@@ -4780,8 +4780,8 @@ namespace CarSimulator
 
                 if (ipLocalBytes != null && ipLocalBytes.Length == 4 && networkMask != null && networkMask.Length == 4)
                 {
-                    byte[] ecuList = new byte[] { 0x10
-                        //, 0x21, 0x5D, 0x60, 0x61, 0x63
+                    byte[] ecuList = { 0x10
+                        , 0x21, 0x5D, 0x60, 0x61, 0x63
                         };
 
                     int index = 0;
@@ -4800,7 +4800,7 @@ namespace CarSimulator
                         _sendData[i++] = ipLocalBytes[0];
                         _sendData[i++] = ipLocalBytes[1];
                         _sendData[i++] = ipLocalBytes[2];
-                        _sendData[i++] = (byte)(ipLocalBytes[3] + index);
+                        _sendData[i++] = (byte)(ipLocalBytes[3] /*+ index*/);
 
                         // mask
                         _sendData[i++] = networkMask[0];
