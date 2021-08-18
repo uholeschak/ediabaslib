@@ -207,6 +207,42 @@ Keep-Alive: timeout=5, max=5
 	</S:Body>
 </S:Envelope>
 
+No host:
+========
+POST /nVm HTTP/1.1
+User-Agent: Jakarta Commons-HttpClient/3.1
+Host: 192.168.10.221:5302
+Content-Length: 838
+Content-Type: multipart/form-data; boundary=B_IZiIUcUrMpbqvNWoNhZO5BBpMvPyYAB
+
+--B_IZiIUcUrMpbqvNWoNhZO5BBpMvPyYAB
+Content-Disposition: form-data; name="FunctionName"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+
+nvmAllocateDevice
+--B_IZiIUcUrMpbqvNWoNhZO5BBpMvPyYAB
+Content-Disposition: form-data; name="com.nubix.nvm.commands.Allocate"; filename="com.nubix.nvm.commands.Allocate"
+Content-Type: application/octet-stream; charset=ISO-8859-1
+Content-Transfer-Encoding: binary
+
+<?xml version='1.0'?><!DOCTYPE wddxPacket SYSTEM 'http://www.openwddx.org/downloads/dtd/wddx_dtd_10.txt'><wddxPacket version='1.0'><header/><data><struct><var name='DeviceOwner'><string>EXPERT</string></var><var name='IfhClientIpAddr'><string>ANY_HOST</string></var><var name='IfhClientTcpPorts'><string>IP_PORT_ANY</string></var></struct></data></wddxPacket>
+--B_IZiIUcUrMpbqvNWoNhZO5BBpMvPyYAB--
+HTTP/1.0 200 OK
+Content-Type: text/html
+Content-Length: 379
+content-length: 379
+Connection: Close
+
+<?xml version='1.0'?>
+<!DOCTYPE wddxPacket SYSTEM 'wddx_dtd_10.dtd'>
+<wddxPacket version="1.0">
+<header><comment>nVmAllocateDevice</comment></header>
+<data>
+<struct>
+<var name="Status"><struct><var name="code"><number>0</number></var><var name="msg"><number>0</number></var><var name="params"><array length="1"><null /></array></var></struct></var></struct></data>
+</wddxPacket>
+
 Soap Release (Port 5302):
 =========================
 Request:
@@ -234,3 +270,38 @@ Keep-Alive: timeout=5, max=5
 	</ns2:releaseDeviceResponse>
 	</S:Body>
 </S:Envelope>
+
+No host:
+========
+POST /nVm HTTP/1.1
+User-Agent: Jakarta Commons-HttpClient/3.1
+Host: 192.168.10.221:5302
+Content-Length: 727
+Content-Type: multipart/form-data; boundary=vArme02j6FQ28vlwaBozTtKMAEta8F3WgKjibB
+
+--vArme02j6FQ28vlwaBozTtKMAEta8F3WgKjibB
+Content-Disposition: form-data; name="FunctionName"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+
+nvmReleaseDevice
+--vArme02j6FQ28vlwaBozTtKMAEta8F3WgKjibB
+Content-Disposition: form-data; name="com.nubix.nvm.commands.Release"; filename="com.nubix.nvm.commands.Release"
+Content-Type: application/octet-stream; charset=ISO-8859-1
+Content-Transfer-Encoding: binary
+
+<?xml version='1.0'?><!DOCTYPE wddxPacket SYSTEM 'http://www.openwddx.org/downloads/dtd/wddx_dtd_10.txt'><wddxPacket version='1.0'><header/><data><struct><var name='DeviceOwner'><string>EXPERT</string></var></struct></data></wddxPacket>
+--vArme02j6FQ28vlwaBozTtKMAEta8F3WgKjibB--
+HTTP/1.0 200 OK
+Content-Type: text/xml;charset="utf-8"
+Content-Length: 178
+content-length: 178
+Connection: Close
+
+<?xml version='1.0'?>
+<!DOCTYPE wddxPacket SYSTEM 'wddx_dtd_10.dtd'>
+<wddxPacket version="1.0">
+<header><comment>nvmReleaseDevice</comment></header>
+<data>
+</data>
+</wddxPacket>
