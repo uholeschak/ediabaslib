@@ -5912,26 +5912,27 @@ namespace BmwDeepObd
                 if (allocate)
                 {
                     StringContent actionContent = new StringContent("nvmAllocateDevice", Encoding.ASCII, "text/plain");
-                    formAllocate.Add(actionContent, "FunctionName");
+                    formAllocate.Add(actionContent, "\"FunctionName\"");
 
                     string xmlString = xmlHeader +
                                         "<var name='IfhClientIpAddr'><string>ANY_HOST</string></var>" +
                                         "<var name='IfhClientTcpPorts'><string>IP_PORT_ANY</string></var>" +
                                         xmlFooter;
                     StringContent xmlContent = new StringContent(xmlString, Encoding.GetEncoding("ISO-8859-1"), "application/octet-stream");
-                    formAllocate.Add(xmlContent, "com.nubix.nvm.commands.Allocate", "com.nubix.nvm.commands.Allocate");
+                    formAllocate.Add(xmlContent, "\"com.nubix.nvm.commands.Allocate\"", "\"com.nubix.nvm.commands.Allocate\"");
                 }
                 else
                 {
                     StringContent actionContent = new StringContent("nvmReleaseDevice", Encoding.ASCII, "text/plain");
-                    formAllocate.Add(actionContent, "FunctionName");
+                    formAllocate.Add(actionContent, "\"FunctionName\"");
 
                     string xmlString = xmlHeader + xmlFooter;
                     StringContent xmlContent = new StringContent(xmlString, Encoding.GetEncoding("ISO-8859-1"), "application/octet-stream");
-                    formAllocate.Add(xmlContent, "com.nubix.nvm.commands.Release", "com.nubix.nvm.commands.Release");
+                    formAllocate.Add(xmlContent, "\"com.nubix.nvm.commands.Release\"", "\"com.nubix.nvm.commands.Release\"");
                 }
 
                 string deviceUrl = "http://" + ipParts[0] + ":5302";
+                //deviceUrl = "http://192.168.10.247:8000";
                 System.Threading.Tasks.Task<HttpResponseMessage> taskAllocate = _icomAllocateDeviceHttpClient.PostAsync(deviceUrl, formAllocate);
                 _icomAllocateActive = true;
                 taskAllocate.ContinueWith((task, o) =>
