@@ -5911,22 +5911,24 @@ namespace BmwDeepObd
                     "</struct></data></wddxPacket>";
                 if (allocate)
                 {
-                    formAllocate.Add(new StringContent("nvmAllocateDevice", null, "text/plain"),
-                        "FunctionName");
+                    StringContent actionContent = new StringContent("nvmAllocateDevice", Encoding.ASCII, "text/plain");
+                    formAllocate.Add(actionContent, "FunctionName");
 
-                    formAllocate.Add(new StringContent(xmlHeader +
-                           "<var name='IfhClientIpAddr'><string>ANY_HOST</string></var>" +
-                           "<var name='IfhClientTcpPorts'><string>IP_PORT_ANY</string></var>" +
-                           xmlFooter, null, "application/octet-stream"),
-                        "com.nubix.nvm.commands.Allocate", "com.nubix.nvm.commands.Allocate");
+                    string xmlString = xmlHeader +
+                                        "<var name='IfhClientIpAddr'><string>ANY_HOST</string></var>" +
+                                        "<var name='IfhClientTcpPorts'><string>IP_PORT_ANY</string></var>" +
+                                        xmlFooter;
+                    StringContent xmlContent = new StringContent(xmlString, Encoding.GetEncoding("ISO-8859-1"), "application/octet-stream");
+                    formAllocate.Add(xmlContent, "com.nubix.nvm.commands.Allocate", "com.nubix.nvm.commands.Allocate");
                 }
                 else
                 {
-                    formAllocate.Add(new StringContent("nvmReleaseDevice", null, "text/plain"),
-                        "FunctionName");
+                    StringContent actionContent = new StringContent("nvmReleaseDevice", Encoding.ASCII, "text/plain");
+                    formAllocate.Add(actionContent, "FunctionName");
 
-                    formAllocate.Add(new StringContent(xmlHeader + xmlFooter, null, "application/octet-stream"),
-                        "com.nubix.nvm.commands.Release", "com.nubix.nvm.commands.Release");
+                    string xmlString = xmlHeader + xmlFooter;
+                    StringContent xmlContent = new StringContent(xmlString, Encoding.GetEncoding("ISO-8859-1"), "application/octet-stream");
+                    formAllocate.Add(xmlContent, "com.nubix.nvm.commands.Release", "com.nubix.nvm.commands.Release");
                 }
 
                 string deviceUrl = "http://" + ipParts[0] + ":5302";
