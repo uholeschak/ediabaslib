@@ -5931,6 +5931,13 @@ namespace BmwDeepObd
                     formAllocate.Add(xmlContent, "\"com.nubix.nvm.commands.Release\"", "\"com.nubix.nvm.commands.Release\"");
                 }
 
+                foreach (HttpContent httpContent in formAllocate)
+                {
+                    httpContent.Headers.ContentDisposition.FileNameStar = null;
+                    string transferEncoding = string.IsNullOrEmpty(httpContent.Headers.ContentDisposition.FileName) ? "8bit" : "binary";
+                    httpContent.Headers.Add("Content-Transfer-Encoding", transferEncoding);
+                }
+
                 string deviceUrl = "http://" + ipParts[0] + ":5302";
                 //deviceUrl = "http://192.168.10.247:8000";
                 System.Threading.Tasks.Task<HttpResponseMessage> taskAllocate = _icomAllocateDeviceHttpClient.PostAsync(deviceUrl, formAllocate);
