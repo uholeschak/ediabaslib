@@ -1194,7 +1194,7 @@ namespace EdiabasLib
                                 vciChannels = vciChannels.TrimStart('[');
                                 vciChannels = vciChannels.TrimEnd(']');
                                 string[] channelList = vciChannels.Split(';');
-                                if (channelList.Contains("3+"))
+                                if (channelList.Contains("3+") || channelList.Contains("3*"))
                                 {
                                     enetChannel = true;
                                 }
