@@ -5947,6 +5947,10 @@ namespace BmwDeepObd
 
                         if (success)
                         {
+                            if (!GetIcomAllocateStatus(allocateResult, out int statusCode))
+                            {
+                                success = false;
+                            }
                         }
 
                         handlerLocal?.Invoke(success);
@@ -5964,6 +5968,90 @@ namespace BmwDeepObd
             }
 
             return true;
+        }
+
+        private bool GetIcomAllocateStatus(string allocResultXml, out int statusCode)
+        {
+            statusCode = -1;
+            bool statusValid = false;
+
+            try
+            {
+                if (string.IsNullOrEmpty(allocResultXml))
+                {
+                    return false;
+                }
+
+                XmlReaderSettings readerSettings = new XmlReaderSettings { XmlResolver = null, DtdProcessing = DtdProcessing.Ignore };
+                XmlReader xmlReader = XmlReader.Create(new StringReader(allocResultXml), readerSettings);
+                XDocument xmlDoc = XDocument.Load(xmlReader);
+                if (xmlDoc.Root == null)
+                {
+                    return false;
+                }
+
+                XElement dataNode = xmlDoc.Root.Element("data");
+                if (dataNode == null)
+                {
+                    return false;
+                }
+
+                foreach (XElement structNode1 in dataNode.Elements("struct"))
+                {
+                    foreach (XElement varNode1 in structNode1.Elements("var"))
+                    {
+                        XAttribute nameAttr1 = varNode1.Attribute("name");
+                        string name1 = nameAttr1?.Value;
+                        bool isStatus = false;
+                        if (!string.IsNullOrEmpty(name1))
+                        {
+                            name1 = name1.Trim();
+                            if (string.Compare(name1, "Status", StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                isStatus = true;
+                            }
+                        }
+
+                        if (isStatus)
+                        {
+                            foreach (XElement structNode2 in varNode1.Elements("struct"))
+                            {
+                                foreach (XElement varNode2 in structNode2.Elements("var"))
+                                {
+                                    XAttribute nameAttr2 = varNode2.Attribute("name");
+                                    string name2 = nameAttr2?.Value;
+                                    bool isCode = false;
+                                    if (!string.IsNullOrEmpty(name2))
+                                    {
+                                        name2 = name2.Trim();
+                                        if (string.Compare(name2, "code", StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            isCode = true;
+                                        }
+                                    }
+
+                                    if (isCode)
+                                    {
+                                        foreach (XElement numberNode1 in varNode2.Elements("number"))
+                                        {
+                                            if (Int32.TryParse(numberNode1.Value.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 codeValue))
+                                            {
+                                                statusCode = codeValue;
+                                                statusValid = true;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return statusValid;
         }
 
         public void SetDefaultSettings(bool globalOnly = false, bool includeTheme = false)
