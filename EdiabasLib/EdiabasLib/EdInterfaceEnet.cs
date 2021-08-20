@@ -5,8 +5,12 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Xml;
+using System.Xml.Linq;
+using System.Net.Http;
 
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable ConvertPropertyToExpressionBody
@@ -178,6 +182,7 @@ namespace EdiabasLib
 
         protected delegate EdiabasNet.ErrorCodes TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength);
         protected delegate void ExecuteNetworkDelegate();
+        public delegate void IcomAllocateDeviceDelegate(bool success, int statusCode = -1);
 
         private bool _disposed;
         private static Mutex _interfaceMutex;
@@ -208,6 +213,8 @@ namespace EdiabasLib
 
         protected static object NetworkData;
         protected static EnetConnection EnetHostConn;
+        protected static HttpClient IcomAllocateDeviceHttpClient;
+        protected static CancellationTokenSource HttpAllocCancelToken;
         protected static TcpClient TcpDiagClient;
         protected static NetworkStream TcpDiagStream;
         protected static AutoResetEvent TcpDiagStreamRecEvent;
@@ -223,6 +230,7 @@ namespace EdiabasLib
         protected static long LastTcpDiagRecTime;
         protected static Queue<byte[]> TcpDiagRecQueue;
         protected static bool ReconnectRequired;
+        protected static bool IcomAllocateActive;
 
         protected Socket UdpSocket;
         protected byte[] UdpBuffer = new byte[1500];
@@ -230,6 +238,7 @@ namespace EdiabasLib
         protected object UdpRecListLock = new object();
         protected int UdpMaxResponses;
         protected AutoResetEvent UdpEvent = new AutoResetEvent(false);
+        protected AutoResetEvent IcomEvent = new AutoResetEvent(false);
 
         protected string RemoteHostProtected = AutoIp;
         protected int TesterAddress = 0xF4;
@@ -601,6 +610,7 @@ namespace EdiabasLib
 #else
             _interfaceMutex = new Mutex(false, MutexName);
 #endif
+            HttpAllocCancelToken = new CancellationTokenSource();
             TcpDiagStreamRecEvent = new AutoResetEvent(false);
             TcpDiagStreamSendLock = new object();
             TcpDiagStreamRecLock = new object();
@@ -698,6 +708,33 @@ namespace EdiabasLib
                 {
                     diagPort = EnetHostConn.DiagPort;
                 }
+
+#if Android
+                if (EnetHostConn.DiagPort >= 0)
+                {
+                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM at: {0}", EnetHostConn.IpAddress);
+                    IcomEvent.Reset();
+                    if (!IcomAllocateDevice(EnetHostConn.IpAddress.ToString(), true, (success, code) =>
+                    {
+                        if (success && code == 0)
+                        {
+                            EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM ok: Code={0}", code);
+                        }
+                        else
+                        {
+                            EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM rejected: Code={0}", code);
+                        }
+
+                        IcomEvent.Set();
+                    }))
+                    {
+                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM error");
+                    }
+
+                    IcomEvent.WaitOne(2000, false);
+                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM finished");
+                }
+#endif
 
                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting to: {0}:{1}", EnetHostConn.IpAddress, diagPort);
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
@@ -907,6 +944,7 @@ namespace EdiabasLib
             int retryCount = 0;
             for (;;)
             {
+                UdpEvent.Reset();
                 bool broadcastSend = false;
 #if !WindowsCE
                 string configData = remoteHostConfig.Remove(0, AutoIp.Length);
@@ -1240,6 +1278,187 @@ namespace EdiabasLib
             {
                 // ignored
             }
+        }
+
+        public bool IcomAllocateDevice(string deviceIp, bool allocate, IcomAllocateDeviceDelegate handler)
+        {
+            try
+            {
+                if (IcomAllocateActive)
+                {
+                    return false;
+                }
+
+                if (handler == null)
+                {
+                    return false;
+                }
+
+                if (string.IsNullOrEmpty(deviceIp))
+                {
+                    return false;
+                }
+
+                string[] ipParts = deviceIp.Split(':');
+                if (ipParts.Length == 0)
+                {
+                    return false;
+                }
+
+                if (IcomAllocateDeviceHttpClient == null)
+                {
+                    IcomAllocateDeviceHttpClient = new HttpClient(new HttpClientHandler());
+                }
+
+                MultipartFormDataContent formAllocate = new MultipartFormDataContent();
+                string xmlHeader =
+                    "<?xml version='1.0'?><!DOCTYPE wddxPacket SYSTEM 'http://www.openwddx.org/downloads/dtd/wddx_dtd_10.txt'>" +
+                    "<wddxPacket version='1.0'><header/><data><struct><var name='DeviceOwner'><string>EXPERT</string></var>";
+                string xmlFooter =
+                    "</struct></data></wddxPacket>";
+                if (allocate)
+                {
+                    StringContent actionContent = new StringContent("nvmAllocateDevice", Encoding.ASCII, "text/plain");
+                    formAllocate.Add(actionContent, "FunctionName");
+
+                    string xmlString = xmlHeader +
+                                        "<var name='IfhClientIpAddr'><string>ANY_HOST</string></var>" +
+                                        "<var name='IfhClientTcpPorts'><string>IP_PORT_ANY</string></var>" +
+                                        xmlFooter;
+                    StringContent xmlContent = new StringContent(xmlString, Encoding.GetEncoding("ISO-8859-1"), "application/octet-stream");
+                    formAllocate.Add(xmlContent, "com.nubix.nvm.commands.Allocate", "com.nubix.nvm.commands.Allocate");
+                }
+                else
+                {
+                    StringContent actionContent = new StringContent("nvmReleaseDevice", Encoding.ASCII, "text/plain");
+                    formAllocate.Add(actionContent, "FunctionName");
+
+                    string xmlString = xmlHeader + xmlFooter;
+                    StringContent xmlContent = new StringContent(xmlString, Encoding.GetEncoding("ISO-8859-1"), "application/octet-stream");
+                    formAllocate.Add(xmlContent, "com.nubix.nvm.commands.Release", "com.nubix.nvm.commands.Release");
+                }
+
+                string deviceUrl = "http://" + ipParts[0] + ":5302/nVm";
+                System.Threading.Tasks.Task<HttpResponseMessage> taskAllocate = IcomAllocateDeviceHttpClient.PostAsync(deviceUrl, formAllocate);
+                IcomAllocateActive = true;
+                taskAllocate.ContinueWith((task) =>
+                {
+                    IcomAllocateActive = false;
+                    try
+                    {
+                        HttpResponseMessage responseAllocate = taskAllocate.Result;
+                        bool success = responseAllocate.IsSuccessStatusCode;
+                        responseAllocate.Content.Headers.ContentType.CharSet = "ISO-8859-1";
+                        string allocateResult = responseAllocate.Content.ReadAsStringAsync().Result;
+
+                        int statusCode = -1;
+                        if (success && allocate)
+                        {
+                            if (!GetIcomAllocateStatus(allocateResult, out statusCode))
+                            {
+                                success = false;
+                            }
+                        }
+
+                        handler?.Invoke(success, statusCode);
+                    }
+                    catch (Exception)
+                    {
+                        handler?.Invoke(false);
+                    }
+                }, System.Threading.Tasks.TaskContinuationOptions.None);
+            }
+            catch (Exception)
+            {
+                IcomAllocateActive = false;
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool GetIcomAllocateStatus(string allocResultXml, out int statusCode)
+        {
+            statusCode = -1;
+            bool statusValid = false;
+
+            try
+            {
+                if (string.IsNullOrEmpty(allocResultXml))
+                {
+                    return false;
+                }
+
+                XmlReaderSettings readerSettings = new XmlReaderSettings { XmlResolver = null, DtdProcessing = DtdProcessing.Ignore };
+                XmlReader xmlReader = XmlReader.Create(new StringReader(allocResultXml), readerSettings);
+                XDocument xmlDoc = XDocument.Load(xmlReader);
+                if (xmlDoc.Root == null)
+                {
+                    return false;
+                }
+
+                XElement dataNode = xmlDoc.Root.Element("data");
+                if (dataNode == null)
+                {
+                    return false;
+                }
+
+                foreach (XElement structNode1 in dataNode.Elements("struct"))
+                {
+                    foreach (XElement varNode1 in structNode1.Elements("var"))
+                    {
+                        XAttribute nameAttr1 = varNode1.Attribute("name");
+                        string name1 = nameAttr1?.Value;
+                        bool isStatus = false;
+                        if (!string.IsNullOrEmpty(name1))
+                        {
+                            name1 = name1.Trim();
+                            if (string.Compare(name1, "Status", StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                isStatus = true;
+                            }
+                        }
+
+                        if (isStatus)
+                        {
+                            foreach (XElement structNode2 in varNode1.Elements("struct"))
+                            {
+                                foreach (XElement varNode2 in structNode2.Elements("var"))
+                                {
+                                    XAttribute nameAttr2 = varNode2.Attribute("name");
+                                    string name2 = nameAttr2?.Value;
+                                    bool isCode = false;
+                                    if (!string.IsNullOrEmpty(name2))
+                                    {
+                                        name2 = name2.Trim();
+                                        if (string.Compare(name2, "code", StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            isCode = true;
+                                        }
+                                    }
+
+                                    if (isCode)
+                                    {
+                                        foreach (XElement numberNode1 in varNode2.Elements("number"))
+                                        {
+                                            if (Int32.TryParse(numberNode1.Value.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 codeValue))
+                                            {
+                                                statusCode = codeValue;
+                                                statusValid = true;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return statusValid;
         }
 
         public static Dictionary<string, string> ExtractSvrLocItems(byte[] dataBuffer, int dataLength, int expectedId)

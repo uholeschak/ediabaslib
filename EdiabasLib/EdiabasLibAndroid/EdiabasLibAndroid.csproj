@@ -39,9 +39,11 @@
   <ItemGroup>
     <Reference Include="Mono.Android.Export" />
     <Reference Include="System" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="Mono.Android" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\EdiabasLib\BtEscapeStreamReader.cs">

@@ -383,7 +383,6 @@ namespace BmwDeepObd
         public delegate void BcReceiverReceivedDelegate(Context context, Intent intent);
         public delegate void TranslateDelegate(List<string> transList);
         public delegate void TranslateLoginDelegate(bool success);
-        public delegate void IcomAllocateDeviceDelegate(bool success);
         public delegate void UpdateCheckDelegate(bool success, bool updateAvailable, int? appVer, string message);
         public delegate void EnetSsidWarnDelegate(bool retry);
         public delegate void WifiConnectedWarnDelegate();
@@ -668,11 +667,9 @@ namespace BmwDeepObd
         private HttpClient _sendHttpClient;
         private HttpClient _updateHttpClient;
         private HttpClient _transLoginHttpClient;
-        private HttpClient _icomAllocateDeviceHttpClient;
         private bool _updateCheckActive;
         private bool _transLoginActive;
         private bool _translateLockAquired;
-        private bool _icomAllocateActive;
         private List<string> _yandexLangList;
         private List<string> _yandexTransList;
         private List<string> _yandexReducedStringList;
@@ -1333,19 +1330,6 @@ namespace BmwDeepObd
                             // ignored
                         }
                         _transLoginHttpClient = null;
-                    }
-
-                    if (_icomAllocateDeviceHttpClient != null)
-                    {
-                        try
-                        {
-                            _icomAllocateDeviceHttpClient.Dispose();
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
-                        _icomAllocateDeviceHttpClient = null;
                     }
 
                     UnRegisterWifiEnetCallback();
@@ -3871,15 +3855,6 @@ namespace BmwDeepObd
                                 {
                                     EdInterfaceEnet.EnetConnection enetConnection = detectedVehicles[listView.CheckedItemPosition - 1];
                                     _selectedEnetIp = enetConnection.ToString();
-#if false
-                                    if (enetConnection.DiagPort > 0)
-                                    {
-                                        IcomAllocateDevice(_selectedEnetIp, true, success =>
-                                        {
-
-                                        });
-                                    }
-#endif
                                     handler(sender, args);
                                 }
                                 break;
@@ -5867,191 +5842,6 @@ namespace BmwDeepObd
             }
 
             return true;
-        }
-
-        public bool IcomAllocateDevice(string deviceIp, bool allocate, IcomAllocateDeviceDelegate handler)
-        {
-            try
-            {
-                if (_icomAllocateActive)
-                {
-                    return false;
-                }
-
-                if (handler == null)
-                {
-                    return false;
-                }
-
-                if (string.IsNullOrEmpty(deviceIp))
-                {
-                    return false;
-                }
-
-                string[] ipParts = deviceIp.Split(':');
-                if (ipParts.Length == 0)
-                {
-                    return false;
-                }
-
-                if (_icomAllocateDeviceHttpClient == null)
-                {
-                    _icomAllocateDeviceHttpClient = new HttpClient(new HttpClientHandler()
-                    {
-                        SslProtocols = DefaultSslProtocols,
-                        ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true
-                    });
-                }
-
-                MultipartFormDataContent formAllocate = new MultipartFormDataContent();
-                string xmlHeader =
-                    "<?xml version='1.0'?><!DOCTYPE wddxPacket SYSTEM 'http://www.openwddx.org/downloads/dtd/wddx_dtd_10.txt'>" +
-                    "<wddxPacket version='1.0'><header/><data><struct><var name='DeviceOwner'><string>EXPERT</string></var>";
-                string xmlFooter =
-                    "</struct></data></wddxPacket>";
-                if (allocate)
-                {
-                    StringContent actionContent = new StringContent("nvmAllocateDevice", Encoding.ASCII, "text/plain");
-                    formAllocate.Add(actionContent, "FunctionName");
-
-                    string xmlString = xmlHeader +
-                                        "<var name='IfhClientIpAddr'><string>ANY_HOST</string></var>" +
-                                        "<var name='IfhClientTcpPorts'><string>IP_PORT_ANY</string></var>" +
-                                        xmlFooter;
-                    StringContent xmlContent = new StringContent(xmlString, Encoding.GetEncoding("ISO-8859-1"), "application/octet-stream");
-                    formAllocate.Add(xmlContent, "com.nubix.nvm.commands.Allocate", "com.nubix.nvm.commands.Allocate");
-                }
-                else
-                {
-                    StringContent actionContent = new StringContent("nvmReleaseDevice", Encoding.ASCII, "text/plain");
-                    formAllocate.Add(actionContent, "FunctionName");
-
-                    string xmlString = xmlHeader + xmlFooter;
-                    StringContent xmlContent = new StringContent(xmlString, Encoding.GetEncoding("ISO-8859-1"), "application/octet-stream");
-                    formAllocate.Add(xmlContent, "com.nubix.nvm.commands.Release", "com.nubix.nvm.commands.Release");
-                }
-
-                string deviceUrl = "http://" + ipParts[0] + ":5302/nVm";
-                System.Threading.Tasks.Task<HttpResponseMessage> taskAllocate = _icomAllocateDeviceHttpClient.PostAsync(deviceUrl, formAllocate);
-                _icomAllocateActive = true;
-                taskAllocate.ContinueWith((task, o) =>
-                {
-                    IcomAllocateDeviceDelegate handlerLocal = o as IcomAllocateDeviceDelegate;
-                    _icomAllocateActive = false;
-                    try
-                    {
-                        HttpResponseMessage responseAllocate = taskAllocate.Result;
-                        bool success = responseAllocate.IsSuccessStatusCode;
-                        responseAllocate.Content.Headers.ContentType.CharSet = "ISO-8859-1";
-                        string allocateResult = responseAllocate.Content.ReadAsStringAsync().Result;
-
-                        if (success)
-                        {
-                            if (!GetIcomAllocateStatus(allocateResult, out int statusCode))
-                            {
-                                success = false;
-                            }
-                        }
-
-                        handlerLocal?.Invoke(success);
-                    }
-                    catch (Exception)
-                    {
-                        handlerLocal?.Invoke(false);
-                    }
-                }, handler, System.Threading.Tasks.TaskContinuationOptions.None);
-            }
-            catch (Exception)
-            {
-                _icomAllocateActive = false;
-                return false;
-            }
-
-            return true;
-        }
-
-        private bool GetIcomAllocateStatus(string allocResultXml, out int statusCode)
-        {
-            statusCode = -1;
-            bool statusValid = false;
-
-            try
-            {
-                if (string.IsNullOrEmpty(allocResultXml))
-                {
-                    return false;
-                }
-
-                XmlReaderSettings readerSettings = new XmlReaderSettings { XmlResolver = null, DtdProcessing = DtdProcessing.Ignore };
-                XmlReader xmlReader = XmlReader.Create(new StringReader(allocResultXml), readerSettings);
-                XDocument xmlDoc = XDocument.Load(xmlReader);
-                if (xmlDoc.Root == null)
-                {
-                    return false;
-                }
-
-                XElement dataNode = xmlDoc.Root.Element("data");
-                if (dataNode == null)
-                {
-                    return false;
-                }
-
-                foreach (XElement structNode1 in dataNode.Elements("struct"))
-                {
-                    foreach (XElement varNode1 in structNode1.Elements("var"))
-                    {
-                        XAttribute nameAttr1 = varNode1.Attribute("name");
-                        string name1 = nameAttr1?.Value;
-                        bool isStatus = false;
-                        if (!string.IsNullOrEmpty(name1))
-                        {
-                            name1 = name1.Trim();
-                            if (string.Compare(name1, "Status", StringComparison.OrdinalIgnoreCase) == 0)
-                            {
-                                isStatus = true;
-                            }
-                        }
-
-                        if (isStatus)
-                        {
-                            foreach (XElement structNode2 in varNode1.Elements("struct"))
-                            {
-                                foreach (XElement varNode2 in structNode2.Elements("var"))
-                                {
-                                    XAttribute nameAttr2 = varNode2.Attribute("name");
-                                    string name2 = nameAttr2?.Value;
-                                    bool isCode = false;
-                                    if (!string.IsNullOrEmpty(name2))
-                                    {
-                                        name2 = name2.Trim();
-                                        if (string.Compare(name2, "code", StringComparison.OrdinalIgnoreCase) == 0)
-                                        {
-                                            isCode = true;
-                                        }
-                                    }
-
-                                    if (isCode)
-                                    {
-                                        foreach (XElement numberNode1 in varNode2.Elements("number"))
-                                        {
-                                            if (Int32.TryParse(numberNode1.Value.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 codeValue))
-                                            {
-                                                statusCode = codeValue;
-                                                statusValid = true;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-            return statusValid;
         }
 
         public void SetDefaultSettings(bool globalOnly = false, bool includeTheme = false)
