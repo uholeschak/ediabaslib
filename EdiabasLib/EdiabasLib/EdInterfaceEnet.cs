@@ -2207,6 +2207,18 @@ namespace EdiabasLib
             if (!_disposed)
             {
                 InterfaceDisconnect();
+                if (IcomAllocateDeviceHttpClient != null)
+                {
+                    try
+                    {
+                        IcomAllocateDeviceHttpClient.Dispose();
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                    IcomAllocateDeviceHttpClient = null;
+                }
                 // If disposing equals true, dispose all managed
                 // and unmanaged resources.
                 if (disposing)
