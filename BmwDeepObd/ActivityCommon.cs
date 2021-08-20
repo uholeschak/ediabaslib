@@ -5932,7 +5932,6 @@ namespace BmwDeepObd
                 }
 
                 string deviceUrl = "http://" + ipParts[0] + ":5302/nVm";
-                //deviceUrl = "http://192.168.10.247:8000";
                 System.Threading.Tasks.Task<HttpResponseMessage> taskAllocate = _icomAllocateDeviceHttpClient.PostAsync(deviceUrl, formAllocate);
                 _icomAllocateActive = true;
                 taskAllocate.ContinueWith((task, o) =>
@@ -5943,6 +5942,7 @@ namespace BmwDeepObd
                     {
                         HttpResponseMessage responseAllocate = taskAllocate.Result;
                         bool success = responseAllocate.IsSuccessStatusCode;
+                        responseAllocate.Content.Headers.ContentType.CharSet = "ISO-8859-1";
                         string allocateResult = responseAllocate.Content.ReadAsStringAsync().Result;
 
                         if (success)
