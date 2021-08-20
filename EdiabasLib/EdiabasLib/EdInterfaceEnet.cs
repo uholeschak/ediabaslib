@@ -709,6 +709,7 @@ namespace EdiabasLib
                     diagPort = EnetHostConn.DiagPort;
                 }
 
+#if Android
                 if (EnetHostConn.DiagPort >= 0)
                 {
                     EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM at: {0}", EnetHostConn.IpAddress);
@@ -733,6 +734,7 @@ namespace EdiabasLib
                     IcomEvent.WaitOne(2000, false);
                     EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM finished");
                 }
+#endif
 
                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting to: {0}:{1}", EnetHostConn.IpAddress, diagPort);
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
