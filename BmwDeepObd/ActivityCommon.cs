@@ -3819,7 +3819,7 @@ namespace BmwDeepObd
                         foreach (EdInterfaceEnet.EnetConnection enetConnection in detectedVehicles)
                         {
                             if (!string.IsNullOrEmpty(_selectedEnetIp) &&
-                                string.Compare(_selectedEnetIp, enetConnection.IpAddress.ToString(), StringComparison.OrdinalIgnoreCase) == 0)
+                                string.Compare(_selectedEnetIp, enetConnection.ToString(), StringComparison.OrdinalIgnoreCase) == 0)
                             {
                                 selIndex = index + 1;
                             }
