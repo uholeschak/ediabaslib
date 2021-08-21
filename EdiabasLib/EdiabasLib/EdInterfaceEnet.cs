@@ -714,24 +714,32 @@ namespace EdiabasLib
                 {
                     EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM at: {0}", EnetHostConn.IpAddress);
                     IcomEvent.Reset();
-                    if (!IcomAllocateDevice(EnetHostConn.IpAddress.ToString(), true, (success, code) =>
+                    using (CancellationTokenSource cts = new CancellationTokenSource())
                     {
-                        if (success && code == 0)
+                        if (!IcomAllocateDevice(EnetHostConn.IpAddress.ToString(), true, cts, (success, code) =>
                         {
-                            EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM ok: Code={0}", code);
-                        }
-                        else
+                            if (success && code == 0)
+                            {
+                                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM ok: Code={0}", code);
+                            }
+                            else
+                            {
+                                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM rejected: Code={0}", code);
+                            }
+
+                            IcomEvent.Set();
+                        }))
                         {
-                            EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM rejected: Code={0}", code);
+                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM error");
                         }
 
-                        IcomEvent.Set();
-                    }))
-                    {
-                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM error");
+                        if (!IcomEvent.WaitOne(2000, false))
+                        {
+                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM timeout");
+                            cts.Cancel();
+                            IcomEvent.WaitOne(1000, false);
+                        }
                     }
-
-                    IcomEvent.WaitOne(2000, false);
                     EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM finished");
                 }
 #endif
@@ -1280,7 +1288,7 @@ namespace EdiabasLib
             }
         }
 
-        public bool IcomAllocateDevice(string deviceIp, bool allocate, IcomAllocateDeviceDelegate handler)
+        public bool IcomAllocateDevice(string deviceIp, bool allocate, CancellationTokenSource cts, IcomAllocateDeviceDelegate handler)
         {
             try
             {
@@ -1366,7 +1374,7 @@ namespace EdiabasLib
                     {
                         handler?.Invoke(false);
                     }
-                }, System.Threading.Tasks.TaskContinuationOptions.None);
+                }, cts.Token, System.Threading.Tasks.TaskContinuationOptions.None, System.Threading.Tasks.TaskScheduler.Default);
             }
             catch (Exception)
             {
