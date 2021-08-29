@@ -672,7 +672,6 @@ namespace EdiabasLib
                         return false;
                     }
                     EnetHostConn = detectedVehicles[0];
-                    UdpSocket.Close();
                     EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Received: IP={0}:{1}", EnetHostConn.IpAddress, EnetHostConn.DiagPort));
                 }
                 else
@@ -998,207 +997,224 @@ namespace EdiabasLib
             {
                 return null;
             }
-            // ReSharper disable once UseObjectOrCollectionInitializer
-            UdpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-#if !WindowsCE
-            UdpSocket.EnableBroadcast = true;
-#endif
-            IPEndPoint ipUdp = new IPEndPoint(IPAddress.Any, 0);
-            UdpSocket.Bind(ipUdp);
-            lock (UdpRecListLock)
-            {
-                UdpRecIpListList = new List<EnetConnection>();
-            }
-            UdpMaxResponses = maxVehicles;
-            StartUdpListen();
 
-            int retryCount = 0;
-            for (;;)
+            try
             {
-                UdpEvent.Reset();
-                bool broadcastSend = false;
+// ReSharper disable once UseObjectOrCollectionInitializer
+                UdpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 #if !WindowsCE
-                string configData = remoteHostConfig.Remove(0, AutoIp.Length);
-                if ((configData.Length > 0) && (configData[0] == ':'))
+                UdpSocket.EnableBroadcast = true;
+#endif
+                IPEndPoint ipUdp = new IPEndPoint(IPAddress.Any, 0);
+                UdpSocket.Bind(ipUdp);
+                lock (UdpRecListLock)
                 {
-                    string adapterName = configData.StartsWith(":all", StringComparison.OrdinalIgnoreCase) ? string.Empty : configData.Remove(0, 1);
+                    UdpRecIpListList = new List<EnetConnection>();
+                }
+                UdpMaxResponses = maxVehicles;
+                StartUdpListen();
+
+                int retryCount = 0;
+                for (;;)
+                {
+                    UdpEvent.Reset();
+                    bool broadcastSend = false;
+#if !WindowsCE
+                    string configData = remoteHostConfig.Remove(0, AutoIp.Length);
+                    if ((configData.Length > 0) && (configData[0] == ':'))
+                    {
+                        string adapterName = configData.StartsWith(":all", StringComparison.OrdinalIgnoreCase) ? string.Empty : configData.Remove(0, 1);
 
 #if Android
-                    Java.Util.IEnumeration networkInterfaces = Java.Net.NetworkInterface.NetworkInterfaces;
-                    while (networkInterfaces.HasMoreElements)
-                    {
-                        Java.Net.NetworkInterface netInterface = (Java.Net.NetworkInterface) networkInterfaces.NextElement();
-                        if (netInterface.IsUp)
+                        Java.Util.IEnumeration networkInterfaces = Java.Net.NetworkInterface.NetworkInterfaces;
+                        while (networkInterfaces.HasMoreElements)
                         {
-                            IList<Java.Net.InterfaceAddress> interfaceAdresses = netInterface.InterfaceAddresses;
-                            foreach (Java.Net.InterfaceAddress interfaceAddress in interfaceAdresses)
+                            Java.Net.NetworkInterface netInterface = (Java.Net.NetworkInterface) networkInterfaces.NextElement();
+                            if (netInterface.IsUp)
                             {
-                                if (string.IsNullOrEmpty(adapterName) || (netInterface.Name.StartsWith(adapterName, StringComparison.OrdinalIgnoreCase)))
+                                IList<Java.Net.InterfaceAddress> interfaceAdresses = netInterface.InterfaceAddresses;
+                                foreach (Java.Net.InterfaceAddress interfaceAddress in interfaceAdresses)
                                 {
-                                    if (interfaceAddress.Broadcast != null)
+                                    if (string.IsNullOrEmpty(adapterName) || (netInterface.Name.StartsWith(adapterName, StringComparison.OrdinalIgnoreCase)))
                                     {
-                                        string broadcastAddressName = interfaceAddress.Broadcast.HostAddress;
-                                        // ReSharper disable once ConvertIfStatementToNullCoalescingExpression
-                                        if (broadcastAddressName == null)
+                                        if (interfaceAddress.Broadcast != null)
                                         {
-                                            string text = interfaceAddress.Broadcast.ToString();
-                                            System.Text.RegularExpressions.Match match = System.Text.RegularExpressions.Regex.Match(text, @"\d+\.\d+\.\d+\.\d+$", System.Text.RegularExpressions.RegexOptions.Singleline);
-                                            if (match.Success)
+                                            string broadcastAddressName = interfaceAddress.Broadcast.HostAddress;
+                                            // ReSharper disable once ConvertIfStatementToNullCoalescingExpression
+                                            if (broadcastAddressName == null)
                                             {
-                                                broadcastAddressName = match.Value;
-                                            }
-                                        }
-                                        if (broadcastAddressName != null && !broadcastAddressName.StartsWith("127."))
-                                        {
-                                            try
-                                            {
-                                                IPAddress broadcastAddress = IPAddress.Parse(broadcastAddressName);
-                                                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending: '{0}': Ident broadcast={1} Port={2}",
-                                                    netInterface.Name, broadcastAddress, UdpIdentPort));
-                                                IPEndPoint ipUdpIdent = new IPEndPoint(broadcastAddress, UdpIdentPort);
-
-                                                TcpClientWithTimeout.ExecuteNetworkCommand(() =>
+                                                string text = interfaceAddress.Broadcast.ToString();
+                                                System.Text.RegularExpressions.Match match = System.Text.RegularExpressions.Regex.Match(text, @"\d+\.\d+\.\d+\.\d+$", System.Text.RegularExpressions.RegexOptions.Singleline);
+                                                if (match.Success)
                                                 {
-                                                    UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
-                                                }, ipUdpIdent.Address, NetworkData);
-
-                                                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending: '{0}': SrvLoc broadcast={1} Port={2}",
-                                                    netInterface.Name, broadcastAddress, UdpSrvLocPort));
-                                                IPEndPoint ipUdpSvrLoc = new IPEndPoint(broadcastAddress, UdpSrvLocPort);
-
-                                                TcpClientWithTimeout.ExecuteNetworkCommand(() =>
-                                                {
-                                                    UdpSocket.SendTo(UdpSvrLocReq, ipUdpSvrLoc);
-                                                }, ipUdpSvrLoc.Address, NetworkData);
-
-                                                broadcastSend = true;
-                                            }
-                                            catch (Exception)
-                                            {
-                                                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Broadcast failed");
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-#else
-                    System.Net.NetworkInformation.NetworkInterface[] adapters = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces();
-                    foreach (System.Net.NetworkInformation.NetworkInterface adapter in adapters)
-                    {
-                        if (adapter.OperationalStatus == System.Net.NetworkInformation.OperationalStatus.Up)
-                        {
-                            System.Net.NetworkInformation.IPInterfaceProperties properties = adapter.GetIPProperties();
-                            if (properties?.UnicastAddresses != null)
-                            {
-                                foreach (System.Net.NetworkInformation.UnicastIPAddressInformation ipAddressInfo in properties.UnicastAddresses)
-                                {
-                                    if (ipAddressInfo.Address.AddressFamily == AddressFamily.InterNetwork)
-                                    {
-                                        if (string.IsNullOrEmpty(adapterName) || (adapter.Name.StartsWith(adapterName, StringComparison.OrdinalIgnoreCase)))
-                                        {
-                                            try
-                                            {
-                                                byte[] ipBytes = ipAddressInfo.Address.GetAddressBytes();
-                                                byte[] maskBytes = ipAddressInfo.IPv4Mask.GetAddressBytes();
-                                                for (int i = 0; i < ipBytes.Length; i++)
-                                                {
-                                                    ipBytes[i] |= (byte)(~maskBytes[i]);
+                                                    broadcastAddressName = match.Value;
                                                 }
-                                                IPAddress broadcastAddress = new IPAddress(ipBytes);
-
-                                                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending ident: '{0}': Ip={1} Mask={2} Broadcast={3} Port={4}",
-                                                    adapter.Name, ipAddressInfo.Address, ipAddressInfo.IPv4Mask, broadcastAddress, UdpIdentPort));
-                                                IPEndPoint ipUdpIdent = new IPEndPoint(broadcastAddress, UdpIdentPort);
-                                                UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
-
-                                                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending SvrLoc: '{0}': Ip={1} Mask={2} Broadcast={3} Port={4}",
-                                                    adapter.Name, ipAddressInfo.Address, ipAddressInfo.IPv4Mask, broadcastAddress, UdpSrvLocPort));
-                                                IPEndPoint ipUdpSvrLoc = new IPEndPoint(broadcastAddress, UdpSrvLocPort);
-                                                UdpSocket.SendTo(UdpSvrLocReq, ipUdpSvrLoc);
-                                                broadcastSend = true;
                                             }
-                                            catch (Exception)
+                                            if (broadcastAddressName != null && !broadcastAddressName.StartsWith("127."))
                                             {
-                                                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Broadcast failed");
+                                                try
+                                                {
+                                                    IPAddress broadcastAddress = IPAddress.Parse(broadcastAddressName);
+                                                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending: '{0}': Ident broadcast={1} Port={2}",
+                                                        netInterface.Name, broadcastAddress, UdpIdentPort));
+                                                    IPEndPoint ipUdpIdent = new IPEndPoint(broadcastAddress, UdpIdentPort);
+
+                                                    TcpClientWithTimeout.ExecuteNetworkCommand(() =>
+                                                    {
+                                                        UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
+                                                    }, ipUdpIdent.Address, NetworkData);
+
+                                                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending: '{0}': SrvLoc broadcast={1} Port={2}",
+                                                        netInterface.Name, broadcastAddress, UdpSrvLocPort));
+                                                    IPEndPoint ipUdpSvrLoc = new IPEndPoint(broadcastAddress, UdpSrvLocPort);
+
+                                                    TcpClientWithTimeout.ExecuteNetworkCommand(() =>
+                                                    {
+                                                        UdpSocket.SendTo(UdpSvrLocReq, ipUdpSvrLoc);
+                                                    }, ipUdpSvrLoc.Address, NetworkData);
+
+                                                    broadcastSend = true;
+                                                }
+                                                catch (Exception)
+                                                {
+                                                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Broadcast failed");
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
                         }
-                    }
-#endif
-                }
-                else
-#endif
-                {
-                    try
-                    {
-#if WindowsCE
-                        IPEndPoint ipUdpIdent = new IPEndPoint(IPAddress.Broadcast, UdpIdentPort);
-                        IPEndPoint ipUdpSvrLoc = new IPEndPoint(IPAddress.Broadcast, UdpSrvLocPort);
 #else
-                        IPEndPoint ipUdpIdent = new IPEndPoint(IPAddress.Parse(AutoIpBroadcastAddress), UdpIdentPort);
-                        IPEndPoint ipUdpSvrLoc = new IPEndPoint(IPAddress.Parse(AutoIpBroadcastAddress), UdpSrvLocPort);
+                        System.Net.NetworkInformation.NetworkInterface[] adapters = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces();
+                        foreach (System.Net.NetworkInformation.NetworkInterface adapter in adapters)
+                        {
+                            if (adapter.OperationalStatus == System.Net.NetworkInformation.OperationalStatus.Up)
+                            {
+                                System.Net.NetworkInformation.IPInterfaceProperties properties = adapter.GetIPProperties();
+                                if (properties?.UnicastAddresses != null)
+                                {
+                                    foreach (System.Net.NetworkInformation.UnicastIPAddressInformation ipAddressInfo in properties.UnicastAddresses)
+                                    {
+                                        if (ipAddressInfo.Address.AddressFamily == AddressFamily.InterNetwork)
+                                        {
+                                            if (string.IsNullOrEmpty(adapterName) || (adapter.Name.StartsWith(adapterName, StringComparison.OrdinalIgnoreCase)))
+                                            {
+                                                try
+                                                {
+                                                    byte[] ipBytes = ipAddressInfo.Address.GetAddressBytes();
+                                                    byte[] maskBytes = ipAddressInfo.IPv4Mask.GetAddressBytes();
+                                                    for (int i = 0; i < ipBytes.Length; i++)
+                                                    {
+                                                        ipBytes[i] |= (byte)(~maskBytes[i]);
+                                                    }
+                                                    IPAddress broadcastAddress = new IPAddress(ipBytes);
+
+                                                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending ident: '{0}': Ip={1} Mask={2} Broadcast={3} Port={4}",
+                                                        adapter.Name, ipAddressInfo.Address, ipAddressInfo.IPv4Mask, broadcastAddress, UdpIdentPort));
+                                                    IPEndPoint ipUdpIdent = new IPEndPoint(broadcastAddress, UdpIdentPort);
+                                                    UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
+
+                                                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending SvrLoc: '{0}': Ip={1} Mask={2} Broadcast={3} Port={4}",
+                                                        adapter.Name, ipAddressInfo.Address, ipAddressInfo.IPv4Mask, broadcastAddress, UdpSrvLocPort));
+                                                    IPEndPoint ipUdpSvrLoc = new IPEndPoint(broadcastAddress, UdpSrvLocPort);
+                                                    UdpSocket.SendTo(UdpSvrLocReq, ipUdpSvrLoc);
+                                                    broadcastSend = true;
+                                                }
+                                                catch (Exception)
+                                                {
+                                                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Broadcast failed");
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
 #endif
+                    }
+                    else
+#endif
+                    {
+                        try
+                        {
+#if WindowsCE
+                            IPEndPoint ipUdpIdent = new IPEndPoint(IPAddress.Broadcast, UdpIdentPort);
+                            IPEndPoint ipUdpSvrLoc = new IPEndPoint(IPAddress.Broadcast, UdpSrvLocPort);
+#else
+                            IPEndPoint ipUdpIdent = new IPEndPoint(IPAddress.Parse(AutoIpBroadcastAddress), UdpIdentPort);
+                            IPEndPoint ipUdpSvrLoc = new IPEndPoint(IPAddress.Parse(AutoIpBroadcastAddress), UdpSrvLocPort);
+#endif
+                            if (EdiabasProtected != null)
+                            {
+                                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending Ident broadcast to: {0}:{1}", ipUdpIdent.Address, UdpIdentPort));
+                            }
+                            TcpClientWithTimeout.ExecuteNetworkCommand(() =>
+                            {
+                                UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
+                            }, ipUdpIdent.Address, NetworkData);
+
+                            if (EdiabasProtected != null)
+                            {
+                                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending SvrLoc broadcast to: {0}:{1}", ipUdpSvrLoc.Address , UdpSrvLocPort));
+                            }
+                            TcpClientWithTimeout.ExecuteNetworkCommand(() =>
+                            {
+                                UdpSocket.SendTo(UdpSvrLocReq, ipUdpSvrLoc);
+                            }, ipUdpSvrLoc.Address, NetworkData);
+
+                            broadcastSend = true;
+                        }
+                        catch (Exception)
+                        {
+                            if (EdiabasProtected != null)
+                            {
+                                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Broadcast failed");
+                            }
+                        }
+                    }
+                    if (!broadcastSend)
+                    {
                         if (EdiabasProtected != null)
                         {
-                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending Ident broadcast to: {0}:{1}", ipUdpIdent.Address, UdpIdentPort));
+                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "No broadcast send");
                         }
-                        TcpClientWithTimeout.ExecuteNetworkCommand(() =>
-                        {
-                            UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
-                        }, ipUdpIdent.Address, NetworkData);
-
-                        if (EdiabasProtected != null)
-                        {
-                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending SvrLoc broadcast to: {0}:{1}", ipUdpSvrLoc.Address , UdpSrvLocPort));
-                        }
-                        TcpClientWithTimeout.ExecuteNetworkCommand(() =>
-                        {
-                            UdpSocket.SendTo(UdpSvrLocReq, ipUdpSvrLoc);
-                        }, ipUdpSvrLoc.Address, NetworkData);
-
-                        broadcastSend = true;
+                        return null;
                     }
-                    catch (Exception)
+
+                    UdpEvent.WaitOne(1000, false);
+                    if (UdpRecIpListList.Count == 0)
                     {
                         if (EdiabasProtected != null)
                         {
-                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Broadcast failed");
+                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "No answer received");
                         }
+                        if (retryCount < maxRetries)
+                        {
+                            retryCount++;
+                            continue;
+                        }
+                        return null;
                     }
+                    break;
                 }
-                if (!broadcastSend)
-                {
-                    if (EdiabasProtected != null)
-                    {
-                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "No broadcast send");
-                    }
-                    InterfaceDisconnect();
-                    return null;
-                }
-
-                UdpEvent.WaitOne(1000, false);
-                if (UdpRecIpListList.Count == 0)
-                {
-                    if (EdiabasProtected != null)
-                    {
-                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "No answer received");
-                    }
-                    if (retryCount < maxRetries)
-                    {
-                        retryCount++;
-                        continue;
-                    }
-                    InterfaceDisconnect();
-                    return null;
-                }
-                break;
             }
-            UdpSocket.Close();
+            finally
+            {
+                try
+                {
+                    if (UdpSocket != null)
+                    {
+                        UdpSocket.Close();
+                        UdpSocket = null;
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+
             List<EnetConnection> ipList;
             lock (UdpRecListLock)
             {
