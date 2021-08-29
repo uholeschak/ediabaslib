@@ -500,8 +500,8 @@ namespace EdiabasLib
             {
                 if (ReconnectRequired)
                 {
-                    InterfaceDisconnect();
-                    if (!InterfaceConnect())
+                    InterfaceDisconnect(true);
+                    if (!InterfaceConnect(true))
                     {
                         ReconnectRequired = true;
                         EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
@@ -644,6 +644,11 @@ namespace EdiabasLib
 
         public override bool InterfaceConnect()
         {
+            return InterfaceConnect(false);
+        }
+
+        public bool InterfaceConnect(bool reconnect)
+        {
             if (TcpDiagClient != null)
             {
                 return true;
@@ -710,7 +715,7 @@ namespace EdiabasLib
                 }
 
 #if Android
-                if (EnetHostConn.DiagPort >= 0)
+                if (!reconnect && EnetHostConn.DiagPort >= 0)
                 {
                     EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM at: {0}", EnetHostConn.IpAddress);
                     IcomEvent.Reset();
@@ -766,7 +771,7 @@ namespace EdiabasLib
             catch (Exception ex)
             {
                 EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "InterfaceConnect exception: " + EdiabasNet.GetExceptionText(ex));
-                InterfaceDisconnect();
+                InterfaceDisconnect(reconnect);
                 return false;
             }
             return true;
@@ -774,11 +779,69 @@ namespace EdiabasLib
 
         public override bool InterfaceDisconnect()
         {
+            return InterfaceDisconnect(false);
+        }
+
+        public bool InterfaceDisconnect(bool reconnect)
+        {
             if (EdiabasProtected != null)
             {
                 EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Disconnect");
             }
             bool result = true;
+
+            if (!reconnect && EnetHostConn != null && EnetHostConn.DiagPort >= 0)
+            {
+                if (EdiabasProtected != null)
+                {
+                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM at: {0}", EnetHostConn.IpAddress);
+                }
+
+                IcomEvent.Reset();
+                using (CancellationTokenSource cts = new CancellationTokenSource())
+                {
+                    if (!IcomAllocateDevice(EnetHostConn.IpAddress.ToString(), false, cts, (success, code) =>
+                    {
+                        if (success && code == 0)
+                        {
+                            if (EdiabasProtected != null)
+                            {
+                                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM ok: Code={0}", code);
+                            }
+                        }
+                        else
+                        {
+                            if (EdiabasProtected != null)
+                            {
+                                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM rejected: Code={0}", code);
+                            }
+                        }
+
+                        IcomEvent.Set();
+                    }))
+                    {
+                        if (EdiabasProtected != null)
+                        {
+                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM error");
+                        }
+                    }
+
+                    if (!IcomEvent.WaitOne(2000, false))
+                    {
+                        if (EdiabasProtected != null)
+                        {
+                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM timeout");
+                        }
+                        cts.Cancel();
+                        IcomEvent.WaitOne(1000, false);
+                    }
+                }
+
+                if (EdiabasProtected != null)
+                {
+                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM finished");
+                }
+            }
 
             try
             {
@@ -863,8 +926,8 @@ namespace EdiabasLib
             }
             if (ReconnectRequired)
             {
-                InterfaceDisconnect();
-                if (!InterfaceConnect())
+                InterfaceDisconnect(true);
+                if (!InterfaceConnect(true))
                 {
                     ReconnectRequired = true;
                     EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
@@ -1784,8 +1847,8 @@ namespace EdiabasLib
                 if (recLen < 0)
                 {
                     if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No ack received");
-                    InterfaceDisconnect();
-                    if (!InterfaceConnect())
+                    InterfaceDisconnect(true);
+                    if (!InterfaceConnect(true))
                     {
                         if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Reconnect failed");
                         ReconnectRequired = true;
