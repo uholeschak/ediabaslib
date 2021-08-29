@@ -1402,6 +1402,11 @@ namespace EdiabasLib
                     return false;
                 }
 
+                if (!IPAddress.TryParse(ipParts[0], out IPAddress clientIp))
+                {
+                    return false;
+                }
+
                 if (IcomAllocateDeviceHttpClient == null)
                 {
                     IcomAllocateDeviceHttpClient = new HttpClient(new HttpClientHandler());
@@ -1435,8 +1440,18 @@ namespace EdiabasLib
                     formAllocate.Add(xmlContent, "com.nubix.nvm.commands.Release", "com.nubix.nvm.commands.Release");
                 }
 
-                string deviceUrl = "http://" + ipParts[0] + ":5302/nVm";
-                System.Threading.Tasks.Task<HttpResponseMessage> taskAllocate = IcomAllocateDeviceHttpClient.PostAsync(deviceUrl, formAllocate);
+                System.Threading.Tasks.Task<HttpResponseMessage> taskAllocate = null;
+                TcpClientWithTimeout.ExecuteNetworkCommand(() =>
+                {
+                    string deviceUrl = "http://" + ipParts[0] + ":5302/nVm";
+                    taskAllocate = IcomAllocateDeviceHttpClient.PostAsync(deviceUrl, formAllocate, cts.Token);
+                }, clientIp, NetworkData);
+
+                if (taskAllocate == null)
+                {
+                    return false;
+                }
+
                 IcomAllocateActive = true;
                 taskAllocate.ContinueWith((task) =>
                 {
