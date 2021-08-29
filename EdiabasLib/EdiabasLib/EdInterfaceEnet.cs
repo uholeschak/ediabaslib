@@ -1440,45 +1440,38 @@ namespace EdiabasLib
                     formAllocate.Add(xmlContent, "com.nubix.nvm.commands.Release", "com.nubix.nvm.commands.Release");
                 }
 
-                System.Threading.Tasks.Task<HttpResponseMessage> taskAllocate = null;
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
                     string deviceUrl = "http://" + ipParts[0] + ":5302/nVm";
-                    taskAllocate = IcomAllocateDeviceHttpClient.PostAsync(deviceUrl, formAllocate, cts.Token);
-                }, clientIp, NetworkData);
-
-                if (taskAllocate == null)
-                {
-                    return false;
-                }
-
-                IcomAllocateActive = true;
-                taskAllocate.ContinueWith((task) =>
-                {
-                    IcomAllocateActive = false;
-                    try
+                    System.Threading.Tasks.Task<HttpResponseMessage> taskAllocate = IcomAllocateDeviceHttpClient.PostAsync(deviceUrl, formAllocate, cts.Token);
+                    IcomAllocateActive = true;
+                    taskAllocate.ContinueWith((task) =>
                     {
-                        HttpResponseMessage responseAllocate = taskAllocate.Result;
-                        bool success = responseAllocate.IsSuccessStatusCode;
-                        responseAllocate.Content.Headers.ContentType.CharSet = "ISO-8859-1";
-                        string allocateResult = responseAllocate.Content.ReadAsStringAsync().Result;
-
-                        int statusCode = -1;
-                        if (success)
+                        IcomAllocateActive = false;
+                        try
                         {
-                            if (!GetIcomAllocateStatus(allocateResult, out statusCode))
-                            {
-                                success = false;
-                            }
-                        }
+                            HttpResponseMessage responseAllocate = taskAllocate.Result;
+                            bool success = responseAllocate.IsSuccessStatusCode;
+                            responseAllocate.Content.Headers.ContentType.CharSet = "ISO-8859-1";
+                            string allocateResult = responseAllocate.Content.ReadAsStringAsync().Result;
 
-                        handler.Invoke(success, statusCode);
-                    }
-                    catch (Exception)
-                    {
-                        handler.Invoke(false);
-                    }
-                }, cts.Token, System.Threading.Tasks.TaskContinuationOptions.None, System.Threading.Tasks.TaskScheduler.Default);
+                            int statusCode = -1;
+                            if (success)
+                            {
+                                if (!GetIcomAllocateStatus(allocateResult, out statusCode))
+                                {
+                                    success = false;
+                                }
+                            }
+
+                            handler.Invoke(success, statusCode);
+                        }
+                        catch (Exception)
+                        {
+                            handler.Invoke(false);
+                        }
+                    }, cts.Token, System.Threading.Tasks.TaskContinuationOptions.None, System.Threading.Tasks.TaskScheduler.Default);
+                }, clientIp, NetworkData);
             }
             catch (Exception)
             {
