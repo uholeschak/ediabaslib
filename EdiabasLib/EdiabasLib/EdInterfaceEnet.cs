@@ -248,6 +248,7 @@ namespace EdiabasLib
         protected int ControlPort = 6811;
         protected int DiagnosticPort = 6801;
         protected int ConnectTimeout = 5000;
+        protected bool IcomAllocate = false;
 
         protected byte[] RecBuffer = new byte[TransBufferSize];
         protected byte[] DataBuffer = new byte[TransBufferSize];
@@ -324,6 +325,17 @@ namespace EdiabasLib
                 if (prop != null)
                 {
                     ConnectTimeout = (int)EdiabasNet.StringToValue(prop);
+                }
+
+#if Android
+                IcomAllocate = true;
+#else
+                IcomAllocate = false;
+#endif
+                prop = EdiabasProtected.GetConfigProperty("EnetIcomAllocate");
+                if (prop != null)
+                {
+                    IcomAllocate = EdiabasNet.StringToValue(prop) != 0;
                 }
 
                 if (!IsIpv4Address(RemoteHostProtected))
@@ -713,8 +725,7 @@ namespace EdiabasLib
                     diagPort = EnetHostConn.DiagPort;
                 }
 
-#if Android
-                if (!reconnect && EnetHostConn.DiagPort >= 0)
+                if (IcomAllocate && !reconnect && EnetHostConn.DiagPort >= 0)
                 {
                     EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM at: {0}", EnetHostConn.IpAddress);
                     IcomEvent.Reset();
@@ -746,7 +757,6 @@ namespace EdiabasLib
                     }
                     EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM finished");
                 }
-#endif
 
                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting to: {0}:{1}", EnetHostConn.IpAddress, diagPort);
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
@@ -789,7 +799,7 @@ namespace EdiabasLib
             }
             bool result = true;
 
-            if (!reconnect && EnetHostConn != null && EnetHostConn.DiagPort >= 0)
+            if (IcomAllocate && !reconnect && EnetHostConn != null && EnetHostConn.DiagPort >= 0)
             {
                 if (EdiabasProtected != null)
                 {
@@ -801,7 +811,7 @@ namespace EdiabasLib
                 {
                     if (!IcomAllocateDevice(EnetHostConn.IpAddress.ToString(), false, cts, (success, code) =>
                     {
-                        if (success && code == 0)
+                        if (success)
                         {
                             if (EdiabasProtected != null)
                             {
@@ -1439,7 +1449,7 @@ namespace EdiabasLib
                         string allocateResult = responseAllocate.Content.ReadAsStringAsync().Result;
 
                         int statusCode = -1;
-                        if (success && allocate)
+                        if (success)
                         {
                             if (!GetIcomAllocateStatus(allocateResult, out statusCode))
                             {
@@ -1447,11 +1457,11 @@ namespace EdiabasLib
                             }
                         }
 
-                        handler?.Invoke(success, statusCode);
+                        handler.Invoke(success, statusCode);
                     }
                     catch (Exception)
                     {
-                        handler?.Invoke(false);
+                        handler.Invoke(false);
                     }
                 }, cts.Token, System.Threading.Tasks.TaskContinuationOptions.None, System.Threading.Tasks.TaskScheduler.Default);
             }
@@ -1467,7 +1477,6 @@ namespace EdiabasLib
         private bool GetIcomAllocateStatus(string allocResultXml, out int statusCode)
         {
             statusCode = -1;
-            bool statusValid = false;
 
             try
             {
@@ -1531,7 +1540,6 @@ namespace EdiabasLib
                                             if (Int32.TryParse(numberNode1.Value.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 codeValue))
                                             {
                                                 statusCode = codeValue;
-                                                statusValid = true;
                                             }
                                         }
                                     }
@@ -1545,7 +1553,7 @@ namespace EdiabasLib
             {
                 return false;
             }
-            return statusValid;
+            return true;
         }
 
         public static Dictionary<string, string> ExtractSvrLocItems(byte[] dataBuffer, int dataLength, int expectedId)
