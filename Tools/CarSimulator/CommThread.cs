@@ -276,6 +276,7 @@ namespace CarSimulator
         // Make sure that on the OBD interface side of the ICOM only the IP4 protocol ist enabled in the interface!
         // Otherwise ther is packet loss in the ICOM internally!
         private const int TcpSendBufferSize = 0x80;
+        private const int TcpSendTimeout = 5000;
         private const int Kwp2000Nr2123Retries = 3;
         private const int ResetAdaptionChannel = 0;
         private const int DefaultAdaptionChannelValue = 0x1234;
@@ -2143,7 +2144,7 @@ namespace CarSimulator
                     }
                     bmwTcpClientData.TcpClientConnection = bmwTcpClientData.BmpBmwTcpChannel.TcpServerControl.AcceptTcpClient();
                     bmwTcpClientData.TcpClientConnection.SendBufferSize = TcpSendBufferSize;
-                    bmwTcpClientData.TcpClientConnection.SendTimeout = 1000;
+                    bmwTcpClientData.TcpClientConnection.SendTimeout = TcpSendTimeout;
                     bmwTcpClientData.TcpClientConnection.NoDelay = true;
                     bmwTcpClientData.TcpClientStream = bmwTcpClientData.TcpClientConnection.GetStream();
                     bmwTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
@@ -2251,7 +2252,7 @@ namespace CarSimulator
                     Debug.WriteLine("Diag connect request [{0}], Port={1}", bmwTcpClientData.Index, bmwTcpClientData.BmpBmwTcpChannel.DiagPort);
                     bmwTcpClientData.TcpClientConnection = bmwTcpClientData.BmpBmwTcpChannel.TcpServerDiag.AcceptTcpClient();
                     bmwTcpClientData.TcpClientConnection.SendBufferSize = TcpSendBufferSize;
-                    bmwTcpClientData.TcpClientConnection.SendTimeout = 1000;
+                    bmwTcpClientData.TcpClientConnection.SendTimeout = TcpSendTimeout;
                     bmwTcpClientData.TcpClientConnection.NoDelay = true;
                     bmwTcpClientData.TcpClientStream = bmwTcpClientData.TcpClientConnection.GetStream();
                     bmwTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
