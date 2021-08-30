@@ -194,6 +194,7 @@ namespace EdiabasLib
         protected const int UdpDetectRetries = 3;
         protected const string AutoIp = "auto";
         protected const string IniFileSection = "XEthernet";
+        protected const string IcomOwner = "DeepObd";
         protected static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
         protected static readonly byte[] ByteArray0 = new byte[0];
         protected static readonly byte[] UdpIdentReq =
@@ -1335,7 +1336,20 @@ namespace EdiabasLib
                                 }
                             }
 
-                            if (gatewayAddr >= 0 && enetChannel)
+                            bool isFree = true;
+                            if (attrDict.TryGetValue("OWNER", out string ownerString))
+                            {
+                                ownerString = ownerString.Trim();
+                                if (!string.IsNullOrEmpty(ownerString))
+                                {
+                                    if (string.Compare(ownerString, IcomOwner, StringComparison.OrdinalIgnoreCase) != 0)
+                                    {
+                                        isFree = false;
+                                    }
+                                }
+                            }
+
+                            if (gatewayAddr >= 0 && enetChannel && isFree)
                             {
                                 addListConn = new EnetConnection(ipAddressHost, 50000 + gatewayAddr * 10, 50001 + gatewayAddr * 10);
                             }
@@ -1415,7 +1429,7 @@ namespace EdiabasLib
                 MultipartFormDataContent formAllocate = new MultipartFormDataContent();
                 string xmlHeader =
                     "<?xml version='1.0'?><!DOCTYPE wddxPacket SYSTEM 'http://www.openwddx.org/downloads/dtd/wddx_dtd_10.txt'>" +
-                    "<wddxPacket version='1.0'><header/><data><struct><var name='DeviceOwner'><string>EXPERT</string></var>";
+                    "<wddxPacket version='1.0'><header/><data><struct><var name='DeviceOwner'><string>" + IcomOwner + "</string></var>";
                 string xmlFooter =
                     "</struct></data></wddxPacket>";
                 if (allocate)
