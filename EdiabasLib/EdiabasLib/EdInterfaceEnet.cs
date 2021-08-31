@@ -190,7 +190,7 @@ namespace EdiabasLib
         protected const int TransBufferSize = 0x10010; // transmit buffer size
         protected const int TcpConnectTimeoutMin = 1000;
         protected const int TcpAckTimeout = 5000;
-        protected const int TcpSendBufferSize = 0x80;
+        protected const int TcpSendBufferSize = 1400;
         protected const int UdpDetectRetries = 3;
         protected const string AutoIp = "auto";
         protected const string IniFileSection = "XEthernet";

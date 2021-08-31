@@ -275,8 +275,8 @@ namespace CarSimulator
         private const int SrvLocPort = 427;
         // Make sure that on the OBD interface side of the ICOM only the IP4 protocol ist enabled in the interface!
         // Otherwise ther is packet loss in the ICOM internally!
-        // Use PC connection via WiFi, this also reduces the traffic.
-        private const int TcpSendBufferSize = 0x80;
+        // Use PC connection via WiFi or 100Mbit network, this also reduces the traffic.
+        private const int TcpSendBufferSize = 1400;
         private const int TcpSendTimeout = 5000;
         private const int Kwp2000Nr2123Retries = 3;
         private const int ResetAdaptionChannel = 0;
