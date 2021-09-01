@@ -3124,8 +3124,9 @@ namespace BmwDeepObd
 
                 bool validSsid = enetSsid.Contains(AdapterSsidDeepObd) || enetSsid.Contains(AdapterSsidEnetLink) || enetSsid.Contains(AdapterSsidModBmw);
                 bool validEthernet = IsValidEthernetConnection();
+                bool ipSelected = !string.IsNullOrEmpty(SelectedEnetIp);
 
-                if (!validEthernet && !validDeepObd && !validEnetLink && !validModBmw &&
+                if (!ipSelected && !validEthernet && !validDeepObd && !validEnetLink && !validModBmw &&
                     string.Compare(_lastEnetSsid, enetSsid, StringComparison.Ordinal) != 0)
                 {
                     _lastEnetSsid = enetSsid;
