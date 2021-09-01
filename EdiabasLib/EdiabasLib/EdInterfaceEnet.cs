@@ -34,13 +34,22 @@ namespace EdiabasLib
 
         public class EnetConnection : IComparable<EnetConnection>, IEquatable<EnetConnection>
         {
-            public EnetConnection(IPAddress ipAddress, int diagPort = -1, int controlPort = -1)
+            public enum InterfaceType
             {
+                Direct,
+                Enet,
+                Icom
+            }
+
+            public EnetConnection(InterfaceType connectionType, IPAddress ipAddress, int diagPort = -1, int controlPort = -1)
+            {
+                ConnectionType = connectionType;
                 IpAddress = ipAddress;
                 DiagPort = diagPort;
                 ControlPort = controlPort;
             }
 
+            public InterfaceType ConnectionType { get; }
             public IPAddress IpAddress { get;}
             public int DiagPort { get; }
             public int ControlPort { get; }
@@ -697,6 +706,7 @@ namespace EdiabasLib
                     }
 
                     string hostIp = hostParts[0];
+                    EnetConnection.InterfaceType connectionType = EnetConnection.InterfaceType.Direct;
                     int hostDiagPort = -1;
                     int hostControlPort = -1;
                     if (hostParts.Length >= 2)
@@ -705,6 +715,7 @@ namespace EdiabasLib
                         if (valid)
                         {
                             hostDiagPort = (int)portValue;
+                            connectionType = EnetConnection.InterfaceType.Icom;
                         }
                     }
 
@@ -717,7 +728,7 @@ namespace EdiabasLib
                         }
                     }
 
-                    EnetHostConn = new EnetConnection(IPAddress.Parse(hostIp), hostDiagPort, hostControlPort);
+                    EnetHostConn = new EnetConnection(connectionType, IPAddress.Parse(hostIp), hostDiagPort, hostControlPort);
                 }
 
                 int diagPort = DiagnosticPort;
@@ -1277,7 +1288,7 @@ namespace EdiabasLib
                         (UdpBuffer[13] == '1') &&
                         (UdpBuffer[14] == '0'))
                     {
-                        addListConn = new EnetConnection(recIp);
+                        addListConn = new EnetConnection(EnetConnection.InterfaceType.Direct, recIp);
                     }
                 }
                 else if (recPort == UdpSrvLocPort)
@@ -1310,7 +1321,7 @@ namespace EdiabasLib
 
                         if (isEnet)
                         {
-                            addListConn = new EnetConnection(ipAddressHost);
+                            addListConn = new EnetConnection(EnetConnection.InterfaceType.Enet, ipAddressHost);
                         }
                         else if (isIcom)
                         {
@@ -1351,7 +1362,7 @@ namespace EdiabasLib
 
                             if (gatewayAddr >= 0 && enetChannel && isFree)
                             {
-                                addListConn = new EnetConnection(ipAddressHost, 50000 + gatewayAddr * 10, 50001 + gatewayAddr * 10);
+                                addListConn = new EnetConnection(EnetConnection.InterfaceType.Icom, ipAddressHost, 50000 + gatewayAddr * 10, 50001 + gatewayAddr * 10);
                             }
                         }
                     }
