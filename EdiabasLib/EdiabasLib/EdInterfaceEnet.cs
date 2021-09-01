@@ -725,6 +725,7 @@ namespace EdiabasLib
                         if (valid)
                         {
                             hostControlPort = (int)portValue;
+                            connectionType = EnetConnection.InterfaceType.Icom;
                         }
                     }
 
