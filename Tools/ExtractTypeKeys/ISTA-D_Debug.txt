@@ -45,7 +45,7 @@ If file is blocked, terminate IstaSericesHost.exe first!
 Fix ICOM apiInitExt:
 ====================
 Modify RheingoldVehicleCommunication.dll (Edit -> Edit class, remove all references to other ISTA-D version first):
-Function: public bool InitVCI(IVciDevice device, bool logging)
+Function: public bool ECUKom.InitVCI(IVciDevice device, bool logging)
 case VCIDeviceType.ICOM:
 Change init function to:
 -------------------------------------------------------------------------------------
@@ -68,7 +68,8 @@ in IstaOperationStarter.Start() add at the end of the function:
 -------------------------------------------------------------------------------------
 	if (Debugger.IsAttached)
 	{
-		MessageBox.Show(new Form { TopMost = true}, "IstaOperation started. Attach to IstaOperation.exe now.", "ISTAGUI", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+		System.Windows.Forms.MessageBox.Show(new System.Windows.Forms.Form { System.Windows.Forms.TopMost = true},
+			"IstaOperation started. Attach to IstaOperation.exe now.", "ISTAGUI", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Asterisk);
 	}
 	return istaOperation;
 -------------------------------------------------------------------------------------
@@ -81,11 +82,11 @@ ISTA+ config settings:
 ISTAGUI.exe.config:
 <add key="BMW.Rheingold.ISTAGUI.disableCheckSystemRequirements" value="true" />
 <add key="BMW.Rheingold.ISTAGUI.enableENETprogramming" value="true" />
+ModifyEdiabasIni is not required after the "Fix ICOM apiInitExt" patch!
 <add key="BMW.Rheingold.VehicleCommunication.ECUKom.ModifyEdiabasIni" value="true" />
 For slow systems increase host ide timeout:
 <add key="BMW.Rheingold.Programming.PsdzService.HostIdleTimeout" value="100000" />
 
-ModifyEdiabasIni is not required after the "Fix ICOM apiInitExt" patch!
 Make sure the EDIABAS.INI settings has default values in this case:
 [XEthernet]
 RemoteHost       = Autodetect
