@@ -113,6 +113,11 @@ BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionsReadStatus.DoR
 BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionsReadStatus.DoReadStatusSingleShot()
 BMW.Rheingold.Programming.StartHostIfNotRunning()
 
+ENET VoltageCheck:
+BMW.Rheingold.Diagnostics.Common.VoltageUtils.CheckVoltageForEthernetConnection()
+"G_MOTOR", "STATUS_LESEN", "ARG;MESSWERTE_IBS2015"
+"G_MOTOR", "STATUS_MESSWERTE_IBS"
+
 BMW.Rheingold.xVM:
 VCIEnetHsfzService.ZGWBroadcastSendCyclic(), ReceiveCallback(),
 VciDeviceService.CyclicBroadcastDeviceRequest(), VciDeviceService.ReceiveData(), VciDeviceService.CreateVciDevices()
