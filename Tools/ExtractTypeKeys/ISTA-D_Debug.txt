@@ -10,6 +10,11 @@ Copy files from "TesterGUI\bin\Release" to "TesterGUI\bin\ReleaseMod"
 de4dot -r "TesterGUI\bin\Release" -ru -ro "TesterGUI\bin\ReleaseMod" --dont-rename
 The files in "TesterGUI\bin\Release" are not modified, "TesterGUI\bin\ReleaseMod" now contains the deobfuscated files.
 
+de4dot -r "PSdZ\hostx64Org" -ru -ro "PSdZ\hostx64" --dont-rename
+The files in "PSdZ\hostx64Org" are not modified, "PSdZ\hostx64" now contains the deobfuscated files.
+de4dot -r "PSdZ\hostOrg" -ru -ro "PSdZ\host" --dont-rename
+The files in "PSdZ\hostOrg" are not modified, "PSdZ\host" now contains the deobfuscated files.
+
 Disable ISTAGUI.exe hash check:
 ===============================
 Modify RheingoldCoreFramework.dll (Edit -> Edit class, remove all references to other ISTA-D version first):
@@ -52,19 +57,6 @@ Change init function to:
 flag = this.api.apiInitExt("ENET", "_", "Rheingold", "RemoteHost=" + device.IPAddress + ";DiagnosticPort=50160;ControlPort=50161", logging);
 -------------------------------------------------------------------------------------
 If file is blocked, terminate IstaSericesHost.exe first!
-
-Fix ENET invalid voltage message:
-=================================
-Modify: RheingoldDiagnostics.dll
-Function: public static void VoltageUtils.CheckVoltageForEthernetConnection()
-Add before if (num == null):
--------------------------------------------------------------------------------------
-			if (num == null)
-			{
-				num = 14.0;
-			}
--------------------------------------------------------------------------------------
-			if (num == null)
 
 Compile dnSpy-x86:
 ============================
