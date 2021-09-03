@@ -53,6 +53,19 @@ flag = this.api.apiInitExt("ENET", "_", "Rheingold", "RemoteHost=" + device.IPAd
 -------------------------------------------------------------------------------------
 If file is blocked, terminate IstaSericesHost.exe first!
 
+Fix ENET invalid voltage message:
+=================================
+Modify: RheingoldDiagnostics.dll
+Function: public static void VoltageUtils.CheckVoltageForEthernetConnection()
+Add before if (num == null):
+-------------------------------------------------------------------------------------
+			if (num == null)
+			{
+				num = 14.0;
+			}
+-------------------------------------------------------------------------------------
+			if (num == null)
+
 Compile dnSpy-x86:
 ============================
 git clone --recursive https://github.com/0xd4d/dnSpy.git
