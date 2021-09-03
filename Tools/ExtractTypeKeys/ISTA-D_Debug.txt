@@ -117,6 +117,10 @@ BMW.Rheingold.Diagnostics.VehicleIdent.SetDTCDetailValues()
 BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionsReadStatus.DoReadStatus()
 BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionsReadStatus.DoReadStatusSingleShot()
 BMW.Rheingold.Programming.StartHostIfNotRunning()
+BMW.Rheingold.Programming.PsdzConfig.CreateServiceArgs()
+PsdzServiceHost:
+BMW.Rheingold.Psdz.Services.ConfigurationService.RequestBaureihenverbund()
+BMW.Rheingold.Programming.ConnectToProject()
 
 ENET VoltageCheck:
 BMW.Rheingold.Diagnostics.Common.VoltageUtils.CheckVoltageForEthernetConnection()
