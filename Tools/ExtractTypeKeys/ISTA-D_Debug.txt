@@ -118,6 +118,7 @@ BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionsReadStatus.DoR
 BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionsReadStatus.DoReadStatusSingleShot()
 BMW.Rheingold.Programming.PsdzServiceStarter.ProgrammingService.StartPsdzServiceHost()
 BMW.Rheingold.Psdz.Client.PsdzServiceStarter.IsServerInstanceRunning()
+BMW.Rheingold.Psdz.Client.PsdzServiceClient()
 BMW.Rheingold.Programming.StartHostIfNotRunning()
 BMW.Rheingold.Programming.PsdzConfig.CreateServiceArgs()
 PsdzServiceHost:
