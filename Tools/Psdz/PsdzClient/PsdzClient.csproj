@@ -58,18 +58,33 @@
       <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
     <Compile Include="IConnectionFactoryService.cs" />
+    <Compile Include="IObjectBuilderService.cs" />
+    <Compile Include="IPsdzFa.cs" />
     <Compile Include="IPsdzService.cs" />
+    <Compile Include="IPsdzStandardFa.cs" />
+    <Compile Include="IPsdzSwtAction.cs" />
+    <Compile Include="IPsdzSwtApplicationId.cs" />
+    <Compile Include="IPsdzSwtEcu.cs" />
+    <Compile Include="IPsdzTalFilter.cs" />
     <Compile Include="IPsdzTargetSelector.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProgrammingService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PsdzClientBase.cs" />
     <Compile Include="PsdzConfig.cs" />
+    <Compile Include="PsdzFa.cs" />
     <Compile Include="PsdzRuntimeException.cs" />
     <Compile Include="PsdzServiceArgs.cs" />
     <Compile Include="PsdzServiceClient.cs" />
     <Compile Include="PsdzServiceStarter.cs" />
+    <Compile Include="PsdzStandardFa.cs" />
+    <Compile Include="PsdzSwtAction.cs" />
+    <Compile Include="PsdzSwtApplication.cs" />
+    <Compile Include="PsdzSwtApplicationId.cs" />
+    <Compile Include="PsdzSwtEcu.cs" />
+    <Compile Include="PsdzTalFilter.cs" />
     <Compile Include="PsdzTargetSelector.cs" />
+    <Compile Include="IPsdzSwtApplication.cs" />
     <EmbeddedResource Include="FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
     </EmbeddedResource>
