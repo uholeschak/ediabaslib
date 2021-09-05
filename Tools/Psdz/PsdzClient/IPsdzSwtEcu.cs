@@ -6,6 +6,23 @@ using System.Threading.Tasks;
 
 namespace PsdzClient
 {
+    public enum PsdzRootCertificateState
+    {
+        Accepted,
+        Invalid,
+        NotAvailable,
+        Rejected
+    }
+
+    public enum PsdzSoftwareSigState
+    {
+        Accepted,
+        Imported,
+        Invalid,
+        NotAvailable,
+        Rejected
+    }
+
     public interface IPsdzSwtEcu
     {
         IPsdzEcuIdentifier EcuIdentifier { get; }

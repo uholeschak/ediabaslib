@@ -6,6 +6,45 @@ using System.Threading.Tasks;
 
 namespace PsdzClient
 {
+    public enum PsdzFscCertificateState
+    {
+        Accepted,
+        Imported,
+        Invalid,
+        NotAvailable,
+        Rejected
+    }
+
+    public enum PsdzFscState
+    {
+        Accepted,
+        Cancelled,
+        Imported,
+        Invalid,
+        NotAvailable,
+        Rejected
+    }
+
+    public enum PsdzSwtActionType
+    {
+        ActivateStore,
+        ActivateUpdate,
+        ActivateUpgrade,
+        Deactivate,
+        ReturnState,
+        WriteVin
+    }
+
+    public enum PsdzSwtType
+    {
+        Full,
+        Light,
+        PreEnabFull,
+        PreEnabLight,
+        Short,
+        Unknown
+    }
+
     public interface IPsdzSwtApplication
     {
         byte[] Fsc { get; }
