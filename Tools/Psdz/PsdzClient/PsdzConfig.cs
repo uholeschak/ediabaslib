@@ -22,9 +22,13 @@ namespace PsdzClient
         {
             string psdzHostSubDir = Environment.Is64BitOperatingSystem ? @"PSdZ\hostx64" : @"PSdZ\host";
             HostPath = Path.Combine(istaFolder, psdzHostSubDir);
-            PsdzServiceHostLogDir = Path.Combine(istaFolder, "logs");
-            PsdzServiceHostLogFilePath = Path.Combine(PsdzServiceHostLogDir, "PsdzServiceHost.log");
-            PsdzLogFilePath = Path.Combine(PsdzServiceHostLogDir, "psdz.log");
+            PsdzServiceHostLogDir = Path.Combine(istaFolder, @"logs\client");
+            PsdzServiceHostLogFilePath = Path.Combine(PsdzServiceHostLogDir, @"PsdzServiceHost.log");
+            PsdzLogFilePath = Path.Combine(PsdzServiceHostLogDir, @"psdz.log");
+            if (!Directory.Exists(PsdzServiceHostLogDir))
+            {
+                Directory.CreateDirectory(PsdzServiceHostLogDir);
+            }
             PsdzServiceArgs = CreateServiceArgs(istaFolder, PsdzLogFilePath, dealerId);
         }
 

@@ -119,7 +119,7 @@ namespace PsdzClient
             processStartInfo.RedirectStandardOutput = false;
             processStartInfo.RedirectStandardError = false;
             processStartInfo.CreateNoWindow = true;
-            processStartInfo.Environment["PSDZSERVICEHOST_LOGDIR"] = this.psdzServiceHostLogDir;
+            processStartInfo.Environment["PSDZSERVICEHOST_LOGDIR"] = psdzServiceHostLogDir;
             processStartInfo.Arguments = string.Format(CultureInfo.InvariantCulture, "\"{0}\"", tempFileName);
             EventWaitHandle eventWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset, HostReadyEventName);
             EventWaitHandle eventWaitHandle2 = new EventWaitHandle(false, EventResetMode.AutoReset, HostFailedEventName);
