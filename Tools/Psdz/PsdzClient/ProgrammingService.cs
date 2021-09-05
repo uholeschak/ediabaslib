@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using static PsdzClient.PsdzServiceStarter;
 
 namespace PsdzClient
@@ -39,13 +35,12 @@ namespace PsdzClient
             return WaitForPsdzServiceHostInitialization();
         }
 
-        // Token: 0x060002CE RID: 718 RVA: 0x000187A8 File Offset: 0x000169A8
         private bool WaitForPsdzServiceHostInitialization()
         {
-            DateTime t = DateTime.Now.AddSeconds(40f);
+            DateTime endTime = DateTime.Now.AddSeconds(40f);
             while (!IsServerInstanceRunning())
             {
-                if (DateTime.Now > t)
+                if (DateTime.Now > endTime)
                 {
                     return false;
                 }
