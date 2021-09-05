@@ -8,21 +8,41 @@ namespace PsdzClient
 {
     class PsdzConfig
     {
-        private static PsdzServiceArgs CreateServiceArgs(string istaFolder, string psdzLogFilePath)
+        public string PsdzServiceHostLogFilePath { get; }
+
+        public string PsdzLogFilePath { get; }
+
+        public string HostPath { get; }
+
+        public string PsdzServiceHostLogDir { get; }
+
+        public PsdzServiceArgs PsdzServiceArgs { get; }
+
+        public PsdzConfig(string istaFolder, string dealerId)
+        {
+            string psdzHostSubDir = Environment.Is64BitOperatingSystem ? @"PSdZ\hostx64" : @"PSdZ\host";
+            HostPath = Path.Combine(istaFolder, psdzHostSubDir);
+            PsdzServiceHostLogDir = Path.Combine(istaFolder, "logs");
+            PsdzServiceHostLogFilePath = Path.Combine(PsdzServiceHostLogDir, "PsdzServiceHost.log");
+            PsdzLogFilePath = Path.Combine(PsdzServiceHostLogDir, "psdz.log");
+            PsdzServiceArgs = CreateServiceArgs(istaFolder, PsdzLogFilePath, dealerId);
+        }
+
+        private static PsdzServiceArgs CreateServiceArgs(string istaFolder, string psdzLogFilePath, string dealerId)
         {
             string psdzSubDir = Environment.Is64BitOperatingSystem ? @"PSdZ\binx64" : @"PSdZ\bin";
             string psdzBinaryPath = Path.Combine(istaFolder, psdzSubDir);
             PsdzServiceArgs psdzServiceArgs = new PsdzServiceArgs();
             string jreSubDir = Environment.Is64BitOperatingSystem ? @"OpenJREx64" : @"OpenJREx86";
             psdzServiceArgs.JrePath = Path.Combine(istaFolder, jreSubDir);
-            psdzServiceArgs.JvmOptions = PsdzConfig.GetPsdzJvmOptions(psdzBinaryPath, psdzLogFilePath);
+            psdzServiceArgs.JvmOptions = GetPsdzJvmOptions(psdzBinaryPath, psdzLogFilePath);
             psdzServiceArgs.PsdzBinaryPath = psdzBinaryPath;
             psdzServiceArgs.PsdzDataPath = Path.Combine(istaFolder, @"PSdZ\data");
             psdzServiceArgs.EdiabasBinPath = Path.Combine(istaFolder, @"Ediabas\BIN");
             psdzServiceArgs.IsTestRun = false;
             psdzServiceArgs.IdleTimeout = 10000;
             psdzServiceArgs.ClientConfigArgs = new ClientConfigArgs();
-            psdzServiceArgs.ClientConfigArgs.DealerID = "32395";
+            psdzServiceArgs.ClientConfigArgs.DealerID = dealerId;
             return psdzServiceArgs;
         }
 
@@ -45,7 +65,7 @@ namespace PsdzClient
                 "-Djava.library.path='${PSDZ_BIN_PATH}\\prodias; ${PSDZ_BIN_PATH}\\psdz'"
             });
 
-            string text = defaultValue.Replace("${PSDZ_BIN_PATH}", Path.GetFullPath(psdzBinaryPath));
+            string text = defaultValue.Replace("${PSDZ_BIN_PATH}", psdzBinaryPath);
 
             return new List<string>(Regex.Split(text, "\\s+(?=\\-)"))
             {

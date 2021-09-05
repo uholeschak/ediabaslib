@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace PsdzClient
 {
@@ -113,9 +110,9 @@ namespace PsdzClient
         private PsdzServiceStartResult StartServerInstance()
         {
             string tempFileName = Path.GetTempFileName();
-            PsdzServiceArgs.Serialize(tempFileName, this.psdzServiceArgs);
+            PsdzServiceArgs.Serialize(tempFileName, psdzServiceArgs);
             ProcessStartInfo processStartInfo = new ProcessStartInfo();
-            processStartInfo.FileName = Path.Combine(this.psdzHostDir, string.Format(CultureInfo.InvariantCulture, "{0}.exe", PsdzServiceHostProcessName));
+            processStartInfo.FileName = Path.Combine(psdzHostDir, string.Format(CultureInfo.InvariantCulture, "{0}.exe", PsdzServiceHostProcessName));
             processStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             processStartInfo.UseShellExecute = false;
             processStartInfo.RedirectStandardInput = false;
