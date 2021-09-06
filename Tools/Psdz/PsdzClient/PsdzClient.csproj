@@ -79,6 +79,7 @@
     <Compile Include="IPsdzTalFilter.cs" />
     <Compile Include="IPsdzTalLine.cs" />
     <Compile Include="IPsdzTargetSelector.cs" />
+    <Compile Include="ObjectBuilderServiceClient.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProgrammingService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

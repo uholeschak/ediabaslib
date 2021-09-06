@@ -26,9 +26,9 @@ namespace PsdzClient
 		private readonly LogicServiceClient logicService;
 
 		private readonly MacrosServiceClient macrosService;
-
+#endif
 		private readonly ObjectBuilderServiceClient objectBuilderServiceClient;
-
+#if false
 		private readonly ProgrammingServiceClient programmingService;
 
 		private readonly PsdzEventService psdzEventService;
@@ -53,7 +53,7 @@ namespace PsdzClient
 
 		private readonly KdsServiceClient kdsService;
 #endif
-        public PsdzServiceClient(string clientLogDir)
+		public PsdzServiceClient(string clientLogDir)
 		{
 			NetNamedPipeBinding netNamedPipeBinding = new NetNamedPipeBinding
 			{
@@ -62,9 +62,7 @@ namespace PsdzClient
 			};
 			netNamedPipeBinding.MaxReceivedMessageSize = 0x7FFFFFFF;
 			string clientId = Guid.NewGuid().ToString();
-#if false
 			this.objectBuilderServiceClient = new ObjectBuilderServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ObjectBuilderService", clientId, clientLogDir));
-#endif
 			this.connectionFactoryService = new ConnectionFactoryServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ConnectionFactoryService", clientId, clientLogDir));
 #if false
 			this.connectionManagerService = new ConnectionManagerServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ConnectionManagerService", clientId, clientLogDir));
@@ -85,7 +83,7 @@ namespace PsdzClient
 			this.secureCodingService = new SecureCodingServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/SecureCodingService", clientId, clientLogDir));
 			this.individualDataRestoreService = new IndividualDataRestoreServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/IndividualDataRestoreService", clientId, clientLogDir));
 #endif
-		}
+        }
 
         private static EndpointAddress CreateEndpointAddress(string uri, string clientId, string clientLogDir)
         {
@@ -104,7 +102,15 @@ namespace PsdzClient
             }
         }
 
-        public void Dispose()
+        public IObjectBuilderService ObjectBuilderService
+        {
+            get
+            {
+                return this.objectBuilderServiceClient;
+            }
+        }
+
+		public void Dispose()
         {
 #if false
             this.psdzEventService.RemoveAllEventListener();
