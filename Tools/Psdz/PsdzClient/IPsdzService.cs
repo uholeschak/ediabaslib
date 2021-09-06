@@ -29,9 +29,9 @@ namespace PsdzClient
 		IObjectBuilderService ObjectBuilderService { get; }
 
 		IProgrammingService ProgrammingService { get; }
-#if false
-		ITalExecutionService TalExecutionService { get; }
 
+		ITalExecutionService TalExecutionService { get; }
+#if false
 		IVcmService VcmService { get; }
 
 		ICbbTlsConfiguratorService CbbTlsConfiguratorService { get; }

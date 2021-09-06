@@ -31,9 +31,9 @@ namespace PsdzClient
 		private readonly PsdzEventService psdzEventService;
 
 		private readonly PsdzProgressListenerDispatcher psdzProgressListenerDispatcher = new PsdzProgressListenerDispatcher();
-#if false
-        private readonly TalExecutionServiceClient talExecutionService;
 
+        private readonly TalExecutionServiceClient talExecutionService;
+#if false
 		private readonly VcmServiceClient vcmService;
 
 		private readonly CbbTlsConfiguratorServiceClient cbbTlsConfiguratorService;
@@ -70,9 +70,7 @@ namespace PsdzClient
 #endif
             this.programmingService = new ProgrammingServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ProgrammingService", clientId, clientLogDir));
             this.ecuService = new EcuServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/EcuService", clientId, clientLogDir));
-#if false
             this.talExecutionService = new TalExecutionServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/TalExecutionService", clientId, clientLogDir));
-#endif
 			this.logService = new LogServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/LogService", clientId, clientLogDir));
             this.macrosService = new MacrosServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/MacrosService", clientId, clientLogDir));
 #if false
@@ -166,6 +164,14 @@ namespace PsdzClient
             get
             {
                 return this.programmingService;
+            }
+        }
+
+        public ITalExecutionService TalExecutionService
+        {
+            get
+            {
+                return this.talExecutionService;
             }
         }
 

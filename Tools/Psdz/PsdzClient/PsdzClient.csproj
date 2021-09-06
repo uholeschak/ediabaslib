@@ -101,6 +101,7 @@
     <Compile Include="IPsdzProgressListener.cs" />
     <Compile Include="IPsdzReplacementPart.cs" />
     <Compile Include="IPsdzResponse.cs" />
+    <Compile Include="IPsdzSecureCodingConfigCto.cs" />
     <Compile Include="IPsdzSecureTokenEto.cs" />
     <Compile Include="IPsdzSecureTokenForTal.cs" />
     <Compile Include="IPsdzService.cs" />
@@ -125,6 +126,8 @@
     <Compile Include="IPsdzTargetSelector.cs" />
     <Compile Include="IPsdzTransactionEvent.cs" />
     <Compile Include="IPsdzTransactionProgressEvent.cs" />
+    <Compile Include="IPsdzVin.cs" />
+    <Compile Include="ITalExecutionService.cs" />
     <Compile Include="LogicServiceClient.cs" />
     <Compile Include="LogServiceClient.cs" />
     <Compile Include="MacrosServiceClient.cs" />
@@ -141,6 +144,7 @@
     <Compile Include="PsdzConfig.cs" />
     <Compile Include="PsdzConnection.cs" />
     <Compile Include="PsdzDiagAddress.cs" />
+    <Compile Include="PsdzDuplexClientBase.cs" />
     <Compile Include="PsdzEcu.cs" />
     <Compile Include="PsdzEcuComparer.cs" />
     <Compile Include="PsdzEcuContextInfo.cs" />
@@ -186,6 +190,7 @@
     <Compile Include="PsdzReplacementPart.cs" />
     <Compile Include="PsdzResponse.cs" />
     <Compile Include="PsdzRuntimeException.cs" />
+    <Compile Include="PsdzSecureCodingConfigCto.cs" />
     <Compile Include="PsdzSecureTokenEto.cs" />
     <Compile Include="PsdzSecureTokenForTal.cs" />
     <Compile Include="PsdzServiceArgs.cs" />
@@ -222,6 +227,9 @@
     <Compile Include="IPsdzSwtApplication.cs" />
     <Compile Include="PsdzTransactionEvent.cs" />
     <Compile Include="PsdzTransactionProgressEvent.cs" />
+    <Compile Include="PsdzVin.cs" />
+    <Compile Include="TalExecutionServiceClient.cs" />
+    <Compile Include="TalExecutionSettings.cs" />
     <EmbeddedResource Include="FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
     </EmbeddedResource>
