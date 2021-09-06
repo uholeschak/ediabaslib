@@ -57,7 +57,7 @@ namespace PsdzClient
 
 		private static bool EqualsMember<T>(T x, T y)
 		{
-			return x == y || (x != null && y != null && !(x.GetType() != y.GetType()) && x.Equals(y));
+			return (object) x == (object) y || (x != null && y != null && !(x.GetType() != y.GetType()) && x.Equals(y));
 		}
 	}
 }
