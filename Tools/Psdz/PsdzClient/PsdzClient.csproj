@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CbbTlsConfiguratorServiceClient.cs" />
+    <Compile Include="CertificateManagementServiceClient.cs" />
     <Compile Include="ClientConfigArgs.cs" />
     <Compile Include="ConfigurationServiceClient.cs" />
     <Compile Include="ConnectionFactoryServiceClient.cs" />
@@ -62,6 +63,7 @@
       <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
     <Compile Include="ICbbTlsConfiguratorService.cs" />
+    <Compile Include="ICertificateManagementService.cs" />
     <Compile Include="IConfigurationService.cs" />
     <Compile Include="IConnectionFactoryService.cs" />
     <Compile Include="IConnectionManagerService.cs" />
@@ -141,18 +143,24 @@
     <Compile Include="ProgrammingServiceClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PsdzAsamJobInputDictionary.cs" />
+    <Compile Include="PsdzBindingCalculationFailure.cs" />
+    <Compile Include="PsdzBindingCalculationRequestId.cs" />
+    <Compile Include="PsdzBindingDetailsStatus.cs" />
     <Compile Include="PsdzBlFlash.cs" />
     <Compile Include="PsdzBlFlashTa.cs" />
     <Compile Include="PsdzCdDeploy.cs" />
+    <Compile Include="PsdzCertMemoryObject.cs" />
     <Compile Include="PsdzClientBase.cs" />
     <Compile Include="PsdzConfig.cs" />
     <Compile Include="PsdzConnection.cs" />
     <Compile Include="PsdzDiagAddress.cs" />
     <Compile Include="PsdzDuplexClientBase.cs" />
     <Compile Include="PsdzEcu.cs" />
+    <Compile Include="PsdzEcuCertCheckingResponse.cs" />
     <Compile Include="PsdzEcuComparer.cs" />
     <Compile Include="PsdzEcuContextInfo.cs" />
     <Compile Include="PsdzEcuDetailInfo.cs" />
+    <Compile Include="PsdzEcuFailureResponse.cs" />
     <Compile Include="PsdzEcuFeatureTokenRelationCto.cs" />
     <Compile Include="PsdzEcuIdentifier.cs" />
     <Compile Include="PsdzEcuPdxInfo.cs" />
@@ -165,6 +173,8 @@
     <Compile Include="PsdzFeatureConditionCto.cs" />
     <Compile Include="PsdzFeatureIdCto.cs" />
     <Compile Include="PsdzFeatureLongStatusCto.cs" />
+    <Compile Include="PsdzFetchBindingCalculationResult.cs" />
+    <Compile Include="PsdzFetchEcuCertCheckingResult.cs" />
     <Compile Include="PsdzFp.cs" />
     <Compile Include="PsdzFscBackup.cs" />
     <Compile Include="PsdzFscDeploy.cs" />
@@ -183,21 +193,26 @@
     <Compile Include="PsdzIdRestoreTa.cs" />
     <Compile Include="PsdzIstufe.cs" />
     <Compile Include="PsdzIstufenTriple.cs" />
+    <Compile Include="PsdzKeypackDetailStatus.cs" />
     <Compile Include="PsdzLogisticPart.cs" />
     <Compile Include="PsdzMcdDiagServiceEvent.cs" />
     <Compile Include="PsdzObdData.cs" />
     <Compile Include="PsdzObdTripleValue.cs" />
     <Compile Include="PsdzOrderList.cs" />
     <Compile Include="PsdzOrderPart.cs" />
+    <Compile Include="PsdzOtherBindingDetailsStatus.cs" />
     <Compile Include="PsdzPreviousRun.cs" />
     <Compile Include="PsdzProgressEvent.cs" />
     <Compile Include="PsdzProgressListenerDispatcher.cs" />
+    <Compile Include="PsdzReadCertMemoryObjectResult.cs" />
     <Compile Include="PsdzReplacementPart.cs" />
+    <Compile Include="PsdzRequestEcuSecCheckingResult.cs" />
     <Compile Include="PsdzResponse.cs" />
     <Compile Include="PsdzRuntimeException.cs" />
     <Compile Include="PsdzSecureCodingConfigCto.cs" />
     <Compile Include="PsdzSecureTokenEto.cs" />
     <Compile Include="PsdzSecureTokenForTal.cs" />
+    <Compile Include="PsdzSecurityCalculatedObjectCto.cs" />
     <Compile Include="PsdzServiceArgs.cs" />
     <Compile Include="PsdzServiceClient.cs" />
     <Compile Include="PsdzServiceStarter.cs" />

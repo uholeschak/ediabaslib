@@ -35,10 +35,10 @@ namespace PsdzClient
 		IVcmService VcmService { get; }
 
 		ICbbTlsConfiguratorService CbbTlsConfiguratorService { get; }
-#if false
-		ICertificateManagementService CertificateManagementService { get; }
 
-		ISecureFeatureActivationService SecureFeatureActivationService { get; }
+		ICertificateManagementService CertificateManagementService { get; }
+#if false
+        ISecureFeatureActivationService SecureFeatureActivationService { get; }
 
 		ISecurityManagementService SecurityManagementService { get; }
 
