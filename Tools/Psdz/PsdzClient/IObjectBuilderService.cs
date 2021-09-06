@@ -7,6 +7,15 @@ using System.Threading.Tasks;
 
 namespace PsdzClient
 {
+    public enum PsdzTalFilterAction
+    {
+        AllowedToBeTreated,
+        Empty,
+        MustBeTreated,
+        MustNotBeTreated,
+        OnlyToBeTreatedAndBlockCategoryInAllEcu
+    }
+
 	[ServiceKnownType(typeof(PsdzFa))]
 	[ServiceKnownType(typeof(PsdzTalFilter))]
 	[ServiceKnownType(typeof(PsdzSwtAction))]
