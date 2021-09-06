@@ -10,9 +10,7 @@ namespace PsdzClient
 {
     class PsdzServiceClient : IDisposable, IPsdzService
 	{
-#if false
 		private readonly ConfigurationServiceClient configurationService;
-#endif
 
 		private readonly ConnectionFactoryServiceClient connectionFactoryService;
 
@@ -66,8 +64,10 @@ namespace PsdzClient
 			this.connectionFactoryService = new ConnectionFactoryServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ConnectionFactoryService", clientId, clientLogDir));
             this.connectionManagerService = new ConnectionManagerServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ConnectionManagerService", clientId, clientLogDir));
 #if false
-            this.logicService = new LogicServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/LogicService", clientId, clientLogDir));
+			this.logicService = new LogicServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/LogicService", clientId, clientLogDir));
+#endif
 			this.configurationService = new ConfigurationServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ConfigurationService", clientId, clientLogDir));
+#if false
 			this.psdzEventService = new PsdzEventService(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/EventManagerService", clientId, clientLogDir));
 			this.vcmService = new VcmServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/VcmService", clientId, clientLogDir));
 			this.programmingService = new ProgrammingServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ProgrammingService", clientId, clientLogDir));
@@ -85,13 +85,21 @@ namespace PsdzClient
 #endif
 		}
 
-		private static EndpointAddress CreateEndpointAddress(string uri, string clientId, string clientLogDir)
+        private static EndpointAddress CreateEndpointAddress(string uri, string clientId, string clientLogDir)
         {
             return new EndpointAddress(new Uri(uri), new AddressHeader[]
             {
                 AddressHeader.CreateAddressHeader("ClientIdentification", string.Empty, clientId),
                 AddressHeader.CreateAddressHeader("ClientLogDir", string.Empty, clientLogDir)
             });
+        }
+
+        public IConfigurationService ConfigurationService
+        {
+            get
+            {
+                return this.configurationService;
+            }
         }
 
         public IConnectionFactoryService ConnectionFactoryService

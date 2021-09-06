@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientConfigArgs.cs" />
+    <Compile Include="ConfigurationServiceClient.cs" />
     <Compile Include="ConnectionFactoryServiceClient.cs" />
     <Compile Include="ConnectionManagerServiceClient.cs" />
     <Compile Include="FormMain.cs">
@@ -58,6 +59,7 @@
     <Compile Include="FormMain.Designer.cs">
       <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
+    <Compile Include="IConfigurationService.cs" />
     <Compile Include="IConnectionFactoryService.cs" />
     <Compile Include="IConnectionManagerService.cs" />
     <Compile Include="ILocalizableMessage.cs" />

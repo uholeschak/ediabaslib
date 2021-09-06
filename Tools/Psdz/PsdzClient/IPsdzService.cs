@@ -8,10 +8,9 @@ namespace PsdzClient
 {
 	public interface IPsdzService
 	{
-#if false
 		IConfigurationService ConfigurationService { get; }
-#endif
-		IConnectionFactoryService ConnectionFactoryService { get; }
+
+        IConnectionFactoryService ConnectionFactoryService { get; }
 
 		IConnectionManagerService ConnectionManagerService { get; }
 #if false
