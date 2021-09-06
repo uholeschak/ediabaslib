@@ -25,9 +25,9 @@ namespace PsdzClient
 		private readonly MacrosServiceClient macrosService;
 
         private readonly ObjectBuilderServiceClient objectBuilderServiceClient;
-#if false
-		private readonly ProgrammingServiceClient programmingService;
 
+		private readonly ProgrammingServiceClient programmingService;
+#if false
 		private readonly PsdzEventService psdzEventService;
 
 		private readonly PsdzProgressListenerDispatcher psdzProgressListenerDispatcher = new PsdzProgressListenerDispatcher();
@@ -50,7 +50,7 @@ namespace PsdzClient
 
 		private readonly KdsServiceClient kdsService;
 #endif
-		public PsdzServiceClient(string clientLogDir)
+        public PsdzServiceClient(string clientLogDir)
 		{
 			NetNamedPipeBinding netNamedPipeBinding = new NetNamedPipeBinding
 			{
@@ -67,9 +67,9 @@ namespace PsdzClient
 #if false
 			this.psdzEventService = new PsdzEventService(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/EventManagerService", clientId, clientLogDir));
 			this.vcmService = new VcmServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/VcmService", clientId, clientLogDir));
-			this.programmingService = new ProgrammingServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ProgrammingService", clientId, clientLogDir));
 #endif
-			this.ecuService = new EcuServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/EcuService", clientId, clientLogDir));
+            this.programmingService = new ProgrammingServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ProgrammingService", clientId, clientLogDir));
+            this.ecuService = new EcuServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/EcuService", clientId, clientLogDir));
 #if false
 			this.talExecutionService = new TalExecutionServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/TalExecutionService", clientId, clientLogDir));
 #endif
@@ -159,7 +159,15 @@ namespace PsdzClient
             }
         }
 
-		public void Dispose()
+        public IProgrammingService ProgrammingService
+        {
+            get
+            {
+                return this.programmingService;
+            }
+        }
+
+        public void Dispose()
         {
 #if false
             this.psdzEventService.RemoveAllEventListener();

@@ -27,9 +27,9 @@ namespace PsdzClient
 		IMacrosService MacrosService { get; }
 
 		IObjectBuilderService ObjectBuilderService { get; }
-#if false
-		IProgrammingService ProgrammingService { get; }
 
+		IProgrammingService ProgrammingService { get; }
+#if false
 		ITalExecutionService TalExecutionService { get; }
 
 		IVcmService VcmService { get; }
