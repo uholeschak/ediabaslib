@@ -6,7 +6,29 @@ using System.Threading.Tasks;
 
 namespace PsdzClient
 {
-    public interface IPsdzTalLine : IPsdzTalElement
+    public enum PsdzTaCategories
+    {
+        BlFlash,
+        CdDeploy,
+        FscBackup,
+        FscDeploy,
+        FscDeployPrehwd,
+        GatewayTableDeploy,
+        HddUpdate,
+        HwDeinstall,
+        HwInstall,
+        IbaDeploy,
+        IdBackup,
+        IdRestore,
+        SwDeploy,
+        SFADeploy,
+        Unknown,
+        EcuActivate,
+        EcuPoll,
+        EcuMirrorDeploy
+    }
+
+	public interface IPsdzTalLine : IPsdzTalElement
     {
         IPsdzEcuIdentifier EcuIdentifier { get; }
 
