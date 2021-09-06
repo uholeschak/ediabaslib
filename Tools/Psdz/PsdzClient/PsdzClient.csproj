@@ -69,10 +69,12 @@
     <Compile Include="IConnectionManagerService.cs" />
     <Compile Include="IEcuService.cs" />
     <Compile Include="IEventManagerService.cs" />
+    <Compile Include="IIndividualDataRestoreService.cs" />
     <Compile Include="ILocalizableMessage.cs" />
     <Compile Include="ILogicService.cs" />
     <Compile Include="ILogService.cs" />
     <Compile Include="IMacrosService.cs" />
+    <Compile Include="IndividualDataRestoreServiceClient.cs" />
     <Compile Include="IObjectBuilderService.cs" />
     <Compile Include="IProgrammingService.cs" />
     <Compile Include="IPsdzAsamJobInputDictionary.cs" />

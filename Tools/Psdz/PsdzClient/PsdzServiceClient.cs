@@ -39,10 +39,10 @@ namespace PsdzClient
 		private readonly CbbTlsConfiguratorServiceClient cbbTlsConfiguratorService;
 
 		private readonly ICertificateManagementService certificateManagementService;
-#if false
-        private readonly IndividualDataRestoreServiceClient individualDataRestoreService;
 
-		private readonly SecureFeatureActivationServiceClient secureFeatureActivationService;
+        private readonly IndividualDataRestoreServiceClient individualDataRestoreService;
+#if false
+        private readonly SecureFeatureActivationServiceClient secureFeatureActivationService;
 
 		private readonly SecurityManagementServiceClient securityManagementService;
 
@@ -78,8 +78,8 @@ this.secureFeatureActivationService = new SecureFeatureActivationServiceClient(t
 			this.kdsService = new KdsServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/KdsService", clientId, clientLogDir));
 			this.securityManagementService = new SecurityManagementServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/SecurityManagementService", clientId, clientLogDir));
 			this.secureCodingService = new SecureCodingServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/SecureCodingService", clientId, clientLogDir));
-			this.individualDataRestoreService = new IndividualDataRestoreServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/IndividualDataRestoreService", clientId, clientLogDir));
 #endif
+            this.individualDataRestoreService = new IndividualDataRestoreServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/IndividualDataRestoreService", clientId, clientLogDir));
         }
 
         private static EndpointAddress CreateEndpointAddress(string uri, string clientId, string clientLogDir)
@@ -194,6 +194,14 @@ this.secureFeatureActivationService = new SecureFeatureActivationServiceClient(t
             get
             {
                 return this.certificateManagementService;
+            }
+        }
+
+        public IIndividualDataRestoreService IndividualDataRestoreService
+        {
+            get
+            {
+                return this.individualDataRestoreService;
             }
         }
 
