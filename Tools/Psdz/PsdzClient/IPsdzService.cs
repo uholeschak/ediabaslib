@@ -23,9 +23,9 @@ namespace PsdzClient
         ILogService LogService { get; }
 
         ILogicService LogicService { get; }
-#if false
+
 		IMacrosService MacrosService { get; }
-#endif
+
 		IObjectBuilderService ObjectBuilderService { get; }
 #if false
 		IProgrammingService ProgrammingService { get; }

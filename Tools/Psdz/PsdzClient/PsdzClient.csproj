@@ -67,6 +67,7 @@
     <Compile Include="ILocalizableMessage.cs" />
     <Compile Include="ILogicService.cs" />
     <Compile Include="ILogService.cs" />
+    <Compile Include="IMacrosService.cs" />
     <Compile Include="IObjectBuilderService.cs" />
     <Compile Include="IPsdzConnection.cs" />
     <Compile Include="IPsdzDiagAddress.cs" />
@@ -117,6 +118,7 @@
     <Compile Include="IPsdzTargetSelector.cs" />
     <Compile Include="LogicServiceClient.cs" />
     <Compile Include="LogServiceClient.cs" />
+    <Compile Include="MacrosServiceClient.cs" />
     <Compile Include="ObjectBuilderServiceClient.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProgrammingService.cs" />

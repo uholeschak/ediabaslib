@@ -21,10 +21,9 @@ namespace PsdzClient
 		private readonly LogServiceClient logService;
 
         private readonly LogicServiceClient logicService;
-#if false
 
 		private readonly MacrosServiceClient macrosService;
-#endif
+
         private readonly ObjectBuilderServiceClient objectBuilderServiceClient;
 #if false
 		private readonly ProgrammingServiceClient programmingService;
@@ -75,8 +74,8 @@ namespace PsdzClient
 			this.talExecutionService = new TalExecutionServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/TalExecutionService", clientId, clientLogDir));
 #endif
 			this.logService = new LogServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/LogService", clientId, clientLogDir));
-#if false
             this.macrosService = new MacrosServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/MacrosService", clientId, clientLogDir));
+#if false
 			this.cbbTlsConfiguratorService = new CbbTlsConfiguratorServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/CbbTlsConfiguratorService", clientId, clientLogDir));
 			this.certificateManagementService = new CertificateManagementServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/CertificateManagementService", clientId, clientLogDir));
 			this.secureFeatureActivationService = new SecureFeatureActivationServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/SecureFeatureActivationService", clientId, clientLogDir));
@@ -85,7 +84,7 @@ namespace PsdzClient
 			this.secureCodingService = new SecureCodingServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/SecureCodingService", clientId, clientLogDir));
 			this.individualDataRestoreService = new IndividualDataRestoreServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/IndividualDataRestoreService", clientId, clientLogDir));
 #endif
-		}
+        }
 
         private static EndpointAddress CreateEndpointAddress(string uri, string clientId, string clientLogDir)
         {
@@ -141,6 +140,14 @@ namespace PsdzClient
             get
             {
                 return this.logicService;
+            }
+        }
+
+        public IMacrosService MacrosService
+        {
+            get
+            {
+                return this.macrosService;
             }
         }
 
