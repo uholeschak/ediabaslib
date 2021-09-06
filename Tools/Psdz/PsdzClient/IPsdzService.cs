@@ -15,12 +15,12 @@ namespace PsdzClient
 		IConnectionManagerService ConnectionManagerService { get; }
 
         IEcuService EcuService { get; }
-#if false
-		IEventManagerService EventManagerService { get; }
 
+		IEventManagerService EventManagerService { get; }
+#if false
 		IIndividualDataRestoreService IndividualDataRestoreService { get; }
 #endif
-        ILogService LogService { get; }
+		ILogService LogService { get; }
 
         ILogicService LogicService { get; }
 

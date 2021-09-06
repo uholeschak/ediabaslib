@@ -64,6 +64,7 @@
     <Compile Include="IConnectionFactoryService.cs" />
     <Compile Include="IConnectionManagerService.cs" />
     <Compile Include="IEcuService.cs" />
+    <Compile Include="IEventManagerService.cs" />
     <Compile Include="ILocalizableMessage.cs" />
     <Compile Include="ILogicService.cs" />
     <Compile Include="ILogService.cs" />
@@ -81,6 +82,8 @@
     <Compile Include="IPsdzEcuPdxInfo.cs" />
     <Compile Include="IPsdzEcuStatusInfo.cs" />
     <Compile Include="IPsdzEcuVariantInstance.cs" />
+    <Compile Include="IPsdzEvent.cs" />
+    <Compile Include="IPsdzEventListener.cs" />
     <Compile Include="IPsdzFa.cs" />
     <Compile Include="IPsdzFailureCause.cs" />
     <Compile Include="IPsdzFeatureConditionCto.cs" />
@@ -90,6 +93,7 @@
     <Compile Include="IPsdzFsaTa.cs" />
     <Compile Include="IPsdzIstufe.cs" />
     <Compile Include="IPsdzLogisticPart.cs" />
+    <Compile Include="IPsdzMcdDiagServiceEvent.cs" />
     <Compile Include="IPsdzObdData.cs" />
     <Compile Include="IPsdzObdTripleValue.cs" />
     <Compile Include="IPsdzOrderList.cs" />
@@ -118,6 +122,8 @@
     <Compile Include="IPsdzTalFilter.cs" />
     <Compile Include="IPsdzTalLine.cs" />
     <Compile Include="IPsdzTargetSelector.cs" />
+    <Compile Include="IPsdzTransactionEvent.cs" />
+    <Compile Include="IPsdzTransactionProgressEvent.cs" />
     <Compile Include="LogicServiceClient.cs" />
     <Compile Include="LogServiceClient.cs" />
     <Compile Include="MacrosServiceClient.cs" />
@@ -143,6 +149,8 @@
     <Compile Include="PsdzEcuPdxInfo.cs" />
     <Compile Include="PsdzEcuStatusInfo.cs" />
     <Compile Include="PsdzEcuVariantInstance.cs" />
+    <Compile Include="PsdzEvent.cs" />
+    <Compile Include="PsdzEventService.cs" />
     <Compile Include="PsdzFa.cs" />
     <Compile Include="PsdzFailureCause.cs" />
     <Compile Include="PsdzFeatureConditionCto.cs" />
@@ -166,11 +174,13 @@
     <Compile Include="PsdzIdRestoreTa.cs" />
     <Compile Include="PsdzIstufe.cs" />
     <Compile Include="PsdzLogisticPart.cs" />
+    <Compile Include="PsdzMcdDiagServiceEvent.cs" />
     <Compile Include="PsdzObdData.cs" />
     <Compile Include="PsdzObdTripleValue.cs" />
     <Compile Include="PsdzOrderList.cs" />
     <Compile Include="PsdzOrderPart.cs" />
     <Compile Include="PsdzPreviousRun.cs" />
+    <Compile Include="PsdzProgressEvent.cs" />
     <Compile Include="PsdzReplacementPart.cs" />
     <Compile Include="PsdzResponse.cs" />
     <Compile Include="PsdzRuntimeException.cs" />
@@ -208,6 +218,8 @@
     <Compile Include="PsdzTalLine.cs" />
     <Compile Include="PsdzTargetSelector.cs" />
     <Compile Include="IPsdzSwtApplication.cs" />
+    <Compile Include="PsdzTransactionEvent.cs" />
+    <Compile Include="PsdzTransactionProgressEvent.cs" />
     <EmbeddedResource Include="FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
     </EmbeddedResource>

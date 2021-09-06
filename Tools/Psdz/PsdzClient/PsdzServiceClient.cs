@@ -27,9 +27,9 @@ namespace PsdzClient
         private readonly ObjectBuilderServiceClient objectBuilderServiceClient;
 
 		private readonly ProgrammingServiceClient programmingService;
-#if false
-		private readonly PsdzEventService psdzEventService;
 
+		private readonly PsdzEventService psdzEventService;
+#if false
 		private readonly PsdzProgressListenerDispatcher psdzProgressListenerDispatcher = new PsdzProgressListenerDispatcher();
 
 		private readonly TalExecutionServiceClient talExecutionService;
@@ -64,9 +64,9 @@ namespace PsdzClient
             this.connectionManagerService = new ConnectionManagerServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ConnectionManagerService", clientId, clientLogDir));
 			this.logicService = new LogicServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/LogicService", clientId, clientLogDir));
 			this.configurationService = new ConfigurationServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ConfigurationService", clientId, clientLogDir));
+            this.psdzEventService = new PsdzEventService(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/EventManagerService", clientId, clientLogDir));
 #if false
-			this.psdzEventService = new PsdzEventService(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/EventManagerService", clientId, clientLogDir));
-			this.vcmService = new VcmServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/VcmService", clientId, clientLogDir));
+            this.vcmService = new VcmServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/VcmService", clientId, clientLogDir));
 #endif
             this.programmingService = new ProgrammingServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ProgrammingService", clientId, clientLogDir));
             this.ecuService = new EcuServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/EcuService", clientId, clientLogDir));
@@ -127,6 +127,8 @@ namespace PsdzClient
             }
         }
 
+        public IEventManagerService EventManagerService { get; private set; }
+
         public ILogService LogService
         {
             get
@@ -167,13 +169,40 @@ namespace PsdzClient
             }
         }
 
+        public void AddPsdzEventListener(IPsdzEventListener psdzEventListener)
+        {
+            this.psdzEventService.AddEventListener(psdzEventListener);
+        }
+
+        public void CloseAllConnections()
+        {
+            this.psdzEventService.RemoveAllEventListener();
+            this.connectionFactoryService.CloseCachedChannels();
+            this.configurationService.CloseCachedChannels();
+            this.connectionManagerService.CloseCachedChannels();
+            //this.vcmService.CloseCachedChannels();
+            this.logicService.CloseCachedChannels();
+            this.programmingService.CloseCachedChannels();
+            this.ecuService.CloseCachedChannels();
+            this.objectBuilderServiceClient.CloseCachedChannels();
+            //this.talExecutionService.CloseCachedChannels();
+            this.logService.CloseCachedChannels();
+            this.macrosService.CloseCachedChannels();
+            //this.individualDataRestoreService.CloseCachedChannels();
+            //this.secureFeatureActivationService.CloseCachedChannels();
+            //this.psdzProgressListenerDispatcher.Clear();
+        }
+
         public void Dispose()
         {
-#if false
             this.psdzEventService.RemoveAllEventListener();
             this.CloseAllConnections();
-            this.psdzProgressListenerDispatcher.Clear();
-#endif
+            //this.psdzProgressListenerDispatcher.Clear();
+        }
+
+        public void RemovePsdzEventListener(IPsdzEventListener psdzEventListener)
+        {
+            this.psdzEventService.RemoveEventListener(psdzEventListener);
         }
     }
 }
