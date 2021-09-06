@@ -58,16 +58,21 @@
       <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
     <Compile Include="IConnectionFactoryService.cs" />
+    <Compile Include="ILocalizableMessage.cs" />
     <Compile Include="IObjectBuilderService.cs" />
     <Compile Include="IPsdzDiagAddress.cs" />
     <Compile Include="IPsdzEcuIdentifier.cs" />
     <Compile Include="IPsdzFa.cs" />
+    <Compile Include="IPsdzFailureCause.cs" />
     <Compile Include="IPsdzService.cs" />
     <Compile Include="IPsdzStandardFa.cs" />
     <Compile Include="IPsdzSwtAction.cs" />
     <Compile Include="IPsdzSwtApplicationId.cs" />
     <Compile Include="IPsdzSwtEcu.cs" />
+    <Compile Include="IPsdzTal.cs" />
+    <Compile Include="IPsdzTalElement.cs" />
     <Compile Include="IPsdzTalFilter.cs" />
+    <Compile Include="IPsdzTalLine.cs" />
     <Compile Include="IPsdzTargetSelector.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProgrammingService.cs" />
@@ -77,6 +82,7 @@
     <Compile Include="PsdzDiagAddress.cs" />
     <Compile Include="PsdzEcuIdentifier.cs" />
     <Compile Include="PsdzFa.cs" />
+    <Compile Include="PsdzFailureCause.cs" />
     <Compile Include="PsdzRuntimeException.cs" />
     <Compile Include="PsdzServiceArgs.cs" />
     <Compile Include="PsdzServiceClient.cs" />
@@ -86,7 +92,10 @@
     <Compile Include="PsdzSwtApplication.cs" />
     <Compile Include="PsdzSwtApplicationId.cs" />
     <Compile Include="PsdzSwtEcu.cs" />
+    <Compile Include="PsdzTal.cs" />
+    <Compile Include="PsdzTalElement.cs" />
     <Compile Include="PsdzTalFilter.cs" />
+    <Compile Include="PsdzTalLine.cs" />
     <Compile Include="PsdzTargetSelector.cs" />
     <Compile Include="IPsdzSwtApplication.cs" />
     <EmbeddedResource Include="FormMain.resx">
