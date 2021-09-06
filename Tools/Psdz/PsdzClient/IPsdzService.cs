@@ -20,9 +20,9 @@ namespace PsdzClient
 		IEventManagerService EventManagerService { get; }
 
 		IIndividualDataRestoreService IndividualDataRestoreService { get; }
-
-		ILogService LogService { get; }
-
+#endif
+        ILogService LogService { get; }
+#if false
 		ILogicService LogicService { get; }
 
 		IMacrosService MacrosService { get; }

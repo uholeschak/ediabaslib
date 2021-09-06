@@ -18,9 +18,8 @@ namespace PsdzClient
 
 		private readonly EcuServiceClient ecuService;
 
-#if false
 		private readonly LogServiceClient logService;
-
+#if false
 		private readonly LogicServiceClient logicService;
 
 		private readonly MacrosServiceClient macrosService;
@@ -75,8 +74,10 @@ namespace PsdzClient
 			this.ecuService = new EcuServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/EcuService", clientId, clientLogDir));
 #if false
 			this.talExecutionService = new TalExecutionServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/TalExecutionService", clientId, clientLogDir));
+#endif
 			this.logService = new LogServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/LogService", clientId, clientLogDir));
-			this.macrosService = new MacrosServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/MacrosService", clientId, clientLogDir));
+#if false
+            this.macrosService = new MacrosServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/MacrosService", clientId, clientLogDir));
 			this.cbbTlsConfiguratorService = new CbbTlsConfiguratorServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/CbbTlsConfiguratorService", clientId, clientLogDir));
 			this.certificateManagementService = new CertificateManagementServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/CertificateManagementService", clientId, clientLogDir));
 			this.secureFeatureActivationService = new SecureFeatureActivationServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/SecureFeatureActivationService", clientId, clientLogDir));
@@ -128,7 +129,15 @@ namespace PsdzClient
             }
         }
 
-		public IObjectBuilderService ObjectBuilderService
+        public ILogService LogService
+        {
+            get
+            {
+                return this.logService;
+            }
+        }
+
+        public IObjectBuilderService ObjectBuilderService
         {
             get
             {
