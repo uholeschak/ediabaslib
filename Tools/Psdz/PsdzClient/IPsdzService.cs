@@ -13,8 +13,9 @@ namespace PsdzClient
         IConnectionFactoryService ConnectionFactoryService { get; }
 
 		IConnectionManagerService ConnectionManagerService { get; }
+
+        IEcuService EcuService { get; }
 #if false
-		IEcuService EcuService { get; }
 
 		IEventManagerService EventManagerService { get; }
 

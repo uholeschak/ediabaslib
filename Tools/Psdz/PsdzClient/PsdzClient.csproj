@@ -53,6 +53,7 @@
     <Compile Include="ConfigurationServiceClient.cs" />
     <Compile Include="ConnectionFactoryServiceClient.cs" />
     <Compile Include="ConnectionManagerServiceClient.cs" />
+    <Compile Include="EcuServiceClient.cs" />
     <Compile Include="FormMain.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -62,18 +63,28 @@
     <Compile Include="IConfigurationService.cs" />
     <Compile Include="IConnectionFactoryService.cs" />
     <Compile Include="IConnectionManagerService.cs" />
+    <Compile Include="IEcuService.cs" />
     <Compile Include="ILocalizableMessage.cs" />
     <Compile Include="IObjectBuilderService.cs" />
     <Compile Include="IPsdzConnection.cs" />
     <Compile Include="IPsdzDiagAddress.cs" />
+    <Compile Include="IPsdzEcu.cs" />
+    <Compile Include="IPsdzEcuContextInfo.cs" />
+    <Compile Include="IPsdzEcuDetailInfo.cs" />
     <Compile Include="IPsdzEcuIdentifier.cs" />
+    <Compile Include="IPsdzEcuPdxInfo.cs" />
+    <Compile Include="IPsdzEcuStatusInfo.cs" />
     <Compile Include="IPsdzFa.cs" />
     <Compile Include="IPsdzFailureCause.cs" />
     <Compile Include="IPsdzFsaTa.cs" />
+    <Compile Include="IPsdzResponse.cs" />
     <Compile Include="IPsdzSecureTokenForTal.cs" />
     <Compile Include="IPsdzService.cs" />
     <Compile Include="IPsdzSgbmId.cs" />
     <Compile Include="IPsdzStandardFa.cs" />
+    <Compile Include="IPsdzStandardSvk.cs" />
+    <Compile Include="IPsdzStandardSvt.cs" />
+    <Compile Include="IPsdzSvt.cs" />
     <Compile Include="IPsdzSwtAction.cs" />
     <Compile Include="IPsdzSwtApplicationId.cs" />
     <Compile Include="IPsdzSwtEcu.cs" />
@@ -95,7 +106,13 @@
     <Compile Include="PsdzConfig.cs" />
     <Compile Include="PsdzConnection.cs" />
     <Compile Include="PsdzDiagAddress.cs" />
+    <Compile Include="PsdzEcu.cs" />
+    <Compile Include="PsdzEcuComparer.cs" />
+    <Compile Include="PsdzEcuContextInfo.cs" />
+    <Compile Include="PsdzEcuDetailInfo.cs" />
     <Compile Include="PsdzEcuIdentifier.cs" />
+    <Compile Include="PsdzEcuPdxInfo.cs" />
+    <Compile Include="PsdzEcuStatusInfo.cs" />
     <Compile Include="PsdzFa.cs" />
     <Compile Include="PsdzFailureCause.cs" />
     <Compile Include="PsdzFscBackup.cs" />
@@ -114,6 +131,7 @@
     <Compile Include="PsdzIdRestoreLightTa.cs" />
     <Compile Include="PsdzIdRestoreTa.cs" />
     <Compile Include="PsdzPreviousRun.cs" />
+    <Compile Include="PsdzResponse.cs" />
     <Compile Include="PsdzRuntimeException.cs" />
     <Compile Include="PsdzSecureTokenForTal.cs" />
     <Compile Include="PsdzServiceArgs.cs" />
@@ -125,6 +143,10 @@
     <Compile Include="PsdzSFAWriteTA.cs" />
     <Compile Include="PsdzSgbmId.cs" />
     <Compile Include="PsdzStandardFa.cs" />
+    <Compile Include="PsdzStandardSvk.cs" />
+    <Compile Include="PsdzStandardSvt.cs" />
+    <Compile Include="PsdzStandardSvtComparer.cs" />
+    <Compile Include="PsdzSvt.cs" />
     <Compile Include="PsdzSwDelete.cs" />
     <Compile Include="PsdzSwDeploy.cs" />
     <Compile Include="PsdzSwDeployTa.cs" />

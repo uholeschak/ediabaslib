@@ -16,9 +16,9 @@ namespace PsdzClient
 
 		private readonly ConnectionManagerServiceClient connectionManagerService;
 
-#if false
 		private readonly EcuServiceClient ecuService;
 
+#if false
 		private readonly LogServiceClient logService;
 
 		private readonly LogicServiceClient logicService;
@@ -71,7 +71,9 @@ namespace PsdzClient
 			this.psdzEventService = new PsdzEventService(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/EventManagerService", clientId, clientLogDir));
 			this.vcmService = new VcmServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/VcmService", clientId, clientLogDir));
 			this.programmingService = new ProgrammingServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ProgrammingService", clientId, clientLogDir));
+#endif
 			this.ecuService = new EcuServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/EcuService", clientId, clientLogDir));
+#if false
 			this.talExecutionService = new TalExecutionServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/TalExecutionService", clientId, clientLogDir));
 			this.logService = new LogServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/LogService", clientId, clientLogDir));
 			this.macrosService = new MacrosServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/MacrosService", clientId, clientLogDir));
@@ -118,7 +120,15 @@ namespace PsdzClient
             }
         }
 
-        public IObjectBuilderService ObjectBuilderService
+        public IEcuService EcuService
+        {
+            get
+            {
+                return this.ecuService;
+            }
+        }
+
+		public IObjectBuilderService ObjectBuilderService
         {
             get
             {
