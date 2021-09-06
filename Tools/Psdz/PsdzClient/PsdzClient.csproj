@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="ClientConfigArgs.cs" />
     <Compile Include="ConnectionFactoryServiceClient.cs" />
+    <Compile Include="ConnectionManagerServiceClient.cs" />
     <Compile Include="FormMain.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -58,8 +59,10 @@
       <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
     <Compile Include="IConnectionFactoryService.cs" />
+    <Compile Include="IConnectionManagerService.cs" />
     <Compile Include="ILocalizableMessage.cs" />
     <Compile Include="IObjectBuilderService.cs" />
+    <Compile Include="IPsdzConnection.cs" />
     <Compile Include="IPsdzDiagAddress.cs" />
     <Compile Include="IPsdzEcuIdentifier.cs" />
     <Compile Include="IPsdzFa.cs" />
@@ -88,6 +91,7 @@
     <Compile Include="PsdzCdDeploy.cs" />
     <Compile Include="PsdzClientBase.cs" />
     <Compile Include="PsdzConfig.cs" />
+    <Compile Include="PsdzConnection.cs" />
     <Compile Include="PsdzDiagAddress.cs" />
     <Compile Include="PsdzEcuIdentifier.cs" />
     <Compile Include="PsdzFa.cs" />

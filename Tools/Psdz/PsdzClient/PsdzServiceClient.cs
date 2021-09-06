@@ -16,9 +16,9 @@ namespace PsdzClient
 
 		private readonly ConnectionFactoryServiceClient connectionFactoryService;
 
-#if false
 		private readonly ConnectionManagerServiceClient connectionManagerService;
 
+#if false
 		private readonly EcuServiceClient ecuService;
 
 		private readonly LogServiceClient logService;
@@ -64,9 +64,9 @@ namespace PsdzClient
 			string clientId = Guid.NewGuid().ToString();
 			this.objectBuilderServiceClient = new ObjectBuilderServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ObjectBuilderService", clientId, clientLogDir));
 			this.connectionFactoryService = new ConnectionFactoryServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ConnectionFactoryService", clientId, clientLogDir));
+            this.connectionManagerService = new ConnectionManagerServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ConnectionManagerService", clientId, clientLogDir));
 #if false
-			this.connectionManagerService = new ConnectionManagerServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ConnectionManagerService", clientId, clientLogDir));
-			this.logicService = new LogicServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/LogicService", clientId, clientLogDir));
+            this.logicService = new LogicServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/LogicService", clientId, clientLogDir));
 			this.configurationService = new ConfigurationServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ConfigurationService", clientId, clientLogDir));
 			this.psdzEventService = new PsdzEventService(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/EventManagerService", clientId, clientLogDir));
 			this.vcmService = new VcmServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/VcmService", clientId, clientLogDir));
@@ -83,9 +83,9 @@ namespace PsdzClient
 			this.secureCodingService = new SecureCodingServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/SecureCodingService", clientId, clientLogDir));
 			this.individualDataRestoreService = new IndividualDataRestoreServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/IndividualDataRestoreService", clientId, clientLogDir));
 #endif
-        }
+		}
 
-        private static EndpointAddress CreateEndpointAddress(string uri, string clientId, string clientLogDir)
+		private static EndpointAddress CreateEndpointAddress(string uri, string clientId, string clientLogDir)
         {
             return new EndpointAddress(new Uri(uri), new AddressHeader[]
             {
@@ -99,6 +99,14 @@ namespace PsdzClient
             get
             {
                 return this.connectionFactoryService;
+            }
+        }
+
+        public IConnectionManagerService ConnectionManagerService
+        {
+            get
+            {
+                return this.connectionManagerService;
             }
         }
 
