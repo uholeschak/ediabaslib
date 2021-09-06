@@ -29,10 +29,10 @@ namespace PsdzClient
 		private readonly ProgrammingServiceClient programmingService;
 
 		private readonly PsdzEventService psdzEventService;
-#if false
-		private readonly PsdzProgressListenerDispatcher psdzProgressListenerDispatcher = new PsdzProgressListenerDispatcher();
 
-		private readonly TalExecutionServiceClient talExecutionService;
+		private readonly PsdzProgressListenerDispatcher psdzProgressListenerDispatcher = new PsdzProgressListenerDispatcher();
+#if false
+        private readonly TalExecutionServiceClient talExecutionService;
 
 		private readonly VcmServiceClient vcmService;
 
@@ -71,7 +71,7 @@ namespace PsdzClient
             this.programmingService = new ProgrammingServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ProgrammingService", clientId, clientLogDir));
             this.ecuService = new EcuServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/EcuService", clientId, clientLogDir));
 #if false
-			this.talExecutionService = new TalExecutionServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/TalExecutionService", clientId, clientLogDir));
+            this.talExecutionService = new TalExecutionServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/TalExecutionService", clientId, clientLogDir));
 #endif
 			this.logService = new LogServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/LogService", clientId, clientLogDir));
             this.macrosService = new MacrosServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/MacrosService", clientId, clientLogDir));
@@ -174,6 +174,11 @@ namespace PsdzClient
             this.psdzEventService.AddEventListener(psdzEventListener);
         }
 
+        public void AddPsdzProgressListener(IPsdzProgressListener psdzProgressListener)
+        {
+            this.psdzProgressListenerDispatcher.AddPsdzProgressListener(psdzProgressListener);
+        }
+
         public void CloseAllConnections()
         {
             this.psdzEventService.RemoveAllEventListener();
@@ -190,19 +195,24 @@ namespace PsdzClient
             this.macrosService.CloseCachedChannels();
             //this.individualDataRestoreService.CloseCachedChannels();
             //this.secureFeatureActivationService.CloseCachedChannels();
-            //this.psdzProgressListenerDispatcher.Clear();
+            this.psdzProgressListenerDispatcher.Clear();
         }
 
         public void Dispose()
         {
             this.psdzEventService.RemoveAllEventListener();
             this.CloseAllConnections();
-            //this.psdzProgressListenerDispatcher.Clear();
+            this.psdzProgressListenerDispatcher.Clear();
         }
 
         public void RemovePsdzEventListener(IPsdzEventListener psdzEventListener)
         {
             this.psdzEventService.RemoveEventListener(psdzEventListener);
+        }
+
+        public void RemovePsdzProgressListener(IPsdzProgressListener psdzProgressListener)
+        {
+            this.psdzProgressListenerDispatcher.RemovePsdzProgressListener(psdzProgressListener);
         }
     }
 }

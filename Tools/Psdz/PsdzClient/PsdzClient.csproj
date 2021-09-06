@@ -98,6 +98,7 @@
     <Compile Include="IPsdzObdTripleValue.cs" />
     <Compile Include="IPsdzOrderList.cs" />
     <Compile Include="IPsdzOrderPart.cs" />
+    <Compile Include="IPsdzProgressListener.cs" />
     <Compile Include="IPsdzReplacementPart.cs" />
     <Compile Include="IPsdzResponse.cs" />
     <Compile Include="IPsdzSecureTokenEto.cs" />
@@ -181,6 +182,7 @@
     <Compile Include="PsdzOrderPart.cs" />
     <Compile Include="PsdzPreviousRun.cs" />
     <Compile Include="PsdzProgressEvent.cs" />
+    <Compile Include="PsdzProgressListenerDispatcher.cs" />
     <Compile Include="PsdzReplacementPart.cs" />
     <Compile Include="PsdzResponse.cs" />
     <Compile Include="PsdzRuntimeException.cs" />
