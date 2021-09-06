@@ -31,9 +31,9 @@ namespace PsdzClient
 		IProgrammingService ProgrammingService { get; }
 
 		ITalExecutionService TalExecutionService { get; }
-#if false
-		IVcmService VcmService { get; }
 
+		IVcmService VcmService { get; }
+#if false
 		ICbbTlsConfiguratorService CbbTlsConfiguratorService { get; }
 
 		ICertificateManagementService CertificateManagementService { get; }

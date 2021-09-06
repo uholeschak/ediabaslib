@@ -33,9 +33,9 @@ namespace PsdzClient
 		private readonly PsdzProgressListenerDispatcher psdzProgressListenerDispatcher = new PsdzProgressListenerDispatcher();
 
         private readonly TalExecutionServiceClient talExecutionService;
-#if false
-		private readonly VcmServiceClient vcmService;
 
+		private readonly VcmServiceClient vcmService;
+#if false
 		private readonly CbbTlsConfiguratorServiceClient cbbTlsConfiguratorService;
 
 		private readonly ICertificateManagementService certificateManagementService;
@@ -65,9 +65,7 @@ namespace PsdzClient
 			this.logicService = new LogicServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/LogicService", clientId, clientLogDir));
 			this.configurationService = new ConfigurationServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ConfigurationService", clientId, clientLogDir));
             this.psdzEventService = new PsdzEventService(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/EventManagerService", clientId, clientLogDir));
-#if false
             this.vcmService = new VcmServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/VcmService", clientId, clientLogDir));
-#endif
             this.programmingService = new ProgrammingServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ProgrammingService", clientId, clientLogDir));
             this.ecuService = new EcuServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/EcuService", clientId, clientLogDir));
             this.talExecutionService = new TalExecutionServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/TalExecutionService", clientId, clientLogDir));
@@ -172,6 +170,14 @@ namespace PsdzClient
             get
             {
                 return this.talExecutionService;
+            }
+        }
+
+        public IVcmService VcmService
+        {
+            get
+            {
+                return this.vcmService;
             }
         }
 

@@ -92,6 +92,7 @@
     <Compile Include="IPsdzFp.cs" />
     <Compile Include="IPsdzFsaTa.cs" />
     <Compile Include="IPsdzIstufe.cs" />
+    <Compile Include="IPsdzIstufenTriple.cs" />
     <Compile Include="IPsdzLogisticPart.cs" />
     <Compile Include="IPsdzMcdDiagServiceEvent.cs" />
     <Compile Include="IPsdzObdData.cs" />
@@ -128,6 +129,7 @@
     <Compile Include="IPsdzTransactionProgressEvent.cs" />
     <Compile Include="IPsdzVin.cs" />
     <Compile Include="ITalExecutionService.cs" />
+    <Compile Include="IVcmService.cs" />
     <Compile Include="LogicServiceClient.cs" />
     <Compile Include="LogServiceClient.cs" />
     <Compile Include="MacrosServiceClient.cs" />
@@ -178,6 +180,7 @@
     <Compile Include="PsdzIdRestoreLightTa.cs" />
     <Compile Include="PsdzIdRestoreTa.cs" />
     <Compile Include="PsdzIstufe.cs" />
+    <Compile Include="PsdzIstufenTriple.cs" />
     <Compile Include="PsdzLogisticPart.cs" />
     <Compile Include="PsdzMcdDiagServiceEvent.cs" />
     <Compile Include="PsdzObdData.cs" />
@@ -230,6 +233,7 @@
     <Compile Include="PsdzVin.cs" />
     <Compile Include="TalExecutionServiceClient.cs" />
     <Compile Include="TalExecutionSettings.cs" />
+    <Compile Include="VcmServiceClient.cs" />
     <EmbeddedResource Include="FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
     </EmbeddedResource>
