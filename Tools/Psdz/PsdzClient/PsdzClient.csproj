@@ -65,6 +65,7 @@
     <Compile Include="IPsdzFa.cs" />
     <Compile Include="IPsdzFailureCause.cs" />
     <Compile Include="IPsdzFsaTa.cs" />
+    <Compile Include="IPsdzSecureTokenForTal.cs" />
     <Compile Include="IPsdzService.cs" />
     <Compile Include="IPsdzSgbmId.cs" />
     <Compile Include="IPsdzStandardFa.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="ProgrammingService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PsdzBlFlashTa.cs" />
     <Compile Include="PsdzClientBase.cs" />
     <Compile Include="PsdzConfig.cs" />
     <Compile Include="PsdzDiagAddress.cs" />
@@ -89,14 +91,19 @@
     <Compile Include="PsdzFailureCause.cs" />
     <Compile Include="PsdzFscBackup.cs" />
     <Compile Include="PsdzFscDeployTa.cs" />
+    <Compile Include="PsdzIbaDeployTa.cs" />
     <Compile Include="PsdzIdBackupLightTa.cs" />
     <Compile Include="PsdzIdLightBasisTa.cs" />
+    <Compile Include="PsdzIdRestoreLightTa.cs" />
+    <Compile Include="PsdzIdRestoreTa.cs" />
     <Compile Include="PsdzRuntimeException.cs" />
+    <Compile Include="PsdzSecureTokenForTal.cs" />
     <Compile Include="PsdzServiceArgs.cs" />
     <Compile Include="PsdzServiceClient.cs" />
     <Compile Include="PsdzServiceStarter.cs" />
     <Compile Include="PsdzSFADeleteTA.cs" />
     <Compile Include="PsdzSFAVerifyTA.cs" />
+    <Compile Include="PsdzSFAWriteTA.cs" />
     <Compile Include="PsdzSgbmId.cs" />
     <Compile Include="PsdzStandardFa.cs" />
     <Compile Include="PsdzSwDeployTa.cs" />
