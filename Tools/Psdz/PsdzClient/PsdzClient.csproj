@@ -64,6 +64,7 @@
     <Compile Include="IPsdzEcuIdentifier.cs" />
     <Compile Include="IPsdzFa.cs" />
     <Compile Include="IPsdzFailureCause.cs" />
+    <Compile Include="IPsdzFsaTa.cs" />
     <Compile Include="IPsdzService.cs" />
     <Compile Include="IPsdzSgbmId.cs" />
     <Compile Include="IPsdzStandardFa.cs" />
@@ -87,12 +88,18 @@
     <Compile Include="PsdzFa.cs" />
     <Compile Include="PsdzFailureCause.cs" />
     <Compile Include="PsdzFscBackup.cs" />
+    <Compile Include="PsdzFscDeployTa.cs" />
+    <Compile Include="PsdzIdBackupLightTa.cs" />
+    <Compile Include="PsdzIdLightBasisTa.cs" />
     <Compile Include="PsdzRuntimeException.cs" />
     <Compile Include="PsdzServiceArgs.cs" />
     <Compile Include="PsdzServiceClient.cs" />
     <Compile Include="PsdzServiceStarter.cs" />
+    <Compile Include="PsdzSFADeleteTA.cs" />
+    <Compile Include="PsdzSFAVerifyTA.cs" />
     <Compile Include="PsdzSgbmId.cs" />
     <Compile Include="PsdzStandardFa.cs" />
+    <Compile Include="PsdzSwDeployTa.cs" />
     <Compile Include="PsdzSwtAction.cs" />
     <Compile Include="PsdzSwtApplication.cs" />
     <Compile Include="PsdzSwtApplicationId.cs" />
