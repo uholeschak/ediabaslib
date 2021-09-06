@@ -84,6 +84,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PsdzBlFlash.cs" />
     <Compile Include="PsdzBlFlashTa.cs" />
+    <Compile Include="PsdzCdDeploy.cs" />
     <Compile Include="PsdzClientBase.cs" />
     <Compile Include="PsdzConfig.cs" />
     <Compile Include="PsdzDiagAddress.cs" />
@@ -93,13 +94,19 @@
     <Compile Include="PsdzFscBackup.cs" />
     <Compile Include="PsdzFscDeploy.cs" />
     <Compile Include="PsdzFscDeployTa.cs" />
+    <Compile Include="PsdzGatewayTableDeploy.cs" />
+    <Compile Include="PsdzHddUpdate.cs" />
+    <Compile Include="PsdzHwDeinstall.cs" />
+    <Compile Include="PsdzHwInstall.cs" />
     <Compile Include="PsdzIbaDeploy.cs" />
     <Compile Include="PsdzIbaDeployTa.cs" />
+    <Compile Include="PsdzIdBackup.cs" />
     <Compile Include="PsdzIdBackupLightTa.cs" />
     <Compile Include="PsdzIdLightBasisTa.cs" />
     <Compile Include="PsdzIdRestore.cs" />
     <Compile Include="PsdzIdRestoreLightTa.cs" />
     <Compile Include="PsdzIdRestoreTa.cs" />
+    <Compile Include="PsdzPreviousRun.cs" />
     <Compile Include="PsdzRuntimeException.cs" />
     <Compile Include="PsdzSecureTokenForTal.cs" />
     <Compile Include="PsdzServiceArgs.cs" />
@@ -111,6 +118,7 @@
     <Compile Include="PsdzSFAWriteTA.cs" />
     <Compile Include="PsdzSgbmId.cs" />
     <Compile Include="PsdzStandardFa.cs" />
+    <Compile Include="PsdzSwDelete.cs" />
     <Compile Include="PsdzSwDeploy.cs" />
     <Compile Include="PsdzSwDeployTa.cs" />
     <Compile Include="PsdzSwtAction.cs" />
