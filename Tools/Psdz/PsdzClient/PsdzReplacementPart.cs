@@ -1,0 +1,20 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PsdzClient
+{
+    [DataContract]
+    [KnownType(typeof(PsdzLogisticPart))]
+    [KnownType(typeof(PsdzOrderPart))]
+    [KnownType(typeof(PsdzEcuVariantInstance))]
+    [KnownType(typeof(PsdzReplacementPart))]
+    public class PsdzReplacementPart : PsdzLogisticPart, IPsdzLogisticPart, IPsdzReplacementPart
+    {
+        [DataMember]
+        public IPsdzLogisticPart[] Deliverables { get; set; }
+    }
+}

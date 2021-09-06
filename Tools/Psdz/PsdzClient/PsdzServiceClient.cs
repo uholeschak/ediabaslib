@@ -19,12 +19,13 @@ namespace PsdzClient
 		private readonly EcuServiceClient ecuService;
 
 		private readonly LogServiceClient logService;
+
+        private readonly LogicServiceClient logicService;
 #if false
-		private readonly LogicServiceClient logicService;
 
 		private readonly MacrosServiceClient macrosService;
 #endif
-		private readonly ObjectBuilderServiceClient objectBuilderServiceClient;
+        private readonly ObjectBuilderServiceClient objectBuilderServiceClient;
 #if false
 		private readonly ProgrammingServiceClient programmingService;
 
@@ -62,9 +63,7 @@ namespace PsdzClient
 			this.objectBuilderServiceClient = new ObjectBuilderServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ObjectBuilderService", clientId, clientLogDir));
 			this.connectionFactoryService = new ConnectionFactoryServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ConnectionFactoryService", clientId, clientLogDir));
             this.connectionManagerService = new ConnectionManagerServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ConnectionManagerService", clientId, clientLogDir));
-#if false
 			this.logicService = new LogicServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/LogicService", clientId, clientLogDir));
-#endif
 			this.configurationService = new ConfigurationServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ConfigurationService", clientId, clientLogDir));
 #if false
 			this.psdzEventService = new PsdzEventService(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/EventManagerService", clientId, clientLogDir));
@@ -134,6 +133,14 @@ namespace PsdzClient
             get
             {
                 return this.logService;
+            }
+        }
+
+        public ILogicService LogicService
+        {
+            get
+            {
+                return this.logicService;
             }
         }
 
