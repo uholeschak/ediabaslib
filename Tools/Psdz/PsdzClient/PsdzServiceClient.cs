@@ -45,9 +45,9 @@ namespace PsdzClient
         private readonly SecureFeatureActivationServiceClient secureFeatureActivationService;
 
 		private readonly SecurityManagementServiceClient securityManagementService;
-#if false
+
 		private readonly SecureCodingServiceClient secureCodingService;
-#endif
+
         private readonly KdsServiceClient kdsService;
 
         public PsdzServiceClient(string clientLogDir)
@@ -76,9 +76,7 @@ namespace PsdzClient
             this.secureFeatureActivationService = new SecureFeatureActivationServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/SecureFeatureActivationService", clientId, clientLogDir));
             this.kdsService = new KdsServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/KdsService", clientId, clientLogDir));
             this.securityManagementService = new SecurityManagementServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/SecurityManagementService", clientId, clientLogDir));
-#if false
             this.secureCodingService = new SecureCodingServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/SecureCodingService", clientId, clientLogDir));
-#endif
             this.individualDataRestoreService = new IndividualDataRestoreServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/IndividualDataRestoreService", clientId, clientLogDir));
         }
 
@@ -226,6 +224,14 @@ namespace PsdzClient
             get
             {
                 return this.securityManagementService;
+            }
+        }
+
+        public ISecureCodingService SecureCodingService
+        {
+            get
+            {
+                return this.secureCodingService;
             }
         }
 

@@ -41,9 +41,9 @@ namespace PsdzClient
         ISecureFeatureActivationService SecureFeatureActivationService { get; }
 
 		ISecurityManagementService SecurityManagementService { get; }
-#if false
+
 		ISecureCodingService SecureCodingService { get; }
-#endif
+
 		IKdsService KdsService { get; }
 	}
 }
