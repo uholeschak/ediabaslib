@@ -73,7 +73,7 @@ namespace PsdzClient
     }
 
     //[AuthorAPI(SelectableTypeDeclaration = true)]
-    [Obsolete("Legacy Property, the ChassisType is retrieved from the Database and not used in test modules, thus it can be deleted.")]
+    //[Obsolete("Legacy Property, the ChassisType is retrieved from the Database and not used in test modules, thus it can be deleted.")]
     public enum ChassisType
     {
         LIM,

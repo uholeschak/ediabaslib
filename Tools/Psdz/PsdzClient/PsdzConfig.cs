@@ -6,11 +6,13 @@ using System.Text.RegularExpressions;
 
 namespace PsdzClient
 {
-    class PsdzConfig
+    public class PsdzConfig
     {
         public string PsdzServiceHostLogFilePath { get; }
 
         public string PsdzLogFilePath { get; }
+
+        public string ClientLogPath { get; private set; }
 
         public string HostPath { get; }
 
@@ -23,6 +25,7 @@ namespace PsdzClient
             string psdzHostSubDir = Environment.Is64BitOperatingSystem ? @"PSdZ\hostx64" : @"PSdZ\host";
             HostPath = Path.Combine(istaFolder, psdzHostSubDir);
             PsdzServiceHostLogDir = Path.Combine(istaFolder, @"logs\client");
+            ClientLogPath = PsdzServiceHostLogDir;
             PsdzServiceHostLogFilePath = Path.Combine(PsdzServiceHostLogDir, @"PsdzServiceHost.log");
             PsdzLogFilePath = Path.Combine(PsdzServiceHostLogDir, @"psdz.log");
             if (!Directory.Exists(PsdzServiceHostLogDir))

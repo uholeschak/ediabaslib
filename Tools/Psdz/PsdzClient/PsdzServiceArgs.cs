@@ -9,7 +9,7 @@ using System.Xml;
 
 namespace PsdzClient
 {
-    class PsdzServiceArgs
+    public class PsdzServiceArgs
     {
 		[DataMember]
 		public ClientConfigArgs ClientConfigArgs { get; set; }

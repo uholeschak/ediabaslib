@@ -4,8 +4,41 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PsdzClient
+namespace PsdzClient.Programming
 {
+    //[AuthorAPI(SelectableTypeDeclaration = true)]
+    public enum TaCategories
+    {
+        BlFlash,
+        CdDeploy,
+        FscBackup,
+        FscDeploy,
+        FscDeployPrehwd,
+        SFADeploy,
+        GatewayTableDeploy,
+        HddUpdate,
+        HwDeinstall,
+        HwInstall,
+        IbaDeploy,
+        IdBackup,
+        IdRestore,
+        SwDeploy,
+        Unknown,
+        IdDelete,
+        EcuActivate,
+        EcuPoll,
+        EcuMirrorDeploy
+    }
+
+    //[AuthorAPI(SelectableTypeDeclaration = true)]
+    public enum TalFilterOptions
+    {
+        Allowed,
+        Must,
+        MustNot,
+        Only
+    }
+
 	public interface IPsdzObjectBuilder
 	{
 		IPsdzDiagAddress BuildDiagAddress(int diagAddress);

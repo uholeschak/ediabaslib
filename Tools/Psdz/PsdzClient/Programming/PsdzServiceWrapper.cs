@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PsdzClient
+namespace PsdzClient.Programming
 {
 	public class PsdzServiceWrapper : IPsdz, IPsdzService, IPsdzInfo, IDisposable
 	{
@@ -71,40 +71,10 @@ namespace PsdzClient
 			}
 		}
 
-		public bool IsValidPsdzVersion
-		{
-			get
-			{
-				Log.Info("PsdzServiceWrapper.IsValidPsdzVersion()", "Check installed PSdZ-Version ...", Array.Empty<object>());
-				if (ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Programming.IgnorePsdzCheckAtOwnRisk", false))
-				{
-					Log.Info("PsdzServiceWrapper.IsValidPsdzVersion()", "PSdZ Version check was diabled at own risk", Array.Empty<object>());
-					Log.Info("PsdzServiceWrapper.IsValidPsdzVersion()", "Used PSdZ version:  {0}", new object[]
-					{
-						this.PsdzVersion
-					});
-					return true;
-				}
-				Log.Info("PsdzServiceWrapper.IsValidPsdzVersion()", "Expected: {0}", new object[]
-				{
-					this.ExpectedPsdzVersion
-				});
-				Log.Info("PsdzServiceWrapper.IsValidPsdzVersion()", "Current:  {0}", new object[]
-				{
-					this.PsdzVersion
-				});
-				if (!string.Equals(this.ExpectedPsdzVersion, this.PsdzVersion, StringComparison.Ordinal))
-				{
-					Log.Error("PsdzServiceWrapper.IsValidPsdzVersion()", "Installed PSdZ (ver. {0}) is invalid! You have to use PSdZ ver. {1}!", new object[]
-					{
-						this.PsdzVersion,
-						this.ExpectedPsdzVersion
-					});
-					return false;
-				}
-				return true;
-			}
-		}
+        public bool IsValidPsdzVersion
+        {
+            get { return true; }
+        }
 
 		public ILogService LogService
 		{
@@ -140,7 +110,7 @@ namespace PsdzClient
 			}
 		}
 
-		public BMW.Rheingold.Psdz.IProgrammingService ProgrammingService
+		public IProgrammingService ProgrammingService
 		{
 			get
 			{
@@ -277,7 +247,7 @@ namespace PsdzClient
 			}
 		}
 
-		public void StartHostIfNotRunning(IVehicle vehicle = null)
+		public bool StartHostIfNotRunning(IVehicle vehicle = null)
 		{
 			try
 			{
@@ -287,50 +257,27 @@ namespace PsdzClient
 				}
 				else
 				{
-					if (this.psdzServiceArgs.IsTestRun)
-					{
-						this.psdzServiceArgs.TestRunParams = this.BuildTestRunParams(vehicle);
-					}
-					Log.Info("PsdzServiceWrapper.StartHostIfNotRunning()", "Initialize PSdZ ...", Array.Empty<object>());
-					PsdzServiceStartResult psdzServiceStartResult = new PsdzServiceStarter(this.psdzHostPath, this.psdzServiceHostLogDir, this.psdzServiceArgs).StartIfNotRunning();
-					Log.Info("PsdzServiceWrapper.StartHostIfNotRunning()", "Result: {0}", new object[]
-					{
-						psdzServiceStartResult
-					});
+					PsdzServiceStarter.PsdzServiceStartResult psdzServiceStartResult = new PsdzServiceStarter(this.psdzHostPath, this.psdzServiceHostLogDir, this.psdzServiceArgs).StartIfNotRunning();
 					switch (psdzServiceStartResult)
 					{
-						case PsdzServiceStartResult.PsdzStillRunning:
-						case PsdzServiceStartResult.PsdzStartOk:
+						case PsdzServiceStarter.PsdzServiceStartResult.PsdzStillRunning:
+						case PsdzServiceStarter.PsdzServiceStartResult.PsdzStartOk:
 							this.DoSettingsForInitializedPsdz();
-							Log.Info("PsdzServiceWrapper.StartHostIfNotRunning()", "PSdZ initialized! Has valid version: {0}", new object[]
-							{
-							this.IsValidPsdzVersion
-							});
 							break;
 						default:
-							throw new AppException(new FormatedData("#PSdZNotStarted", Array.Empty<object>()));
-						case PsdzServiceStartResult.PsdzStartFailedMemError:
-							throw new AppException(new FormatedData("#PSdZNotStartedMemError", Array.Empty<object>()));
+                            return false;
+						case PsdzServiceStarter.PsdzServiceStartResult.PsdzStartFailedMemError:
+                            return false;
 					}
 				}
 			}
-			catch (AppException ex)
+			catch (Exception)
 			{
-				Log.Error("PsdzServiceWrapper.StartHostIfNotRunning()", "PSdZ could not be initialized: {0}", new object[]
-				{
-					ex
-				});
-				throw;
+                return false;
 			}
-			catch (Exception ex2)
-			{
-				Log.Error("PsdzServiceWrapper.StartHostIfNotRunning()", "PSdZ could not be initialized: {0}", new object[]
-				{
-					ex2
-				});
-				throw new AppException(new FormatedData("#PSdZNotStarted", Array.Empty<object>()));
-			}
-		}
+
+            return true;
+        }
 
 		public void DoInitSettings()
 		{
@@ -340,59 +287,38 @@ namespace PsdzClient
 			}
 		}
 
-		public void Shutdown()
+		public bool Shutdown()
 		{
 			try
 			{
 				if (this.IsPsdzInitialized)
 				{
 					this.CloseConnectionsToPsdzHost();
-					Log.Info("PsdzServiceWrapper.Shutdown()", "PSdZ host: Closed connections.", Array.Empty<object>());
 					this.ConnectionManagerService.RequestShutdown();
-					Log.Info("PsdzServiceWrapper.Shutdown()", "PSdZ host: Shutdown requested.", Array.Empty<object>());
 				}
 			}
-			catch (Exception exception)
-			{
-				Log.WarningException("PsdzServiceWrapper.Shutdown()", exception);
-			}
-		}
+			catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
 
 		private void DoSettingsForInitializedPsdz()
 		{
-			int configint = ConfigSettings.getConfigint("DebugLevel", 0);
-			if (configint > 0 && configint < 6)
-			{
-				this.psdzLoglevel = new PsdzLoglevel?((PsdzLoglevel)configint);
-			}
+            this.psdzLoglevel = PsdzLoglevel.DEBUG;
 			if (this.psdzLoglevel != null && !this.psdzServiceArgs.IsTestRun)
 			{
 				this.psdzServiceClient.LogService.SetLogLevel(this.psdzLoglevel.Value);
 			}
-			ProdiasLoglevel value;
-			if (Enum.TryParse<ProdiasLoglevel>(ConfigSettings.getConfigString("BMW.Rheingold.Programming.Prodias.LogLevel", null), out value))
-			{
-				this.prodiasLoglevel = new ProdiasLoglevel?(value);
-			}
+			this.prodiasLoglevel = ProdiasLoglevel.DEBUG;
 			if (this.prodiasLoglevel != null)
 			{
 				this.psdzServiceClient.ConnectionManagerService.SetProdiasLogLevel(this.prodiasLoglevel.Value);
 			}
 			this.ExpectedPsdzVersion = this.psdzServiceClient.ConfigurationService.GetExpectedPsdzVersion();
 			this.PsdzVersion = this.psdzServiceClient.ConfigurationService.GetPsdzVersion();
-		}
-
-		private TestRunParams BuildTestRunParams(IVehicle vehicle)
-		{
-			return new TestRunParams
-			{
-				StandardFa = this.ObjectBuilder.BuildFaActualFromVehicleContext(vehicle),
-				SvtCurrent = this.ObjectBuilder.BuildStandardSvtActualFromVehicleContext(vehicle, null),
-				IstufeCurrent = this.ObjectBuilder.BuildIstufe(vehicle.ILevel),
-				DurationTalLineExecution = 1000,
-				InitNoGeneratedTal = 0,
-				IncNoGeneratedTal = 1
-			};
 		}
 
 		private readonly PsdzServiceArgs psdzServiceArgs;

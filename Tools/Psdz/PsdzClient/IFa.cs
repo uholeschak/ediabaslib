@@ -1,35 +1,49 @@
-﻿using System;
+﻿using DevExpress.Xpo;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace PsdzClient
 {
     //[AuthorAPI(SelectableTypeDeclaration = true)]
-    public interface IFa
+    public interface IFa : INotifyPropertyChanged
     {
-        IList<string> EWords { get; set; }
+        bool AlreadyDone { get; }
 
-        string Entwicklungsbaureihe { get; set; }
+        string BR { get; }
 
-        int FaVersion { get; set; }
+        string C_DATE { get; }
 
-        IList<string> HOWords { get; }
+        DateTime? C_DATETIME { get; }
 
-        string Lackcode { get; set; }
+        IEnumerable<string> DealerInstalledSA { get; }
 
-        string Polstercode { get; set; }
+        IEnumerable<string> E_WORT { get; }
 
-        IList<string> Salapas { get; set; }
+        IEnumerable<string> HO_WORT { get; }
 
-        string Type { get; set; }
+        string LACK { get; }
 
-        string Zeitkriterium { get; set; }
+        string LACK_TEXT { get; }
 
-        IFa Clone();
+        string POLSTER { get; }
 
-        //[AuthorAPIHidden]
-        bool AreEqual(IFa vehicleOrder);
+        string POLSTER_TEXT { get; }
+
+        IEnumerable<string> SA { get; }
+
+        string STANDARD_FA { get; }
+
+        string TYPE { get; }
+
+        string VERSION { get; }
+
+        IEnumerable<string> ZUSBAU_WORT { get; }
+
+        ICollection<LocalizedSAItem> SaLocalizedItems { get; }
+
+        string ExtractEreihe();
+
+        string ExtractType();
     }
 }
