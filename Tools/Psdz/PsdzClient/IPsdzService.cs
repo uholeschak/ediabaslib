@@ -6,44 +6,44 @@ using System.Threading.Tasks;
 
 namespace PsdzClient
 {
-	public interface IPsdzService
-	{
-		IConfigurationService ConfigurationService { get; }
+    public interface IPsdzService
+    {
+        IConfigurationService ConfigurationService { get; }
 
         IConnectionFactoryService ConnectionFactoryService { get; }
 
-		IConnectionManagerService ConnectionManagerService { get; }
+        IConnectionManagerService ConnectionManagerService { get; }
 
         IEcuService EcuService { get; }
 
-		IEventManagerService EventManagerService { get; }
+        IEventManagerService EventManagerService { get; }
 
-		IIndividualDataRestoreService IndividualDataRestoreService { get; }
+        IIndividualDataRestoreService IndividualDataRestoreService { get; }
 
-		ILogService LogService { get; }
+        ILogService LogService { get; }
 
         ILogicService LogicService { get; }
 
-		IMacrosService MacrosService { get; }
+        IMacrosService MacrosService { get; }
 
-		IObjectBuilderService ObjectBuilderService { get; }
+        IObjectBuilderService ObjectBuilderService { get; }
 
-		IProgrammingService ProgrammingService { get; }
+        IProgrammingService ProgrammingService { get; }
 
-		ITalExecutionService TalExecutionService { get; }
+        ITalExecutionService TalExecutionService { get; }
 
-		IVcmService VcmService { get; }
+        IVcmService VcmService { get; }
 
-		ICbbTlsConfiguratorService CbbTlsConfiguratorService { get; }
+        ICbbTlsConfiguratorService CbbTlsConfiguratorService { get; }
 
-		ICertificateManagementService CertificateManagementService { get; }
+        ICertificateManagementService CertificateManagementService { get; }
 
         ISecureFeatureActivationService SecureFeatureActivationService { get; }
 
-		ISecurityManagementService SecurityManagementService { get; }
+        ISecurityManagementService SecurityManagementService { get; }
 
-		ISecureCodingService SecureCodingService { get; }
+        ISecureCodingService SecureCodingService { get; }
 
-		IKdsService KdsService { get; }
-	}
+        IKdsService KdsService { get; }
+    }
 }
