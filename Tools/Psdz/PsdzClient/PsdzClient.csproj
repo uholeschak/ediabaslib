@@ -55,6 +55,7 @@
     <Compile Include="ConfigurationServiceClient.cs" />
     <Compile Include="ConnectionFactoryServiceClient.cs" />
     <Compile Include="ConnectionManagerServiceClient.cs" />
+    <Compile Include="DealerSessionProperty.cs" />
     <Compile Include="EcuServiceClient.cs" />
     <Compile Include="FormMain.cs">
       <SubType>Form</SubType>
@@ -62,14 +63,33 @@
     <Compile Include="FormMain.Designer.cs">
       <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
+    <Compile Include="IAif.cs" />
+    <Compile Include="IBasicFeatures.cs" />
     <Compile Include="ICbbTlsConfiguratorService.cs" />
+    <Compile Include="ICbsInfo.cs" />
     <Compile Include="ICertificateManagementService.cs" />
     <Compile Include="IConfigurationService.cs" />
     <Compile Include="IConnectionFactoryService.cs" />
     <Compile Include="IConnectionManagerService.cs" />
+    <Compile Include="IDiagCode.cs" />
+    <Compile Include="IDtc.cs" />
+    <Compile Include="IDtcContext.cs" />
+    <Compile Include="IDtcUmwelt.cs" />
+    <Compile Include="IDtcUmweltDisplay.cs" />
+    <Compile Include="IEcu.cs" />
+    <Compile Include="IEcuDetailInfo.cs" />
+    <Compile Include="IEcuIdentifier.cs" />
+    <Compile Include="IEcuObj.cs" />
+    <Compile Include="IEcuPdxInfo.cs" />
     <Compile Include="IEcuService.cs" />
+    <Compile Include="IEcuStatusInfo.cs" />
+    <Compile Include="IEcuTransaction.cs" />
     <Compile Include="IEventManagerService.cs" />
+    <Compile Include="IFa.cs" />
+    <Compile Include="IFArtExt.cs" />
+    <Compile Include="IFfmResult.cs" />
     <Compile Include="IIndividualDataRestoreService.cs" />
+    <Compile Include="IJob.cs" />
     <Compile Include="IKdsService.cs" />
     <Compile Include="ILocalizableMessage.cs" />
     <Compile Include="ILocalizableMessageTo.cs" />
@@ -79,6 +99,7 @@
     <Compile Include="IndividualDataRestoreServiceClient.cs" />
     <Compile Include="IObjectBuilderService.cs" />
     <Compile Include="IProgrammingService.cs" />
+    <Compile Include="IPsdz.cs" />
     <Compile Include="IPsdzAsamJobInputDictionary.cs" />
     <Compile Include="IPsdzCalculatedNcdsEto.cs" />
     <Compile Include="IPsdzCalculationNcdResultCto.cs" />
@@ -113,6 +134,7 @@
     <Compile Include="IPsdzFetchCalculationSecureTokensResultCto.cs" />
     <Compile Include="IPsdzFp.cs" />
     <Compile Include="IPsdzFsaTa.cs" />
+    <Compile Include="IPsdzInfo.cs" />
     <Compile Include="IPsdzIstufe.cs" />
     <Compile Include="IPsdzIstufenTriple.cs" />
     <Compile Include="IPsdzKdsActionStatusResultCto.cs" />
@@ -127,6 +149,7 @@
     <Compile Include="IPsdzNcdCalculationRequestIdEto.cs" />
     <Compile Include="IPsdzObdData.cs" />
     <Compile Include="IPsdzObdTripleValue.cs" />
+    <Compile Include="IPsdzObjectBuilder.cs" />
     <Compile Include="IPsdzOrderList.cs" />
     <Compile Include="IPsdzOrderPart.cs" />
     <Compile Include="IPsdzPerformQuickKdsCheckResultCto.cs" />
@@ -173,11 +196,30 @@
     <Compile Include="IPsdzTransactionProgressEvent.cs" />
     <Compile Include="IPsdzValidityConditionCto.cs" />
     <Compile Include="IPsdzVin.cs" />
+    <Compile Include="IRoadsideAssistanceCause.cs" />
     <Compile Include="ISecureCodingService.cs" />
     <Compile Include="ISecureFeatureActivationService.cs" />
     <Compile Include="ISecurityManagementService.cs" />
+    <Compile Include="IServiceHistoryEntry.cs" />
+    <Compile Include="ISettlement.cs" />
+    <Compile Include="ISgbmId.cs" />
+    <Compile Include="IStandardSvk.cs" />
+    <Compile Include="ISvk.cs" />
+    <Compile Include="ISvt.cs" />
+    <Compile Include="ISwt.cs" />
+    <Compile Include="ISwtApplication.cs" />
+    <Compile Include="ISwtApplicationId.cs" />
+    <Compile Include="ISwtApplicationReport.cs" />
+    <Compile Include="ISwtEcu.cs" />
+    <Compile Include="ISwtStatus.cs" />
     <Compile Include="ITalExecutionService.cs" />
+    <Compile Include="ITechnicalCampaign.cs" />
+    <Compile Include="IVciDevice.cs" />
     <Compile Include="IVcmService.cs" />
+    <Compile Include="IVehicle.cs" />
+    <Compile Include="IVehicleProfile.cs" />
+    <Compile Include="IVehicleProfileCriterion.cs" />
+    <Compile Include="IZfsResult.cs" />
     <Compile Include="KdsServiceClient.cs" />
     <Compile Include="LogicServiceClient.cs" />
     <Compile Include="LogServiceClient.cs" />
@@ -296,6 +338,7 @@
     <Compile Include="PsdzServiceArgs.cs" />
     <Compile Include="PsdzServiceClient.cs" />
     <Compile Include="PsdzServiceStarter.cs" />
+    <Compile Include="PsdzServiceWrapper.cs" />
     <Compile Include="PsdzSFADeleteTA.cs" />
     <Compile Include="PsdzSFADeploy.cs" />
     <Compile Include="PsdzSFAVerifyTA.cs" />
