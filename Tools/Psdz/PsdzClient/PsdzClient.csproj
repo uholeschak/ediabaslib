@@ -122,6 +122,7 @@
     <Compile Include="IPsdzOrderPart.cs" />
     <Compile Include="IPsdzPerformQuickKdsCheckResultCto.cs" />
     <Compile Include="IPsdzProgressListener.cs" />
+    <Compile Include="IPsdzReadEcuUidResultCto.cs" />
     <Compile Include="IPsdzReadLcsResultCto.cs" />
     <Compile Include="IPsdzReadPublicKeyResultCto.cs" />
     <Compile Include="IPsdzReadSecureEcuModeResultCto.cs" />
@@ -159,6 +160,7 @@
     <Compile Include="IPsdzValidityConditionCto.cs" />
     <Compile Include="IPsdzVin.cs" />
     <Compile Include="ISecureFeatureActivationService.cs" />
+    <Compile Include="ISecurityManagementService.cs" />
     <Compile Include="ITalExecutionService.cs" />
     <Compile Include="IVcmService.cs" />
     <Compile Include="KdsServiceClient.cs" />
@@ -248,6 +250,7 @@
     <Compile Include="PsdzProgressEvent.cs" />
     <Compile Include="PsdzProgressListenerDispatcher.cs" />
     <Compile Include="PsdzReadCertMemoryObjectResult.cs" />
+    <Compile Include="PsdzReadEcuUidResultCto.cs" />
     <Compile Include="PsdzReadLcsResultCto.cs" />
     <Compile Include="PsdzReadPublicKeyResultCto.cs" />
     <Compile Include="PsdzReadSecureEcuModeResultCto.cs" />
@@ -300,6 +303,7 @@
     <Compile Include="PsdzValidityConditionCto.cs" />
     <Compile Include="PsdzVin.cs" />
     <Compile Include="SecureFeatureActivationServiceClient.cs" />
+    <Compile Include="SecurityManagementServiceClient.cs" />
     <Compile Include="TalExecutionServiceClient.cs" />
     <Compile Include="TalExecutionSettings.cs" />
     <Compile Include="VcmServiceClient.cs" />
