@@ -47,9 +47,9 @@ namespace PsdzClient
 		private readonly SecurityManagementServiceClient securityManagementService;
 
 		private readonly SecureCodingServiceClient secureCodingService;
-
-		private readonly KdsServiceClient kdsService;
 #endif
+		private readonly KdsServiceClient kdsService;
+
         public PsdzServiceClient(string clientLogDir)
 		{
 			NetNamedPipeBinding netNamedPipeBinding = new NetNamedPipeBinding
@@ -74,9 +74,9 @@ namespace PsdzClient
             this.cbbTlsConfiguratorService = new CbbTlsConfiguratorServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/CbbTlsConfiguratorService", clientId, clientLogDir));
             this.certificateManagementService = new CertificateManagementServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/CertificateManagementService", clientId, clientLogDir));
             this.secureFeatureActivationService = new SecureFeatureActivationServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/SecureFeatureActivationService", clientId, clientLogDir));
-#if false
             this.kdsService = new KdsServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/KdsService", clientId, clientLogDir));
-			this.securityManagementService = new SecurityManagementServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/SecurityManagementService", clientId, clientLogDir));
+#if false
+            this.securityManagementService = new SecurityManagementServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/SecurityManagementService", clientId, clientLogDir));
 			this.secureCodingService = new SecureCodingServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/SecureCodingService", clientId, clientLogDir));
 #endif
             this.individualDataRestoreService = new IndividualDataRestoreServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/IndividualDataRestoreService", clientId, clientLogDir));
@@ -210,6 +210,14 @@ namespace PsdzClient
             get
             {
                 return this.secureFeatureActivationService;
+            }
+        }
+
+        public IKdsService KdsService
+        {
+            get
+            {
+                return this.kdsService;
             }
         }
 

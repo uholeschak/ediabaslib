@@ -43,8 +43,7 @@ namespace PsdzClient
 		ISecurityManagementService SecurityManagementService { get; }
 
 		ISecureCodingService SecureCodingService { get; }
-
-		IKdsService KdsService { get; }
 #endif
+		IKdsService KdsService { get; }
 	}
 }
