@@ -41,9 +41,9 @@ namespace PsdzClient
 		private readonly ICertificateManagementService certificateManagementService;
 
         private readonly IndividualDataRestoreServiceClient individualDataRestoreService;
-#if false
-        private readonly SecureFeatureActivationServiceClient secureFeatureActivationService;
 
+        private readonly SecureFeatureActivationServiceClient secureFeatureActivationService;
+#if false
 		private readonly SecurityManagementServiceClient securityManagementService;
 
 		private readonly SecureCodingServiceClient secureCodingService;
@@ -73,9 +73,9 @@ namespace PsdzClient
             this.macrosService = new MacrosServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/MacrosService", clientId, clientLogDir));
             this.cbbTlsConfiguratorService = new CbbTlsConfiguratorServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/CbbTlsConfiguratorService", clientId, clientLogDir));
             this.certificateManagementService = new CertificateManagementServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/CertificateManagementService", clientId, clientLogDir));
+            this.secureFeatureActivationService = new SecureFeatureActivationServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/SecureFeatureActivationService", clientId, clientLogDir));
 #if false
-this.secureFeatureActivationService = new SecureFeatureActivationServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/SecureFeatureActivationService", clientId, clientLogDir));
-			this.kdsService = new KdsServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/KdsService", clientId, clientLogDir));
+            this.kdsService = new KdsServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/KdsService", clientId, clientLogDir));
 			this.securityManagementService = new SecurityManagementServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/SecurityManagementService", clientId, clientLogDir));
 			this.secureCodingService = new SecureCodingServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/SecureCodingService", clientId, clientLogDir));
 #endif
@@ -202,6 +202,14 @@ this.secureFeatureActivationService = new SecureFeatureActivationServiceClient(t
             get
             {
                 return this.individualDataRestoreService;
+            }
+        }
+
+        public ISecureFeatureActivationService SecureFeatureActivationService
+        {
+            get
+            {
+                return this.secureFeatureActivationService;
             }
         }
 

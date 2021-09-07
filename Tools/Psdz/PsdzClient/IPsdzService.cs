@@ -37,9 +37,9 @@ namespace PsdzClient
 		ICbbTlsConfiguratorService CbbTlsConfiguratorService { get; }
 
 		ICertificateManagementService CertificateManagementService { get; }
-#if false
-        ISecureFeatureActivationService SecureFeatureActivationService { get; }
 
+        ISecureFeatureActivationService SecureFeatureActivationService { get; }
+#if false
 		ISecurityManagementService SecurityManagementService { get; }
 
 		ISecureCodingService SecureCodingService { get; }
