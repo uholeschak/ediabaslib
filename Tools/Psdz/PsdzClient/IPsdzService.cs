@@ -28,7 +28,7 @@ namespace PsdzClient
 
         IObjectBuilderService ObjectBuilderService { get; }
 
-        IProgrammingService ProgrammingService { get; }
+        Psdz.IProgrammingService ProgrammingService { get; }
 
         ITalExecutionService TalExecutionService { get; }
 

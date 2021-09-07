@@ -110,7 +110,7 @@ namespace PsdzClient.Programming
 			}
 		}
 
-		public IProgrammingService ProgrammingService
+		public Psdz.IProgrammingService ProgrammingService
 		{
 			get
 			{

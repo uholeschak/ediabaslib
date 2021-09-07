@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PsdzClient.Programming
+namespace PsdzClient.Contracts
 {
     //[AuthorAPI(SelectableTypeDeclaration = true)]
-    public interface ICertType
+    public interface IFscType
     {
         string Code { get; set; }
 
-        string Serial { get; set; }
+        string Id { get; set; }
 
         string Value { get; set; }
 

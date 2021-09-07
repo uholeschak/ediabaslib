@@ -7,14 +7,12 @@ using System.Threading.Tasks;
 namespace PsdzClient.Programming
 {
     //[AuthorAPI(SelectableTypeDeclaration = true)]
-    public interface IFscType
+    public interface IIstufenTriple
     {
-        string Code { get; set; }
+        string Current { get; }
 
-        string Id { get; set; }
+        string Last { get; }
 
-        string Value { get; set; }
-
-        byte[] GetBinaryValue();
+        string Shipment { get; }
     }
 }

@@ -6,7 +6,7 @@ using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PsdzClient
+namespace PsdzClient.Psdz
 {
 	class ProgrammingServiceClient : PsdzClientBase<IProgrammingService>, IProgrammingService
 	{
