@@ -90,7 +90,7 @@
     <Compile Include="Vehicle\IEcu.cs" />
     <Compile Include="IEcuDetailInfo.cs" />
     <Compile Include="IEcuIdentifier.cs" />
-    <Compile Include="IEcuObj.cs" />
+    <Compile Include="Programming\IEcuObj.cs" />
     <Compile Include="IEcuPdxInfo.cs" />
     <Compile Include="IEcuService.cs" />
     <Compile Include="IEcuStatusInfo.cs" />
@@ -220,7 +220,7 @@
     <Compile Include="ISgbmId.cs" />
     <Compile Include="IStandardSvk.cs" />
     <Compile Include="ISvk.cs" />
-    <Compile Include="ISvt.cs" />
+    <Compile Include="Programming\ISvt.cs" />
     <Compile Include="ISwt.cs" />
     <Compile Include="ISwtApplication.cs" />
     <Compile Include="ISwtApplicationId.cs" />
