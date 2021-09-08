@@ -7,10 +7,11 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using PsdzClient.Contracts;
+using PsdzClient.Programming;
 
-namespace PsdzClient.Programming
+namespace PsdzClient.Psdz
 {
-	internal class PsdzObjectBuilder : IPsdzObjectBuilder
+	class PsdzObjectBuilder : IPsdzObjectBuilder
 	{
 		public PsdzObjectBuilder(IObjectBuilderService objectBuilderService)
 		{
@@ -138,7 +139,7 @@ namespace PsdzClient.Programming
 			return this.ValidateBuiltFaObjectViaPsdz(fa);
 		}
 
-		public IPsdzFa BuildFa(IFa faInput, string vin17)
+		public IPsdzFa BuildFa(Programming.IFa faInput, string vin17)
 		{
 			if (faInput == null)
 			{
@@ -165,7 +166,7 @@ namespace PsdzClient.Programming
 			return this.objectBuilderService.BuildFaFromXml(xml);
 		}
 
-		public IPsdzStandardFa BuildFaActualFromVehicleContext(IVehicle vehicleContext)
+		public IPsdzStandardFa BuildFaActualFromVehicleContext(Vehicle.IVehicle vehicleContext)
 		{
 			MethodBase currentMethod = MethodBase.GetCurrentMethod();
 			IPsdzStandardFa result;
@@ -225,7 +226,7 @@ namespace PsdzClient.Programming
 			};
 		}
 
-		public IPsdzIstufenTriple BuildIStufenTripleActualFromVehicleContext(IVehicle vehicleContext)
+		public IPsdzIstufenTriple BuildIStufenTripleActualFromVehicleContext(Vehicle.IVehicle vehicleContext)
 		{
 			string ilevelWerk = vehicleContext.ILevelWerk;
 			string ilevel = vehicleContext.ILevel;
@@ -252,7 +253,7 @@ namespace PsdzClient.Programming
 			};
 		}
 
-		public IPsdzStandardSvt BuildStandardSvtActualFromVehicleContext(IVehicle vehicleContext, IEnumerable<IPsdzEcuIdentifier> ecuListFromPsdz = null)
+		public IPsdzStandardSvt BuildStandardSvtActualFromVehicleContext(Vehicle.IVehicle vehicleContext, IEnumerable<IPsdzEcuIdentifier> ecuListFromPsdz = null)
 		{
 			MethodBase currentMethod = MethodBase.GetCurrentMethod();
 			IPsdzStandardSvt result;

@@ -96,7 +96,7 @@
     <Compile Include="IEcuStatusInfo.cs" />
     <Compile Include="IEcuTransaction.cs" />
     <Compile Include="IEventManagerService.cs" />
-    <Compile Include="IFa.cs" />
+    <Compile Include="Vehicle\IFa.cs" />
     <Compile Include="LocalizedSAItem.cs" />
     <Compile Include="Programming\BusEnumMapper.cs" />
     <Compile Include="Programming\FscCertificateStateEnumMapper.cs" />
@@ -231,7 +231,7 @@
     <Compile Include="ITechnicalCampaign.cs" />
     <Compile Include="IVciDevice.cs" />
     <Compile Include="IVcmService.cs" />
-    <Compile Include="IVehicle.cs" />
+    <Compile Include="Vehicle\IVehicle.cs" />
     <Compile Include="IVehicleProfile.cs" />
     <Compile Include="IVehicleProfileCriterion.cs" />
     <Compile Include="IZfsResult.cs" />
@@ -258,7 +258,7 @@
     <Compile Include="Programming\ISwIdType.cs" />
     <Compile Include="Programming\IValidityCondition.cs" />
     <Compile Include="Programming\ProgrammingEnumMapperBase.cs" />
-    <Compile Include="Programming\PsdzObjectBuilder.cs" />
+    <Compile Include="Psdz\PsdzObjectBuilder.cs" />
     <Compile Include="Programming\PsdzServiceWrapper.cs" />
     <Compile Include="Programming\RootCertificateStateEnumMapper.cs" />
     <Compile Include="Programming\SoftwareSigStateEnumMapper.cs" />

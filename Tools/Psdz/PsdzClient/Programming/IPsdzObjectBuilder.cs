@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PsdzClient.Contracts;
+using PsdzClient.Vehicle;
 
 namespace PsdzClient.Programming
 {
@@ -54,7 +55,7 @@ namespace PsdzClient.Programming
 
 		IPsdzFa BuildEmptyFa();
 
-		IPsdzFa BuildFa(IFa fa, string vin17);
+		IPsdzFa BuildFa(Programming.IFa fa, string vin17);
 
 		IPsdzFa BuildFa(IPsdzStandardFa fa, string vin17);
 

@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace PsdzClient
+namespace PsdzClient.Vehicle
 {
     //[AuthorAPI(SelectableTypeDeclaration = true)]
     public enum BNMixed
