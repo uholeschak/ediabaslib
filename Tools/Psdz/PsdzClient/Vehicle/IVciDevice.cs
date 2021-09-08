@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using PsdzClient.Core;
 
-namespace PsdzClient
+namespace PsdzClient.Vehicle
 {
     public enum VCIReservationType
     {
@@ -16,7 +16,7 @@ namespace PsdzClient
         UNKNOWN
     }
 
-    //[AuthorAPI(SelectableTypeDeclaration = true)]
+    [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum VCIDeviceType
     {
         ENET,

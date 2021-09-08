@@ -4,10 +4,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PsdzClient.Core;
 
-namespace PsdzClient
+namespace PsdzClient.Vehicle
 {
-    //[AuthorAPI(SelectableTypeDeclaration = true)]
+    [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum technicalCampaignTypeState
     {
         open,
@@ -15,7 +16,7 @@ namespace PsdzClient
         closed
     }
 
-    //[AuthorAPI(SelectableTypeDeclaration = true)]
+    [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum typeTechnicalCampaignRecallType
     {
         NONE,
@@ -24,7 +25,7 @@ namespace PsdzClient
         NONCOMPLIANT
     }
 
-    //[AuthorAPI(SelectableTypeDeclaration = true)]
+    [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface ITechnicalCampaign : INotifyPropertyChanged
     {
         string description { get; }

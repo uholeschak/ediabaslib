@@ -2,10 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using PsdzClient.Core;
 
-namespace PsdzClient
+namespace PsdzClient.Vehicle
 {
-    //[AuthorAPI(SelectableTypeDeclaration = true)]
+    [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IFa : INotifyPropertyChanged
     {
         bool AlreadyDone { get; }

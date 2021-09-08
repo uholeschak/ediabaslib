@@ -5,7 +5,7 @@ using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PsdzClient
+namespace PsdzClient.Psdz
 {
     [ServiceContract(SessionMode = SessionMode.Required)]
     public interface ICbbTlsConfiguratorService

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using PsdzClient.Core;
 
-namespace PsdzClient
+namespace PsdzClient.Vehicle
 {
     [AuthorAPI(SelectableTypeDeclaration = false)]
     public interface IFfmResult : INotifyPropertyChanged

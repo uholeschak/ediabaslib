@@ -2,7 +2,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace PsdzClient
+namespace PsdzClient.Vehicle
 {
     [DataContract]
     public class LocalizedSAItem

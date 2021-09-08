@@ -6,17 +6,15 @@ using System.Text;
 using System.Threading.Tasks;
 using PsdzClient.Core;
 
-namespace PsdzClient
+namespace PsdzClient.Vehicle
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
-    public interface IRoadsideAssistanceCause : INotifyPropertyChanged
+    public interface IJob : INotifyPropertyChanged
     {
-        uint? Cause { get; }
+        IEnumerable<string> jobArguments { get; }
 
-        uint? TowedAway { get; }
+        string jobName { get; set; }
 
-        uint? Repaired { get; }
-
-        uint? Completed { get; }
+        IEnumerable<string> jobResults { get; }
     }
 }

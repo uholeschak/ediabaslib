@@ -4,10 +4,12 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PsdzClient.Core;
+using PsdzClient.Programming;
 
 namespace PsdzClient.Vehicle
 {
-    //[AuthorAPI(SelectableTypeDeclaration = true)]
+    [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum BusType
     {
         ROOT,
@@ -53,7 +55,7 @@ namespace PsdzClient.Vehicle
         UNKNOWN
     }
 
-    //[AuthorAPI(SelectableTypeDeclaration = true)]
+    [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum typeDiagProtocoll
     {
         UDS,
@@ -62,7 +64,7 @@ namespace PsdzClient.Vehicle
         UNKNOWN
     }
 
-	//[AuthorAPI(SelectableTypeDeclaration = true)]
+	[AuthorAPI(SelectableTypeDeclaration = true)]
 	public interface IEcu : INotifyPropertyChanged
 	{
 		string ProgrammingVariantName { get; set; }
