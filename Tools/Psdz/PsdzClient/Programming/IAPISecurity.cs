@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PsdzClient.Contracts;
+using PsdzClient.Core;
 
 namespace PsdzClient.Programming
 {
-	//[AuthorAPI(SelectableTypeDeclaration = true)]
+	[AuthorAPI(SelectableTypeDeclaration = true)]
 	public interface IAPISecurity
 	{
 		string GetRefurbishFSCFromWebService(string appNo, string upIdx);
