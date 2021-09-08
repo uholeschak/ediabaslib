@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PsdzClient
+namespace PsdzClient.Vehicle
 {
     [DataContract]
     public class DealerSessionProperty

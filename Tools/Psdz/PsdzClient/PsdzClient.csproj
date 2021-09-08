@@ -54,7 +54,7 @@
     <Compile Include="Core\AuthorAPIAttribute.cs" />
     <Compile Include="Psdz\CbbTlsConfiguratorServiceClient.cs" />
     <Compile Include="Psdz\CertificateManagementServiceClient.cs" />
-    <Compile Include="ClientConfigArgs.cs" />
+    <Compile Include="Psdz\ClientConfigArgs.cs" />
     <Compile Include="Psdz\ConfigurationServiceClient.cs" />
     <Compile Include="Psdz\ConnectionFactoryServiceClient.cs" />
     <Compile Include="Psdz\ConnectionManagerServiceClient.cs" />
@@ -62,7 +62,7 @@
     <Compile Include="Contracts\IBoolResultObject.cs" />
     <Compile Include="Contracts\IFeatureStatusResult.cs" />
     <Compile Include="Contracts\INavFSCProvided.cs" />
-    <Compile Include="DealerSessionProperty.cs" />
+    <Compile Include="Vehicle\DealerSessionProperty.cs" />
     <Compile Include="Psdz\EcuServiceClient.cs" />
     <Compile Include="Programming\IAPISecurity.cs" />
     <Compile Include="Programming\IIstufenTriple.cs" />
