@@ -4,10 +4,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PsdzClient.Core;
 
 namespace PsdzClient
 {
-    //[AuthorAPI(SelectableTypeDeclaration = true)]
+    [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum typeCBSMeaurementType
     {
         MotorOil,
@@ -28,7 +29,7 @@ namespace PsdzClient
         Unknown
     }
 
-    //[AuthorAPI(SelectableTypeDeclaration = true)]
+    [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum typeCBSVersion
     {
         CBS13,
@@ -37,7 +38,7 @@ namespace PsdzClient
         UNKNOWN
     }
 
-    //[AuthorAPI(SelectableTypeDeclaration = true)]
+    [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface ICbsInfo : INotifyPropertyChanged
     {
         string AVAI_CBS_EINH { get; }

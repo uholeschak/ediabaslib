@@ -4,10 +4,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PsdzClient.Core;
 
 namespace PsdzClient
 {
-    //[AuthorAPI(SelectableTypeDeclaration = true)]
+    [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum StateType
     {
         stopped,
@@ -18,7 +19,7 @@ namespace PsdzClient
         idle
     }
 
-    //[AuthorAPI(SelectableTypeDeclaration = false)]
+    [AuthorAPI(SelectableTypeDeclaration = false)]
     public interface IEcuTransaction : INotifyPropertyChanged
     {
         DateTime? transactionEnd { get; }

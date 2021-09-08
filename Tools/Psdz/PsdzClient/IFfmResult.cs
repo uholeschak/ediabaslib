@@ -4,10 +4,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PsdzClient.Core;
 
 namespace PsdzClient
 {
-    //[AuthorAPI(SelectableTypeDeclaration = false)]
+    [AuthorAPI(SelectableTypeDeclaration = false)]
     public interface IFfmResult : INotifyPropertyChanged
     {
         string Evaluation { get; }

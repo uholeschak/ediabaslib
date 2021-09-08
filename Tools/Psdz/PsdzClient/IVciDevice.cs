@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PsdzClient.Core;
 
 namespace PsdzClient
 {
@@ -32,7 +33,7 @@ namespace PsdzClient
         UNKNOWN
     }
 
-	//[AuthorAPI(SelectableTypeDeclaration = true)]
+	[AuthorAPI(SelectableTypeDeclaration = true)]
 	public interface IVciDevice : INotifyPropertyChanged
 	{
 		string AccuCapacity { get; }

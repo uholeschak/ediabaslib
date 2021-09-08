@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\AuthorAPIAttribute.cs" />
     <Compile Include="Psdz\CbbTlsConfiguratorServiceClient.cs" />
     <Compile Include="Psdz\CertificateManagementServiceClient.cs" />
     <Compile Include="ClientConfigArgs.cs" />
