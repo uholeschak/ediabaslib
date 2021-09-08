@@ -74,7 +74,7 @@
     <Compile Include="FormMain.Designer.cs">
       <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="IAif.cs" />
+    <Compile Include="Vehicle\IAif.cs" />
     <Compile Include="IBasicFeatures.cs" />
     <Compile Include="ICbbTlsConfiguratorService.cs" />
     <Compile Include="ICbsInfo.cs" />
@@ -87,7 +87,7 @@
     <Compile Include="IDtcContext.cs" />
     <Compile Include="IDtcUmwelt.cs" />
     <Compile Include="IDtcUmweltDisplay.cs" />
-    <Compile Include="IEcu.cs" />
+    <Compile Include="Vehicle\IEcu.cs" />
     <Compile Include="IEcuDetailInfo.cs" />
     <Compile Include="IEcuIdentifier.cs" />
     <Compile Include="IEcuObj.cs" />

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PsdzClient
+namespace PsdzClient.Vehicle
 {
     //[AuthorAPI(SelectableTypeDeclaration = true)]
     public enum BusType
