@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PsdzClient.Psdz
+{
+    public interface IPsdzEcuStatusInfo
+    {
+        byte ByteValue { get; }
+
+        bool HasIndividualData { get; }
+    }
+}

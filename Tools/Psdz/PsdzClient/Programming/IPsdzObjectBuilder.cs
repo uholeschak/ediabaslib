@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PsdzClient.Contracts;
+using PsdzClient.Psdz;
 using PsdzClient.Vehicle;
 
 namespace PsdzClient.Programming
