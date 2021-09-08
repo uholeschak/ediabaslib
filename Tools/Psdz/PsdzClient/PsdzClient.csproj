@@ -83,10 +83,10 @@
     <Compile Include="IConnectionFactoryService.cs" />
     <Compile Include="IConnectionManagerService.cs" />
     <Compile Include="IDiagCode.cs" />
-    <Compile Include="IDtc.cs" />
-    <Compile Include="IDtcContext.cs" />
-    <Compile Include="IDtcUmwelt.cs" />
-    <Compile Include="IDtcUmweltDisplay.cs" />
+    <Compile Include="Vehicle\IDtc.cs" />
+    <Compile Include="Vehicle\IDtcContext.cs" />
+    <Compile Include="Vehicle\IDtcUmwelt.cs" />
+    <Compile Include="Vehicle\IDtcUmweltDisplay.cs" />
     <Compile Include="Vehicle\IEcu.cs" />
     <Compile Include="IEcuDetailInfo.cs" />
     <Compile Include="IEcuIdentifier.cs" />
