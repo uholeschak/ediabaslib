@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PsdzClient.Core;
 
-namespace PsdzClient
+namespace PsdzClient.Programming
 {
-    //[AuthorAPI(SelectableTypeDeclaration = true)]
+    [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum FscCertificateState
     {
         Accepted,
@@ -16,7 +17,7 @@ namespace PsdzClient
         Rejected
     }
 
-    //[AuthorAPI(SelectableTypeDeclaration = true)]
+    [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum SwtActionType
     {
         ActivateStore,
@@ -27,7 +28,7 @@ namespace PsdzClient
         WriteVin
     }
 
-    //[AuthorAPI(SelectableTypeDeclaration = true)]
+    [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum SwtType
     {
         Full,
@@ -38,7 +39,7 @@ namespace PsdzClient
         Unknown
     }
 
-    //[AuthorAPI(SelectableTypeDeclaration = true)]
+    [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface ISwtApplication : ISwtApplicationReport
     {
         byte[] Fsc { get; }

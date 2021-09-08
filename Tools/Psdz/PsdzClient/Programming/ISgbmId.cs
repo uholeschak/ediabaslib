@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PsdzClient.Core;
 
-namespace PsdzClient
+namespace PsdzClient.Programming
 {
-    //[AuthorAPI(SelectableTypeDeclaration = true)]
+    [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface ISgbmId : IComparable<ISgbmId>, IEquatable<ISgbmId>
     {
         long Id { get; }
