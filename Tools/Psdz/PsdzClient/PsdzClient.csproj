@@ -88,8 +88,8 @@
     <Compile Include="Vehicle\IDtcUmwelt.cs" />
     <Compile Include="Vehicle\IDtcUmweltDisplay.cs" />
     <Compile Include="Vehicle\IEcu.cs" />
-    <Compile Include="IEcuDetailInfo.cs" />
-    <Compile Include="IEcuIdentifier.cs" />
+    <Compile Include="Programming\IEcuDetailInfo.cs" />
+    <Compile Include="Programming\IEcuIdentifier.cs" />
     <Compile Include="Programming\IEcuObj.cs" />
     <Compile Include="IEcuPdxInfo.cs" />
     <Compile Include="IEcuService.cs" />
@@ -221,11 +221,11 @@
     <Compile Include="IStandardSvk.cs" />
     <Compile Include="ISvk.cs" />
     <Compile Include="Programming\ISvt.cs" />
-    <Compile Include="ISwt.cs" />
+    <Compile Include="Programming\ISwt.cs" />
     <Compile Include="ISwtApplication.cs" />
     <Compile Include="ISwtApplicationId.cs" />
     <Compile Include="ISwtApplicationReport.cs" />
-    <Compile Include="ISwtEcu.cs" />
+    <Compile Include="Programming\ISwtEcu.cs" />
     <Compile Include="ISwtStatus.cs" />
     <Compile Include="ITalExecutionService.cs" />
     <Compile Include="ITechnicalCampaign.cs" />
