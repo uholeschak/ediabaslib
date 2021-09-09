@@ -33,8 +33,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DevExpress.Data.v18.1, Version=18.1.12.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Xpo.v18.1, Version=18.1.12.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management" />
@@ -52,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\AuthorAPIAttribute.cs" />
+    <Compile Include="Programming\IProgrammingTask.cs" />
     <Compile Include="Psdz\CbbTlsConfiguratorServiceClient.cs" />
     <Compile Include="Psdz\CertificateManagementServiceClient.cs" />
     <Compile Include="Psdz\ClientConfigArgs.cs" />
@@ -64,7 +63,6 @@
     <Compile Include="Contracts\INavFSCProvided.cs" />
     <Compile Include="Vehicle\DealerSessionProperty.cs" />
     <Compile Include="Psdz\EcuServiceClient.cs" />
-    <Compile Include="Programming\IAPISecurity.cs" />
     <Compile Include="Programming\IIstufenTriple.cs" />
     <Compile Include="Programming\IProgrammingApi.cs" />
     <Compile Include="Programming\IProgrammingObjectBuilder.cs" />

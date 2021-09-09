@@ -1,53 +1,146 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using PsdzClient.Psdz;
+using PsdzClient.Vehicle;
 
 namespace PsdzClient.Programming
 {
-    class ProgrammingService
-    {
-        private readonly PsdzConfig psdzConfig;
+	public class ProgrammingService
+	{
+		public ProgrammingService(string istaFolder, string dealerId)
+		{
+			this.psdzConfig = new PsdzConfig(istaFolder, dealerId);
+			this.psdz = new PsdzServiceWrapper(this.psdzConfig);
+			ProgrammingService.PreparePsdzBackupDataPath(istaFolder);
+		}
 
-        private readonly PsdzServiceStarter pdszService;
+		public bool CollectPsdzLog(string targetLogFilePath)
+		{
+			if (!this.psdz.IsPsdzInitialized)
+			{
+				return false;
+			}
+			string text = this.psdz.LogService.ClosePsdzLog();
+			if (!string.IsNullOrEmpty(text) && !string.IsNullOrEmpty(targetLogFilePath))
+			{
+				bool flag = false;
+				try
+				{
+					File.Move(text, targetLogFilePath);
+					flag = true;
+				}
+				catch (Exception)
+				{
+					//Log.WarningException("ProgrammingService.CollectPsdzLog", exception);
+				}
+				if (!flag)
+				{
+					File.Copy(text, targetLogFilePath, true);
+				}
+				return true;
+			}
+			return false;
+		}
 
-        public ProgrammingService(string istaFolder, string dealerId)
-        {
-            psdzConfig = new PsdzConfig(istaFolder, dealerId);
-            pdszService = new PsdzServiceStarter(psdzConfig.HostPath, psdzConfig.PsdzServiceHostLogDir, psdzConfig.PsdzServiceArgs);
-        }
+		public void SetLogLevelToMax()
+		{
+			this.psdz.SetLogLevel(PsdzLoglevel.TRACE, ProdiasLoglevel.INFO);
+		}
 
-        private bool StartPsdzServiceHost()
-        {
-            PsdzServiceStarter.PsdzServiceStartResult psdzServiceStartResult = pdszService.StartIfNotRunning();
-            switch (psdzServiceStartResult)
+		public void SetLogLevelToNormal()
+		{
+			this.psdz.SetLogLevel(PsdzLoglevel.FINE, ProdiasLoglevel.ERROR);
+		}
+#if false
+		public IProgrammingSessionExt Start(ProgrammingParam programmingParam)
+		{
+			this.StartPsdzServiceHost(programmingParam.Vehicle);
+			ProgrammingSession programmingSession = new ProgrammingSession(this.psdz, programmingParam, this.programmingWorker);
+			IFscValidationService fscValidationService = this.InitializeFscValidationService(programmingParam.FscValidationConfig);
+			programmingSession.FscValidationService = fscValidationService;
+			programmingSession.Start();
+			return programmingSession;
+		}
+
+		public FcFnActivationResult StoreAndActivateFcFn(IVehicle vehicle, int appNo, int upgradeIdx, byte[] fsc, IEcuKom ecuKom)
+		{
+			FscService fscService = new FscService();
+			this.StartPsdzServiceHost(vehicle);
+			return fscService.StoreAndActivateFcFn(this.psdz, vehicle, appNo, upgradeIdx, fsc, ecuKom, this.programmingWorker);
+		}
+#endif
+		public void CloseConnectionsToPsdzHost()
+		{
+			try
+			{
+				this.psdz.CloseConnectionsToPsdzHost();
+			}
+			catch (Exception)
+			{
+				//Log.WarningException("ProgrammingService.CloseConnectionsToPsdzHost()", exception);
+			}
+		}
+
+		public string GetPsdzServiceHostLogFilePath()
+		{
+			return this.psdzConfig.PsdzServiceHostLogFilePath;
+		}
+
+		public string GetPsdzLogFilePath()
+		{
+			return this.psdzConfig.PsdzLogFilePath;
+		}
+
+		private static void PreparePsdzBackupDataPath(string istaFolder)
+		{
+			string pathString = Path.Combine(istaFolder, "Temp");
+			try
+			{
+				if (!Directory.Exists(pathString))
+				{
+					Directory.CreateDirectory(pathString);
+				}
+				string path = Path.Combine(pathString, Guid.NewGuid().ToString());
+				File.WriteAllText(path, string.Empty);
+				File.Delete(path);
+			}
+			catch (Exception)
+			{
+				throw;
+			}
+		}
+
+		private bool StartPsdzServiceHost(IVehicle vehicle = null)
+		{
+            this.psdz.StartHostIfNotRunning(vehicle);
+            if (!this.WaitForPsdzServiceHostInitialization())
             {
-                case PsdzServiceStarter.PsdzServiceStartResult.PsdzStillRunning:
-                case PsdzServiceStarter.PsdzServiceStartResult.PsdzStartOk:
-                    break;
-
-                case PsdzServiceStarter.PsdzServiceStartResult.PsdzStartFailedMemError:
-                    return false;
-
-                default:
-                    return false;
-            }
-
-            return WaitForPsdzServiceHostInitialization();
-        }
-
-        private bool WaitForPsdzServiceHostInitialization()
-        {
-            DateTime endTime = DateTime.Now.AddSeconds(40f);
-            while (!PsdzServiceStarter.IsServerInstanceRunning())
-            {
-                if (DateTime.Now > endTime)
-                {
-                    return false;
-                }
-                Thread.Sleep(500);
+                return false;
             }
 
             return true;
         }
+
+		private bool WaitForPsdzServiceHostInitialization()
+		{
+			DateTime t = DateTime.Now.AddSeconds((double)40f);
+			while (!this.psdz.IsPsdzInitialized)
+			{
+				if (DateTime.Now > t)
+				{
+					return false;
+				}
+				Thread.Sleep(500);
+			}
+			this.psdz.DoInitSettings();
+
+            return true;
+        }
+
+		private readonly PsdzConfig psdzConfig;
+
+		private readonly PsdzServiceWrapper psdz;
     }
 }
