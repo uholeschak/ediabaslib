@@ -7,11 +7,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using PsdzClient.Programming;
 
 namespace PsdzClient
 {
     public partial class FormMain : Form
     {
+        private ProgrammingService programmingService;
+
         public FormMain()
         {
             InitializeComponent();
@@ -19,6 +22,9 @@ namespace PsdzClient
 
         private void UpdateDisplay()
         {
+            bool hostRunning = programmingService != null && programmingService.IsPsdzPsdzServiceHostInitialized();
+            buttonStartHost.Enabled = !hostRunning;
+            buttonStopHost.Enabled = hostRunning;
         }
 
         private bool LoadSettings()
@@ -50,6 +56,15 @@ namespace PsdzClient
             return true;
         }
 
+        private void StopProgrammingService()
+        {
+            if (programmingService != null)
+            {
+                programmingService.CloseConnectionsToPsdzHost();
+                programmingService = null;
+            }
+        }
+
         private void buttonClose_Click(object sender, EventArgs e)
         {
             Close();
@@ -73,6 +88,7 @@ namespace PsdzClient
 
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
         {
+            StopProgrammingService();
             StoreSettings();
         }
 
@@ -80,6 +96,23 @@ namespace PsdzClient
         {
             LoadSettings();
             UpdateDisplay();
+        }
+
+        private void timerUpdate_Tick(object sender, EventArgs e)
+        {
+            UpdateDisplay();
+        }
+
+        private void buttonStartHost_Click(object sender, EventArgs e)
+        {
+            StopProgrammingService();
+            programmingService = new ProgrammingService(textBoxIstaFolder.Text, "12345");
+            programmingService.StartPsdzServiceHost();
+        }
+
+        private void buttonStopHost_Click(object sender, EventArgs e)
+        {
+            StopProgrammingService();
         }
     }
 }

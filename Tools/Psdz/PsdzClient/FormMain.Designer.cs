@@ -29,12 +29,16 @@ namespace PsdzClient
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.textBoxIstaFolder = new System.Windows.Forms.TextBox();
             this.buttonClose = new System.Windows.Forms.Button();
             this.buttonAbort = new System.Windows.Forms.Button();
             this.folderBrowserDialogIsta = new System.Windows.Forms.FolderBrowserDialog();
             this.buttonIstaFolder = new System.Windows.Forms.Button();
+            this.buttonStartHost = new System.Windows.Forms.Button();
+            this.buttonStopHost = new System.Windows.Forms.Button();
+            this.timerUpdate = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // textBoxIstaFolder
@@ -79,6 +83,30 @@ namespace PsdzClient
             this.buttonIstaFolder.UseVisualStyleBackColor = true;
             this.buttonIstaFolder.Click += new System.EventHandler(this.buttonIstaFolder_Click);
             // 
+            // buttonStartHost
+            // 
+            this.buttonStartHost.Location = new System.Drawing.Point(12, 38);
+            this.buttonStartHost.Name = "buttonStartHost";
+            this.buttonStartHost.Size = new System.Drawing.Size(75, 23);
+            this.buttonStartHost.TabIndex = 4;
+            this.buttonStartHost.Text = "Start Host";
+            this.buttonStartHost.UseVisualStyleBackColor = true;
+            this.buttonStartHost.Click += new System.EventHandler(this.buttonStartHost_Click);
+            // 
+            // buttonStopHost
+            // 
+            this.buttonStopHost.Location = new System.Drawing.Point(93, 38);
+            this.buttonStopHost.Name = "buttonStopHost";
+            this.buttonStopHost.Size = new System.Drawing.Size(75, 23);
+            this.buttonStopHost.TabIndex = 5;
+            this.buttonStopHost.Text = "Stop Host";
+            this.buttonStopHost.UseVisualStyleBackColor = true;
+            this.buttonStopHost.Click += new System.EventHandler(this.buttonStopHost_Click);
+            // 
+            // timerUpdate
+            // 
+            this.timerUpdate.Tick += new System.EventHandler(this.timerUpdate_Tick);
+            // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
@@ -86,6 +114,8 @@ namespace PsdzClient
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonAbort;
             this.ClientSize = new System.Drawing.Size(810, 450);
+            this.Controls.Add(this.buttonStopHost);
+            this.Controls.Add(this.buttonStartHost);
             this.Controls.Add(this.buttonIstaFolder);
             this.Controls.Add(this.buttonAbort);
             this.Controls.Add(this.buttonClose);
@@ -108,6 +138,9 @@ namespace PsdzClient
         private System.Windows.Forms.Button buttonAbort;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialogIsta;
         private System.Windows.Forms.Button buttonIstaFolder;
+        private System.Windows.Forms.Button buttonStartHost;
+        private System.Windows.Forms.Button buttonStopHost;
+        private System.Windows.Forms.Timer timerUpdate;
     }
 }
 

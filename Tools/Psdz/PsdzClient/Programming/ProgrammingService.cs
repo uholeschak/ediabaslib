@@ -112,7 +112,7 @@ namespace PsdzClient.Programming
 			}
 		}
 
-		private bool StartPsdzServiceHost(IVehicle vehicle = null)
+		public bool StartPsdzServiceHost(IVehicle vehicle = null)
 		{
             this.psdz.StartHostIfNotRunning(vehicle);
             if (!this.WaitForPsdzServiceHostInitialization())
@@ -123,7 +123,7 @@ namespace PsdzClient.Programming
             return true;
         }
 
-		private bool WaitForPsdzServiceHostInitialization()
+        public bool WaitForPsdzServiceHostInitialization()
 		{
 			DateTime t = DateTime.Now.AddSeconds((double)40f);
 			while (!this.psdz.IsPsdzInitialized)
@@ -137,6 +137,11 @@ namespace PsdzClient.Programming
 			this.psdz.DoInitSettings();
 
             return true;
+        }
+
+        public bool IsPsdzPsdzServiceHostInitialized()
+        {
+            return this.psdz.IsPsdzInitialized;
         }
 
 		private readonly PsdzConfig psdzConfig;
