@@ -9,6 +9,7 @@ using System.Xml;
 
 namespace PsdzClient.Psdz
 {
+    [DataContract(Namespace = @"http://schemas.datacontract.org/2004/07/BMW.Rheingold.Psdz")]
     public class PsdzServiceArgs
     {
 		[DataMember]

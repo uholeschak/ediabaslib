@@ -89,13 +89,16 @@ namespace PsdzClient
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
         {
             StopProgrammingService();
+            UpdateDisplay();
             StoreSettings();
+            timerUpdate.Enabled = false;
         }
 
         private void FormMain_Load(object sender, EventArgs e)
         {
             LoadSettings();
             UpdateDisplay();
+            timerUpdate.Enabled = true;
         }
 
         private void timerUpdate_Tick(object sender, EventArgs e)
@@ -106,13 +109,15 @@ namespace PsdzClient
         private void buttonStartHost_Click(object sender, EventArgs e)
         {
             StopProgrammingService();
-            programmingService = new ProgrammingService(textBoxIstaFolder.Text, "12345");
+            programmingService = new ProgrammingService(textBoxIstaFolder.Text, "32395");
             programmingService.StartPsdzServiceHost();
+            UpdateDisplay();
         }
 
         private void buttonStopHost_Click(object sender, EventArgs e)
         {
             StopProgrammingService();
+            UpdateDisplay();
         }
     }
 }
