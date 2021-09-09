@@ -7,9 +7,9 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Xml;
 
-namespace PsdzClient.Psdz
+namespace BMW.Rheingold.Psdz
 {
-    [DataContract(Namespace = @"http://schemas.datacontract.org/2004/07/BMW.Rheingold.Psdz")]
+    [DataContract]
     public class PsdzServiceArgs
     {
 		[DataMember]

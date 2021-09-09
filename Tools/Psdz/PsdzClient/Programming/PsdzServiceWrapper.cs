@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.Rheingold.Psdz;
 using PsdzClient.Psdz;
 using PsdzClient.Vehicle;
 
