@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PsdzClient.Psdz
+namespace BMW.Rheingold.Psdz.Model.Swt
 {
     [DataContract]
     public class PsdzSwtApplicationId : IPsdzSwtApplicationId

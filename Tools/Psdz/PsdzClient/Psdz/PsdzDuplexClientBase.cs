@@ -6,7 +6,7 @@ using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PsdzClient.Psdz
+namespace BMW.Rheingold.Psdz.Client
 {
     abstract class PsdzDuplexClientBase<TChannel, TCallback> : PsdzClientBase<TChannel> where TChannel : class where TCallback : class
     {

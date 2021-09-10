@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.Rheingold.Psdz.Model.Tal.TalStatus;
 
-namespace PsdzClient.Psdz
+namespace BMW.Rheingold.Psdz.Model.Tal
 {
     public enum PsdzTaExecutionState
     {

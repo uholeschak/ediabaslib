@@ -6,8 +6,9 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.Rheingold.Psdz.Model.Exceptions;
 
-namespace PsdzClient.Psdz
+namespace BMW.Rheingold.Psdz.Client
 {
 	abstract class PsdzClientBase<TChannel> where TChannel : class
 	{

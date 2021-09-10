@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace PsdzClient.Vehicle
+namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 {
     [DataContract]
     public class LocalizedSAItem

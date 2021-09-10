@@ -6,7 +6,7 @@ using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PsdzClient.Psdz
+namespace BMW.Rheingold.Psdz.Client
 {
 	public class PsdzServiceClient : IDisposable, IPsdzService
 	{
@@ -26,7 +26,7 @@ namespace PsdzClient.Psdz
 
         private readonly ObjectBuilderServiceClient objectBuilderServiceClient;
 
-        private readonly Psdz.ProgrammingServiceClient programmingService;
+        private readonly BMW.Rheingold.Psdz.Client.ProgrammingServiceClient programmingService;
 
         private readonly PsdzEventService psdzEventService;
 
@@ -66,7 +66,7 @@ namespace PsdzClient.Psdz
 			this.configurationService = new ConfigurationServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ConfigurationService", clientId, clientLogDir));
 			this.psdzEventService = new PsdzEventService(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/EventManagerService", clientId, clientLogDir));
 			this.vcmService = new VcmServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/VcmService", clientId, clientLogDir));
-			this.programmingService = new Psdz.ProgrammingServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ProgrammingService", clientId, clientLogDir));
+			this.programmingService = new BMW.Rheingold.Psdz.Client.ProgrammingServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ProgrammingService", clientId, clientLogDir));
 			this.ecuService = new EcuServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/EcuService", clientId, clientLogDir));
 			this.talExecutionService = new TalExecutionServiceClient(this.psdzProgressListenerDispatcher, netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/TalExecutionService", clientId, clientLogDir));
 			this.logService = new LogServiceClient(netNamedPipeBinding, PsdzServiceClient.CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/LogService", clientId, clientLogDir));
@@ -155,7 +155,7 @@ namespace PsdzClient.Psdz
 			}
 		}
 
-		public Psdz.IProgrammingService ProgrammingService
+		public BMW.Rheingold.Psdz.IProgrammingService ProgrammingService
 		{
 			get
 			{

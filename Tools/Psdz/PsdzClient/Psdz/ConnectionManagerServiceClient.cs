@@ -5,8 +5,9 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.Rheingold.Psdz.Model;
 
-namespace PsdzClient.Psdz
+namespace BMW.Rheingold.Psdz.Client
 {
     public enum InterfaceType
     {

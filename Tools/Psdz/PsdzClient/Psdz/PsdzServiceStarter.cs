@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading;
 using BMW.Rheingold.Psdz;
 
-namespace PsdzClient.Psdz
+namespace BMW.Rheingold.Psdz.Client
 {
     class PsdzServiceStarter
     {

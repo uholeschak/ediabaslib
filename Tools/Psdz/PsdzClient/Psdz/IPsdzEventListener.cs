@@ -4,8 +4,9 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.Rheingold.Psdz.Model.Events;
 
-namespace PsdzClient.Psdz
+namespace BMW.Rheingold.Psdz
 {
     public interface IPsdzEventListener
     {

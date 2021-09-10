@@ -6,8 +6,10 @@ using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using BMW.Rheingold.Psdz.Model;
+using BMW.Rheingold.Psdz.Model.Tal;
 
-namespace PsdzClient.Psdz
+namespace BMW.Rheingold.Psdz.Client
 {
     class TalExecutionServiceClient : PsdzDuplexClientBase<ITalExecutionService, IPsdzProgressListener>, ITalExecutionService
     {

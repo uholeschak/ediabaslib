@@ -5,8 +5,13 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.Rheingold.Psdz.Model;
+using BMW.Rheingold.Psdz.Model.SecureCoding;
+using BMW.Rheingold.Psdz.Model.Sfa;
+using BMW.Rheingold.Psdz.Model.Sfa.RequestNcdSignatureResponseCto;
+using BMW.Rheingold.Psdz.Model.Tal;
 
-namespace PsdzClient.Psdz
+namespace BMW.Rheingold.Psdz.Client
 {
 	class SecureCodingServiceClient : PsdzDuplexClientBase<ISecureCodingService, IPsdzProgressListener>, ISecureCodingService
 	{

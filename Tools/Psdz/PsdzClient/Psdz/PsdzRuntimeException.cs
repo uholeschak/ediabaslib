@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace PsdzClient.Psdz
+namespace BMW.Rheingold.Psdz.Model.Exceptions
 {
     [Serializable]
     public class PsdzRuntimeException : Exception

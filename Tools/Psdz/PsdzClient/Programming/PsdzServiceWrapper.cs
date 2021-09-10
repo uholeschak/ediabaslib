@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.Psdz;
-using PsdzClient.Psdz;
+using BMW.Rheingold.Psdz.Client;
 using PsdzClient.Vehicle;
 
 namespace PsdzClient.Programming
@@ -113,7 +113,7 @@ namespace PsdzClient.Programming
 			}
 		}
 
-		public Psdz.IProgrammingService ProgrammingService
+		public BMW.Rheingold.Psdz.IProgrammingService ProgrammingService
 		{
 			get
 			{

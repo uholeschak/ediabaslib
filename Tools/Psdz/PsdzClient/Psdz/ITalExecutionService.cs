@@ -6,8 +6,12 @@ using System.ServiceModel;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using BMW.Rheingold.Psdz.Model;
+using BMW.Rheingold.Psdz.Model.Exceptions;
+using BMW.Rheingold.Psdz.Model.SecureCoding;
+using BMW.Rheingold.Psdz.Model.Tal;
 
-namespace PsdzClient.Psdz
+namespace BMW.Rheingold.Psdz
 {
     [ServiceContract(SessionMode = SessionMode.Required, CallbackContract = typeof(IPsdzProgressListener))]
     [ServiceKnownType(typeof(PsdzVin))]

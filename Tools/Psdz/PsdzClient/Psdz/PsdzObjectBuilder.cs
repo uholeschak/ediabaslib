@@ -6,11 +6,19 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.Rheingold.Psdz.Client;
+using BMW.Rheingold.Psdz.Model;
+using BMW.Rheingold.Psdz.Model.Certificate;
+using BMW.Rheingold.Psdz.Model.Ecu;
+using BMW.Rheingold.Psdz.Model.Sfa;
+using BMW.Rheingold.Psdz.Model.Swt;
+using BMW.Rheingold.Psdz.Model.Tal;
+using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using PsdzClient.Contracts;
 using PsdzClient.Programming;
 using PsdzClient.Vehicle;
 
-namespace PsdzClient.Psdz
+namespace BMW.Rheingold.Psdz
 {
 	class PsdzObjectBuilder : IPsdzObjectBuilder
 	{
@@ -140,7 +148,7 @@ namespace PsdzClient.Psdz
 			return this.ValidateBuiltFaObjectViaPsdz(fa);
 		}
 
-		public IPsdzFa BuildFa(Programming.IFa faInput, string vin17)
+		public IPsdzFa BuildFa(PsdzClient.Programming.IFa faInput, string vin17)
 		{
 			if (faInput == null)
 			{
@@ -176,7 +184,7 @@ namespace PsdzClient.Psdz
 				PsdzStandardFa psdzStandardFa = new PsdzStandardFa();
 				if (vehicleContext.FA != null)
 				{
-					string entwicklungsbaureihe = Utility.FormatConverter.ConvertToBn2020ConformModelSeries(vehicleContext.FA.BR);
+					string entwicklungsbaureihe = PsdzClient.Utility.FormatConverter.ConvertToBn2020ConformModelSeries(vehicleContext.FA.BR);
 					psdzStandardFa.Entwicklungsbaureihe = entwicklungsbaureihe;
 					psdzStandardFa.Type = vehicleContext.FA.TYPE;
 					psdzStandardFa.Zeitkriterium = vehicleContext.FA.C_DATE;
@@ -281,7 +289,7 @@ namespace PsdzClient.Psdz
 								psdzEcu.PrimaryKey = this.BuildEcuIdentifier((int)srcEcu.ID_SG_ADR, srcEcu.ECU_GROBNAME);
 							}
 							PsdzStandardSvk psdzStandardSvk = new PsdzStandardSvk();
-                            Utility.SgbmIdParser sgbmIdParser = new Utility.SgbmIdParser();
+                            PsdzClient.Utility.SgbmIdParser sgbmIdParser = new PsdzClient.Utility.SgbmIdParser();
 							IList<IPsdzSgbmId> list2 = new List<IPsdzSgbmId>();
 							foreach (string sgbmId in srcEcu.SVK.XWE_SGBMID)
 							{

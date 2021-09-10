@@ -149,7 +149,7 @@
     <Compile Include="Psdz\IPsdzFetchCalculationSecureTokensResultCto.cs" />
     <Compile Include="Psdz\IPsdzFp.cs" />
     <Compile Include="Psdz\IPsdzFsaTa.cs" />
-    <Compile Include="Psdz\IPsdzInfo.cs" />
+    <Compile Include="Programming\IPsdzInfo.cs" />
     <Compile Include="Psdz\IPsdzIstufe.cs" />
     <Compile Include="Psdz\IPsdzIstufenTriple.cs" />
     <Compile Include="Psdz\IPsdzKdsActionStatusResultCto.cs" />

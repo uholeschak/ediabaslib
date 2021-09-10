@@ -4,8 +4,9 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.Rheingold.Psdz.Model.Sfa;
 
-namespace PsdzClient.Psdz
+namespace BMW.Rheingold.Psdz.Model.SecureCoding
 {
     [KnownType(typeof(PsdzScbResultStatusCto))]
     [DataContract]

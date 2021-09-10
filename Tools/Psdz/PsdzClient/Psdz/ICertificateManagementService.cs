@@ -4,8 +4,11 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.Rheingold.Psdz.Model;
+using BMW.Rheingold.Psdz.Model.Certificate;
+using BMW.Rheingold.Psdz.Model.Ecu;
 
-namespace PsdzClient.Psdz
+namespace BMW.Rheingold.Psdz
 {
 	[ServiceKnownType(typeof(PsdzConnection))]
 	[ServiceKnownType(typeof(PsdzSvt))]

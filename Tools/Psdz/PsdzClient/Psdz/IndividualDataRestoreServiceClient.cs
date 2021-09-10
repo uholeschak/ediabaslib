@@ -5,8 +5,11 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.Rheingold.Psdz.Model;
+using BMW.Rheingold.Psdz.Model.Tal;
+using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 
-namespace PsdzClient.Psdz
+namespace BMW.Rheingold.Psdz.Client
 {
 	class IndividualDataRestoreServiceClient : PsdzDuplexClientBase<IIndividualDataRestoreService, IPsdzProgressListener>, IIndividualDataRestoreService
 	{
