@@ -60,7 +60,9 @@ namespace PsdzClient
         {
             if (programmingService != null)
             {
+                programmingService.Psdz.Shutdown();
                 programmingService.CloseConnectionsToPsdzHost();
+                programmingService.Dispose();
                 programmingService = null;
             }
         }

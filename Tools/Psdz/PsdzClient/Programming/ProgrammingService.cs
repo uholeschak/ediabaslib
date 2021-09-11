@@ -8,7 +8,7 @@ using PsdzClient.Vehicle;
 
 namespace PsdzClient.Programming
 {
-	public class ProgrammingService
+	public class ProgrammingService: IDisposable
 	{
 		public ProgrammingService(string istaFolder, string dealerId)
 		{
@@ -145,7 +145,14 @@ namespace PsdzClient.Programming
             return this.psdz.IsPsdzInitialized;
         }
 
-		private readonly PsdzConfig psdzConfig;
+        public void Dispose()
+        {
+            this.psdz.Dispose();
+        }
+
+		public PsdzServiceWrapper Psdz => psdz;
+
+        private readonly PsdzConfig psdzConfig;
 
 		private readonly PsdzServiceWrapper psdz;
     }
