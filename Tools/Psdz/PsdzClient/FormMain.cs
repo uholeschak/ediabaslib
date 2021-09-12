@@ -14,6 +14,7 @@ namespace PsdzClient
     public partial class FormMain : Form
     {
         private ProgrammingService programmingService;
+        private bool taskActive = false;
 
         public FormMain()
         {
@@ -23,8 +24,10 @@ namespace PsdzClient
         private void UpdateDisplay()
         {
             bool hostRunning = programmingService != null && programmingService.IsPsdzPsdzServiceHostInitialized();
-            buttonStartHost.Enabled = !hostRunning;
-            buttonStopHost.Enabled = hostRunning;
+            buttonStartHost.Enabled = !taskActive && !hostRunning;
+            buttonStopHost.Enabled = !taskActive && hostRunning;
+            buttonClose.Enabled = !taskActive && !hostRunning;
+            buttonAbort.Enabled = taskActive;
         }
 
         private bool LoadSettings()
@@ -56,15 +59,73 @@ namespace PsdzClient
             return true;
         }
 
-        private void StopProgrammingService()
+        private void UpdateStatus(string message = null)
         {
-            if (programmingService != null)
+            if (InvokeRequired)
             {
-                programmingService.Psdz.Shutdown();
-                programmingService.CloseConnectionsToPsdzHost();
-                programmingService.Dispose();
-                programmingService = null;
+                BeginInvoke((Action)(() =>
+                {
+                    UpdateStatus(message);
+                }));
+                return;
             }
+
+            textBoxStatus.Text = message ?? string.Empty;
+            textBoxStatus.SelectionStart = textBoxStatus.TextLength;
+            textBoxStatus.Update();
+            textBoxStatus.ScrollToCaret();
+
+            UpdateDisplay();
+        }
+
+        private async Task<bool> StartProgrammingServiceTask(string dealerId)
+        {
+            return await Task.Run(() => StartProgrammingService(dealerId)).ConfigureAwait(false);
+        }
+
+        private bool StartProgrammingService(string dealerId)
+        {
+            try
+            {
+                if (!StopProgrammingService())
+                {
+                    return false;
+                }
+                programmingService = new ProgrammingService(textBoxIstaFolder.Text, dealerId);
+                programmingService.StartPsdzServiceHost();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private async Task<bool> StopProgrammingServiceTask()
+        {
+            // ReSharper disable once ConvertClosureToMethodGroup
+            return await Task.Run(() => StopProgrammingService()).ConfigureAwait(false);
+        }
+
+        private bool StopProgrammingService()
+        {
+            try
+            {
+                if (programmingService != null)
+                {
+                    programmingService.Psdz.Shutdown();
+                    programmingService.CloseConnectionsToPsdzHost();
+                    programmingService.Dispose();
+                    programmingService = null;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private void buttonClose_Click(object sender, EventArgs e)
@@ -90,7 +151,14 @@ namespace PsdzClient
 
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
         {
-            StopProgrammingService();
+            StringBuilder sbMessage = new StringBuilder();
+            UpdateStatus(sbMessage.ToString());
+            if (!StopProgrammingServiceTask().Wait(10000))
+            {
+                sbMessage.AppendLine("Host stop failed");
+                UpdateStatus(sbMessage.ToString());
+            }
+
             UpdateDisplay();
             StoreSettings();
             timerUpdate.Enabled = false;
@@ -100,6 +168,7 @@ namespace PsdzClient
         {
             LoadSettings();
             UpdateDisplay();
+            UpdateStatus();
             timerUpdate.Enabled = true;
         }
 
@@ -110,16 +179,64 @@ namespace PsdzClient
 
         private void buttonStartHost_Click(object sender, EventArgs e)
         {
-            StopProgrammingService();
-            programmingService = new ProgrammingService(textBoxIstaFolder.Text, "32395");
-            programmingService.StartPsdzServiceHost();
+            StringBuilder sbMessage = new StringBuilder();
+            sbMessage.AppendLine("Starting host ...");
+            UpdateStatus(sbMessage.ToString());
+
+            StartProgrammingServiceTask("32395").ContinueWith(task =>
+            {
+                taskActive = false;
+                if (task.Result)
+                {
+                    sbMessage.AppendLine("Host started");
+                }
+                else
+                {
+                    sbMessage.AppendLine("Host start failed");
+                }
+                UpdateStatus(sbMessage.ToString());
+            });
+
+            taskActive = true;
             UpdateDisplay();
         }
 
         private void buttonStopHost_Click(object sender, EventArgs e)
         {
-            StopProgrammingService();
+            StringBuilder sbMessage = new StringBuilder();
+            sbMessage.AppendLine("Stopping host ...");
+            UpdateStatus(sbMessage.ToString());
+
+            StopProgrammingServiceTask().ContinueWith(task =>
+            {
+                taskActive = false;
+                if (task.Result)
+                {
+                    sbMessage.AppendLine("Host stopped");
+                }
+                else
+                {
+                    sbMessage.AppendLine("Host stop failed");
+                }
+                UpdateStatus(sbMessage.ToString());
+            });
+
+            taskActive = true;
             UpdateDisplay();
+        }
+
+        private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            bool active = taskActive;
+            if (programmingService != null && programmingService.IsPsdzPsdzServiceHostInitialized())
+            {
+                active = true;
+            }
+
+            if (active)
+            {
+                e.Cancel = true;
+            }
         }
     }
 }

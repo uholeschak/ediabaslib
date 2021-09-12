@@ -39,6 +39,7 @@ namespace PsdzClient
             this.buttonStartHost = new System.Windows.Forms.Button();
             this.buttonStopHost = new System.Windows.Forms.Button();
             this.timerUpdate = new System.Windows.Forms.Timer(this.components);
+            this.textBoxStatus = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // textBoxIstaFolder
@@ -107,6 +108,18 @@ namespace PsdzClient
             // 
             this.timerUpdate.Tick += new System.EventHandler(this.timerUpdate_Tick);
             // 
+            // textBoxStatus
+            // 
+            this.textBoxStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxStatus.Location = new System.Drawing.Point(16, 67);
+            this.textBoxStatus.Multiline = true;
+            this.textBoxStatus.Name = "textBoxStatus";
+            this.textBoxStatus.ReadOnly = true;
+            this.textBoxStatus.Size = new System.Drawing.Size(786, 342);
+            this.textBoxStatus.TabIndex = 6;
+            // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
@@ -114,6 +127,7 @@ namespace PsdzClient
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonAbort;
             this.ClientSize = new System.Drawing.Size(810, 450);
+            this.Controls.Add(this.textBoxStatus);
             this.Controls.Add(this.buttonStopHost);
             this.Controls.Add(this.buttonStartHost);
             this.Controls.Add(this.buttonIstaFolder);
@@ -124,6 +138,7 @@ namespace PsdzClient
             this.MaximizeBox = false;
             this.Name = "FormMain";
             this.Text = "PsdzClient";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormMain_FormClosed);
             this.Load += new System.EventHandler(this.FormMain_Load);
             this.ResumeLayout(false);
@@ -141,6 +156,7 @@ namespace PsdzClient
         private System.Windows.Forms.Button buttonStartHost;
         private System.Windows.Forms.Button buttonStopHost;
         private System.Windows.Forms.Timer timerUpdate;
+        private System.Windows.Forms.TextBox textBoxStatus;
     }
 }
 
