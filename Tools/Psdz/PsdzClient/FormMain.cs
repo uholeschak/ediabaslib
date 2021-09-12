@@ -11,6 +11,8 @@ using System.Windows.Forms;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Client;
 using BMW.Rheingold.Psdz.Model;
+using BMW.Rheingold.Psdz.Model.Ecu;
+using BMW.Rheingold.Psdz.Model.Swt;
 using PsdzClient.Programming;
 
 namespace PsdzClient
@@ -213,13 +215,13 @@ namespace PsdzClient
             return true;
         }
 
-        private async Task<string> VehicleFunctionsTask(string baureihe)
+        private async Task<string> VehicleFunctionsTask(IPsdzConnection psdzConnection)
         {
             // ReSharper disable once ConvertClosureToMethodGroup
-            return await Task.Run(() => VehicleFunctions(baureihe)).ConfigureAwait(false);
+            return await Task.Run(() => VehicleFunctions(psdzConnection)).ConfigureAwait(false);
         }
 
-        private string VehicleFunctions(string baureihe)
+        private string VehicleFunctions(IPsdzConnection psdzConnection)
         {
             try
             {
@@ -228,8 +230,17 @@ namespace PsdzClient
                     return null;
                 }
 
-                string verbund = programmingService.Psdz.ConfigurationService.RequestBaureihenverbund(baureihe);
-                return string.Format("Baureihenverbund: {0}", verbund);
+                StringBuilder sbResult = new StringBuilder();
+                IPsdzSwtAction psdzSwtAction = programmingService.Psdz.ProgrammingService.RequestSwtAction(psdzConnection, true);
+                if (psdzSwtAction?.SwtEcus != null)
+                {
+                    foreach (IPsdzSwtEcu psdzSwtEcu in psdzSwtAction.SwtEcus)
+                    {
+                        sbResult.AppendLine(string.Format("Ecu: Id={0}, Vin={1}, CertState={2}, SwSig={3}",
+                            psdzSwtEcu.EcuIdentifier, psdzSwtEcu.Vin, psdzSwtEcu.RootCertState, psdzSwtEcu.SoftwareSigState));
+                    }
+                }
+                return sbResult.ToString();
             }
             catch (Exception)
             {
@@ -427,7 +438,7 @@ namespace PsdzClient
             sbMessage.AppendLine("Executing vehicle functions ...");
             UpdateStatus(sbMessage.ToString());
 
-            VehicleFunctionsTask(Baureihe).ContinueWith(task =>
+            VehicleFunctionsTask(activePsdzConnection).ContinueWith(task =>
             {
                 taskActive = false;
                 string resultMessage = task.Result;
