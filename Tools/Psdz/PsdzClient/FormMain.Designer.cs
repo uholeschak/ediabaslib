@@ -45,16 +45,17 @@ namespace PsdzClient
             this.buttonConnect = new System.Windows.Forms.Button();
             this.buttonDisconnect = new System.Windows.Forms.Button();
             this.buttonFunc1 = new System.Windows.Forms.Button();
+            this.labelIstaFolder = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // textBoxIstaFolder
             // 
             this.textBoxIstaFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxIstaFolder.Location = new System.Drawing.Point(12, 12);
+            this.textBoxIstaFolder.Location = new System.Drawing.Point(93, 12);
             this.textBoxIstaFolder.Name = "textBoxIstaFolder";
-            this.textBoxIstaFolder.Size = new System.Drawing.Size(754, 20);
-            this.textBoxIstaFolder.TabIndex = 0;
+            this.textBoxIstaFolder.Size = new System.Drawing.Size(673, 20);
+            this.textBoxIstaFolder.TabIndex = 3;
             // 
             // buttonClose
             // 
@@ -62,7 +63,7 @@ namespace PsdzClient
             this.buttonClose.Location = new System.Drawing.Point(723, 415);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(75, 23);
-            this.buttonClose.TabIndex = 1;
+            this.buttonClose.TabIndex = 0;
             this.buttonClose.Text = "Close";
             this.buttonClose.UseVisualStyleBackColor = true;
             this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
@@ -73,7 +74,7 @@ namespace PsdzClient
             this.buttonAbort.Location = new System.Drawing.Point(642, 415);
             this.buttonAbort.Name = "buttonAbort";
             this.buttonAbort.Size = new System.Drawing.Size(75, 23);
-            this.buttonAbort.TabIndex = 2;
+            this.buttonAbort.TabIndex = 1;
             this.buttonAbort.Text = "Abort";
             this.buttonAbort.UseVisualStyleBackColor = true;
             this.buttonAbort.Click += new System.EventHandler(this.buttonAbort_Click);
@@ -84,7 +85,7 @@ namespace PsdzClient
             this.buttonIstaFolder.Location = new System.Drawing.Point(772, 10);
             this.buttonIstaFolder.Name = "buttonIstaFolder";
             this.buttonIstaFolder.Size = new System.Drawing.Size(30, 23);
-            this.buttonIstaFolder.TabIndex = 3;
+            this.buttonIstaFolder.TabIndex = 4;
             this.buttonIstaFolder.Text = "...";
             this.buttonIstaFolder.UseVisualStyleBackColor = true;
             this.buttonIstaFolder.Click += new System.EventHandler(this.buttonIstaFolder_Click);
@@ -94,7 +95,7 @@ namespace PsdzClient
             this.buttonStartHost.Location = new System.Drawing.Point(12, 64);
             this.buttonStartHost.Name = "buttonStartHost";
             this.buttonStartHost.Size = new System.Drawing.Size(75, 23);
-            this.buttonStartHost.TabIndex = 4;
+            this.buttonStartHost.TabIndex = 7;
             this.buttonStartHost.Text = "Start Host";
             this.buttonStartHost.UseVisualStyleBackColor = true;
             this.buttonStartHost.Click += new System.EventHandler(this.buttonStartHost_Click);
@@ -104,7 +105,7 @@ namespace PsdzClient
             this.buttonStopHost.Location = new System.Drawing.Point(93, 64);
             this.buttonStopHost.Name = "buttonStopHost";
             this.buttonStopHost.Size = new System.Drawing.Size(75, 23);
-            this.buttonStopHost.TabIndex = 5;
+            this.buttonStopHost.TabIndex = 8;
             this.buttonStopHost.Text = "Stop Host";
             this.buttonStopHost.UseVisualStyleBackColor = true;
             this.buttonStopHost.Click += new System.EventHandler(this.buttonStopHost_Click);
@@ -123,7 +124,7 @@ namespace PsdzClient
             this.textBoxStatus.Name = "textBoxStatus";
             this.textBoxStatus.ReadOnly = true;
             this.textBoxStatus.Size = new System.Drawing.Size(790, 316);
-            this.textBoxStatus.TabIndex = 6;
+            this.textBoxStatus.TabIndex = 12;
             // 
             // ipAddressControlVehicleIp
             // 
@@ -137,7 +138,7 @@ namespace PsdzClient
             this.ipAddressControlVehicleIp.Name = "ipAddressControlVehicleIp";
             this.ipAddressControlVehicleIp.ReadOnly = false;
             this.ipAddressControlVehicleIp.Size = new System.Drawing.Size(87, 20);
-            this.ipAddressControlVehicleIp.TabIndex = 7;
+            this.ipAddressControlVehicleIp.TabIndex = 6;
             this.ipAddressControlVehicleIp.Text = "...";
             // 
             // labelVehicleIp
@@ -146,7 +147,7 @@ namespace PsdzClient
             this.labelVehicleIp.Location = new System.Drawing.Point(12, 41);
             this.labelVehicleIp.Name = "labelVehicleIp";
             this.labelVehicleIp.Size = new System.Drawing.Size(57, 13);
-            this.labelVehicleIp.TabIndex = 8;
+            this.labelVehicleIp.TabIndex = 5;
             this.labelVehicleIp.Text = "Vehicle Ip:";
             // 
             // buttonConnect
@@ -179,6 +180,15 @@ namespace PsdzClient
             this.buttonFunc1.UseVisualStyleBackColor = true;
             this.buttonFunc1.Click += new System.EventHandler(this.buttonFunc1_Click);
             // 
+            // labelIstaFolder
+            // 
+            this.labelIstaFolder.AutoSize = true;
+            this.labelIstaFolder.Location = new System.Drawing.Point(12, 15);
+            this.labelIstaFolder.Name = "labelIstaFolder";
+            this.labelIstaFolder.Size = new System.Drawing.Size(59, 13);
+            this.labelIstaFolder.TabIndex = 2;
+            this.labelIstaFolder.Text = "Ista Folder:";
+            // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
@@ -186,6 +196,7 @@ namespace PsdzClient
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonAbort;
             this.ClientSize = new System.Drawing.Size(810, 450);
+            this.Controls.Add(this.labelIstaFolder);
             this.Controls.Add(this.buttonFunc1);
             this.Controls.Add(this.buttonDisconnect);
             this.Controls.Add(this.buttonConnect);
@@ -226,6 +237,7 @@ namespace PsdzClient
         private System.Windows.Forms.Button buttonConnect;
         private System.Windows.Forms.Button buttonDisconnect;
         private System.Windows.Forms.Button buttonFunc1;
+        private System.Windows.Forms.Label labelIstaFolder;
     }
 }
 

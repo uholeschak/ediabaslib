@@ -172,7 +172,8 @@ namespace PsdzClient
                     return null;
                 }
 
-                IPsdzConnection psdzConnection = programmingService.Psdz.ConnectionManagerService.ConnectOverEthernet("S15A_21_07_540_V_004_000_001", "S15A", url, baureihe, "S15A-17-03-509");
+                string verbund = programmingService.Psdz.ConfigurationService.RequestBaureihenverbund(baureihe);
+                IPsdzConnection psdzConnection = programmingService.Psdz.ConnectionManagerService.ConnectOverEthernet("S15A_21_07_540_V_004_000_001", verbund, url, baureihe, "S15A-17-03-509");
                 return psdzConnection;
             }
             catch (Exception)
@@ -228,7 +229,7 @@ namespace PsdzClient
                 }
 
                 string verbund = programmingService.Psdz.ConfigurationService.RequestBaureihenverbund(baureihe);
-                return verbund;
+                return string.Format("Baureihenverbund: {0}", verbund);
             }
             catch (Exception)
             {
