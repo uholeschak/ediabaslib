@@ -40,6 +40,8 @@ namespace PsdzClient
             this.buttonStopHost = new System.Windows.Forms.Button();
             this.timerUpdate = new System.Windows.Forms.Timer(this.components);
             this.textBoxStatus = new System.Windows.Forms.TextBox();
+            this.ipAddressControlVehicleIp = new IPAddressControlLib.IPAddressControl();
+            this.labelVehicleIp = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // textBoxIstaFolder
@@ -86,7 +88,7 @@ namespace PsdzClient
             // 
             // buttonStartHost
             // 
-            this.buttonStartHost.Location = new System.Drawing.Point(12, 38);
+            this.buttonStartHost.Location = new System.Drawing.Point(12, 64);
             this.buttonStartHost.Name = "buttonStartHost";
             this.buttonStartHost.Size = new System.Drawing.Size(75, 23);
             this.buttonStartHost.TabIndex = 4;
@@ -96,7 +98,7 @@ namespace PsdzClient
             // 
             // buttonStopHost
             // 
-            this.buttonStopHost.Location = new System.Drawing.Point(93, 38);
+            this.buttonStopHost.Location = new System.Drawing.Point(93, 64);
             this.buttonStopHost.Name = "buttonStopHost";
             this.buttonStopHost.Size = new System.Drawing.Size(75, 23);
             this.buttonStopHost.TabIndex = 5;
@@ -113,12 +115,36 @@ namespace PsdzClient
             this.textBoxStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxStatus.Location = new System.Drawing.Point(16, 67);
+            this.textBoxStatus.Location = new System.Drawing.Point(12, 93);
             this.textBoxStatus.Multiline = true;
             this.textBoxStatus.Name = "textBoxStatus";
             this.textBoxStatus.ReadOnly = true;
-            this.textBoxStatus.Size = new System.Drawing.Size(786, 342);
+            this.textBoxStatus.Size = new System.Drawing.Size(790, 316);
             this.textBoxStatus.TabIndex = 6;
+            // 
+            // ipAddressControlVehicleIp
+            // 
+            this.ipAddressControlVehicleIp.AllowInternalTab = false;
+            this.ipAddressControlVehicleIp.AutoHeight = true;
+            this.ipAddressControlVehicleIp.BackColor = System.Drawing.SystemColors.Window;
+            this.ipAddressControlVehicleIp.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.ipAddressControlVehicleIp.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.ipAddressControlVehicleIp.Location = new System.Drawing.Point(93, 38);
+            this.ipAddressControlVehicleIp.MinimumSize = new System.Drawing.Size(87, 20);
+            this.ipAddressControlVehicleIp.Name = "ipAddressControlVehicleIp";
+            this.ipAddressControlVehicleIp.ReadOnly = false;
+            this.ipAddressControlVehicleIp.Size = new System.Drawing.Size(87, 20);
+            this.ipAddressControlVehicleIp.TabIndex = 7;
+            this.ipAddressControlVehicleIp.Text = "...";
+            // 
+            // labelVehicleIp
+            // 
+            this.labelVehicleIp.AutoSize = true;
+            this.labelVehicleIp.Location = new System.Drawing.Point(12, 41);
+            this.labelVehicleIp.Name = "labelVehicleIp";
+            this.labelVehicleIp.Size = new System.Drawing.Size(57, 13);
+            this.labelVehicleIp.TabIndex = 8;
+            this.labelVehicleIp.Text = "Vehicle Ip:";
             // 
             // FormMain
             // 
@@ -127,6 +153,8 @@ namespace PsdzClient
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonAbort;
             this.ClientSize = new System.Drawing.Size(810, 450);
+            this.Controls.Add(this.labelVehicleIp);
+            this.Controls.Add(this.ipAddressControlVehicleIp);
             this.Controls.Add(this.textBoxStatus);
             this.Controls.Add(this.buttonStopHost);
             this.Controls.Add(this.buttonStartHost);
@@ -157,6 +185,8 @@ namespace PsdzClient
         private System.Windows.Forms.Button buttonStopHost;
         private System.Windows.Forms.Timer timerUpdate;
         private System.Windows.Forms.TextBox textBoxStatus;
+        private IPAddressControlLib.IPAddressControl ipAddressControlVehicleIp;
+        private System.Windows.Forms.Label labelVehicleIp;
     }
 }
 

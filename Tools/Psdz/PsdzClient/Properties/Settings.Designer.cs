@@ -34,5 +34,17 @@ namespace PsdzClient.Properties {
                 this["IstaFolder"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string VehicleIp {
+            get {
+                return ((string)(this["VehicleIp"]));
+            }
+            set {
+                this["VehicleIp"] = value;
+            }
+        }
     }
 }

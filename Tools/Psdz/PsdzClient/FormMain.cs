@@ -41,6 +41,11 @@ namespace PsdzClient
             try
             {
                 textBoxIstaFolder.Text = Properties.Settings.Default.IstaFolder;
+                ipAddressControlVehicleIp.Text = Properties.Settings.Default.VehicleIp;
+                if (string.IsNullOrWhiteSpace(ipAddressControlVehicleIp.Text.Trim('.')))
+                {
+                    ipAddressControlVehicleIp.Text = @"127.0.0.1";
+                }
             }
             catch (Exception)
             {
@@ -55,6 +60,7 @@ namespace PsdzClient
             try
             {
                 Properties.Settings.Default.IstaFolder = textBoxIstaFolder.Text;
+                Properties.Settings.Default.VehicleIp = ipAddressControlVehicleIp.Text;
                 Properties.Settings.Default.Save();
             }
             catch (Exception)
