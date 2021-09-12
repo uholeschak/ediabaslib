@@ -234,9 +234,10 @@ namespace PsdzClient
                 IPsdzSwtAction psdzSwtAction = programmingService.Psdz.ProgrammingService.RequestSwtAction(psdzConnection, true);
                 if (psdzSwtAction?.SwtEcus != null)
                 {
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecus: {0}", psdzSwtAction.SwtEcus.Count()));
                     foreach (IPsdzSwtEcu psdzSwtEcu in psdzSwtAction.SwtEcus)
                     {
-                        sbResult.AppendLine(string.Format("Ecu: Id={0}, Vin={1}, CertState={2}, SwSig={3}",
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecu: Id={0}, Vin={1}, CertState={2}, SwSig={3}",
                             psdzSwtEcu.EcuIdentifier, psdzSwtEcu.Vin, psdzSwtEcu.RootCertState, psdzSwtEcu.SoftwareSigState));
                     }
                 }
