@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace PsdzClient
     {
         private ProgrammingService programmingService;
         private bool taskActive = false;
-        private IPsdzConnection psdzConnection;
+        private IPsdzConnection activePsdzConnection;
 
         public FormMain()
         {
@@ -35,7 +36,7 @@ namespace PsdzClient
                 hostRunning = programmingService != null && programmingService.IsPsdzPsdzServiceHostInitialized();
             }
 
-            if (psdzConnection != null)
+            if (activePsdzConnection != null)
             {
                 vehicleConnected = true;
             }
@@ -154,48 +155,38 @@ namespace PsdzClient
             return true;
         }
 
-        private async Task<bool> ConnectVehicleTask()
+        private async Task<IPsdzConnection> ConnectVehicleTask()
         {
             // ReSharper disable once ConvertClosureToMethodGroup
             return await Task.Run(() => ConnectVehicle()).ConfigureAwait(false);
         }
 
-        private bool ConnectVehicle()
+        private IPsdzConnection ConnectVehicle()
         {
             try
             {
                 if (programmingService == null)
                 {
-                    return false;
-                }
-
-                if (psdzConnection != null)
-                {
-                    return false;
+                    return null;
                 }
 
                 string url = "tcp://" + ipAddressControlVehicleIp.Text + ":6801";
-                psdzConnection = programmingService.Psdz.ConnectionManagerService.ConnectOverEthernet("S15A_21_07_540_V_004_000_001", "S15A", url, "G31", "S15A-17-03-509");
-                if (psdzConnection == null)
-                {
-                    return false;
-                }
+                IPsdzConnection psdzConnection = programmingService.Psdz.ConnectionManagerService.ConnectOverEthernet("S15A_21_07_540_V_004_000_001", "S15A", url, "G31", "S15A-17-03-509");
+                return psdzConnection;
             }
             catch (Exception)
             {
-                return false;
+                return null;
             }
-
-            return true;
         }
 
-        private async Task<bool> DisconnectVehicleTask()
+        private async Task<bool> DisconnectVehicleTask(IPsdzConnection psdzConnection)
         {
             // ReSharper disable once ConvertClosureToMethodGroup
-            return await Task.Run(() => DisconnectVehicle()).ConfigureAwait(false);
+            return await Task.Run(() => DisconnectVehicle(psdzConnection)).ConfigureAwait(false);
         }
 
-        private bool DisconnectVehicle()
+        private bool DisconnectVehicle(IPsdzConnection psdzConnection)
         {
             try
             {
@@ -333,6 +324,11 @@ namespace PsdzClient
 
         private void buttonConnect_Click(object sender, EventArgs e)
         {
+            if (activePsdzConnection != null)
+            {
+                return;
+            }
+
             StringBuilder sbMessage = new StringBuilder();
             sbMessage.AppendLine("Connecting vehicle ...");
             UpdateStatus(sbMessage.ToString());
@@ -340,9 +336,17 @@ namespace PsdzClient
             ConnectVehicleTask().ContinueWith(task =>
             {
                 taskActive = false;
-                if (task.Result)
+                IPsdzConnection psdzConnection = task.Result;
+                if (psdzConnection != null)
                 {
+                    activePsdzConnection = psdzConnection;
                     sbMessage.AppendLine("Vehicle connected");
+                    sbMessage.AppendLine(string.Format(CultureInfo.InvariantCulture, "Id: {0}", psdzConnection.Id));
+                    sbMessage.AppendLine(string.Format(CultureInfo.InvariantCulture, "Port: {0}", psdzConnection.Port));
+                    sbMessage.AppendLine(string.Format(CultureInfo.InvariantCulture, "Project: {0}", psdzConnection.TargetSelector.Project));
+                    sbMessage.AppendLine(string.Format(CultureInfo.InvariantCulture, "Vehicle: {0}", psdzConnection.TargetSelector.VehicleInfo));
+                    sbMessage.AppendLine(string.Format(CultureInfo.InvariantCulture, "Series: {0}", psdzConnection.TargetSelector.Baureihenverbund));
+                    sbMessage.AppendLine(string.Format(CultureInfo.InvariantCulture, "Direct: {0}", psdzConnection.TargetSelector.IsDirect));
                 }
                 else
                 {
@@ -357,13 +361,19 @@ namespace PsdzClient
 
         private void buttonDisconnect_Click(object sender, EventArgs e)
         {
+            if (activePsdzConnection == null)
+            {
+                return;
+            }
+
             StringBuilder sbMessage = new StringBuilder();
             sbMessage.AppendLine("Disconnecting vehicle ...");
             UpdateStatus(sbMessage.ToString());
 
-            DisconnectVehicleTask().ContinueWith(task =>
+            DisconnectVehicleTask(activePsdzConnection).ContinueWith(task =>
             {
                 taskActive = false;
+                activePsdzConnection = null;
                 if (task.Result)
                 {
                     sbMessage.AppendLine("Vehicle disconnected");
