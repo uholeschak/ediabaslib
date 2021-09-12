@@ -42,6 +42,8 @@ namespace PsdzClient
             this.textBoxStatus = new System.Windows.Forms.TextBox();
             this.ipAddressControlVehicleIp = new IPAddressControlLib.IPAddressControl();
             this.labelVehicleIp = new System.Windows.Forms.Label();
+            this.buttonConnect = new System.Windows.Forms.Button();
+            this.buttonDisconnect = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // textBoxIstaFolder
@@ -146,6 +148,26 @@ namespace PsdzClient
             this.labelVehicleIp.TabIndex = 8;
             this.labelVehicleIp.Text = "Vehicle Ip:";
             // 
+            // buttonConnect
+            // 
+            this.buttonConnect.Location = new System.Drawing.Point(174, 64);
+            this.buttonConnect.Name = "buttonConnect";
+            this.buttonConnect.Size = new System.Drawing.Size(75, 23);
+            this.buttonConnect.TabIndex = 9;
+            this.buttonConnect.Text = "Connect";
+            this.buttonConnect.UseVisualStyleBackColor = true;
+            this.buttonConnect.Click += new System.EventHandler(this.buttonConnect_Click);
+            // 
+            // buttonDisconnect
+            // 
+            this.buttonDisconnect.Location = new System.Drawing.Point(255, 64);
+            this.buttonDisconnect.Name = "buttonDisconnect";
+            this.buttonDisconnect.Size = new System.Drawing.Size(75, 23);
+            this.buttonDisconnect.TabIndex = 10;
+            this.buttonDisconnect.Text = "Disconnect";
+            this.buttonDisconnect.UseVisualStyleBackColor = true;
+            this.buttonDisconnect.Click += new System.EventHandler(this.buttonDisconnect_Click);
+            // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
@@ -153,6 +175,8 @@ namespace PsdzClient
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonAbort;
             this.ClientSize = new System.Drawing.Size(810, 450);
+            this.Controls.Add(this.buttonDisconnect);
+            this.Controls.Add(this.buttonConnect);
             this.Controls.Add(this.labelVehicleIp);
             this.Controls.Add(this.ipAddressControlVehicleIp);
             this.Controls.Add(this.textBoxStatus);
@@ -187,6 +211,8 @@ namespace PsdzClient
         private System.Windows.Forms.TextBox textBoxStatus;
         private IPAddressControlLib.IPAddressControl ipAddressControlVehicleIp;
         private System.Windows.Forms.Label labelVehicleIp;
+        private System.Windows.Forms.Button buttonConnect;
+        private System.Windows.Forms.Button buttonDisconnect;
     }
 }
 

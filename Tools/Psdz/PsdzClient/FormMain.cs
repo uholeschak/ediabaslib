@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Client;
+using BMW.Rheingold.Psdz.Model;
 using PsdzClient.Programming;
 
 namespace PsdzClient
@@ -17,6 +18,7 @@ namespace PsdzClient
     {
         private ProgrammingService programmingService;
         private bool taskActive = false;
+        private IPsdzConnection psdzConnection;
 
         public FormMain()
         {
@@ -25,15 +27,23 @@ namespace PsdzClient
 
         private void UpdateDisplay()
         {
-            bool hostRunning = false;
             bool active = taskActive;
+            bool hostRunning = false;
+            bool vehicleConnected = false;
             if (!active)
             {
                 hostRunning = programmingService != null && programmingService.IsPsdzPsdzServiceHostInitialized();
             }
 
+            if (psdzConnection != null)
+            {
+                vehicleConnected = true;
+            }
+
             buttonStartHost.Enabled = !active && !hostRunning;
             buttonStopHost.Enabled = !active && hostRunning;
+            buttonConnect.Enabled = !active && hostRunning && !vehicleConnected;
+            buttonDisconnect.Enabled = !active && hostRunning && vehicleConnected;
             buttonClose.Enabled = !active && !hostRunning;
             buttonAbort.Enabled = active;
         }
@@ -141,6 +151,72 @@ namespace PsdzClient
                 return false;
             }
 
+            return true;
+        }
+
+        private async Task<bool> ConnectVehicleTask()
+        {
+            // ReSharper disable once ConvertClosureToMethodGroup
+            return await Task.Run(() => ConnectVehicle()).ConfigureAwait(false);
+        }
+
+        private bool ConnectVehicle()
+        {
+            try
+            {
+                if (programmingService == null)
+                {
+                    return false;
+                }
+
+                if (psdzConnection != null)
+                {
+                    return false;
+                }
+
+                string url = "tcp://" + ipAddressControlVehicleIp.Text + ":6801";
+                psdzConnection = programmingService.Psdz.ConnectionManagerService.ConnectOverEthernet("S15A_21_07_540_V_004_000_001", "S15A", url, "G31", string.Empty);
+                if (psdzConnection == null)
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private async Task<bool> DisconnectVehicleTask()
+        {
+            // ReSharper disable once ConvertClosureToMethodGroup
+            return await Task.Run(() => DisconnectVehicle()).ConfigureAwait(false);
+        }
+
+        private bool DisconnectVehicle()
+        {
+            try
+            {
+                if (programmingService == null)
+                {
+                    return false;
+                }
+
+                if (psdzConnection == null)
+                {
+                    return false;
+                }
+
+                programmingService.Psdz.ConnectionManagerService.CloseConnection(psdzConnection);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            psdzConnection = null;
             return true;
         }
 
@@ -253,6 +329,54 @@ namespace PsdzClient
             {
                 e.Cancel = true;
             }
+        }
+
+        private void buttonConnect_Click(object sender, EventArgs e)
+        {
+            StringBuilder sbMessage = new StringBuilder();
+            sbMessage.AppendLine("Connecting vehicle ...");
+            UpdateStatus(sbMessage.ToString());
+
+            ConnectVehicleTask().ContinueWith(task =>
+            {
+                taskActive = false;
+                if (task.Result)
+                {
+                    sbMessage.AppendLine("Vehicle connected");
+                }
+                else
+                {
+                    sbMessage.AppendLine("Vehicle connect failed");
+                }
+                UpdateStatus(sbMessage.ToString());
+            });
+
+            taskActive = true;
+            UpdateDisplay();
+        }
+
+        private void buttonDisconnect_Click(object sender, EventArgs e)
+        {
+            StringBuilder sbMessage = new StringBuilder();
+            sbMessage.AppendLine("Disconnecting vehicle ...");
+            UpdateStatus(sbMessage.ToString());
+
+            DisconnectVehicleTask().ContinueWith(task =>
+            {
+                taskActive = false;
+                if (task.Result)
+                {
+                    sbMessage.AppendLine("Vehicle disconnected");
+                }
+                else
+                {
+                    sbMessage.AppendLine("Vehicle disconnect failed");
+                }
+                UpdateStatus(sbMessage.ToString());
+            });
+
+            taskActive = true;
+            UpdateDisplay();
         }
     }
 }
