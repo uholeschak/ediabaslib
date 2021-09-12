@@ -23,11 +23,17 @@ namespace PsdzClient
 
         private void UpdateDisplay()
         {
-            bool hostRunning = programmingService != null && programmingService.IsPsdzPsdzServiceHostInitialized();
-            buttonStartHost.Enabled = !taskActive && !hostRunning;
-            buttonStopHost.Enabled = !taskActive && hostRunning;
-            buttonClose.Enabled = !taskActive && !hostRunning;
-            buttonAbort.Enabled = taskActive;
+            bool hostRunning = false;
+            bool active = taskActive;
+            if (!active)
+            {
+                hostRunning = programmingService != null && programmingService.IsPsdzPsdzServiceHostInitialized();
+            }
+
+            buttonStartHost.Enabled = !active && !hostRunning;
+            buttonStopHost.Enabled = !active && hostRunning;
+            buttonClose.Enabled = !active && !hostRunning;
+            buttonAbort.Enabled = active;
         }
 
         private bool LoadSettings()
@@ -228,7 +234,7 @@ namespace PsdzClient
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
         {
             bool active = taskActive;
-            if (programmingService != null && programmingService.IsPsdzPsdzServiceHostInitialized())
+            if (!active && programmingService != null && programmingService.IsPsdzPsdzServiceHostInitialized())
             {
                 active = true;
             }
