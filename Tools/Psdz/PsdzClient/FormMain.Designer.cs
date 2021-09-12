@@ -44,6 +44,7 @@ namespace PsdzClient
             this.labelVehicleIp = new System.Windows.Forms.Label();
             this.buttonConnect = new System.Windows.Forms.Button();
             this.buttonDisconnect = new System.Windows.Forms.Button();
+            this.buttonFunc1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // textBoxIstaFolder
@@ -168,6 +169,16 @@ namespace PsdzClient
             this.buttonDisconnect.UseVisualStyleBackColor = true;
             this.buttonDisconnect.Click += new System.EventHandler(this.buttonDisconnect_Click);
             // 
+            // buttonFunc1
+            // 
+            this.buttonFunc1.Location = new System.Drawing.Point(336, 64);
+            this.buttonFunc1.Name = "buttonFunc1";
+            this.buttonFunc1.Size = new System.Drawing.Size(75, 23);
+            this.buttonFunc1.TabIndex = 11;
+            this.buttonFunc1.Text = "Function 1";
+            this.buttonFunc1.UseVisualStyleBackColor = true;
+            this.buttonFunc1.Click += new System.EventHandler(this.buttonFunc1_Click);
+            // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
@@ -175,6 +186,7 @@ namespace PsdzClient
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonAbort;
             this.ClientSize = new System.Drawing.Size(810, 450);
+            this.Controls.Add(this.buttonFunc1);
             this.Controls.Add(this.buttonDisconnect);
             this.Controls.Add(this.buttonConnect);
             this.Controls.Add(this.labelVehicleIp);
@@ -213,6 +225,7 @@ namespace PsdzClient
         private System.Windows.Forms.Label labelVehicleIp;
         private System.Windows.Forms.Button buttonConnect;
         private System.Windows.Forms.Button buttonDisconnect;
+        private System.Windows.Forms.Button buttonFunc1;
     }
 }
 

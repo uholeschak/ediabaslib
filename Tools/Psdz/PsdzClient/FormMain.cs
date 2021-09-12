@@ -17,6 +17,7 @@ namespace PsdzClient
 {
     public partial class FormMain : Form
     {
+        private const string Baureihe = "G31";
         private ProgrammingService programmingService;
         private bool taskActive = false;
         private IPsdzConnection activePsdzConnection;
@@ -45,6 +46,7 @@ namespace PsdzClient
             buttonStopHost.Enabled = !active && hostRunning;
             buttonConnect.Enabled = !active && hostRunning && !vehicleConnected;
             buttonDisconnect.Enabled = !active && hostRunning && vehicleConnected;
+            buttonFunc1.Enabled = !active && hostRunning && vehicleConnected;
             buttonClose.Enabled = !active && !hostRunning;
             buttonAbort.Enabled = active;
         }
@@ -155,13 +157,13 @@ namespace PsdzClient
             return true;
         }
 
-        private async Task<IPsdzConnection> ConnectVehicleTask()
+        private async Task<IPsdzConnection> ConnectVehicleTask(string url, string baureihe)
         {
             // ReSharper disable once ConvertClosureToMethodGroup
-            return await Task.Run(() => ConnectVehicle()).ConfigureAwait(false);
+            return await Task.Run(() => ConnectVehicle(url, baureihe)).ConfigureAwait(false);
         }
 
-        private IPsdzConnection ConnectVehicle()
+        private IPsdzConnection ConnectVehicle(string url, string baureihe)
         {
             try
             {
@@ -170,8 +172,7 @@ namespace PsdzClient
                     return null;
                 }
 
-                string url = "tcp://" + ipAddressControlVehicleIp.Text + ":6801";
-                IPsdzConnection psdzConnection = programmingService.Psdz.ConnectionManagerService.ConnectOverEthernet("S15A_21_07_540_V_004_000_001", "S15A", url, "G31", "S15A-17-03-509");
+                IPsdzConnection psdzConnection = programmingService.Psdz.ConnectionManagerService.ConnectOverEthernet("S15A_21_07_540_V_004_000_001", "S15A", url, baureihe, "S15A-17-03-509");
                 return psdzConnection;
             }
             catch (Exception)
@@ -209,6 +210,30 @@ namespace PsdzClient
 
             psdzConnection = null;
             return true;
+        }
+
+        private async Task<string> VehicleFunctionsTask(string baureihe)
+        {
+            // ReSharper disable once ConvertClosureToMethodGroup
+            return await Task.Run(() => VehicleFunctions(baureihe)).ConfigureAwait(false);
+        }
+
+        private string VehicleFunctions(string baureihe)
+        {
+            try
+            {
+                if (programmingService == null)
+                {
+                    return null;
+                }
+
+                string verbund = programmingService.Psdz.ConfigurationService.RequestBaureihenverbund(baureihe);
+                return verbund;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         private void buttonClose_Click(object sender, EventArgs e)
@@ -333,7 +358,8 @@ namespace PsdzClient
             sbMessage.AppendLine("Connecting vehicle ...");
             UpdateStatus(sbMessage.ToString());
 
-            ConnectVehicleTask().ContinueWith(task =>
+            string url = "tcp://" + ipAddressControlVehicleIp.Text + ":6801";
+            ConnectVehicleTask(url, Baureihe).ContinueWith(task =>
             {
                 taskActive = false;
                 IPsdzConnection psdzConnection = task.Result;
@@ -381,6 +407,36 @@ namespace PsdzClient
                 else
                 {
                     sbMessage.AppendLine("Vehicle disconnect failed");
+                }
+                UpdateStatus(sbMessage.ToString());
+            });
+
+            taskActive = true;
+            UpdateDisplay();
+        }
+
+        private void buttonFunc1_Click(object sender, EventArgs e)
+        {
+            if (activePsdzConnection == null)
+            {
+                return;
+            }
+
+            StringBuilder sbMessage = new StringBuilder();
+            sbMessage.AppendLine("Executing vehicle functions ...");
+            UpdateStatus(sbMessage.ToString());
+
+            VehicleFunctionsTask(Baureihe).ContinueWith(task =>
+            {
+                taskActive = false;
+                string resultMessage = task.Result;
+                if (!string.IsNullOrEmpty(resultMessage))
+                {
+                    sbMessage.AppendLine(resultMessage);
+                }
+                else
+                {
+                    sbMessage.AppendLine("Vehicle functions failed");
                 }
                 UpdateStatus(sbMessage.ToString());
             });
