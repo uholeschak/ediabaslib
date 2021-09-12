@@ -175,7 +175,7 @@ namespace PsdzClient
                 }
 
                 string url = "tcp://" + ipAddressControlVehicleIp.Text + ":6801";
-                psdzConnection = programmingService.Psdz.ConnectionManagerService.ConnectOverEthernet("S15A_21_07_540_V_004_000_001", "S15A", url, "G31", string.Empty);
+                psdzConnection = programmingService.Psdz.ConnectionManagerService.ConnectOverEthernet("S15A_21_07_540_V_004_000_001", "S15A", url, "G31", "S15A-17-03-509");
                 if (psdzConnection == null)
                 {
                     return false;
