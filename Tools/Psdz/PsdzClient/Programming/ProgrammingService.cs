@@ -11,9 +11,12 @@ namespace PsdzClient.Programming
 	public class ProgrammingService: IDisposable
 	{
 		public ProgrammingService(string istaFolder, string dealerId)
-		{
+        {
+            this.PsdzLoglevel = PsdzLoglevel.FINE;
+            this.ProdiasLoglevel = ProdiasLoglevel.ERROR;
 			this.psdzConfig = new PsdzConfig(istaFolder, dealerId);
 			this.psdz = new PsdzServiceWrapper(this.psdzConfig);
+			this.psdz.SetLogLevel(PsdzLoglevel, ProdiasLoglevel);
 			ProgrammingService.PreparePsdzBackupDataPath(istaFolder);
 		}
 
@@ -155,5 +158,9 @@ namespace PsdzClient.Programming
         private readonly PsdzConfig psdzConfig;
 
 		private readonly PsdzServiceWrapper psdz;
-    }
+
+		public PsdzLoglevel PsdzLoglevel { get; set; }
+
+        public ProdiasLoglevel ProdiasLoglevel { get; set; }
+	}
 }

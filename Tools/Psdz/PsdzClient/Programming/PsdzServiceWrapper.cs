@@ -309,14 +309,13 @@ namespace PsdzClient.Programming
         }
 
 		private void DoSettingsForInitializedPsdz()
-		{
-            this.psdzLoglevel = PsdzLoglevel.DEBUG;
+        {
 			if (this.psdzLoglevel != null && !this.psdzServiceArgs.IsTestRun)
 			{
 				this.psdzServiceClient.LogService.SetLogLevel(this.psdzLoglevel.Value);
 			}
-			this.prodiasLoglevel = ProdiasLoglevel.DEBUG;
-			if (this.prodiasLoglevel != null)
+
+            if (this.prodiasLoglevel != null)
 			{
 				this.psdzServiceClient.ConnectionManagerService.SetProdiasLogLevel(this.prodiasLoglevel.Value);
 			}
@@ -328,12 +327,12 @@ namespace PsdzClient.Programming
 
 		private readonly PsdzServiceClient psdzServiceClient;
 
-		private ProdiasLoglevel? prodiasLoglevel = new ProdiasLoglevel?(ProdiasLoglevel.ERROR);
+		private ProdiasLoglevel? prodiasLoglevel = ProdiasLoglevel.ERROR;
 
-		private PsdzLoglevel? psdzLoglevel = new PsdzLoglevel?(PsdzLoglevel.FINE);
+		private PsdzLoglevel? psdzLoglevel = PsdzLoglevel.FINE;
 
 		private readonly string psdzHostPath;
 
 		private readonly string psdzServiceHostLogDir;
-	}
+    }
 }

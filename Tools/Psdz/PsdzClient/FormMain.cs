@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BMW.Rheingold.Psdz;
+using BMW.Rheingold.Psdz.Client;
 using PsdzClient.Programming;
 
 namespace PsdzClient
@@ -104,6 +106,8 @@ namespace PsdzClient
                     return false;
                 }
                 programmingService = new ProgrammingService(textBoxIstaFolder.Text, dealerId);
+                programmingService.PsdzLoglevel = PsdzLoglevel.TRACE;
+                programmingService.ProdiasLoglevel = ProdiasLoglevel.ERROR;
                 programmingService.StartPsdzServiceHost();
             }
             catch (Exception)
