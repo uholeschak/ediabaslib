@@ -7,7 +7,7 @@ namespace BMW.Rheingold.Psdz.Client
 {
     class ConnectionFactoryServiceClient : PsdzClientBase<IConnectionFactoryService>, IConnectionFactoryService
     {
-        internal ConnectionFactoryServiceClient(Binding binding, EndpointAddress remoteAddress) : base(binding, remoteAddress)
+        public ConnectionFactoryServiceClient(Binding binding, EndpointAddress remoteAddress) : base(binding, remoteAddress)
         {
         }
 
