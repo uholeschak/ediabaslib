@@ -176,7 +176,22 @@ namespace PsdzClient
                 }
 
                 string verbund = programmingService.Psdz.ConfigurationService.RequestBaureihenverbund(baureihe);
-                IPsdzConnection psdzConnection = programmingService.Psdz.ConnectionManagerService.ConnectOverEthernet("S15A_21_07_540_V_004_000_001", verbund, url, baureihe, "S15A-17-03-509");
+                IEnumerable<IPsdzTargetSelector> targetSelectors = programmingService.Psdz.ConnectionFactoryService.GetTargetSelectors();
+                IPsdzTargetSelector targetSelectorMatch = null;
+                foreach (IPsdzTargetSelector targetSelector in targetSelectors)
+                {
+                    if (!targetSelector.IsDirect && verbund == targetSelector.Baureihenverbund)
+                    {
+                        targetSelectorMatch = targetSelector;
+                    }
+                }
+
+                if (targetSelectorMatch == null)
+                {
+                    return null;
+                }
+
+                IPsdzConnection psdzConnection = programmingService.Psdz.ConnectionManagerService.ConnectOverEthernet(targetSelectorMatch.Project, targetSelectorMatch.VehicleInfo, url, baureihe, "S15A-17-03-509");
                 return psdzConnection;
             }
             catch (Exception)
@@ -254,14 +269,6 @@ namespace PsdzClient
                         IPsdzIstufenTriple iStufenTriple = programmingService.Psdz.VcmService.GetIStufenTripleActual(psdzConnection);
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep: Current={0}, Last={1}, Shipment={2}",
                             iStufenTriple.Current, iStufenTriple.Last, iStufenTriple.Shipment));
-
-                        IPsdzTargetSelector[] targetSelectors = programmingService.Psdz.ConnectionFactoryService.GetTargetSelectors().ToArray();
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "TargetSelectors: {0}", targetSelectors.Length));
-                        foreach (IPsdzTargetSelector targetSelector in targetSelectors)
-                        {
-                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Selector: Project={0}, Vehicle={1}, Series={2}, Direct={3}",
-                                targetSelector.Project, targetSelector.VehicleInfo, targetSelector.Baureihenverbund, targetSelector.IsDirect));
-                        }
 
                         IPsdzStandardFa standardFa = programmingService.Psdz.VcmService.GetStandardFaActual(psdzConnection);
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "StdFa:"));
