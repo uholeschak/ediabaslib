@@ -124,6 +124,7 @@ namespace PsdzClient
             this.textBoxStatus.Multiline = true;
             this.textBoxStatus.Name = "textBoxStatus";
             this.textBoxStatus.ReadOnly = true;
+            this.textBoxStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxStatus.Size = new System.Drawing.Size(790, 316);
             this.textBoxStatus.TabIndex = 12;
             // 

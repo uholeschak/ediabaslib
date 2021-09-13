@@ -20,6 +20,7 @@ namespace PsdzClient
     public partial class FormMain : Form
     {
         private const string Baureihe = "G31";
+        private const string TestVin = "WBAJM71000B055940";
         private ProgrammingService programmingService;
         private bool taskActive = false;
         private IPsdzConnection activePsdzConnection;
@@ -272,34 +273,9 @@ namespace PsdzClient
                             iStufenTriple.Current, iStufenTriple.Last, iStufenTriple.Shipment));
 
                         IPsdzStandardFa standardFa = programmingService.Psdz.VcmService.GetStandardFaActual(psdzConnection);
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "StdFa:"));
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " String={0}", standardFa.AsString));
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Series={0}, Paint={1}, Pad={2}, Ver={3}, Type={4}, TimeCrit={5}",
-                            standardFa.Entwicklungsbaureihe, standardFa.Lackcode, standardFa.Polstercode, standardFa.FaVersion, standardFa.Type, standardFa.Zeitkriterium));
-
-                        sbResult.Append(" E words:");
-                        foreach (string text in standardFa.EWords)
-                        {
-                            sbResult.Append(" ");
-                            sbResult.Append(text);
-                        }
-                        sbResult.AppendLine();
-
-                        sbResult.Append(" HO words:");
-                        foreach (string text in standardFa.HOWords)
-                        {
-                            sbResult.Append(" ");
-                            sbResult.Append(text);
-                        }
-                        sbResult.AppendLine();
-
-                        sbResult.Append(" Salapas:");
-                        foreach (string text in standardFa.Salapas)
-                        {
-                            sbResult.Append(" ");
-                            sbResult.Append(text);
-                        }
-                        sbResult.AppendLine();
+                        IPsdzFa psdzFa = programmingService.Psdz.ObjectBuilder.BuildFa(standardFa, TestVin);
+                        sbResult.AppendLine("FA:");
+                        sbResult.Append(psdzFa.AsXml);
                         break;
                     }
                 }
