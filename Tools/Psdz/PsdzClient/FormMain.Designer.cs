@@ -46,6 +46,7 @@ namespace PsdzClient
             this.buttonDisconnect = new System.Windows.Forms.Button();
             this.buttonFunc1 = new System.Windows.Forms.Button();
             this.labelIstaFolder = new System.Windows.Forms.Label();
+            this.buttonFunc2 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // textBoxIstaFolder
@@ -178,7 +179,7 @@ namespace PsdzClient
             this.buttonFunc1.TabIndex = 11;
             this.buttonFunc1.Text = "Function 1";
             this.buttonFunc1.UseVisualStyleBackColor = true;
-            this.buttonFunc1.Click += new System.EventHandler(this.buttonFunc1_Click);
+            this.buttonFunc1.Click += new System.EventHandler(this.buttonFunc_Click);
             // 
             // labelIstaFolder
             // 
@@ -189,6 +190,16 @@ namespace PsdzClient
             this.labelIstaFolder.TabIndex = 2;
             this.labelIstaFolder.Text = "Ista Folder:";
             // 
+            // buttonFunc2
+            // 
+            this.buttonFunc2.Location = new System.Drawing.Point(417, 64);
+            this.buttonFunc2.Name = "buttonFunc2";
+            this.buttonFunc2.Size = new System.Drawing.Size(75, 23);
+            this.buttonFunc2.TabIndex = 13;
+            this.buttonFunc2.Text = "Function 2";
+            this.buttonFunc2.UseVisualStyleBackColor = true;
+            this.buttonFunc2.Click += new System.EventHandler(this.buttonFunc_Click);
+            // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
@@ -196,6 +207,7 @@ namespace PsdzClient
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonAbort;
             this.ClientSize = new System.Drawing.Size(810, 450);
+            this.Controls.Add(this.buttonFunc2);
             this.Controls.Add(this.labelIstaFolder);
             this.Controls.Add(this.buttonFunc1);
             this.Controls.Add(this.buttonDisconnect);
@@ -238,6 +250,7 @@ namespace PsdzClient
         private System.Windows.Forms.Button buttonDisconnect;
         private System.Windows.Forms.Button buttonFunc1;
         private System.Windows.Forms.Label labelIstaFolder;
+        private System.Windows.Forms.Button buttonFunc2;
     }
 }
 

@@ -49,6 +49,7 @@ namespace PsdzClient
             buttonConnect.Enabled = !active && hostRunning && !vehicleConnected;
             buttonDisconnect.Enabled = !active && hostRunning && vehicleConnected;
             buttonFunc1.Enabled = !active && hostRunning && vehicleConnected;
+            buttonFunc2.Enabled = buttonFunc1.Enabled;
             buttonClose.Enabled = !active && !hostRunning;
             buttonAbort.Enabled = active;
         }
@@ -215,13 +216,13 @@ namespace PsdzClient
             return true;
         }
 
-        private async Task<string> VehicleFunctionsTask(IPsdzConnection psdzConnection)
+        private async Task<string> VehicleFunctionsTask(IPsdzConnection psdzConnection, int function)
         {
             // ReSharper disable once ConvertClosureToMethodGroup
-            return await Task.Run(() => VehicleFunctions(psdzConnection)).ConfigureAwait(false);
+            return await Task.Run(() => VehicleFunctions(psdzConnection, function)).ConfigureAwait(false);
         }
 
-        private string VehicleFunctions(IPsdzConnection psdzConnection)
+        private string VehicleFunctions(IPsdzConnection psdzConnection, int function)
         {
             try
             {
@@ -231,16 +232,62 @@ namespace PsdzClient
                 }
 
                 StringBuilder sbResult = new StringBuilder();
-                IPsdzSwtAction psdzSwtAction = programmingService.Psdz.ProgrammingService.RequestSwtAction(psdzConnection, true);
-                if (psdzSwtAction?.SwtEcus != null)
+                switch (function)
                 {
-                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecus: {0}", psdzSwtAction.SwtEcus.Count()));
-                    foreach (IPsdzSwtEcu psdzSwtEcu in psdzSwtAction.SwtEcus)
+                    case 0:
                     {
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecu: Id={0}, Vin={1}, CertState={2}, SwSig={3}",
-                            psdzSwtEcu.EcuIdentifier, psdzSwtEcu.Vin, psdzSwtEcu.RootCertState, psdzSwtEcu.SoftwareSigState));
+                        IPsdzSwtAction psdzSwtAction = programmingService.Psdz.ProgrammingService.RequestSwtAction(psdzConnection, true);
+                        if (psdzSwtAction?.SwtEcus != null)
+                        {
+                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecus: {0}", psdzSwtAction.SwtEcus.Count()));
+                            foreach (IPsdzSwtEcu psdzSwtEcu in psdzSwtAction.SwtEcus)
+                            {
+                                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecu: Id={0}, Vin={1}, CertState={2}, SwSig={3}",
+                                    psdzSwtEcu.EcuIdentifier, psdzSwtEcu.Vin, psdzSwtEcu.RootCertState, psdzSwtEcu.SoftwareSigState));
+                            }
+                        }
+                        break;
+                    }
+
+                    case 1:
+                    {
+                        IPsdzIstufenTriple iStufenTriple = programmingService.Psdz.VcmService.GetIStufenTripleActual(psdzConnection);
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep: Current={0}, Last={1}, Shipment={2}",
+                            iStufenTriple.Current, iStufenTriple.Last, iStufenTriple.Shipment));
+
+                        IPsdzStandardFa standardFa = programmingService.Psdz.VcmService.GetStandardFaActual(psdzConnection);
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "StdFa:"));
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " String={0}", standardFa.AsString));
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Series={0}, Paint={1}, Pad={2}, Ver={3}, Type={4}, TimeCrit={5}",
+                            standardFa.Entwicklungsbaureihe, standardFa.Lackcode, standardFa.Polstercode, standardFa.FaVersion, standardFa.Type, standardFa.Zeitkriterium));
+
+                        sbResult.Append(" E words:");
+                        foreach (string text in standardFa.EWords)
+                        {
+                            sbResult.Append(" ");
+                            sbResult.Append(text);
+                        }
+                        sbResult.AppendLine();
+
+                        sbResult.Append(" HO words:");
+                        foreach (string text in standardFa.HOWords)
+                        {
+                            sbResult.Append(" ");
+                            sbResult.Append(text);
+                        }
+                        sbResult.AppendLine();
+
+                        sbResult.Append(" Salapas:");
+                        foreach (string text in standardFa.Salapas)
+                        {
+                            sbResult.Append(" ");
+                            sbResult.Append(text);
+                        }
+                        sbResult.AppendLine();
+                        break;
                     }
                 }
+
                 return sbResult.ToString();
             }
             catch (Exception)
@@ -428,7 +475,7 @@ namespace PsdzClient
             UpdateDisplay();
         }
 
-        private void buttonFunc1_Click(object sender, EventArgs e)
+        private void buttonFunc_Click(object sender, EventArgs e)
         {
             if (activePsdzConnection == null)
             {
@@ -439,7 +486,17 @@ namespace PsdzClient
             sbMessage.AppendLine("Executing vehicle functions ...");
             UpdateStatus(sbMessage.ToString());
 
-            VehicleFunctionsTask(activePsdzConnection).ContinueWith(task =>
+            int function = 0;
+            if (sender == buttonFunc1)
+            {
+                function = 0;
+            }
+            if (sender == buttonFunc2)
+            {
+                function = 1;
+            }
+
+            VehicleFunctionsTask(activePsdzConnection, function).ContinueWith(task =>
             {
                 taskActive = false;
                 string resultMessage = task.Result;
