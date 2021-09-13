@@ -92,7 +92,7 @@ ModifyEdiabasIni is not required after the "Fix ICOM apiInitExt" patch!
 For slow systems increase host ide timeout:
 <add key="BMW.Rheingold.Programming.PsdzService.HostIdleTimeout" value="100000" />
 More Debug info:
-<add key="BMW.Rheingold.Programming.Prodias.LogLevel" value="4" />
+<add key="BMW.Rheingold.Programming.Prodias.LogLevel" value="TRACE" />
 <add key="DebugLevel" value="5" />
 
 Make sure the EDIABAS.INI settings has default values in this case:
@@ -128,6 +128,8 @@ PsdzServiceHost:
 BMW.Rheingold.Psdz.Services.ConfigurationService.RequestBaureihenverbund()
 BMW.Rheingold.Programming.ConnectToCar()
 BMW.Rheingold.Programming.ConnectToProject()
+BMW.Rheingold.Programming.ProgrammingEngine.States.RetrieveActualSwtEnablingCodesState.Handle(ProgrammingSession session)
+BMW.Rheingold.Programming.ProgrammingEngine.SetSwtAction()
 
 ENET VoltageCheck:
 BMW.Rheingold.Diagnostics.Common.VoltageUtils.CheckVoltageForEthernetConnection()
