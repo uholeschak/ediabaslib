@@ -122,7 +122,7 @@ namespace PsdzClient
                 }
                 programmingService = new ProgrammingService(textBoxIstaFolder.Text, dealerId);
                 programmingService.PsdzLoglevel = PsdzLoglevel.TRACE;
-                programmingService.ProdiasLoglevel = ProdiasLoglevel.ERROR;
+                programmingService.ProdiasLoglevel = ProdiasLoglevel.TRACE;
                 programmingService.StartPsdzServiceHost();
             }
             catch (Exception)
