@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using PsdzClient.Core;
 using PsdzClient.Programming;
 
-namespace PsdzClient.Vehicle
+namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum BusType

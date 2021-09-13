@@ -4,7 +4,7 @@ using System.ComponentModel;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using PsdzClient.Core;
 
-namespace PsdzClient.Vehicle
+namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IFa : INotifyPropertyChanged

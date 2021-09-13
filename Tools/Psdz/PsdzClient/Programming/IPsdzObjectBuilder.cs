@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Certificate;
 using BMW.Rheingold.Psdz.Model.Ecu;
@@ -12,7 +13,6 @@ using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using PsdzClient.Contracts;
 using PsdzClient.Core;
-using PsdzClient.Vehicle;
 
 namespace PsdzClient.Programming
 {

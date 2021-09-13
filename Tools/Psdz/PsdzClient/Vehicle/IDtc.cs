@@ -4,10 +4,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PsdzClient.Core;
 
-namespace PsdzClient.Vehicle
+namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 {
-    //[AuthorAPI(SelectableTypeDeclaration = true)]
+    [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IDtc : INotifyPropertyChanged
     {
         IDtcContext Current { get; }

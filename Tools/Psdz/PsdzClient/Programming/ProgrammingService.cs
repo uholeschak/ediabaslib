@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Client;
-using PsdzClient.Vehicle;
 
 namespace PsdzClient.Programming
 {

@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Psdz.Client;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Certificate;
@@ -16,7 +17,6 @@ using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using PsdzClient.Contracts;
 using PsdzClient.Programming;
-using PsdzClient.Vehicle;
 
 namespace BMW.Rheingold.Psdz
 {

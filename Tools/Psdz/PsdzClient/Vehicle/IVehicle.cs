@@ -7,10 +7,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using PsdzClient.Core;
 
-namespace PsdzClient.Vehicle
+namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 {
-    //[AuthorAPI(SelectableTypeDeclaration = true)]
+    [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum BNMixed
     {
         HETEROGENEOUS,
@@ -19,7 +20,7 @@ namespace PsdzClient.Vehicle
         UNKNOWN
     }
 
-    //[AuthorAPI(SelectableTypeDeclaration = true)]
+    [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum BNType
     {
         BN2000,
@@ -38,7 +39,7 @@ namespace PsdzClient.Vehicle
         UNKNOWN
     }
 
-    //[AuthorAPI(SelectableTypeDeclaration = true)]
+    [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum BrandName
     {
         [XmlEnum("BMW PKW")]
@@ -73,7 +74,7 @@ namespace PsdzClient.Vehicle
         WORKHORSE
     }
 
-    //[AuthorAPI(SelectableTypeDeclaration = true)]
+    [AuthorAPI(SelectableTypeDeclaration = true)]
     //[Obsolete("Legacy Property, the ChassisType is retrieved from the Database and not used in test modules, thus it can be deleted.")]
     public enum ChassisType
     {
@@ -102,14 +103,14 @@ namespace PsdzClient.Vehicle
         Visible
     }
 
-    //[AuthorAPI(SelectableTypeDeclaration = true)]
+    [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum GwszUnitType
     {
         km,
         miles
     }
 
-    //[AuthorAPI(SelectableTypeDeclaration = true)]
+    [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum IdentificationLevel
     {
         None,
@@ -123,7 +124,7 @@ namespace PsdzClient.Vehicle
         VehicleTypeNotLicensed
     }
 
-	//[AuthorAPI(SelectableTypeDeclaration = true)]
+	[AuthorAPI(SelectableTypeDeclaration = true)]
 	public interface IVehicle : INotifyPropertyChanged
 	{
 		string AEKurzbezeichnung { get; }
