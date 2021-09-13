@@ -180,7 +180,8 @@ namespace PsdzClient
                 IPsdzTargetSelector targetSelectorMatch = null;
                 foreach (IPsdzTargetSelector targetSelector in targetSelectors)
                 {
-                    if (!targetSelector.IsDirect && verbund == targetSelector.Baureihenverbund)
+                    if (!targetSelector.IsDirect &&
+                        string.Compare(verbund, targetSelector.Baureihenverbund, StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         targetSelectorMatch = targetSelector;
                     }
