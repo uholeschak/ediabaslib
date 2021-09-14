@@ -36,7 +36,8 @@ namespace PsdzClient.Programming
 			return ecu != null && !list.Contains(ecu.ID_SG_ADR) && !ecu.IsVirtualOrVirtualBusCheck();
 		}
 
-        public static IPsdzTalFilter CreateTalFilter(ProgrammingTaskFlags programmingTaskFlags, IPsdzObjectBuilder objectBuilder)
+		// ProgrammingTaskFlags.Mount | ProgrammingTaskFlags.Unmount | ProgrammingTaskFlags.Replace | ProgrammingTaskFlags.Flash | Programming.ProgrammingTaskFlags.Code | ProgrammingTaskFlags.DataRecovery | ProgrammingTaskFlags.Fsc
+		public static IPsdzTalFilter CreateTalFilter(ProgrammingTaskFlags programmingTaskFlags, IPsdzObjectBuilder objectBuilder)
 		{
 			ISet<TaCategories> set = new HashSet<TaCategories>();
 			if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.EnforceCoding))
@@ -112,9 +113,24 @@ namespace PsdzClient.Programming
 		}
 
         static ProgrammingUtils()
-		{
-			TaCategories[] array = new TaCategories[14];
-			//RuntimeHelpers.InitializeArray(array, fieldof(< PrivateImplementationDetails > .39238353CD75E3D7EBF0095324CF360A0F24BCD3).FieldHandle);
+        {
+            TaCategories[] array = new TaCategories[]
+            {
+                TaCategories.BlFlash,
+                TaCategories.CdDeploy,
+                TaCategories.FscBackup,
+                TaCategories.FscDeploy,
+                TaCategories.FscDeployPrehwd,
+                TaCategories.GatewayTableDeploy,
+                TaCategories.HddUpdate,
+                TaCategories.HwDeinstall,
+                TaCategories.HwInstall,
+                TaCategories.IbaDeploy,
+                TaCategories.IdBackup,
+                TaCategories.IdRestore,
+                TaCategories.SwDeploy,
+                TaCategories.SFADeploy,
+            };
 			ProgrammingUtils.AllowedTaCategories = array;
 		}
 
