@@ -303,6 +303,19 @@ namespace PsdzClient
                             }
                         }
 
+                        PsdzIstufe psdzIstufeShip = new PsdzIstufe
+                        {
+                            Value = iStufenTriple.Shipment,
+                            IsValid = true
+                        };
+
+                        IPsdzEcuIdentifier[] psdzEcuIdentifiers = programmingService.Psdz.MacrosService.GetInstalledEcuList(psdzFa, psdzIstufeShip).ToArray();
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "EcuIds: {0}", psdzEcuIdentifiers.Length));
+                        foreach (IPsdzEcuIdentifier ecuIdentifier in psdzEcuIdentifiers)
+                        {
+                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " EcuId: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
+                                ecuIdentifier.BaseVariant, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset));
+                        }
                         break;
                     }
                 }
