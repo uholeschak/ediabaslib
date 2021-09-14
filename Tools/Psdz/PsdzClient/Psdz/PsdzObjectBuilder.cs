@@ -434,10 +434,13 @@ namespace BMW.Rheingold.Psdz
 		}
 
 		private IPsdzTalFilter SetEcuTaCategoriesAsMustNot(IPsdzTalFilter talFilter)
-		{
-			TaCategories[] array = new TaCategories[3];
-			//RuntimeHelpers.InitializeArray(array, fieldof(< PrivateImplementationDetails > .9E026594702FC79A923CF22AE584048C6B00945B).FieldHandle);
-			TaCategories[] taCategories = array;
+        {
+			TaCategories[] taCategories = new TaCategories[]
+            {
+                TaCategories.EcuActivate,
+                TaCategories.EcuPoll,
+                TaCategories.EcuMirrorDeploy
+            };
 			talFilter = this.DefineFilterForAllEcus(taCategories, TalFilterOptions.MustNot, talFilter);
 			return talFilter;
 		}

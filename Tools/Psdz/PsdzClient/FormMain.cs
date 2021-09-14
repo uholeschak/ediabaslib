@@ -13,6 +13,7 @@ using BMW.Rheingold.Psdz.Client;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.Swt;
+using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using PsdzClient.Programming;
 
 namespace PsdzClient
@@ -23,6 +24,7 @@ namespace PsdzClient
         private ProgrammingService programmingService;
         private bool taskActive = false;
         private IPsdzConnection activePsdzConnection;
+        private IPsdzTalFilter activeTalFilter;
 
         public FormMain()
         {
@@ -124,7 +126,10 @@ namespace PsdzClient
                 programmingService = new ProgrammingService(textBoxIstaFolder.Text, dealerId);
                 programmingService.PsdzLoglevel = PsdzLoglevel.TRACE;
                 programmingService.ProdiasLoglevel = ProdiasLoglevel.TRACE;
-                programmingService.StartPsdzServiceHost();
+                if (!programmingService.StartPsdzServiceHost())
+                {
+                    return false;
+                }
             }
             catch (Exception)
             {
@@ -150,6 +155,7 @@ namespace PsdzClient
                     programmingService.CloseConnectionsToPsdzHost();
                     programmingService.Dispose();
                     programmingService = null;
+                    ClearProgrammingObjects();
                 }
             }
             catch (Exception)
@@ -171,6 +177,11 @@ namespace PsdzClient
             try
             {
                 if (programmingService == null)
+                {
+                    return null;
+                }
+
+                if (!InitProgrammingObjects())
                 {
                     return null;
                 }
@@ -222,6 +233,8 @@ namespace PsdzClient
                 }
 
                 programmingService.Psdz.ConnectionManagerService.CloseConnection(psdzConnection);
+
+                ClearProgrammingObjects();
             }
             catch (Exception)
             {
@@ -287,6 +300,35 @@ namespace PsdzClient
             {
                 return null;
             }
+        }
+
+        private bool InitProgrammingObjects()
+        {
+            try
+            {
+                ProgrammingTaskFlags programmingTaskFlags =
+                    ProgrammingTaskFlags.Mount |
+                    ProgrammingTaskFlags.Unmount |
+                    ProgrammingTaskFlags.Replace |
+                    ProgrammingTaskFlags.Flash |
+                    ProgrammingTaskFlags.Code |
+                    ProgrammingTaskFlags.DataRecovery |
+                    ProgrammingTaskFlags.Fsc;
+                IPsdzTalFilter psdzTalFilter = ProgrammingUtils.CreateTalFilter(programmingTaskFlags, programmingService.Psdz.ObjectBuilder);
+                activeTalFilter = psdzTalFilter;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private void ClearProgrammingObjects()
+        {
+            activeTalFilter = null;
+            activePsdzConnection = null;
         }
 
         private void buttonClose_Click(object sender, EventArgs e)
@@ -426,6 +468,12 @@ namespace PsdzClient
                     sbMessage.AppendLine(string.Format(CultureInfo.InvariantCulture, "Vehicle: {0}", psdzConnection.TargetSelector.VehicleInfo));
                     sbMessage.AppendLine(string.Format(CultureInfo.InvariantCulture, "Series: {0}", psdzConnection.TargetSelector.Baureihenverbund));
                     sbMessage.AppendLine(string.Format(CultureInfo.InvariantCulture, "Direct: {0}", psdzConnection.TargetSelector.IsDirect));
+
+                    if (activeTalFilter != null)
+                    {
+                        sbMessage.AppendLine("TalFilter:");
+                        sbMessage.Append(activeTalFilter.AsXml);
+                    }
                 }
                 else
                 {

@@ -114,7 +114,7 @@ namespace PsdzClient.Programming
 
         static ProgrammingUtils()
         {
-            TaCategories[] array = new TaCategories[]
+            ProgrammingUtils.AllowedTaCategories = new TaCategories[]
             {
                 TaCategories.BlFlash,
                 TaCategories.CdDeploy,
@@ -131,7 +131,6 @@ namespace PsdzClient.Programming
                 TaCategories.SwDeploy,
                 TaCategories.SFADeploy,
             };
-			ProgrammingUtils.AllowedTaCategories = array;
 		}
 
 		public static readonly TaCategories[] AllowedTaCategories;
