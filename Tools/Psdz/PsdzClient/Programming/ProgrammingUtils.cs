@@ -1,0 +1,123 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.Psdz;
+using BMW.Rheingold.Psdz.Model.Ecu;
+using BMW.Rheingold.Psdz.Model.Tal;
+using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
+
+namespace PsdzClient.Programming
+{
+	public class ProgrammingUtils
+	{
+        public static bool IsFlashableOverMost(IEcu ecu)
+		{
+			if (ecu.BUS != BusType.MOST)
+			{
+				if (ecu.BUS != BusType.VIRTUAL || ecu.ID_SG_ADR != 160L)
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+
+		public static bool IsUsedSpecificRoutingTable(IEcu ecu)
+		{
+			IList<long> list = new List<long>();
+			list.Add(41L);
+			return ecu != null && !list.Contains(ecu.ID_SG_ADR) && !ecu.IsVirtualOrVirtualBusCheck();
+		}
+
+        public static IPsdzTalFilter CreateTalFilter(ProgrammingTaskFlags programmingTaskFlags, IPsdzObjectBuilder objectBuilder)
+		{
+			ISet<TaCategories> set = new HashSet<TaCategories>();
+			if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.EnforceCoding))
+			{
+				set.Add(TaCategories.CdDeploy);
+			}
+			IPsdzTalFilter psdzTalFilter = objectBuilder.DefineFilterForAllEcus(set.ToArray<TaCategories>(), TalFilterOptions.Must, null);
+			ISet<TaCategories> set2 = new HashSet<TaCategories>();
+			if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.Mount))
+			{
+				set2.Add(TaCategories.HwInstall);
+			}
+			if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.Unmount))
+			{
+				set2.Add(TaCategories.HwDeinstall);
+			}
+			if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.Replace))
+			{
+				set2.Add(TaCategories.HwInstall);
+				set2.Add(TaCategories.HwDeinstall);
+			}
+			if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.Flash))
+			{
+				set2.Add(TaCategories.BlFlash);
+				set2.Add(TaCategories.SwDeploy);
+				set2.Add(TaCategories.IbaDeploy);
+			}
+			if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.Code))
+			{
+				set2.Add(TaCategories.CdDeploy);
+			}
+			if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.DataRecovery))
+			{
+				set2.Add(TaCategories.IdBackup);
+				set2.Add(TaCategories.IdRestore);
+				set2.Add(TaCategories.FscBackup);
+			}
+			if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.Fsc))
+			{
+				set2.Add(TaCategories.FscDeploy);
+				set2.Add(TaCategories.FscDeployPrehwd);
+			}
+			ISet<TaCategories> set3 = new HashSet<TaCategories>(ProgrammingUtils.AllowedTaCategories);
+			set3.ExceptWith(set);
+			set3.ExceptWith(set2);
+			set3.Add(TaCategories.EcuActivate);
+			set3.Add(TaCategories.EcuPoll);
+			set3.Add(TaCategories.EcuMirrorDeploy);
+			psdzTalFilter = objectBuilder.DefineFilterForAllEcus(set3.ToArray<TaCategories>(), TalFilterOptions.MustNot, psdzTalFilter);
+			return psdzTalFilter;
+		}
+
+        public static ProgrammingTaskFlags RetrieveProgrammingTaskFlagsFromTasks(IEnumerable<IProgrammingTask> programmingTasks)
+		{
+			ProgrammingTaskFlags programmingTaskFlags = (ProgrammingTaskFlags)0;
+			if (programmingTasks != null)
+			{
+				foreach (IProgrammingTask programmingTask in programmingTasks)
+				{
+					programmingTaskFlags |= programmingTask.Flags;
+				}
+			}
+			return programmingTaskFlags;
+		}
+
+        public static string NormalizeXmlText(string xmlText)
+		{
+			if (string.IsNullOrEmpty(xmlText))
+			{
+				return xmlText;
+			}
+			return Regex.Replace(xmlText.Trim(), ">\\s+<", "><");
+		}
+
+        static ProgrammingUtils()
+		{
+			TaCategories[] array = new TaCategories[14];
+			//RuntimeHelpers.InitializeArray(array, fieldof(< PrivateImplementationDetails > .39238353CD75E3D7EBF0095324CF360A0F24BCD3).FieldHandle);
+			ProgrammingUtils.AllowedTaCategories = array;
+		}
+
+		public static readonly TaCategories[] AllowedTaCategories;
+	}
+}

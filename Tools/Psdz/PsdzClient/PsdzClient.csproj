@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="Core\AuthorAPIAttribute.cs" />
     <Compile Include="Programming\IProgrammingTask.cs" />
+    <Compile Include="Programming\ProgrammingUtils.cs" />
     <Compile Include="Psdz\CbbTlsConfiguratorServiceClient.cs" />
     <Compile Include="Psdz\CertificateManagementServiceClient.cs" />
     <Compile Include="Psdz\ClientConfigArgs.cs" />

@@ -16,7 +16,7 @@ using PsdzClient.Core;
 
 namespace PsdzClient.Programming
 {
-    //[AuthorAPI(SelectableTypeDeclaration = true)]
+    [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum TaCategories
     {
         BlFlash,

@@ -132,6 +132,7 @@ BMW.Rheingold.Programming.ProgrammingEngine.States.RetrieveActualSwtEnablingCode
 BMW.Rheingold.Programming.ProgrammingEngine.SetSwtAction()
 BMW.Rheingold.Programming.ProgrammingEngine.States.RetrieveActualFaState()
 BMW.Rheingold.Psdz.PsdzObjectBuilder.BuildFa()
+BMW.Rheingold.Programming.Common.ProgrammingUtils.CreateTalFilter()
 
 ENET VoltageCheck:
 BMW.Rheingold.Diagnostics.Common.VoltageUtils.CheckVoltageForEthernetConnection()
