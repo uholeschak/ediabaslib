@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -46,13 +47,15 @@ namespace PsdzClient
                 vehicleConnected = true;
             }
 
+            textBoxIstaFolder.Enabled = !active && !hostRunning;
+            ipAddressControlVehicleIp.Enabled = !active && !vehicleConnected;
             buttonStartHost.Enabled = !active && !hostRunning;
             buttonStopHost.Enabled = !active && hostRunning;
             buttonConnect.Enabled = !active && hostRunning && !vehicleConnected;
             buttonDisconnect.Enabled = !active && hostRunning && vehicleConnected;
             buttonFunc1.Enabled = !active && hostRunning && vehicleConnected;
             buttonFunc2.Enabled = buttonFunc1.Enabled;
-            buttonClose.Enabled = !active && !hostRunning;
+            buttonClose.Enabled = !active;
             buttonAbort.Enabled = active;
         }
 
@@ -290,6 +293,16 @@ namespace PsdzClient
                         IPsdzFa psdzFa = programmingService.Psdz.ObjectBuilder.BuildFa(standardFa, psdzVin.Value);
                         sbResult.AppendLine("FA:");
                         sbResult.Append(psdzFa.AsXml);
+                        IPsdzIstufe[] psdzIstufes = programmingService.Psdz.LogicService.GetPossibleIntegrationLevel(psdzFa).ToArray();
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "ISteps: {0}", psdzIstufes.Length));
+                        foreach (IPsdzIstufe iStufe in psdzIstufes)
+                        {
+                            if (iStufe.IsValid)
+                            {
+                                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " IStep: {0}", iStufe.Value));
+                            }
+                        }
+
                         break;
                     }
                 }
@@ -355,6 +368,7 @@ namespace PsdzClient
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
         {
             StringBuilder sbMessage = new StringBuilder();
+            sbMessage.AppendLine("Stopping host ...");
             UpdateStatus(sbMessage.ToString());
             if (!StopProgrammingServiceTask().Wait(10000))
             {
@@ -431,11 +445,12 @@ namespace PsdzClient
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
         {
             bool active = taskActive;
+#if false
             if (!active && programmingService != null && programmingService.IsPsdzPsdzServiceHostInitialized())
             {
                 active = true;
             }
-
+#endif
             if (active)
             {
                 e.Cancel = true;
