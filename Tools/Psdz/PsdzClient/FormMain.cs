@@ -20,7 +20,6 @@ namespace PsdzClient
     public partial class FormMain : Form
     {
         private const string Baureihe = "G31";
-        private const string TestVin = "WBAJM71000B055940";
         private ProgrammingService programmingService;
         private bool taskActive = false;
         private IPsdzConnection activePsdzConnection;
@@ -271,9 +270,11 @@ namespace PsdzClient
                         IPsdzIstufenTriple iStufenTriple = programmingService.Psdz.VcmService.GetIStufenTripleActual(psdzConnection);
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep: Current={0}, Last={1}, Shipment={2}",
                             iStufenTriple.Current, iStufenTriple.Last, iStufenTriple.Shipment));
+                        IPsdzVin psdzVin = programmingService.Psdz.VcmService.GetVinFromMaster(psdzConnection);
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Vin: {0}", psdzVin.Value));
 
                         IPsdzStandardFa standardFa = programmingService.Psdz.VcmService.GetStandardFaActual(psdzConnection);
-                        IPsdzFa psdzFa = programmingService.Psdz.ObjectBuilder.BuildFa(standardFa, TestVin);
+                        IPsdzFa psdzFa = programmingService.Psdz.ObjectBuilder.BuildFa(standardFa, psdzVin.Value);
                         sbResult.AppendLine("FA:");
                         sbResult.Append(psdzFa.AsXml);
                         break;
