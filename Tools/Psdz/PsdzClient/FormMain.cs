@@ -318,7 +318,7 @@ namespace PsdzClient
                         }
 
                         IPsdzStandardSvt psdzStandardSvt = programmingService.Psdz.EcuService.RequestSvt(psdzConnection, psdzEcuIdentifiers);
-                        string svtString = psdzStandardSvt.AsString.Replace("ECU[", "\r\nECU[");
+                        string svtString = psdzStandardSvt.AsString.Replace(", ECU[", ",\r\nECU[");
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Svt: {0}", svtString));
                         break;
                     }
