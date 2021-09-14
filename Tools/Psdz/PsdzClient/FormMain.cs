@@ -309,13 +309,17 @@ namespace PsdzClient
                             IsValid = true
                         };
 
-                        IPsdzEcuIdentifier[] psdzEcuIdentifiers = programmingService.Psdz.MacrosService.GetInstalledEcuList(psdzFa, psdzIstufeShip).ToArray();
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "EcuIds: {0}", psdzEcuIdentifiers.Length));
+                        IEnumerable<IPsdzEcuIdentifier> psdzEcuIdentifiers = programmingService.Psdz.MacrosService.GetInstalledEcuList(psdzFa, psdzIstufeShip);
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "EcuIds: {0}", psdzEcuIdentifiers.Count()));
                         foreach (IPsdzEcuIdentifier ecuIdentifier in psdzEcuIdentifiers)
                         {
                             sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " EcuId: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
                                 ecuIdentifier.BaseVariant, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset));
                         }
+
+                        IPsdzStandardSvt psdzStandardSvt = programmingService.Psdz.EcuService.RequestSvt(psdzConnection, psdzEcuIdentifiers);
+                        string svtString = psdzStandardSvt.AsString.Replace("ECU[", "\r\nECU[");
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Svt: {0}", svtString));
                         break;
                     }
                 }
