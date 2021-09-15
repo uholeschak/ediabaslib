@@ -15,6 +15,7 @@ using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.SecurityManagement;
 using BMW.Rheingold.Psdz.Model.Sfa;
+using BMW.Rheingold.Psdz.Model.Svb;
 using BMW.Rheingold.Psdz.Model.Swt;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using PsdzClient.Programming;
@@ -297,19 +298,29 @@ namespace PsdzClient
                         sbResult.Append(psdzFa.AsXml);
                         IPsdzIstufe[] psdzIstufes = programmingService.Psdz.LogicService.GetPossibleIntegrationLevel(psdzFa).ToArray();
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "ISteps: {0}", psdzIstufes.Length));
+                        IPsdzIstufe psdzIstufeTarget = null;
                         foreach (IPsdzIstufe iStufe in psdzIstufes)
                         {
                             if (iStufe.IsValid)
                             {
                                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " IStep: {0}", iStufe.Value));
+                                psdzIstufeTarget = iStufe;
                             }
                         }
 
-                        PsdzIstufe psdzIstufeShip = new PsdzIstufe
+                        if (psdzIstufeTarget == null)
+                        {
+                            return sbResult.ToString();
+                        }
+
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep Target: {0}", psdzIstufeTarget.Value));
+
+                        IPsdzIstufe psdzIstufeShip = new PsdzIstufe
                         {
                             Value = iStufenTriple.Shipment,
                             IsValid = true
                         };
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep Ship: {0}", psdzIstufeShip.Value));
 
                         IEnumerable<IPsdzEcuIdentifier> psdzEcuIdentifiers = programmingService.Psdz.MacrosService.GetInstalledEcuList(psdzFa, psdzIstufeShip);
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "EcuIds: {0}", psdzEcuIdentifiers.Count()));
@@ -359,6 +370,10 @@ namespace PsdzClient
                                 featureLongStatus.FeatureStatusEto, featureLongStatus.TokenId));
                         }
 
+                        IPsdzSollverbauung psdzSollverbauung = programmingService.Psdz.LogicService.GenerateSollverbauungGesamtFlash(psdzConnection, psdzIstufeTarget, psdzIstufeShip, psdzSvt, psdzFa, activeTalFilter);
+                        sbResult.AppendLine("Target flash:");
+                        sbResult.Append(psdzSollverbauung.AsXml);
+
                         IEnumerable<IPsdzEcuContextInfo> psdzEcuContextInfos = programmingService.Psdz.EcuService.RequestEcuContextInfos(psdzConnection, psdzEcuIdentifiers);
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecu contexts: {0}", psdzEcuContextInfos.Count()));
                         foreach (IPsdzEcuContextInfo ecuContextInfo in psdzEcuContextInfos)
@@ -367,6 +382,18 @@ namespace PsdzClient
                                 ecuContextInfo.EcuId.BaseVariant, ecuContextInfo.EcuId.DiagAddrAsInt, ecuContextInfo.EcuId.DiagnosisAddress.Offset,
                                 ecuContextInfo.ManufacturingDate, ecuContextInfo.LastProgrammingDate, ecuContextInfo.ProgramCounter, ecuContextInfo.PerformedFlashCycles, ecuContextInfo.RemainingFlashCycles));
                         }
+
+                        IPsdzSwtAction psdzSwtAction = programmingService.Psdz.ProgrammingService.RequestSwtAction(psdzConnection, true);
+                        if (psdzSwtAction?.SwtEcus != null)
+                        {
+                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecus: {0}", psdzSwtAction.SwtEcus.Count()));
+                            foreach (IPsdzSwtEcu psdzSwtEcu in psdzSwtAction.SwtEcus)
+                            {
+                                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecu: Id={0}, Vin={1}, CertState={2}, SwSig={3}",
+                                    psdzSwtEcu.EcuIdentifier, psdzSwtEcu.Vin, psdzSwtEcu.RootCertState, psdzSwtEcu.SoftwareSigState));
+                            }
+                        }
+
                         break;
                     }
                 }
