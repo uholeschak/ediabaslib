@@ -60,6 +60,7 @@ namespace PsdzClient
             // 
             // buttonClose
             // 
+            this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.buttonClose.Location = new System.Drawing.Point(723, 415);
             this.buttonClose.Name = "buttonClose";
@@ -71,6 +72,7 @@ namespace PsdzClient
             // 
             // buttonAbort
             // 
+            this.buttonAbort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonAbort.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.buttonAbort.Location = new System.Drawing.Point(642, 415);
             this.buttonAbort.Name = "buttonAbort";
