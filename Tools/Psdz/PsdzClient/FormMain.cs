@@ -14,6 +14,7 @@ using BMW.Rheingold.Psdz.Client;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.SecurityManagement;
+using BMW.Rheingold.Psdz.Model.Sfa;
 using BMW.Rheingold.Psdz.Model.Swt;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using PsdzClient.Programming;
@@ -330,6 +331,29 @@ namespace PsdzClient
                         {
                             sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " EcuId: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, Uid={3}",
                                 ecuUid.Key.BaseVariant, ecuUid.Key.DiagAddrAsInt, ecuUid.Key.DiagnosisAddress.Offset, ecuUid.Value.EcuUid));
+                        }
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Failures: {0}", psdzReadEcuUid.FailureResponse.Count()));
+                        foreach (IPsdzEcuFailureResponseCto failureResponse in psdzReadEcuUid.FailureResponse)
+                        {
+                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Fail: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, Cause={3}",
+                                failureResponse.EcuIdentifierCto.BaseVariant, failureResponse.EcuIdentifierCto.DiagAddrAsInt, failureResponse.EcuIdentifierCto.DiagnosisAddress.Offset,
+                                failureResponse.Cause.Description));
+                        }
+
+                        IPsdzReadStatusResultCto psdzReadStatusResult = programmingService.Psdz.SecureFeatureActivationService.ReadStatus(PsdzStatusRequestFeatureTypeEtoEnum.ALL_FEATURES, psdzConnection, psdzSvt, psdzEcuIdentifiers, true, 3, 100);
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Status failures: {0}", psdzReadStatusResult.Failures.Count()));
+                        foreach (IPsdzEcuFailureResponseCto failureResponse in psdzReadStatusResult.Failures)
+                        {
+                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Fail: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, Cause={3}",
+                                failureResponse.EcuIdentifierCto.BaseVariant, failureResponse.EcuIdentifierCto.DiagAddrAsInt, failureResponse.EcuIdentifierCto.DiagnosisAddress.Offset,
+                                failureResponse.Cause.Description));
+                        }
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Status features: {0}", psdzReadStatusResult.FeatureStatusSet.Count()));
+                        foreach (IPsdzFeatureLongStatusCto featureLongStatus in psdzReadStatusResult.FeatureStatusSet)
+                        {
+                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Feature: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, Status={3}, Token={4}",
+                                featureLongStatus.EcuIdentifierCto.BaseVariant, featureLongStatus.EcuIdentifierCto.DiagAddrAsInt, featureLongStatus.EcuIdentifierCto.DiagnosisAddress.Offset,
+                                featureLongStatus.FeatureStatusEto, featureLongStatus.TokenId));
                         }
                         break;
                     }
