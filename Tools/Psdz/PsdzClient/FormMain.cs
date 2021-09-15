@@ -395,15 +395,6 @@ namespace PsdzClient
 
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
         {
-            StringBuilder sbMessage = new StringBuilder();
-            sbMessage.AppendLine("Stopping host ...");
-            UpdateStatus(sbMessage.ToString());
-            if (!StopProgrammingServiceTask().Wait(10000))
-            {
-                sbMessage.AppendLine("Host stop failed");
-                UpdateStatus(sbMessage.ToString());
-            }
-
             UpdateDisplay();
             StoreSettings();
             timerUpdate.Enabled = false;
@@ -464,6 +455,14 @@ namespace PsdzClient
                     sbMessage.AppendLine("Host stop failed");
                 }
                 UpdateStatus(sbMessage.ToString());
+
+                if (e == null)
+                {
+                    BeginInvoke((Action)(() =>
+                    {
+                        Close();
+                    }));
+                }
             });
 
             taskActive = true;
@@ -472,15 +471,15 @@ namespace PsdzClient
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-            bool active = taskActive;
-#if false
-            if (!active && programmingService != null && programmingService.IsPsdzPsdzServiceHostInitialized())
+            if (taskActive)
             {
-                active = true;
+                e.Cancel = true;
+                return;
             }
-#endif
-            if (active)
+
+            if (programmingService != null && programmingService.IsPsdzPsdzServiceHostInitialized())
             {
+                buttonStopHost_Click(sender, null);
                 e.Cancel = true;
             }
         }
