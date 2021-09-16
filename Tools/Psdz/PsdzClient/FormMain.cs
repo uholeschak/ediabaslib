@@ -17,6 +17,7 @@ using BMW.Rheingold.Psdz.Model.SecurityManagement;
 using BMW.Rheingold.Psdz.Model.Sfa;
 using BMW.Rheingold.Psdz.Model.Svb;
 using BMW.Rheingold.Psdz.Model.Swt;
+using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using PsdzClient.Programming;
 
@@ -296,10 +297,11 @@ namespace PsdzClient
                         IPsdzFa psdzFa = programmingService.Psdz.ObjectBuilder.BuildFa(standardFa, psdzVin.Value);
                         sbResult.AppendLine("FA:");
                         sbResult.Append(psdzFa.AsXml);
+
                         IPsdzIstufe[] psdzIstufes = programmingService.Psdz.LogicService.GetPossibleIntegrationLevel(psdzFa).ToArray();
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "ISteps: {0}", psdzIstufes.Length));
                         IPsdzIstufe psdzIstufeTarget = null;
-                        foreach (IPsdzIstufe iStufe in psdzIstufes)
+                        foreach (IPsdzIstufe iStufe in psdzIstufes.OrderBy(x => x))
                         {
                             if (iStufe.IsValid)
                             {
@@ -310,6 +312,7 @@ namespace PsdzClient
 
                         if (psdzIstufeTarget == null)
                         {
+                            sbResult.AppendLine("No target iStep");
                             return sbResult.ToString();
                         }
 
@@ -394,6 +397,9 @@ namespace PsdzClient
                             }
                         }
 
+                        IPsdzTal psdzTal = programmingService.Psdz.LogicService.GenerateTal(psdzConnection, psdzSvt, psdzSollverbauung, psdzSwtAction, activeTalFilter);
+                        sbResult.AppendLine("Tal:");
+                        sbResult.Append(psdzTal.AsXml);
                         break;
                     }
                 }
