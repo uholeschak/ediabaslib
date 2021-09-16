@@ -414,6 +414,7 @@ namespace PsdzClient
                         IPsdzTal psdzTal = programmingService.Psdz.LogicService.GenerateTal(psdzConnection, psdzContext.SvtActual, psdzSollverbauung, psdzContext.SwtAction, psdzContext.TalFilter);
                         psdzContext.Tal = psdzTal;
                         sbResult.AppendLine("Tal:");
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Size: {0}", psdzTal.AsXml.Length));
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " State: {0}", psdzTal.TalExecutionState));
                         foreach (IPsdzEcuIdentifier ecuIdentifier in psdzTal.AffectedEcus)
                         {
@@ -432,12 +433,16 @@ namespace PsdzClient
                         }
                         UpdateStatus(sbResult.ToString());
 
-                        IPsdzTal psdzBackupTal = programmingService.Psdz.IndividualDataRestoreService.GenerateBackupTal(psdzConnection, psdzContext.PathToBackupData, psdzTal, psdzContext.TalFilter);
+                        IPsdzTal psdzBackupTal = programmingService.Psdz.IndividualDataRestoreService.GenerateBackupTal(psdzConnection, psdzContext.PathToBackupData, psdzContext.Tal, psdzContext.TalFilter);
                         psdzContext.IndividualDataBackupTal = psdzBackupTal;
-                        sbResult.AppendLine(" Backup Tal:");
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " State: {0}", psdzBackupTal.TalExecutionState));
+                        sbResult.AppendLine("Backup Tal:");
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Size: {0}", psdzBackupTal.AsXml.Length));
                         UpdateStatus(sbResult.ToString());
 
+                        IPsdzTal psdzRestorePrognosisTal = programmingService.Psdz.IndividualDataRestoreService.GenerateRestorePrognosisTal(psdzConnection, psdzContext.PathToBackupData, psdzContext.Tal, psdzContext.IndividualDataBackupTal, psdzContext.TalFilter);
+                        psdzContext.IndividualDataRestorePrognosisTal = psdzRestorePrognosisTal;
+                        sbResult.AppendLine("Restore prognosis Tal:");
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Size: {0}", psdzRestorePrognosisTal.AsXml.Length));
                         break;
                     }
                 }
