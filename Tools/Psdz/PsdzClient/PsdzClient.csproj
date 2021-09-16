@@ -70,7 +70,6 @@
     <Compile Include="Vehicle\DealerSessionProperty.cs" />
     <Compile Include="Psdz\EcuServiceClient.cs" />
     <Compile Include="Programming\IIstufenTriple.cs" />
-    <Compile Include="Programming\IProgrammingApi.cs" />
     <Compile Include="Programming\IProgrammingObjectBuilder.cs" />
     <Compile Include="Utility\FormatConverter.cs" />
     <Compile Include="FormMain.cs">
