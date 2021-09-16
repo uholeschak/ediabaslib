@@ -276,6 +276,7 @@ namespace PsdzClient
                     {
                         psdzContext.CleanupBackupData();
                         IPsdzIstufenTriple iStufenTriple = programmingService.Psdz.VcmService.GetIStufenTripleActual(psdzConnection);
+                        psdzContext.SetIstufen(iStufenTriple);
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep: Current={0}, Last={1}, Shipment={2}",
                             iStufenTriple.Current, iStufenTriple.Last, iStufenTriple.Shipment));
                         IPsdzVin psdzVin = programmingService.Psdz.VcmService.GetVinFromMaster(psdzConnection);
@@ -289,12 +290,14 @@ namespace PsdzClient
 
                         IPsdzStandardFa standardFa = programmingService.Psdz.VcmService.GetStandardFaActual(psdzConnection);
                         IPsdzFa psdzFa = programmingService.Psdz.ObjectBuilder.BuildFa(standardFa, psdzVin.Value);
+                        psdzContext.SetFaActual(psdzFa);
                         sbResult.AppendLine("FA:");
                         sbResult.Append(psdzFa.AsXml);
                         UpdateStatus(sbResult.ToString());
 
-                        IPsdzIstufe[] psdzIstufes = programmingService.Psdz.LogicService.GetPossibleIntegrationLevel(psdzFa).ToArray();
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "ISteps: {0}", psdzIstufes.Length));
+                        IEnumerable<IPsdzIstufe> psdzIstufes = programmingService.Psdz.LogicService.GetPossibleIntegrationLevel(psdzContext.FaActual);
+                        psdzContext.SetPossibleIstufenTarget(psdzIstufes);
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "ISteps: {0}", psdzIstufes.Count()));
                         IPsdzIstufe psdzIstufeTarget = null;
                         foreach (IPsdzIstufe iStufe in psdzIstufes.OrderBy(x => x))
                         {
@@ -316,13 +319,13 @@ namespace PsdzClient
 
                         IPsdzIstufe psdzIstufeShip = new PsdzIstufe
                         {
-                            Value = iStufenTriple.Shipment,
+                            Value = psdzContext.IstufeShipment,
                             IsValid = true
                         };
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep Ship: {0}", psdzIstufeShip.Value));
                         UpdateStatus(sbResult.ToString());
 
-                        IEnumerable<IPsdzEcuIdentifier> psdzEcuIdentifiers = programmingService.Psdz.MacrosService.GetInstalledEcuList(psdzFa, psdzIstufeShip);
+                        IEnumerable<IPsdzEcuIdentifier> psdzEcuIdentifiers = programmingService.Psdz.MacrosService.GetInstalledEcuList(psdzContext.FaActual, psdzIstufeShip);
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "EcuIds: {0}", psdzEcuIdentifiers.Count()));
                         foreach (IPsdzEcuIdentifier ecuIdentifier in psdzEcuIdentifiers)
                         {
@@ -336,9 +339,10 @@ namespace PsdzClient
                         string svtString = psdzStandardSvtNames.AsString.Replace(", ECU[", ",\r\nECU[");
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Svt: {0}", svtString));
                         IPsdzSvt psdzSvt = programmingService.Psdz.ObjectBuilder.BuildSvt(psdzStandardSvtNames, psdzVin.Value);
+                        psdzContext.SetSvtActual(psdzSvt);
                         UpdateStatus(sbResult.ToString());
 
-                        IPsdzReadEcuUidResultCto psdzReadEcuUid = programmingService.Psdz.SecurityManagementService.readEcuUid(psdzConnection, psdzEcuIdentifiers, psdzSvt);
+                        IPsdzReadEcuUidResultCto psdzReadEcuUid = programmingService.Psdz.SecurityManagementService.readEcuUid(psdzConnection, psdzEcuIdentifiers, psdzContext.SvtActual);
 
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "EcuUids: {0}", psdzReadEcuUid.EcuUids.Count));
                         foreach (KeyValuePair<IPsdzEcuIdentifier, IPsdzEcuUidCto> ecuUid in psdzReadEcuUid.EcuUids)
@@ -357,7 +361,7 @@ namespace PsdzClient
 #endif
                         UpdateStatus(sbResult.ToString());
 
-                        IPsdzReadStatusResultCto psdzReadStatusResult = programmingService.Psdz.SecureFeatureActivationService.ReadStatus(PsdzStatusRequestFeatureTypeEtoEnum.ALL_FEATURES, psdzConnection, psdzSvt, psdzEcuIdentifiers, true, 3, 100);
+                        IPsdzReadStatusResultCto psdzReadStatusResult = programmingService.Psdz.SecureFeatureActivationService.ReadStatus(PsdzStatusRequestFeatureTypeEtoEnum.ALL_FEATURES, psdzConnection, psdzContext.SvtActual, psdzEcuIdentifiers, true, 3, 100);
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Status failures: {0}", psdzReadStatusResult.Failures.Count()));
 #if false
                         foreach (IPsdzEcuFailureResponseCto failureResponse in psdzReadStatusResult.Failures)
@@ -378,7 +382,8 @@ namespace PsdzClient
                         }
                         UpdateStatus(sbResult.ToString());
 
-                        IPsdzSollverbauung psdzSollverbauung = programmingService.Psdz.LogicService.GenerateSollverbauungGesamtFlash(psdzConnection, psdzIstufeTarget, psdzIstufeShip, psdzSvt, psdzFa, psdzContext.TalFilter);
+                        IPsdzSollverbauung psdzSollverbauung = programmingService.Psdz.LogicService.GenerateSollverbauungGesamtFlash(psdzConnection, psdzIstufeTarget, psdzIstufeShip, psdzContext.SvtActual, psdzContext.FaActual, psdzContext.TalFilter);
+                        psdzContext.SetSollverbauung(psdzSollverbauung);
                         sbResult.AppendLine("Target flash:");
                         sbResult.Append(psdzSollverbauung.AsXml);
                         UpdateStatus(sbResult.ToString());
@@ -394,6 +399,7 @@ namespace PsdzClient
                         UpdateStatus(sbResult.ToString());
 
                         IPsdzSwtAction psdzSwtAction = programmingService.Psdz.ProgrammingService.RequestSwtAction(psdzConnection, true);
+                        psdzContext.SwtAction = psdzSwtAction;
                         if (psdzSwtAction?.SwtEcus != null)
                         {
                             sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecus: {0}", psdzSwtAction.SwtEcus.Count()));
@@ -405,7 +411,8 @@ namespace PsdzClient
                         }
                         UpdateStatus(sbResult.ToString());
 
-                        IPsdzTal psdzTal = programmingService.Psdz.LogicService.GenerateTal(psdzConnection, psdzSvt, psdzSollverbauung, psdzSwtAction, psdzContext.TalFilter);
+                        IPsdzTal psdzTal = programmingService.Psdz.LogicService.GenerateTal(psdzConnection, psdzContext.SvtActual, psdzSollverbauung, psdzContext.SwtAction, psdzContext.TalFilter);
+                        psdzContext.Tal = psdzTal;
                         sbResult.AppendLine("Tal:");
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " State: {0}", psdzTal.TalExecutionState));
                         foreach (IPsdzEcuIdentifier ecuIdentifier in psdzTal.AffectedEcus)
@@ -426,6 +433,7 @@ namespace PsdzClient
                         UpdateStatus(sbResult.ToString());
 
                         IPsdzTal psdzBackupTal = programmingService.Psdz.IndividualDataRestoreService.GenerateBackupTal(psdzConnection, psdzContext.PathToBackupData, psdzTal, psdzContext.TalFilter);
+                        psdzContext.IndividualDataBackupTal = psdzBackupTal;
                         sbResult.AppendLine(" Backup Tal:");
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " State: {0}", psdzBackupTal.TalExecutionState));
                         UpdateStatus(sbResult.ToString());
