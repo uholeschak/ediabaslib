@@ -239,7 +239,7 @@ namespace PsdzClient
                     if (!targetSelector.IsDirect &&
                         string.Compare(verbund, targetSelector.Baureihenverbund, StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Possible target selector: {0}", targetSelector.Project));
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Target selector matched: {0}", targetSelector.Project));
                         targetSelectorMatch = targetSelector;
                     }
                 }
@@ -253,11 +253,28 @@ namespace PsdzClient
 
                 psdzContext.ProjectName = targetSelectorMatch.Project;
                 psdzContext.VehicleInfo = targetSelectorMatch.VehicleInfo;
-
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Target selector: Project={0}, Vehicle={1}, Series={2}",
                     targetSelectorMatch.Project, targetSelectorMatch.VehicleInfo, targetSelectorMatch.Baureihenverbund));
+                UpdateStatus(sbResult.ToString());
 
-                IPsdzConnection psdzConnection = programmingService.Psdz.ConnectionManagerService.ConnectOverEthernet(targetSelectorMatch.Project, targetSelectorMatch.VehicleInfo, url, baureihe, "S15A-17-03-509");
+                string[] selectorParts = targetSelectorMatch.Project.Split('_', '-');
+                if (selectorParts.Length < 4)
+                {
+                    sbResult.AppendLine("Target selector not valid");
+                    UpdateStatus(sbResult.ToString());
+                    return false;
+                }
+
+                string dummyIStep = string.Format(CultureInfo.InvariantCulture, "{0}-{1}-{2}-{3}", selectorParts[0], selectorParts[1], selectorParts[2], selectorParts[3]);
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Dummy IStep: {0}", dummyIStep));
+
+                IPsdzConnection psdzConnectionTemp = programmingService.Psdz.ConnectionManagerService.ConnectOverEthernet(targetSelectorMatch.Project, targetSelectorMatch.VehicleInfo, url, baureihe, dummyIStep);
+                IPsdzIstufenTriple iStufenTriple = programmingService.Psdz.VcmService.GetIStufenTripleActual(psdzConnectionTemp);
+                programmingService.Psdz.ConnectionManagerService.CloseConnection(psdzConnectionTemp);
+                string bauIStufe = iStufenTriple.Shipment;
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep shipment: {0}", bauIStufe));
+
+                IPsdzConnection psdzConnection = programmingService.Psdz.ConnectionManagerService.ConnectOverEthernet(targetSelectorMatch.Project, targetSelectorMatch.VehicleInfo, url, baureihe, bauIStufe);
                 psdzContext.Connection = psdzConnection;
 
                 sbResult.AppendLine("Vehicle connected");
