@@ -471,7 +471,8 @@ namespace PsdzClient
                         }
                         UpdateStatus(sbResult.ToString());
 
-                        IPsdzSollverbauung psdzSollverbauung = programmingService.Psdz.LogicService.GenerateSollverbauungGesamtFlash(psdzContext.Connection, psdzIstufeTarget, psdzIstufeShip, psdzContext.SvtActual, psdzContext.FaActual, psdzContext.TalFilter);
+                        IPsdzTalFilter talFilterFlash = new PsdzTalFilter();
+                        IPsdzSollverbauung psdzSollverbauung = programmingService.Psdz.LogicService.GenerateSollverbauungGesamtFlash(psdzContext.Connection, psdzIstufeTarget, psdzIstufeShip, psdzContext.SvtActual, psdzContext.FaActual, talFilterFlash);
                         psdzContext.SetSollverbauung(psdzSollverbauung);
                         sbResult.AppendLine("Target flash:");
                         sbResult.Append(psdzSollverbauung.AsXml);
