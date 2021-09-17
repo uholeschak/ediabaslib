@@ -25,6 +25,7 @@ namespace PsdzClient
 {
     public partial class FormMain : Form
     {
+        private const string DealerId = "32395";
         private const string Baureihe = "G31";
         private ProgrammingService programmingService;
         private bool taskActive = false;
@@ -123,26 +124,43 @@ namespace PsdzClient
 
         private bool StartProgrammingService(string dealerId)
         {
+            StringBuilder sbResult = new StringBuilder();
             try
             {
-                if (!StopProgrammingService())
+                sbResult.AppendLine("Starting host ...");
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "DealerId={0}", dealerId));
+                UpdateStatus(sbResult.ToString());
+
+                if (programmingService != null && programmingService.IsPsdzPsdzServiceHostInitialized())
                 {
-                    return false;
+                    if (!StopProgrammingService())
+                    {
+                        sbResult.AppendLine("Stop host failed");
+                        UpdateStatus(sbResult.ToString());
+                        return false;
+                    }
                 }
+
                 programmingService = new ProgrammingService(textBoxIstaFolder.Text, dealerId);
                 programmingService.PsdzLoglevel = PsdzLoglevel.TRACE;
                 programmingService.ProdiasLoglevel = ProdiasLoglevel.TRACE;
                 if (!programmingService.StartPsdzServiceHost())
                 {
+                    sbResult.AppendLine("Start host failed");
+                    UpdateStatus(sbResult.ToString());
                     return false;
                 }
+
+                sbResult.AppendLine("Host started");
+                UpdateStatus(sbResult.ToString());
+                return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Exception: {0}", ex.Message));
+                UpdateStatus(sbResult.ToString());
                 return false;
             }
-
-            return true;
         }
 
         private async Task<bool> StopProgrammingServiceTask()
@@ -153,8 +171,12 @@ namespace PsdzClient
 
         private bool StopProgrammingService()
         {
+            StringBuilder sbResult = new StringBuilder();
             try
             {
+                sbResult.AppendLine("Stopping host ...");
+                UpdateStatus(sbResult.ToString());
+
                 if (programmingService != null)
                 {
                     programmingService.Psdz.Shutdown();
@@ -163,9 +185,14 @@ namespace PsdzClient
                     programmingService = null;
                     ClearProgrammingObjects();
                 }
+
+                sbResult.AppendLine("Host stopped");
+                UpdateStatus(sbResult.ToString());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Exception: {0}", ex.Message));
+                UpdateStatus(sbResult.ToString());
                 return false;
             }
 
@@ -223,6 +250,9 @@ namespace PsdzClient
                     UpdateStatus(sbResult.ToString());
                     return false;
                 }
+
+                psdzContext.ProjectName = targetSelectorMatch.Project;
+                psdzContext.VehicleInfo = targetSelectorMatch.VehicleInfo;
 
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Target selector: Project={0}, Vehicle={1}, Series={2}",
                     targetSelectorMatch.Project, targetSelectorMatch.VehicleInfo, targetSelectorMatch.Baureihenverbund));
@@ -345,30 +375,35 @@ namespace PsdzClient
                         IEnumerable<IPsdzIstufe> psdzIstufes = programmingService.Psdz.LogicService.GetPossibleIntegrationLevel(psdzContext.FaActual);
                         psdzContext.SetPossibleIstufenTarget(psdzIstufes);
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "ISteps: {0}", psdzIstufes.Count()));
-                        IPsdzIstufe psdzIstufeTarget = null;
                         foreach (IPsdzIstufe iStufe in psdzIstufes.OrderBy(x => x))
                         {
                             if (iStufe.IsValid)
                             {
                                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " IStep: {0}", iStufe.Value));
-                                psdzIstufeTarget = iStufe;
                             }
                         }
                         UpdateStatus(sbResult.ToString());
 
-                        if (psdzIstufeTarget == null)
+                        string latestIstufeTarget = psdzContext.LatestPossibleIstufeTarget;
+                        if (string.IsNullOrEmpty(latestIstufeTarget))
                         {
                             sbResult.AppendLine("No target iStep");
                             return false;
                         }
-
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep Target: {0}", psdzIstufeTarget.Value));
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep Target: {0}", latestIstufeTarget));
 
                         IPsdzIstufe psdzIstufeShip = new PsdzIstufe
                         {
                             Value = psdzContext.IstufeShipment,
                             IsValid = true
                         };
+
+                        IPsdzIstufe psdzIstufeTarget = new PsdzIstufe
+                        {
+                            Value = latestIstufeTarget,
+                            IsValid = true
+                        };
+
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep Ship: {0}", psdzIstufeShip.Value));
                         UpdateStatus(sbResult.ToString());
 
@@ -581,22 +616,9 @@ namespace PsdzClient
 
         private void buttonStartHost_Click(object sender, EventArgs e)
         {
-            StringBuilder sbMessage = new StringBuilder();
-            sbMessage.AppendLine("Starting host ...");
-            UpdateStatus(sbMessage.ToString());
-
-            StartProgrammingServiceTask("32395").ContinueWith(task =>
+            StartProgrammingServiceTask(DealerId).ContinueWith(task =>
             {
                 taskActive = false;
-                if (task.Result)
-                {
-                    sbMessage.AppendLine("Host started");
-                }
-                else
-                {
-                    sbMessage.AppendLine("Host start failed");
-                }
-                UpdateStatus(sbMessage.ToString());
             });
 
             taskActive = true;
@@ -605,23 +627,9 @@ namespace PsdzClient
 
         private void buttonStopHost_Click(object sender, EventArgs e)
         {
-            StringBuilder sbMessage = new StringBuilder();
-            sbMessage.AppendLine("Stopping host ...");
-            UpdateStatus(sbMessage.ToString());
-
             StopProgrammingServiceTask().ContinueWith(task =>
             {
                 taskActive = false;
-                if (task.Result)
-                {
-                    sbMessage.AppendLine("Host stopped");
-                }
-                else
-                {
-                    sbMessage.AppendLine("Host stop failed");
-                }
-                UpdateStatus(sbMessage.ToString());
-
                 if (e == null)
                 {
                     BeginInvoke((Action)(() =>
