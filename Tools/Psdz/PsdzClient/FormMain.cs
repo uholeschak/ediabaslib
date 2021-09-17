@@ -409,18 +409,8 @@ namespace PsdzClient
                         }
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep Target: {0}", latestIstufeTarget));
 
-                        IPsdzIstufe psdzIstufeShip = new PsdzIstufe
-                        {
-                            Value = psdzContext.IstufeShipment,
-                            IsValid = true
-                        };
-
-                        IPsdzIstufe psdzIstufeTarget = new PsdzIstufe
-                        {
-                            Value = latestIstufeTarget,
-                            IsValid = true
-                        };
-
+                        IPsdzIstufe psdzIstufeShip = programmingService.Psdz.ObjectBuilder.BuildIstufe(psdzContext.IstufeShipment);
+                        IPsdzIstufe psdzIstufeTarget = programmingService.Psdz.ObjectBuilder.BuildIstufe(latestIstufeTarget);
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep Ship: {0}", psdzIstufeShip.Value));
                         UpdateStatus(sbResult.ToString());
 
