@@ -233,6 +233,7 @@ namespace PsdzClient
 
                 string verbund = programmingService.Psdz.ConfigurationService.RequestBaureihenverbund(baureihe);
                 IEnumerable<IPsdzTargetSelector> targetSelectors = programmingService.Psdz.ConnectionFactoryService.GetTargetSelectors();
+                psdzContext.TargetSelectors = targetSelectors;
                 IPsdzTargetSelector targetSelectorMatch = null;
                 foreach (IPsdzTargetSelector targetSelector in targetSelectors)
                 {
