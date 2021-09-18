@@ -128,6 +128,7 @@ PsdzServiceHost:
 BMW.Rheingold.Psdz.Services.ConfigurationService.RequestBaureihenverbund()
 BMW.Rheingold.Programming.ConnectToCar()
 BMW.Rheingold.Programming.ConnectToProject()
+BMW.Rheingold.Programming.ProgrammingEngine.States.RetrieveTargetSelectorsState.Handle(ProgrammingSession session)
 BMW.Rheingold.Programming.ProgrammingEngine.States.RetrieveActualSwtEnablingCodesState.Handle(ProgrammingSession session)
 BMW.Rheingold.Programming.ProgrammingEngine.SetSwtAction()
 BMW.Rheingold.Programming.ProgrammingEngine.States.RetrieveActualFaState()
