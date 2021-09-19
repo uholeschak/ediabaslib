@@ -327,12 +327,12 @@ namespace PsdzClient
             }
         }
 
-        private async Task<bool> VehicleFunctionsTask(int function)
+        private async Task<bool> VehicleFunctionsTask(List<string> faRemList = null, List<string> faAddList = null)
         {
-            return await Task.Run(() => VehicleFunctions(function)).ConfigureAwait(false);
+            return await Task.Run(() => VehicleFunctions(faRemList, faAddList)).ConfigureAwait(false);
         }
 
-        private bool VehicleFunctions(int function)
+        private bool VehicleFunctions(List<string> faRemList, List<string> faAddList)
         {
             StringBuilder sbResult = new StringBuilder();
 
@@ -355,188 +355,203 @@ namespace PsdzClient
                     return false;
                 }
 
-                switch (function)
+                bool bModifyFa = false;
+                if (faRemList != null && faAddList != null && (faRemList.Count > 0 || faAddList.Count > 0))
                 {
-                    case 0:
-                    default:
+                    bModifyFa = true;
+                    sbResult.Append("FaRem:");
+                    foreach (string faRem in faRemList)
                     {
-                        psdzContext.CleanupBackupData();
-                        IPsdzIstufenTriple iStufenTriple = programmingService.Psdz.VcmService.GetIStufenTripleActual(psdzContext.Connection);
-                        psdzContext.SetIstufen(iStufenTriple);
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep: Current={0}, Last={1}, Shipment={2}",
-                            iStufenTriple.Current, iStufenTriple.Last, iStufenTriple.Shipment));
-                        IPsdzVin psdzVin = programmingService.Psdz.VcmService.GetVinFromMaster(psdzContext.Connection);
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Vin: {0}", psdzVin.Value));
-                        UpdateStatus(sbResult.ToString());
-                        if (!psdzContext.SetPathToBackupData(psdzVin.Value))
-                        {
-                            sbResult.AppendLine("Create backup path failed");
-                            return false;
-                        }
+                        sbResult.Append(" ");
+                        sbResult.Append(faRem);
+                    }
 
-                        IPsdzStandardFa standardFa = programmingService.Psdz.VcmService.GetStandardFaActual(psdzContext.Connection);
-                        IPsdzFa psdzFa = programmingService.Psdz.ObjectBuilder.BuildFa(standardFa, psdzVin.Value);
-                        psdzContext.SetFaActual(psdzFa);
-                        sbResult.AppendLine("FA:");
-                        sbResult.Append(psdzFa.AsXml);
-                        UpdateStatus(sbResult.ToString());
+                    sbResult.AppendLine();
 
-                        IEnumerable<IPsdzIstufe> psdzIstufes = programmingService.Psdz.LogicService.GetPossibleIntegrationLevel(psdzContext.FaActual);
-                        psdzContext.SetPossibleIstufenTarget(psdzIstufes);
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "ISteps: {0}", psdzIstufes.Count()));
-                        foreach (IPsdzIstufe iStufe in psdzIstufes.OrderBy(x => x))
-                        {
-                            if (iStufe.IsValid)
-                            {
-                                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " IStep: {0}", iStufe.Value));
-                            }
-                        }
-                        UpdateStatus(sbResult.ToString());
+                    sbResult.Append("FaAdd:");
+                    foreach (string faAdd in faAddList)
+                    {
+                        sbResult.Append(" ");
+                        sbResult.Append(faAdd);
+                    }
 
-                        string latestIstufeTarget = psdzContext.LatestPossibleIstufeTarget;
-                        if (string.IsNullOrEmpty(latestIstufeTarget))
-                        {
-                            sbResult.AppendLine("No target iStep");
-                            return false;
-                        }
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep Target: {0}", latestIstufeTarget));
+                    sbResult.AppendLine();
+                }
 
-                        IPsdzIstufe psdzIstufeShip = programmingService.Psdz.ObjectBuilder.BuildIstufe(psdzContext.IstufeShipment);
-                        IPsdzIstufe psdzIstufeTarget = programmingService.Psdz.ObjectBuilder.BuildIstufe(latestIstufeTarget);
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep Ship: {0}", psdzIstufeShip.Value));
-                        UpdateStatus(sbResult.ToString());
+                psdzContext.CleanupBackupData();
+                IPsdzIstufenTriple iStufenTriple = programmingService.Psdz.VcmService.GetIStufenTripleActual(psdzContext.Connection);
+                psdzContext.SetIstufen(iStufenTriple);
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep: Current={0}, Last={1}, Shipment={2}",
+                    iStufenTriple.Current, iStufenTriple.Last, iStufenTriple.Shipment));
+                IPsdzVin psdzVin = programmingService.Psdz.VcmService.GetVinFromMaster(psdzContext.Connection);
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Vin: {0}", psdzVin.Value));
+                UpdateStatus(sbResult.ToString());
+                if (!psdzContext.SetPathToBackupData(psdzVin.Value))
+                {
+                    sbResult.AppendLine("Create backup path failed");
+                    return false;
+                }
 
-                        IEnumerable<IPsdzEcuIdentifier> psdzEcuIdentifiers = programmingService.Psdz.MacrosService.GetInstalledEcuList(psdzContext.FaActual, psdzIstufeShip);
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "EcuIds: {0}", psdzEcuIdentifiers.Count()));
-                        foreach (IPsdzEcuIdentifier ecuIdentifier in psdzEcuIdentifiers)
-                        {
-                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " EcuId: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
-                                ecuIdentifier.BaseVariant, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset));
-                        }
-                        UpdateStatus(sbResult.ToString());
+                IPsdzStandardFa standardFa = programmingService.Psdz.VcmService.GetStandardFaActual(psdzContext.Connection);
+                IPsdzFa psdzFa = programmingService.Psdz.ObjectBuilder.BuildFa(standardFa, psdzVin.Value);
+                psdzContext.SetFaActual(psdzFa);
+                sbResult.AppendLine("FA:");
+                sbResult.Append(psdzFa.AsXml);
+                UpdateStatus(sbResult.ToString());
 
-                        IPsdzStandardSvt psdzStandardSvt = programmingService.Psdz.EcuService.RequestSvt(psdzContext.Connection, psdzEcuIdentifiers);
-                        IPsdzStandardSvt psdzStandardSvtNames = programmingService.Psdz.LogicService.FillBntnNamesForMainSeries(psdzContext.Connection.TargetSelector.Baureihenverbund, psdzStandardSvt);
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Svt Ecus: {0}", psdzStandardSvtNames.Ecus.Count()));
-                        foreach (IPsdzEcu ecu in psdzStandardSvtNames.Ecus)
-                        {
-                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Variant: BaseVar={0}, Var={1}, Name={2}",
-                                ecu.BaseVariant, ecu.EcuVariant, ecu.BnTnName));
-                        }
-
-                        IPsdzSvt psdzSvt = programmingService.Psdz.ObjectBuilder.BuildSvt(psdzStandardSvtNames, psdzVin.Value);
-                        psdzContext.SetSvtActual(psdzSvt);
-                        UpdateStatus(sbResult.ToString());
-
-                        IPsdzReadEcuUidResultCto psdzReadEcuUid = programmingService.Psdz.SecurityManagementService.readEcuUid(psdzContext.Connection, psdzEcuIdentifiers, psdzContext.SvtActual);
-
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "EcuUids: {0}", psdzReadEcuUid.EcuUids.Count));
-                        foreach (KeyValuePair<IPsdzEcuIdentifier, IPsdzEcuUidCto> ecuUid in psdzReadEcuUid.EcuUids)
-                        {
-                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " EcuId: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, Uid={3}",
-                                ecuUid.Key.BaseVariant, ecuUid.Key.DiagAddrAsInt, ecuUid.Key.DiagnosisAddress.Offset, ecuUid.Value.EcuUid));
-                        }
-#if false
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "EcuUid failures: {0}", psdzReadEcuUid.FailureResponse.Count()));
-                        foreach (IPsdzEcuFailureResponseCto failureResponse in psdzReadEcuUid.FailureResponse)
-                        {
-                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Fail: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, Cause={3}",
-                                failureResponse.EcuIdentifierCto.BaseVariant, failureResponse.EcuIdentifierCto.DiagAddrAsInt, failureResponse.EcuIdentifierCto.DiagnosisAddress.Offset,
-                                failureResponse.Cause.Description));
-                        }
-#endif
-                        UpdateStatus(sbResult.ToString());
-
-                        IPsdzReadStatusResultCto psdzReadStatusResult = programmingService.Psdz.SecureFeatureActivationService.ReadStatus(PsdzStatusRequestFeatureTypeEtoEnum.ALL_FEATURES, psdzContext.Connection, psdzContext.SvtActual, psdzEcuIdentifiers, true, 3, 100);
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Status failures: {0}", psdzReadStatusResult.Failures.Count()));
-#if false
-                        foreach (IPsdzEcuFailureResponseCto failureResponse in psdzReadStatusResult.Failures)
-                        {
-                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Fail: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, Cause={3}",
-                                failureResponse.EcuIdentifierCto.BaseVariant, failureResponse.EcuIdentifierCto.DiagAddrAsInt, failureResponse.EcuIdentifierCto.DiagnosisAddress.Offset,
-                                failureResponse.Cause.Description));
-                        }
-#endif
-                        UpdateStatus(sbResult.ToString());
-
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Status features: {0}", psdzReadStatusResult.FeatureStatusSet.Count()));
-                        foreach (IPsdzFeatureLongStatusCto featureLongStatus in psdzReadStatusResult.FeatureStatusSet)
-                        {
-                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Feature: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, Status={3}, Token={4}",
-                                featureLongStatus.EcuIdentifierCto.BaseVariant, featureLongStatus.EcuIdentifierCto.DiagAddrAsInt, featureLongStatus.EcuIdentifierCto.DiagnosisAddress.Offset,
-                                featureLongStatus.FeatureStatusEto, featureLongStatus.TokenId));
-                        }
-                        UpdateStatus(sbResult.ToString());
-
-                        IPsdzTalFilter talFilterFlash = new PsdzTalFilter();
-                        IPsdzSollverbauung psdzSollverbauung = programmingService.Psdz.LogicService.GenerateSollverbauungGesamtFlash(psdzContext.Connection, psdzIstufeTarget, psdzIstufeShip, psdzContext.SvtActual, psdzContext.FaActual, talFilterFlash);
-                        psdzContext.SetSollverbauung(psdzSollverbauung);
-                        sbResult.AppendLine("Target construction:");
-                        foreach (IPsdzEcuVariantInstance bntnVariant in psdzSollverbauung.PsdzOrderList.BntnVariantInstances)
-                        {
-                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Variant: BaseVar={0}, Var={1}, Name={2}",
-                                bntnVariant.Ecu.BaseVariant, bntnVariant.Ecu.EcuVariant, bntnVariant.Ecu.BnTnName));
-                        }
-                        UpdateStatus(sbResult.ToString());
-
-                        IEnumerable<IPsdzEcuContextInfo> psdzEcuContextInfos = programmingService.Psdz.EcuService.RequestEcuContextInfos(psdzContext.Connection, psdzEcuIdentifiers);
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecu contexts: {0}", psdzEcuContextInfos.Count()));
-                        foreach (IPsdzEcuContextInfo ecuContextInfo in psdzEcuContextInfos)
-                        {
-                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Ecu context: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, ManuDate={3}, PrgDate={4}, PrgCnt={5}, FlashCnt={6}, FlashRemain={7}",
-                                ecuContextInfo.EcuId.BaseVariant, ecuContextInfo.EcuId.DiagAddrAsInt, ecuContextInfo.EcuId.DiagnosisAddress.Offset,
-                                ecuContextInfo.ManufacturingDate, ecuContextInfo.LastProgrammingDate, ecuContextInfo.ProgramCounter, ecuContextInfo.PerformedFlashCycles, ecuContextInfo.RemainingFlashCycles));
-                        }
-                        UpdateStatus(sbResult.ToString());
-
-                        IPsdzSwtAction psdzSwtAction = programmingService.Psdz.ProgrammingService.RequestSwtAction(psdzContext.Connection, true);
-                        psdzContext.SwtAction = psdzSwtAction;
-                        if (psdzSwtAction?.SwtEcus != null)
-                        {
-                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecus: {0}", psdzSwtAction.SwtEcus.Count()));
-                            foreach (IPsdzSwtEcu psdzSwtEcu in psdzSwtAction.SwtEcus)
-                            {
-                                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecu: Id={0}, Vin={1}, CertState={2}, SwSig={3}",
-                                    psdzSwtEcu.EcuIdentifier, psdzSwtEcu.Vin, psdzSwtEcu.RootCertState, psdzSwtEcu.SoftwareSigState));
-                            }
-                        }
-                        UpdateStatus(sbResult.ToString());
-
-                        IPsdzTal psdzTal = programmingService.Psdz.LogicService.GenerateTal(psdzContext.Connection, psdzContext.SvtActual, psdzSollverbauung, psdzContext.SwtAction, psdzContext.TalFilter);
-                        psdzContext.Tal = psdzTal;
-                        sbResult.AppendLine("Tal:");
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Size: {0}", psdzTal.AsXml.Length));
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " State: {0}", psdzTal.TalExecutionState));
-                        foreach (IPsdzEcuIdentifier ecuIdentifier in psdzTal.AffectedEcus)
-                        {
-                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Affected Ecu: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
-                                ecuIdentifier.BaseVariant, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset));
-                        }
-
-                        foreach (IPsdzTalLine talLine in psdzTal.TalLines)
-                        {
-                            sbResult.Append(string.Format(CultureInfo.InvariantCulture, " Tal line: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
-                                talLine.EcuIdentifier.BaseVariant, talLine.EcuIdentifier.DiagAddrAsInt, talLine.EcuIdentifier.DiagnosisAddress.Offset));
-                            sbResult.Append(string.Format(CultureInfo.InvariantCulture, " Fsc={0}, Flash={1}, Iba={2}, Sw={3}, Restore={4}, Sfa={5}",
-                                talLine.FscDeploy.Tas.Count(), talLine.BlFlash.Tas.Count(), talLine.IbaDeploy.Tas.Count(),
-                                talLine.SwDeploy.Tas.Count(), talLine.IdRestore.Tas.Count(), talLine.SFADeploy.Tas.Count()));
-                            sbResult.AppendLine();
-                        }
-                        UpdateStatus(sbResult.ToString());
-
-                        IPsdzTal psdzBackupTal = programmingService.Psdz.IndividualDataRestoreService.GenerateBackupTal(psdzContext.Connection, psdzContext.PathToBackupData, psdzContext.Tal, psdzContext.TalFilter);
-                        psdzContext.IndividualDataBackupTal = psdzBackupTal;
-                        sbResult.AppendLine("Backup Tal:");
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Size: {0}", psdzBackupTal.AsXml.Length));
-                        UpdateStatus(sbResult.ToString());
-
-                        IPsdzTal psdzRestorePrognosisTal = programmingService.Psdz.IndividualDataRestoreService.GenerateRestorePrognosisTal(psdzContext.Connection, psdzContext.PathToBackupData, psdzContext.Tal, psdzContext.IndividualDataBackupTal, psdzContext.TalFilter);
-                        psdzContext.IndividualDataRestorePrognosisTal = psdzRestorePrognosisTal;
-                        sbResult.AppendLine("Restore prognosis Tal:");
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Size: {0}", psdzRestorePrognosisTal.AsXml.Length));
-                        break;
+                IEnumerable<IPsdzIstufe> psdzIstufes = programmingService.Psdz.LogicService.GetPossibleIntegrationLevel(psdzContext.FaActual);
+                psdzContext.SetPossibleIstufenTarget(psdzIstufes);
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "ISteps: {0}", psdzIstufes.Count()));
+                foreach (IPsdzIstufe iStufe in psdzIstufes.OrderBy(x => x))
+                {
+                    if (iStufe.IsValid)
+                    {
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " IStep: {0}", iStufe.Value));
                     }
                 }
+                UpdateStatus(sbResult.ToString());
+
+                string latestIstufeTarget = psdzContext.LatestPossibleIstufeTarget;
+                if (string.IsNullOrEmpty(latestIstufeTarget))
+                {
+                    sbResult.AppendLine("No target iStep");
+                    return false;
+                }
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep Target: {0}", latestIstufeTarget));
+
+                IPsdzIstufe psdzIstufeShip = programmingService.Psdz.ObjectBuilder.BuildIstufe(psdzContext.IstufeShipment);
+                IPsdzIstufe psdzIstufeTarget = programmingService.Psdz.ObjectBuilder.BuildIstufe(latestIstufeTarget);
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep Ship: {0}", psdzIstufeShip.Value));
+                UpdateStatus(sbResult.ToString());
+
+                IEnumerable<IPsdzEcuIdentifier> psdzEcuIdentifiers = programmingService.Psdz.MacrosService.GetInstalledEcuList(psdzContext.FaActual, psdzIstufeShip);
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "EcuIds: {0}", psdzEcuIdentifiers.Count()));
+                foreach (IPsdzEcuIdentifier ecuIdentifier in psdzEcuIdentifiers)
+                {
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " EcuId: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
+                        ecuIdentifier.BaseVariant, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset));
+                }
+                UpdateStatus(sbResult.ToString());
+
+                IPsdzStandardSvt psdzStandardSvt = programmingService.Psdz.EcuService.RequestSvt(psdzContext.Connection, psdzEcuIdentifiers);
+                IPsdzStandardSvt psdzStandardSvtNames = programmingService.Psdz.LogicService.FillBntnNamesForMainSeries(psdzContext.Connection.TargetSelector.Baureihenverbund, psdzStandardSvt);
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Svt Ecus: {0}", psdzStandardSvtNames.Ecus.Count()));
+                foreach (IPsdzEcu ecu in psdzStandardSvtNames.Ecus)
+                {
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Variant: BaseVar={0}, Var={1}, Name={2}",
+                        ecu.BaseVariant, ecu.EcuVariant, ecu.BnTnName));
+                }
+
+                IPsdzSvt psdzSvt = programmingService.Psdz.ObjectBuilder.BuildSvt(psdzStandardSvtNames, psdzVin.Value);
+                psdzContext.SetSvtActual(psdzSvt);
+                UpdateStatus(sbResult.ToString());
+
+                IPsdzReadEcuUidResultCto psdzReadEcuUid = programmingService.Psdz.SecurityManagementService.readEcuUid(psdzContext.Connection, psdzEcuIdentifiers, psdzContext.SvtActual);
+
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "EcuUids: {0}", psdzReadEcuUid.EcuUids.Count));
+                foreach (KeyValuePair<IPsdzEcuIdentifier, IPsdzEcuUidCto> ecuUid in psdzReadEcuUid.EcuUids)
+                {
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " EcuId: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, Uid={3}",
+                        ecuUid.Key.BaseVariant, ecuUid.Key.DiagAddrAsInt, ecuUid.Key.DiagnosisAddress.Offset, ecuUid.Value.EcuUid));
+                }
+#if false
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "EcuUid failures: {0}", psdzReadEcuUid.FailureResponse.Count()));
+                foreach (IPsdzEcuFailureResponseCto failureResponse in psdzReadEcuUid.FailureResponse)
+                {
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Fail: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, Cause={3}",
+                        failureResponse.EcuIdentifierCto.BaseVariant, failureResponse.EcuIdentifierCto.DiagAddrAsInt, failureResponse.EcuIdentifierCto.DiagnosisAddress.Offset,
+                        failureResponse.Cause.Description));
+                }
+#endif
+                UpdateStatus(sbResult.ToString());
+
+                IPsdzReadStatusResultCto psdzReadStatusResult = programmingService.Psdz.SecureFeatureActivationService.ReadStatus(PsdzStatusRequestFeatureTypeEtoEnum.ALL_FEATURES, psdzContext.Connection, psdzContext.SvtActual, psdzEcuIdentifiers, true, 3, 100);
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Status failures: {0}", psdzReadStatusResult.Failures.Count()));
+#if false
+                foreach (IPsdzEcuFailureResponseCto failureResponse in psdzReadStatusResult.Failures)
+                {
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Fail: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, Cause={3}",
+                        failureResponse.EcuIdentifierCto.BaseVariant, failureResponse.EcuIdentifierCto.DiagAddrAsInt, failureResponse.EcuIdentifierCto.DiagnosisAddress.Offset,
+                        failureResponse.Cause.Description));
+                }
+#endif
+                UpdateStatus(sbResult.ToString());
+
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Status features: {0}", psdzReadStatusResult.FeatureStatusSet.Count()));
+                foreach (IPsdzFeatureLongStatusCto featureLongStatus in psdzReadStatusResult.FeatureStatusSet)
+                {
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Feature: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, Status={3}, Token={4}",
+                        featureLongStatus.EcuIdentifierCto.BaseVariant, featureLongStatus.EcuIdentifierCto.DiagAddrAsInt, featureLongStatus.EcuIdentifierCto.DiagnosisAddress.Offset,
+                        featureLongStatus.FeatureStatusEto, featureLongStatus.TokenId));
+                }
+                UpdateStatus(sbResult.ToString());
+
+                IPsdzTalFilter talFilterFlash = new PsdzTalFilter();
+                IPsdzSollverbauung psdzSollverbauung = programmingService.Psdz.LogicService.GenerateSollverbauungGesamtFlash(psdzContext.Connection, psdzIstufeTarget, psdzIstufeShip, psdzContext.SvtActual, psdzContext.FaActual, talFilterFlash);
+                psdzContext.SetSollverbauung(psdzSollverbauung);
+                sbResult.AppendLine("Target construction:");
+                foreach (IPsdzEcuVariantInstance bntnVariant in psdzSollverbauung.PsdzOrderList.BntnVariantInstances)
+                {
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Variant: BaseVar={0}, Var={1}, Name={2}",
+                        bntnVariant.Ecu.BaseVariant, bntnVariant.Ecu.EcuVariant, bntnVariant.Ecu.BnTnName));
+                }
+                UpdateStatus(sbResult.ToString());
+
+                IEnumerable<IPsdzEcuContextInfo> psdzEcuContextInfos = programmingService.Psdz.EcuService.RequestEcuContextInfos(psdzContext.Connection, psdzEcuIdentifiers);
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecu contexts: {0}", psdzEcuContextInfos.Count()));
+                foreach (IPsdzEcuContextInfo ecuContextInfo in psdzEcuContextInfos)
+                {
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Ecu context: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, ManuDate={3}, PrgDate={4}, PrgCnt={5}, FlashCnt={6}, FlashRemain={7}",
+                        ecuContextInfo.EcuId.BaseVariant, ecuContextInfo.EcuId.DiagAddrAsInt, ecuContextInfo.EcuId.DiagnosisAddress.Offset,
+                        ecuContextInfo.ManufacturingDate, ecuContextInfo.LastProgrammingDate, ecuContextInfo.ProgramCounter, ecuContextInfo.PerformedFlashCycles, ecuContextInfo.RemainingFlashCycles));
+                }
+                UpdateStatus(sbResult.ToString());
+
+                IPsdzSwtAction psdzSwtAction = programmingService.Psdz.ProgrammingService.RequestSwtAction(psdzContext.Connection, true);
+                psdzContext.SwtAction = psdzSwtAction;
+                if (psdzSwtAction?.SwtEcus != null)
+                {
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecus: {0}", psdzSwtAction.SwtEcus.Count()));
+                    foreach (IPsdzSwtEcu psdzSwtEcu in psdzSwtAction.SwtEcus)
+                    {
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecu: Id={0}, Vin={1}, CertState={2}, SwSig={3}",
+                            psdzSwtEcu.EcuIdentifier, psdzSwtEcu.Vin, psdzSwtEcu.RootCertState, psdzSwtEcu.SoftwareSigState));
+                    }
+                }
+                UpdateStatus(sbResult.ToString());
+
+                IPsdzTal psdzTal = programmingService.Psdz.LogicService.GenerateTal(psdzContext.Connection, psdzContext.SvtActual, psdzSollverbauung, psdzContext.SwtAction, psdzContext.TalFilter);
+                psdzContext.Tal = psdzTal;
+                sbResult.AppendLine("Tal:");
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Size: {0}", psdzTal.AsXml.Length));
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " State: {0}", psdzTal.TalExecutionState));
+                foreach (IPsdzEcuIdentifier ecuIdentifier in psdzTal.AffectedEcus)
+                {
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Affected Ecu: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
+                        ecuIdentifier.BaseVariant, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset));
+                }
+
+                foreach (IPsdzTalLine talLine in psdzTal.TalLines)
+                {
+                    sbResult.Append(string.Format(CultureInfo.InvariantCulture, " Tal line: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
+                        talLine.EcuIdentifier.BaseVariant, talLine.EcuIdentifier.DiagAddrAsInt, talLine.EcuIdentifier.DiagnosisAddress.Offset));
+                    sbResult.Append(string.Format(CultureInfo.InvariantCulture, " Fsc={0}, Flash={1}, Iba={2}, Sw={3}, Restore={4}, Sfa={5}",
+                        talLine.FscDeploy.Tas.Count(), talLine.BlFlash.Tas.Count(), talLine.IbaDeploy.Tas.Count(),
+                        talLine.SwDeploy.Tas.Count(), talLine.IdRestore.Tas.Count(), talLine.SFADeploy.Tas.Count()));
+                    sbResult.AppendLine();
+                }
+                UpdateStatus(sbResult.ToString());
+
+                IPsdzTal psdzBackupTal = programmingService.Psdz.IndividualDataRestoreService.GenerateBackupTal(psdzContext.Connection, psdzContext.PathToBackupData, psdzContext.Tal, psdzContext.TalFilter);
+                psdzContext.IndividualDataBackupTal = psdzBackupTal;
+                sbResult.AppendLine("Backup Tal:");
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Size: {0}", psdzBackupTal.AsXml.Length));
+                UpdateStatus(sbResult.ToString());
+
+                IPsdzTal psdzRestorePrognosisTal = programmingService.Psdz.IndividualDataRestoreService.GenerateRestorePrognosisTal(psdzContext.Connection, psdzContext.PathToBackupData, psdzContext.Tal, psdzContext.IndividualDataBackupTal, psdzContext.TalFilter);
+                psdzContext.IndividualDataRestorePrognosisTal = psdzRestorePrognosisTal;
+                sbResult.AppendLine("Restore prognosis Tal:");
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Size: {0}", psdzRestorePrognosisTal.AsXml.Length));
 
                 UpdateStatus(sbResult.ToString());
                 return true;
@@ -707,17 +722,18 @@ namespace PsdzClient
                 return;
             }
 
-            int function = 0;
-            if (sender == buttonFunc1)
-            {
-                function = 0;
-            }
+            List<string> faRemList = null;
+            List<string> faAddList = null;
             if (sender == buttonFunc2)
             {
-                function = 1;
+                faRemList = new List<string>();
+                faAddList = new List<string>();
+
+                faRemList.AddRange(new [] {"$8KA", "$8KC", "$8KD", "$8KE", "$8KF", "$8KG", "$8KH", "$8KK", "$8KL", "$8KM", "$8KN", "$8KP", "$984", "$988", "$8ST" });
+                faAddList.AddRange(new[] { "-A090", "+MFSG", "+ATEF" });
             }
 
-            VehicleFunctionsTask(function).ContinueWith(task =>
+            VehicleFunctionsTask(faRemList, faAddList).ContinueWith(task =>
             {
                 taskActive = false;
             });

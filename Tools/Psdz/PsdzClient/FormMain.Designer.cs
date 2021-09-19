@@ -180,7 +180,7 @@ namespace PsdzClient
             this.buttonFunc1.Name = "buttonFunc1";
             this.buttonFunc1.Size = new System.Drawing.Size(75, 23);
             this.buttonFunc1.TabIndex = 11;
-            this.buttonFunc1.Text = "Function 1";
+            this.buttonFunc1.Text = "Mod. IStep";
             this.buttonFunc1.UseVisualStyleBackColor = true;
             this.buttonFunc1.Click += new System.EventHandler(this.buttonFunc_Click);
             // 
@@ -199,7 +199,7 @@ namespace PsdzClient
             this.buttonFunc2.Name = "buttonFunc2";
             this.buttonFunc2.Size = new System.Drawing.Size(75, 23);
             this.buttonFunc2.TabIndex = 13;
-            this.buttonFunc2.Text = "Function 2";
+            this.buttonFunc2.Text = "Mo. Fa";
             this.buttonFunc2.UseVisualStyleBackColor = true;
             this.buttonFunc2.Click += new System.EventHandler(this.buttonFunc_Click);
             // 
