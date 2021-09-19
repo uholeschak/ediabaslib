@@ -112,13 +112,14 @@ namespace PsdzClient.Programming
 			return Regex.Replace(xmlText.Trim(), ">\\s+<", "><");
 		}
 
-        public static bool ModifyFa(IFa fa, List<string> faModList, bool addEntry)
+        public static IFa ModifyFa(IFa faInput, List<string> faModList, bool addEntry)
         {
-            if (fa == null)
+            if (faInput == null)
             {
-                return false;
+                return null;
             }
 
+            IFa faResult = faInput.Clone();
             foreach (string modEntry in faModList)
             {
                 IList<string> faList = null;
@@ -128,21 +129,21 @@ namespace PsdzClient.Programming
                 switch (prefix)
                 {
                     case '-':
-                        faList = fa.EWords;
+                        faList = faResult.EWords;
                         break;
 
                     case '+':
-                        faList = fa.HOWords;
+                        faList = faResult.HOWords;
                         break;
 
                     case '$':
-                        faList = fa.Salapas;
+                        faList = faResult.Salapas;
                         break;
                 }
 
                 if (faList == null)
                 {
-                    return false;
+                    return null;
                 }
 
                 if (addEntry)
@@ -161,7 +162,7 @@ namespace PsdzClient.Programming
                 }
             }
 
-            return true;
+            return faResult;
         }
 
         static ProgrammingUtils()
