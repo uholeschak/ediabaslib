@@ -112,6 +112,58 @@ namespace PsdzClient.Programming
 			return Regex.Replace(xmlText.Trim(), ">\\s+<", "><");
 		}
 
+        public static bool ModifyFa(IFa fa, List<string> faModList, bool addEntry)
+        {
+            if (fa == null)
+            {
+                return false;
+            }
+
+            foreach (string modEntry in faModList)
+            {
+                IList<string> faList = null;
+                string item = modEntry.Trim();
+                char prefix = item[0];
+                string itemName = item.Substring(1);
+                switch (prefix)
+                {
+                    case '-':
+                        faList = fa.EWords;
+                        break;
+
+                    case '+':
+                        faList = fa.HOWords;
+                        break;
+
+                    case '$':
+                        faList = fa.Salapas;
+                        break;
+                }
+
+                if (faList == null)
+                {
+                    return false;
+                }
+
+                if (addEntry)
+                {
+                    if (!faList.Contains(itemName))
+                    {
+                        faList.Add(itemName);
+                    }
+                }
+                else
+                {
+                    if (faList.Contains(itemName))
+                    {
+                        faList.Remove(itemName);
+                    }
+                }
+            }
+
+            return true;
+        }
+
         static ProgrammingUtils()
         {
             ProgrammingUtils.AllowedTaCategories = new TaCategories[]
