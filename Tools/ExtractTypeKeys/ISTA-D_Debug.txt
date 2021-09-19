@@ -140,6 +140,7 @@ BMW.Rheingold.Programming.TherapyPlan.ResetTargetFa() PsdzContext.FaActual -> Ps
 BMW.Rheingold.Programming.ProgrammingEngine.SetFaTarget()
 BMW.Rheingold.Module.ISTA.ABL_LIF_REMOVE_ELEMENTS_FROM_VO.Start() -> SetFaTarget()
 BMW.Rheingold.Module.ISTA.ABL_LIF_REMOVE_ELEMENTS_FROM_VO.run()
+BMW.Rheingold.Module.ISTA.ABL_LIF_ADD_ELEMENTS_TO_VO.run()
 InParameter:
 "faElementsToAdd": +MFSG
 "faElementsToAdd": +ATEF
