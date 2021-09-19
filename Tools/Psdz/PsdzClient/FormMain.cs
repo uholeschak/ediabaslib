@@ -249,7 +249,7 @@ namespace PsdzClient
                     psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, psdzTargetSelectorNewest.Baureihenverbund));
                 UpdateStatus(sbResult.ToString());
 
-                string[] selectorParts = psdzTargetSelectorNewest.Project.Split('_', '-');
+                string[] selectorParts = psdzTargetSelectorNewest.Project.Split('_');
                 if (selectorParts.Length < 4)
                 {
                     sbResult.AppendLine("Target selector not valid");
@@ -257,7 +257,7 @@ namespace PsdzClient
                     return false;
                 }
 
-                string dummyIStep = string.Format(CultureInfo.InvariantCulture, "{0}-{1}-{2}-{3}", selectorParts[0], selectorParts[1], selectorParts[2], selectorParts[3]);
+                string dummyIStep = string.Join("-", selectorParts, 0, 4);
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Dummy IStep: {0}", dummyIStep));
 
                 IPsdzConnection psdzConnectionTemp = programmingService.Psdz.ConnectionManagerService.ConnectOverEthernet(psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, baureihe, dummyIStep);
