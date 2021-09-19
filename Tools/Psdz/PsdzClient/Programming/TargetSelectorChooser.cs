@@ -135,7 +135,7 @@ namespace PsdzClient.Programming
 
 			private bool TryParseDetailsByShortName(string project)
 			{
-				Match match = Regex.Match((!string.IsNullOrEmpty(project)) ? project.Trim() : string.Empty, "^(?<mainSeries>\\w{4})_(?<iLevelYear>\\d{2})_(?<iLevelMonth>\\d{2})_(?<iLevelNumber>\\d{3})$");
+				Match match = Regex.Match((!string.IsNullOrEmpty(project)) ? project.Trim() : string.Empty, PatternTargetSelectorILevelContainerShort);
 				if (match.Success)
 				{
 					this.ContainerTypeWeight = this.GetContainerTypeWeight("V");
@@ -152,7 +152,7 @@ namespace PsdzClient.Programming
 
 			private void ParseDetails(string project)
 			{
-				Match match = Regex.Match((!string.IsNullOrEmpty(project)) ? project.Trim() : string.Empty, "^(?<mainSeries>\\w{4})_(?<iLevelYear>\\d{2})_(?<iLevelMonth>\\d{2})_(?<iLevelNumber>\\d{3})_(?<containerType>[VTE])_(?<major>\\d{3})_(?<minor>\\d{3})_(?<patch>\\d{3})$");
+				Match match = Regex.Match((!string.IsNullOrEmpty(project)) ? project.Trim() : string.Empty, PatternTargetSelectorILevelContainer);
 				if (match.Success)
 				{
 					this.ContainerTypeWeight = this.GetContainerTypeWeight(match.Groups["containerType"].Value);
