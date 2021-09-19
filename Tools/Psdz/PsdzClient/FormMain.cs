@@ -417,8 +417,13 @@ namespace PsdzClient
 
                         IPsdzStandardSvt psdzStandardSvt = programmingService.Psdz.EcuService.RequestSvt(psdzContext.Connection, psdzEcuIdentifiers);
                         IPsdzStandardSvt psdzStandardSvtNames = programmingService.Psdz.LogicService.FillBntnNamesForMainSeries(psdzContext.Connection.TargetSelector.Baureihenverbund, psdzStandardSvt);
-                        string svtString = psdzStandardSvtNames.AsString.Replace(", ECU[", ",\r\nECU[");
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Svt: {0}", svtString));
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Svt Ecus: {0}", psdzStandardSvtNames.Ecus.Count()));
+                        foreach (IPsdzEcu ecu in psdzStandardSvtNames.Ecus)
+                        {
+                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Variant: BaseVar={0}, Var={1}, Name={2}",
+                                ecu.BaseVariant, ecu.EcuVariant, ecu.BnTnName));
+                        }
+
                         IPsdzSvt psdzSvt = programmingService.Psdz.ObjectBuilder.BuildSvt(psdzStandardSvtNames, psdzVin.Value);
                         psdzContext.SetSvtActual(psdzSvt);
                         UpdateStatus(sbResult.ToString());
@@ -466,8 +471,12 @@ namespace PsdzClient
                         IPsdzTalFilter talFilterFlash = new PsdzTalFilter();
                         IPsdzSollverbauung psdzSollverbauung = programmingService.Psdz.LogicService.GenerateSollverbauungGesamtFlash(psdzContext.Connection, psdzIstufeTarget, psdzIstufeShip, psdzContext.SvtActual, psdzContext.FaActual, talFilterFlash);
                         psdzContext.SetSollverbauung(psdzSollverbauung);
-                        sbResult.AppendLine("Target flash:");
-                        sbResult.Append(psdzSollverbauung.AsXml);
+                        sbResult.AppendLine("Target construction:");
+                        foreach (IPsdzEcuVariantInstance bntnVariant in psdzSollverbauung.PsdzOrderList.BntnVariantInstances)
+                        {
+                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Variant: BaseVar={0}, Var={1}, Name={2}",
+                                bntnVariant.Ecu.BaseVariant, bntnVariant.Ecu.EcuVariant, bntnVariant.Ecu.BnTnName));
+                        }
                         UpdateStatus(sbResult.ToString());
 
                         IEnumerable<IPsdzEcuContextInfo> psdzEcuContextInfos = programmingService.Psdz.EcuService.RequestEcuContextInfos(psdzContext.Connection, psdzEcuIdentifiers);
