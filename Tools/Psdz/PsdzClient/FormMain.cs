@@ -517,7 +517,8 @@ namespace PsdzClient
                 IPsdzTalFilter talFilterFlash = new PsdzTalFilter();
                 IPsdzSollverbauung psdzSollverbauung = programmingService.Psdz.LogicService.GenerateSollverbauungGesamtFlash(psdzContext.Connection, psdzIstufeTarget, psdzIstufeShip, psdzContext.SvtActual, psdzContext.FaTarget, talFilterFlash);
                 psdzContext.SetSollverbauung(psdzSollverbauung);
-                sbResult.AppendLine("Target construction:");
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Target construction: Count={0}, Units={1}",
+                    psdzSollverbauung.PsdzOrderList.BntnVariantInstances.Length, psdzSollverbauung.PsdzOrderList.NumberOfUnits));
                 foreach (IPsdzEcuVariantInstance bntnVariant in psdzSollverbauung.PsdzOrderList.BntnVariantInstances)
                 {
                     sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Variant: BaseVar={0}, Var={1}, Name={2}",
@@ -539,11 +540,16 @@ namespace PsdzClient
                 psdzContext.SwtAction = psdzSwtAction;
                 if (psdzSwtAction?.SwtEcus != null)
                 {
-                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecus: {0}", psdzSwtAction.SwtEcus.Count()));
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Swt Ecus: {0}", psdzSwtAction.SwtEcus.Count()));
                     foreach (IPsdzSwtEcu psdzSwtEcu in psdzSwtAction.SwtEcus)
                     {
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecu: Id={0}, Vin={1}, CertState={2}, SwSig={3}",
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Ecu: Id={0}, Vin={1}, CertState={2}, SwSig={3}",
                             psdzSwtEcu.EcuIdentifier, psdzSwtEcu.Vin, psdzSwtEcu.RootCertState, psdzSwtEcu.SoftwareSigState));
+                        foreach (IPsdzSwtApplication swtApplication in psdzSwtEcu.SwtApplications)
+                        {
+                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Fsc: Type={0}, State={1}, Length={2}",
+                                swtApplication.SwtType, swtApplication.FscState,  swtApplication.Fsc.Length));
+                        }
                     }
                 }
                 UpdateStatus(sbResult.ToString());
