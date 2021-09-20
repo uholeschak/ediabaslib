@@ -199,7 +199,7 @@ namespace PsdzClient
             this.buttonFunc2.Name = "buttonFunc2";
             this.buttonFunc2.Size = new System.Drawing.Size(75, 23);
             this.buttonFunc2.TabIndex = 13;
-            this.buttonFunc2.Text = "Mo. Fa";
+            this.buttonFunc2.Text = "Mod. Fa";
             this.buttonFunc2.UseVisualStyleBackColor = true;
             this.buttonFunc2.Click += new System.EventHandler(this.buttonFunc_Click);
             // 

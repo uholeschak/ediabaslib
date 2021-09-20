@@ -19,6 +19,7 @@ using BMW.Rheingold.Psdz.Model.Svb;
 using BMW.Rheingold.Psdz.Model.Swt;
 using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
+using BMW.Rheingold.Psdz.Model.Tal.TalStatus;
 using PsdzClient.Programming;
 
 namespace PsdzClient
@@ -262,6 +263,13 @@ namespace PsdzClient
 
                 IPsdzConnection psdzConnectionTemp = programmingService.Psdz.ConnectionManagerService.ConnectOverEthernet(psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, baureihe, dummyIStep);
                 IPsdzIstufenTriple iStufenTriple = programmingService.Psdz.VcmService.GetIStufenTripleActual(psdzConnectionTemp);
+                if (iStufenTriple == null)
+                {
+                    sbResult.AppendLine("Unable to read IStep triple");
+                    UpdateStatus(sbResult.ToString());
+                    return false;
+                }
+
                 programmingService.Psdz.ConnectionManagerService.CloseConnection(psdzConnectionTemp);
                 string bauIStufe = iStufenTriple.Shipment;
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep shipment: {0}", bauIStufe));
@@ -562,19 +570,28 @@ namespace PsdzClient
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Ecus: {0}", psdzTal.AffectedEcus.Count()));
                 foreach (IPsdzEcuIdentifier ecuIdentifier in psdzTal.AffectedEcus)
                 {
-                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Affected Ecu: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "  Affected Ecu: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
                         ecuIdentifier.BaseVariant, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset));
                 }
 
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Lines: {0}", psdzTal.TalLines.Count()));
                 foreach (IPsdzTalLine talLine in psdzTal.TalLines)
                 {
-                    sbResult.Append(string.Format(CultureInfo.InvariantCulture, " Tal line: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
+                    sbResult.Append(string.Format(CultureInfo.InvariantCulture, "  Tal line: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
                         talLine.EcuIdentifier.BaseVariant, talLine.EcuIdentifier.DiagAddrAsInt, talLine.EcuIdentifier.DiagnosisAddress.Offset));
-                    sbResult.Append(string.Format(CultureInfo.InvariantCulture, " Fsc={0}, Flash={1}, Iba={2}, Sw={3}, Restore={4}, Sfa={5}",
+                    sbResult.Append(string.Format(CultureInfo.InvariantCulture, "  Fsc={0}, Flash={1}, Iba={2}, Sw={3}, Restore={4}, Sfa={5}",
                         talLine.FscDeploy.Tas.Count(), talLine.BlFlash.Tas.Count(), talLine.IbaDeploy.Tas.Count(),
                         talLine.SwDeploy.Tas.Count(), talLine.IdRestore.Tas.Count(), talLine.SFADeploy.Tas.Count()));
                     sbResult.AppendLine();
+                }
+
+                if (psdzTal.HasFailureCauses)
+                {
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Failures: {0}", psdzTal.FailureCauses.Count()));
+                    foreach (IPsdzFailureCause failureCause in psdzTal.FailureCauses)
+                    {
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "  Failure cause: {0}", failureCause.Message));
+                    }
                 }
                 UpdateStatus(sbResult.ToString());
 
