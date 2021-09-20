@@ -31,6 +31,6 @@ namespace PsdzClient.Programming
         IFa Clone();
 
         //[AuthorAPIHidden]
-        bool AreEqual(IFa vehicleOrder);
+        bool AreEqual(BMW.Rheingold.CoreFramework.Contracts.Vehicle.IFa vehicleOrder);
     }
 }
