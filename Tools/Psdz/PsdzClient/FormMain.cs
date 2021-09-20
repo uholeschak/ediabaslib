@@ -395,17 +395,30 @@ namespace PsdzClient
                 IPsdzStandardFa standardFa = programmingService.Psdz.VcmService.GetStandardFaActual(psdzContext.Connection);
                 IPsdzFa psdzFa = programmingService.Psdz.ObjectBuilder.BuildFa(standardFa, psdzVin.Value);
                 psdzContext.SetFaActual(psdzFa);
-                sbResult.AppendLine("FA:");
+                sbResult.AppendLine("FA current:");
                 sbResult.Append(psdzFa.AsXml);
                 UpdateStatus(sbResult.ToString());
 
                 if (bModifyFa)
                 {
                     IFa ifaTarget = ProgrammingUtils.BuildFa(standardFa);
-                    ProgrammingUtils.ModifyFa(ifaTarget, faRemList, false);
-                    ProgrammingUtils.ModifyFa(ifaTarget, faAddList, true);
+                    if (!ProgrammingUtils.ModifyFa(ifaTarget, faRemList, false))
+                    {
+                        sbResult.AppendLine("ModifyFa remove failed");
+                        return false;
+                    }
+
+                    if (!ProgrammingUtils.ModifyFa(ifaTarget, faAddList, true))
+                    {
+                        sbResult.AppendLine("ModifyFa add failed");
+                        return false;
+                    }
+
                     IPsdzFa psdzFaTarget = programmingService.Psdz.ObjectBuilder.BuildFa(ifaTarget, psdzVin.Value);
                     psdzContext.SetFaTarget(psdzFaTarget);
+
+                    sbResult.AppendLine("FA target:");
+                    sbResult.Append(psdzFaTarget.AsXml);
                 }
                 else
                 {
@@ -540,12 +553,14 @@ namespace PsdzClient
                 sbResult.AppendLine("Tal:");
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Size: {0}", psdzTal.AsXml.Length));
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " State: {0}", psdzTal.TalExecutionState));
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Ecus: {0}", psdzTal.AffectedEcus.Count()));
                 foreach (IPsdzEcuIdentifier ecuIdentifier in psdzTal.AffectedEcus)
                 {
                     sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Affected Ecu: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
                         ecuIdentifier.BaseVariant, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset));
                 }
 
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Lines: {0}", psdzTal.TalLines.Count()));
                 foreach (IPsdzTalLine talLine in psdzTal.TalLines)
                 {
                     sbResult.Append(string.Format(CultureInfo.InvariantCulture, " Tal line: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
@@ -745,7 +760,7 @@ namespace PsdzClient
                 faAddList = new List<string>();
 
                 faRemList.AddRange(new [] {"$8KA", "$8KC", "$8KD", "$8KE", "$8KF", "$8KG", "$8KH", "$8KK", "$8KL", "$8KM", "$8KN", "$8KP", "$984", "$988", "$8ST" });
-                faAddList.AddRange(new[] { "-A090", "+MFSG", "+ATEF" });
+                faAddList.AddRange(new[] { "+MFSG", "+ATEF", "$8KB" });
             }
 
             VehicleFunctionsTask(faRemList, faAddList).ContinueWith(task =>

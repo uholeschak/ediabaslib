@@ -166,7 +166,7 @@ namespace PsdzClient.Programming
                     return false;
                 }
 
-				if (addEntry)
+                if (addEntry)
                 {
                     if (!faList.Contains(itemName))
                     {
