@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Psdz;
+using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
@@ -112,14 +113,33 @@ namespace PsdzClient.Programming
 			return Regex.Replace(xmlText.Trim(), ">\\s+<", "><");
 		}
 
-        public static IFa ModifyFa(IFa faInput, List<string> faModList, bool addEntry)
+        public static IFa BuildFa(IPsdzStandardFa faInput)
         {
             if (faInput == null)
             {
                 return null;
             }
+            return new VehicleOrder
+            {
+                FaVersion = faInput.FaVersion,
+                Entwicklungsbaureihe = faInput.Entwicklungsbaureihe,
+                Lackcode = faInput.Lackcode,
+                Polstercode = faInput.Polstercode,
+                Type = faInput.Type,
+                Zeitkriterium = faInput.Zeitkriterium,
+                EWords = ((faInput.EWords != null) ? new List<string>(faInput.EWords) : null),
+                HOWords = ((faInput.HOWords != null) ? new List<string>(faInput.HOWords) : null),
+                Salapas = ((faInput.Salapas != null) ? new List<string>(faInput.Salapas) : null)
+            };
+        }
 
-            IFa faResult = faInput.Clone();
+        public static bool ModifyFa(IFa fa, List<string> faModList, bool addEntry)
+        {
+            if (fa == null)
+            {
+                return false;
+            }
+
             foreach (string modEntry in faModList)
             {
                 IList<string> faList = null;
@@ -129,24 +149,24 @@ namespace PsdzClient.Programming
                 switch (prefix)
                 {
                     case '-':
-                        faList = faResult.EWords;
+                        faList = fa.EWords;
                         break;
 
                     case '+':
-                        faList = faResult.HOWords;
+                        faList = fa.HOWords;
                         break;
 
                     case '$':
-                        faList = faResult.Salapas;
+                        faList = fa.Salapas;
                         break;
                 }
 
                 if (faList == null)
                 {
-                    return null;
+                    return false;
                 }
 
-                if (addEntry)
+				if (addEntry)
                 {
                     if (!faList.Contains(itemName))
                     {
@@ -162,7 +182,7 @@ namespace PsdzClient.Programming
                 }
             }
 
-            return faResult;
+            return true;
         }
 
         static ProgrammingUtils()

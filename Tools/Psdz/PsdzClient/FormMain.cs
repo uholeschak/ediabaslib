@@ -399,7 +399,20 @@ namespace PsdzClient
                 sbResult.Append(psdzFa.AsXml);
                 UpdateStatus(sbResult.ToString());
 
-                IEnumerable<IPsdzIstufe> psdzIstufes = programmingService.Psdz.LogicService.GetPossibleIntegrationLevel(psdzContext.FaActual);
+                if (bModifyFa)
+                {
+                    IFa ifaTarget = ProgrammingUtils.BuildFa(standardFa);
+                    ProgrammingUtils.ModifyFa(ifaTarget, faRemList, false);
+                    ProgrammingUtils.ModifyFa(ifaTarget, faAddList, true);
+                    IPsdzFa psdzFaTarget = programmingService.Psdz.ObjectBuilder.BuildFa(ifaTarget, psdzVin.Value);
+                    psdzContext.SetFaTarget(psdzFaTarget);
+                }
+                else
+                {
+                    psdzContext.SetFaTarget(psdzFa);
+                }
+
+                IEnumerable<IPsdzIstufe> psdzIstufes = programmingService.Psdz.LogicService.GetPossibleIntegrationLevel(psdzContext.FaTarget);
                 psdzContext.SetPossibleIstufenTarget(psdzIstufes);
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "ISteps: {0}", psdzIstufes.Count()));
                 foreach (IPsdzIstufe iStufe in psdzIstufes.OrderBy(x => x))
@@ -417,11 +430,13 @@ namespace PsdzClient
                     sbResult.AppendLine("No target iStep");
                     return false;
                 }
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep Target: {0}", latestIstufeTarget));
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep Latest: {0}", latestIstufeTarget));
 
                 IPsdzIstufe psdzIstufeShip = programmingService.Psdz.ObjectBuilder.BuildIstufe(psdzContext.IstufeShipment);
-                IPsdzIstufe psdzIstufeTarget = programmingService.Psdz.ObjectBuilder.BuildIstufe(latestIstufeTarget);
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep Ship: {0}", psdzIstufeShip.Value));
+
+                IPsdzIstufe psdzIstufeTarget = programmingService.Psdz.ObjectBuilder.BuildIstufe(bModifyFa ? psdzContext.IstufeCurrent : latestIstufeTarget);
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep Target: {0}", psdzIstufeTarget.Value));
                 UpdateStatus(sbResult.ToString());
 
                 IEnumerable<IPsdzEcuIdentifier> psdzEcuIdentifiers = programmingService.Psdz.MacrosService.GetInstalledEcuList(psdzContext.FaActual, psdzIstufeShip);
@@ -487,7 +502,7 @@ namespace PsdzClient
                 UpdateStatus(sbResult.ToString());
 
                 IPsdzTalFilter talFilterFlash = new PsdzTalFilter();
-                IPsdzSollverbauung psdzSollverbauung = programmingService.Psdz.LogicService.GenerateSollverbauungGesamtFlash(psdzContext.Connection, psdzIstufeTarget, psdzIstufeShip, psdzContext.SvtActual, psdzContext.FaActual, talFilterFlash);
+                IPsdzSollverbauung psdzSollverbauung = programmingService.Psdz.LogicService.GenerateSollverbauungGesamtFlash(psdzContext.Connection, psdzIstufeTarget, psdzIstufeShip, psdzContext.SvtActual, psdzContext.FaTarget, talFilterFlash);
                 psdzContext.SetSollverbauung(psdzSollverbauung);
                 sbResult.AppendLine("Target construction:");
                 foreach (IPsdzEcuVariantInstance bntnVariant in psdzSollverbauung.PsdzOrderList.BntnVariantInstances)
