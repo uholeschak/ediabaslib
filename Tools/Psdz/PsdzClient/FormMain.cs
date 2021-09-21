@@ -226,12 +226,6 @@ namespace PsdzClient
                     return false;
                 }
 
-                if (psdzContext.TalFilter != null)
-                {
-                    sbResult.AppendLine("TalFilter:");
-                    sbResult.Append(psdzContext.TalFilter.AsXml);
-                }
-
                 string mainSeries = programmingService.Psdz.ConfigurationService.RequestBaureihenverbund(baureihe);
                 IEnumerable<IPsdzTargetSelector> targetSelectors = programmingService.Psdz.ConnectionFactoryService.GetTargetSelectors();
                 psdzContext.TargetSelectors = targetSelectors;
@@ -384,6 +378,39 @@ namespace PsdzClient
                     }
 
                     sbResult.AppendLine();
+                }
+
+                ProgrammingTaskFlags programmingTaskFlags;
+                if (bModifyFa)
+                {
+                    programmingTaskFlags =
+                        ProgrammingTaskFlags.Mount |
+                        ProgrammingTaskFlags.Unmount |
+                        ProgrammingTaskFlags.Replace |
+                        ProgrammingTaskFlags.Flash |
+                        ProgrammingTaskFlags.Code |
+                        ProgrammingTaskFlags.Fsc |
+                        ProgrammingTaskFlags.EnforceCoding;
+                }
+                else
+                {
+                    programmingTaskFlags =
+                        ProgrammingTaskFlags.Mount |
+                        ProgrammingTaskFlags.Unmount |
+                        ProgrammingTaskFlags.Replace |
+                        ProgrammingTaskFlags.Flash |
+                        ProgrammingTaskFlags.Code |
+                        ProgrammingTaskFlags.DataRecovery |
+                        ProgrammingTaskFlags.Fsc;
+                }
+
+                IPsdzTalFilter psdzTalFilter = ProgrammingUtils.CreateTalFilter(programmingTaskFlags, programmingService.Psdz.ObjectBuilder);
+                psdzContext.SetTalFilter(psdzTalFilter);
+
+                if (psdzContext.TalFilter != null)
+                {
+                    sbResult.AppendLine("TalFilter:");
+                    sbResult.Append(psdzContext.TalFilter.AsXml);
                 }
 
                 psdzContext.CleanupBackupData();
@@ -565,6 +592,7 @@ namespace PsdzClient
                 IPsdzTal psdzTal = programmingService.Psdz.LogicService.GenerateTal(psdzContext.Connection, psdzContext.SvtActual, psdzSollverbauung, psdzContext.SwtAction, psdzContext.TalFilter);
                 psdzContext.Tal = psdzTal;
                 sbResult.AppendLine("Tal:");
+                //sbResult.AppendLine(psdzTal.AsXml);
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Size: {0}", psdzTal.AsXml.Length));
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " State: {0}", psdzTal.TalExecutionState));
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Ecus: {0}", psdzTal.AffectedEcus.Count()));
@@ -579,7 +607,7 @@ namespace PsdzClient
                 {
                     sbResult.Append(string.Format(CultureInfo.InvariantCulture, "  Tal line: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
                         talLine.EcuIdentifier.BaseVariant, talLine.EcuIdentifier.DiagAddrAsInt, talLine.EcuIdentifier.DiagnosisAddress.Offset));
-                    sbResult.Append(string.Format(CultureInfo.InvariantCulture, "  Fsc={0}, Flash={1}, Iba={2}, Sw={3}, Restore={4}, Sfa={5}",
+                    sbResult.Append(string.Format(CultureInfo.InvariantCulture, "  FscDeploy={0}, BlFlash={1}, IbaDeploy={2}, SwDeploy={3}, IdRestore={4}, SfaDeploy={5}",
                         talLine.FscDeploy.Tas.Count(), talLine.BlFlash.Tas.Count(), talLine.IbaDeploy.Tas.Count(),
                         talLine.SwDeploy.Tas.Count(), talLine.IdRestore.Tas.Count(), talLine.SFADeploy.Tas.Count()));
                     sbResult.AppendLine();
@@ -622,16 +650,6 @@ namespace PsdzClient
             try
             {
                 psdzContext = new PsdzContext(istaFolder);
-                ProgrammingTaskFlags programmingTaskFlags =
-                    ProgrammingTaskFlags.Mount |
-                    ProgrammingTaskFlags.Unmount |
-                    ProgrammingTaskFlags.Replace |
-                    ProgrammingTaskFlags.Flash |
-                    ProgrammingTaskFlags.Code |
-                    ProgrammingTaskFlags.DataRecovery |
-                    ProgrammingTaskFlags.Fsc;
-                IPsdzTalFilter psdzTalFilter = ProgrammingUtils.CreateTalFilter(programmingTaskFlags, programmingService.Psdz.ObjectBuilder);
-                psdzContext.SetTalFilter(psdzTalFilter);
             }
             catch (Exception)
             {
