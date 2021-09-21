@@ -589,7 +589,7 @@ namespace PsdzClient
                 }
                 UpdateStatus(sbResult.ToString());
 
-                IPsdzTal psdzTal = programmingService.Psdz.LogicService.GenerateTal(psdzContext.Connection, psdzContext.SvtActual, psdzSollverbauung, psdzContext.SwtAction, psdzContext.TalFilter);
+                IPsdzTal psdzTal = programmingService.Psdz.LogicService.GenerateTal(psdzContext.Connection, psdzContext.SvtActual, psdzSollverbauung, psdzContext.SwtAction, psdzContext.TalFilter, psdzContext.FaTarget.Vin);
                 psdzContext.Tal = psdzTal;
                 sbResult.AppendLine("Tal:");
                 //sbResult.AppendLine(psdzTal.AsXml);
