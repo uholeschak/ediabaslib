@@ -91,7 +91,12 @@ namespace PsdzClient.Programming
 			return psdzTalFilter;
 		}
 
-        public static ProgrammingTaskFlags RetrieveProgrammingTaskFlagsFromTasks(IEnumerable<IProgrammingTask> programmingTasks)
+        public static IPsdzTalFilter UpdateTalFilterForAllEcus(IPsdzTalFilter psdzTalFilter, IPsdzObjectBuilder objectBuilder, TaCategories[] taCategories, TalFilterOptions talFilterOptions)
+        {
+            return objectBuilder.DefineFilterForAllEcus(taCategories, talFilterOptions, psdzTalFilter);
+        }
+
+		public static ProgrammingTaskFlags RetrieveProgrammingTaskFlagsFromTasks(IEnumerable<IProgrammingTask> programmingTasks)
 		{
 			ProgrammingTaskFlags programmingTaskFlags = (ProgrammingTaskFlags)0;
 			if (programmingTasks != null)

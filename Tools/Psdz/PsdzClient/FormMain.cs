@@ -380,32 +380,25 @@ namespace PsdzClient
                     sbResult.AppendLine();
                 }
 
-                ProgrammingTaskFlags programmingTaskFlags;
-                if (bModifyFa)
-                {
-                    programmingTaskFlags =
-                        ProgrammingTaskFlags.Mount |
-                        ProgrammingTaskFlags.Unmount |
-                        ProgrammingTaskFlags.Replace |
-                        ProgrammingTaskFlags.Flash |
-                        ProgrammingTaskFlags.Code |
-                        ProgrammingTaskFlags.Fsc |
-                        ProgrammingTaskFlags.EnforceCoding;
-                }
-                else
-                {
-                    programmingTaskFlags =
-                        ProgrammingTaskFlags.Mount |
-                        ProgrammingTaskFlags.Unmount |
-                        ProgrammingTaskFlags.Replace |
-                        ProgrammingTaskFlags.Flash |
-                        ProgrammingTaskFlags.Code |
-                        ProgrammingTaskFlags.DataRecovery |
-                        ProgrammingTaskFlags.Fsc;
-                }
-
+                ProgrammingTaskFlags programmingTaskFlags =
+                    ProgrammingTaskFlags.Mount |
+                    ProgrammingTaskFlags.Unmount |
+                    ProgrammingTaskFlags.Replace |
+                    ProgrammingTaskFlags.Flash |
+                    ProgrammingTaskFlags.Code |
+                    ProgrammingTaskFlags.DataRecovery |
+                    ProgrammingTaskFlags.Fsc;
                 IPsdzTalFilter psdzTalFilter = ProgrammingUtils.CreateTalFilter(programmingTaskFlags, programmingService.Psdz.ObjectBuilder);
+                // disable backup
+                psdzTalFilter = ProgrammingUtils.UpdateTalFilterForAllEcus(psdzTalFilter, programmingService.Psdz.ObjectBuilder, new []{ TaCategories.FscBackup }, TalFilterOptions.MustNot);
+                if (bModifyFa)
+                {   // enable deploy
+                    psdzTalFilter = ProgrammingUtils.UpdateTalFilterForAllEcus(psdzTalFilter, programmingService.Psdz.ObjectBuilder, new[] { TaCategories.CdDeploy }, TalFilterOptions.Must);
+                }
                 psdzContext.SetTalFilter(psdzTalFilter);
+
+                IPsdzTalFilter psdzTalFilterEmpty = programmingService.Psdz.ObjectBuilder.BuildTalFilter();
+                psdzContext.SetTalFilterForIndividualDataTal(psdzTalFilterEmpty);
 
                 if (psdzContext.TalFilter != null)
                 {
@@ -629,7 +622,7 @@ namespace PsdzClient
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Size: {0}", psdzBackupTal.AsXml.Length));
                 UpdateStatus(sbResult.ToString());
 
-                IPsdzTal psdzRestorePrognosisTal = programmingService.Psdz.IndividualDataRestoreService.GenerateRestorePrognosisTal(psdzContext.Connection, psdzContext.PathToBackupData, psdzContext.Tal, psdzContext.IndividualDataBackupTal, psdzContext.TalFilter);
+                IPsdzTal psdzRestorePrognosisTal = programmingService.Psdz.IndividualDataRestoreService.GenerateRestorePrognosisTal(psdzContext.Connection, psdzContext.PathToBackupData, psdzContext.Tal, psdzContext.IndividualDataBackupTal, psdzContext.TalFilterForIndividualDataTal);
                 psdzContext.IndividualDataRestorePrognosisTal = psdzRestorePrognosisTal;
                 sbResult.AppendLine("Restore prognosis Tal:");
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Size: {0}", psdzRestorePrognosisTal.AsXml.Length));
