@@ -132,6 +132,7 @@ BMW.Rheingold.Psdz.Client.PsdzServiceStarter.IsServerInstanceRunning()
 BMW.Rheingold.Psdz.Client.PsdzServiceClient()
 BMW.Rheingold.Programming.StartHostIfNotRunning()
 BMW.Rheingold.Programming.PsdzConfig.CreateServiceArgs()
+BMW.Rheingold.Programming.Common.ProgrammingUtils.NormalizeXmlText()
 PsdzServiceHost:
 BMW.Rheingold.Psdz.Services.ConfigurationService.RequestBaureihenverbund()
 BMW.Rheingold.Programming.ConnectToCar()
