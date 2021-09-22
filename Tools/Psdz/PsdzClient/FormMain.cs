@@ -393,10 +393,10 @@ namespace PsdzClient
 #endif
                 IPsdzTalFilter psdzTalFilter = programmingService.Psdz.ObjectBuilder.BuildTalFilter();
                 // disable backup
-                psdzTalFilter = ProgrammingUtils.UpdateTalFilterForAllEcus(psdzTalFilter, programmingService.Psdz.ObjectBuilder, new []{ TaCategories.FscBackup }, TalFilterOptions.MustNot);
+                psdzTalFilter = programmingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.FscBackup }, TalFilterOptions.MustNot, psdzTalFilter);
                 if (bModifyFa)
                 {   // enable deploy
-                    psdzTalFilter = ProgrammingUtils.UpdateTalFilterForAllEcus(psdzTalFilter, programmingService.Psdz.ObjectBuilder, new[] { TaCategories.CdDeploy }, TalFilterOptions.Must);
+                    psdzTalFilter = programmingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.CdDeploy }, TalFilterOptions.Must, psdzTalFilter);
                 }
                 psdzContext.SetTalFilter(psdzTalFilter);
 
