@@ -380,17 +380,6 @@ namespace PsdzClient
                     sbResult.AppendLine();
                 }
 
-#if false
-                ProgrammingTaskFlags programmingTaskFlags =
-                    ProgrammingTaskFlags.Mount |
-                    ProgrammingTaskFlags.Unmount |
-                    ProgrammingTaskFlags.Replace |
-                    ProgrammingTaskFlags.Flash |
-                    ProgrammingTaskFlags.Code |
-                    ProgrammingTaskFlags.DataRecovery |
-                    ProgrammingTaskFlags.Fsc;
-                IPsdzTalFilter psdzTalFilter = ProgrammingUtils.CreateTalFilter(programmingTaskFlags, programmingService.Psdz.ObjectBuilder);
-#endif
                 IPsdzTalFilter psdzTalFilter = programmingService.Psdz.ObjectBuilder.BuildTalFilter();
                 // disable backup
                 psdzTalFilter = programmingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.FscBackup }, TalFilterOptions.MustNot, psdzTalFilter);
