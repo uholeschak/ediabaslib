@@ -13,6 +13,7 @@ using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Client;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
+using BMW.Rheingold.Psdz.Model.SecureCoding;
 using BMW.Rheingold.Psdz.Model.SecurityManagement;
 using BMW.Rheingold.Psdz.Model.Sfa;
 using BMW.Rheingold.Psdz.Model.Svb;
@@ -42,14 +43,16 @@ namespace PsdzClient
             bool active = taskActive;
             bool hostRunning = false;
             bool vehicleConnected = false;
+            bool talPresent = false;
             if (!active)
             {
                 hostRunning = programmingService != null && programmingService.IsPsdzPsdzServiceHostInitialized();
             }
 
-            if (psdzContext?.Connection != null)
+            if (hostRunning && psdzContext?.Connection != null)
             {
                 vehicleConnected = true;
+                talPresent = psdzContext?.Tal != null;
             }
 
             textBoxIstaFolder.Enabled = !active && !hostRunning;
@@ -60,6 +63,7 @@ namespace PsdzClient
             buttonDisconnect.Enabled = !active && hostRunning && vehicleConnected;
             buttonFunc1.Enabled = !active && hostRunning && vehicleConnected;
             buttonFunc2.Enabled = buttonFunc1.Enabled;
+            buttonExecuteTal.Enabled = buttonFunc1.Enabled && talPresent;
             buttonClose.Enabled = !active;
             buttonAbort.Enabled = active;
         }
@@ -329,12 +333,12 @@ namespace PsdzClient
             }
         }
 
-        private async Task<bool> VehicleFunctionsTask(List<string> faRemList = null, List<string> faAddList = null)
+        private async Task<bool> VehicleFunctionsTask(bool executeTal, List<string> faRemList = null, List<string> faAddList = null)
         {
-            return await Task.Run(() => VehicleFunctions(faRemList, faAddList)).ConfigureAwait(false);
+            return await Task.Run(() => VehicleFunctions(executeTal, faRemList, faAddList)).ConfigureAwait(false);
         }
 
-        private bool VehicleFunctions(List<string> faRemList, List<string> faAddList)
+        private bool VehicleFunctions(bool executeTal, List<string> faRemList, List<string> faAddList)
         {
             StringBuilder sbResult = new StringBuilder();
 
@@ -355,6 +359,36 @@ namespace PsdzClient
                     sbResult.AppendLine("No connection");
                     UpdateStatus(sbResult.ToString());
                     return false;
+                }
+
+                IPsdzVin psdzVin = programmingService.Psdz.VcmService.GetVinFromMaster(psdzContext.Connection);
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Vin: {0}", psdzVin.Value));
+                UpdateStatus(sbResult.ToString());
+
+                if (executeTal)
+                {
+                    sbResult.AppendLine("Execute TAL");
+                    UpdateStatus(sbResult.ToString());
+                    if (psdzContext.Tal == null)
+                    {
+                        sbResult.AppendLine("No TAL present");
+                        UpdateStatus(sbResult.ToString());
+                        return false;
+                    }
+
+                    IEnumerable<IPsdzEcuIdentifier> psdzEcuIdentifiersPrg = programmingService.Psdz.ProgrammingService.CheckProgrammingCounter(psdzContext.Connection, psdzContext.Tal);
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "ProgCounter: {0}", psdzEcuIdentifiersPrg.Count()));
+                    foreach (IPsdzEcuIdentifier ecuIdentifier in psdzEcuIdentifiersPrg)
+                    {
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " EcuId: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
+                            ecuIdentifier.BaseVariant, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset));
+                    }
+                    UpdateStatus(sbResult.ToString());
+
+                    IPsdzCheckNcdResultEto psdzCheckNcdResultEto = programmingService.Psdz.SecureCodingService.CheckNcdAvailabilityForGivenTal(psdzContext.Tal, psdzContext.PathToBackupData, psdzVin);
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ncd: Signed={0}", psdzCheckNcdResultEto.isEachNcdSigned));
+                    UpdateStatus(sbResult.ToString());
+                    return true;
                 }
 
                 bool bModifyFa = false;
@@ -403,9 +437,7 @@ namespace PsdzClient
                 psdzContext.SetIstufen(iStufenTriple);
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep: Current={0}, Last={1}, Shipment={2}",
                     iStufenTriple.Current, iStufenTriple.Last, iStufenTriple.Shipment));
-                IPsdzVin psdzVin = programmingService.Psdz.VcmService.GetVinFromMaster(psdzContext.Connection);
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Vin: {0}", psdzVin.Value));
-                UpdateStatus(sbResult.ToString());
+
                 if (!psdzContext.SetPathToBackupData(psdzVin.Value))
                 {
                     sbResult.AppendLine("Create backup path failed");
@@ -784,6 +816,7 @@ namespace PsdzClient
                 return;
             }
 
+            bool executeTal = false;
             List<string> faRemList = null;
             List<string> faAddList = null;
             if (sender == buttonFunc2)
@@ -794,8 +827,12 @@ namespace PsdzClient
                 faRemList.AddRange(new [] {"$8KA", "$8KC", "$8KD", "$8KE", "$8KF", "$8KG", "$8KH", "$8KK", "$8KL", "$8KM", "$8KN", "$8KP", "$984", "$988", "$8ST" });
                 faAddList.AddRange(new[] { "+MFSG", "+ATEF", "$8KB" });
             }
+            else if (sender == buttonExecuteTal)
+            {
+                executeTal = true;
+            }
 
-            VehicleFunctionsTask(faRemList, faAddList).ContinueWith(task =>
+            VehicleFunctionsTask(executeTal, faRemList, faAddList).ContinueWith(task =>
             {
                 taskActive = false;
             });

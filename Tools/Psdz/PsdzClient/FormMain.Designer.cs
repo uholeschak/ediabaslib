@@ -47,6 +47,7 @@ namespace PsdzClient
             this.buttonFunc1 = new System.Windows.Forms.Button();
             this.labelIstaFolder = new System.Windows.Forms.Label();
             this.buttonFunc2 = new System.Windows.Forms.Button();
+            this.buttonExecuteTal = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // textBoxIstaFolder
@@ -203,6 +204,16 @@ namespace PsdzClient
             this.buttonFunc2.UseVisualStyleBackColor = true;
             this.buttonFunc2.Click += new System.EventHandler(this.buttonFunc_Click);
             // 
+            // buttonExecuteTal
+            // 
+            this.buttonExecuteTal.Location = new System.Drawing.Point(498, 64);
+            this.buttonExecuteTal.Name = "buttonExecuteTal";
+            this.buttonExecuteTal.Size = new System.Drawing.Size(75, 23);
+            this.buttonExecuteTal.TabIndex = 14;
+            this.buttonExecuteTal.Text = "Mod. Fa";
+            this.buttonExecuteTal.UseVisualStyleBackColor = true;
+            this.buttonExecuteTal.Click += new System.EventHandler(this.buttonFunc_Click);
+            // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
@@ -210,6 +221,7 @@ namespace PsdzClient
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonAbort;
             this.ClientSize = new System.Drawing.Size(810, 450);
+            this.Controls.Add(this.buttonExecuteTal);
             this.Controls.Add(this.buttonFunc2);
             this.Controls.Add(this.labelIstaFolder);
             this.Controls.Add(this.buttonFunc1);
@@ -254,6 +266,7 @@ namespace PsdzClient
         private System.Windows.Forms.Button buttonFunc1;
         private System.Windows.Forms.Label labelIstaFolder;
         private System.Windows.Forms.Button buttonFunc2;
+        private System.Windows.Forms.Button buttonExecuteTal;
     }
 }
 
