@@ -151,6 +151,7 @@ BMW.Rheingold.Module.ISTA.ABL_LIF_REMOVE_ELEMENTS_FROM_VO.Start() -> SetFaTarget
 BMW.Rheingold.Module.ISTA.ABL_LIF_REMOVE_ELEMENTS_FROM_VO.run()
 BMW.Rheingold.Module.ISTA.ABL_LIF_ADD_ELEMENTS_TO_VO.run()
 BMW.Rheingold.Programming.Controller.SecureCoding.SecureCodingLogic.ReturnNcdsToBeCalculated()
+BMW.Rheingold.Programming.Controller.SecureCoding.SecureCodingLogic.GenerateRequestFileForNcdCalculation()
 
 InParameter:
 "faElementsToAdd": +MFSG

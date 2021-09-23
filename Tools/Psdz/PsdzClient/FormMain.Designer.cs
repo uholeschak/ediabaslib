@@ -210,7 +210,7 @@ namespace PsdzClient
             this.buttonExecuteTal.Name = "buttonExecuteTal";
             this.buttonExecuteTal.Size = new System.Drawing.Size(75, 23);
             this.buttonExecuteTal.TabIndex = 14;
-            this.buttonExecuteTal.Text = "Mod. Fa";
+            this.buttonExecuteTal.Text = "Execute Tal";
             this.buttonExecuteTal.UseVisualStyleBackColor = true;
             this.buttonExecuteTal.Click += new System.EventHandler(this.buttonFunc_Click);
             // 

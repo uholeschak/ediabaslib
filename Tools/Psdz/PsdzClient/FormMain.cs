@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -393,6 +394,19 @@ namespace PsdzClient
                             detailedNcdInfo.Btld.HexString, detailedNcdInfo.Cafd.HexString, detailedNcdInfo.NcdStatus));
                     }
                     UpdateStatus(sbResult.ToString());
+
+                    List<IPsdzRequestNcdEto> requestNcdEtos = new List<IPsdzRequestNcdEto>();
+                    foreach (IPsdzDetailedNcdInfoEto detailedNcdInfo in psdzCheckNcdResultEto.DetailedNcdStatus)
+                    {
+                        requestNcdEtos.Add(new PsdzRequestNcdEto
+                        {
+                            Btld = detailedNcdInfo.Btld,
+                            Cafd = detailedNcdInfo.Cafd
+                        });
+                    }
+
+                    string jsonRequestFilePath = Path.Combine(psdzContext.PathToBackupData, string.Format(CultureInfo.InvariantCulture, "SecureCodingNCDCalculationRequest_{0}_{1}.json", psdzVin.Value, DealerId));
+                    programmingService.Psdz.SecureCodingService.RequestCalculationNcdAndSignatureOffline(requestNcdEtos, jsonRequestFilePath, null, psdzVin, psdzContext.FaTarget);
                     return true;
                 }
 
