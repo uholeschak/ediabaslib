@@ -386,7 +386,12 @@ namespace PsdzClient
                     UpdateStatus(sbResult.ToString());
 
                     IPsdzCheckNcdResultEto psdzCheckNcdResultEto = programmingService.Psdz.SecureCodingService.CheckNcdAvailabilityForGivenTal(psdzContext.Tal, psdzContext.PathToBackupData, psdzVin);
-                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ncd: Signed={0}", psdzCheckNcdResultEto.isEachNcdSigned));
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ncd EachSigned: {0}", psdzCheckNcdResultEto.isEachNcdSigned));
+                    foreach (IPsdzDetailedNcdInfoEto detailedNcdInfo in psdzCheckNcdResultEto.DetailedNcdStatus)
+                    {
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Ncd: Btld={0}, Cadf={1}, Status={2}",
+                            detailedNcdInfo.Btld.HexString, detailedNcdInfo.Cafd.HexString, detailedNcdInfo.NcdStatus));
+                    }
                     UpdateStatus(sbResult.ToString());
                     return true;
                 }
