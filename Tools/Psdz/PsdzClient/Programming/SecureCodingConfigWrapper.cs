@@ -9,7 +9,9 @@ using BMW.Rheingold.Psdz.Model.SecureCoding;
 namespace PsdzClient.Programming
 {
 	public class SecureCodingConfigWrapper
-	{
+    {
+        public const string NcdRoot = "ncd";
+
 		private PsdzSecureCodingConfigCto SecureCodingConfigCto { get; }
 
 		public static PsdzSecureCodingConfigCto GetSecureCodingConfig(ProgrammingService programmingService)
@@ -56,7 +58,7 @@ namespace PsdzClient.Programming
 
 		public static string GetSecureCodingPathWithVin(ProgrammingService programmingService, string vin)
 		{
-			return Path.Combine(programmingService.BackupDataPath, vin);
+			return Path.Combine(programmingService.BackupDataPath, NcdRoot, vin);
 		}
 
 		private SecureCodingConfigWrapper(ProgrammingService programmingService)
@@ -94,7 +96,7 @@ namespace PsdzClient.Programming
 			}
 			this.SecureCodingConfigCto.ConnectionTimeout = 5000;
 			this.SecureCodingConfigCto.ScbPollingTimeout = 120;
-			this.SecureCodingConfigCto.NcdRootDirectory = programmingService.BackupDataPath;
+			this.SecureCodingConfigCto.NcdRootDirectory = Path.Combine(programmingService.BackupDataPath, NcdRoot);
 			this.SecureCodingConfigCto.Retries = 3;
 			this.SecureCodingConfigCto.Crls = null;
 			this.SecureCodingConfigCto.SwlSecBackendUrls = null;
