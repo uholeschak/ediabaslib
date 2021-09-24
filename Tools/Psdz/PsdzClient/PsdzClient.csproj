@@ -57,6 +57,7 @@
     <Compile Include="Programming\IPsdzContext.cs" />
     <Compile Include="Programming\ProgrammingUtils.cs" />
     <Compile Include="Programming\PsdzContext.cs" />
+    <Compile Include="Programming\SecureCodingConfigWrapper.cs" />
     <Compile Include="Programming\TargetSelectorChooser.cs" />
     <Compile Include="Programming\VehicleOrder.cs" />
     <Compile Include="Psdz\CbbTlsConfiguratorServiceClient.cs" />

@@ -386,7 +386,8 @@ namespace PsdzClient
                     }
                     UpdateStatus(sbResult.ToString());
 
-                    IPsdzCheckNcdResultEto psdzCheckNcdResultEto = programmingService.Psdz.SecureCodingService.CheckNcdAvailabilityForGivenTal(psdzContext.Tal, psdzContext.PathToBackupData, psdzVin);
+                    PsdzSecureCodingConfigCto secureCodingConfig = SecureCodingConfigWrapper.GetSecureCodingConfig(programmingService);
+                    IPsdzCheckNcdResultEto psdzCheckNcdResultEto = programmingService.Psdz.SecureCodingService.CheckNcdAvailabilityForGivenTal(psdzContext.Tal, secureCodingConfig.NcdRootDirectory, psdzVin);
                     sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ncd EachSigned: {0}", psdzCheckNcdResultEto.isEachNcdSigned));
                     foreach (IPsdzDetailedNcdInfoEto detailedNcdInfo in psdzCheckNcdResultEto.DetailedNcdStatus)
                     {
@@ -405,8 +406,8 @@ namespace PsdzClient
                         });
                     }
 
-                    string jsonRequestFilePath = Path.Combine(psdzContext.PathToBackupData, string.Format(CultureInfo.InvariantCulture, "SecureCodingNCDCalculationRequest_{0}_{1}.json", psdzVin.Value, DealerId));
-                    programmingService.Psdz.SecureCodingService.RequestCalculationNcdAndSignatureOffline(requestNcdEtos, jsonRequestFilePath, null, psdzVin, psdzContext.FaTarget);
+                    string jsonRequestFilePath = Path.Combine(secureCodingConfig.NcdRootDirectory, string.Format(CultureInfo.InvariantCulture, "SecureCodingNCDCalculationRequest_{0}_{1}.json", psdzVin.Value, DealerId));
+                    programmingService.Psdz.SecureCodingService.RequestCalculationNcdAndSignatureOffline(requestNcdEtos, jsonRequestFilePath, secureCodingConfig, psdzVin, psdzContext.FaTarget);
                     return true;
                 }
 

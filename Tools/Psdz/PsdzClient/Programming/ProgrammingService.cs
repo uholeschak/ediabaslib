@@ -17,7 +17,7 @@ namespace PsdzClient.Programming
 			this.psdzConfig = new PsdzConfig(istaFolder, dealerId);
 			this.psdz = new PsdzServiceWrapper(this.psdzConfig);
 			this.psdz.SetLogLevel(PsdzLoglevel, ProdiasLoglevel);
-			ProgrammingService.PreparePsdzBackupDataPath(istaFolder);
+			PreparePsdzBackupDataPath(istaFolder);
 		}
 
 		public bool CollectPsdzLog(string targetLogFilePath)
@@ -97,7 +97,7 @@ namespace PsdzClient.Programming
 			return this.psdzConfig.PsdzLogFilePath;
 		}
 
-		private static void PreparePsdzBackupDataPath(string istaFolder)
+		private void PreparePsdzBackupDataPath(string istaFolder)
 		{
 			string pathString = Path.Combine(istaFolder, "Temp");
 			try
@@ -109,7 +109,8 @@ namespace PsdzClient.Programming
 				string path = Path.Combine(pathString, Guid.NewGuid().ToString());
 				File.WriteAllText(path, string.Empty);
 				File.Delete(path);
-			}
+                BackupDataPath = path;
+            }
 			catch (Exception)
 			{
 				throw;
@@ -162,5 +163,7 @@ namespace PsdzClient.Programming
 		public PsdzLoglevel PsdzLoglevel { get; set; }
 
         public ProdiasLoglevel ProdiasLoglevel { get; set; }
-	}
+
+        public string BackupDataPath { get; private set; }
+    }
 }
