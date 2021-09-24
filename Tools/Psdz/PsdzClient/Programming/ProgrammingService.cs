@@ -109,7 +109,7 @@ namespace PsdzClient.Programming
 				string path = Path.Combine(pathString, Guid.NewGuid().ToString());
 				File.WriteAllText(path, string.Empty);
 				File.Delete(path);
-                BackupDataPath = path;
+                BackupDataPath = pathString;
             }
 			catch (Exception)
 			{
