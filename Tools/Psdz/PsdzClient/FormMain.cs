@@ -415,6 +415,8 @@ namespace PsdzClient
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Failure: Cause={0}, Retry={1}, Url={2}",
                             psdzSecurityBackendRequestFailure.Cause, psdzSecurityBackendRequestFailure.Retry, psdzSecurityBackendRequestFailure.Url));
                     }
+                    UpdateStatus(sbResult.ToString());
+
                     return true;
                 }
 
