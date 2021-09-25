@@ -370,6 +370,7 @@ namespace PsdzClient
                 {
                     sbResult.AppendLine("Execute TAL");
                     UpdateStatus(sbResult.ToString());
+
                     if (psdzContext.Tal == null)
                     {
                         sbResult.AppendLine("No TAL present");
@@ -377,6 +378,7 @@ namespace PsdzClient
                         return false;
                     }
 
+                    DateTime calculationStartTime = DateTime.Now;
                     IEnumerable<IPsdzEcuIdentifier> psdzEcuIdentifiersPrg = programmingService.Psdz.ProgrammingService.CheckProgrammingCounter(psdzContext.Connection, psdzContext.Tal);
                     sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "ProgCounter: {0}", psdzEcuIdentifiersPrg.Count()));
                     foreach (IPsdzEcuIdentifier ecuIdentifier in psdzEcuIdentifiersPrg)
@@ -407,7 +409,8 @@ namespace PsdzClient
                     }
 
                     string secureCodingPath = SecureCodingConfigWrapper.GetSecureCodingPathWithVin(programmingService, psdzVin.Value);
-                    string jsonRequestFilePath = Path.Combine(secureCodingPath, string.Format(CultureInfo.InvariantCulture, "SecureCodingNCDCalculationRequest_{0}_{1}.json", psdzVin.Value, DealerId));
+                    string jsonRequestFilePath = Path.Combine(secureCodingPath, string.Format(CultureInfo.InvariantCulture, "SecureCodingNCDCalculationRequest_{0}_{1}_{2}.json",
+                        psdzVin.Value, DealerId, calculationStartTime.ToString("HHmmss", CultureInfo.InvariantCulture)));
                     IList<IPsdzSecurityBackendRequestFailureCto> psdzSecurityBackendRequestFailureList = programmingService.Psdz.SecureCodingService.RequestCalculationNcdAndSignatureOffline(requestNcdEtos, jsonRequestFilePath, secureCodingConfig, psdzVin, psdzContext.FaTarget);
                     sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ncd failures: {0}", psdzSecurityBackendRequestFailureList.Count));
                     foreach (IPsdzSecurityBackendRequestFailureCto psdzSecurityBackendRequestFailure in psdzSecurityBackendRequestFailureList)
