@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BMW.Rheingold.Programming.Controller.SecureCoding.Model;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Client;
 using BMW.Rheingold.Psdz.Model;
@@ -22,6 +23,7 @@ using BMW.Rheingold.Psdz.Model.Swt;
 using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using BMW.Rheingold.Psdz.Model.Tal.TalStatus;
+using Newtonsoft.Json;
 using PsdzClient.Programming;
 
 namespace PsdzClient
@@ -411,22 +413,57 @@ namespace PsdzClient
                     string secureCodingPath = SecureCodingConfigWrapper.GetSecureCodingPathWithVin(programmingService, psdzVin.Value);
                     string jsonRequestFilePath = Path.Combine(secureCodingPath, string.Format(CultureInfo.InvariantCulture, "SecureCodingNCDCalculationRequest_{0}_{1}_{2}.json",
                         psdzVin.Value, DealerId, calculationStartTime.ToString("HHmmss", CultureInfo.InvariantCulture)));
-                    IList<IPsdzSecurityBackendRequestFailureCto> psdzSecurityBackendRequestFailureList = programmingService.Psdz.SecureCodingService.RequestCalculationNcdAndSignatureOffline(requestNcdEtos, jsonRequestFilePath, secureCodingConfig, psdzVin, psdzContext.FaTarget);
-                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ncd failures: {0}", psdzSecurityBackendRequestFailureList.Count));
-                    foreach (IPsdzSecurityBackendRequestFailureCto psdzSecurityBackendRequestFailure in psdzSecurityBackendRequestFailureList)
+                    try
                     {
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Failure: Cause={0}, Retry={1}, Url={2}",
-                            psdzSecurityBackendRequestFailure.Cause, psdzSecurityBackendRequestFailure.Retry, psdzSecurityBackendRequestFailure.Url));
-                    }
-                    UpdateStatus(sbResult.ToString());
+                        IList<IPsdzSecurityBackendRequestFailureCto> psdzSecurityBackendRequestFailureList = programmingService.Psdz.SecureCodingService.RequestCalculationNcdAndSignatureOffline(requestNcdEtos, jsonRequestFilePath, secureCodingConfig, psdzVin, psdzContext.FaTarget);
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ncd failures: {0}", psdzSecurityBackendRequestFailureList.Count));
+                        foreach (IPsdzSecurityBackendRequestFailureCto psdzSecurityBackendRequestFailure in psdzSecurityBackendRequestFailureList)
+                        {
+                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Failure: Cause={0}, Retry={1}, Url={2}",
+                                psdzSecurityBackendRequestFailure.Cause, psdzSecurityBackendRequestFailure.Retry, psdzSecurityBackendRequestFailure.Url));
+                        }
+                        UpdateStatus(sbResult.ToString());
 
-                    IEnumerable<IPsdzSgbmId> psdzSgbmIds = programmingService.Psdz.LogicService.RequestSweList(psdzContext.Tal, true);
-                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Swe list: {0}", psdzSgbmIds.Count()));
-                    foreach (IPsdzSgbmId psdzSgbmId in psdzSgbmIds)
-                    {
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Sgbm: {0}", psdzSgbmId.HexString));
+                        RequestJson requestJson = new JsonHelper().ReadRequestJson(jsonRequestFilePath);
+                        IEnumerable<string> cafdCalculatedInSCB = requestJson.ecuData.SelectMany((EcuData a) => a.CafdId);
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Cafd in SCB: {0}", cafdCalculatedInSCB.Count()));
+                        foreach (string cafd in cafdCalculatedInSCB)
+                        {
+                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Cafd: {0}", cafd));
+                        }
+
+                        IEnumerable<IPsdzSgbmId> psdzSweLists = programmingService.Psdz.LogicService.RequestSweList(psdzContext.Tal, true);
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Swe list: {0}", psdzSweLists.Count()));
+                        foreach (IPsdzSgbmId psdzSgbmId in psdzSweLists)
+                        {
+                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Sgbm: {0}", psdzSgbmId.HexString));
+                        }
+                        UpdateStatus(sbResult.ToString());
+#if false
+                        IEnumerable<IPsdzSgbmId> psdzSoftwareEntries = programmingService.Psdz.MacrosService.CheckSoftwareEntries(psdzSweLists);
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Sw entries: {0}", psdzSoftwareEntries.Count()));
+                        foreach (IPsdzSgbmId psdzSgbmId in psdzSoftwareEntries)
+                        {
+                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Sgbm: {0}", psdzSgbmId.HexString));
+                        }
+                        UpdateStatus(sbResult.ToString());
+#endif
                     }
-                    UpdateStatus(sbResult.ToString());
+                    finally
+                    {
+                        if (Directory.Exists(secureCodingPath))
+                        {
+                            try
+                            {
+                                Directory.Delete(secureCodingPath, true);
+                            }
+                            catch (Exception ex)
+                            {
+                                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Directory exception: {0}", ex.Message));
+                                UpdateStatus(sbResult.ToString());
+                            }
+                        }
+                    }
 
                     return true;
                 }

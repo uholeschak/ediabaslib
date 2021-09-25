@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PsdzClient.Core;
 
 namespace PsdzClient.Programming
 {
-    //[AuthorAPI(SelectableTypeDeclaration = true)]
+    [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum Bus
     {
         ACan,
@@ -38,7 +39,7 @@ namespace PsdzClient.Programming
         SrrCanFd
     }
 
-	//[AuthorAPI(SelectableTypeDeclaration = true)]
+	[AuthorAPI(SelectableTypeDeclaration = true)]
 	public interface IEcuObj
     {
         string EcuRep { get; }
