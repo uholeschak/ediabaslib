@@ -420,6 +420,14 @@ namespace PsdzClient
                     }
                     UpdateStatus(sbResult.ToString());
 
+                    IEnumerable<IPsdzSgbmId> psdzSgbmIds = programmingService.Psdz.LogicService.RequestSweList(psdzContext.Tal, true);
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Swe list: {0}", psdzSgbmIds.Count()));
+                    foreach (IPsdzSgbmId psdzSgbmId in psdzSgbmIds)
+                    {
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Sgbm: {0}", psdzSgbmId.HexString));
+                    }
+                    UpdateStatus(sbResult.ToString());
+
                     return true;
                 }
 
