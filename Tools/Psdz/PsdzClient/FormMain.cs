@@ -410,6 +410,14 @@ namespace PsdzClient
                         });
                     }
 
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ncd Requests: {0}", requestNcdEtos.Count));
+                    foreach (IPsdzRequestNcdEto requestNcdEto in requestNcdEtos)
+                    {
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Ncd for Cafd={0}, Btld={1}",
+                            requestNcdEto.Cafd.Id, requestNcdEto.Btld.HexString));
+                    }
+                    UpdateStatus(sbResult.ToString());
+
                     string secureCodingPath = SecureCodingConfigWrapper.GetSecureCodingPathWithVin(programmingService, psdzVin.Value);
                     string jsonRequestFilePath = Path.Combine(secureCodingPath, string.Format(CultureInfo.InvariantCulture, "SecureCodingNCDCalculationRequest_{0}_{1}_{2}.json",
                         psdzVin.Value, DealerId, calculationStartTime.ToString("HHmmss", CultureInfo.InvariantCulture)));
