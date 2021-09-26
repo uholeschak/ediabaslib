@@ -416,13 +416,21 @@ namespace PsdzClient
                     try
                     {
                         IList<IPsdzSecurityBackendRequestFailureCto> psdzSecurityBackendRequestFailureList = programmingService.Psdz.SecureCodingService.RequestCalculationNcdAndSignatureOffline(requestNcdEtos, jsonRequestFilePath, secureCodingConfig, psdzVin, psdzContext.FaTarget);
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ncd failures: {0}", psdzSecurityBackendRequestFailureList.Count));
+                        int failureCount = psdzSecurityBackendRequestFailureList.Count;
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ncd failures: {0}", failureCount));
                         foreach (IPsdzSecurityBackendRequestFailureCto psdzSecurityBackendRequestFailure in psdzSecurityBackendRequestFailureList)
                         {
                             sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Failure: Cause={0}, Retry={1}, Url={2}",
                                 psdzSecurityBackendRequestFailure.Cause, psdzSecurityBackendRequestFailure.Retry, psdzSecurityBackendRequestFailure.Url));
                         }
                         UpdateStatus(sbResult.ToString());
+
+                        if (failureCount > 0)
+                        {
+                            sbResult.AppendLine("Ncd failures present");
+                            UpdateStatus(sbResult.ToString());
+                            return false;
+                        }
 
                         RequestJson requestJson = new JsonHelper().ReadRequestJson(jsonRequestFilePath);
                         IEnumerable<string> cafdCalculatedInSCB = requestJson.ecuData.SelectMany((EcuData a) => a.CafdId);
