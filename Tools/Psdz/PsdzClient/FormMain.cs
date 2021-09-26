@@ -432,14 +432,30 @@ namespace PsdzClient
                             return false;
                         }
 
-                        RequestJson requestJson = new JsonHelper().ReadRequestJson(jsonRequestFilePath);
-                        IEnumerable<string> cafdCalculatedInSCB = requestJson.ecuData.SelectMany((EcuData a) => a.CafdId);
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Cafd in SCB: {0}", cafdCalculatedInSCB.Count()));
-                        foreach (string cafd in cafdCalculatedInSCB)
+                        if (!File.Exists(jsonRequestFilePath))
                         {
-                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Cafd: {0}", cafd));
+                            sbResult.AppendLine("Ncd request file not generated");
+                            UpdateStatus(sbResult.ToString());
+                            return false;
                         }
-                        UpdateStatus(sbResult.ToString());
+
+                        RequestJson requestJson = new JsonHelper().ReadRequestJson(jsonRequestFilePath);
+                        if (requestJson == null || !ProgrammingUtils.CheckIfThereAreAnyNcdInTheRequest(requestJson))
+                        {
+                            sbResult.AppendLine("No ecu data in the request json file. Ncd calculation not required");
+                        }
+
+                        IEnumerable<string> cafdCalculatedInSCB = null;
+                        if (requestJson != null)
+                        {
+                            cafdCalculatedInSCB = requestJson.ecuData.SelectMany((EcuData a) => a.CafdId);
+                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Cafd in SCB: {0}", cafdCalculatedInSCB.Count()));
+                            foreach (string cafd in cafdCalculatedInSCB)
+                            {
+                                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Cafd: {0}", cafd));
+                            }
+                            UpdateStatus(sbResult.ToString());
+                        }
 
                         IEnumerable<IPsdzSgbmId> sweList = programmingService.Psdz.LogicService.RequestSweList(psdzContext.Tal, true);
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Swe list: {0}", sweList.Count()));

@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.Programming.Controller.SecureCoding.Model;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
@@ -199,7 +200,28 @@ namespace PsdzClient.Programming
             return enumerable;
         }
 
-        static ProgrammingUtils()
+        public static bool CheckIfThereAreAnyNcdInTheRequest(RequestJson jsonContentObj)
+        {
+            bool? flag;
+            if (jsonContentObj == null)
+            {
+                flag = null;
+            }
+            else
+            {
+                EcuData[] ecuData2 = jsonContentObj.ecuData;
+                flag = ((ecuData2 != null) ? new bool?(ecuData2.Any<EcuData>()) : null);
+            }
+
+            if (flag.HasValue)
+            {
+                return flag.Value;
+            }
+
+            return false;
+        }
+
+		static ProgrammingUtils()
         {
             ProgrammingUtils.AllowedTaCategories = new TaCategories[]
             {
