@@ -102,6 +102,7 @@ namespace PsdzClient.Programming
 			this.SecureCodingConfigCto.SwlSecBackendUrls = null;
 			this.SecureCodingConfigCto.ScbUrls = new List<string>
 			{
+				string.Empty
 				//BackendConnector.GetBackendServiceUrl(BackendServiceType.SecureCoding, ContextError.SecureCoding).ResultObject
 			};
 			this.SecureCodingConfigCto.PsdzAuthenticationTypeEto = PsdzAuthenticationTypeEto.SSL;
