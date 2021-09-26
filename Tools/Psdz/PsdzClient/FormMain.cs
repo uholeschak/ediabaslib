@@ -431,23 +431,24 @@ namespace PsdzClient
                         {
                             sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Cafd: {0}", cafd));
                         }
+                        UpdateStatus(sbResult.ToString());
 
-                        IEnumerable<IPsdzSgbmId> psdzSweLists = programmingService.Psdz.LogicService.RequestSweList(psdzContext.Tal, true);
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Swe list: {0}", psdzSweLists.Count()));
-                        foreach (IPsdzSgbmId psdzSgbmId in psdzSweLists)
+                        IEnumerable<IPsdzSgbmId> sweList = programmingService.Psdz.LogicService.RequestSweList(psdzContext.Tal, true);
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Swe list: {0}", sweList.Count()));
+                        foreach (IPsdzSgbmId psdzSgbmId in sweList)
                         {
                             sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Sgbm: {0}", psdzSgbmId.HexString));
                         }
                         UpdateStatus(sbResult.ToString());
-#if false
-                        IEnumerable<IPsdzSgbmId> psdzSoftwareEntries = programmingService.Psdz.MacrosService.CheckSoftwareEntries(psdzSweLists);
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Sw entries: {0}", psdzSoftwareEntries.Count()));
-                        foreach (IPsdzSgbmId psdzSgbmId in psdzSoftwareEntries)
+
+                        IEnumerable<IPsdzSgbmId> sgbmIds = ProgrammingUtils.RemoveCafdsCalculatedOnSCB(cafdCalculatedInSCB, sweList);
+                        IEnumerable<IPsdzSgbmId> softwareEntries = programmingService.Psdz.MacrosService.CheckSoftwareEntries(sgbmIds);
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Sw entries: {0}", softwareEntries.Count()));
+                        foreach (IPsdzSgbmId psdzSgbmId in softwareEntries)
                         {
                             sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Sgbm: {0}", psdzSgbmId.HexString));
                         }
                         UpdateStatus(sbResult.ToString());
-#endif
                     }
                     finally
                     {

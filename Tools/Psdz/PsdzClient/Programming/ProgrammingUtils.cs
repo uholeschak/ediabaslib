@@ -185,6 +185,20 @@ namespace PsdzClient.Programming
             return true;
         }
 
+        public static IEnumerable<IPsdzSgbmId> RemoveCafdsCalculatedOnSCB(IEnumerable<string> cafdList, IEnumerable<IPsdzSgbmId> sweList)
+        {
+            IEnumerable<string> cafdList2 = cafdList;
+            if (cafdList2 != null && !cafdList2.Any<string>())
+            {
+                return sweList;
+            }
+
+            IEnumerable<IPsdzSgbmId> enumerable = from x in sweList
+                where !"CAFD".Equals(x.ProcessClass) && !cafdList.Contains(x.Id)
+                select x;
+            return enumerable;
+        }
+
         static ProgrammingUtils()
         {
             ProgrammingUtils.AllowedTaCategories = new TaCategories[]
