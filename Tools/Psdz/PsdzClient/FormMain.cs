@@ -479,6 +479,16 @@ namespace PsdzClient
                             UpdateStatus(sbResult.ToString());
                             return false;
                         }
+
+                        TalExecutionSettings talExecutionSettings = ProgrammingUtils.GetTalExecutionSettings(programmingService);
+                        IPsdzTal backupTalResult = programmingService.Psdz.IndividualDataRestoreService.ExecuteBackupTal(
+                            psdzContext.Connection, psdzContext.IndividualDataBackupTal, null, psdzContext.FaTarget, psdzVin, talExecutionSettings, psdzContext.PathToBackupData);
+                        sbResult.AppendLine("Backup Tal result:");
+                        //sbResult.AppendLine(backupTalResult.AsXml);
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Size: {0}", backupTalResult.AsXml.Length));
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " State: {0}", backupTalResult.TalExecutionState));
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Ecus: {0}", backupTalResult.AffectedEcus.Count()));
+                        UpdateStatus(sbResult.ToString());
                     }
                     finally
                     {

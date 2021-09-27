@@ -248,6 +248,22 @@ namespace PsdzClient.Programming
             return requestNcdEtos;
         }
 
+        public static TalExecutionSettings GetTalExecutionSettings(ProgrammingService programmingService)
+        {
+            TalExecutionSettings talExecutionSettings = new TalExecutionSettings
+            {
+                Parallel = true,
+                TaMaxRepeat = 1,
+                UseFlaMode = true,
+                UseProgrammingCounter = false,
+                UseAep = false,
+                ProgrammingModeSwitch = true,
+                CodingModeSwitch = false,
+                SecureCodingConfig = SecureCodingConfigWrapper.GetSecureCodingConfig(programmingService)
+            };
+            return talExecutionSettings;
+        }
+
         static ProgrammingUtils()
         {
             ProgrammingUtils.AllowedTaCategories = new TaCategories[]
