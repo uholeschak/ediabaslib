@@ -156,6 +156,7 @@ BMW.Rheingold.Programming.Controller.SecureCoding.SecureCodingLogic.ReturnNcdsTo
 BMW.Rheingold.Programming.Controller.SecureCoding.SecureCodingLogic.GenerateRequestFileForNcdCalculation()
 BMW.Rheingold.Programming.Controller.SecureCoding.SecureCodingLogic.GetCafdCalculatedInSCB()
 BMW.Rheingold.Programming.ProgrammingEngine.States.CheckSoftwareAvailabilityState.Handle(ProgrammingSession session)
+BMW.Rheingold.Programming.ProgrammingEngine.States.ExecuteIndividualDataBackupTalState.Handle(ProgrammingSession session)
 
 InParameter:
 "faElementsToAdd": +MFSG
