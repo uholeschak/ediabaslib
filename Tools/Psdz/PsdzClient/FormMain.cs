@@ -391,7 +391,6 @@ namespace PsdzClient
                     UpdateStatus(sbResult.ToString());
 
                     PsdzSecureCodingConfigCto secureCodingConfig = SecureCodingConfigWrapper.GetSecureCodingConfig(programmingService);
-                    //secureCodingConfig.BackendNcdCalculationEtoEnum = PsdzBackendNcdCalculationEtoEnum.FORCE;
                     IPsdzCheckNcdResultEto psdzCheckNcdResultEto = programmingService.Psdz.SecureCodingService.CheckNcdAvailabilityForGivenTal(psdzContext.Tal, secureCodingConfig.NcdRootDirectory, psdzVin);
                     sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ncd EachSigned: {0}", psdzCheckNcdResultEto.isEachNcdSigned));
                     foreach (IPsdzDetailedNcdInfoEto detailedNcdInfo in psdzCheckNcdResultEto.DetailedNcdStatus)
@@ -413,8 +412,10 @@ namespace PsdzClient
                     string secureCodingPath = SecureCodingConfigWrapper.GetSecureCodingPathWithVin(programmingService, psdzVin.Value);
                     string jsonRequestFilePath = Path.Combine(secureCodingPath, string.Format(CultureInfo.InvariantCulture, "SecureCodingNCDCalculationRequest_{0}_{1}_{2}.json",
                         psdzVin.Value, DealerId, calculationStartTime.ToString("HHmmss", CultureInfo.InvariantCulture)));
+                    PsdzBackendNcdCalculationEtoEnum backendNcdCalculationEtoEnumOld = secureCodingConfig.BackendNcdCalculationEtoEnum;
                     try
                     {
+                        secureCodingConfig.BackendNcdCalculationEtoEnum = PsdzBackendNcdCalculationEtoEnum.ALLOW;
                         IList<IPsdzSecurityBackendRequestFailureCto> psdzSecurityBackendRequestFailureList = programmingService.Psdz.SecureCodingService.RequestCalculationNcdAndSignatureOffline(requestNcdEtos, jsonRequestFilePath, secureCodingConfig, psdzVin, psdzContext.FaTarget);
                         int failureCount = psdzSecurityBackendRequestFailureList.Count;
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ncd failures: {0}", failureCount));
@@ -472,6 +473,7 @@ namespace PsdzClient
                     }
                     finally
                     {
+                        secureCodingConfig.BackendNcdCalculationEtoEnum = backendNcdCalculationEtoEnumOld;
                         if (Directory.Exists(secureCodingPath))
                         {
                             try
