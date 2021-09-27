@@ -30,7 +30,7 @@ namespace PsdzClient.Programming
 			return SecureCodingConfigWrapper.instance;
 		}
 
-		internal static void ChangeNcdRecalculationValueTo(ProgrammingService programmingService, PsdzNcdRecalculationEtoEnum psdzNcdRecalculation)
+        public static void ChangeNcdRecalculationValueTo(ProgrammingService programmingService, PsdzNcdRecalculationEtoEnum psdzNcdRecalculation)
 		{
 #if false
 			string value = ConfigSettings.getConfigString("BMW.Rheingold.Programming.Security.SC.NcdRecalculationEnum").ToUpper();
@@ -43,7 +43,7 @@ namespace PsdzClient.Programming
 			SecureCodingConfigWrapper.GetSecureCodingConfig(programmingService).NcdRecalculationEtoEnum = psdzNcdRecalculation;
 		}
 
-		internal static void ChangeBackendNcdCalculationValueTo(ProgrammingService programmingService, PsdzBackendNcdCalculationEtoEnum backendNcdCalculation)
+        public static void ChangeBackendNcdCalculationValueTo(ProgrammingService programmingService, PsdzBackendNcdCalculationEtoEnum backendNcdCalculation)
 		{
 #if false
 			string configString = ConfigSettings.getConfigString("BMW.Rheingold.Programming.Security.SC.BackendNcdCalculationMode");
@@ -108,7 +108,7 @@ namespace PsdzClient.Programming
 			this.SecureCodingConfigCto.PsdzAuthenticationTypeEto = PsdzAuthenticationTypeEto.SSL;
 		}
 
-		private static string ConvertListToString(IList<string> list)
+        public static string ConvertListToString(IList<string> list)
 		{
 			if (list != null && list.Any<string>())
 			{

@@ -12,8 +12,10 @@ using BMW.Rheingold.Programming.Controller.SecureCoding.Model;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
+using BMW.Rheingold.Psdz.Model.SecureCoding;
 using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
+using PsdzClient.Core;
 
 namespace PsdzClient.Programming
 {
@@ -221,7 +223,32 @@ namespace PsdzClient.Programming
             return false;
         }
 
-		static ProgrammingUtils()
+        public static IEnumerable<string> CafdCalculatedInSCB(RequestJson jsonContentObj)
+        {
+            if (jsonContentObj != null && jsonContentObj.ecuData != null)
+            {
+                return jsonContentObj.ecuData.SelectMany((EcuData a) => a.CafdId);
+            }
+
+            return new string[0];
+        }
+
+        public static List<IPsdzRequestNcdEto> CreateRequestNcdEtos(IPsdzCheckNcdResultEto psdzCheckNcdResultEto)
+        {
+            List<IPsdzRequestNcdEto> requestNcdEtos = new List<IPsdzRequestNcdEto>();
+            psdzCheckNcdResultEto.DetailedNcdStatus.ForEach(delegate (IPsdzDetailedNcdInfoEto f)
+            {
+                requestNcdEtos.Add(new PsdzRequestNcdEto
+                {
+                    Btld = f.Btld,
+                    Cafd = f.Cafd
+                });
+            });
+
+            return requestNcdEtos;
+        }
+
+        static ProgrammingUtils()
         {
             ProgrammingUtils.AllowedTaCategories = new TaCategories[]
             {

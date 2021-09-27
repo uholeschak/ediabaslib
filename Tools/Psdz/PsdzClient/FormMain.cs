@@ -391,6 +391,7 @@ namespace PsdzClient
                     UpdateStatus(sbResult.ToString());
 
                     PsdzSecureCodingConfigCto secureCodingConfig = SecureCodingConfigWrapper.GetSecureCodingConfig(programmingService);
+                    //secureCodingConfig.BackendNcdCalculationEtoEnum = PsdzBackendNcdCalculationEtoEnum.FORCE;
                     IPsdzCheckNcdResultEto psdzCheckNcdResultEto = programmingService.Psdz.SecureCodingService.CheckNcdAvailabilityForGivenTal(psdzContext.Tal, secureCodingConfig.NcdRootDirectory, psdzVin);
                     sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ncd EachSigned: {0}", psdzCheckNcdResultEto.isEachNcdSigned));
                     foreach (IPsdzDetailedNcdInfoEto detailedNcdInfo in psdzCheckNcdResultEto.DetailedNcdStatus)
@@ -400,16 +401,7 @@ namespace PsdzClient
                     }
                     UpdateStatus(sbResult.ToString());
 
-                    List<IPsdzRequestNcdEto> requestNcdEtos = new List<IPsdzRequestNcdEto>();
-                    foreach (IPsdzDetailedNcdInfoEto detailedNcdInfo in psdzCheckNcdResultEto.DetailedNcdStatus)
-                    {
-                        requestNcdEtos.Add(new PsdzRequestNcdEto
-                        {
-                            Btld = detailedNcdInfo.Btld,
-                            Cafd = detailedNcdInfo.Cafd
-                        });
-                    }
-
+                    List<IPsdzRequestNcdEto> requestNcdEtos = ProgrammingUtils.CreateRequestNcdEtos(psdzCheckNcdResultEto);
                     sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ncd Requests: {0}", requestNcdEtos.Count));
                     foreach (IPsdzRequestNcdEto requestNcdEto in requestNcdEtos)
                     {
@@ -453,17 +445,13 @@ namespace PsdzClient
                             sbResult.AppendLine("No ecu data in the request json file. Ncd calculation not required");
                         }
 
-                        IEnumerable<string> cafdCalculatedInSCB = null;
-                        if (requestJson != null)
+                        IEnumerable<string> cafdCalculatedInSCB = ProgrammingUtils.CafdCalculatedInSCB(requestJson);
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Cafd in SCB: {0}", cafdCalculatedInSCB.Count()));
+                        foreach (string cafd in cafdCalculatedInSCB)
                         {
-                            cafdCalculatedInSCB = requestJson.ecuData.SelectMany((EcuData a) => a.CafdId);
-                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Cafd in SCB: {0}", cafdCalculatedInSCB.Count()));
-                            foreach (string cafd in cafdCalculatedInSCB)
-                            {
-                                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Cafd: {0}", cafd));
-                            }
-                            UpdateStatus(sbResult.ToString());
+                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Cafd: {0}", cafd));
                         }
+                        UpdateStatus(sbResult.ToString());
 
                         IEnumerable<IPsdzSgbmId> sweList = programmingService.Psdz.LogicService.RequestSweList(psdzContext.Tal, true);
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Swe list: {0}", sweList.Count()));
