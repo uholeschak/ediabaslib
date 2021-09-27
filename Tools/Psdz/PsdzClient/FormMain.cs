@@ -401,6 +401,7 @@ namespace PsdzClient
                     UpdateStatus(sbResult.ToString());
 
                     List<IPsdzRequestNcdEto> requestNcdEtos = ProgrammingUtils.CreateRequestNcdEtos(psdzCheckNcdResultEto);
+#if false
                     sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ncd Requests: {0}", requestNcdEtos.Count));
                     foreach (IPsdzRequestNcdEto requestNcdEto in requestNcdEtos)
                     {
@@ -408,7 +409,7 @@ namespace PsdzClient
                             requestNcdEto.Cafd.Id, requestNcdEto.Btld.HexString));
                     }
                     UpdateStatus(sbResult.ToString());
-
+#endif
                     string secureCodingPath = SecureCodingConfigWrapper.GetSecureCodingPathWithVin(programmingService, psdzVin.Value);
                     string jsonRequestFilePath = Path.Combine(secureCodingPath, string.Format(CultureInfo.InvariantCulture, "SecureCodingNCDCalculationRequest_{0}_{1}_{2}.json",
                         psdzVin.Value, DealerId, calculationStartTime.ToString("HHmmss", CultureInfo.InvariantCulture)));
@@ -464,12 +465,20 @@ namespace PsdzClient
 
                         IEnumerable<IPsdzSgbmId> sgbmIds = ProgrammingUtils.RemoveCafdsCalculatedOnSCB(cafdCalculatedInSCB, sweList);
                         IEnumerable<IPsdzSgbmId> softwareEntries = programmingService.Psdz.MacrosService.CheckSoftwareEntries(sgbmIds);
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Sw entries: {0}", softwareEntries.Count()));
+                        int softwareEntryCount = softwareEntries.Count();
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Sw entries: {0}", softwareEntryCount));
                         foreach (IPsdzSgbmId psdzSgbmId in softwareEntries)
                         {
                             sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Sgbm: {0}", psdzSgbmId.HexString));
                         }
                         UpdateStatus(sbResult.ToString());
+
+                        if (softwareEntryCount > 0)
+                        {
+                            sbResult.AppendLine("Software failures present");
+                            UpdateStatus(sbResult.ToString());
+                            return false;
+                        }
                     }
                     finally
                     {
