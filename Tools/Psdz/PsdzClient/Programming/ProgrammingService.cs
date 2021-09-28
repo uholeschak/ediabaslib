@@ -165,5 +165,7 @@ namespace PsdzClient.Programming
         public ProdiasLoglevel ProdiasLoglevel { get; set; }
 
         public string BackupDataPath { get; private set; }
+
+        public IPsdzProgressListener PsdzProgressListener { get; set; }
     }
 }

@@ -13,7 +13,7 @@ using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 
 namespace PsdzClient.Programming
 {
-	internal class PsdzContext : IPsdzContext
+	public class PsdzContext : IPsdzContext
 	{
 		public PsdzContext(string istaFolder)
         {
