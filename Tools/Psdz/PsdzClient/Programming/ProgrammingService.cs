@@ -12,13 +12,15 @@ namespace PsdzClient.Programming
 	{
 		public ProgrammingService(string istaFolder, string dealerId)
         {
-            this.EventManager = new ProgrammingEventManager();
-            this.PsdzProgressListener = new PsdzProgressListener(this.EventManager);
 			this.PsdzLoglevel = PsdzLoglevel.FINE;
             this.ProdiasLoglevel = ProdiasLoglevel.ERROR;
 			this.psdzConfig = new PsdzConfig(istaFolder, dealerId);
 			this.psdz = new PsdzServiceWrapper(this.psdzConfig);
 			this.psdz.SetLogLevel(PsdzLoglevel, ProdiasLoglevel);
+
+            this.EventManager = new ProgrammingEventManager();
+            this.PsdzProgressListener = new PsdzProgressListener(this.EventManager);
+            this.psdz.AddPsdzProgressListener(this.PsdzProgressListener);
 			PreparePsdzBackupDataPath(istaFolder);
 		}
 
@@ -153,6 +155,7 @@ namespace PsdzClient.Programming
 
         public void Dispose()
         {
+            this.psdz.RemovePsdzProgressListener(this.PsdzProgressListener);
             this.psdz.Dispose();
         }
 

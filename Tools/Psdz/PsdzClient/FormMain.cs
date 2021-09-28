@@ -190,12 +190,37 @@ namespace PsdzClient
                             }
                             else
                             {
-                                labelProgressEvent.Text = string.Format(CultureInfo.InvariantCulture, "{0}%, {1}s", programmingEventArgs.Progress, programmingEventArgs.TimeLeftSec);
-                                progressBarEvent.Value = (int) programmingEventArgs.Progress;
+                                int progress = (int) (programmingEventArgs.Progress * 100.0);
+                                labelProgressEvent.Text = string.Format(CultureInfo.InvariantCulture, "{0}%, {1}s", progress, programmingEventArgs.TimeLeftSec);
+                                progressBarEvent.Value = progress;
                             }
                         }));
                     }
+                    else if (args is ProgrammingActionStateChangedEventArgs programmingActionEventArgs)
+                    {
+                        BeginInvoke((Action)(() =>
+                        {
+                            labelProgressEvent.Text = string.Format(CultureInfo.InvariantCulture, "Ecu={0}, State={1}, Type={2}",
+                                programmingActionEventArgs.Ecu.ECU_NAME,
+                                programmingActionEventArgs.ProgrammingActionState,
+                                programmingActionEventArgs.ProgrammingActionType);
+                        }));
+                    }
+                    else if (args is ProgrammingCurrentEcuChangedEventArgs programmingEcuEventArgs)
+                    {
+                        BeginInvoke((Action)(() =>
+                        {
+                            int progress = (int)programmingEcuEventArgs.EcuProgrammingInfo.ProgressValue * 100;
+                            progressBarEvent.Style = ProgressBarStyle.Blocks;
+                            progressBarEvent.Value = progress;
+                            labelProgressEvent.Text = string.Format(CultureInfo.InvariantCulture, "Ecu={0}, State={1}, {2}%",
+                                programmingEcuEventArgs.EcuProgrammingInfo.Ecu.ECU_NAME,
+                                programmingEcuEventArgs.EcuProgrammingInfo.State,
+                                progress);
+                        }));
+                    }
                 };
+
                 programmingService.PsdzLoglevel = PsdzLoglevel.TRACE;
                 programmingService.ProdiasLoglevel = ProdiasLoglevel.TRACE;
                 if (!programmingService.StartPsdzServiceHost())
