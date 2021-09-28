@@ -481,7 +481,7 @@ namespace PsdzClient
                         }
 
                         TalExecutionSettings talExecutionSettings = ProgrammingUtils.GetTalExecutionSettings(programmingService);
-                        IPsdzTal backupTalResult = programmingService.Psdz.IndividualDataRestoreService.ExecuteBackupTal(
+                        IPsdzTal backupTalResult = programmingService.Psdz.IndividualDataRestoreService.ExecuteAsyncBackupTal(
                             psdzContext.Connection, psdzContext.IndividualDataBackupTal, null, psdzContext.FaTarget, psdzVin, talExecutionSettings, psdzContext.PathToBackupData);
                         sbResult.AppendLine("Backup Tal result:");
                         //sbResult.AppendLine(backupTalResult.AsXml);
