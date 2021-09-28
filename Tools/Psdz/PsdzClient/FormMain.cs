@@ -45,6 +45,7 @@ namespace PsdzClient
                     BeginInvoke((Action)(() =>
                     {
                         progressBarEvent.Style = ProgressBarStyle.Marquee;
+                        labelProgressEvent.Text = string.Empty;
                     }));
                 }
                 else
@@ -53,6 +54,7 @@ namespace PsdzClient
                     {
                         progressBarEvent.Style = ProgressBarStyle.Blocks;
                         progressBarEvent.Value = progressBarEvent.Minimum;
+                        labelProgressEvent.Text = string.Empty;
                     }));
                 }
             }
@@ -183,12 +185,12 @@ namespace PsdzClient
                             progressBarEvent.Style = ProgressBarStyle.Blocks;
                             if (programmingEventArgs.IsTaskFinished)
                             {
-                                progressBarEvent.Text = "Done";
+                                labelProgressEvent.Text = string.Empty;
                                 progressBarEvent.Value = progressBarEvent.Maximum;
                             }
                             else
                             {
-                                progressBarEvent.Text = string.Format(CultureInfo.InvariantCulture, "{0}%, time left={0}s", programmingEventArgs.Progress, programmingEventArgs.TimeLeftSec);
+                                labelProgressEvent.Text = string.Format(CultureInfo.InvariantCulture, "{0}%, {1}s", programmingEventArgs.Progress, programmingEventArgs.TimeLeftSec);
                                 progressBarEvent.Value = (int) programmingEventArgs.Progress;
                             }
                         }));
@@ -888,6 +890,7 @@ namespace PsdzClient
             UpdateDisplay();
             UpdateStatus();
             timerUpdate.Enabled = true;
+            labelProgressEvent.Text = string.Empty;
         }
 
         private void timerUpdate_Tick(object sender, EventArgs e)

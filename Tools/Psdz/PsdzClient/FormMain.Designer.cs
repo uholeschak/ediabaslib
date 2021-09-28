@@ -49,6 +49,7 @@ namespace PsdzClient
             this.buttonFunc2 = new System.Windows.Forms.Button();
             this.buttonExecuteTal = new System.Windows.Forms.Button();
             this.progressBarEvent = new System.Windows.Forms.ProgressBar();
+            this.labelProgressEvent = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // textBoxIstaFolder
@@ -223,6 +224,16 @@ namespace PsdzClient
             this.progressBarEvent.Size = new System.Drawing.Size(140, 23);
             this.progressBarEvent.TabIndex = 15;
             // 
+            // labelProgressEvent
+            // 
+            this.labelProgressEvent.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.labelProgressEvent.AutoSize = true;
+            this.labelProgressEvent.Location = new System.Drawing.Point(158, 420);
+            this.labelProgressEvent.Name = "labelProgressEvent";
+            this.labelProgressEvent.Size = new System.Drawing.Size(21, 13);
+            this.labelProgressEvent.TabIndex = 16;
+            this.labelProgressEvent.Text = "0%";
+            // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
@@ -230,6 +241,7 @@ namespace PsdzClient
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonAbort;
             this.ClientSize = new System.Drawing.Size(810, 450);
+            this.Controls.Add(this.labelProgressEvent);
             this.Controls.Add(this.progressBarEvent);
             this.Controls.Add(this.buttonExecuteTal);
             this.Controls.Add(this.buttonFunc2);
@@ -278,6 +290,7 @@ namespace PsdzClient
         private System.Windows.Forms.Button buttonFunc2;
         private System.Windows.Forms.Button buttonExecuteTal;
         private System.Windows.Forms.ProgressBar progressBarEvent;
+        private System.Windows.Forms.Label labelProgressEvent;
     }
 }
 
