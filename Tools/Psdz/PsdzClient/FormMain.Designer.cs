@@ -48,6 +48,7 @@ namespace PsdzClient
             this.labelIstaFolder = new System.Windows.Forms.Label();
             this.buttonFunc2 = new System.Windows.Forms.Button();
             this.buttonExecuteTal = new System.Windows.Forms.Button();
+            this.progressBarEvent = new System.Windows.Forms.ProgressBar();
             this.SuspendLayout();
             // 
             // textBoxIstaFolder
@@ -214,6 +215,14 @@ namespace PsdzClient
             this.buttonExecuteTal.UseVisualStyleBackColor = true;
             this.buttonExecuteTal.Click += new System.EventHandler(this.buttonFunc_Click);
             // 
+            // progressBarEvent
+            // 
+            this.progressBarEvent.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.progressBarEvent.Location = new System.Drawing.Point(12, 415);
+            this.progressBarEvent.Name = "progressBarEvent";
+            this.progressBarEvent.Size = new System.Drawing.Size(140, 23);
+            this.progressBarEvent.TabIndex = 15;
+            // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
@@ -221,6 +230,7 @@ namespace PsdzClient
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonAbort;
             this.ClientSize = new System.Drawing.Size(810, 450);
+            this.Controls.Add(this.progressBarEvent);
             this.Controls.Add(this.buttonExecuteTal);
             this.Controls.Add(this.buttonFunc2);
             this.Controls.Add(this.labelIstaFolder);
@@ -267,6 +277,7 @@ namespace PsdzClient
         private System.Windows.Forms.Label labelIstaFolder;
         private System.Windows.Forms.Button buttonFunc2;
         private System.Windows.Forms.Button buttonExecuteTal;
+        private System.Windows.Forms.ProgressBar progressBarEvent;
     }
 }
 

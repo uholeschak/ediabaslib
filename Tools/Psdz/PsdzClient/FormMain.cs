@@ -33,7 +33,31 @@ namespace PsdzClient
         private const string DealerId = "32395";
         private const string Baureihe = "G31";
         private ProgrammingService programmingService;
-        private bool taskActive = false;
+        private bool taskActive;
+        private bool TaskActive
+        {
+            get { return taskActive;}
+            set
+            {
+                taskActive = value;
+                if (taskActive)
+                {
+                    BeginInvoke((Action)(() =>
+                    {
+                        progressBarEvent.Style = ProgressBarStyle.Marquee;
+                    }));
+                }
+                else
+                {
+                    BeginInvoke((Action)(() =>
+                    {
+                        progressBarEvent.Style = ProgressBarStyle.Blocks;
+                        progressBarEvent.Value = progressBarEvent.Minimum;
+                    }));
+                }
+            }
+        }
+
         private PsdzContext psdzContext;
 
         public FormMain()
@@ -43,7 +67,7 @@ namespace PsdzClient
 
         private void UpdateDisplay()
         {
-            bool active = taskActive;
+            bool active = TaskActive;
             bool hostRunning = false;
             bool vehicleConnected = false;
             bool talPresent = false;
@@ -150,6 +174,26 @@ namespace PsdzClient
                 }
 
                 programmingService = new ProgrammingService(textBoxIstaFolder.Text, dealerId);
+                programmingService.EventManager.ProgrammingEventRaised += (sender, args) =>
+                {
+                    if (args is ProgrammingTaskEventArgs programmingEventArgs)
+                    {
+                        BeginInvoke((Action)(() =>
+                        {
+                            progressBarEvent.Style = ProgressBarStyle.Blocks;
+                            if (programmingEventArgs.IsTaskFinished)
+                            {
+                                progressBarEvent.Text = "Done";
+                                progressBarEvent.Value = progressBarEvent.Maximum;
+                            }
+                            else
+                            {
+                                progressBarEvent.Text = string.Format(CultureInfo.InvariantCulture, "{0}%, time left={0}s", programmingEventArgs.Progress, programmingEventArgs.TimeLeftSec);
+                                progressBarEvent.Value = (int) programmingEventArgs.Progress;
+                            }
+                        }));
+                    }
+                };
                 programmingService.PsdzLoglevel = PsdzLoglevel.TRACE;
                 programmingService.ProdiasLoglevel = ProdiasLoglevel.TRACE;
                 if (!programmingService.StartPsdzServiceHost())
@@ -855,10 +899,10 @@ namespace PsdzClient
         {
             StartProgrammingServiceTask(DealerId).ContinueWith(task =>
             {
-                taskActive = false;
+                TaskActive = false;
             });
 
-            taskActive = true;
+            TaskActive = true;
             UpdateDisplay();
         }
 
@@ -866,7 +910,7 @@ namespace PsdzClient
         {
             StopProgrammingServiceTask().ContinueWith(task =>
             {
-                taskActive = false;
+                TaskActive = false;
                 if (e == null)
                 {
                     BeginInvoke((Action)(() =>
@@ -876,13 +920,13 @@ namespace PsdzClient
                 }
             });
 
-            taskActive = true;
+            TaskActive = true;
             UpdateDisplay();
         }
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (taskActive)
+            if (TaskActive)
             {
                 e.Cancel = true;
                 return;
@@ -905,10 +949,10 @@ namespace PsdzClient
             string url = "tcp://" + ipAddressControlVehicleIp.Text + ":6801";
             ConnectVehicleTask(textBoxIstaFolder.Text, url, Baureihe).ContinueWith(task =>
             {
-                taskActive = false;
+                TaskActive = false;
             });
 
-            taskActive = true;
+            TaskActive = true;
             UpdateDisplay();
         }
 
@@ -921,10 +965,10 @@ namespace PsdzClient
 
             DisconnectVehicleTask().ContinueWith(task =>
             {
-                taskActive = false;
+                TaskActive = false;
             });
 
-            taskActive = true;
+            TaskActive = true;
             UpdateDisplay();
         }
 
@@ -953,10 +997,10 @@ namespace PsdzClient
 
             VehicleFunctionsTask(executeTal, faRemList, faAddList).ContinueWith(task =>
             {
-                taskActive = false;
+                TaskActive = false;
             });
 
-            taskActive = true;
+            TaskActive = true;
             UpdateDisplay();
         }
     }

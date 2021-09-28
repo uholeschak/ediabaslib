@@ -12,7 +12,9 @@ namespace PsdzClient.Programming
 	{
 		public ProgrammingService(string istaFolder, string dealerId)
         {
-            this.PsdzLoglevel = PsdzLoglevel.FINE;
+            this.EventManager = new ProgrammingEventManager();
+            this.PsdzProgressListener = new PsdzProgressListener(this.EventManager);
+			this.PsdzLoglevel = PsdzLoglevel.FINE;
             this.ProdiasLoglevel = ProdiasLoglevel.ERROR;
 			this.psdzConfig = new PsdzConfig(istaFolder, dealerId);
 			this.psdz = new PsdzServiceWrapper(this.psdzConfig);
@@ -154,6 +156,10 @@ namespace PsdzClient.Programming
             this.psdz.Dispose();
         }
 
+        public IPsdzProgressListener PsdzProgressListener { get; private set; }
+
+        public ProgrammingEventManager EventManager { get; private set; }
+
 		public PsdzServiceWrapper Psdz => psdz;
 
         private readonly PsdzConfig psdzConfig;
@@ -166,6 +172,5 @@ namespace PsdzClient.Programming
 
         public string BackupDataPath { get; private set; }
 
-        public IPsdzProgressListener PsdzProgressListener { get; set; }
-    }
+	}
 }

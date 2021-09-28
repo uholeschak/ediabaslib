@@ -11,7 +11,7 @@ namespace PsdzClient.Programming
     {
         public event EventHandler<ProgrammingEventArgs> ProgrammingEventRaised;
 
-        internal void OnCurrentEcuChanged(IEcuProgrammingInfo ecu)
+        public void OnCurrentEcuChanged(IEcuProgrammingInfo ecu)
         {
             if (this.ProgrammingEventRaised != null)
             {
@@ -19,7 +19,7 @@ namespace PsdzClient.Programming
             }
         }
 
-        internal void OnProgrammingActionStateChanged(IEcu ecu, ProgrammingActionType programmingActionType, ProgrammingActionState programmingActionState)
+        public void OnProgrammingActionStateChanged(IEcu ecu, ProgrammingActionType programmingActionType, ProgrammingActionState programmingActionState)
         {
             if (this.ProgrammingEventRaised != null)
             {
@@ -27,7 +27,7 @@ namespace PsdzClient.Programming
             }
         }
 
-        internal void OnProgressChanged(string taskName, double progress, double timeLeftSec, bool isTaskFinished)
+        public void OnProgressChanged(string taskName, double progress, double timeLeftSec, bool isTaskFinished)
         {
             if (this.ProgrammingEventRaised != null)
             {
