@@ -35,9 +35,9 @@ namespace PsdzClient.Programming
 
         bool Select(bool value);
 
-        //ProgrammingActionType Type { get; }
+        ProgrammingActionType Type { get; }
 
-        //IList<ISgbmIdChange> SgbmIds { get; }
+        IList<ISgbmIdChange> SgbmIds { get; }
 
         bool RequiresEscalation();
     }
