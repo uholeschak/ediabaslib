@@ -11,7 +11,7 @@ namespace PsdzClient.Programming
 {
 	public class ProgrammingService: IDisposable
 	{
-		public ProgrammingService(string istaFolder, string dealerId, PsdzContext psdzContext)
+		public ProgrammingService(string istaFolder, string dealerId)
         {
 			this.PsdzLoglevel = PsdzLoglevel.FINE;
             this.ProdiasLoglevel = ProdiasLoglevel.ERROR;
@@ -20,10 +20,6 @@ namespace PsdzClient.Programming
 			this.psdz.SetLogLevel(PsdzLoglevel, ProdiasLoglevel);
 
             this.EventManager = new ProgrammingEventManager();
-            this.PsdzProgressListener = new PsdzProgressListener(this.EventManager);
-			this.VehicleProgrammingEventHandler = new VehicleProgrammingEventHandler(psdzContext);
-			this.psdz.AddPsdzProgressListener(this.PsdzProgressListener);
-			//this.psdz.AddPsdzEventListener(this.VehicleProgrammingEventHandler);
 			PreparePsdzBackupDataPath(istaFolder);
 		}
 
@@ -156,11 +152,33 @@ namespace PsdzClient.Programming
             return this.psdz.IsPsdzInitialized;
         }
 
+        public void AddListener(PsdzContext psdzContext)
+        {
+            RemoveListener();
+            this.PsdzProgressListener = new PsdzProgressListener(this.EventManager);
+            this.psdz.AddPsdzProgressListener(this.PsdzProgressListener);
+            this.VehicleProgrammingEventHandler = new VehicleProgrammingEventHandler(psdzContext);
+            this.psdz.AddPsdzEventListener(this.VehicleProgrammingEventHandler);
+        }
+
+		public void RemoveListener()
+        {
+            if (PsdzProgressListener != null)
+            {
+                this.psdz.RemovePsdzProgressListener(this.PsdzProgressListener);
+                this.PsdzProgressListener = null;
+            }
+            if (VehicleProgrammingEventHandler != null)
+            {
+                this.psdz.RemovePsdzEventListener(this.VehicleProgrammingEventHandler);
+                this.VehicleProgrammingEventHandler = null;
+            }
+        }
+		
         public void Dispose()
         {
-            this.psdz.RemovePsdzProgressListener(this.PsdzProgressListener);
-            this.psdz.RemovePsdzEventListener(this.VehicleProgrammingEventHandler);
-            this.psdz.Dispose();
+            RemoveListener();
+			this.psdz.Dispose();
         }
 
         public IPsdzProgressListener PsdzProgressListener { get; private set; }

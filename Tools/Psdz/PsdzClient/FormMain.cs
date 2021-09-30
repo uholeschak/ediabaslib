@@ -177,7 +177,7 @@ namespace PsdzClient
                     }
                 }
 
-                programmingService = new ProgrammingService(textBoxIstaFolder.Text, dealerId, psdzContext);
+                programmingService = new ProgrammingService(textBoxIstaFolder.Text, dealerId);
                 programmingService.EventManager.ProgrammingEventRaised += (sender, args) =>
                 {
                     if (args is ProgrammingTaskEventArgs programmingEventArgs)
@@ -355,6 +355,8 @@ namespace PsdzClient
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Connection: Id={0}, Port={1}", psdzConnection.Id, psdzConnection.Port));
 
                 UpdateStatus(sbResult.ToString());
+
+                programmingService.AddListener(psdzContext);
                 return true;
             }
             catch (Exception ex)
@@ -394,6 +396,7 @@ namespace PsdzClient
                     return false;
                 }
 
+                programmingService.RemoveListener();
                 programmingService.Psdz.ConnectionManagerService.CloseConnection(psdzContext.Connection);
 
                 ClearProgrammingObjects();

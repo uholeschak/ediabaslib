@@ -12,7 +12,7 @@ namespace PsdzClient.Programming
 {
 	public class VehicleProgrammingEventHandler : IPsdzEventListener
 	{
-		public VehicleProgrammingEventHandler(PsdzContext psdzContext, bool ecusSeveralTimesPossible = false)
+		public VehicleProgrammingEventHandler(PsdzContext psdzContext)
 		{
 			this.psdzContext = psdzContext;
 			this.diagAddrToEcuMap = new Dictionary<long, EcuProgrammingInfo>();
