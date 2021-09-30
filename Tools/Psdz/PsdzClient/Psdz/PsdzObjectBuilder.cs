@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Psdz.Client;
 using BMW.Rheingold.Psdz.Model;
@@ -148,7 +149,7 @@ namespace BMW.Rheingold.Psdz
 			return this.ValidateBuiltFaObjectViaPsdz(fa);
 		}
 
-		public IPsdzFa BuildFa(PsdzClient.Programming.IFa faInput, string vin17)
+		public IPsdzFa BuildFa(BMW.Rheingold.CoreFramework.Contracts.Programming.IFa faInput, string vin17)
 		{
 			if (faInput == null)
 			{

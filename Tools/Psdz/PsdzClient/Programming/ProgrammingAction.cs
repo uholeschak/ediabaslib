@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
@@ -22,6 +23,24 @@ namespace PsdzClient.Programming
         Canceled,
         Performed,
         Running
+    }
+
+    public enum SwiActionCategory
+    {
+        AL,
+        UR,
+        RR,
+        CU,
+        NR,
+        FCA,
+        UNM,
+        FCD,
+        IDR,
+        PRG,
+        HDD,
+        COD,
+        MNT,
+        SFA
     }
 
 	public class ProgrammingAction : IComparable<IProgrammingAction>, INotifyPropertyChanged, IProgrammingAction
@@ -56,11 +75,7 @@ namespace PsdzClient.Programming
 			}
 			internal set
 			{
-				this.PropertyChanged.NotifyPropertyChanged(this, Expression.Lambda<Func<object>>(Expression.Property(Expression.Constant(this, typeof(ProgrammingAction)), methodof(ProgrammingAction.get_SgbmIds())), Array.Empty<ParameterExpression>()), ref this.sgbmIds, value);
-				if (this.ActionData != null)
-				{
-					this.ActionData.SetSgbmIds(value);
-				}
+				this.PropertyChanged.NotifyPropertyChanged(this, Expression.Lambda<Func<object>>(Expression.Property(Expression.Constant(this, typeof(ProgrammingAction)), "SgbmIds"), Array.Empty<ParameterExpression>()), ref this.sgbmIds, value);
 			}
 		}
 
@@ -74,11 +89,7 @@ namespace PsdzClient.Programming
 			}
 			internal set
 			{
-				this.PropertyChanged.NotifyPropertyChanged(this, Expression.Lambda<Func<object>>(Expression.Convert(Expression.Property(Expression.Constant(this, typeof(ProgrammingAction)), methodof(ProgrammingAction.get_State())), typeof(object)), Array.Empty<ParameterExpression>()), ref this.stateDiag, value);
-				if (this.ActionData != null)
-				{
-					this.ActionData.SetState(value);
-				}
+				this.PropertyChanged.NotifyPropertyChanged(this, Expression.Lambda<Func<object>>(Expression.Convert(Expression.Property(Expression.Constant(this, typeof(ProgrammingAction)), "State"), typeof(object)), Array.Empty<ParameterExpression>()), ref this.stateDiag, value);
 			}
 		}
 
@@ -89,8 +100,8 @@ namespace PsdzClient.Programming
 				return this.assemblyNumberSetPoint;
 			}
 			internal set
-			{
-				this.PropertyChanged.NotifyPropertyChanged(this, Expression.Lambda<Func<object>>(Expression.Property(Expression.Constant(this, typeof(ProgrammingAction)), methodof(ProgrammingAction.get_AssemblyNumberSetPoint())), Array.Empty<ParameterExpression>()), ref this.assemblyNumberSetPoint, value);
+            {
+				this.PropertyChanged.NotifyPropertyChanged(this, Expression.Lambda<Func<object>>(Expression.Property(Expression.Constant(this, typeof(ProgrammingAction)), "AssemblyNumberSetPoint"), Array.Empty<ParameterExpression>()), ref this.assemblyNumberSetPoint, value);
 			}
 		}
 
@@ -178,10 +189,6 @@ namespace PsdzClient.Programming
 			internal set
 			{
 				this.data.StateProgramming = value;
-				if (this.ActionData != null)
-				{
-					this.ActionData.SetStateProgramming(value);
-				}
 				this.SetStateDiag();
 			}
 		}
@@ -464,38 +471,33 @@ namespace PsdzClient.Programming
 				if (stateProgramming - ProgrammingActionState.ActionSuccessful <= 1)
 				{
 					this.State = typeDiagObjectState.Performed;
-					goto IL_71;
+                    return;
 				}
 				if (stateProgramming == ProgrammingActionState.ActionPlanned)
 				{
-					goto IL_6A;
+                    this.State = typeDiagObjectState.NotCalled;
+                    return;
 				}
 			}
 			else
 			{
 				if (stateProgramming == ProgrammingActionState.MissingPrerequisitesForAction)
 				{
-					goto IL_6A;
+                    this.State = typeDiagObjectState.NotCalled;
+                    return;
 				}
 				if (stateProgramming == ProgrammingActionState.ActionFailed)
 				{
 					this.State = typeDiagObjectState.Canceled;
-					goto IL_71;
+                    return;
 				}
 				if (stateProgramming == ProgrammingActionState.ActionInProcess)
 				{
 					this.State = typeDiagObjectState.Running;
-					goto IL_71;
+					return;
 				}
 			}
 			throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Unsupported programming state {0}.", this.data.StateProgramming));
-			IL_6A:
-			this.State = typeDiagObjectState.NotCalled;
-			IL_71:
-			if (this.ActionData != null)
-			{
-				this.ActionData.SetState(this.State);
-			}
 		}
 
 		private ICollection<IPsdzTa> GetFscTas(PsdzFscDeploy fscDeploy)
@@ -564,7 +566,7 @@ namespace PsdzClient.Programming
 
 		private string assemblyNumberSetPoint;
 
-		private string pn;
+		//private string pn;
 
 		private IList<ISgbmIdChange> sgbmIds;
 

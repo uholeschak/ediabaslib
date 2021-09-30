@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Client;
+using PsdzClient.Programming;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.Programming
 {
 	public class PsdzServiceWrapper : IPsdz, IPsdzService, IPsdzInfo, IDisposable
 	{

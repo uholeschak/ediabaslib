@@ -98,9 +98,9 @@ namespace PsdzClient.Programming
 							if (programmingActionType != null && programmingActionState != null)
 							{
 								correspondingEcu.UpdateSingleProgrammingAction(programmingActionType.Value, programmingActionState.Value, false);
-								goto IL_E6;
+								return;
 							}
-							goto IL_E6;
+                            return;
 						}
 					}
 					IEnumerable<IPsdzTalLine> talLines = from talLine in this.psdzContext.Tal.TalLines
@@ -108,9 +108,9 @@ namespace PsdzClient.Programming
 														 select talLine;
 					correspondingEcu.UpdateProgrammingActions(talLines, false, 0);
 				}
-				IL_E6:;
+                return;
 			}
-			catch (Exception exception)
+			catch (Exception)
 			{
 			}
 		}

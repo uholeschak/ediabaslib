@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.Programming.API
 {
-	public class VehicleOrder : IFa
+	public class VehicleOrder : BMW.Rheingold.CoreFramework.Contracts.Programming.IFa
 	{
 		public IList<string> EWords { get; set; }
 
@@ -47,7 +47,7 @@ namespace PsdzClient.Programming
 			return this.Equals(this.Entwicklungsbaureihe, vehicleOrder.BR) && this.Equals(this.Lackcode, vehicleOrder.LACK) && this.Equals(this.Polstercode, vehicleOrder.POLSTER) && this.Equals(this.Type, vehicleOrder.TYPE) && this.Equals(this.Zeitkriterium, vehicleOrder.C_DATE) && this.Equals(this.Salapas, vehicleOrder.SA) && this.Equals(this.EWords, vehicleOrder.E_WORT) && this.Equals(this.HOWords, vehicleOrder.HO_WORT);
 		}
 
-		public IFa Clone()
+		public BMW.Rheingold.CoreFramework.Contracts.Programming.IFa Clone()
 		{
 			return new VehicleOrder
 			{

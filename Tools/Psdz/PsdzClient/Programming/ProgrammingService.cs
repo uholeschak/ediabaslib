@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.Programming;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Client;
 
@@ -10,7 +11,7 @@ namespace PsdzClient.Programming
 {
 	public class ProgrammingService: IDisposable
 	{
-		public ProgrammingService(string istaFolder, string dealerId)
+		public ProgrammingService(string istaFolder, string dealerId, PsdzContext psdzContext)
         {
 			this.PsdzLoglevel = PsdzLoglevel.FINE;
             this.ProdiasLoglevel = ProdiasLoglevel.ERROR;
@@ -20,7 +21,9 @@ namespace PsdzClient.Programming
 
             this.EventManager = new ProgrammingEventManager();
             this.PsdzProgressListener = new PsdzProgressListener(this.EventManager);
-            this.psdz.AddPsdzProgressListener(this.PsdzProgressListener);
+			this.VehicleProgrammingEventHandler = new VehicleProgrammingEventHandler(psdzContext);
+			this.psdz.AddPsdzProgressListener(this.PsdzProgressListener);
+			//this.psdz.AddPsdzEventListener(this.VehicleProgrammingEventHandler);
 			PreparePsdzBackupDataPath(istaFolder);
 		}
 
@@ -156,11 +159,14 @@ namespace PsdzClient.Programming
         public void Dispose()
         {
             this.psdz.RemovePsdzProgressListener(this.PsdzProgressListener);
+            this.psdz.RemovePsdzEventListener(this.VehicleProgrammingEventHandler);
             this.psdz.Dispose();
         }
 
         public IPsdzProgressListener PsdzProgressListener { get; private set; }
 
+		public IPsdzEventListener VehicleProgrammingEventHandler { get; private set; }
+        
         public ProgrammingEventManager EventManager { get; private set; }
 
 		public PsdzServiceWrapper Psdz => psdz;

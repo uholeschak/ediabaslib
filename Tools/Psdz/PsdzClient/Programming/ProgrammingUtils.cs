@@ -7,7 +7,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.Programming.API;
 using BMW.Rheingold.Programming.Controller.SecureCoding.Model;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
@@ -16,8 +18,9 @@ using BMW.Rheingold.Psdz.Model.SecureCoding;
 using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using PsdzClient.Core;
+using PsdzClient.Programming;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.Programming.Common
 {
 	public class ProgrammingUtils
 	{
@@ -116,7 +119,7 @@ namespace PsdzClient.Programming
 			return Regex.Replace(xmlText.Trim(), ">\\s+<", "><");
 		}
 
-        public static IFa BuildFa(IPsdzStandardFa faInput)
+        public static BMW.Rheingold.CoreFramework.Contracts.Programming.IFa BuildFa(IPsdzStandardFa faInput)
         {
             if (faInput == null)
             {
@@ -136,7 +139,7 @@ namespace PsdzClient.Programming
             };
         }
 
-        public static bool ModifyFa(IFa fa, List<string> faModList, bool addEntry)
+        public static bool ModifyFa(BMW.Rheingold.CoreFramework.Contracts.Programming.IFa fa, List<string> faModList, bool addEntry)
         {
             if (fa == null)
             {

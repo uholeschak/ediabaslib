@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using PsdzClient.Core;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IFa
