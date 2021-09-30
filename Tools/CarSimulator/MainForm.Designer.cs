@@ -59,9 +59,8 @@
             this.checkBoxBtNameStd = new System.Windows.Forms.CheckBox();
             this.buttonAbortTest = new System.Windows.Forms.Button();
             this.buttonEcuFolder = new System.Windows.Forms.Button();
-            this.textEditEcuFolder = new DevExpress.XtraEditors.TextEdit();
+            this.textBoxEcuFolder = new System.Windows.Forms.TextBox();
             this.groupBoxConcepts.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.textEditEcuFolder.Properties)).BeginInit();
             this.SuspendLayout();
             // 
             // buttonConnect
@@ -359,21 +358,20 @@
             this.buttonEcuFolder.UseVisualStyleBackColor = true;
             this.buttonEcuFolder.Click += new System.EventHandler(this.buttonEcuFolder_Click);
             // 
-            // textEditEcuFolder
+            // textBoxEcuFolder
             // 
-            this.textEditEcuFolder.Location = new System.Drawing.Point(224, 119);
-            this.textEditEcuFolder.Name = "textEditEcuFolder";
-            this.textEditEcuFolder.Properties.ReadOnly = true;
-            this.textEditEcuFolder.Size = new System.Drawing.Size(207, 20);
-            this.textEditEcuFolder.TabIndex = 16;
-            this.textEditEcuFolder.TabStop = false;
+            this.textBoxEcuFolder.Location = new System.Drawing.Point(225, 118);
+            this.textBoxEcuFolder.Name = "textBoxEcuFolder";
+            this.textBoxEcuFolder.ReadOnly = true;
+            this.textBoxEcuFolder.Size = new System.Drawing.Size(207, 20);
+            this.textBoxEcuFolder.TabIndex = 18;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(657, 461);
-            this.Controls.Add(this.textEditEcuFolder);
+            this.Controls.Add(this.textBoxEcuFolder);
             this.Controls.Add(this.buttonEcuFolder);
             this.Controls.Add(this.buttonAbortTest);
             this.Controls.Add(this.checkBoxBtNameStd);
@@ -402,7 +400,6 @@
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.groupBoxConcepts.ResumeLayout(false);
             this.groupBoxConcepts.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.textEditEcuFolder.Properties)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -439,7 +436,7 @@
         private System.Windows.Forms.CheckBox checkBoxBtNameStd;
         private System.Windows.Forms.Button buttonAbortTest;
         private System.Windows.Forms.Button buttonEcuFolder;
-        private DevExpress.XtraEditors.TextEdit textEditEcuFolder;
+        private System.Windows.Forms.TextBox textBoxEcuFolder;
     }
 }
 

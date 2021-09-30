@@ -512,7 +512,7 @@ namespace CarSimulator
             bool connected = _commThread.ThreadRunning();
             bool testing = _deviceTest.TestActive;
             bool testAborted = _deviceTest.AbortTest;
-            textEditEcuFolder.Text = _ecuFolder;
+            textBoxEcuFolder.Text = _ecuFolder;
             buttonConnect.Text = connected && !testing ? "Disconnect" : "Connect";
             buttonConnect.Enabled = !testing;
             buttonErrorDefault.Enabled = !testing;
