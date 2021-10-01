@@ -150,6 +150,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Response\g31.txt" />
+    <Content Include="Response\g31_coding.txt" />
     <Content Include="Response\ihka.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
