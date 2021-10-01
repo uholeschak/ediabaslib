@@ -75,11 +75,12 @@ namespace BmwDeepObd
 
         public class JobInfo
         {
-            public JobInfo(string id, string sgbd, string name, string fixedFuncStructId, string argsFirst, string args, string results, int argLimit)
+            public JobInfo(string id, string sgbd, string name, string rawTelegrams, string fixedFuncStructId, string argsFirst, string args, string results, int argLimit)
             {
                 Id = id;
                 Sgbd = sgbd;
                 Name = name;
+                RawTelegrams = rawTelegrams;
                 FixedFuncStructId = fixedFuncStructId;
                 ArgsFirst = argsFirst;
                 Args = args;
@@ -93,6 +94,8 @@ namespace BmwDeepObd
             public string Sgbd { get; }
 
             public string Name { get; }
+
+            public string RawTelegrams { get; }
 
             public string FixedFuncStructId { get; }
 
@@ -643,6 +646,7 @@ namespace BmwDeepObd
                                         string jobId = string.Empty;
                                         string jobSgbd = string.Empty;
                                         string jobName = string.Empty;
+                                        string jobRawTelegrams = string.Empty;
                                         string jobFixedFuncStructId = string.Empty;
                                         string jobArgsFirst = string.Empty;
                                         string jobArgs = string.Empty;
@@ -658,6 +662,9 @@ namespace BmwDeepObd
 
                                             attrib = xnodeJobsChild.Attributes["name"];
                                             if (attrib != null) jobName = attrib.Value;
+
+                                            attrib = xnodeJobsChild.Attributes["raw_telegrams"];
+                                            if (attrib != null) jobRawTelegrams = attrib.Value;
 
                                             if (isBmw)
                                             {
@@ -688,7 +695,7 @@ namespace BmwDeepObd
                                             }
                                         }
 
-                                        jobList.Add(new JobInfo(jobId, jobSgbd, jobName, jobFixedFuncStructId, jobArgsFirst, jobArgs, jobResults, argLimit));
+                                        jobList.Add(new JobInfo(jobId, jobSgbd, jobName, jobRawTelegrams, jobFixedFuncStructId, jobArgsFirst, jobArgs, jobResults, argLimit));
                                         foreach (XmlNode xnodeJobChild in xnodeJobsChild.ChildNodes)
                                         {
                                             string nodePrefix = (string.IsNullOrEmpty(jobId) ? jobName : jobId);

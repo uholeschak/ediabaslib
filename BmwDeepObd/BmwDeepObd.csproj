@@ -441,6 +441,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Xml\G31\Axis.ccpage" />
+    <None Include="Xml\G31\Test.ccpage" />
     <None Include="Xml\G31\Errors.ccpage" />
     <None Include="Xml\G31\G31.ccpages" />
     <None Include="Xml\G31\G31Enet.cccfg" />

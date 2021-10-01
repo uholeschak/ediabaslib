@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<fragment xmlns="http://www.holeschak.de/BmwDeepObd"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
+  <page name ="tab_test" weight="0.8">
+    <strings>
+      <string name="tab_test">Test</string>
+      <string name="label_tel_1">Telegram 1:</string>
+      <string name="label_tel_2">Telegram 2:</string>
+    </strings>
+    <strings lang="de">
+      <string name="tab_test">Test</string>
+      <string name="label_tel_1">Telegramm 1:</string>
+      <string name="label_tel_2">Telegramm 2:</string>
+    </strings>
+    <jobs sgbd="D83BX7C0">
+      <job name="IDENT" raw_telegrams="83 12 F1 22 40 3C;83 12 F1 22 40 48">
+        <display name="label_tel_1" result="RAW_TELEGRAM_1" format="" />
+        <display name="label_tel_2" result="RAW_TELEGRAM_2" format="" />
+      </job>
+    </jobs>
+  </page>
+</fragment>
