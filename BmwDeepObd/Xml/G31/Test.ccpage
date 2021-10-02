@@ -2,21 +2,64 @@
 <fragment xmlns="http://www.holeschak.de/BmwDeepObd"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
-  <page name ="tab_test" weight="0.8">
+  <page name ="tab_test" weight="0.2">
     <strings>
       <string name="tab_test">Test</string>
-      <string name="label_tel_1">Telegram 1:</string>
-      <string name="label_tel_2">Telegram 2:</string>
+      <string name="label_tel_1">Tel 1:</string>
+      <string name="label_tel_2">Tel 2:</string>
+      <string name="label_tel_3">Tel 3:</string>
+      <string name="label_tel_4">Tel 4:</string>
+      <string name="label_tel_5">Tel 5:</string>
+      <string name="label_tel_6">Tel 6:</string>
+      <string name="label_tel_7">Tel 7:</string>
+      <string name="label_tel_8">Tel 8:</string>
+      <string name="label_tel_9">Tel 9:</string>
+      <string name="label_tel_10">Tel 10:</string>
     </strings>
     <strings lang="de">
       <string name="tab_test">Test</string>
-      <string name="label_tel_1">Telegramm 1:</string>
-      <string name="label_tel_2">Telegramm 2:</string>
+      <string name="label_tel_1">Tel 1:</string>
+      <string name="label_tel_2">Tel 2:</string>
+      <string name="label_tel_3">Tel 3:</string>
+      <string name="label_tel_4">Tel 4:</string>
+      <string name="label_tel_5">Tel 5:</string>
+      <string name="label_tel_6">Tel 6:</string>
+      <string name="label_tel_7">Tel 7:</string>
+      <string name="label_tel_8">Tel 8:</string>
+      <string name="label_tel_9">Tel 9:</string>
+      <string name="label_tel_10">Tel 10:</string>
     </strings>
     <jobs sgbd="D83BX7C0">
-      <job name="IDENT" raw_telegrams="83 12 F1 22 40 3C;83 12 F1 22 40 48">
+      <job id="1" name="IDENT" raw_telegrams="83 63 F1 22 25 04;83 63 F1 22 F1 86;83 63 F1 22 F1 00;83 2C F1 22 F1 00;83 18 F1 22 F1 00;83 0B F1 22 F1 00;83 61 F1 22 F1 00;83 5E F1 22 F1 00;83 56 F1 22 F1 00;83 12 F1 22 F1 00">
         <display name="label_tel_1" result="RAW_TELEGRAM_1" format="" />
         <display name="label_tel_2" result="RAW_TELEGRAM_2" format="" />
+        <display name="label_tel_3" result="RAW_TELEGRAM_3" format="" />
+        <display name="label_tel_4" result="RAW_TELEGRAM_4" format="" />
+        <display name="label_tel_5" result="RAW_TELEGRAM_5" format="" />
+        <display name="label_tel_6" result="RAW_TELEGRAM_6" format="" />
+        <display name="label_tel_7" result="RAW_TELEGRAM_7" format="" />
+        <display name="label_tel_8" result="RAW_TELEGRAM_8" format="" />
+        <display name="label_tel_9" result="RAW_TELEGRAM_9" format="" />
+        <display name="label_tel_10" result="RAW_TELEGRAM_10" format="" />
+      </job>
+      <job id="2" name="IDENT" raw_telegrams="83 78 F1 22 F1 00;83 0D F1 22 F1 00;83 29 F1 22 F1 00;83 30 F1 22 F1 00;83 22 F1 22 F1 00;83 76 F1 22 F1 00;83 60 F1 22 F1 00;83 5D F1 22 F1 00;83 43 F1 22 F1 00;83 01 F1 22 F1 00">
+        <display name="label_tel_1" result="RAW_TELEGRAM_1" format="" />
+        <display name="label_tel_2" result="RAW_TELEGRAM_2" format="" />
+        <display name="label_tel_3" result="RAW_TELEGRAM_3" format="" />
+        <display name="label_tel_4" result="RAW_TELEGRAM_4" format="" />
+        <display name="label_tel_5" result="RAW_TELEGRAM_5" format="" />
+        <display name="label_tel_6" result="RAW_TELEGRAM_6" format="" />
+        <display name="label_tel_7" result="RAW_TELEGRAM_7" format="" />
+        <display name="label_tel_8" result="RAW_TELEGRAM_8" format="" />
+        <display name="label_tel_9" result="RAW_TELEGRAM_9" format="" />
+        <display name="label_tel_10" result="RAW_TELEGRAM_10" format="" />
+      </job>
+      <job id="3" name="IDENT" raw_telegrams="83 21 F1 22 F1 00;83 44 F1 22 F1 00;83 63 F1 22 24 04;83 08 F1 22 F1 00;83 67 F1 22 F1 00">
+        <display name="label_tel_1" result="RAW_TELEGRAM_1" format="" />
+        <display name="label_tel_2" result="RAW_TELEGRAM_2" format="" />
+        <display name="label_tel_3" result="RAW_TELEGRAM_3" format="" />
+        <display name="label_tel_4" result="RAW_TELEGRAM_4" format="" />
+        <display name="label_tel_5" result="RAW_TELEGRAM_5" format="" />
       </job>
     </jobs>
   </page>
