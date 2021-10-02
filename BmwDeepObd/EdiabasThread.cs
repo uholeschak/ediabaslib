@@ -1319,7 +1319,7 @@ namespace BmwDeepObd
                                                         }
                                                         else
                                                         {
-                                                            MergeResultDictionarys(ref resultDict, resultDictTel, jobInfo.Id + "#" + telIdx + "#");
+                                                            MergeResultDictionarys(ref resultDict, resultDictTel, jobInfo.Id + "#");
                                                         }
                                                     }
                                                 }
