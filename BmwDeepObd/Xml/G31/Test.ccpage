@@ -61,6 +61,71 @@
         <display name="label_tel_4" result="RAW_TELEGRAM_4" format="" />
         <display name="label_tel_5" result="RAW_TELEGRAM_5" format="" />
       </job>
+      <job id="4" name="IDENT" raw_telegrams="83 5D F1 22 F1 86;83 12 F1 22 F1 86;83 76 F1 22 25 07;83 76 F1 22 F1 86;83 29 F1 22 25 07;83 29 F1 22 F1 86;83 30 F1 22 25 07;83 30 F1 22 F1 86;83 0B F1 22 25 07;83 0B F1 22 F1 86">
+        <display name="label_tel_1" result="RAW_TELEGRAM_1" format="" />
+        <display name="label_tel_2" result="RAW_TELEGRAM_2" format="" />
+        <display name="label_tel_3" result="RAW_TELEGRAM_3" format="" />
+        <display name="label_tel_4" result="RAW_TELEGRAM_4" format="" />
+        <display name="label_tel_5" result="RAW_TELEGRAM_5" format="" />
+        <display name="label_tel_6" result="RAW_TELEGRAM_6" format="" />
+        <display name="label_tel_7" result="RAW_TELEGRAM_7" format="" />
+        <display name="label_tel_8" result="RAW_TELEGRAM_8" format="" />
+        <display name="label_tel_9" result="RAW_TELEGRAM_9" format="" />
+        <display name="label_tel_10" result="RAW_TELEGRAM_10" format="" />
+      </job>
+      <job id="5" name="IDENT" raw_telegrams="83 40 F1 22 25 31;83 63 F1 22 D0 E2;83 63 F1 22 D2 07;83 40 F1 22 16 00;83 22 F1 22 25 04;83 22 F1 22 F1 86;83 56 F1 22 25 04;83 56 F1 22 F1 86;83 76 F1 22 25 04;83 29 F1 22 25 04">
+        <display name="label_tel_1" result="RAW_TELEGRAM_1" format="" />
+        <display name="label_tel_2" result="RAW_TELEGRAM_2" format="" />
+        <display name="label_tel_3" result="RAW_TELEGRAM_3" format="" />
+        <display name="label_tel_4" result="RAW_TELEGRAM_4" format="" />
+        <display name="label_tel_5" result="RAW_TELEGRAM_5" format="" />
+        <display name="label_tel_6" result="RAW_TELEGRAM_6" format="" />
+        <display name="label_tel_7" result="RAW_TELEGRAM_7" format="" />
+        <display name="label_tel_8" result="RAW_TELEGRAM_8" format="" />
+        <display name="label_tel_9" result="RAW_TELEGRAM_9" format="" />
+        <display name="label_tel_10" result="RAW_TELEGRAM_10" format="" />
+      </job>
+      <job id="6" name="IDENT" raw_telegrams="83 29 F1 22 F1 86;83 01 F1 22 25 04;83 01 F1 22 F1 86;83 60 F1 22 25 04;83 60 F1 22 F1 86;83 18 F1 22 25 04;83 18 F1 22 F1 86;83 21 F1 22 25 04;83 21 F1 22 F1 86;83 08 F1 22 25 04">
+        <display name="label_tel_1" result="RAW_TELEGRAM_1" format="" />
+        <display name="label_tel_2" result="RAW_TELEGRAM_2" format="" />
+        <display name="label_tel_3" result="RAW_TELEGRAM_3" format="" />
+        <display name="label_tel_4" result="RAW_TELEGRAM_4" format="" />
+        <display name="label_tel_5" result="RAW_TELEGRAM_5" format="" />
+        <display name="label_tel_6" result="RAW_TELEGRAM_6" format="" />
+        <display name="label_tel_7" result="RAW_TELEGRAM_7" format="" />
+        <display name="label_tel_8" result="RAW_TELEGRAM_8" format="" />
+        <display name="label_tel_9" result="RAW_TELEGRAM_9" format="" />
+        <display name="label_tel_10" result="RAW_TELEGRAM_10" format="" />
+      </job>
+      <job id="7" name="IDENT" raw_telegrams="83 08 F1 22 F1 86;83 40 F1 22 25 04;83 40 F1 22 F1 86;83 40 F1 22 F1 00;83 5D F1 22 25 04;83 67 F1 22 25 04;83 67 F1 22 F1 86;83 2C F1 22 25 04;83 2C F1 22 F1 86;83 78 F1 22 25 04">
+        <display name="label_tel_1" result="RAW_TELEGRAM_1" format="" />
+        <display name="label_tel_2" result="RAW_TELEGRAM_2" format="" />
+        <display name="label_tel_3" result="RAW_TELEGRAM_3" format="" />
+        <display name="label_tel_4" result="RAW_TELEGRAM_4" format="" />
+        <display name="label_tel_5" result="RAW_TELEGRAM_5" format="" />
+        <display name="label_tel_6" result="RAW_TELEGRAM_6" format="" />
+        <display name="label_tel_7" result="RAW_TELEGRAM_7" format="" />
+        <display name="label_tel_8" result="RAW_TELEGRAM_8" format="" />
+        <display name="label_tel_9" result="RAW_TELEGRAM_9" format="" />
+        <display name="label_tel_10" result="RAW_TELEGRAM_10" format="" />
+      </job>
+      <job id="8" name="IDENT" raw_telegrams="83 78 F1 22 F1 86;83 61 F1 22 25 04;83 61 F1 22 F1 86;83 0D F1 22 25 04;83 0D F1 22 F1 86;83 30 F1 22 25 04;83 30 F1 22 F1 86;83 44 F1 22 25 04;83 44 F1 22 F1 86;83 12 F1 22 25 04">
+        <display name="label_tel_1" result="RAW_TELEGRAM_1" format="" />
+        <display name="label_tel_2" result="RAW_TELEGRAM_2" format="" />
+        <display name="label_tel_3" result="RAW_TELEGRAM_3" format="" />
+        <display name="label_tel_4" result="RAW_TELEGRAM_4" format="" />
+        <display name="label_tel_5" result="RAW_TELEGRAM_5" format="" />
+        <display name="label_tel_6" result="RAW_TELEGRAM_6" format="" />
+        <display name="label_tel_7" result="RAW_TELEGRAM_7" format="" />
+        <display name="label_tel_8" result="RAW_TELEGRAM_8" format="" />
+        <display name="label_tel_9" result="RAW_TELEGRAM_9" format="" />
+        <display name="label_tel_10" result="RAW_TELEGRAM_10" format="" />
+      </job>
+      <job id="9" name="IDENT" raw_telegrams="83 12 F1 22 F1 86;83 43 F1 22 25 04;83 43 F1 22 F1 86">
+        <display name="label_tel_1" result="RAW_TELEGRAM_1" format="" />
+        <display name="label_tel_2" result="RAW_TELEGRAM_2" format="" />
+        <display name="label_tel_3" result="RAW_TELEGRAM_3" format="" />
+      </job>
     </jobs>
   </page>
 </fragment>
