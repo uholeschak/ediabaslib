@@ -200,6 +200,22 @@
         <display name="label_tel_6" result="RAW_TELEGRAM_6" format="" />
         <display name="label_tel_7" result="RAW_TELEGRAM_7" format="" />
       </job>
+      <job id="16" name="IDENT" raw_telegrams="83 40 F1 22 DA BD;83 40 F1 22 DA B9;83 61 F1 22 D0 5A;83 61 F1 22 D1 08;83 61 F1 22 D0 35;83 61 F1 22 D0 CE;83 63 F1 22 D0 CE;83 63 F1 22 D0 92;83 01 F1 22 D4 82;83 56 F1 22 D1 C8">
+        <display name="label_tel_1" result="RAW_TELEGRAM_1" format="" />
+        <display name="label_tel_2" result="RAW_TELEGRAM_2" format="" />
+        <display name="label_tel_3" result="RAW_TELEGRAM_3" format="" />
+        <display name="label_tel_4" result="RAW_TELEGRAM_4" format="" />
+        <display name="label_tel_5" result="RAW_TELEGRAM_5" format="" />
+        <display name="label_tel_6" result="RAW_TELEGRAM_6" format="" />
+        <display name="label_tel_7" result="RAW_TELEGRAM_7" format="" />
+        <display name="label_tel_8" result="RAW_TELEGRAM_8" format="" />
+        <display name="label_tel_9" result="RAW_TELEGRAM_9" format="" />
+        <display name="label_tel_10" result="RAW_TELEGRAM_10" format="" />
+      </job>
+      <job id="17" name="IDENT" raw_telegrams="83 56 F1 22 D1 95;83 63 F1 22 17 11">
+        <display name="label_tel_1" result="RAW_TELEGRAM_1" format="" />
+        <display name="label_tel_2" result="RAW_TELEGRAM_2" format="" />
+      </job>
     </jobs>
   </page>
 </fragment>
