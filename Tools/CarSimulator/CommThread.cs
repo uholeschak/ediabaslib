@@ -4939,6 +4939,41 @@ namespace CarSimulator
                 if (!found)
                 {
                     if (
+                        _receiveData[0] == 0x82 &&
+                        _receiveData[2] == 0xF1 &&
+                        _receiveData[3] == 0x10)
+                    {
+                        // session control
+                        if (_receiveData[4] == 0x01)
+                        {
+                            Debug.WriteLine("Dummy service 10 default session");
+                            _sendData[0] = 0x82;
+                            _sendData[1] = 0xF1;
+                            _sendData[2] = _receiveData[1];
+                            _sendData[3] = 0x50;
+                            _sendData[4] = _receiveData[4];
+                        }
+                        else
+                        {
+                            Debug.WriteLine("Dummy service 10 other session");
+                            _sendData[0] = 0x86;
+                            _sendData[1] = 0xF1;
+                            _sendData[2] = _receiveData[1];
+                            _sendData[3] = 0x50;
+                            _sendData[4] = _receiveData[4];
+                            _sendData[5] = 0x01;
+                            _sendData[6] = 0x2B;
+                            _sendData[7] = 0x01;
+                            _sendData[8] = 0xF4;
+                        }
+                        ObdSend(_sendData, bmwTcpClientData);
+                        found = true;
+                    }
+                }
+
+                if (!found)
+                {
+                    if (
                         _receiveData[0] == 0x84 &&
                         _receiveData[2] == 0xF1 &&
                         _receiveData[3] == 0x18 &&
@@ -4968,12 +5003,34 @@ namespace CarSimulator
                         _receiveData[4] == 0x02)
                     {
                         // dummy error response for all devices
-                        Debug.WriteLine("Dummy service 19");
+                        Debug.WriteLine("Dummy service 19 02");
                         _sendData[0] = 0x83;
                         _sendData[1] = 0xF1;
                         _sendData[2] = _receiveData[1];
                         _sendData[3] = 0x59;
                         _sendData[4] = 0x02;
+                        _sendData[5] = 0xFF;
+
+                        ObdSend(_sendData, bmwTcpClientData);
+                        found = true;
+                    }
+                }
+
+                if (!found)
+                {
+                    if (
+                        _receiveData[0] == 0x86 &&
+                        _receiveData[2] == 0xF1 &&
+                        _receiveData[3] == 0x19 &&
+                        _receiveData[4] == 0x06)
+                    {
+                        // dummy error response for all devices
+                        Debug.WriteLine("Dummy service 19 06");
+                        _sendData[0] = 0x83;
+                        _sendData[1] = 0xF1;
+                        _sendData[2] = _receiveData[1];
+                        _sendData[3] = 0x59;
+                        _sendData[4] = 0x06;
                         _sendData[5] = 0xFF;
 
                         ObdSend(_sendData, bmwTcpClientData);
