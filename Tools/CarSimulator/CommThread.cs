@@ -12,7 +12,6 @@ using System.IO.Ports;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using BmwFileReader;
@@ -5077,6 +5076,34 @@ namespace CarSimulator
 
                         ObdSend(_sendData, bmwTcpClientData);
                         found = true;
+                    }
+                }
+
+                if (!found)
+                {
+                    if (_receiveData.Length >= 6 && (_receiveData[0] & 0x80) == 0x80 && _receiveData[3] == 0x27)
+                    {   // service 27 (security access)
+                        found = true;
+                        if (_receiveData[0] == 0x82)
+                        {
+                            Debug.WriteLine("Request seed accmode: {0:X02}", _receiveData[4]);
+                            byte[] dummyResponse = { 0x86, _receiveData[2], _receiveData[1], 0x67, _receiveData[4], 0x12, 0x34, 0x56, 0x78, 0x00 };   // send seed
+                            ObdSend(dummyResponse, bmwTcpClientData);
+                        }
+                        else
+                        {
+                            if (_receiveData[0] == 0x86)
+                            {
+                                Debug.WriteLine("Receive key accmode: {0:X02}, key: {1:X02} {2:X02} {3:X02} {4:X02}",
+                                    _receiveData[4], _receiveData[5], _receiveData[6], _receiveData[7], _receiveData[8]);
+                            }
+                            else
+                            {
+                                Debug.WriteLine("Dummy service27: {0:X02}", _receiveData[4]);
+                            }
+                            byte[] dummyResponse = { 0x82, _receiveData[2], _receiveData[1], 0x67, _receiveData[4], 0x00 };   // positive ACK
+                            ObdSend(dummyResponse, bmwTcpClientData);
+                        }
                     }
                 }
 
