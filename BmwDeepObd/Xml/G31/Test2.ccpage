@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<fragment xmlns="http://www.holeschak.de/BmwDeepObd"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
+  <page name ="tab_test" weight="0.2">
+    <strings>
+      <string name="tab_test">Test2</string>
+      <string name="label_tel_1">Tel 1:</string>
+      <string name="label_tel_2">Tel 2:</string>
+      <string name="label_tel_3">Tel 3:</string>
+      <string name="label_tel_4">Tel 4:</string>
+      <string name="label_tel_5">Tel 5:</string>
+      <string name="label_tel_6">Tel 6:</string>
+      <string name="label_tel_7">Tel 7:</string>
+      <string name="label_tel_8">Tel 8:</string>
+      <string name="label_tel_9">Tel 9:</string>
+      <string name="label_tel_10">Tel 10:</string>
+    </strings>
+    <strings lang="de">
+      <string name="tab_test">Test2</string>
+      <string name="label_tel_1">Tel 1:</string>
+      <string name="label_tel_2">Tel 2:</string>
+      <string name="label_tel_3">Tel 3:</string>
+      <string name="label_tel_4">Tel 4:</string>
+      <string name="label_tel_5">Tel 5:</string>
+      <string name="label_tel_6">Tel 6:</string>
+      <string name="label_tel_7">Tel 7:</string>
+      <string name="label_tel_8">Tel 8:</string>
+      <string name="label_tel_9">Tel 9:</string>
+      <string name="label_tel_10">Tel 10:</string>
+    </strings>
+    <jobs sgbd="D83BX7C0">
+      <job id="0" name="IDENT" raw_telegrams="82 0D F1 10 01;82 12 F1 10 01;82 29 F1 10 01;82 5D F1 10 01;82 67 F1 10 01;82 21 F1 10 01;82 60 F1 10 01;82 61 F1 10 01;82 63 F1 10 01;82 76 F1 10 01;82 78 F1 10 01">
+        <display name="label_tel_1" result="RAW_TELEGRAM_1" format="" />
+        <display name="label_tel_2" result="RAW_TELEGRAM_2" format="" />
+        <display name="label_tel_3" result="RAW_TELEGRAM_3" format="" />
+        <display name="label_tel_4" result="RAW_TELEGRAM_4" format="" />
+        <display name="label_tel_5" result="RAW_TELEGRAM_5" format="" />
+        <display name="label_tel_6" result="RAW_TELEGRAM_6" format="" />
+        <display name="label_tel_7" result="RAW_TELEGRAM_7" format="" />
+      </job>
+      <job id="1" name="IDENT" raw_telegrams="C4 DF F1 19 17 0C 01">
+        <display name="label_tel_1" result="RAW_TELEGRAM_1" format="" />
+      </job>
+      <job id="1" name="IDENT" raw_telegrams="86 08 F1 27 01 FF FF FF FF;86 22 F1 27 01 FF FF FF FF;86 63 F1 27 01 FF FF FF FF;86 56 F1 27 01 FF FF FF FF;86 2C F1 27 01 FF FF FF FF;86 5D F1 27 01 FF FF FF FF;86 0D F1 27 01 FF FF FF FF;86 60 F1 27 01 FF FF FF FF;86 40 F1 27 01 FF FF FF FF;86 29 F1 27 01 FF FF FF FF">
+        <display name="label_tel_1" result="RAW_TELEGRAM_1" format="" />
+        <display name="label_tel_2" result="RAW_TELEGRAM_2" format="" />
+        <display name="label_tel_3" result="RAW_TELEGRAM_3" format="" />
+        <display name="label_tel_4" result="RAW_TELEGRAM_4" format="" />
+        <display name="label_tel_5" result="RAW_TELEGRAM_5" format="" />
+        <display name="label_tel_6" result="RAW_TELEGRAM_6" format="" />
+        <display name="label_tel_7" result="RAW_TELEGRAM_7" format="" />
+        <display name="label_tel_8" result="RAW_TELEGRAM_8" format="" />
+        <display name="label_tel_9" result="RAW_TELEGRAM_9" format="" />
+        <display name="label_tel_10" result="RAW_TELEGRAM_10" format="" />
+      </job>
+    </jobs>
+  </page>
+</fragment>
