@@ -1308,19 +1308,26 @@ namespace BmwDeepObd
                                                 byte[] sendData = EdiabasNet.HexToByteArray(rawTelegram);
                                                 if (sendData.Length > 0)
                                                 {
-                                                    if (Ediabas.EdInterfaceClass.TransmitData(sendData, out byte[] receiveData))
+                                                    try
                                                     {
-                                                        string telName = string.Format(CultureInfo.InvariantCulture, "RAW_TELEGRAM_{0}", telIdx + 1);
-                                                        Dictionary<string, EdiabasNet.ResultData> resultDictTel = new Dictionary<string, EdiabasNet.ResultData>();
-                                                        resultDictTel.Add(telName, new EdiabasNet.ResultData(EdiabasNet.ResultType.TypeY, telName, receiveData));
-                                                        if (string.IsNullOrEmpty(jobInfo.Id))
+                                                        if (Ediabas.EdInterfaceClass.TransmitData(sendData, out byte[] receiveData))
                                                         {
-                                                            MergeResultDictionarys(ref resultDict, resultDictTel, jobInfo.Name + "#");
+                                                            string telName = string.Format(CultureInfo.InvariantCulture, "RAW_TELEGRAM_{0}", telIdx + 1);
+                                                            Dictionary<string, EdiabasNet.ResultData> resultDictTel = new Dictionary<string, EdiabasNet.ResultData>();
+                                                            resultDictTel.Add(telName, new EdiabasNet.ResultData(EdiabasNet.ResultType.TypeY, telName, receiveData));
+                                                            if (string.IsNullOrEmpty(jobInfo.Id))
+                                                            {
+                                                                MergeResultDictionarys(ref resultDict, resultDictTel, jobInfo.Name + "#");
+                                                            }
+                                                            else
+                                                            {
+                                                                MergeResultDictionarys(ref resultDict, resultDictTel, jobInfo.Id + "#");
+                                                            }
                                                         }
-                                                        else
-                                                        {
-                                                            MergeResultDictionarys(ref resultDict, resultDictTel, jobInfo.Id + "#");
-                                                        }
+                                                    }
+                                                    catch (Exception)
+                                                    {
+                                                        // ignored
                                                     }
                                                 }
                                             }
