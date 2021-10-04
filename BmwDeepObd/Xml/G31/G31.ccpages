@@ -5,6 +5,7 @@
   <pages>
     <include filename="Axis.ccpage"/>
     <include filename="Errors.ccpage"/>
-    <include filename="Test.ccpage"/>
+    <include filename="Test1.ccpage"/>
+    <include filename="Test2.ccpage"/>
   </pages>
 </fragment>
