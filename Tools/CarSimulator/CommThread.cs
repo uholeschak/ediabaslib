@@ -4631,7 +4631,7 @@ namespace CarSimulator
                 standardResponse = true;
             }
             else if (
-                _receiveData[0] == 0x81 &&
+                (_receiveData[0] == 0x81 || _receiveData[0] == 0x82) &&
                 _receiveData[2] == 0xF1 &&
                 _receiveData[3] == 0x3E)
             {   // tester present
