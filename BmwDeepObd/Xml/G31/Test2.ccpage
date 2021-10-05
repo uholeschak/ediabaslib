@@ -42,7 +42,13 @@
       <job id="1" name="IDENT" raw_telegrams="C4 DF F1 19 17 0C 01">
         <display name="label_tel_1" result="RAW_TELEGRAM_1" format="" />
       </job>
-      <job id="2" name="IDENT" raw_telegrams="86 08 F1 27 01 FF FF FF FF;86 22 F1 27 01 FF FF FF FF;86 63 F1 27 01 FF FF FF FF;86 56 F1 27 01 FF FF FF FF;86 2C F1 27 01 FF FF FF FF;86 5D F1 27 01 FF FF FF FF;86 0D F1 27 01 FF FF FF FF;86 60 F1 27 01 FF FF FF FF;86 40 F1 27 01 FF FF FF FF;86 29 F1 27 01 FF FF FF FF">
+      <job id="2" name="IDENT" raw_telegrams="C4 DF F1 31 01 0F 06">
+        <display name="label_tel_1" result="RAW_TELEGRAM_1" format="" />
+      </job>
+      <job id="3" name="IDENT" raw_telegrams="C5 DF F1 31 01 0F 0C 00">
+        <display name="label_tel_1" result="RAW_TELEGRAM_1" format="" />
+      </job>
+      <job id="4" name="IDENT" raw_telegrams="86 08 F1 27 01 FF FF FF FF;86 22 F1 27 01 FF FF FF FF;86 63 F1 27 01 FF FF FF FF;86 56 F1 27 01 FF FF FF FF;86 2C F1 27 01 FF FF FF FF;86 5D F1 27 01 FF FF FF FF;86 0D F1 27 01 FF FF FF FF;86 60 F1 27 01 FF FF FF FF;86 40 F1 27 01 FF FF FF FF;86 29 F1 27 01 FF FF FF FF">
         <display name="label_tel_1" result="RAW_TELEGRAM_1" format="" />
         <display name="label_tel_2" result="RAW_TELEGRAM_2" format="" />
         <display name="label_tel_3" result="RAW_TELEGRAM_3" format="" />
