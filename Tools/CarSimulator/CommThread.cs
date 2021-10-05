@@ -4631,7 +4631,7 @@ namespace CarSimulator
                 standardResponse = true;
             }
             else if (
-                (_receiveData[0] == 0x81 || _receiveData[0] == 0x82) &&
+                _receiveData[0] == 0x81 &&
                 _receiveData[2] == 0xF1 &&
                 _receiveData[3] == 0x3E)
             {   // tester present
@@ -4642,6 +4642,25 @@ namespace CarSimulator
                 _sendData[i++] = 0x7E;
 
                 ObdSend(_sendData, bmwTcpClientData);
+                Debug.WriteLine("Tester present short");
+                standardResponse = true;
+            }
+            else if (
+                _receiveData[0] == 0x82 &&
+                _receiveData[2] == 0xF1 &&
+                _receiveData[3] == 0x3E)
+            {
+                if ((_receiveData[4] & 0x80) == 0x00)
+                {   // with response
+                    int i = 0;
+                    _sendData[i++] = _receiveData[0];
+                    _sendData[i++] = _receiveData[1];
+                    _sendData[i++] = _receiveData[2];
+                    _sendData[i++] = (byte)(_receiveData[3] | 0x40);
+                    _sendData[i++] = _receiveData[2];
+
+                    ObdSend(_sendData, bmwTcpClientData);
+                }
                 Debug.WriteLine("Tester present");
                 standardResponse = true;
             }
