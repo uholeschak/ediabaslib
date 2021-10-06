@@ -5152,6 +5152,29 @@ namespace CarSimulator
                 {
                     if (
                         (_receiveData[0] & 0xC0) == 0x80 &&
+                        (_receiveData[0] & 0x3F) == 0 &&
+                        _receiveData[2] == 0xF1 &&
+                        _receiveData[3] >= 3 &&
+                        _receiveData[4] == 0x2E)
+                    {
+                        // dummy ok response for service 2E WriteDataByLocalIdentification
+                        Debug.WriteLine("Dummy service 2E long: {0:X02}{1:X02}", _receiveData[5], _receiveData[6]);
+                        _sendData[0] = 0x83;
+                        _sendData[1] = 0xF1;
+                        _sendData[2] = _receiveData[1];
+                        _sendData[3] = 0x6E;
+                        _sendData[4] = _receiveData[5];
+                        _sendData[5] = _receiveData[6];
+
+                        ObdSend(_sendData, bmwTcpClientData);
+                        found = true;
+                    }
+                }
+
+                if (!found)
+                {
+                    if (
+                        (_receiveData[0] & 0xC0) == 0x80 &&
                         (_receiveData[0] & 0x3F) >= 3 &&
                         _receiveData[2] == 0xF1 &&
                         _receiveData[3] == 0x30)
