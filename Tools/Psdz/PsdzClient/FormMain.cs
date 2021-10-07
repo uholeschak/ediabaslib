@@ -527,6 +527,12 @@ namespace PsdzClient
                         {
                             sbResult.AppendLine("No ecu data in the request json file. Ncd calculation not required");
                         }
+                        else
+                        {
+                            sbResult.AppendLine("Ncd online calculation required, aborting");
+                            UpdateStatus(sbResult.ToString());
+                            return false;
+                        }
 
                         IEnumerable<string> cafdCalculatedInSCB = ProgrammingUtils.CafdCalculatedInSCB(requestJson);
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Cafd in SCB: {0}", cafdCalculatedInSCB.Count()));
