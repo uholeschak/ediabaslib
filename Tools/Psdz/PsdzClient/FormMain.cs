@@ -225,8 +225,6 @@ namespace PsdzClient
                     }
                 };
 
-                programmingService.PsdzLoglevel = PsdzLoglevel.TRACE;
-                programmingService.ProdiasLoglevel = ProdiasLoglevel.TRACE;
                 if (!programmingService.StartPsdzServiceHost())
                 {
                     sbResult.AppendLine("Start host failed");
@@ -234,6 +232,7 @@ namespace PsdzClient
                     return false;
                 }
 
+                programmingService.SetLogLevelToMax();
                 sbResult.AppendLine("Host started");
                 UpdateStatus(sbResult.ToString());
                 return true;
