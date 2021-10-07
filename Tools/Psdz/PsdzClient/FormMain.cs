@@ -570,6 +570,8 @@ namespace PsdzClient
                             return false;
                         }
 
+                        sbResult.AppendLine("Executing Backup Tal ...");
+                        UpdateStatus(sbResult.ToString());
                         TalExecutionSettings talExecutionSettings = ProgrammingUtils.GetTalExecutionSettings(programmingService);
                         IPsdzTal backupTalResult = programmingService.Psdz.IndividualDataRestoreService.ExecuteAsyncBackupTal(
                             _psdzContext.Connection, _psdzContext.IndividualDataBackupTal, null, _psdzContext.FaTarget, psdzVin, talExecutionSettings, _psdzContext.PathToBackupData);
@@ -581,6 +583,8 @@ namespace PsdzClient
                         UpdateStatus(sbResult.ToString());
                         _cts?.Token.ThrowIfCancellationRequested();
 
+                        sbResult.AppendLine("Executing Tal ...");
+                        UpdateStatus(sbResult.ToString());
                         IPsdzTal executeTalResult = programmingService.Psdz.TalExecutionService.ExecuteTal(_psdzContext.Connection, _psdzContext.Tal,
                             null, psdzVin, _psdzContext.FaTarget, talExecutionSettings, _psdzContext.PathToBackupData, _cts.Token);
                         sbResult.AppendLine("Exceute Tal result:");
