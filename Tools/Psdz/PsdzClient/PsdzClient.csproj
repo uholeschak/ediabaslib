@@ -129,6 +129,7 @@
     <Compile Include="Contracts\IBoolResultObject.cs" />
     <Compile Include="Contracts\IFeatureStatusResult.cs" />
     <Compile Include="Contracts\INavFSCProvided.cs" />
+    <Compile Include="Psdz\TestRunParams.cs" />
     <Compile Include="Vehicle\DealerSessionProperty.cs" />
     <Compile Include="Psdz\EcuServiceClient.cs" />
     <Compile Include="Programming\IIstufenTriple.cs" />

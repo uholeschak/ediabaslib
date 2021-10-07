@@ -45,7 +45,7 @@ namespace PsdzClient.Programming
             psdzServiceArgs.JrePath = Path.Combine(istaFolder, jreSubDir);
             psdzServiceArgs.JvmOptions = GetPsdzJvmOptions(psdzBinaryPath, psdzLogFilePath);
             psdzServiceArgs.PsdzBinaryPath = psdzBinaryPath;
-            psdzServiceArgs.PsdzDataPath = Path.Combine(istaFolder, @"PSdZ\data");
+            psdzServiceArgs.PsdzDataPath = Path.Combine(istaFolder, @"PSdZ\data_swi");
             psdzServiceArgs.EdiabasBinPath = Path.Combine(istaFolder, @"Ediabas\BIN");
             psdzServiceArgs.IsTestRun = false;
             psdzServiceArgs.IdleTimeout = 10000;
