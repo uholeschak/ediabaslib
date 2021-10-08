@@ -15,6 +15,7 @@ using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.Obd;
 using BMW.Rheingold.Psdz.Model.Svb;
 using BMW.Rheingold.Psdz.Model.Swt;
+using PsdzClient.Core;
 using PsdzClient.Programming;
 using PsdzClient.Programming.BMW.Rheingold.Programming.API;
 using PsdzClient.Utility;
@@ -290,6 +291,28 @@ namespace BMW.Rheingold.Programming.API
 			}
 			return null;
 		}
+
+        public ECU Build(IEcuObj ecuInput)
+        {
+            ECU ecu = null;
+            EcuObj ecuObj = ecuInput as EcuObj;
+            if (ecuObj != null)
+            {
+                ecu = new ECU();
+                ecu.ID_SG_ADR = (long)ecuObj.EcuIdentifier.DiagAddrAsInt;
+                ecu.TITLE_ECUTREE = ecuObj.EcuRep;
+                ecu.ECU_SGBD = ecuObj.EcuVariant;
+                ecu.VARIANTE = ecuObj.EcuVariant;
+                ecu.ECU_GRUPPE = ecuObj.EcuGroup;
+                ecu.ECU_GROBNAME = ecuObj.BaseVariant;
+                //ecu.XepEcuClique = ecuObj.XepEcuClique;
+                //ecu.ECUTitle = ((ecuObj.XepEcuClique != null) ? ecuObj.XepEcuClique.Title : string.Empty);
+                //ecu.XepEcuVariant = ecuObj.XepEcuVariant;
+                ecu.ProgrammingVariantName = ecuObj.BnTnName;
+                ecu.StatusInfo = ecuObj.EcuStatusInfo;
+            }
+            return ecu;
+        }
 
 		public IEcuIdentifier Build(IPsdzEcuIdentifier ecuIdentifierInput)
 		{

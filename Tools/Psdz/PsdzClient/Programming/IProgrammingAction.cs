@@ -29,7 +29,7 @@ namespace PsdzClient.Programming
 
         //ICollection<IEscalationStep> EscalationSteps { get; }
 
-        //IProgrammingActionData DataContext { get; }
+        IProgrammingActionData DataContext { get; }
 
         string GetShortType();
 

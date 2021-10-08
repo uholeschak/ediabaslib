@@ -105,7 +105,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
 		string ECU_SGBD { get; }
 
-		IEnumerable<IDtc> FEHLER { get; }
+		//IEnumerable<IDtc> FEHLER { get; }
 
 		int FLASH_STATE { get; }
 
@@ -165,13 +165,13 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
 		int? ID_VAR_INDEX { get; }
 
-		IEnumerable<IDtc> INFO { get; }
+		//IEnumerable<IDtc> INFO { get; }
 
 		bool IS_SUCCESSFULLY { get; }
 
 		int I_ANZ { get; }
 
-		IEnumerable<IJob> JOBS { get; }
+		//IEnumerable<IJob> JOBS { get; }
 
 		bool PHYSHW_SUCCESSFULLY { get; }
 

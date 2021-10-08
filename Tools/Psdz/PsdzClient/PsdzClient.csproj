@@ -57,9 +57,15 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\AIF.cs" />
     <Compile Include="Core\AuthorAPIAttribute.cs" />
+    <Compile Include="Core\ECU.cs" />
     <Compile Include="Core\Extensions.cs" />
     <Compile Include="Core\ObservableCollectionEx.cs" />
+    <Compile Include="Core\SVK.cs" />
+    <Compile Include="Core\typeECU_Transaction.cs" />
+    <Compile Include="Core\typeSWTStatus.cs" />
+    <Compile Include="Core\typeVehicle.cs" />
     <Compile Include="Programming\AsamJobInputDictionary.cs" />
     <Compile Include="Programming\BindingDetailsStatus.cs" />
     <Compile Include="Programming\EcuCertCheckingResponse.cs" />
@@ -72,6 +78,8 @@
     <Compile Include="Programming\EcuObjStatusInfo.cs" />
     <Compile Include="Programming\EcuProgrammingInfo.cs" />
     <Compile Include="Programming\EcuProgrammingInfoData.cs" />
+    <Compile Include="Programming\EcuProgrammingInfos.cs" />
+    <Compile Include="Programming\EcuProgrammingInfosData.cs" />
     <Compile Include="Programming\FetchEcuCertCheckingResult.cs" />
     <Compile Include="Programming\IEcuProgrammingInfo.cs" />
     <Compile Include="Programming\IEcuProgrammingInfoData.cs" />

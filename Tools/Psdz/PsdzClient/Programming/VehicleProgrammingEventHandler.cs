@@ -12,10 +12,27 @@ namespace PsdzClient.Programming
 {
 	public class VehicleProgrammingEventHandler : IPsdzEventListener
 	{
-		public VehicleProgrammingEventHandler(PsdzContext psdzContext)
+		public VehicleProgrammingEventHandler(EcuProgrammingInfos ecuProgrammingInfos, PsdzContext psdzContext, bool ecusSeveralTimesPossible = false)
 		{
 			this.psdzContext = psdzContext;
 			this.diagAddrToEcuMap = new Dictionary<long, EcuProgrammingInfo>();
+            if (!ecusSeveralTimesPossible)
+            {
+                using (IEnumerator<IEcuProgrammingInfo> enumerator = ecuProgrammingInfos.GetEnumerator())
+                {
+                    while (enumerator.MoveNext())
+                    {
+                        IEcuProgrammingInfo ecuProgrammingInfo = enumerator.Current;
+                        EcuProgrammingInfo ecuProgrammingInfo2 = (EcuProgrammingInfo)ecuProgrammingInfo;
+                        if (!this.diagAddrToEcuMap.ContainsKey(ecuProgrammingInfo2.Ecu.ID_SG_ADR))
+                        {
+                            this.diagAddrToEcuMap.Add(ecuProgrammingInfo2.Ecu.ID_SG_ADR, ecuProgrammingInfo2);
+                        }
+                    }
+                    return;
+                }
+            }
+            this.FillEcusIfSeveralTimesPossible(ecuProgrammingInfos);
 		}
 
 		public void SetPsdzEvent(IPsdzEvent psdzEvent)
@@ -145,6 +162,34 @@ namespace PsdzClient.Programming
 			}
 			return result;
 		}
+
+        private void FillEcusIfSeveralTimesPossible(EcuProgrammingInfos ecuProgrammingInfos)
+        {
+            using (IEnumerator<IEcuProgrammingInfo> enumerator = ecuProgrammingInfos.GetEnumerator())
+            {
+                while (enumerator.MoveNext())
+                {
+                    EcuProgrammingInfo ecuProgrammingInfo = (EcuProgrammingInfo)enumerator.Current;
+                    bool flag = false;
+                    using (IEnumerator<IProgrammingAction> enumerator2 = ecuProgrammingInfo.GetProgrammingActions(null).GetEnumerator())
+                    {
+                        while (enumerator2.MoveNext())
+                        {
+                            if (enumerator2.Current.IsSelected)
+                            {
+                                flag = true;
+                                break;
+                            }
+                        }
+
+                        if (flag)
+                        {
+                            this.diagAddrToEcuMap.Add(ecuProgrammingInfo.Ecu.ID_SG_ADR, ecuProgrammingInfo);
+                        }
+                    }
+                }
+            }
+        }
 
 		private readonly Dictionary<long, EcuProgrammingInfo> diagAddrToEcuMap;
 

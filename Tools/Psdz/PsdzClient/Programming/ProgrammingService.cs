@@ -20,6 +20,7 @@ namespace PsdzClient.Programming
 			this.psdz.SetLogLevel(PsdzLoglevel, ProdiasLoglevel);
 
             this.EventManager = new ProgrammingEventManager();
+            this.ProgrammingInfos = new EcuProgrammingInfos();
 			PreparePsdzBackupDataPath(istaFolder);
 		}
 
@@ -157,7 +158,7 @@ namespace PsdzClient.Programming
             RemoveListener();
             this.PsdzProgressListener = new PsdzProgressListener(this.EventManager);
             this.psdz.AddPsdzProgressListener(this.PsdzProgressListener);
-            this.VehicleProgrammingEventHandler = new VehicleProgrammingEventHandler(psdzContext);
+            this.VehicleProgrammingEventHandler = new VehicleProgrammingEventHandler(ProgrammingInfos, psdzContext);
             this.psdz.AddPsdzEventListener(this.VehicleProgrammingEventHandler);
         }
 
@@ -187,7 +188,9 @@ namespace PsdzClient.Programming
         
         public ProgrammingEventManager EventManager { get; private set; }
 
-		public PsdzServiceWrapper Psdz => psdz;
+        public EcuProgrammingInfos ProgrammingInfos { get; private set; }
+
+	    public PsdzServiceWrapper Psdz => psdz;
 
         private readonly PsdzConfig psdzConfig;
 
