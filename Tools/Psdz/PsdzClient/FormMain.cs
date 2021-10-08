@@ -610,6 +610,12 @@ namespace PsdzClient
                             UpdateStatus(sbResult.ToString());
                         }
                         _cts?.Token.ThrowIfCancellationRequested();
+
+                        IPsdzResponse piaResponse = programmingService.Psdz.EcuService.UpdatePiaPortierungsmaster(_psdzContext.Connection, _psdzContext.SvtActual);
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "PIA master update Success={0}, Cause={1}",
+                            piaResponse.IsSuccessful, piaResponse.Cause));
+                        UpdateStatus(sbResult.ToString());
+                        _cts?.Token.ThrowIfCancellationRequested();
                     }
                     finally
                     {
