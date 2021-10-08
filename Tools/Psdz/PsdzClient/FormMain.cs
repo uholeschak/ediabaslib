@@ -616,6 +616,32 @@ namespace PsdzClient
                             piaResponse.IsSuccessful, piaResponse.Cause));
                         UpdateStatus(sbResult.ToString());
                         _cts?.Token.ThrowIfCancellationRequested();
+
+                        try
+                        {
+                            programmingService.Psdz.VcmService.WriteFa(_psdzContext.Connection, _psdzContext.FaTarget);
+                            sbResult.AppendLine("FA written");
+                            UpdateStatus(sbResult.ToString());
+                        }
+                        catch (Exception ex)
+                        {
+                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "FA write failure: {0}", ex.Message));
+                            UpdateStatus(sbResult.ToString());
+                        }
+                        _cts?.Token.ThrowIfCancellationRequested();
+
+                        try
+                        {
+                            programmingService.Psdz.VcmService.WriteFaToBackup(_psdzContext.Connection, _psdzContext.FaTarget);
+                            sbResult.AppendLine("FA backup written");
+                            UpdateStatus(sbResult.ToString());
+                        }
+                        catch (Exception ex)
+                        {
+                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "FA backup write failure: {0}", ex.Message));
+                            UpdateStatus(sbResult.ToString());
+                        }
+                        _cts?.Token.ThrowIfCancellationRequested();
                     }
                     finally
                     {
