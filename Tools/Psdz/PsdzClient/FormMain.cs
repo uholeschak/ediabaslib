@@ -571,6 +571,19 @@ namespace PsdzClient
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Ecus: {0}", executeTalResult.AffectedEcus.Count()));
                         UpdateStatus(sbResult.ToString());
                         _cts?.Token.ThrowIfCancellationRequested();
+
+                        try
+                        {
+                            programmingService.Psdz.ProgrammingService.TslUpdate(_psdzContext.Connection, true, _psdzContext.SvtActual, _psdzContext.Sollverbauung.Svt);
+                            sbResult.AppendLine("Tsl updated");
+                            UpdateStatus(sbResult.ToString());
+                        }
+                        catch (Exception ex)
+                        {
+                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Tsl update failure: {0}", ex.Message));
+                            UpdateStatus(sbResult.ToString());
+                        }
+                        _cts?.Token.ThrowIfCancellationRequested();
                     }
                     finally
                     {
