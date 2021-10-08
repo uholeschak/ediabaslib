@@ -584,6 +584,32 @@ namespace PsdzClient
                             UpdateStatus(sbResult.ToString());
                         }
                         _cts?.Token.ThrowIfCancellationRequested();
+
+                        try
+                        {
+                            programmingService.Psdz.VcmService.WriteIStufen(_psdzContext.Connection, _psdzContext.IstufeShipment, _psdzContext.IstufeLast, _psdzContext.IstufeCurrent);
+                            sbResult.AppendLine("ISteps updated");
+                            UpdateStatus(sbResult.ToString());
+                        }
+                        catch (Exception ex)
+                        {
+                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Write ISteps failure: {0}", ex.Message));
+                            UpdateStatus(sbResult.ToString());
+                        }
+                        _cts?.Token.ThrowIfCancellationRequested();
+
+                        try
+                        {
+                            programmingService.Psdz.VcmService.WriteIStufenToBackup(_psdzContext.Connection, _psdzContext.IstufeShipment, _psdzContext.IstufeLast, _psdzContext.IstufeCurrent);
+                            sbResult.AppendLine("ISteps backup updated");
+                            UpdateStatus(sbResult.ToString());
+                        }
+                        catch (Exception ex)
+                        {
+                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Write ISteps backup failure: {0}", ex.Message));
+                            UpdateStatus(sbResult.ToString());
+                        }
+                        _cts?.Token.ThrowIfCancellationRequested();
                     }
                     finally
                     {
