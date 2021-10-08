@@ -1308,26 +1308,55 @@ namespace BmwDeepObd
                                                 byte[] sendData = EdiabasNet.HexToByteArray(rawTelegram);
                                                 if (sendData.Length > 0)
                                                 {
-                                                    try
+                                                    bool funcAddress = (sendData[0] & 0xC0) == 0xC0;     // functional address
+                                                    List<byte> responseList = new List<byte>();
+                                                    for (;;)
                                                     {
-                                                        if (Ediabas.EdInterfaceClass.TransmitData(sendData, out byte[] receiveData))
+                                                        bool dataReceived = false;
+                                                        try
                                                         {
-                                                            string telName = string.Format(CultureInfo.InvariantCulture, "RAW_TELEGRAM_{0}", telIdx + 1);
-                                                            Dictionary<string, EdiabasNet.ResultData> resultDictTel = new Dictionary<string, EdiabasNet.ResultData>();
-                                                            resultDictTel.Add(telName, new EdiabasNet.ResultData(EdiabasNet.ResultType.TypeY, telName, receiveData));
-                                                            if (string.IsNullOrEmpty(jobInfo.Id))
+                                                            if (Ediabas.EdInterfaceClass.TransmitData(sendData, out byte[] receiveData))
                                                             {
-                                                                MergeResultDictionarys(ref resultDict, resultDictTel, jobInfo.Name + "#");
-                                                            }
-                                                            else
-                                                            {
-                                                                MergeResultDictionarys(ref resultDict, resultDictTel, jobInfo.Id + "#");
+                                                                dataReceived = true;
+                                                                responseList.AddRange(receiveData);
                                                             }
                                                         }
+                                                        catch (Exception)
+                                                        {
+                                                            // ignored
+                                                        }
+
+                                                        if (!funcAddress || !dataReceived)
+                                                        {
+                                                            break;
+                                                        }
+
+                                                        if (AbortEdiabasJob())
+                                                        {
+                                                            break;
+                                                        }
+
+                                                        sendData = Array.Empty<byte>();
                                                     }
-                                                    catch (Exception)
+
+                                                    if (responseList.Count > 0)
                                                     {
-                                                        // ignored
+                                                        string telName = string.Format(CultureInfo.InvariantCulture, "RAW_TELEGRAM_{0}", telIdx + 1);
+                                                        Dictionary<string, EdiabasNet.ResultData> resultDictTel = new Dictionary<string, EdiabasNet.ResultData>();
+                                                        resultDictTel.Add(telName, new EdiabasNet.ResultData(EdiabasNet.ResultType.TypeY, telName, responseList.ToArray()));
+                                                        if (string.IsNullOrEmpty(jobInfo.Id))
+                                                        {
+                                                            MergeResultDictionarys(ref resultDict, resultDictTel, jobInfo.Name + "#");
+                                                        }
+                                                        else
+                                                        {
+                                                            MergeResultDictionarys(ref resultDict, resultDictTel, jobInfo.Id + "#");
+                                                        }
+                                                    }
+
+                                                    if (AbortEdiabasJob())
+                                                    {
+                                                        break;
                                                     }
                                                 }
                                             }
