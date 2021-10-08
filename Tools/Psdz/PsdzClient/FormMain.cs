@@ -48,7 +48,6 @@ namespace PsdzClient
                     {
                         progressBarEvent.Style = ProgressBarStyle.Marquee;
                         labelProgressEvent.Text = string.Empty;
-                        labelEcuEvent.Text = string.Empty;
                     }));
                 }
                 else
@@ -58,7 +57,6 @@ namespace PsdzClient
                         progressBarEvent.Style = ProgressBarStyle.Blocks;
                         progressBarEvent.Value = progressBarEvent.Minimum;
                         labelProgressEvent.Text = string.Empty;
-                        labelEcuEvent.Text = string.Empty;
                     }));
                 }
             }
@@ -200,27 +198,6 @@ namespace PsdzClient
                                 labelProgressEvent.Text = string.Format(CultureInfo.InvariantCulture, "{0}%, {1}s", progress, programmingEventArgs.TimeLeftSec);
                                 progressBarEvent.Value = progress;
                             }
-                        }));
-                    }
-                    else if (args is ProgrammingActionStateChangedEventArgs programmingActionEventArgs)
-                    {
-                        BeginInvoke((Action)(() =>
-                        {
-                            labelEcuEvent.Text = string.Format(CultureInfo.InvariantCulture, "Ecu={0}, State={1}, Type={2}",
-                                programmingActionEventArgs.Ecu.ECU_NAME,
-                                programmingActionEventArgs.ProgrammingActionState,
-                                programmingActionEventArgs.ProgrammingActionType);
-                        }));
-                    }
-                    else if (args is ProgrammingCurrentEcuChangedEventArgs programmingEcuEventArgs)
-                    {
-                        BeginInvoke((Action)(() =>
-                        {
-                            int progress = (int)programmingEcuEventArgs.EcuProgrammingInfo.ProgressValue * 100;
-                            labelEcuEvent.Text = string.Format(CultureInfo.InvariantCulture, "Ecu={0}, State={1}, {2}%",
-                                programmingEcuEventArgs.EcuProgrammingInfo.Ecu.ECU_NAME,
-                                programmingEcuEventArgs.EcuProgrammingInfo.State,
-                                progress);
                         }));
                     }
                 };
@@ -971,7 +948,6 @@ namespace PsdzClient
             UpdateStatus();
             timerUpdate.Enabled = true;
             labelProgressEvent.Text = string.Empty;
-            labelEcuEvent.Text = string.Empty;
         }
 
         private void timerUpdate_Tick(object sender, EventArgs e)

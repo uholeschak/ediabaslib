@@ -50,7 +50,6 @@ namespace PsdzClient
             this.buttonExecuteTal = new System.Windows.Forms.Button();
             this.progressBarEvent = new System.Windows.Forms.ProgressBar();
             this.labelProgressEvent = new System.Windows.Forms.Label();
-            this.labelEcuEvent = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // textBoxIstaFolder
@@ -235,17 +234,6 @@ namespace PsdzClient
             this.labelProgressEvent.TabIndex = 16;
             this.labelProgressEvent.Text = "0%";
             // 
-            // labelEcuEvent
-            // 
-            this.labelEcuEvent.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelEcuEvent.AutoSize = true;
-            this.labelEcuEvent.Location = new System.Drawing.Point(615, 420);
-            this.labelEcuEvent.Name = "labelEcuEvent";
-            this.labelEcuEvent.Size = new System.Drawing.Size(21, 13);
-            this.labelEcuEvent.TabIndex = 17;
-            this.labelEcuEvent.Text = "0%";
-            this.labelEcuEvent.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
@@ -253,7 +241,6 @@ namespace PsdzClient
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonAbort;
             this.ClientSize = new System.Drawing.Size(810, 450);
-            this.Controls.Add(this.labelEcuEvent);
             this.Controls.Add(this.labelProgressEvent);
             this.Controls.Add(this.progressBarEvent);
             this.Controls.Add(this.buttonExecuteTal);
@@ -304,7 +291,6 @@ namespace PsdzClient
         private System.Windows.Forms.Button buttonExecuteTal;
         private System.Windows.Forms.ProgressBar progressBarEvent;
         private System.Windows.Forms.Label labelProgressEvent;
-        private System.Windows.Forms.Label labelEcuEvent;
     }
 }
 
