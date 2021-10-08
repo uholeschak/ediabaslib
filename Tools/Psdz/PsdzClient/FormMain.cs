@@ -565,7 +565,7 @@ namespace PsdzClient
                         IPsdzTal executeTalResult = programmingService.Psdz.TalExecutionService.ExecuteTal(_psdzContext.Connection, _psdzContext.Tal,
                             null, psdzVin, _psdzContext.FaTarget, talExecutionSettings, _psdzContext.PathToBackupData, _cts.Token);
                         sbResult.AppendLine("Exceute Tal result:");
-                        sbResult.AppendLine(executeTalResult.AsXml);
+                        //sbResult.AppendLine(executeTalResult.AsXml);
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Size: {0}", executeTalResult.AsXml.Length));
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " State: {0}", executeTalResult.TalExecutionState));
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Ecus: {0}", executeTalResult.AffectedEcus.Count()));
