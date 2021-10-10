@@ -1308,7 +1308,12 @@ namespace BmwDeepObd
                                                 byte[] sendData = EdiabasNet.HexToByteArray(rawTelegram);
                                                 if (sendData.Length > 0)
                                                 {
-                                                    bool funcAddress = (sendData[0] & 0xC0) == 0xC0;     // functional address
+                                                    bool funcAddress = false;
+                                                    if (Ediabas.EdInterfaceClass.BmwFastProtocol)
+                                                    {
+                                                        funcAddress = (sendData[0] & 0xC0) == 0xC0;     // functional address
+                                                    }
+
                                                     List<byte> responseList = new List<byte>();
                                                     for (;;)
                                                     {

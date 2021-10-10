@@ -888,6 +888,14 @@ namespace EdiabasLib
             }
         }
 
+        public override bool BmwFastProtocol
+        {
+            get
+            {
+                return ParTransmitFunc == TransBmwFast;
+            }
+        }
+
         public override string InterfaceType
         {
             get
