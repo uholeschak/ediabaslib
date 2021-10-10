@@ -14,7 +14,7 @@ namespace CarSimulator
 {
     public partial class MainForm : Form
     {
-        private const string StdResponseFile = "g31.txt";
+        private const string StdResponseFile = "g31_coding.txt";
         private string _rootFolder;
         private string _ecuFolder;
         private string _responseDir;
@@ -571,7 +571,7 @@ namespace CarSimulator
                 {
                     responseType = CommThread.ResponseType.E90;
                 }
-                else if (string.Compare(responseFile, StdResponseFile, StringComparison.OrdinalIgnoreCase) == 0)
+                else if (responseFile.StartsWith("g31", StringComparison.OrdinalIgnoreCase))
                 {
                     responseType = CommThread.ResponseType.G31;
                 }
