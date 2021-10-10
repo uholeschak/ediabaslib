@@ -553,10 +553,18 @@ namespace PsdzClient
                         IPsdzTal backupTalResult = programmingService.Psdz.IndividualDataRestoreService.ExecuteAsyncBackupTal(
                             _psdzContext.Connection, _psdzContext.IndividualDataBackupTal, null, _psdzContext.FaTarget, psdzVin, talExecutionSettings, _psdzContext.PathToBackupData);
                         sbResult.AppendLine("Backup Tal result:");
-                        //sbResult.AppendLine(backupTalResult.AsXml);
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Size: {0}", backupTalResult.AsXml.Length));
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " State: {0}", backupTalResult.TalExecutionState));
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Ecus: {0}", backupTalResult.AffectedEcus.Count()));
+                        foreach (IPsdzEcuIdentifier ecuIdentifier in backupTalResult.AffectedEcus)
+                        {
+                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "  Affected Ecu: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
+                                ecuIdentifier.BaseVariant, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset));
+                        }
+                        if (backupTalResult.TalExecutionState != PsdzTalExecutionState.Finished)
+                        {
+                            sbResult.AppendLine(backupTalResult.AsXml);
+                        }
                         UpdateStatus(sbResult.ToString());
                         _cts?.Token.ThrowIfCancellationRequested();
 
@@ -565,10 +573,18 @@ namespace PsdzClient
                         IPsdzTal executeTalResult = programmingService.Psdz.TalExecutionService.ExecuteTal(_psdzContext.Connection, _psdzContext.Tal,
                             null, psdzVin, _psdzContext.FaTarget, talExecutionSettings, _psdzContext.PathToBackupData, _cts.Token);
                         sbResult.AppendLine("Exceute Tal result:");
-                        //sbResult.AppendLine(executeTalResult.AsXml);
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Size: {0}", executeTalResult.AsXml.Length));
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " State: {0}", executeTalResult.TalExecutionState));
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Ecus: {0}", executeTalResult.AffectedEcus.Count()));
+                        foreach (IPsdzEcuIdentifier ecuIdentifier in executeTalResult.AffectedEcus)
+                        {
+                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "  Affected Ecu: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
+                                ecuIdentifier.BaseVariant, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset));
+                        }
+                        if (executeTalResult.TalExecutionState != PsdzTalExecutionState.Finished)
+                        {
+                            sbResult.AppendLine(executeTalResult.AsXml);
+                        }
                         UpdateStatus(sbResult.ToString());
                         _cts?.Token.ThrowIfCancellationRequested();
 
