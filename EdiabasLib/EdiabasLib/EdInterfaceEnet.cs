@@ -463,6 +463,14 @@ namespace EdiabasLib
             }
         }
 
+        public override bool BmwFastProtocol
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         public override string InterfaceType
         {
             get

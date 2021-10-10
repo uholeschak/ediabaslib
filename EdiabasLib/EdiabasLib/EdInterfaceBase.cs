@@ -195,6 +195,8 @@ namespace EdiabasLib
             }
         }
 
+        public abstract bool BmwFastProtocol { get; }
+
         public abstract string InterfaceType { get; }
 
         public abstract UInt32 InterfaceVersion { get; }
