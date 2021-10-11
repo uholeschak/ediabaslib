@@ -15,7 +15,7 @@
       <string name="label_tel_8">Tel 8:</string>
       <string name="label_tel_9">Tel 9:</string>
       <string name="label_tel_10">Tel 10:</string>
-      <string name="routine_0201">PAR_N11:</string>
+      <string name="routine_0201">GetParN11:</string>
     </strings>
     <strings lang="de">
       <string name="tab_test">Test3</string>
@@ -29,7 +29,7 @@
       <string name="label_tel_8">Tel 8:</string>
       <string name="label_tel_9">Tel 9:</string>
       <string name="label_tel_10">Tel 10:</string>
-      <string name="routine_0201">PAR_N11:</string>
+      <string name="routine_0201">GetParN11:</string>
     </strings>
     <jobs sgbd="ZGW_01">
       <job id="0" name="IDENT" raw_telegrams="82 10 F1 10 03">
