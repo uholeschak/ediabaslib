@@ -7,5 +7,6 @@
     <include filename="Errors.ccpage"/>
     <include filename="Test1.ccpage"/>
     <include filename="Test2.ccpage"/>
+    <include filename="Test3.ccpage"/>
   </pages>
 </fragment>
