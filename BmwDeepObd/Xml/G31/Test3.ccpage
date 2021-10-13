@@ -33,8 +33,9 @@
       <job id="0" name="IDENT" raw_telegrams="82 10 F1 10 03">
         <display name="label_tel_1" result="RAW_TELEGRAM_1" format="" />
       </job>
-      <job id="1" name="IDENT" raw_telegrams="86 10 F1 31 01 02 15 C8 00">
+      <job id="1" name="IDENT" raw_telegrams="86 10 F1 31 01 02 15 C8 00;85 10 F1 31 01 02 33 7F">
         <display name="label_tel_1" result="RAW_TELEGRAM_1" format="" />
+        <display name="label_tel_2" result="RAW_TELEGRAM_2" format="" />
       </job>
     </jobs>
   </page>
