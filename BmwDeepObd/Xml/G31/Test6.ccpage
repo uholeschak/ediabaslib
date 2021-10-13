@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<fragment xmlns="http://www.holeschak.de/BmwDeepObd"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
+  <page name ="tab_test" weight="0.3">
+    <strings>
+      <string name="tab_test">Read 63</string>
+      <string name="label_tel_1">Tel 1:</string>
+      <string name="label_tel_2">Tel 2:</string>
+      <string name="label_tel_3">Tel 3:</string>
+      <string name="label_tel_4">Tel 4:</string>
+      <string name="label_tel_5">Tel 5:</string>
+      <string name="label_tel_6">Tel 6:</string>
+      <string name="label_tel_7">Tel 7:</string>
+      <string name="label_tel_8">Tel 8:</string>
+      <string name="label_tel_9">Tel 9:</string>
+      <string name="label_tel_10">Tel 10:</string>
+    </strings>
+    <strings lang="de">
+      <string name="tab_test">Read 63</string>
+      <string name="label_tel_1">Tel 1:</string>
+      <string name="label_tel_2">Tel 2:</string>
+      <string name="label_tel_3">Tel 3:</string>
+      <string name="label_tel_4">Tel 4:</string>
+      <string name="label_tel_5">Tel 5:</string>
+      <string name="label_tel_6">Tel 6:</string>
+      <string name="label_tel_7">Tel 7:</string>
+      <string name="label_tel_8">Tel 8:</string>
+      <string name="label_tel_9">Tel 9:</string>
+      <string name="label_tel_10">Tel 10:</string>
+    </strings>
+    <jobs sgbd="nbtevo">
+      <job id="0" name="IDENT" raw_telegrams="82 63 F1 10 03">
+        <display name="label_tel_1" result="RAW_TELEGRAM_1" format="" />
+      </job>
+      <job id="1" name="IDENT" raw_telegrams="85 63 F1 31 01 0F 1F 0E;85 63 F1 31 01 0F 1F 04;89 63 F1 31 01 10 02 01 00 00 00 00">
+        <display name="label_tel_1" result="RAW_TELEGRAM_1" format="" />
+        <display name="label_tel_2" result="RAW_TELEGRAM_2" format="" />
+        <display name="label_tel_3" result="RAW_TELEGRAM_3" format="" />
+      </job>
+    </jobs>
+  </page>
+</fragment>
