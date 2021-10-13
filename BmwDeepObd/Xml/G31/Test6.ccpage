@@ -37,6 +37,7 @@
         <display name="label_tel_1" result="RAW_TELEGRAM_1" format="" />
         <display name="label_tel_2" result="RAW_TELEGRAM_2" format="" />
         <display name="label_tel_3" result="RAW_TELEGRAM_3" format="" />
+        <display name="label_tel_4" result="RAW_TELEGRAM_4" format="" />
       </job>
     </jobs>
   </page>
