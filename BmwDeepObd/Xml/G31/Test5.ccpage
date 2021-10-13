@@ -4,7 +4,7 @@
           xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
   <page name ="tab_test" weight="0.3">
     <strings>
-      <string name="tab_test">Par N11</string>
+      <string name="tab_test">Read 5D</string>
       <string name="label_tel_1">Tel 1:</string>
       <string name="label_tel_2">Tel 2:</string>
       <string name="label_tel_3">Tel 3:</string>
@@ -17,7 +17,7 @@
       <string name="label_tel_10">Tel 10:</string>
     </strings>
     <strings lang="de">
-      <string name="tab_test">Par N11</string>
+      <string name="tab_test">Read 5D</string>
       <string name="label_tel_1">Tel 1:</string>
       <string name="label_tel_2">Tel 2:</string>
       <string name="label_tel_3">Tel 3:</string>
@@ -29,12 +29,13 @@
       <string name="label_tel_9">Tel 9:</string>
       <string name="label_tel_10">Tel 10:</string>
     </strings>
-    <jobs sgbd="zgw_01">
-      <job id="0" name="IDENT" raw_telegrams="82 10 F1 10 03">
+    <jobs sgbd="kafasg11">
+      <job id="0" name="IDENT" raw_telegrams="82 5D F1 10 03">
         <display name="label_tel_1" result="RAW_TELEGRAM_1" format="" />
       </job>
-      <job id="1" name="IDENT" raw_telegrams="86 10 F1 31 01 02 15 C8 00">
+      <job id="1" name="IDENT" raw_telegrams="85 5D F1 31 01 0F 1F 0E;85 5D F1 31 01 0F 1F 04">
         <display name="label_tel_1" result="RAW_TELEGRAM_1" format="" />
+        <display name="label_tel_2" result="RAW_TELEGRAM_2" format="" />
       </job>
     </jobs>
   </page>
