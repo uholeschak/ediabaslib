@@ -50,6 +50,7 @@ namespace PsdzClient
             this.buttonExecuteTal = new System.Windows.Forms.Button();
             this.progressBarEvent = new System.Windows.Forms.ProgressBar();
             this.labelProgressEvent = new System.Windows.Forms.Label();
+            this.checkBoxIcom = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // textBoxIstaFolder
@@ -234,6 +235,16 @@ namespace PsdzClient
             this.labelProgressEvent.TabIndex = 16;
             this.labelProgressEvent.Text = "0%";
             // 
+            // checkBoxIcom
+            // 
+            this.checkBoxIcom.AutoSize = true;
+            this.checkBoxIcom.Location = new System.Drawing.Point(186, 40);
+            this.checkBoxIcom.Name = "checkBoxIcom";
+            this.checkBoxIcom.Size = new System.Drawing.Size(53, 17);
+            this.checkBoxIcom.TabIndex = 17;
+            this.checkBoxIcom.Text = "ICOM";
+            this.checkBoxIcom.UseVisualStyleBackColor = true;
+            // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
@@ -241,6 +252,7 @@ namespace PsdzClient
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonAbort;
             this.ClientSize = new System.Drawing.Size(810, 450);
+            this.Controls.Add(this.checkBoxIcom);
             this.Controls.Add(this.labelProgressEvent);
             this.Controls.Add(this.progressBarEvent);
             this.Controls.Add(this.buttonExecuteTal);
@@ -291,6 +303,7 @@ namespace PsdzClient
         private System.Windows.Forms.Button buttonExecuteTal;
         private System.Windows.Forms.ProgressBar progressBarEvent;
         private System.Windows.Forms.Label labelProgressEvent;
+        private System.Windows.Forms.CheckBox checkBoxIcom;
     }
 }
 

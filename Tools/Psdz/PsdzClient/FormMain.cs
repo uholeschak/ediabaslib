@@ -90,6 +90,7 @@ namespace PsdzClient
 
             textBoxIstaFolder.Enabled = !active && !hostRunning;
             ipAddressControlVehicleIp.Enabled = !active && !vehicleConnected;
+            checkBoxIcom.Enabled = ipAddressControlVehicleIp.Enabled;
             buttonStartHost.Enabled = !active && !hostRunning;
             buttonStopHost.Enabled = !active && hostRunning;
             buttonConnect.Enabled = !active && hostRunning && !vehicleConnected;
@@ -107,9 +108,11 @@ namespace PsdzClient
             {
                 textBoxIstaFolder.Text = Properties.Settings.Default.IstaFolder;
                 ipAddressControlVehicleIp.Text = Properties.Settings.Default.VehicleIp;
+                checkBoxIcom.Checked = Properties.Settings.Default.IcomConnection;
                 if (string.IsNullOrWhiteSpace(ipAddressControlVehicleIp.Text.Trim('.')))
                 {
                     ipAddressControlVehicleIp.Text = @"127.0.0.1";
+                    checkBoxIcom.Checked = false;
                 }
             }
             catch (Exception)
@@ -126,6 +129,7 @@ namespace PsdzClient
             {
                 Properties.Settings.Default.IstaFolder = textBoxIstaFolder.Text;
                 Properties.Settings.Default.VehicleIp = ipAddressControlVehicleIp.Text;
+                Properties.Settings.Default.IcomConnection = checkBoxIcom.Checked;
                 Properties.Settings.Default.Save();
             }
             catch (Exception)
@@ -1093,7 +1097,8 @@ namespace PsdzClient
                 return;
             }
 
-            string url = "tcp://" + ipAddressControlVehicleIp.Text + ":6801";
+            int port = checkBoxIcom.Checked ? 50160 : 6801;
+            string url = string.Format(CultureInfo.InvariantCulture, "tcp://{0}:{1}", ipAddressControlVehicleIp.Text, port);
             ConnectVehicleTask(textBoxIstaFolder.Text, url, Baureihe).ContinueWith(task =>
             {
                 TaskActive = false;
