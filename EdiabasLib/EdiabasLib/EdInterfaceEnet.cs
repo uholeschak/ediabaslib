@@ -258,7 +258,7 @@ namespace EdiabasLib
         protected int ControlPort = 6811;
         protected int DiagnosticPort = 6801;
         protected int ConnectTimeout = 5000;
-        protected bool IcomAllocate = false;
+        protected bool IcomAllocateProtected = false;
 
         protected byte[] RecBuffer = new byte[TransBufferSize];
         protected byte[] DataBuffer = new byte[TransBufferSize];
@@ -1014,6 +1014,18 @@ namespace EdiabasLib
             set
             {
                 RemoteHostProtected = value;
+            }
+        }
+
+        public bool IcomAllocate
+        {
+            get
+            {
+                return IcomAllocateProtected;
+            }
+            set
+            {
+                IcomAllocateProtected = value;
             }
         }
 
