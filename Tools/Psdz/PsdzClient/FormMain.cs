@@ -262,20 +262,20 @@ namespace PsdzClient
             return true;
         }
 
-        private async Task<bool> ConnectVehicleTask(string istaFolder, string url, string baureihe)
+        private async Task<bool> ConnectVehicleTask(string istaFolder, string url, bool icomConnection, string baureihe)
         {
             // ReSharper disable once ConvertClosureToMethodGroup
-            return await Task.Run(() => ConnectVehicle(istaFolder, url, baureihe)).ConfigureAwait(false);
+            return await Task.Run(() => ConnectVehicle(istaFolder, url, icomConnection, baureihe)).ConfigureAwait(false);
         }
 
-        private bool ConnectVehicle(string istaFolder, string url, string baureihe)
+        private bool ConnectVehicle(string istaFolder, string url, bool icomConnection, string baureihe)
         {
             StringBuilder sbResult = new StringBuilder();
 
             try
             {
                 sbResult.AppendLine("Connecting vehicle ...");
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Url={0}, Series={1}", url, baureihe));
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Url={0}, ICOM={1}, Series={2}", url, icomConnection, baureihe));
                 UpdateStatus(sbResult.ToString());
 
                 if (programmingService == null)
@@ -317,7 +317,15 @@ namespace PsdzClient
                 string dummyIStep = string.Join("-", selectorParts, 0, 4);
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Dummy IStep: {0}", dummyIStep));
 
-                IPsdzConnection psdzConnectionTemp = programmingService.Psdz.ConnectionManagerService.ConnectOverEthernet(psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, baureihe, dummyIStep);
+                IPsdzConnection psdzConnectionTemp;
+                if (icomConnection)
+                {
+                    psdzConnectionTemp = programmingService.Psdz.ConnectionManagerService.ConnectOverIcom(psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, 1000, baureihe, dummyIStep, IcomConnectionType.Ip, false);
+                }
+                else
+                {
+                    psdzConnectionTemp = programmingService.Psdz.ConnectionManagerService.ConnectOverEthernet(psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, baureihe, dummyIStep);
+                }
                 IPsdzIstufenTriple iStufenTriple = programmingService.Psdz.VcmService.GetIStufenTripleActual(psdzConnectionTemp);
                 if (iStufenTriple == null)
                 {
@@ -330,7 +338,15 @@ namespace PsdzClient
                 string bauIStufe = iStufenTriple.Shipment;
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep shipment: {0}", bauIStufe));
 
-                IPsdzConnection psdzConnection = programmingService.Psdz.ConnectionManagerService.ConnectOverEthernet(psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, baureihe, bauIStufe);
+                IPsdzConnection psdzConnection;
+                if (icomConnection)
+                {
+                    psdzConnection = programmingService.Psdz.ConnectionManagerService.ConnectOverIcom(psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, 1000, baureihe, bauIStufe, IcomConnectionType.Ip, false);
+                }
+                else
+                {
+                    psdzConnection = programmingService.Psdz.ConnectionManagerService.ConnectOverEthernet(psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, baureihe, bauIStufe);
+                }
                 _psdzContext.Connection = psdzConnection;
 
                 sbResult.AppendLine("Vehicle connected");
@@ -1097,9 +1113,10 @@ namespace PsdzClient
                 return;
             }
 
-            int port = checkBoxIcom.Checked ? 50160 : 6801;
+            bool icomConnection = checkBoxIcom.Checked;
+            int port = icomConnection ? 50160 : 6801;
             string url = string.Format(CultureInfo.InvariantCulture, "tcp://{0}:{1}", ipAddressControlVehicleIp.Text, port);
-            ConnectVehicleTask(textBoxIstaFolder.Text, url, Baureihe).ContinueWith(task =>
+            ConnectVehicleTask(textBoxIstaFolder.Text, url, icomConnection, Baureihe).ContinueWith(task =>
             {
                 TaskActive = false;
             });
