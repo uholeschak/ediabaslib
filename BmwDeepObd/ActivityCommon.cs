@@ -3786,12 +3786,12 @@ namespace BmwDeepObd
 
             Thread detectThread = new Thread(() =>
             {
-                EdInterfaceEnet edInterface = new EdInterfaceEnet
+                List<EdInterfaceEnet.EnetConnection> detectedVehicles;
+                using (EdInterfaceEnet edInterface = new EdInterfaceEnet { ConnectParameter = new EdInterfaceEnet.ConnectParameterType(_networkData) })
                 {
-                    ConnectParameter = new EdInterfaceEnet.ConnectParameterType(_networkData)
-                };
-                List<EdInterfaceEnet.EnetConnection> detectedVehicles = edInterface.DetectedVehicles("auto:all");
-                edInterface.Dispose();
+                    detectedVehicles = edInterface.DetectedVehicles("auto:all");
+                }
+
                 _activity?.RunOnUiThread(() =>
                 {
                     if (_disposed)
