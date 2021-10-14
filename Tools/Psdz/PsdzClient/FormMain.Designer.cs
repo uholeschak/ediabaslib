@@ -51,6 +51,7 @@ namespace PsdzClient
             this.progressBarEvent = new System.Windows.Forms.ProgressBar();
             this.labelProgressEvent = new System.Windows.Forms.Label();
             this.checkBoxIcom = new System.Windows.Forms.CheckBox();
+            this.buttonVehicleSearch = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // textBoxIstaFolder
@@ -245,6 +246,16 @@ namespace PsdzClient
             this.checkBoxIcom.Text = "ICOM";
             this.checkBoxIcom.UseVisualStyleBackColor = true;
             // 
+            // buttonVehicleSearch
+            // 
+            this.buttonVehicleSearch.Location = new System.Drawing.Point(255, 36);
+            this.buttonVehicleSearch.Name = "buttonVehicleSearch";
+            this.buttonVehicleSearch.Size = new System.Drawing.Size(75, 23);
+            this.buttonVehicleSearch.TabIndex = 18;
+            this.buttonVehicleSearch.Text = "Search";
+            this.buttonVehicleSearch.UseVisualStyleBackColor = true;
+            this.buttonVehicleSearch.Click += new System.EventHandler(this.buttonVehicleSearch_Click);
+            // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
@@ -252,6 +263,7 @@ namespace PsdzClient
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonAbort;
             this.ClientSize = new System.Drawing.Size(810, 450);
+            this.Controls.Add(this.buttonVehicleSearch);
             this.Controls.Add(this.checkBoxIcom);
             this.Controls.Add(this.labelProgressEvent);
             this.Controls.Add(this.progressBarEvent);
@@ -304,6 +316,7 @@ namespace PsdzClient
         private System.Windows.Forms.ProgressBar progressBarEvent;
         private System.Windows.Forms.Label labelProgressEvent;
         private System.Windows.Forms.CheckBox checkBoxIcom;
+        private System.Windows.Forms.Button buttonVehicleSearch;
     }
 }
 

@@ -26,6 +26,7 @@ using BMW.Rheingold.Psdz.Model.Swt;
 using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using BMW.Rheingold.Psdz.Model.Tal.TalStatus;
+using EdiabasLib;
 using PsdzClient.Programming;
 
 namespace PsdzClient
@@ -34,6 +35,7 @@ namespace PsdzClient
     {
         private const string DealerId = "32395";
         private const string Baureihe = "G31";
+        private const string DefaultIp = @"127.0.0.1";
         private ProgrammingService programmingService;
         private bool _taskActive;
         private bool TaskActive
@@ -88,9 +90,12 @@ namespace PsdzClient
                 talPresent = _psdzContext?.Tal != null;
             }
 
+            bool ipEnabled = !active && !vehicleConnected;
+
             textBoxIstaFolder.Enabled = !active && !hostRunning;
-            ipAddressControlVehicleIp.Enabled = !active && !vehicleConnected;
-            checkBoxIcom.Enabled = ipAddressControlVehicleIp.Enabled;
+            ipAddressControlVehicleIp.Enabled = ipEnabled;
+            checkBoxIcom.Enabled = ipEnabled;
+            buttonVehicleSearch.Enabled = ipEnabled;
             buttonStartHost.Enabled = !active && !hostRunning;
             buttonStopHost.Enabled = !active && hostRunning;
             buttonConnect.Enabled = !active && hostRunning && !vehicleConnected;
@@ -111,7 +116,7 @@ namespace PsdzClient
                 checkBoxIcom.Checked = Properties.Settings.Default.IcomConnection;
                 if (string.IsNullOrWhiteSpace(ipAddressControlVehicleIp.Text.Trim('.')))
                 {
-                    ipAddressControlVehicleIp.Text = @"127.0.0.1";
+                    ipAddressControlVehicleIp.Text = DefaultIp;
                     checkBoxIcom.Checked = false;
                 }
             }
@@ -260,6 +265,23 @@ namespace PsdzClient
             }
 
             return true;
+        }
+
+        private async Task<List<EdInterfaceEnet.EnetConnection>> SearchVehiclesTask()
+        {
+            // ReSharper disable once ConvertClosureToMethodGroup
+            return await Task.Run(() => SearchVehicles()).ConfigureAwait(false);
+        }
+
+        private List<EdInterfaceEnet.EnetConnection> SearchVehicles()
+        {
+            List<EdInterfaceEnet.EnetConnection> detectedVehicles;
+            using (EdInterfaceEnet edInterface = new EdInterfaceEnet())
+            {
+                detectedVehicles = edInterface.DetectedVehicles("auto:all");
+            }
+
+            return detectedVehicles;
         }
 
         private async Task<bool> ConnectVehicleTask(string istaFolder, string url, bool icomConnection, string baureihe)
@@ -1170,6 +1192,90 @@ namespace PsdzClient
                 TaskActive = false;
                 _cts.Dispose();
                 _cts = null;
+            });
+
+            TaskActive = true;
+            UpdateDisplay();
+        }
+
+        private void buttonVehicleSearch_Click(object sender, EventArgs e)
+        {
+            bool preferIcom = checkBoxIcom.Checked;
+
+            SearchVehiclesTask().ContinueWith(task =>
+            {
+                TaskActive = false;
+                BeginInvoke((Action)(() =>
+                {
+                    List<EdInterfaceEnet.EnetConnection> detectedVehicles = task.Result;
+                    EdInterfaceEnet.EnetConnection connectionDirect = null;
+                    EdInterfaceEnet.EnetConnection connectionIcom = null;
+                    EdInterfaceEnet.EnetConnection connectionSelected = null;
+                    if (detectedVehicles != null)
+                    {
+                        foreach (EdInterfaceEnet.EnetConnection enetConnection in detectedVehicles)
+                        {
+                            if (connectionSelected == null)
+                            {
+                                connectionSelected = enetConnection;
+                            }
+
+                            switch (enetConnection.ConnectionType)
+                            {
+                                case EdInterfaceEnet.EnetConnection.InterfaceType.Icom:
+                                    if (connectionIcom == null)
+                                    {
+                                        connectionIcom = enetConnection;
+                                    }
+                                    break;
+
+                                default:
+                                    if (connectionDirect == null)
+                                    {
+                                        connectionDirect = enetConnection;
+                                    }
+                                    break;
+                            }
+                        }
+                    }
+
+                    if (preferIcom)
+                    {
+                        if (connectionIcom != null)
+                        {
+                            connectionSelected = connectionIcom;
+                        }
+                    }
+                    else
+                    {
+                        if (connectionDirect != null)
+                        {
+                            connectionSelected = connectionDirect;
+                        }
+                    }
+
+                    bool ipValid = false;
+                    try
+                    {
+                        if (connectionSelected != null)
+                        {
+                            ipAddressControlVehicleIp.Text = connectionSelected.IpAddress.ToString();
+                            checkBoxIcom.Checked = connectionSelected.ConnectionType == EdInterfaceEnet.EnetConnection.InterfaceType.Icom;
+                            ipValid = true;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        ipValid = false;
+                    }
+
+                    if (!ipValid)
+                    {
+                        ipAddressControlVehicleIp.Text = DefaultIp;
+                        checkBoxIcom.Checked = false;
+                    }
+                }));
+
             });
 
             TaskActive = true;

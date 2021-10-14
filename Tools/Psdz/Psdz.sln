@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.31624.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsdzClient", "PsdzClient\PsdzClient.csproj", "{EE741859-CB0F-4130-9F07-5CEC56A982C6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdiabasLib", "..\..\EdiabasLib\EdiabasLib\EdiabasLib.csproj", "{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{EE741859-CB0F-4130-9F07-5CEC56A982C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE741859-CB0F-4130-9F07-5CEC56A982C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE741859-CB0F-4130-9F07-5CEC56A982C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
