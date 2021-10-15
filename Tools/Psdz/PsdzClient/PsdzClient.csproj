@@ -57,6 +57,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\EdiabasLib\BmwFileReader\VehicleInfoBmw.cs">
+      <Link>VehicleInfoBmw.cs</Link>
+    </Compile>
     <Compile Include="Core\AIF.cs" />
     <Compile Include="Core\AuthorAPIAttribute.cs" />
     <Compile Include="Core\ECU.cs" />
@@ -66,6 +69,7 @@
     <Compile Include="Core\typeECU_Transaction.cs" />
     <Compile Include="Core\typeSWTStatus.cs" />
     <Compile Include="Core\typeVehicle.cs" />
+    <Compile Include="DetectVehicle.cs" />
     <Compile Include="Programming\AsamJobInputDictionary.cs" />
     <Compile Include="Programming\BindingDetailsStatus.cs" />
     <Compile Include="Programming\EcuCertCheckingResponse.cs" />

@@ -7,7 +7,9 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using EdiabasLib;
+#if Android
 using ICSharpCode.SharpZipLib.Zip;
+#endif
 
 // ReSharper disable UnusedMemberInSuper.Global
 // ReSharper disable UnusedMember.Global
@@ -1016,8 +1018,9 @@ namespace BmwFileReader
         // ReSharper restore CoVariantArrayConversion
         // ReSharper restore RedundantExplicitArrayCreation
 
+#if Android
         private static Dictionary<string, string> _typeKeyDict;
-
+#endif
         private static bool EcuLogisticsCreated;
 
         public static void CreateEcuLogistics(string resourcePath)
@@ -1037,7 +1040,7 @@ namespace BmwFileReader
             }
 
             EcuLogisticsCreated = true;
-#if DEBUG
+#if Android && DEBUG
             {
                 foreach (EcuLogisticsData ecuLogisticsData in EcuLogisticsList)
                 {
@@ -1163,6 +1166,7 @@ namespace BmwFileReader
             }
         }
 
+#if Android
         public static Dictionary<string, string> GetTypeKeyDict(EdiabasNet ediabas, string databaseDir)
         {
             ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Extract type key dict");
@@ -1225,6 +1229,7 @@ namespace BmwFileReader
                 return null;
             }
         }
+#endif
 
         public static int GetModelYearFromVin(string vin)
         {
@@ -1291,6 +1296,7 @@ namespace BmwFileReader
             return -1;
         }
 
+#if Android
         public static string GetTypeKeyFromVin(string vin, EdiabasNet ediabas, string databaseDir)
         {
             ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Type key from VIN: {0}", vin ?? "No VIN");
@@ -1460,6 +1466,7 @@ namespace BmwFileReader
             ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Vehicle type unknown");
             return null;
         }
+#endif
 
         // from: RheingoldCoreFramework.dll BMW.Rheingold.CoreFramework.DatabaseProvider.FA.ExtractEreihe
         public static string GetVehicleTypeFromBrName(string brName, EdiabasNet ediabas)
