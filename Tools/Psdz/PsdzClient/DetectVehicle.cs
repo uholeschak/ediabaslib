@@ -10,7 +10,7 @@ using EdiabasLib;
 
 namespace PsdzClient
 {
-    class DetectVehicle : IDisposable
+    public class DetectVehicle : IDisposable
     {
         private readonly Regex _vinRegex = new Regex(@"^(?!0{7,})([a-zA-Z0-9]{7,})$");
         private static readonly Tuple<string, string, string>[] ReadVinJobsBmwFast =
@@ -32,14 +32,15 @@ namespace PsdzClient
         private bool _disposed;
         private EdiabasNet _ediabas;
 
-        public DetectVehicle(string ecuPath, string remoteHost)
+        public DetectVehicle(string ecuPath, EdInterfaceEnet.EnetConnection enetConnection = null)
         {
             EdInterfaceEnet edInterfaceEnet = new EdInterfaceEnet();
-            string hostAddress = remoteHost;
-            if (string.IsNullOrEmpty(hostAddress))
+            string hostAddress = "auto:all";
+            if (enetConnection != null)
             {
-                hostAddress = "auto:all";
+                hostAddress = enetConnection.ToString();
             }
+
             edInterfaceEnet.RemoteHost = hostAddress;
             edInterfaceEnet.IcomAllocate = true;
 

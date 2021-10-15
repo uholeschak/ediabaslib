@@ -13,7 +13,7 @@ using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 
 namespace PsdzClient.Programming
 {
-	public class PsdzContext : IPsdzContext
+	public class PsdzContext : IPsdzContext, IDisposable
 	{
 		public PsdzContext(string istaFolder)
         {
@@ -159,6 +159,8 @@ namespace PsdzClient.Programming
 
         public IPsdzConnection Connection { get; set; }
 
+        public DetectVehicle DetectVehicle { get; set; }
+        
         public IEnumerable<IPsdzEcuIdentifier> EcuListActual { get; set; }
 
         public IDictionary<string, IList<string>> ExecutionOrderBottom { get; private set; }
@@ -289,8 +291,44 @@ namespace PsdzClient.Programming
 			this.TalFilterForIndividualDataTal = talFilterForIndividualDataTal;
 		}
 
+        private bool _disposed;
 		private bool hasVinBackupDataFolder;
 
 		private IEnumerable<IPsdzIstufe> possibleIstufenTarget;
+
+        public void Dispose()
+        {
+            Dispose(true);
+            // This object will be cleaned up by the Dispose method.
+            // Therefore, you should call GC.SupressFinalize to
+            // take this object off the finalization queue
+            // and prevent finalization code for this object
+            // from executing a second time.
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            // Check to see if Dispose has already been called.
+            if (!_disposed)
+            {
+                CleanupBackupData();
+                if (DetectVehicle != null)
+                {
+                    DetectVehicle.Dispose();
+                    DetectVehicle = null;
+                }
+
+                // If disposing equals true, dispose all managed
+                // and unmanaged resources.
+                if (disposing)
+                {
+                }
+
+                // Note disposing has been done.
+                _disposed = true;
+            }
+        }
+
 	}
 }
