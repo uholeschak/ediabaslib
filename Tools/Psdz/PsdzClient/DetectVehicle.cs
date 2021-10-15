@@ -125,7 +125,6 @@ namespace PsdzClient
                     try
                     {
                         bool readFa = string.Compare(job.Item2, "C_FA_LESEN", StringComparison.OrdinalIgnoreCase) == 0;
-                        int localIndex = index;
 
                         _ediabas.ResolveSgbdFile(job.Item1);
 
@@ -223,6 +222,7 @@ namespace PsdzClient
                 {
                     detectCDate = cDate.Value.ToString("yyyy-MM", CultureInfo.InvariantCulture);
                 }
+
                 string groupSgbd = VehicleInfoBmw.GetGroupSgbdFromVehicleType(vehicleType, detectedVin, cDate, _ediabas);
                 if (string.IsNullOrEmpty(groupSgbd))
                 {

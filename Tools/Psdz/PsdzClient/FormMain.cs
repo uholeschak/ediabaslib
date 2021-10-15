@@ -35,7 +35,6 @@ namespace PsdzClient
     public partial class FormMain : Form
     {
         private const string DealerId = "32395";
-        private const string Baureihe = "G31";
         private const string DefaultIp = @"127.0.0.1";
         private ProgrammingService programmingService;
         private bool _taskActive;
@@ -285,21 +284,21 @@ namespace PsdzClient
             return detectedVehicles;
         }
 
-        private async Task<bool> ConnectVehicleTask(string istaFolder, string ipAddress, bool icomConnection, string baureihe)
+        private async Task<bool> ConnectVehicleTask(string istaFolder, string ipAddress, bool icomConnection)
         {
             // ReSharper disable once ConvertClosureToMethodGroup
-            return await Task.Run(() => ConnectVehicle(istaFolder, ipAddress, icomConnection, baureihe)).ConfigureAwait(false);
+            return await Task.Run(() => ConnectVehicle(istaFolder, ipAddress, icomConnection)).ConfigureAwait(false);
         }
 
-        private bool ConnectVehicle(string istaFolder, string ipAddress, bool icomConnection, string baureihe)
+        private bool ConnectVehicle(string istaFolder, string ipAddress, bool icomConnection)
         {
             StringBuilder sbResult = new StringBuilder();
 
             try
             {
                 sbResult.AppendLine("Connecting vehicle ...");
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ip={0}, ICOM={1}, Series={2}",
-                    ipAddress, icomConnection, baureihe));
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ip={0}, ICOM={1}",
+                    ipAddress, icomConnection));
                 UpdateStatus(sbResult.ToString());
 
                 if (programmingService == null)
@@ -312,19 +311,38 @@ namespace PsdzClient
                     return false;
                 }
 
+                sbResult.AppendLine("Detecting vehicle ...");
+                UpdateStatus(sbResult.ToString());
+
                 string ecuPath = Path.Combine(istaFolder, @"Ecu");
                 int diagPort = icomConnection ? 50160 : 6801;
                 int controlPort = icomConnection ? 50161 : 6811;
                 EdInterfaceEnet.EnetConnection.InterfaceType interfaceType =
-                    icomConnection
-                        ? EdInterfaceEnet.EnetConnection.InterfaceType.Icom
-                        : EdInterfaceEnet.EnetConnection.InterfaceType.Direct;
-                EdInterfaceEnet.EnetConnection enetConnection =
-                    new EdInterfaceEnet.EnetConnection(interfaceType, IPAddress.Parse(ipAddress), diagPort,
-                        controlPort);
+                    icomConnection ? EdInterfaceEnet.EnetConnection.InterfaceType.Icom : EdInterfaceEnet.EnetConnection.InterfaceType.Direct;
+                EdInterfaceEnet.EnetConnection enetConnection = new EdInterfaceEnet.EnetConnection(interfaceType, IPAddress.Parse(ipAddress), diagPort, controlPort);
                 _psdzContext.DetectVehicle = new DetectVehicle(ecuPath, enetConnection);
+                string groupSgbd = _psdzContext.DetectVehicle.DetectVehicleBmwFast(out string detectedVin, out string detectedVehicleType, out string detectCDate);
+                if (groupSgbd == null)
+                {
+                    sbResult.AppendLine("Vehicle detection failed");
+                    UpdateStatus(sbResult.ToString());
+                    return false;
+                }
 
-                string mainSeries = programmingService.Psdz.ConfigurationService.RequestBaureihenverbund(baureihe);
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture,
+                    "Detected vehicle: VIN={0}, Series={1}, BuildDate={2}, GroupFile={3}",
+                        detectedVin ?? string.Empty, detectedVehicleType ?? string.Empty, detectCDate ?? string.Empty, groupSgbd ?? string.Empty));
+                UpdateStatus(sbResult.ToString());
+
+                string series = detectedVehicleType;
+                if (string.IsNullOrEmpty(series))
+                {
+                    sbResult.AppendLine("Vehicle series not detected");
+                    UpdateStatus(sbResult.ToString());
+                    return false;
+                }
+
+                string mainSeries = programmingService.Psdz.ConfigurationService.RequestBaureihenverbund(series);
                 IEnumerable<IPsdzTargetSelector> targetSelectors =
                     programmingService.Psdz.ConnectionFactoryService.GetTargetSelectors();
                 _psdzContext.TargetSelectors = targetSelectors;
@@ -362,13 +380,13 @@ namespace PsdzClient
                 if (icomConnection)
                 {
                     psdzConnectionTemp = programmingService.Psdz.ConnectionManagerService.ConnectOverIcom(
-                        psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, 1000, baureihe,
+                        psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, 1000, series,
                         dummyIStep, IcomConnectionType.Ip, false);
                 }
                 else
                 {
                     psdzConnectionTemp = programmingService.Psdz.ConnectionManagerService.ConnectOverEthernet(
-                        psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, baureihe,
+                        psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, series,
                         dummyIStep);
                 }
 
@@ -389,13 +407,13 @@ namespace PsdzClient
                 if (icomConnection)
                 {
                     psdzConnection = programmingService.Psdz.ConnectionManagerService.ConnectOverIcom(
-                        psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, 1000, baureihe,
+                        psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, 1000, series,
                         bauIStufe, IcomConnectionType.Ip, false);
                 }
                 else
                 {
                     psdzConnection = programmingService.Psdz.ConnectionManagerService.ConnectOverEthernet(
-                        psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, baureihe,
+                        psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, series,
                         bauIStufe);
                 }
 
@@ -1177,7 +1195,7 @@ namespace PsdzClient
             }
 
             bool icomConnection = checkBoxIcom.Checked;
-            ConnectVehicleTask(textBoxIstaFolder.Text, ipAddressControlVehicleIp.Text, icomConnection, Baureihe).ContinueWith(task =>
+            ConnectVehicleTask(textBoxIstaFolder.Text, ipAddressControlVehicleIp.Text, icomConnection).ContinueWith(task =>
             {
                 TaskActive = false;
             });
