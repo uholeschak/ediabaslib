@@ -35,21 +35,20 @@ namespace PsdzClient
         public DetectVehicle(string ecuPath, EdInterfaceEnet.EnetConnection enetConnection = null)
         {
             EdInterfaceEnet edInterfaceEnet = new EdInterfaceEnet();
-            string hostAddress = "auto:all";
-            if (enetConnection != null)
-            {
-                hostAddress = enetConnection.ToString();
-            }
-
-            edInterfaceEnet.RemoteHost = hostAddress;
-            edInterfaceEnet.IcomAllocate = true;
-
             _ediabas = new EdiabasNet
             {
                 EdInterfaceClass = edInterfaceEnet,
                 AbortJobFunc = AbortEdiabasJob
             };
             _ediabas.SetConfigProperty("EcuPath", ecuPath);
+
+            string hostAddress = "auto:all";
+            if (enetConnection != null)
+            {
+                hostAddress = enetConnection.ToString();
+            }
+            edInterfaceEnet.RemoteHost = hostAddress;
+            edInterfaceEnet.IcomAllocate = true;
         }
 
         public string DetectVehicleBmwFast(out string detectedVin, out string detectedVehicleType, out string detectCDate)
