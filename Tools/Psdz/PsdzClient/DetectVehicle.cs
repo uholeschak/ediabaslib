@@ -42,13 +42,15 @@ namespace PsdzClient
             };
             _ediabas.SetConfigProperty("EcuPath", ecuPath);
 
+            bool icomAllocate = false;
             string hostAddress = "auto:all";
             if (enetConnection != null)
             {
+                icomAllocate = enetConnection.ConnectionType == EdInterfaceEnet.EnetConnection.InterfaceType.Icom;
                 hostAddress = enetConnection.ToString();
             }
             edInterfaceEnet.RemoteHost = hostAddress;
-            edInterfaceEnet.IcomAllocate = true;
+            edInterfaceEnet.IcomAllocate = icomAllocate;
         }
 
         public string DetectVehicleBmwFast(out string detectedVin, out string detectedVehicleType, out string detectCDate)
