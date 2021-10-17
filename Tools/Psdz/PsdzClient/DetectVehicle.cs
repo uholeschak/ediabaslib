@@ -20,6 +20,7 @@ namespace PsdzClient
             new Tuple<string, string, string>("G_CAS", "STATUS_FAHRGESTELLNUMMER", "STAT_FGNR17_WERT"),
             new Tuple<string, string, string>("D_CAS", "STATUS_FAHRGESTELLNUMMER", "FGNUMMER"),
         };
+
         private static readonly Tuple<string, string, string>[] ReadIdentJobsBmwFast =
         {
             new Tuple<string, string, string>("G_ZGW", "STATUS_VCM_GET_FA", "STAT_BAUREIHE"),
@@ -29,6 +30,13 @@ namespace PsdzClient
             new Tuple<string, string, string>("D_KBM", "C_FA_LESEN", "FAHRZEUGAUFTRAG"),
         };
 
+        private static readonly Tuple<string, string>[] ReadILevelJobsBmwFast =
+        {
+            new Tuple<string, string>("G_ZGW", "STATUS_I_STUFE_LESEN_MIT_SIGNATUR"),
+            new Tuple<string, string>("G_ZGW", "STATUS_VCM_I_STUFE_LESEN"),
+            new Tuple<string, string>("G_FRM", "STATUS_VCM_I_STUFE_LESEN"),
+        };
+
         private bool _disposed;
         private EdiabasNet _ediabas;
 
@@ -36,6 +44,9 @@ namespace PsdzClient
         public string GroupSgdb { get; private set; }
         public string Series { get; private set; }
         public string ConstructDate { get; private set; }
+        public string ILevelShip { get; private set; }
+        public string ILevelCurrent { get; private set; }
+        public string ILevelBackup { get; private set; }
 
         public DetectVehicle(string ecuPath, EdInterfaceEnet.EnetConnection enetConnection = null)
         {
@@ -70,7 +81,6 @@ namespace PsdzClient
                 List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
 
                 string detectedVin = null;
-                int index = 0;
                 foreach (Tuple<string, string, string> job in ReadVinJobsBmwFast)
                 {
                     try
@@ -109,7 +119,6 @@ namespace PsdzClient
                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No VIN response");
                         // ignored
                     }
-                    index++;
                 }
 
                 if (string.IsNullOrEmpty(detectedVin))
@@ -127,7 +136,6 @@ namespace PsdzClient
                     if (invalidSgbdSet.Contains(job.Item1))
                     {
                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Job ignored: {0}", job.Item1);
-                        index++;
                         continue;
                     }
                     try
@@ -222,7 +230,6 @@ namespace PsdzClient
                         _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "No BR response");
                         // ignored
                     }
-                    index++;
                 }
 
                 Series = vehicleType;
@@ -240,6 +247,98 @@ namespace PsdzClient
                 }
                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Group SGBD: {0}", groupSgbd);
                 GroupSgdb = groupSgbd;
+
+                string iLevelShip = null;
+                string iLevelCurrent = null;
+                string iLevelBackup = null;
+                foreach (Tuple<string, string> job in ReadILevelJobsBmwFast)
+                {
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read ILevel job: {0},{1}", job.Item1, job.Item2);
+                    if (invalidSgbdSet.Contains(job.Item1))
+                    {
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Job ignored: {0}", job.Item1);
+                        continue;
+                    }
+                    try
+                    {
+                        _ediabas.ResolveSgbdFile(job.Item1);
+
+                        _ediabas.ArgString = string.Empty;
+                        _ediabas.ArgBinaryStd = null;
+                        _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.ExecuteJob(job.Item2);
+
+                        resultSets = _ediabas.ResultSets;
+                        if (resultSets != null && resultSets.Count >= 2)
+                        {
+                            if (detectedVin == null)
+                            {
+                                detectedVin = string.Empty;
+                            }
+
+                            Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
+                            if (resultDict.TryGetValue("STAT_I_STUFE_WERK", out EdiabasNet.ResultData resultData))
+                            {
+                                string iLevel = resultData.OpData as string;
+                                if (!string.IsNullOrEmpty(iLevel) && iLevel.Length >= 4 &&
+                                    string.Compare(iLevel, VehicleInfoBmw.ResultUnknown, StringComparison.OrdinalIgnoreCase) != 0)
+                                {
+                                    iLevelShip = iLevel;
+                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected ILevel ship: {0}", iLevelShip);
+                                }
+                            }
+
+                            if (!string.IsNullOrEmpty(iLevelShip))
+                            {
+                                if (resultDict.TryGetValue("STAT_I_STUFE_HO", out resultData))
+                                {
+                                    string iLevel = resultData.OpData as string;
+                                    if (!string.IsNullOrEmpty(iLevel) && iLevel.Length >= 4 &&
+                                        string.Compare(iLevel, VehicleInfoBmw.ResultUnknown, StringComparison.OrdinalIgnoreCase) != 0)
+                                    {
+                                        iLevelCurrent = iLevel;
+                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected ILevel current: {0}", iLevelCurrent);
+                                    }
+                                }
+
+                                if (string.IsNullOrEmpty(iLevelCurrent))
+                                {
+                                    iLevelCurrent = iLevelShip;
+                                }
+
+                                if (resultDict.TryGetValue("STAT_I_STUFE_HO_BACKUP", out resultData))
+                                {
+                                    string iLevel = resultData.OpData as string;
+                                    if (!string.IsNullOrEmpty(iLevel) && iLevel.Length >= 4 &&
+                                        string.Compare(iLevel, VehicleInfoBmw.ResultUnknown, StringComparison.OrdinalIgnoreCase) != 0)
+                                    {
+                                        iLevelBackup = iLevel;
+                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected ILevel backup: {0}", iLevelBackup);
+                                    }
+                                }
+
+                                break;
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "No ILevel response");
+                        // ignored
+                    }
+                }
+
+                if (string.IsNullOrEmpty(iLevelShip))
+                {
+                    _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "ILevel not found");
+                    return false;
+                }
+
+                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ILevel: Ship={0}, Current={1}, Backup={2}", iLevelShip, iLevelCurrent, iLevelBackup);
+
+                ILevelShip = iLevelShip;
+                ILevelCurrent = iLevelCurrent;
+                ILevelBackup = iLevelBackup;
 
                 return true;
             }
