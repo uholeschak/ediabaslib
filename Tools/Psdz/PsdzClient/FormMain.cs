@@ -321,8 +321,7 @@ namespace PsdzClient
                     icomConnection ? EdInterfaceEnet.EnetConnection.InterfaceType.Icom : EdInterfaceEnet.EnetConnection.InterfaceType.Direct;
                 EdInterfaceEnet.EnetConnection enetConnection = new EdInterfaceEnet.EnetConnection(interfaceType, IPAddress.Parse(ipAddress), diagPort, controlPort);
                 _psdzContext.DetectVehicle = new DetectVehicle(ecuPath, enetConnection);
-                string groupSgbd = _psdzContext.DetectVehicle.DetectVehicleBmwFast(out string detectedVin, out string detectedVehicleType, out string detectCDate);
-                if (groupSgbd == null)
+                if (!_psdzContext.DetectVehicle.DetectVehicleBmwFast())
                 {
                     sbResult.AppendLine("Vehicle detection failed");
                     UpdateStatus(sbResult.ToString());
@@ -330,11 +329,12 @@ namespace PsdzClient
                 }
 
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture,
-                    "Detected vehicle: VIN={0}, Series={1}, BuildDate={2}, GroupFile={3}",
-                        detectedVin ?? string.Empty, detectedVehicleType ?? string.Empty, detectCDate ?? string.Empty, groupSgbd ?? string.Empty));
+                    "Detected vehicle: VIN={0}, GroupFile={1}, Series={2}, BuildDate={3}",
+                    _psdzContext.DetectVehicle.Vin ?? string.Empty, _psdzContext.DetectVehicle.GroupSgdb ?? string.Empty,
+                    _psdzContext.DetectVehicle.Series ?? string.Empty, _psdzContext.DetectVehicle.ConstructDate ?? string.Empty));
                 UpdateStatus(sbResult.ToString());
 
-                string series = detectedVehicleType;
+                string series = _psdzContext.DetectVehicle.Series;
                 if (string.IsNullOrEmpty(series))
                 {
                     sbResult.AppendLine("Vehicle series not detected");

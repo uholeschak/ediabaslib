@@ -32,6 +32,11 @@ namespace PsdzClient
         private bool _disposed;
         private EdiabasNet _ediabas;
 
+        public string Vin { get; private set; }
+        public string GroupSgdb { get; private set; }
+        public string Series { get; private set; }
+        public string ConstructDate { get; private set; }
+
         public DetectVehicle(string ecuPath, EdInterfaceEnet.EnetConnection enetConnection = null)
         {
             EdInterfaceEnet edInterfaceEnet = new EdInterfaceEnet();
@@ -51,20 +56,20 @@ namespace PsdzClient
             }
             edInterfaceEnet.RemoteHost = hostAddress;
             edInterfaceEnet.IcomAllocate = icomAllocate;
+
+            ResetValues();
         }
 
-        public string DetectVehicleBmwFast(out string detectedVin, out string detectedVehicleType, out string detectCDate)
+        public bool DetectVehicleBmwFast()
         {
-            detectedVin = null;
-            detectedVehicleType = null;
-            detectCDate = null;
+            ResetValues();
             HashSet<string> invalidSgbdSet = new HashSet<string>();
 
             try
             {
                 List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
 
-                int jobCount = ReadIdentJobsBmwFast.Length;
+                string detectedVin = null;
                 int index = 0;
                 foreach (Tuple<string, string, string> job in ReadVinJobsBmwFast)
                 {
@@ -109,8 +114,10 @@ namespace PsdzClient
 
                 if (string.IsNullOrEmpty(detectedVin))
                 {
-                    return null;
+                    return false;
                 }
+
+                Vin = detectedVin;
                 string vehicleType = null;
                 DateTime? cDate = null;
 
@@ -218,30 +225,41 @@ namespace PsdzClient
                     index++;
                 }
 
-                detectedVehicleType = vehicleType;
+                Series = vehicleType;
+
                 if (cDate.HasValue)
                 {
-                    detectCDate = cDate.Value.ToString("yyyy-MM", CultureInfo.InvariantCulture);
+                    ConstructDate = cDate.Value.ToString("yyyy-MM", CultureInfo.InvariantCulture);
                 }
 
                 string groupSgbd = VehicleInfoBmw.GetGroupSgbdFromVehicleType(vehicleType, detectedVin, cDate, _ediabas);
                 if (string.IsNullOrEmpty(groupSgbd))
                 {
                     _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "No group SGBD found");
-                    return null;
+                    return false;
                 }
                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Group SGBD: {0}", groupSgbd);
-                return groupSgbd;
+                GroupSgdb = groupSgbd;
+
+                return true;
             }
             catch (Exception)
             {
-                return null;
+                return false;
             }
         }
 
         private bool AbortEdiabasJob()
         {
             return false;
+        }
+
+        private void ResetValues()
+        {
+            Vin = null;
+            GroupSgdb = null;
+            Series = null;
+            ConstructDate = null;
         }
 
         public void Dispose()
