@@ -1251,6 +1251,11 @@ namespace PsdzClient
                     {
                         foreach (EdInterfaceEnet.EnetConnection enetConnection in detectedVehicles)
                         {
+                            if (enetConnection.IpAddress.ToString().StartsWith("192.168.11."))
+                            {   // ICOM vehicle IP
+                                continue;
+                            }
+
                             if (connectionSelected == null)
                             {
                                 connectionSelected = enetConnection;
