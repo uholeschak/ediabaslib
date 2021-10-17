@@ -3219,7 +3219,7 @@ namespace BmwDeepObd
                                 {
                                     string detectedType = resultData.OpData as string;
                                     if (!string.IsNullOrEmpty(vehicleType) &&
-                                        string.Compare(vehicleType, "UNBEK", StringComparison.OrdinalIgnoreCase) != 0)
+                                        string.Compare(vehicleType, VehicleInfoBmw.ResultUnknown, StringComparison.OrdinalIgnoreCase) != 0)
                                     {
                                         vehicleType = detectedType;
                                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected Vehicle type: {0}", vehicleType);
