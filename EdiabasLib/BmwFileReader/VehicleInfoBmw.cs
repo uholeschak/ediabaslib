@@ -1015,6 +1015,8 @@ namespace BmwFileReader
             EcuLogisticsDataR50,
         });
 
+        public const string ResultUnknown = "UNBEK";
+
         // ReSharper restore CoVariantArrayConversion
         // ReSharper restore RedundantExplicitArrayCreation
 
@@ -1476,7 +1478,7 @@ namespace BmwFileReader
             {
                 return null;
             }
-            if (string.Compare(brName, "UNBEK", StringComparison.OrdinalIgnoreCase) == 0)
+            if (string.Compare(brName, ResultUnknown, StringComparison.OrdinalIgnoreCase) == 0)
             {
                 return null;
             }
