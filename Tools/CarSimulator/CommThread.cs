@@ -309,6 +309,7 @@ namespace CarSimulator
         private UdpClient _udpClient;
         private bool _udpError;
         private UdpClient _srvLocClient;
+        private IcomDhcpServer _icomDhcpServer;
         private bool _srvLocError;
         private bool _icomUp;
         private int _icomIdentBroadcastCount;
@@ -347,7 +348,8 @@ namespace CarSimulator
 
         private const string TestMac = "D8182B890A8B";
         private const string TestVin = "WBAJM71000B055940";
-        private const string IcomAddress = "192.168.11.1";
+        private const string IcomVehicleAddress = "192.168.11.1";
+        private const string IcomDhcpAddress = "192.168.201.1";
 
         private const double FilterConst = 0.95;
         private const int IsoTimeout = 2000;
@@ -735,6 +737,8 @@ namespace CarSimulator
             {
                 UpdateIcomStatus();
             };
+
+            _icomDhcpServer = new IcomDhcpServer(IPAddress.Parse(IcomDhcpAddress), IPAddress.Parse("255.255.255.0"));
         }
 
         public bool StartThread(string comPort, ConceptType conceptType, bool adsAdapter, bool klineResponder, ResponseType responseType, ConfigData configData, bool testMode = false)
@@ -1876,7 +1880,7 @@ namespace CarSimulator
                 {
                     if (_timeIcomIdentBroadcast.ElapsedMilliseconds > 500)
                     {
-                        IPAddress ipIcomBroadcast = GetLocalIpAddress(IPAddress.Parse(IcomAddress), true, out _, out _);
+                        IPAddress ipIcomBroadcast = GetLocalIpAddress(IPAddress.Parse(IcomVehicleAddress), true, out _, out _);
                         if (!SendIdentMessage(new IPEndPoint(ipIcomBroadcast, 7811), EnetControlPort))
                         {
                             _icomIdentBroadcastCount = 0;
@@ -1901,7 +1905,34 @@ namespace CarSimulator
                     return;
                 }
 
-                IPAddress ipIcom = IPAddress.Parse(IcomAddress);
+                try
+                {
+                    IPAddress ipIcomDhcp = IPAddress.Parse(IcomDhcpAddress);
+                    IPAddress ipIcomDhcpLocal = GetLocalIpAddress(ipIcomDhcp, false, out _, out _);
+                    bool isDhcpUp = ipIcomDhcpLocal != null;
+                    if (isDhcpUp)
+                    {
+                        Debug.WriteLine("ICOM DHCP is up");
+                        if (!_icomDhcpServer.IsRunning)
+                        {
+                            _icomDhcpServer.Start();
+                        }
+                    }
+                    else
+                    {
+                        Debug.WriteLine("ICOM DHCP is down");
+                        if (_icomDhcpServer.IsRunning)
+                        {
+                            _icomDhcpServer.Stop();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("DHCP Server exception: {0}", ex.Message);
+                }
+
+                IPAddress ipIcom = IPAddress.Parse(IcomVehicleAddress);
                 IPAddress ipIcomLocal = GetLocalIpAddress(ipIcom, false, out _, out _);
                 IPAddress ipIcomBroadcast = GetLocalIpAddress(ipIcom, true, out _, out _);
                 bool isUp = false;
@@ -4794,7 +4825,7 @@ namespace CarSimulator
             {   // get IP configuration
                 Debug.WriteLine("Get IP configuration");
 
-                IPAddress ipIcom = IPAddress.Parse(IcomAddress);
+                IPAddress ipIcom = IPAddress.Parse(IcomVehicleAddress);
                 IPAddress ipIcomLocal = GetLocalIpAddress(ipIcom, false, out _, out byte[] networkMask);
                 byte[] ipLocalBytes = ipIcomLocal?.GetAddressBytes();
 
