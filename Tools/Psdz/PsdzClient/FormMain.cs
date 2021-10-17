@@ -332,6 +332,10 @@ namespace PsdzClient
                     "Detected vehicle: VIN={0}, GroupFile={1}, Series={2}, BuildDate={3}",
                     _psdzContext.DetectVehicle.Vin ?? string.Empty, _psdzContext.DetectVehicle.GroupSgdb ?? string.Empty,
                     _psdzContext.DetectVehicle.Series ?? string.Empty, _psdzContext.DetectVehicle.ConstructDate ?? string.Empty));
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture,
+                    "Detected ILevel: Ship={0}, Current={1}, Backup={2}",
+                    _psdzContext.DetectVehicle.ILevelShip ?? string.Empty, _psdzContext.DetectVehicle.ILevelCurrent ?? string.Empty,
+                    _psdzContext.DetectVehicle.ILevelBackup ?? string.Empty));
                 UpdateStatus(sbResult.ToString());
 
                 string series = _psdzContext.DetectVehicle.Series;
@@ -364,45 +368,10 @@ namespace PsdzClient
                     psdzTargetSelectorNewest.Baureihenverbund));
                 UpdateStatus(sbResult.ToString());
 
-                string[] selectorParts = psdzTargetSelectorNewest.Project.Split('_');
-                if (selectorParts.Length < 4)
-                {
-                    sbResult.AppendLine("Target selector not valid");
-                    UpdateStatus(sbResult.ToString());
-                    return false;
-                }
-
-                string dummyIStep = string.Join("-", selectorParts, 0, 4);
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Dummy IStep: {0}", dummyIStep));
-
-                string url = string.Format(CultureInfo.InvariantCulture, "tcp://{0}:{1}", ipAddress, diagPort);
-                IPsdzConnection psdzConnectionTemp;
-                if (icomConnection)
-                {
-                    psdzConnectionTemp = programmingService.Psdz.ConnectionManagerService.ConnectOverIcom(
-                        psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, 1000, series,
-                        dummyIStep, IcomConnectionType.Ip, false);
-                }
-                else
-                {
-                    psdzConnectionTemp = programmingService.Psdz.ConnectionManagerService.ConnectOverEthernet(
-                        psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, series,
-                        dummyIStep);
-                }
-
-                IPsdzIstufenTriple iStufenTriple =
-                    programmingService.Psdz.VcmService.GetIStufenTripleActual(psdzConnectionTemp);
-                if (iStufenTriple == null)
-                {
-                    sbResult.AppendLine("Unable to read IStep triple");
-                    UpdateStatus(sbResult.ToString());
-                    return false;
-                }
-
-                programmingService.Psdz.ConnectionManagerService.CloseConnection(psdzConnectionTemp);
-                string bauIStufe = iStufenTriple.Shipment;
+                string bauIStufe = _psdzContext.DetectVehicle.ILevelShip;
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep shipment: {0}", bauIStufe));
 
+                string url = string.Format(CultureInfo.InvariantCulture, "tcp://{0}:{1}", ipAddress, diagPort);
                 IPsdzConnection psdzConnection;
                 if (icomConnection)
                 {
