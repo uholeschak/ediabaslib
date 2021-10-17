@@ -38,14 +38,21 @@ namespace CarSimulator
                 ipBytesRemote[i] &= maskBytes[i];
             }
 
-            for (int i = 1; i < 254; i++)
+            if (maskBytes[maskBytes.Length - 1] == 0x00)
             {
-                ipBytesRemote[ipBytesRemote.Length - 1] = (byte)i;
-                IPAddress ipAddress = new IPAddress(ipBytesRemote);
-                if (!ipAddress.Equals(listeningAddress))
+                for (int i = 0x01; i < 0xFE; i++)
                 {
-                    _availableIpAddresses.Add(ipAddress);
+                    ipBytesRemote[ipBytesRemote.Length - 1] = (byte)i;
+                    IPAddress ipAddress = new IPAddress(ipBytesRemote);
+                    if (!ipAddress.Equals(listeningAddress))
+                    {
+                        _availableIpAddresses.Add(ipAddress);
+                    }
                 }
+            }
+            else
+            {
+                Debug.WriteLine("Address mask invalid");
             }
         }
 
@@ -97,6 +104,7 @@ namespace CarSimulator
                         return null;
                     }
 
+                    Debug.WriteLine("Added new client IP: {0} / {1}", mac, ip);
                     _clientMap[mac] = ip;
                 }
             }
@@ -113,7 +121,9 @@ namespace CarSimulator
             var mac = message.ClientMacAddress;
 
             if (ip == null)
+            {
                 return DhcpRequestResult.CreateNoAcknowledgement(message, "No requested IP address provided");
+            }
 
             bool found = false;
             lock (_syncRoot)
@@ -177,12 +187,12 @@ namespace CarSimulator
 
         protected override void OnMessageError(Exception ex)
         {
-            Debug.WriteLine("Bad message received.", ex.Message);
+            Debug.WriteLine("Bad message received: {0}", (object) ex.Message);
         }
 
         protected override void OnSocketError(SocketException ex)
         {
-            Debug.WriteLine("Socket error {0}", ex.Message);
+            Debug.WriteLine("Socket error: {0}", (object) ex.Message);
             Disconnected.Invoke();
         }
 

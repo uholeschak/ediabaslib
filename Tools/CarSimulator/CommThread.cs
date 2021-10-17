@@ -737,8 +737,6 @@ namespace CarSimulator
             {
                 UpdateIcomStatus();
             };
-
-            _icomDhcpServer = new IcomDhcpServer(IPAddress.Parse(IcomDhcpAddress), IPAddress.Parse("255.255.255.0"));
         }
 
         public bool StartThread(string comPort, ConceptType conceptType, bool adsAdapter, bool klineResponder, ResponseType responseType, ConfigData configData, bool testMode = false)
@@ -1908,11 +1906,15 @@ namespace CarSimulator
                 try
                 {
                     IPAddress ipIcomDhcp = IPAddress.Parse(IcomDhcpAddress);
-                    IPAddress ipIcomDhcpLocal = GetLocalIpAddress(ipIcomDhcp, false, out _, out _);
-                    bool isDhcpUp = ipIcomDhcpLocal != null;
+                    IPAddress ipIcomDhcpLocal = GetLocalIpAddress(ipIcomDhcp, false, out _, out byte[] networkMaskIcomDhcp);
+                    bool isDhcpUp = ipIcomDhcpLocal != null && networkMaskIcomDhcp != null;
                     if (isDhcpUp)
                     {
                         Debug.WriteLine("ICOM DHCP is up");
+                        if (_icomDhcpServer == null)
+                        {
+                            _icomDhcpServer = new IcomDhcpServer(ipIcomDhcpLocal, new IPAddress(networkMaskIcomDhcp));
+                        }
                         if (!_icomDhcpServer.IsRunning)
                         {
                             _icomDhcpServer.Start();
