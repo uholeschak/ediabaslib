@@ -45,6 +45,9 @@
     <Reference Include="SimpleWifi, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\SimpleWifi.1.0.0.0\lib\net40\SimpleWifi.dll</HintPath>
     </Reference>
+    <Reference Include="Singulink.Net.Dhcp, Version=1.0.2.1, Culture=neutral, PublicKeyToken=824341486690b098, processorArchitecture=MSIL">
+      <HintPath>packages\Singulink.Net.Dhcp.1.0.2.1\lib\netstandard2.0\Singulink.Net.Dhcp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
@@ -84,6 +87,7 @@
     </Compile>
     <Compile Include="CommThread.cs" />
     <Compile Include="DeviceTest.cs" />
+    <Compile Include="IcomDhcpServer.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
