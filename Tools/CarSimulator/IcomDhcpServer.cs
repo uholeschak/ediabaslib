@@ -29,10 +29,23 @@ namespace CarSimulator
         {
             _clientMap = new Dictionary<PhysicalAddress, IPAddress>();
             _availableIpAddresses = new List<IPAddress>();
-            for (int i = 2; i < 200; i++)
+
+            byte[] ipBytesRemote = listeningAddress.GetAddressBytes();
+            byte[] maskBytes = subnetMask.GetAddressBytes();
+
+            for (int i = 0; i < ipBytesRemote.Length; i++)
             {
-                IPAddress ipAddress = IPAddress.Parse(string.Format(CultureInfo.InvariantCulture, "192.168.11.{0}", i));
-                _availableIpAddresses.Add(ipAddress);
+                ipBytesRemote[i] &= maskBytes[i];
+            }
+
+            for (int i = 1; i < 254; i++)
+            {
+                ipBytesRemote[ipBytesRemote.Length - 1] = (byte)i;
+                IPAddress ipAddress = new IPAddress(ipBytesRemote);
+                if (!ipAddress.Equals(listeningAddress))
+                {
+                    _availableIpAddresses.Add(ipAddress);
+                }
             }
         }
 
