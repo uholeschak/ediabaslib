@@ -319,7 +319,17 @@ namespace PsdzClient
                 int controlPort = icomConnection ? 50161 : 6811;
                 EdInterfaceEnet.EnetConnection.InterfaceType interfaceType =
                     icomConnection ? EdInterfaceEnet.EnetConnection.InterfaceType.Icom : EdInterfaceEnet.EnetConnection.InterfaceType.Direct;
-                EdInterfaceEnet.EnetConnection enetConnection = new EdInterfaceEnet.EnetConnection(interfaceType, IPAddress.Parse(ipAddress), diagPort, controlPort);
+                EdInterfaceEnet.EnetConnection enetConnection;
+                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                if (icomConnection)
+                {
+                    enetConnection = new EdInterfaceEnet.EnetConnection(interfaceType, IPAddress.Parse(ipAddress), diagPort, controlPort);
+                }
+                else
+                {
+                    enetConnection = new EdInterfaceEnet.EnetConnection(interfaceType, IPAddress.Parse(ipAddress));
+                }
+
                 _psdzContext.DetectVehicle = new DetectVehicle(ecuPath, enetConnection);
                 if (!_psdzContext.DetectVehicle.DetectVehicleBmwFast())
                 {
