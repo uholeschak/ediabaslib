@@ -333,9 +333,16 @@ namespace PsdzClient
                 _psdzContext.DetectVehicle = new DetectVehicle(ecuPath, enetConnection);
                 _psdzContext.DetectVehicle.AbortRequest += () =>
                 {
+                    if (_cts != null)
+                    {
+                        return _cts.Token.IsCancellationRequested;
+                    }
                     return false;
                 };
-                if (!_psdzContext.DetectVehicle.DetectVehicleBmwFast())
+
+                bool detectResult = _psdzContext.DetectVehicle.DetectVehicleBmwFast();
+                _cts?.Token.ThrowIfCancellationRequested();
+                if (!detectResult)
                 {
                     sbResult.AppendLine("Vehicle detection failed");
                     UpdateStatus(sbResult.ToString());
@@ -351,6 +358,7 @@ namespace PsdzClient
                     _psdzContext.DetectVehicle.ILevelShip ?? string.Empty, _psdzContext.DetectVehicle.ILevelCurrent ?? string.Empty,
                     _psdzContext.DetectVehicle.ILevelBackup ?? string.Empty));
                 UpdateStatus(sbResult.ToString());
+                _cts?.Token.ThrowIfCancellationRequested();
 
                 string series = _psdzContext.DetectVehicle.Series;
                 if (string.IsNullOrEmpty(series))
@@ -381,6 +389,7 @@ namespace PsdzClient
                     psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo,
                     psdzTargetSelectorNewest.Baureihenverbund));
                 UpdateStatus(sbResult.ToString());
+                _cts?.Token.ThrowIfCancellationRequested();
 
                 string bauIStufe = _psdzContext.DetectVehicle.ILevelShip;
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep shipment: {0}", bauIStufe));
@@ -1178,9 +1187,12 @@ namespace PsdzClient
             }
 
             bool icomConnection = checkBoxIcom.Checked;
+            _cts = new CancellationTokenSource();
             ConnectVehicleTask(textBoxIstaFolder.Text, ipAddressControlVehicleIp.Text, icomConnection).ContinueWith(task =>
             {
                 TaskActive = false;
+                _cts.Dispose();
+                _cts = null;
             });
 
             TaskActive = true;
