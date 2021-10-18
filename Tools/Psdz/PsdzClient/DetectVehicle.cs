@@ -39,7 +39,7 @@ namespace PsdzClient
 
         private bool _disposed;
         private EdiabasNet _ediabas;
-        private bool _abort;
+        private bool _abortRequest;
 
         public delegate bool AbortDelegate();
         public event AbortDelegate AbortRequest;
@@ -87,6 +87,11 @@ namespace PsdzClient
                 string detectedVin = null;
                 foreach (Tuple<string, string, string> job in ReadVinJobsBmwFast)
                 {
+                    if (_abortRequest)
+                    {
+                        return false;
+                    }
+
                     try
                     {
                         _ediabas.ResolveSgbdFile(job.Item1);
@@ -136,6 +141,11 @@ namespace PsdzClient
 
                 foreach (Tuple<string, string, string> job in ReadIdentJobsBmwFast)
                 {
+                    if (_abortRequest)
+                    {
+                        return false;
+                    }
+
                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read BR job: {0},{1}", job.Item1, job.Item2);
                     if (invalidSgbdSet.Contains(job.Item1))
                     {
@@ -257,6 +267,11 @@ namespace PsdzClient
                 string iLevelBackup = null;
                 foreach (Tuple<string, string> job in ReadILevelJobsBmwFast)
                 {
+                    if (_abortRequest)
+                    {
+                        return false;
+                    }
+
                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read ILevel job: {0},{1}", job.Item1, job.Item2);
                     if (invalidSgbdSet.Contains(job.Item1))
                     {
@@ -344,6 +359,11 @@ namespace PsdzClient
                 ILevelCurrent = iLevelCurrent;
                 ILevelBackup = iLevelBackup;
 
+                if (_abortRequest)
+                {
+                    return false;
+                }
+
                 return true;
             }
             catch (Exception)
@@ -358,16 +378,16 @@ namespace PsdzClient
             {
                 if (AbortRequest.Invoke())
                 {
-                    _abort = true;
+                    _abortRequest = true;
                 }
             }
 
-            return _abort;
+            return _abortRequest;
         }
 
         private void ResetValues()
         {
-            _abort = false;
+            _abortRequest = false;
             Vin = null;
             GroupSgdb = null;
             Series = null;
