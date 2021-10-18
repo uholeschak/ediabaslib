@@ -512,6 +512,13 @@ namespace PsdzClient
                 }
 
                 IPsdzVin psdzVin = programmingService.Psdz.VcmService.GetVinFromMaster(_psdzContext.Connection);
+                if (string.IsNullOrEmpty(psdzVin.Value))
+                {
+                    sbResult.AppendLine("Reading VIN failed");
+                    UpdateStatus(sbResult.ToString());
+                    return false;
+                }
+
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Vin: {0}", psdzVin.Value));
                 UpdateStatus(sbResult.ToString());
                 _cts?.Token.ThrowIfCancellationRequested();
