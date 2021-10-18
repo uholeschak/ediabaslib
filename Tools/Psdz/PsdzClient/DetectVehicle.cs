@@ -39,6 +39,10 @@ namespace PsdzClient
 
         private bool _disposed;
         private EdiabasNet _ediabas;
+        private bool _abort;
+
+        public delegate bool AbortDelegate();
+        public event AbortDelegate AbortRequest;
 
         public string Vin { get; private set; }
         public string GroupSgdb { get; private set; }
@@ -350,11 +354,20 @@ namespace PsdzClient
 
         private bool AbortEdiabasJob()
         {
-            return false;
+            if (AbortRequest != null)
+            {
+                if (AbortRequest.Invoke())
+                {
+                    _abort = true;
+                }
+            }
+
+            return _abort;
         }
 
         private void ResetValues()
         {
+            _abort = false;
             Vin = null;
             GroupSgdb = null;
             Series = null;

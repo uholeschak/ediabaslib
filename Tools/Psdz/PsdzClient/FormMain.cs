@@ -331,6 +331,10 @@ namespace PsdzClient
                 }
 
                 _psdzContext.DetectVehicle = new DetectVehicle(ecuPath, enetConnection);
+                _psdzContext.DetectVehicle.AbortRequest += () =>
+                {
+                    return false;
+                };
                 if (!_psdzContext.DetectVehicle.DetectVehicleBmwFast())
                 {
                     sbResult.AppendLine("Vehicle detection failed");
