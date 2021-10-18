@@ -1923,7 +1923,7 @@ namespace CarSimulator
                     else
                     {
                         Debug.WriteLine("ICOM DHCP is down");
-                        if (_icomDhcpServer.IsRunning)
+                        if (_icomDhcpServer != null && _icomDhcpServer.IsRunning)
                         {
                             _icomDhcpServer.Stop();
                         }
