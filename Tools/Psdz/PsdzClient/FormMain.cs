@@ -512,7 +512,7 @@ namespace PsdzClient
                 }
 
                 IPsdzVin psdzVin = programmingService.Psdz.VcmService.GetVinFromMaster(_psdzContext.Connection);
-                if (string.IsNullOrEmpty(psdzVin.Value))
+                if (string.IsNullOrEmpty(psdzVin?.Value))
                 {
                     sbResult.AppendLine("Reading VIN failed");
                     UpdateStatus(sbResult.ToString());
