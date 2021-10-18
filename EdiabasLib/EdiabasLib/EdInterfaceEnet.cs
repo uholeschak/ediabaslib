@@ -258,6 +258,8 @@ namespace EdiabasLib
         protected int ControlPort = 6811;
         protected int DiagnosticPort = 6801;
         protected int ConnectTimeout = 5000;
+        protected int AddRecTimeoutProtected = 1000;
+        protected int AddRecTimeoutIcomProtected = 2000;
         protected bool IcomAllocateProtected = false;
 
         protected byte[] RecBuffer = new byte[TransBufferSize];
@@ -337,6 +339,17 @@ namespace EdiabasLib
                     ConnectTimeout = (int)EdiabasNet.StringToValue(prop);
                 }
 
+                prop = EdiabasProtected.GetConfigProperty("EnetAddRecTimeout");
+                if (prop != null)
+                {
+                    AddRecTimeout = (int)EdiabasNet.StringToValue(prop);
+                }
+
+                prop = EdiabasProtected.GetConfigProperty("EnetAddRecTimeoutIcom");
+                if (prop != null)
+                {
+                    AddRecTimeoutIcom = (int)EdiabasNet.StringToValue(prop);
+                }
 #if Android
                 IcomAllocate = true;
 #else
@@ -1014,6 +1027,30 @@ namespace EdiabasLib
             set
             {
                 RemoteHostProtected = value;
+            }
+        }
+
+        public int AddRecTimeout
+        {
+            get
+            {
+                return AddRecTimeoutProtected;
+            }
+            set
+            {
+                AddRecTimeoutProtected = value;
+            }
+        }
+
+        public int AddRecTimeoutIcom
+        {
+            get
+            {
+                return AddRecTimeoutIcomProtected;
+            }
+            set
+            {
+                AddRecTimeoutIcomProtected = value;
             }
         }
 
@@ -2220,7 +2257,15 @@ namespace EdiabasLib
             {
                 int timeout = (Nr78Dict.Count > 0) ? ParTimeoutNr78 : ParTimeoutStd;
                 //if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Timeout: {0}", timeout);
-                timeout += ConnectTimeout;
+                if (EnetHostConn.ConnectionType == EnetConnection.InterfaceType.Icom)
+                {
+                    timeout += AddRecTimeoutIcom;
+                }
+                else
+                {
+                    timeout += AddRecTimeout;
+                }
+
                 if (!ReceiveData(receiveData, timeout))
                 {
                     if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No data received");
