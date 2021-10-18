@@ -1431,6 +1431,14 @@ namespace CarSimulator
                 case ConceptType.ConceptBwmFast:
                 case ConceptType.ConceptKwp2000Bmw:
 #if true
+                    if (bmwTcpClientData != null)
+                    {
+                        Debug.WriteLine("Time[{0}], Port={1}: {2}", bmwTcpClientData.Index, bmwTcpClientData.BmpBmwTcpChannel.DiagPort, DateTime.Now.ToString("hh:mm:ss.fff"));
+                    }
+                    else
+                    {
+                        Debug.WriteLine(string.Format("Time: {0}", DateTime.Now.ToString("hh:mm:ss.fff")));
+                    }
                     DebugLogData("Response: ", sendData, TelLengthBmwFast(sendData));
 #endif
                     if (bmwTcpClientData != null)
@@ -4630,7 +4638,14 @@ namespace CarSimulator
             int recLength = TelLengthBmwFast(_receiveData);
             recLength += 1; // checksum
 #if true
-            Debug.WriteLine(string.Format("Time: {0}", DateTime.Now.ToString("hh:mm:ss.fff")));
+            if (bmwTcpClientData != null)
+            {
+                Debug.WriteLine("Time[{0}], Port={1}: {2}", bmwTcpClientData.Index, bmwTcpClientData.BmpBmwTcpChannel.DiagPort, DateTime.Now.ToString("hh:mm:ss.fff"));
+            }
+            else
+            {
+                Debug.WriteLine(string.Format("Time: {0}", DateTime.Now.ToString("hh:mm:ss.fff")));
+            }
             DebugLogData("Request: ", _receiveData, recLength);
 #endif
             if (!_adsAdapter && !_klineResponder && (bmwTcpClientData == null) && (_pcanHandle == PCANBasic.PCAN_NONEBUS))
