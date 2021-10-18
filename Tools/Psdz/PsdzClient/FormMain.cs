@@ -392,7 +392,7 @@ namespace PsdzClient
                 _cts?.Token.ThrowIfCancellationRequested();
 
                 string bauIStufe = _psdzContext.DetectVehicle.ILevelShip;
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep shipment: {0}", bauIStufe));
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "ILevel shipment: {0}", bauIStufe));
 
                 string url = string.Format(CultureInfo.InvariantCulture, "tcp://{0}:{1}", ipAddress, diagPort);
                 IPsdzConnection psdzConnection;
@@ -697,12 +697,12 @@ namespace PsdzClient
                         try
                         {
                             programmingService.Psdz.VcmService.WriteIStufen(_psdzContext.Connection, _psdzContext.IstufeShipment, _psdzContext.IstufeLast, _psdzContext.IstufeCurrent);
-                            sbResult.AppendLine("ISteps updated");
+                            sbResult.AppendLine("ILevel updated");
                             UpdateStatus(sbResult.ToString());
                         }
                         catch (Exception ex)
                         {
-                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Write ISteps failure: {0}", ex.Message));
+                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Write ILevel failure: {0}", ex.Message));
                             UpdateStatus(sbResult.ToString());
                         }
                         _cts?.Token.ThrowIfCancellationRequested();
@@ -710,12 +710,12 @@ namespace PsdzClient
                         try
                         {
                             programmingService.Psdz.VcmService.WriteIStufenToBackup(_psdzContext.Connection, _psdzContext.IstufeShipment, _psdzContext.IstufeLast, _psdzContext.IstufeCurrent);
-                            sbResult.AppendLine("ISteps backup updated");
+                            sbResult.AppendLine("ILevel backup updated");
                             UpdateStatus(sbResult.ToString());
                         }
                         catch (Exception ex)
                         {
-                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Write ISteps backup failure: {0}", ex.Message));
+                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Write ILevel backup failure: {0}", ex.Message));
                             UpdateStatus(sbResult.ToString());
                         }
                         _cts?.Token.ThrowIfCancellationRequested();
@@ -815,13 +815,21 @@ namespace PsdzClient
 
                 _psdzContext.CleanupBackupData();
                 IPsdzIstufenTriple iStufenTriple = programmingService.Psdz.VcmService.GetIStufenTripleActual(_psdzContext.Connection);
+                if (iStufenTriple == null)
+                {
+                    sbResult.AppendLine("Reading ILevel failed");
+                    UpdateStatus(sbResult.ToString());
+                    return false;
+                }
+
                 _psdzContext.SetIstufen(iStufenTriple);
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep: Current={0}, Last={1}, Shipment={2}",
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "ILevel: Current={0}, Last={1}, Shipment={2}",
                     iStufenTriple.Current, iStufenTriple.Last, iStufenTriple.Shipment));
 
                 if (!_psdzContext.SetPathToBackupData(psdzVin.Value))
                 {
                     sbResult.AppendLine("Create backup path failed");
+                    UpdateStatus(sbResult.ToString());
                     return false;
                 }
 
@@ -861,12 +869,12 @@ namespace PsdzClient
 
                 IEnumerable<IPsdzIstufe> psdzIstufes = programmingService.Psdz.LogicService.GetPossibleIntegrationLevel(_psdzContext.FaTarget);
                 _psdzContext.SetPossibleIstufenTarget(psdzIstufes);
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "ISteps: {0}", psdzIstufes.Count()));
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "ILevels: {0}", psdzIstufes.Count()));
                 foreach (IPsdzIstufe iStufe in psdzIstufes.OrderBy(x => x))
                 {
                     if (iStufe.IsValid)
                     {
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " IStep: {0}", iStufe.Value));
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " ILevel: {0}", iStufe.Value));
                     }
                 }
                 UpdateStatus(sbResult.ToString());
@@ -875,16 +883,17 @@ namespace PsdzClient
                 string latestIstufeTarget = _psdzContext.LatestPossibleIstufeTarget;
                 if (string.IsNullOrEmpty(latestIstufeTarget))
                 {
-                    sbResult.AppendLine("No target iStep");
+                    sbResult.AppendLine("No target ILevels");
+                    UpdateStatus(sbResult.ToString());
                     return false;
                 }
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep Latest: {0}", latestIstufeTarget));
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "ILevel Latest: {0}", latestIstufeTarget));
 
                 IPsdzIstufe psdzIstufeShip = programmingService.Psdz.ObjectBuilder.BuildIstufe(_psdzContext.IstufeShipment);
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep Ship: {0}", psdzIstufeShip.Value));
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "ILevel Ship: {0}", psdzIstufeShip.Value));
 
                 IPsdzIstufe psdzIstufeTarget = programmingService.Psdz.ObjectBuilder.BuildIstufe(bModifyFa ? _psdzContext.IstufeCurrent : latestIstufeTarget);
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "IStep Target: {0}", psdzIstufeTarget.Value));
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "ILevel Target: {0}", psdzIstufeTarget.Value));
                 UpdateStatus(sbResult.ToString());
                 _cts?.Token.ThrowIfCancellationRequested();
 
