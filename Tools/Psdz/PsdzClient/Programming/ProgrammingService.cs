@@ -21,6 +21,7 @@ namespace PsdzClient.Programming
 
             this.EventManager = new ProgrammingEventManager();
             this.ProgrammingInfos = new EcuProgrammingInfos();
+            this.PdszDatabase = new PdszDatabase(istaFolder);
 			PreparePsdzBackupDataPath(istaFolder);
 		}
 
@@ -180,7 +181,12 @@ namespace PsdzClient.Programming
         {
             RemoveListener();
 			this.psdz.Dispose();
-        }
+            if (this.PdszDatabase != null)
+            {
+                this.PdszDatabase.Dispose();
+                this.PdszDatabase = null;
+            }
+		}
 
         public IPsdzProgressListener PsdzProgressListener { get; private set; }
 
@@ -190,7 +196,9 @@ namespace PsdzClient.Programming
 
         public EcuProgrammingInfos ProgrammingInfos { get; private set; }
 
-	    public PsdzServiceWrapper Psdz => psdz;
+        public PdszDatabase PdszDatabase { get; private set; }
+
+        public PsdzServiceWrapper Psdz => psdz;
 
         private readonly PsdzConfig psdzConfig;
 
