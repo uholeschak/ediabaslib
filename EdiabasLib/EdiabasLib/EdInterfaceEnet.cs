@@ -833,6 +833,50 @@ namespace EdiabasLib
             }
             bool result = true;
 
+            try
+            {
+                if (TcpDiagStream != null)
+                {
+                    TcpDiagStream.Close();
+                    TcpDiagStream = null;
+                }
+            }
+            catch (Exception)
+            {
+                result = false;
+            }
+
+            try
+            {
+                if (TcpDiagClient != null)
+                {
+                    TcpDiagClient.Close();
+                    TcpDiagClient = null;
+                }
+            }
+            catch (Exception)
+            {
+                result = false;
+            }
+
+            if (!TcpControlDisconnect())
+            {
+                result = false;
+            }
+
+            try
+            {
+                if (UdpSocket != null)
+                {
+                    UdpSocket.Close();
+                    UdpSocket = null;
+                }
+            }
+            catch (Exception)
+            {
+                result = false;
+            }
+
             if (IcomAllocate && !reconnect && EnetHostConn != null && EnetHostConn.DiagPort >= 0)
             {
                 if (EdiabasProtected != null)
@@ -886,49 +930,6 @@ namespace EdiabasLib
                 }
             }
 
-            try
-            {
-                if (TcpDiagStream != null)
-                {
-                    TcpDiagStream.Close();
-                    TcpDiagStream = null;
-                }
-            }
-            catch (Exception)
-            {
-                result = false;
-            }
-
-            try
-            {
-                if (TcpDiagClient != null)
-                {
-                    TcpDiagClient.Close();
-                    TcpDiagClient = null;
-                }
-            }
-            catch (Exception)
-            {
-                result = false;
-            }
-
-            if (!TcpControlDisconnect())
-            {
-                result = false;
-            }
-
-            try
-            {
-                if (UdpSocket != null)
-                {
-                    UdpSocket.Close();
-                    UdpSocket = null;
-                }
-            }
-            catch (Exception)
-            {
-                result = false;
-            }
             EnetHostConn = null;
             ReconnectRequired = false;
             return result;
