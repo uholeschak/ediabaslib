@@ -12,8 +12,8 @@ namespace PsdzClient
     {
         private bool _disposed;
         private SQLiteConnection _mDbConnection;
-        private static string RootENameClassId;
-        private static string TypeKeyClassId;
+        private string _rootENameClassId;
+        private string _typeKeyClassId;
 
         public PdszDatabase(string istaFolder)
         {
@@ -24,8 +24,8 @@ namespace PsdzClient
             _mDbConnection.SetPassword("6505EFBDC3E5F324");
             _mDbConnection.Open();
 
-            RootENameClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"RootEBezeichnung");
-            TypeKeyClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"Typschluessel");
+            _rootENameClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"RootEBezeichnung");
+            _typeKeyClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"Typschluessel");
         }
 
         public void Dispose()
