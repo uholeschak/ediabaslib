@@ -28,6 +28,40 @@ namespace PsdzClient
             _typeKeyClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"Typschluessel");
         }
 
+        public bool GetEcuVariants(List<DetectVehicle.EcuInfo> ecuList)
+        {
+            bool result = true;
+            foreach (DetectVehicle.EcuInfo ecuInfo in ecuList)
+            {
+                if (!GetEcuVariant(ecuInfo))
+                {
+                    result = false;
+                }
+            }
+
+            return result;
+        }
+
+        private bool GetEcuVariant(DetectVehicle.EcuInfo ecuInfo)
+        {
+            bool result = false;
+            string sql = string.Format(@"SELECT ID, " + DatabaseFunctions.SqlTitleItems + ", ECUGROUPID FROM XEP_ECUVARIANTS WHERE (lower(NAME) = '{0}')", ecuInfo.Sgbd.ToLowerInvariant());
+            using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+            {
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        ecuInfo.VariantGroupId = reader["ECUGROUPID"].ToString().Trim();
+                        ecuInfo.VariantId = reader["ID"].ToString().Trim();
+                        result = true;
+                    }
+                }
+            }
+
+            return result;
+        }
+
         public void Dispose()
         {
             Dispose(true);

@@ -27,15 +27,6 @@ namespace ExtractEcuFunctions
             "cs", "pl",
         };
 
-        private const string SqlTitleItems =
-            "TITLE_DEDE, TITLE_ENGB, TITLE_ENUS, " +
-            "TITLE_FR, TITLE_TH, TITLE_SV, " +
-            "TITLE_IT, TITLE_ES, TITLE_ID, " +
-            "TITLE_KO, TITLE_EL, TITLE_TR, " +
-            "TITLE_ZHCN, TITLE_RU, TITLE_NL, " +
-            "TITLE_PT, TITLE_ZHTW, TITLE_JA, " +
-            "TITLE_CSCZ, TITLE_PLPL";
-
         private const string SqlPreOpItems =
                 "PREPARINGOPERATORTEXT_DEDE, PREPARINGOPERATORTEXT_ENGB, PREPARINGOPERATORTEXT_ENUS, " +
                 "PREPARINGOPERATORTEXT_FR, PREPARINGOPERATORTEXT_TH, PREPARINGOPERATORTEXT_SV, " +
@@ -389,7 +380,7 @@ namespace ExtractEcuFunctions
         private static EcuFunctionStructs.EcuVariant GetEcuVariant(SQLiteConnection mDbConnection, string ecuName)
         {
             EcuFunctionStructs.EcuVariant ecuVariant = null;
-            string sql = string.Format(@"SELECT ID, " + SqlTitleItems + ", ECUGROUPID FROM XEP_ECUVARIANTS WHERE (lower(NAME) = '{0}')", ecuName.ToLowerInvariant());
+            string sql = string.Format(@"SELECT ID, " + DatabaseFunctions.SqlTitleItems + ", ECUGROUPID FROM XEP_ECUVARIANTS WHERE (lower(NAME) = '{0}')", ecuName.ToLowerInvariant());
             using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
             {
                 using (SQLiteDataReader reader = command.ExecuteReader())
@@ -480,7 +471,7 @@ namespace ExtractEcuFunctions
         private static List<EcuFunctionStructs.EcuFaultCodeLabel> GetFaultCodeLabels(SQLiteConnection mDbConnection, string language)
         {
             List<EcuFunctionStructs.EcuFaultCodeLabel> ecuFaultCodeLabelList = new List<EcuFunctionStructs.EcuFaultCodeLabel>();
-            string sql = @"SELECT ID LABELID, CODE, SAECODE, " + SqlTitleItems + ", RELEVANCE, DATATYPE " +
+            string sql = @"SELECT ID LABELID, CODE, SAECODE, " + DatabaseFunctions.SqlTitleItems + ", RELEVANCE, DATATYPE " +
                          @"FROM XEP_FAULTLABELS";
             using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
             {
@@ -515,7 +506,7 @@ namespace ExtractEcuFunctions
         private static EcuFunctionStructs.EcuFaultCodeLabel GetFaultCodeLabel(SQLiteConnection mDbConnection, EcuFunctionStructs.EcuFaultCode ecuFaultCode)
         {
             EcuFunctionStructs.EcuFaultCodeLabel ecuFaultCodeLabel = null;
-            string sql = string.Format(@"SELECT LABELS.ID LABELID, CODE, SAECODE, " + SqlTitleItems + ", RELEVANCE, DATATYPE " +
+            string sql = string.Format(@"SELECT LABELS.ID LABELID, CODE, SAECODE, " + DatabaseFunctions.SqlTitleItems + ", RELEVANCE, DATATYPE " +
                                        @"FROM XEP_FAULTLABELS LABELS, XEP_REFFAULTLABELS REFLABELS" +
                                        @" WHERE CODE = {0} AND LABELS.ID = REFLABELS.LABELID AND REFLABELS.ID = {1}", ecuFaultCode.Code, ecuFaultCode.Id);
             using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
@@ -542,7 +533,7 @@ namespace ExtractEcuFunctions
         private static List<EcuFunctionStructs.EcuFaultModeLabel> GetFaultModeLabels(SQLiteConnection mDbConnection, string language)
         {
             List<EcuFunctionStructs.EcuFaultModeLabel> ecuFaultModeLabelList = new List<EcuFunctionStructs.EcuFaultModeLabel>();
-            string sql = @"SELECT ID LABELID, CODE, " + SqlTitleItems + ", RELEVANCE, ERWEITERT " +
+            string sql = @"SELECT ID LABELID, CODE, " + DatabaseFunctions.SqlTitleItems + ", RELEVANCE, ERWEITERT " +
                          @"FROM XEP_FAULTMODELABELS ORDER BY LABELID";
             using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
             {
@@ -576,7 +567,7 @@ namespace ExtractEcuFunctions
         private static List<EcuFunctionStructs.EcuFaultModeLabel> GetFaultModeLabelList(SQLiteConnection mDbConnection, EcuFunctionStructs.EcuFaultCode ecuFaultCode)
         {
             List<EcuFunctionStructs.EcuFaultModeLabel> ecuFaultModeLabelList = new List<EcuFunctionStructs.EcuFaultModeLabel>();
-            string sql = string.Format(@"SELECT LABELS.ID LABELID, CODE, " + SqlTitleItems + ", RELEVANCE, ERWEITERT " +
+            string sql = string.Format(@"SELECT LABELS.ID LABELID, CODE, " + DatabaseFunctions.SqlTitleItems + ", RELEVANCE, ERWEITERT " +
                                        @"FROM XEP_FAULTMODELABELS LABELS, XEP_REFFAULTLABELS REFLABELS" +
                                        @" WHERE LABELS.ID = REFLABELS.LABELID AND REFLABELS.ID = {0} ORDER BY LABELID", ecuFaultCode.Id);
             using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
@@ -601,7 +592,7 @@ namespace ExtractEcuFunctions
         private static List<EcuFunctionStructs.EcuEnvCondLabel> GetEnvCondLabels(SQLiteConnection mDbConnection, string language)
         {
             List<EcuFunctionStructs.EcuEnvCondLabel> ecuEnvCondLabelList = new List<EcuFunctionStructs.EcuEnvCondLabel>();
-            string sql = @"SELECT ID, NODECLASS, " + SqlTitleItems + ", RELEVANCE, BLOCKANZAHL, UWIDENTTYP, UWIDENT, UNIT " +
+            string sql = @"SELECT ID, NODECLASS, " + DatabaseFunctions.SqlTitleItems + ", RELEVANCE, BLOCKANZAHL, UWIDENTTYP, UWIDENT, UNIT " +
                          @"FROM XEP_ENVCONDSLABELS ORDER BY ID";
             using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
             {
@@ -647,7 +638,7 @@ namespace ExtractEcuFunctions
             EcuFunctionStructs.EcuFaultCode ecuFaultCode, string variantId)
         {
             List<EcuFunctionStructs.EcuEnvCondLabel> ecuEnvCondLabelList = new List<EcuFunctionStructs.EcuEnvCondLabel>();
-            string sql = string.Format(@"SELECT ID, NODECLASS, " + SqlTitleItems + ", RELEVANCE, BLOCKANZAHL, UWIDENTTYP, UWIDENT, UNIT " +
+            string sql = string.Format(@"SELECT ID, NODECLASS, " + DatabaseFunctions.SqlTitleItems + ", RELEVANCE, BLOCKANZAHL, UWIDENTTYP, UWIDENT, UNIT " +
                        @"FROM XEP_ENVCONDSLABELS" +
                        @" WHERE ID IN (SELECT LABELID FROM XEP_REFFAULTLABELS, XEP_FAULTCODES WHERE CODE = {0} AND ECUVARIANTID = {1} AND XEP_REFFAULTLABELS.ID = XEP_FAULTCODES.ID) ORDER BY ID",
                         ecuFaultCode.Code, variantId);
@@ -766,7 +757,7 @@ namespace ExtractEcuFunctions
                 List<EcuFunctionStructs.EcuJobResult> ecuJobResultList = new List<EcuFunctionStructs.EcuJobResult>();
                 // from: DatabaseProvider.SQLiteConnector.dll BMW.Rheingold.DatabaseProvider.SQLiteConnector.DatabaseProviderSQLite.GetEcuResults
                 sql = string.Format(
-                    @"SELECT RESULTS.ID RESULTID, " + SqlTitleItems + ", FUNCTIONNAMERESULT, ADAPTERPATH, NAME, STEUERGERAETEFUNKTIONENRELEVAN, LOCATION, UNIT, UNITFIXED, FORMAT, MULTIPLIKATOR, OFFSET, RUNDEN, ZAHLENFORMAT, ECUJOBID " +
+                    @"SELECT RESULTS.ID RESULTID, " + DatabaseFunctions.SqlTitleItems + ", FUNCTIONNAMERESULT, ADAPTERPATH, NAME, STEUERGERAETEFUNKTIONENRELEVAN, LOCATION, UNIT, UNITFIXED, FORMAT, MULTIPLIKATOR, OFFSET, RUNDEN, ZAHLENFORMAT, ECUJOBID " +
                     "FROM XEP_ECURESULTS RESULTS, XEP_REFECURESULTS REFRESULTS WHERE " +
                     "ECURESULTID = RESULTS.ID AND REFRESULTS.ID = {0} AND RESULTS.ECUJOBID = {1}", ecuFixedFuncStruct.Id, ecuJob.Id);
                 using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
@@ -814,7 +805,7 @@ namespace ExtractEcuFunctions
         private static List<EcuFunctionStructs.EcuResultStateValue> GetResultStateValueList(SQLiteConnection mDbConnection, string id, string language = null)
         {
             List<EcuFunctionStructs.EcuResultStateValue> ecuResultStateValueList = new List<EcuFunctionStructs.EcuResultStateValue>();
-            string sql = string.Format(@"SELECT ID, " + SqlTitleItems + ", STATEVALUE, VALIDFROM, VALIDTO, PARENTID " +
+            string sql = string.Format(@"SELECT ID, " + DatabaseFunctions.SqlTitleItems + ", STATEVALUE, VALIDFROM, VALIDTO, PARENTID " +
                                        "FROM XEP_STATEVALUES WHERE (PARENTID IN (SELECT STATELISTID FROM XEP_REFSTATELISTS WHERE (ID = {0})))", id);
             using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
             {
@@ -839,7 +830,7 @@ namespace ExtractEcuFunctions
         private static List<EcuFunctionStructs.EcuFixedFuncStruct> GetEcuFixedFuncStructList(SQLiteConnection mDbConnection, string parentId)
         {
             List<EcuFunctionStructs.EcuFixedFuncStruct> ecuFixedFuncStructList = new List<EcuFunctionStructs.EcuFixedFuncStruct>();
-            string sql = string.Format(@"SELECT ID, NODECLASS, " + SqlTitleItems + ", " +
+            string sql = string.Format(@"SELECT ID, NODECLASS, " + DatabaseFunctions.SqlTitleItems + ", " +
                                        SqlPreOpItems + ", " + SqlProcItems + ", " + SqlPostOpItems + ", " +
                                        "SORT_ORDER, ACTIVATION, ACTIVATION_DURATION_MS " +
                                        "FROM XEP_ECUFIXEDFUNCTIONS WHERE (PARENTID = {0})", parentId);
@@ -939,7 +930,7 @@ namespace ExtractEcuFunctions
             foreach (EcuFunctionStructs.EcuVarFunc ecuVarFunc in ecuVarFunctionsList)
             {
                 // from: DatabaseProvider.SQLiteConnector.dll BMW.Rheingold.DatabaseProvider.SQLiteConnector.DatabaseProviderSQLite.GetEcuFunctionStructureById
-                string sql = string.Format(@"SELECT REFFUNCS.ECUFUNCSTRUCTID FUNCSTRUCTID, " + SqlTitleItems + ", MULTISELECTION " +
+                string sql = string.Format(@"SELECT REFFUNCS.ECUFUNCSTRUCTID FUNCSTRUCTID, " + DatabaseFunctions.SqlTitleItems + ", MULTISELECTION " +
                         "FROM XEP_ECUFUNCSTRUCTURES FUNCS, XEP_REFECUFUNCSTRUCTS REFFUNCS WHERE FUNCS.ID = REFFUNCS.ECUFUNCSTRUCTID AND REFFUNCS.ID = {0}", ecuVarFunc.Id);
                 using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
                 {

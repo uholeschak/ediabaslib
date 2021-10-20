@@ -21,6 +21,8 @@ namespace PsdzClient
                 Description = description;
                 Sgbd = sgbd;
                 Grp = grp;
+                VariantId = string.Empty;
+                VariantGroupId = string.Empty;
             }
 
             public string Name { get; set; }
@@ -32,6 +34,10 @@ namespace PsdzClient
             public string Sgbd { get; set; }
 
             public string Grp { get; set; }
+
+            public string VariantId { get; set; }
+
+            public string VariantGroupId { get; set; }
         }
 
         private readonly Regex _vinRegex = new Regex(@"^(?!0{7,})([a-zA-Z0-9]{7,})$");
