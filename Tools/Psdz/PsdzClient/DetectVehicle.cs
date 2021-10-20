@@ -12,6 +12,28 @@ namespace PsdzClient
 {
     public class DetectVehicle : IDisposable
     {
+        public class EcuInfo
+        {
+            public EcuInfo(string name, Int64 address, string description, string sgbd, string grp)
+            {
+                Name = name;
+                Address = address;
+                Description = description;
+                Sgbd = sgbd;
+                Grp = grp;
+            }
+
+            public string Name { get; set; }
+
+            public Int64 Address { get; set; }
+
+            public string Description { get; set; }
+
+            public string Sgbd { get; set; }
+
+            public string Grp { get; set; }
+        }
+
         private readonly Regex _vinRegex = new Regex(@"^(?!0{7,})([a-zA-Z0-9]{7,})$");
         private static readonly Tuple<string, string, string>[] ReadVinJobsBmwFast =
         {
@@ -44,6 +66,7 @@ namespace PsdzClient
         public delegate bool AbortDelegate();
         public event AbortDelegate AbortRequest;
 
+        public List<EcuInfo> EcuList { get; private set; }
         public string Vin { get; private set; }
         public string GroupSgdb { get; private set; }
         public string Series { get; private set; }
@@ -71,6 +94,7 @@ namespace PsdzClient
             }
             edInterfaceEnet.RemoteHost = hostAddress;
             edInterfaceEnet.IcomAllocate = icomAllocate;
+            EcuList = new List<EcuInfo>();
 
             ResetValues();
         }
@@ -262,6 +286,96 @@ namespace PsdzClient
                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Group SGBD: {0}", groupSgbd);
                 GroupSgdb = groupSgbd;
 
+                if (_abortRequest)
+                {
+                    return false;
+                }
+
+                try
+                {
+                    _ediabas.ResolveSgbdFile(groupSgbd);
+
+                    _ediabas.ArgString = string.Empty;
+                    _ediabas.ArgBinaryStd = null;
+                    _ediabas.ResultsRequests = string.Empty;
+                    _ediabas.ExecuteJob("IDENT_FUNKTIONAL");
+
+                    EcuList.Clear();
+                    resultSets = _ediabas.ResultSets;
+                    if (resultSets != null && resultSets.Count >= 2)
+                    {
+                        int dictIndex = 0;
+                        foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+                        {
+                            if (dictIndex == 0)
+                            {
+                                dictIndex++;
+                                continue;
+                            }
+
+                            string ecuName = string.Empty;
+                            Int64 ecuAdr = -1;
+                            string ecuDesc = string.Empty;
+                            string ecuSgbd = string.Empty;
+                            string ecuGroup = string.Empty;
+                            // ReSharper disable once InlineOutVariableDeclaration
+                            EdiabasNet.ResultData resultData;
+                            if (resultDict.TryGetValue("ECU_GROBNAME", out resultData))
+                            {
+                                if (resultData.OpData is string)
+                                {
+                                    ecuName = (string)resultData.OpData;
+                                }
+                            }
+
+                            if (resultDict.TryGetValue("ID_SG_ADR", out resultData))
+                            {
+                                if (resultData.OpData is Int64)
+                                {
+                                    ecuAdr = (Int64)resultData.OpData;
+                                }
+                            }
+
+                            if (resultDict.TryGetValue("ECU_NAME", out resultData))
+                            {
+                                if (resultData.OpData is string)
+                                {
+                                    ecuDesc = (string)resultData.OpData;
+                                }
+                            }
+
+                            if (resultDict.TryGetValue("ECU_SGBD", out resultData))
+                            {
+                                if (resultData.OpData is string)
+                                {
+                                    ecuSgbd = (string)resultData.OpData;
+                                }
+                            }
+
+                            if (resultDict.TryGetValue("ECU_GRUPPE", out resultData))
+                            {
+                                if (resultData.OpData is string)
+                                {
+                                    ecuGroup = (string)resultData.OpData;
+                                }
+                            }
+
+                            if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0 && !string.IsNullOrEmpty(ecuSgbd))
+                            {
+                                EcuInfo ecuInfo = new EcuInfo(ecuName, ecuAdr, ecuDesc, ecuSgbd, ecuGroup);
+                                EcuList.Add(ecuInfo);
+                            }
+
+                            dictIndex++;
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "No ident response");
+                    return false;
+                }
+
                 string iLevelShip = null;
                 string iLevelCurrent = null;
                 string iLevelBackup = null;
@@ -388,6 +502,7 @@ namespace PsdzClient
         private void ResetValues()
         {
             _abortRequest = false;
+            EcuList.Clear();
             Vin = null;
             GroupSgdb = null;
             Series = null;

@@ -357,6 +357,14 @@ namespace PsdzClient
                     "Detected ILevel: Ship={0}, Current={1}, Backup={2}",
                     _psdzContext.DetectVehicle.ILevelShip ?? string.Empty, _psdzContext.DetectVehicle.ILevelCurrent ?? string.Empty,
                     _psdzContext.DetectVehicle.ILevelBackup ?? string.Empty));
+
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecus: {0}", _psdzContext.DetectVehicle.EcuList.Count()));
+                foreach (DetectVehicle.EcuInfo ecuInfo in _psdzContext.DetectVehicle.EcuList)
+                {
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Ecu: Name={0}, Addr={1}, Sgdb={2}, Group={3}",
+                        ecuInfo.Name, ecuInfo.Address, ecuInfo.Sgbd, ecuInfo.Grp));
+                }
+                
                 UpdateStatus(sbResult.ToString());
                 _cts?.Token.ThrowIfCancellationRequested();
 
