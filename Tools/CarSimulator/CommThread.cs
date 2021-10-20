@@ -1430,7 +1430,7 @@ namespace CarSimulator
             {
                 case ConceptType.ConceptBwmFast:
                 case ConceptType.ConceptKwp2000Bmw:
-#if true
+#if false
                     if (bmwTcpClientData != null)
                     {
                         Debug.WriteLine("Time[{0}], Port={1}: {2}", bmwTcpClientData.Index, bmwTcpClientData.BmpBmwTcpChannel.DiagPort, DateTime.Now.ToString("hh:mm:ss.fff"));
@@ -1439,8 +1439,9 @@ namespace CarSimulator
                     {
                         Debug.WriteLine(string.Format("Time: {0}", DateTime.Now.ToString("hh:mm:ss.fff")));
                     }
-                    DebugLogData("Response: ", sendData, TelLengthBmwFast(sendData));
 #endif
+                    DebugLogData("Response: ", sendData, TelLengthBmwFast(sendData));
+
                     if (bmwTcpClientData != null)
                     {
                         return SendEnet(sendData, bmwTcpClientData);
