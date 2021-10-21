@@ -43,9 +43,9 @@ namespace PsdzClient
 
         public class SwiAction
         {
-            public SwiAction(string id, string name, string actionCategory, string selectable, string showInPlan, string executable, string nodeClass)
+            public SwiAction(bool varGroup, string id, string name, string actionCategory, string selectable, string showInPlan, string executable, string nodeClass)
             {
-                Id = id;
+                VarGroup = varGroup;
                 Name = name;
                 ActionCategory = actionCategory;
                 Selectable = selectable;
@@ -53,6 +53,8 @@ namespace PsdzClient
                 Executable = executable;
                 NodeClass = nodeClass;
             }
+
+            public bool VarGroup { get; set; }
 
             public string Id { get; set; }
 
@@ -95,6 +97,7 @@ namespace PsdzClient
                 if (GetEcuVariant(ecuInfo))
                 {
                     GetSwiActionsForEcuVariant(ecuInfo);
+                    GetSwiActionsForEcuGroup(ecuInfo);
                 }
                 else
                 {
@@ -158,7 +161,7 @@ namespace PsdzClient
                             string showInPlan = reader["SHOW_IN_PLAN"].ToString().Trim();
                             string executable = reader["EXECUTABLE"].ToString().Trim();
                             string nodeclass = reader["NODECLASS"].ToString().Trim();
-                            SwiAction swiAction = new SwiAction(id, name, actionCategory, selectable, showInPlan, executable, nodeclass);
+                            SwiAction swiAction = new SwiAction(false, id, name, actionCategory, selectable, showInPlan, executable, nodeclass);
                             ecuInfo.SwiActions.Add(swiAction);
                         }
                     }
@@ -169,6 +172,45 @@ namespace PsdzClient
                 return false;
             }
         
+            return true;
+        }
+
+        private bool GetSwiActionsForEcuGroup(EcuInfo ecuInfo)
+        {
+            if (string.IsNullOrEmpty(ecuInfo.VariantId))
+            {
+                return false;
+            }
+
+            string sql = string.Format(@"SELECT ID, NAME, ACTIONCATEGORY, SELECTABLE, SHOW_IN_PLAN, EXECUTABLE, " + DatabaseFunctions.SqlTitleItems +
+                                       ", NODECLASS FROM XEP_SWIACTION WHERE ID IN (SELECT SWI_ACTION_ID FROM XEP_REF_ECUGROUPS_SWIACTION WHERE ECUGROUP_ID = {0})",
+                ecuInfo.VariantGroupId);
+            try
+            {
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string id = reader["ID"].ToString().Trim();
+                            string name = reader["NAME"].ToString().Trim();
+                            string actionCategory = reader["ACTIONCATEGORY"].ToString().Trim();
+                            string selectable = reader["SELECTABLE"].ToString().Trim();
+                            string showInPlan = reader["SHOW_IN_PLAN"].ToString().Trim();
+                            string executable = reader["EXECUTABLE"].ToString().Trim();
+                            string nodeclass = reader["NODECLASS"].ToString().Trim();
+                            SwiAction swiAction = new SwiAction(true, id, name, actionCategory, selectable, showInPlan, executable, nodeclass);
+                            ecuInfo.SwiActions.Add(swiAction);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
             return true;
         }
 

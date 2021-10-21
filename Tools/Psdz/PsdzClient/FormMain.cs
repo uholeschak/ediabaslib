@@ -367,8 +367,8 @@ namespace PsdzClient
                         ecuInfo.VariantId, ecuInfo.VariantGroupId));
                     foreach (PdszDatabase.SwiAction swiAction in ecuInfo.SwiActions)
                     {
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "  SwiAction: Id={0}, Name={1}, Category={2}, Select={3}, Show={4}, Executable={5}",
-                            swiAction.Id, swiAction.Name, swiAction.ActionCategory, swiAction.Selectable, swiAction.ShowInPlan, swiAction.Executable));
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "  SwiAction: Group={0}, Id={1}, Name={2}, Category={3}, Select={4}, Show={5}, Executable={6}",
+                            swiAction.VarGroup, swiAction.Id, swiAction.Name, swiAction.ActionCategory, swiAction.Selectable, swiAction.ShowInPlan, swiAction.Executable));
                     }
                 }
 
