@@ -360,11 +360,16 @@ namespace PsdzClient
 
                 programmingService.PdszDatabase.GetEcuVariants(_psdzContext.DetectVehicle.EcuList);
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecus: {0}", _psdzContext.DetectVehicle.EcuList.Count()));
-                foreach (DetectVehicle.EcuInfo ecuInfo in _psdzContext.DetectVehicle.EcuList)
+                foreach (PdszDatabase.EcuInfo ecuInfo in _psdzContext.DetectVehicle.EcuList)
                 {
                     sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Ecu: Name={0}, Addr={1}, Sgdb={2}, Group={3}, VarId={4}, VarGroupId={5}",
                         ecuInfo.Name, ecuInfo.Address, ecuInfo.Sgbd, ecuInfo.Grp,
                         ecuInfo.VariantId, ecuInfo.VariantGroupId));
+                    foreach (PdszDatabase.SwiAction swiAction in ecuInfo.SwiActions)
+                    {
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "  SwiAction: Id={0}, Name={1}, Category={2}, Select={3}, Show={4}, Executable={5}",
+                            swiAction.Id, swiAction.Name, swiAction.ActionCategory, swiAction.Selectable, swiAction.ShowInPlan, swiAction.Executable));
+                    }
                 }
 
                 UpdateStatus(sbResult.ToString());

@@ -12,34 +12,6 @@ namespace PsdzClient
 {
     public class DetectVehicle : IDisposable
     {
-        public class EcuInfo
-        {
-            public EcuInfo(string name, Int64 address, string description, string sgbd, string grp)
-            {
-                Name = name;
-                Address = address;
-                Description = description;
-                Sgbd = sgbd;
-                Grp = grp;
-                VariantId = string.Empty;
-                VariantGroupId = string.Empty;
-            }
-
-            public string Name { get; set; }
-
-            public Int64 Address { get; set; }
-
-            public string Description { get; set; }
-
-            public string Sgbd { get; set; }
-
-            public string Grp { get; set; }
-
-            public string VariantId { get; set; }
-
-            public string VariantGroupId { get; set; }
-        }
-
         private readonly Regex _vinRegex = new Regex(@"^(?!0{7,})([a-zA-Z0-9]{7,})$");
         private static readonly Tuple<string, string, string>[] ReadVinJobsBmwFast =
         {
@@ -72,7 +44,7 @@ namespace PsdzClient
         public delegate bool AbortDelegate();
         public event AbortDelegate AbortRequest;
 
-        public List<EcuInfo> EcuList { get; private set; }
+        public List<PdszDatabase.EcuInfo> EcuList { get; private set; }
         public string Vin { get; private set; }
         public string GroupSgdb { get; private set; }
         public string Series { get; private set; }
@@ -100,7 +72,7 @@ namespace PsdzClient
             }
             edInterfaceEnet.RemoteHost = hostAddress;
             edInterfaceEnet.IcomAllocate = icomAllocate;
-            EcuList = new List<EcuInfo>();
+            EcuList = new List<PdszDatabase.EcuInfo>();
 
             ResetValues();
         }
@@ -368,7 +340,7 @@ namespace PsdzClient
 
                             if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0 && !string.IsNullOrEmpty(ecuSgbd))
                             {
-                                EcuInfo ecuInfo = new EcuInfo(ecuName, ecuAdr, ecuDesc, ecuSgbd, ecuGroup);
+                                PdszDatabase.EcuInfo ecuInfo = new PdszDatabase.EcuInfo(ecuName, ecuAdr, ecuDesc, ecuSgbd, ecuGroup);
                                 EcuList.Add(ecuInfo);
                             }
 
