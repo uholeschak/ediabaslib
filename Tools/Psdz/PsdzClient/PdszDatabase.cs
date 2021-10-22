@@ -12,6 +12,13 @@ namespace PsdzClient
 {
     public class PdszDatabase : IDisposable
     {
+        public enum SwiActionSource
+        {
+            VarId,
+            VarGroupId,
+            VarPrgEcuId,
+        }
+
         public class EcuInfo
         {
             public EcuInfo(string name, Int64 address, string description, string sgbd, string grp)
@@ -60,9 +67,9 @@ namespace PsdzClient
 
         public class SwiAction
         {
-            public SwiAction(bool varGroup, string id, string name, string actionCategory, string selectable, string showInPlan, string executable, string nodeClass)
+            public SwiAction(SwiActionSource swiSource, string id, string name, string actionCategory, string selectable, string showInPlan, string executable, string nodeClass)
             {
-                VarGroup = varGroup;
+                SwiSource = swiSource;
                 Name = name;
                 ActionCategory = actionCategory;
                 Selectable = selectable;
@@ -71,7 +78,7 @@ namespace PsdzClient
                 NodeClass = nodeClass;
             }
 
-            public bool VarGroup { get; set; }
+            public SwiActionSource SwiSource { get; set; }
 
             public string Id { get; set; }
 
@@ -146,6 +153,7 @@ namespace PsdzClient
 
                 GetSwiActionsForEcuVariant(ecuInfo);
                 GetSwiActionsForEcuGroup(ecuInfo);
+                GetSwiActionsForEcuProgrammingVariant(ecuInfo);
             }
 
             return result;
@@ -251,7 +259,7 @@ namespace PsdzClient
                             string showInPlan = reader["SHOW_IN_PLAN"].ToString().Trim();
                             string executable = reader["EXECUTABLE"].ToString().Trim();
                             string nodeclass = reader["NODECLASS"].ToString().Trim();
-                            SwiAction swiAction = new SwiAction(false, id, name, actionCategory, selectable, showInPlan, executable, nodeclass);
+                            SwiAction swiAction = new SwiAction(SwiActionSource.VarId, id, name, actionCategory, selectable, showInPlan, executable, nodeclass);
                             ecuInfo.SwiActions.Add(swiAction);
                         }
                     }
@@ -290,7 +298,46 @@ namespace PsdzClient
                             string showInPlan = reader["SHOW_IN_PLAN"].ToString().Trim();
                             string executable = reader["EXECUTABLE"].ToString().Trim();
                             string nodeclass = reader["NODECLASS"].ToString().Trim();
-                            SwiAction swiAction = new SwiAction(true, id, name, actionCategory, selectable, showInPlan, executable, nodeclass);
+                            SwiAction swiAction = new SwiAction(SwiActionSource.VarGroupId, id, name, actionCategory, selectable, showInPlan, executable, nodeclass);
+                            ecuInfo.SwiActions.Add(swiAction);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool GetSwiActionsForEcuProgrammingVariant(EcuInfo ecuInfo)
+        {
+            if (ecuInfo.PsdzEcu == null || string.IsNullOrEmpty(ecuInfo.VariantPrgId))
+            {
+                return false;
+            }
+
+            string sql = string.Format(@"SELECT ID, NAME, ACTIONCATEGORY, SELECTABLE, SHOW_IN_PLAN, EXECUTABLE, " + DatabaseFunctions.SqlTitleItems +
+                                       ", NODECLASS FROM XEP_SWIACTION WHERE ID IN (SELECT SWI_ACTION_ID FROM XEP_REF_ECUPRGVARI_SWIACTION WHERE ECUPROGRAMMINGVARIANT_ID = {0})",
+                ecuInfo.VariantPrgId);
+            try
+            {
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string id = reader["ID"].ToString().Trim();
+                            string name = reader["NAME"].ToString().Trim();
+                            string actionCategory = reader["ACTIONCATEGORY"].ToString().Trim();
+                            string selectable = reader["SELECTABLE"].ToString().Trim();
+                            string showInPlan = reader["SHOW_IN_PLAN"].ToString().Trim();
+                            string executable = reader["EXECUTABLE"].ToString().Trim();
+                            string nodeclass = reader["NODECLASS"].ToString().Trim();
+                            SwiAction swiAction = new SwiAction(SwiActionSource.VarPrgEcuId, id, name, actionCategory, selectable, showInPlan, executable, nodeclass);
                             ecuInfo.SwiActions.Add(swiAction);
                         }
                     }
