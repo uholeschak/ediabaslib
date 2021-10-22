@@ -358,18 +358,11 @@ namespace PsdzClient
                     _psdzContext.DetectVehicle.ILevelShip ?? string.Empty, _psdzContext.DetectVehicle.ILevelCurrent ?? string.Empty,
                     _psdzContext.DetectVehicle.ILevelBackup ?? string.Empty));
 
-                programmingService.PdszDatabase.GetEcuVariants(_psdzContext.DetectVehicle.EcuList);
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecus: {0}", _psdzContext.DetectVehicle.EcuList.Count()));
                 foreach (PdszDatabase.EcuInfo ecuInfo in _psdzContext.DetectVehicle.EcuList)
                 {
-                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Ecu: Name={0}, Addr={1}, Sgdb={2}, Group={3}, VarId={4}, VarGroupId={5}",
-                        ecuInfo.Name, ecuInfo.Address, ecuInfo.Sgbd, ecuInfo.Grp,
-                        ecuInfo.VariantId, ecuInfo.VariantGroupId));
-                    foreach (PdszDatabase.SwiAction swiAction in ecuInfo.SwiActions)
-                    {
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "  SwiAction: Group={0}, Id={1}, Name={2}, Category={3}, Select={4}, Show={5}, Executable={6}",
-                            swiAction.VarGroup, swiAction.Id, swiAction.Name, swiAction.ActionCategory, swiAction.Selectable, swiAction.ShowInPlan, swiAction.Executable));
-                    }
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Ecu: Name={0}, Addr={1}, Sgdb={2}, Group={3}",
+                        ecuInfo.Name, ecuInfo.Address, ecuInfo.Sgbd, ecuInfo.Grp));
                 }
 
                 UpdateStatus(sbResult.ToString());
@@ -940,6 +933,29 @@ namespace PsdzClient
 
                 IPsdzSvt psdzSvt = programmingService.Psdz.ObjectBuilder.BuildSvt(psdzStandardSvtNames, psdzVin.Value);
                 _psdzContext.SetSvtActual(psdzSvt);
+                UpdateStatus(sbResult.ToString());
+                _cts?.Token.ThrowIfCancellationRequested();
+
+                programmingService.PdszDatabase.LinkSvtEcus(_psdzContext.DetectVehicle.EcuList, psdzSvt);
+                programmingService.PdszDatabase.GetEcuVariants(_psdzContext.DetectVehicle.EcuList);
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecus: {0}", _psdzContext.DetectVehicle.EcuList.Count()));
+                foreach (PdszDatabase.EcuInfo ecuInfo in _psdzContext.DetectVehicle.EcuList)
+                {
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Ecu: Name={0}, Addr={1}, Sgdb={2}, Group={3}",
+                        ecuInfo.Name, ecuInfo.Address, ecuInfo.Sgbd, ecuInfo.Grp));
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "  VarId={0}, VarGroupId={1}, VarPrgId={2}, VarPrgEcuId={3}, VarPrgName={4}",
+                        ecuInfo.VariantId, ecuInfo.VariantGroupId, ecuInfo.VariantPrgId, ecuInfo.VariantPrgEcuVarId, ecuInfo.VariantPrgName));
+                    if (ecuInfo.PsdzEcu != null)
+                    {
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "  Psdz: BaseVar={0}, Var={1}, Name={2}",
+                            ecuInfo.PsdzEcu.BaseVariant, ecuInfo.PsdzEcu.EcuVariant, ecuInfo.PsdzEcu.BnTnName));
+                    }
+                    foreach (PdszDatabase.SwiAction swiAction in ecuInfo.SwiActions)
+                    {
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "  SwiAction: Group={0}, Id={1}, Name={2}, Category={3}, Select={4}, Show={5}, Executable={6}",
+                            swiAction.VarGroup, swiAction.Id, swiAction.Name, swiAction.ActionCategory, swiAction.Selectable, swiAction.ShowInPlan, swiAction.Executable));
+                    }
+                }
                 UpdateStatus(sbResult.ToString());
                 _cts?.Token.ThrowIfCancellationRequested();
 

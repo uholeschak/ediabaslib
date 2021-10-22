@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.Rheingold.Psdz.Model;
+using BMW.Rheingold.Psdz.Model.Ecu;
 
 namespace PsdzClient
 {
@@ -21,6 +23,11 @@ namespace PsdzClient
                 Grp = grp;
                 VariantId = string.Empty;
                 VariantGroupId = string.Empty;
+                VariantPrgId = string.Empty;
+                VariantPrgName = string.Empty;
+                VariantPrgFlashLimit = string.Empty;
+                VariantPrgEcuVarId = string.Empty;
+                PsdzEcu = null;
                 SwiActions = new List<SwiAction>();
             }
 
@@ -37,6 +44,16 @@ namespace PsdzClient
             public string VariantId { get; set; }
 
             public string VariantGroupId { get; set; }
+
+            public string VariantPrgId { get; set; }
+
+            public string VariantPrgName { get; set; }
+
+            public string VariantPrgFlashLimit { get; set; }
+
+            public string VariantPrgEcuVarId { get; set; }
+
+            public IPsdzEcu PsdzEcu { get; set; }
 
             public List<SwiAction> SwiActions { get; set; }
         }
@@ -89,20 +106,46 @@ namespace PsdzClient
             _typeKeyClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"Typschluessel");
         }
 
+        public bool LinkSvtEcus(List<EcuInfo> ecuList, IPsdzSvt psdzSvt)
+        {
+            try
+            {
+                foreach (EcuInfo ecuInfo in ecuList)
+                {
+                    IPsdzEcu psdzEcuMatch = null; 
+                    if (ecuInfo.Address >= 0)
+                    {
+                        foreach (IPsdzEcu psdzEcu in psdzSvt.Ecus)
+                        {
+                            if (psdzEcu.PrimaryKey.DiagAddrAsInt == ecuInfo.Address)
+                            {
+                                psdzEcuMatch = psdzEcu;
+                                break;
+                            }
+                        }
+                    }
+                    ecuInfo.PsdzEcu = psdzEcuMatch;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public bool GetEcuVariants(List<EcuInfo> ecuList)
         {
             bool result = true;
             foreach (EcuInfo ecuInfo in ecuList)
             {
-                if (GetEcuVariant(ecuInfo))
-                {
-                    GetSwiActionsForEcuVariant(ecuInfo);
-                    GetSwiActionsForEcuGroup(ecuInfo);
-                }
-                else
-                {
-                    result = false;
-                }
+                ecuInfo.SwiActions.Clear();
+                GetEcuVariant(ecuInfo);
+                GetEcuProgrammingVariant(ecuInfo);
+
+                GetSwiActionsForEcuVariant(ecuInfo);
+                GetSwiActionsForEcuGroup(ecuInfo);
             }
 
             return result;
@@ -110,19 +153,66 @@ namespace PsdzClient
 
         private bool GetEcuVariant(EcuInfo ecuInfo)
         {
+            if (string.IsNullOrEmpty(ecuInfo.Sgbd))
+            {
+                return false;
+            }
+
             bool result = false;
             string sql = string.Format(@"SELECT ID, " + DatabaseFunctions.SqlTitleItems + ", ECUGROUPID FROM XEP_ECUVARIANTS WHERE (lower(NAME) = '{0}')", ecuInfo.Sgbd.ToLowerInvariant());
 
             try
             {
+                ecuInfo.VariantId = string.Empty;
+                ecuInfo.VariantGroupId = string.Empty;
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            ecuInfo.VariantGroupId = reader["ECUGROUPID"].ToString().Trim();
                             ecuInfo.VariantId = reader["ID"].ToString().Trim();
+                            ecuInfo.VariantGroupId = reader["ECUGROUPID"].ToString().Trim();
+                            result = true;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return result;
+        }
+
+        private bool GetEcuProgrammingVariant(EcuInfo ecuInfo)
+        {
+            if (ecuInfo.PsdzEcu == null || string.IsNullOrEmpty(ecuInfo.PsdzEcu.BnTnName))
+            {
+                return false;
+            }
+
+            bool result = false;
+            string sql = string.Format(@"SELECT ID, NAME, FLASHLIMIT, ECUVARIANTID FROM XEP_ECUPROGRAMMINGVARIANT WHERE UPPER(NAME) = UPPER('{0}')", ecuInfo.PsdzEcu.BnTnName);
+
+            try
+            {
+                ecuInfo.VariantPrgId = string.Empty;
+                ecuInfo.VariantPrgName = string.Empty;
+                ecuInfo.VariantPrgFlashLimit = string.Empty;
+                ecuInfo.VariantPrgEcuVarId = string.Empty;
+
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            ecuInfo.VariantPrgId = reader["ID"].ToString().Trim();
+                            ecuInfo.VariantPrgName = reader["NAME"].ToString().Trim();
+                            ecuInfo.VariantPrgFlashLimit = reader["FLASHLIMIT"].ToString().Trim();
+                            ecuInfo.VariantPrgEcuVarId = reader["ECUVARIANTID"].ToString().Trim();
                             result = true;
                         }
                     }
@@ -177,7 +267,7 @@ namespace PsdzClient
 
         private bool GetSwiActionsForEcuGroup(EcuInfo ecuInfo)
         {
-            if (string.IsNullOrEmpty(ecuInfo.VariantId))
+            if (string.IsNullOrEmpty(ecuInfo.VariantGroupId))
             {
                 return false;
             }
