@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.Psdz.Model;
@@ -17,6 +18,106 @@ namespace PsdzClient
             VarId,
             VarGroupId,
             VarPrgEcuId,
+        }
+
+        public class EcuTranslation
+        {
+            public EcuTranslation()
+            {
+                TextDe = string.Empty;
+                TextEn = string.Empty;
+                TextFr = string.Empty;
+                TextTh = string.Empty;
+                TextSv = string.Empty;
+                TextIt = string.Empty;
+                TextEs = string.Empty;
+                TextId = string.Empty;
+                TextKo = string.Empty;
+                TextEl = string.Empty;
+                TextTr = string.Empty;
+                TextZh = string.Empty;
+                TextRu = string.Empty;
+                TextNl = string.Empty;
+                TextPt = string.Empty;
+                TextJa = string.Empty;
+                TextCs = string.Empty;
+                TextPl = string.Empty;
+            }
+
+            public EcuTranslation(string textDe, string textEn, string textFr, string textTh, string textSv, string textIt,
+                string textEs, string textId, string textKo, string textEl, string textTr, string textZh,
+                string textRu, string textNl, string textPt, string textJa, string textCs, string textPl)
+            {
+                TextDe = textDe;
+                TextEn = textEn;
+                TextFr = textFr;
+                TextTh = textTh;
+                TextSv = textSv;
+                TextIt = textIt;
+                TextEs = textEs;
+                TextId = textId;
+                TextKo = textKo;
+                TextEl = textEl;
+                TextTr = textTr;
+                TextZh = textZh;
+                TextRu = textRu;
+                TextNl = textNl;
+                TextPt = textPt;
+                TextJa = textJa;
+                TextCs = textCs;
+                TextPl = textPl;
+            }
+
+            public string GetTitle(string language, string prefix = "Text")
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(language) || language.Length < 2)
+                    {
+                        return string.Empty;
+                    }
+
+                    string titlePropertyName = prefix + language.ToUpperInvariant()[0] + language.ToLowerInvariant()[1];
+                    Type objType = GetType();
+                    PropertyInfo propertyTitle = objType.GetProperty(titlePropertyName);
+                    if (propertyTitle == null)
+                    {
+                        titlePropertyName = prefix + "En";
+                        propertyTitle = objType.GetProperty(titlePropertyName);
+                    }
+
+                    if (propertyTitle != null)
+                    {
+                        string result = propertyTitle.GetValue(this) as string;
+                        return result ?? string.Empty;
+                    }
+
+                    return string.Empty;
+                }
+                catch (Exception)
+                {
+                    return string.Empty;
+                }
+            }
+
+            public string TextDe { get; set; }
+            public string TextEn { get; set; }
+            public string TextFr { get; set; }
+            public string TextTh { get; set; }
+            public string TextSv { get; set; }
+            public string TextIt { get; set; }
+            public string TextEs { get; set; }
+            public string TextId { get; set; }
+            public string TextKo { get; set; }
+            public string TextEl { get; set; }
+            public string TextTr { get; set; }
+            public string TextZh { get; set; }
+            public string TextRu { get; set; }
+            public string TextNl { get; set; }
+            public string TextPt { get; set; }
+            public string TextJa { get; set; }
+            public string TextCs { get; set; }
+            public string TextPl { get; set; }
         }
 
         public class EcuInfo
@@ -60,6 +161,8 @@ namespace PsdzClient
 
             public string VariantPrgEcuVarId { get; set; }
 
+            public EcuTranslation EcuTranslation { get; set; }
+
             public IPsdzEcu PsdzEcu { get; set; }
 
             public List<SwiAction> SwiActions { get; set; }
@@ -67,15 +170,18 @@ namespace PsdzClient
 
         public class SwiAction
         {
-            public SwiAction(SwiActionSource swiSource, string id, string name, string actionCategory, string selectable, string showInPlan, string executable, string nodeClass)
+            public SwiAction(SwiActionSource swiSource, string id, string name, string actionCategory, string selectable, string showInPlan, string executable, string nodeClass,
+                EcuTranslation ecuTranslation)
             {
                 SwiSource = swiSource;
+                Id = id;
                 Name = name;
                 ActionCategory = actionCategory;
                 Selectable = selectable;
                 ShowInPlan = showInPlan;
                 Executable = executable;
                 NodeClass = nodeClass;
+                EcuTranslation = ecuTranslation;
             }
 
             public SwiActionSource SwiSource { get; set; }
@@ -93,6 +199,8 @@ namespace PsdzClient
             public string Executable { get; set; }
 
             public string NodeClass { get; set; }
+
+            public EcuTranslation EcuTranslation { get; set; }
         }
 
         private bool _disposed;
@@ -181,6 +289,7 @@ namespace PsdzClient
                         {
                             ecuInfo.VariantId = reader["ID"].ToString().Trim();
                             ecuInfo.VariantGroupId = reader["ECUGROUPID"].ToString().Trim();
+                            ecuInfo.EcuTranslation = GetTranslation(reader);
                             result = true;
                         }
                     }
@@ -259,7 +368,7 @@ namespace PsdzClient
                             string showInPlan = reader["SHOW_IN_PLAN"].ToString().Trim();
                             string executable = reader["EXECUTABLE"].ToString().Trim();
                             string nodeclass = reader["NODECLASS"].ToString().Trim();
-                            SwiAction swiAction = new SwiAction(SwiActionSource.VarId, id, name, actionCategory, selectable, showInPlan, executable, nodeclass);
+                            SwiAction swiAction = new SwiAction(SwiActionSource.VarId, id, name, actionCategory, selectable, showInPlan, executable, nodeclass, GetTranslation(reader));
                             ecuInfo.SwiActions.Add(swiAction);
                         }
                     }
@@ -298,7 +407,7 @@ namespace PsdzClient
                             string showInPlan = reader["SHOW_IN_PLAN"].ToString().Trim();
                             string executable = reader["EXECUTABLE"].ToString().Trim();
                             string nodeclass = reader["NODECLASS"].ToString().Trim();
-                            SwiAction swiAction = new SwiAction(SwiActionSource.VarGroupId, id, name, actionCategory, selectable, showInPlan, executable, nodeclass);
+                            SwiAction swiAction = new SwiAction(SwiActionSource.VarGroupId, id, name, actionCategory, selectable, showInPlan, executable, nodeclass, GetTranslation(reader));
                             ecuInfo.SwiActions.Add(swiAction);
                         }
                     }
@@ -337,7 +446,7 @@ namespace PsdzClient
                             string showInPlan = reader["SHOW_IN_PLAN"].ToString().Trim();
                             string executable = reader["EXECUTABLE"].ToString().Trim();
                             string nodeclass = reader["NODECLASS"].ToString().Trim();
-                            SwiAction swiAction = new SwiAction(SwiActionSource.VarPrgEcuId, id, name, actionCategory, selectable, showInPlan, executable, nodeclass);
+                            SwiAction swiAction = new SwiAction(SwiActionSource.VarPrgEcuId, id, name, actionCategory, selectable, showInPlan, executable, nodeclass, GetTranslation(reader));
                             ecuInfo.SwiActions.Add(swiAction);
                         }
                     }
@@ -349,6 +458,30 @@ namespace PsdzClient
             }
 
             return true;
+        }
+
+        private static EcuTranslation GetTranslation(SQLiteDataReader reader, string prefix = "TITLE", string language = null)
+        {
+            return new EcuTranslation(
+                language == null || language.ToLowerInvariant() == "de" ? reader[prefix + "_DEDE"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "en" ? reader[prefix + "_ENUS"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "fr" ? reader[prefix + "_FR"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "th" ? reader[prefix + "_TH"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "sv" ? reader[prefix + "_SV"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "it" ? reader[prefix + "_IT"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "es" ? reader[prefix + "_ES"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "id" ? reader[prefix + "_ID"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "ko" ? reader[prefix + "_KO"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "el" ? reader[prefix + "_EL"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "tr" ? reader[prefix + "_TR"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "zh" ? reader[prefix + "_ZHCN"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "ru" ? reader[prefix + "_RU"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "nl" ? reader[prefix + "_NL"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "pt" ? reader[prefix + "_PT"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "ja" ? reader[prefix + "_JA"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "cs" ? reader[prefix + "_CSCZ"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "pl" ? reader[prefix + "_PLPL"].ToString() : string.Empty
+                );
         }
 
         public void Dispose()

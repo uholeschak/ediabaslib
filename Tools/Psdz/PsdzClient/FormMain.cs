@@ -36,6 +36,7 @@ namespace PsdzClient
     {
         private const string DealerId = "32395";
         private const string DefaultIp = @"127.0.0.1";
+        private const string TitleLang = "En";
         private ProgrammingService programmingService;
         private bool _taskActive;
         private bool TaskActive
@@ -943,8 +944,8 @@ namespace PsdzClient
                 {
                     sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Ecu: Name={0}, Addr={1}, Sgdb={2}, Group={3}",
                         ecuInfo.Name, ecuInfo.Address, ecuInfo.Sgbd, ecuInfo.Grp));
-                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "  VarId={0}, VarGroupId={1}, VarPrgId={2}, VarPrgEcuId={3}, VarPrgName={4}",
-                        ecuInfo.VariantId, ecuInfo.VariantGroupId, ecuInfo.VariantPrgId, ecuInfo.VariantPrgEcuVarId, ecuInfo.VariantPrgName));
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "  VarId={0}, VarGroupId={1}, VarPrgId={2}, VarPrgEcuId={3}, VarPrgName={4}, Title={5}",
+                        ecuInfo.VariantId, ecuInfo.VariantGroupId, ecuInfo.VariantPrgId, ecuInfo.VariantPrgEcuVarId, ecuInfo.VariantPrgName, ecuInfo.EcuTranslation.GetTitle(TitleLang)));
                     if (ecuInfo.PsdzEcu != null)
                     {
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "  Psdz: BaseVar={0}, Var={1}, Name={2}",
@@ -952,8 +953,9 @@ namespace PsdzClient
                     }
                     foreach (PdszDatabase.SwiAction swiAction in ecuInfo.SwiActions)
                     {
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "  SwiAction: Source={0}, Id={1}, Name={2}, Category={3}, Select={4}, Show={5}, Executable={6}",
-                            swiAction.SwiSource, swiAction.Id, swiAction.Name, swiAction.ActionCategory, swiAction.Selectable, swiAction.ShowInPlan, swiAction.Executable));
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "  SwiAction: Source={0}, Id={1}, Name={2}, Category={3}, Select={4}, Show={5}, Executable={6}, Title={7}",
+                            swiAction.SwiSource, swiAction.Id, swiAction.Name, swiAction.ActionCategory, swiAction.Selectable, swiAction.ShowInPlan, swiAction.Executable,
+                            swiAction.EcuTranslation.GetTitle(TitleLang)));
                     }
                 }
                 UpdateStatus(sbResult.ToString());
