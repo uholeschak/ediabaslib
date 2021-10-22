@@ -162,6 +162,8 @@ BMW.Rheingold.DatabaseProvider.SQLiteConnector.GetSwiActionsForRegister()
 BMW.Rheingold.DatabaseProvider.SQLiteConnector.GetSwiActionsForEcuVariant()
 BMW.Rheingold.DatabaseProvider.SQLiteConnector.GetServiceProgramsForSwiAction()
 BMW.Rheingold.DatabaseProvider.SQLiteConnector.GetSwiActionsLinkedToSwiActionId()
+BMW.Rheingold.DatabaseProvider.SQLiteConnector.GetEcuProgrammingVariantByName();
+BMW.Rheingold.DatabaseProvider.SQLiteConnector.GetSwiActionsForEcuProgrammingVariant()
 BMW.Rheingold.Programming.ProgrammingEngine.States.FillTherapyPlanState.AddServiceProgrammsToSwiAction()
 BMW.Rheingold.Programming.Controller.SecureCoding.SecureCodingManager.RequestOnlineNcdCalculation()
 BMW.Rheingold.Programming.Controller.SecureCoding.RequestOnlineNcdCalculationViaIsta()
