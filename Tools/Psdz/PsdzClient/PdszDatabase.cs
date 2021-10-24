@@ -378,7 +378,7 @@ namespace PsdzClient
             {
                 return false;
             }
-        
+
             return true;
         }
 
@@ -448,6 +448,45 @@ namespace PsdzClient
                             string nodeclass = reader["NODECLASS"].ToString().Trim();
                             SwiAction swiAction = new SwiAction(SwiActionSource.VarPrgEcuId, id, name, actionCategory, selectable, showInPlan, executable, nodeclass, GetTranslation(reader));
                             ecuInfo.SwiActions.Add(swiAction);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool GetSwiActionsForSwiRegister(string registerId, List<SwiAction> swiActions)
+        {
+            if (string.IsNullOrEmpty(registerId))
+            {
+                return false;
+            }
+
+            string sql = string.Format(@"SELECT ID, NAME, ACTIONCATEGORY, SELECTABLE, SHOW_IN_PLAN, EXECUTABLE, " + DatabaseFunctions.SqlTitleItems +
+                                       ", NODECLASS FROM XEP_SWIACTION WHERE ID IN (SELECT SWI_ACTION_ID FROM XEP_REF_SWIREGISTER_SWIACTION WHERE SWI_REGISTER_ID = {0})",
+                registerId);
+            try
+            {
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string id = reader["ID"].ToString().Trim();
+                            string name = reader["NAME"].ToString().Trim();
+                            string actionCategory = reader["ACTIONCATEGORY"].ToString().Trim();
+                            string selectable = reader["SELECTABLE"].ToString().Trim();
+                            string showInPlan = reader["SHOW_IN_PLAN"].ToString().Trim();
+                            string executable = reader["EXECUTABLE"].ToString().Trim();
+                            string nodeclass = reader["NODECLASS"].ToString().Trim();
+                            SwiAction swiAction = new SwiAction(SwiActionSource.VarId, id, name, actionCategory, selectable, showInPlan, executable, nodeclass, GetTranslation(reader));
+                            swiActions.Add(swiAction);
                         }
                     }
                 }
