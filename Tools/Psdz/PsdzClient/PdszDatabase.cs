@@ -204,6 +204,41 @@ namespace PsdzClient
             public EcuTranslation EcuTranslation { get; set; }
         }
 
+        public class SwiRegister
+        {
+            public SwiRegister(string id, string nodeClass, string name, string parentId, string remark, string sort, string versionNum, string identifier,
+                EcuTranslation ecuTranslation)
+            {
+                Id = id;
+                NodeClass = nodeClass;
+                Name = name;
+                ParentId = parentId;
+                Remark = remark;
+                Sort = sort;
+                VersionNum = versionNum;
+                Identifier = identifier;
+                EcuTranslation = ecuTranslation;
+            }
+
+            public string Id { get; set; }
+
+            public string NodeClass { get; set; }
+
+            public string ParentId { get; set; }
+
+            public string Name { get; set; }
+
+            public string Remark { get; set; }
+
+            public string Sort { get; set; }
+
+            public string VersionNum { get; set; }
+
+            public string Identifier { get; set; }
+
+            public EcuTranslation EcuTranslation { get; set; }
+        }
+
         private bool _disposed;
         private SQLiteConnection _mDbConnection;
         private string _rootENameClassId;
@@ -472,6 +507,38 @@ namespace PsdzClient
             return true;
         }
 
+        private SwiRegister GetSwiRegisterByByIdentifer(string registerId)
+        {
+            if (string.IsNullOrEmpty(registerId))
+            {
+                return null;
+            }
+
+            string sql = string.Format(@"SELECT ID, NODECLASS, PARENTID, NAME, REMARK, SORT, TITLEID, " + DatabaseFunctions.SqlTitleItems +
+                                       ", VERSIONNUMBER, IDENTIFIER FROM XEP_SWIREGISTER WHERE ID IDENTIFER = '{0}'",
+                registerId);
+            SwiRegister swiRegister = null;
+            try
+            {
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            swiRegister = ReadXepSwiRegister(reader);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return swiRegister;
+        }
+
         private static SwiAction ReadXepSwiAction(SQLiteDataReader reader, SwiActionSource swiActionSource)
         {
             string id = reader["ID"].ToString().Trim();
@@ -480,8 +547,21 @@ namespace PsdzClient
             string selectable = reader["SELECTABLE"].ToString().Trim();
             string showInPlan = reader["SHOW_IN_PLAN"].ToString().Trim();
             string executable = reader["EXECUTABLE"].ToString().Trim();
-            string nodeclass = reader["NODECLASS"].ToString().Trim();
-            return new SwiAction(swiActionSource, id, name, actionCategory, selectable, showInPlan, executable, nodeclass, GetTranslation(reader));
+            string nodeClass = reader["NODECLASS"].ToString().Trim();
+            return new SwiAction(swiActionSource, id, name, actionCategory, selectable, showInPlan, executable, nodeClass, GetTranslation(reader));
+        }
+
+        private static SwiRegister ReadXepSwiRegister(SQLiteDataReader reader)
+        {
+            string id = reader["ID"].ToString().Trim();
+            string nodeClass = reader["NODECLASS"].ToString().Trim();
+            string parentId = reader["PARENTID"].ToString().Trim();
+            string name = reader["NAME"].ToString().Trim();
+            string remark = reader["REMARK"].ToString().Trim();
+            string sort = reader["SORT"].ToString().Trim();
+            string versionNum = reader["VERSIONNUMBER"].ToString().Trim();
+            string identifer = reader["IDENTIFIER"].ToString().Trim();
+            return new SwiRegister(id, nodeClass, parentId, name, remark, sort, versionNum, identifer, GetTranslation(reader));
         }
 
         private static EcuTranslation GetTranslation(SQLiteDataReader reader, string prefix = "TITLE", string language = null)
