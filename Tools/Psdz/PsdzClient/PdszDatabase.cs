@@ -218,6 +218,7 @@ namespace PsdzClient
                 VersionNum = versionNum;
                 Identifier = identifier;
                 EcuTranslation = ecuTranslation;
+                SwiActions = new List<SwiAction>();
             }
 
             public string Id { get; set; }
@@ -237,12 +238,15 @@ namespace PsdzClient
             public string Identifier { get; set; }
 
             public EcuTranslation EcuTranslation { get; set; }
+
+            public List<SwiAction> SwiActions { get; set; }
         }
 
         private bool _disposed;
         private SQLiteConnection _mDbConnection;
         private string _rootENameClassId;
         private string _typeKeyClassId;
+        public List<SwiRegister> SwiRegisterList { get; private set; }
 
         public PdszDatabase(string istaFolder)
         {
@@ -255,6 +259,8 @@ namespace PsdzClient
 
             _rootENameClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"RootEBezeichnung");
             _typeKeyClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"Typschluessel");
+            SwiRegisterList = new List<SwiRegister>();
+            ReadSwiRegister();
         }
 
         public bool LinkSvtEcus(List<EcuInfo> ecuList, IPsdzSvt psdzSvt)
@@ -301,6 +307,26 @@ namespace PsdzClient
             }
 
             return result;
+        }
+
+        public void ReadSwiRegister()
+        {
+            List<SwiRegister> swiRegisterGlobal = GetSwiRegistersByParentId(null);
+            if (swiRegisterGlobal != null)
+            {
+                SwiRegisterList.AddRange(swiRegisterGlobal);
+            }
+
+            List<SwiRegister> swiRegisterCoding = GetSwiRegisterByIdentifer("CODIERUMRUESTUNGEN");
+            if (swiRegisterCoding != null)
+            {
+                SwiRegisterList.AddRange(swiRegisterGlobal);
+            }
+
+            foreach (SwiRegister swiRegister in SwiRegisterList)
+            {
+                GetSwiActionsForSwiRegister(swiRegister.Id, swiRegister.SwiActions);
+            }
         }
 
         private bool GetEcuVariant(EcuInfo ecuInfo)
@@ -515,7 +541,7 @@ namespace PsdzClient
             }
 
             string sql = string.Format(@"SELECT ID, NODECLASS, PARENTID, NAME, REMARK, SORT, TITLEID, " + DatabaseFunctions.SqlTitleItems +
-                                       ", VERSIONNUMBER, IDENTIFIER FROM XEP_SWIREGISTER WHERE IDENTIFER = 'REG|{0}'",
+                                       @", VERSIONNUMBER, IDENTIFIER FROM XEP_SWIREGISTER WHERE IDENTIFIER = 'REG|{0}'",
                 registerId);
             List<SwiRegister> swiRegisterList = new List<SwiRegister>();
             try
@@ -591,7 +617,7 @@ namespace PsdzClient
             string sort = reader["SORT"].ToString().Trim();
             string versionNum = reader["VERSIONNUMBER"].ToString().Trim();
             string identifer = reader["IDENTIFIER"].ToString().Trim();
-            return new SwiRegister(id, nodeClass, parentId, name, remark, sort, versionNum, identifer, GetTranslation(reader));
+            return new SwiRegister(id, nodeClass, name, parentId, remark, sort, versionNum, identifer, GetTranslation(reader));
         }
 
         private static EcuTranslation GetTranslation(SQLiteDataReader reader, string prefix = "TITLE", string language = null)
