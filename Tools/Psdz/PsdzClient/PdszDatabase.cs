@@ -507,7 +507,7 @@ namespace PsdzClient
             return true;
         }
 
-        private SwiRegister GetSwiRegisterByByIdentifer(string registerId)
+        private List<SwiRegister> GetSwiRegisterByIdentifer(string registerId)
         {
             if (string.IsNullOrEmpty(registerId))
             {
@@ -515,9 +515,9 @@ namespace PsdzClient
             }
 
             string sql = string.Format(@"SELECT ID, NODECLASS, PARENTID, NAME, REMARK, SORT, TITLEID, " + DatabaseFunctions.SqlTitleItems +
-                                       ", VERSIONNUMBER, IDENTIFIER FROM XEP_SWIREGISTER WHERE ID IDENTIFER = '{0}'",
+                                       ", VERSIONNUMBER, IDENTIFIER FROM XEP_SWIREGISTER WHERE IDENTIFER = 'REG|{0}'",
                 registerId);
-            SwiRegister swiRegister = null;
+            List<SwiRegister> swiRegisterList = new List<SwiRegister>();
             try
             {
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
@@ -526,7 +526,8 @@ namespace PsdzClient
                     {
                         while (reader.Read())
                         {
-                            swiRegister = ReadXepSwiRegister(reader);
+                            SwiRegister swiRegister = ReadXepSwiRegister(reader);
+                            swiRegisterList.Add(swiRegister);
                         }
                     }
                 }
@@ -536,7 +537,36 @@ namespace PsdzClient
                 return null;
             }
 
-            return swiRegister;
+            return swiRegisterList;
+        }
+
+        private List<SwiRegister> GetSwiRegistersByParentId(string parentId)
+        {
+            string selection;
+            selection = parentId != null ? string.Format(@"= {0}", parentId) : "IS NULL";
+            string sql = @"SELECT ID, NODECLASS, PARENTID, NAME, REMARK, SORT, TITLEID, " + DatabaseFunctions.SqlTitleItems +
+                                       ", VERSIONNUMBER, IDENTIFIER FROM XEP_SWIREGISTER WHERE PARENTID " + selection;
+            List<SwiRegister> swiRegisterList = new List<SwiRegister>();
+            try
+            {
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            SwiRegister swiRegister = ReadXepSwiRegister(reader);
+                            swiRegisterList.Add(swiRegister);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return swiRegisterList;
         }
 
         private static SwiAction ReadXepSwiAction(SQLiteDataReader reader, SwiActionSource swiActionSource)
