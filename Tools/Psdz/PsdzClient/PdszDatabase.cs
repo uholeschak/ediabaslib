@@ -208,8 +208,8 @@ namespace PsdzClient
             {
                 StringBuilder sb = new StringBuilder();
                 sb.Append(prefix);
-                sb.AppendLine(string.Format(CultureInfo.InvariantCulture,
-                    "SwiAction: Id={0}, Name={1}, Category={2}, Select={3}, Show={4}, Execute={5}, Title={6}",
+                sb.Append(string.Format(CultureInfo.InvariantCulture,
+                    "SwiAction: Id={0}, Name={1}, Category={2}, Select={3}, Show={4}, Execute={5}, Title='{6}'",
                     Id, Name, ActionCategory, Selectable, ShowInPlan, Executable, EcuTranslation.GetTitle(language)));
                 return sb.ToString();
             }
@@ -259,8 +259,8 @@ namespace PsdzClient
             {
                 StringBuilder sb = new StringBuilder();
                 sb.Append(prefix);
-                sb.AppendLine(string.Format(CultureInfo.InvariantCulture,
-                    "SwiReg: Name={0}, Remark={1}, Sort={2}, Ver={3}, Ident={4}, Title={5}",
+                sb.Append(string.Format(CultureInfo.InvariantCulture,
+                    "SwiReg: Name={0}, Remark={1}, Sort={2}, Ver={3}, Ident={4}, Title='{5}'",
                     Name, Remark, Sort, VersionNum, Identifier, EcuTranslation.GetTitle(language)));
 
                 string prefixChild = prefix + " ";
@@ -268,7 +268,8 @@ namespace PsdzClient
                 {
                     foreach (SwiRegister swiChild in Children)
                     {
-                        sb.AppendLine(swiChild.ToString(language, prefixChild));
+                        sb.AppendLine();
+                        sb.Append(swiChild.ToString(language, prefixChild));
                     }
                 }
 
@@ -276,7 +277,8 @@ namespace PsdzClient
                 {
                     foreach (SwiAction swiAction in SwiActions)
                     {
-                        sb.AppendLine(swiAction.ToString(language, prefixChild));
+                        sb.AppendLine();
+                        sb.Append(swiAction.ToString(language, prefixChild));
                     }
                 }
                 return sb.ToString();
