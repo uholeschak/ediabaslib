@@ -361,14 +361,7 @@ namespace PsdzClient
                     {
                         while (reader.Read())
                         {
-                            string id = reader["ID"].ToString().Trim();
-                            string name = reader["NAME"].ToString().Trim();
-                            string actionCategory = reader["ACTIONCATEGORY"].ToString().Trim();
-                            string selectable = reader["SELECTABLE"].ToString().Trim();
-                            string showInPlan = reader["SHOW_IN_PLAN"].ToString().Trim();
-                            string executable = reader["EXECUTABLE"].ToString().Trim();
-                            string nodeclass = reader["NODECLASS"].ToString().Trim();
-                            SwiAction swiAction = new SwiAction(SwiActionSource.VarId, id, name, actionCategory, selectable, showInPlan, executable, nodeclass, GetTranslation(reader));
+                            SwiAction swiAction = ReadXepSwiAction(reader);
                             ecuInfo.SwiActions.Add(swiAction);
                         }
                     }
@@ -400,14 +393,7 @@ namespace PsdzClient
                     {
                         while (reader.Read())
                         {
-                            string id = reader["ID"].ToString().Trim();
-                            string name = reader["NAME"].ToString().Trim();
-                            string actionCategory = reader["ACTIONCATEGORY"].ToString().Trim();
-                            string selectable = reader["SELECTABLE"].ToString().Trim();
-                            string showInPlan = reader["SHOW_IN_PLAN"].ToString().Trim();
-                            string executable = reader["EXECUTABLE"].ToString().Trim();
-                            string nodeclass = reader["NODECLASS"].ToString().Trim();
-                            SwiAction swiAction = new SwiAction(SwiActionSource.VarGroupId, id, name, actionCategory, selectable, showInPlan, executable, nodeclass, GetTranslation(reader));
+                            SwiAction swiAction = ReadXepSwiAction(reader);
                             ecuInfo.SwiActions.Add(swiAction);
                         }
                     }
@@ -439,14 +425,7 @@ namespace PsdzClient
                     {
                         while (reader.Read())
                         {
-                            string id = reader["ID"].ToString().Trim();
-                            string name = reader["NAME"].ToString().Trim();
-                            string actionCategory = reader["ACTIONCATEGORY"].ToString().Trim();
-                            string selectable = reader["SELECTABLE"].ToString().Trim();
-                            string showInPlan = reader["SHOW_IN_PLAN"].ToString().Trim();
-                            string executable = reader["EXECUTABLE"].ToString().Trim();
-                            string nodeclass = reader["NODECLASS"].ToString().Trim();
-                            SwiAction swiAction = new SwiAction(SwiActionSource.VarPrgEcuId, id, name, actionCategory, selectable, showInPlan, executable, nodeclass, GetTranslation(reader));
+                            SwiAction swiAction = ReadXepSwiAction(reader);
                             ecuInfo.SwiActions.Add(swiAction);
                         }
                     }
@@ -478,14 +457,7 @@ namespace PsdzClient
                     {
                         while (reader.Read())
                         {
-                            string id = reader["ID"].ToString().Trim();
-                            string name = reader["NAME"].ToString().Trim();
-                            string actionCategory = reader["ACTIONCATEGORY"].ToString().Trim();
-                            string selectable = reader["SELECTABLE"].ToString().Trim();
-                            string showInPlan = reader["SHOW_IN_PLAN"].ToString().Trim();
-                            string executable = reader["EXECUTABLE"].ToString().Trim();
-                            string nodeclass = reader["NODECLASS"].ToString().Trim();
-                            SwiAction swiAction = new SwiAction(SwiActionSource.VarId, id, name, actionCategory, selectable, showInPlan, executable, nodeclass, GetTranslation(reader));
+                            SwiAction swiAction = ReadXepSwiAction(reader);
                             swiActions.Add(swiAction);
                         }
                     }
@@ -497,6 +469,18 @@ namespace PsdzClient
             }
 
             return true;
+        }
+
+        private static SwiAction ReadXepSwiAction(SQLiteDataReader reader)
+        {
+            string id = reader["ID"].ToString().Trim();
+            string name = reader["NAME"].ToString().Trim();
+            string actionCategory = reader["ACTIONCATEGORY"].ToString().Trim();
+            string selectable = reader["SELECTABLE"].ToString().Trim();
+            string showInPlan = reader["SHOW_IN_PLAN"].ToString().Trim();
+            string executable = reader["EXECUTABLE"].ToString().Trim();
+            string nodeclass = reader["NODECLASS"].ToString().Trim();
+            return new SwiAction(SwiActionSource.VarId, id, name, actionCategory, selectable, showInPlan, executable, nodeclass, GetTranslation(reader));
         }
 
         private static EcuTranslation GetTranslation(SQLiteDataReader reader, string prefix = "TITLE", string language = null)
