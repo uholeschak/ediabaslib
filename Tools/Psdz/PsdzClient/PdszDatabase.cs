@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -202,6 +203,16 @@ namespace PsdzClient
             public string NodeClass { get; set; }
 
             public EcuTranslation EcuTranslation { get; set; }
+
+            public string ToString(string language, string prefix = "")
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(prefix);
+                sb.AppendLine(string.Format(CultureInfo.InvariantCulture,
+                    "SwiAction: Id={0}, Name={1}, Category={2}, Select={3}, Show={4}, Execute={5}, Title={6}",
+                    Id, Name, ActionCategory, Selectable, ShowInPlan, Executable, EcuTranslation.GetTitle(language)));
+                return sb.ToString();
+            }
         }
 
         public class SwiRegister
@@ -218,6 +229,7 @@ namespace PsdzClient
                 VersionNum = versionNum;
                 Identifier = identifier;
                 EcuTranslation = ecuTranslation;
+                Children = null;
                 SwiActions = new List<SwiAction>();
             }
 
@@ -239,14 +251,43 @@ namespace PsdzClient
 
             public EcuTranslation EcuTranslation { get; set; }
 
+            public List<SwiRegister> Children { get; set; }
+
             public List<SwiAction> SwiActions { get; set; }
+
+            public string ToString(string language, string prefix = "")
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(prefix);
+                sb.AppendLine(string.Format(CultureInfo.InvariantCulture,
+                    "SwiReg: Name={0}, Remark={1}, Sort={2}, Ver={3}, Ident={4}, Title={5}",
+                    Name, Remark, Sort, VersionNum, Identifier, EcuTranslation.GetTitle(language)));
+
+                string prefixChild = prefix + " ";
+                if (Children != null)
+                {
+                    foreach (SwiRegister swiChild in Children)
+                    {
+                        sb.AppendLine(swiChild.ToString(language, prefixChild));
+                    }
+                }
+
+                if (SwiActions != null)
+                {
+                    foreach (SwiAction swiAction in SwiActions)
+                    {
+                        sb.AppendLine(swiAction.ToString(language, prefixChild));
+                    }
+                }
+                return sb.ToString();
+            }
         }
 
         private bool _disposed;
         private SQLiteConnection _mDbConnection;
         private string _rootENameClassId;
         private string _typeKeyClassId;
-        public List<SwiRegister> SwiRegisterList { get; private set; }
+        public SwiRegister SwiRegisterTree { get; private set; }
 
         public PdszDatabase(string istaFolder)
         {
@@ -259,7 +300,7 @@ namespace PsdzClient
 
             _rootENameClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"RootEBezeichnung");
             _typeKeyClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"Typschluessel");
-            SwiRegisterList = new List<SwiRegister>();
+            SwiRegisterTree = null;
             ReadSwiRegister();
         }
 
@@ -311,21 +352,48 @@ namespace PsdzClient
 
         public void ReadSwiRegister()
         {
-            List<SwiRegister> swiRegisterGlobal = GetSwiRegistersByParentId(null);
-            if (swiRegisterGlobal != null)
+            List<SwiRegister> swiRegisterRoot = GetSwiRegistersByParentId(null);
+            if (swiRegisterRoot != null)
             {
-                SwiRegisterList.AddRange(swiRegisterGlobal);
+                SwiRegisterTree = swiRegisterRoot.FirstOrDefault();
             }
 
-            List<SwiRegister> swiRegisterCoding = GetSwiRegisterByIdentifer("CODIERUMRUESTUNGEN");
-            if (swiRegisterCoding != null)
+            ReadSwiRegisterTree(SwiRegisterTree);
+            GetSwiActionsForTree(SwiRegisterTree);
+        }
+
+        public void ReadSwiRegisterTree(SwiRegister swiRegister)
+        {
+            if (string.IsNullOrEmpty(swiRegister.Id))
             {
-                SwiRegisterList.AddRange(swiRegisterGlobal);
+                return;
             }
 
-            foreach (SwiRegister swiRegister in SwiRegisterList)
+            List<SwiRegister> swiChildren = GetSwiRegistersByParentId(swiRegister.Id);
+            if (swiChildren != null && swiChildren.Count > 0)
             {
-                GetSwiActionsForSwiRegister(swiRegister.Id, swiRegister.SwiActions);
+                swiRegister.Children = swiChildren;
+                foreach (SwiRegister swiChild in swiChildren)
+                {
+                    ReadSwiRegisterTree(swiChild);
+                }
+            }
+        }
+
+        public void GetSwiActionsForTree(SwiRegister swiRegister)
+        {
+            if (string.IsNullOrEmpty(swiRegister.Id))
+            {
+                return;
+            }
+
+            GetSwiActionsForSwiRegister(swiRegister.Id, swiRegister.SwiActions);
+            if (swiRegister.Children != null && swiRegister.Children.Count > 0)
+            {
+                foreach (SwiRegister swiChild in swiRegister.Children)
+                {
+                    GetSwiActionsForTree(swiChild);
+                }
             }
         }
 

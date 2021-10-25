@@ -222,6 +222,13 @@ namespace PsdzClient
                 programmingService.SetLogLevelToMax();
                 sbResult.AppendLine("Host started");
                 UpdateStatus(sbResult.ToString());
+
+                if (programmingService.PdszDatabase.SwiRegisterTree != null)
+                {
+                    sbResult.AppendLine("Swi Tree:");
+                    sbResult.AppendLine(programmingService.PdszDatabase.SwiRegisterTree.ToString(TitleLang));
+                    UpdateStatus(sbResult.ToString());
+                }
                 return true;
             }
             catch (Exception ex)
@@ -953,9 +960,7 @@ namespace PsdzClient
                     }
                     foreach (PdszDatabase.SwiAction swiAction in ecuInfo.SwiActions)
                     {
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "  SwiAction: Source={0}, Id={1}, Name={2}, Category={3}, Select={4}, Show={5}, Executable={6}, Title={7}",
-                            swiAction.SwiSource, swiAction.Id, swiAction.Name, swiAction.ActionCategory, swiAction.Selectable, swiAction.ShowInPlan, swiAction.Executable,
-                            swiAction.EcuTranslation.GetTitle(TitleLang)));
+                        sbResult.AppendLine(swiAction.ToString(TitleLang));
                     }
                 }
                 UpdateStatus(sbResult.ToString());
