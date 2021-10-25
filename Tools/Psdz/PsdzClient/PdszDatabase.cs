@@ -18,6 +18,7 @@ namespace PsdzClient
             VarId,
             VarGroupId,
             VarPrgEcuId,
+            SwiRegister,
         }
 
         public class EcuTranslation
@@ -361,7 +362,7 @@ namespace PsdzClient
                     {
                         while (reader.Read())
                         {
-                            SwiAction swiAction = ReadXepSwiAction(reader);
+                            SwiAction swiAction = ReadXepSwiAction(reader, SwiActionSource.VarId);
                             ecuInfo.SwiActions.Add(swiAction);
                         }
                     }
@@ -393,7 +394,7 @@ namespace PsdzClient
                     {
                         while (reader.Read())
                         {
-                            SwiAction swiAction = ReadXepSwiAction(reader);
+                            SwiAction swiAction = ReadXepSwiAction(reader, SwiActionSource.VarGroupId);
                             ecuInfo.SwiActions.Add(swiAction);
                         }
                     }
@@ -425,7 +426,7 @@ namespace PsdzClient
                     {
                         while (reader.Read())
                         {
-                            SwiAction swiAction = ReadXepSwiAction(reader);
+                            SwiAction swiAction = ReadXepSwiAction(reader, SwiActionSource.VarPrgEcuId);
                             ecuInfo.SwiActions.Add(swiAction);
                         }
                     }
@@ -457,7 +458,7 @@ namespace PsdzClient
                     {
                         while (reader.Read())
                         {
-                            SwiAction swiAction = ReadXepSwiAction(reader);
+                            SwiAction swiAction = ReadXepSwiAction(reader, SwiActionSource.SwiRegister);
                             swiActions.Add(swiAction);
                         }
                     }
@@ -471,7 +472,7 @@ namespace PsdzClient
             return true;
         }
 
-        private static SwiAction ReadXepSwiAction(SQLiteDataReader reader)
+        private static SwiAction ReadXepSwiAction(SQLiteDataReader reader, SwiActionSource swiActionSource)
         {
             string id = reader["ID"].ToString().Trim();
             string name = reader["NAME"].ToString().Trim();
@@ -480,7 +481,7 @@ namespace PsdzClient
             string showInPlan = reader["SHOW_IN_PLAN"].ToString().Trim();
             string executable = reader["EXECUTABLE"].ToString().Trim();
             string nodeclass = reader["NODECLASS"].ToString().Trim();
-            return new SwiAction(SwiActionSource.VarId, id, name, actionCategory, selectable, showInPlan, executable, nodeclass, GetTranslation(reader));
+            return new SwiAction(swiActionSource, id, name, actionCategory, selectable, showInPlan, executable, nodeclass, GetTranslation(reader));
         }
 
         private static EcuTranslation GetTranslation(SQLiteDataReader reader, string prefix = "TITLE", string language = null)
