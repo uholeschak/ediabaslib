@@ -204,6 +204,8 @@ namespace PsdzClient
 
             public EcuTranslation EcuTranslation { get; set; }
 
+            public List<SwiInfoObjLinked> SwiInfoObjLinks { get; set; }
+
             public string ToString(string language, string prefix = "")
             {
                 StringBuilder sb = new StringBuilder();
@@ -211,6 +213,16 @@ namespace PsdzClient
                 sb.Append(string.Format(CultureInfo.InvariantCulture,
                     "SwiAction: Id={0}, Name={1}, Category={2}, Select={3}, Show={4}, Execute={5}, Title='{6}'",
                     Id, Name, ActionCategory, Selectable, ShowInPlan, Executable, EcuTranslation.GetTitle(language)));
+
+                if (SwiInfoObjLinks != null)
+                {
+                    string prefixChild = prefix + " ";
+                    foreach (SwiInfoObjLinked swiInfoObjLinked in SwiInfoObjLinks)
+                    {
+                        sb.AppendLine();
+                        sb.Append(swiInfoObjLinked.ToString(language, prefixChild));
+                    }
+                }
                 return sb.ToString();
             }
         }
@@ -230,7 +242,7 @@ namespace PsdzClient
                 Identifier = identifier;
                 EcuTranslation = ecuTranslation;
                 Children = null;
-                SwiActions = new List<SwiAction>();
+                SwiActions = null;
             }
 
             public string Id { get; set; }
@@ -281,6 +293,31 @@ namespace PsdzClient
                         sb.Append(swiAction.ToString(language, prefixChild));
                     }
                 }
+                return sb.ToString();
+            }
+        }
+
+        public class SwiInfoObjLinked
+        {
+            public SwiInfoObjLinked(string infoObjId, string linkTypeId, string priority)
+            {
+                InfoObjId = infoObjId;
+                LinkTypeId = linkTypeId;
+                Priority = priority;
+            }
+
+            public string InfoObjId { get; set; }
+
+            public string LinkTypeId { get; set; }
+
+            public string Priority { get; set; }
+
+            public string ToString(string language, string prefix = "")
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(prefix);
+                sb.Append(string.Format(CultureInfo.InvariantCulture,
+                    "SwiInfoObjLink: ObjId={0}, LinkId={1}, Prio={2}", InfoObjId, LinkTypeId, Priority));
                 return sb.ToString();
             }
         }
@@ -389,7 +426,15 @@ namespace PsdzClient
                 return;
             }
 
-            GetSwiActionsForSwiRegister(swiRegister.Id, swiRegister.SwiActions);
+            swiRegister.SwiActions = GetSwiActionsForSwiRegister(swiRegister);
+            if (swiRegister.SwiActions != null)
+            {
+                foreach (SwiAction swiAction in swiRegister.SwiActions)
+                {
+                    swiAction.SwiInfoObjLinks = GetServiceProgramsForSwiAction(swiAction);
+                }
+            }
+
             if (swiRegister.Children != null && swiRegister.Children.Count > 0)
             {
                 foreach (SwiRegister swiChild in swiRegister.Children)
@@ -571,16 +616,17 @@ namespace PsdzClient
             return true;
         }
 
-        private bool GetSwiActionsForSwiRegister(string registerId, List<SwiAction> swiActions)
+        private List<SwiAction> GetSwiActionsForSwiRegister(SwiRegister swiRegister)
         {
-            if (string.IsNullOrEmpty(registerId))
+            if (string.IsNullOrEmpty(swiRegister.Id))
             {
-                return false;
+                return null;
             }
 
             string sql = string.Format(@"SELECT ID, NAME, ACTIONCATEGORY, SELECTABLE, SHOW_IN_PLAN, EXECUTABLE, " + DatabaseFunctions.SqlTitleItems +
                                        ", NODECLASS FROM XEP_SWIACTION WHERE ID IN (SELECT SWI_ACTION_ID FROM XEP_REF_SWIREGISTER_SWIACTION WHERE SWI_REGISTER_ID = {0})",
-                registerId);
+                swiRegister.Id);
+            List<SwiAction> swiActions = new List<SwiAction>();
             try
             {
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
@@ -597,10 +643,10 @@ namespace PsdzClient
             }
             catch (Exception)
             {
-                return false;
+                return null;
             }
 
-            return true;
+            return swiActions;
         }
 
         private List<SwiRegister> GetSwiRegisterByIdentifer(string registerId)
@@ -663,6 +709,41 @@ namespace PsdzClient
             }
 
             return swiRegisterList;
+        }
+
+        private List<SwiInfoObjLinked> GetServiceProgramsForSwiAction(SwiAction swiAction)
+        {
+            if (string.IsNullOrEmpty(swiAction.Id))
+            {
+                return null;
+            }
+
+            string sql = string.Format(@"SELECT INFOOBJECTID, LINK_TYPE_ID, PRIORITY FROM XEP_REFINFOOBJECTS WHERE ID IN (SELECT ID FROM XEP_SWIACTION WHERE ID = {0})",
+                swiAction.Id);
+            List<SwiInfoObjLinked> swiInfoObjList = new List<SwiInfoObjLinked>();
+            try
+            {
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string infoObjId = reader["INFOOBJECTID"].ToString().Trim();
+                            string linkTypeId = reader["LINK_TYPE_ID"].ToString().Trim();
+                            string priority = reader["PRIORITY"].ToString().Trim();
+                            SwiInfoObjLinked swiInfoObj = new SwiInfoObjLinked(infoObjId, linkTypeId, priority);
+                            swiInfoObjList.Add(swiInfoObj);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return swiInfoObjList;
         }
 
         private static SwiAction ReadXepSwiAction(SQLiteDataReader reader, SwiActionSource swiActionSource)
