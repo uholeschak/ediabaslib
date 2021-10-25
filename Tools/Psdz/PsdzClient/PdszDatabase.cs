@@ -452,12 +452,12 @@ namespace PsdzClient
             }
 
             bool result = false;
-            string sql = string.Format(@"SELECT ID, " + DatabaseFunctions.SqlTitleItems + ", ECUGROUPID FROM XEP_ECUVARIANTS WHERE (lower(NAME) = '{0}')", ecuInfo.Sgbd.ToLowerInvariant());
-
             try
             {
                 ecuInfo.VariantId = string.Empty;
                 ecuInfo.VariantGroupId = string.Empty;
+
+                string sql = string.Format(@"SELECT ID, " + DatabaseFunctions.SqlTitleItems + ", ECUGROUPID FROM XEP_ECUVARIANTS WHERE (lower(NAME) = '{0}')", ecuInfo.Sgbd.ToLowerInvariant());
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
@@ -488,8 +488,6 @@ namespace PsdzClient
             }
 
             bool result = false;
-            string sql = string.Format(@"SELECT ID, NAME, FLASHLIMIT, ECUVARIANTID FROM XEP_ECUPROGRAMMINGVARIANT WHERE UPPER(NAME) = UPPER('{0}')", ecuInfo.PsdzEcu.BnTnName);
-
             try
             {
                 ecuInfo.VariantPrgId = string.Empty;
@@ -497,6 +495,7 @@ namespace PsdzClient
                 ecuInfo.VariantPrgFlashLimit = string.Empty;
                 ecuInfo.VariantPrgEcuVarId = string.Empty;
 
+                string sql = string.Format(@"SELECT ID, NAME, FLASHLIMIT, ECUVARIANTID FROM XEP_ECUPROGRAMMINGVARIANT WHERE UPPER(NAME) = UPPER('{0}')", ecuInfo.PsdzEcu.BnTnName);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
@@ -527,11 +526,11 @@ namespace PsdzClient
                 return false;
             }
 
-            string sql = string.Format(@"SELECT ID, NAME, ACTIONCATEGORY, SELECTABLE, SHOW_IN_PLAN, EXECUTABLE, " + DatabaseFunctions.SqlTitleItems +
-                                       ", NODECLASS FROM XEP_SWIACTION WHERE ID IN (SELECT SWI_ACTION_ID FROM XEP_REF_ECUVARIANTS_SWIACTION WHERE ECUVARIANT_ID = {0})",
-                                        ecuInfo.VariantId);
             try
             {
+                string sql = string.Format(@"SELECT ID, NAME, ACTIONCATEGORY, SELECTABLE, SHOW_IN_PLAN, EXECUTABLE, " + DatabaseFunctions.SqlTitleItems +
+                                           ", NODECLASS FROM XEP_SWIACTION WHERE ID IN (SELECT SWI_ACTION_ID FROM XEP_REF_ECUVARIANTS_SWIACTION WHERE ECUVARIANT_ID = {0})",
+                    ecuInfo.VariantId);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
@@ -559,11 +558,11 @@ namespace PsdzClient
                 return false;
             }
 
-            string sql = string.Format(@"SELECT ID, NAME, ACTIONCATEGORY, SELECTABLE, SHOW_IN_PLAN, EXECUTABLE, " + DatabaseFunctions.SqlTitleItems +
-                                       ", NODECLASS FROM XEP_SWIACTION WHERE ID IN (SELECT SWI_ACTION_ID FROM XEP_REF_ECUGROUPS_SWIACTION WHERE ECUGROUP_ID = {0})",
-                ecuInfo.VariantGroupId);
             try
             {
+                string sql = string.Format(@"SELECT ID, NAME, ACTIONCATEGORY, SELECTABLE, SHOW_IN_PLAN, EXECUTABLE, " + DatabaseFunctions.SqlTitleItems +
+                                           ", NODECLASS FROM XEP_SWIACTION WHERE ID IN (SELECT SWI_ACTION_ID FROM XEP_REF_ECUGROUPS_SWIACTION WHERE ECUGROUP_ID = {0})",
+                    ecuInfo.VariantGroupId);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
@@ -591,11 +590,11 @@ namespace PsdzClient
                 return false;
             }
 
-            string sql = string.Format(@"SELECT ID, NAME, ACTIONCATEGORY, SELECTABLE, SHOW_IN_PLAN, EXECUTABLE, " + DatabaseFunctions.SqlTitleItems +
-                                       ", NODECLASS FROM XEP_SWIACTION WHERE ID IN (SELECT SWI_ACTION_ID FROM XEP_REF_ECUPRGVARI_SWIACTION WHERE ECUPROGRAMMINGVARIANT_ID = {0})",
-                ecuInfo.VariantPrgId);
             try
             {
+                string sql = string.Format(@"SELECT ID, NAME, ACTIONCATEGORY, SELECTABLE, SHOW_IN_PLAN, EXECUTABLE, " + DatabaseFunctions.SqlTitleItems +
+                                           ", NODECLASS FROM XEP_SWIACTION WHERE ID IN (SELECT SWI_ACTION_ID FROM XEP_REF_ECUPRGVARI_SWIACTION WHERE ECUPROGRAMMINGVARIANT_ID = {0})",
+                    ecuInfo.VariantPrgId);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
@@ -623,12 +622,12 @@ namespace PsdzClient
                 return null;
             }
 
-            string sql = string.Format(@"SELECT ID, NAME, ACTIONCATEGORY, SELECTABLE, SHOW_IN_PLAN, EXECUTABLE, " + DatabaseFunctions.SqlTitleItems +
-                                       ", NODECLASS FROM XEP_SWIACTION WHERE ID IN (SELECT SWI_ACTION_ID FROM XEP_REF_SWIREGISTER_SWIACTION WHERE SWI_REGISTER_ID = {0})",
-                swiRegister.Id);
             List<SwiAction> swiActions = new List<SwiAction>();
             try
             {
+                string sql = string.Format(@"SELECT ID, NAME, ACTIONCATEGORY, SELECTABLE, SHOW_IN_PLAN, EXECUTABLE, " + DatabaseFunctions.SqlTitleItems +
+                                           ", NODECLASS FROM XEP_SWIACTION WHERE ID IN (SELECT SWI_ACTION_ID FROM XEP_REF_SWIREGISTER_SWIACTION WHERE SWI_REGISTER_ID = {0})",
+                    swiRegister.Id);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
@@ -656,12 +655,12 @@ namespace PsdzClient
                 return null;
             }
 
-            string sql = string.Format(@"SELECT ID, NODECLASS, PARENTID, NAME, REMARK, SORT, TITLEID, " + DatabaseFunctions.SqlTitleItems +
-                                       @", VERSIONNUMBER, IDENTIFIER FROM XEP_SWIREGISTER WHERE IDENTIFIER = 'REG|{0}'",
-                registerId);
             List<SwiRegister> swiRegisterList = new List<SwiRegister>();
             try
             {
+                string sql = string.Format(@"SELECT ID, NODECLASS, PARENTID, NAME, REMARK, SORT, TITLEID, " + DatabaseFunctions.SqlTitleItems +
+                                           @", VERSIONNUMBER, IDENTIFIER FROM XEP_SWIREGISTER WHERE IDENTIFIER = 'REG|{0}'",
+                    registerId);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
@@ -684,13 +683,12 @@ namespace PsdzClient
 
         private List<SwiRegister> GetSwiRegistersByParentId(string parentId)
         {
-            string selection;
-            selection = parentId != null ? string.Format(@"= {0}", parentId) : "IS NULL";
-            string sql = @"SELECT ID, NODECLASS, PARENTID, NAME, REMARK, SORT, TITLEID, " + DatabaseFunctions.SqlTitleItems +
-                                       ", VERSIONNUMBER, IDENTIFIER FROM XEP_SWIREGISTER WHERE PARENTID " + selection;
             List<SwiRegister> swiRegisterList = new List<SwiRegister>();
             try
             {
+                string selection = parentId != null ? string.Format(@"= {0}", parentId) : "IS NULL";
+                string sql = @"SELECT ID, NODECLASS, PARENTID, NAME, REMARK, SORT, TITLEID, " + DatabaseFunctions.SqlTitleItems +
+                             ", VERSIONNUMBER, IDENTIFIER FROM XEP_SWIREGISTER WHERE PARENTID " + selection;
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
@@ -718,11 +716,11 @@ namespace PsdzClient
                 return null;
             }
 
-            string sql = string.Format(@"SELECT INFOOBJECTID, LINK_TYPE_ID, PRIORITY FROM XEP_REFINFOOBJECTS WHERE ID IN (SELECT ID FROM XEP_SWIACTION WHERE ID = {0})",
-                swiAction.Id);
             List<SwiInfoObjLinked> swiInfoObjList = new List<SwiInfoObjLinked>();
             try
             {
+                string sql = string.Format(@"SELECT INFOOBJECTID, LINK_TYPE_ID, PRIORITY FROM XEP_REFINFOOBJECTS WHERE ID IN (SELECT ID FROM XEP_SWIACTION WHERE ID = {0})",
+                    swiAction.Id);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
@@ -733,6 +731,29 @@ namespace PsdzClient
                             string linkTypeId = reader["LINK_TYPE_ID"].ToString().Trim();
                             string priority = reader["PRIORITY"].ToString().Trim();
                             SwiInfoObjLinked swiInfoObj = new SwiInfoObjLinked(infoObjId, linkTypeId, priority);
+                            swiInfoObjList.Add(swiInfoObj);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            try
+            {
+                string sql = string.Format(@"SELECT DIAGNOSISOBJECTCONTROLID, PRIORITY FROM XEP_REF_SWIACTION_DIAGOBJECTS WHERE SWI_ACTION_ID IN (SELECT ID FROM XEP_SWIACTION WHERE ID = {0})",
+                    swiAction.Id);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string infoObjId = reader["DIAGNOSISOBJECTCONTROLID"].ToString().Trim();
+                            string priority = reader["PRIORITY"].ToString().Trim();
+                            SwiInfoObjLinked swiInfoObj = new SwiInfoObjLinked(infoObjId, "SwiActionDiagnosticLink", priority);
                             swiInfoObjList.Add(swiInfoObj);
                         }
                     }
