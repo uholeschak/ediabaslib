@@ -429,8 +429,8 @@ namespace PsdzClient
                 StringBuilder sb = new StringBuilder();
                 sb.Append(prefix);
                 sb.Append(string.Format(CultureInfo.InvariantCulture,
-                    "SwiInfoObj: LinkId={0}, Id={1}, PrgType={2}, InformationType={3}, Ident={4}, ILevel={5}, Identifier={6}, InfoType={7}, Title='{8}'",
-                    LinkTypeId, Id, ProgramType, InformationType, Identification, TargetILevel, InfoType, Identifier, EcuTranslation.GetTitle(language)));
+                    "SwiInfoObj: LinkId={0}, Class={1}, Id={2}, PrgType={3}, InformationType={4}, Identification={5}, ILevel={6}, InfoType={7}, Identifier={8}, Title='{9}'",
+                    LinkTypeId, Id, NodeClass, ProgramType, InformationType, Identification, TargetILevel, InfoType, Identifier, EcuTranslation.GetTitle(language)));
                 return sb.ToString();
             }
         }
