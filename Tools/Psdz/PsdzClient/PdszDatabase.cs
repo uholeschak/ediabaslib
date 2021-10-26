@@ -204,7 +204,7 @@ namespace PsdzClient
 
             public EcuTranslation EcuTranslation { get; set; }
 
-            public List<SwiInfoObjLinked> SwiInfoObjLinks { get; set; }
+            public List<SwiInfoObj> SwiInfoObjs { get; set; }
 
             public string ToString(string language, string prefix = "")
             {
@@ -214,10 +214,10 @@ namespace PsdzClient
                     "SwiAction: Id={0}, Name={1}, Category={2}, Select={3}, Show={4}, Execute={5}, Title='{6}'",
                     Id, Name, ActionCategory, Selectable, ShowInPlan, Executable, EcuTranslation.GetTitle(language)));
 
-                if (SwiInfoObjLinks != null)
+                if (SwiInfoObjs != null)
                 {
                     string prefixChild = prefix + " ";
-                    foreach (SwiInfoObjLinked swiInfoObjLinked in SwiInfoObjLinks)
+                    foreach (SwiInfoObj swiInfoObjLinked in SwiInfoObjs)
                     {
                         sb.AppendLine();
                         sb.Append(swiInfoObjLinked.ToString(language, prefixChild));
@@ -297,27 +297,99 @@ namespace PsdzClient
             }
         }
 
-        public class SwiInfoObjLinked
+        public class SwiInfoObj
         {
-            public SwiInfoObjLinked(string infoObjId, string linkTypeId, string priority)
+            public SwiInfoObj(string linkTypeId, string id, string nodeClass, string assembly, string versionNum, string programType, string safetyRelevant,
+                string titleId, string general, string telSrvId, string vehicleComm, string measurement, string hidden, string name, string informationType,
+                string identification, string informationFormat, string siNumber, string targetILevel, string controlId,
+                string infoType, string infoFormat, string docNum, string priority, string identifier, EcuTranslation ecuTranslation)
             {
-                InfoObjId = infoObjId;
                 LinkTypeId = linkTypeId;
+                Id = id;
+                NodeClass = nodeClass;
+                Assembly = assembly;
+                VersionNum = versionNum;
+                ProgramType = programType;
+                SafetyRelevant = safetyRelevant;
+                TitleId = titleId;
+                General = general;
+                TelSrvId = telSrvId;
+                VehicleComm = vehicleComm;
+                Measurement = measurement;
+                Hidden = hidden;
+                InformationType = informationType;
+                Identification = identification;
+                InformationFormat = informationFormat;
+                SiNumber = siNumber;
+                TargetILevel = targetILevel;
+                ControlId = controlId;
+                InfoType = infoType;
+                InfoFormat = infoFormat;
+                DocNum = docNum;
                 Priority = priority;
+                Identifier = identifier;
+                EcuTranslation = ecuTranslation;
             }
-
-            public string InfoObjId { get; set; }
 
             public string LinkTypeId { get; set; }
 
+            public string Id { get; set; }
+
+            public string NodeClass { get; set; }
+
+            public string Assembly { get; set; }
+
+            public string VersionNum { get; set; }
+
+            public string ProgramType { get; set; }
+
+            public string SafetyRelevant { get; set; }
+
+            public string TitleId { get; set; }
+
+            public string General { get; set; }
+
+            public string TelSrvId { get; set; }
+
+            public string VehicleComm { get; set; }
+
+            public string Measurement { get; set; }
+
+            public string Hidden { get; set; }
+
+            public string Name { get; set; }
+
+            public string InformationType { get; set; }
+
+            public string Identification { get; set; }
+
+            public string InformationFormat { get; set; }
+
+            public string SiNumber { get; set; }
+
+            public string TargetILevel { get; set; }
+
+            public string ControlId { get; set; }
+
+            public string InfoType { get; set; }
+
+            public string InfoFormat { get; set; }
+
+            public string DocNum { get; set; }
+
             public string Priority { get; set; }
+
+            public string Identifier { get; set; }
+
+            public EcuTranslation EcuTranslation { get; set; }
 
             public string ToString(string language, string prefix = "")
             {
                 StringBuilder sb = new StringBuilder();
                 sb.Append(prefix);
                 sb.Append(string.Format(CultureInfo.InvariantCulture,
-                    "SwiInfoObjLink: ObjId={0}, LinkId={1}, Prio={2}", InfoObjId, LinkTypeId, Priority));
+                    "SwiInfoObj: LinkId={0}, Id={1}, PrgType={2}, InformationType={3}, Ident={4}, ILevel={5}, Identifier={6}, InfoType={7}, Title='{8}'",
+                    LinkTypeId, Id, ProgramType, InformationType, Identification, TargetILevel, InfoType, Identifier, EcuTranslation.GetTitle(language)));
                 return sb.ToString();
             }
         }
@@ -431,7 +503,7 @@ namespace PsdzClient
             {
                 foreach (SwiAction swiAction in swiRegister.SwiActions)
                 {
-                    swiAction.SwiInfoObjLinks = GetServiceProgramsForSwiAction(swiAction);
+                    swiAction.SwiInfoObjs = GetServiceProgramsForSwiAction(swiAction);
                 }
             }
 
@@ -648,39 +720,6 @@ namespace PsdzClient
             return swiActions;
         }
 
-        private List<SwiRegister> GetSwiRegisterByIdentifer(string registerId)
-        {
-            if (string.IsNullOrEmpty(registerId))
-            {
-                return null;
-            }
-
-            List<SwiRegister> swiRegisterList = new List<SwiRegister>();
-            try
-            {
-                string sql = string.Format(@"SELECT ID, NODECLASS, PARENTID, NAME, REMARK, SORT, TITLEID, " + DatabaseFunctions.SqlTitleItems +
-                                           @", VERSIONNUMBER, IDENTIFIER FROM XEP_SWIREGISTER WHERE IDENTIFIER = 'REG|{0}'",
-                    registerId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
-                {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            SwiRegister swiRegister = ReadXepSwiRegister(reader);
-                            swiRegisterList.Add(swiRegister);
-                        }
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-
-            return swiRegisterList;
-        }
-
         private List<SwiRegister> GetSwiRegistersByParentId(string parentId)
         {
             List<SwiRegister> swiRegisterList = new List<SwiRegister>();
@@ -709,14 +748,14 @@ namespace PsdzClient
             return swiRegisterList;
         }
 
-        private List<SwiInfoObjLinked> GetServiceProgramsForSwiAction(SwiAction swiAction)
+        private List<SwiInfoObj> GetServiceProgramsForSwiAction(SwiAction swiAction)
         {
             if (string.IsNullOrEmpty(swiAction.Id))
             {
                 return null;
             }
 
-            List<SwiInfoObjLinked> swiInfoObjList = new List<SwiInfoObjLinked>();
+            List<SwiInfoObj> swiInfoObjList = new List<SwiInfoObj>();
             try
             {
                 string sql = string.Format(@"SELECT INFOOBJECTID, LINK_TYPE_ID, PRIORITY FROM XEP_REFINFOOBJECTS WHERE ID IN (SELECT ID FROM XEP_SWIACTION WHERE ID = {0})",
@@ -730,8 +769,11 @@ namespace PsdzClient
                             string infoObjId = reader["INFOOBJECTID"].ToString().Trim();
                             string linkTypeId = reader["LINK_TYPE_ID"].ToString().Trim();
                             string priority = reader["PRIORITY"].ToString().Trim();
-                            SwiInfoObjLinked swiInfoObj = new SwiInfoObjLinked(infoObjId, linkTypeId, priority);
-                            swiInfoObjList.Add(swiInfoObj);
+                            SwiInfoObj swiInfoObj = GetInfoObjectById(infoObjId, linkTypeId);
+                            if (swiInfoObj != null)
+                            {
+                                swiInfoObjList.Add(swiInfoObj);
+                            }
                         }
                     }
                 }
@@ -752,9 +794,13 @@ namespace PsdzClient
                         while (reader.Read())
                         {
                             string infoObjId = reader["DIAGNOSISOBJECTCONTROLID"].ToString().Trim();
-                            string priority = reader["PRIORITY"].ToString().Trim();
-                            SwiInfoObjLinked swiInfoObj = new SwiInfoObjLinked(infoObjId, "SwiActionDiagnosticLink", priority);
-                            swiInfoObjList.Add(swiInfoObj);
+#if false
+                            SwiInfoObj swiInfoObj = GetInfoObjectById(infoObjId, "SwiActionDiagnosticLink");
+                            if (swiInfoObj != null)
+                            {
+                                swiInfoObjList.Add(swiInfoObj);
+                            }
+#endif
                         }
                     }
                 }
@@ -765,6 +811,65 @@ namespace PsdzClient
             }
 
             return swiInfoObjList;
+        }
+
+        private SwiInfoObj GetInfoObjectById(string infoObjectId, string linkTypeId)
+        {
+            if (string.IsNullOrEmpty(infoObjectId))
+            {
+                return null;
+            }
+
+            SwiInfoObj swiInfoObj = null;
+            try
+            {
+                string sql = string.Format(@"SELECT ID, NODECLASS, ASSEMBLY, VERSIONNUMBER, PROGRAMTYPE, SICHERHEITSRELEVANT, TITLEID, " +
+                                           DatabaseFunctions.SqlTitleItems + ", GENERELL, TELESERVICEKENNUNG, FAHRZEUGKOMMUNIKATION, MESSTECHNIK, VERSTECKT, NAME, INFORMATIONSTYP, " +
+                                           "IDENTIFIKATOR, INFORMATIONSFORMAT, SINUMMER, ZIELISTUFE, CONTROLID, INFOTYPE, INFOFORMAT, DOCNUMBER, PRIORITY, IDENTIFIER FROM XEP_INFOOBJECTS WHERE XEP_INFOOBJECTS.ID = {0}",
+                    infoObjectId);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string id = reader["ID"].ToString().Trim();
+                            string nodeClass = reader["NODECLASS"].ToString().Trim();
+                            string assembly = reader["ASSEMBLY"].ToString().Trim();
+                            string versionNum = reader["VERSIONNUMBER"].ToString().Trim();
+                            string programType = reader["PROGRAMTYPE"].ToString().Trim();
+                            string safetyRelevant = reader["SICHERHEITSRELEVANT"].ToString().Trim();
+                            string titleId = reader["TITLEID"].ToString().Trim();
+                            string general = reader["GENERELL"].ToString().Trim();
+                            string telSrvId = reader["TELESERVICEKENNUNG"].ToString().Trim();
+                            string vehicleComm = reader["FAHRZEUGKOMMUNIKATION"].ToString().Trim();
+                            string measurement = reader["MESSTECHNIK"].ToString().Trim();
+                            string hidden = reader["VERSTECKT"].ToString().Trim();
+                            string name = reader["NAME"].ToString().Trim();
+                            string informationType = reader["INFORMATIONSTYP"].ToString().Trim();
+                            string identification = reader["IDENTIFIKATOR"].ToString().Trim();
+                            string informationFormat = reader["INFORMATIONSFORMAT"].ToString().Trim();
+                            string siNumber = reader["SINUMMER"].ToString().Trim();
+                            string targetILevel = reader["ZIELISTUFE"].ToString().Trim();
+                            string controlId = reader["CONTROLID"].ToString().Trim();
+                            string infoType = reader["INFOTYPE"].ToString().Trim();
+                            string infoFormat = reader["INFOFORMAT"].ToString().Trim();
+                            string docNum = reader["DOCNUMBER"].ToString().Trim();
+                            string priority = reader["PRIORITY"].ToString().Trim();
+                            string identifier = reader["IDENTIFIER"].ToString().Trim();
+                            swiInfoObj = new SwiInfoObj(linkTypeId, id, nodeClass, assembly, versionNum, programType, safetyRelevant, titleId, general,
+                                telSrvId, vehicleComm, measurement, hidden, name, informationType, identification, informationFormat, siNumber, targetILevel, controlId,
+                                infoType, infoFormat, docNum, priority, identifier, GetTranslation(reader));
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return swiInfoObj;
         }
 
         private static SwiAction ReadXepSwiAction(SQLiteDataReader reader, SwiActionSource swiActionSource)
