@@ -517,7 +517,6 @@ namespace PsdzClient
 
         public bool GetEcuVariants(List<EcuInfo> ecuList)
         {
-            bool result = true;
             foreach (EcuInfo ecuInfo in ecuList)
             {
                 ecuInfo.SwiActions.Clear();
@@ -527,9 +526,13 @@ namespace PsdzClient
                 GetSwiActionsForEcuVariant(ecuInfo);
                 GetSwiActionsForEcuGroup(ecuInfo);
                 GetSwiActionsForEcuProgrammingVariant(ecuInfo);
+                foreach (SwiAction swiAction in ecuInfo.SwiActions)
+                {
+                    swiAction.SwiInfoObjs = GetServiceProgramsForSwiAction(swiAction);
+                }
             }
 
-            return result;
+            return true;
         }
 
         public void ReadSwiRegister()
