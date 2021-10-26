@@ -317,6 +317,7 @@ namespace PsdzClient
                 VehicleComm = vehicleComm;
                 Measurement = measurement;
                 Hidden = hidden;
+                Name = name;
                 InformationType = informationType;
                 Identification = identification;
                 InformationFormat = informationFormat;
@@ -328,6 +329,42 @@ namespace PsdzClient
                 DocNum = docNum;
                 Priority = priority;
                 Identifier = identifier;
+                FailWeight = string.Empty;
+                SortOrder = string.Empty;
+                EcuTranslation = ecuTranslation;
+            }
+
+            public SwiInfoObj(string linkTypeId, string id, string nodeClass,
+                string titleId, string versionNum, string name, string failWeight, string hidden,
+                string safetyRelevant, string sortOrder, EcuTranslation ecuTranslation)
+            {
+                LinkTypeId = linkTypeId;
+                Id = id;
+                NodeClass = nodeClass;
+                Assembly = string.Empty;
+                VersionNum = versionNum;
+                ProgramType = string.Empty;
+                SafetyRelevant = safetyRelevant;
+                TitleId = titleId;
+                General = string.Empty;
+                TelSrvId = string.Empty;
+                VehicleComm = string.Empty;
+                Measurement = string.Empty;
+                Hidden = hidden;
+                Name = name;
+                InformationType = string.Empty;
+                Identification = string.Empty;
+                InformationFormat = string.Empty;
+                SiNumber = string.Empty;
+                TargetILevel = string.Empty;
+                ControlId = string.Empty;
+                InfoType = string.Empty;
+                InfoFormat = string.Empty;
+                DocNum = string.Empty;
+                Priority = string.Empty;
+                Identifier = string.Empty;
+                FailWeight = failWeight;
+                SortOrder = sortOrder;
                 EcuTranslation = ecuTranslation;
             }
 
@@ -380,6 +417,10 @@ namespace PsdzClient
             public string Priority { get; set; }
 
             public string Identifier { get; set; }
+
+            public string FailWeight { get; set; }
+
+            public string SortOrder { get; set; }
 
             public EcuTranslation EcuTranslation { get; set; }
 
@@ -768,7 +809,6 @@ namespace PsdzClient
                         {
                             string infoObjId = reader["INFOOBJECTID"].ToString().Trim();
                             string linkTypeId = reader["LINK_TYPE_ID"].ToString().Trim();
-                            string priority = reader["PRIORITY"].ToString().Trim();
                             SwiInfoObj swiInfoObj = GetInfoObjectById(infoObjId, linkTypeId);
                             if (swiInfoObj != null)
                             {
@@ -793,14 +833,12 @@ namespace PsdzClient
                     {
                         while (reader.Read())
                         {
-                            string infoObjId = reader["DIAGNOSISOBJECTCONTROLID"].ToString().Trim();
-#if false
-                            SwiInfoObj swiInfoObj = GetInfoObjectById(infoObjId, "SwiActionDiagnosticLink");
+                            string controlId = reader["DIAGNOSISOBJECTCONTROLID"].ToString().Trim();
+                            SwiInfoObj swiInfoObj = GetDiagObjectsByControlId(controlId, "SwiActionDiagnosticLink");
                             if (swiInfoObj != null)
                             {
                                 swiInfoObjList.Add(swiInfoObj);
                             }
-#endif
                         }
                     }
                 }
@@ -860,6 +898,49 @@ namespace PsdzClient
                             swiInfoObj = new SwiInfoObj(linkTypeId, id, nodeClass, assembly, versionNum, programType, safetyRelevant, titleId, general,
                                 telSrvId, vehicleComm, measurement, hidden, name, informationType, identification, informationFormat, siNumber, targetILevel, controlId,
                                 infoType, infoFormat, docNum, priority, identifier, GetTranslation(reader));
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return swiInfoObj;
+        }
+
+        private SwiInfoObj GetDiagObjectsByControlId(string controlId, string linkTypeId)
+        {
+            if (string.IsNullOrEmpty(controlId))
+            {
+                return null;
+            }
+
+            SwiInfoObj swiInfoObj = null;
+            try
+            {
+                string sql = string.Format(@"SELECT ID, NODECLASS, TITLEID, " +
+                                           DatabaseFunctions.SqlTitleItems + ", VERSIONNUMBER, NAME, FAILUREWEIGHT, VERSTECKT, SICHERHEITSRELEVANT, " +
+                                           "CONTROLID, SORT_ORDER FROM XEP_DIAGNOSISOBJECTS WHERE (CONTROLID = {0})",
+                    controlId);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string id = reader["ID"].ToString().Trim();
+                            string nodeClass = reader["NODECLASS"].ToString().Trim();
+                            string titleId = reader["TITLEID"].ToString().Trim();
+                            string versionNum = reader["VERSIONNUMBER"].ToString().Trim();
+                            string name = reader["NAME"].ToString().Trim();
+                            string failWeight = reader["FAILUREWEIGHT"].ToString().Trim();
+                            string hidden = reader["VERSTECKT"].ToString().Trim();
+                            string safetyRelevant = reader["SICHERHEITSRELEVANT"].ToString().Trim();
+                            string sortOrder = reader["SORT_ORDER"].ToString().Trim();
+                            swiInfoObj = new SwiInfoObj(linkTypeId, id, nodeClass, titleId, versionNum, name, failWeight, hidden, safetyRelevant,
+                                sortOrder, GetTranslation(reader));
                         }
                     }
                 }
