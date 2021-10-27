@@ -26,7 +26,7 @@ namespace PsdzClient.Core
 			//this.historyInfoObjectsField = new ObservableCollection<InfoObject>();
 			//this.faField = new FA();
 			//this.fFMField = new ObservableCollection<FFMResult>();
-			//this.eMotorField = new EMotor();
+			this.eMotorField = new EMotor();
 			//this.heatMotorsField = new List<HeatMotor>();
 			//this.genericMotorField = new GenericMotor();
 			//this.cBSField = new ObservableCollection<typeCBSInfo>();
@@ -741,7 +741,7 @@ namespace PsdzClient.Core
 				}
 			}
 		}
-#if false
+
 		public EMotor EMotor
 		{
 			get
@@ -766,7 +766,7 @@ namespace PsdzClient.Core
 				}
 			}
 		}
-
+#if false
 		public List<HeatMotor> HeatMotors
 		{
 			get
@@ -1301,7 +1301,7 @@ namespace PsdzClient.Core
 				}
 			}
 		}
-#if false
+
 		public ObservableCollection<FFMResult> FFM
 		{
 			get
@@ -1326,7 +1326,7 @@ namespace PsdzClient.Core
 				}
 			}
 		}
-#endif
+
 		public string ILevelWerk
 		{
 			get
@@ -2904,7 +2904,7 @@ namespace PsdzClient.Core
 
 		private string karosserieField;
 
-		//private EMotor eMotorField;
+		private EMotor eMotorField;
 
 		//private List<HeatMotor> heatMotorsField;
 
@@ -2954,7 +2954,7 @@ namespace PsdzClient.Core
 
 		private GwszUnitType? gwszUnitField;
 
-		//private ObservableCollection<FFMResult> fFMField;
+		private ObservableCollection<FFMResult> fFMField;
 
 		private string iLevelWerkField;
 

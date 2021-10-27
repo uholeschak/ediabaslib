@@ -394,7 +394,7 @@ namespace PsdzClient.Core
 				return base.EMotor.EMOTBaureihe;
 			}
 		}
-
+#if false
 		public string Produktlinie
 		{
 			get
@@ -454,7 +454,7 @@ namespace PsdzClient.Core
 				}
 			}
 		}
-#if false
+
 		[XmlIgnore]
 		public IList<Fault> FaultList
 		{
@@ -1250,12 +1250,12 @@ namespace PsdzClient.Core
 			}
 			return null;
 		}
-
+#if false
 		public DTC GetFaultCode(FaultCode faultCode)
 		{
 			if (faultCode == null)
 			{
-				Log.Warning("Vehicle.GetFaultCode()", "faultCode was null", Array.Empty<object>());
+				//Log.Warning("Vehicle.GetFaultCode()", "faultCode was null", Array.Empty<object>());
 				return null;
 			}
 			try
@@ -1302,13 +1302,14 @@ namespace PsdzClient.Core
 			}
 			catch (Exception exception)
 			{
-				Log.WarningException("Vehicle.GetFaultCode()", exception);
+				//Log.WarningException("Vehicle.GetFaultCode()", exception);
 			}
 			return null;
 		}
-
+#endif
 		public void CalculateFaultProperties(IFFMDynamicResolver ffmResolver = null)
 		{
+#if false
 			IEnumerable<Fault> collection = Vehicle.CalculateFaultList(this, base.ECU, base.CombinedFaults, base.ZFS, ffmResolver);
 			this.FaultCodeSum = Vehicle.CalculateFaultCodeSum(base.ECU, base.CombinedFaults);
 			string method = "Vehicle.CalculateFaultProperties()";
@@ -1318,16 +1319,13 @@ namespace PsdzClient.Core
 			IList<Fault> list = this.FaultList;
 			array[num] = ((list != null) ? new int?(list.Count) : null);
 			array[1] = this.FaultCodeSum;
-			Log.Info(method, msg, array);
+			//Log.Info(method, msg, array);
 			this.FaultList = new List<Fault>(collection);
+#endif
 		}
 
 		public typeECU_Transaction getECUTransaction(ECU transECU, string transId)
 		{
-			if (!CoreFramework.validLicense)
-			{
-				throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
-			}
 			if (transECU == null)
 			{
 				return null;
@@ -1351,17 +1349,13 @@ namespace PsdzClient.Core
 			}
 			catch (Exception exception)
 			{
-				Log.WarningException("Vehicle.getECUTransaction()", exception);
+				//Log.WarningException("Vehicle.getECUTransaction()", exception);
 			}
 			return null;
 		}
 
 		public bool hasBusType(BusType bus)
 		{
-			if (!CoreFramework.validLicense)
-			{
-				throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
-			}
 			if (base.ECU != null)
 			{
 				using (IEnumerator<ECU> enumerator = base.ECU.GetEnumerator())
@@ -1383,13 +1377,9 @@ namespace PsdzClient.Core
 
 		public bool hasSA(string checkSA)
 		{
-			if (!CoreFramework.validLicense)
-			{
-				throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
-			}
 			if (string.IsNullOrEmpty(checkSA))
 			{
-				Log.Warning("CoreFramework.hasSA()", "checkSA was null or empty", Array.Empty<object>());
+				//Log.Warning("CoreFramework.hasSA()", "checkSA was null or empty", Array.Empty<object>());
 				return false;
 			}
 			if (base.FA == null)
@@ -1434,14 +1424,12 @@ namespace PsdzClient.Core
 							return true;
 						}
 					}
-					goto IL_13B;
+                    return fa.DealerInstalledSA != null && fa.DealerInstalledSA.Any((string item) => string.Equals(item, checkSA, StringComparison.OrdinalIgnoreCase));
 				}
-				bool result;
-				return result;
 			}
-			IL_13B:
-			return fa.DealerInstalledSA != null && fa.DealerInstalledSA.Any((string item) => string.Equals(item, checkSA, StringComparison.OrdinalIgnoreCase));
-		}
+
+            return false;
+        }
 
 		public bool HasUnidentifiedECU()
 		{
@@ -1462,13 +1450,9 @@ namespace PsdzClient.Core
 
 		public bool? hasFFM(string checkFFM)
 		{
-			if (!CoreFramework.validLicense)
-			{
-				throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
-			}
 			if (string.IsNullOrEmpty(checkFFM))
 			{
-				Log.Warning("CoreFramework.hasFFM()", "checkFFM was null or empty", Array.Empty<object>());
+				//Log.Warning("CoreFramework.hasFFM()", "checkFFM was null or empty", Array.Empty<object>());
 				return new bool?(true);
 			}
 			if (base.FFM != null)
@@ -1513,10 +1497,6 @@ namespace PsdzClient.Core
 
 		public ECU getECU(long? sgAdr)
 		{
-			if (!CoreFramework.validLicense)
-			{
-				throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
-			}
 			try
 			{
 				foreach (ECU ecu in base.ECU)
@@ -1547,17 +1527,13 @@ namespace PsdzClient.Core
 			}
 			catch (Exception exception)
 			{
-				Log.WarningException("Vehicle.getECU()", exception);
+				//Log.WarningException("Vehicle.getECU()", exception);
 			}
 			return null;
 		}
 
 		public ECU getECU(long? sgAdr, long? subAddress)
 		{
-			if (!CoreFramework.validLicense)
-			{
-				throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
-			}
 			try
 			{
 				foreach (ECU ecu in base.ECU)
@@ -1577,17 +1553,13 @@ namespace PsdzClient.Core
 			}
 			catch (Exception exception)
 			{
-				Log.WarningException("Vehcile.getECU()", exception);
+				//Log.WarningException("Vehcile.getECU()", exception);
 			}
 			return null;
 		}
 
 		public ECU getECUbyECU_SGBD(string ECU_SGBD)
 		{
-			if (!CoreFramework.validLicense)
-			{
-				throw new Exception("This copy of CoreFramework.dll is not licensed!!!");
-			}
 			if (string.IsNullOrEmpty(ECU_SGBD))
 			{
 				return null;
@@ -1607,25 +1579,17 @@ namespace PsdzClient.Core
 						}
 					}
 				}
-				goto IL_B2;
 			}
 			catch (Exception exception)
 			{
-				Log.WarningException("Vehicle.getECUbyECU_SGBD()", exception);
-				goto IL_B2;
+				//Log.WarningException("Vehicle.getECUbyECU_SGBD()", exception);
+                return null;
 			}
-			ECU result;
-			return result;
-			IL_B2:
 			return null;
 		}
 
 		public ECU getECUbyTITLE_ECUTREE(string grobName)
 		{
-			if (!CoreFramework.validLicense)
-			{
-				throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
-			}
 			if (string.IsNullOrEmpty(grobName))
 			{
 				return null;
@@ -1642,25 +1606,21 @@ namespace PsdzClient.Core
 			}
 			catch (Exception exception)
 			{
-				Log.WarningException("Vehicle.getECUbyTITLE_ECUTREE()", exception);
+				//Log.WarningException("Vehicle.getECUbyTITLE_ECUTREE()", exception);
 			}
 			return null;
 		}
 
 		public ECU getECUbyECU_GRUPPE(string ECU_GRUPPE)
 		{
-			if (!CoreFramework.validLicense)
-			{
-				throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
-			}
 			if (string.IsNullOrEmpty(ECU_GRUPPE))
 			{
-				Log.Warning("Vehicle.getECUbyECU_GRUPPE()", "parameter was null or empty", Array.Empty<object>());
+				//Log.Warning("Vehicle.getECUbyECU_GRUPPE()", "parameter was null or empty", Array.Empty<object>());
 				return null;
 			}
 			if (base.ECU == null)
 			{
-				Log.Warning("Vehicle.getECUbyECU_GRUPPE()", "ECU was null", Array.Empty<object>());
+				//Log.Warning("Vehicle.getECUbyECU_GRUPPE()", "ECU was null", Array.Empty<object>());
 				return null;
 			}
 			try
@@ -1691,17 +1651,13 @@ namespace PsdzClient.Core
 			}
 			catch (Exception exception)
 			{
-				Log.WarningException("Vehicle.getECUbyECU_GRUPPE()", exception);
+				//Log.WarningException("Vehicle.getECUbyECU_GRUPPE()", exception);
 			}
 			return null;
 		}
 
 		public uint getDiagProtECUCount(typeDiagProtocoll ecuDiag)
 		{
-			if (!CoreFramework.validLicense)
-			{
-				throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
-			}
 			uint num = 0U;
 			try
 			{
@@ -1718,11 +1674,11 @@ namespace PsdzClient.Core
 			}
 			catch (Exception exception)
 			{
-				Log.WarningException("Vehcile.getECU()", exception);
+				//Log.WarningException("Vehcile.getECU()", exception);
 			}
 			return num;
 		}
-
+#if false
 		public typeCBSInfo getCBSMeasurementValue(typeCBSMeaurementType mType)
 		{
 			try
@@ -1818,7 +1774,7 @@ namespace PsdzClient.Core
 			}
 			return false;
 		}
-
+#endif
 		public void AddEcu(ECU ecu)
 		{
 			base.ECU.Add(ecu);
@@ -2607,7 +2563,7 @@ namespace PsdzClient.Core
 			}
 			return null;
 		}
-
+#if false
 		private static ObservableCollection<Fault> CalculateFaultList(Vehicle vehicle, IEnumerable<ECU> ecus, IEnumerable<DTC> combinedFaults, ObservableCollection<ZFSResult> zfs, IFFMDynamicResolver ffmFesolver = null)
 		{
 			bool flag = true;
@@ -2782,7 +2738,7 @@ namespace PsdzClient.Core
 			}
 			catch (Exception exception)
 			{
-				Log.WarningException("Vehicle.CalculateFaultCodeSum()", exception);
+				//Log.WarningException("Vehicle.CalculateFaultCodeSum()", exception);
 				result = null;
 			}
 			return result;
@@ -2800,16 +2756,17 @@ namespace PsdzClient.Core
 				base.CombinedFaults.AddIfNotContains(dtc);
 			}
 		}
-
+#endif
 		public bool GetProgrammingEnabledForBn(string bn)
 		{
 			return Vehicle.GetBnTypes(bn).Contains(base.BNType);
 		}
 
 		public bool IsProgrammingSupported(bool considerLogisticBase)
-		{
-			return (ConfigSettings.IsProgrammingEnabled() || (considerLogisticBase && ConfigSettings.IsLogisticBaseEnabled())) && this.GetProgrammingEnabledForBn(ConfigSettings.getConfigString("BMW.Rheingold.Programming.BN", "BN2020,BN2020_MOTORBIKE")) && ConfigSettings.OperationalMode != OperationalMode.TELESERVICE;
-		}
+        {
+            return true;
+            //return (ConfigSettings.IsProgrammingEnabled() || (considerLogisticBase && ConfigSettings.IsLogisticBaseEnabled())) && this.GetProgrammingEnabledForBn(ConfigSettings.getConfigString("BMW.Rheingold.Programming.BN", "BN2020,BN2020_MOTORBIKE")) && ConfigSettings.OperationalMode != OperationalMode.TELESERVICE;
+        }
 
 		private static ISet<BNType> GetBnTypes(string bnTypes)
 		{
@@ -2827,13 +2784,6 @@ namespace PsdzClient.Core
 				if (Enum.TryParse<BNType>(text, false, out item))
 				{
 					set.Add(item);
-				}
-				else
-				{
-					Log.Error("Vehicle.GetBnTypes()", "Ignore BN \"{0}\", because of missconfiguration.", new object[]
-					{
-						text
-					});
 				}
 			}
 			return set;
