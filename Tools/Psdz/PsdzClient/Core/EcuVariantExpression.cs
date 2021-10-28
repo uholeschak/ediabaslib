@@ -26,9 +26,10 @@ namespace PsdzClient.Core
 			{
 				if (string.IsNullOrEmpty(this.variantName))
 				{
-					if (DatabaseProviderFactory.Instance.GetEcuVariantById(this.value) != null)
+                    PdszDatabase.EcuVar ecuVariantById = ClientContext.Database?.GetEcuVariantById(this.value.ToString(CultureInfo.InvariantCulture));
+					if (ecuVariantById != null)
 					{
-						this.variantName = DatabaseProviderFactory.Instance.GetEcuVariantById(this.value).Name;
+						this.variantName = ecuVariantById.Name;
 					}
 					else
 					{
@@ -42,13 +43,7 @@ namespace PsdzClient.Core
 
 		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, ValidationRuleInternalResults internalResult)
 		{
-			IDatabaseProvider instance = DatabaseProviderFactory.Instance;
-			if (vec == null)
-			{
-				//Log.Warning("EcuVariantExpression.Evaluate()", "vec was null", Array.Empty<object>());
-				return false;
-			}
-			XEP_ECUVARIANTS ecuVariantById = instance.GetEcuVariantById(this.value);
+            PdszDatabase.EcuVar ecuVariantById = ClientContext.Database?.GetEcuVariantById(this.value.ToString(CultureInfo.InvariantCulture));
 			if (ecuVariantById == null)
 			{
 				return false;
