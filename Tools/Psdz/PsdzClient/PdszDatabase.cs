@@ -674,7 +674,7 @@ namespace PsdzClient
             return result;
         }
 
-        private EcuPrgVar GetEcuProgrammingVariantByName(string bnTnName)
+        public EcuPrgVar GetEcuProgrammingVariantByName(string bnTnName)
         {
             if (string.IsNullOrEmpty(bnTnName))
             {
@@ -685,6 +685,40 @@ namespace PsdzClient
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NAME, FLASHLIMIT, ECUVARIANTID FROM XEP_ECUPROGRAMMINGVARIANT WHERE UPPER(NAME) = UPPER('{0}')", bnTnName);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string id = reader["ID"].ToString().Trim();
+                            string name = reader["NAME"].ToString().Trim();
+                            string flashLimit = reader["FLASHLIMIT"].ToString().Trim();
+                            string ecuVarId = reader["ECUVARIANTID"].ToString().Trim();
+                            ecuPrgVar = new EcuPrgVar(id, name, flashLimit, ecuVarId);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return ecuPrgVar;
+        }
+
+        public EcuPrgVar GetEcuProgrammingVariantById(string prgId)
+        {
+            if (string.IsNullOrEmpty(prgId))
+            {
+                return null;
+            }
+
+            EcuPrgVar ecuPrgVar = null;
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NAME, FLASHLIMIT, ECUVARIANTID FROM XEP_ECUPROGRAMMINGVARIANT WHERE ID = {0}", prgId);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
