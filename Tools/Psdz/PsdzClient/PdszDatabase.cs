@@ -568,7 +568,7 @@ namespace PsdzClient
             foreach (EcuInfo ecuInfo in ecuList)
             {
                 ecuInfo.SwiActions.Clear();
-                GetEcuVariant(ecuInfo);
+                GetEcuVariantName(ecuInfo);
                 ecuInfo.EcuPrgVar = GetEcuProgrammingVariantByName(ecuInfo.PsdzEcu?.BnTnName);
 
                 GetSwiActionsForEcuVariant(ecuInfo);
@@ -638,7 +638,7 @@ namespace PsdzClient
             }
         }
 
-        private bool GetEcuVariant(EcuInfo ecuInfo)
+        private bool GetEcuVariantName(EcuInfo ecuInfo)
         {
             if (string.IsNullOrEmpty(ecuInfo.Sgbd))
             {
