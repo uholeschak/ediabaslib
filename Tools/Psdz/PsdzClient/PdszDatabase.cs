@@ -602,6 +602,7 @@ namespace PsdzClient
             _typeKeyClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"Typschluessel");
             SwiRegisterTree = null;
             ReadSwiRegister();
+            PsdzContext.Database = this;
         }
 
         public bool LinkSvtEcus(List<EcuInfo> ecuList, IPsdzSvt psdzSvt)
@@ -1248,6 +1249,7 @@ namespace PsdzClient
                 {
                 }
 
+                PsdzContext.Database = null;
                 // Note disposing has been done.
                 _disposed = true;
             }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,16 +20,15 @@ namespace PsdzClient.Core
 					result = false;
 				}
 				else
-				{
-					IDatabaseProvider instance = DatabaseProviderFactory.Instance;
-					this.programmingVariant = instance.GetEcuProgrammingVariantById(this.value, vec, ffmResolver);
-					if (this.programmingVariant == null)
+                {
+					this.programmingVariant = PsdzContext.Database?.GetEcuProgrammingVariantById(this.value.ToString(CultureInfo.InvariantCulture));
+                    if (this.programmingVariant == null)
 					{
 						result = false;
 					}
 					else
 					{
-						this.ecuVariant = instance.GetEcuVariantById(this.programmingVariant.EcuVariantId);
+						this.ecuVariant = PsdzContext.Database?.GetEcuVariantById(this.programmingVariant.EcuVarId);
 						if (this.ecuVariant == null)
 						{
 							result = false;
@@ -46,7 +46,7 @@ namespace PsdzClient.Core
 					}
 				}
 			}
-			catch (Exception exception)
+			catch (Exception)
 			{
 				//Log.WarningException("EcuProgrammingVariantExpression.Evaluate()", exception);
 				result = false;
@@ -67,7 +67,7 @@ namespace PsdzClient.Core
 			return string.Format("EcuProgrammingVariant: ID= {0}", this.value);
 		}
 
-		private XEP_ECUPROGRAMMINGVARIANT programmingVariant;
+		private PdszDatabase.EcuPrgVar programmingVariant;
 
 		private XEP_ECUVARIANTS ecuVariant;
 	}

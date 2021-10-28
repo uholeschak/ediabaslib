@@ -248,7 +248,7 @@ namespace PsdzClient.Core
 						result = base.VIN17.Substring(0, 10);
 					}
 				}
-				catch (Exception exception)
+				catch (Exception)
 				{
 					//Log.WarningException("Vehicle.VIN10Prefix", exception);
 					result = null;
@@ -281,7 +281,7 @@ namespace PsdzClient.Core
 					}
 					return base.VIN17.Substring(10, 7);
 				}
-				catch (Exception exception)
+				catch (Exception)
 				{
 					//Log.WarningException("Vehicle.get_VIN7", exception);
 				}
@@ -366,7 +366,7 @@ namespace PsdzClient.Core
 					}
 					return null;
 				}
-				catch (Exception exception)
+				catch (Exception)
 				{
 					//Log.WarningException("Vehicle.get_VINType", exception);
 				}
@@ -694,7 +694,7 @@ namespace PsdzClient.Core
 						return this.cDatetimeByModelYearMonth;
 					}
 				}
-				catch (Exception exception)
+				catch (Exception)
 				{
 					//Log.WarningException("Vehicle.get_C_DATETIME()", exception);
 				}
@@ -957,7 +957,7 @@ namespace PsdzClient.Core
 				}
 				return null;
 			}
-			catch (Exception exception)
+			catch (Exception)
 			{
 				//Log.WarningException(Log.CurrentMethod() + "()", exception);
 			}
@@ -984,7 +984,7 @@ namespace PsdzClient.Core
 					result = vehicle;
 				}
 			}
-			catch (Exception exception)
+			catch (Exception)
 			{
 				//Log.WarningException(Log.CurrentMethod() + "()", exception);
 				throw;
@@ -1339,7 +1339,7 @@ namespace PsdzClient.Core
 					}
 				}
 			}
-			catch (Exception exception)
+			catch (Exception)
 			{
 				//Log.WarningException("Vehicle.getECUTransaction()", exception);
 			}
@@ -1517,7 +1517,7 @@ namespace PsdzClient.Core
 					}
 				}
 			}
-			catch (Exception exception)
+			catch (Exception)
 			{
 				//Log.WarningException("Vehicle.getECU()", exception);
 			}
@@ -1543,7 +1543,7 @@ namespace PsdzClient.Core
 					}
 				}
 			}
-			catch (Exception exception)
+			catch (Exception)
 			{
 				//Log.WarningException("Vehcile.getECU()", exception);
 			}
@@ -1572,7 +1572,7 @@ namespace PsdzClient.Core
 					}
 				}
 			}
-			catch (Exception exception)
+			catch (Exception)
 			{
 				//Log.WarningException("Vehicle.getECUbyECU_SGBD()", exception);
                 return null;
@@ -1596,7 +1596,7 @@ namespace PsdzClient.Core
 					}
 				}
 			}
-			catch (Exception exception)
+			catch (Exception)
 			{
 				//Log.WarningException("Vehicle.getECUbyTITLE_ECUTREE()", exception);
 			}
@@ -1641,7 +1641,7 @@ namespace PsdzClient.Core
 					}
 				}
 			}
-			catch (Exception exception)
+			catch (Exception)
 			{
 				//Log.WarningException("Vehicle.getECUbyECU_GRUPPE()", exception);
 			}
@@ -1664,7 +1664,7 @@ namespace PsdzClient.Core
 					}
 				}
 			}
-			catch (Exception exception)
+			catch (Exception)
 			{
 				//Log.WarningException("Vehcile.getECU()", exception);
 			}
@@ -1799,7 +1799,7 @@ namespace PsdzClient.Core
 				base.ECU.Add(nECU);
 				return true;
 			}
-			catch (Exception exception)
+			catch (Exception)
 			{
 				//Log.WarningException("Vehicle.AddOrUpdateECU()", exception);
 			}
@@ -1832,7 +1832,7 @@ namespace PsdzClient.Core
 				}
 				this.IsNoVehicleCommunicationRunning = (base.Status_FunctionState != StateType.running);
 			}
-			catch (Exception exception)
+			catch (Exception)
 			{
 				//Log.WarningException("Vehicle.UpdateStatus()", exception);
 			}

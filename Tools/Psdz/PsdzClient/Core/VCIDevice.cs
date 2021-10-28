@@ -290,7 +290,7 @@ namespace PsdzClient.Core
 				stringBuilder.AppendFormat(CultureInfo.InvariantCulture, "(ControlPort={0}),{1}", this.ControlPort, arg);
 				stringBuilder.AppendFormat(CultureInfo.InvariantCulture, "(PwfState={0})", this.PwfState);
 			}
-			catch (Exception exception)
+			catch (Exception)
 			{
 				//Log.WarningException("VCIDevice.ToAttrList()", exception);
 			}
@@ -355,13 +355,12 @@ namespace PsdzClient.Core
 				{
 					result = new double?(Convert.ToDouble(new Regex("(mV|MV|mv|Mv)").Replace(voltage, string.Empty).Trim()));
 				}
-				catch (Exception exception)
+				catch (Exception)
 				{
-					goto IL_72;
+                    return null;
 				}
 				return result;
 			}
-			IL_72:
 			return null;
 		}
 
@@ -423,7 +422,7 @@ namespace PsdzClient.Core
 					num4
 				});
 			}
-			catch (Exception exception)
+			catch (Exception)
 			{
 				//Log.WarningException("VCIDevice.IntIPAddress2String()", exception);
 			}
@@ -444,7 +443,7 @@ namespace PsdzClient.Core
 					return;
 				}
 			}
-			catch (Exception exception)
+			catch (Exception)
 			{
 				//Log.WarningException("VCIGuiDevice.UUIDString2UUID()", exception);
 			}
