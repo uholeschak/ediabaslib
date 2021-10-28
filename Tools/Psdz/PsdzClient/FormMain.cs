@@ -949,19 +949,7 @@ namespace PsdzClient
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecus: {0}", _psdzContext.DetectVehicle.EcuList.Count()));
                 foreach (PdszDatabase.EcuInfo ecuInfo in _psdzContext.DetectVehicle.EcuList)
                 {
-                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Ecu: Name={0}, Addr={1}, Sgdb={2}, Group={3}",
-                        ecuInfo.Name, ecuInfo.Address, ecuInfo.Sgbd, ecuInfo.Grp));
-                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "  VarId={0}, VarGroupId={1}, VarPrgId={2}, VarPrgEcuId={3}, VarPrgName={4}, Title={5}",
-                        ecuInfo.VariantId, ecuInfo.VariantGroupId, ecuInfo.VariantPrgId, ecuInfo.VariantPrgEcuVarId, ecuInfo.VariantPrgName, ecuInfo.EcuTranslation.GetTitle(TitleLang)));
-                    if (ecuInfo.PsdzEcu != null)
-                    {
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "  Psdz: BaseVar={0}, Var={1}, Name={2}",
-                            ecuInfo.PsdzEcu.BaseVariant, ecuInfo.PsdzEcu.EcuVariant, ecuInfo.PsdzEcu.BnTnName));
-                    }
-                    foreach (PdszDatabase.SwiAction swiAction in ecuInfo.SwiActions)
-                    {
-                        sbResult.AppendLine(swiAction.ToString(TitleLang));
-                    }
+                    sbResult.AppendLine(ecuInfo.ToString(TitleLang));
                 }
                 UpdateStatus(sbResult.ToString());
                 _cts?.Token.ThrowIfCancellationRequested();

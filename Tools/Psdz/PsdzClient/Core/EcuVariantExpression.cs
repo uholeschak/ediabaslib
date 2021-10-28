@@ -45,7 +45,7 @@ namespace PsdzClient.Core
 			IDatabaseProvider instance = DatabaseProviderFactory.Instance;
 			if (vec == null)
 			{
-				Log.Warning("EcuVariantExpression.Evaluate()", "vec was null", Array.Empty<object>());
+				//Log.Warning("EcuVariantExpression.Evaluate()", "vec was null", Array.Empty<object>());
 				return false;
 			}
 			XEP_ECUVARIANTS ecuVariantById = instance.GetEcuVariantById(this.value);

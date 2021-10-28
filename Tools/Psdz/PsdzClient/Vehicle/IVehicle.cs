@@ -155,7 +155,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
 		BrandName? BrandName { get; }
 
-		IEnumerable<ICbsInfo> CBS { get; }
+		//IEnumerable<ICbsInfo> CBS { get; }
 
 		bool CVDRequestFailed { get; }
 
@@ -163,7 +163,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
 		ChassisType ChassisType { get; }
 
-		IEnumerable<IDtc> CombinedFaults { get; }
+		//IEnumerable<IDtc> CombinedFaults { get; }
 
 		VisibilityType ConnectIMIBIPState { get; }
 
@@ -181,7 +181,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
 		bool DOMRequestFailed { get; }
 
-		IEnumerable<IDiagCode> DiagCodes { get; }
+		//IEnumerable<IDiagCode> DiagCodes { get; }
 
 		ObservableCollection<string> DiagCodesProgramming { get; }
 
@@ -257,7 +257,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
 		string Lenkung { get; }
 
-		IVciDevice MIB { get; }
+		//IVciDevice MIB { get; }
 
 		string MOTBezeichnung { get; }
 
@@ -305,7 +305,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
 		string SerialGearBox { get; }
 
-		IEnumerable<IServiceHistoryEntry> ServiceHistory { get; }
+		//IEnumerable<IServiceHistoryEntry> ServiceHistory { get; }
 
 		//bool SimulatedParts { get; }
 
@@ -321,7 +321,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
 		bool TecCampaignsRequestFailed { get; }
 
-		IEnumerable<ITechnicalCampaign> TechnicalCampaigns { get; }
+		//IEnumerable<ITechnicalCampaign> TechnicalCampaigns { get; }
 
 		string Typ { get; }
 
@@ -353,7 +353,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
 		string ZCS { get; }
 
-		IEnumerable<IZfsResult> ZFS { get; }
+		//IEnumerable<IZfsResult> ZFS { get; }
 
 		bool ZFS_SUCCESSFULLY { get; }
 

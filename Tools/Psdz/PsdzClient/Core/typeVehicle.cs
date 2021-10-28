@@ -21,7 +21,7 @@ namespace PsdzClient.Core
 			//this.serviceHistoryField = new ObservableCollection<typeServiceHistoryEntry>();
 			//this.technicalCampaignsField = new ObservableCollection<technicalCampaignType>();
 			//this.mIBField = new VCIDevice();
-			//this.vCIField = new VCIDevice();
+			this.vCIField = new VCIDevice();
 			//this.testplanField = new TestPlanType();
 			//this.historyInfoObjectsField = new ObservableCollection<InfoObject>();
 			//this.faField = new FA();
@@ -1376,7 +1376,7 @@ namespace PsdzClient.Core
 				}
 			}
 		}
-#if false
+
 		public FA FA
 		{
 			get
@@ -1401,7 +1401,7 @@ namespace PsdzClient.Core
 				}
 			}
 		}
-#endif
+
 		public string ZCS
 		{
 			get
@@ -1492,7 +1492,7 @@ namespace PsdzClient.Core
 				}
 			}
 		}
-
+#endif
 		public VCIDevice VCI
 		{
 			get
@@ -1517,7 +1517,7 @@ namespace PsdzClient.Core
 				}
 			}
 		}
-
+#if false
 		public VCIDevice MIB
 		{
 			get
@@ -2960,7 +2960,7 @@ namespace PsdzClient.Core
 
 		private string iLevelBackupField;
 
-		//private FA faField;
+		private FA faField;
 
 		private string zCSField;
 
@@ -2970,7 +2970,7 @@ namespace PsdzClient.Core
 
 		//private bool simulatedPartsField;
 
-		//private VCIDevice vCIField;
+		private VCIDevice vCIField;
 
 		//private VCIDevice mIBField;
 

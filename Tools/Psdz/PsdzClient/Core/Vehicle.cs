@@ -696,12 +696,12 @@ namespace PsdzClient.Core
 				}
 				catch (Exception exception)
 				{
-					Log.WarningException("Vehicle.get_C_DATETIME()", exception);
+					//Log.WarningException("Vehicle.get_C_DATETIME()", exception);
 				}
 				return null;
 			}
 		}
-
+#if false
 		[XmlIgnore]
 		IEnumerable<ICbsInfo> IVehicle.CBS
 		{
@@ -728,7 +728,7 @@ namespace PsdzClient.Core
 				return base.DiagCodes;
 			}
 		}
-
+#endif
 		[XmlIgnore]
 		IEnumerable<IEcu> IVehicle.ECU
 		{
@@ -773,7 +773,7 @@ namespace PsdzClient.Core
 				return base.SelectedECU;
 			}
 		}
-
+#if false
 		[XmlIgnore]
 		IVciDevice IVehicle.MIB
 		{
@@ -800,7 +800,7 @@ namespace PsdzClient.Core
 				return base.TechnicalCampaigns;
 			}
 		}
-
+#endif
 		[XmlIgnore]
 		IVciDevice IVehicle.VCI
 		{
@@ -809,7 +809,7 @@ namespace PsdzClient.Core
 				return base.VCI;
 			}
 		}
-
+#if false
 		[XmlIgnore]
 		IEnumerable<IZfsResult> IVehicle.ZFS
 		{
@@ -818,7 +818,7 @@ namespace PsdzClient.Core
 				return base.ZFS;
 			}
 		}
-
+#endif
 		[XmlIgnore]
 		public double Clamp15MinValue
 		{
@@ -934,10 +934,6 @@ namespace PsdzClient.Core
 			}
 			catch
 			{
-				Log.Warning("Vehicle.ValidateFSC", "Exception Occurred validating HDDUpdateIndex {0}", new object[]
-				{
-					updateIndex
-				});
 				result = "-";
 			}
 			return result;
@@ -959,15 +955,11 @@ namespace PsdzClient.Core
 						}
 					}
 				}
-				Log.Warning(Log.CurrentMethod() + "()", "file doesn't exist: {0}", new object[]
-				{
-					filename
-				});
 				return null;
 			}
 			catch (Exception exception)
 			{
-				Log.WarningException(Log.CurrentMethod() + "()", exception);
+				//Log.WarningException(Log.CurrentMethod() + "()", exception);
 			}
 			return null;
 		}
@@ -1158,7 +1150,7 @@ namespace PsdzClient.Core
 			}
 			return false;
 		}
-#endif
+
 		public bool IsEreiheValid()
 		{
 			return !string.IsNullOrEmpty(base.Ereihe) && !(base.Ereihe == "UNBEK");
@@ -1250,7 +1242,7 @@ namespace PsdzClient.Core
 			}
 			return null;
 		}
-#if false
+
 		public DTC GetFaultCode(FaultCode faultCode)
 		{
 			if (faultCode == null)
@@ -1786,7 +1778,6 @@ namespace PsdzClient.Core
 			{
 				if (nECU == null)
 				{
-					Log.Warning("Vehicle.AddOrUpdateECU()", "ecu was null", Array.Empty<object>());
 					return false;
 				}
 				if (base.ECU == null)
@@ -1801,26 +1792,16 @@ namespace PsdzClient.Core
 						if (num >= 0 && num < base.ECU.Count)
 						{
 							base.ECU[num] = nECU;
-							Log.Info("Vehicle.AddOrUpdateECU()", "updating ecu: \"{0:X2}\" (hex.), slave address: \"{1:X2}\" (hex.).", new object[]
-							{
-								nECU.ID_SG_ADR,
-								nECU.ID_LIN_SLAVE_ADR
-							});
 							return true;
 						}
 					}
 				}
 				base.ECU.Add(nECU);
-				Log.Info("Vehicle.AddOrUpdateECU()", "adding ecu: \"{0:X2}\" (hex.), slave address: \"{1:X2}\" (hex.).", new object[]
-				{
-					nECU.ID_SG_ADR,
-					nECU.ID_LIN_SLAVE_ADR
-				});
 				return true;
 			}
 			catch (Exception exception)
 			{
-				Log.WarningException("Vehicle.AddOrUpdateECU()", exception);
+				//Log.WarningException("Vehicle.AddOrUpdateECU()", exception);
 			}
 			return false;
 		}
@@ -1832,10 +1813,6 @@ namespace PsdzClient.Core
 			{
 				return new VehicleCharacteristicVehicleHelper().GetISTACharacteristics(characteristicRootsById, out value, id, this, datavalueId, internalResult);
 			}
-			Log.Warning("Vehicle.getISTACharactersitics()", "No entry found in CharacteristicRoots for id: {0}!", new object[]
-			{
-				id
-			});
 			value = "???";
 			return false;
 		}
@@ -1846,13 +1823,6 @@ namespace PsdzClient.Core
 			{
 				string status_FunctionName = base.Status_FunctionName;
 				StateType status_FunctionState = base.Status_FunctionState;
-				Log.Info("Vehicle.UpdateStatus()", "Change state from '{0}/{1}' to '{2}/{3}'", new object[]
-				{
-					status_FunctionName,
-					status_FunctionState,
-					name,
-					type
-				});
 				base.Status_FunctionName = name;
 				base.Status_FunctionState = type;
 				base.Status_FunctionStateLastChangeTime = DateTime.Now;
@@ -1864,7 +1834,7 @@ namespace PsdzClient.Core
 			}
 			catch (Exception exception)
 			{
-				Log.WarningException("Vehicle.UpdateStatus()", exception);
+				//Log.WarningException("Vehicle.UpdateStatus()", exception);
 			}
 		}
 

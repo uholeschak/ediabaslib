@@ -33,6 +33,32 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         UNKNOWN
     }
 
+    public enum DeviceState
+    {
+        Init,
+        Booted,
+        Lost,
+        Sleep,
+        Free,
+        Reserved,
+        Selftest,
+        Fail,
+        Found,
+        Transit,
+        Updated,
+        Unregistered,
+        Blocked,
+        FreeNvm,
+        FirmwareOutdated
+    }
+
+    public enum NetworkType
+    {
+        Unknown = -1,
+        LAN,
+        WLAN
+    }
+
 	[AuthorAPI(SelectableTypeDeclaration = true)]
 	public interface IVciDevice : INotifyPropertyChanged
 	{

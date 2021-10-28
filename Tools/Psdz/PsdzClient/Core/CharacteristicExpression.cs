@@ -136,14 +136,16 @@ namespace PsdzClient.Core
 		{
 			string text = null;
 			bool flag;
+
 			if (vec != null && vec.VCI != null)
 			{
 				if (vec.VCI.VCIType != VCIDeviceType.UNKNOWN)
 				{
 					flag = vec.getISTACharacteristics(this.dataclassId, out text, this.datavalueId, internalResult);
-					goto IL_2E0;
+					return flag;
 				}
 			}
+
 			if (this.CharacteristicRoot.Equals("Marke"))
 			{
 				string text2;
@@ -238,7 +240,6 @@ namespace PsdzClient.Core
 			{
 				flag = false;
 			}
-			IL_2E0:
 			return flag;
 		}
 
