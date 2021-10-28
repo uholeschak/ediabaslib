@@ -54,6 +54,7 @@ namespace PsdzClient.Core
 				else
 				{
 					bool flag3 = instance.EvaluateXepRulesById(this.value, vec, ffmResolver, null);
+#if false
 					if (ffmResolver != null && flag3)
 					{
 						ObservableCollectionEx<IXepInfoObject> infoObjectsByDiagObjectControlId = DatabaseProviderFactory.Instance.GetInfoObjectsByDiagObjectControlId(this.value, vec, ffmResolver, true, null);
@@ -75,7 +76,9 @@ namespace PsdzClient.Core
 							result = false;
 						}
 					}
-					else if (flag3)
+					else
+#endif
+					if (flag3)
 					{
 						result = true;
 					}
