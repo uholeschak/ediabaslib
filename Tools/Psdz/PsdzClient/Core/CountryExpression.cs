@@ -41,7 +41,7 @@ namespace PsdzClient.Core
                 string outletCountry = Dealer.Instance.DealerData.OutletCountry;
                 flag = (outletCountry == this.CountryCode);
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 //Log.WarningException("CountryExpression.Evaluate()", exception);
             }

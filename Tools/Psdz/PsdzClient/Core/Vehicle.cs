@@ -1361,8 +1361,6 @@ namespace PsdzClient.Core
 					}
 					return false;
 				}
-				bool result;
-				return result;
 			}
 			return false;
 		}
@@ -1459,12 +1457,9 @@ namespace PsdzClient.Core
 							return ffmresult.Result;
 						}
 					}
-					goto IL_87;
+                    return null;
 				}
-				bool? result;
-				return result;
 			}
-			IL_87:
 			return null;
 		}
 
@@ -2803,17 +2798,17 @@ namespace PsdzClient.Core
 
 		private string vinRangeType;
 
-		private string vinRangeTypeLastResolvedType;
+		//private string vinRangeTypeLastResolvedType;
 
 		private FA targetFA;
 
 		private bool isBusy;
 
-		private string productLine;
+		//private string productLine;
 
-		private string doorNumber;
+		//private string doorNumber;
 
-		private string securityRelevant;
+		//private string securityRelevant;
 
 		private DateTime? cDatetimeByModelYearMonth;
 

@@ -711,9 +711,9 @@ namespace PsdzClient.Core
 					return str + str2;
 				}
 			}
-			catch (Exception exception)
+			catch (Exception)
 			{
-				Log.WarningException("FA.ExtractEreihe()", exception);
+				//Log.WarningException("FA.ExtractEreihe()", exception);
 			}
 			return null;
 		}

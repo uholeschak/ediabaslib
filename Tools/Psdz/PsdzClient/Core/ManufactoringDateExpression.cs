@@ -50,7 +50,7 @@ namespace PsdzClient.Core
 					ticks = new DateTime(Convert.ToInt32(vec.Modelljahr, CultureInfo.InvariantCulture), Convert.ToInt32(vec.Modellmonat, CultureInfo.InvariantCulture), 1).Ticks;
 				}
 			}
-			catch (Exception exception)
+			catch (Exception)
 			{
 				//Log.WarningException("ManufactoringDateExpression.Evaluate()", exception);
 				return false;

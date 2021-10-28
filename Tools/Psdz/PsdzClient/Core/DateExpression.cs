@@ -73,7 +73,7 @@ namespace PsdzClient.Core
                         break;
                 }
 			}
-			catch (Exception exception)
+			catch (Exception)
 			{
 				//Log.WarningException("DateExpression.Evaluate()", exception);
 				result = false;

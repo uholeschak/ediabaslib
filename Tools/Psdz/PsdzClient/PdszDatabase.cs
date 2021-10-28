@@ -197,14 +197,17 @@ namespace PsdzClient
 
         public class EcuVar
         {
-            public EcuVar(string id, string groupId, EcuTranslation ecuTranslation)
+            public EcuVar(string id, string name, string groupId, EcuTranslation ecuTranslation)
             {
                 Id = id;
+                Name = name;
                 GroupId = groupId;
                 EcuTranslation = ecuTranslation;
             }
 
             public string Id { get; set; }
+
+            public string Name { get; set; }
 
             public string GroupId { get; set; }
 
@@ -215,8 +218,8 @@ namespace PsdzClient
                 StringBuilder sb = new StringBuilder();
                 sb.Append(prefix);
                 sb.Append(string.Format(CultureInfo.InvariantCulture,
-                    "EcuVar: Id={0}, GroupId={1}, Title='{2}'",
-                    Id, GroupId, EcuTranslation.GetTitle(language)));
+                    "EcuVar: Id={0}, Name={1}, GroupId={2}, Title='{3}'",
+                    Id, Name, GroupId, EcuTranslation.GetTitle(language)));
                 return sb.ToString();
             }
         }
@@ -602,7 +605,7 @@ namespace PsdzClient
             _typeKeyClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"Typschluessel");
             SwiRegisterTree = null;
             ReadSwiRegister();
-            PsdzContext.Database = this;
+            ClientContext.Database = this;
         }
 
         public bool LinkSvtEcus(List<EcuInfo> ecuList, IPsdzSvt psdzSvt)
@@ -639,7 +642,7 @@ namespace PsdzClient
             foreach (EcuInfo ecuInfo in ecuList)
             {
                 ecuInfo.SwiActions.Clear();
-                ecuInfo.EcuVar = GetEcuVariantName(ecuInfo.Sgbd);
+                ecuInfo.EcuVar = GetEcuVariantByName(ecuInfo.Sgbd);
                 ecuInfo.EcuPrgVar = GetEcuProgrammingVariantByName(ecuInfo.PsdzEcu?.BnTnName);
 
                 GetSwiActionsForEcuVariant(ecuInfo);
@@ -709,7 +712,7 @@ namespace PsdzClient
             }
         }
 
-        private EcuVar GetEcuVariantName(string sgbdName)
+        public EcuVar GetEcuVariantByName(string sgbdName)
         {
             if (string.IsNullOrEmpty(sgbdName))
             {
@@ -719,16 +722,44 @@ namespace PsdzClient
             EcuVar ecuVar = null;
             try
             {
-                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, " + DatabaseFunctions.SqlTitleItems + ", ECUGROUPID FROM XEP_ECUVARIANTS WHERE (lower(NAME) = '{0}')", sgbdName.ToLowerInvariant());
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NAME, " + DatabaseFunctions.SqlTitleItems + ", ECUGROUPID FROM XEP_ECUVARIANTS WHERE (lower(NAME) = '{0}')", sgbdName.ToLowerInvariant());
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            string id = reader["ID"].ToString().Trim();
-                            string groupId = reader["ECUGROUPID"].ToString().Trim();
-                            ecuVar = new EcuVar(id, groupId, GetTranslation(reader));
+                            ecuVar = ReadXepEcuVar(reader);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return ecuVar;
+        }
+
+        public EcuVar GetEcuVariantById(string varId)
+        {
+            if (string.IsNullOrEmpty(varId))
+            {
+                return null;
+            }
+
+            EcuVar ecuVar = null;
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NAME, " + DatabaseFunctions.SqlTitleItems + ", ECUGROUPID FROM XEP_ECUVARIANTS WHERE (ID = {0})", varId);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            ecuVar = ReadXepEcuVar(reader);
                         }
                     }
                 }
@@ -758,11 +789,7 @@ namespace PsdzClient
                     {
                         while (reader.Read())
                         {
-                            string id = reader["ID"].ToString().Trim();
-                            string name = reader["NAME"].ToString().Trim();
-                            string flashLimit = reader["FLASHLIMIT"].ToString().Trim();
-                            string ecuVarId = reader["ECUVARIANTID"].ToString().Trim();
-                            ecuPrgVar = new EcuPrgVar(id, name, flashLimit, ecuVarId);
+                            ecuPrgVar = ReadXepEcuPrgVar(reader);
                         }
                     }
                 }
@@ -792,11 +819,7 @@ namespace PsdzClient
                     {
                         while (reader.Read())
                         {
-                            string id = reader["ID"].ToString().Trim();
-                            string name = reader["NAME"].ToString().Trim();
-                            string flashLimit = reader["FLASHLIMIT"].ToString().Trim();
-                            string ecuVarId = reader["ECUVARIANTID"].ToString().Trim();
-                            ecuPrgVar = new EcuPrgVar(id, name, flashLimit, ecuVarId);
+                            ecuPrgVar = ReadXepEcuPrgVar(reader);
                         }
                     }
                 }
@@ -1172,6 +1195,23 @@ namespace PsdzClient
             return swiRule;
         }
 
+        private static EcuVar ReadXepEcuVar(SQLiteDataReader reader)
+        {
+            string id = reader["ID"].ToString().Trim();
+            string name = reader["NAME"].ToString().Trim();
+            string groupId = reader["ECUGROUPID"].ToString().Trim();
+            return new EcuVar(id, name, groupId, GetTranslation(reader));
+        }
+
+        private static EcuPrgVar ReadXepEcuPrgVar(SQLiteDataReader reader)
+        {
+            string id = reader["ID"].ToString().Trim();
+            string name = reader["NAME"].ToString().Trim();
+            string flashLimit = reader["FLASHLIMIT"].ToString().Trim();
+            string ecuVarId = reader["ECUVARIANTID"].ToString().Trim();
+            return new EcuPrgVar(id, name, flashLimit, ecuVarId);
+        }
+
         private static SwiAction ReadXepSwiAction(SQLiteDataReader reader, SwiActionSource swiActionSource)
         {
             string id = reader["ID"].ToString().Trim();
@@ -1249,7 +1289,7 @@ namespace PsdzClient
                 {
                 }
 
-                PsdzContext.Database = null;
+                ClientContext.Database = null;
                 // Note disposing has been done.
                 _disposed = true;
             }

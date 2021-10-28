@@ -72,8 +72,6 @@ namespace PsdzClient.Core
 					}
 					return EEvaluationResult.INVALID;
 				}
-				EEvaluationResult result;
-				return result;
 			}
 			return EEvaluationResult.INVALID;
 		}

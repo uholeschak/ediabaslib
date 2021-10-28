@@ -21,14 +21,14 @@ namespace PsdzClient.Core
 				}
 				else
                 {
-					this.programmingVariant = PsdzContext.Database?.GetEcuProgrammingVariantById(this.value.ToString(CultureInfo.InvariantCulture));
+					this.programmingVariant = ClientContext.Database?.GetEcuProgrammingVariantById(this.value.ToString(CultureInfo.InvariantCulture));
                     if (this.programmingVariant == null)
 					{
 						result = false;
 					}
 					else
 					{
-						this.ecuVariant = PsdzContext.Database?.GetEcuVariantById(this.programmingVariant.EcuVarId);
+						this.ecuVariant = ClientContext.Database?.GetEcuVariantById(this.programmingVariant.EcuVarId);
 						if (this.ecuVariant == null)
 						{
 							result = false;
@@ -69,6 +69,6 @@ namespace PsdzClient.Core
 
 		private PdszDatabase.EcuPrgVar programmingVariant;
 
-		private XEP_ECUVARIANTS ecuVariant;
+		private PdszDatabase.EcuVar ecuVariant;
 	}
 }

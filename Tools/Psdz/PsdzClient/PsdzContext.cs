@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PsdzClient
 {
-    static class PsdzContext
+    static class ClientContext
     {
         public static PdszDatabase Database { get; set; }
     }
