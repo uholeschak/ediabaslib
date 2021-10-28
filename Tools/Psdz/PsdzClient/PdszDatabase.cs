@@ -133,10 +133,7 @@ namespace PsdzClient
                 Grp = grp;
                 VariantId = string.Empty;
                 VariantGroupId = string.Empty;
-                VariantPrgId = string.Empty;
-                VariantPrgName = string.Empty;
-                VariantPrgFlashLimit = string.Empty;
-                VariantPrgEcuVarId = string.Empty;
+                EcuPrgVar = null;
                 PsdzEcu = null;
                 SwiActions = new List<SwiAction>();
             }
@@ -155,19 +152,32 @@ namespace PsdzClient
 
             public string VariantGroupId { get; set; }
 
-            public string VariantPrgId { get; set; }
-
-            public string VariantPrgName { get; set; }
-
-            public string VariantPrgFlashLimit { get; set; }
-
-            public string VariantPrgEcuVarId { get; set; }
+            public EcuPrgVar EcuPrgVar { get; set; }
 
             public EcuTranslation EcuTranslation { get; set; }
 
             public IPsdzEcu PsdzEcu { get; set; }
 
             public List<SwiAction> SwiActions { get; set; }
+        }
+
+        public class EcuPrgVar
+        {
+            public EcuPrgVar(string id, string name, string flashLimit, string ecuVarId)
+            {
+                Id = id;
+                Name = name;
+                FlashLimit = flashLimit;
+                EcuVarId = ecuVarId;
+            }
+
+            public string Id { get; set; }
+
+            public string Name { get; set; }
+
+            public string FlashLimit { get; set; }
+
+            public string EcuVarId { get; set; }
         }
 
         public class SwiAction
@@ -559,7 +569,7 @@ namespace PsdzClient
             {
                 ecuInfo.SwiActions.Clear();
                 GetEcuVariant(ecuInfo);
-                GetEcuProgrammingVariant(ecuInfo);
+                ecuInfo.EcuPrgVar = GetEcuProgrammingVariantByName(ecuInfo.PsdzEcu?.BnTnName);
 
                 GetSwiActionsForEcuVariant(ecuInfo);
                 GetSwiActionsForEcuGroup(ecuInfo);
@@ -664,43 +674,38 @@ namespace PsdzClient
             return result;
         }
 
-        private bool GetEcuProgrammingVariant(EcuInfo ecuInfo)
+        private EcuPrgVar GetEcuProgrammingVariantByName(string bnTnName)
         {
-            if (ecuInfo.PsdzEcu == null || string.IsNullOrEmpty(ecuInfo.PsdzEcu.BnTnName))
+            if (string.IsNullOrEmpty(bnTnName))
             {
-                return false;
+                return null;
             }
 
-            bool result = false;
+            EcuPrgVar ecuPrgVar = null;
             try
             {
-                ecuInfo.VariantPrgId = string.Empty;
-                ecuInfo.VariantPrgName = string.Empty;
-                ecuInfo.VariantPrgFlashLimit = string.Empty;
-                ecuInfo.VariantPrgEcuVarId = string.Empty;
-
-                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NAME, FLASHLIMIT, ECUVARIANTID FROM XEP_ECUPROGRAMMINGVARIANT WHERE UPPER(NAME) = UPPER('{0}')", ecuInfo.PsdzEcu.BnTnName);
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NAME, FLASHLIMIT, ECUVARIANTID FROM XEP_ECUPROGRAMMINGVARIANT WHERE UPPER(NAME) = UPPER('{0}')", bnTnName);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            ecuInfo.VariantPrgId = reader["ID"].ToString().Trim();
-                            ecuInfo.VariantPrgName = reader["NAME"].ToString().Trim();
-                            ecuInfo.VariantPrgFlashLimit = reader["FLASHLIMIT"].ToString().Trim();
-                            ecuInfo.VariantPrgEcuVarId = reader["ECUVARIANTID"].ToString().Trim();
-                            result = true;
+                            string id = reader["ID"].ToString().Trim();
+                            string name = reader["NAME"].ToString().Trim();
+                            string flashLimit = reader["FLASHLIMIT"].ToString().Trim();
+                            string ecuVarId = reader["ECUVARIANTID"].ToString().Trim();
+                            ecuPrgVar = new EcuPrgVar(id, name, flashLimit, ecuVarId);
                         }
                     }
                 }
             }
             catch (Exception)
             {
-                return false;
+                return null;
             }
 
-            return result;
+            return ecuPrgVar;
         }
 
         private bool GetSwiActionsForEcuVariant(EcuInfo ecuInfo)
@@ -771,7 +776,7 @@ namespace PsdzClient
 
         private bool GetSwiActionsForEcuProgrammingVariant(EcuInfo ecuInfo)
         {
-            if (ecuInfo.PsdzEcu == null || string.IsNullOrEmpty(ecuInfo.VariantPrgId))
+            if (ecuInfo.EcuPrgVar == null || string.IsNullOrEmpty(ecuInfo.EcuPrgVar.Id))
             {
                 return false;
             }
@@ -781,7 +786,7 @@ namespace PsdzClient
                 string sql = string.Format(CultureInfo.InvariantCulture,
                     @"SELECT ID, NAME, ACTIONCATEGORY, SELECTABLE, SHOW_IN_PLAN, EXECUTABLE, " + DatabaseFunctions.SqlTitleItems +
                     @", NODECLASS FROM XEP_SWIACTION WHERE ID IN (SELECT SWI_ACTION_ID FROM XEP_REF_ECUPRGVARI_SWIACTION WHERE ECUPROGRAMMINGVARIANT_ID = {0})",
-                    ecuInfo.VariantPrgId);
+                    ecuInfo.EcuPrgVar.Id);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
