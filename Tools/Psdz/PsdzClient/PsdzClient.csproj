@@ -197,7 +197,7 @@
     <Compile Include="Programming\VehicleProfile.cs" />
     <Compile Include="Programming\VehicleProfileCriterion.cs" />
     <Compile Include="Programming\VehicleProgrammingEventHandler.cs" />
-    <Compile Include="PsdzContext.cs" />
+    <Compile Include="ClientContext.cs" />
     <Compile Include="Psdz\CbbTlsConfiguratorServiceClient.cs" />
     <Compile Include="Psdz\CertificateManagementServiceClient.cs" />
     <Compile Include="Psdz\ClientConfigArgs.cs" />

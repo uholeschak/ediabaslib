@@ -149,7 +149,7 @@ namespace PsdzClient.Core
 			if (this.CharacteristicRoot.Equals("Marke"))
 			{
 				string text2;
-				switch (ConfigSettings.SelectedBrand)
+				switch (ClientContext.SelectedBrand)
 				{
 					case EnumBrand.BMWBMWiMINI:
 						text2 = "BMW/BMW I/MINI";
@@ -211,7 +211,7 @@ namespace PsdzClient.Core
 				{
 					flag = true;
 				}
-				else if (this.CharacteristicValue.Equals("BMW I", StringComparison.OrdinalIgnoreCase) && string.Compare(text2, "BMW/MINI", StringComparison.OrdinalIgnoreCase) == 0 && Dealer.Instance != null && Dealer.Instance.HasLicenseForBrand(new BrandName?(BrandName.BMWi)))
+				else if (this.CharacteristicValue.Equals("BMW I", StringComparison.OrdinalIgnoreCase) && string.Compare(text2, "BMW/MINI", StringComparison.OrdinalIgnoreCase) == 0 /*&& Dealer.Instance != null && Dealer.Instance.HasLicenseForBrand(new BrandName?(BrandName.BMWi))*/)
 				{
 					flag = true;
 				}
