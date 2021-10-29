@@ -386,7 +386,7 @@ namespace PsdzClient
                 Name = name;
                 LegacyName = legacyName;
                 DriveId = string.Empty;
-                ParentNodeClass = string.Empty;
+                RootNodeClass = string.Empty;
             }
 
             public string Id { get; set; }
@@ -409,15 +409,15 @@ namespace PsdzClient
 
             public string DriveId { get; set; }
 
-            public string ParentNodeClass { get; set; }
+            public string RootNodeClass { get; set; }
 
             public string ToString(string language, string prefix = "")
             {
                 StringBuilder sb = new StringBuilder();
                 sb.Append(prefix);
                 sb.Append(string.Format(CultureInfo.InvariantCulture,
-                    "EcuVar: Id={0}, Class={1}, ParentId={2}, Name={3}, LegacyName={4}, ParentClass={5}",
-                    Id, NodeClass, ParentId, Name, LegacyName, ParentNodeClass));
+                    "EcuVar: Id={0}, Class={1}, ParentId={2}, Name={3}, LegacyName={4}, RootClass={5}",
+                    Id, NodeClass, ParentId, Name, LegacyName, RootNodeClass));
                 return sb.ToString();
             }
         }
@@ -1230,7 +1230,7 @@ namespace PsdzClient
                         {
                             Characteristics characteristics = ReadXepCharacteristics(reader);
                             characteristics.DriveId = reader["DRIVEID"].ToString().Trim();
-                            characteristics.ParentNodeClass = reader["PARENTNODECLASS"].ToString().Trim();
+                            characteristics.RootNodeClass = reader["PARENTNODECLASS"].ToString().Trim();
                             characteristicsList.Add(characteristics);
                         }
                     }
@@ -1242,6 +1242,12 @@ namespace PsdzClient
             }
 
             return characteristicsList;
+        }
+
+        public List<Characteristics> GetVehicleIdentByTypeKey(string typeKey)
+        {
+            string typeKeyId = GetTypeKeyId(typeKey);
+            return GetCharacteristicsByTypeKeyId(typeKeyId);
         }
 
         public SaLaPa GetSaLaPaById(string salapaId)

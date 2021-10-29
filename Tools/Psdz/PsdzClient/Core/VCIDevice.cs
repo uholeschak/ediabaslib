@@ -85,8 +85,7 @@ namespace PsdzClient.Core
 		{
 			get
 			{
-				IDatabaseProvider instance = DatabaseProviderFactory.Instance;
-				if (!string.IsNullOrEmpty(this.VIN) && !this.VIN.Contains("XXXX") && this.VIN.Length == 17 && instance != null && instance.DatabaseAccessType == DatabaseType.SQLite)
+				if (!string.IsNullOrEmpty(this.VIN) && !this.VIN.Contains("XXXX") && this.VIN.Length == 17)
 				{
 					string text = this.VIN.Substring(3, 3);
 					switch (this.VIN[6])
@@ -121,14 +120,14 @@ namespace PsdzClient.Core
 					}
 					text += this.VIN[6].ToString();
 					IL_141:
-					IList<XEP_CHARACTERISTICS> vehicleIdentByTypeKey = instance.GetVehicleIdentByTypeKey(text, false);
+                    List<PdszDatabase.Characteristics> vehicleIdentByTypeKey = ClientContext.Database?.GetVehicleIdentByTypeKey(text);
 					if (vehicleIdentByTypeKey != null)
 					{
 						BasicFeaturesVci basicFeaturesVci = new BasicFeaturesVci();
 						VehicleCharacteristicVCIDeviceHelper vehicleCharacteristicVCIDeviceHelper = new VehicleCharacteristicVCIDeviceHelper();
-						foreach (XEP_CHARACTERISTICS xep_CHARACTERISTICS in vehicleIdentByTypeKey)
+						foreach (PdszDatabase.Characteristics xep_CHARACTERISTICS in vehicleIdentByTypeKey)
 						{
-							vehicleCharacteristicVCIDeviceHelper.AssignBasicFeaturesVciCharacteristic(xep_CHARACTERISTICS.RootNodeClass.ToString(), basicFeaturesVci, xep_CHARACTERISTICS);
+							vehicleCharacteristicVCIDeviceHelper.AssignBasicFeaturesVciCharacteristic(xep_CHARACTERISTICS.RootNodeClass, basicFeaturesVci, xep_CHARACTERISTICS);
 						}
 						return basicFeaturesVci;
 					}
