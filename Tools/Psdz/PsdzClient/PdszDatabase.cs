@@ -372,6 +372,56 @@ namespace PsdzClient
             }
         }
 
+        public class Characteristics
+        {
+            public Characteristics(string id, string nodeClass, string titleId, string istaVisible, string staticClassVar, string staticClassVarMCycle, string parentId, string name, string legacyName)
+            {
+                Id = id;
+                NodeClass = nodeClass;
+                TitleId = titleId;
+                IstaVisible = istaVisible;
+                StaticClassVar = staticClassVar;
+                StaticClassVarMCycle = staticClassVarMCycle;
+                ParentId = parentId;
+                Name = name;
+                LegacyName = legacyName;
+                DriveId = string.Empty;
+                ParentNodeClass = string.Empty;
+            }
+
+            public string Id { get; set; }
+
+            public string NodeClass { get; set; }
+
+            public string TitleId { get; set; }
+
+            public string IstaVisible { get; set; }
+
+            public string StaticClassVar { get; set; }
+
+            public string StaticClassVarMCycle { get; set; }
+
+            public string ParentId { get; set; }
+
+            public string Name { get; set; }
+
+            public string LegacyName { get; set; }
+
+            public string DriveId { get; set; }
+
+            public string ParentNodeClass { get; set; }
+
+            public string ToString(string language, string prefix = "")
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(prefix);
+                sb.Append(string.Format(CultureInfo.InvariantCulture,
+                    "EcuVar: Id={0}, Class={1}, ParentId={2}, Name={3}, LegacyName={4}, ParentClass={5}",
+                    Id, NodeClass, ParentId, Name, LegacyName, ParentNodeClass));
+                return sb.ToString();
+            }
+        }
+
         public class SaLaPa
         {
             public SaLaPa(string id, string name, string productType, EcuTranslation ecuTranslation)
@@ -1158,6 +1208,42 @@ namespace PsdzClient
             return characteristicRoots;
         }
 
+        public List<Characteristics> GetCharacteristicsByTypeKeyId(string typeKeyId)
+        {
+            if (string.IsNullOrEmpty(typeKeyId))
+            {
+                return null;
+            }
+
+            List<Characteristics> characteristicsList = new List<Characteristics>();
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture,
+                    @"SELECT C.ID, C.NODECLASS, C.TITLEID, C.STATICCLASSVARIABLES, C.STATICCLASSVARIABLESMOTORRAD, C.PARENTID, C.ISTA_VISIBLE, C.NAME, C.LEGACY_NAME, V.DRIVEID, CR.NODECLASS" +
+                    @" AS PARENTNODECLASS FROM xep_vehicles JOIN xep_characteristics C on C.ID = V.CHARACTERISTICID JOIN xep_characteristicroots CR on CR.ID = C.PARENTID" +
+                    @" WHERE TYPEKEYID = {0} AND CR.NODECLASS IS NOT NULL", typeKeyId);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Characteristics characteristics = ReadXepCharacteristics(reader);
+                            characteristics.DriveId = reader["DRIVEID"].ToString().Trim();
+                            characteristics.ParentNodeClass = reader["PARENTNODECLASS"].ToString().Trim();
+                            characteristicsList.Add(characteristics);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return characteristicsList;
+        }
+
         public SaLaPa GetSaLaPaById(string salapaId)
         {
             if (string.IsNullOrEmpty(salapaId))
@@ -1697,6 +1783,20 @@ namespace PsdzClient
             string motorCycSeq = reader["MOTORCYCLESEQUENCE"].ToString().Trim();
             string vehicleSeq = reader["VEHICLESEQUENCE"].ToString().Trim();
             return new CharacteristicRoots(id, nodeClass, motorCycSeq, vehicleSeq, GetTranslation(reader));
+        }
+
+        private static Characteristics ReadXepCharacteristics(SQLiteDataReader reader)
+        {
+            string id = reader["ID"].ToString().Trim();
+            string nodeClass = reader["NODECLASS"].ToString().Trim();
+            string titleId = reader["TITLEID"].ToString().Trim();
+            string istaVisible = reader["ISTA_VISIBLE"].ToString().Trim();
+            string staticClassVar = reader["STATICCLASSVARIABLES"].ToString().Trim();
+            string staticClassVarMCycle = reader["STATICCLASSVARIABLESMOTORRAD"].ToString().Trim();
+            string parentId = reader["PARENTID"].ToString().Trim();
+            string name = reader["NAME"].ToString().Trim();
+            string legacyName = reader["LEGACY_NAME"].ToString().Trim();
+            return new Characteristics(id, nodeClass, titleId, istaVisible, staticClassVar, staticClassVarMCycle, parentId, name, legacyName);
         }
 
         private static SaLaPa ReadXepSaLaPa(SQLiteDataReader reader)
