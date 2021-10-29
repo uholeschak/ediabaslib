@@ -1801,6 +1801,8 @@ namespace PsdzClient.Core
 			return false;
 		}
 
+        // TODO: getISTACharacteristics
+#if false
 		public bool getISTACharacteristics(decimal id, out string value, long datavalueId, ValidationRuleInternalResults internalResult)
 		{
             PdszDatabase.CharacteristicRoots characteristicRootsById = ClientContext.Database?.GetCharacteristicRootsById(id.ToString(CultureInfo.InvariantCulture));
@@ -1811,7 +1813,7 @@ namespace PsdzClient.Core
 			value = "???";
 			return false;
 		}
-
+#endif
 		public void UpdateStatus(string name, StateType type, double? progress)
 		{
 			try
