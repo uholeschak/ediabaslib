@@ -1645,6 +1645,36 @@ namespace PsdzClient
             return charId;
         }
 
+        public string GetTypeKeyId(string typeKey)
+        {
+            if (string.IsNullOrEmpty(typeKey))
+            {
+                return null;
+            }
+
+            string typeId = null;
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID FROM XEP_CHARACTERISTICS WHERE (NAME = {0}) AND (NODECLASS = {1})", typeKey, _typeKeyClassId);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            typeId = reader["ID"].ToString().Trim();
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return typeId;
+        }
+
         private static Equipement ReadXepEquipement(SQLiteDataReader reader)
         {
             string id = reader["ID"].ToString().Trim();
