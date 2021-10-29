@@ -1803,7 +1803,7 @@ namespace PsdzClient.Core
 
 		public bool getISTACharacteristics(decimal id, out string value, long datavalueId, ValidationRuleInternalResults internalResult)
 		{
-			XEP_CHARACTERISTICROOTS characteristicRootsById = DatabaseProviderFactory.Instance.GetCharacteristicRootsById(id);
+            PdszDatabase.CharacteristicRoots characteristicRootsById = ClientContext.Database?.GetCharacteristicRootsById(id.ToString(CultureInfo.InvariantCulture));
 			if (characteristicRootsById != null)
 			{
 				return new VehicleCharacteristicVehicleHelper().GetISTACharacteristics(characteristicRootsById, out value, id, this, datavalueId, internalResult);

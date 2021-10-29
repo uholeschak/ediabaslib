@@ -253,6 +253,38 @@ namespace PsdzClient
             }
         }
 
+        public class EcuGroup
+        {
+            public EcuGroup(string id, string name, string virt, string safetyRelevant, string diagAddr)
+            {
+                Id = id;
+                Name = name;
+                Virt = virt;
+                SafetyRelevant = safetyRelevant;
+                DiagAddr = diagAddr;
+            }
+
+            public string Id { get; set; }
+
+            public string Name { get; set; }
+
+            public string Virt { get; set; }
+
+            public string SafetyRelevant { get; set; }
+
+            public string DiagAddr { get; set; }
+
+            public string ToString(string language, string prefix = "")
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(prefix);
+                sb.Append(string.Format(CultureInfo.InvariantCulture,
+                    "EcuGroup: Id={0}, Name={1}, Virt={2}, Safety={3}, Addr={4}",
+                    Id, Name, Virt, SafetyRelevant, DiagAddr));
+                return sb.ToString();
+            }
+        }
+
         public class Equipement
         {
             public Equipement(string id, string name, EcuTranslation ecuTranslation)
@@ -954,6 +986,37 @@ namespace PsdzClient
             return ecuPrgVar;
         }
 
+        public EcuGroup GetEcuGroupById(string groupId)
+        {
+            if (string.IsNullOrEmpty(groupId))
+            {
+                return null;
+            }
+
+            EcuGroup ecuGroup = null;
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NAME, VIRTUELL, SICHERHEITSRELEVANT, DIAGNOSTIC_ADDRESS FROM XEP_ECUGROUPS WHERE (ID = {0})", groupId);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            ecuGroup = ReadXepEcuGroup(reader);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return ecuGroup;
+        }
+
+
         public Equipement GetEquipmentById(string equipmentId)
         {
             if (string.IsNullOrEmpty(equipmentId))
@@ -1417,7 +1480,7 @@ namespace PsdzClient
             string titleDe = null;
             try
             {
-                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, TITLE_DEDE FROM XEP_CHARACTERISTICS WHERE ID = {0}", characteristicId);
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, TITLE_DEDE FROM XEP_CHARACTERISTICS WHERE (ID = {0})", characteristicId);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
@@ -1476,6 +1539,16 @@ namespace PsdzClient
             string flashLimit = reader["FLASHLIMIT"].ToString().Trim();
             string ecuVarId = reader["ECUVARIANTID"].ToString().Trim();
             return new EcuPrgVar(id, name, flashLimit, ecuVarId);
+        }
+
+        private static EcuGroup ReadXepEcuGroup(SQLiteDataReader reader)
+        {
+            string id = reader["ID"].ToString().Trim();
+            string name = reader["NAME"].ToString().Trim();
+            string virt = reader["VIRTUELL"].ToString().Trim();
+            string safetyRelevant = reader["SICHERHEITSRELEVANT"].ToString().Trim();
+            string diagAddr = reader["DIAGNOSTIC_ADDRESS"].ToString().Trim();
+            return new EcuGroup(id, name, virt, safetyRelevant, diagAddr);
         }
 
         private static SwiAction ReadXepSwiAction(SQLiteDataReader reader, SwiActionSource swiActionSource)

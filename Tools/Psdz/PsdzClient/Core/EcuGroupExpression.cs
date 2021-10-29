@@ -27,7 +27,7 @@ namespace PsdzClient.Core
 				//Log.Warning("EcuGroupExpression.Evaluate()", "vec was null", Array.Empty<object>());
 				return false;
 			}
-			XEP_ECUGROUPS ecuGroupById = DatabaseProviderFactory.Instance.GetEcuGroupById(this.value);
+			PdszDatabase.EcuGroup ecuGroupById = ClientContext.Database?.GetEcuGroupById(this.value.ToString(CultureInfo.InvariantCulture));
 			if (ecuGroupById == null || string.IsNullOrEmpty(ecuGroupById.Name))
 			{
 				return false;
