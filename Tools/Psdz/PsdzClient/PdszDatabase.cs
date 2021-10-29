@@ -279,6 +279,35 @@ namespace PsdzClient
             }
         }
 
+        public class EcuClique
+        {
+            public EcuClique(string id, string cliqueName, string ecuRepId, EcuTranslation ecuTranslation)
+            {
+                Id = id;
+                CliqueName = cliqueName;
+                EcuRepId = ecuRepId;
+                EcuTranslation = ecuTranslation;
+            }
+
+            public string Id { get; set; }
+
+            public string CliqueName { get; set; }
+
+            public string EcuRepId { get; set; }
+
+            public EcuTranslation EcuTranslation { get; set; }
+
+            public string ToString(string language, string prefix = "")
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(prefix);
+                sb.Append(string.Format(CultureInfo.InvariantCulture,
+                    "EcuVar: Id={0}, Name={1}, RepId={2}, Title='{3}'",
+                    Id, CliqueName, EcuRepId, EcuTranslation.GetTitle(language)));
+                return sb.ToString();
+            }
+        }
+
         public class SwiAction
         {
             public SwiAction(SwiActionSource swiSource, string id, string name, string actionCategory, string selectable, string showInPlan, string executable, string nodeClass,
@@ -888,6 +917,36 @@ namespace PsdzClient
             return equipement;
         }
 
+        public EcuClique GetEcuCliqueById(string ecuCliqueId)
+        {
+            if (string.IsNullOrEmpty(ecuCliqueId))
+            {
+                return null;
+            }
+
+            EcuClique ecuClique = null;
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, CLIQUENKURZBEZEICHNUNG, " + DatabaseFunctions.SqlTitleItems + ", ECUREPID FROM XEP_ECUCLIQUES WHERE (ID = {0})", ecuCliqueId);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            ecuClique = ReadXepEcuClique(reader);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return ecuClique;
+        }
+
         private bool GetSwiActionsForEcuVariant(EcuInfo ecuInfo)
         {
             if (ecuInfo.EcuVar == null || string.IsNullOrEmpty(ecuInfo.EcuVar.Id))
@@ -1256,6 +1315,14 @@ namespace PsdzClient
             string id = reader["ID"].ToString().Trim();
             string name = reader["NAME"].ToString().Trim();
             return new Equipement(id, name, GetTranslation(reader));
+        }
+
+        private static EcuClique ReadXepEcuClique(SQLiteDataReader reader)
+        {
+            string id = reader["ID"].ToString().Trim();
+            string cliqueName = reader["CLIQUENKURZBEZEICHNUNG"].ToString().Trim();
+            string ecuRepId = reader["ECUREPID"].ToString().Trim();
+            return new EcuClique(id, cliqueName, ecuRepId, GetTranslation(reader));
         }
 
         private static EcuVar ReadXepEcuVar(SQLiteDataReader reader)

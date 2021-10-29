@@ -23,8 +23,7 @@ namespace PsdzClient.Core
 		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, ValidationRuleInternalResults internalResult)
 		{
 			bool flag = false;
-			IDatabaseProvider instance = DatabaseProviderFactory.Instance;
-			XEP_ECUCLIQUES ecuClique = instance.GetEcuClique(this.value);
+            PdszDatabase.EcuClique ecuClique = ClientContext.Database?.GetEcuCliqueById(this.value.ToString(CultureInfo.InvariantCulture));
 			if (vec == null)
 			{
 				return false;
