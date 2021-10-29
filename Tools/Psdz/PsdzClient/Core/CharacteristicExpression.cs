@@ -312,7 +312,7 @@ namespace PsdzClient.Core
 
 		private string GetCharacteristicValueFromDb()
 		{
-			return DatabaseProviderFactory.Instance.LookupVehicleCharDeDeById(this.datavalueId);
+			return ClientContext.Database?.LookupVehicleCharDeDeById(this.datavalueId.ToString(CultureInfo.InvariantCulture));
 		}
 
 		private readonly long dataclassId;

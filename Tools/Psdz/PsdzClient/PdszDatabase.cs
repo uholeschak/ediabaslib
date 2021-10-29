@@ -1044,7 +1044,7 @@ namespace PsdzClient
             return characteristicRoots;
         }
 
-        private bool GetSwiActionsForEcuVariant(EcuInfo ecuInfo)
+        public bool GetSwiActionsForEcuVariant(EcuInfo ecuInfo)
         {
             if (ecuInfo.EcuVar == null || string.IsNullOrEmpty(ecuInfo.EcuVar.Id))
             {
@@ -1077,7 +1077,7 @@ namespace PsdzClient
             return true;
         }
 
-        private bool GetSwiActionsForEcuGroup(EcuInfo ecuInfo)
+        public bool GetSwiActionsForEcuGroup(EcuInfo ecuInfo)
         {
             if (ecuInfo.EcuVar == null || string.IsNullOrEmpty(ecuInfo.EcuVar.GroupId))
             {
@@ -1110,7 +1110,7 @@ namespace PsdzClient
             return true;
         }
 
-        private bool GetSwiActionsForEcuProgrammingVariant(EcuInfo ecuInfo)
+        public bool GetSwiActionsForEcuProgrammingVariant(EcuInfo ecuInfo)
         {
             if (ecuInfo.EcuPrgVar == null || string.IsNullOrEmpty(ecuInfo.EcuPrgVar.Id))
             {
@@ -1143,7 +1143,7 @@ namespace PsdzClient
             return true;
         }
 
-        private List<SwiAction> GetSwiActionsForSwiRegister(SwiRegister swiRegister)
+        public List<SwiAction> GetSwiActionsForSwiRegister(SwiRegister swiRegister)
         {
             if (string.IsNullOrEmpty(swiRegister.Id))
             {
@@ -1177,7 +1177,7 @@ namespace PsdzClient
             return swiActions;
         }
 
-        private List<SwiRegister> GetSwiRegistersByParentId(string parentId)
+        public List<SwiRegister> GetSwiRegistersByParentId(string parentId)
         {
             List<SwiRegister> swiRegisterList = new List<SwiRegister>();
             try
@@ -1205,7 +1205,7 @@ namespace PsdzClient
             return swiRegisterList;
         }
 
-        private List<SwiInfoObj> GetServiceProgramsForSwiAction(SwiAction swiAction)
+        public List<SwiInfoObj> GetServiceProgramsForSwiAction(SwiAction swiAction)
         {
             if (string.IsNullOrEmpty(swiAction.Id))
             {
@@ -1271,7 +1271,7 @@ namespace PsdzClient
             return swiInfoObjList;
         }
 
-        private SwiInfoObj GetInfoObjectById(string infoObjectId, string linkTypeId)
+        public SwiInfoObj GetInfoObjectById(string infoObjectId, string linkTypeId)
         {
             if (string.IsNullOrEmpty(infoObjectId))
             {
@@ -1331,7 +1331,7 @@ namespace PsdzClient
             return swiInfoObj;
         }
 
-        private SwiInfoObj GetDiagObjectsByControlId(string controlId, SwiInfoObj.SwiActionDatabaseLinkType linkType)
+        public SwiInfoObj GetDiagObjectsByControlId(string controlId, SwiInfoObj.SwiActionDatabaseLinkType linkType)
         {
             if (string.IsNullOrEmpty(controlId))
             {
@@ -1375,7 +1375,7 @@ namespace PsdzClient
             return swiInfoObj;
         }
 
-        private SwiRule GetRuleById(string ruleId)
+        public SwiRule GetRuleById(string ruleId)
         {
             if (string.IsNullOrEmpty(ruleId))
             {
@@ -1405,6 +1405,36 @@ namespace PsdzClient
             }
 
             return swiRule;
+        }
+
+        public string LookupVehicleCharDeDeById(string characteristicId)
+        {
+            if (string.IsNullOrEmpty(characteristicId))
+            {
+                return null;
+            }
+
+            string titleDe = null;
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, TITLE_DEDE FROM XEP_CHARACTERISTICS WHERE ID = {0}", characteristicId);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            titleDe = reader["TITLE_DEDE"].ToString().Trim();
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return titleDe;
         }
 
         private static Equipement ReadXepEquipement(SQLiteDataReader reader)
