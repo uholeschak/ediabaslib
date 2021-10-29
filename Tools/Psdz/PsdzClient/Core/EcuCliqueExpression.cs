@@ -32,39 +32,34 @@ namespace PsdzClient.Core
 			{
 				return true;
 			}
-			if (!instance.EvaluateXepRulesById(ecuClique.ID, vec, ffmResolver, null))
+			if (!instance.EvaluateXepRulesById(ecuClique.Id, vec, ffmResolver, null))
 			{
 				return false;
 			}
-			ICollection<XEP_ECUVARIANTS> ecuVariantsByEcuCliquesId = instance.GetEcuVariantsByEcuCliquesId(ecuClique.ID);
+            List<PdszDatabase.EcuVar> ecuVariantsByEcuCliquesId = ClientContext.Database?.GetEcuVariantsByEcuCliquesId(ecuClique.Id);
 			if (ecuVariantsByEcuCliquesId == null || ecuVariantsByEcuCliquesId.Count == 0)
 			{
 				return false;
 			}
 			if (vec.VCI != null && vec.VCI.VCIType == VCIDeviceType.INFOSESSION && (vec.VehicleIdentLevel == IdentificationLevel.BasicFeatures || vec.VehicleIdentLevel == IdentificationLevel.VINBasedFeatures || (vec.VehicleIdentLevel == IdentificationLevel.VINBasedOnlineUpdated && (vec.ECU == null || (vec.ECU != null && vec.ECU.Count == 0))) || vec.VehicleIdentLevel == IdentificationLevel.VINOnly))
 			{
-				foreach (XEP_ECUVARIANTS xep_ECUVARIANTS in ecuVariantsByEcuCliquesId)
+				foreach (PdszDatabase.EcuVar ecuVar in ecuVariantsByEcuCliquesId)
 				{
-					flag = instance.EvaluateXepRulesById(xep_ECUVARIANTS.Id, vec, ffmResolver, null);
-					if (flag && xep_ECUVARIANTS.EcuGroupId != null)
+					flag = instance.EvaluateXepRulesById(ecuVar.Id, vec, ffmResolver, null);
+					if (flag && !string.IsNullOrEmpty(ecuVar.GroupId))
 					{
-						decimal? ecuGroupId = xep_ECUVARIANTS.EcuGroupId;
-						decimal d = 0m;
-						if (ecuGroupId.GetValueOrDefault() > d & ecuGroupId != null)
+						flag = instance.EvaluateXepRulesById(ecuVar.GroupId, vec, ffmResolver, null);
+						if (flag)
 						{
-							flag = instance.EvaluateXepRulesById(xep_ECUVARIANTS.EcuGroupId.Value, vec, ffmResolver, null);
-							if (flag)
-							{
-								break;
-							}
+							break;
 						}
 					}
 				}
 				return flag;
 			}
-			foreach (XEP_ECUVARIANTS xep_ECUVARIANTS2 in ecuVariantsByEcuCliquesId)
+			foreach (PdszDatabase.EcuVar ecuVar in ecuVariantsByEcuCliquesId)
 			{
-				if (!(flag = (vec.getECUbyECU_SGBD(xep_ECUVARIANTS2.Name) != null)) && "EWS3".Equals(xep_ECUVARIANTS2.Name, StringComparison.OrdinalIgnoreCase) && vec.BNType == BNType.BN2000_PGO)
+				if (!(flag = (vec.getECUbyECU_SGBD(ecuVar.Name) != null)) && "EWS3".Equals(ecuVar.Name, StringComparison.OrdinalIgnoreCase) && vec.BNType == BNType.BN2000_PGO)
 				{
 					//Log.Info("EcuCliqueExpression.Evaluate()", "check for EWS3 => EWS3P", Array.Empty<object>());
 					flag = true;

@@ -827,6 +827,41 @@ namespace PsdzClient
             return ecuVar;
         }
 
+        public List<EcuVar> GetEcuVariantsByEcuCliquesId(string ecuCliquesId)
+        {
+            if (string.IsNullOrEmpty(ecuCliquesId))
+            {
+                return null;
+            }
+
+            List<EcuVar> ecuVarList = new List<EcuVar>();
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, ECUCLIQUEID FROM XEP_REFECUCLIQUES WHERE (ECUCLIQUEID = {0})", ecuCliquesId);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string id = reader["ID"].ToString().Trim();
+                            EcuVar ecuVar = GetEcuVariantById(id);
+                            if (ecuVar != null)
+                            {
+                                ecuVarList.Add(ecuVar);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return ecuVarList;
+        }
+
         public EcuPrgVar GetEcuProgrammingVariantByName(string bnTnName)
         {
             if (string.IsNullOrEmpty(bnTnName))
