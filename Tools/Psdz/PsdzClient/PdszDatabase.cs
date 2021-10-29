@@ -1798,6 +1798,36 @@ namespace PsdzClient
             return iLevel;
         }
 
+        public string GetCountryById(string countryId)
+        {
+            if (string.IsNullOrEmpty(countryId))
+            {
+                return null;
+            }
+
+            string country = null;
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, LAENDERKUERZEL FROM XEP_COUNTRIES WHERE (ID = {0})", countryId);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            country = reader["LAENDERKUERZEL"].ToString().Trim();
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return country;
+        }
+
         public bool EvaluateXepRulesById(string id, Vehicle vehicle, IFFMDynamicResolver ffmResolver, string objectId = null)
         {
             // TODO: EvaluateXepRulesById

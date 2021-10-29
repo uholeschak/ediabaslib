@@ -26,7 +26,7 @@ namespace PsdzClient.Core
             {
                 if (string.IsNullOrEmpty(this.countryCode))
                 {
-                    this.countryCode = DatabaseProviderFactory.Instance.GetCountryById(this.value);
+                    this.countryCode = ClientContext.Database?.GetCountryById(this.value.ToString(CultureInfo.InvariantCulture));
                     return this.countryCode;
                 }
                 return this.countryCode;
