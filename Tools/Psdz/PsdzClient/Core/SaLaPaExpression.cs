@@ -46,7 +46,7 @@ namespace PsdzClient.Core
 			{
 				return false;
 			}
-			XEP_SALAPAS saLaPaById = DatabaseProviderFactory.Instance.GetSaLaPaById(this.value);
+			PdszDatabase.SaLaPa saLaPaById = ClientContext.Database?.GetSaLaPaById(this.value.ToString(CultureInfo.InvariantCulture));
 			if (saLaPaById == null)
 			{
 				return false;

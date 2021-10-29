@@ -366,8 +366,37 @@ namespace PsdzClient
                 StringBuilder sb = new StringBuilder();
                 sb.Append(prefix);
                 sb.Append(string.Format(CultureInfo.InvariantCulture,
-                    "EcuVar: Id={0}, Class={1}, MotorSeq={2}, VehicleSeq={3},Title='{4}'",
+                    "EcuVar: Id={0}, Class={1}, MotorSeq={2}, VehicleSeq={3}, Title='{4}'",
                     Id, NodeClass, MotorCycSeq, VehicleSeq, EcuTranslation.GetTitle(language)));
+                return sb.ToString();
+            }
+        }
+
+        public class SaLaPa
+        {
+            public SaLaPa(string id, string name, string productType, EcuTranslation ecuTranslation)
+            {
+                Id = id;
+                Name = name;
+                ProductType = productType;
+                EcuTranslation = ecuTranslation;
+            }
+
+            public string Id { get; set; }
+
+            public string Name { get; set; }
+
+            public string ProductType { get; set; }
+
+            public EcuTranslation EcuTranslation { get; set; }
+
+            public string ToString(string language, string prefix = "")
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(prefix);
+                sb.Append(string.Format(CultureInfo.InvariantCulture,
+                    "EcuVar: Id={0}, Name={1}, ProdTyp={2}, Title='{3}'",
+                    Id, Name, ProductType, EcuTranslation.GetTitle(language)));
                 return sb.ToString();
             }
         }
@@ -389,8 +418,7 @@ namespace PsdzClient
                 StringBuilder sb = new StringBuilder();
                 sb.Append(prefix);
                 sb.Append(string.Format(CultureInfo.InvariantCulture,
-                    "EcuVar: Id={0}, EcuShortcut={1}",
-                    Id, EcuShortcut));
+                    "EcuVar: Id={0}, EcuShortcut={1}", Id, EcuShortcut));
                 return sb.ToString();
             }
         }
@@ -1130,6 +1158,36 @@ namespace PsdzClient
             return characteristicRoots;
         }
 
+        public SaLaPa GetSaLaPaById(string salapaId)
+        {
+            if (string.IsNullOrEmpty(salapaId))
+            {
+                return null;
+            }
+
+            SaLaPa saLaPa = null;
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, " + DatabaseFunctions.SqlTitleItems + ", NAME, PRODUCT_TYPE FROM XEP_SALAPAS WHERE (ID = {0})", salapaId);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            saLaPa = ReadXepSaLaPa(reader);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return saLaPa;
+        }
+
         public EcuReps GetEcuRepsById(string ecuId)
         {
             if (string.IsNullOrEmpty(ecuId))
@@ -1609,6 +1667,14 @@ namespace PsdzClient
             string motorCycSeq = reader["MOTORCYCLESEQUENCE"].ToString().Trim();
             string vehicleSeq = reader["VEHICLESEQUENCE"].ToString().Trim();
             return new CharacteristicRoots(id, nodeClass, motorCycSeq, vehicleSeq, GetTranslation(reader));
+        }
+
+        private static SaLaPa ReadXepSaLaPa(SQLiteDataReader reader)
+        {
+            string id = reader["ID"].ToString().Trim();
+            string name = reader["NAME"].ToString().Trim();
+            string productType = reader["PRODUCT_TYPE"].ToString().Trim();
+            return new SaLaPa(id, name, productType, GetTranslation(reader));
         }
 
         private static EcuReps ReadXepEcuReps(SQLiteDataReader reader)
