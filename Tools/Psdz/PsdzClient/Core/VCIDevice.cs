@@ -381,7 +381,7 @@ namespace PsdzClient.Core
 		{
 			get
 			{
-				return this.LocalAdapterNetworkType == BMW.Rheingold.CoreFramework.DatabaseProvider.NetworkType.LAN && "0".Equals(this.NetworkType);
+				return this.LocalAdapterNetworkType == BMW.Rheingold.CoreFramework.Contracts.Vehicle.NetworkType.LAN && "0".Equals(this.NetworkType);
 			}
 		}
 

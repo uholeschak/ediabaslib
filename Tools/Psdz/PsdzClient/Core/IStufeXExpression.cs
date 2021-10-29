@@ -36,7 +36,7 @@ namespace PsdzClient.Core
 				return false;
 			}
 			string ilevelOperand = this.GetILevelOperand(vec);
-			string istufeById = DatabaseProviderFactory.Instance.GetIStufeById(this.iLevelId);
+			string istufeById = ClientContext.Database?.GetIStufeById(this.iLevelId.ToString(CultureInfo.InvariantCulture));
 			if (string.IsNullOrEmpty(istufeById))
 			{
 				return false;
@@ -127,7 +127,7 @@ namespace PsdzClient.Core
 
 		public override string ToString()
 		{
-			string istufeById = DatabaseProviderFactory.Instance.GetIStufeById(this.iLevelId);
+			string istufeById = ClientContext.Database?.GetIStufeById(this.iLevelId.ToString(CultureInfo.InvariantCulture));
 			string ilevelTypeDescription = this.GetILevelTypeDescription();
 			return string.Format(CultureInfo.InvariantCulture, "IStufeX: {0}-I-Stufe {1} '{2}' [{3}]", new object[]
 			{

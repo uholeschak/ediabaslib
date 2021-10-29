@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
+using PsdzClient.Core;
 
 namespace PsdzClient
 {
@@ -1765,6 +1766,42 @@ namespace PsdzClient
             }
 
             return typeId;
+        }
+
+        public string GetIStufeById(string iStufenId)
+        {
+            if (string.IsNullOrEmpty(iStufenId))
+            {
+                return null;
+            }
+
+            string iLevel = null;
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NAME FROM XEP_ISTUFEN WHERE (ID = {0})", iStufenId);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            iLevel = reader["NAME"].ToString().Trim();
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return iLevel;
+        }
+
+        public bool EvaluateXepRulesById(string id, Vehicle vehicle, IFFMDynamicResolver ffmResolver, string objectId = null)
+        {
+            // TODO: EvaluateXepRulesById
+            return true;
         }
 
         private static Equipement ReadXepEquipement(SQLiteDataReader reader)

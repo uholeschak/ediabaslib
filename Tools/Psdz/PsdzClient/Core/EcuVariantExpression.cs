@@ -43,14 +43,19 @@ namespace PsdzClient.Core
 
 		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, ValidationRuleInternalResults internalResult)
 		{
-            PdszDatabase.EcuVar ecuVariantById = ClientContext.Database?.GetEcuVariantById(this.value.ToString(CultureInfo.InvariantCulture));
+            PdszDatabase database = ClientContext.Database;
+            if (database == null)
+            {
+                return false;
+            }
+            PdszDatabase.EcuVar ecuVariantById = database.GetEcuVariantById(this.value.ToString(CultureInfo.InvariantCulture));
 			if (ecuVariantById == null)
 			{
 				return false;
 			}
 			if (vec.VCI != null && (vec.VehicleIdentLevel == IdentificationLevel.BasicFeatures || vec.VehicleIdentLevel == IdentificationLevel.VINBasedFeatures || vec.VehicleIdentLevel == IdentificationLevel.VINOnly))
 			{
-				if (!instance.EvaluateXepRulesById(ecuVariantById.Id, vec, ffmResolver, null))
+				if (!database.EvaluateXepRulesById(ecuVariantById.Id, vec, ffmResolver, null))
 				{
 					return false;
 				}
@@ -66,7 +71,7 @@ namespace PsdzClient.Core
 						IEcuGroupLocator ecuGroupLocator = ispelocator as IEcuGroupLocator;
 						if (ecuGroupLocator != null)
 						{
-							if (instance.EvaluateXepRulesById(ecuGroupLocator.SignedId, vec, ffmResolver, null))
+							if (database.EvaluateXepRulesById(ecuGroupLocator.SignedId, vec, ffmResolver, null))
 							{
 								return true;
 							}

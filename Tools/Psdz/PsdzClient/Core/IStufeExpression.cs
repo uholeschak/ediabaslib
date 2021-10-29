@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -24,7 +25,7 @@ namespace PsdzClient.Core
             {
                 if (string.IsNullOrEmpty(this.iStufe))
                 {
-                    this.iStufe = DatabaseProviderFactory.Instance.GetIStufeById(this.value);
+                    this.iStufe = ClientContext.Database?.GetIStufeById(this.value.ToString(CultureInfo.InvariantCulture));
                     return this.iStufe;
                 }
                 return this.iStufe;

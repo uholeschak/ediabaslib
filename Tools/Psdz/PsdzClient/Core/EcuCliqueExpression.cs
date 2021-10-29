@@ -23,7 +23,13 @@ namespace PsdzClient.Core
 		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, ValidationRuleInternalResults internalResult)
 		{
 			bool flag = false;
-            PdszDatabase.EcuClique ecuClique = ClientContext.Database?.GetEcuCliqueById(this.value.ToString(CultureInfo.InvariantCulture));
+            PdszDatabase database = ClientContext.Database;
+            if (database == null)
+            {
+                return false;
+            }
+
+            PdszDatabase.EcuClique ecuClique = database.GetEcuCliqueById(this.value.ToString(CultureInfo.InvariantCulture));
 			if (vec == null)
 			{
 				return false;
@@ -32,7 +38,7 @@ namespace PsdzClient.Core
 			{
 				return true;
 			}
-			if (!instance.EvaluateXepRulesById(ecuClique.Id, vec, ffmResolver, null))
+			if (!database.EvaluateXepRulesById(ecuClique.Id, vec, ffmResolver, null))
 			{
 				return false;
 			}
@@ -45,10 +51,10 @@ namespace PsdzClient.Core
 			{
 				foreach (PdszDatabase.EcuVar ecuVar in ecuVariantsByEcuCliquesId)
 				{
-					flag = instance.EvaluateXepRulesById(ecuVar.Id, vec, ffmResolver, null);
+					flag = database.EvaluateXepRulesById(ecuVar.Id, vec, ffmResolver, null);
 					if (flag && !string.IsNullOrEmpty(ecuVar.GroupId))
 					{
-						flag = instance.EvaluateXepRulesById(ecuVar.GroupId, vec, ffmResolver, null);
+						flag = database.EvaluateXepRulesById(ecuVar.GroupId, vec, ffmResolver, null);
 						if (flag)
 						{
 							break;
