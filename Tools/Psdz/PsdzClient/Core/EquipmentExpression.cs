@@ -22,7 +22,6 @@ namespace PsdzClient.Core
 
 		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, ValidationRuleInternalResults internalResult)
 		{
-			IDatabaseProvider instance = DatabaseProviderFactory.Instance;
 			if (vec == null)
 			{
 				//Log.Error("EquipmentExpression.Evaluate()", "vec was null", Array.Empty<object>());
@@ -32,12 +31,7 @@ namespace PsdzClient.Core
 			{
 				return false;
 			}
-			if (instance == null)
-			{
-				//Log.Error("EquipmentExpression.Evaluate()", "database connection invalid", Array.Empty<object>());
-				return false;
-			}
-			XEP_EQUIPMENT equipmentById = instance.GetEquipmentById(this.value);
+            PdszDatabase.Equipement equipmentById = ClientContext.Database?.GetEquipmentById(this.value.ToString(CultureInfo.InvariantCulture));
 			if (equipmentById == null)
 			{
 				return false;
@@ -46,7 +40,7 @@ namespace PsdzClient.Core
 			bool result;
 			lock (obj)
 			{
-				bool? flag2 = vec.hasFFM(equipmentById.NAME);
+				bool? flag2 = vec.hasFFM(equipmentById.Name);
 				if (flag2 != null)
 				{
 					result = flag2.Value;

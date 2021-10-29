@@ -253,6 +253,32 @@ namespace PsdzClient
             }
         }
 
+        public class Equipement
+        {
+            public Equipement(string id, string name, EcuTranslation ecuTranslation)
+            {
+                Id = id;
+                Name = name;
+                EcuTranslation = ecuTranslation;
+            }
+
+            public string Id { get; set; }
+
+            public string Name { get; set; }
+
+            public EcuTranslation EcuTranslation { get; set; }
+
+            public string ToString(string language, string prefix = "")
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(prefix);
+                sb.Append(string.Format(CultureInfo.InvariantCulture,
+                    "EcuVar: Id={0}, Name={1}, Title='{2}'",
+                    Id, Name, EcuTranslation.GetTitle(language)));
+                return sb.ToString();
+            }
+        }
+
         public class SwiAction
         {
             public SwiAction(SwiActionSource swiSource, string id, string name, string actionCategory, string selectable, string showInPlan, string executable, string nodeClass,
@@ -832,6 +858,36 @@ namespace PsdzClient
             return ecuPrgVar;
         }
 
+        public Equipement GetEquipmentById(string equipmentId)
+        {
+            if (string.IsNullOrEmpty(equipmentId))
+            {
+                return null;
+            }
+
+            Equipement equipement = null;
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NAME, " + DatabaseFunctions.SqlTitleItems + " FROM XEP_EQUIPMENT WHERE (ID = {0})", equipmentId);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            equipement = ReadXepEquipement(reader);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return equipement;
+        }
+
         private bool GetSwiActionsForEcuVariant(EcuInfo ecuInfo)
         {
             if (ecuInfo.EcuVar == null || string.IsNullOrEmpty(ecuInfo.EcuVar.Id))
@@ -1193,6 +1249,13 @@ namespace PsdzClient
             }
 
             return swiRule;
+        }
+
+        private static Equipement ReadXepEquipement(SQLiteDataReader reader)
+        {
+            string id = reader["ID"].ToString().Trim();
+            string name = reader["NAME"].ToString().Trim();
+            return new Equipement(id, name, GetTranslation(reader));
         }
 
         private static EcuVar ReadXepEcuVar(SQLiteDataReader reader)
