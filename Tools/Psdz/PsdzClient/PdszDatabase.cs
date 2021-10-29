@@ -1500,6 +1500,40 @@ namespace PsdzClient
             return titleDe;
         }
 
+        public string LookupVehicleCharIdByName(string name, string nodeclass)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return null;
+            }
+
+            string charId = null;
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NODECLASS, NAME FROM XEP_CHARACTERISTICS WHERE (NAME = {0})", name);
+                if (!string.IsNullOrEmpty(nodeclass))
+                {
+                    sql += string.Format(CultureInfo.InvariantCulture, @" AND (NODECLASS = {0})", nodeclass);
+                }
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            charId = reader["ID"].ToString().Trim();
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return charId;
+        }
+
         private static Equipement ReadXepEquipement(SQLiteDataReader reader)
         {
             string id = reader["ID"].ToString().Trim();
