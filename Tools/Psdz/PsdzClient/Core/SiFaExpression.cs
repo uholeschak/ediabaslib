@@ -26,12 +26,14 @@ namespace PsdzClient.Core
             {
                 return false;
             }
+#if false
             Dealer instance = Dealer.Instance;
             if (instance != null && vec.BrandName != null)
             {
                 bool flag = instance.HasProtectionVehicleService(vec.BrandName.Value);
                 return flag;
             }
+#endif
             return false;
         }
 

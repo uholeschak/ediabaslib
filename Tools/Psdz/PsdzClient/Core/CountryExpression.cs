@@ -38,7 +38,7 @@ namespace PsdzClient.Core
             bool flag = false;
             try
             {
-                string outletCountry = Dealer.Instance.DealerData.OutletCountry;
+                string outletCountry = ClientContext.OutletCountry;
                 flag = (outletCountry == this.CountryCode);
             }
             catch (Exception)
