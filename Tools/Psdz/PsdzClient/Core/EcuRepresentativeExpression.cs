@@ -27,7 +27,7 @@ namespace PsdzClient.Core
 				//Log.Warning("EcuRepresentativeExpression.Evaluate()", "vec was null", Array.Empty<object>());
 				return false;
 			}
-			XEP_ECUREPS ecuRepsById = DatabaseProviderFactory.Instance.GetEcuRepsById(this.value);
+            PdszDatabase.EcuReps ecuRepsById = ClientContext.Database?.GetEcuRepsById(this.value.ToString(CultureInfo.InvariantCulture));
 			if (ecuRepsById == null)
 			{
 				return false;
@@ -40,7 +40,7 @@ namespace PsdzClient.Core
 			{
 				return true;
 			}
-			bool flag = vec.getECUbyTITLE_ECUTREE(ecuRepsById.SteuergeraeteKuerzel) != null;
+			bool flag = vec.getECUbyTITLE_ECUTREE(ecuRepsById.EcuShortcut) != null;
 			return flag;
 		}
 

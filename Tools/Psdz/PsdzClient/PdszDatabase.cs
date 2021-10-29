@@ -372,6 +372,29 @@ namespace PsdzClient
             }
         }
 
+        public class EcuReps
+        {
+            public EcuReps(string id, string ecuShortcut)
+            {
+                Id = id;
+                EcuShortcut = ecuShortcut;
+            }
+
+            public string Id { get; set; }
+
+            public string EcuShortcut { get; set; }
+
+            public string ToString(string language, string prefix = "")
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(prefix);
+                sb.Append(string.Format(CultureInfo.InvariantCulture,
+                    "EcuVar: Id={0}, EcuShortcut={1}",
+                    Id, EcuShortcut));
+                return sb.ToString();
+            }
+        }
+
         public class SwiAction
         {
             public SwiAction(SwiActionSource swiSource, string id, string name, string actionCategory, string selectable, string showInPlan, string executable, string nodeClass,
@@ -1107,6 +1130,36 @@ namespace PsdzClient
             return characteristicRoots;
         }
 
+        public EcuReps GetEcuRepsById(string ecuId)
+        {
+            if (string.IsNullOrEmpty(ecuId))
+            {
+                return null;
+            }
+
+            EcuReps ecuReps = null;
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, STEUERGERAETEKUERZEL FROM XEP_ECUREPS WHERE (ID = {0})", ecuId);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            ecuReps = ReadXepEcuReps(reader);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return ecuReps;
+        }
+
         public bool GetSwiActionsForEcuVariant(EcuInfo ecuInfo)
         {
             if (ecuInfo.EcuVar == null || string.IsNullOrEmpty(ecuInfo.EcuVar.Id))
@@ -1556,6 +1609,13 @@ namespace PsdzClient
             string motorCycSeq = reader["MOTORCYCLESEQUENCE"].ToString().Trim();
             string vehicleSeq = reader["VEHICLESEQUENCE"].ToString().Trim();
             return new CharacteristicRoots(id, nodeClass, motorCycSeq, vehicleSeq, GetTranslation(reader));
+        }
+
+        private static EcuReps ReadXepEcuReps(SQLiteDataReader reader)
+        {
+            string id = reader["ID"].ToString().Trim();
+            string ecuShortcut = reader["STEUERGERAETEKUERZEL"].ToString().Trim();
+            return new EcuReps(id, ecuShortcut);
         }
 
         private static EcuVar ReadXepEcuVar(SQLiteDataReader reader)
