@@ -302,10 +302,10 @@ namespace PsdzClient.Core
 		private string GetCharacteristicRootFromDb()
 		{
 			string result = string.Empty;
-			XEP_CHARACTERISTICROOTS characteristicRootsById = DatabaseProviderFactory.Instance.GetCharacteristicRootsById(this.dataclassId);
-			if (characteristicRootsById != null && characteristicRootsById.Title_dede != null)
+            PdszDatabase.CharacteristicRoots characteristicRootsById = ClientContext.Database?.GetCharacteristicRootsById(this.dataclassId.ToString(CultureInfo.InvariantCulture));
+			if (characteristicRootsById != null && !string.IsNullOrEmpty(characteristicRootsById.EcuTranslation.TextDe))
 			{
-				result = characteristicRootsById.Title_dede;
+				result = characteristicRootsById.EcuTranslation.TextDe;
 			}
 			return result;
 		}

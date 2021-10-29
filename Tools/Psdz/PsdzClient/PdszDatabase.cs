@@ -308,6 +308,38 @@ namespace PsdzClient
             }
         }
 
+        public class CharacteristicRoots
+        {
+            public CharacteristicRoots(string id, string nodeClass, string motorCycSeq, string vehicleSeq, EcuTranslation ecuTranslation)
+            {
+                Id = id;
+                NodeClass = nodeClass;
+                MotorCycSeq = motorCycSeq;
+                VehicleSeq = vehicleSeq;
+                EcuTranslation = ecuTranslation;
+            }
+
+            public string Id { get; set; }
+
+            public string NodeClass { get; set; }
+
+            public string MotorCycSeq { get; set; }
+
+            public string VehicleSeq { get; set; }
+
+            public EcuTranslation EcuTranslation { get; set; }
+
+            public string ToString(string language, string prefix = "")
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(prefix);
+                sb.Append(string.Format(CultureInfo.InvariantCulture,
+                    "EcuVar: Id={0}, Class={1}, MotorSeq={2}, VehicleSeq={3},Title='{4}'",
+                    Id, NodeClass, MotorCycSeq, VehicleSeq, EcuTranslation.GetTitle(language)));
+                return sb.ToString();
+            }
+        }
+
         public class SwiAction
         {
             public SwiAction(SwiActionSource swiSource, string id, string name, string actionCategory, string selectable, string showInPlan, string executable, string nodeClass,
@@ -982,6 +1014,36 @@ namespace PsdzClient
             return ecuClique;
         }
 
+        public CharacteristicRoots GetCharacteristicRootsById(string characteristicRootsId)
+        {
+            if (string.IsNullOrEmpty(characteristicRootsId))
+            {
+                return null;
+            }
+
+            CharacteristicRoots characteristicRoots = null;
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NODECLASS, " + DatabaseFunctions.SqlTitleItems + ", MOTORCYCLESEQUENCE, VEHICLESEQUENCE FROM XEP_CHARACTERISTICROOTS WHERE (ID = {0})", characteristicRootsId);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            characteristicRoots = ReadXepCharacteristicRoots(reader);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return characteristicRoots;
+        }
+
         private bool GetSwiActionsForEcuVariant(EcuInfo ecuInfo)
         {
             if (ecuInfo.EcuVar == null || string.IsNullOrEmpty(ecuInfo.EcuVar.Id))
@@ -1358,6 +1420,15 @@ namespace PsdzClient
             string cliqueName = reader["CLIQUENKURZBEZEICHNUNG"].ToString().Trim();
             string ecuRepId = reader["ECUREPID"].ToString().Trim();
             return new EcuClique(id, cliqueName, ecuRepId, GetTranslation(reader));
+        }
+
+        private static CharacteristicRoots ReadXepCharacteristicRoots(SQLiteDataReader reader)
+        {
+            string id = reader["ID"].ToString().Trim();
+            string nodeClass = reader["NODECLASS"].ToString().Trim();
+            string motorCycSeq = reader["MOTORCYCLESEQUENCE"].ToString().Trim();
+            string vehicleSeq = reader["VEHICLESEQUENCE"].ToString().Trim();
+            return new CharacteristicRoots(id, nodeClass, motorCycSeq, vehicleSeq, GetTranslation(reader));
         }
 
         private static EcuVar ReadXepEcuVar(SQLiteDataReader reader)
