@@ -34,7 +34,7 @@ namespace PsdzClient.Programming
 			}
 		}
 
-		protected ProgrammingObjectBuilder ProgrammingObjectBuilder
+        public ProgrammingObjectBuilder ProgrammingObjectBuilder
 		{
 			get
 			{
@@ -46,7 +46,7 @@ namespace PsdzClient.Programming
 			}
 		}
 
-		internal EcuProgrammingInfos(bool standard = true)
+        public EcuProgrammingInfos(bool standard = true)
 		{
 			//this.db = db;
 			//this.vehicle = vehicle;
@@ -282,6 +282,7 @@ namespace PsdzClient.Programming
 					if (ecu != null)
 					{
 						ecuProgrammingInfo2 = this.GetEcuProgrammingInfo(ecu);
+                        ecuProgrammingInfo2.SvkTarget = ecuObj.StandardSvk;
 					}
 				}
 			}

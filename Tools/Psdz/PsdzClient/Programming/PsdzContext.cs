@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.Programming.API;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.Svb;
@@ -294,7 +296,7 @@ namespace PsdzClient.Programming
 			this.TalFilterForIndividualDataTal = talFilterForIndividualDataTal;
 		}
 
-        public void UpdateVehicle()
+        public void UpdateVehicle(ProgrammingObjectBuilder programmingObjectBuilder)
         {
             if (Vehicle == null)
             {
@@ -304,9 +306,16 @@ namespace PsdzClient.Programming
             Vehicle.ILevelWerk = IstufeShipment;
             Vehicle.ILevel = IstufeCurrent;
             Vehicle.BNType = GetBnType();
+
+            Vehicle.ECU.Clear();
+            foreach (IEcuObj ecuObj in SvtActual.Ecus)
+            {
+                ECU ecu = programmingObjectBuilder.Build(ecuObj);
+                Vehicle.ECU.Add(ecu);
+            }
         }
 
-        public BNType GetBnType()
+		public BNType GetBnType()
         {
             switch (DetectVehicle.BnType)
             {
