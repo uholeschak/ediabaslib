@@ -10,6 +10,7 @@ using BMW.Rheingold.Psdz.Model.Svb;
 using BMW.Rheingold.Psdz.Model.Swt;
 using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
+using PsdzClient.Core;
 
 namespace PsdzClient.Programming
 {
@@ -160,7 +161,9 @@ namespace PsdzClient.Programming
         public IPsdzConnection Connection { get; set; }
 
         public DetectVehicle DetectVehicle { get; set; }
-        
+
+        public Vehicle Vehicle { get; set; }
+
         public IEnumerable<IPsdzEcuIdentifier> EcuListActual { get; set; }
 
         public IDictionary<string, IList<string>> ExecutionOrderBottom { get; private set; }
@@ -319,9 +322,11 @@ namespace PsdzClient.Programming
                     DetectVehicle = null;
                 }
 
-                // If disposing equals true, dispose all managed
-                // and unmanaged resources.
-                if (disposing)
+                Vehicle = null;
+
+				// If disposing equals true, dispose all managed
+				// and unmanaged resources.
+				if (disposing)
                 {
                 }
 

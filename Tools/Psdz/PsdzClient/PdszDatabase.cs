@@ -1763,7 +1763,10 @@ namespace PsdzClient
                 return null;
             }
 
-            _swiRuleDict.Add(ruleId, swiRule);
+            if (swiRule != null)
+            {
+                _swiRuleDict.Add(ruleId, swiRule);
+            }
             return swiRule;
         }
 

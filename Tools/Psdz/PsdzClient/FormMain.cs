@@ -28,6 +28,7 @@ using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using BMW.Rheingold.Psdz.Model.Tal.TalStatus;
 using EdiabasLib;
+using PsdzClient.Core;
 using PsdzClient.Programming;
 
 namespace PsdzClient
@@ -428,6 +429,7 @@ namespace PsdzClient
                         bauIStufe);
                 }
 
+                _psdzContext.Vehicle = new Vehicle();
                 _psdzContext.Connection = psdzConnection;
 
                 sbResult.AppendLine("Vehicle connected");
