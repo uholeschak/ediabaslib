@@ -1542,20 +1542,23 @@ namespace BmwFileReader
                 case "E62": // BNType: UNKNOWN
                 case "E63": // E60EcuCharacteristics
                 case "E64": // E60EcuCharacteristics
+                    // UNKNOWN
                     return "e60";
 
                 case "E65": // E65EcuCharacteristics
                 case "E66": // E65EcuCharacteristics
                 case "E67": // E65EcuCharacteristics
                 case "E68": // E65EcuCharacteristics
+                    // UNKNOWN
                     return "e65";
 
                 case "E70": // E70EcuCharacteristics
                 case "E71": // E70EcuCharacteristics, E70EcuCharacteristicsAMPT, E70EcuCharacteristicsAMPH: MainSeriesSgbd="e70"
                 case "E72": // E72EcuCharacteristics
+                    // UNKNOWN
                     return "e70";
 
-                case "M12": // E89XEcuCharacteristics
+                case "M12": // E89XEcuCharacteristics BEV2010
                 case "E89X": // E89XEcuCharacteristics
                 case "E81": // E89XEcuCharacteristics
                 case "E82": // E89XEcuCharacteristics
@@ -1567,16 +1570,19 @@ namespace BmwFileReader
                 case "E91": // E89XEcuCharacteristics
                 case "E92": // E89XEcuCharacteristics
                 case "E93": // E89XEcuCharacteristics
+                    // IBUS
                     // E89XEcuCharacteristics -> E89EcuCharacteristics
                     return "e89x";
 
                 case "M13": // F56EcuCharacteristics
+                    // BN2020
                     return "f01";
 
                 case "E38": // E38EcuCharacteristics
                 case "E46": // E46EcuCharacteristics
                 case "E83": // E83EcuCharacteristics
                 case "E85": // E85EcuCharacteristics
+                    // IBUS
                     // return "zcs_all";
                     break;
 
@@ -1585,19 +1591,23 @@ namespace BmwFileReader
                     break;
 
                 case "E39": // E39EcuCharacteristics
+                    // IBUS
                     // return "zcs_e39";
                     break;
 
                 case "E52": // E52EcuCharacteristics
+                    // IBUS
                     // return "zcs_e52";
                     break;
 
                 case "E53": // E53EcuCharacteristics
+                    // IBUS
                     // return "zcs_e53";
                     break;
 
                 case "H61": // H61EcuCharacteristics
                 case "H91": // H61EcuCharacteristics
+                    // BN2000_MOTORBIKE
                     return "MRKH24";
 
                 case "247": // MRK01XEcuCharacteristics
@@ -1642,6 +1652,7 @@ namespace BmwFileReader
                 case "R22": // MRK01XEcuCharacteristics
                 case "R28": // MRK01XEcuCharacteristics
                 case "V98": // MREcuCharacteristics
+                    // BNK01X_MOTORBIKE
                     return "MRK24";
 
                 case "K18":
@@ -1726,6 +1737,7 @@ namespace BmwFileReader
                 case "RR1": // RREcuCharacteristics, RR2EcuCharacteristics
                 case "RR2": // RREcuCharacteristics, RR2EcuCharacteristics
                 case "RR3": // RREcuCharacteristics, RR2EcuCharacteristics
+                    // UNKNOWN
                     if (cDate.HasValue && !(cDate.Value < new DateTime(2012, 06, 01)))
                     {
                         // RR2EcuCharacteristics
@@ -1741,11 +1753,13 @@ namespace BmwFileReader
                 case "R59": // R55EcuCharacteristics
                 case "R60": // R55EcuCharacteristics
                 case "R61": // R55EcuCharacteristics
+                    // BN2000
                     return "r56";
 
                 case "R50": // R50EcuCharacteristics
                 case "R52": // R50EcuCharacteristics
                 case "R53": // R50EcuCharacteristics
+                    // IBUS
                     // return "zcs_all";
                     return null;
 
@@ -1757,6 +1771,7 @@ namespace BmwFileReader
                 case "RR4": // RR6EcuCharacteristics
                 case "RR5": // RR6EcuCharacteristics
                 case "RR6": // RR6EcuCharacteristics
+                    // BN2020
                     return "f01";
             }
 
@@ -1781,6 +1796,7 @@ namespace BmwFileReader
                 // J29: BNT_J29
                 // U11: BNT_U06
                 // U06: BNT-XML-U06...
+                // BN2020
                 return "f01";
             }
             ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Vehicle type unknown");
