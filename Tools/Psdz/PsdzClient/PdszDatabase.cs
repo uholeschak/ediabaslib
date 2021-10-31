@@ -874,6 +874,14 @@ namespace PsdzClient
             ClientContext.Database = this;
         }
 
+        public void ResetSwiRules()
+        {
+            foreach (KeyValuePair<string, SwiRule> keyValuePair in _swiRuleDict)
+            {
+                keyValuePair.Value.Reset();
+            }
+        }
+
         public bool LinkSvtEcus(List<EcuInfo> ecuList, IPsdzSvt psdzSvt)
         {
             try

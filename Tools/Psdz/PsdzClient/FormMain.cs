@@ -225,6 +225,7 @@ namespace PsdzClient
                 sbResult.AppendLine("Host started");
                 UpdateStatus(sbResult.ToString());
 
+                programmingService.PdszDatabase.ResetSwiRules();
                 if (programmingService.PdszDatabase.SwiRegisterTree != null)
                 {
                     sbResult.AppendLine("Swi Tree:");
@@ -946,6 +947,7 @@ namespace PsdzClient
                 UpdateStatus(sbResult.ToString());
                 _cts?.Token.ThrowIfCancellationRequested();
 
+                programmingService.PdszDatabase.ResetSwiRules();
                 programmingService.PdszDatabase.LinkSvtEcus(_psdzContext.DetectVehicle.EcuList, psdzSvt);
                 programmingService.PdszDatabase.GetEcuVariants(_psdzContext.DetectVehicle.EcuList);
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecus: {0}", _psdzContext.DetectVehicle.EcuList.Count()));
