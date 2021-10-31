@@ -294,7 +294,18 @@ namespace PsdzClient.Programming
 			this.TalFilterForIndividualDataTal = talFilterForIndividualDataTal;
 		}
 
-        private bool _disposed;
+        public void UpdateVehicle()
+        {
+            if (Vehicle == null)
+            {
+                return;
+            }
+
+            Vehicle.ILevelWerk = IstufeShipment;
+            Vehicle.ILevel = IstufeCurrent;
+        }
+
+		private bool _disposed;
 		private bool hasVinBackupDataFolder;
 
 		private IEnumerable<IPsdzIstufe> possibleIstufenTarget;
