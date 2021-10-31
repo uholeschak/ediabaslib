@@ -1683,10 +1683,10 @@ namespace BmwFileReader
                          vinTypeUpper.Equals("0D90", StringComparison.OrdinalIgnoreCase)
                          ))
                     {
-                        // BN2020: MRXEcuCharacteristics
+                        // BN2020_MOTORBIKE: MRXEcuCharacteristics
                         return "x_k001";
                     }
-                    // BN2000: MREcuCharacteristics
+                    // BN2000_MOTORBIKE: MREcuCharacteristics
                     return "MRK24";
 
                 case "K22": // MRXEcuCharacteristics
@@ -1711,6 +1711,7 @@ namespace BmwFileReader
                 case "K84": // MRXEcuCharacteristics
                 case "V99": // MRXEcuCharacteristics
                 case "X_K001": // MRXEcuCharacteristics
+                    // BN2020_MOTORBIKE
                     return "x_k001";
 
                 case "K02": // MRXEcuCharacteristics
@@ -1719,6 +1720,7 @@ namespace BmwFileReader
                 case "K09": // MRXEcuCharacteristics
                 case "K60": // MRXEcuCharacteristics
                     // special case in MRXEcuCharacteristics
+                    // BN2020_MOTORBIKE
                     return "x_ks01";
 
                 case "RR1": // RREcuCharacteristics, RR2EcuCharacteristics
@@ -1758,7 +1760,7 @@ namespace BmwFileReader
                     return "f01";
             }
 
-            if (typeUpper.StartsWith("F") || typeUpper.StartsWith("G") || typeUpper.StartsWith("I") || typeUpper.StartsWith("J"))
+            if (typeUpper.StartsWith("F") || typeUpper.StartsWith("G") || typeUpper.StartsWith("I") || typeUpper.StartsWith("J") || typeUpper.StartsWith("U"))
             {
                 // F01, F02, F03, F04, F06, F07, F10, F11, F12, F13, F18: F01EcuCharacteristics, F01_1307EcuCharacteristics
                 // F39, F54, F55, F56, F60: F56EcuCharacteristics
@@ -1777,6 +1779,8 @@ namespace BmwFileReader
                 // I01, F01BN2K: I01EcuCharacteristics
                 // I12, I15: BNT_I12_I15
                 // J29: BNT_J29
+                // U11: BNT_U06
+                // U06: BNT-XML-U06...
                 return "f01";
             }
             ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Vehicle type unknown");
