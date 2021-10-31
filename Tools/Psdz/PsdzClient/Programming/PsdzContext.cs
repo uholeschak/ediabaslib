@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
@@ -11,6 +9,7 @@ using BMW.Rheingold.Psdz.Model.Svb;
 using BMW.Rheingold.Psdz.Model.Swt;
 using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
+using BmwFileReader;
 using PsdzClient.Core;
 
 namespace PsdzClient.Programming
@@ -304,7 +303,54 @@ namespace PsdzClient.Programming
 
             Vehicle.ILevelWerk = IstufeShipment;
             Vehicle.ILevel = IstufeCurrent;
-            Vehicle.BNType = BNType.BN2020;
+            Vehicle.BNType = GetBnType();
+        }
+
+        public BNType GetBnType()
+        {
+            switch (DetectVehicle.BnType)
+            {
+                case VehicleInfoBmw.BnType.BN2000:
+                    return BNType.BN2000;
+
+                case VehicleInfoBmw.BnType.BN2020:
+                    return BNType.BN2020;
+
+                case VehicleInfoBmw.BnType.IBUS:
+                    return BNType.IBUS;
+
+                case VehicleInfoBmw.BnType.BN2000_MOTORBIKE:
+                    return BNType.BN2000_MOTORBIKE;
+
+                case VehicleInfoBmw.BnType.BN2020_MOTORBIKE:
+                    return BNType.BN2020_MOTORBIKE;
+
+                case VehicleInfoBmw.BnType.BNK01X_MOTORBIKE:
+                    return BNType.BNK01X_MOTORBIKE;
+
+                case VehicleInfoBmw.BnType.BEV2010:
+                    return BNType.BEV2010;
+
+                case VehicleInfoBmw.BnType.BN2000_MORGAN:
+                    return BNType.BN2000_MORGAN;
+
+                case VehicleInfoBmw.BnType.BN2000_WIESMANN: 
+                    return BNType.BN2000_WIESMANN;
+
+                case VehicleInfoBmw.BnType.BN2000_RODING:
+                    return BNType.BN2000_RODING;
+
+                case VehicleInfoBmw.BnType.BN2000_PGO:
+                    return BNType.BN2000_PGO;
+
+                case VehicleInfoBmw.BnType.BN2000_GIBBS:
+                    return BNType.BN2000_GIBBS;
+
+                case VehicleInfoBmw.BnType.BN2020_CAMPAGNA:
+                    return BNType.BN2020_CAMPAGNA;
+            }
+
+            return BNType.UNKNOWN;
         }
 
 		private bool _disposed;
