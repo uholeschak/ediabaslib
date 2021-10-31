@@ -816,11 +816,28 @@ namespace PsdzClient
             {
                 Id = id;
                 RuleExpression = RuleExpression.Deserialize(new MemoryStream(rule));
+                Reset();
             }
 
             public string Id { get; set; }
 
             public RuleExpression RuleExpression { get; }
+
+            public bool? RuleResult { get; private set; }
+
+            public void Reset()
+            {
+                RuleResult = null;
+            }
+
+            public bool EvaluateRule(Vehicle vehicle, IFFMDynamicResolver ffmResolver)
+            {
+                if (!RuleResult.HasValue)
+                {
+                    RuleResult = RuleExpression.Evaluate(vehicle, RuleExpression, ffmResolver);
+                }
+                return RuleResult.Value;
+            }
 
             public string ToString(string prefix = "")
             {
@@ -836,6 +853,8 @@ namespace PsdzClient
         private SQLiteConnection _mDbConnection;
         private string _rootENameClassId;
         private string _typeKeyClassId;
+        private Dictionary<string, SwiRule> _swiRuleDict;
+        public Dictionary<string, SwiRule> SwiRuleDict => _swiRuleDict;
         public SwiRegister SwiRegisterTree { get; private set; }
 
         public PdszDatabase(string istaFolder)
@@ -849,6 +868,7 @@ namespace PsdzClient
 
             _rootENameClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"RootEBezeichnung");
             _typeKeyClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"Typschluessel");
+            _swiRuleDict = new Dictionary<string, SwiRule>();
             SwiRegisterTree = null;
             ReadSwiRegister();
             ClientContext.Database = this;
@@ -1709,7 +1729,11 @@ namespace PsdzClient
                 return null;
             }
 
-            SwiRule swiRule = null;
+            if (_swiRuleDict.TryGetValue(ruleId, out SwiRule swiRule))
+            {
+                return swiRule;
+            }
+
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, RULE FROM XEP_RULES WHERE ID IN ({0})", ruleId);
@@ -1731,6 +1755,7 @@ namespace PsdzClient
                 return null;
             }
 
+            _swiRuleDict.Add(ruleId, swiRule);
             return swiRule;
         }
 
@@ -1896,7 +1921,7 @@ namespace PsdzClient
                 return false;
             }
 
-            return RuleExpression.Evaluate(vehicle, swiRule.RuleExpression, ffmResolver);
+            return swiRule.EvaluateRule(vehicle, ffmResolver);
         }
 
         private static Equipement ReadXepEquipement(SQLiteDataReader reader)
