@@ -96,9 +96,11 @@
     <Compile Include="Core\EcuCliqueExpression.cs" />
     <Compile Include="Core\EcuConfiguration.cs" />
     <Compile Include="Core\EcuGroupExpression.cs" />
+    <Compile Include="Core\EcuGroupLocator.cs" />
     <Compile Include="Core\EcuProgrammingVariantExpression.cs" />
     <Compile Include="Core\EcuRepresentativeExpression.cs" />
     <Compile Include="Core\EcuVariantExpression.cs" />
+    <Compile Include="Core\EcuVariantLocator.cs" />
     <Compile Include="Core\EMotor.cs" />
     <Compile Include="Core\EmpiricalRuleParser.cs" />
     <Compile Include="Core\EquipmentExpression.cs" />
@@ -106,8 +108,11 @@
     <Compile Include="Core\FA.cs" />
     <Compile Include="Core\FaultClassRuleParser.cs" />
     <Compile Include="Core\FFMResult.cs" />
+    <Compile Include="Core\IEcuGroupLocator.cs" />
+    <Compile Include="Core\IEcuVariantLocator.cs" />
     <Compile Include="Core\IFFMDynamicResolver.cs" />
     <Compile Include="Core\IRuleExpression.cs" />
+    <Compile Include="Core\ISPELocator.cs" />
     <Compile Include="Core\IStufeExpression.cs" />
     <Compile Include="Core\IStufeXExpression.cs" />
     <Compile Include="Core\ManufactoringDateExpression.cs" />
