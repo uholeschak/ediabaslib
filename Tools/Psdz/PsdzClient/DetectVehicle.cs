@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BmwFileReader;
 using EdiabasLib;
 
@@ -47,6 +48,7 @@ namespace PsdzClient
         public List<PdszDatabase.EcuInfo> EcuList { get; private set; }
         public string Vin { get; private set; }
         public string GroupSgdb { get; private set; }
+        public VehicleInfoBmw.BnType BnType { get; private set; }
         public string Series { get; private set; }
         public string ConstructDate { get; private set; }
         public string ILevelShip { get; private set; }
@@ -255,7 +257,7 @@ namespace PsdzClient
                     ConstructDate = cDate.Value.ToString("yyyy-MM", CultureInfo.InvariantCulture);
                 }
 
-                string groupSgbd = VehicleInfoBmw.GetGroupSgbdFromVehicleType(vehicleType, detectedVin, cDate, _ediabas);
+                string groupSgbd = VehicleInfoBmw.GetGroupSgbdFromVehicleType(vehicleType, detectedVin, cDate, _ediabas, out VehicleInfoBmw.BnType bnType);
                 if (string.IsNullOrEmpty(groupSgbd))
                 {
                     _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "No group SGBD found");
@@ -263,6 +265,7 @@ namespace PsdzClient
                 }
                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Group SGBD: {0}", groupSgbd);
                 GroupSgdb = groupSgbd;
+                BnType = bnType;
 
                 if (_abortRequest)
                 {
@@ -483,6 +486,7 @@ namespace PsdzClient
             EcuList.Clear();
             Vin = null;
             GroupSgdb = null;
+            BnType = VehicleInfoBmw.BnType.UNKNOWN;
             Series = null;
             ConstructDate = null;
         }
