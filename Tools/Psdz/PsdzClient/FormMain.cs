@@ -120,6 +120,8 @@ namespace PsdzClient
                     ipAddressControlVehicleIp.Text = DefaultIp;
                     checkBoxIcom.Checked = false;
                 }
+
+                ClientContext.Language = TitleLang;
             }
             catch (Exception)
             {
@@ -226,7 +228,7 @@ namespace PsdzClient
                 if (programmingService.PdszDatabase.SwiRegisterTree != null)
                 {
                     sbResult.AppendLine("Swi Tree:");
-                    sbResult.AppendLine(programmingService.PdszDatabase.SwiRegisterTree.ToString(TitleLang));
+                    sbResult.AppendLine(programmingService.PdszDatabase.SwiRegisterTree.ToString(ClientContext.Language));
                     UpdateStatus(sbResult.ToString());
                 }
                 return true;
@@ -949,7 +951,7 @@ namespace PsdzClient
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecus: {0}", _psdzContext.DetectVehicle.EcuList.Count()));
                 foreach (PdszDatabase.EcuInfo ecuInfo in _psdzContext.DetectVehicle.EcuList)
                 {
-                    sbResult.AppendLine(ecuInfo.ToString(TitleLang));
+                    sbResult.AppendLine(ecuInfo.ToString(ClientContext.Language));
                 }
                 UpdateStatus(sbResult.ToString());
                 _cts?.Token.ThrowIfCancellationRequested();

@@ -14,6 +14,7 @@ namespace PsdzClient
             Database = null;
             SelectedBrand = EnumBrand.BMWPKW;
             OutletCountry = string.Empty;
+            Language = "En";
         }
 
         public static PdszDatabase Database { get; set; }
@@ -21,5 +22,7 @@ namespace PsdzClient
         public static EnumBrand SelectedBrand { get; set; }
 
         public static string OutletCountry { get; set; }
+
+        public static string Language { get; set; }
     }
 }

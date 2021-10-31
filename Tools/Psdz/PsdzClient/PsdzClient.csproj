@@ -139,6 +139,8 @@
     <Compile Include="Core\VariantRuleParser.cs" />
     <Compile Include="Core\VCIDevice.cs" />
     <Compile Include="Core\Vehicle.cs" />
+    <Compile Include="Core\VehicleCharacteristicAbstract.cs" />
+    <Compile Include="Core\VehicleCharacteristicVCIDeviceHelper.cs" />
     <Compile Include="DetectVehicle.cs" />
     <Compile Include="Core\ISalapaLocalizedEntry.cs" />
     <Compile Include="Programming\AsamJobInputDictionary.cs" />

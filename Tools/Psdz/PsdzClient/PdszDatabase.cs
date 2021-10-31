@@ -112,6 +112,14 @@ namespace PsdzClient
                 }
             }
 
+            public string Title
+            {
+                get
+                {
+                    return GetTitle(ClientContext.Language);
+                }
+            }
+
             public string TextDe { get; set; }
             public string TextEn { get; set; }
             public string TextFr { get; set; }
