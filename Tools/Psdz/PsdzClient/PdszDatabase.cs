@@ -811,19 +811,19 @@ namespace PsdzClient
             public SwiRule(string id, byte[] rule)
             {
                 Id = id;
-                Rule = rule;
+                RuleExpression = RuleExpression.Deserialize(new MemoryStream(rule));
             }
 
             public string Id { get; set; }
 
-            public byte[] Rule { get; set; }
+            public RuleExpression RuleExpression { get; }
 
             public string ToString(string prefix = "")
             {
                 StringBuilder sb = new StringBuilder();
                 sb.Append(prefix);
                 sb.Append(string.Format(CultureInfo.InvariantCulture,
-                    "SwiRule: Id={0}, RuleSize={1}", Id, Rule.Length));
+                    "SwiRule: Id={0}, Rule='{1}'", Id, RuleExpression.ToString()));
                 return sb.ToString();
             }
         }
