@@ -21,7 +21,7 @@ namespace PsdzClient.Core
 				}
 				else
                 {
-					this.programmingVariant = ClientContext.Database?.GetEcuProgrammingVariantById(this.value.ToString(CultureInfo.InvariantCulture));
+					this.programmingVariant = ClientContext.Database?.GetEcuProgrammingVariantById(this.value.ToString(CultureInfo.InvariantCulture), vec, ffmResolver);
                     if (this.programmingVariant == null)
 					{
 						result = false;

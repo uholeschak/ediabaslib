@@ -150,7 +150,7 @@ namespace PsdzClient
                 Sgbd = sgbd;
                 Grp = grp;
                 EcuVar = null;
-                EcuPrgVar = null;
+                EcuPrgVars = null;
                 PsdzEcu = null;
                 SwiActions = new List<SwiAction>();
             }
@@ -167,7 +167,7 @@ namespace PsdzClient
 
             public EcuVar EcuVar { get; set; }
 
-            public EcuPrgVar EcuPrgVar { get; set; }
+            public List<EcuPrgVar> EcuPrgVars { get; set; }
 
             public IPsdzEcu PsdzEcu { get; set; }
 
@@ -187,10 +187,14 @@ namespace PsdzClient
                     sb.AppendLine();
                     sb.Append(EcuVar.ToString(language, prefixChild));
                 }
-                if (EcuPrgVar != null)
+
+                if (EcuPrgVars != null)
                 {
-                    sb.AppendLine();
-                    sb.Append(EcuPrgVar.ToString(language, prefixChild));
+                    foreach (EcuPrgVar ecuPrgVar in EcuPrgVars)
+                    {
+                        sb.AppendLine();
+                        sb.Append(ecuPrgVar.ToString(language, prefixChild));
+                    }
                 }
 
                 if (PsdzEcu != null)
@@ -879,17 +883,24 @@ namespace PsdzClient
             return true;
         }
 
-        public bool GetEcuVariants(List<EcuInfo> ecuList)
+        public bool GetEcuVariants(List<EcuInfo> ecuList, Vehicle vehicle = null, IFFMDynamicResolver ffmDynamicResolver = null)
         {
             foreach (EcuInfo ecuInfo in ecuList)
             {
                 ecuInfo.SwiActions.Clear();
                 ecuInfo.EcuVar = GetEcuVariantByName(ecuInfo.Sgbd);
-                ecuInfo.EcuPrgVar = GetEcuProgrammingVariantByName(ecuInfo.PsdzEcu?.BnTnName);
+                ecuInfo.EcuPrgVars = GetEcuProgrammingVariantByName(ecuInfo.PsdzEcu?.BnTnName, vehicle, ffmDynamicResolver);
 
                 GetSwiActionsForEcuVariant(ecuInfo);
                 GetSwiActionsForEcuGroup(ecuInfo);
-                GetSwiActionsForEcuProgrammingVariant(ecuInfo);
+                foreach (EcuPrgVar ecuPrgVar in ecuInfo.EcuPrgVars)
+                {
+                    List<SwiAction> swiActions = GetSwiActionsForEcuProgrammingVariant(ecuPrgVar.Id);
+                    if (swiActions != null)
+                    {
+                        ecuInfo.SwiActions.AddRange(swiActions);
+                    }
+                }
                 foreach (SwiAction swiAction in ecuInfo.SwiActions)
                 {
                     swiAction.SwiInfoObjs = GetServiceProgramsForSwiAction(swiAction);
@@ -1049,14 +1060,14 @@ namespace PsdzClient
             return ecuVarList;
         }
 
-        public EcuPrgVar GetEcuProgrammingVariantByName(string bnTnName)
+        public List<EcuPrgVar> GetEcuProgrammingVariantByName(string bnTnName, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
         {
             if (string.IsNullOrEmpty(bnTnName))
             {
                 return null;
             }
 
-            EcuPrgVar ecuPrgVar = null;
+            List<EcuPrgVar> ecuPrgVarList = new List<EcuPrgVar>();
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NAME, FLASHLIMIT, ECUVARIANTID FROM XEP_ECUPROGRAMMINGVARIANT WHERE UPPER(NAME) = UPPER('{0}')", bnTnName);
@@ -1066,7 +1077,20 @@ namespace PsdzClient
                     {
                         while (reader.Read())
                         {
-                            ecuPrgVar = ReadXepEcuPrgVar(reader);
+                            EcuPrgVar ecuPrgVar = ReadXepEcuPrgVar(reader);
+                            bool valid = ecuPrgVar != null;
+                            if (vehicle != null && ecuPrgVar != null)
+                            {
+                                if (!EvaluateXepRulesById(ecuPrgVar.Id, vehicle, ffmDynamicResolver))
+                                {
+                                    valid = false;
+                                }
+                            }
+
+                            if (valid)
+                            {
+                                ecuPrgVarList.Add(ecuPrgVar);
+                            }
                         }
                     }
                 }
@@ -1076,10 +1100,10 @@ namespace PsdzClient
                 return null;
             }
 
-            return ecuPrgVar;
+            return ecuPrgVarList;
         }
 
-        public EcuPrgVar GetEcuProgrammingVariantById(string prgId)
+        public EcuPrgVar GetEcuProgrammingVariantById(string prgId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
         {
             if (string.IsNullOrEmpty(prgId))
             {
@@ -1096,7 +1120,20 @@ namespace PsdzClient
                     {
                         while (reader.Read())
                         {
-                            ecuPrgVar = ReadXepEcuPrgVar(reader);
+                            EcuPrgVar ecuPrgVarTemp = ReadXepEcuPrgVar(reader);
+                            bool valid = ecuPrgVarTemp != null;
+                            if (vehicle != null && ecuPrgVarTemp != null)
+                            {
+                                if (!EvaluateXepRulesById(ecuPrgVarTemp.EcuVarId, vehicle, ffmDynamicResolver))
+                                {
+                                    valid = false;
+                                }
+                            }
+
+                            if (valid)
+                            {
+                                ecuPrgVar = ecuPrgVarTemp;
+                            }
                         }
                     }
                 }
@@ -1399,19 +1436,20 @@ namespace PsdzClient
             return true;
         }
 
-        public bool GetSwiActionsForEcuProgrammingVariant(EcuInfo ecuInfo)
+        public List<SwiAction> GetSwiActionsForEcuProgrammingVariant(string prgId)
         {
-            if (ecuInfo.EcuPrgVar == null || string.IsNullOrEmpty(ecuInfo.EcuPrgVar.Id))
+            if (string.IsNullOrEmpty(prgId))
             {
-                return false;
+                return null;
             }
 
+            List<SwiAction> swiActions = new List<SwiAction>();
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture,
                     @"SELECT ID, NAME, ACTIONCATEGORY, SELECTABLE, SHOW_IN_PLAN, EXECUTABLE, " + DatabaseFunctions.SqlTitleItems +
                     @", NODECLASS FROM XEP_SWIACTION WHERE ID IN (SELECT SWI_ACTION_ID FROM XEP_REF_ECUPRGVARI_SWIACTION WHERE ECUPROGRAMMINGVARIANT_ID = {0})",
-                    ecuInfo.EcuPrgVar.Id);
+                    prgId);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
@@ -1419,17 +1457,17 @@ namespace PsdzClient
                         while (reader.Read())
                         {
                             SwiAction swiAction = ReadXepSwiAction(reader, SwiActionSource.VarPrgEcuId);
-                            ecuInfo.SwiActions.Add(swiAction);
+                            swiActions.Add(swiAction);
                         }
                     }
                 }
             }
             catch (Exception)
             {
-                return false;
+                return null;
             }
 
-            return true;
+            return swiActions;
         }
 
         public List<SwiAction> GetSwiActionsForSwiRegister(SwiRegister swiRegister)
