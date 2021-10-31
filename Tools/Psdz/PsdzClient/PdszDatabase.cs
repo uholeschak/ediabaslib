@@ -1852,8 +1852,13 @@ namespace PsdzClient
 
         public bool EvaluateXepRulesById(string id, Vehicle vehicle, IFFMDynamicResolver ffmResolver, string objectId = null)
         {
-            // TODO: EvaluateXepRulesById
-            return true;
+            SwiRule swiRule = GetRuleById(id);
+            if (swiRule == null)
+            {
+                return false;
+            }
+
+            return RuleExpression.Evaluate(vehicle, swiRule.RuleExpression, ffmResolver);
         }
 
         private static Equipement ReadXepEquipement(SQLiteDataReader reader)
