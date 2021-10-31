@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.Svb;
@@ -303,6 +304,7 @@ namespace PsdzClient.Programming
 
             Vehicle.ILevelWerk = IstufeShipment;
             Vehicle.ILevel = IstufeCurrent;
+            Vehicle.BNType = BNType.BN2020;
         }
 
 		private bool _disposed;
