@@ -15,6 +15,15 @@ namespace PsdzClient
 {
     public class PdszDatabase : IDisposable
     {
+        public const string SqlTitleItemsC =
+            "C.TITLE_DEDE, C.TITLE_ENGB, C.TITLE_ENUS, " +
+            "C.TITLE_FR, C.TITLE_TH, C.TITLE_SV, " +
+            "C.TITLE_IT, C.TITLE_ES, C.TITLE_ID, " +
+            "C.TITLE_KO, C.TITLE_EL, C.TITLE_TR, " +
+            "C.TITLE_ZHCN, C.TITLE_RU, C.TITLE_NL, " +
+            "C.TITLE_PT, C.TITLE_ZHTW, C.TITLE_JA, " +
+            "C.TITLE_CSCZ, C.TITLE_PLPL";
+
         public enum SwiActionSource
         {
             VarId,
@@ -375,7 +384,8 @@ namespace PsdzClient
 
         public class Characteristics
         {
-            public Characteristics(string id, string nodeClass, string titleId, string istaVisible, string staticClassVar, string staticClassVarMCycle, string parentId, string name, string legacyName)
+            public Characteristics(string id, string nodeClass, string titleId, string istaVisible, string staticClassVar, string staticClassVarMCycle,
+                string parentId, string name, string legacyName, EcuTranslation ecuTranslation)
             {
                 Id = id;
                 NodeClass = nodeClass;
@@ -388,6 +398,7 @@ namespace PsdzClient
                 LegacyName = legacyName;
                 DriveId = string.Empty;
                 RootNodeClass = string.Empty;
+                EcuTranslation = ecuTranslation;
             }
 
             public string Id { get; set; }
@@ -412,13 +423,15 @@ namespace PsdzClient
 
             public string RootNodeClass { get; set; }
 
+            public EcuTranslation EcuTranslation { get; set; }
+
             public string ToString(string language, string prefix = "")
             {
                 StringBuilder sb = new StringBuilder();
                 sb.Append(prefix);
                 sb.Append(string.Format(CultureInfo.InvariantCulture,
-                    "EcuVar: Id={0}, Class={1}, ParentId={2}, Name={3}, LegacyName={4}, RootClass={5}",
-                    Id, NodeClass, ParentId, Name, LegacyName, RootNodeClass));
+                    "EcuVar: Id={0}, Class={1}, ParentId={2}, Name={3}, LegacyName={4}, RootClass={5}, Title='{6}'",
+                    Id, NodeClass, ParentId, Name, LegacyName, RootNodeClass, EcuTranslation.GetTitle(language)));
                 return sb.ToString();
             }
         }
@@ -1220,7 +1233,8 @@ namespace PsdzClient
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture,
-                    @"SELECT C.ID, C.NODECLASS, C.TITLEID, C.STATICCLASSVARIABLES, C.STATICCLASSVARIABLESMOTORRAD, C.PARENTID, C.ISTA_VISIBLE, C.NAME, C.LEGACY_NAME, V.DRIVEID, CR.NODECLASS" +
+                    @"SELECT C.ID, C.NODECLASS, C.TITLEID, " + SqlTitleItemsC +
+                    @"C.STATICCLASSVARIABLES, C.STATICCLASSVARIABLESMOTORRAD, C.PARENTID, C.ISTA_VISIBLE, C.NAME, C.LEGACY_NAME, V.DRIVEID, CR.NODECLASS" +
                     @" AS PARENTNODECLASS FROM xep_vehicles JOIN xep_characteristics C on C.ID = V.CHARACTERISTICID JOIN xep_characteristicroots CR on CR.ID = C.PARENTID" +
                     @" WHERE TYPEKEYID = {0} AND CR.NODECLASS IS NOT NULL", typeKeyId);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
@@ -1869,7 +1883,7 @@ namespace PsdzClient
             string parentId = reader["PARENTID"].ToString().Trim();
             string name = reader["NAME"].ToString().Trim();
             string legacyName = reader["LEGACY_NAME"].ToString().Trim();
-            return new Characteristics(id, nodeClass, titleId, istaVisible, staticClassVar, staticClassVarMCycle, parentId, name, legacyName);
+            return new Characteristics(id, nodeClass, titleId, istaVisible, staticClassVar, staticClassVarMCycle, parentId, name, legacyName, GetTranslation(reader));
         }
 
         private static SaLaPa ReadXepSaLaPa(SQLiteDataReader reader)
