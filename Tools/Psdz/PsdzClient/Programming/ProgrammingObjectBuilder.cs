@@ -107,6 +107,25 @@ namespace BMW.Rheingold.Programming.API
 			return vehicleOrder;
 		}
 
+        public BMW.Rheingold.CoreFramework.Contracts.Vehicle.IFa Build(BMW.Rheingold.CoreFramework.Contracts.Programming.IFa faInput)
+        {
+            if (faInput == null)
+            {
+                return null;
+            }
+            FA fa = new FA();
+            fa.VERSION = faInput.FaVersion.ToString(CultureInfo.InvariantCulture);
+            //fa.BR = FormatConverter.ConvertToBn2020ConformModelSeries(faInput.Entwicklungsbaureihe);
+            fa.LACK = faInput.Lackcode;
+            fa.POLSTER = faInput.Polstercode;
+            fa.TYPE = faInput.Type;
+            fa.C_DATE = faInput.Zeitkriterium;
+            fa.E_WORT = ((faInput.EWords != null) ? new ObservableCollection<string>(faInput.EWords) : null);
+            fa.HO_WORT = ((faInput.HOWords != null) ? new ObservableCollection<string>(faInput.HOWords) : null);
+            fa.SA = ((faInput.Salapas != null) ? new ObservableCollection<string>(faInput.Salapas) : null);
+            return fa;
+        }
+
 		public IStandardSvk Build(IPsdzStandardSvk svkInput)
 		{
 			if (svkInput == null)

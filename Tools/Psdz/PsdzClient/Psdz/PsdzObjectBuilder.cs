@@ -178,7 +178,7 @@ namespace BMW.Rheingold.Psdz
 
 		public IPsdzStandardFa BuildFaActualFromVehicleContext(IVehicle vehicleContext)
 		{
-			MethodBase currentMethod = MethodBase.GetCurrentMethod();
+			//MethodBase currentMethod = MethodBase.GetCurrentMethod();
 			IPsdzStandardFa result;
 			try
 			{
