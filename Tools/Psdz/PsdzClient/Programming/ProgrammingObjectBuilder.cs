@@ -154,7 +154,10 @@ namespace BMW.Rheingold.Programming.API
 				foreach (IPsdzEcu ecuInput in ecus)
 				{
 					IEcuObj ecu = this.Build(ecuInput);
-					systemVerbauTabelle.AddEcu(ecu);
+                    if (ecu != null)
+                    {
+                        systemVerbauTabelle.AddEcu(ecu);
+                    }
 				}
 			}
 			return systemVerbauTabelle;
