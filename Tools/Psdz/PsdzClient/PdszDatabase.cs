@@ -363,6 +363,28 @@ namespace PsdzClient
             }
         }
 
+        public class EcuRefClique
+        {
+            public EcuRefClique(string id, string ecuCliqueId)
+            {
+                Id = id;
+                EcuCliqueId = ecuCliqueId;
+            }
+
+            public string Id { get; set; }
+
+            public string EcuCliqueId { get; set; }
+
+            public string ToString(string language, string prefix = "")
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(prefix);
+                sb.Append(string.Format(CultureInfo.InvariantCulture,
+                    "EcuVar: Id={0}, CliqueId={1}", Id, EcuCliqueId));
+                return sb.ToString();
+            }
+        }
+
         public class CharacteristicRoots
         {
             public CharacteristicRoots(string id, string nodeClass, string motorCycSeq, string vehicleSeq, EcuTranslation ecuTranslation)
@@ -1349,6 +1371,36 @@ namespace PsdzClient
             return ecuClique;
         }
 
+        public EcuRefClique GetRefEcuCliqueById(string ecuRefId)
+        {
+            if (string.IsNullOrEmpty(ecuRefId))
+            {
+                return null;
+            }
+
+            EcuRefClique ecuRefClique = null;
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, ECUCLIQUEID, FROM XEP_REFECUCLIQUES WHERE (ID = {0})", ecuRefId);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            ecuRefClique = ReadXepEcuRefClique(reader);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return ecuRefClique;
+        }
+
         public CharacteristicRoots GetCharacteristicRootsById(string characteristicRootsId)
         {
             if (string.IsNullOrEmpty(characteristicRootsId))
@@ -2032,6 +2084,13 @@ namespace PsdzClient
             string cliqueName = reader["CLIQUENKURZBEZEICHNUNG"].ToString().Trim();
             string ecuRepId = reader["ECUREPID"].ToString().Trim();
             return new EcuClique(id, cliqueName, ecuRepId, GetTranslation(reader));
+        }
+
+        private static EcuRefClique ReadXepEcuRefClique(SQLiteDataReader reader)
+        {
+            string id = reader["ID"].ToString().Trim();
+            string ecuCliqueId = reader["ECUCLIQUEID"].ToString().Trim();
+            return new EcuRefClique(id, ecuCliqueId);
         }
 
         private static CharacteristicRoots ReadXepCharacteristicRoots(SQLiteDataReader reader)
