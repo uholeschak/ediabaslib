@@ -15,6 +15,7 @@ using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.Obd;
 using BMW.Rheingold.Psdz.Model.Svb;
 using BMW.Rheingold.Psdz.Model.Swt;
+using PsdzClient;
 using PsdzClient.Core;
 using PsdzClient.Programming;
 using PsdzClient.Programming.BMW.Rheingold.Programming.API;
@@ -267,8 +268,33 @@ namespace BMW.Rheingold.Programming.API
 			ecuObj.EcuDetailInfo = ((ecuInput.EcuDetailInfo != null) ? new EcuObjDetailInfo(ecuInput.EcuDetailInfo.ByteValue) : null);
 			ecuObj.EcuStatusInfo = ((ecuInput.EcuStatusInfo != null) ? new EcuObjStatusInfo(ecuInput.EcuStatusInfo.ByteValue, ecuInput.EcuStatusInfo.HasIndividualData) : null);
 			ecuObj.EcuPdxInfo = this.Build(ecuInput.PsdzEcuPdxInfo);
-			string bnTnName = ecuInput.BnTnName;
-			IEcuIdentifier ecuIdentifier = ecuObj.EcuIdentifier;
+
+            PdszDatabase database = ClientContext.Database;
+            if (database != null)
+            {
+                string bnTnName = ecuInput.BnTnName;
+                IEcuIdentifier ecuIdentifier = ecuObj.EcuIdentifier;
+                PdszDatabase.EcuVar ecuVar = database.FindEcuVariantFromBntn(bnTnName, (ecuIdentifier != null) ? new int?(ecuIdentifier.DiagAddrAsInt) : null, this.vehicle, this.ffmResolver);
+                if (ecuVar != null && !string.IsNullOrEmpty(ecuVar.Name))
+                {
+                    //ecuObj.XepEcuVariant = xep_ECUVARIANTS;
+                    ecuObj.EcuVariant = ecuVar.Name.ToUpper(CultureInfo.InvariantCulture);
+					//ecuObj.XepEcuClique = this.vdc.FindEcuClique(xep_ECUVARIANTS);
+                    PdszDatabase.EcuGroup ecuGroup = database.FindEcuGroup(ecuVar, this.vehicle, this.ffmResolver);
+                    if (ecuGroup != null)
+                    {
+                        ecuObj.EcuGroup = ecuGroup.Name.ToUpper(CultureInfo.InvariantCulture);
+                    }
+#if false
+					XEP_ECUREPS xep_ECUREPS = database.FindEcuRep(ecuObj.XepEcuClique);
+                    if (xep_ECUREPS != null)
+                    {
+                        ecuObj.EcuRep = xep_ECUREPS.SteuergeraeteKuerzel;
+                    }
+#endif
+                }
+            }
+
 			return ecuObj;
 		}
 
@@ -311,6 +337,12 @@ namespace BMW.Rheingold.Programming.API
                 ecu.ProgrammingVariantName = ecuObj.BnTnName;
                 ecu.StatusInfo = ecuObj.EcuStatusInfo;
             }
+#if false
+            if (ecu.XepEcuVariant == null)
+            {
+                this.vdc.FillEcuNames(ecu, this.vehicle, this.ffmResolver);
+            }
+#endif
             return ecu;
         }
 
@@ -601,9 +633,21 @@ namespace BMW.Rheingold.Programming.API
 			return obdData;
 		}
 
-		//private readonly IFFMDynamicResolver ffmResolver;
+        public IFFMDynamicResolver IFFMDynamicResolver
+        {
+            get => ffmResolver;
+            set => ffmResolver = value;
+        }
 
-		//private readonly Vehicle vehicle;
+        public Vehicle Vehicle
+		{
+            get => vehicle;
+            set => vehicle = value;
+        }
+
+		private IFFMDynamicResolver ffmResolver;
+
+		private Vehicle vehicle;
 
 		private readonly BusEnumMapper busEnumMapper = new BusEnumMapper();
 

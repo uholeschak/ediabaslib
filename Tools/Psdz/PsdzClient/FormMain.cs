@@ -430,7 +430,9 @@ namespace PsdzClient
                         bauIStufe);
                 }
 
-                _psdzContext.Vehicle = new Vehicle();
+                Vehicle vehicle = new Vehicle();
+                _psdzContext.Vehicle = vehicle;
+                programmingService.ProgrammingInfos.ProgrammingObjectBuilder.Vehicle = vehicle;
                 _psdzContext.Connection = psdzConnection;
 
                 sbResult.AppendLine("Vehicle connected");
@@ -951,7 +953,7 @@ namespace PsdzClient
                 UpdateStatus(sbResult.ToString());
                 _cts?.Token.ThrowIfCancellationRequested();
 
-                _psdzContext.UpdateVehicle(programmingService.ProgrammingInfos.ProgrammingObjectBuilder, psdzStandardSvt);
+                _psdzContext.UpdateVehicle(programmingService.ProgrammingInfos.ProgrammingObjectBuilder, psdzStandardSvtNames);
                 programmingService.PdszDatabase.ResetSwiRules();
                 programmingService.PdszDatabase.LinkSvtEcus(_psdzContext.DetectVehicle.EcuList, psdzSvt);
                 programmingService.PdszDatabase.GetEcuVariants(_psdzContext.DetectVehicle.EcuList);

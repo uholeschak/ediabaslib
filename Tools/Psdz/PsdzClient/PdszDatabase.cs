@@ -1243,6 +1243,22 @@ namespace PsdzClient
             return ecuPrgVar;
         }
 
+        public EcuGroup FindEcuGroup(EcuVar ecuVar, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
+        {
+            if (ecuVar == null || string.IsNullOrEmpty(ecuVar.GroupId))
+            {
+                return null;
+            }
+
+            EcuGroup ecuGroup = null;
+            string groupId = ecuVar.GroupId;
+            if (EvaluateXepRulesById(groupId, vehicle, ffmResolver, null))
+            {
+                ecuGroup = GetEcuGroupById(groupId);
+            }
+            return ecuGroup;
+        }
+
         public EcuGroup GetEcuGroupById(string groupId)
         {
             if (string.IsNullOrEmpty(groupId))
@@ -1272,7 +1288,6 @@ namespace PsdzClient
 
             return ecuGroup;
         }
-
 
         public Equipement GetEquipmentById(string equipmentId)
         {
