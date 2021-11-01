@@ -306,8 +306,11 @@ namespace PsdzClient.Programming
             Vehicle.ILevelWerk = IstufeShipment;
             Vehicle.ILevel = IstufeCurrent;
             Vehicle.BNType = GetBnType();
+            Vehicle.VIN17 = DetectVehicle.Vin;
+            Vehicle.Modelljahr = DetectVehicle.ConstructYear;
+            Vehicle.Modellmonat = DetectVehicle.ConstructMonth;
 
-            Vehicle.ECU.Clear();
+			Vehicle.ECU.Clear();
             foreach (IEcuObj ecuObj in SvtActual.Ecus)
             {
                 ECU ecu = programmingObjectBuilder.Build(ecuObj);

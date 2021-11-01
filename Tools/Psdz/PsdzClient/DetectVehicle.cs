@@ -49,7 +49,8 @@ namespace PsdzClient
         public string GroupSgdb { get; private set; }
         public VehicleInfoBmw.BnType BnType { get; private set; }
         public string Series { get; private set; }
-        public string ConstructDate { get; private set; }
+        public string ConstructYear { get; private set; }
+        public string ConstructMonth { get; private set; }
         public string ILevelShip { get; private set; }
         public string ILevelCurrent { get; private set; }
         public string ILevelBackup { get; private set; }
@@ -250,10 +251,10 @@ namespace PsdzClient
                 }
 
                 Series = vehicleType;
-
                 if (cDate.HasValue)
                 {
-                    ConstructDate = cDate.Value.ToString("yyyy-MM", CultureInfo.InvariantCulture);
+                    ConstructYear = cDate.Value.ToString("yyyy", CultureInfo.InvariantCulture);
+                    ConstructMonth = cDate.Value.ToString("MM", CultureInfo.InvariantCulture);
                 }
 
                 string groupSgbd = VehicleInfoBmw.GetGroupSgbdFromVehicleType(vehicleType, detectedVin, cDate, _ediabas, out VehicleInfoBmw.BnType bnType);
@@ -487,7 +488,8 @@ namespace PsdzClient
             GroupSgdb = null;
             BnType = VehicleInfoBmw.BnType.UNKNOWN;
             Series = null;
-            ConstructDate = null;
+            ConstructYear = null;
+            ConstructMonth = null;
         }
 
         public void Dispose()
