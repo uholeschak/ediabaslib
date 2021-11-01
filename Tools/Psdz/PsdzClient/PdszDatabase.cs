@@ -901,7 +901,7 @@ namespace PsdzClient
         {
             foreach (KeyValuePair<string, SwiRule> keyValuePair in _swiRuleDict)
             {
-                keyValuePair.Value.Reset();
+                keyValuePair.Value?.Reset();
             }
         }
 
@@ -1925,10 +1925,7 @@ namespace PsdzClient
                 return null;
             }
 
-            if (swiRule != null)
-            {
-                _swiRuleDict.Add(ruleId, swiRule);
-            }
+            _swiRuleDict.Add(ruleId, swiRule);
             return swiRule;
         }
 
@@ -2091,7 +2088,7 @@ namespace PsdzClient
             SwiRule swiRule = GetRuleById(id);
             if (swiRule == null)
             {
-                return false;
+                return true;
             }
 
             return swiRule.EvaluateRule(vehicle, ffmResolver);
