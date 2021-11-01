@@ -313,17 +313,36 @@ namespace PsdzClient.Programming
 
             Vehicle.FA = ProgrammingUtils.BuildVehicleFa(FaActual, DetectVehicle.ModelSeries);
 
-            Vehicle.ECU.Clear();
-            ISvt svt = programmingObjectBuilder.Build(psdzStandardSvt);
-            foreach (IEcuObj ecuObj in svt.Ecus)
+            for (int i = 0; i < 2; i++)
             {
-                ECU ecu = programmingObjectBuilder.Build(ecuObj);
-                if (ecu != null)
+                ObservableCollection<ECU> EcuList = new ObservableCollection<ECU>();
+                foreach (PdszDatabase.EcuInfo ecuInfo in DetectVehicle.EcuList)
                 {
-                    Vehicle.ECU.Add(ecu);
+                    IEcuObj ecuObj = programmingObjectBuilder.Build(ecuInfo.PsdzEcu);
+                    ECU ecu = programmingObjectBuilder.Build(ecuObj);
+                    if (ecu != null)
+                    {
+                        if (string.IsNullOrEmpty(ecu.ECU_NAME))
+                        {
+                            ecu.ECU_NAME = ecuInfo.Name;
+                        }
+
+                        if (string.IsNullOrEmpty(ecu.ECU_SGBD))
+                        {
+                            ecu.ECU_SGBD = ecuInfo.Sgbd;
+                        }
+
+                        if (string.IsNullOrEmpty(ecu.ECU_GRUPPE))
+                        {
+                            ecu.ECU_GRUPPE = ecuInfo.Grp;
+                        }
+                        EcuList.Add(ecu);
+                    }
                 }
-			}
-        }
+
+                Vehicle.ECU = EcuList;
+            }
+		}
 
 		public BNType GetBnType()
         {
