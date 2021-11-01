@@ -951,7 +951,7 @@ namespace PsdzClient
                 UpdateStatus(sbResult.ToString());
                 _cts?.Token.ThrowIfCancellationRequested();
 
-                _psdzContext.UpdateVehicle(programmingService.ProgrammingInfos.ProgrammingObjectBuilder);
+                _psdzContext.UpdateVehicle(programmingService.ProgrammingInfos.ProgrammingObjectBuilder, psdzStandardSvt);
                 programmingService.PdszDatabase.ResetSwiRules();
                 programmingService.PdszDatabase.LinkSvtEcus(_psdzContext.DetectVehicle.EcuList, psdzSvt);
                 programmingService.PdszDatabase.GetEcuVariants(_psdzContext.DetectVehicle.EcuList);

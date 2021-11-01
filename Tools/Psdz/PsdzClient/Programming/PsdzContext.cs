@@ -296,7 +296,7 @@ namespace PsdzClient.Programming
 			this.TalFilterForIndividualDataTal = talFilterForIndividualDataTal;
 		}
 
-        public void UpdateVehicle(ProgrammingObjectBuilder programmingObjectBuilder)
+        public void UpdateVehicle(ProgrammingObjectBuilder programmingObjectBuilder, IPsdzStandardSvt psdzStandardSvt)
         {
             if (Vehicle == null)
             {
@@ -310,8 +310,9 @@ namespace PsdzClient.Programming
             Vehicle.Modelljahr = DetectVehicle.ConstructYear;
             Vehicle.Modellmonat = DetectVehicle.ConstructMonth;
 
-			Vehicle.ECU.Clear();
-            foreach (IEcuObj ecuObj in SvtActual.Ecus)
+            Vehicle.ECU.Clear();
+            ISvt svt = programmingObjectBuilder.Build(psdzStandardSvt);
+            foreach (IEcuObj ecuObj in svt.Ecus)
             {
                 ECU ecu = programmingObjectBuilder.Build(ecuObj);
                 Vehicle.ECU.Add(ecu);
