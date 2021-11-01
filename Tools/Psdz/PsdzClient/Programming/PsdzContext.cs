@@ -318,8 +318,11 @@ namespace PsdzClient.Programming
             foreach (IEcuObj ecuObj in svt.Ecus)
             {
                 ECU ecu = programmingObjectBuilder.Build(ecuObj);
-                Vehicle.ECU.Add(ecu);
-            }
+                if (ecu != null)
+                {
+                    Vehicle.ECU.Add(ecu);
+                }
+			}
         }
 
 		public BNType GetBnType()
