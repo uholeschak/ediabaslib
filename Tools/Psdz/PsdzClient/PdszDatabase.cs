@@ -1401,6 +1401,22 @@ namespace PsdzClient
             return ecuRefClique;
         }
 
+        public EcuClique FindEcuClique(EcuVar ecuVar)
+        {
+            if (ecuVar == null)
+            {
+                return null;
+            }
+
+            EcuRefClique ecuRefClique = GetRefEcuCliqueById(ecuVar.Id);
+            if (ecuRefClique == null)
+            {
+                return null;
+            }
+
+            return GetEcuCliqueById(ecuRefClique.EcuCliqueId);
+        }
+
         public CharacteristicRoots GetCharacteristicRootsById(string characteristicRootsId)
         {
             if (string.IsNullOrEmpty(characteristicRootsId))
