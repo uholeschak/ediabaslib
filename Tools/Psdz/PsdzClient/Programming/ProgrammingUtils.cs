@@ -120,7 +120,7 @@ namespace BMW.Rheingold.Programming.Common
 			return Regex.Replace(xmlText.Trim(), ">\\s+<", "><");
 		}
 
-        public static FA BuildVehicleFa(IPsdzFa faInput)
+        public static FA BuildVehicleFa(IPsdzFa faInput, string br)
         {
             if (faInput == null)
             {
@@ -128,7 +128,7 @@ namespace BMW.Rheingold.Programming.Common
             }
             FA fa = new FA();
             fa.VERSION = faInput.FaVersion.ToString(CultureInfo.InvariantCulture);
-            //fa.BR = FormatConverter.ConvertToBn2020ConformModelSeries(faInput.Entwicklungsbaureihe);
+            fa.BR = br;
             fa.LACK = faInput.Lackcode;
             fa.POLSTER = faInput.Polstercode;
             fa.TYPE = faInput.Type;

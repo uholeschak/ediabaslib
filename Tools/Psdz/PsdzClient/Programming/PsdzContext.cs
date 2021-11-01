@@ -311,7 +311,7 @@ namespace PsdzClient.Programming
             Vehicle.Modelljahr = DetectVehicle.ConstructYear;
             Vehicle.Modellmonat = DetectVehicle.ConstructMonth;
 
-            Vehicle.FA = ProgrammingUtils.BuildVehicleFa(FaActual);
+            Vehicle.FA = ProgrammingUtils.BuildVehicleFa(FaActual, DetectVehicle.ModelSeries);
 
             Vehicle.ECU.Clear();
             ISvt svt = programmingObjectBuilder.Build(psdzStandardSvt);

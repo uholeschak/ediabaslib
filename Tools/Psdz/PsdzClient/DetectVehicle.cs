@@ -48,6 +48,7 @@ namespace PsdzClient
         public string Vin { get; private set; }
         public string GroupSgdb { get; private set; }
         public VehicleInfoBmw.BnType BnType { get; private set; }
+        public string ModelSeries { get; private set; }
         public string Series { get; private set; }
         public string ConstructYear { get; private set; }
         public string ConstructMonth { get; private set; }
@@ -141,6 +142,7 @@ namespace PsdzClient
 
                 Vin = detectedVin;
                 string vehicleType = null;
+                string modelSeries = null;
                 DateTime? cDate = null;
 
                 foreach (Tuple<string, string, string> job in ReadIdentJobsBmwFast)
@@ -199,6 +201,7 @@ namespace PsdzClient
                                                     if (!string.IsNullOrEmpty(vtype))
                                                     {
                                                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected vehicle type: {0}", vtype);
+                                                        modelSeries = br;
                                                         vehicleType = vtype;
                                                     }
                                                 }
@@ -235,6 +238,7 @@ namespace PsdzClient
                                         if (!string.IsNullOrEmpty(vtype))
                                         {
                                             _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected vehicle type: {0}", vtype);
+                                            modelSeries = br;
                                             vehicleType = vtype;
                                             break;
                                         }
@@ -250,6 +254,7 @@ namespace PsdzClient
                     }
                 }
 
+                ModelSeries = modelSeries;
                 Series = vehicleType;
                 if (cDate.HasValue)
                 {
@@ -487,6 +492,7 @@ namespace PsdzClient
             Vin = null;
             GroupSgdb = null;
             BnType = VehicleInfoBmw.BnType.UNKNOWN;
+            ModelSeries = null;
             Series = null;
             ConstructYear = null;
             ConstructMonth = null;

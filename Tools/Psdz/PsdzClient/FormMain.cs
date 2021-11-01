@@ -362,9 +362,9 @@ namespace PsdzClient
                 }
 
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture,
-                    "Detected vehicle: VIN={0}, GroupFile={1}, Series={2}, BuildDate={3}-{4}",
+                    "Detected vehicle: VIN={0}, GroupFile={1}, BR={2}, Series={3}, BuildDate={4}-{5}",
                     _psdzContext.DetectVehicle.Vin ?? string.Empty, _psdzContext.DetectVehicle.GroupSgdb ?? string.Empty,
-                    _psdzContext.DetectVehicle.Series ?? string.Empty,
+                    _psdzContext.DetectVehicle.ModelSeries ?? string.Empty, _psdzContext.DetectVehicle.Series ?? string.Empty,
                     _psdzContext.DetectVehicle.ConstructYear ?? string.Empty, _psdzContext.DetectVehicle.ConstructMonth ?? string.Empty));
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture,
                     "Detected ILevel: Ship={0}, Current={1}, Backup={2}",
