@@ -44,14 +44,15 @@ namespace PsdzClient
             this.labelVehicleIp = new System.Windows.Forms.Label();
             this.buttonConnect = new System.Windows.Forms.Button();
             this.buttonDisconnect = new System.Windows.Forms.Button();
-            this.buttonFunc1 = new System.Windows.Forms.Button();
+            this.buttonModILevel = new System.Windows.Forms.Button();
             this.labelIstaFolder = new System.Windows.Forms.Label();
-            this.buttonFunc2 = new System.Windows.Forms.Button();
+            this.buttonModFa = new System.Windows.Forms.Button();
             this.buttonExecuteTal = new System.Windows.Forms.Button();
             this.progressBarEvent = new System.Windows.Forms.ProgressBar();
             this.labelProgressEvent = new System.Windows.Forms.Label();
             this.checkBoxIcom = new System.Windows.Forms.CheckBox();
             this.buttonVehicleSearch = new System.Windows.Forms.Button();
+            this.buttonCreateOptions = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // textBoxIstaFolder
@@ -103,7 +104,7 @@ namespace PsdzClient
             this.buttonStartHost.Location = new System.Drawing.Point(12, 64);
             this.buttonStartHost.Name = "buttonStartHost";
             this.buttonStartHost.Size = new System.Drawing.Size(75, 23);
-            this.buttonStartHost.TabIndex = 7;
+            this.buttonStartHost.TabIndex = 9;
             this.buttonStartHost.Text = "Start Host";
             this.buttonStartHost.UseVisualStyleBackColor = true;
             this.buttonStartHost.Click += new System.EventHandler(this.buttonStartHost_Click);
@@ -113,7 +114,7 @@ namespace PsdzClient
             this.buttonStopHost.Location = new System.Drawing.Point(93, 64);
             this.buttonStopHost.Name = "buttonStopHost";
             this.buttonStopHost.Size = new System.Drawing.Size(75, 23);
-            this.buttonStopHost.TabIndex = 8;
+            this.buttonStopHost.TabIndex = 10;
             this.buttonStopHost.Text = "Stop Host";
             this.buttonStopHost.UseVisualStyleBackColor = true;
             this.buttonStopHost.Click += new System.EventHandler(this.buttonStopHost_Click);
@@ -133,7 +134,7 @@ namespace PsdzClient
             this.textBoxStatus.ReadOnly = true;
             this.textBoxStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxStatus.Size = new System.Drawing.Size(790, 316);
-            this.textBoxStatus.TabIndex = 12;
+            this.textBoxStatus.TabIndex = 17;
             // 
             // ipAddressControlVehicleIp
             // 
@@ -164,7 +165,7 @@ namespace PsdzClient
             this.buttonConnect.Location = new System.Drawing.Point(174, 64);
             this.buttonConnect.Name = "buttonConnect";
             this.buttonConnect.Size = new System.Drawing.Size(75, 23);
-            this.buttonConnect.TabIndex = 9;
+            this.buttonConnect.TabIndex = 11;
             this.buttonConnect.Text = "Connect";
             this.buttonConnect.UseVisualStyleBackColor = true;
             this.buttonConnect.Click += new System.EventHandler(this.buttonConnect_Click);
@@ -174,20 +175,20 @@ namespace PsdzClient
             this.buttonDisconnect.Location = new System.Drawing.Point(255, 64);
             this.buttonDisconnect.Name = "buttonDisconnect";
             this.buttonDisconnect.Size = new System.Drawing.Size(75, 23);
-            this.buttonDisconnect.TabIndex = 10;
+            this.buttonDisconnect.TabIndex = 12;
             this.buttonDisconnect.Text = "Disconnect";
             this.buttonDisconnect.UseVisualStyleBackColor = true;
             this.buttonDisconnect.Click += new System.EventHandler(this.buttonDisconnect_Click);
             // 
-            // buttonFunc1
+            // buttonModILevel
             // 
-            this.buttonFunc1.Location = new System.Drawing.Point(336, 64);
-            this.buttonFunc1.Name = "buttonFunc1";
-            this.buttonFunc1.Size = new System.Drawing.Size(75, 23);
-            this.buttonFunc1.TabIndex = 11;
-            this.buttonFunc1.Text = "Mod. IStep";
-            this.buttonFunc1.UseVisualStyleBackColor = true;
-            this.buttonFunc1.Click += new System.EventHandler(this.buttonFunc_Click);
+            this.buttonModILevel.Location = new System.Drawing.Point(417, 64);
+            this.buttonModILevel.Name = "buttonModILevel";
+            this.buttonModILevel.Size = new System.Drawing.Size(75, 23);
+            this.buttonModILevel.TabIndex = 0;
+            this.buttonModILevel.Text = "Mod. ILevel";
+            this.buttonModILevel.UseVisualStyleBackColor = true;
+            this.buttonModILevel.Click += new System.EventHandler(this.buttonFunc_Click);
             // 
             // labelIstaFolder
             // 
@@ -198,22 +199,22 @@ namespace PsdzClient
             this.labelIstaFolder.TabIndex = 2;
             this.labelIstaFolder.Text = "Ista Folder:";
             // 
-            // buttonFunc2
+            // buttonModFa
             // 
-            this.buttonFunc2.Location = new System.Drawing.Point(417, 64);
-            this.buttonFunc2.Name = "buttonFunc2";
-            this.buttonFunc2.Size = new System.Drawing.Size(75, 23);
-            this.buttonFunc2.TabIndex = 13;
-            this.buttonFunc2.Text = "Mod. Fa";
-            this.buttonFunc2.UseVisualStyleBackColor = true;
-            this.buttonFunc2.Click += new System.EventHandler(this.buttonFunc_Click);
+            this.buttonModFa.Location = new System.Drawing.Point(498, 64);
+            this.buttonModFa.Name = "buttonModFa";
+            this.buttonModFa.Size = new System.Drawing.Size(75, 23);
+            this.buttonModFa.TabIndex = 15;
+            this.buttonModFa.Text = "Mod. Fa";
+            this.buttonModFa.UseVisualStyleBackColor = true;
+            this.buttonModFa.Click += new System.EventHandler(this.buttonFunc_Click);
             // 
             // buttonExecuteTal
             // 
-            this.buttonExecuteTal.Location = new System.Drawing.Point(498, 64);
+            this.buttonExecuteTal.Location = new System.Drawing.Point(579, 64);
             this.buttonExecuteTal.Name = "buttonExecuteTal";
             this.buttonExecuteTal.Size = new System.Drawing.Size(75, 23);
-            this.buttonExecuteTal.TabIndex = 14;
+            this.buttonExecuteTal.TabIndex = 16;
             this.buttonExecuteTal.Text = "Execute Tal";
             this.buttonExecuteTal.UseVisualStyleBackColor = true;
             this.buttonExecuteTal.Click += new System.EventHandler(this.buttonFunc_Click);
@@ -224,7 +225,7 @@ namespace PsdzClient
             this.progressBarEvent.Location = new System.Drawing.Point(12, 415);
             this.progressBarEvent.Name = "progressBarEvent";
             this.progressBarEvent.Size = new System.Drawing.Size(140, 23);
-            this.progressBarEvent.TabIndex = 15;
+            this.progressBarEvent.TabIndex = 18;
             // 
             // labelProgressEvent
             // 
@@ -233,7 +234,7 @@ namespace PsdzClient
             this.labelProgressEvent.Location = new System.Drawing.Point(158, 420);
             this.labelProgressEvent.Name = "labelProgressEvent";
             this.labelProgressEvent.Size = new System.Drawing.Size(21, 13);
-            this.labelProgressEvent.TabIndex = 16;
+            this.labelProgressEvent.TabIndex = 19;
             this.labelProgressEvent.Text = "0%";
             // 
             // checkBoxIcom
@@ -242,7 +243,7 @@ namespace PsdzClient
             this.checkBoxIcom.Location = new System.Drawing.Point(186, 40);
             this.checkBoxIcom.Name = "checkBoxIcom";
             this.checkBoxIcom.Size = new System.Drawing.Size(53, 17);
-            this.checkBoxIcom.TabIndex = 17;
+            this.checkBoxIcom.TabIndex = 7;
             this.checkBoxIcom.Text = "ICOM";
             this.checkBoxIcom.UseVisualStyleBackColor = true;
             // 
@@ -251,10 +252,20 @@ namespace PsdzClient
             this.buttonVehicleSearch.Location = new System.Drawing.Point(255, 36);
             this.buttonVehicleSearch.Name = "buttonVehicleSearch";
             this.buttonVehicleSearch.Size = new System.Drawing.Size(75, 23);
-            this.buttonVehicleSearch.TabIndex = 18;
+            this.buttonVehicleSearch.TabIndex = 8;
             this.buttonVehicleSearch.Text = "Search";
             this.buttonVehicleSearch.UseVisualStyleBackColor = true;
             this.buttonVehicleSearch.Click += new System.EventHandler(this.buttonVehicleSearch_Click);
+            // 
+            // buttonCreateOptions
+            // 
+            this.buttonCreateOptions.Location = new System.Drawing.Point(336, 64);
+            this.buttonCreateOptions.Name = "buttonCreateOptions";
+            this.buttonCreateOptions.Size = new System.Drawing.Size(75, 23);
+            this.buttonCreateOptions.TabIndex = 13;
+            this.buttonCreateOptions.Text = "List Options";
+            this.buttonCreateOptions.UseVisualStyleBackColor = true;
+            this.buttonCreateOptions.Click += new System.EventHandler(this.buttonFunc_Click);
             // 
             // FormMain
             // 
@@ -263,14 +274,15 @@ namespace PsdzClient
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonAbort;
             this.ClientSize = new System.Drawing.Size(810, 450);
+            this.Controls.Add(this.buttonCreateOptions);
             this.Controls.Add(this.buttonVehicleSearch);
             this.Controls.Add(this.checkBoxIcom);
             this.Controls.Add(this.labelProgressEvent);
             this.Controls.Add(this.progressBarEvent);
             this.Controls.Add(this.buttonExecuteTal);
-            this.Controls.Add(this.buttonFunc2);
+            this.Controls.Add(this.buttonModFa);
             this.Controls.Add(this.labelIstaFolder);
-            this.Controls.Add(this.buttonFunc1);
+            this.Controls.Add(this.buttonModILevel);
             this.Controls.Add(this.buttonDisconnect);
             this.Controls.Add(this.buttonConnect);
             this.Controls.Add(this.labelVehicleIp);
@@ -309,14 +321,15 @@ namespace PsdzClient
         private System.Windows.Forms.Label labelVehicleIp;
         private System.Windows.Forms.Button buttonConnect;
         private System.Windows.Forms.Button buttonDisconnect;
-        private System.Windows.Forms.Button buttonFunc1;
+        private System.Windows.Forms.Button buttonModILevel;
         private System.Windows.Forms.Label labelIstaFolder;
-        private System.Windows.Forms.Button buttonFunc2;
+        private System.Windows.Forms.Button buttonModFa;
         private System.Windows.Forms.Button buttonExecuteTal;
         private System.Windows.Forms.ProgressBar progressBarEvent;
         private System.Windows.Forms.Label labelProgressEvent;
         private System.Windows.Forms.CheckBox checkBoxIcom;
         private System.Windows.Forms.Button buttonVehicleSearch;
+        private System.Windows.Forms.Button buttonCreateOptions;
     }
 }
 

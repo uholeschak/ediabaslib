@@ -35,6 +35,13 @@ namespace PsdzClient
 {
     public partial class FormMain : Form
     {
+        private enum OperationType
+        {
+            CreateOptions,
+            BuildTal,
+            ExecuteTal,
+        }
+
         private const string DealerId = "32395";
         private const string DefaultIp = @"127.0.0.1";
         private const string TitleLang = "En";
@@ -102,9 +109,10 @@ namespace PsdzClient
             buttonStopHost.Enabled = !active && hostRunning;
             buttonConnect.Enabled = !active && hostRunning && !vehicleConnected;
             buttonDisconnect.Enabled = !active && hostRunning && vehicleConnected;
-            buttonFunc1.Enabled = !active && hostRunning && vehicleConnected;
-            buttonFunc2.Enabled = buttonFunc1.Enabled;
-            buttonExecuteTal.Enabled = buttonFunc1.Enabled && talPresent;
+            buttonCreateOptions.Enabled = !active && hostRunning && vehicleConnected;
+            buttonModILevel.Enabled = buttonCreateOptions.Enabled;
+            buttonModFa.Enabled = buttonCreateOptions.Enabled;
+            buttonExecuteTal.Enabled = buttonModILevel.Enabled && talPresent;
             buttonClose.Enabled = !active;
             buttonAbort.Enabled = active && abortPossible;
         }
@@ -227,12 +235,6 @@ namespace PsdzClient
                 UpdateStatus(sbResult.ToString());
 
                 programmingService.PdszDatabase.ResetSwiRules();
-                if (programmingService.PdszDatabase.SwiRegisterTree != null)
-                {
-                    sbResult.AppendLine("Swi Tree:");
-                    sbResult.AppendLine(programmingService.PdszDatabase.SwiRegisterTree.ToString(ClientContext.Language));
-                    UpdateStatus(sbResult.ToString());
-                }
                 return true;
             }
             catch (Exception ex)
@@ -507,12 +509,12 @@ namespace PsdzClient
             }
         }
 
-        private async Task<bool> VehicleFunctionsTask(bool executeTal, List<string> faRemList = null, List<string> faAddList = null)
+        private async Task<bool> VehicleFunctionsTask(OperationType operationType, List<string> faRemList = null, List<string> faAddList = null)
         {
-            return await Task.Run(() => VehicleFunctions(executeTal, faRemList, faAddList)).ConfigureAwait(false);
+            return await Task.Run(() => VehicleFunctions(operationType, faRemList, faAddList)).ConfigureAwait(false);
         }
 
-        private bool VehicleFunctions(bool executeTal, List<string> faRemList, List<string> faAddList)
+        private bool VehicleFunctions(OperationType operationType, List<string> faRemList, List<string> faAddList)
         {
             StringBuilder sbResult = new StringBuilder();
 
@@ -547,7 +549,7 @@ namespace PsdzClient
                 UpdateStatus(sbResult.ToString());
                 _cts?.Token.ThrowIfCancellationRequested();
 
-                if (executeTal)
+                if (operationType == OperationType.ExecuteTal)
                 {
                     sbResult.AppendLine("Execute TAL");
                     UpdateStatus(sbResult.ToString());
@@ -804,7 +806,8 @@ namespace PsdzClient
                 }
 
                 bool bModifyFa = false;
-                if (faRemList != null && faAddList != null && (faRemList.Count > 0 || faAddList.Count > 0))
+                if (operationType == OperationType.BuildTal &&
+                    faRemList != null && faAddList != null && (faRemList.Count > 0 || faAddList.Count > 0))
                 {
                     bModifyFa = true;
                     sbResult.Append("FaRem:");
@@ -964,6 +967,17 @@ namespace PsdzClient
                 }
                 UpdateStatus(sbResult.ToString());
                 _cts?.Token.ThrowIfCancellationRequested();
+                if (operationType == OperationType.CreateOptions)
+                {
+                    programmingService.PdszDatabase.ReadSwiRegister(_psdzContext.Vehicle);
+                    if (programmingService.PdszDatabase.SwiRegisterTree != null)
+                    {
+                        sbResult.AppendLine("Swi Tree:");
+                        sbResult.AppendLine(programmingService.PdszDatabase.SwiRegisterTree.ToString(ClientContext.Language));
+                        UpdateStatus(sbResult.ToString());
+                    }
+                    return true;
+                }
 
                 IPsdzReadEcuUidResultCto psdzReadEcuUid = programmingService.Psdz.SecurityManagementService.readEcuUid(_psdzContext.Connection, psdzEcuIdentifiers, _psdzContext.SvtActual);
 
@@ -1112,7 +1126,7 @@ namespace PsdzClient
             {
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Exception: {0}", ex.Message));
                 UpdateStatus(sbResult.ToString());
-                if (!executeTal)
+                if (operationType != OperationType.ExecuteTal)
                 {
                     _psdzContext.Tal = null;
                 }
@@ -1275,11 +1289,20 @@ namespace PsdzClient
                 return;
             }
 
-            bool executeTal = false;
+            OperationType operationType = OperationType.CreateOptions;
             List<string> faRemList = null;
             List<string> faAddList = null;
-            if (sender == buttonFunc2)
+            if (sender == buttonCreateOptions)
             {
+                operationType = OperationType.CreateOptions;
+            }
+            else if (sender == buttonModILevel)
+            {
+                operationType = OperationType.BuildTal;
+            }
+            else if (sender == buttonModFa)
+            {
+                operationType = OperationType.BuildTal;
                 faRemList = new List<string>();
                 faAddList = new List<string>();
 
@@ -1288,11 +1311,11 @@ namespace PsdzClient
             }
             else if (sender == buttonExecuteTal)
             {
-                executeTal = true;
+                operationType = OperationType.ExecuteTal;
             }
 
             _cts = new CancellationTokenSource();
-            VehicleFunctionsTask(executeTal, faRemList, faAddList).ContinueWith(task =>
+            VehicleFunctionsTask(operationType, faRemList, faAddList).ContinueWith(task =>
             {
                 TaskActive = false;
                 _cts.Dispose();

@@ -866,8 +866,9 @@ namespace PsdzClient
             {
                 StringBuilder sb = new StringBuilder();
                 sb.Append(prefix);
+                string ruleResult = RuleResult != null ? RuleResult.Value.ToString() : "-";
                 sb.Append(string.Format(CultureInfo.InvariantCulture,
-                    "SwiRule: Id={0}, Rule='{1}'", Id, RuleExpression.ToString()));
+                    "SwiRule: Id={0}, Result={1}, Rule='{2}'", Id, ruleResult, RuleExpression.ToString()));
                 return sb.ToString();
             }
         }
@@ -893,7 +894,6 @@ namespace PsdzClient
             _typeKeyClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"Typschluessel");
             _swiRuleDict = new Dictionary<string, SwiRule>();
             SwiRegisterTree = null;
-            ReadSwiRegister();
             ClientContext.Database = this;
         }
 
@@ -961,7 +961,7 @@ namespace PsdzClient
             return true;
         }
 
-        public void ReadSwiRegister()
+        public void ReadSwiRegister(Vehicle vehicle, IFFMDynamicResolver ffmResolver = null)
         {
             List<SwiRegister> swiRegisterRoot = GetSwiRegistersByParentId(null);
             if (swiRegisterRoot != null)
@@ -970,7 +970,7 @@ namespace PsdzClient
             }
 
             ReadSwiRegisterTree(SwiRegisterTree);
-            GetSwiActionsForTree(SwiRegisterTree);
+            GetSwiActionsForTree(SwiRegisterTree, vehicle, ffmResolver);
         }
 
         public void ReadSwiRegisterTree(SwiRegister swiRegister)
@@ -991,7 +991,7 @@ namespace PsdzClient
             }
         }
 
-        public void GetSwiActionsForTree(SwiRegister swiRegister)
+        public void GetSwiActionsForTree(SwiRegister swiRegister, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
         {
             if (string.IsNullOrEmpty(swiRegister.Id))
             {
@@ -1004,6 +1004,10 @@ namespace PsdzClient
                 foreach (SwiAction swiAction in swiRegister.SwiActions)
                 {
                     swiAction.SwiInfoObjs = GetServiceProgramsForSwiAction(swiAction);
+                    if (swiAction.SwiRule != null)
+                    {
+                        swiAction.SwiRule.EvaluateRule(vehicle, ffmResolver);
+                    }
                 }
             }
 
@@ -1011,7 +1015,7 @@ namespace PsdzClient
             {
                 foreach (SwiRegister swiChild in swiRegister.Children)
                 {
-                    GetSwiActionsForTree(swiChild);
+                    GetSwiActionsForTree(swiChild, vehicle, ffmResolver);
                 }
             }
         }
