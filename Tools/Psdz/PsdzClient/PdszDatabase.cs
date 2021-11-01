@@ -1008,6 +1008,17 @@ namespace PsdzClient
                     {
                         swiAction.SwiRule.EvaluateRule(vehicle, ffmResolver);
                     }
+
+                    if (swiAction.SwiInfoObjs != null)
+                    {
+                        foreach (SwiInfoObj swiInfoObj in swiAction.SwiInfoObjs)
+                        {
+                            if (swiInfoObj.SwiRule != null)
+                            {
+                                swiInfoObj.SwiRule.EvaluateRule(vehicle, ffmResolver);
+                            }
+                        }
+                    }
                 }
             }
 
