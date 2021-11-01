@@ -1381,7 +1381,7 @@ namespace PsdzClient
             EcuRefClique ecuRefClique = null;
             try
             {
-                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, ECUCLIQUEID, FROM XEP_REFECUCLIQUES WHERE (ID = {0})", ecuRefId);
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, ECUCLIQUEID FROM XEP_REFECUCLIQUES WHERE (ID = {0})", ecuRefId);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
