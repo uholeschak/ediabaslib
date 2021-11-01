@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Programming.API;
+using BMW.Rheingold.Programming.Common;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.Svb;
@@ -309,6 +310,8 @@ namespace PsdzClient.Programming
             Vehicle.VIN17 = DetectVehicle.Vin;
             Vehicle.Modelljahr = DetectVehicle.ConstructYear;
             Vehicle.Modellmonat = DetectVehicle.ConstructMonth;
+
+            Vehicle.FA = ProgrammingUtils.BuildVehicleFa(FaActual);
 
             Vehicle.ECU.Clear();
             ISvt svt = programmingObjectBuilder.Build(psdzStandardSvt);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -118,6 +119,25 @@ namespace BMW.Rheingold.Programming.Common
 			}
 			return Regex.Replace(xmlText.Trim(), ">\\s+<", "><");
 		}
+
+        public static FA BuildVehicleFa(IPsdzFa faInput)
+        {
+            if (faInput == null)
+            {
+                return null;
+            }
+            FA fa = new FA();
+            fa.VERSION = faInput.FaVersion.ToString(CultureInfo.InvariantCulture);
+            //fa.BR = FormatConverter.ConvertToBn2020ConformModelSeries(faInput.Entwicklungsbaureihe);
+            fa.LACK = faInput.Lackcode;
+            fa.POLSTER = faInput.Polstercode;
+            fa.TYPE = faInput.Type;
+            fa.C_DATE = faInput.Zeitkriterium;
+            fa.E_WORT = ((faInput.EWords != null) ? new ObservableCollection<string>(faInput.EWords) : null);
+            fa.HO_WORT = ((faInput.HOWords != null) ? new ObservableCollection<string>(faInput.HOWords) : null);
+            fa.SA = ((faInput.Salapas != null) ? new ObservableCollection<string>(faInput.Salapas) : null);
+            return fa;
+        }
 
         public static BMW.Rheingold.CoreFramework.Contracts.Programming.IFa BuildFa(IPsdzStandardFa faInput)
         {
