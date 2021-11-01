@@ -1550,6 +1550,16 @@ namespace PsdzClient
             return ecuReps;
         }
 
+        public EcuReps FindEcuRep(EcuClique ecuClique)
+        {
+            if (ecuClique == null || string.IsNullOrEmpty(ecuClique.EcuRepId))
+            {
+                return null;
+            }
+
+            return GetEcuRepsById(ecuClique.EcuRepId);
+        }
+
         public bool GetSwiActionsForEcuVariant(EcuInfo ecuInfo)
         {
             if (ecuInfo.EcuVar == null || string.IsNullOrEmpty(ecuInfo.EcuVar.Id))

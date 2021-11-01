@@ -279,19 +279,18 @@ namespace BMW.Rheingold.Programming.API
                 {
                     //ecuObj.XepEcuVariant = xep_ECUVARIANTS;
                     ecuObj.EcuVariant = ecuVar.Name.ToUpper(CultureInfo.InvariantCulture);
-					//ecuObj.XepEcuClique = this.vdc.FindEcuClique(xep_ECUVARIANTS);
-                    PdszDatabase.EcuGroup ecuGroup = database.FindEcuGroup(ecuVar, this.vehicle, this.ffmResolver);
+                    PdszDatabase.EcuClique ecuClique = database.FindEcuClique(ecuVar);
+					//ecuObj.XepEcuClique = ecuClique;
+					PdszDatabase.EcuGroup ecuGroup = database.FindEcuGroup(ecuVar, this.vehicle, this.ffmResolver);
                     if (ecuGroup != null)
                     {
                         ecuObj.EcuGroup = ecuGroup.Name.ToUpper(CultureInfo.InvariantCulture);
                     }
-#if false
-					XEP_ECUREPS xep_ECUREPS = database.FindEcuRep(ecuObj.XepEcuClique);
-                    if (xep_ECUREPS != null)
+                    PdszDatabase.EcuReps ecuReps = database.FindEcuRep(ecuClique);
+                    if (ecuReps != null)
                     {
-                        ecuObj.EcuRep = xep_ECUREPS.SteuergeraeteKuerzel;
+                        ecuObj.EcuRep = ecuReps.EcuShortcut;
                     }
-#endif
                 }
             }
 
