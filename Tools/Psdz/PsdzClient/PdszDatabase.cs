@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data.SQLite;
 using System.Globalization;
 using System.IO;
@@ -1086,6 +1087,74 @@ namespace PsdzClient
             }
 
             return ecuVarList;
+        }
+
+        public EcuVar FindEcuVariantFromBntn(string bnTnName, int? diagAddrAsInt, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
+        {
+            if (string.IsNullOrEmpty(bnTnName))
+            {
+                return null;
+            }
+            List<EcuVar> ecuVars = FindEcuVariantsFromBntn(bnTnName, vehicle, ffmResolver);
+            if (ecuVars == null || ecuVars.Count == 0)
+            {
+                return null;
+            }
+
+            EcuVar ecuVar = ecuVars.FirstOrDefault((EcuVar x) => vehicle.ECU != null && vehicle.ECU.Any((ECU i) => string.Compare(x.Name, i.ECU_SGBD, StringComparison.InvariantCultureIgnoreCase) == 0));
+            if (ecuVar != null)
+            {
+                return ecuVar;
+            }
+
+            if (diagAddrAsInt == null)
+            {
+                return null;
+            }
+
+            ObservableCollection<ECU> ecu = vehicle.ECU;
+            ECU ecu2 = (ecu != null) ? ecu.FirstOrDefault(delegate (ECU v)
+            {
+                long id_SG_ADR = v.ID_SG_ADR;
+                int? diagAddrAsInt2 = diagAddrAsInt;
+                long? num = (diagAddrAsInt2 != null) ? new long?((long)diagAddrAsInt2.GetValueOrDefault()) : null;
+                return id_SG_ADR == num.GetValueOrDefault() & num != null;
+            }) : null;
+
+            if (ecu2 != null && !string.IsNullOrEmpty(ecu2.ECU_SGBD))
+            {
+                ecuVar = GetEcuVariantByName(ecu2.ECU_SGBD);
+            }
+
+            return ecuVar;
+        }
+
+        private List<EcuVar> FindEcuVariantsFromBntn(string bnTnName, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
+        {
+            if (string.IsNullOrEmpty(bnTnName))
+            {
+                return null;
+            }
+
+            List<EcuPrgVar> ecuPrgVars = GetEcuProgrammingVariantByName(bnTnName, vehicle, ffmResolver);
+            if (ecuPrgVars == null)
+            {
+                return null;
+            }
+
+            List<EcuVar> ecuVars = new List<EcuVar>();
+            foreach (EcuPrgVar ecuPrgVar in ecuPrgVars)
+            {
+                EcuVar ecuVar = GetEcuVariantById(ecuPrgVar.EcuVarId);
+                if (ecuVar != null)
+                {
+                    if (EvaluateXepRulesById(ecuVar.Id, vehicle, ffmResolver, null))
+                    {
+                        ecuVars.Add(ecuVar);
+                    }
+                }
+            }
+            return ecuVars;
         }
 
         public List<EcuPrgVar> GetEcuProgrammingVariantByName(string bnTnName, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
