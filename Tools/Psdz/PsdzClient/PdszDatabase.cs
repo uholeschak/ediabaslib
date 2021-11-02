@@ -797,7 +797,7 @@ namespace PsdzClient
         {
             public SwiDiagObj(string id, string nodeClass,
                 string titleId, string versionNum, string name, string failWeight, string hidden,
-                string safetyRelevant, string sortOrder, EcuTranslation ecuTranslation)
+                string safetyRelevant, string controlId, string sortOrder, EcuTranslation ecuTranslation)
             {
                 Id = id;
                 NodeClass = nodeClass;
@@ -807,6 +807,7 @@ namespace PsdzClient
                 FailWeight = failWeight;
                 Hidden = hidden;
                 SafetyRelevant = safetyRelevant;
+                ControlId = controlId;
                 SortOrder = sortOrder;
                 EcuTranslation = ecuTranslation;
             }
@@ -829,6 +830,8 @@ namespace PsdzClient
 
             public string Identifier { get; set; }
 
+            public string ControlId { get; set; }
+
             public string SortOrder { get; set; }
 
             public EcuTranslation EcuTranslation { get; set; }
@@ -840,8 +843,8 @@ namespace PsdzClient
                 StringBuilder sb = new StringBuilder();
                 sb.Append(prefix);
                 sb.Append(string.Format(CultureInfo.InvariantCulture,
-                    "SwiInfoObj: Id={0}, Class={1}, TitleId={2}, Name={3}, Identification={4}, Title='{5}'",
-                    Id, NodeClass, TitleId, Name, Identifier, EcuTranslation.GetTitle(language)));
+                    "SwiInfoObj: Id={0}, Class={1}, TitleId={2}, Name={3}, Identification={4}, ControlId={5}, Title='{6}'",
+                    Id, NodeClass, TitleId, Name, Identifier, ControlId, EcuTranslation.GetTitle(language)));
                 if (SwiRule != null)
                 {
                     string prefixChild = prefix + " ";
@@ -1918,16 +1921,7 @@ namespace PsdzClient
                     {
                         while (reader.Read())
                         {
-                            string id = reader["ID"].ToString().Trim();
-                            string nodeClass = reader["NODECLASS"].ToString().Trim();
-                            string titleId = reader["TITLEID"].ToString().Trim();
-                            string versionNum = reader["VERSIONNUMBER"].ToString().Trim();
-                            string name = reader["NAME"].ToString().Trim();
-                            string failWeight = reader["FAILUREWEIGHT"].ToString().Trim();
-                            string hidden = reader["VERSTECKT"].ToString().Trim();
-                            string safetyRelevant = reader["SICHERHEITSRELEVANT"].ToString().Trim();
-                            string sortOrder = reader["SORT_ORDER"].ToString().Trim();
-                            SwiDiagObj swiDiagObj = new SwiDiagObj(id, nodeClass, titleId, versionNum, name, failWeight, hidden, safetyRelevant, sortOrder, GetTranslation(reader));
+                            SwiDiagObj swiDiagObj = ReadXepSwiDiagObj(reader);
                             if (vehicle != null)
                             {
                                 if (IsDiagObjectValid(swiDiagObj.Id, vehicle, ffmDynamicResolver))
@@ -1999,13 +1993,23 @@ namespace PsdzClient
                     return true;
                 }
 
-                if (EvaluateXepRulesById(swiDiagObj.Id, vehicle, ffmDynamicResolver))
+                if (string.IsNullOrEmpty(swiDiagObj.ControlId) && EvaluateXepRulesById(swiDiagObj.Id, vehicle, ffmDynamicResolver))
                 {
                     swiDiagObjHash.AddIfNotContains(swiDiagObj);
                 }
             }
-            return true;
 
+            if (swiDiagObjHash.Count > 0)
+            {
+                foreach (SwiDiagObj swiDiagObj in swiDiagObjHash)
+                {
+                    if (!string.IsNullOrEmpty(swiDiagObj.ControlId) && AreAllParentDiagObjectsValid(swiDiagObj.ControlId, vehicle, ffmDynamicResolver))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         private List<string> GetParentDiagObjectControlIdsForControlId(string controlId)
@@ -2426,7 +2430,22 @@ namespace PsdzClient
                 infoType, infoFormat, docNum, priority, identifier, GetTranslation(reader));
         }
 
-    private static EcuTranslation GetTranslation(SQLiteDataReader reader, string prefix = "TITLE", string language = null)
+        private static SwiDiagObj ReadXepSwiDiagObj(SQLiteDataReader reader)
+        {
+            string id = reader["ID"].ToString().Trim();
+            string nodeClass = reader["NODECLASS"].ToString().Trim();
+            string titleId = reader["TITLEID"].ToString().Trim();
+            string versionNum = reader["VERSIONNUMBER"].ToString().Trim();
+            string name = reader["NAME"].ToString().Trim();
+            string failWeight = reader["FAILUREWEIGHT"].ToString().Trim();
+            string hidden = reader["VERSTECKT"].ToString().Trim();
+            string safetyRelevant = reader["SICHERHEITSRELEVANT"].ToString().Trim();
+            string controlId = reader["CONTROLID"].ToString().Trim();
+            string sortOrder = reader["SORT_ORDER"].ToString().Trim();
+            return new SwiDiagObj(id, nodeClass, titleId, versionNum, name, failWeight, hidden, safetyRelevant, controlId, sortOrder, GetTranslation(reader));
+        }
+
+        private static EcuTranslation GetTranslation(SQLiteDataReader reader, string prefix = "TITLE", string language = null)
         {
             return new EcuTranslation(
                 language == null || language.ToLowerInvariant() == "de" ? reader[prefix + "_DEDE"].ToString() : string.Empty,
