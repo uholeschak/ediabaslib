@@ -36,7 +36,7 @@ namespace PsdzClient.Core
 			{
 				return false;
 			}
-            PdszDatabase.Equipement equipmentById = database.GetEquipmentById(this.value.ToString(CultureInfo.InvariantCulture));
+            PdszDatabase.Equipment equipmentById = database.GetEquipmentById(this.value.ToString(CultureInfo.InvariantCulture));
 			if (equipmentById == null)
 			{
 				return false;

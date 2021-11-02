@@ -689,42 +689,6 @@ namespace PsdzClient
                 DocNum = docNum;
                 Priority = priority;
                 Identifier = identifier;
-                FailWeight = string.Empty;
-                SortOrder = string.Empty;
-                EcuTranslation = ecuTranslation;
-            }
-
-            public SwiInfoObj(SwiActionDatabaseLinkType? linkType, string id, string nodeClass,
-                string titleId, string versionNum, string name, string failWeight, string hidden,
-                string safetyRelevant, string sortOrder, EcuTranslation ecuTranslation)
-            {
-                LinkType = linkType;
-                Id = id;
-                NodeClass = nodeClass;
-                Assembly = string.Empty;
-                VersionNum = versionNum;
-                ProgramType = string.Empty;
-                SafetyRelevant = safetyRelevant;
-                TitleId = titleId;
-                General = string.Empty;
-                TelSrvId = string.Empty;
-                VehicleComm = string.Empty;
-                Measurement = string.Empty;
-                Hidden = hidden;
-                Name = name;
-                InformationType = string.Empty;
-                Identification = string.Empty;
-                InformationFormat = string.Empty;
-                SiNumber = string.Empty;
-                TargetILevel = string.Empty;
-                ControlId = string.Empty;
-                InfoType = string.Empty;
-                InfoFormat = string.Empty;
-                DocNum = string.Empty;
-                Priority = string.Empty;
-                Identifier = string.Empty;
-                FailWeight = failWeight;
-                SortOrder = sortOrder;
                 EcuTranslation = ecuTranslation;
             }
 
@@ -798,10 +762,6 @@ namespace PsdzClient
 
             public string Identifier { get; set; }
 
-            public string FailWeight { get; set; }
-
-            public string SortOrder { get; set; }
-
             public EcuTranslation EcuTranslation { get; set; }
 
             public SwiRule SwiRule { get; set; }
@@ -830,6 +790,65 @@ namespace PsdzClient
                 }
 
                 return null;
+            }
+        }
+
+        public class SwiDiagObj
+        {
+            public SwiDiagObj(string id, string nodeClass,
+                string titleId, string versionNum, string name, string failWeight, string hidden,
+                string safetyRelevant, string sortOrder, EcuTranslation ecuTranslation)
+            {
+                Id = id;
+                NodeClass = nodeClass;
+                TitleId = titleId;
+                VersionNum = versionNum;
+                Name = name;
+                FailWeight = failWeight;
+                Hidden = hidden;
+                SafetyRelevant = safetyRelevant;
+                SortOrder = sortOrder;
+                EcuTranslation = ecuTranslation;
+            }
+
+            public string Id { get; set; }
+
+            public string NodeClass { get; set; }
+
+            public string TitleId { get; set; }
+
+            public string VersionNum { get; set; }
+
+            public string Name { get; set; }
+
+            public string FailWeight { get; set; }
+
+            public string Hidden { get; set; }
+
+            public string SafetyRelevant { get; set; }
+
+            public string Identifier { get; set; }
+
+            public string SortOrder { get; set; }
+
+            public EcuTranslation EcuTranslation { get; set; }
+
+            public SwiRule SwiRule { get; set; }
+
+            public string ToString(string language, string prefix = "")
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(prefix);
+                sb.Append(string.Format(CultureInfo.InvariantCulture,
+                    "SwiInfoObj: Id={0}, Class={1}, TitleId={2}, Name={3}, Identification={4}, Title='{5}'",
+                    Id, NodeClass, TitleId, Name, Identifier, EcuTranslation.GetTitle(language)));
+                if (SwiRule != null)
+                {
+                    string prefixChild = prefix + " ";
+                    sb.AppendLine();
+                    sb.Append(SwiRule.ToString(prefixChild));
+                }
+                return sb.ToString();
             }
         }
 
@@ -1789,10 +1808,10 @@ namespace PsdzClient
                         while (reader.Read())
                         {
                             string controlId = reader["DIAGNOSISOBJECTCONTROLID"].ToString().Trim();
-                            SwiInfoObj swiInfoObj = GetDiagObjectsByControlId(controlId, SwiInfoObj.SwiActionDatabaseLinkType.SwiActionDiagnosticLink, vehicle, ffmDynamicResolver);
-                            if (swiInfoObj != null)
+                            List<SwiDiagObj> swiInfoObjs = GetDiagObjectsByControlId(controlId, vehicle, ffmDynamicResolver);
+                            foreach (SwiDiagObj swiDiagObj in swiInfoObjs)
                             {
-                                swiInfoObjList.Add(swiInfoObj);
+                                
                             }
                         }
                     }
@@ -1840,14 +1859,52 @@ namespace PsdzClient
             return swiInfoObj;
         }
 
-        public SwiInfoObj GetDiagObjectsByControlId(string controlId, SwiInfoObj.SwiActionDatabaseLinkType linkType, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
+        public List<SwiInfoObj> GetInfoObjectsByDiagObjectControlId(string infoObjectId, string linkTypeId)
+        {
+            if (string.IsNullOrEmpty(infoObjectId))
+            {
+                return null;
+            }
+
+            List<SwiInfoObj> swiInfoObjs = new List<SwiInfoObj>();
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture,
+                    @"SELECT ID, NODECLASS, ASSEMBLY, VERSIONNUMBER, PROGRAMTYPE, SICHERHEITSRELEVANT, TITLEID, " +
+                    DatabaseFunctions.SqlTitleItems + ", GENERELL, TELESERVICEKENNUNG, FAHRZEUGKOMMUNIKATION, MESSTECHNIK, VERSTECKT, NAME, INFORMATIONSTYP, " +
+                    @"IDENTIFIKATOR, INFORMATIONSFORMAT, SINUMMER, ZIELISTUFE, CONTROLID, INFOTYPE, INFOFORMAT, DOCNUMBER, PRIORITY, IDENTIFIER FROM XEP_INFOOBJECTS WHERE XEP_INFOOBJECTS.ID = {0}",
+                    infoObjectId);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            SwiInfoObj swiInfoObj = ReadXepSwiInfoObj(reader, SwiInfoObj.GetLinkType(linkTypeId));
+                            if (swiInfoObj != null)
+                            {
+                                swiInfoObjs.Add(swiInfoObj);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return swiInfoObjs;
+        }
+
+        public List<SwiDiagObj> GetDiagObjectsByControlId(string controlId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
         {
             if (string.IsNullOrEmpty(controlId))
             {
                 return null;
             }
 
-            SwiInfoObj swiInfoObj = null;
+            List<SwiDiagObj> swiDiagObjs = new List<SwiDiagObj>();
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture,
@@ -1870,8 +1927,18 @@ namespace PsdzClient
                             string hidden = reader["VERSTECKT"].ToString().Trim();
                             string safetyRelevant = reader["SICHERHEITSRELEVANT"].ToString().Trim();
                             string sortOrder = reader["SORT_ORDER"].ToString().Trim();
-                            swiInfoObj = new SwiInfoObj(linkType, id, nodeClass, titleId, versionNum, name, failWeight, hidden, safetyRelevant,
-                                sortOrder, GetTranslation(reader));
+                            SwiDiagObj swiDiagObj = new SwiDiagObj(id, nodeClass, titleId, versionNum, name, failWeight, hidden, safetyRelevant, sortOrder, GetTranslation(reader));
+                            if (vehicle != null)
+                            {
+                                if (EvaluateXepRulesById(swiDiagObj.Id, vehicle, ffmDynamicResolver))
+                                {
+                                    swiDiagObjs.Add(swiDiagObj);
+                                }
+                            }
+                            else
+                            {
+                                swiDiagObjs.Add(swiDiagObj);
+                            }
                         }
                     }
                 }
@@ -1881,7 +1948,7 @@ namespace PsdzClient
                 return null;
             }
 
-            return swiInfoObj;
+            return swiDiagObjs;
         }
 
         public SwiRule GetRuleById(string ruleId)
