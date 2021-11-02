@@ -1930,8 +1930,7 @@ namespace PsdzClient
                             SwiDiagObj swiDiagObj = new SwiDiagObj(id, nodeClass, titleId, versionNum, name, failWeight, hidden, safetyRelevant, sortOrder, GetTranslation(reader));
                             if (vehicle != null)
                             {
-                                string diagObjectObjectId = GetDiagObjectObjectId(swiDiagObj.Id);
-                                if (EvaluateXepRulesById(swiDiagObj.Id, vehicle, ffmDynamicResolver, diagObjectObjectId))
+                                if (IsDiagObjectValid(swiDiagObj.Id, vehicle, ffmDynamicResolver))
                                 {
                                     swiDiagObjs.Add(swiDiagObj);
                                 }
@@ -1950,6 +1949,22 @@ namespace PsdzClient
             }
 
             return swiDiagObjs;
+        }
+
+        public bool IsDiagObjectValid(string diagObjectId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
+        {
+            if (vehicle == null)
+            {
+                return true;
+            }
+
+            string diagObjectObjectId = GetDiagObjectObjectId(diagObjectId);
+            if (!EvaluateXepRulesById(diagObjectId, vehicle, ffmDynamicResolver, diagObjectObjectId))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public string GetDiagObjectObjectId(string id)
