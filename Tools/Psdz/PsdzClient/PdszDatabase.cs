@@ -1964,12 +1964,80 @@ namespace PsdzClient
                 return false;
             }
 
-            string controlId = GetDiagObjectControlIdForDiagObjectId(diagObjectId);
-            if (string.IsNullOrEmpty(controlId))
+            string diagObjectControlId = GetDiagObjectControlIdForDiagObjectId(diagObjectId);
+            if (string.IsNullOrEmpty(diagObjectControlId))
             {
                 return true;
             }
+
+            if (AreAllParentDiagObjectsValid(diagObjectControlId, vehicle, ffmDynamicResolver))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool AreAllParentDiagObjectsValid(string diagObjectControlId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
+        {
+            List<string> idList = GetParentDiagObjectControlIdsForControlId(diagObjectControlId);
+            if (idList == null || idList.Count == 0)
+            {
+                return true;
+            }
+
+            HashSet<SwiDiagObj> swiDiagObjHash = new HashSet<SwiDiagObj>();
+            foreach (string parentId in idList)
+            {
+                if (string.IsNullOrEmpty(parentId))
+                {
+                    return true;
+                }
+
+                SwiDiagObj swiDiagObj = GetDiagObjectsByControlId(parentId, null, null).FirstOrDefault();
+                if (swiDiagObj == null)
+                {
+                    return true;
+                }
+
+                if (EvaluateXepRulesById(swiDiagObj.Id, vehicle, ffmDynamicResolver))
+                {
+                    swiDiagObjHash.AddIfNotContains(swiDiagObj);
+                }
+            }
             return true;
+
+        }
+
+        private List<string> GetParentDiagObjectControlIdsForControlId(string controlId)
+        {
+            if (string.IsNullOrEmpty(controlId))
+            {
+                return null;
+            }
+
+            List<string> idList = new List<string>();
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID FROM XEP_REFDIAGNOSISTREE WHERE (DIAGNOSISOBJECTCONTROLID = {0})", controlId);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string id = reader["ID"].ToString().Trim();
+                            idList.Add(id);
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return idList;
+
         }
 
         public string GetDiagObjectObjectId(string diagObjectId)
