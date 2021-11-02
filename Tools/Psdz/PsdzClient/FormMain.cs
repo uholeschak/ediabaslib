@@ -28,6 +28,7 @@ using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using BMW.Rheingold.Psdz.Model.Tal.TalStatus;
 using EdiabasLib;
+using log4net.Config;
 using PsdzClient.Core;
 using PsdzClient.Programming;
 
@@ -131,6 +132,16 @@ namespace PsdzClient
                 }
 
                 ClientContext.Language = TitleLang;
+
+                string appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase);
+                if (!string.IsNullOrEmpty(appDir))
+                {
+                    string log4NetConfig = Path.Combine(appDir, "log4net.xml");
+                    if (File.Exists(log4NetConfig))
+                    {
+                        XmlConfigurator.Configure(new System.IO.FileInfo(Path.Combine(appDir, "log4net.xml")));
+                    }
+                }
             }
             catch (Exception)
             {

@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
+using log4net;
 using PsdzClient.Core;
 
 namespace PsdzClient
@@ -871,6 +872,8 @@ namespace PsdzClient
                 return sb.ToString();
             }
         }
+
+        private static readonly ILog log = LogManager.GetLogger(typeof(PdszDatabase));
 
         private bool _disposed;
         private SQLiteConnection _mDbConnection;
