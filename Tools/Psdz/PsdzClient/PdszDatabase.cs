@@ -1964,20 +1964,36 @@ namespace PsdzClient
                 return false;
             }
 
+            string controlId = GetDiagObjectControlIdForDiagObjectId(diagObjectId);
+            if (string.IsNullOrEmpty(controlId))
+            {
+                return true;
+            }
             return true;
         }
 
-        public string GetDiagObjectObjectId(string id)
+        public string GetDiagObjectObjectId(string diagObjectId)
         {
-            if (string.IsNullOrEmpty(id))
+            string controlId = GetDiagObjectControlIdForDiagObjectId(diagObjectId);
+            if (string.IsNullOrEmpty(controlId))
+            {
+                controlId = diagObjectId;
+            }
+
+            return controlId;
+        }
+
+        public string GetDiagObjectControlIdForDiagObjectId(string diagObjectId)
+        {
+            if (string.IsNullOrEmpty(diagObjectId))
             {
                 return null;
             }
 
-            string controlId = id;
+            string controlId = null;
             try
             {
-                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT CONTROLID FROM XEP_DIAGNOSISOBJECTS (ID = {0})", id);
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT CONTROLID FROM XEP_DIAGNOSISOBJECTS (ID = {0})", diagObjectId);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
