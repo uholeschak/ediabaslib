@@ -954,7 +954,7 @@ namespace PsdzClient
                 }
                 foreach (SwiAction swiAction in ecuInfo.SwiActions)
                 {
-                    swiAction.SwiInfoObjs = GetServiceProgramsForSwiAction(swiAction);
+                    swiAction.SwiInfoObjs = GetServiceProgramsForSwiAction(swiAction, vehicle, ffmDynamicResolver);
                 }
             }
 
@@ -1003,7 +1003,7 @@ namespace PsdzClient
             {
                 foreach (SwiAction swiAction in swiRegister.SwiActions)
                 {
-                    swiAction.SwiInfoObjs = GetServiceProgramsForSwiAction(swiAction);
+                    swiAction.SwiInfoObjs = GetServiceProgramsForSwiAction(swiAction, vehicle, ffmResolver);
                     if (swiAction.SwiRule != null)
                     {
                         swiAction.SwiRule.EvaluateRule(vehicle, ffmResolver);
@@ -1737,7 +1737,7 @@ namespace PsdzClient
             return swiRegisterList;
         }
 
-        public List<SwiInfoObj> GetServiceProgramsForSwiAction(SwiAction swiAction)
+        public List<SwiInfoObj> GetServiceProgramsForSwiAction(SwiAction swiAction, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
         {
             if (string.IsNullOrEmpty(swiAction.Id))
             {
@@ -1762,8 +1762,11 @@ namespace PsdzClient
                             SwiInfoObj swiInfoObj = GetInfoObjectById(infoObjId, linkTypeId);
                             if (swiInfoObj != null)
                             {
-                                swiInfoObj.SwiRule = GetRuleById(infoObjId);
-                                swiInfoObjList.Add(swiInfoObj);
+                                if (EvaluateXepRulesById(infoObjId, vehicle, ffmDynamicResolver, swiInfoObj.ControlId))
+                                {
+                                    //swiInfoObj.SwiRule = GetRuleById(infoObjId);
+                                    swiInfoObjList.Add(swiInfoObj);
+                                }
                             }
                         }
                     }
@@ -1786,7 +1789,7 @@ namespace PsdzClient
                         while (reader.Read())
                         {
                             string controlId = reader["DIAGNOSISOBJECTCONTROLID"].ToString().Trim();
-                            SwiInfoObj swiInfoObj = GetDiagObjectsByControlId(controlId, SwiInfoObj.SwiActionDatabaseLinkType.SwiActionDiagnosticLink);
+                            SwiInfoObj swiInfoObj = GetDiagObjectsByControlId(controlId, SwiInfoObj.SwiActionDatabaseLinkType.SwiActionDiagnosticLink, vehicle, ffmDynamicResolver);
                             if (swiInfoObj != null)
                             {
                                 swiInfoObjList.Add(swiInfoObj);
@@ -1863,7 +1866,7 @@ namespace PsdzClient
             return swiInfoObj;
         }
 
-        public SwiInfoObj GetDiagObjectsByControlId(string controlId, SwiInfoObj.SwiActionDatabaseLinkType linkType)
+        public SwiInfoObj GetDiagObjectsByControlId(string controlId, SwiInfoObj.SwiActionDatabaseLinkType linkType, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
         {
             if (string.IsNullOrEmpty(controlId))
             {
