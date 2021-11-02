@@ -832,9 +832,9 @@ namespace PsdzClient
             }
         }
 
-        public class SwiRule
+        public class XepRule
         {
-            public SwiRule(string id, byte[] rule)
+            public XepRule(string id, byte[] rule)
             {
                 Id = id;
                 RuleExpression = RuleExpression.Deserialize(new MemoryStream(rule));
@@ -867,7 +867,7 @@ namespace PsdzClient
                 sb.Append(prefix);
                 string ruleResult = RuleResult != null ? RuleResult.Value.ToString() : "-";
                 sb.Append(string.Format(CultureInfo.InvariantCulture,
-                    "SwiRule: Id={0}, Result={1}, Rule='{2}'", Id, ruleResult, RuleExpression.ToString()));
+                    "XepRule: Id={0}, Result={1}, Rule='{2}'", Id, ruleResult, RuleExpression.ToString()));
                 return sb.ToString();
             }
         }
@@ -876,8 +876,8 @@ namespace PsdzClient
         private SQLiteConnection _mDbConnection;
         private string _rootENameClassId;
         private string _typeKeyClassId;
-        private Dictionary<string, SwiRule> _swiRuleDict;
-        public Dictionary<string, SwiRule> SwiRuleDict => _swiRuleDict;
+        private Dictionary<string, XepRule> _xepRuleDict;
+        public Dictionary<string, XepRule> XepRuleDict => _xepRuleDict;
         public SwiRegister SwiRegisterTree { get; private set; }
 
         public PdszDatabase(string istaFolder)
@@ -891,17 +891,30 @@ namespace PsdzClient
 
             _rootENameClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"RootEBezeichnung");
             _typeKeyClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"Typschluessel");
-            _swiRuleDict = new Dictionary<string, SwiRule>();
+            _xepRuleDict = new Dictionary<string, XepRule>();
             SwiRegisterTree = null;
             ClientContext.Database = this;
         }
 
-        public void ResetSwiRules()
+        public void ResetXepRules()
         {
-            foreach (KeyValuePair<string, SwiRule> keyValuePair in _swiRuleDict)
+            foreach (KeyValuePair<string, XepRule> keyValuePair in _xepRuleDict)
             {
                 keyValuePair.Value?.Reset();
             }
+        }
+
+        public string XepRulesToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (KeyValuePair<string, XepRule> keyValuePair in _xepRuleDict)
+            {
+                if (keyValuePair.Value != null)
+                {
+                    sb.AppendLine(keyValuePair.Value.ToString());
+                }
+            }
+            return sb.ToString();
         }
 
         public bool LinkSvtEcus(List<EcuInfo> ecuList, IPsdzSvt psdzSvt)
@@ -2058,16 +2071,16 @@ namespace PsdzClient
             return controlId;
         }
 
-        public SwiRule GetRuleById(string ruleId)
+        public XepRule GetRuleById(string ruleId)
         {
             if (string.IsNullOrEmpty(ruleId))
             {
                 return null;
             }
 
-            if (_swiRuleDict.TryGetValue(ruleId, out SwiRule swiRule))
+            if (_xepRuleDict.TryGetValue(ruleId, out XepRule xepRule))
             {
-                return swiRule;
+                return xepRule;
             }
 
             try
@@ -2081,7 +2094,7 @@ namespace PsdzClient
                         {
                             string id = reader["ID"].ToString().Trim();
                             byte[] rule = (byte[]) reader["RULE"];
-                            swiRule = new SwiRule(id, rule);
+                            xepRule = new XepRule(id, rule);
                         }
                     }
                 }
@@ -2091,8 +2104,8 @@ namespace PsdzClient
                 return null;
             }
 
-            _swiRuleDict.Add(ruleId, swiRule);
-            return swiRule;
+            _xepRuleDict.Add(ruleId, xepRule);
+            return xepRule;
         }
 
         public string LookupVehicleCharDeDeById(string characteristicId)
@@ -2251,13 +2264,13 @@ namespace PsdzClient
 
         public bool EvaluateXepRulesById(string id, Vehicle vehicle, IFFMDynamicResolver ffmResolver, string objectId = null)
         {
-            SwiRule swiRule = GetRuleById(id);
-            if (swiRule == null)
+            XepRule xepRule = GetRuleById(id);
+            if (xepRule == null)
             {
                 return true;
             }
 
-            return swiRule.EvaluateRule(vehicle, ffmResolver);
+            return xepRule.EvaluateRule(vehicle, ffmResolver);
         }
 
         private static Equipment ReadXepEquipment(SQLiteDataReader reader)

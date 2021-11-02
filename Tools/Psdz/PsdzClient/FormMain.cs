@@ -234,7 +234,7 @@ namespace PsdzClient
                 sbResult.AppendLine("Host started");
                 UpdateStatus(sbResult.ToString());
 
-                programmingService.PdszDatabase.ResetSwiRules();
+                programmingService.PdszDatabase.ResetXepRules();
                 return true;
             }
             catch (Exception ex)
@@ -959,7 +959,7 @@ namespace PsdzClient
                 programmingService.PdszDatabase.LinkSvtEcus(_psdzContext.DetectVehicle.EcuList, psdzSvt);
                 programmingService.PdszDatabase.GetEcuVariants(_psdzContext.DetectVehicle.EcuList);
                 _psdzContext.UpdateVehicle(programmingService.ProgrammingInfos.ProgrammingObjectBuilder, psdzStandardSvtNames);
-                programmingService.PdszDatabase.ResetSwiRules();
+                programmingService.PdszDatabase.ResetXepRules();
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecus: {0}", _psdzContext.DetectVehicle.EcuList.Count()));
                 foreach (PdszDatabase.EcuInfo ecuInfo in _psdzContext.DetectVehicle.EcuList)
                 {
@@ -974,8 +974,11 @@ namespace PsdzClient
                     {
                         sbResult.AppendLine("Swi Tree:");
                         sbResult.AppendLine(programmingService.PdszDatabase.SwiRegisterTree.ToString(ClientContext.Language));
-                        UpdateStatus(sbResult.ToString());
                     }
+
+                    sbResult.AppendLine("XepRules cache:");
+                    sbResult.Append(programmingService.PdszDatabase.XepRulesToString());
+                    UpdateStatus(sbResult.ToString());
                     return true;
                 }
 
