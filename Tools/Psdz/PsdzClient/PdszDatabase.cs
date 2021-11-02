@@ -558,8 +558,6 @@ namespace PsdzClient
 
             public List<SwiInfoObj> SwiInfoObjs { get; set; }
 
-            public SwiRule SwiRule { get; set; }
-
             public string ToString(string language, string prefix = "")
             {
                 StringBuilder sb = new StringBuilder();
@@ -569,11 +567,6 @@ namespace PsdzClient
                     Id, Name, ActionCategory, Selectable, ShowInPlan, Executable, EcuTranslation.GetTitle(language)));
 
                 string prefixChild = prefix + " ";
-                if (SwiRule != null)
-                {
-                    sb.AppendLine();
-                    sb.Append(SwiRule.ToString(prefixChild));
-                }
 
                 if (SwiInfoObjs != null)
                 {
@@ -764,8 +757,6 @@ namespace PsdzClient
 
             public EcuTranslation EcuTranslation { get; set; }
 
-            public SwiRule SwiRule { get; set; }
-
             public string ToString(string language, string prefix = "")
             {
                 StringBuilder sb = new StringBuilder();
@@ -773,12 +764,6 @@ namespace PsdzClient
                 sb.Append(string.Format(CultureInfo.InvariantCulture,
                     "SwiInfoObj: LinkType={0}, Id={1}, Class={2}, PrgType={3}, InformationType={4}, Identification={5}, ILevel={6}, InfoType={7}, Identifier={8}, Title='{9}'",
                     LinkType, Id, NodeClass, ProgramType, InformationType, Identification, TargetILevel, InfoType, Identifier, EcuTranslation.GetTitle(language)));
-                if (SwiRule != null)
-                {
-                    string prefixChild = prefix + " ";
-                    sb.AppendLine();
-                    sb.Append(SwiRule.ToString(prefixChild));
-                }
                 return sb.ToString();
             }
 
@@ -836,8 +821,6 @@ namespace PsdzClient
 
             public EcuTranslation EcuTranslation { get; set; }
 
-            public SwiRule SwiRule { get; set; }
-
             public string ToString(string language, string prefix = "")
             {
                 StringBuilder sb = new StringBuilder();
@@ -845,12 +828,6 @@ namespace PsdzClient
                 sb.Append(string.Format(CultureInfo.InvariantCulture,
                     "SwiInfoObj: Id={0}, Class={1}, TitleId={2}, Name={3}, Identification={4}, ControlId={5}, Title='{6}'",
                     Id, NodeClass, TitleId, Name, Identifier, ControlId, EcuTranslation.GetTitle(language)));
-                if (SwiRule != null)
-                {
-                    string prefixChild = prefix + " ";
-                    sb.AppendLine();
-                    sb.Append(SwiRule.ToString(prefixChild));
-                }
                 return sb.ToString();
             }
         }
@@ -968,7 +945,7 @@ namespace PsdzClient
                 GetSwiActionsForEcuGroup(ecuInfo);
                 foreach (EcuPrgVar ecuPrgVar in ecuInfo.EcuPrgVars)
                 {
-                    List<SwiAction> swiActions = GetSwiActionsForEcuProgrammingVariant(ecuPrgVar.Id);
+                    List<SwiAction> swiActions = GetSwiActionsForEcuProgrammingVariant(ecuPrgVar.Id, vehicle, ffmDynamicResolver);
                     if (swiActions != null)
                     {
                         ecuInfo.SwiActions.AddRange(swiActions);
@@ -1026,21 +1003,6 @@ namespace PsdzClient
                 foreach (SwiAction swiAction in swiRegister.SwiActions)
                 {
                     swiAction.SwiInfoObjs = GetServiceProgramsForSwiAction(swiAction, vehicle, ffmResolver);
-                    if (swiAction.SwiRule != null)
-                    {
-                        swiAction.SwiRule.EvaluateRule(vehicle, ffmResolver);
-                    }
-
-                    if (swiAction.SwiInfoObjs != null)
-                    {
-                        foreach (SwiInfoObj swiInfoObj in swiAction.SwiInfoObjs)
-                        {
-                            if (swiInfoObj.SwiRule != null)
-                            {
-                                swiInfoObj.SwiRule.EvaluateRule(vehicle, ffmResolver);
-                            }
-                        }
-                    }
                 }
             }
 
@@ -1663,7 +1625,7 @@ namespace PsdzClient
             return true;
         }
 
-        public List<SwiAction> GetSwiActionsForEcuProgrammingVariant(string prgId)
+        public List<SwiAction> GetSwiActionsForEcuProgrammingVariant(string prgId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
         {
             if (string.IsNullOrEmpty(prgId))
             {
@@ -1684,7 +1646,10 @@ namespace PsdzClient
                         while (reader.Read())
                         {
                             SwiAction swiAction = ReadXepSwiAction(reader, SwiActionSource.VarPrgEcuId);
-                            swiActions.Add(swiAction);
+                            if (EvaluateXepRulesById(swiAction.Id, vehicle, ffmDynamicResolver))
+                            {
+                                swiActions.Add(swiAction);
+                            }
                         }
                     }
                 }
@@ -1766,7 +1731,6 @@ namespace PsdzClient
                 return null;
             }
 
-            swiAction.SwiRule = GetRuleById(swiAction.Id);
             List<SwiInfoObj> swiInfoObjList = new List<SwiInfoObj>();
             try
             {
@@ -1786,7 +1750,6 @@ namespace PsdzClient
                             {
                                 if (EvaluateXepRulesById(infoObjId, vehicle, ffmDynamicResolver, swiInfoObj.ControlId))
                                 {
-                                    //swiInfoObj.SwiRule = GetRuleById(infoObjId);
                                     swiInfoObjList.Add(swiInfoObj);
                                 }
                             }
