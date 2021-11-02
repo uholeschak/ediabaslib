@@ -1811,10 +1811,20 @@ namespace PsdzClient
                         while (reader.Read())
                         {
                             string controlId = reader["DIAGNOSISOBJECTCONTROLID"].ToString().Trim();
-                            List<SwiDiagObj> swiInfoObjs = GetDiagObjectsByControlId(controlId, vehicle, ffmDynamicResolver);
-                            foreach (SwiDiagObj swiDiagObj in swiInfoObjs)
+                            List<SwiDiagObj> swiDiagObjs = GetDiagObjectsByControlId(controlId, vehicle, ffmDynamicResolver);
+                            if (swiDiagObjs != null)
                             {
-                                
+                                foreach (SwiDiagObj swiDiagObj in swiDiagObjs)
+                                {
+                                    if (!string.IsNullOrEmpty(swiDiagObj.ControlId))
+                                    {
+                                        List<SwiInfoObj> swiInfoObjs = GetInfoObjectsByDiagObjectControlId(swiDiagObj.ControlId, SwiInfoObj.SwiActionDatabaseLinkType.SwiActionDiagnosticLink);
+                                        if (swiInfoObjs != null)
+                                        {
+                                            swiInfoObjList.AddRange(swiInfoObjs);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -1862,7 +1872,7 @@ namespace PsdzClient
             return swiInfoObj;
         }
 
-        public List<SwiInfoObj> GetInfoObjectsByDiagObjectControlId(string infoObjectId, string linkTypeId)
+        public List<SwiInfoObj> GetInfoObjectsByDiagObjectControlId(string infoObjectId, SwiInfoObj.SwiActionDatabaseLinkType linkType)
         {
             if (string.IsNullOrEmpty(infoObjectId))
             {
@@ -1883,7 +1893,7 @@ namespace PsdzClient
                     {
                         while (reader.Read())
                         {
-                            SwiInfoObj swiInfoObj = ReadXepSwiInfoObj(reader, SwiInfoObj.GetLinkType(linkTypeId));
+                            SwiInfoObj swiInfoObj = ReadXepSwiInfoObj(reader, linkType);
                             if (swiInfoObj != null)
                             {
                                 swiInfoObjs.Add(swiInfoObj);
