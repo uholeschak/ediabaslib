@@ -1930,7 +1930,8 @@ namespace PsdzClient
                             SwiDiagObj swiDiagObj = new SwiDiagObj(id, nodeClass, titleId, versionNum, name, failWeight, hidden, safetyRelevant, sortOrder, GetTranslation(reader));
                             if (vehicle != null)
                             {
-                                if (EvaluateXepRulesById(swiDiagObj.Id, vehicle, ffmDynamicResolver))
+                                string diagObjectObjectId = GetDiagObjectObjectId(swiDiagObj.Id);
+                                if (EvaluateXepRulesById(swiDiagObj.Id, vehicle, ffmDynamicResolver, diagObjectObjectId))
                                 {
                                     swiDiagObjs.Add(swiDiagObj);
                                 }
@@ -1949,6 +1950,36 @@ namespace PsdzClient
             }
 
             return swiDiagObjs;
+        }
+
+        public string GetDiagObjectObjectId(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return null;
+            }
+
+            string controlId = id;
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT CONTROLID FROM XEP_DIAGNOSISOBJECTS (ID = {0})", id);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            controlId = reader["CONTROLID"].ToString().Trim();
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return controlId;
         }
 
         public SwiRule GetRuleById(string ruleId)
