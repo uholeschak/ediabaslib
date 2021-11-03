@@ -7,20 +7,18 @@
     </layout>
   </appender>
 
-  <appender name="RollingFile" type="log4net.Appender.RollingFileAppender">
+  <appender name="FileAppender" type="log4net.Appender.FileAppender">
     <file value="PsdzClient.log" />
     <appendToFile value="false" />
-    <maximumFileSize value="100KB" />
-    <maxSizeRollBackups value="2" />
 
     <layout type="log4net.Layout.PatternLayout">
-      <conversionPattern value="%level %thread %logger - %message%newline" />
+      <conversionPattern value="%date [%thread] %-5level %logger - %message%newline" />
     </layout>
   </appender>
 
   <root>
     <level value="DEBUG" />
     <appender-ref ref="Console" />
-    <appender-ref ref="RollingFile" />
+    <appender-ref ref="FileAppender" />
   </root>
 </log4net>
