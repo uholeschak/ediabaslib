@@ -1975,13 +1975,13 @@ namespace PsdzClient
 
         public bool IsDiagObjectValid(string diagObjectId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
         {
+            log.InfoFormat("IsDiagObjectValid Id: {0}", diagObjectId);
             if (vehicle == null)
             {
                 log.InfoFormat("IsDiagObjectValid No vehicle, Valid: {0}", true);
                 return true;
             }
 
-            log.InfoFormat("IsDiagObjectValid Id: {0}", diagObjectId);
             string diagObjectObjectId = GetDiagObjectObjectId(diagObjectId);
             if (!EvaluateXepRulesById(diagObjectId, vehicle, ffmDynamicResolver, diagObjectObjectId))
             {
@@ -2008,6 +2008,7 @@ namespace PsdzClient
 
         public bool AreAllParentDiagObjectsValid(string diagObjectControlId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
         {
+            log.InfoFormat("AreAllParentDiagObjectsValid Id: {0}", diagObjectControlId);
             List<string> idList = GetParentDiagObjectControlIdsForControlId(diagObjectControlId);
             if (idList == null || idList.Count == 0)
             {
@@ -2015,7 +2016,6 @@ namespace PsdzClient
                 return true;
             }
 
-            log.InfoFormat("AreAllParentDiagObjectsValid Id: {0}", diagObjectControlId);
             HashSet<SwiDiagObj> swiDiagObjHash = new HashSet<SwiDiagObj>();
             foreach (string parentId in idList)
             {
@@ -2056,6 +2056,7 @@ namespace PsdzClient
 
         private List<string> GetParentDiagObjectControlIdsForControlId(string controlId)
         {
+            log.InfoFormat("GetParentDiagObjectControlIdsForControlId Id: {0}", controlId);
             if (string.IsNullOrEmpty(controlId))
             {
                 return null;
@@ -2083,6 +2084,7 @@ namespace PsdzClient
                 return null;
             }
 
+            log.InfoFormat("GetParentDiagObjectControlIdsForControlId IdList: {0}", idList);
             return idList;
         }
 
@@ -2099,6 +2101,7 @@ namespace PsdzClient
 
         public string GetDiagObjectControlIdForDiagObjectId(string diagObjectId)
         {
+            log.InfoFormat("GetDiagObjectControlIdForDiagObjectId Id: {0}", diagObjectId);
             if (string.IsNullOrEmpty(diagObjectId))
             {
                 return null;
@@ -2125,6 +2128,7 @@ namespace PsdzClient
                 return null;
             }
 
+            log.InfoFormat("GetDiagObjectControlIdForDiagObjectId ControlId: {0}", controlId);
             return controlId;
         }
 
@@ -2168,6 +2172,7 @@ namespace PsdzClient
 
         public string LookupVehicleCharDeDeById(string characteristicId)
         {
+            log.InfoFormat("LookupVehicleCharDeDeById Id: {0}", characteristicId);
             if (string.IsNullOrEmpty(characteristicId))
             {
                 return null;
@@ -2194,11 +2199,13 @@ namespace PsdzClient
                 return null;
             }
 
+            log.InfoFormat("LookupVehicleCharDeDeById Title: {0}", titleDe);
             return titleDe;
         }
 
         public string LookupVehicleCharIdByName(string name, string nodeclass)
         {
+            log.InfoFormat("LookupVehicleCharIdByName Id: {0} Class: {1}", name, nodeclass);
             if (string.IsNullOrEmpty(name))
             {
                 return null;
@@ -2229,11 +2236,13 @@ namespace PsdzClient
                 return null;
             }
 
+            log.InfoFormat("LookupVehicleCharIdByName CharId: {0}", charId);
             return charId;
         }
 
         public string GetTypeKeyId(string typeKey)
         {
+            log.InfoFormat("GetTypeKeyId Key: {0}", typeKey);
             if (string.IsNullOrEmpty(typeKey))
             {
                 return null;
@@ -2260,12 +2269,13 @@ namespace PsdzClient
                 return null;
             }
 
+            log.InfoFormat("GetTypeKeyId TypeId: {0}", typeId);
             return typeId;
         }
 
         public string GetIStufeById(string iStufenId)
         {
-            log.InfoFormat("GetIStufeById Id: '{0}'", iStufenId);
+            log.InfoFormat("GetIStufeById Id: {0}", iStufenId);
             if (string.IsNullOrEmpty(iStufenId))
             {
                 return null;
@@ -2298,6 +2308,7 @@ namespace PsdzClient
 
         public string GetCountryById(string countryId)
         {
+            log.InfoFormat("GetCountryById Id: {0}", countryId);
             if (string.IsNullOrEmpty(countryId))
             {
                 return null;
@@ -2324,6 +2335,7 @@ namespace PsdzClient
                 return null;
             }
 
+            log.InfoFormat("GetCountryById Country: {0}", country);
             return country;
         }
 
