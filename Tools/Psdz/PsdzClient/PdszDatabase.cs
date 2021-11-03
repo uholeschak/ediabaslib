@@ -1977,6 +1977,7 @@ namespace PsdzClient
         {
             if (vehicle == null)
             {
+                log.InfoFormat("IsDiagObjectValid No vehicle, Valid: {0}", true);
                 return true;
             }
 
@@ -1984,19 +1985,24 @@ namespace PsdzClient
             string diagObjectObjectId = GetDiagObjectObjectId(diagObjectId);
             if (!EvaluateXepRulesById(diagObjectId, vehicle, ffmDynamicResolver, diagObjectObjectId))
             {
+                log.InfoFormat("IsDiagObjectValid Rule failed, Valid: {0}", false);
                 return false;
             }
 
             string diagObjectControlId = GetDiagObjectControlIdForDiagObjectId(diagObjectId);
             if (string.IsNullOrEmpty(diagObjectControlId))
             {
+                log.InfoFormat("IsDiagObjectValid No control id, Valid: {0}", true);
                 return true;
             }
 
             if (AreAllParentDiagObjectsValid(diagObjectControlId, vehicle, ffmDynamicResolver))
             {
+                log.InfoFormat("IsDiagObjectValid All parents valid, Valid: {0}", true);
                 return true;
             }
+
+            log.InfoFormat("IsDiagObjectValid Valid: {0}", false);
             return false;
         }
 
@@ -2005,6 +2011,7 @@ namespace PsdzClient
             List<string> idList = GetParentDiagObjectControlIdsForControlId(diagObjectControlId);
             if (idList == null || idList.Count == 0)
             {
+                log.InfoFormat("AreAllParentDiagObjectsValid No parent diag objects, Valid: {0}", true);
                 return true;
             }
 
@@ -2014,12 +2021,14 @@ namespace PsdzClient
             {
                 if (string.IsNullOrEmpty(parentId))
                 {
+                    log.InfoFormat("AreAllParentDiagObjectsValid No parent id, Valid: {0}", true);
                     return true;
                 }
 
                 SwiDiagObj swiDiagObj = GetDiagObjectsByControlId(parentId, null, null).FirstOrDefault();
                 if (swiDiagObj == null)
                 {
+                    log.InfoFormat("AreAllParentDiagObjectsValid No diag control id, Valid: {0}", true);
                     return true;
                 }
 
@@ -2035,10 +2044,13 @@ namespace PsdzClient
                 {
                     if (!string.IsNullOrEmpty(swiDiagObj.ControlId) && AreAllParentDiagObjectsValid(swiDiagObj.ControlId, vehicle, ffmDynamicResolver))
                     {
+                        log.InfoFormat("AreAllParentDiagObjectsValid Sub parent objects valid, Valid: {0}", true);
                         return true;
                     }
                 }
             }
+
+            log.InfoFormat("AreAllParentDiagObjectsValid Valid: {0}", false);
             return false;
         }
 
@@ -2072,7 +2084,6 @@ namespace PsdzClient
             }
 
             return idList;
-
         }
 
         public string GetDiagObjectObjectId(string diagObjectId)
