@@ -856,6 +856,11 @@ namespace PsdzClient
             public bool EvaluateRule(Vehicle vehicle, IFFMDynamicResolver ffmResolver)
             {
                 log.InfoFormat("EvaluateRule Name: '{0}'", RuleExpression);
+                if (vehicle == null)
+                {
+                    log.ErrorFormat("EvaluateRule No vehicle");
+                    return false;
+                }
                 if (!RuleResult.HasValue)
                 {
                     try
@@ -2344,10 +2349,14 @@ namespace PsdzClient
 
         public bool EvaluateXepRulesById(string id, Vehicle vehicle, IFFMDynamicResolver ffmResolver, string objectId = null)
         {
+            if (vehicle == null)
+            {
+                log.WarnFormat("EvaluateXepRulesById No vehicle");
+                return true;
+            }
             XepRule xepRule = GetRuleById(id);
             if (xepRule == null)
             {
-                log.WarnFormat("EvaluateXepRulesById Id not found: {0}", id);
                 return true;
             }
 
