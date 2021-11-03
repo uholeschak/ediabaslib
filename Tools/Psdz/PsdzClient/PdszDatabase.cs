@@ -951,8 +951,9 @@ namespace PsdzClient
                     ecuInfo.PsdzEcu = psdzEcuMatch;
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("LinkSvtEcus Exception: '{0}'", e.Message);
                 return false;
             }
 
@@ -961,6 +962,7 @@ namespace PsdzClient
 
         public bool GetEcuVariants(List<EcuInfo> ecuList, Vehicle vehicle = null, IFFMDynamicResolver ffmDynamicResolver = null)
         {
+            log.InfoFormat("GetEcuVariants Vehicle: {0}", vehicle != null);
             foreach (EcuInfo ecuInfo in ecuList)
             {
                 ecuInfo.SwiActions.Clear();
@@ -983,6 +985,7 @@ namespace PsdzClient
                 }
             }
 
+            log.InfoFormat("GetEcuVariants Result: {0}", true);
             return true;
         }
 
@@ -1181,12 +1184,12 @@ namespace PsdzClient
 
         private List<EcuVar> FindEcuVariantsFromBntn(string bnTnName, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
         {
+            log.InfoFormat("FindEcuVariantsFromBntn BnTnName: {0}", bnTnName);
             if (string.IsNullOrEmpty(bnTnName))
             {
                 return null;
             }
 
-            log.InfoFormat("FindEcuVariantsFromBntn BnTnName: {0}", bnTnName);
             List<EcuPrgVar> ecuPrgVars = GetEcuProgrammingVariantByName(bnTnName, vehicle, ffmResolver);
             if (ecuPrgVars == null)
             {
@@ -1210,12 +1213,12 @@ namespace PsdzClient
 
         public List<EcuPrgVar> GetEcuProgrammingVariantByName(string bnTnName, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
         {
+            log.InfoFormat("GetEcuProgrammingVariantByName BnTnName: {0}", bnTnName);
             if (string.IsNullOrEmpty(bnTnName))
             {
                 return null;
             }
 
-            log.InfoFormat("GetEcuProgrammingVariantByName BnTnName: {0}", bnTnName);
             List<EcuPrgVar> ecuPrgVarList = new List<EcuPrgVar>();
             try
             {
@@ -1255,12 +1258,12 @@ namespace PsdzClient
 
         public EcuPrgVar GetEcuProgrammingVariantById(string prgId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
         {
+            log.InfoFormat("GetEcuProgrammingVariantById Id: {0}", prgId);
             if (string.IsNullOrEmpty(prgId))
             {
                 return null;
             }
 
-            log.InfoFormat("GetEcuProgrammingVariantById Id: {0}", prgId);
             EcuPrgVar ecuPrgVar = null;
             try
             {
