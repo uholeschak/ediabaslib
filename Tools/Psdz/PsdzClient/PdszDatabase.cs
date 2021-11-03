@@ -864,7 +864,7 @@ namespace PsdzClient
                     }
                     catch (Exception e)
                     {
-                        log.InfoFormat("EvaluateRule Exception:'{0}'", e.Message);
+                        log.ErrorFormat("EvaluateRule Exception:'{0}'", e.Message);
                         RuleResult = false;
                     }
                 }
