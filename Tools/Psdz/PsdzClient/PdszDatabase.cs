@@ -2265,6 +2265,7 @@ namespace PsdzClient
 
         public string GetIStufeById(string iStufenId)
         {
+            log.InfoFormat("GetIStufeById Id: '{0}'", iStufenId);
             if (string.IsNullOrEmpty(iStufenId))
             {
                 return null;
@@ -2291,6 +2292,7 @@ namespace PsdzClient
                 return null;
             }
 
+            log.InfoFormat("GetIStufeById ILevel: '{0}'", iLevel);
             return iLevel;
         }
 
