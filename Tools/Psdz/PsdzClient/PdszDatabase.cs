@@ -858,7 +858,15 @@ namespace PsdzClient
                 log.InfoFormat("EvaluateRule Name:'{0}'", RuleExpression.ToString());
                 if (!RuleResult.HasValue)
                 {
-                    RuleResult = RuleExpression.Evaluate(vehicle, RuleExpression, ffmResolver);
+                    try
+                    {
+                        RuleResult = RuleExpression.Evaluate(vehicle, RuleExpression, ffmResolver);
+                    }
+                    catch (Exception e)
+                    {
+                        log.InfoFormat("EvaluateRule Exception:'{0}'", e.Message);
+                        RuleResult = false;
+                    }
                 }
                 log.InfoFormat("EvaluateRule Result:'{0}'", RuleResult.Value);
                 return RuleResult.Value;
