@@ -12,7 +12,7 @@
     <appendToFile value="false" />
 
     <layout type="log4net.Layout.PatternLayout">
-      <conversionPattern value="%date [%thread] %-5level %logger - %message%newline" />
+      <conversionPattern value="%date [%thread] %-5level %logger [%M]- %message%newline" />
     </layout>
   </appender>
 

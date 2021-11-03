@@ -855,7 +855,7 @@ namespace PsdzClient
 
             public bool EvaluateRule(Vehicle vehicle, IFFMDynamicResolver ffmResolver)
             {
-                log.InfoFormat("EvaluateRule Name:'{0}'", RuleExpression.ToString());
+                log.InfoFormat("EvaluateRule Name: '{0}'", RuleExpression);
                 if (!RuleResult.HasValue)
                 {
                     try
@@ -864,11 +864,11 @@ namespace PsdzClient
                     }
                     catch (Exception e)
                     {
-                        log.ErrorFormat("EvaluateRule Exception:'{0}'", e.Message);
+                        log.ErrorFormat("EvaluateRule Exception: '{0}'", e.Message);
                         return false;
                     }
                 }
-                log.InfoFormat("EvaluateRule Result:'{0}'", RuleResult.Value);
+                log.InfoFormat("EvaluateRule Result: {0}", RuleResult.Value);
                 return RuleResult.Value;
             }
 
@@ -1183,6 +1183,7 @@ namespace PsdzClient
                 return null;
             }
 
+            log.InfoFormat("FindEcuVariantsFromBntn BnTnName: {0}", bnTnName);
             List<EcuPrgVar> ecuPrgVars = GetEcuProgrammingVariantByName(bnTnName, vehicle, ffmResolver);
             if (ecuPrgVars == null)
             {
@@ -1211,6 +1212,7 @@ namespace PsdzClient
                 return null;
             }
 
+            log.InfoFormat("GetEcuProgrammingVariantByName BnTnName: {0}", bnTnName);
             List<EcuPrgVar> ecuPrgVarList = new List<EcuPrgVar>();
             try
             {
@@ -1254,6 +1256,7 @@ namespace PsdzClient
                 return null;
             }
 
+            log.InfoFormat("GetEcuProgrammingVariantById Id: {0}", prgId);
             EcuPrgVar ecuPrgVar = null;
             try
             {
@@ -1299,6 +1302,7 @@ namespace PsdzClient
 
             EcuGroup ecuGroup = null;
             string groupId = ecuVar.GroupId;
+            log.InfoFormat("FindEcuGroup Id: {0}", groupId);
             if (EvaluateXepRulesById(groupId, vehicle, ffmResolver, null))
             {
                 ecuGroup = GetEcuGroupById(groupId);
@@ -1658,6 +1662,7 @@ namespace PsdzClient
                 return null;
             }
 
+            log.InfoFormat("GetSwiActionsForEcuProgrammingVariant Id: {0}", prgId);
             List<SwiAction> swiActions = new List<SwiAction>();
             try
             {
@@ -1757,6 +1762,7 @@ namespace PsdzClient
                 return null;
             }
 
+            log.InfoFormat("GetServiceProgramsForSwiAction Id: {0}", swiAction.Id);
             List<SwiInfoObj> swiInfoObjList = new List<SwiInfoObj>();
             try
             {
@@ -1951,6 +1957,7 @@ namespace PsdzClient
                 return true;
             }
 
+            log.InfoFormat("IsDiagObjectValid Id: {0}", diagObjectId);
             string diagObjectObjectId = GetDiagObjectObjectId(diagObjectId);
             if (!EvaluateXepRulesById(diagObjectId, vehicle, ffmDynamicResolver, diagObjectObjectId))
             {
@@ -1978,6 +1985,7 @@ namespace PsdzClient
                 return true;
             }
 
+            log.InfoFormat("AreAllParentDiagObjectsValid Id: {0}", diagObjectControlId);
             HashSet<SwiDiagObj> swiDiagObjHash = new HashSet<SwiDiagObj>();
             foreach (string parentId in idList)
             {
@@ -2280,6 +2288,7 @@ namespace PsdzClient
             XepRule xepRule = GetRuleById(id);
             if (xepRule == null)
             {
+                log.WarnFormat("EvaluateXepRulesById Id not found: {0}", id);
                 return true;
             }
 
