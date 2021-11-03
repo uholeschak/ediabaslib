@@ -133,13 +133,13 @@ namespace PsdzClient
 
                 ClientContext.Language = TitleLang;
 
-                string appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase);
+                string appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
                 if (!string.IsNullOrEmpty(appDir))
                 {
                     string log4NetConfig = Path.Combine(appDir, "log4net.xml");
                     if (File.Exists(log4NetConfig))
                     {
-                        XmlConfigurator.Configure(new System.IO.FileInfo(Path.Combine(appDir, "log4net.xml")));
+                        XmlConfigurator.Configure(new FileInfo(log4NetConfig));
                     }
                 }
             }
