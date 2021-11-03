@@ -1063,8 +1063,9 @@ namespace PsdzClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("GetEcuVariantByName Exception: '{0}'", e.Message);
                 return null;
             }
 
@@ -1093,8 +1094,9 @@ namespace PsdzClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("GetEcuVariantById Exception: '{0}'", e.Message);
                 return null;
             }
 
@@ -1128,8 +1130,9 @@ namespace PsdzClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("GetEcuVariantsByEcuCliquesId Exception: '{0}'", e.Message);
                 return null;
             }
 
@@ -1241,8 +1244,9 @@ namespace PsdzClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("GetEcuProgrammingVariantByName Exception: '{0}'", e.Message);
                 return null;
             }
 
@@ -1285,8 +1289,9 @@ namespace PsdzClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("GetEcuProgrammingVariantById Exception: '{0}'", e.Message);
                 return null;
             }
 
@@ -1332,8 +1337,9 @@ namespace PsdzClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("GetEcuGroupById Exception: '{0}'", e.Message);
                 return null;
             }
 
@@ -1362,8 +1368,9 @@ namespace PsdzClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("GetEquipmentById Exception: '{0}'", e.Message);
                 return null;
             }
 
@@ -1392,8 +1399,9 @@ namespace PsdzClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("GetEcuCliqueById Exception: '{0}'", e.Message);
                 return null;
             }
 
@@ -1422,8 +1430,9 @@ namespace PsdzClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("GetRefEcuCliqueById Exception: '{0}'", e.Message);
                 return null;
             }
 
@@ -1468,8 +1477,9 @@ namespace PsdzClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("GetCharacteristicRootsById Exception: '{0}'", e.Message);
                 return null;
             }
 
@@ -1505,8 +1515,9 @@ namespace PsdzClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("GetCharacteristicsByTypeKeyId Exception: '{0}'", e.Message);
                 return null;
             }
 
@@ -1541,8 +1552,9 @@ namespace PsdzClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("GetSaLaPaById Exception: '{0}'", e.Message);
                 return null;
             }
 
@@ -1571,8 +1583,9 @@ namespace PsdzClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("GetEcuRepsById Exception: '{0}'", e.Message);
                 return null;
             }
 
@@ -1614,8 +1627,9 @@ namespace PsdzClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("GetSwiActionsForEcuVariant Exception: '{0}'", e.Message);
                 return false;
             }
 
@@ -1647,8 +1661,9 @@ namespace PsdzClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("GetSwiActionsForEcuGroup Exception: '{0}'", e.Message);
                 return false;
             }
 
@@ -1685,8 +1700,9 @@ namespace PsdzClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("GetSwiActionsForEcuProgrammingVariant Exception: '{0}'", e.Message);
                 return null;
             }
 
@@ -1719,8 +1735,9 @@ namespace PsdzClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("GetSwiActionsForSwiRegister Exception: '{0}'", e.Message);
                 return null;
             }
 
@@ -1747,8 +1764,9 @@ namespace PsdzClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("GetSwiRegistersByParentId Exception: '{0}'", e.Message);
                 return null;
             }
 
@@ -1789,8 +1807,9 @@ namespace PsdzClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("GetServiceProgramsForSwiAction Exception: '{0}'", e.Message);
                 return null;
             }
 
@@ -1825,8 +1844,9 @@ namespace PsdzClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("GetServiceProgramsForSwiAction DIAGNOSISOBJECTCONTROLID Exception: '{0}'", e.Message);
                 return null;
             }
 
@@ -1859,8 +1879,9 @@ namespace PsdzClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("GetInfoObjectById Exception: '{0}'", e.Message);
                 return null;
             }
 
@@ -1897,8 +1918,9 @@ namespace PsdzClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("GetInfoObjectsByDiagObjectControlId Exception: '{0}'", e.Message);
                 return null;
             }
 
@@ -1942,8 +1964,9 @@ namespace PsdzClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("GetDiagObjectsByControlId Exception: '{0}'", e.Message);
                 return null;
             }
 
@@ -2042,8 +2065,9 @@ namespace PsdzClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("GetParentDiagObjectControlIdsForControlId Exception: '{0}'", e.Message);
                 return null;
             }
 
@@ -2084,8 +2108,9 @@ namespace PsdzClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("GetDiagObjectControlIdForDiagObjectId Exception: '{0}'", e.Message);
                 return null;
             }
 
@@ -2120,8 +2145,9 @@ namespace PsdzClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("GetRuleById Exception: '{0}'", e.Message);
                 return null;
             }
 
@@ -2151,8 +2177,9 @@ namespace PsdzClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("LookupVehicleCharDeDeById Exception: '{0}'", e.Message);
                 return null;
             }
 
@@ -2185,8 +2212,9 @@ namespace PsdzClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("LookupVehicleCharIdByName Exception: '{0}'", e.Message);
                 return null;
             }
 
@@ -2215,8 +2243,9 @@ namespace PsdzClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("GetTypeKeyId Exception: '{0}'", e.Message);
                 return null;
             }
 
@@ -2245,8 +2274,9 @@ namespace PsdzClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("GetIStufeById Exception: '{0}'", e.Message);
                 return null;
             }
 
@@ -2275,8 +2305,9 @@ namespace PsdzClient
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.ErrorFormat("GetCountryById Exception: '{0}'", e.Message);
                 return null;
             }
 
