@@ -855,10 +855,12 @@ namespace PsdzClient
 
             public bool EvaluateRule(Vehicle vehicle, IFFMDynamicResolver ffmResolver)
             {
+                log.InfoFormat("EvaluateRule Name:'{0}'", RuleExpression.ToString());
                 if (!RuleResult.HasValue)
                 {
                     RuleResult = RuleExpression.Evaluate(vehicle, RuleExpression, ffmResolver);
                 }
+                log.InfoFormat("EvaluateRule Result:'{0}'", RuleResult.Value);
                 return RuleResult.Value;
             }
 

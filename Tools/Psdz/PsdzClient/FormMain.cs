@@ -132,16 +132,6 @@ namespace PsdzClient
                 }
 
                 ClientContext.Language = TitleLang;
-
-                string appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-                if (!string.IsNullOrEmpty(appDir))
-                {
-                    string log4NetConfig = Path.Combine(appDir, "log4net.xml");
-                    if (File.Exists(log4NetConfig))
-                    {
-                        XmlConfigurator.Configure(new FileInfo(log4NetConfig));
-                    }
-                }
             }
             catch (Exception)
             {
@@ -187,6 +177,21 @@ namespace PsdzClient
             UpdateDisplay();
         }
 
+        private void SetupLog4Net()
+        {
+            string appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            if (!string.IsNullOrEmpty(appDir))
+            {
+                string log4NetConfig = Path.Combine(appDir, "log4net.xml");
+                if (File.Exists(log4NetConfig))
+                {
+                    string logFile = Path.Combine(programmingService.GetPsdzServiceHostLogDir(), "PsdzClient.log");
+                    log4net.GlobalContext.Properties["LogFileName"] = logFile;
+                    XmlConfigurator.Configure(new FileInfo(log4NetConfig));
+                }
+            }
+        }
+
         private async Task<bool> StartProgrammingServiceTask(string dealerId)
         {
             return await Task.Run(() => StartProgrammingService(dealerId)).ConfigureAwait(false);
@@ -212,6 +217,7 @@ namespace PsdzClient
                 }
 
                 programmingService = new ProgrammingService(textBoxIstaFolder.Text, dealerId);
+                SetupLog4Net();
                 programmingService.EventManager.ProgrammingEventRaised += (sender, args) =>
                 {
                     if (args is ProgrammingTaskEventArgs programmingEventArgs)

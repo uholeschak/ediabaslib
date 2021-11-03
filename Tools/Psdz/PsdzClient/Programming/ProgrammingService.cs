@@ -92,6 +92,11 @@ namespace PsdzClient.Programming
 			}
 		}
 
+        public string GetPsdzServiceHostLogDir()
+        {
+            return this.psdzConfig.PsdzServiceHostLogDir;
+        }
+
 		public string GetPsdzServiceHostLogFilePath()
 		{
 			return this.psdzConfig.PsdzServiceHostLogFilePath;

@@ -8,7 +8,7 @@
   </appender>
 
   <appender name="FileAppender" type="log4net.Appender.FileAppender">
-    <file value="PsdzClient.log" />
+    <file type="log4net.Util.PatternString" value="%property{LogFileName}" />
     <appendToFile value="false" />
 
     <layout type="log4net.Layout.PatternLayout">
