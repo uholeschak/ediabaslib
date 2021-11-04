@@ -2379,7 +2379,7 @@ namespace PsdzClient
 
         public bool EvaluateXepRulesById(string id, Vehicle vehicle, IFFMDynamicResolver ffmResolver, string objectId = null)
         {
-            log.WarnFormat("EvaluateXepRulesById Id: {0}, ObjectId: {1}", id, objectId);
+            log.WarnFormat("EvaluateXepRulesById Id: {0}, ObjectId: {1}", id, objectId ?? "-");
             if (vehicle == null)
             {
                 log.WarnFormat("EvaluateXepRulesById No vehicle");
