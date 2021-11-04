@@ -1076,6 +1076,7 @@ namespace PsdzClient
                 return;
             }
 
+            log.InfoFormat("GetSwiActionsForTree Start - Id: {0}, Name: {1}", swiRegister.Id, swiRegister.Name);
             swiRegister.SwiActions = GetSwiActionsForSwiRegister(swiRegister);
             if (swiRegister.SwiActions != null)
             {
@@ -1092,6 +1093,7 @@ namespace PsdzClient
                     GetSwiActionsForTree(swiChild, vehicle, ffmResolver);
                 }
             }
+            log.InfoFormat("GetSwiActionsForTree Finish - Id: {0}, Name: {1}", swiRegister.Id, swiRegister.Name);
         }
 
         public EcuVar GetEcuVariantByName(string sgbdName)
@@ -1833,7 +1835,7 @@ namespace PsdzClient
                 return null;
             }
 
-            log.InfoFormat("GetServiceProgramsForSwiAction Id: {0}", swiAction.Id);
+            log.InfoFormat("GetServiceProgramsForSwiAction Id: {0}, Name: {1}", swiAction.Id, swiAction.Name);
             List<SwiInfoObj> swiInfoObjList = new List<SwiInfoObj>();
             try
             {
@@ -2413,7 +2415,7 @@ namespace PsdzClient
 
         public bool EvaluateXepRulesById(string id, Vehicle vehicle, IFFMDynamicResolver ffmResolver, string objectId = null)
         {
-            log.WarnFormat("EvaluateXepRulesById Id: {0}, ObjectId: {1}", id, objectId ?? "-");
+            log.InfoFormat("EvaluateXepRulesById Id: {0}, ObjectId: {1}", id, objectId ?? "-");
             if (vehicle == null)
             {
                 log.WarnFormat("EvaluateXepRulesById No vehicle");
@@ -2421,12 +2423,14 @@ namespace PsdzClient
             }
 
             XepRule xepRule = GetRuleById(id);
-            if (xepRule == null)
+            bool result = true;
+            if (xepRule != null)
             {
-                return true;
+                result = xepRule.EvaluateRule(vehicle, ffmResolver);
             }
 
-            return xepRule.EvaluateRule(vehicle, ffmResolver);
+            log.InfoFormat("EvaluateXepRulesById Result: {0}", result);
+            return result;
         }
 
         private static Equipment ReadXepEquipment(SQLiteDataReader reader)
