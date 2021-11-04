@@ -993,10 +993,6 @@ namespace PsdzClient
                         sbResult.AppendLine("Swi Tree:");
                         sbResult.AppendLine(programmingService.PdszDatabase.SwiRegisterTree.ToString(ClientContext.Language));
                     }
-#if false
-                    sbResult.AppendLine("XepRules cache:");
-                    sbResult.Append(programmingService.PdszDatabase.XepRulesToString());
-#endif
                     UpdateStatus(sbResult.ToString());
                     return true;
                 }

@@ -838,13 +838,16 @@ namespace PsdzClient
             public XepRule(string id, byte[] rule)
             {
                 Id = id;
-                RuleExpression = RuleExpression.Deserialize(new MemoryStream(rule));
+                Rule = rule;
+                RuleExpression = null;
                 Reset();
             }
 
             public string Id { get; set; }
 
-            public RuleExpression RuleExpression { get; }
+            public byte[] Rule { get; }
+
+            public RuleExpression RuleExpression { get; private set; }
 
             public bool? RuleResult { get; private set; }
 
@@ -855,12 +858,27 @@ namespace PsdzClient
 
             public bool EvaluateRule(Vehicle vehicle, IFFMDynamicResolver ffmResolver)
             {
-                log.InfoFormat("EvaluateRule Name: '{0}'", RuleExpression);
+                log.InfoFormat("EvaluateRule Id: {0}", Id);
                 if (vehicle == null)
                 {
                     log.ErrorFormat("EvaluateRule No vehicle");
                     return false;
                 }
+
+                if (RuleExpression == null)
+                {
+                    try
+                    {
+                        log.InfoFormat("EvaluateRule Create expression");
+                        RuleExpression = RuleExpression.Deserialize(new MemoryStream(Rule));
+                    }
+                    catch (Exception e)
+                    {
+                        log.ErrorFormat("EvaluateRule Exception: '{0}'", e.Message);
+                    }
+                }
+
+                log.InfoFormat("EvaluateRule Expression: '{0}'", RuleExpression);
                 if (!RuleResult.HasValue)
                 {
                     try
@@ -909,30 +927,23 @@ namespace PsdzClient
 
             _rootENameClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"RootEBezeichnung");
             _typeKeyClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"Typschluessel");
-            _xepRuleDict = new Dictionary<string, XepRule>();
+            _xepRuleDict = null;
             SwiRegisterTree = null;
             ClientContext.Database = this;
         }
 
         public void ResetXepRules()
         {
+            if (_xepRuleDict == null)
+            {
+                log.InfoFormat("ResetXepRules No rules present");
+                return;
+            }
+
             foreach (KeyValuePair<string, XepRule> keyValuePair in _xepRuleDict)
             {
                 keyValuePair.Value?.Reset();
             }
-        }
-
-        public string XepRulesToString()
-        {
-            StringBuilder sb = new StringBuilder();
-            foreach (KeyValuePair<string, XepRule> keyValuePair in _xepRuleDict)
-            {
-                if (keyValuePair.Value != null)
-                {
-                    sb.AppendLine(keyValuePair.Value.ToString());
-                }
-            }
-            return sb.ToString();
         }
 
         public bool LinkSvtEcus(List<EcuInfo> ecuList, IPsdzSvt psdzSvt)
@@ -2140,10 +2151,52 @@ namespace PsdzClient
             return controlId;
         }
 
+        public Dictionary<string, XepRule> LoadXepRules()
+        {
+            log.InfoFormat("LoadXepRules");
+            Dictionary<string, XepRule> xepRuleDict = new Dictionary<string, XepRule>();
+            try
+            {
+                string sql = @"SELECT ID, RULE FROM XEP_RULES";
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string id = reader["ID"].ToString().Trim();
+                            byte[] rule = (byte[])reader["RULE"];
+                            XepRule xepRule = new XepRule(id, rule);
+                            xepRuleDict.Add(id, xepRule);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("LoadXepRules Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            log.InfoFormat("LoadXepRules Count: {0}", xepRuleDict.Count);
+            return xepRuleDict;
+        }
+
         public XepRule GetRuleById(string ruleId)
         {
             if (string.IsNullOrEmpty(ruleId))
             {
+                return null;
+            }
+
+            if (_xepRuleDict == null)
+            {
+                _xepRuleDict = LoadXepRules();
+            }
+
+            if (_xepRuleDict == null)
+            {
+                log.InfoFormat("GetRuleById No rules present");
                 return null;
             }
 
@@ -2152,30 +2205,7 @@ namespace PsdzClient
                 return xepRule;
             }
 
-            try
-            {
-                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, RULE FROM XEP_RULES WHERE ID IN ({0})", ruleId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
-                {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            string id = reader["ID"].ToString().Trim();
-                            byte[] rule = (byte[]) reader["RULE"];
-                            xepRule = new XepRule(id, rule);
-                        }
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                log.ErrorFormat("GetRuleById Exception: '{0}'", e.Message);
-                return null;
-            }
-
-            _xepRuleDict.Add(ruleId, xepRule);
-            return xepRule;
+            return null;
         }
 
         public string LookupVehicleCharDeDeById(string characteristicId)
