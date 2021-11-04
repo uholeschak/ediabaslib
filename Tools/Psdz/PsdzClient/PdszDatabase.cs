@@ -211,8 +211,11 @@ namespace PsdzClient
                 {
                     foreach (SwiAction swiAction in SwiActions)
                     {
-                        sb.AppendLine();
-                        sb.Append(swiAction.ToString(language, prefixChild));
+                        if (swiAction.HasInfoObjects)
+                        {
+                            sb.AppendLine();
+                            sb.Append(swiAction.ToString(language, prefixChild));
+                        }
                     }
                 }
                 return sb.ToString();
@@ -559,6 +562,11 @@ namespace PsdzClient
 
             public List<SwiInfoObj> SwiInfoObjs { get; set; }
 
+            public bool HasInfoObjects
+            {
+                get { return SwiInfoObjs != null && SwiInfoObjs.Count > 0; }
+            }
+
             public string ToString(string language, string prefix = "")
             {
                 StringBuilder sb = new StringBuilder();
@@ -621,8 +629,31 @@ namespace PsdzClient
 
             public List<SwiAction> SwiActions { get; set; }
 
+            public bool HasInfoObjects
+            {
+                get
+                {
+                    if (Children != null && Children.Any(x => x.HasInfoObjects))
+                    {
+                        return true;
+                    }
+
+                    if (SwiActions != null && SwiActions.Any(x => x.HasInfoObjects))
+                    {
+                        return true;
+                    }
+
+                    return false;
+                }
+            }
+
             public string ToString(string language, string prefix = "")
             {
+                if (!HasInfoObjects)
+                {
+                    return string.Empty;
+                }
+
                 StringBuilder sb = new StringBuilder();
                 sb.Append(prefix);
                 sb.Append(string.Format(CultureInfo.InvariantCulture,
@@ -643,8 +674,11 @@ namespace PsdzClient
                 {
                     foreach (SwiAction swiAction in SwiActions)
                     {
-                        sb.AppendLine();
-                        sb.Append(swiAction.ToString(language, prefixChild));
+                        if (swiAction.HasInfoObjects)
+                        {
+                            sb.AppendLine();
+                            sb.Append(swiAction.ToString(language, prefixChild));
+                        }
                     }
                 }
                 return sb.ToString();
