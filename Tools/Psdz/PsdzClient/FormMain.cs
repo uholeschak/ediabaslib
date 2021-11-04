@@ -28,6 +28,7 @@ using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using BMW.Rheingold.Psdz.Model.Tal.TalStatus;
 using EdiabasLib;
+using log4net;
 using log4net.Config;
 using PsdzClient.Core;
 using PsdzClient.Programming;
@@ -42,6 +43,8 @@ namespace PsdzClient
             BuildTal,
             ExecuteTal,
         }
+
+        private static readonly ILog log = LogManager.GetLogger(typeof(FormMain));
 
         private const string DealerId = "32395";
         private const string DefaultIp = @"127.0.0.1";
@@ -323,6 +326,7 @@ namespace PsdzClient
 
         private bool ConnectVehicle(string istaFolder, string ipAddress, bool icomConnection)
         {
+            log.InfoFormat("ConnectVehicle Start - Ip: {0}, ICOM: {1}", ipAddress, icomConnection);
             StringBuilder sbResult = new StringBuilder();
 
             try
@@ -471,6 +475,9 @@ namespace PsdzClient
             }
             finally
             {
+                log.InfoFormat("ConnectVehicle Finish - Ip: {0}, ICOM: {1}", ipAddress, icomConnection);
+                log.Info(Environment.NewLine + sbResult);
+
                 if (_psdzContext != null)
                 {
                     if (_psdzContext.Connection == null)
@@ -489,6 +496,7 @@ namespace PsdzClient
 
         private bool DisconnectVehicle()
         {
+            log.Info("DisconnectVehicle Start");
             StringBuilder sbResult = new StringBuilder();
 
             try
@@ -524,6 +532,19 @@ namespace PsdzClient
                 UpdateStatus(sbResult.ToString());
                 return false;
             }
+            finally
+            {
+                log.Info("DisconnectVehicle Finish");
+                log.Info(Environment.NewLine + sbResult);
+
+                if (_psdzContext != null)
+                {
+                    if (_psdzContext.Connection == null)
+                    {
+                        ClearProgrammingObjects();
+                    }
+                }
+            }
         }
 
         private async Task<bool> VehicleFunctionsTask(OperationType operationType, List<string> faRemList = null, List<string> faAddList = null)
@@ -533,6 +554,7 @@ namespace PsdzClient
 
         private bool VehicleFunctions(OperationType operationType, List<string> faRemList, List<string> faAddList)
         {
+            log.InfoFormat("VehicleFunctions Start - Type: {0}", operationType);
             StringBuilder sbResult = new StringBuilder();
 
             try
@@ -1149,6 +1171,11 @@ namespace PsdzClient
                     _psdzContext.Tal = null;
                 }
                 return false;
+            }
+            finally
+            {
+                log.InfoFormat("VehicleFunctions Finish - Type: {0}", operationType);
+                log.Info(Environment.NewLine + sbResult);
             }
         }
 
