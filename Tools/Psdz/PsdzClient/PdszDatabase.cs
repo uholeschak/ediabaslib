@@ -1905,9 +1905,10 @@ namespace PsdzClient
                 return null;
             }
 
+            log.InfoFormat("GetServiceProgramsForSwiAction InfoObj Count: {0}", swiInfoObjList.Count);
             foreach (SwiInfoObj swiInfoObj in swiInfoObjList)
             {
-                log.InfoFormat("GetServiceProgramsForSwiAction InfoObj Id: {0}, Identifier: '{1}'", swiInfoObj.Id, swiInfoObj.Identifier);
+                log.InfoFormat("InfoObj Id: {0}, Identifier: '{1}'", swiInfoObj.Id, swiInfoObj.Identifier);
             }
 
             return swiInfoObjList;
