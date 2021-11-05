@@ -304,6 +304,8 @@ namespace PsdzClient.Programming
                 return;
             }
 
+            Vehicle.VehicleIdentLevel = IdentificationLevel.VINVehicleReadout;
+            Vehicle.VehicleIdentAlreadyDone = true;
             Vehicle.ILevelWerk = IstufeShipment;
             Vehicle.ILevel = IstufeCurrent;
             Vehicle.BNType = GetBnType();
