@@ -213,8 +213,12 @@ namespace PsdzClient
                     {
                         if (swiAction.HasInfoObjects)
                         {
-                            sb.AppendLine();
-                            sb.Append(swiAction.ToString(language, prefixChild));
+                            string actionText = swiAction.ToString(language, prefixChild);
+                            if (!string.IsNullOrEmpty(actionText))
+                            {
+                                sb.AppendLine();
+                                sb.Append(actionText);
+                            }
                         }
                     }
                 }
@@ -665,8 +669,12 @@ namespace PsdzClient
                 {
                     foreach (SwiRegister swiChild in Children)
                     {
-                        sb.AppendLine();
-                        sb.Append(swiChild.ToString(language, prefixChild));
+                        string childText = swiChild.ToString(language, prefixChild);
+                        if (!string.IsNullOrEmpty(childText))
+                        {
+                            sb.AppendLine();
+                            sb.Append(childText);
+                        }
                     }
                 }
 
@@ -676,8 +684,12 @@ namespace PsdzClient
                     {
                         if (swiAction.HasInfoObjects)
                         {
-                            sb.AppendLine();
-                            sb.Append(swiAction.ToString(language, prefixChild));
+                            string actionText = swiAction.ToString(language, prefixChild);
+                            if (!string.IsNullOrEmpty(actionText))
+                            {
+                                sb.AppendLine();
+                                sb.Append(actionText);
+                            }
                         }
                     }
                 }

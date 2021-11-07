@@ -1012,8 +1012,12 @@ namespace PsdzClient
                     programmingService.PdszDatabase.ReadSwiRegister(_psdzContext.Vehicle);
                     if (programmingService.PdszDatabase.SwiRegisterTree != null)
                     {
-                        sbResult.AppendLine("Swi Tree:");
-                        sbResult.AppendLine(programmingService.PdszDatabase.SwiRegisterTree.ToString(ClientContext.Language));
+                        string treeText = programmingService.PdszDatabase.SwiRegisterTree.ToString(ClientContext.Language);
+                        if (!string.IsNullOrEmpty(treeText))
+                        {
+                            sbResult.AppendLine("Swi Tree:");
+                            sbResult.AppendLine(treeText);
+                        }
                     }
                     UpdateStatus(sbResult.ToString());
                     return true;
