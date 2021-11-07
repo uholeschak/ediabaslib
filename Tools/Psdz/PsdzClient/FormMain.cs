@@ -454,7 +454,14 @@ namespace PsdzClient
                 }
 
                 Vehicle vehicle = new Vehicle();
+                vehicle.VCI.VCIType = icomConnection ?
+                    BMW.Rheingold.CoreFramework.Contracts.Vehicle.VCIDeviceType.ICOM : BMW.Rheingold.CoreFramework.Contracts.Vehicle.VCIDeviceType.ENET;
+                vehicle.VCI.IPAddress = ipAddress;
+                vehicle.VCI.Port = diagPort;
+                vehicle.VCI.NetworkType = "LAN";
+                vehicle.VCI.VIN = _psdzContext.DetectVehicle.Vin;
                 _psdzContext.Vehicle = vehicle;
+
                 programmingService.CreateEcuProgrammingInfos(_psdzContext.Vehicle);
                 _psdzContext.Connection = psdzConnection;
 
