@@ -1077,7 +1077,7 @@ namespace PsdzClient
             }
 
             log.InfoFormat("GetSwiActionsForTree Start - Id: {0}, Name: {1}", swiRegister.Id, swiRegister.Name);
-            swiRegister.SwiActions = GetSwiActionsForSwiRegister(swiRegister);
+            swiRegister.SwiActions = GetSwiActionsForSwiRegister(swiRegister, vehicle, ffmResolver);
             if (swiRegister.SwiActions != null)
             {
                 foreach (SwiAction swiAction in swiRegister.SwiActions)
@@ -1764,13 +1764,14 @@ namespace PsdzClient
             return swiActions;
         }
 
-        public List<SwiAction> GetSwiActionsForSwiRegister(SwiRegister swiRegister)
+        public List<SwiAction> GetSwiActionsForSwiRegister(SwiRegister swiRegister, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
         {
             if (string.IsNullOrEmpty(swiRegister.Id))
             {
                 return null;
             }
 
+            log.InfoFormat("GetSwiActionsForSwiRegister Id: {0}, Name: {1}", swiRegister.Id, swiRegister.Name);
             List<SwiAction> swiActions = new List<SwiAction>();
             try
             {
@@ -1785,7 +1786,10 @@ namespace PsdzClient
                         while (reader.Read())
                         {
                             SwiAction swiAction = ReadXepSwiAction(reader, SwiActionSource.SwiRegister);
-                            swiActions.Add(swiAction);
+                            if (EvaluateXepRulesById(swiAction.Id, vehicle, ffmResolver))
+                            {
+                                swiActions.Add(swiAction);
+                            }
                         }
                     }
                 }
@@ -1796,6 +1800,11 @@ namespace PsdzClient
                 return null;
             }
 
+            log.InfoFormat("GetSwiActionsForSwiRegister Actions Count: {0}", swiActions.Count);
+            foreach (SwiAction swiAction in swiActions)
+            {
+                log.InfoFormat("Action Id: {0}, Name: '{1}'", swiAction.Id, swiAction.Name);
+            }
             return swiActions;
         }
 
