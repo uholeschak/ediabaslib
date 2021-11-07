@@ -1798,9 +1798,16 @@ namespace PsdzClient
                         while (reader.Read())
                         {
                             SwiAction swiAction = ReadXepSwiAction(reader, SwiActionSource.SwiRegister);
-                            if (EvaluateXepRulesById(swiAction.Id, vehicle, ffmResolver))
+                            if (vehicle == null)
                             {
                                 swiActions.Add(swiAction);
+                            }
+                            else
+                            {
+                                if (EvaluateXepRulesById(swiAction.Id, vehicle, ffmResolver))
+                                {
+                                    swiActions.Add(swiAction);
+                                }
                             }
                         }
                     }
