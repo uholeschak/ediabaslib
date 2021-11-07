@@ -46,11 +46,11 @@ namespace PsdzClient.Programming
 			}
 		}
 
-        public EcuProgrammingInfos(bool standard = true)
+        public EcuProgrammingInfos(IVehicle vehicle, IFFMDynamicResolver ffmResolver, bool standard = true)
 		{
 			//this.db = db;
-			//this.vehicle = vehicle;
-			//this.ffmResolver = ffmResolver;
+			this.vehicle = vehicle;
+			this.ffmResolver = ffmResolver;
 			this.ecuProgrammingInfos = new List<EcuProgrammingInfo>();
 			if (standard)
 			{
@@ -225,8 +225,8 @@ namespace PsdzClient.Programming
 				{
 					this.UnregisterEventHandler();
 				}
-				this.programmingObjectBuilder = new ProgrammingObjectBuilder();
-				//this.CreateEcuProgrammingInfos(this.vehicle.ECU);
+				this.programmingObjectBuilder = new ProgrammingObjectBuilder(this.vehicle as Vehicle, this.ffmResolver);
+				this.CreateEcuProgrammingInfos(this.vehicle.ECU);
 				this.ecuProgrammingInfosMap = new Dictionary<IEcu, EcuProgrammingInfo>();
 				this.ecuProgrammingInfos.ForEach(delegate (EcuProgrammingInfo info)
 				{
@@ -234,7 +234,7 @@ namespace PsdzClient.Programming
 				});
 				return;
 			}
-#if false
+
 			foreach (IEcu key in ((IEnumerable<IEcu>)new List<IEcu>(from ecu in this.ecuProgrammingInfosMap.Keys
 																	where !this.vehicle.ECU.Contains(ecu)
 																	select ecu)))
@@ -245,8 +245,7 @@ namespace PsdzClient.Programming
 				this.DataContext.ECUsWithIndividualData.Remove(ecuProgrammingInfo.Data);
 				this.ecuProgrammingInfosMap.Remove(key);
 			}
-#endif
-		}
+        }
 
 		internal void SetSvkCurrentForEachEcu(ISvt svt)
 		{
@@ -457,7 +456,7 @@ namespace PsdzClient.Programming
 
 		private bool ProgrammingInfoCanBeAdded(IEcuProgrammingInfoData ecuProgrammingInfoData)
 		{
-			return !this.OnlyAddECUsWithIndividualData() || /*this.vehicle.IsMotorcycle() ||*/ (ecuProgrammingInfoData.Ecu != null && ecuProgrammingInfoData.Ecu.StatusInfo != null && ecuProgrammingInfoData.Ecu.StatusInfo.HasIndividualData);
+			return !this.OnlyAddECUsWithIndividualData() || this.vehicle.IsMotorcycle() || (ecuProgrammingInfoData.Ecu != null && ecuProgrammingInfoData.Ecu.StatusInfo != null && ecuProgrammingInfoData.Ecu.StatusInfo.HasIndividualData);
 		}
 
 		private void RefreshProgrammingInfo(IList<EcuProgrammingInfoData> ecuProgrammingInfoDataList)
@@ -505,11 +504,11 @@ namespace PsdzClient.Programming
 
 		protected IDictionary<IEcu, EcuProgrammingInfo> ecuProgrammingInfosMap;
 
-		//protected IVehicle vehicle;
+		protected IVehicle vehicle;
 
 		//private readonly IDatabaseProvider db;
 
-		//private readonly IFFMDynamicResolver ffmResolver;
+		private readonly IFFMDynamicResolver ffmResolver;
 
 		private readonly object threadLock = new object();
 

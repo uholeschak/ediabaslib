@@ -6,6 +6,7 @@ using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Programming;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Client;
+using PsdzClient.Core;
 
 namespace PsdzClient.Programming
 {
@@ -20,7 +21,6 @@ namespace PsdzClient.Programming
 			this.psdz.SetLogLevel(PsdzLoglevel, ProdiasLoglevel);
 
             this.EventManager = new ProgrammingEventManager();
-            this.ProgrammingInfos = new EcuProgrammingInfos();
             this.PdszDatabase = new PdszDatabase(istaFolder);
 			PreparePsdzBackupDataPath(istaFolder);
 		}
@@ -159,7 +159,12 @@ namespace PsdzClient.Programming
             return this.psdz.IsPsdzInitialized;
         }
 
-        public void AddListener(PsdzContext psdzContext)
+        public void CreateEcuProgrammingInfos(IVehicle vehicle, IFFMDynamicResolver ffmResolver = null)
+        {
+            this.ProgrammingInfos = new EcuProgrammingInfos(vehicle, ffmResolver);
+        }
+
+		public void AddListener(PsdzContext psdzContext)
         {
             RemoveListener();
             this.PsdzProgressListener = new PsdzProgressListener(this.EventManager);

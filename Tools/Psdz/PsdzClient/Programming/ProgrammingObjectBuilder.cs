@@ -25,8 +25,10 @@ namespace BMW.Rheingold.Programming.API
 {
 	public class ProgrammingObjectBuilder : IProgrammingObjectBuilder
 	{
-		public ProgrammingObjectBuilder()
+		public ProgrammingObjectBuilder(Vehicle vehicle, IFFMDynamicResolver ffmResolver)
 		{
+			this.vehicle = vehicle;
+			this.ffmResolver = ffmResolver;
 		}
 
 		public BMW.Rheingold.CoreFramework.Contracts.Programming.IFa Build(IPsdzStandardFa faInput)

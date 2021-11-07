@@ -455,7 +455,7 @@ namespace PsdzClient
 
                 Vehicle vehicle = new Vehicle();
                 _psdzContext.Vehicle = vehicle;
-                programmingService.ProgrammingInfos.ProgrammingObjectBuilder.Vehicle = vehicle;
+                programmingService.CreateEcuProgrammingInfos(_psdzContext.Vehicle);
                 _psdzContext.Connection = psdzConnection;
 
                 sbResult.AppendLine("Vehicle connected");
