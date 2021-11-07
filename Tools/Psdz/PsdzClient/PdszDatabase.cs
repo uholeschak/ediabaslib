@@ -2387,7 +2387,28 @@ namespace PsdzClient
             return titleDe;
         }
 
-        public string LookupVehicleCharIdByName(string name, string nodeclass)
+        public long LookupVehicleCharIdByName(string name, decimal? nodeclassValue)
+        {
+            if (!nodeclassValue.HasValue)
+            {
+                return 0;
+            }
+
+            string charId = LookupVehicleCharIdByName(name, nodeclassValue.Value.ToString(CultureInfo.InvariantCulture));
+            if (string.IsNullOrEmpty(charId))
+            {
+                return 0;
+            }
+
+            if (!long.TryParse(charId, NumberStyles.Integer, CultureInfo.InvariantCulture, out long value))
+            {
+                return 0;
+            }
+
+            return value;
+        }
+
+        private string LookupVehicleCharIdByName(string name, string nodeclass)
         {
             log.InfoFormat("LookupVehicleCharIdByName Id: {0} Class: {1}", name, nodeclass);
             if (string.IsNullOrEmpty(name))

@@ -27,8 +27,8 @@ namespace PsdzClient.Core
 			//this.faField = new FA();
 			//this.fFMField = new ObservableCollection<FFMResult>();
 			this.eMotorField = new EMotor();
-			//this.heatMotorsField = new List<HeatMotor>();
-			//this.genericMotorField = new GenericMotor();
+			this.heatMotorsField = new List<HeatMotor>();
+			this.genericMotorField = new GenericMotor();
 			//this.cBSField = new ObservableCollection<typeCBSInfo>();
 			this.selectedECUField = new ECU();
 			//this.zFSField = new ObservableCollection<ZFSResult>();
@@ -766,7 +766,7 @@ namespace PsdzClient.Core
 				}
 			}
 		}
-#if false
+
 		public List<HeatMotor> HeatMotors
 		{
 			get
@@ -843,7 +843,7 @@ namespace PsdzClient.Core
 				}
 			}
 		}
-#endif
+
 		public string Hubraum
 		{
 			get
@@ -2906,11 +2906,11 @@ namespace PsdzClient.Core
 
 		private EMotor eMotorField;
 
-		//private List<HeatMotor> heatMotorsField;
+		private List<HeatMotor> heatMotorsField;
 
-		//private GenericMotor genericMotorField;
+		private GenericMotor genericMotorField;
 
-		//private string motorField;
+		private string motorField;
 
 		private string hubraumField;
 

@@ -203,7 +203,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
 		DateTime? FirstRegistration { get; }
 
-		//string GMType { get; }
+		string GMType { get; }
 
 		string Getriebe { get; }
 
@@ -273,7 +273,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
 		string Modelltag { get; }
 
-		//string Motor { get; }
+		string Motor { get; }
 
 		string Motorarbeitsverfahren { get; }
 

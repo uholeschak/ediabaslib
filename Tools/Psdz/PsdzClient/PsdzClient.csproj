@@ -113,6 +113,8 @@
     <Compile Include="Core\FA.cs" />
     <Compile Include="Core\FaultClassRuleParser.cs" />
     <Compile Include="Core\FFMResult.cs" />
+    <Compile Include="Core\GenericMotor.cs" />
+    <Compile Include="Core\HeatMotor.cs" />
     <Compile Include="Core\IEcuGroupLocator.cs" />
     <Compile Include="Core\IEcuVariantLocator.cs" />
     <Compile Include="Core\IFFMDynamicResolver.cs" />
@@ -146,6 +148,7 @@
     <Compile Include="Core\Vehicle.cs" />
     <Compile Include="Core\VehicleCharacteristicAbstract.cs" />
     <Compile Include="Core\VehicleCharacteristicVCIDeviceHelper.cs" />
+    <Compile Include="Core\VehicleCharacteristicVehicleHelper.cs" />
     <Compile Include="DetectVehicle.cs" />
     <Compile Include="Core\ISalapaLocalizedEntry.cs" />
     <Compile Include="Programming\AsamJobInputDictionary.cs" />

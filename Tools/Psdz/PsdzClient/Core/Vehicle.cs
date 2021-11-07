@@ -288,7 +288,7 @@ namespace PsdzClient.Core
 				return null;
 			}
 		}
-#if false
+
 		public string GMType
 		{
 			get
@@ -346,14 +346,14 @@ namespace PsdzClient.Core
 						return text2;
 					}
 				}
-				catch (Exception exception)
+				catch (Exception)
 				{
 					//Log.WarningException("Vehicle.get_VINType", exception);
 				}
 				return null;
 			}
 		}
-#endif
+
 		public string VINType
 		{
 			get
@@ -394,7 +394,7 @@ namespace PsdzClient.Core
 				return base.EMotor.EMOTBaureihe;
 			}
 		}
-#if false
+
 		public string Produktlinie
 		{
 			get
@@ -403,8 +403,10 @@ namespace PsdzClient.Core
 				{
 					return this.productLine;
 				}
-				return VehicleESeriesPropertiesGetter.GetProductLineBasedOnESeries(base.Ereihe);
-			}
+                // TODO: VehicleESeriesPropertiesGetter
+				//return VehicleESeriesPropertiesGetter.GetProductLineBasedOnESeries(base.Ereihe);
+				return string.Empty;
+            }
 			set
 			{
 				if (this.productLine != value)
@@ -423,8 +425,10 @@ namespace PsdzClient.Core
 				{
 					return this.securityRelevant;
 				}
-				return VehicleESeriesPropertiesGetter.GetSecurityRelevanceBasedOnESeries(base.Ereihe, this.hasSA("106"), this.hasSA("109"), this.hasSA("8SU"));
-			}
+                // TODO: VehicleESeriesPropertiesGetter
+				//return VehicleESeriesPropertiesGetter.GetSecurityRelevanceBasedOnESeries(base.Ereihe, this.hasSA("106"), this.hasSA("109"), this.hasSA("8SU"));
+				return string.Empty;
+            }
 			set
 			{
 				if (this.securityRelevant != value)
@@ -443,8 +447,10 @@ namespace PsdzClient.Core
 				{
 					return this.doorNumber;
 				}
-				return VehicleESeriesPropertiesGetter.GetDoorNumberBasedOnESeries(base.Ereihe, base.Prodart);
-			}
+				// TODO: VehicleESeriesPropertiesGetter
+				//return VehicleESeriesPropertiesGetter.GetDoorNumberBasedOnESeries(base.Ereihe, base.Prodart);
+				return string.Empty;
+            }
 			set
 			{
 				if (value != this.doorNumber)
@@ -454,7 +460,7 @@ namespace PsdzClient.Core
 				}
 			}
 		}
-
+#if false
 		[XmlIgnore]
 		public IList<Fault> FaultList
 		{
@@ -1801,8 +1807,6 @@ namespace PsdzClient.Core
 			return false;
 		}
 
-        // TODO: getISTACharacteristics
-#if false
 		public bool getISTACharacteristics(decimal id, out string value, long datavalueId, ValidationRuleInternalResults internalResult)
 		{
             PdszDatabase.CharacteristicRoots characteristicRootsById = ClientContext.Database?.GetCharacteristicRootsById(id.ToString(CultureInfo.InvariantCulture));
@@ -1813,7 +1817,7 @@ namespace PsdzClient.Core
 			value = "???";
 			return false;
 		}
-#endif
+
 		public void UpdateStatus(string name, StateType type, double? progress)
 		{
 			try
@@ -2806,11 +2810,11 @@ namespace PsdzClient.Core
 
 		private bool isBusy;
 
-		//private string productLine;
+		private string productLine;
 
-		//private string doorNumber;
+		private string doorNumber;
 
-		//private string securityRelevant;
+		private string securityRelevant;
 
 		private DateTime? cDatetimeByModelYearMonth;
 

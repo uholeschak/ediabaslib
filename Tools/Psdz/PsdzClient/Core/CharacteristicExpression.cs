@@ -137,8 +137,6 @@ namespace PsdzClient.Core
 			string text = null;
 			bool flag;
 
-            // TODO: getISTACharacteristics
-#if false
 			if (vec != null && vec.VCI != null)
 			{
 				if (vec.VCI.VCIType != VCIDeviceType.UNKNOWN)
@@ -147,7 +145,7 @@ namespace PsdzClient.Core
 					return flag;
 				}
 			}
-#endif
+
 			if (this.CharacteristicRoot.Equals("Marke"))
 			{
 				string text2;
