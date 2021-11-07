@@ -1820,6 +1820,51 @@ namespace PsdzClient
             return swiActions;
         }
 
+        public List<SwiAction> GetSwiActionsLinkedToSwiActionId(string id, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return null;
+            }
+
+            log.InfoFormat("GetSwiActionsLinkedToSwiActionId Id: {0}", id);
+            List<SwiAction> swiActions = new List<SwiAction>();
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture,
+                    @"SELECT ID, NAME, ACTIONCATEGORY, SELECTABLE, SHOW_IN_PLAN, EXECUTABLE, " + DatabaseFunctions.SqlTitleItems +
+                    ", NODECLASS FROM XEP_SWIACTION WHERE ID IN (SELECT SWI_ACTION_TARGET_ID FROM XEP_REF_SWIACTION_SWIACTION WHERE SWI_ACTION_ID = {0})",
+                    id);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            SwiAction swiAction = ReadXepSwiAction(reader, SwiActionSource.SwiRegister);
+                            if (EvaluateXepRulesById(swiAction.Id, vehicle, ffmResolver))
+                            {
+                                swiActions.Add(swiAction);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetSwiActionsLinkedToSwiActionId Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            log.InfoFormat("GetSwiActionsLinkedToSwiActionId Actions Count: {0}", swiActions.Count);
+            foreach (SwiAction swiAction in swiActions)
+            {
+                log.InfoFormat("Action Id: {0}, Name: '{1}'", swiAction.Id, swiAction.Name);
+            }
+            return swiActions;
+        }
+
+
         public List<SwiRegister> GetSwiRegistersByParentId(string parentId)
         {
             List<SwiRegister> swiRegisterList = new List<SwiRegister>();
