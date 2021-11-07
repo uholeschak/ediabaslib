@@ -1053,30 +1053,30 @@ namespace PsdzClient
 
         public void ReadSwiRegister(Vehicle vehicle, IFFMDynamicResolver ffmResolver = null)
         {
-            List<SwiRegister> swiRegisterRoot = GetSwiRegistersByParentId(null);
+            List<SwiRegister> swiRegisterRoot = GetSwiRegistersByParentId(null, vehicle, ffmResolver);
             if (swiRegisterRoot != null)
             {
                 SwiRegisterTree = swiRegisterRoot.FirstOrDefault();
             }
 
-            ReadSwiRegisterTree(SwiRegisterTree);
+            ReadSwiRegisterTree(SwiRegisterTree, vehicle, ffmResolver);
             GetSwiActionsForTree(SwiRegisterTree, vehicle, ffmResolver);
         }
 
-        public void ReadSwiRegisterTree(SwiRegister swiRegister)
+        public void ReadSwiRegisterTree(SwiRegister swiRegister, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
         {
             if (string.IsNullOrEmpty(swiRegister.Id))
             {
                 return;
             }
 
-            List<SwiRegister> swiChildren = GetSwiRegistersByParentId(swiRegister.Id);
+            List<SwiRegister> swiChildren = GetSwiRegistersByParentId(swiRegister.Id, vehicle, ffmResolver);
             if (swiChildren != null && swiChildren.Count > 0)
             {
                 swiRegister.Children = swiChildren;
                 foreach (SwiRegister swiChild in swiChildren)
                 {
-                    ReadSwiRegisterTree(swiChild);
+                    ReadSwiRegisterTree(swiChild, vehicle, ffmResolver);
                 }
             }
         }
@@ -1893,7 +1893,7 @@ namespace PsdzClient
             return swiActionsLinked;
         }
 
-        public List<SwiRegister> GetSwiRegistersByParentId(string parentId)
+        public List<SwiRegister> GetSwiRegistersByParentId(string parentId, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
         {
             List<SwiRegister> swiRegisterList = new List<SwiRegister>();
             try
@@ -1908,7 +1908,17 @@ namespace PsdzClient
                         while (reader.Read())
                         {
                             SwiRegister swiRegister = ReadXepSwiRegister(reader);
-                            swiRegisterList.Add(swiRegister);
+                            if (vehicle == null)
+                            {
+                                swiRegisterList.Add(swiRegister);
+                            }
+                            else
+                            {
+                                if (EvaluateXepRulesById(swiRegister.Id, vehicle, ffmResolver))
+                                {
+                                    swiRegisterList.Add(swiRegister);
+                                }
+                            }
                         }
                     }
                 }
