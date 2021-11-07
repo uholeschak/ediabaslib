@@ -12,7 +12,7 @@ namespace PsdzClient
         static ClientContext()
         {
             Database = null;
-            SelectedBrand = EnumBrand.BMWPKW;
+            SelectedBrand = EnumBrand.BMWBMWiMINI;
             OutletCountry = string.Empty;
             Language = "En";
         }
