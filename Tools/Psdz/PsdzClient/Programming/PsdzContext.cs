@@ -313,6 +313,14 @@ namespace PsdzClient.Programming
             Vehicle.Modelljahr = DetectVehicle.ConstructYear;
             Vehicle.Modellmonat = DetectVehicle.ConstructMonth;
 
+            CharacteristicExpression.EnumBrand brand = CharacteristicExpression.EnumBrand.BMWBMWiMINI;
+            if (Vehicle.IsMotorcycle())
+            {
+                brand = CharacteristicExpression.EnumBrand.BMWMotorrad;
+            }
+
+            ClientContext.SelectedBrand = brand;
+
             Vehicle.FA = ProgrammingUtils.BuildVehicleFa(FaActual, DetectVehicle.ModelSeries);
 
             for (int i = 0; i < 2; i++)
