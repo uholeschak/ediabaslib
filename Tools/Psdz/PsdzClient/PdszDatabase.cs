@@ -1864,6 +1864,27 @@ namespace PsdzClient
             return swiActions;
         }
 
+        public List<SwiAction> ReadLinkedSwiActions(List<SwiAction> selectedRegister, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
+        {
+            log.InfoFormat("ReadLinkedSwiActions Register count: {0}", selectedRegister.Count);
+
+            List<SwiAction> swiActionsLinked = new List<SwiAction>();
+            foreach (SwiAction swiAction in selectedRegister)
+            {
+                List<SwiAction> swiActions = GetSwiActionsLinkedToSwiActionId(swiAction.Id, vehicle, ffmResolver);
+                if (swiActions != null)
+                {
+                    swiActionsLinked.AddRange(swiActions);
+                }
+            }
+
+            log.InfoFormat("ReadLinkedSwiActions Actions Count: {0}", swiActionsLinked.Count);
+            foreach (SwiAction swiAction in swiActionsLinked)
+            {
+                log.InfoFormat("Action Id: {0}, Name: '{1}'", swiAction.Id, swiAction.Name);
+            }
+            return swiActionsLinked;
+        }
 
         public List<SwiRegister> GetSwiRegistersByParentId(string parentId)
         {
