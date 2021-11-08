@@ -315,35 +315,33 @@ namespace PsdzClient.Core
 						{
 							case 'A':
 								text2 += "1";
-								goto IL_150;
+                                return text2;
 							case 'B':
 								text2 += "2";
-								goto IL_150;
+                                return text2;
 							case 'C':
 								text2 += "3";
-								goto IL_150;
+                                return text2;
 							case 'D':
 								text2 += "4";
-								goto IL_150;
+                                return text2;
 							case 'E':
 								text2 += "5";
-								goto IL_150;
+                                return text2;
 							case 'F':
 								text2 += "6";
-								goto IL_150;
+                                return text2;
 							case 'G':
 								text2 += "7";
-								goto IL_150;
+                                return text2;
 							case 'H':
 								text2 += "8";
-								goto IL_150;
+                                return text2;
 							case 'J':
 								text2 += "9";
-								goto IL_150;
+                                return text2;
 						}
 						return text;
-						IL_150:
-						return text2;
 					}
 				}
 				catch (Exception)
