@@ -1697,10 +1697,58 @@ namespace PsdzClient
 
             if (returnFirstEntryWithoutCheck)
             {
-
+                return GetVinRangesByVin17_4_7(vin17_4_7);
             }
 
             log.ErrorFormat("GetVinRangesByVin17 Not found: {0}", vin17_4_7);
+            return null;
+        }
+
+        public VinRanges GetVinRangesByVin17_4_7(string vin17_4_7)
+        {
+            log.InfoFormat("GetVinRangesByVin17_4_7 Vin17_4_7: {0}", vin17_4_7);
+            if (string.IsNullOrEmpty(vin17_4_7))
+            {
+                return null;
+            }
+
+            List<VinRanges> vinRangesList = new List<VinRanges>();
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture,
+                    @"SELECT VINBANDFROM, VINBANDTO, TYPSCHLUESSEL, PRODUCTIONDATEYEAR, PRODUCTIONDATEMONTH, RELEASESTATE, CHANGEDATE, GEARBOX_TYPE, VIN17_4_7" +
+                    @" FROM VINRANGES WHERE (VIN17_4_7 = {0})", vin17_4_7);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            VinRanges vinRanges = ReadXepVinRanges(reader);
+                            vinRangesList.Add(vinRanges);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetVinRangesByVin17_4_7 Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            if (vinRangesList.Count > 1)
+            {
+                log.InfoFormat("GetVinRangesByVin17_4_7 List count: {0}", vinRangesList.Count);
+            }
+
+            if (vinRangesList.Count >= 1)
+            {
+                VinRanges vinRanges = vinRangesList.First();
+                log.InfoFormat("GetVinRangesByVin17_4_7 TypeKey: {0}", vinRanges.TypeKey);
+                return vinRanges;
+            }
+
+            log.ErrorFormat("GetVinRangesByVin17_4_7 Not found: {0}", vin17_4_7);
             return null;
         }
 
