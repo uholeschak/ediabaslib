@@ -1591,6 +1591,22 @@ namespace PsdzClient
             return characteristicsList;
         }
 
+        public List<Characteristics> GetVehicleCharacteristicsFromDatabase(Vehicle vehicle)
+        {
+            List<Characteristics> characteristicsList = null;
+            if (!string.IsNullOrEmpty(vehicle.VINRangeType))
+            {
+                characteristicsList = GetVehicleIdentByTypeKey(vehicle.VINRangeType);
+            }
+
+            if (characteristicsList == null || characteristicsList.Count == 0)
+            {
+                characteristicsList = GetVehicleIdentByTypeKey(vehicle.GMType);
+            }
+
+            return characteristicsList;
+        }
+
         public List<Characteristics> GetVehicleIdentByTypeKey(string typeKey)
         {
             string typeKeyId = GetTypeKeyId(typeKey);
