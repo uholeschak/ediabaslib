@@ -1638,6 +1638,7 @@ namespace PsdzClient
 
         public VinRanges GetVinRangesByVin17(string vin17_4_7, string vin7, bool returnFirstEntryWithoutCheck)
         {
+            log.InfoFormat("GetVinRangesByVin17 Vin17_4_7: {0}, Vin7: {1}", vin17_4_7, vin7);
             if (string.IsNullOrEmpty(vin17_4_7) || string.IsNullOrEmpty(vin7))
             {
                 return null;
@@ -1663,8 +1664,13 @@ namespace PsdzClient
             }
             catch (Exception e)
             {
-                log.ErrorFormat("GetCharacteristicsByTypeKeyId Exception: '{0}'", e.Message);
+                log.ErrorFormat("GetVinRangesByVin17 Exception: '{0}'", e.Message);
                 return null;
+            }
+
+            if (vinRangesList.Count > 1)
+            {
+                log.InfoFormat("GetVinRangesByVin17 List count: {0}", vinRangesList.Count);
             }
 
             IComparer<string> comparer = new EbcdicVIN7Comparer();
@@ -1679,10 +1685,13 @@ namespace PsdzClient
 
             if (vinRangesList2.Count == 1)
             {
-                return vinRangesList2.First();
+                VinRanges vinRanges = vinRangesList2.First();
+                log.InfoFormat("GetVinRangesByVin17 TypeKey: {0}", vinRanges.TypeKey);
+                return vinRanges;
             }
             if (vinRangesList2.Count > 1)
             {
+                log.ErrorFormat("GetVinRangesByVin17 List2 count: {0}", vinRangesList.Count);
                 return null;
             }
 
@@ -1690,6 +1699,8 @@ namespace PsdzClient
             {
 
             }
+
+            log.ErrorFormat("GetVinRangesByVin17 Not found: {0}", vin17_4_7);
             return null;
         }
 
