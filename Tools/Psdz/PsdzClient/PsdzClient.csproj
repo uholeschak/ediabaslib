@@ -97,6 +97,7 @@
     <Compile Include="Core\CompareExpression.cs" />
     <Compile Include="Core\CountryExpression.cs" />
     <Compile Include="Core\DateExpression.cs" />
+    <Compile Include="Core\EbcdicVIN7Comparer.cs" />
     <Compile Include="Core\ECU.cs" />
     <Compile Include="Core\EcuCliqueExpression.cs" />
     <Compile Include="Core\EcuConfiguration.cs" />

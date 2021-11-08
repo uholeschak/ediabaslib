@@ -479,6 +479,51 @@ namespace PsdzClient
             }
         }
 
+        public class VinRanges
+        {
+            public VinRanges(string changeDate, string productionMonth, string productionYear, string releaseState, string typeKey,
+                string vinBandFrom, string vinBandTo, string gearboxType, string vin17_4_7)
+            {
+                ChangeDate = changeDate;
+                ProductionMonth = productionMonth;
+                ProductionYear = productionYear;
+                ReleaseState = releaseState;
+                TypeKey = typeKey;
+                VinBandFrom = vinBandFrom;
+                VinBandTo = vinBandTo;
+                GearboxType = gearboxType;
+                Vin17_4_7 = vin17_4_7;
+            }
+
+            public string ChangeDate { get; set; }
+
+            public string ProductionMonth { get; set; }
+
+            public string ProductionYear { get; set; }
+
+            public string ReleaseState { get; set; }
+
+            public string TypeKey { get; set; }
+
+            public string VinBandFrom { get; set; }
+
+            public string VinBandTo { get; set; }
+
+            public string GearboxType { get; set; }
+
+            public string Vin17_4_7 { get; set; }
+
+            public string ToString(string language, string prefix = "")
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(prefix);
+                sb.Append(string.Format(CultureInfo.InvariantCulture,
+                    "EcuVar: Date={0}, Month={1}, Year={2}, State={3}, Key={4}, VinFrom={5}, VinTo={6}, Gear={6}, Vin17_4_7={7}",
+                    ChangeDate, ProductionMonth, ProductionYear, ReleaseState, TypeKey, VinBandFrom, VinBandTo, GearboxType, Vin17_4_7));
+                return sb.ToString();
+            }
+        }
+
         public class SaLaPa
         {
             public SaLaPa(string id, string name, string productType, EcuTranslation ecuTranslation)
@@ -1591,6 +1636,63 @@ namespace PsdzClient
             return characteristicsList;
         }
 
+        public VinRanges GetVinRangesByVin17(string vin17_4_7, string vin7, bool returnFirstEntryWithoutCheck)
+        {
+            if (string.IsNullOrEmpty(vin17_4_7) || string.IsNullOrEmpty(vin7))
+            {
+                return null;
+            }
+
+            List<VinRanges> vinRangesList = new List<VinRanges>();
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture,
+                    @"SELECT VINBANDFROM, VINBANDTO, TYPSCHLUESSEL, PRODUCTIONDATEYEAR, PRODUCTIONDATEMONTH, RELEASESTATE, CHANGEDATE, GEARBOX_TYPE, VIN17_4_7" +
+                    @" FROM VINRANGES WHERE ({0} BETWEEN VINBANDFROM AND VINBANDTO) AND (VIN17_4_7 = {1})", vin7, vin17_4_7);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            VinRanges vinRanges = ReadXepVinRanges(reader);
+                            vinRangesList.Add(vinRanges);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetCharacteristicsByTypeKeyId Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            IComparer<string> comparer = new EbcdicVIN7Comparer();
+            List<VinRanges> vinRangesList2 = new List<VinRanges>();
+            foreach (VinRanges vinRanges in vinRangesList)
+            {
+                if (comparer.Compare(vinRanges.VinBandFrom, vin7) <= 0 && comparer.Compare(vinRanges.VinBandTo, vin7) >= 0)
+                {
+                    vinRangesList2.Add(vinRanges);
+                }
+            }
+
+            if (vinRangesList2.Count == 1)
+            {
+                return vinRangesList2.First();
+            }
+            if (vinRangesList2.Count > 1)
+            {
+                return null;
+            }
+
+            if (returnFirstEntryWithoutCheck)
+            {
+
+            }
+            return null;
+        }
+
         public List<Characteristics> GetVehicleCharacteristicsFromDatabase(Vehicle vehicle)
         {
             List<Characteristics> characteristicsList = null;
@@ -2623,6 +2725,20 @@ namespace PsdzClient
             string name = reader["NAME"].ToString().Trim();
             string legacyName = reader["LEGACY_NAME"].ToString().Trim();
             return new Characteristics(id, nodeClass, titleId, istaVisible, staticClassVar, staticClassVarMCycle, parentId, name, legacyName, GetTranslation(reader));
+        }
+
+        private static VinRanges ReadXepVinRanges(SQLiteDataReader reader)
+        {
+            string changeDate = reader["CHANGEDATE"].ToString().Trim();
+            string productionMonth = reader["PRODUCTIONDATEMONTH"].ToString().Trim();
+            string productionYear = reader["PRODUCTIONDATEYEAR"].ToString().Trim();
+            string releaseState = reader["RELEASESTATE"].ToString().Trim();
+            string typeKey = reader["TYPSCHLUESSEL"].ToString().Trim();
+            string vinBandFrom = reader["VINBANDFROM"].ToString().Trim();
+            string vinBandTo = reader["VINBANDTO"].ToString().Trim();
+            string gearboxType = reader["GEARBOX_TYPE"].ToString().Trim();
+            string vin17_4_7 = reader["VIN17_4_7"].ToString().Trim();
+            return new VinRanges(changeDate, productionMonth, productionYear, releaseState, typeKey, vinBandFrom, vinBandTo, gearboxType, vin17_4_7);
         }
 
         private static SaLaPa ReadXepSaLaPa(SQLiteDataReader reader)

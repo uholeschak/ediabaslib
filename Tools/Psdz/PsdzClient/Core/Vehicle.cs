@@ -180,23 +180,23 @@ namespace PsdzClient.Core
 				return base.SerialGearBox;
 			}
 		}
-#if false
+
 		public bool SetVINRangeTypeFromVINRanges()
 		{
-			IDatabaseProvider instance = DatabaseProviderFactory.Instance;
-			if (instance != null && instance.DatabaseAccessType != DatabaseType.None && !"XXXXXXX".Equals(this.VIN7) && !string.IsNullOrEmpty(this.VIN7) && !this.VIN7.Equals(this.vinRangeTypeLastResolvedType, StringComparison.OrdinalIgnoreCase))
+            PdszDatabase database = ClientContext.Database;
+			if (database != null && !"XXXXXXX".Equals(this.VIN7) && !string.IsNullOrEmpty(this.VIN7) && !this.VIN7.Equals(this.vinRangeTypeLastResolvedType, StringComparison.OrdinalIgnoreCase))
 			{
-				VINRANGES vinRangesByVin = instance.GetVinRangesByVin17(this.VINType, this.VIN7, false);
+                PdszDatabase.VinRanges vinRangesByVin = database.GetVinRangesByVin17(this.VINType, this.VIN7, false);
 				if (vinRangesByVin != null)
 				{
-					this.vinRangeType = vinRangesByVin.TYPSCHLUESSEL;
+					this.vinRangeType = vinRangesByVin.TypeKey;
 					this.vinRangeTypeLastResolvedType = this.VIN7;
 					return true;
 				}
 			}
 			return false;
 		}
-#endif
+
 		[XmlIgnore]
 		public string VINRangeType
 		{
@@ -2802,7 +2802,7 @@ namespace PsdzClient.Core
 
 		private string vinRangeType;
 
-		//private string vinRangeTypeLastResolvedType;
+		private string vinRangeTypeLastResolvedType;
 
 		private FA targetFA;
 
