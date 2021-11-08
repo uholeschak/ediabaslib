@@ -473,8 +473,8 @@ namespace PsdzClient
                 StringBuilder sb = new StringBuilder();
                 sb.Append(prefix);
                 sb.Append(string.Format(CultureInfo.InvariantCulture,
-                    "EcuVar: Id={0}, Class={1}, ParentId={2}, Name={3}, LegacyName={4}, RootClass={5}, Title='{6}'",
-                    Id, NodeClass, ParentId, Name, LegacyName, RootNodeClass, EcuTranslation.GetTitle(language)));
+                    "Char: Id={0}, Class={1}, TitleId={2}, ParentId={3}, Name={4}, LegacyName={5}, Drive={6}, RootClass={7}, Title='{8}'",
+                    Id, NodeClass, TitleId, ParentId, Name, LegacyName, DriveId, RootNodeClass, EcuTranslation.GetTitle(language)));
                 return sb.ToString();
             }
         }
@@ -1600,6 +1600,7 @@ namespace PsdzClient
 
         public List<Characteristics> GetCharacteristicsByTypeKeyId(string typeKeyId)
         {
+            log.InfoFormat("GetCharacteristicsByTypeKeyId TypeKey: {0}", typeKeyId);
             if (string.IsNullOrEmpty(typeKeyId))
             {
                 return null;
@@ -1610,8 +1611,8 @@ namespace PsdzClient
             {
                 string sql = string.Format(CultureInfo.InvariantCulture,
                     @"SELECT C.ID, C.NODECLASS, C.TITLEID, " + SqlTitleItemsC +
-                    @"C.STATICCLASSVARIABLES, C.STATICCLASSVARIABLESMOTORRAD, C.PARENTID, C.ISTA_VISIBLE, C.NAME, C.LEGACY_NAME, V.DRIVEID, CR.NODECLASS" +
-                    @" AS PARENTNODECLASS FROM xep_vehicles JOIN xep_characteristics C on C.ID = V.CHARACTERISTICID JOIN xep_characteristicroots CR on CR.ID = C.PARENTID" +
+                    @", C.STATICCLASSVARIABLES, C.STATICCLASSVARIABLESMOTORRAD, C.PARENTID, C.ISTA_VISIBLE, C.NAME, C.LEGACY_NAME, V.DRIVEID, CR.NODECLASS" +
+                    @" AS PARENTNODECLASS FROM xep_vehicles V JOIN xep_characteristics C on C.ID = V.CHARACTERISTICID JOIN xep_characteristicroots CR on CR.ID = C.PARENTID" +
                     @" WHERE TYPEKEYID = {0} AND CR.NODECLASS IS NOT NULL", typeKeyId);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
@@ -1633,6 +1634,7 @@ namespace PsdzClient
                 return null;
             }
 
+            log.InfoFormat("GetCharacteristicsByTypeKeyId Count: {0}", characteristicsList.Count);
             return characteristicsList;
         }
 
@@ -1755,6 +1757,7 @@ namespace PsdzClient
 
         public List<Characteristics> GetVehicleCharacteristicsFromDatabase(Vehicle vehicle)
         {
+            log.InfoFormat("GetVehicleCharacteristicsFromDatabase VinRangeType: {0}", vehicle.VINRangeType);
             List<Characteristics> characteristicsList = null;
             if (!string.IsNullOrEmpty(vehicle.VINRangeType))
             {
@@ -1764,6 +1767,19 @@ namespace PsdzClient
             if (characteristicsList == null || characteristicsList.Count == 0)
             {
                 characteristicsList = GetVehicleIdentByTypeKey(vehicle.GMType);
+            }
+
+            if (characteristicsList == null)
+            {
+                log.ErrorFormat("GetVehicleCharacteristicsFromDatabase VinRangeType: {0} Not found", vehicle.VINRangeType);
+            }
+            else
+            {
+                log.InfoFormat("GetVehicleCharacteristicsFromDatabase Count: {0}", characteristicsList.Count);
+                foreach (Characteristics characteristics in characteristicsList)
+                {
+                    log.InfoFormat("Characteristics: {0}", characteristics.ToString(ClientContext.Language));
+                }
             }
 
             return characteristicsList;
@@ -2634,7 +2650,7 @@ namespace PsdzClient
             string typeId = null;
             try
             {
-                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID FROM XEP_CHARACTERISTICS WHERE (NAME = {0}) AND (NODECLASS = {1})", typeKey, _typeKeyClassId);
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID FROM XEP_CHARACTERISTICS WHERE (NAME = '{0}') AND (NODECLASS = {1})", typeKey, _typeKeyClassId);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())

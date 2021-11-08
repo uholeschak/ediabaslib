@@ -1006,7 +1006,7 @@ namespace PsdzClient
 
                 programmingService.PdszDatabase.LinkSvtEcus(_psdzContext.DetectVehicle.EcuList, psdzSvt);
                 programmingService.PdszDatabase.GetEcuVariants(_psdzContext.DetectVehicle.EcuList);
-                _psdzContext.UpdateVehicle(programmingService.ProgrammingInfos.ProgrammingObjectBuilder, psdzStandardSvtNames);
+                _psdzContext.UpdateVehicle(programmingService, psdzStandardSvtNames);
                 programmingService.PdszDatabase.ResetXepRules();
                 programmingService.PdszDatabase.GetEcuVariants(_psdzContext.DetectVehicle.EcuList, _psdzContext.Vehicle);
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecus: {0}", _psdzContext.DetectVehicle.EcuList.Count()));

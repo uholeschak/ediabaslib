@@ -297,12 +297,14 @@ namespace PsdzClient.Programming
 			this.TalFilterForIndividualDataTal = talFilterForIndividualDataTal;
 		}
 
-        public void UpdateVehicle(ProgrammingObjectBuilder programmingObjectBuilder, IPsdzStandardSvt psdzStandardSvt)
+        public void UpdateVehicle(ProgrammingService programmingService, IPsdzStandardSvt psdzStandardSvt)
         {
             if (Vehicle == null)
             {
                 return;
             }
+
+            ProgrammingObjectBuilder programmingObjectBuilder = programmingService.ProgrammingInfos.ProgrammingObjectBuilder;
 
             Vehicle.VehicleIdentLevel = IdentificationLevel.VINVehicleReadout;
             Vehicle.VehicleIdentAlreadyDone = true;
@@ -353,9 +355,14 @@ namespace PsdzClient.Programming
 
                 Vehicle.ECU = EcuList;
             }
-		}
 
-		public BNType GetBnType()
+            List<PdszDatabase.Characteristics> characteristicsList = programmingService.PdszDatabase.GetVehicleCharacteristicsFromDatabase(Vehicle);
+            if (characteristicsList != null)
+            {
+            }
+        }
+
+        public BNType GetBnType()
         {
             switch (DetectVehicle.BnType)
             {
