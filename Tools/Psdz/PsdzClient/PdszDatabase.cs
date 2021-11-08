@@ -518,7 +518,7 @@ namespace PsdzClient
                 StringBuilder sb = new StringBuilder();
                 sb.Append(prefix);
                 sb.Append(string.Format(CultureInfo.InvariantCulture,
-                    "EcuVar: Date={0}, Month={1}, Year={2}, State={3}, Key={4}, VinFrom={5}, VinTo={6}, Gear={6}, Vin17_4_7={7}",
+                    "VinRange: Date={0}, Month={1}, Year={2}, State={3}, Key={4}, VinFrom={5}, VinTo={6}, Gear={6}, Vin17_4_7={7}",
                     ChangeDate, ProductionMonth, ProductionYear, ReleaseState, TypeKey, VinBandFrom, VinBandTo, GearboxType, Vin17_4_7));
                 return sb.ToString();
             }
