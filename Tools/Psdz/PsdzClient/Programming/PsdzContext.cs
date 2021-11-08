@@ -312,6 +312,7 @@ namespace PsdzClient.Programming
             Vehicle.VIN17 = DetectVehicle.Vin;
             Vehicle.Modelljahr = DetectVehicle.ConstructYear;
             Vehicle.Modellmonat = DetectVehicle.ConstructMonth;
+            Vehicle.SetVINRangeTypeFromVINRanges();
 
             CharacteristicExpression.EnumBrand brand = CharacteristicExpression.EnumBrand.BMWBMWiMINI;
             if (Vehicle.IsMotorcycle())
