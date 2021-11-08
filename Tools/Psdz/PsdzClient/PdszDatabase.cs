@@ -1649,7 +1649,8 @@ namespace PsdzClient
             {
                 string sql = string.Format(CultureInfo.InvariantCulture,
                     @"SELECT VINBANDFROM, VINBANDTO, TYPSCHLUESSEL, PRODUCTIONDATEYEAR, PRODUCTIONDATEMONTH, RELEASESTATE, CHANGEDATE, GEARBOX_TYPE, VIN17_4_7" +
-                    @" FROM VINRANGES WHERE ({0} BETWEEN VINBANDFROM AND VINBANDTO) AND (VIN17_4_7 = {1})", vin7, vin17_4_7);
+                    @" FROM VINRANGES WHERE ('{0}' BETWEEN VINBANDFROM AND VINBANDTO) AND (VIN17_4_7 = '{1}')",
+                    vin7.ToUpper(CultureInfo.InvariantCulture), vin17_4_7.ToUpper(CultureInfo.InvariantCulture));
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
@@ -1717,7 +1718,7 @@ namespace PsdzClient
             {
                 string sql = string.Format(CultureInfo.InvariantCulture,
                     @"SELECT VINBANDFROM, VINBANDTO, TYPSCHLUESSEL, PRODUCTIONDATEYEAR, PRODUCTIONDATEMONTH, RELEASESTATE, CHANGEDATE, GEARBOX_TYPE, VIN17_4_7" +
-                    @" FROM VINRANGES WHERE (VIN17_4_7 = {0})", vin17_4_7);
+                    @" FROM VINRANGES WHERE (VIN17_4_7 = '{0}')", vin17_4_7.ToUpper(CultureInfo.InvariantCulture));
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
