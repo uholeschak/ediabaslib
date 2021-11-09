@@ -1870,18 +1870,18 @@ namespace PsdzClient
             return null;
         }
 
-        public List<Characteristics> GetVehicleCharacteristicsFromDatabase(Vehicle vehicle)
+        public List<Characteristics> GetVehicleCharacteristicsFromDatabase(Vehicle vehicle, bool isAlpina)
         {
-            log.InfoFormat("GetVehicleCharacteristicsFromDatabase VinRangeType: {0}", vehicle.VINRangeType);
+            log.InfoFormat("GetVehicleCharacteristicsFromDatabase VinRangeType: {0}, Alpina: {1}", vehicle.VINRangeType, isAlpina);
             List<Characteristics> characteristicsList = null;
             if (!string.IsNullOrEmpty(vehicle.VINRangeType))
             {
-                characteristicsList = GetVehicleIdentByTypeKey(vehicle.VINRangeType);
+                characteristicsList = GetVehicleIdentByTypeKey(vehicle.VINRangeType, isAlpina);
             }
 
             if (characteristicsList == null || characteristicsList.Count == 0)
             {
-                characteristicsList = GetVehicleIdentByTypeKey(vehicle.GMType);
+                characteristicsList = GetVehicleIdentByTypeKey(vehicle.GMType, isAlpina);
             }
 
             if (characteristicsList == null)
@@ -1900,9 +1900,9 @@ namespace PsdzClient
             return characteristicsList;
         }
 
-        public List<Characteristics> GetVehicleIdentByTypeKey(string typeKey)
+        public List<Characteristics> GetVehicleIdentByTypeKey(string typeKey, bool isAlpina)
         {
-            string typeKeyId = GetTypeKeyId(typeKey);
+            string typeKeyId = GetTypeKeyId(typeKey, isAlpina);
             return GetCharacteristicsByTypeKeyId(typeKeyId);
         }
 
@@ -2754,9 +2754,9 @@ namespace PsdzClient
             return charId;
         }
 
-        public string GetTypeKeyId(string typeKey)
+        public string GetTypeKeyId(string typeKey, bool isAlpina)
         {
-            log.InfoFormat("GetTypeKeyId Key: {0}", typeKey);
+            log.InfoFormat("GetTypeKeyId Key: {0}, Alpina: {1}", typeKey, isAlpina);
             if (string.IsNullOrEmpty(typeKey))
             {
                 return null;
@@ -2773,6 +2773,11 @@ namespace PsdzClient
                         while (reader.Read())
                         {
                             typeId = reader["ID"].ToString().Trim();
+                            if (isAlpina)
+                            {
+                                typeId = GetAlpinaTypeKeyId(typeId);
+                            }
+                            break;
                         }
                     }
                 }
@@ -2785,6 +2790,51 @@ namespace PsdzClient
 
             log.InfoFormat("GetTypeKeyId TypeId: {0}", typeId);
             return typeId;
+        }
+
+        public string GetAlpinaTypeKeyId(string typeId)
+        {
+            string alpinaId = GetTypeKeyMapping(typeId);
+            if (!string.IsNullOrEmpty(alpinaId))
+            {
+                return alpinaId;
+            }
+
+            return alpinaId;
+        }
+
+        public string GetTypeKeyMapping(string typeId)
+        {
+            log.InfoFormat("GetTypeKeyMapping Id: {0}", typeId);
+            if (string.IsNullOrEmpty(typeId))
+            {
+                return null;
+            }
+
+            string alpinaId = null;
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, ALPINA_ID FROM XEP_TYPEKEY_MAPPING WHERE (ID = {0})", typeId);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            alpinaId = reader["ALPINA_ID"].ToString().Trim();
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetTypeKeyMapping Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            log.InfoFormat("GetTypeKeyMapping ILevel: '{0}'", alpinaId);
+            return alpinaId;
         }
 
         public string GetIStufeById(string iStufenId)
