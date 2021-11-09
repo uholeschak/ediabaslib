@@ -2613,7 +2613,7 @@ namespace PsdzClient
             string charId = null;
             try
             {
-                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NODECLASS, NAME FROM XEP_CHARACTERISTICS WHERE (NAME = {0})", name);
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NODECLASS, NAME FROM XEP_CHARACTERISTICS WHERE (NAME = '{0}')", name);
                 if (!string.IsNullOrEmpty(nodeclass))
                 {
                     sql += string.Format(CultureInfo.InvariantCulture, @" AND (NODECLASS = {0})", nodeclass);

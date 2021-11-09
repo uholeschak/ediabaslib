@@ -454,10 +454,8 @@ namespace PsdzClient
                 }
 
                 Vehicle vehicle = new Vehicle();
-#if false
                 vehicle.VCI.VCIType = icomConnection ?
                     BMW.Rheingold.CoreFramework.Contracts.Vehicle.VCIDeviceType.ICOM : BMW.Rheingold.CoreFramework.Contracts.Vehicle.VCIDeviceType.ENET;
-#endif
                 vehicle.VCI.IPAddress = ipAddress;
                 vehicle.VCI.Port = diagPort;
                 vehicle.VCI.NetworkType = "LAN";
