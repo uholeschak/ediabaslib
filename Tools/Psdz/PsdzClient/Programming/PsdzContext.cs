@@ -297,11 +297,11 @@ namespace PsdzClient.Programming
 			this.TalFilterForIndividualDataTal = talFilterForIndividualDataTal;
 		}
 
-        public void UpdateVehicle(ProgrammingService programmingService, IPsdzStandardSvt psdzStandardSvt)
+        public bool UpdateVehicle(ProgrammingService programmingService, IPsdzStandardSvt psdzStandardSvt)
         {
             if (Vehicle == null)
             {
-                return;
+                return false;
             }
 
             ProgrammingObjectBuilder programmingObjectBuilder = programmingService.ProgrammingInfos.ProgrammingObjectBuilder;
@@ -357,9 +357,21 @@ namespace PsdzClient.Programming
             }
 
             List<PdszDatabase.Characteristics> characteristicsList = programmingService.PdszDatabase.GetVehicleCharacteristicsFromDatabase(Vehicle);
-            if (characteristicsList != null)
+            if (characteristicsList == null)
             {
+                return false;
             }
+            VehicleCharacteristicIdent vehicleCharacteristicIdent = new VehicleCharacteristicIdent();
+
+            foreach (PdszDatabase.Characteristics characteristics in characteristicsList)
+            {
+                if (!vehicleCharacteristicIdent.AssignVehicleCharacteristic(characteristics.RootNodeClass, Vehicle, characteristics))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public BNType GetBnType()
