@@ -1028,10 +1028,34 @@ namespace PsdzClient
                         string treeText = programmingService.PdszDatabase.SwiRegisterTree.ToString(ClientContext.Language);
                         if (!string.IsNullOrEmpty(treeText))
                         {
-                            sbResult.AppendLine("Swi Tree:");
-                            sbResult.AppendLine(treeText);
+                            log.Info(Environment.NewLine + "Swi tree:" + Environment.NewLine + treeText);
+                        }
+
+                        PdszDatabase.SwiRegister swiRegisterCoding = programmingService.PdszDatabase.FindNodeForRegister(PdszDatabase.SwiRegisterEnum.VehicleModificationCodingConversion);
+                        if (swiRegisterCoding != null)
+                        {
+                            string codingText = swiRegisterCoding.ToString(ClientContext.Language);
+                            if (!string.IsNullOrEmpty(codingText))
+                            {
+                                sbResult.AppendLine();
+                                sbResult.AppendLine("Swi coding:");
+                                sbResult.AppendLine(codingText);
+                            }
+                        }
+
+                        PdszDatabase.SwiRegister swiRegisterCodingBack = programmingService.PdszDatabase.FindNodeForRegister(PdszDatabase.SwiRegisterEnum.VehicleModificationCodingBackConversion);
+                        if (swiRegisterCodingBack != null)
+                        {
+                            string codingBackText = swiRegisterCodingBack.ToString(ClientContext.Language);
+                            if (!string.IsNullOrEmpty(codingBackText))
+                            {
+                                sbResult.AppendLine();
+                                sbResult.AppendLine("Swi coding back:");
+                                sbResult.AppendLine(codingBackText);
+                            }
                         }
                     }
+
                     UpdateStatus(sbResult.ToString());
                     return true;
                 }

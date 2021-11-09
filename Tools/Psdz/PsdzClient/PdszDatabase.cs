@@ -1163,6 +1163,54 @@ namespace PsdzClient
             return true;
         }
 
+        public SwiRegister FindNodeForRegister(SwiRegisterEnum swiRegisterEnum)
+        {
+            try
+            {
+                if (SwiRegisterTree == null)
+                {
+                    log.ErrorFormat("FindNodeForRegister No tree");
+                    return null;
+                }
+
+                string registerId = SwiRegisterEnumerationNameConverter(swiRegisterEnum);
+                return FindNodeForRegisterId(SwiRegisterTree, registerId);
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("FindNodeForRegister Exception: '{0}'", e.Message);
+            }
+            return null;
+        }
+
+        public SwiRegister FindNodeForRegisterId(SwiRegister swiRegister, string registerId)
+        {
+            if (swiRegister == null)
+            {
+                log.ErrorFormat("FindNodeForRegisterId No register");
+                return null;
+            }
+
+            if (string.Compare(swiRegister.Identifier, registerId, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                return swiRegister;
+            }
+
+            if (swiRegister.Children != null)
+            {
+                foreach (SwiRegister swiRegisterChild in swiRegister.Children)
+                {
+                    SwiRegister swiRegisterMatch = FindNodeForRegisterId(swiRegisterChild, registerId);
+                    if (swiRegisterMatch != null)
+                    {
+                        return swiRegisterMatch;
+                    }
+                }
+            }
+
+            return null;
+        }
+
         public void ReadSwiRegister(Vehicle vehicle, IFFMDynamicResolver ffmResolver = null)
         {
             List<SwiRegister> swiRegisterRoot = GetSwiRegistersByParentId(null, vehicle, ffmResolver);
