@@ -26,6 +26,23 @@ namespace PsdzClient
             "C.TITLE_PT, C.TITLE_ZHTW, C.TITLE_JA, " +
             "C.TITLE_CSCZ, C.TITLE_PLPL";
 
+        public enum SwiRegisterEnum
+        {
+            SoftwareUpdateExtended,
+            SoftwareUpdateAdditionalSoftware,
+            SoftwareUpdateComfort,
+            EcuReplacementBeforeReplacement,
+            EcuReplacementAfterReplacement,
+            VehicleModification,
+            VehicleModificationRetrofitting,
+            VehicleModificationConversion,
+            VehicleModificationCodingConversion,
+            VehicleModificationBackConversion,
+            VehicleModificationCodingBackConversion,
+            Common,
+            Immediatactions
+        }
+
         public enum SwiActionSource
         {
             VarId,
@@ -1021,6 +1038,56 @@ namespace PsdzClient
             _xepRuleDict = null;
             SwiRegisterTree = null;
             ClientContext.Database = this;
+        }
+
+        public static string SwiRegisterEnumerationNameConverter(SwiRegisterEnum swiRegisterEnum)
+        {
+            string arg;
+            switch (swiRegisterEnum)
+            {
+                case SwiRegisterEnum.SoftwareUpdateExtended:
+                    arg = "ERWEITERT";
+                    break;
+                case SwiRegisterEnum.SoftwareUpdateAdditionalSoftware:
+                    arg = "ZUSATZSOFTWARE";
+                    break;
+                case SwiRegisterEnum.SoftwareUpdateComfort:
+                    arg = "KOMFORT";
+                    break;
+                case SwiRegisterEnum.EcuReplacementBeforeReplacement:
+                    arg = "VOR_DEM_TAUSCH";
+                    break;
+                case SwiRegisterEnum.EcuReplacementAfterReplacement:
+                    arg = "NACH_DEM_TAUSCH";
+                    break;
+                case SwiRegisterEnum.VehicleModification:
+                    arg = "FAHRZEUG-MODIFIKATION";
+                    break;
+                case SwiRegisterEnum.VehicleModificationRetrofitting:
+                    arg = "NACHRUESTUNGEN";
+                    break;
+                case SwiRegisterEnum.VehicleModificationConversion:
+                    arg = "UMRUESTUNGEN";
+                    break;
+                case SwiRegisterEnum.VehicleModificationCodingConversion:
+                    arg = "CODIERUMRUESTUNGEN";
+                    break;
+                case SwiRegisterEnum.VehicleModificationBackConversion:
+                    arg = "RUECKRUESTUNGEN";
+                    break;
+                case SwiRegisterEnum.VehicleModificationCodingBackConversion:
+                    arg = "CODIERRUECKRUESTUNGEN";
+                    break;
+                case SwiRegisterEnum.Common:
+                    arg = "ALLGEMEIN";
+                    break;
+                case SwiRegisterEnum.Immediatactions:
+                    arg = "SOFORTMASSNAHMEN";
+                    break;
+                default:
+                    throw new ArgumentException("Unknown SWI Register!");
+            }
+            return string.Format(CultureInfo.InvariantCulture, "REG|{0}", arg);
         }
 
         public void ResetXepRules()
