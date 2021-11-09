@@ -1872,7 +1872,18 @@ namespace PsdzClient
 
         public List<Characteristics> GetVehicleCharacteristics(Vehicle vehicle)
         {
-            return GetVehicleCharacteristicsFromDatabase(vehicle, false);
+            List<Characteristics> characteristicsList = GetVehicleCharacteristicsFromDatabase(vehicle, false);
+            if (characteristicsList != null && characteristicsList.Count > 0 && IsVehicleAnAlpina(vehicle))
+            {
+
+            }
+
+            return characteristicsList;
+        }
+
+        public bool IsVehicleAnAlpina(Vehicle vehicle)
+        {
+            return vehicle.hasSA("920");
         }
 
         public List<Characteristics> GetVehicleCharacteristicsFromDatabase(Vehicle vehicle, bool isAlpina)
