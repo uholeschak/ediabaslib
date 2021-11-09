@@ -356,7 +356,7 @@ namespace PsdzClient.Programming
                 Vehicle.ECU = EcuList;
             }
 
-            List<PdszDatabase.Characteristics> characteristicsList = programmingService.PdszDatabase.GetVehicleCharacteristicsFromDatabase(Vehicle, false);
+            List<PdszDatabase.Characteristics> characteristicsList = programmingService.PdszDatabase.GetVehicleCharacteristics(Vehicle);
             if (characteristicsList == null)
             {
                 return false;

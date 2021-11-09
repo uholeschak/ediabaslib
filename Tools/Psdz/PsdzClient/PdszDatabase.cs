@@ -1870,6 +1870,11 @@ namespace PsdzClient
             return null;
         }
 
+        public List<Characteristics> GetVehicleCharacteristics(Vehicle vehicle)
+        {
+            return GetVehicleCharacteristicsFromDatabase(vehicle, false);
+        }
+
         public List<Characteristics> GetVehicleCharacteristicsFromDatabase(Vehicle vehicle, bool isAlpina)
         {
             log.InfoFormat("GetVehicleCharacteristicsFromDatabase VinRangeType: {0}, Alpina: {1}", vehicle.VINRangeType, isAlpina);
