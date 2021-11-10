@@ -1016,6 +1016,34 @@ namespace PsdzClient
 
         private static readonly ILog log = LogManager.GetLogger(typeof(PdszDatabase));
 
+        private static List<string> engineRootNodeClasses = new List<string>
+        {
+            "40141570",
+            "40142338",
+            "40142722",
+            "40143106",
+            "40145794",
+            "99999999866",
+            "99999999868",
+            "99999999870",
+            "99999999872",
+            "99999999874",
+            "99999999876",
+            "99999999878",
+            "99999999880",
+            "99999999909",
+            "99999999910",
+            "99999999918",
+            "99999999701",
+            "99999999702",
+            "99999999703",
+            "99999999704",
+            "99999999705",
+            "99999999706",
+            "99999999707",
+            "99999999708"
+        };
+
         private bool _disposed;
         private SQLiteConnection _mDbConnection;
         private string _rootENameClassId;
@@ -1875,7 +1903,7 @@ namespace PsdzClient
             List<Characteristics> characteristicsList = GetVehicleCharacteristicsFromDatabase(vehicle, false);
             if (characteristicsList != null && characteristicsList.Count > 0 && IsVehicleAnAlpina(vehicle))
             {
-
+                HandleAlpinaVehicles(vehicle, characteristicsList);
             }
 
             return characteristicsList;
@@ -1884,6 +1912,37 @@ namespace PsdzClient
         public bool IsVehicleAnAlpina(Vehicle vehicle)
         {
             return vehicle.hasSA("920");
+        }
+
+        private void HandleAlpinaVehicles(Vehicle vehicle, List<Characteristics> characteristicsList)
+        {
+            log.InfoFormat("HandleAlpinaVehicles List size: {0}", characteristicsList.Count);
+            List<Characteristics> vehicleCharacteristicsFromDatabase = GetVehicleCharacteristicsFromDatabase(vehicle, true);
+            if (vehicleCharacteristicsFromDatabase != null)
+            {
+                using (List<Characteristics>.Enumerator enumerator = (from c in vehicleCharacteristicsFromDatabase
+                    where engineRootNodeClasses.Contains(c.RootNodeClass)
+                    select c).ToList().GetEnumerator())
+                {
+                    while (enumerator.MoveNext())
+                    {
+                        Characteristics characteristicCurrent = enumerator.Current;
+                        if (characteristicCurrent != null)
+                        {
+                            Characteristics characteristicMatch = characteristicsList.FirstOrDefault(c => c.RootNodeClass == characteristicCurrent.RootNodeClass);
+                            if (characteristicMatch != null)
+                            {
+                                if (characteristicMatch.Name != characteristicCurrent.Name)
+                                {
+                                    log.InfoFormat("HandleAlpinaVehicles Overwrite: {0} by {1}", characteristicMatch.Name, characteristicCurrent.Name);
+                                }
+                                characteristicsList.Remove(characteristicMatch);
+                            }
+                            characteristicsList.Add(characteristicCurrent);
+                        }
+                    }
+                }
+            }
         }
 
         public List<Characteristics> GetVehicleCharacteristicsFromDatabase(Vehicle vehicle, bool isAlpina)
