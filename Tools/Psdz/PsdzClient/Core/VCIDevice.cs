@@ -120,7 +120,7 @@ namespace PsdzClient.Core
 					}
 					text += this.VIN[6].ToString();
 					IL_141:
-                    List<PdszDatabase.Characteristics> vehicleIdentByTypeKey = ClientContext.Database?.GetVehicleIdentByTypeKey(text);
+                    List<PdszDatabase.Characteristics> vehicleIdentByTypeKey = ClientContext.Database?.GetVehicleIdentByTypeKey(text, false);
 					if (vehicleIdentByTypeKey != null)
 					{
 						BasicFeaturesVci basicFeaturesVci = new BasicFeaturesVci();

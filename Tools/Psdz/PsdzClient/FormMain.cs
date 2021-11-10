@@ -46,15 +46,18 @@ namespace PsdzClient
 
         private class OptionsItem
         {
-            public OptionsItem(string name, PdszDatabase.SwiAction swiAction)
+            public OptionsItem(string name, PdszDatabase.SwiAction swiAction, bool selected = false)
             {
                 Name = name;
                 SwiAction = swiAction;
+                Selected = selected;
             }
 
             public string Name { get; private set; }
 
             public PdszDatabase.SwiAction SwiAction { get; private set; }
+
+            public bool Selected { get; private set; }
 
             public override string ToString()
             {
