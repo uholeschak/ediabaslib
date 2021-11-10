@@ -275,7 +275,6 @@ namespace PsdzClient
             this.checkedListBoxOptions.CheckOnClick = true;
             this.checkedListBoxOptions.Location = new System.Drawing.Point(12, 93);
             this.checkedListBoxOptions.Name = "checkedListBoxOptions";
-            this.checkedListBoxOptions.SelectionMode = System.Windows.Forms.SelectionMode.None;
             this.checkedListBoxOptions.Size = new System.Drawing.Size(790, 154);
             this.checkedListBoxOptions.TabIndex = 17;
             this.checkedListBoxOptions.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.checkedListBoxOptions_ItemCheck);
