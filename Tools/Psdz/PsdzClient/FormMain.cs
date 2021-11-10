@@ -44,6 +44,24 @@ namespace PsdzClient
             ExecuteTal,
         }
 
+        private class OptionsItem
+        {
+            public OptionsItem(string name, PdszDatabase.SwiAction swiAction)
+            {
+                Name = name;
+                SwiAction = swiAction;
+            }
+
+            public string Name { get; private set; }
+
+            public PdszDatabase.SwiAction SwiAction { get; private set; }
+
+            public override string ToString()
+            {
+                return Name;
+            }
+        }
+
         private static readonly ILog log = LogManager.GetLogger(typeof(FormMain));
 
         private const string DealerId = "32395";
@@ -119,6 +137,11 @@ namespace PsdzClient
             buttonExecuteTal.Enabled = buttonModILevel.Enabled && talPresent;
             buttonClose.Enabled = !active;
             buttonAbort.Enabled = active && abortPossible;
+            checkedListBoxOptions.Enabled = !active && hostRunning && vehicleConnected;
+            if (!vehicleConnected)
+            {
+                UpdateOptions(null);
+            }
         }
 
         private bool LoadSettings()
@@ -178,6 +201,27 @@ namespace PsdzClient
             textBoxStatus.ScrollToCaret();
 
             UpdateDisplay();
+        }
+
+        private void UpdateOptions(List<PdszDatabase.SwiAction> swiActions)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke((Action)(() =>
+                {
+                    UpdateOptions(swiActions);
+                }));
+                return;
+            }
+
+            checkedListBoxOptions.Items.Clear();
+            if (swiActions != null)
+            {
+                foreach (PdszDatabase.SwiAction swiAction in swiActions)
+                {
+                    checkedListBoxOptions.Items.Add(new OptionsItem(swiAction.EcuTranslation.GetTitle(ClientContext.Language), swiAction));
+                }
+            }
         }
 
         private void SetupLog4Net()
@@ -1034,6 +1078,8 @@ namespace PsdzClient
                         List<PdszDatabase.SwiAction> swiActionsCoding = programmingService.PdszDatabase.GetSwiActionsForRegister(PdszDatabase.SwiRegisterEnum.VehicleModificationCodingConversion, true);
                         if (swiActionsCoding != null)
                         {
+                            UpdateOptions(swiActionsCoding);
+
                             sbResult.AppendLine();
                             sbResult.AppendLine("Swi coding:");
                             foreach (PdszDatabase.SwiAction swiAction in swiActionsCoding)

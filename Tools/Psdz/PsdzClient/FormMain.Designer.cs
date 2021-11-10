@@ -53,6 +53,7 @@ namespace PsdzClient
             this.checkBoxIcom = new System.Windows.Forms.CheckBox();
             this.buttonVehicleSearch = new System.Windows.Forms.Button();
             this.buttonCreateOptions = new System.Windows.Forms.Button();
+            this.checkedListBoxOptions = new System.Windows.Forms.CheckedListBox();
             this.SuspendLayout();
             // 
             // textBoxIstaFolder
@@ -68,7 +69,7 @@ namespace PsdzClient
             // 
             this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonClose.Location = new System.Drawing.Point(723, 415);
+            this.buttonClose.Location = new System.Drawing.Point(723, 604);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(75, 23);
             this.buttonClose.TabIndex = 0;
@@ -80,7 +81,7 @@ namespace PsdzClient
             // 
             this.buttonAbort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonAbort.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonAbort.Location = new System.Drawing.Point(642, 415);
+            this.buttonAbort.Location = new System.Drawing.Point(642, 604);
             this.buttonAbort.Name = "buttonAbort";
             this.buttonAbort.Size = new System.Drawing.Size(75, 23);
             this.buttonAbort.TabIndex = 1;
@@ -128,12 +129,12 @@ namespace PsdzClient
             this.textBoxStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxStatus.Location = new System.Drawing.Point(12, 93);
+            this.textBoxStatus.Location = new System.Drawing.Point(12, 261);
             this.textBoxStatus.Multiline = true;
             this.textBoxStatus.Name = "textBoxStatus";
             this.textBoxStatus.ReadOnly = true;
             this.textBoxStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxStatus.Size = new System.Drawing.Size(790, 316);
+            this.textBoxStatus.Size = new System.Drawing.Size(790, 337);
             this.textBoxStatus.TabIndex = 17;
             // 
             // ipAddressControlVehicleIp
@@ -222,7 +223,7 @@ namespace PsdzClient
             // progressBarEvent
             // 
             this.progressBarEvent.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.progressBarEvent.Location = new System.Drawing.Point(12, 415);
+            this.progressBarEvent.Location = new System.Drawing.Point(12, 604);
             this.progressBarEvent.Name = "progressBarEvent";
             this.progressBarEvent.Size = new System.Drawing.Size(140, 23);
             this.progressBarEvent.TabIndex = 18;
@@ -231,7 +232,7 @@ namespace PsdzClient
             // 
             this.labelProgressEvent.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.labelProgressEvent.AutoSize = true;
-            this.labelProgressEvent.Location = new System.Drawing.Point(158, 420);
+            this.labelProgressEvent.Location = new System.Drawing.Point(158, 609);
             this.labelProgressEvent.Name = "labelProgressEvent";
             this.labelProgressEvent.Size = new System.Drawing.Size(21, 13);
             this.labelProgressEvent.TabIndex = 19;
@@ -267,13 +268,22 @@ namespace PsdzClient
             this.buttonCreateOptions.UseVisualStyleBackColor = true;
             this.buttonCreateOptions.Click += new System.EventHandler(this.buttonFunc_Click);
             // 
+            // checkedListBoxOptions
+            // 
+            this.checkedListBoxOptions.CheckOnClick = true;
+            this.checkedListBoxOptions.Location = new System.Drawing.Point(12, 93);
+            this.checkedListBoxOptions.Name = "checkedListBoxOptions";
+            this.checkedListBoxOptions.Size = new System.Drawing.Size(790, 154);
+            this.checkedListBoxOptions.TabIndex = 21;
+            // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonAbort;
-            this.ClientSize = new System.Drawing.Size(810, 450);
+            this.ClientSize = new System.Drawing.Size(810, 639);
+            this.Controls.Add(this.checkedListBoxOptions);
             this.Controls.Add(this.buttonCreateOptions);
             this.Controls.Add(this.buttonVehicleSearch);
             this.Controls.Add(this.checkBoxIcom);
@@ -330,6 +340,7 @@ namespace PsdzClient
         private System.Windows.Forms.CheckBox checkBoxIcom;
         private System.Windows.Forms.Button buttonVehicleSearch;
         private System.Windows.Forms.Button buttonCreateOptions;
+        private System.Windows.Forms.CheckedListBox checkedListBoxOptions;
     }
 }
 
