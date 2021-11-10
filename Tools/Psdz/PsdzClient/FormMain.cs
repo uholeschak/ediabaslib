@@ -57,7 +57,7 @@ namespace PsdzClient
 
             public PdszDatabase.SwiAction SwiAction { get; private set; }
 
-            public bool Selected { get; private set; }
+            public bool Selected { get; set; }
 
             public override string ToString()
             {
@@ -100,6 +100,8 @@ namespace PsdzClient
 
         private PsdzContext _psdzContext;
         private CancellationTokenSource _cts;
+        private List<OptionsItem> _optionsCoding;
+        private List<OptionsItem> _optionsCodingBack;
 
         public FormMain()
         {
@@ -143,6 +145,8 @@ namespace PsdzClient
             checkedListBoxOptions.Enabled = !active && hostRunning && vehicleConnected;
             if (!vehicleConnected)
             {
+                _optionsCoding = null;
+                _optionsCodingBack = null;
                 UpdateOptions(null);
             }
         }
@@ -206,23 +210,23 @@ namespace PsdzClient
             UpdateDisplay();
         }
 
-        private void UpdateOptions(List<PdszDatabase.SwiAction> swiActions)
+        private void UpdateOptions(List<OptionsItem> optionsItems)
         {
             if (InvokeRequired)
             {
                 BeginInvoke((Action)(() =>
                 {
-                    UpdateOptions(swiActions);
+                    UpdateOptions(optionsItems);
                 }));
                 return;
             }
 
             checkedListBoxOptions.Items.Clear();
-            if (swiActions != null)
+            if (optionsItems != null)
             {
-                foreach (PdszDatabase.SwiAction swiAction in swiActions)
+                foreach (OptionsItem optionsItem in optionsItems)
                 {
-                    checkedListBoxOptions.Items.Add(new OptionsItem(swiAction.EcuTranslation.GetTitle(ClientContext.Language), swiAction));
+                    checkedListBoxOptions.Items.Add(optionsItem, optionsItem.Selected ? CheckState.Checked : CheckState.Unchecked);
                 }
             }
         }
@@ -1081,14 +1085,16 @@ namespace PsdzClient
                         List<PdszDatabase.SwiAction> swiActionsCoding = programmingService.PdszDatabase.GetSwiActionsForRegister(PdszDatabase.SwiRegisterEnum.VehicleModificationCodingConversion, true);
                         if (swiActionsCoding != null)
                         {
-                            UpdateOptions(swiActionsCoding);
-
                             sbResult.AppendLine();
                             sbResult.AppendLine("Swi coding:");
+                            List<OptionsItem> optionsItems = new List<OptionsItem>();
                             foreach (PdszDatabase.SwiAction swiAction in swiActionsCoding)
                             {
                                 sbResult.AppendLine(swiAction.ToString(ClientContext.Language));
+                                optionsItems.Add(new OptionsItem(swiAction.EcuTranslation.GetTitle(ClientContext.Language), swiAction));
                             }
+
+                            _optionsCoding = optionsItems;
                         }
 
                         List<PdszDatabase.SwiAction> swiActionsCodingBack = programmingService.PdszDatabase.GetSwiActionsForRegister(PdszDatabase.SwiRegisterEnum.VehicleModificationCodingBackConversion, true);
@@ -1096,11 +1102,17 @@ namespace PsdzClient
                         {
                             sbResult.AppendLine();
                             sbResult.AppendLine("Swi coding back:");
+                            List<OptionsItem> optionsItems = new List<OptionsItem>();
                             foreach (PdszDatabase.SwiAction swiAction in swiActionsCodingBack)
                             {
                                 sbResult.AppendLine(swiAction.ToString(ClientContext.Language));
+                                optionsItems.Add(new OptionsItem(swiAction.EcuTranslation.GetTitle(ClientContext.Language), swiAction));
                             }
+
+                            _optionsCodingBack = optionsItems;
                         }
+
+                        UpdateOptions(_optionsCoding);
                     }
 
                     UpdateStatus(sbResult.ToString());
@@ -1546,6 +1558,17 @@ namespace PsdzClient
 
             TaskActive = true;
             UpdateDisplay();
+        }
+
+        private void checkedListBoxOptions_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            if (e.Index >= 0 && e.Index < checkedListBoxOptions.Items.Count)
+            {
+                if (checkedListBoxOptions.Items[e.Index] is OptionsItem optionsItem)
+                {
+                    optionsItem.Selected = e.NewValue == CheckState.Checked;
+                }
+            }
         }
     }
 }

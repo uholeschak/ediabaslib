@@ -135,7 +135,7 @@ namespace PsdzClient
             this.textBoxStatus.ReadOnly = true;
             this.textBoxStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxStatus.Size = new System.Drawing.Size(790, 337);
-            this.textBoxStatus.TabIndex = 17;
+            this.textBoxStatus.TabIndex = 18;
             // 
             // ipAddressControlVehicleIp
             // 
@@ -186,7 +186,7 @@ namespace PsdzClient
             this.buttonModILevel.Location = new System.Drawing.Point(417, 64);
             this.buttonModILevel.Name = "buttonModILevel";
             this.buttonModILevel.Size = new System.Drawing.Size(75, 23);
-            this.buttonModILevel.TabIndex = 0;
+            this.buttonModILevel.TabIndex = 14;
             this.buttonModILevel.Text = "Mod. ILevel";
             this.buttonModILevel.UseVisualStyleBackColor = true;
             this.buttonModILevel.Click += new System.EventHandler(this.buttonFunc_Click);
@@ -226,7 +226,7 @@ namespace PsdzClient
             this.progressBarEvent.Location = new System.Drawing.Point(12, 604);
             this.progressBarEvent.Name = "progressBarEvent";
             this.progressBarEvent.Size = new System.Drawing.Size(140, 23);
-            this.progressBarEvent.TabIndex = 18;
+            this.progressBarEvent.TabIndex = 19;
             // 
             // labelProgressEvent
             // 
@@ -235,7 +235,7 @@ namespace PsdzClient
             this.labelProgressEvent.Location = new System.Drawing.Point(158, 609);
             this.labelProgressEvent.Name = "labelProgressEvent";
             this.labelProgressEvent.Size = new System.Drawing.Size(21, 13);
-            this.labelProgressEvent.TabIndex = 19;
+            this.labelProgressEvent.TabIndex = 20;
             this.labelProgressEvent.Text = "0%";
             // 
             // checkBoxIcom
@@ -270,11 +270,15 @@ namespace PsdzClient
             // 
             // checkedListBoxOptions
             // 
+            this.checkedListBoxOptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.checkedListBoxOptions.CheckOnClick = true;
             this.checkedListBoxOptions.Location = new System.Drawing.Point(12, 93);
             this.checkedListBoxOptions.Name = "checkedListBoxOptions";
+            this.checkedListBoxOptions.SelectionMode = System.Windows.Forms.SelectionMode.None;
             this.checkedListBoxOptions.Size = new System.Drawing.Size(790, 154);
-            this.checkedListBoxOptions.TabIndex = 21;
+            this.checkedListBoxOptions.TabIndex = 17;
+            this.checkedListBoxOptions.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.checkedListBoxOptions_ItemCheck);
             // 
             // FormMain
             // 
