@@ -1031,27 +1031,25 @@ namespace PsdzClient
                             log.Info(Environment.NewLine + "Swi tree:" + Environment.NewLine + treeText);
                         }
 
-                        PdszDatabase.SwiRegister swiRegisterCoding = programmingService.PdszDatabase.FindNodeForRegister(PdszDatabase.SwiRegisterEnum.VehicleModificationCodingConversion);
-                        if (swiRegisterCoding != null)
+                        List<PdszDatabase.SwiAction> swiActionsCoding = programmingService.PdszDatabase.GetSwiActionsForRegister(PdszDatabase.SwiRegisterEnum.VehicleModificationCodingConversion, true);
+                        if (swiActionsCoding != null)
                         {
-                            string codingText = swiRegisterCoding.ToString(ClientContext.Language);
-                            if (!string.IsNullOrEmpty(codingText))
+                            sbResult.AppendLine();
+                            sbResult.AppendLine("Swi coding:");
+                            foreach (PdszDatabase.SwiAction swiAction in swiActionsCoding)
                             {
-                                sbResult.AppendLine();
-                                sbResult.AppendLine("Swi coding:");
-                                sbResult.AppendLine(codingText);
+                                sbResult.AppendLine(swiAction.ToString(ClientContext.Language));
                             }
                         }
 
-                        PdszDatabase.SwiRegister swiRegisterCodingBack = programmingService.PdszDatabase.FindNodeForRegister(PdszDatabase.SwiRegisterEnum.VehicleModificationCodingBackConversion);
-                        if (swiRegisterCodingBack != null)
+                        List<PdszDatabase.SwiAction> swiActionsCodingBack = programmingService.PdszDatabase.GetSwiActionsForRegister(PdszDatabase.SwiRegisterEnum.VehicleModificationCodingBackConversion, true);
+                        if (swiActionsCodingBack != null)
                         {
-                            string codingBackText = swiRegisterCodingBack.ToString(ClientContext.Language);
-                            if (!string.IsNullOrEmpty(codingBackText))
+                            sbResult.AppendLine();
+                            sbResult.AppendLine("Swi coding back:");
+                            foreach (PdszDatabase.SwiAction swiAction in swiActionsCodingBack)
                             {
-                                sbResult.AppendLine();
-                                sbResult.AppendLine("Swi coding back:");
-                                sbResult.AppendLine(codingBackText);
+                                sbResult.AppendLine(swiAction.ToString(ClientContext.Language));
                             }
                         }
                     }

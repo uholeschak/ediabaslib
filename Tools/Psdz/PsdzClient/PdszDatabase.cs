@@ -1191,6 +1191,40 @@ namespace PsdzClient
             return true;
         }
 
+        public List<SwiAction> GetSwiActionsForRegister(SwiRegisterEnum swiRegisterEnum, bool getChildren)
+        {
+            SwiRegister swiRegister = FindNodeForRegister(swiRegisterEnum);
+            if (swiRegister == null)
+            {
+                return null;
+            }
+
+            return CollectSwiActionsForNode(swiRegister, getChildren);
+        }
+
+        public List<SwiAction> CollectSwiActionsForNode(SwiRegister swiRegister, bool getChildren)
+        {
+            List<SwiAction> swiActions = new List<SwiAction>();
+            if (swiRegister.SwiActions != null)
+            {
+                swiActions.AddRange(swiRegister.SwiActions);
+            }
+
+            if (getChildren && swiRegister.Children != null)
+            {
+                foreach (SwiRegister swiRegisterChild in swiRegister.Children)
+                {
+                    List<SwiAction> swiActionsChild = CollectSwiActionsForNode(swiRegisterChild, true);
+                    if (swiActionsChild != null)
+                    {
+                        swiActions.AddRange(swiActionsChild);
+                    }
+                }
+            }
+
+            return swiActions;
+        }
+
         public SwiRegister FindNodeForRegister(SwiRegisterEnum swiRegisterEnum)
         {
             try
