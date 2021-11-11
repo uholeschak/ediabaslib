@@ -100,8 +100,7 @@ namespace PsdzClient
 
         private PsdzContext _psdzContext;
         private CancellationTokenSource _cts;
-        private List<OptionsItem> _optionsCoding;
-        private List<OptionsItem> _optionsCodingBack;
+        private Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>> _optionsDict;
 
         public FormMain()
         {
@@ -145,8 +144,6 @@ namespace PsdzClient
             checkedListBoxOptions.Enabled = !active && hostRunning && vehicleConnected;
             if (!vehicleConnected)
             {
-                _optionsCoding = null;
-                _optionsCodingBack = null;
                 UpdateOptions(null);
             }
         }
@@ -210,19 +207,20 @@ namespace PsdzClient
             UpdateDisplay();
         }
 
-        private void UpdateOptions(List<OptionsItem> optionsItems)
+        private void UpdateOptions(Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>> optionsDict)
         {
             if (InvokeRequired)
             {
                 BeginInvoke((Action)(() =>
                 {
-                    UpdateOptions(optionsItems);
+                    UpdateOptions(optionsDict);
                 }));
                 return;
             }
 
+            _optionsDict = optionsDict;
             checkedListBoxOptions.Items.Clear();
-            if (optionsItems != null)
+            if (_optionsDict != null && _optionsDict.TryGetValue(PdszDatabase.SwiRegisterEnum.VehicleModificationCodingConversion, out List<OptionsItem> optionsItems))
             {
                 foreach (OptionsItem optionsItem in optionsItems)
                 {
@@ -1082,6 +1080,7 @@ namespace PsdzClient
                             log.Info(Environment.NewLine + "Swi tree:" + Environment.NewLine + treeText);
                         }
 
+                        Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>> optionsDict = new Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>>();
                         List<PdszDatabase.SwiAction> swiActionsCoding = programmingService.PdszDatabase.GetSwiActionsForRegister(PdszDatabase.SwiRegisterEnum.VehicleModificationCodingConversion, true);
                         if (swiActionsCoding != null)
                         {
@@ -1094,7 +1093,7 @@ namespace PsdzClient
                                 optionsItems.Add(new OptionsItem(swiAction.EcuTranslation.GetTitle(ClientContext.Language), swiAction));
                             }
 
-                            _optionsCoding = optionsItems;
+                            optionsDict.Add(PdszDatabase.SwiRegisterEnum.VehicleModificationCodingConversion, optionsItems);
                         }
 
                         List<PdszDatabase.SwiAction> swiActionsCodingBack = programmingService.PdszDatabase.GetSwiActionsForRegister(PdszDatabase.SwiRegisterEnum.VehicleModificationCodingBackConversion, true);
@@ -1109,10 +1108,10 @@ namespace PsdzClient
                                 optionsItems.Add(new OptionsItem(swiAction.EcuTranslation.GetTitle(ClientContext.Language), swiAction));
                             }
 
-                            _optionsCodingBack = optionsItems;
+                            optionsDict.Add(PdszDatabase.SwiRegisterEnum.VehicleModificationCodingBackConversion, optionsItems);
                         }
 
-                        UpdateOptions(_optionsCoding);
+                        UpdateOptions(optionsDict);
                     }
 
                     UpdateStatus(sbResult.ToString());
