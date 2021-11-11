@@ -281,7 +281,18 @@ namespace PsdzClient
                 {
                     foreach (OptionsItem optionsItem in optionsItems)
                     {
-                        checkedListBoxOptions.Items.Add(optionsItem, optionsItem.Selected ? CheckState.Checked : CheckState.Unchecked);
+                        CheckState checkState;
+                        if (optionsItem.Selected)
+                        {
+                            checkState = CheckState.Checked;
+                        }
+                        else
+                        {
+                            checkState = programmingService.PdszDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, _psdzContext.Vehicle, null) ?
+                                CheckState.Unchecked : CheckState.Indeterminate;
+                        }
+
+                        checkedListBoxOptions.Items.Add(optionsItem, checkState);
                     }
                 }
             }
