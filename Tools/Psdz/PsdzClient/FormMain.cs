@@ -137,7 +137,7 @@ namespace PsdzClient
                 hostRunning = programmingService != null && programmingService.IsPsdzPsdzServiceHostInitialized();
             }
 
-            if (hostRunning && _psdzContext?.Connection != null)
+            if (_psdzContext?.Connection != null)
             {
                 vehicleConnected = true;
                 talPresent = _psdzContext?.Tal != null;
@@ -227,6 +227,27 @@ namespace PsdzClient
             UpdateDisplay();
         }
 
+        private void UpdateCurrentOptions()
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke((Action)(() =>
+                {
+                    UpdateCurrentOptions();
+                }));
+                return;
+            }
+
+            if (comboBoxOptionType.SelectedItem is OptionType optionType)
+            {
+                SelectOptions(optionType.SwiRegisterEnum);
+            }
+            else
+            {
+                SelectOptions(null);
+            }
+        }
+
         private void UpdateOptions(Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>> optionsDict)
         {
             if (InvokeRequired)
@@ -239,14 +260,7 @@ namespace PsdzClient
             }
 
             _optionsDict = optionsDict;
-            if (comboBoxOptionType.SelectedItem is OptionType optionType)
-            {
-                SelectOptions(optionType.SwiRegisterEnum);
-            }
-            else
-            {
-                SelectOptions(null);
-            }
+            UpdateCurrentOptions();
         }
 
         private void SelectOptions(PdszDatabase.SwiRegisterEnum? swiRegisterEnum)
@@ -1035,6 +1049,9 @@ namespace PsdzClient
 
                     IPsdzFa psdzFaTarget = programmingService.Psdz.ObjectBuilder.BuildFa(ifaTarget, psdzVin.Value);
                     _psdzContext.SetFaTarget(psdzFaTarget);
+                    _psdzContext.UpdateVehicleFa(psdzFaTarget);
+                    programmingService.PdszDatabase.ResetXepRules();
+                    UpdateCurrentOptions();
 
                     sbResult.AppendLine("FA target:");
                     sbResult.Append(psdzFaTarget.AsXml);
@@ -1625,10 +1642,7 @@ namespace PsdzClient
 
         private void comboBoxOptionType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBoxOptionType.SelectedItem is OptionType optionType)
-            {
-                SelectOptions(optionType.SwiRegisterEnum);
-            }
+            UpdateCurrentOptions();
         }
     }
 }

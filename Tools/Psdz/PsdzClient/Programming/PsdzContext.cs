@@ -324,7 +324,7 @@ namespace PsdzClient.Programming
 
             ClientContext.SelectedBrand = brand;
 
-            Vehicle.FA = ProgrammingUtils.BuildVehicleFa(FaActual, DetectVehicle.ModelSeries);
+            UpdateVehicleFa(FaActual);
 
             for (int i = 0; i < 2; i++)
             {
@@ -372,6 +372,11 @@ namespace PsdzClient.Programming
             }
 
             return true;
+        }
+
+        public void UpdateVehicleFa(IPsdzFa faInput)
+        {
+            Vehicle.FA = ProgrammingUtils.BuildVehicleFa(FaActual, DetectVehicle.ModelSeries);
         }
 
         public BNType GetBnType()
