@@ -65,6 +65,24 @@ namespace PsdzClient
             }
         }
 
+        private class OptionType
+        {
+            public OptionType(string name, PdszDatabase.SwiRegisterEnum swiRegisterEnum)
+            {
+                Name = name;
+                SwiRegisterEnum = swiRegisterEnum;
+            }
+
+            public string Name { get; private set; }
+
+            public PdszDatabase.SwiRegisterEnum SwiRegisterEnum { get; private set; }
+
+            public override string ToString()
+            {
+                return Name;
+            }
+        }
+
         private static readonly ILog log = LogManager.GetLogger(typeof(FormMain));
 
         private const string DealerId = "32395";
@@ -142,10 +160,12 @@ namespace PsdzClient
             buttonClose.Enabled = !active;
             buttonAbort.Enabled = active && abortPossible;
             checkedListBoxOptions.Enabled = !active && hostRunning && vehicleConnected;
+
             if (!vehicleConnected)
             {
                 UpdateOptions(null);
             }
+            comboBoxOptionType.Enabled = _optionsDict != null && _optionsDict.Count > 0;
         }
 
         private bool LoadSettings()
@@ -219,13 +239,41 @@ namespace PsdzClient
             }
 
             _optionsDict = optionsDict;
-            checkedListBoxOptions.Items.Clear();
-            if (_optionsDict != null && _optionsDict.TryGetValue(PdszDatabase.SwiRegisterEnum.VehicleModificationCodingConversion, out List<OptionsItem> optionsItems))
+            if (comboBoxOptionType.SelectedItem is OptionType optionType)
             {
-                foreach (OptionsItem optionsItem in optionsItems)
+                SelectOptions(optionType.SwiRegisterEnum);
+            }
+            else
+            {
+                SelectOptions(null);
+            }
+        }
+
+        private void SelectOptions(PdszDatabase.SwiRegisterEnum? swiRegisterEnum)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke((Action)(() =>
                 {
-                    checkedListBoxOptions.Items.Add(optionsItem, optionsItem.Selected ? CheckState.Checked : CheckState.Unchecked);
+                    SelectOptions(swiRegisterEnum);
+                }));
+                return;
+            }
+
+            checkedListBoxOptions.Items.Clear();
+            if (_optionsDict != null && swiRegisterEnum.HasValue)
+            {
+                if (_optionsDict.TryGetValue(swiRegisterEnum.Value, out List<OptionsItem> optionsItems))
+                {
+                    foreach (OptionsItem optionsItem in optionsItems)
+                    {
+                        checkedListBoxOptions.Items.Add(optionsItem, optionsItem.Selected ? CheckState.Checked : CheckState.Unchecked);
+                    }
                 }
+            }
+            else
+            {
+                comboBoxOptionType.SelectedIndex = 0;
             }
         }
 
@@ -1334,6 +1382,11 @@ namespace PsdzClient
 
         private void FormMain_Load(object sender, EventArgs e)
         {
+            comboBoxOptionType.Items.Clear();
+            comboBoxOptionType.Items.Add(new OptionType("Coding", PdszDatabase.SwiRegisterEnum.VehicleModificationCodingConversion));
+            comboBoxOptionType.Items.Add(new OptionType("Coding back", PdszDatabase.SwiRegisterEnum.VehicleModificationCodingBackConversion));
+            comboBoxOptionType.SelectedIndex = 0;
+
             LoadSettings();
             UpdateDisplay();
             UpdateStatus();
@@ -1567,6 +1620,14 @@ namespace PsdzClient
                 {
                     optionsItem.Selected = e.NewValue == CheckState.Checked;
                 }
+            }
+        }
+
+        private void comboBoxOptionType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBoxOptionType.SelectedItem is OptionType optionType)
+            {
+                SelectOptions(optionType.SwiRegisterEnum);
             }
         }
     }

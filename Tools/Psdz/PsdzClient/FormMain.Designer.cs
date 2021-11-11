@@ -54,6 +54,7 @@ namespace PsdzClient
             this.buttonVehicleSearch = new System.Windows.Forms.Button();
             this.buttonCreateOptions = new System.Windows.Forms.Button();
             this.checkedListBoxOptions = new System.Windows.Forms.CheckedListBox();
+            this.comboBoxOptionType = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // textBoxIstaFolder
@@ -279,6 +280,16 @@ namespace PsdzClient
             this.checkedListBoxOptions.TabIndex = 17;
             this.checkedListBoxOptions.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.checkedListBoxOptions_ItemCheck);
             // 
+            // comboBoxOptionType
+            // 
+            this.comboBoxOptionType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxOptionType.FormattingEnabled = true;
+            this.comboBoxOptionType.Location = new System.Drawing.Point(579, 38);
+            this.comboBoxOptionType.Name = "comboBoxOptionType";
+            this.comboBoxOptionType.Size = new System.Drawing.Size(223, 21);
+            this.comboBoxOptionType.TabIndex = 21;
+            this.comboBoxOptionType.SelectedIndexChanged += new System.EventHandler(this.comboBoxOptionType_SelectedIndexChanged);
+            // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
@@ -286,6 +297,7 @@ namespace PsdzClient
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonAbort;
             this.ClientSize = new System.Drawing.Size(810, 639);
+            this.Controls.Add(this.comboBoxOptionType);
             this.Controls.Add(this.checkedListBoxOptions);
             this.Controls.Add(this.buttonCreateOptions);
             this.Controls.Add(this.buttonVehicleSearch);
@@ -344,6 +356,7 @@ namespace PsdzClient
         private System.Windows.Forms.Button buttonVehicleSearch;
         private System.Windows.Forms.Button buttonCreateOptions;
         private System.Windows.Forms.CheckedListBox checkedListBoxOptions;
+        private System.Windows.Forms.ComboBox comboBoxOptionType;
     }
 }
 
