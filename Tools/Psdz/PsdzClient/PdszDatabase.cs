@@ -2017,6 +2017,7 @@ namespace PsdzClient
 
         public SaLaPa GetSaLaPaById(string salapaId)
         {
+            log.InfoFormat("GetSaLaPaById Id: {0}", salapaId);
             if (string.IsNullOrEmpty(salapaId))
             {
                 return null;
@@ -2043,11 +2044,13 @@ namespace PsdzClient
                 return null;
             }
 
+            log.InfoFormat("GetSaLaPaById Name: {0}", saLaPa?.Name);
             return saLaPa;
         }
 
         public EcuReps GetEcuRepsById(string ecuId)
         {
+            log.InfoFormat("GetEcuRepsById Sortcut: {0}", ecuId);
             if (string.IsNullOrEmpty(ecuId))
             {
                 return null;
@@ -2074,6 +2077,7 @@ namespace PsdzClient
                 return null;
             }
 
+            log.InfoFormat("GetEcuRepsById Sortcut: {0}", ecuReps?.EcuShortcut);
             return ecuReps;
         }
 
