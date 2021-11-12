@@ -1062,7 +1062,6 @@ namespace PsdzClient
 
                     IPsdzFa psdzFaTarget = programmingService.Psdz.ObjectBuilder.BuildFa(ifaTarget, psdzVin.Value);
                     _psdzContext.SetFaTarget(psdzFaTarget);
-                    UpdateCurrentOptions();
 
                     sbResult.AppendLine("FA target:");
                     sbResult.Append(psdzFaTarget.AsXml);
@@ -1071,7 +1070,9 @@ namespace PsdzClient
                 {
                     _psdzContext.SetFaTarget(psdzFa);
                 }
+
                 programmingService.PdszDatabase.ResetXepRules();
+                UpdateCurrentOptions();
 
                 IEnumerable<IPsdzIstufe> psdzIstufes = programmingService.Psdz.LogicService.GetPossibleIntegrationLevel(_psdzContext.FaTarget);
                 _psdzContext.SetPossibleIstufenTarget(psdzIstufes);
