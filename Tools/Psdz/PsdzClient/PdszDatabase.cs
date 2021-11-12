@@ -3027,8 +3027,12 @@ namespace PsdzClient
             {
                 result = xepRule.EvaluateRule(vehicle, ffmResolver);
             }
+            else
+            {
+                log.InfoFormat("EvaluateXepRulesById No rule found for Id: {0}", id);
+            }
 
-            log.InfoFormat("EvaluateXepRulesById Result: {0}", result);
+            log.InfoFormat("EvaluateXepRulesById Id: {0}, Result: {1}", id, result);
             return result;
         }
 
