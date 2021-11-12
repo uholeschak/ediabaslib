@@ -154,8 +154,8 @@ namespace PsdzClient
             buttonConnect.Enabled = !active && hostRunning && !vehicleConnected;
             buttonDisconnect.Enabled = !active && hostRunning && vehicleConnected;
             buttonCreateOptions.Enabled = !active && hostRunning && vehicleConnected && _optionsDict == null;
-            buttonModILevel.Enabled = buttonCreateOptions.Enabled;
-            buttonModFa.Enabled = buttonCreateOptions.Enabled;
+            buttonModILevel.Enabled = !active && hostRunning && vehicleConnected && _optionsDict != null;
+            buttonModFa.Enabled = buttonModILevel.Enabled;
             buttonExecuteTal.Enabled = buttonModILevel.Enabled && talPresent;
             buttonClose.Enabled = !active;
             buttonAbort.Enabled = active && abortPossible;
