@@ -153,7 +153,7 @@ namespace PsdzClient
             buttonStopHost.Enabled = !active && hostRunning;
             buttonConnect.Enabled = !active && hostRunning && !vehicleConnected;
             buttonDisconnect.Enabled = !active && hostRunning && vehicleConnected;
-            buttonCreateOptions.Enabled = !active && hostRunning && vehicleConnected;
+            buttonCreateOptions.Enabled = !active && hostRunning && vehicleConnected && _optionsDict == null;
             buttonModILevel.Enabled = buttonCreateOptions.Enabled;
             buttonModFa.Enabled = buttonCreateOptions.Enabled;
             buttonExecuteTal.Enabled = buttonModILevel.Enabled && talPresent;
@@ -1062,8 +1062,6 @@ namespace PsdzClient
 
                     IPsdzFa psdzFaTarget = programmingService.Psdz.ObjectBuilder.BuildFa(ifaTarget, psdzVin.Value);
                     _psdzContext.SetFaTarget(psdzFaTarget);
-                    _psdzContext.UpdateVehicleFa(psdzFaTarget);
-                    programmingService.PdszDatabase.ResetXepRules();
                     UpdateCurrentOptions();
 
                     sbResult.AppendLine("FA target:");
@@ -1073,6 +1071,7 @@ namespace PsdzClient
                 {
                     _psdzContext.SetFaTarget(psdzFa);
                 }
+                programmingService.PdszDatabase.ResetXepRules();
 
                 IEnumerable<IPsdzIstufe> psdzIstufes = programmingService.Psdz.LogicService.GetPossibleIntegrationLevel(_psdzContext.FaTarget);
                 _psdzContext.SetPossibleIstufenTarget(psdzIstufes);

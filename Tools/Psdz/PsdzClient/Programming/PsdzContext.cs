@@ -246,14 +246,22 @@ namespace PsdzClient.Programming
         public void SetFaActual(IPsdzFa fa)
 		{
 			this.FaActual = fa;
+            if (Vehicle != null)
+            {
+                Vehicle.FA = ProgrammingUtils.BuildVehicleFa(fa, DetectVehicle.ModelSeries);
+            }
 		}
 
-        public void SetFaTarget(IPsdzFa fa)
+		public void SetFaTarget(IPsdzFa fa)
 		{
 			this.FaTarget = fa;
+            if (Vehicle != null)
+            {
+                Vehicle.TargetFA = ProgrammingUtils.BuildVehicleFa(fa, DetectVehicle.ModelSeries);
+            }
 		}
 
-        public void SetIstufen(IPsdzIstufenTriple istufenTriple)
+		public void SetIstufen(IPsdzIstufenTriple istufenTriple)
 		{
 			if (istufenTriple != null)
 			{
@@ -324,8 +332,6 @@ namespace PsdzClient.Programming
 
             ClientContext.SelectedBrand = brand;
 
-            UpdateVehicleFa(FaActual);
-
             for (int i = 0; i < 2; i++)
             {
                 ObservableCollection<ECU> EcuList = new ObservableCollection<ECU>();
@@ -372,11 +378,6 @@ namespace PsdzClient.Programming
             }
 
             return true;
-        }
-
-        public void UpdateVehicleFa(IPsdzFa faInput)
-        {
-            Vehicle.FA = ProgrammingUtils.BuildVehicleFa(FaActual, DetectVehicle.ModelSeries);
         }
 
         public BNType GetBnType()
