@@ -281,15 +281,17 @@ namespace PsdzClient
                 {
                     foreach (OptionsItem optionsItem in optionsItems)
                     {
-                        CheckState checkState;
+                        CheckState checkState = CheckState.Unchecked;
                         if (optionsItem.Selected)
                         {
                             checkState = CheckState.Checked;
                         }
                         else
                         {
-                            checkState = programmingService.PdszDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, _psdzContext.Vehicle, null) ?
-                                CheckState.Unchecked : CheckState.Indeterminate;
+                            if (!programmingService.PdszDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, _psdzContext.Vehicle, null))
+                            {
+                                checkState = CheckState.Indeterminate;
+                            }
                         }
 
                         checkedListBoxOptions.Items.Add(optionsItem, checkState);
@@ -1646,7 +1648,14 @@ namespace PsdzClient
             {
                 if (checkedListBoxOptions.Items[e.Index] is OptionsItem optionsItem)
                 {
-                    optionsItem.Selected = e.NewValue == CheckState.Checked;
+                    if (e.CurrentValue == CheckState.Indeterminate)
+                    {
+                        e.NewValue = e.CurrentValue;
+                    }
+                    else
+                    {
+                        optionsItem.Selected = e.NewValue == CheckState.Checked;
+                    }
                 }
             }
         }

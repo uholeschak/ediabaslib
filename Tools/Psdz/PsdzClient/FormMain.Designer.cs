@@ -282,6 +282,7 @@ namespace PsdzClient
             // 
             // comboBoxOptionType
             // 
+            this.comboBoxOptionType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxOptionType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxOptionType.FormattingEnabled = true;
             this.comboBoxOptionType.Location = new System.Drawing.Point(579, 38);
