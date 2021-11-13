@@ -173,6 +173,7 @@ BMW.Rheingold.Programming.Controller.SecureCoding.SecureCodingLogic.GetCafdCalcu
 BMW.Rheingold.Programming.ProgrammingEngine.States.CheckSoftwareAvailabilityState.Handle(ProgrammingSession session)
 BMW.Rheingold.Programming.ProgrammingEngine.States.ExecuteIndividualDataBackupTalState.Handle(ProgrammingSession session)
 BMW.Rheingold.Programming.TherapyPlan.UpdateMsmTslUpdate.UpdateTsl()
+BMW.Rheingold.Module.ISTA.ModuleBootstrapLoader.CompileOnTheFly()
 
 InParameter:
 "faElementsToAdd": +MFSG
