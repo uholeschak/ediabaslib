@@ -1234,6 +1234,20 @@ namespace PsdzClient
             return data;
         }
 
+        public string GetFlowForInfoObj(SwiInfoObj swiInfoObj)
+        {
+            log.InfoFormat("GetFlowForInfoObj Identifier: {0}, Flow={1}", swiInfoObj?.Identifier, swiInfoObj?.FlowXml);
+            if (string.IsNullOrEmpty(swiInfoObj?.FlowXml))
+            {
+                log.WarnFormat("GetFlowForInfoObj No FlowXml for: {0}", swiInfoObj?.Identifier);
+                return null;
+            }
+
+            string data = GetXmlValuePrimitivesById(swiInfoObj.FlowXml, "DEDE");
+            log.InfoFormat("GetFlowForInfoObj Data: {0}", data);
+            return data;
+        }
+
         public bool GetEcuVariants(List<EcuInfo> ecuList, Vehicle vehicle = null, IFFMDynamicResolver ffmDynamicResolver = null)
         {
             log.InfoFormat("GetEcuVariants Vehicle: {0}", vehicle != null);
