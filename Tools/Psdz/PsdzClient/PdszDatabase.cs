@@ -1045,6 +1045,7 @@ namespace PsdzClient
         };
 
         private bool _disposed;
+        private string _databasePath;
         private SQLiteConnection _mDbConnection;
         private string _rootENameClassId;
         private string _typeKeyClassId;
@@ -1054,7 +1055,8 @@ namespace PsdzClient
 
         public PdszDatabase(string istaFolder)
         {
-            string databaseFile = Path.Combine(istaFolder, "SQLiteDBs", "DiagDocDb.sqlite");
+            _databasePath = Path.Combine(istaFolder, "SQLiteDBs");
+            string databaseFile = Path.Combine(_databasePath, "DiagDocDb.sqlite");
             string connection = "Data Source=\"" + databaseFile + "\";";
             _mDbConnection = new SQLiteConnection(connection);
 
@@ -1160,6 +1162,73 @@ namespace PsdzClient
             }
 
             return true;
+        }
+
+        public string GetXmlValuePrimitivesById(string id, string languageExtension)
+        {
+            log.InfoFormat("GetXmlValuePrimitivesById Id: {0}, Lang: {1}", id, languageExtension);
+
+            string data = GetXmlValuePrimitivesByIdSingle(id, languageExtension);
+            if (string.IsNullOrEmpty(data))
+            {
+                data = GetXmlValuePrimitivesByIdSingle(id, "ENGB");
+            }
+
+            if (string.IsNullOrEmpty(data))
+            {
+                data = GetXmlValuePrimitivesByIdSingle(id, "OTHER");
+            }
+
+            if (string.IsNullOrEmpty(data))
+            {
+                data = string.Empty;
+            }
+
+            log.InfoFormat("GetXmlValuePrimitivesById Data: {0}", data);
+            return data;
+        }
+
+        public string GetXmlValuePrimitivesByIdSingle(string id, string languageExtension)
+        {
+            log.InfoFormat("GetXmlValuePrimitivesByIdSingle Id: {0}, Lang: {1}", id, languageExtension);
+
+            string data = null;
+            try
+            {
+                string databaseName = @"xmlvalueprimitive_" + languageExtension;
+                string databaseFile = Path.Combine(_databasePath, databaseName);
+                if (!File.Exists(databaseFile))
+                {
+                    log.InfoFormat("GetXmlValuePrimitivesByIdSingle File not found: {0}", databaseFile);
+                    return null;
+                }
+
+                string connection = "Data Source=\"" + databaseFile + "\";";
+                using (SQLiteConnection mDbConnection = new SQLiteConnection(connection))
+                {
+                    mDbConnection.Open();
+                    string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, DATA FROM XMLVALUEPRIMITIVE WHERE (ID = '{0}')", id);
+                    using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                    {
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                data = reader["DATA"].ToString();
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetXmlValuePrimitivesByIdSingle Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            log.InfoFormat("GetXmlValuePrimitivesByIdSingle Data: {0}", data);
+            return data;
         }
 
         public bool GetEcuVariants(List<EcuInfo> ecuList, Vehicle vehicle = null, IFFMDynamicResolver ffmDynamicResolver = null)
