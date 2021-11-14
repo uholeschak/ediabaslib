@@ -876,6 +876,14 @@ namespace PsdzClient
                 sb.Append(string.Format(CultureInfo.InvariantCulture,
                     "SwiInfoObj: LinkType={0}, Id={1}, Class={2}, PrgType={3}, InformationType={4}, Identification={5}, ILevel={6}, InfoType={7}, Identifier={8}, Flow={9}, Title='{10}'",
                     LinkType, Id, NodeClass, ProgramType, InformationType, Identification, TargetILevel, InfoType, Identifier, FlowXml, EcuTranslation.GetTitle(language)));
+                if (!string.IsNullOrEmpty(FlowXml))
+                {
+                    string flowData = ClientContext.Database.GetFlowForInfoObj(this);
+                    if (!string.IsNullOrEmpty(flowData))
+                    {
+                        sb.Append(string.Format(CultureInfo.InvariantCulture, "SwiInfoObj: Flow='{0}'", flowData));
+                    }
+                }
                 return sb.ToString();
             }
 
@@ -1198,7 +1206,7 @@ namespace PsdzClient
             string data = null;
             try
             {
-                string databaseName = @"xmlvalueprimitive_" + languageExtension;
+                string databaseName = @"xmlvalueprimitive_" + languageExtension + @".sqlite";
                 string databaseFile = Path.Combine(_databasePath, databaseName);
                 if (!File.Exists(databaseFile))
                 {
@@ -1211,7 +1219,7 @@ namespace PsdzClient
                 {
                     mDbConnection.Open();
                     string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, DATA FROM XMLVALUEPRIMITIVE WHERE (ID = '{0}')", id);
-                    using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                    using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
                     {
                         using (SQLiteDataReader reader = command.ExecuteReader())
                         {
