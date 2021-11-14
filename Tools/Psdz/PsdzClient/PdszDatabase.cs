@@ -1351,11 +1351,9 @@ namespace PsdzClient
                     log.ErrorFormat("LoadTestModule ParameterName type not found");
                     return null;
                 }
-
-                Array paramNameFields = paramNameType.GetFields(BindingFlags.Public | BindingFlags.Static);
+                object parameterNameLogic = Enum.Parse(paramNameType, "Logic", true);
 
                 object moduleParamInst = Activator.CreateInstance(moduleParamType);
-
                 Type logicType = sessionConrollerAssembly.GetType("BMW.Rheingold.RheingoldSessionController.Logic");
                 if (logicType == null)
                 {
@@ -1378,11 +1376,11 @@ namespace PsdzClient
                     return null;
                 }
 
-                methodSetParameter.Invoke(moduleParamInst, new object[] {"Logic", logicInst});
+                methodSetParameter.Invoke(moduleParamInst, new object[] {parameterNameLogic, logicInst});
                 methodContainerSetParameter.Invoke(moduleParamContainerInst, new object[] { "__RheinGoldCoreModuleParameters__", moduleParamInst });
 
                 Type moduleType = exportedTypes[0];
-                //object testModule = Activator.CreateInstance(moduleType, moduleParamContainerInst);
+                object testModule = Activator.CreateInstance(moduleType, moduleParamContainerInst);
                 log.InfoFormat("LoadTestModule Loaded: {0}, Type: {1}", fileName, moduleType.FullName);
                 return moduleAssembly;
             }
