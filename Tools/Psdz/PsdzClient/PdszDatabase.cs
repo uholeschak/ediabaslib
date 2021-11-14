@@ -1307,7 +1307,7 @@ namespace PsdzClient
                 }
 
                 Type moduleType = exportedTypes[0];
-                //object testModule = Activator.CreateInstance(moduleType);
+                //object testModule = Activator.CreateInstance(moduleType, new object[] {null});
                 log.InfoFormat("LoadTestModule Loaded: {0}, Type: {1}", fileName, moduleType.FullName);
                 return moduleAssembly;
             }
