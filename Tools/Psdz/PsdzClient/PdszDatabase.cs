@@ -1307,6 +1307,15 @@ namespace PsdzClient
                     log.ErrorFormat("LoadTestModule Core framework not found: {0}", moduleFile);
                     return null;
                 }
+                Assembly coreFrameworkAssembly = Assembly.LoadFrom(coreFrameworkFile);
+
+                string sessionControllerFile = Path.Combine(_frameworkPath, "RheingoldSessionController.dll");
+                if (!File.Exists(sessionControllerFile))
+                {
+                    log.ErrorFormat("LoadTestModule Session controller not found: {0}", sessionControllerFile);
+                    return null;
+                }
+                Assembly sessionConrollerAssembly = Assembly.LoadFrom(sessionControllerFile);
 
                 Assembly moduleAssembly = Assembly.LoadFrom(moduleFile);
                 Type[] exportedTypes = moduleAssembly.GetExportedTypes();
@@ -1321,12 +1330,59 @@ namespace PsdzClient
                     return null;
                 }
 
-                Assembly coreFrameworkAssembly = Assembly.LoadFrom(coreFrameworkFile);
                 Type moduleParamContainerType = coreFrameworkAssembly.GetType("BMW.Rheingold.CoreFramework.ParameterContainer");
-                object moduleParamContainer = Activator.CreateInstance(moduleParamContainerType);
+                if (moduleParamContainerType == null)
+                {
+                    log.ErrorFormat("LoadTestModule ParameterContainer not found");
+                    return null;
+                }
+                object moduleParamContainerInst = Activator.CreateInstance(moduleParamContainerType);
+
+                Type moduleParamType = coreFrameworkAssembly.GetType("BMW.Rheingold.CoreFramework.ModuleParameter");
+                if (moduleParamType == null)
+                {
+                    log.ErrorFormat("LoadTestModule ModuleParameter not found");
+                    return null;
+                }
+
+                Type paramNameType = moduleParamType.GetNestedType("ParameterName", BindingFlags.Public | BindingFlags.DeclaredOnly);
+                if (paramNameType == null)
+                {
+                    log.ErrorFormat("LoadTestModule ParameterName type not found");
+                    return null;
+                }
+
+                Array paramNameFields = paramNameType.GetFields(BindingFlags.Public | BindingFlags.Static);
+
+                object moduleParamInst = Activator.CreateInstance(moduleParamType);
+
+                Type logicType = sessionConrollerAssembly.GetType("BMW.Rheingold.RheingoldSessionController.Logic");
+                if (logicType == null)
+                {
+                    log.ErrorFormat("LoadTestModule Logic not found");
+                    return null;
+                }
+                object logicInst = Activator.CreateInstance(logicType);
+
+                MethodInfo methodContainerSetParameter = moduleParamContainerType.GetMethod("setParameter");
+                if (methodContainerSetParameter == null)
+                {
+                    log.ErrorFormat("LoadTestModule ParameterContainer setParameter not found");
+                    return null;
+                }
+
+                MethodInfo methodSetParameter = moduleParamType.GetMethod("setParameter");
+                if (methodSetParameter == null)
+                {
+                    log.ErrorFormat("LoadTestModule ModuleParameter setParameter not found");
+                    return null;
+                }
+
+                methodSetParameter.Invoke(moduleParamInst, new object[] {"Logic", logicInst});
+                methodContainerSetParameter.Invoke(moduleParamContainerInst, new object[] { "__RheinGoldCoreModuleParameters__", moduleParamInst });
 
                 Type moduleType = exportedTypes[0];
-                //object testModule = Activator.CreateInstance(moduleType, moduleParamContainer);
+                //object testModule = Activator.CreateInstance(moduleType, moduleParamContainerInst);
                 log.InfoFormat("LoadTestModule Loaded: {0}, Type: {1}", fileName, moduleType.FullName);
                 return moduleAssembly;
             }
