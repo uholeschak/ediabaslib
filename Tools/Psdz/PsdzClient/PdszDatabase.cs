@@ -1098,6 +1098,14 @@ namespace PsdzClient
                 Assembly assembly = Assembly.LoadFrom(assemblyPath);
                 return assembly;
             };
+
+            AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
+            {
+                if ((Exception)args.ExceptionObject is Exception e)
+                {
+                    log.ErrorFormat("UnhandledException: {0}", e.Message);
+                }
+            };
         }
 
         public static string SwiRegisterEnumerationNameConverter(SwiRegisterEnum swiRegisterEnum)
@@ -1293,6 +1301,13 @@ namespace PsdzClient
                     return null;
                 }
 
+                string coreFrameworkFile = Path.Combine(_frameworkPath, "RheingoldCoreFramework.dll");
+                if (!File.Exists(coreFrameworkFile))
+                {
+                    log.ErrorFormat("LoadTestModule Core framework not found: {0}", moduleFile);
+                    return null;
+                }
+
                 Assembly moduleAssembly = Assembly.LoadFrom(moduleFile);
                 Type[] exportedTypes = moduleAssembly.GetExportedTypes();
                 foreach (Type type in exportedTypes)
@@ -1306,8 +1321,12 @@ namespace PsdzClient
                     return null;
                 }
 
+                Assembly coreFrameworkAssembly = Assembly.LoadFrom(coreFrameworkFile);
+                Type moduleParamContainerType = coreFrameworkAssembly.GetType("BMW.Rheingold.CoreFramework.ParameterContainer");
+                object moduleParamContainer = Activator.CreateInstance(moduleParamContainerType);
+
                 Type moduleType = exportedTypes[0];
-                //object testModule = Activator.CreateInstance(moduleType, new object[] {null});
+                //object testModule = Activator.CreateInstance(moduleType, moduleParamContainer);
                 log.InfoFormat("LoadTestModule Loaded: {0}, Type: {1}", fileName, moduleType.FullName);
                 return moduleAssembly;
             }
