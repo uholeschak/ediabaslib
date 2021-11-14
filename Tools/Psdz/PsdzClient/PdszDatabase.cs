@@ -1057,6 +1057,8 @@ namespace PsdzClient
 
         private bool _disposed;
         private string _databasePath;
+        private string _testModulePath;
+        private string _frameworkPath;
         private SQLiteConnection _mDbConnection;
         private string _rootENameClassId;
         private string _typeKeyClassId;
@@ -1067,6 +1069,12 @@ namespace PsdzClient
         public PdszDatabase(string istaFolder)
         {
             _databasePath = Path.Combine(istaFolder, "SQLiteDBs");
+            _testModulePath = Path.Combine(istaFolder, "Testmodule");
+            _frameworkPath = Path.Combine(istaFolder, "TesterGUI", "bin","ReleaseMod");
+            if (!Directory.Exists(_frameworkPath))
+            {
+                _frameworkPath = Path.Combine(istaFolder, "TesterGUI", "bin", "ReleaseMod");
+            }
             string databaseFile = Path.Combine(_databasePath, "DiagDocDb.sqlite");
             string connection = "Data Source=\"" + databaseFile + "\";";
             _mDbConnection = new SQLiteConnection(connection);
@@ -1079,6 +1087,17 @@ namespace PsdzClient
             _xepRuleDict = null;
             SwiRegisterTree = null;
             ClientContext.Database = this;
+
+            AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
+            {
+                string assemblyPath = Path.Combine(_frameworkPath, new AssemblyName(args.Name).Name + ".dll");
+                if (!File.Exists(assemblyPath))
+                {
+                    return null;
+                }
+                Assembly assembly = Assembly.LoadFrom(assemblyPath);
+                return assembly;
+            };
         }
 
         public static string SwiRegisterEnumerationNameConverter(SwiRegisterEnum swiRegisterEnum)
@@ -1254,6 +1273,49 @@ namespace PsdzClient
             string data = GetXmlValuePrimitivesById(swiInfoObj.FlowXml, "DEDE");
             log.InfoFormat("GetFlowForInfoObj Data: {0}", data);
             return data;
+        }
+
+        public Assembly LoadTestModule(string moduleName)
+        {
+            log.InfoFormat("LoadTestModule Name: {0}", moduleName);
+            try
+            {
+                if (string.IsNullOrEmpty(moduleName))
+                {
+                    return null;
+                }
+
+                string fileName = moduleName + ".dll";
+                string moduleFile = Path.Combine(_testModulePath, fileName);
+                if (!File.Exists(moduleFile))
+                {
+                    log.ErrorFormat("LoadTestModule File not found: {0}", moduleFile);
+                    return null;
+                }
+
+                Assembly moduleAssembly = Assembly.LoadFrom(moduleFile);
+                Type[] exportedTypes = moduleAssembly.GetExportedTypes();
+                foreach (Type type in exportedTypes)
+                {
+                    log.InfoFormat("LoadTestModule Exported type: {0}", type.FullName);
+                }
+
+                if (exportedTypes.Length != 1)
+                {
+                    log.ErrorFormat("LoadTestModule Exported types: {0}", exportedTypes.Length);
+                    return null;
+                }
+
+                Type moduleType = exportedTypes[0];
+                //object testModule = Activator.CreateInstance(moduleType);
+                log.InfoFormat("LoadTestModule Loaded: {0}, Type: {1}", fileName, moduleType.FullName);
+                return moduleAssembly;
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("LoadTestModule Exception: '{0}'", e.Message);
+                return null;
+            }
         }
 
         public bool GetEcuVariants(List<EcuInfo> ecuList, Vehicle vehicle = null, IFFMDynamicResolver ffmDynamicResolver = null)
