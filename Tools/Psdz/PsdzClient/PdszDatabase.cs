@@ -764,7 +764,7 @@ namespace PsdzClient
             public SwiInfoObj(SwiActionDatabaseLinkType? linkType, string id, string nodeClass, string assembly, string versionNum, string programType, string safetyRelevant,
                 string titleId, string general, string telSrvId, string vehicleComm, string measurement, string hidden, string name, string informationType,
                 string identification, string informationFormat, string siNumber, string targetILevel, string controlId,
-                string infoType, string infoFormat, string docNum, string priority, string identifier, EcuTranslation ecuTranslation)
+                string infoType, string infoFormat, string docNum, string priority, string identifier, string flowXml, EcuTranslation ecuTranslation)
             {
                 LinkType = linkType;
                 Id = id;
@@ -791,6 +791,7 @@ namespace PsdzClient
                 DocNum = docNum;
                 Priority = priority;
                 Identifier = identifier;
+                FlowXml = flowXml;
                 EcuTranslation = ecuTranslation;
             }
 
@@ -864,6 +865,8 @@ namespace PsdzClient
 
             public string Identifier { get; set; }
 
+            public string FlowXml { get; set; }
+
             public EcuTranslation EcuTranslation { get; set; }
 
             public string ToString(string language, string prefix = "")
@@ -871,8 +874,8 @@ namespace PsdzClient
                 StringBuilder sb = new StringBuilder();
                 sb.Append(prefix);
                 sb.Append(string.Format(CultureInfo.InvariantCulture,
-                    "SwiInfoObj: LinkType={0}, Id={1}, Class={2}, PrgType={3}, InformationType={4}, Identification={5}, ILevel={6}, InfoType={7}, Identifier={8}, Title='{9}'",
-                    LinkType, Id, NodeClass, ProgramType, InformationType, Identification, TargetILevel, InfoType, Identifier, EcuTranslation.GetTitle(language)));
+                    "SwiInfoObj: LinkType={0}, Id={1}, Class={2}, PrgType={3}, InformationType={4}, Identification={5}, ILevel={6}, InfoType={7}, Identifier={8}, Flow={9}, Title='{10}'",
+                    LinkType, Id, NodeClass, ProgramType, InformationType, Identification, TargetILevel, InfoType, Identifier, FlowXml, EcuTranslation.GetTitle(language)));
                 return sb.ToString();
             }
 
@@ -2522,7 +2525,7 @@ namespace PsdzClient
                 string sql = string.Format(CultureInfo.InvariantCulture,
                     @"SELECT ID, NODECLASS, ASSEMBLY, VERSIONNUMBER, PROGRAMTYPE, SICHERHEITSRELEVANT, TITLEID, " +
                     DatabaseFunctions.SqlTitleItems + ", GENERELL, TELESERVICEKENNUNG, FAHRZEUGKOMMUNIKATION, MESSTECHNIK, VERSTECKT, NAME, INFORMATIONSTYP, " +
-                    @"IDENTIFIKATOR, INFORMATIONSFORMAT, SINUMMER, ZIELISTUFE, CONTROLID, INFOTYPE, INFOFORMAT, DOCNUMBER, PRIORITY, IDENTIFIER FROM XEP_INFOOBJECTS WHERE XEP_INFOOBJECTS.ID = {0}",
+                    @"IDENTIFIKATOR, INFORMATIONSFORMAT, SINUMMER, ZIELISTUFE, CONTROLID, INFOTYPE, INFOFORMAT, DOCNUMBER, PRIORITY, IDENTIFIER, FLOWXML FROM XEP_INFOOBJECTS WHERE XEP_INFOOBJECTS.ID = {0}",
                     infoObjectId);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
@@ -2557,7 +2560,7 @@ namespace PsdzClient
                 string sql = string.Format(CultureInfo.InvariantCulture,
                     @"SELECT ID, NODECLASS, ASSEMBLY, VERSIONNUMBER, PROGRAMTYPE, SICHERHEITSRELEVANT, TITLEID, " +
                     DatabaseFunctions.SqlTitleItems + ", GENERELL, TELESERVICEKENNUNG, FAHRZEUGKOMMUNIKATION, MESSTECHNIK, VERSTECKT, NAME, INFORMATIONSTYP, " +
-                    @"IDENTIFIKATOR, INFORMATIONSFORMAT, SINUMMER, ZIELISTUFE, CONTROLID, INFOTYPE, INFOFORMAT, DOCNUMBER, PRIORITY, IDENTIFIER FROM XEP_INFOOBJECTS WHERE XEP_INFOOBJECTS.ID = {0}",
+                    @"IDENTIFIKATOR, INFORMATIONSFORMAT, SINUMMER, ZIELISTUFE, CONTROLID, INFOTYPE, INFOFORMAT, DOCNUMBER, PRIORITY, IDENTIFIER, FLOWXML FROM XEP_INFOOBJECTS WHERE XEP_INFOOBJECTS.ID = {0}",
                     infoObjectId);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
@@ -3261,9 +3264,10 @@ namespace PsdzClient
             string docNum = reader["DOCNUMBER"].ToString().Trim();
             string priority = reader["PRIORITY"].ToString().Trim();
             string identifier = reader["IDENTIFIER"].ToString().Trim();
+            string flowXml = reader["FLOWXML"].ToString().Trim();
             return new SwiInfoObj(linkType, id, nodeClass, assembly, versionNum, programType, safetyRelevant, titleId, general,
                 telSrvId, vehicleComm, measurement, hidden, name, informationType, identification, informationFormat, siNumber, targetILevel, controlId,
-                infoType, infoFormat, docNum, priority, identifier, GetTranslation(reader));
+                infoType, infoFormat, docNum, priority, identifier, flowXml, GetTranslation(reader));
         }
 
         private static SwiDiagObj ReadXepSwiDiagObj(SQLiteDataReader reader)
