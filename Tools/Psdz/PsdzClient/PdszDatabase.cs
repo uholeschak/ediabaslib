@@ -1067,6 +1067,12 @@ namespace PsdzClient
         public Dictionary<string, XepRule> XepRuleDict => _xepRuleDict;
         public SwiRegister SwiRegisterTree { get; private set; }
 
+        private static bool CallModuleRefPrefix(string refPath, object inParameters, ref object outParameters, ref object inAndOutParameters)
+        {
+            log.InfoFormat("CallModuleRefPrefix refPath: {0}", refPath);
+            return false;
+        }
+
         public PdszDatabase(string istaFolder)
         {
             _databasePath = Path.Combine(istaFolder, "SQLiteDBs");
@@ -1340,6 +1346,13 @@ namespace PsdzClient
                     return null;
                 }
 
+                MethodInfo methodModuleRefPrefix = typeof(PdszDatabase).GetMethod("CallModuleRefPrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                if (methodModuleRefPrefix == null)
+                {
+                    log.ErrorFormat("LoadTestModule CallModuleRefPrefix not found");
+                    return null;
+                }
+
                 Assembly moduleAssembly = Assembly.LoadFrom(moduleFile);
                 Type[] exportedTypes = moduleAssembly.GetExportedTypes();
                 foreach (Type type in exportedTypes)
@@ -1417,18 +1430,27 @@ namespace PsdzClient
 
                 log.InfoFormat("LoadTestModule Module loaded: {0}, Type: {1}", fileName, moduleType.FullName);
 
-                MethodInfo methodeTestModuleStartType = moduleType.GetMethod("Start");
-                if (methodeTestModuleStartType == null)
-                {
-                    log.ErrorFormat("LoadTestModule Test module Start methode not found");
-                    return null;
-                }
+                harmony.Patch(methodIstaModuleModuleRef, new HarmonyMethod(methodModuleRefPrefix));
 
-                object moduleRunInContainerInst = Activator.CreateInstance(moduleParamContainerType);
-                object moduleRunOutContainerInst = Activator.CreateInstance(moduleParamContainerType);
-                object moduleRunInOutContainerInst = Activator.CreateInstance(moduleParamContainerType);
-                object[] startArguments = { moduleRunInContainerInst, moduleRunOutContainerInst, moduleRunInOutContainerInst };
-                //methodeTestModuleStartType.Invoke(testModule, startArguments);
+                try
+                {
+                    MethodInfo methodeTestModuleStartType = moduleType.GetMethod("Start");
+                    if (methodeTestModuleStartType == null)
+                    {
+                        log.ErrorFormat("LoadTestModule Test module Start methode not found");
+                        return null;
+                    }
+
+                    object moduleRunInContainerInst = Activator.CreateInstance(moduleParamContainerType);
+                    object moduleRunOutContainerInst = Activator.CreateInstance(moduleParamContainerType);
+                    object moduleRunInOutContainerInst = Activator.CreateInstance(moduleParamContainerType);
+                    object[] startArguments = { moduleRunInContainerInst, moduleRunOutContainerInst, moduleRunInOutContainerInst };
+                    methodeTestModuleStartType.Invoke(testModule, startArguments);
+                }
+                finally
+                {
+                    harmony.Unpatch(methodIstaModuleModuleRef, HarmonyPatchType.All);
+                }
 
                 log.InfoFormat("LoadTestModule Executed: {0}, Type: {1}", fileName, moduleType.FullName);
                 return moduleAssembly;
