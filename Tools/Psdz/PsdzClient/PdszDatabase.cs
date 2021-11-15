@@ -1390,8 +1390,25 @@ namespace PsdzClient
                 methodContainerSetParameter.Invoke(moduleParamContainerInst, new object[] { "__RheinGoldCoreModuleParameters__", moduleParamInst });
 
                 Type moduleType = exportedTypes[0];
+
                 object testModule = Activator.CreateInstance(moduleType, moduleParamContainerInst);
-                log.InfoFormat("LoadTestModule Loaded: {0}, Type: {1}", fileName, moduleType.FullName);
+
+                log.InfoFormat("LoadTestModule Module loaded: {0}, Type: {1}", fileName, moduleType.FullName);
+
+                MethodInfo methodeTestModuleStartType = moduleType.GetMethod("Start");
+                if (methodeTestModuleStartType == null)
+                {
+                    log.ErrorFormat("LoadTestModule Test module Start methode not found");
+                    return null;
+                }
+
+                object moduleRunInContainerInst = Activator.CreateInstance(moduleParamContainerType);
+                object moduleRunOutContainerInst = Activator.CreateInstance(moduleParamContainerType);
+                object moduleRunInOutContainerInst = Activator.CreateInstance(moduleParamContainerType);
+                object[] startArguments = { moduleRunInContainerInst, moduleRunOutContainerInst, moduleRunInOutContainerInst };
+                //methodeTestModuleStartType.Invoke(testModule, startArguments);
+
+                log.InfoFormat("LoadTestModule Executed: {0}, Type: {1}", fileName, moduleType.FullName);
                 return moduleAssembly;
             }
             catch (Exception e)
