@@ -1352,6 +1352,7 @@ namespace PsdzClient
                     return null;
                 }
                 object parameterNameLogic = Enum.Parse(paramNameType, "Logic", true);
+                object parameterNameVehicle = Enum.Parse(paramNameType, "Vehicle", true);
 
                 object moduleParamInst = Activator.CreateInstance(moduleParamType);
                 Type logicType = sessionConrollerAssembly.GetType("BMW.Rheingold.RheingoldSessionController.Logic");
@@ -1361,6 +1362,14 @@ namespace PsdzClient
                     return null;
                 }
                 object logicInst = Activator.CreateInstance(logicType);
+
+                Type vehicleType = coreFrameworkAssembly.GetType("BMW.Rheingold.CoreFramework.DatabaseProvider.Vehicle");
+                if (vehicleType == null)
+                {
+                    log.ErrorFormat("LoadTestModule Vehicle not found");
+                    return null;
+                }
+                object vehicleInst = Activator.CreateInstance(vehicleType);
 
                 MethodInfo methodContainerSetParameter = moduleParamContainerType.GetMethod("setParameter");
                 if (methodContainerSetParameter == null)
@@ -1377,6 +1386,7 @@ namespace PsdzClient
                 }
 
                 methodSetParameter.Invoke(moduleParamInst, new object[] {parameterNameLogic, logicInst});
+                methodSetParameter.Invoke(moduleParamInst, new object[] { parameterNameVehicle, vehicleInst });
                 methodContainerSetParameter.Invoke(moduleParamContainerInst, new object[] { "__RheinGoldCoreModuleParameters__", moduleParamInst });
 
                 Type moduleType = exportedTypes[0];
