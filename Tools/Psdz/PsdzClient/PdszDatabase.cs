@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
+using HarmonyLib;
 using log4net;
 using PsdzClient.Core;
 
@@ -1317,6 +1318,28 @@ namespace PsdzClient
                 }
                 Assembly sessionConrollerAssembly = Assembly.LoadFrom(sessionControllerFile);
 
+                string istaCoreFrameworkFile = Path.Combine(_frameworkPath, "RheingoldISTACoreFramework.dll");
+                if (!File.Exists(istaCoreFrameworkFile))
+                {
+                    log.ErrorFormat("LoadTestModule ISTA core framework not found: {0}", istaCoreFrameworkFile);
+                    return null;
+                }
+                Assembly istaCoreFrameworkAssembly = Assembly.LoadFrom(istaCoreFrameworkFile);
+
+                Harmony harmony = new Harmony("de.holeschak.PsdzClient");
+                Type istaModuleType = istaCoreFrameworkAssembly.GetType("BMW.Rheingold.Module.ISTA.ISTAModule");
+                if (istaModuleType == null)
+                {
+                    log.ErrorFormat("LoadTestModule ISTAModule not found");
+                    return null;
+                }
+                MethodInfo methodIstaModuleModuleRef = istaModuleType.GetMethod("callModuleRef", BindingFlags.Instance | BindingFlags.NonPublic);
+                if (methodIstaModuleModuleRef == null)
+                {
+                    log.ErrorFormat("LoadTestModule ISTAModule callModuleRef not found");
+                    return null;
+                }
+
                 Assembly moduleAssembly = Assembly.LoadFrom(moduleFile);
                 Type[] exportedTypes = moduleAssembly.GetExportedTypes();
                 foreach (Type type in exportedTypes)
@@ -1390,7 +1413,6 @@ namespace PsdzClient
                 methodContainerSetParameter.Invoke(moduleParamContainerInst, new object[] { "__RheinGoldCoreModuleParameters__", moduleParamInst });
 
                 Type moduleType = exportedTypes[0];
-
                 object testModule = Activator.CreateInstance(moduleType, moduleParamContainerInst);
 
                 log.InfoFormat("LoadTestModule Module loaded: {0}, Type: {1}", fileName, moduleType.FullName);
