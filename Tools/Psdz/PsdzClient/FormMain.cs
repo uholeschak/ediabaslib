@@ -1582,11 +1582,7 @@ namespace PsdzClient
             else if (sender == buttonModFa)
             {
                 operationType = OperationType.BuildTal;
-                faRemList = new List<string>();
-                faAddList = new List<string>();
-
-                faRemList.AddRange(new [] {"$8KA", "$8KC", "$8KD", "$8KE", "$8KF", "$8KG", "$8KH", "$8KK", "$8KL", "$8KM", "$8KN", "$8KP", "$984", "$988", "$8ST" });
-                faAddList.AddRange(new[] { "+MFSG", "+ATEF", "$8KB" });
+                GenerateFaModifications(out faAddList, out faRemList);
             }
             else if (sender == buttonExecuteTal)
             {
