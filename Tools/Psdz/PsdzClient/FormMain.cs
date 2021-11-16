@@ -246,6 +246,8 @@ namespace PsdzClient
             {
                 SelectOptions(null);
             }
+
+            GenerateFaModifications();
         }
 
         private void UpdateOptions(Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>> optionsDict)
@@ -301,6 +303,27 @@ namespace PsdzClient
             else
             {
                 comboBoxOptionType.SelectedIndex = 0;
+            }
+        }
+
+        private void GenerateFaModifications()
+        {
+            foreach (object item in checkedListBoxOptions.Items)
+            {
+                if (item is OptionsItem optionsItem)
+                {
+                    if (optionsItem.Selected && optionsItem.SwiAction.SwiInfoObjs != null)
+                    {
+                        foreach (PdszDatabase.SwiInfoObj infoInfoObj in optionsItem.SwiAction.SwiInfoObjs)
+                        {
+                            if (infoInfoObj.LinkType == PdszDatabase.SwiInfoObj.SwiActionDatabaseLinkType.SwiActionActionSelectionLink)
+                            {
+                                string moduleName = infoInfoObj.Identifier.Replace("-", "_");
+                                Dictionary<string, List<string>> actionsDict = programmingService.PdszDatabase.ReadTestModule(moduleName);
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -1658,6 +1681,8 @@ namespace PsdzClient
                     }
                 }
             }
+
+            GenerateFaModifications();
         }
 
         private void comboBoxOptionType_SelectedIndexChanged(object sender, EventArgs e)
