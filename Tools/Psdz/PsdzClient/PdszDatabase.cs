@@ -1063,6 +1063,7 @@ namespace PsdzClient
         private SQLiteConnection _mDbConnection;
         private string _rootENameClassId;
         private string _typeKeyClassId;
+        private Harmony _harmony;
         private Dictionary<string, XepRule> _xepRuleDict;
         public Dictionary<string, XepRule> XepRuleDict => _xepRuleDict;
         public SwiRegister SwiRegisterTree { get; private set; }
@@ -1091,6 +1092,7 @@ namespace PsdzClient
 
             _rootENameClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"RootEBezeichnung");
             _typeKeyClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"Typschluessel");
+            _harmony = new Harmony("de.holeschak.PsdzClient");
             _xepRuleDict = null;
             SwiRegisterTree = null;
             ClientContext.Database = this;
@@ -1332,7 +1334,6 @@ namespace PsdzClient
                 }
                 Assembly istaCoreFrameworkAssembly = Assembly.LoadFrom(istaCoreFrameworkFile);
 
-                Harmony harmony = new Harmony("de.holeschak.PsdzClient");
                 Type istaModuleType = istaCoreFrameworkAssembly.GetType("BMW.Rheingold.Module.ISTA.ISTAModule");
                 if (istaModuleType == null)
                 {
@@ -1430,27 +1431,35 @@ namespace PsdzClient
 
                 log.InfoFormat("LoadTestModule Module loaded: {0}, Type: {1}", fileName, moduleType.FullName);
 
-                harmony.Patch(methodIstaModuleModuleRef, new HarmonyMethod(methodModuleRefPrefix));
-
-                try
+                bool patched = false;
+                foreach (MethodBase methodBase in _harmony.GetPatchedMethods())
                 {
-                    MethodInfo methodeTestModuleStartType = moduleType.GetMethod("Start");
-                    if (methodeTestModuleStartType == null)
+                    log.InfoFormat("LoadTestModule Patched: {0}", methodBase.Name);
+                    if (methodBase == methodIstaModuleModuleRef)
                     {
-                        log.ErrorFormat("LoadTestModule Test module Start methode not found");
-                        return null;
+                        patched = true;
+                        break;
                     }
+                }
 
-                    object moduleRunInContainerInst = Activator.CreateInstance(moduleParamContainerType);
-                    object moduleRunOutContainerInst = Activator.CreateInstance(moduleParamContainerType);
-                    object moduleRunInOutContainerInst = Activator.CreateInstance(moduleParamContainerType);
-                    object[] startArguments = { moduleRunInContainerInst, moduleRunOutContainerInst, moduleRunInOutContainerInst };
-                    methodeTestModuleStartType.Invoke(testModule, startArguments);
-                }
-                finally
+                if (!patched)
                 {
-                    harmony.Unpatch(methodIstaModuleModuleRef, HarmonyPatchType.All);
+                    log.InfoFormat("LoadTestModule Patching: {0}", methodIstaModuleModuleRef.Name);
+                    _harmony.Patch(methodIstaModuleModuleRef, new HarmonyMethod(methodModuleRefPrefix));
                 }
+
+                MethodInfo methodeTestModuleStartType = moduleType.GetMethod("Start");
+                if (methodeTestModuleStartType == null)
+                {
+                    log.ErrorFormat("LoadTestModule Test module Start methode not found");
+                    return null;
+                }
+
+                object moduleRunInContainerInst = Activator.CreateInstance(moduleParamContainerType);
+                object moduleRunOutContainerInst = Activator.CreateInstance(moduleParamContainerType);
+                object moduleRunInOutContainerInst = Activator.CreateInstance(moduleParamContainerType);
+                object[] startArguments = { moduleRunInContainerInst, moduleRunOutContainerInst, moduleRunInOutContainerInst };
+                methodeTestModuleStartType.Invoke(testModule, startArguments);
 
                 log.InfoFormat("LoadTestModule Executed: {0}, Type: {1}", fileName, moduleType.FullName);
                 return moduleAssembly;
