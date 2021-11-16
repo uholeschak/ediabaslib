@@ -1071,6 +1071,48 @@ namespace PsdzClient
         private static bool CallModuleRefPrefix(string refPath, object inParameters, ref object outParameters, ref object inAndOutParameters)
         {
             log.InfoFormat("CallModuleRefPrefix refPath: {0}", refPath);
+            if (inParameters != null)
+            {
+                try
+                {
+                    PropertyInfo propertyParameter = inParameters.GetType().GetProperty("Parameter");
+                    if (propertyParameter == null)
+                    {
+                        log.ErrorFormat("CallModuleRefPrefix Parameter not found");
+                    }
+                    else
+                    {
+                        object parameters = propertyParameter.GetValue(inParameters);
+                        Dictionary<string, object> paramDictionary = parameters as Dictionary<string, object>;
+                        if (paramDictionary == null)
+                        {
+                            log.ErrorFormat("CallModuleRefPrefix Parameter Dict not found");
+                        }
+                        else
+                        {
+                            foreach (KeyValuePair<string, object> keyValuePair in paramDictionary)
+                            {
+                                StringBuilder sb = new StringBuilder();
+                                sb.Append(string.Format(CultureInfo.InvariantCulture, "Key: {0}", keyValuePair.Key));
+                                sb.Append(", Values: ");
+                                if (keyValuePair.Value is List<string> elements)
+                                {
+                                    foreach (string element in elements)
+                                    {
+                                        sb.Append(string.Format(CultureInfo.InvariantCulture, "{0} ", element));
+                                    }
+                                }
+
+                                log.InfoFormat("CallModuleRefPrefix Entry {0}", sb);
+                            }
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    log.ErrorFormat("CallModuleRefPrefix Exception: {0}", e.Message);
+                }
+            }
             return false;
         }
 
