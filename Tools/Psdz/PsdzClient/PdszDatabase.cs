@@ -1068,6 +1068,7 @@ namespace PsdzClient
         public Dictionary<string, XepRule> XepRuleDict => _xepRuleDict;
         public SwiRegister SwiRegisterTree { get; private set; }
 
+        private static Dictionary<string, List<string>> _moduleRefDict;
         private static bool CallModuleRefPrefix(string refPath, object inParameters, ref object outParameters, ref object inAndOutParameters)
         {
             log.InfoFormat("CallModuleRefPrefix refPath: {0}", refPath);
@@ -1090,20 +1091,14 @@ namespace PsdzClient
                         }
                         else
                         {
+                            log.InfoFormat("CallModuleRefPrefix Parameter Dict items: {0}", paramDictionary.Count);
+                            _moduleRefDict = new Dictionary<string, List<string>>();
                             foreach (KeyValuePair<string, object> keyValuePair in paramDictionary)
                             {
-                                StringBuilder sb = new StringBuilder();
-                                sb.Append(string.Format(CultureInfo.InvariantCulture, "Key: {0}", keyValuePair.Key));
-                                sb.Append(", Values: ");
                                 if (keyValuePair.Value is List<string> elements)
                                 {
-                                    foreach (string element in elements)
-                                    {
-                                        sb.Append(string.Format(CultureInfo.InvariantCulture, "{0} ", element));
-                                    }
+                                    _moduleRefDict.Add(keyValuePair.Key, elements);
                                 }
-
-                                log.InfoFormat("CallModuleRefPrefix Entry {0}", sb);
                             }
                         }
                     }
@@ -1334,9 +1329,9 @@ namespace PsdzClient
             return data;
         }
 
-        public Assembly LoadTestModule(string moduleName)
+        public Dictionary<string, List<string>> ReadTestModule(string moduleName)
         {
-            log.InfoFormat("LoadTestModule Name: {0}", moduleName);
+            log.InfoFormat("ReadTestModule Name: {0}", moduleName);
             try
             {
                 if (string.IsNullOrEmpty(moduleName))
@@ -1348,14 +1343,14 @@ namespace PsdzClient
                 string moduleFile = Path.Combine(_testModulePath, fileName);
                 if (!File.Exists(moduleFile))
                 {
-                    log.ErrorFormat("LoadTestModule File not found: {0}", moduleFile);
+                    log.ErrorFormat("ReadTestModule File not found: {0}", moduleFile);
                     return null;
                 }
 
                 string coreFrameworkFile = Path.Combine(_frameworkPath, "RheingoldCoreFramework.dll");
                 if (!File.Exists(coreFrameworkFile))
                 {
-                    log.ErrorFormat("LoadTestModule Core framework not found: {0}", moduleFile);
+                    log.ErrorFormat("ReadTestModule Core framework not found: {0}", moduleFile);
                     return null;
                 }
                 Assembly coreFrameworkAssembly = Assembly.LoadFrom(coreFrameworkFile);
@@ -1363,7 +1358,7 @@ namespace PsdzClient
                 string sessionControllerFile = Path.Combine(_frameworkPath, "RheingoldSessionController.dll");
                 if (!File.Exists(sessionControllerFile))
                 {
-                    log.ErrorFormat("LoadTestModule Session controller not found: {0}", sessionControllerFile);
+                    log.ErrorFormat("ReadTestModule Session controller not found: {0}", sessionControllerFile);
                     return null;
                 }
                 Assembly sessionConrollerAssembly = Assembly.LoadFrom(sessionControllerFile);
@@ -1371,7 +1366,7 @@ namespace PsdzClient
                 string istaCoreFrameworkFile = Path.Combine(_frameworkPath, "RheingoldISTACoreFramework.dll");
                 if (!File.Exists(istaCoreFrameworkFile))
                 {
-                    log.ErrorFormat("LoadTestModule ISTA core framework not found: {0}", istaCoreFrameworkFile);
+                    log.ErrorFormat("ReadTestModule ISTA core framework not found: {0}", istaCoreFrameworkFile);
                     return null;
                 }
                 Assembly istaCoreFrameworkAssembly = Assembly.LoadFrom(istaCoreFrameworkFile);
@@ -1379,20 +1374,20 @@ namespace PsdzClient
                 Type istaModuleType = istaCoreFrameworkAssembly.GetType("BMW.Rheingold.Module.ISTA.ISTAModule");
                 if (istaModuleType == null)
                 {
-                    log.ErrorFormat("LoadTestModule ISTAModule not found");
+                    log.ErrorFormat("ReadTestModule ISTAModule not found");
                     return null;
                 }
                 MethodInfo methodIstaModuleModuleRef = istaModuleType.GetMethod("callModuleRef", BindingFlags.Instance | BindingFlags.NonPublic);
                 if (methodIstaModuleModuleRef == null)
                 {
-                    log.ErrorFormat("LoadTestModule ISTAModule callModuleRef not found");
+                    log.ErrorFormat("ReadTestModule ISTAModule callModuleRef not found");
                     return null;
                 }
 
                 MethodInfo methodModuleRefPrefix = typeof(PdszDatabase).GetMethod("CallModuleRefPrefix", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodModuleRefPrefix == null)
                 {
-                    log.ErrorFormat("LoadTestModule CallModuleRefPrefix not found");
+                    log.ErrorFormat("ReadTestModule CallModuleRefPrefix not found");
                     return null;
                 }
 
@@ -1400,19 +1395,19 @@ namespace PsdzClient
                 Type[] exportedTypes = moduleAssembly.GetExportedTypes();
                 foreach (Type type in exportedTypes)
                 {
-                    log.InfoFormat("LoadTestModule Exported type: {0}", type.FullName);
+                    log.InfoFormat("ReadTestModule Exported type: {0}", type.FullName);
                 }
 
                 if (exportedTypes.Length != 1)
                 {
-                    log.ErrorFormat("LoadTestModule Exported types: {0}", exportedTypes.Length);
+                    log.ErrorFormat("ReadTestModule Exported types: {0}", exportedTypes.Length);
                     return null;
                 }
 
                 Type moduleParamContainerType = coreFrameworkAssembly.GetType("BMW.Rheingold.CoreFramework.ParameterContainer");
                 if (moduleParamContainerType == null)
                 {
-                    log.ErrorFormat("LoadTestModule ParameterContainer not found");
+                    log.ErrorFormat("ReadTestModule ParameterContainer not found");
                     return null;
                 }
                 object moduleParamContainerInst = Activator.CreateInstance(moduleParamContainerType);
@@ -1420,14 +1415,14 @@ namespace PsdzClient
                 Type moduleParamType = coreFrameworkAssembly.GetType("BMW.Rheingold.CoreFramework.ModuleParameter");
                 if (moduleParamType == null)
                 {
-                    log.ErrorFormat("LoadTestModule ModuleParameter not found");
+                    log.ErrorFormat("ReadTestModule ModuleParameter not found");
                     return null;
                 }
 
                 Type paramNameType = moduleParamType.GetNestedType("ParameterName", BindingFlags.Public | BindingFlags.DeclaredOnly);
                 if (paramNameType == null)
                 {
-                    log.ErrorFormat("LoadTestModule ParameterName type not found");
+                    log.ErrorFormat("ReadTestModule ParameterName type not found");
                     return null;
                 }
                 object parameterNameLogic = Enum.Parse(paramNameType, "Logic", true);
@@ -1437,7 +1432,7 @@ namespace PsdzClient
                 Type logicType = sessionConrollerAssembly.GetType("BMW.Rheingold.RheingoldSessionController.Logic");
                 if (logicType == null)
                 {
-                    log.ErrorFormat("LoadTestModule Logic not found");
+                    log.ErrorFormat("ReadTestModule Logic not found");
                     return null;
                 }
                 object logicInst = Activator.CreateInstance(logicType);
@@ -1445,7 +1440,7 @@ namespace PsdzClient
                 Type vehicleType = coreFrameworkAssembly.GetType("BMW.Rheingold.CoreFramework.DatabaseProvider.Vehicle");
                 if (vehicleType == null)
                 {
-                    log.ErrorFormat("LoadTestModule Vehicle not found");
+                    log.ErrorFormat("ReadTestModule Vehicle not found");
                     return null;
                 }
                 object vehicleInst = Activator.CreateInstance(vehicleType);
@@ -1453,30 +1448,21 @@ namespace PsdzClient
                 MethodInfo methodContainerSetParameter = moduleParamContainerType.GetMethod("setParameter");
                 if (methodContainerSetParameter == null)
                 {
-                    log.ErrorFormat("LoadTestModule ParameterContainer setParameter not found");
+                    log.ErrorFormat("ReadTestModule ParameterContainer setParameter not found");
                     return null;
                 }
 
                 MethodInfo methodSetParameter = moduleParamType.GetMethod("setParameter");
                 if (methodSetParameter == null)
                 {
-                    log.ErrorFormat("LoadTestModule ModuleParameter setParameter not found");
+                    log.ErrorFormat("ReadTestModule ModuleParameter setParameter not found");
                     return null;
                 }
-
-                methodSetParameter.Invoke(moduleParamInst, new object[] {parameterNameLogic, logicInst});
-                methodSetParameter.Invoke(moduleParamInst, new object[] { parameterNameVehicle, vehicleInst });
-                methodContainerSetParameter.Invoke(moduleParamContainerInst, new object[] { "__RheinGoldCoreModuleParameters__", moduleParamInst });
-
-                Type moduleType = exportedTypes[0];
-                object testModule = Activator.CreateInstance(moduleType, moduleParamContainerInst);
-
-                log.InfoFormat("LoadTestModule Module loaded: {0}, Type: {1}", fileName, moduleType.FullName);
 
                 bool patched = false;
                 foreach (MethodBase methodBase in _harmony.GetPatchedMethods())
                 {
-                    log.InfoFormat("LoadTestModule Patched: {0}", methodBase.Name);
+                    log.InfoFormat("ReadTestModule Patched: {0}", methodBase.Name);
                     if (methodBase == methodIstaModuleModuleRef)
                     {
                         patched = true;
@@ -1486,29 +1472,62 @@ namespace PsdzClient
 
                 if (!patched)
                 {
-                    log.InfoFormat("LoadTestModule Patching: {0}", methodIstaModuleModuleRef.Name);
+                    log.InfoFormat("ReadTestModule Patching: {0}", methodIstaModuleModuleRef.Name);
                     _harmony.Patch(methodIstaModuleModuleRef, new HarmonyMethod(methodModuleRefPrefix));
                 }
+
+                methodSetParameter.Invoke(moduleParamInst, new object[] {parameterNameLogic, logicInst});
+                methodSetParameter.Invoke(moduleParamInst, new object[] { parameterNameVehicle, vehicleInst });
+                methodContainerSetParameter.Invoke(moduleParamContainerInst, new object[] { "__RheinGoldCoreModuleParameters__", moduleParamInst });
+
+                Type moduleType = exportedTypes[0];
+                object testModule = Activator.CreateInstance(moduleType, moduleParamContainerInst);
+
+                log.InfoFormat("ReadTestModule Module loaded: {0}, Type: {1}", fileName, moduleType.FullName);
 
                 MethodInfo methodeTestModuleStartType = moduleType.GetMethod("Start");
                 if (methodeTestModuleStartType == null)
                 {
-                    log.ErrorFormat("LoadTestModule Test module Start methode not found");
+                    log.ErrorFormat("ReadTestModule Test module Start methode not found");
                     return null;
                 }
 
+                _moduleRefDict = null;
                 object moduleRunInContainerInst = Activator.CreateInstance(moduleParamContainerType);
                 object moduleRunOutContainerInst = Activator.CreateInstance(moduleParamContainerType);
                 object moduleRunInOutContainerInst = Activator.CreateInstance(moduleParamContainerType);
                 object[] startArguments = { moduleRunInContainerInst, moduleRunOutContainerInst, moduleRunInOutContainerInst };
                 methodeTestModuleStartType.Invoke(testModule, startArguments);
 
-                log.InfoFormat("LoadTestModule Executed: {0}, Type: {1}", fileName, moduleType.FullName);
-                return moduleAssembly;
+                if (_moduleRefDict == null)
+                {
+                    log.ErrorFormat("ReadTestModule No data from test module");
+                    return null;
+                }
+
+                log.ErrorFormat("ReadTestModule Test module items: {0}", _moduleRefDict.Count);
+                foreach (KeyValuePair<string, List<string>> keyValuePair in _moduleRefDict)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append(string.Format(CultureInfo.InvariantCulture, "Key: {0}", keyValuePair.Key));
+                    sb.Append(", Values: ");
+                    if (keyValuePair.Value is List<string> elements)
+                    {
+                        foreach (string element in elements)
+                        {
+                            sb.Append(string.Format(CultureInfo.InvariantCulture, "{0} ", element));
+                        }
+                    }
+
+                    log.InfoFormat("ReadTestModule Entry {0}", sb);
+                }
+
+                log.InfoFormat("ReadTestModule Finished: {0}", fileName);
+                return new Dictionary<string, List<string>>(_moduleRefDict);
             }
             catch (Exception e)
             {
-                log.ErrorFormat("LoadTestModule Exception: '{0}'", e.Message);
+                log.ErrorFormat("ReadTestModule Exception: '{0}'", e.Message);
                 return null;
             }
         }
