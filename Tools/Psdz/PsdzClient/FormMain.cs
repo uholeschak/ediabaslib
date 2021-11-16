@@ -247,7 +247,7 @@ namespace PsdzClient
                 SelectOptions(null);
             }
 
-            GenerateFaModifications();
+            GenerateFaModifications(out List<string> faAddList, out List<string> faRemList);
         }
 
         private void UpdateOptions(Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>> optionsDict)
@@ -306,8 +306,10 @@ namespace PsdzClient
             }
         }
 
-        private void GenerateFaModifications()
+        private void GenerateFaModifications(out List<string> faAddList, out List<string> faRemList)
         {
+            faAddList = new List<string>();
+            faRemList = new List<string>();
             foreach (object item in checkedListBoxOptions.Items)
             {
                 if (item is OptionsItem optionsItem)
@@ -320,11 +322,38 @@ namespace PsdzClient
                             {
                                 string moduleName = infoInfoObj.Identifier.Replace("-", "_");
                                 Dictionary<string, List<string>> actionsDict = programmingService.PdszDatabase.ReadTestModule(moduleName);
+                                if (actionsDict != null)
+                                {
+                                    if (actionsDict.TryGetValue("faElementsToAdd", out List<string> addList))
+                                    {
+                                        faAddList.AddRange(addList);
+                                    }
+                                    if (actionsDict.TryGetValue("faElementsToRem", out List<string> remList))
+                                    {
+                                        faRemList.AddRange(remList);
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
+
+            StringBuilder sbAdd = new StringBuilder();
+            foreach (string entry in faAddList)
+            {
+                sbAdd.Append(string.Format(CultureInfo.InvariantCulture, "{0} ", entry));
+            }
+
+            log.InfoFormat("Fa Add: {0}", sbAdd);
+
+            StringBuilder sbRem = new StringBuilder();
+            foreach (string entry in faRemList)
+            {
+                sbRem.Append(string.Format(CultureInfo.InvariantCulture, "{0} ", entry));
+            }
+
+            log.InfoFormat("Fa Rem: {0}", sbRem);
         }
 
         private void SetupLog4Net()
@@ -1682,7 +1711,7 @@ namespace PsdzClient
                 }
             }
 
-            GenerateFaModifications();
+            GenerateFaModifications(out List<string> faAddList, out List<string> faRemList);
         }
 
         private void comboBoxOptionType_SelectedIndexChanged(object sender, EventArgs e)
