@@ -40,7 +40,8 @@ namespace PsdzClient
         private enum OperationType
         {
             CreateOptions,
-            BuildTal,
+            BuildTalILevel,
+            BuildTalModFa,
             ExecuteTal,
         }
 
@@ -228,24 +229,24 @@ namespace PsdzClient
             UpdateDisplay();
         }
 
-        private void UpdateCurrentOptions()
+        private void UpdateCurrentOptions(bool reset = false)
         {
             if (InvokeRequired)
             {
                 BeginInvoke((Action)(() =>
                 {
-                    UpdateCurrentOptions();
+                    UpdateCurrentOptions(reset);
                 }));
                 return;
             }
 
             if (comboBoxOptionType.SelectedItem is OptionType optionType)
             {
-                SelectOptions(optionType.SwiRegisterEnum);
+                SelectOptions(optionType.SwiRegisterEnum, reset);
             }
             else
             {
-                SelectOptions(null);
+                SelectOptions(null, reset);
             }
         }
 
@@ -264,13 +265,13 @@ namespace PsdzClient
             UpdateCurrentOptions();
         }
 
-        private void SelectOptions(PdszDatabase.SwiRegisterEnum? swiRegisterEnum)
+        private void SelectOptions(PdszDatabase.SwiRegisterEnum? swiRegisterEnum, bool reset)
         {
             if (InvokeRequired)
             {
                 BeginInvoke((Action)(() =>
                 {
-                    SelectOptions(swiRegisterEnum);
+                    SelectOptions(swiRegisterEnum, reset);
                 }));
                 return;
             }
@@ -285,6 +286,11 @@ namespace PsdzClient
                     {
                         foreach (OptionsItem optionsItem in optionsItems)
                         {
+                            if (reset)
+                            {
+                                optionsItem.Selected = false;
+                            }
+
                             CheckState checkState = CheckState.Unchecked;
                             if (optionsItem.Selected)
                             {
@@ -313,11 +319,16 @@ namespace PsdzClient
             }
         }
 
-        private void UpdateTargetFa()
+        private void UpdateTargetFa(bool reset = false)
         {
             if (_psdzContext == null)
             {
                 return;
+            }
+
+            if (reset)
+            {
+                UpdateCurrentOptions(true);
             }
 
             _psdzContext.SetFaTarget(_psdzContext.FaActual);
@@ -749,12 +760,12 @@ namespace PsdzClient
             }
         }
 
-        private async Task<bool> VehicleFunctionsTask(OperationType operationType, List<string> faRemList = null, List<string> faAddList = null)
+        private async Task<bool> VehicleFunctionsTask(OperationType operationType)
         {
-            return await Task.Run(() => VehicleFunctions(operationType, faRemList, faAddList)).ConfigureAwait(false);
+            return await Task.Run(() => VehicleFunctions(operationType)).ConfigureAwait(false);
         }
 
-        private bool VehicleFunctions(OperationType operationType, List<string> faRemList, List<string> faAddList)
+        private bool VehicleFunctions(OperationType operationType)
         {
             log.InfoFormat("VehicleFunctions Start - Type: {0}", operationType);
             StringBuilder sbResult = new StringBuilder();
@@ -1046,30 +1057,7 @@ namespace PsdzClient
                     return true;
                 }
 
-                bool bModifyFa = false;
-                if (operationType == OperationType.BuildTal &&
-                    faRemList != null && faAddList != null && (faRemList.Count > 0 || faAddList.Count > 0))
-                {
-                    bModifyFa = true;
-                    sbResult.Append("FaRem:");
-                    foreach (string faRem in faRemList)
-                    {
-                        sbResult.Append(" ");
-                        sbResult.Append(faRem);
-                    }
-
-                    sbResult.AppendLine();
-
-                    sbResult.Append("FaAdd:");
-                    foreach (string faAdd in faAddList)
-                    {
-                        sbResult.Append(" ");
-                        sbResult.Append(faAdd);
-                    }
-
-                    sbResult.AppendLine();
-                }
-
+                bool bModifyFa = operationType == OperationType.BuildTalModFa;
                 IPsdzTalFilter psdzTalFilter = programmingService.Psdz.ObjectBuilder.BuildTalFilter();
                 // disable backup
                 psdzTalFilter = programmingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.FscBackup }, TalFilterOptions.MustNot, psdzTalFilter);
@@ -1116,34 +1104,11 @@ namespace PsdzClient
                 UpdateStatus(sbResult.ToString());
                 _cts?.Token.ThrowIfCancellationRequested();
 
-                if (bModifyFa)
-                {
-                    IFa ifaTarget = ProgrammingUtils.BuildFa(standardFa);
-                    if (!ProgrammingUtils.ModifyFa(ifaTarget, faRemList, false))
-                    {
-                        sbResult.AppendLine("ModifyFa remove failed");
-                        return false;
-                    }
-
-                    if (!ProgrammingUtils.ModifyFa(ifaTarget, faAddList, true))
-                    {
-                        sbResult.AppendLine("ModifyFa add failed");
-                        return false;
-                    }
-
-                    IPsdzFa psdzFaTarget = programmingService.Psdz.ObjectBuilder.BuildFa(ifaTarget, psdzVin.Value);
-                    _psdzContext.SetFaTarget(psdzFaTarget);
-
-                    sbResult.AppendLine("FA target:");
-                    sbResult.Append(psdzFaTarget.AsXml);
-                }
-                else
-                {
+                if (!bModifyFa)
+                {   // reset target fa
                     _psdzContext.SetFaTarget(psdzFa);
                 }
-
                 programmingService.PdszDatabase.ResetXepRules();
-                UpdateCurrentOptions();
 
                 IEnumerable<IPsdzIstufe> psdzIstufes = programmingService.Psdz.LogicService.GetPossibleIntegrationLevel(_psdzContext.FaTarget);
                 _psdzContext.SetPossibleIstufenTarget(psdzIstufes);
@@ -1588,19 +1553,18 @@ namespace PsdzClient
             }
 
             OperationType operationType = OperationType.CreateOptions;
-            List<string> faRemList = null;
-            List<string> faAddList = null;
             if (sender == buttonCreateOptions)
             {
                 operationType = OperationType.CreateOptions;
             }
             else if (sender == buttonModILevel)
             {
-                operationType = OperationType.BuildTal;
+                operationType = OperationType.BuildTalILevel;
+                UpdateTargetFa(true);
             }
             else if (sender == buttonModFa)
             {
-                operationType = OperationType.BuildTal;
+                operationType = OperationType.BuildTalModFa;
                 UpdateTargetFa();
             }
             else if (sender == buttonExecuteTal)
@@ -1609,7 +1573,7 @@ namespace PsdzClient
             }
 
             _cts = new CancellationTokenSource();
-            VehicleFunctionsTask(operationType, faRemList, faAddList).ContinueWith(task =>
+            VehicleFunctionsTask(operationType).ContinueWith(task =>
             {
                 TaskActive = false;
                 _cts.Dispose();
