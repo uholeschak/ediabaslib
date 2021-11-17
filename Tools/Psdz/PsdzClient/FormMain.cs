@@ -352,22 +352,35 @@ namespace PsdzClient
                                 else
                                 {
                                     string moduleName = infoInfoObj.Identifier.Replace("-", "_");
-                                    Dictionary<string, List<string>> actionsDict = programmingService.PdszDatabase.ReadTestModule(moduleName);
+                                    Dictionary<string, List<string>> actionsDict = programmingService.PdszDatabase.ReadTestModule(moduleName, out string moduleRef);
                                     if (actionsDict != null)
                                     {
+                                        if (!string.IsNullOrEmpty(moduleRef))
+                                        {
+                                            PdszDatabase.SwiInfoObj swiInfoObj = programmingService.PdszDatabase.GetInfoObjectByControlId(moduleRef, infoInfoObj.LinkType);
+                                            if (swiInfoObj == null)
+                                            {
+                                                log.ErrorFormat("UpdateTargetFa No info object: {0}", moduleRef);
+                                            }
+                                            else
+                                            {
+                                                log.InfoFormat("UpdateTargetFa Info object: {0}", swiInfoObj.ToString(ClientContext.Language));
+                                            }
+                                        }
+
                                         IFa ifaTarget = ProgrammingUtils.BuildFa(_psdzContext.FaTarget);
                                         if (actionsDict.TryGetValue("faElementsToRem", out List<string> remList))
                                         {
                                             if (!ProgrammingUtils.ModifyFa(ifaTarget, remList, false))
                                             {
-                                                log.ErrorFormat("ModifyFa Rem failed: {0}", remList.ToStringItems());
+                                                log.ErrorFormat("UpdateTargetFa Rem failed: {0}", remList.ToStringItems());
                                             }
                                         }
                                         if (actionsDict.TryGetValue("faElementsToAdd", out List<string> addList))
                                         {
                                             if (!ProgrammingUtils.ModifyFa(ifaTarget, addList, true))
                                             {
-                                                log.ErrorFormat("ModifyFa Add failed: {0}", addList.ToStringItems());
+                                                log.ErrorFormat("UpdateTargetFa Add failed: {0}", addList.ToStringItems());
                                             }
                                         }
                                         IPsdzFa psdzFaTarget = programmingService.Psdz.ObjectBuilder.BuildFa(ifaTarget, _psdzContext.FaActual.Vin);

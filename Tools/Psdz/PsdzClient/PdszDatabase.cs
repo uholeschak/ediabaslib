@@ -877,6 +877,7 @@ namespace PsdzClient
                 sb.Append(string.Format(CultureInfo.InvariantCulture,
                     "SwiInfoObj: LinkType={0}, Id={1}, Class={2}, PrgType={3}, InformationType={4}, Identification={5}, ILevel={6}, InfoType={7}, Identifier={8}, Flow={9}, Title='{10}'",
                     LinkType, Id, NodeClass, ProgramType, InformationType, Identification, TargetILevel, InfoType, Identifier, FlowXml, EcuTranslation.GetTitle(language)));
+#if false
                 if (!string.IsNullOrEmpty(FlowXml))
                 {
                     string flowData = ClientContext.Database.GetFlowForInfoObj(this);
@@ -885,6 +886,7 @@ namespace PsdzClient
                         sb.Append(string.Format(CultureInfo.InvariantCulture, "SwiInfoObj: Flow='{0}'", flowData));
                     }
                 }
+#endif
                 return sb.ToString();
             }
 
@@ -1068,10 +1070,12 @@ namespace PsdzClient
         public Dictionary<string, XepRule> XepRuleDict => _xepRuleDict;
         public SwiRegister SwiRegisterTree { get; private set; }
 
+        private static string _moduleRefPath;
         private static Dictionary<string, List<string>> _moduleRefDict;
         private static bool CallModuleRefPrefix(string refPath, object inParameters, ref object outParameters, ref object inAndOutParameters)
         {
             log.InfoFormat("CallModuleRefPrefix refPath: {0}", refPath);
+            _moduleRefPath = refPath;
             if (inParameters != null)
             {
                 try
@@ -1329,9 +1333,10 @@ namespace PsdzClient
             return data;
         }
 
-        public Dictionary<string, List<string>> ReadTestModule(string moduleName)
+        public Dictionary<string, List<string>> ReadTestModule(string moduleName, out string moduleRef)
         {
             log.InfoFormat("ReadTestModule Name: {0}", moduleName);
+            moduleRef = null;
             try
             {
                 if (string.IsNullOrEmpty(moduleName))
@@ -1492,12 +1497,19 @@ namespace PsdzClient
                     return null;
                 }
 
+                _moduleRefPath = null;
                 _moduleRefDict = null;
                 object moduleRunInContainerInst = Activator.CreateInstance(moduleParamContainerType);
                 object moduleRunOutContainerInst = Activator.CreateInstance(moduleParamContainerType);
                 object moduleRunInOutContainerInst = Activator.CreateInstance(moduleParamContainerType);
                 object[] startArguments = { moduleRunInContainerInst, moduleRunOutContainerInst, moduleRunInOutContainerInst };
                 methodeTestModuleStartType.Invoke(testModule, startArguments);
+
+                moduleRef = _moduleRefPath;
+                if (!string.IsNullOrEmpty(moduleRef))
+                {
+                    log.ErrorFormat("ReadTestModule RefPath: {0}", moduleRef);
+                }
 
                 if (_moduleRefDict == null)
                 {
@@ -2882,6 +2894,42 @@ namespace PsdzClient
             }
 
             return swiInfoObjs;
+        }
+
+        public SwiInfoObj GetInfoObjectByControlId(string controlId, SwiInfoObj.SwiActionDatabaseLinkType? linkType)
+        {
+            if (string.IsNullOrEmpty(controlId))
+            {
+                return null;
+            }
+
+            SwiInfoObj swiInfoObj = null;
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture,
+                    @"SELECT ID, NODECLASS, ASSEMBLY, VERSIONNUMBER, PROGRAMTYPE, SICHERHEITSRELEVANT, TITLEID, " +
+                    DatabaseFunctions.SqlTitleItems + ", GENERELL, TELESERVICEKENNUNG, FAHRZEUGKOMMUNIKATION, MESSTECHNIK, VERSTECKT, NAME, INFORMATIONSTYP, " +
+                    @"IDENTIFIKATOR, INFORMATIONSFORMAT, SINUMMER, ZIELISTUFE, CONTROLID, INFOTYPE, INFOFORMAT, DOCNUMBER, PRIORITY, IDENTIFIER, FLOWXML FROM XEP_INFOOBJECTS WHERE XEP_INFOOBJECTS.CONTROLID = {0}",
+                    controlId);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            swiInfoObj = ReadXepSwiInfoObj(reader, linkType);
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetInfoObjectByControlId Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            return swiInfoObj;
         }
 
         public List<SwiDiagObj> GetDiagObjectsByControlId(string controlId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
