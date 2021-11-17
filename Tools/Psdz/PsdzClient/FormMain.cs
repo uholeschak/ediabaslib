@@ -121,6 +121,11 @@ namespace PsdzClient
         private PsdzContext _psdzContext;
         private CancellationTokenSource _cts;
         private Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>> _optionsDict;
+        private OptionType[] _optionTypes =
+        {
+            new OptionType("Coding", PdszDatabase.SwiRegisterEnum.VehicleModificationCodingConversion),
+            new OptionType("Coding back", PdszDatabase.SwiRegisterEnum.VehicleModificationCodingBackConversion)
+        };
 
         public FormMain()
         {
@@ -1208,34 +1213,22 @@ namespace PsdzClient
                         }
 
                         Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>> optionsDict = new Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>>();
-                        List<PdszDatabase.SwiAction> swiActionsCoding = programmingService.PdszDatabase.GetSwiActionsForRegister(PdszDatabase.SwiRegisterEnum.VehicleModificationCodingConversion, true);
-                        if (swiActionsCoding != null)
+                        foreach (OptionType optionType in _optionTypes)
                         {
-                            sbResult.AppendLine();
-                            sbResult.AppendLine("Swi coding:");
-                            List<OptionsItem> optionsItems = new List<OptionsItem>();
-                            foreach (PdszDatabase.SwiAction swiAction in swiActionsCoding)
+                            List<PdszDatabase.SwiAction> swiActions = programmingService.PdszDatabase.GetSwiActionsForRegister(optionType.SwiRegisterEnum, true);
+                            if (swiActions != null)
                             {
-                                sbResult.AppendLine(swiAction.ToString(ClientContext.Language));
-                                optionsItems.Add(new OptionsItem(swiAction.EcuTranslation.GetTitle(ClientContext.Language), swiAction));
+                                sbResult.AppendLine();
+                                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Swi actions: {0}", optionType.Name));
+                                List<OptionsItem> optionsItems = new List<OptionsItem>();
+                                foreach (PdszDatabase.SwiAction swiAction in swiActions)
+                                {
+                                    sbResult.AppendLine(swiAction.ToString(ClientContext.Language));
+                                    optionsItems.Add(new OptionsItem(swiAction.EcuTranslation.GetTitle(ClientContext.Language), swiAction));
+                                }
+
+                                optionsDict.Add(optionType.SwiRegisterEnum, optionsItems);
                             }
-
-                            optionsDict.Add(PdszDatabase.SwiRegisterEnum.VehicleModificationCodingConversion, optionsItems);
-                        }
-
-                        List<PdszDatabase.SwiAction> swiActionsCodingBack = programmingService.PdszDatabase.GetSwiActionsForRegister(PdszDatabase.SwiRegisterEnum.VehicleModificationCodingBackConversion, true);
-                        if (swiActionsCodingBack != null)
-                        {
-                            sbResult.AppendLine();
-                            sbResult.AppendLine("Swi coding back:");
-                            List<OptionsItem> optionsItems = new List<OptionsItem>();
-                            foreach (PdszDatabase.SwiAction swiAction in swiActionsCodingBack)
-                            {
-                                sbResult.AppendLine(swiAction.ToString(ClientContext.Language));
-                                optionsItems.Add(new OptionsItem(swiAction.EcuTranslation.GetTitle(ClientContext.Language), swiAction));
-                            }
-
-                            optionsDict.Add(PdszDatabase.SwiRegisterEnum.VehicleModificationCodingBackConversion, optionsItems);
                         }
 
                         UpdateOptions(optionsDict);
@@ -1462,8 +1455,10 @@ namespace PsdzClient
         private void FormMain_Load(object sender, EventArgs e)
         {
             comboBoxOptionType.Items.Clear();
-            comboBoxOptionType.Items.Add(new OptionType("Coding", PdszDatabase.SwiRegisterEnum.VehicleModificationCodingConversion));
-            comboBoxOptionType.Items.Add(new OptionType("Coding back", PdszDatabase.SwiRegisterEnum.VehicleModificationCodingBackConversion));
+            foreach (OptionType optionType in _optionTypes)
+            {
+                comboBoxOptionType.Items.Add(optionType);
+            }
             comboBoxOptionType.SelectedIndex = 0;
 
             LoadSettings();
