@@ -124,7 +124,9 @@ namespace PsdzClient
         private OptionType[] _optionTypes =
         {
             new OptionType("Coding", PdszDatabase.SwiRegisterEnum.VehicleModificationCodingConversion),
-            new OptionType("Coding back", PdszDatabase.SwiRegisterEnum.VehicleModificationCodingBackConversion)
+            new OptionType("Coding back", PdszDatabase.SwiRegisterEnum.VehicleModificationCodingBackConversion),
+            new OptionType("Modification", PdszDatabase.SwiRegisterEnum.VehicleModification),
+            new OptionType("Modification back", PdszDatabase.SwiRegisterEnum.VehicleModificationBackConversion),
         };
 
         public FormMain()
