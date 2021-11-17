@@ -116,6 +116,7 @@ namespace PsdzClient
             }
         }
 
+        private bool _ignoreCheck = false;
         private PsdzContext _psdzContext;
         private CancellationTokenSource _cts;
         private Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>> _optionsDict;
@@ -246,8 +247,6 @@ namespace PsdzClient
             {
                 SelectOptions(null);
             }
-
-            GenerateFaModifications(out List<string> faAddList, out List<string> faRemList);
         }
 
         private void UpdateOptions(Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>> optionsDict)
@@ -276,40 +275,54 @@ namespace PsdzClient
                 return;
             }
 
-            checkedListBoxOptions.Items.Clear();
-            if (_optionsDict != null && swiRegisterEnum.HasValue)
+            _ignoreCheck = true;
+            try
             {
-                if (_optionsDict.TryGetValue(swiRegisterEnum.Value, out List<OptionsItem> optionsItems))
+                checkedListBoxOptions.Items.Clear();
+                if (_optionsDict != null && swiRegisterEnum.HasValue)
                 {
-                    foreach (OptionsItem optionsItem in optionsItems)
+                    if (_optionsDict.TryGetValue(swiRegisterEnum.Value, out List<OptionsItem> optionsItems))
                     {
-                        CheckState checkState = CheckState.Unchecked;
-                        if (optionsItem.Selected)
+                        foreach (OptionsItem optionsItem in optionsItems)
                         {
-                            checkState = CheckState.Checked;
-                        }
-                        else
-                        {
-                            if (!programmingService.PdszDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, _psdzContext.Vehicle, null))
+                            CheckState checkState = CheckState.Unchecked;
+                            if (optionsItem.Selected)
                             {
-                                checkState = CheckState.Indeterminate;
+                                checkState = CheckState.Checked;
                             }
-                        }
+                            else
+                            {
+                                if (!programmingService.PdszDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, _psdzContext.Vehicle, null))
+                                {
+                                    checkState = CheckState.Indeterminate;
+                                }
+                            }
 
-                        checkedListBoxOptions.Items.Add(optionsItem, checkState);
+                            checkedListBoxOptions.Items.Add(optionsItem, checkState);
+                        }
                     }
                 }
+                else
+                {
+                    comboBoxOptionType.SelectedIndex = 0;
+                }
             }
-            else
+            finally
             {
-                comboBoxOptionType.SelectedIndex = 0;
+                _ignoreCheck = false;
             }
         }
 
-        private void GenerateFaModifications(out List<string> faAddList, out List<string> faRemList)
+        private void UpdateTargetFa()
         {
-            faAddList = new List<string>();
-            faRemList = new List<string>();
+            if (_psdzContext == null)
+            {
+                return;
+            }
+
+            _psdzContext.SetFaTarget(_psdzContext.FaActual);
+            programmingService.PdszDatabase.ResetXepRules();
+
             foreach (object item in checkedListBoxOptions.Items)
             {
                 if (item is OptionsItem optionsItem)
@@ -320,17 +333,35 @@ namespace PsdzClient
                         {
                             if (infoInfoObj.LinkType == PdszDatabase.SwiInfoObj.SwiActionDatabaseLinkType.SwiActionActionSelectionLink)
                             {
-                                string moduleName = infoInfoObj.Identifier.Replace("-", "_");
-                                Dictionary<string, List<string>> actionsDict = programmingService.PdszDatabase.ReadTestModule(moduleName);
-                                if (actionsDict != null)
+                                if (!programmingService.PdszDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, _psdzContext.Vehicle, null))
                                 {
-                                    if (actionsDict.TryGetValue("faElementsToAdd", out List<string> addList))
+                                    log.ErrorFormat("UpdateTargetFa SwiAction invalid, deselecting: {0}", optionsItem.SwiAction.Id);
+                                    optionsItem.Selected = false;
+                                }
+                                else
+                                {
+                                    string moduleName = infoInfoObj.Identifier.Replace("-", "_");
+                                    Dictionary<string, List<string>> actionsDict = programmingService.PdszDatabase.ReadTestModule(moduleName);
+                                    if (actionsDict != null)
                                     {
-                                        faAddList.AddRange(addList);
-                                    }
-                                    if (actionsDict.TryGetValue("faElementsToRem", out List<string> remList))
-                                    {
-                                        faRemList.AddRange(remList);
+                                        IFa ifaTarget = ProgrammingUtils.BuildFa(_psdzContext.FaTarget);
+                                        if (actionsDict.TryGetValue("faElementsToRem", out List<string> remList))
+                                        {
+                                            if (!ProgrammingUtils.ModifyFa(ifaTarget, remList, false))
+                                            {
+                                                log.ErrorFormat("ModifyFa Rem failed: {0}", remList.ToStringItems());
+                                            }
+                                        }
+                                        if (actionsDict.TryGetValue("faElementsToAdd", out List<string> addList))
+                                        {
+                                            if (!ProgrammingUtils.ModifyFa(ifaTarget, addList, true))
+                                            {
+                                                log.ErrorFormat("ModifyFa Add failed: {0}", addList.ToStringItems());
+                                            }
+                                        }
+                                        IPsdzFa psdzFaTarget = programmingService.Psdz.ObjectBuilder.BuildFa(ifaTarget, _psdzContext.FaActual.Vin);
+                                        _psdzContext.SetFaTarget(psdzFaTarget);
+                                        programmingService.PdszDatabase.ResetXepRules();
                                     }
                                 }
                             }
@@ -339,21 +370,9 @@ namespace PsdzClient
                 }
             }
 
-            StringBuilder sbAdd = new StringBuilder();
-            foreach (string entry in faAddList)
-            {
-                sbAdd.Append(string.Format(CultureInfo.InvariantCulture, "{0} ", entry));
-            }
+            log.InfoFormat("UpdateTargetFa FaTarget: {0}", _psdzContext.FaTarget.AsString);
 
-            log.InfoFormat("Fa Add: {0}", sbAdd);
-
-            StringBuilder sbRem = new StringBuilder();
-            foreach (string entry in faRemList)
-            {
-                sbRem.Append(string.Format(CultureInfo.InvariantCulture, "{0} ", entry));
-            }
-
-            log.InfoFormat("Fa Rem: {0}", sbRem);
+            UpdateCurrentOptions();
         }
 
         private void SetupLog4Net()
@@ -1582,7 +1601,7 @@ namespace PsdzClient
             else if (sender == buttonModFa)
             {
                 operationType = OperationType.BuildTal;
-                GenerateFaModifications(out faAddList, out faRemList);
+                UpdateTargetFa();
             }
             else if (sender == buttonExecuteTal)
             {
@@ -1692,6 +1711,11 @@ namespace PsdzClient
 
         private void checkedListBoxOptions_ItemCheck(object sender, ItemCheckEventArgs e)
         {
+            if (_ignoreCheck)
+            {
+                return;
+            }
+
             if (e.Index >= 0 && e.Index < checkedListBoxOptions.Items.Count)
             {
                 if (checkedListBoxOptions.Items[e.Index] is OptionsItem optionsItem)
@@ -1707,12 +1731,12 @@ namespace PsdzClient
                 }
             }
 
-            GenerateFaModifications(out List<string> faAddList, out List<string> faRemList);
+            UpdateTargetFa();
         }
 
         private void comboBoxOptionType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            UpdateCurrentOptions();
+            UpdateTargetFa();
         }
     }
 }
