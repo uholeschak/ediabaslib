@@ -237,24 +237,24 @@ namespace PsdzClient
             UpdateDisplay();
         }
 
-        private void UpdateCurrentOptions(bool reset = false)
+        private void UpdateCurrentOptions()
         {
             if (InvokeRequired)
             {
                 BeginInvoke((Action)(() =>
                 {
-                    UpdateCurrentOptions(reset);
+                    UpdateCurrentOptions();
                 }));
                 return;
             }
 
             if (comboBoxOptionType.SelectedItem is OptionType optionType)
             {
-                SelectOptions(optionType.SwiRegisterEnum, reset);
+                SelectOptions(optionType.SwiRegisterEnum);
             }
             else
             {
-                SelectOptions(null, reset);
+                SelectOptions(null);
             }
         }
 
@@ -273,13 +273,13 @@ namespace PsdzClient
             UpdateCurrentOptions();
         }
 
-        private void SelectOptions(PdszDatabase.SwiRegisterEnum? swiRegisterEnum, bool reset)
+        private void SelectOptions(PdszDatabase.SwiRegisterEnum? swiRegisterEnum)
         {
             if (InvokeRequired)
             {
                 BeginInvoke((Action)(() =>
                 {
-                    SelectOptions(swiRegisterEnum, reset);
+                    SelectOptions(swiRegisterEnum);
                 }));
                 return;
             }
@@ -294,11 +294,6 @@ namespace PsdzClient
                     {
                         foreach (OptionsItem optionsItem in optionsItems)
                         {
-                            if (reset)
-                            {
-                                optionsItem.Selected = false;
-                            }
-
                             CheckState checkState = CheckState.Unchecked;
                             if (optionsItem.Selected)
                             {
@@ -334,18 +329,18 @@ namespace PsdzClient
                 return;
             }
 
-            if (reset)
-            {
-                UpdateCurrentOptions(true);
-            }
-
             _psdzContext.SetFaTarget(_psdzContext.FaActual);
             programmingService.PdszDatabase.ResetXepRules();
 
-            foreach (object item in checkedListBoxOptions.Items)
+            foreach (KeyValuePair<PdszDatabase.SwiRegisterEnum, List<OptionsItem>> keyValuePair in _optionsDict)
             {
-                if (item is OptionsItem optionsItem)
+                foreach (OptionsItem optionsItem in keyValuePair.Value)
                 {
+                    if (reset)
+                    {
+                        optionsItem.Selected = false;
+                    }
+
                     if (optionsItem.Selected && optionsItem.SwiAction.SwiInfoObjs != null)
                     {
                         foreach (PdszDatabase.SwiInfoObj infoInfoObj in optionsItem.SwiAction.SwiInfoObjs)
