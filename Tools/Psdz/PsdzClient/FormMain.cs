@@ -125,8 +125,9 @@ namespace PsdzClient
         {
             new OptionType("Coding", PdszDatabase.SwiRegisterEnum.VehicleModificationCodingConversion),
             new OptionType("Coding back", PdszDatabase.SwiRegisterEnum.VehicleModificationCodingBackConversion),
-            new OptionType("Modification", PdszDatabase.SwiRegisterEnum.VehicleModification),
+            new OptionType("Modification", PdszDatabase.SwiRegisterEnum.VehicleModificationConversion),
             new OptionType("Modification back", PdszDatabase.SwiRegisterEnum.VehicleModificationBackConversion),
+            new OptionType("Retrofit", PdszDatabase.SwiRegisterEnum.VehicleModificationRetrofitting),
         };
 
         public FormMain()
