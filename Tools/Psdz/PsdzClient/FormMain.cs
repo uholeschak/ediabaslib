@@ -270,6 +270,11 @@ namespace PsdzClient
                         comboBoxOptionType.Items.Add(optionTypeUpdate);
                     }
 
+                    if (selectedIndex < 0 && comboBoxOptionType.Items.Count >= 1)
+                    {
+                        selectedIndex = 0;
+                    }
+
                     if (selectedIndex < comboBoxOptionType.Items.Count)
                     {
                         comboBoxOptionType.SelectedIndex = selectedIndex;
@@ -324,6 +329,7 @@ namespace PsdzClient
             try
             {
                 _ignoreCheck = true;
+                int topIndex = checkedListBoxOptions.TopIndex;
                 checkedListBoxOptions.BeginUpdate();
                 checkedListBoxOptions.Items.Clear();
                 if (_optionsDict != null && swiRegisterEnum.HasValue)
@@ -348,6 +354,11 @@ namespace PsdzClient
                             checkedListBoxOptions.Items.Add(optionsItem, checkState);
                         }
                     }
+                }
+
+                if (topIndex < checkedListBoxOptions.Items.Count)
+                {
+                    checkedListBoxOptions.TopIndex = topIndex;
                 }
             }
             finally
