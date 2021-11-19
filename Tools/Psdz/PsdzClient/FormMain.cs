@@ -321,9 +321,10 @@ namespace PsdzClient
                 return;
             }
 
-            _ignoreCheck = true;
             try
             {
+                _ignoreCheck = true;
+                checkedListBoxOptions.BeginUpdate();
                 checkedListBoxOptions.Items.Clear();
                 if (_optionsDict != null && swiRegisterEnum.HasValue)
                 {
@@ -348,13 +349,10 @@ namespace PsdzClient
                         }
                     }
                 }
-                else
-                {
-                    comboBoxOptionType.SelectedIndex = 0;
-                }
             }
             finally
             {
+                checkedListBoxOptions.EndUpdate();
                 _ignoreCheck = false;
             }
         }
