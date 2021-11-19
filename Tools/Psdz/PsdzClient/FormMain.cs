@@ -72,14 +72,22 @@ namespace PsdzClient
             {
                 Name = name;
                 SwiRegisterEnum = swiRegisterEnum;
+                SwiRegister = null;
             }
 
             public string Name { get; private set; }
 
             public PdszDatabase.SwiRegisterEnum SwiRegisterEnum { get; private set; }
 
+            public PdszDatabase.SwiRegister SwiRegister { get; set; }
+
             public override string ToString()
             {
+                PdszDatabase.SwiRegister swiRegister = SwiRegister;
+                if (swiRegister != null)
+                {
+                    return swiRegister.EcuTranslation.GetTitle(ClientContext.Language);
+                }
                 return Name;
             }
         }
@@ -88,7 +96,7 @@ namespace PsdzClient
 
         private const string DealerId = "32395";
         private const string DefaultIp = @"127.0.0.1";
-        private const string TitleLang = "En";
+        private const string TitleLang = "De";
         private ProgrammingService programmingService;
         private bool _taskActive;
         private bool TaskActive
@@ -118,6 +126,7 @@ namespace PsdzClient
         }
 
         private bool _ignoreCheck = false;
+        private bool _ignoreChange = false;
         private PsdzContext _psdzContext;
         private CancellationTokenSource _cts;
         private Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>> _optionsDict;
@@ -248,13 +257,41 @@ namespace PsdzClient
                 return;
             }
 
-            if (comboBoxOptionType.SelectedItem is OptionType optionType)
+            try
             {
-                SelectOptions(optionType.SwiRegisterEnum);
+                _ignoreChange = true;
+                int selectedIndex = comboBoxOptionType.SelectedIndex;
+                comboBoxOptionType.BeginUpdate();
+                comboBoxOptionType.Items.Clear();
+                if (_optionsDict != null)
+                {
+                    foreach (OptionType optionTypeUpdate in _optionTypes)
+                    {
+                        comboBoxOptionType.Items.Add(optionTypeUpdate);
+                    }
+
+                    if (selectedIndex < comboBoxOptionType.Items.Count)
+                    {
+                        comboBoxOptionType.SelectedIndex = selectedIndex;
+                    }
+                }
             }
-            else
+            finally
             {
-                SelectOptions(null);
+                comboBoxOptionType.EndUpdate();
+                _ignoreChange = false;
+            }
+
+            if (comboBoxOptionType.Items.Count > 0)
+            {
+                if (comboBoxOptionType.SelectedItem is OptionType optionType)
+                {
+                    SelectOptions(optionType.SwiRegisterEnum);
+                }
+                else
+                {
+                    SelectOptions(null);
+                }
             }
         }
 
@@ -1213,6 +1250,7 @@ namespace PsdzClient
                         Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>> optionsDict = new Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>>();
                         foreach (OptionType optionType in _optionTypes)
                         {
+                            optionType.SwiRegister = programmingService.PdszDatabase.FindNodeForRegister(optionType.SwiRegisterEnum);
                             List<PdszDatabase.SwiAction> swiActions = programmingService.PdszDatabase.GetSwiActionsForRegister(optionType.SwiRegisterEnum, true);
                             if (swiActions != null)
                             {
@@ -1452,13 +1490,6 @@ namespace PsdzClient
 
         private void FormMain_Load(object sender, EventArgs e)
         {
-            comboBoxOptionType.Items.Clear();
-            foreach (OptionType optionType in _optionTypes)
-            {
-                comboBoxOptionType.Items.Add(optionType);
-            }
-            comboBoxOptionType.SelectedIndex = 0;
-
             LoadSettings();
             UpdateDisplay();
             UpdateStatus();
@@ -1706,6 +1737,10 @@ namespace PsdzClient
 
         private void comboBoxOptionType_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (_ignoreChange)
+            {
+                return;
+            }
             UpdateTargetFa();
         }
     }
