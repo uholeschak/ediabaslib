@@ -2677,6 +2677,11 @@ namespace PsdzClient
 
         public List<SwiAction> ReadLinkedSwiActions(List<SwiAction> selectedRegister, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
         {
+            if (selectedRegister == null)
+            {
+                return null;
+            }
+
             log.InfoFormat("ReadLinkedSwiActions Register count: {0}", selectedRegister.Count);
 
             List<SwiAction> swiActionsLinked = new List<SwiAction>();

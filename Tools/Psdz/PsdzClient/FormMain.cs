@@ -328,6 +328,8 @@ namespace PsdzClient
 
             try
             {
+                List<PdszDatabase.SwiAction> selectedSwiActions = GetSelectedSwiActions();
+                List<PdszDatabase.SwiAction> linkedSwiActions = programmingService.PdszDatabase.ReadLinkedSwiActions(selectedSwiActions, _psdzContext.Vehicle, null);
                 _ignoreCheck = true;
                 int topIndex = checkedListBoxOptions.TopIndex;
                 checkedListBoxOptions.BeginUpdate();
@@ -345,9 +347,17 @@ namespace PsdzClient
                             }
                             else
                             {
-                                if (!programmingService.PdszDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, _psdzContext.Vehicle, null))
+                                if (linkedSwiActions != null &&
+                                    linkedSwiActions.Any(x => string.Compare(x.Id, optionsItem.SwiAction.Id, StringComparison.OrdinalIgnoreCase) == 0))
                                 {
                                     checkState = CheckState.Indeterminate;
+                                }
+                                else
+                                {
+                                    if (!programmingService.PdszDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, _psdzContext.Vehicle, null))
+                                    {
+                                        checkState = CheckState.Indeterminate;
+                                    }
                                 }
                             }
 
@@ -366,6 +376,31 @@ namespace PsdzClient
                 checkedListBoxOptions.EndUpdate();
                 _ignoreCheck = false;
             }
+        }
+
+        private List<PdszDatabase.SwiAction> GetSelectedSwiActions()
+        {
+            if (_psdzContext == null)
+            {
+                return null;
+            }
+
+            List<PdszDatabase.SwiAction> selectedSwiActions = new List<PdszDatabase.SwiAction>();
+            foreach (KeyValuePair<PdszDatabase.SwiRegisterEnum, List<OptionsItem>> keyValuePair in _optionsDict)
+            {
+                foreach (OptionsItem optionsItem in keyValuePair.Value)
+                {
+                    if (optionsItem.Selected && optionsItem.SwiAction != null)
+                    {
+                        log.InfoFormat("GetSelectedSwiActions Selected: {0}", optionsItem.SwiAction);
+                        selectedSwiActions.Add(optionsItem.SwiAction);
+                    }
+                }
+            }
+
+            log.InfoFormat("GetSelectedSwiActions Count: {0}", selectedSwiActions.Count);
+
+            return selectedSwiActions;
         }
 
         private void UpdateTargetFa(bool reset = false)
