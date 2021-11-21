@@ -1350,6 +1350,27 @@ namespace PsdzClient
             return data;
         }
 
+        public List<TestModuleData> ReadAllTestModules()
+        {
+            try
+            {
+                List<TestModuleData> testModules = new List<TestModuleData>();
+                string[] files = Directory.GetFiles(_testModulePath, "*.dll");
+                foreach (string file in files)
+                {
+                    ReadTestModule(Path.ChangeExtension(file, null));
+                }
+
+                log.InfoFormat("ReadAllTestModules Count: {0}", testModules.Count);
+                return testModules;
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("ReadAllTestModules Exception: '{0}'", e.Message);
+                return null;
+            }
+        }
+
         public TestModuleData ReadTestModule(string moduleName)
         {
             log.InfoFormat("ReadTestModule Name: {0}", moduleName);
