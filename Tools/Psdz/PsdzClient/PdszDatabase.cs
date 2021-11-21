@@ -1371,7 +1371,7 @@ namespace PsdzClient
                 string coreFrameworkFile = Path.Combine(_frameworkPath, "RheingoldCoreFramework.dll");
                 if (!File.Exists(coreFrameworkFile))
                 {
-                    log.ErrorFormat("ReadTestModule Core framework not found: {0}", moduleFile);
+                    log.ErrorFormat("ReadTestModule Core framework not found: {0}", coreFrameworkFile);
                     return null;
                 }
                 Assembly coreFrameworkAssembly = Assembly.LoadFrom(coreFrameworkFile);
@@ -1398,6 +1398,7 @@ namespace PsdzClient
                     log.ErrorFormat("ReadTestModule ISTAModule not found");
                     return null;
                 }
+
                 MethodInfo methodIstaModuleModuleRef = istaModuleType.GetMethod("callModuleRef", BindingFlags.Instance | BindingFlags.NonPublic);
                 if (methodIstaModuleModuleRef == null)
                 {
@@ -1502,16 +1503,21 @@ namespace PsdzClient
                 methodContainerSetParameter.Invoke(moduleParamContainerInst, new object[] { "__RheinGoldCoreModuleParameters__", moduleParamInst });
 
                 Type moduleType = exportedTypes[0];
-                object testModule = Activator.CreateInstance(moduleType, moduleParamContainerInst);
-
-                log.InfoFormat("ReadTestModule Module loaded: {0}, Type: {1}", fileName, moduleType.FullName);
-
                 MethodInfo methodeTestModuleStartType = moduleType.GetMethod("Start");
                 if (methodeTestModuleStartType == null)
                 {
                     log.ErrorFormat("ReadTestModule Test module Start methode not found");
                     return null;
                 }
+
+                MethodInfo methodTestModuleChangeFa = moduleType.GetMethod("Change_FA", BindingFlags.Instance | BindingFlags.NonPublic);
+                if (methodTestModuleChangeFa == null)
+                {
+                    log.ErrorFormat("ReadTestModule Test module Change_FA methode not found");
+                    return null;
+                }
+                object testModule = Activator.CreateInstance(moduleType, moduleParamContainerInst);
+                log.InfoFormat("ReadTestModule Module loaded: {0}, Type: {1}", fileName, moduleType.FullName);
 
                 _moduleRefPath = null;
                 _moduleRefDict = null;

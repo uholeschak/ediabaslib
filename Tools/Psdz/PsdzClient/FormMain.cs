@@ -51,9 +51,12 @@ namespace PsdzClient
             public OptionsItem(PdszDatabase.SwiAction swiAction)
             {
                 SwiAction = swiAction;
+                Invalid = false;
             }
 
             public PdszDatabase.SwiAction SwiAction { get; private set; }
+
+            public bool Invalid { get; set; }
 
             public override string ToString()
             {
@@ -451,8 +454,14 @@ namespace PsdzClient
                         {
                             string moduleName = infoInfoObj.Identifier.Replace("-", "_");
                             PdszDatabase.TestModuleData testModuleData = programmingService.PdszDatabase.ReadTestModule(moduleName);
-                            if (testModuleData != null)
+                            if (testModuleData == null)
                             {
+                                log.ErrorFormat("UpdateTargetFa ReadTestModule failed for: {0}", moduleName);
+                                optionsItem.Invalid = true;
+                            }
+                            else
+                            {
+                                optionsItem.Invalid = false;
                                 if (!string.IsNullOrEmpty(testModuleData.ModuleRef))
                                 {
                                     PdszDatabase.SwiInfoObj swiInfoObj = programmingService.PdszDatabase.GetInfoObjectByControlId(testModuleData.ModuleRef, infoInfoObj.LinkType);
@@ -490,6 +499,8 @@ namespace PsdzClient
                     }
                 }
             }
+
+            _selectedOptions.RemoveAll(x => x.Invalid);
 
             log.InfoFormat("UpdateTargetFa FaTarget: {0}", _psdzContext.FaTarget.AsString);
 
