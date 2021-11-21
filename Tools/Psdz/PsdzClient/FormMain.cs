@@ -340,9 +340,17 @@ namespace PsdzClient
                         foreach (OptionsItem optionsItem in optionsItems)
                         {
                             CheckState checkState = CheckState.Unchecked;
-                            if (_selectedOptions.Contains(optionsItem))
+                            int selectIndex = _selectedOptions.IndexOf(optionsItem);
+                            if (selectIndex >= 0)
                             {
-                                checkState = CheckState.Checked;
+                                if (selectIndex == _selectedOptions.Count - 1)
+                                {
+                                    checkState = CheckState.Checked;
+                                }
+                                else
+                                {
+                                    checkState = CheckState.Indeterminate;
+                                }
                             }
                             else
                             {
