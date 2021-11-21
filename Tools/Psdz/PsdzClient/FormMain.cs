@@ -8,6 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -47,19 +48,16 @@ namespace PsdzClient
 
         private class OptionsItem
         {
-            public OptionsItem(string name, PdszDatabase.SwiAction swiAction)
+            public OptionsItem(PdszDatabase.SwiAction swiAction)
             {
-                Name = name;
                 SwiAction = swiAction;
             }
-
-            public string Name { get; private set; }
 
             public PdszDatabase.SwiAction SwiAction { get; private set; }
 
             public override string ToString()
             {
-                return Name;
+                return SwiAction.EcuTranslation.GetTitle(ClientContext.Language);
             }
         }
 
@@ -93,7 +91,6 @@ namespace PsdzClient
 
         private const string DealerId = "32395";
         private const string DefaultIp = @"127.0.0.1";
-        private const string TitleLang = "De";
         private ProgrammingService programmingService;
         private bool _taskActive;
         private bool TaskActive
@@ -163,6 +160,7 @@ namespace PsdzClient
             bool ipEnabled = !active && !vehicleConnected;
 
             textBoxIstaFolder.Enabled = !active && !hostRunning;
+            comboBoxLanguage.Enabled = !active;
             ipAddressControlVehicleIp.Enabled = ipEnabled;
             checkBoxIcom.Enabled = ipEnabled;
             buttonVehicleSearch.Enabled = ipEnabled;
@@ -189,7 +187,9 @@ namespace PsdzClient
         {
             try
             {
+                _ignoreChange = true;
                 textBoxIstaFolder.Text = Properties.Settings.Default.IstaFolder;
+                comboBoxLanguage.SelectedIndex = Properties.Settings.Default.LanguageIndex;
                 ipAddressControlVehicleIp.Text = Properties.Settings.Default.VehicleIp;
                 checkBoxIcom.Checked = Properties.Settings.Default.IcomConnection;
                 if (string.IsNullOrWhiteSpace(ipAddressControlVehicleIp.Text.Trim('.')))
@@ -198,11 +198,15 @@ namespace PsdzClient
                     checkBoxIcom.Checked = false;
                 }
 
-                ClientContext.Language = TitleLang;
+                ClientContext.Language = comboBoxLanguage.SelectedItem.ToString();
             }
             catch (Exception)
             {
                 return false;
+            }
+            finally
+            {
+                _ignoreChange = false;
             }
 
             return true;
@@ -213,6 +217,7 @@ namespace PsdzClient
             try
             {
                 Properties.Settings.Default.IstaFolder = textBoxIstaFolder.Text;
+                Properties.Settings.Default.LanguageIndex = comboBoxLanguage.SelectedIndex;
                 Properties.Settings.Default.VehicleIp = ipAddressControlVehicleIp.Text;
                 Properties.Settings.Default.IcomConnection = checkBoxIcom.Checked;
                 Properties.Settings.Default.Save();
@@ -1312,7 +1317,7 @@ namespace PsdzClient
                                 foreach (PdszDatabase.SwiAction swiAction in swiActions)
                                 {
                                     sbResult.AppendLine(swiAction.ToString(ClientContext.Language));
-                                    optionsItems.Add(new OptionsItem(swiAction.EcuTranslation.GetTitle(ClientContext.Language), swiAction));
+                                    optionsItems.Add(new OptionsItem(swiAction));
                                 }
 
                                 optionsDict.Add(optionType.SwiRegisterEnum, optionsItems);
@@ -1542,6 +1547,21 @@ namespace PsdzClient
 
         private void FormMain_Load(object sender, EventArgs e)
         {
+            comboBoxLanguage.BeginUpdate();
+            comboBoxLanguage.Items.Clear();
+            PropertyInfo[] langueProperties = typeof(PdszDatabase.EcuTranslation).GetProperties();
+            foreach (PropertyInfo propertyInfo in langueProperties)
+            {
+                string name = propertyInfo.Name;
+                if (name.StartsWith("Text", StringComparison.OrdinalIgnoreCase))
+                {
+                    comboBoxLanguage.Items.Add(name.Substring(4));
+                }
+            }
+
+            comboBoxLanguage.SelectedIndex = 0;
+            comboBoxLanguage.EndUpdate();
+
             LoadSettings();
             UpdateDisplay();
             UpdateStatus();
@@ -1810,6 +1830,21 @@ namespace PsdzClient
             BeginInvoke((Action)(() =>
             {
                 UpdateTargetFa();
+            }));
+        }
+
+        private void comboBoxLanguage_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_ignoreChange)
+            {
+                return;
+            }
+
+            ClientContext.Language = comboBoxLanguage.SelectedItem.ToString();
+
+            BeginInvoke((Action)(() =>
+            {
+                UpdateCurrentOptions();
             }));
         }
     }

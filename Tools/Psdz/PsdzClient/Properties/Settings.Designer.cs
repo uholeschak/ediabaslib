@@ -58,5 +58,17 @@ namespace PsdzClient.Properties {
                 this["IcomConnection"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int LanguageIndex {
+            get {
+                return ((int)(this["LanguageIndex"]));
+            }
+            set {
+                this["LanguageIndex"] = value;
+            }
+        }
     }
 }
