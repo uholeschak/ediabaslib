@@ -450,15 +450,15 @@ namespace PsdzClient
                         if (infoInfoObj.LinkType == PdszDatabase.SwiInfoObj.SwiActionDatabaseLinkType.SwiActionActionSelectionLink)
                         {
                             string moduleName = infoInfoObj.Identifier.Replace("-", "_");
-                            Dictionary<string, List<string>> actionsDict = programmingService.PdszDatabase.ReadTestModule(moduleName, out string moduleRef);
-                            if (actionsDict != null)
+                            PdszDatabase.TestModuleData testModuleData = programmingService.PdszDatabase.ReadTestModule(moduleName);
+                            if (testModuleData != null)
                             {
-                                if (!string.IsNullOrEmpty(moduleRef))
+                                if (!string.IsNullOrEmpty(testModuleData.ModuleRef))
                                 {
-                                    PdszDatabase.SwiInfoObj swiInfoObj = programmingService.PdszDatabase.GetInfoObjectByControlId(moduleRef, infoInfoObj.LinkType);
+                                    PdszDatabase.SwiInfoObj swiInfoObj = programmingService.PdszDatabase.GetInfoObjectByControlId(testModuleData.ModuleRef, infoInfoObj.LinkType);
                                     if (swiInfoObj == null)
                                     {
-                                        log.ErrorFormat("UpdateTargetFa No info object: {0}", moduleRef);
+                                        log.ErrorFormat("UpdateTargetFa No info object: {0}", testModuleData.ModuleRef);
                                     }
                                     else
                                     {
@@ -467,14 +467,14 @@ namespace PsdzClient
                                 }
 
                                 IFa ifaTarget = ProgrammingUtils.BuildFa(_psdzContext.FaTarget);
-                                if (actionsDict.TryGetValue("faElementsToRem", out List<string> remList))
+                                if (testModuleData.RefDict.TryGetValue("faElementsToRem", out List<string> remList))
                                 {
                                     if (!ProgrammingUtils.ModifyFa(ifaTarget, remList, false))
                                     {
                                         log.ErrorFormat("UpdateTargetFa Rem failed: {0}", remList.ToStringItems());
                                     }
                                 }
-                                if (actionsDict.TryGetValue("faElementsToAdd", out List<string> addList))
+                                if (testModuleData.RefDict.TryGetValue("faElementsToAdd", out List<string> addList))
                                 {
                                     if (!ProgrammingUtils.ModifyFa(ifaTarget, addList, true))
                                     {

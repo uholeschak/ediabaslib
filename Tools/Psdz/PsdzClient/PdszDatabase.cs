@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Data.SQLite;
 using System.Globalization;
 using System.IO;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using HarmonyLib;
@@ -1028,6 +1030,21 @@ namespace PsdzClient
             }
         }
 
+        [XmlType("TestModule")]
+        public class TestModuleData
+        {
+            public TestModuleData(Dictionary<string, List<string>> refDict, string moduleRef)
+            {
+                RefDict = refDict;
+                ModuleRef = moduleRef;
+            }
+
+            [XmlElement("RefDict"), DefaultValue(null)]  public Dictionary<string, List<string>> RefDict { get; }
+
+            [XmlElement("ModuleRef"), DefaultValue(null)] public string ModuleRef { get; }
+        }
+
+
         private static readonly ILog log = LogManager.GetLogger(typeof(PdszDatabase));
 
         private static List<string> engineRootNodeClasses = new List<string>
@@ -1333,10 +1350,9 @@ namespace PsdzClient
             return data;
         }
 
-        public Dictionary<string, List<string>> ReadTestModule(string moduleName, out string moduleRef)
+        public TestModuleData ReadTestModule(string moduleName)
         {
             log.InfoFormat("ReadTestModule Name: {0}", moduleName);
-            moduleRef = null;
             try
             {
                 if (string.IsNullOrEmpty(moduleName))
@@ -1505,7 +1521,7 @@ namespace PsdzClient
                 object[] startArguments = { moduleRunInContainerInst, moduleRunOutContainerInst, moduleRunInOutContainerInst };
                 methodeTestModuleStartType.Invoke(testModule, startArguments);
 
-                moduleRef = _moduleRefPath;
+                string moduleRef = _moduleRefPath;
                 if (!string.IsNullOrEmpty(moduleRef))
                 {
                     log.ErrorFormat("ReadTestModule RefPath: {0}", moduleRef);
@@ -1517,8 +1533,9 @@ namespace PsdzClient
                     return null;
                 }
 
-                log.ErrorFormat("ReadTestModule Test module items: {0}", _moduleRefDict.Count);
-                foreach (KeyValuePair<string, List<string>> keyValuePair in _moduleRefDict)
+                Dictionary<string, List<string>> moduleRefDict = new Dictionary<string, List<string>>(_moduleRefDict);
+                log.ErrorFormat("ReadTestModule Test module items: {0}", moduleRefDict.Count);
+                foreach (KeyValuePair<string, List<string>> keyValuePair in moduleRefDict)
                 {
                     StringBuilder sb = new StringBuilder();
                     sb.Append(string.Format(CultureInfo.InvariantCulture, "Key: {0}", keyValuePair.Key));
@@ -1535,7 +1552,8 @@ namespace PsdzClient
                 }
 
                 log.InfoFormat("ReadTestModule Finished: {0}", fileName);
-                return new Dictionary<string, List<string>>(_moduleRefDict);
+
+                return new TestModuleData(moduleRefDict, moduleRef);
             }
             catch (Exception e)
             {
