@@ -340,6 +340,7 @@ namespace PsdzClient
                         foreach (OptionsItem optionsItem in optionsItems)
                         {
                             CheckState checkState = CheckState.Unchecked;
+                            bool addItem = true;
                             int selectIndex = _selectedOptions.IndexOf(optionsItem);
                             if (selectIndex >= 0)
                             {
@@ -357,18 +358,21 @@ namespace PsdzClient
                                 if (linkedSwiActions != null &&
                                     linkedSwiActions.Any(x => string.Compare(x.Id, optionsItem.SwiAction.Id, StringComparison.OrdinalIgnoreCase) == 0))
                                 {
-                                    checkState = CheckState.Indeterminate;
+                                    addItem = false;
                                 }
                                 else
                                 {
                                     if (!programmingService.PdszDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, _psdzContext.Vehicle, null))
                                     {
-                                        checkState = CheckState.Indeterminate;
+                                        addItem = false;
                                     }
                                 }
                             }
 
-                            checkedListBoxOptions.Items.Add(optionsItem, checkState);
+                            if (addItem)
+                            {
+                                checkedListBoxOptions.Items.Add(optionsItem, checkState);
+                            }
                         }
                     }
                 }
@@ -1780,7 +1784,10 @@ namespace PsdzClient
                 }
             }
 
-            UpdateTargetFa();
+            BeginInvoke((Action)(() =>
+            {
+                UpdateTargetFa();
+            }));
         }
 
         private void comboBoxOptionType_SelectedIndexChanged(object sender, EventArgs e)
@@ -1789,7 +1796,11 @@ namespace PsdzClient
             {
                 return;
             }
-            UpdateTargetFa();
+
+            BeginInvoke((Action)(() =>
+            {
+                UpdateTargetFa();
+            }));
         }
     }
 }
