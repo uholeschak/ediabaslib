@@ -329,8 +329,14 @@ namespace PsdzClient
             {
                 List<PdszDatabase.SwiAction> selectedSwiActions = GetSelectedSwiActions();
                 List<PdszDatabase.SwiAction> linkedSwiActions = programmingService.PdszDatabase.ReadLinkedSwiActions(selectedSwiActions, _psdzContext.Vehicle, null);
+                OptionsItem topItemCurrent = null;
+                int topIndexCurrent = checkedListBoxOptions.TopIndex;
+                if (topIndexCurrent >= 0 && topIndexCurrent < checkedListBoxOptions.Items.Count)
+                {
+                    topItemCurrent = checkedListBoxOptions.Items[topIndexCurrent] as OptionsItem;
+                }
+
                 _ignoreCheck = true;
-                int topIndex = checkedListBoxOptions.TopIndex;
                 checkedListBoxOptions.BeginUpdate();
                 checkedListBoxOptions.Items.Clear();
                 if (_optionsDict != null && _selectedOptions != null && swiRegisterEnum.HasValue)
@@ -377,9 +383,13 @@ namespace PsdzClient
                     }
                 }
 
-                if (topIndex < checkedListBoxOptions.Items.Count)
+                if (topItemCurrent != null)
                 {
-                    checkedListBoxOptions.TopIndex = topIndex;
+                    int topIndexNew = checkedListBoxOptions.Items.IndexOf(topItemCurrent);
+                    if (topIndexNew >= 0 && topIndexNew < checkedListBoxOptions.Items.Count)
+                    {
+                        checkedListBoxOptions.TopIndex = topIndexNew;
+                    }
                 }
             }
             finally
