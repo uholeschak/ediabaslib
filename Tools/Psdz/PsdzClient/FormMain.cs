@@ -532,7 +532,7 @@ namespace PsdzClient
             StringBuilder sbResult = new StringBuilder();
             try
             {
-                sbResult.AppendLine("Starting host ...");
+                sbResult.AppendLine("Starting programming service");
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "DealerId={0}", dealerId));
                 UpdateStatus(sbResult.ToString());
 
@@ -570,6 +570,17 @@ namespace PsdzClient
                     }
                 };
 
+                sbResult.AppendLine("Generating test module data ...");
+                UpdateStatus(sbResult.ToString());
+                if (!programmingService.PdszDatabase.GenerateTestModuleData())
+                {
+                    sbResult.AppendLine("Generating test module data failed");
+                    UpdateStatus(sbResult.ToString());
+                    return false;
+                }
+
+                sbResult.AppendLine("Starting host ...");
+                UpdateStatus(sbResult.ToString());
                 if (!programmingService.StartPsdzServiceHost())
                 {
                     sbResult.AppendLine("Start host failed");
@@ -1306,7 +1317,6 @@ namespace PsdzClient
                 _cts?.Token.ThrowIfCancellationRequested();
                 if (operationType == OperationType.CreateOptions)
                 {
-                    programmingService.PdszDatabase.StoreTestModuleData();
                     programmingService.PdszDatabase.ReadSwiRegister(_psdzContext.Vehicle);
                     if (programmingService.PdszDatabase.SwiRegisterTree != null)
                     {

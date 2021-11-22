@@ -1040,29 +1040,26 @@ namespace PsdzClient
             {
             }
 
-            public TestModules(List<TestModuleData> moduleDataList)
+            public TestModules(SerializableDictionary<string, TestModuleData> moduleDataDict)
             {
-                ModuleDataList = moduleDataList;
+                ModuleDataDict = moduleDataDict;
             }
 
-            [XmlElement("ModuleDataList"), DefaultValue(null)] public List<TestModuleData> ModuleDataList { get; set; }
+            [XmlElement("ModuleDataDict"), DefaultValue(null)] public SerializableDictionary<string, TestModuleData> ModuleDataDict { get; set; }
         }
 
         [XmlType("TestModuleData")]
         public class TestModuleData
         {
-            public TestModuleData() : this(null, null, null)
+            public TestModuleData() : this(null, null)
             {
             }
 
-            public TestModuleData(string moduleName, SerializableDictionary<string, List<string>> refDict, string moduleRef)
+            public TestModuleData(SerializableDictionary<string, List<string>> refDict, string moduleRef)
             {
-                ModuleName = moduleName;
                 RefDict = refDict;
                 ModuleRef = moduleRef;
             }
-
-            [XmlElement("ModuleName"), DefaultValue(null)] public string ModuleName { get; set; }
 
             [XmlElement("RefDict"), DefaultValue(null)] public SerializableDictionary<string, List<string>> RefDict { get; set; }
 
@@ -1111,6 +1108,7 @@ namespace PsdzClient
         private Dictionary<string, XepRule> _xepRuleDict;
         public Dictionary<string, XepRule> XepRuleDict => _xepRuleDict;
         public SwiRegister SwiRegisterTree { get; private set; }
+        public TestModules TestModuleStorage { get; private set; }
 
         private static string _moduleRefPath;
         private static SerializableDictionary<string, List<string>> _moduleRefDict;
@@ -1375,30 +1373,45 @@ namespace PsdzClient
             return data;
         }
 
-        public bool StoreTestModuleData()
+        public bool GenerateTestModuleData()
         {
             try
             {
+                TestModules testModules = null;
+                XmlSerializer serializer = new XmlSerializer(typeof(TestModules));
                 string testModulesFile = Path.Combine(_databasePath, TestModulesFile);
                 if (File.Exists(testModulesFile))
                 {
-                    log.InfoFormat("StoreTestModuleData Modules file exists: {0}", testModulesFile);
-                    return true;
+                    try
+                    {
+                        using (FileStream fileStream = new FileStream(testModulesFile, FileMode.Open))
+                        {
+                            testModules = serializer.Deserialize(fileStream) as TestModules;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        log.ErrorFormat("GenerateTestModuleData Deserialize Exception: '{0}'", e.Message);
+                    }
                 }
 
-                TestModules testModules = ReadAllTestModules();
                 if (testModules == null)
                 {
-                    log.ErrorFormat("StoreTestModuleData ReadAllTestModules failed");
-                    return false;
+                    log.InfoFormat("GenerateTestModuleData Converting test modules");
+                    testModules = ConvertAllTestModules();
+                    if (testModules == null)
+                    {
+                        log.ErrorFormat("GenerateTestModuleData ConvertAllTestModules failed");
+                        return false;
+                    }
+
+                    using (FileStream fileStream = File.Create(testModulesFile))
+                    {
+                        serializer.Serialize(fileStream, testModules);
+                    }
                 }
 
-                XmlSerializer writer = new XmlSerializer(testModules.GetType());
-                using (FileStream fileStream = File.Create(testModulesFile))
-                {
-                    writer.Serialize(fileStream, testModules);
-                }
-
+                TestModuleStorage = testModules;
                 return true;
             }
             catch (Exception e)
@@ -1408,7 +1421,7 @@ namespace PsdzClient
             }
         }
 
-        public TestModules ReadAllTestModules()
+        public TestModules ConvertAllTestModules()
         {
             try
             {
@@ -1416,37 +1429,41 @@ namespace PsdzClient
                 List<SwiAction> swiActions = CollectSwiActionsForNode(SwiRegisterTree, true);
                 if (swiActions == null)
                 {
-                    log.ErrorFormat("ReadAllTestModules CollectSwiActionsForNode failed");
+                    log.ErrorFormat("ConvertAllTestModules CollectSwiActionsForNode failed");
                     return null;
                 }
 
-                List<TestModuleData> moduleDataList = new List<TestModuleData>();
+                SerializableDictionary<string, TestModuleData> moduleDataDict = new SerializableDictionary<string, TestModuleData>();
                 foreach (SwiAction swiAction in swiActions)
                 {
                     foreach (SwiInfoObj infoInfoObj in swiAction.SwiInfoObjs)
                     {
-                        if (infoInfoObj.LinkType == PdszDatabase.SwiInfoObj.SwiActionDatabaseLinkType.SwiActionActionSelectionLink)
+                        if (infoInfoObj.LinkType == SwiInfoObj.SwiActionDatabaseLinkType.SwiActionActionSelectionLink)
                         {
                             string moduleName = infoInfoObj.ModuleName;
-                            TestModuleData moduleData = ReadTestModule(moduleName);
-                            if (moduleData == null)
+                            string key = moduleName.ToUpperInvariant();
+                            if (!moduleDataDict.ContainsKey(key))
                             {
-                                log.ErrorFormat("ReadAllTestModules ReadTestModule failed for: {0}", moduleName);
-                            }
-                            else
-                            {
-                                moduleDataList.Add(moduleData);
+                                TestModuleData moduleData = ReadTestModule(moduleName);
+                                if (moduleData == null)
+                                {
+                                    log.ErrorFormat("ConvertAllTestModules ReadTestModule failed for: {0}", moduleName);
+                                }
+                                else
+                                {
+                                    moduleDataDict.Add(key, moduleData);
+                                }
                             }
                         }
                     }
                 }
 
-                log.InfoFormat("ReadAllTestModules Count: {0}", moduleDataList.Count);
-                return new TestModules(moduleDataList);
+                log.InfoFormat("ConvertAllTestModules Count: {0}", moduleDataDict.Count);
+                return new TestModules(moduleDataDict);
             }
             catch (Exception e)
             {
-                log.ErrorFormat("ReadAllTestModules Exception: '{0}'", e.Message);
+                log.ErrorFormat("ConvertAllTestModules Exception: '{0}'", e.Message);
                 return null;
             }
         }
@@ -1660,7 +1677,7 @@ namespace PsdzClient
 
                 log.InfoFormat("ReadTestModule Finished: {0}", fileName);
 
-                return new TestModuleData(moduleName, moduleRefDict, moduleRef);
+                return new TestModuleData(moduleRefDict, moduleRef);
             }
             catch (Exception e)
             {
