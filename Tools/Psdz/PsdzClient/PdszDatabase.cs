@@ -1053,13 +1053,13 @@ namespace PsdzClient
             {
             }
 
-            public TestModuleData(Dictionary<string, List<string>> refDict, string moduleRef)
+            public TestModuleData(SerializableDictionary<string, List<string>> refDict, string moduleRef)
             {
                 RefDict = refDict;
                 ModuleRef = moduleRef;
             }
 
-            [XmlElement("RefDict"), DefaultValue(null)]  public Dictionary<string, List<string>> RefDict { get; set; }
+            [XmlElement("RefDict"), DefaultValue(null)] public SerializableDictionary<string, List<string>> RefDict { get; set; }
 
             [XmlElement("ModuleRef"), DefaultValue(null)] public string ModuleRef { get; set;  }
         }
@@ -1107,7 +1107,7 @@ namespace PsdzClient
         public SwiRegister SwiRegisterTree { get; private set; }
 
         private static string _moduleRefPath;
-        private static Dictionary<string, List<string>> _moduleRefDict;
+        private static SerializableDictionary<string, List<string>> _moduleRefDict;
         private static bool CallModuleRefPrefix(string refPath, object inParameters, ref object outParameters, ref object inAndOutParameters)
         {
             log.InfoFormat("CallModuleRefPrefix refPath: {0}", refPath);
@@ -1132,7 +1132,7 @@ namespace PsdzClient
                         else
                         {
                             log.InfoFormat("CallModuleRefPrefix Parameter Dict items: {0}", paramDictionary.Count);
-                            _moduleRefDict = new Dictionary<string, List<string>>();
+                            _moduleRefDict = new SerializableDictionary<string, List<string>>();
                             foreach (KeyValuePair<string, object> keyValuePair in paramDictionary)
                             {
                                 if (keyValuePair.Value is List<string> elements)
@@ -1609,7 +1609,7 @@ namespace PsdzClient
                     return null;
                 }
 
-                Dictionary<string, List<string>> moduleRefDict = new Dictionary<string, List<string>>(_moduleRefDict);
+                SerializableDictionary<string, List<string>> moduleRefDict = _moduleRefDict;
                 log.ErrorFormat("ReadTestModule Test module items: {0}", moduleRefDict.Count);
                 foreach (KeyValuePair<string, List<string>> keyValuePair in moduleRefDict)
                 {
