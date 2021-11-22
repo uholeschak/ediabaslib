@@ -13,6 +13,8 @@ using System.Xml.Serialization;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using HarmonyLib;
+using ICSharpCode.SharpZipLib.Core;
+using ICSharpCode.SharpZipLib.Zip;
 using log4net;
 using PsdzClient.Core;
 
@@ -1066,7 +1068,8 @@ namespace PsdzClient
             [XmlElement("ModuleRef"), DefaultValue(null)] public string ModuleRef { get; set;  }
         }
 
-        private const string TestModulesFile = "TestModules.xml";
+        private const string TestModulesXmlFile = "TestModules.xml";
+        private const string TestModulesZipFile = "TestModules.zip";
         private static readonly ILog log = LogManager.GetLogger(typeof(PdszDatabase));
 
         private static List<string> engineRootNodeClasses = new List<string>
@@ -1379,14 +1382,40 @@ namespace PsdzClient
             {
                 TestModules testModules = null;
                 XmlSerializer serializer = new XmlSerializer(typeof(TestModules));
-                string testModulesFile = Path.Combine(_databasePath, TestModulesFile);
-                if (File.Exists(testModulesFile))
+                string testModulesZipFile = Path.Combine(_databasePath, TestModulesZipFile);
+                if (File.Exists(testModulesZipFile))
                 {
                     try
                     {
-                        using (FileStream fileStream = new FileStream(testModulesFile, FileMode.Open))
+                        ZipFile zf = null;
+                        try
                         {
-                            testModules = serializer.Deserialize(fileStream) as TestModules;
+                            FileStream fs = File.OpenRead(testModulesZipFile);
+                            zf = new ZipFile(fs);
+                            foreach (ZipEntry zipEntry in zf)
+                            {
+                                if (!zipEntry.IsFile)
+                                {
+                                    continue; // Ignore directories
+                                }
+
+                                if (string.Compare(zipEntry.Name, TestModulesXmlFile, StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    Stream zipStream = zf.GetInputStream(zipEntry);
+                                    using (TextReader reader = new StreamReader(zipStream))
+                                    {
+                                        testModules = serializer.Deserialize(reader) as TestModules;
+                                    }
+                                }
+                            }
+                        }
+                        finally
+                        {
+                            if (zf != null)
+                            {
+                                zf.IsStreamOwner = true; // Makes close also shut the underlying stream
+                                zf.Close(); // Ensure we release resources
+                            }
                         }
                     }
                     catch (Exception e)
@@ -1405,9 +1434,33 @@ namespace PsdzClient
                         return false;
                     }
 
-                    using (FileStream fileStream = File.Create(testModulesFile))
+                    using (MemoryStream memStream = new MemoryStream())
                     {
-                        serializer.Serialize(fileStream, testModules);
+                        serializer.Serialize(memStream, testModules);
+                        memStream.Seek(0, SeekOrigin.Begin);
+
+                        FileStream fsOut = File.Create(testModulesZipFile);
+                        ZipOutputStream zipStream = new ZipOutputStream(fsOut);
+                        zipStream.SetLevel(3);
+
+                        try
+                        {
+                            ZipEntry newEntry = new ZipEntry(TestModulesXmlFile)
+                            {
+                                DateTime = DateTime.Now,
+                                Size = memStream.Length
+                            };
+                            zipStream.PutNextEntry(newEntry);
+
+                            byte[] buffer = new byte[4096];
+                            StreamUtils.Copy(memStream, zipStream, buffer);
+                            zipStream.CloseEntry();
+                        }
+                        finally
+                        {
+                            zipStream.IsStreamOwner = true;
+                            zipStream.Close();
+                        }
                     }
                 }
 
