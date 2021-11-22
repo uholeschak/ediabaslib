@@ -329,25 +329,23 @@ namespace BmwFileReader
                 try
                 {
                     string fileName = name.ToLowerInvariant() + ".xml";
-                    using (FileStream fs = File.OpenRead(Path.Combine(_rootDir, EcuFuncFileName)))
+                    FileStream fs = File.OpenRead(Path.Combine(_rootDir, EcuFuncFileName));
+                    zf = new ZipFile(fs);
+                    foreach (ZipEntry zipEntry in zf)
                     {
-                        zf = new ZipFile(fs);
-                        foreach (ZipEntry zipEntry in zf)
+                        if (!zipEntry.IsFile)
                         {
-                            if (!zipEntry.IsFile)
+                            continue; // Ignore directories
+                        }
+                        if (string.Compare(zipEntry.Name, fileName, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            Stream zipStream = zf.GetInputStream(zipEntry);
+                            using (TextReader reader = new StreamReader(zipStream))
                             {
-                                continue; // Ignore directories
+                                XmlSerializer serializer = new XmlSerializer(type);
+                                ecuObject = serializer.Deserialize(reader);
                             }
-                            if (string.Compare(zipEntry.Name, fileName, StringComparison.OrdinalIgnoreCase) == 0)
-                            {
-                                Stream zipStream = zf.GetInputStream(zipEntry);
-                                using (TextReader reader = new StreamReader(zipStream))
-                                {
-                                    XmlSerializer serializer = new XmlSerializer(type);
-                                    ecuObject = serializer.Deserialize(reader);
-                                }
-                                break;
-                            }
+                            break;
                         }
                     }
 
