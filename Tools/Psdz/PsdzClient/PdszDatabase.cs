@@ -872,6 +872,8 @@ namespace PsdzClient
 
             public EcuTranslation EcuTranslation { get; set; }
 
+            public string ModuleName => Identifier.Replace("-", "_");
+
             public string ToString(string language, string prefix = "")
             {
                 StringBuilder sb = new StringBuilder();
@@ -1049,21 +1051,25 @@ namespace PsdzClient
         [XmlType("TestModuleData")]
         public class TestModuleData
         {
-            public TestModuleData() : this(null, null)
+            public TestModuleData() : this(null, null, null)
             {
             }
 
-            public TestModuleData(SerializableDictionary<string, List<string>> refDict, string moduleRef)
+            public TestModuleData(string moduleName, SerializableDictionary<string, List<string>> refDict, string moduleRef)
             {
+                ModuleName = moduleName;
                 RefDict = refDict;
                 ModuleRef = moduleRef;
             }
+
+            [XmlElement("ModuleName"), DefaultValue(null)] public string ModuleName { get; set; }
 
             [XmlElement("RefDict"), DefaultValue(null)] public SerializableDictionary<string, List<string>> RefDict { get; set; }
 
             [XmlElement("ModuleRef"), DefaultValue(null)] public string ModuleRef { get; set;  }
         }
 
+        private const string TestModulesFile = "TestModules.xml";
         private static readonly ILog log = LogManager.GetLogger(typeof(PdszDatabase));
 
         private static List<string> engineRootNodeClasses = new List<string>
@@ -1373,14 +1379,21 @@ namespace PsdzClient
         {
             try
             {
+                string testModulesFile = Path.Combine(_databasePath, TestModulesFile);
+                if (File.Exists(testModulesFile))
+                {
+                    log.InfoFormat("StoreTestModuleData Modules file exists: {0}", testModulesFile);
+                    return true;
+                }
+
                 TestModules testModules = ReadAllTestModules();
                 if (testModules == null)
                 {
+                    log.ErrorFormat("StoreTestModuleData ReadAllTestModules failed");
                     return false;
                 }
 
                 XmlSerializer writer = new XmlSerializer(testModules.GetType());
-                string testModulesFile = Path.Combine(_databasePath, "TestModules.xml");
                 using (FileStream fileStream = File.Create(testModulesFile))
                 {
                     writer.Serialize(fileStream, testModules);
@@ -1399,14 +1412,31 @@ namespace PsdzClient
         {
             try
             {
-                List<TestModuleData> moduleDataList = new List<TestModuleData>();
-                string[] files = Directory.GetFiles(_testModulePath, "ABL_AUS_*.dll");
-                foreach (string file in files)
+                List<SwiAction> swiActions = CollectSwiActionsForNode(SwiRegisterTree, true);
+                if (swiActions == null)
                 {
-                    TestModuleData moduleData = ReadTestModule(Path.ChangeExtension(file, null));
-                    if (moduleData != null)
+                    log.ErrorFormat("ReadAllTestModules CollectSwiActionsForNode failed");
+                    return null;
+                }
+
+                List<TestModuleData> moduleDataList = new List<TestModuleData>();
+                foreach (SwiAction swiAction in swiActions)
+                {
+                    foreach (SwiInfoObj infoInfoObj in swiAction.SwiInfoObjs)
                     {
-                        moduleDataList.Add(moduleData);
+                        if (infoInfoObj.LinkType == PdszDatabase.SwiInfoObj.SwiActionDatabaseLinkType.SwiActionActionSelectionLink)
+                        {
+                            string moduleName = infoInfoObj.ModuleName;
+                            TestModuleData moduleData = ReadTestModule(moduleName);
+                            if (moduleData == null)
+                            {
+                                log.ErrorFormat("ReadAllTestModules ReadTestModule failed for: {0}", moduleName);
+                            }
+                            else
+                            {
+                                moduleDataList.Add(moduleData);
+                            }
+                        }
                     }
                 }
 
@@ -1629,7 +1659,7 @@ namespace PsdzClient
 
                 log.InfoFormat("ReadTestModule Finished: {0}", fileName);
 
-                return new TestModuleData(moduleRefDict, moduleRef);
+                return new TestModuleData(moduleName, moduleRefDict, moduleRef);
             }
             catch (Exception e)
             {
@@ -1680,6 +1710,11 @@ namespace PsdzClient
 
         public List<SwiAction> CollectSwiActionsForNode(SwiRegister swiRegister, bool getChildren)
         {
+            if (swiRegister == null)
+            {
+                return null;
+            }
+
             List<SwiAction> swiActions = new List<SwiAction>();
             if (swiRegister.SwiActions != null)
             {

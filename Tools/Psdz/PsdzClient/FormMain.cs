@@ -452,7 +452,7 @@ namespace PsdzClient
                     {
                         if (infoInfoObj.LinkType == PdszDatabase.SwiInfoObj.SwiActionDatabaseLinkType.SwiActionActionSelectionLink)
                         {
-                            string moduleName = infoInfoObj.Identifier.Replace("-", "_");
+                            string moduleName = infoInfoObj.ModuleName;
                             PdszDatabase.TestModuleData testModuleData = programmingService.PdszDatabase.ReadTestModule(moduleName);
                             if (testModuleData == null)
                             {
@@ -1309,6 +1309,8 @@ namespace PsdzClient
                     programmingService.PdszDatabase.ReadSwiRegister(_psdzContext.Vehicle);
                     if (programmingService.PdszDatabase.SwiRegisterTree != null)
                     {
+                        programmingService.PdszDatabase.StoreTestModuleData();
+
                         string treeText = programmingService.PdszDatabase.SwiRegisterTree.ToString(ClientContext.Language);
                         if (!string.IsNullOrEmpty(treeText))
                         {
