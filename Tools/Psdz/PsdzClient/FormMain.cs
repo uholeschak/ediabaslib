@@ -1306,11 +1306,10 @@ namespace PsdzClient
                 _cts?.Token.ThrowIfCancellationRequested();
                 if (operationType == OperationType.CreateOptions)
                 {
+                    programmingService.PdszDatabase.StoreTestModuleData();
                     programmingService.PdszDatabase.ReadSwiRegister(_psdzContext.Vehicle);
                     if (programmingService.PdszDatabase.SwiRegisterTree != null)
                     {
-                        programmingService.PdszDatabase.StoreTestModuleData();
-
                         string treeText = programmingService.PdszDatabase.SwiRegisterTree.ToString(ClientContext.Language);
                         if (!string.IsNullOrEmpty(treeText))
                         {

@@ -1412,6 +1412,7 @@ namespace PsdzClient
         {
             try
             {
+                ReadSwiRegister(null, null);
                 List<SwiAction> swiActions = CollectSwiActionsForNode(SwiRegisterTree, true);
                 if (swiActions == null)
                 {
@@ -2731,16 +2732,16 @@ namespace PsdzClient
                         while (reader.Read())
                         {
                             SwiAction swiAction = ReadXepSwiAction(reader, SwiActionSource.SwiRegister);
-                            if (vehicle == null)
-                            {
-                                swiActions.Add(swiAction);
-                            }
-                            else
+                            if (vehicle != null)
                             {
                                 if (EvaluateXepRulesById(swiAction.Id, vehicle, ffmResolver))
                                 {
                                     swiActions.Add(swiAction);
                                 }
+                            }
+                            else
+                            {
+                                swiActions.Add(swiAction);
                             }
                         }
                     }
@@ -2846,16 +2847,16 @@ namespace PsdzClient
                         while (reader.Read())
                         {
                             SwiRegister swiRegister = ReadXepSwiRegister(reader);
-                            if (vehicle == null)
-                            {
-                                swiRegisterList.Add(swiRegister);
-                            }
-                            else
+                            if (vehicle != null)
                             {
                                 if (EvaluateXepRulesById(swiRegister.Id, vehicle, ffmResolver))
                                 {
                                     swiRegisterList.Add(swiRegister);
                                 }
+                            }
+                            else
+                            {
+                                swiRegisterList.Add(swiRegister);
                             }
                         }
                     }
@@ -2895,7 +2896,14 @@ namespace PsdzClient
                             SwiInfoObj swiInfoObj = GetInfoObjectById(infoObjId, linkTypeId);
                             if (swiInfoObj != null)
                             {
-                                if (EvaluateXepRulesById(infoObjId, vehicle, ffmDynamicResolver, swiInfoObj.ControlId))
+                                if (vehicle != null)
+                                {
+                                    if (EvaluateXepRulesById(infoObjId, vehicle, ffmDynamicResolver, swiInfoObj.ControlId))
+                                    {
+                                        swiInfoObjList.Add(swiInfoObj);
+                                    }
+                                }
+                                else
                                 {
                                     swiInfoObjList.Add(swiInfoObj);
                                 }
