@@ -1468,6 +1468,24 @@ namespace PsdzClient
             }
         }
 
+        public TestModuleData GetTestModuleData(string moduleName)
+        {
+            log.InfoFormat("GetTestModuleData Name: {0}", moduleName);
+            if (TestModuleStorage == null)
+            {
+                return null;
+            }
+
+            string key = moduleName.ToUpperInvariant();
+            if (!TestModuleStorage.ModuleDataDict.TryGetValue(key, out TestModuleData testModuleData))
+            {
+                log.InfoFormat("GetTestModuleData Module not found: {0}", moduleName);
+                return null;
+            }
+
+            return testModuleData;
+        }
+
         public TestModuleData ReadTestModule(string moduleName)
         {
             log.InfoFormat("ReadTestModule Name: {0}", moduleName);

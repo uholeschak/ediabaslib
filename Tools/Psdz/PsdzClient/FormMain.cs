@@ -453,10 +453,10 @@ namespace PsdzClient
                         if (infoInfoObj.LinkType == PdszDatabase.SwiInfoObj.SwiActionDatabaseLinkType.SwiActionActionSelectionLink)
                         {
                             string moduleName = infoInfoObj.ModuleName;
-                            PdszDatabase.TestModuleData testModuleData = programmingService.PdszDatabase.ReadTestModule(moduleName);
+                            PdszDatabase.TestModuleData testModuleData = programmingService.PdszDatabase.GetTestModuleData(moduleName);
                             if (testModuleData == null)
                             {
-                                log.ErrorFormat("UpdateTargetFa ReadTestModule failed for: {0}", moduleName);
+                                log.ErrorFormat("UpdateTargetFa GetTestModuleData failed for: {0}", moduleName);
                                 optionsItem.Invalid = true;
                             }
                             else
