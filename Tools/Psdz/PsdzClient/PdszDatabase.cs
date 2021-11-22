@@ -1030,20 +1030,39 @@ namespace PsdzClient
             }
         }
 
-        [XmlType("TestModule")]
+        [XmlInclude(typeof(TestModuleData))]
+        [XmlType("TestModules")]
+        public class TestModules
+        {
+            public TestModules() : this(null)
+            {
+            }
+
+            public TestModules(List<TestModuleData> moduleDataList)
+            {
+                ModuleDataList = moduleDataList;
+            }
+
+            [XmlElement("ModuleDataList"), DefaultValue(null)] public List<TestModuleData> ModuleDataList { get; set; }
+        }
+
+        [XmlType("TestModuleData")]
         public class TestModuleData
         {
+            public TestModuleData() : this(null, null)
+            {
+            }
+
             public TestModuleData(Dictionary<string, List<string>> refDict, string moduleRef)
             {
                 RefDict = refDict;
                 ModuleRef = moduleRef;
             }
 
-            [XmlElement("RefDict"), DefaultValue(null)]  public Dictionary<string, List<string>> RefDict { get; }
+            [XmlElement("RefDict"), DefaultValue(null)]  public Dictionary<string, List<string>> RefDict { get; set; }
 
-            [XmlElement("ModuleRef"), DefaultValue(null)] public string ModuleRef { get; }
+            [XmlElement("ModuleRef"), DefaultValue(null)] public string ModuleRef { get; set;  }
         }
-
 
         private static readonly ILog log = LogManager.GetLogger(typeof(PdszDatabase));
 
@@ -1350,19 +1369,49 @@ namespace PsdzClient
             return data;
         }
 
-        public List<TestModuleData> ReadAllTestModules()
+        public bool StoreTestModuleData()
         {
             try
             {
-                List<TestModuleData> testModules = new List<TestModuleData>();
-                string[] files = Directory.GetFiles(_testModulePath, "*.dll");
-                foreach (string file in files)
+                TestModules testModules = ReadAllTestModules();
+                if (testModules == null)
                 {
-                    ReadTestModule(Path.ChangeExtension(file, null));
+                    return false;
                 }
 
-                log.InfoFormat("ReadAllTestModules Count: {0}", testModules.Count);
-                return testModules;
+                XmlSerializer writer = new XmlSerializer(testModules.GetType());
+                string testModulesFile = Path.Combine(_databasePath, "TestModules.xml");
+                using (FileStream fileStream = File.Create(testModulesFile))
+                {
+                    writer.Serialize(fileStream, testModules);
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("StoreTestModuleData Exception: '{0}'", e.Message);
+                return false;
+            }
+        }
+
+        public TestModules ReadAllTestModules()
+        {
+            try
+            {
+                List<TestModuleData> moduleDataList = new List<TestModuleData>();
+                string[] files = Directory.GetFiles(_testModulePath, "ABL_AUS_*.dll");
+                foreach (string file in files)
+                {
+                    TestModuleData moduleData = ReadTestModule(Path.ChangeExtension(file, null));
+                    if (moduleData != null)
+                    {
+                        moduleDataList.Add(moduleData);
+                    }
+                }
+
+                log.InfoFormat("ReadAllTestModules Count: {0}", moduleDataList.Count);
+                return new TestModules(moduleDataList);
             }
             catch (Exception e)
             {
