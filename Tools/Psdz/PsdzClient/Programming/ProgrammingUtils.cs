@@ -211,6 +211,42 @@ namespace BMW.Rheingold.Programming.Common
             return true;
         }
 
+        public static string CompareFa(BMW.Rheingold.CoreFramework.Contracts.Programming.IFa faCurrent, BMW.Rheingold.CoreFramework.Contracts.Programming.IFa faTarget)
+        {
+            if (faCurrent != null && faTarget != null)
+            {
+                List<string> faElementAdded = new List<string>();
+                List<string> faElementRemoved = new List<string>();
+                faElementAdded.Clear();
+                faElementAdded.AddRange(from item in faTarget.EWords
+                    where !faCurrent.EWords.Contains(item)
+                    select item);
+                faElementAdded.AddRange(from item in faTarget.HOWords
+                    where !faCurrent.HOWords.Contains(item)
+                    select item);
+                faElementAdded.AddRange(from item in faTarget.Salapas
+                    where !faCurrent.Salapas.Contains(item)
+                    select item);
+                faElementRemoved.Clear();
+                faElementRemoved.AddRange(from item in faCurrent.EWords
+                    where !faTarget.EWords.Contains(item)
+                    select item);
+                faElementRemoved.AddRange(from item in faCurrent.HOWords
+                    where !faTarget.HOWords.Contains(item)
+                    select item);
+                faElementRemoved.AddRange(from item in faCurrent.Salapas
+                    where !faTarget.Salapas.Contains(item)
+                    select item);
+
+                if (faElementAdded.Any() || faElementRemoved.Any())
+                {
+                    return string.Format(CultureInfo.InvariantCulture, "Added: {0}; Removed: {1}", faElementAdded.ToStringItems(), faElementRemoved.ToStringItems());
+                }
+            }
+
+            return string.Empty;
+        }
+
         public static IEnumerable<IPsdzSgbmId> RemoveCafdsCalculatedOnSCB(IEnumerable<string> cafdList, IEnumerable<IPsdzSgbmId> sweList)
         {
             IEnumerable<string> cafdList2 = cafdList;

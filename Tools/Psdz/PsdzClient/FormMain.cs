@@ -502,7 +502,17 @@ namespace PsdzClient
 
             _selectedOptions.RemoveAll(x => x.Invalid);
 
-            log.InfoFormat("UpdateTargetFa FaTarget: {0}", _psdzContext.FaTarget.AsString);
+            {
+                log.InfoFormat("UpdateTargetFa FaTarget: {0}", _psdzContext.FaTarget.AsString);
+
+                IFa ifaTarget = ProgrammingUtils.BuildFa(_psdzContext.FaTarget);
+                IFa ifaActual = ProgrammingUtils.BuildFa(_psdzContext.FaActual);
+                string compareFa = ProgrammingUtils.CompareFa(ifaActual, ifaTarget);
+                if (!string.IsNullOrEmpty(compareFa))
+                {
+                    log.InfoFormat("UpdateTargetFa Compare FA: {0}", compareFa);
+                }
+            }
 
             UpdateCurrentOptions();
         }
@@ -1258,10 +1268,22 @@ namespace PsdzClient
                 UpdateStatus(sbResult.ToString());
                 _cts?.Token.ThrowIfCancellationRequested();
 
-                if (!bModifyFa)
+                if (bModifyFa)
+                {
+                    IFa ifaActual = ProgrammingUtils.BuildFa(_psdzContext.FaActual);
+                    IFa ifaTarget = ProgrammingUtils.BuildFa(_psdzContext.FaTarget);
+                    string compareFa = ProgrammingUtils.CompareFa(ifaActual, ifaTarget);
+                    if (!string.IsNullOrEmpty(compareFa))
+                    {
+                        log.InfoFormat("Compare FA: {0}", compareFa);
+                        UpdateStatus(sbResult.ToString());
+                    }
+                }
+                else
                 {   // reset target fa
                     _psdzContext.SetFaTarget(psdzFa);
                 }
+
                 programmingService.PdszDatabase.ResetXepRules();
 
                 IEnumerable<IPsdzIstufe> psdzIstufes = programmingService.Psdz.LogicService.GetPossibleIntegrationLevel(_psdzContext.FaTarget);
