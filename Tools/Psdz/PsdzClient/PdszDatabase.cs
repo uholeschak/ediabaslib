@@ -1100,6 +1100,8 @@ namespace PsdzClient
             "99999999708"
         };
 
+        public delegate bool ProgressDelegate(int progress);
+
         private bool _disposed;
         private string _databasePath;
         private string _testModulePath;
@@ -1376,7 +1378,7 @@ namespace PsdzClient
             return data;
         }
 
-        public bool GenerateTestModuleData()
+        public bool GenerateTestModuleData(ProgressDelegate progressHandler)
         {
             try
             {
@@ -1427,7 +1429,7 @@ namespace PsdzClient
                 if (testModules == null)
                 {
                     log.InfoFormat("GenerateTestModuleData Converting test modules");
-                    testModules = ConvertAllTestModules();
+                    testModules = ConvertAllTestModules(progressHandler);
                     if (testModules == null)
                     {
                         log.ErrorFormat("GenerateTestModuleData ConvertAllTestModules failed");
@@ -1474,7 +1476,7 @@ namespace PsdzClient
             }
         }
 
-        public TestModules ConvertAllTestModules()
+        public TestModules ConvertAllTestModules(ProgressDelegate progressHandler)
         {
             try
             {
@@ -1487,8 +1489,19 @@ namespace PsdzClient
                 }
 
                 SerializableDictionary<string, TestModuleData> moduleDataDict = new SerializableDictionary<string, TestModuleData>();
+                int index = 0;
                 foreach (SwiAction swiAction in swiActions)
                 {
+                    if (progressHandler != null)
+                    {
+                        int percent = index * 100 / swiActions.Count;
+                        if (progressHandler.Invoke(percent))
+                        {
+                            log.ErrorFormat("ConvertAllTestModules Aborted at {0}%", percent);
+                            return null;
+                        }
+                    }
+
                     foreach (SwiInfoObj infoInfoObj in swiAction.SwiInfoObjs)
                     {
                         if (infoInfoObj.LinkType == SwiInfoObj.SwiActionDatabaseLinkType.SwiActionActionSelectionLink)
@@ -1509,6 +1522,8 @@ namespace PsdzClient
                             }
                         }
                     }
+
+                    index++;
                 }
 
                 log.InfoFormat("ConvertAllTestModules Count: {0}", moduleDataDict.Count);

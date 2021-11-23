@@ -572,7 +572,29 @@ namespace PsdzClient
 
                 sbResult.AppendLine("Generating test module data ...");
                 UpdateStatus(sbResult.ToString());
-                if (!programmingService.PdszDatabase.GenerateTestModuleData())
+                bool result = programmingService.PdszDatabase.GenerateTestModuleData(progress =>
+                {
+                    BeginInvoke((Action)(() =>
+                    {
+                        progressBarEvent.Style = ProgressBarStyle.Blocks;
+                        labelProgressEvent.Text = string.Format(CultureInfo.InvariantCulture, "{0}%", progress);
+                        progressBarEvent.Value = progress;
+                    }));
+
+                    if (_cts != null)
+                    {
+                        return _cts.Token.IsCancellationRequested;
+                    }
+                    return false;
+                });
+
+                BeginInvoke((Action)(() =>
+                {
+                    progressBarEvent.Style = ProgressBarStyle.Marquee;
+                    labelProgressEvent.Text = string.Empty;
+                }));
+
+                if (!result)
                 {
                     sbResult.AppendLine("Generating test module data failed");
                     UpdateStatus(sbResult.ToString());
@@ -1598,9 +1620,12 @@ namespace PsdzClient
 
         private void buttonStartHost_Click(object sender, EventArgs e)
         {
+            _cts = new CancellationTokenSource();
             StartProgrammingServiceTask(DealerId).ContinueWith(task =>
             {
                 TaskActive = false;
+                _cts.Dispose();
+                _cts = null;
             });
 
             TaskActive = true;
