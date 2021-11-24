@@ -11,7 +11,7 @@
 <body>
     <form id="form1" runat="server">
     <div>
-        <h1>Mobile Master Page</h1>
+        <h1>Mobile PsdzClient</h1>
         <asp:ContentPlaceHolder runat="server" ID="FeaturedContent" />
         <section class="content-wrapper main-content clear-fix">
             <asp:ContentPlaceHolder runat="server" ID="MainContent" />

@@ -47,8 +47,8 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" runat="server" href="~/">Anwendungsname</a>
-                </div>
+                    <a class="navbar-brand" runat="server" href="~/">PsdzClient</a><br />
+&nbsp;</div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
                         <li><a runat="server" href="~/">Startseite</a></li>
@@ -63,10 +63,9 @@
             </asp:ContentPlaceHolder>
             <hr />
             <footer>
-                <p>&copy; <%: DateTime.Now.Year %> - Meine ASP.NET-Anwendung</p>
+                <p>&copy; <%: DateTime.Now.Year %> - PsdzClient</p>
             </footer>
         </div>
-
     </form>
 </body>
 </html>
