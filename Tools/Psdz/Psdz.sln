@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsdzClient", "PsdzClient\Ps
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdiabasLib", "..\..\EdiabasLib\EdiabasLib\EdiabasLib.csproj", "{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPsdzClient", "WebPsdzClient\WebPsdzClient.csproj", "{2E1B39A4-D81F-49D0-B306-FA036E12732E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E1B39A4-D81F-49D0-B306-FA036E12732E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E1B39A4-D81F-49D0-B306-FA036E12732E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E1B39A4-D81F-49D0-B306-FA036E12732E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E1B39A4-D81F-49D0-B306-FA036E12732E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
