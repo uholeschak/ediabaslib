@@ -10,7 +10,7 @@
     <RootNamespace>UsbSerialBinding</RootNamespace>
     <AssemblyName>UsbSerialBinding</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkVersion>v11.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v12.0</TargetFrameworkVersion>
     <LangVersion>latest</LangVersion>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>UsbSerialBinding.snk</AssemblyOriginatorKeyFile>
