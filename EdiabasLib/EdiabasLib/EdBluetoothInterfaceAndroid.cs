@@ -82,18 +82,39 @@ namespace EdiabasLib
                 return false;
             }
 
-            BluetoothAdapter bluetoothAdapter = BluetoothAdapter.DefaultAdapter;
-            if (bluetoothAdapter == null)
-            {
-                return false;
-            }
             _elm327Device = false;
             _connectPort = port;
             _connectParameter = parameter as ConnectParameterType;
+
             bool mtcBtService = _connectParameter != null && _connectParameter.MtcBtService;
             bool mtcBtEscapeMode = _connectParameter != null && _connectParameter.MtcBtEscapeMode;
             try
             {
+                Android.Content.Context context = null;
+                if (_connectParameter?.GetContextHandler != null)
+                {
+                    context = _connectParameter.GetContextHandler();
+                }
+
+                BluetoothAdapter bluetoothAdapter;
+                if (Android.OS.Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.JellyBeanMr2)
+                {
+                    BluetoothManager bluetoothManager = context?.GetSystemService(Android.Content.Context.BluetoothService) as BluetoothManager;
+                    bluetoothAdapter = bluetoothManager?.Adapter;
+                }
+                else
+                {
+#pragma warning disable 618
+                    bluetoothAdapter = BluetoothAdapter.DefaultAdapter;
+#pragma warning restore 618
+                }
+
+                if (bluetoothAdapter == null)
+                {
+                    InterfaceDisconnect();
+                    return false;
+                }
+
                 BluetoothDevice device;
                 string portData = port.Remove(0, PortId.Length);
                 if ((portData.Length > 0) && (portData[0] == ':'))
@@ -133,21 +154,16 @@ namespace EdiabasLib
 
                 bool usedRfCommSocket = false;
                 Receiver receiver = null;
-                Android.Content.Context context = null;
                 int connectTimeout = mtcBtService ? 1000 : 2000;
                 try
                 {
-                    if (_connectParameter?.GetContextHandler != null)
+                    if (context != null)
                     {
-                        context = _connectParameter.GetContextHandler();
-                        if (context != null)
-                        {
-                            receiver = new Receiver();
-                            Android.Content.IntentFilter filter = new Android.Content.IntentFilter();
-                            filter.AddAction(BluetoothDevice.ActionAclConnected);
-                            filter.AddAction(BluetoothDevice.ActionAclDisconnected);
-                            context.RegisterReceiver(receiver, filter);
-                        }
+                        receiver = new Receiver();
+                        Android.Content.IntentFilter filter = new Android.Content.IntentFilter();
+                        filter.AddAction(BluetoothDevice.ActionAclConnected);
+                        filter.AddAction(BluetoothDevice.ActionAclDisconnected);
+                        context.RegisterReceiver(receiver, filter);
                     }
 
                     _connectDeviceAddress = device.Address;
