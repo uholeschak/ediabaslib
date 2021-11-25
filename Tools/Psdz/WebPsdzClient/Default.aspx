@@ -9,7 +9,9 @@
     </div>
     <div class="jumbotron">
         <h1>Toolbar</h1>
+        <p class="lead">
         <asp:Button ID="ButtonStartHost" runat="server" Text="Start Host" OnClick="ButtonStartHost_Click" />
         <asp:Button ID="ButtonStopHost" runat="server" Text="Stop Host" OnClick="ButtonStopHost_Click" />
+        </p>
     </div>
 </asp:Content>
