@@ -58,6 +58,7 @@ namespace BmwDeepObd
         private TextView _textViewCaptionTranslator;
         private RadioButton _radioButtonTranslatorYandex;
         private RadioButton _radioButtonTranslatorIbm;
+        private TextView _textViewCaptionTranslatorLogin;
         private CheckBox _checkBoxTranslatorLogin;
         private CheckBox _checkBoxAutoHideTitleBar;
         private CheckBox _checkBoxSuppressTitleBar;
@@ -173,6 +174,8 @@ namespace BmwDeepObd
                 ActivityCommon.IsTranslationRequired() ||
                 (ActivityCommon.SelectedTranslator == ActivityCommon.TranslatorType.IbmWatson && ActivityCommon.IsTranslationAvailable()) ?
                 ViewStates.Visible : ViewStates.Gone;
+            _textViewCaptionTranslatorLogin = FindViewById<TextView>(Resource.Id.textViewCaptionTranslatorLogin);
+            _textViewCaptionTranslatorLogin.Visibility = viewStateTransLogin;
             _checkBoxTranslatorLogin = FindViewById<CheckBox>(Resource.Id.checkBoxTranslatorLogin);
             _checkBoxTranslatorLogin.Visibility = viewStateTransLogin;
 

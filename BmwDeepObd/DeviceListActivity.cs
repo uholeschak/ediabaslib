@@ -246,7 +246,7 @@ namespace BmwDeepObd
             RegisterReceiver(_receiver, filter);
 
             // Get the local Bluetooth adapter
-            _btAdapter = BluetoothAdapter.DefaultAdapter;
+            _btAdapter = _activityCommon.BtAdapter;
             _btLeGattSpp = new BtLeGattSpp(LogString);
 
             // Get a set of currently paired devices
@@ -468,44 +468,53 @@ namespace BmwDeepObd
 
         private void UpdatePairedDevices()
         {
-            // Get a set of currently paired devices
-            var pairedDevices = _btAdapter.BondedDevices;
-
-            // If there are paired devices, add each one to the ArrayAdapter
-            _pairedDevicesArrayAdapter.Clear();
-            if (pairedDevices.Count > 0)
+            try
             {
-                foreach (var device in pairedDevices)
+                // Get a set of currently paired devices
+                ICollection<BluetoothDevice> pairedDevices = _btAdapter.BondedDevices;
+
+                // If there are paired devices, add each one to the ArrayAdapter
+                _pairedDevicesArrayAdapter.Clear();
+                if (pairedDevices?.Count > 0)
                 {
-                    if (device == null)
+                    foreach (var device in pairedDevices)
                     {
-                        continue;
-                    }
-                    try
-                    {
-                        if (IsBtDeviceValid(device))
+                        if (device == null)
                         {
-                            _pairedDevicesArrayAdapter.Add(device.Name + "\n" + device.Address);
+                            continue;
+                        }
+                        try
+                        {
+                            if (IsBtDeviceValid(device))
+                            {
+                                _pairedDevicesArrayAdapter.Add(device.Name + "\n" + device.Address);
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
                         }
                     }
-                    catch (Exception)
+                }
+
+                if (_pairedDevicesArrayAdapter.Count == 0)
+                {
+                    // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                    if (_btAdapter.IsEnabled)
                     {
-                        // ignored
+                        _pairedDevicesArrayAdapter.Add(Resources.GetText(Resource.String.none_paired));
+                    }
+                    else
+                    {
+                        _pairedDevicesArrayAdapter.Add(Resources.GetText(Resource.String.bt_not_enabled));
                     }
                 }
             }
-
-            if (_pairedDevicesArrayAdapter.Count == 0)
+            catch (Exception e)
             {
-                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                if (_btAdapter.IsEnabled)
-                {
-                    _pairedDevicesArrayAdapter.Add(Resources.GetText(Resource.String.none_paired));
-                }
-                else
-                {
-                    _pairedDevicesArrayAdapter.Add(Resources.GetText(Resource.String.bt_not_enabled));
-                }
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format("UpdatePairedDevices Exception: {0}", e.Message));
+#endif
             }
         }
 
@@ -781,33 +790,42 @@ namespace BmwDeepObd
         {
             // Log.Debug (Tag, "doDiscovery()");
 
-            // If we're already discovering, stop it
-            if (_btAdapter.IsDiscovering)
+            try
             {
-                _btAdapter.CancelDiscovery ();
-            }
-            _newDevicesArrayAdapter.Clear();
-
-            // Request discover from BluetoothAdapter
-            if (_btAdapter.StartDiscovery())
-            {
-                // Indicate scanning in the title
-                ShowScanState(true);
-
-                // Turn on area for new devices
-                FindViewById<View>(Resource.Id.layout_new_devices).Visibility = ViewStates.Visible;
-            }
-            else
-            {
-                try
+                // If we're already discovering, stop it
+                if (_btAdapter.IsDiscovering)
                 {
-                    Intent intent = new Intent(Android.Provider.Settings.ActionBluetoothSettings);
-                    StartActivityForResult(intent, (int)ActivityRequest.RequestBluetoothSettings);
+                    _btAdapter.CancelDiscovery();
                 }
-                catch (Exception)
+                _newDevicesArrayAdapter.Clear();
+
+                // Request discover from BluetoothAdapter
+                if (_btAdapter.StartDiscovery())
                 {
-                    // ignored
+                    // Indicate scanning in the title
+                    ShowScanState(true);
+
+                    // Turn on area for new devices
+                    FindViewById<View>(Resource.Id.layout_new_devices).Visibility = ViewStates.Visible;
                 }
+                else
+                {
+                    try
+                    {
+                        Intent intent = new Intent(Android.Provider.Settings.ActionBluetoothSettings);
+                        StartActivityForResult(intent, (int)ActivityRequest.RequestBluetoothSettings);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format("DoDiscovery Exception: {0}", e.Message));
+#endif
             }
         }
 
