@@ -13,5 +13,15 @@ namespace WebPsdzClient
         {
 
         }
+
+        protected void ButtonStartHost_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        protected void ButtonStopHost_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
