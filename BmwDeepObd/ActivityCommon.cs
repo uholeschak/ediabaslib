@@ -629,6 +629,7 @@ namespace BmwDeepObd
         private static List<string> _recentConfigList;
         private static List<SerialInfoEntry> _serialInfoList;
         private readonly BluetoothAdapter _btAdapter;
+        private readonly BluetoothManager _bluetoothManager;
         private readonly Java.Lang.Object _clipboardManager;
         private readonly WifiManager _maWifi;
         private readonly ConnectivityManager _maConnectivity;
@@ -1141,7 +1142,17 @@ namespace BmwDeepObd
             _bcReceiverReceivedHandler = bcReceiverReceivedHandler;
             Emulator = IsEmulator();
             _clipboardManager = context?.GetSystemService(Context.ClipboardService);
-            _btAdapter = BluetoothAdapter.DefaultAdapter;
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.JellyBeanMr2)
+            {
+                _bluetoothManager = context?.GetSystemService(Context.BluetoothService) as BluetoothManager;
+                _btAdapter = _bluetoothManager?.Adapter;
+            }
+            else
+            {
+#pragma warning disable 618
+                _btAdapter = BluetoothAdapter.DefaultAdapter;
+#pragma warning restore 618
+            }
             _btUpdateHandler = new Handler(Looper.MainLooper);
             _maWifi = (WifiManager)context?.ApplicationContext?.GetSystemService(Context.WifiService);
             _maConnectivity = (ConnectivityManager)context?.ApplicationContext?.GetSystemService(Context.ConnectivityService);
