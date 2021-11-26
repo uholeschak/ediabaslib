@@ -94,7 +94,9 @@ namespace BmwDeepObd
         private const int RequestPermissionLocation = 0;
         private readonly string[] _permissionsLocation =
         {
-            Android.Manifest.Permission.AccessFineLocation
+            Android.Manifest.Permission.AccessFineLocation,
+            Android.Manifest.Permission.BluetoothScan,
+            Android.Manifest.Permission.BluetoothConnect,
         };
 
         // Return Intent extra
