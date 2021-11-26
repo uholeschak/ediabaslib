@@ -1,5 +1,3 @@
-//#define APP_USB_FILTER
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -38,9 +36,8 @@ using Mono.CSharp;
 // ReSharper disable IdentifierTypo
 // ReSharper disable StringLiteralTypo
 
-#if APP_USB_FILTER
-[assembly: Android.App.UsesFeature("android.hardware.usb.host")]
-#endif
+[assembly: Android.App.UsesFeature("android.hardware.bluetooth", Required = false)]
+[assembly: Android.App.UsesFeature("android.hardware.bluetooth_le", Required = false)]
 
 namespace BmwDeepObd
 {
@@ -49,10 +46,6 @@ namespace BmwDeepObd
             UiOptions=UiOptions.SplitActionBarWhenNarrow,
             ConfigurationChanges = ActivityConfigChanges)]
     [Android.App.MetaData("android.support.UI_OPTIONS", Value = "splitActionBarWhenNarrow")]
-#if APP_USB_FILTER
-    [Android.App.IntentFilter(new[] { UsbManager.ActionUsbDeviceAttached })]
-    [Android.App.MetaData(UsbManager.ActionUsbDeviceAttached, Resource = "@xml/device_filter")]
-#endif
     public class ActivityMain : BaseActivity, TabLayout.IOnTabSelectedListener
     {
         private enum ActivityRequest
