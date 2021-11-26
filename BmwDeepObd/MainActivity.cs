@@ -50,6 +50,7 @@ namespace BmwDeepObd
     {
         private enum ActivityRequest
         {
+            RequestAppStorePermissions,
             RequestSelectDevice,
             RequestAdapterConfig,
             RequestSelectConfig,
@@ -844,6 +845,10 @@ namespace BmwDeepObd
             ActivityCommon.ActivityStartedFromMain = false;
             switch ((ActivityRequest)requestCode)
             {
+                case ActivityRequest.RequestAppStorePermissions:
+                    RequestStoragePermissions(true);
+                    break;
+
                 case ActivityRequest.RequestSelectDevice:
                     // When DeviceListActivity returns with a device to connect
                     if (data != null && resultCode == Android.App.Result.Ok)
@@ -1501,8 +1506,44 @@ namespace BmwDeepObd
                         StoragePermissionGranted();
                         break;
                     }
-                    Toast.MakeText(this, GetString(Resource.String.access_denied_ext_storage), ToastLength.Long)?.Show();
-                    Finish();
+
+                    bool finish = true;
+                    AlertDialog alertDialog = new AlertDialog.Builder(this)
+                        .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                        {
+                            try
+                            {
+                                Intent intent = new Intent(Android.Provider.Settings.ActionApplicationDetailsSettings,
+                                    Android.Net.Uri.Parse("package:" + Android.App.Application.Context.PackageName));
+                                StartActivityForResult(intent, (int)ActivityRequest.RequestAppStorePermissions);
+                                finish = false;
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                        })
+                        .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                        {
+                            Finish();
+                        })
+                        .SetCancelable(true)
+                        .SetMessage(Resource.String.access_denied_ext_storage)
+                        .SetTitle(Resource.String.alert_title_warning)
+                        .Show();
+
+                    alertDialog.DismissEvent += (sender, args) =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
+                        if (finish)
+                        {
+                            Finish();
+                        }
+                    };
                     break;
             }
         }
@@ -2696,13 +2737,19 @@ namespace BmwDeepObd
             return false;
         }
 
-        private void RequestStoragePermissions()
+        private void RequestStoragePermissions(bool finish = false)
         {
             if (_permissionsExternalStorage.All(permission => ContextCompat.CheckSelfPermission(this, permission) == Permission.Granted))
             {
                 StoragePermissionGranted();
                 return;
             }
+
+            if (finish)
+            {
+                Finish();
+            }
+
             ActivityCompat.RequestPermissions(this, _permissionsExternalStorage, RequestPermissionExternalStorage);
         }
 

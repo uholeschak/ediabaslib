@@ -416,7 +416,7 @@ namespace BmwDeepObd
                                         Android.Net.Uri.Parse("package:" + Android.App.Application.Context.PackageName));
                                     StartActivityForResult(intent, (int)ActivityRequest.RequestAppDetailSettings);
                                 }
-                                catch (Exception ex)
+                                catch (Exception)
                                 {
                                     // ignored
                                 }
