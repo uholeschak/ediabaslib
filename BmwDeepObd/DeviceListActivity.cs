@@ -476,14 +476,14 @@ namespace BmwDeepObd
         {
             try
             {
-                // Get a set of currently paired devices
-                ICollection<BluetoothDevice> pairedDevices = _btAdapter.BondedDevices;
-
                 // If there are paired devices, add each one to the ArrayAdapter
                 _pairedDevicesArrayAdapter.Clear();
+
+                // Get a set of currently paired devices
+                ICollection<BluetoothDevice> pairedDevices = _btAdapter.BondedDevices;
                 if (pairedDevices?.Count > 0)
                 {
-                    foreach (var device in pairedDevices)
+                    foreach (BluetoothDevice device in pairedDevices)
                     {
                         if (device == null)
                         {
@@ -516,10 +516,10 @@ namespace BmwDeepObd
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
 #if DEBUG
-                Android.Util.Log.Info(Tag, string.Format("UpdatePairedDevices Exception: {0}", e.Message));
+                Android.Util.Log.Info(Tag, string.Format("UpdatePairedDevices exception: {0}", EdiabasNet.GetExceptionText(ex)));
 #endif
             }
         }
@@ -798,12 +798,13 @@ namespace BmwDeepObd
 
             try
             {
+                _newDevicesArrayAdapter.Clear();
+
                 // If we're already discovering, stop it
                 if (_btAdapter.IsDiscovering)
                 {
                     _btAdapter.CancelDiscovery();
                 }
-                _newDevicesArrayAdapter.Clear();
 
                 // Request discover from BluetoothAdapter
                 if (_btAdapter.StartDiscovery())
@@ -827,10 +828,10 @@ namespace BmwDeepObd
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
 #if DEBUG
-                Android.Util.Log.Info(Tag, string.Format("DoDiscovery Exception: {0}", e.Message));
+                Android.Util.Log.Info(Tag, string.Format("DoDiscovery Exception: {0}", EdiabasNet.GetExceptionText(ex)));
 #endif
             }
         }
