@@ -393,7 +393,7 @@ namespace BmwDeepObd
                     if (!_instanceData.LocationWarningShown)
                     {
                         _instanceData.LocationWarningShown = true;
-                        _activityCommon.ShowAlert(GetString(Resource.String.location_permission_rejected), Resource.String.alert_title_warning);
+                        _activityCommon.ShowAlert(GetString(Resource.String.access_permission_rejected), Resource.String.alert_title_warning);
                     }
                     break;
             }
