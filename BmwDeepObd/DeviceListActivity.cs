@@ -79,7 +79,7 @@ namespace BmwDeepObd
         {
             public bool BtPermissionRequested { get; set; }
             public bool BtPermissionGranted { get; set; }
-            public bool LocationWarningShown { get; set; }
+            public bool BtPermissionWarningShown { get; set; }
             public bool LocationProviderShown { get; set; }
             public bool MtcAntennaInfoShown { get; set; }
             public bool MtcBtModuleErrorShown { get; set; }
@@ -404,9 +404,9 @@ namespace BmwDeepObd
                         break;
                     }
 
-                    if (!_instanceData.LocationWarningShown)
+                    if (!_instanceData.BtPermissionWarningShown)
                     {
-                        _instanceData.LocationWarningShown = true;
+                        _instanceData.BtPermissionWarningShown = true;
                         new AlertDialog.Builder(this)
                             .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                             {
@@ -416,7 +416,7 @@ namespace BmwDeepObd
                                         Android.Net.Uri.Parse("package:" + Android.App.Application.Context.PackageName));
                                     StartActivityForResult(intent, (int)ActivityRequest.RequestAppDetailSettings);
                                 }
-                                catch (Exception ex)
+                                catch (Exception)
                                 {
                                     // ignored
                                 }
