@@ -32,6 +32,11 @@ namespace BmwDeepObd
 #if DEBUG
         private static readonly string Tag = typeof(ExpansionDownloaderActivity).FullName;
 #endif
+        private enum ActivityRequest
+        {
+            RequestAppStorePermissions,
+        }
+
 #if true
         private const int ObbFileSize = 390926288;
         private static readonly byte[] ObbMd5 = { 0x6E, 0xAB, 0x9B, 0xA9, 0x37, 0x85, 0x1E, 0xD8, 0x61, 0x12, 0xF7, 0x91, 0x44, 0xC7, 0x55, 0x59 };
@@ -46,8 +51,10 @@ namespace BmwDeepObd
         };
 
         private static string _assetFileName;
+        private bool _storageAccessGranted;
         private bool _downloadStarted;
         private bool _activityActive;
+        private bool _destroyed;
 
         /// <summary>
         /// The downloader service.
@@ -269,6 +276,8 @@ namespace BmwDeepObd
                     // ignored
                 }
             }
+
+            RequestStoragePermissions();
         }
 
         /// <summary>
@@ -288,7 +297,7 @@ namespace BmwDeepObd
                 // ignored
             }
 
-            RequestStoragePermissions();
+            StartDownload();
         }
 
         /// <summary>
@@ -310,9 +319,25 @@ namespace BmwDeepObd
             _activityActive = false;
         }
 
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            _destroyed = true;
+        }
+
+        protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
+        {
+            switch ((ActivityRequest)requestCode)
+            {
+                case ActivityRequest.RequestAppStorePermissions:
+                    RequestStoragePermissions(true);
+                    break;
+            }
+        }
+
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
         {
-            if (!_activityActive)
+            if (_destroyed)
             {
                 return;
             }
@@ -324,8 +349,43 @@ namespace BmwDeepObd
                         StoragePermissionGranted();
                         break;
                     }
-                    Toast.MakeText(this, GetString(Resource.String.access_denied_ext_storage), ToastLength.Long)?.Show();
-                    Finish();
+
+                    bool finish = true;
+                    AlertDialog alertDialog = new AlertDialog.Builder(this)
+                        .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                        {
+                            try
+                            {
+                                Intent intent = new Intent(Android.Provider.Settings.ActionApplicationDetailsSettings,
+                                    Android.Net.Uri.Parse("package:" + Android.App.Application.Context.PackageName));
+                                StartActivityForResult(intent, (int)ActivityRequest.RequestAppStorePermissions);
+                                finish = false;
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                        })
+                        .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                        {
+                        })
+                        .SetCancelable(true)
+                        .SetMessage(Resource.String.access_denied_ext_storage)
+                        .SetTitle(Resource.String.alert_title_warning)
+                        .Show();
+
+                    alertDialog.DismissEvent += (sender, args) =>
+                    {
+                        if (_destroyed)
+                        {
+                            return;
+                        }
+
+                        if (finish)
+                        {
+                            Finish();
+                        }
+                    };
                     break;
             }
         }
@@ -809,22 +869,38 @@ namespace BmwDeepObd
             ThreadPool.QueueUserWorkItem(DoValidateZipFiles);
         }
 
-        private void RequestStoragePermissions()
+        private void RequestStoragePermissions(bool finish = false)
         {
             if (_permissionsExternalStorage.All(permission => ContextCompat.CheckSelfPermission(this, permission) == Permission.Granted))
             {
-                if (!_activityActive)
+                if (_destroyed)
                 {
                     return;
                 }
                 StoragePermissionGranted();
                 return;
             }
+
+            if (finish)
+            {
+                Finish();
+            }
+
             ActivityCompat.RequestPermissions(this, _permissionsExternalStorage, RequestPermissionExternalStorage);
         }
 
         private void StoragePermissionGranted()
         {
+            _storageAccessGranted = true;
+        }
+
+        private void StartDownload()
+        {
+            if (!_storageAccessGranted)
+            {
+                return;
+            }
+
             if (!_downloadStarted)
             {
                 _downloadStarted = true;
@@ -901,7 +977,7 @@ namespace BmwDeepObd
                         .Show();
                     alertDialog.DismissEvent += (sender, args) =>
                     {
-                        if (!_activityActive)
+                        if (_destroyed)
                         {
                             return;
                         }
