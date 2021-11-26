@@ -77,8 +77,8 @@ namespace BmwDeepObd
 
         public class InstanceData
         {
-            public bool LocationPermssionRequested { get; set; }
-            public bool LocationPermssionGranted { get; set; }
+            public bool BtPermissionRequested { get; set; }
+            public bool BtPermissionGranted { get; set; }
             public bool LocationWarningShown { get; set; }
             public bool LocationProviderShown { get; set; }
             public bool MtcAntennaInfoShown { get; set; }
@@ -91,10 +91,13 @@ namespace BmwDeepObd
         private static readonly Java.Util.UUID SppUuid = Java.Util.UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
         private static readonly Java.Util.UUID ZeroUuid = Java.Util.UUID.FromString("00000000-0000-0000-0000-000000000000");
         private const int ResponseTimeout = 1000;
-        private const int RequestPermissionLocation = 0;
+        private const int RequestPermissionBluetooth = 0;
         private readonly string[] _permissionsLocation =
         {
             Android.Manifest.Permission.AccessFineLocation,
+        };
+        private readonly string[] _permissionsBluetooth =
+        {
             Android.Manifest.Permission.BluetoothScan,
             Android.Manifest.Permission.BluetoothConnect,
         };
@@ -299,7 +302,7 @@ namespace BmwDeepObd
             }
             else
             {
-                RequestLocationPermissions();
+                RequestBtPermissions();
                 UpdatePairedDevices();
             }
         }
@@ -380,10 +383,10 @@ namespace BmwDeepObd
 
             switch (requestCode)
             {
-                case RequestPermissionLocation:
+                case RequestPermissionBluetooth:
                     if (grantResults.Length > 0 && grantResults.All(permission => permission == Permission.Granted))
                     {
-                        LocationPermissionGranted();
+                        BtPermissionGranted();
                         break;
                     }
 
@@ -396,7 +399,7 @@ namespace BmwDeepObd
             }
         }
 
-        private void RequestLocationPermissions()
+        private void RequestBtPermissions()
         {
             if (_activityCommon.MtcBtService)
             {
@@ -408,25 +411,26 @@ namespace BmwDeepObd
                 return;
             }
 
-            if (_instanceData.LocationPermssionRequested)
+            if (_instanceData.BtPermissionRequested)
             {
                 return;
             }
 
-            if (_permissionsLocation.All(permission => ContextCompat.CheckSelfPermission(this, permission) == Permission.Granted))
+            string[] requestPermissions = Build.VERSION.SdkInt < BuildVersionCodes.S ? _permissionsLocation : _permissionsBluetooth;
+            if (requestPermissions.All(permission => ContextCompat.CheckSelfPermission(this, permission) == Permission.Granted))
             {
-                LocationPermissionGranted();
+                BtPermissionGranted();
                 return;
             }
 
-            _instanceData.LocationPermssionRequested = true;
-            ActivityCompat.RequestPermissions(this, _permissionsLocation, RequestPermissionLocation);
+            _instanceData.BtPermissionRequested = true;
+            ActivityCompat.RequestPermissions(this, requestPermissions, RequestPermissionBluetooth);
         }
 
-        private void LocationPermissionGranted()
+        private void BtPermissionGranted()
         {
-            _instanceData.LocationPermssionGranted = true;
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+            _instanceData.BtPermissionGranted = true;
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q && Build.VERSION.SdkInt < BuildVersionCodes.S)
             {
                 if (_activityCommon.LocationManager != null)
                 {
