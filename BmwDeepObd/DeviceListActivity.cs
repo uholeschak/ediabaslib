@@ -139,6 +139,7 @@ namespace BmwDeepObd
         {
             RequestBluetoothSettings,
             RequestLocationSettings,
+            RequestAppDetailSettings,
         }
 
         protected override void OnCreate (Bundle savedInstanceState)
@@ -381,6 +382,9 @@ namespace BmwDeepObd
 
                 case ActivityRequest.RequestLocationSettings:
                     break;
+
+                case ActivityRequest.RequestAppDetailSettings:
+                    break;
             }
         }
 
@@ -403,7 +407,27 @@ namespace BmwDeepObd
                     if (!_instanceData.LocationWarningShown)
                     {
                         _instanceData.LocationWarningShown = true;
-                        _activityCommon.ShowAlert(GetString(Resource.String.access_permission_rejected), Resource.String.alert_title_warning);
+                        new AlertDialog.Builder(this)
+                            .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                            {
+                                try
+                                {
+                                    Intent intent = new Intent(Android.Provider.Settings.ActionApplicationDetailsSettings,
+                                        Android.Net.Uri.Parse("package:" + Android.App.Application.Context.PackageName));
+                                    StartActivityForResult(intent, (int)ActivityRequest.RequestAppDetailSettings);
+                                }
+                                catch (Exception ex)
+                                {
+                                    // ignored
+                                }
+                            })
+                            .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                            {
+                            })
+                            .SetCancelable(true)
+                            .SetMessage(Resource.String.access_permission_rejected)
+                            .SetTitle(Resource.String.alert_title_warning)
+                            .Show();
                     }
                     break;
             }
