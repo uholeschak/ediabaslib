@@ -332,7 +332,17 @@ namespace BmwDeepObd
             base.OnDestroy ();
 
             // Make sure we're not doing discovery anymore
-            _btAdapter?.CancelDiscovery ();
+            try
+            {
+                _btAdapter?.CancelDiscovery();
+            }
+            catch (Exception ex)
+            {
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format("OnDestroy exception: {0}", EdiabasNet.GetExceptionText(ex)));
+#endif
+            }
+
             if (_btLeGattSpp != null)
             {
                 _btLeGattSpp.Dispose();
