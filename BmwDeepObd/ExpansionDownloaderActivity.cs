@@ -51,6 +51,7 @@ namespace BmwDeepObd
         };
 
         private static string _assetFileName;
+        private bool _storageAccessRequested;
         private bool _storageAccessGranted;
         private bool _downloadStarted;
         private bool _activityActive;
@@ -258,6 +259,7 @@ namespace BmwDeepObd
             base.OnCreate(savedInstanceState);
 
             _downloadStarted = false;
+            _storageAccessRequested = false;
             _storageAccessGranted = false;
         }
 
@@ -265,6 +267,7 @@ namespace BmwDeepObd
         {
             base.OnStart();
 
+            _storageAccessRequested = false;
             if (IsAssetPresent(this))
             {
                 try
@@ -277,8 +280,6 @@ namespace BmwDeepObd
                     // ignored
                 }
             }
-
-            RequestStoragePermissions();
         }
 
         /// <summary>
@@ -296,6 +297,12 @@ namespace BmwDeepObd
             catch (Exception)
             {
                 // ignored
+            }
+
+            if (!_storageAccessRequested)
+            {
+                _storageAccessRequested = true;
+                RequestStoragePermissions();
             }
 
             StartDownload();

@@ -643,6 +643,7 @@ namespace BmwDeepObd
         {
             base.OnStart();
 
+            _onResumeExecuted = false;
             _activityCommon?.StartMtcService();
             if (_instanceData.StorageAccessGranted)
             {
@@ -682,6 +683,7 @@ namespace BmwDeepObd
                 _onResumeExecuted = true;
                 RequestStoragePermissions();
             }
+
             _activityActive = true;
             _activityCommon.MtcBtDisconnectWarnShown = false;
             UpdateLockState();
