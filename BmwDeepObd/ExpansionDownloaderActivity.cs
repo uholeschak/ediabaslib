@@ -267,6 +267,7 @@ namespace BmwDeepObd
         {
             base.OnStart();
 
+            _storageAccessRequested = false;
             if (IsAssetPresent(this))
             {
                 try
@@ -279,8 +280,6 @@ namespace BmwDeepObd
                     // ignored
                 }
             }
-
-            _storageAccessRequested = false;
         }
 
         /// <summary>
