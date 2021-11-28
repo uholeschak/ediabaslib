@@ -337,8 +337,11 @@ namespace BmwDeepObd
             {
                 _btAdapter?.CancelDiscovery();
             }
+#pragma warning disable 168
             catch (Exception ex)
+#pragma warning restore 168
             {
+                // ignored
 #if DEBUG
                 Android.Util.Log.Info(Tag, string.Format("OnDestroy exception: {0}", EdiabasNet.GetExceptionText(ex)));
 #endif
@@ -550,8 +553,11 @@ namespace BmwDeepObd
                     }
                 }
             }
+#pragma warning disable 168
             catch (Exception ex)
+#pragma warning restore 168
             {
+                // ignored
 #if DEBUG
                 Android.Util.Log.Info(Tag, string.Format("UpdatePairedDevices exception: {0}", EdiabasNet.GetExceptionText(ex)));
 #endif
@@ -862,8 +868,11 @@ namespace BmwDeepObd
                     }
                 }
             }
+#pragma warning disable 168
             catch (Exception ex)
+#pragma warning restore 168
             {
+                // ignored
 #if DEBUG
                 Android.Util.Log.Info(Tag, string.Format("DoDiscovery Exception: {0}", EdiabasNet.GetExceptionText(ex)));
 #endif
