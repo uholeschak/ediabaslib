@@ -1572,13 +1572,10 @@ namespace BmwDeepObd
                         {
                             return true;
                         }
-                        if ((_maWifi != null) && _maWifi.IsWifiEnabled)
+
+                        if (IsValidWifiConnection())
                         {
-                            WifiInfo wifiInfo = _maWifi.ConnectionInfo;
-                            if (wifiInfo != null && _maWifi.DhcpInfo != null && wifiInfo.IpAddress != 0)
-                            {
-                                return true;
-                            }
+                            return true;
                         }
 
                         if (_selectedInterface == InterfaceType.Enet && IsValidEthernetConnection())
@@ -2916,6 +2913,57 @@ namespace BmwDeepObd
             return false;
         }
 
+        public bool IsValidWifiConnection()
+        {
+            try
+            {
+                if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+                {
+                    if ((_maWifi != null) && _maWifi.IsWifiEnabled)
+                    {
+#pragma warning disable 618
+                        WifiInfo wifiInfo = _maWifi.ConnectionInfo;
+                        if (wifiInfo != null && _maWifi.DhcpInfo != null && wifiInfo.IpAddress != 0)
+#pragma warning restore 618
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
+
+                bool result = false;
+                lock (_networkData.LockObject)
+                {
+                    foreach (Network network in _networkData.ActiveWifiNetworks)
+                    {
+                        LinkProperties linkProperties = _maConnectivity.GetLinkProperties(network);
+                        if (linkProperties != null)
+                        {
+                            foreach (LinkAddress linkAddress in linkProperties.LinkAddresses)
+                            {
+                                if (linkAddress.Address is Java.Net.Inet4Address inet4Address)
+                                {
+                                    if (inet4Address.IsSiteLocalAddress || inet4Address.IsLinkLocalAddress)
+                                    {
+                                        result = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return result;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public bool IsValidEthernetConnection()
         {
             try
@@ -2931,14 +2979,17 @@ namespace BmwDeepObd
                     foreach (Network network in _networkData.ActiveEthernetNetworks)
                     {
                         LinkProperties linkProperties = _maConnectivity.GetLinkProperties(network);
-                        foreach (LinkAddress linkAddress in linkProperties.LinkAddresses)
+                        if (linkProperties != null)
                         {
-                            if (linkAddress.Address is Java.Net.Inet4Address inet4Address)
+                            foreach (LinkAddress linkAddress in linkProperties.LinkAddresses)
                             {
-                                if (inet4Address.IsSiteLocalAddress || inet4Address.IsLinkLocalAddress)
+                                if (linkAddress.Address is Java.Net.Inet4Address inet4Address)
                                 {
-                                    result = true;
-                                    break;
+                                    if (inet4Address.IsSiteLocalAddress || inet4Address.IsLinkLocalAddress)
+                                    {
+                                        result = true;
+                                        break;
+                                    }
                                 }
                             }
                         }
