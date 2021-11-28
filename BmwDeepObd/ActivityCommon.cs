@@ -1573,7 +1573,7 @@ namespace BmwDeepObd
                             return true;
                         }
 
-                        if (IsValidWifiConnection())
+                        if (IsValidWifiConnection(out _, out _))
                         {
                             return true;
                         }
@@ -2783,47 +2783,9 @@ namespace BmwDeepObd
                 return null;
             }
 
-            if (!IsValidWifiConnection())
+            if (!IsValidWifiConnection(out string dhcpServerAddress, out string ssid))
             {
                 return null;
-            }
-
-            string ssid = null;
-            string dhcpServerAddress = null;
-            if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
-            {
-#pragma warning disable 618
-                WifiInfo wifiInfo = _maWifi.ConnectionInfo;
-                if (wifiInfo != null && _maWifi.DhcpInfo != null && wifiInfo.IpAddress != 0)
-                {
-                    ssid = wifiInfo.SSID;
-                    dhcpServerAddress = TcpClientWithTimeout.ConvertIpAddress(_maWifi.DhcpInfo.ServerAddress);
-                }
-#pragma warning restore 618
-            }
-            else
-            {
-                lock (_networkData.LockObject)
-                {
-                    foreach (Network network in _networkData.ActiveWifiNetworks)
-                    {
-                        NetworkCapabilities networkCapabilities = _maConnectivity.GetNetworkCapabilities(network);
-                        LinkProperties linkProperties = _maConnectivity.GetLinkProperties(network);
-                        if (networkCapabilities != null && linkProperties != null && linkProperties.DhcpServerAddress != null)
-                        {
-                            if (networkCapabilities.TransportInfo is WifiInfo wifiInfo)
-                            {
-                                string serverAddress = TcpClientWithTimeout.ConvertIpAddress(linkProperties.DhcpServerAddress);
-                                if (!string.IsNullOrEmpty(serverAddress))
-                                {
-                                    ssid = wifiInfo.SSID;
-                                    dhcpServerAddress = serverAddress;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
             }
 
             if (!string.IsNullOrEmpty(dhcpServerAddress))
@@ -2873,10 +2835,15 @@ namespace BmwDeepObd
             {
                 return false;
             }
-            WifiInfo wifiInfo = _maWifi.ConnectionInfo;
-            if (wifiInfo != null && _maWifi.DhcpInfo != null && wifiInfo.IpAddress != 0)
+
+            if (!IsValidWifiConnection(out string dhcpServerAddress, out _))
             {
-                string adapterIp = TcpClientWithTimeout.ConvertIpAddress(_maWifi.DhcpInfo.ServerAddress);
+                return false;
+            }
+
+            if (!string.IsNullOrEmpty(dhcpServerAddress))
+            {
+                string adapterIp = dhcpServerAddress;
                 bool ipStandard = false;
                 bool ipEspLink = false;
                 if (string.Compare(adapterIp, EdElmWifiInterface.ElmIp, StringComparison.Ordinal) == 0)
@@ -2956,50 +2923,68 @@ namespace BmwDeepObd
             return false;
         }
 
-        public bool IsValidWifiConnection()
+        public bool IsValidWifiConnection(out string dhcpServerAddress, out string ssid)
         {
+            dhcpServerAddress = null;
+            ssid = null;
+
             try
             {
-                if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+                if ((_maWifi == null) || !_maWifi.IsWifiEnabled)
                 {
-                    if ((_maWifi != null) && _maWifi.IsWifiEnabled)
-                    {
-#pragma warning disable 618
-                        WifiInfo wifiInfo = _maWifi.ConnectionInfo;
-                        if (wifiInfo != null && _maWifi.DhcpInfo != null && wifiInfo.IpAddress != 0)
-#pragma warning restore 618
-                        {
-                            return true;
-                        }
-                    }
-
                     return false;
                 }
 
-                bool result = false;
+                if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+                {
+#pragma warning disable 618
+                    WifiInfo wifiInfo = _maWifi.ConnectionInfo;
+                    if (wifiInfo != null && _maWifi.DhcpInfo != null && wifiInfo.IpAddress != 0)
+                    {
+                        ssid = wifiInfo.SSID;
+                        dhcpServerAddress = TcpClientWithTimeout.ConvertIpAddress(_maWifi.DhcpInfo.ServerAddress);
+                        return !string.IsNullOrEmpty(dhcpServerAddress);
+                    }
+#pragma warning restore 618
+                }
+
                 lock (_networkData.LockObject)
                 {
                     foreach (Network network in _networkData.ActiveWifiNetworks)
                     {
+                        NetworkCapabilities networkCapabilities = _maConnectivity.GetNetworkCapabilities(network);
                         LinkProperties linkProperties = _maConnectivity.GetLinkProperties(network);
-                        if (linkProperties != null)
+                        if (networkCapabilities != null && linkProperties != null && linkProperties.DhcpServerAddress != null)
                         {
-                            foreach (LinkAddress linkAddress in linkProperties.LinkAddresses)
+                            if (networkCapabilities.TransportInfo is WifiInfo wifiInfo)
                             {
-                                if (linkAddress.Address is Java.Net.Inet4Address inet4Address)
+                                string serverAddress = TcpClientWithTimeout.ConvertIpAddress(linkProperties.DhcpServerAddress);
+                                if (!string.IsNullOrEmpty(serverAddress))
                                 {
-                                    if (inet4Address.IsSiteLocalAddress || inet4Address.IsLinkLocalAddress)
+                                    foreach (LinkAddress linkAddress in linkProperties.LinkAddresses)
                                     {
-                                        result = true;
-                                        break;
+                                        if (linkAddress.Address is Java.Net.Inet4Address inet4Address)
+                                        {
+                                            if (inet4Address.IsSiteLocalAddress || inet4Address.IsLinkLocalAddress)
+                                            {
+                                                ssid = wifiInfo.SSID;
+                                                dhcpServerAddress = serverAddress;
+                                                break;
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
+
+                        if (!string.IsNullOrEmpty(dhcpServerAddress))
+                        {
+                            break;
+                        }
                     }
                 }
 
-                return result;
+                return !string.IsNullOrEmpty(dhcpServerAddress);
             }
             catch (Exception)
             {
@@ -3192,22 +3177,22 @@ namespace BmwDeepObd
                 {
                     return false;
                 }
+
                 bool result = false;
                 string enetSsid = "NoSsid";
                 bool validDeepObd = false;
                 bool validEnetLink = false;
                 bool validModBmw = false;
-                if ((_maWifi != null) && _maWifi.IsWifiEnabled)
+                if (IsValidWifiConnection(out string dhcpServerAddress, out string ssid))
                 {
-                    WifiInfo wifiInfo = _maWifi.ConnectionInfo;
-                    if (wifiInfo != null && _maWifi.DhcpInfo != null && wifiInfo.IpAddress != 0)
+                    if (!string.IsNullOrEmpty(dhcpServerAddress))
                     {
-                        if (!string.IsNullOrEmpty(wifiInfo.SSID))
+                        if (!string.IsNullOrEmpty(ssid))
                         {
-                            enetSsid = wifiInfo.SSID;
+                            enetSsid = ssid;
                         }
 
-                        string adapterIp = TcpClientWithTimeout.ConvertIpAddress(_maWifi.DhcpInfo.ServerAddress);
+                        string adapterIp = dhcpServerAddress;
                         if (string.Compare(adapterIp, DeepObdAdapterIp, StringComparison.Ordinal) == 0)
                         {
                             validDeepObd = true;
