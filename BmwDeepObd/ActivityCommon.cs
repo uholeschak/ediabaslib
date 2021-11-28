@@ -2782,23 +2782,66 @@ namespace BmwDeepObd
             {
                 return null;
             }
-            WifiInfo wifiInfo = _maWifi.ConnectionInfo;
-            if (wifiInfo != null && _maWifi.DhcpInfo != null && wifiInfo.IpAddress != 0)
+
+            if (!IsValidWifiConnection())
             {
-                string adapterIp = TcpClientWithTimeout.ConvertIpAddress(_maWifi.DhcpInfo.ServerAddress);
-                if (!string.IsNullOrEmpty(wifiInfo.SSID))
+                return null;
+            }
+
+            string ssid = null;
+            string dhcpServerAddress = null;
+            if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+            {
+#pragma warning disable 618
+                WifiInfo wifiInfo = _maWifi.ConnectionInfo;
+                if (wifiInfo != null && _maWifi.DhcpInfo != null && wifiInfo.IpAddress != 0)
                 {
-                    if (wifiInfo.SSID.Contains(AdapterSsidDeepObd))
+                    ssid = wifiInfo.SSID;
+                    dhcpServerAddress = TcpClientWithTimeout.ConvertIpAddress(_maWifi.DhcpInfo.ServerAddress);
+                }
+#pragma warning restore 618
+            }
+            else
+            {
+                lock (_networkData.LockObject)
+                {
+                    foreach (Network network in _networkData.ActiveWifiNetworks)
+                    {
+                        NetworkCapabilities networkCapabilities = _maConnectivity.GetNetworkCapabilities(network);
+                        LinkProperties linkProperties = _maConnectivity.GetLinkProperties(network);
+                        if (networkCapabilities != null && linkProperties != null && linkProperties.DhcpServerAddress != null)
+                        {
+                            if (networkCapabilities.TransportInfo is WifiInfo wifiInfo)
+                            {
+                                string serverAddress = TcpClientWithTimeout.ConvertIpAddress(linkProperties.DhcpServerAddress);
+                                if (!string.IsNullOrEmpty(serverAddress))
+                                {
+                                    ssid = wifiInfo.SSID;
+                                    dhcpServerAddress = serverAddress;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (!string.IsNullOrEmpty(dhcpServerAddress))
+            {
+                string adapterIp = dhcpServerAddress;
+                if (!string.IsNullOrEmpty(ssid))
+                {
+                    if (ssid.Contains(AdapterSsidDeepObd))
                     {
                         defaultPassword = DefaultPwdDeepObd;
                         return adapterIp;
                     }
-                    if (wifiInfo.SSID.Contains(AdapterSsidEnetLink))
+                    if (ssid.Contains(AdapterSsidEnetLink))
                     {
                         defaultPassword = string.Empty;
                         return adapterIp;
                     }
-                    if (wifiInfo.SSID.Contains(AdapterSsidModBmw))
+                    if (ssid.Contains(AdapterSsidModBmw))
                     {
                         defaultPassword = DefaultPwdModBmw;
                         return adapterIp;
