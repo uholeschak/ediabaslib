@@ -1403,8 +1403,10 @@ namespace ApkUploader
                                     }
                                 }
                             }
+                            UpdateStatus(sb.ToString());
                         }
 
+                        _cts.Token.ThrowIfCancellationRequested();
                         int? versionCode = null;
                         using (FileStream bundleStream = new FileStream(bundleFileName, FileMode.Open, FileAccess.Read))
                         {
