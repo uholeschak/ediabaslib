@@ -154,42 +154,45 @@ namespace EdiabasLib
                     {
                         bool linkValid = false;
                         Android.Net.LinkProperties linkProperties = connectivityManager.GetLinkProperties(network);
-                        foreach (Android.Net.LinkAddress linkAddress in linkProperties.LinkAddresses)
+                        if (linkProperties != null)
                         {
-                            if (linkAddress.Address is Java.Net.Inet4Address linkInet4Address)
+                            foreach (Android.Net.LinkAddress linkAddress in linkProperties.LinkAddresses)
                             {
-                                Java.Net.NetworkInterface networkInterface = Java.Net.NetworkInterface.GetByInetAddress(linkInet4Address);
-                                if (networkInterface != null && networkInterface.IsUp &&
-                                    (linkInet4Address.IsSiteLocalAddress || linkInet4Address.IsLinkLocalAddress))
+                                if (linkAddress.Address is Java.Net.Inet4Address linkInet4Address)
                                 {
-                                    foreach (Java.Net.InterfaceAddress interfaceAddress in networkInterface.InterfaceAddresses)
+                                    Java.Net.NetworkInterface networkInterface = Java.Net.NetworkInterface.GetByInetAddress(linkInet4Address);
+                                    if (networkInterface != null && networkInterface.IsUp &&
+                                        (linkInet4Address.IsSiteLocalAddress || linkInet4Address.IsLinkLocalAddress))
                                     {
-                                        if (interfaceAddress.Address is Java.Net.Inet4Address)
+                                        foreach (Java.Net.InterfaceAddress interfaceAddress in networkInterface.InterfaceAddresses)
                                         {
-                                            byte[] linkAddrBytes = interfaceAddress.Address.GetAddress();
-                                            byte[] inet4AddrBytes = inet4Addr.GetAddress();
-                                            if (linkAddrBytes.Length == inet4AddrBytes.Length)
+                                            if (interfaceAddress.Address is Java.Net.Inet4Address)
                                             {
-                                                for (int bit = interfaceAddress.NetworkPrefixLength; bit < linkAddrBytes.Length * 8; bit++)
+                                                byte[] linkAddrBytes = interfaceAddress.Address.GetAddress();
+                                                byte[] inet4AddrBytes = inet4Addr.GetAddress();
+                                                if (linkAddrBytes.Length == inet4AddrBytes.Length)
                                                 {
-                                                    int index = bit >> 3;
-                                                    byte mask = (byte) (0x80 >> (bit & 0x07));
-                                                    linkAddrBytes[index] |= mask;
-                                                    inet4AddrBytes[index] |= mask;
+                                                    for (int bit = interfaceAddress.NetworkPrefixLength; bit < linkAddrBytes.Length * 8; bit++)
+                                                    {
+                                                        int index = bit >> 3;
+                                                        byte mask = (byte)(0x80 >> (bit & 0x07));
+                                                        linkAddrBytes[index] |= mask;
+                                                        inet4AddrBytes[index] |= mask;
+                                                    }
+                                                }
+
+                                                if (linkAddrBytes.SequenceEqual(inet4AddrBytes))
+                                                {
+                                                    linkValid = true;
+                                                    break;
                                                 }
                                             }
-
-                                            if (linkAddrBytes.SequenceEqual(inet4AddrBytes))
-                                            {
-                                                linkValid = true;
-                                                break;
-                                            }
                                         }
-                                    }
 
-                                    if (linkValid)
-                                    {
-                                        break;
+                                        if (linkValid)
+                                        {
+                                            break;
+                                        }
                                     }
                                 }
                             }
