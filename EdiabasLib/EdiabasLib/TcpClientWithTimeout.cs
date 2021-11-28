@@ -249,6 +249,23 @@ namespace EdiabasLib
             try
             {
                 Java.Net.InetAddress inetAddress = Java.Net.InetAddress.GetByAddress(ipByteArray);
+                return ConvertIpAddress(inetAddress);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public static string ConvertIpAddress(Java.Net.InetAddress inetAddress)
+        {
+            if (inetAddress == null)
+            {
+                return null;
+            }
+
+            try
+            {
                 string address = inetAddress.HostAddress;
                 if (address == null)
                 {
