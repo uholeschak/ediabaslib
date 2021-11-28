@@ -258,6 +258,7 @@ namespace BmwDeepObd
             base.OnCreate(savedInstanceState);
 
             _downloadStarted = false;
+            _storageAccessGranted = false;
         }
 
         protected override void OnStart()
@@ -892,6 +893,10 @@ namespace BmwDeepObd
         private void StoragePermissionGranted()
         {
             _storageAccessGranted = true;
+            if (_activityActive)
+            {
+                StartDownload();
+            }
         }
 
         private void StartDownload()
