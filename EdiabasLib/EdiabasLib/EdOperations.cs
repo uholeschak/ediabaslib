@@ -698,8 +698,27 @@ namespace EdiabasLib
                 throw new ArgumentOutOfRangeException("arg0", "OpFix2flt: Invalid type");
             }
 
-            Int32 value = (Int32)arg1.GetValueData();
-            EdFloatType result = value;
+            EdValueType value = arg1.GetValueData();
+            EdValueType len = arg1.GetDataLen();
+            EdFloatType result;
+            switch (len)
+            {
+                case 1:
+                    result = ((SByte)value);
+                    break;
+
+                case 2:
+                    result = ((Int16)value);
+                    break;
+
+                case 4:
+                    result = ((Int32)value);
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException("len", "OpFix2flt: Invalid length");
+            }
+
             arg0.SetRawData(result);
         }
 
