@@ -140,6 +140,15 @@ TEST_SREG#
 					ergy		"UFIX2DEZS_Y",S0
 					ergs		"UFIX2DEZS_S",S0
 
+					fix2flt		F0,#-12345678.L
+					ergr		"FIX2FLT4_R",F0
+
+					fix2flt		F0,#-12345.I
+					ergr		"FIX2FLT2_R",F0
+
+					fix2flt		F0,#-12.B
+					ergr		"FIX2FLT1_R",F0
+
 					clear		S0
 					move 		S0,S1
 					y2bcd		S0,{$12.B,$34.B,$56.B,$A1.B,$1B.B}
