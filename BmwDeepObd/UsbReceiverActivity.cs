@@ -2,7 +2,7 @@
 using Android.Content;
 using Android.Hardware.Usb;
 using Android.OS;
-using Android.Support.V7.App;
+using AndroidX.AppCompat.App;
 
 [assembly: Android.App.UsesFeature("android.hardware.usb.host")]
 

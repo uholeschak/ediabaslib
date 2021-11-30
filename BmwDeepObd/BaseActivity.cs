@@ -8,10 +8,10 @@ using Android.Content;
 using Android.Content.PM;
 using Android.Content.Res;
 using Android.OS;
-using Android.Support.V4.View;
-using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
+using AndroidX.AppCompat.App;
+using AndroidX.Core.View;
 
 namespace BmwDeepObd
 {
@@ -387,8 +387,8 @@ namespace BmwDeepObd
                 Java.Util.Locale locale = null;
                 if (string.IsNullOrEmpty(language))
                 {
-                    Android.Support.V4.OS.LocaleListCompat localeList =
-                        Android.Support.V4.OS.ConfigurationCompat.GetLocales(Resources.System.Configuration);
+                    AndroidX.Core.OS.LocaleListCompat localeList =
+                        AndroidX.Core.OS.ConfigurationCompat.GetLocales(Resources.System.Configuration);
                     if (localeList != null && localeList.Size() > 0)
                     {
                         locale = localeList.Get(0);

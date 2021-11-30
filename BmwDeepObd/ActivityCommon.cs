@@ -22,7 +22,6 @@ using Android.Hardware.Usb;
 using Android.Net;
 using Android.Net.Wifi;
 using Android.OS;
-using Android.Support.V7.App;
 using Android.Widget;
 using EdiabasLib;
 using Hoho.Android.UsbSerial.Driver;
@@ -38,12 +37,14 @@ using Android.Content.Res;
 using Android.Locations;
 using Android.OS.Storage;
 using Android.Provider;
-using Android.Support.V4.App;
-using Android.Support.V4.Content;
-using Android.Support.V4.Provider;
 using Android.Views;
+using AndroidX.Core.App;
 using BmwFileReader;
 using UdsFileReader;
+using AndroidX.AppCompat.App;
+using AndroidX.DocumentFile.Provider;
+using AndroidX.LocalBroadcastManager.Content;
+
 // ReSharper disable StringLiteralTypo
 // ReSharper disable IdentifierTypo
 // ReSharper disable UnusedMember.Global
@@ -2935,7 +2936,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+                if (Build.VERSION.SdkInt < BuildVersionCodes.S)
                 {
 #pragma warning disable 618
                     WifiInfo wifiInfo = _maWifi.ConnectionInfo;
@@ -4844,7 +4845,7 @@ namespace BmwDeepObd
                     {
                         formDownload.Add(new StringContent(AppId), "appid");
                         formDownload.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}",
-                            packageInfo != null ? Android.Support.V4.Content.PM.PackageInfoCompat.GetLongVersionCode(packageInfo) : 0)), "appver");
+                            packageInfo != null ? AndroidX.Core.Content.PM.PackageInfoCompat.GetLongVersionCode(packageInfo) : 0)), "appver");
                         formDownload.Add(new StringContent(GetCurrentLanguage()), "lang");
                         formDownload.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", (long) Build.VERSION.SdkInt )), "android_ver");
                         formDownload.Add(new StringContent(Build.Fingerprint), "fingerprint");
@@ -4952,7 +4953,7 @@ namespace BmwDeepObd
                     sb.Append(string.Format("\nAndroid user: {0}", Build.User ?? string.Empty));
                     sb.Append(string.Format("\nApp version name: {0}", packageInfo?.VersionName ?? string.Empty));
                     sb.Append(string.Format("\nApp version code: {0}",
-                        packageInfo != null ? Android.Support.V4.Content.PM.PackageInfoCompat.GetLongVersionCode(packageInfo) : 0));
+                        packageInfo != null ? AndroidX.Core.Content.PM.PackageInfoCompat.GetLongVersionCode(packageInfo) : 0));
                     sb.Append(string.Format("\nApp id: {0}", AppId));
                     sb.Append(string.Format("\nOBB: {0}", obbName));
                     sb.Append(string.Format("\nInstaller: {0}", installer ?? string.Empty));
@@ -5674,7 +5675,7 @@ namespace BmwDeepObd
                 {
                     { new StringContent(_activity?.PackageName), "package_name" },
                     { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}",
-                        packageInfo != null ? Android.Support.V4.Content.PM.PackageInfoCompat.GetLongVersionCode(packageInfo) : 0)), "app_ver" },
+                        packageInfo != null ? AndroidX.Core.Content.PM.PackageInfoCompat.GetLongVersionCode(packageInfo) : 0)), "app_ver" },
                     { new StringContent(AppId), "app_id" },
                     { new StringContent(GetCurrentLanguage()), "lang" },
                     { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", (long) Build.VERSION.SdkInt)), "android_ver" },
