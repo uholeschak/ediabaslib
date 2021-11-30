@@ -11,7 +11,6 @@ using System.Xml.Linq;
 using Android.Content;
 using Android.Hardware.Usb;
 using Android.OS;
-using Android.Support.V7.App;
 using Android.Text.Method;
 using Android.Util;
 using Android.Views;
@@ -19,6 +18,7 @@ using Android.Widget;
 using BmwDeepObd.FilePicker;
 using EdiabasLib;
 using System.Collections.ObjectModel;
+using AndroidX.AppCompat.App;
 using BmwFileReader;
 
 // ReSharper disable IdentifierTypo
@@ -1965,7 +1965,7 @@ namespace BmwDeepObd
 
         private void ShowEditMenu(View anchor)
         {
-            Android.Support.V7.Widget.PopupMenu popupEdit = new Android.Support.V7.Widget.PopupMenu(this, anchor);
+            AndroidX.AppCompat.Widget.PopupMenu popupEdit = new AndroidX.AppCompat.Widget.PopupMenu(this, anchor);
             popupEdit.Inflate(Resource.Menu.xml_tool_edit);
             IMenuItem detectMenuMenu = popupEdit.Menu.FindItem(Resource.Id.menu_xml_tool_edit_detect);
             detectMenuMenu?.SetVisible(ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw);
@@ -2044,7 +2044,7 @@ namespace BmwDeepObd
 
         private void ShowContextMenu(View anchor, int itemPos)
         {
-            Android.Support.V7.Widget.PopupMenu popupContext = new Android.Support.V7.Widget.PopupMenu(this, anchor);
+            AndroidX.AppCompat.Widget.PopupMenu popupContext = new AndroidX.AppCompat.Widget.PopupMenu(this, anchor);
             popupContext.Inflate(Resource.Menu.xml_tool_context);
             IMenuItem moveTopMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_move_top);
             moveTopMenu?.SetEnabled(itemPos > 0);

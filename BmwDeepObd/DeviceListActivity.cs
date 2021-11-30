@@ -26,14 +26,14 @@ using System.Threading;
 using Android.Bluetooth;
 using Android.Content;
 using Android.OS;
-using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
 using EdiabasLib;
 using Android.Text.Method;
 using Android.Content.PM;
-using Android.Support.V4.App;
-using Android.Support.V4.Content;
+using AndroidX.AppCompat.App;
+using AndroidX.Core.App;
+using AndroidX.Core.Content;
 
 namespace BmwDeepObd
 {

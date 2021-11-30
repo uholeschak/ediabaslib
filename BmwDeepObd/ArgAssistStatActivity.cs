@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using Android.Content;
 using Android.OS;
-using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
+using AndroidX.AppCompat.App;
 using BmwFileReader;
 using EdiabasLib;
 
@@ -166,9 +166,9 @@ namespace BmwDeepObd
             IMenuItem menuSearch = menu.FindItem(Resource.Id.action_search);
             if (menuSearch != null)
             {
-                menuSearch.SetActionView(new Android.Support.V7.Widget.SearchView(this));
+                menuSearch.SetActionView(new AndroidX.AppCompat.Widget.SearchView(this));
 
-                if (menuSearch.ActionView is Android.Support.V7.Widget.SearchView searchViewV7)
+                if (menuSearch.ActionView is AndroidX.AppCompat.Widget.SearchView searchViewV7)
                 {
                     searchViewV7.QueryTextChange += (sender, e) =>
                     {

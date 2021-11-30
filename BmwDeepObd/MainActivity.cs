@@ -17,19 +17,22 @@ using Android.Content.PM;
 using Android.Content.Res;
 using Android.Hardware.Usb;
 using Android.OS;
-using Android.Support.Design.Widget;
-using Android.Support.V4.App;
-using Android.Support.V4.Content;
-using Android.Support.V4.View;
-using Android.Support.V7.App;
 using Android.Text.Method;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using AndroidX.AppCompat.App;
+using AndroidX.Core.App;
+using AndroidX.Core.Content;
+using AndroidX.Core.View;
+using AndroidX.Fragment.App;
+using AndroidX.LocalBroadcastManager.Content;
+using AndroidX.ViewPager.Widget;
 using Base62;
 using BmwDeepObd.FilePicker;
 using BmwFileReader;
 using EdiabasLib;
+using Google.Android.Material.Tabs;
 using Java.Interop;
 using Mono.CSharp;
 // ReSharper disable MergeCastWithTypeCheck
@@ -1025,7 +1028,7 @@ namespace BmwDeepObd
             IMenuItem actionProviderConnect = menu.FindItem(Resource.Id.menu_action_provider_connect);
             if (actionProviderConnect != null)
             {
-                Android.Support.V4.View.ActionProvider actionProvider = MenuItemCompat.GetActionProvider(actionProviderConnect);
+                AndroidX.Core.View.ActionProvider actionProvider = MenuItemCompat.GetActionProvider(actionProviderConnect);
                 if (actionProvider == null)
                 {
                     MenuItemCompat.SetActionProvider(actionProviderConnect, new ConnectActionProvider(this));
@@ -2174,7 +2177,7 @@ namespace BmwDeepObd
         private void GetSettings()
         {
             PackageInfo packageInfo = PackageManager?.GetPackageInfo(PackageName ?? string.Empty, 0);
-            _currentVersionCode = packageInfo != null ? Android.Support.V4.Content.PM.PackageInfoCompat.GetLongVersionCode(packageInfo) : 0;
+            _currentVersionCode = packageInfo != null ? AndroidX.Core.Content.PM.PackageInfoCompat.GetLongVersionCode(packageInfo) : 0;
             string assetFileName = ExpansionDownloaderActivity.GetAssetFilename();
             if (!string.IsNullOrEmpty(assetFileName))
             {
@@ -6389,7 +6392,7 @@ namespace BmwDeepObd
             }
         }
 
-        public class ConnectActionProvider : Android.Support.V4.View.ActionProvider
+        public class ConnectActionProvider : AndroidX.Core.View.ActionProvider
         {
             public ConnectActionProvider(Context context)
                 : base(context)

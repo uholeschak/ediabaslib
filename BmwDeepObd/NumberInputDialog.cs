@@ -1,9 +1,9 @@
 ﻿using Android.Content;
-using Android.Support.V7.App;
 using Android.Text;
 using Android.Text.Method;
 using Android.Views;
 using Android.Widget;
+using AndroidX.AppCompat.App;
 
 namespace BmwDeepObd
 {

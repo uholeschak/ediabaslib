@@ -5,7 +5,6 @@ using System.Threading;
 using System.Text;
 using Android.Bluetooth;
 using Android.OS;
-using Android.Support.V7.App;
 using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
@@ -14,6 +13,7 @@ using System.IO;
 using System.Net.Sockets;
 using Android.Content;
 using Android.Hardware.Usb;
+using AndroidX.AppCompat.App;
 using BmwDeepObd.FilePicker;
 
 // ReSharper disable IdentifierTypo

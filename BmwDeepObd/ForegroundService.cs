@@ -3,7 +3,8 @@ using System.Reflection;
 using Android.Support.V4.App;
 using Android.Content;
 using Android.OS;
-using Android.Support.V4.Content;
+using AndroidX.Core.App;
+using AndroidX.LocalBroadcastManager.Content;
 
 namespace BmwDeepObd
 {

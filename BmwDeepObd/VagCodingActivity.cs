@@ -7,11 +7,11 @@ using System.Text;
 using Android.Content;
 using Android.Hardware.Usb;
 using Android.OS;
-using Android.Support.V7.App;
 using Android.Text.Method;
 using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
+using AndroidX.AppCompat.App;
 using EdiabasLib;
 
 namespace BmwDeepObd

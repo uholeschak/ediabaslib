@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Android.App;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
@@ -11,14 +10,14 @@ namespace BmwDeepObd
     {
         private readonly List<TableResultItem> _items;
         public List<TableResultItem> Items => _items;
-        private readonly Activity _context;
+        private readonly Android.App.Activity _context;
         private readonly float _textWeight;
         private readonly int _textResId;
         private readonly bool _showCheckBox;
         private bool _ignoreCheckEvent;
         private readonly Android.Content.Res.ColorStateList _defaultTextColors;
 
-        public ResultListAdapter(Activity context, float textWeight, int textResId, bool showCheckBox)
+        public ResultListAdapter(Android.App.Activity context, float textWeight, int textResId, bool showCheckBox)
         {
             _context = context;
             _items = new List<TableResultItem> ();
@@ -30,17 +29,17 @@ namespace BmwDeepObd
             _defaultTextColors = dummy.TextColors;
         }
 
-        public ResultListAdapter(Activity context, float textWeight, int textResId)
+        public ResultListAdapter(Android.App.Activity context, float textWeight, int textResId)
             : this(context, textWeight, textResId, false)
         {
         }
 
-        public ResultListAdapter(Activity context, float textWeight)
+        public ResultListAdapter(Android.App.Activity context, float textWeight)
             : this(context, textWeight, 0, false)
         {
         }
 
-        public ResultListAdapter(Activity context)
+        public ResultListAdapter(Android.App.Activity context)
             : this(context, -1, 0, false)
         {
         }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Android.App;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
@@ -13,9 +12,9 @@ namespace BmwDeepObd
         private const int GaugeBaseSize = 200;
         private readonly List<GridResultItem> _items;
         public List<GridResultItem> Items => _items;
-        private readonly Activity _context;
+        private readonly Android.App.Activity _context;
 
-        public ResultGridAdapter(Activity context)
+        public ResultGridAdapter(Android.App.Activity context)
         {
             _context = context;
             _items = new List<GridResultItem>();

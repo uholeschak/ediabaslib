@@ -10,11 +10,11 @@ using Android.Content;
 using Android.Content.PM;
 using Android.Content.Res;
 using Android.OS;
-using Android.Support.V4.App;
-using Android.Support.V4.Content;
-using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
+using AndroidX.AppCompat.App;
+using AndroidX.Core.App;
+using AndroidX.Core.Content;
 using Google.Android.Vending.Expansion.Downloader;
 using Xamarin.Google.Android.Play.Core.AssetPacks;
 
@@ -527,7 +527,7 @@ namespace BmwDeepObd
             long packageVersion = -1;
             if (packageInfo != null)
             {
-                packageVersion = Android.Support.V4.Content.PM.PackageInfoCompat.GetLongVersionCode(packageInfo);
+                packageVersion = AndroidX.Core.Content.PM.PackageInfoCompat.GetLongVersionCode(packageInfo);
             }
             string obbFile = null;
             Java.IO.File[] obbDirs;
@@ -942,7 +942,7 @@ namespace BmwDeepObd
                     long packageVersion = 0;
                     if (packageInfo != null)
                     {
-                        packageVersion = Android.Support.V4.Content.PM.PackageInfoCompat.GetLongVersionCode(packageInfo);
+                        packageVersion = AndroidX.Core.Content.PM.PackageInfoCompat.GetLongVersionCode(packageInfo);
                     }
                     string obbFileName = string.Format(CultureInfo.InvariantCulture, "main.{0}.{1}.obb", packageVersion, PackageName);
 
