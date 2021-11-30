@@ -91,7 +91,7 @@ namespace EdiabasLib
                 if (WifiManager is Android.Net.Wifi.WifiManager wifiManager)
                 {
                     string serverIp = null;
-                    if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.Lollipop)
+                    if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.S)
                     {
 #pragma warning disable 618
                         if (wifiManager.ConnectionInfo != null && wifiManager.DhcpInfo != null)
