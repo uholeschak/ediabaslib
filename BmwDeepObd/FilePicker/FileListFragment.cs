@@ -107,12 +107,12 @@ namespace BmwDeepObd.FilePicker
             ListAdapter = _adapter;
         }
 
-        public override void OnActivityCreated(Bundle savedInstanceState)
+        public override void OnViewCreated(View view, Bundle savedInstanceState)
         {
-            base.OnActivityCreated(savedInstanceState);
+            base.OnViewCreated(view, savedInstanceState);
 
             ListView.LongClickable = _dirSelect;
-            ListView.ItemLongClick += (sender, args) => 
+            ListView.ItemLongClick += (sender, args) =>
             {
                 if (_dirSelect)
                 {
