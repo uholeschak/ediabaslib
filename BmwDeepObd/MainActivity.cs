@@ -470,7 +470,7 @@ namespace BmwDeepObd
             _viewPager = FindViewById<ViewPager2>(Resource.Id.viewpager);
             _viewPager.Adapter = _fragmentStateAdapter;
             _tabLayout = FindViewById<TabLayout>(Resource.Id.tab_layout);
-            TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(_tabLayout, _viewPager, new TabConfigurationStrategy());
+            TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(_tabLayout, _viewPager, new TabConfigurationStrategy(this));
             tabLayoutMediator.Attach();
 
             _tabLayout.AddOnTabSelectedListener(this);
@@ -6381,6 +6381,13 @@ namespace BmwDeepObd
 
         public class TabConfigurationStrategy : Java.Lang.Object, TabLayoutMediator.ITabConfigurationStrategy
         {
+            private ActivityMain _activityMain;
+
+            public TabConfigurationStrategy(ActivityMain activityMain)
+            {
+                _activityMain = activityMain;
+            }
+
             public void OnConfigureTab(TabLayout.Tab tab, int index)
             {
                 if (index >= 0 && index < (ActivityCommon.JobReader.PageList.Count))
