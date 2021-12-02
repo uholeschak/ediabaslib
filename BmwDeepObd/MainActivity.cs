@@ -26,8 +26,10 @@ using AndroidX.Core.App;
 using AndroidX.Core.Content;
 using AndroidX.Core.View;
 using AndroidX.Fragment.App;
+using AndroidX.Lifecycle;
 using AndroidX.LocalBroadcastManager.Content;
-using AndroidX.ViewPager.Widget;
+using AndroidX.ViewPager2.Adapter;
+using AndroidX.ViewPager2.Widget;
 using Base62;
 using BmwDeepObd.FilePicker;
 using BmwFileReader;
@@ -396,8 +398,8 @@ namespace BmwDeepObd
         private Timer _autoHideTimer;
         private Handler _updateHandler;
         private TabLayout _tabLayout;
-        private ViewPager _viewPager;
-        private TabsFragmentPagerAdapter _fragmentPagerAdapter;
+        private ViewPager2 _viewPager;
+        private TabsFragmentStateAdapter _fragmentStateAdapter;
         private readonly ConnectButtonInfo _connectButtonInfo = new ConnectButtonInfo();
         private ImageView _imageBackground;
         private HttpClient _httpClient;
@@ -464,12 +466,15 @@ namespace BmwDeepObd
 
             SetContentView(Resource.Layout.main);
 
-            _fragmentPagerAdapter = new TabsFragmentPagerAdapter(SupportFragmentManager);
-            _viewPager = FindViewById<ViewPager>(Resource.Id.viewpager);
-            _viewPager.Adapter = _fragmentPagerAdapter;
-            _tabLayout = FindViewById<TabLayout>(Resource.Id.sliding_tabs);
-            _tabLayout.SetupWithViewPager(_viewPager);
+            _fragmentStateAdapter = new TabsFragmentStateAdapter(SupportFragmentManager, Lifecycle);
+            _viewPager = FindViewById<ViewPager2>(Resource.Id.viewpager);
+            _viewPager.Adapter = _fragmentStateAdapter;
+            _tabLayout = FindViewById<TabLayout>(Resource.Id.tab_layout);
+            TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(_tabLayout, _viewPager, new TabConfigurationStrategy());
+            tabLayoutMediator.Attach();
+
             _tabLayout.AddOnTabSelectedListener(this);
+            _tabLayout.TabMode = TabLayout.ModeScrollable;
             _tabLayout.Visibility = ViewStates.Gone;
 
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -559,8 +564,8 @@ namespace BmwDeepObd
                     i++;
                 }
             }
-            _fragmentPagerAdapter.ClearPages();
-            _fragmentPagerAdapter.NotifyDataSetChanged();
+            _fragmentStateAdapter.ClearPages();
+            _fragmentStateAdapter.NotifyDataSetChanged();
             _tabLayout.Visibility = ViewStates.Gone;
 
             int index = 0;
@@ -578,11 +583,11 @@ namespace BmwDeepObd
 
                 Fragment fragmentPage = TabContentFragment.NewInstance(resourceId, index);
                 pageInfo.InfoObject = fragmentPage;
-                _fragmentPagerAdapter.AddPage(fragmentPage, GetPageString(pageInfo, pageInfo.Name));
+                _fragmentStateAdapter.AddPage(fragmentPage, GetPageString(pageInfo, pageInfo.Name));
                 index++;
             }
             _tabLayout.Visibility = (ActivityCommon.JobReader.PageList.Count > 0) ? ViewStates.Visible : ViewStates.Gone;
-            _fragmentPagerAdapter.NotifyDataSetChanged();
+            _fragmentStateAdapter.NotifyDataSetChanged();
             if (_tabLayout.TabCount > 0)
             {
                 if (pageIndex >= _tabLayout.TabCount)
@@ -6236,7 +6241,7 @@ namespace BmwDeepObd
             }
         }
 
-        public class TabsFragmentPagerAdapter : FragmentStatePagerAdapter
+        public class TabsFragmentStateAdapter : FragmentStateAdapter
         {
             private class TabPageInfo
             {
@@ -6252,38 +6257,20 @@ namespace BmwDeepObd
 
             private readonly List<TabPageInfo> _pageList;
 
-            public TabsFragmentPagerAdapter(FragmentManager fm) : base(fm)
+            public TabsFragmentStateAdapter(FragmentManager fm, Lifecycle lifecycle) : base(fm, lifecycle)
             {
                 _pageList = new List<TabPageInfo>();
             }
 
-            public override int Count => _pageList.Count;
+            public override int ItemCount => _pageList.Count;
 
-            public override void RestoreState(IParcelable state, Java.Lang.ClassLoader loader)
-            {
-            }
-
-            public override int GetItemPosition(Java.Lang.Object @object)
-            {
-                return PositionNone;
-            }
-
-            public override Fragment GetItem(int position)
+            public override Fragment CreateFragment(int position)
             {
                 if (position >= _pageList.Count)
                 {
                     return null;
                 }
                 return _pageList[position].Fragment;
-            }
-
-            public override Java.Lang.ICharSequence GetPageTitleFormatted(int position)
-            {
-                if (position >= _pageList.Count)
-                {
-                    return null;
-                }
-                return new Java.Lang.String(_pageList[position].Title);
             }
 
             public void ClearPages()
@@ -6388,6 +6375,18 @@ namespace BmwDeepObd
                             // ignored
                         }
                     }
+                }
+            }
+        }
+
+        public class TabConfigurationStrategy : Java.Lang.Object, TabLayoutMediator.ITabConfigurationStrategy
+        {
+            public void OnConfigureTab(TabLayout.Tab tab, int index)
+            {
+                if (index >= 0 && index < (ActivityCommon.JobReader.PageList.Count))
+                {
+                    JobReader.PageInfo pageInfo = ActivityCommon.JobReader.PageList[index];
+                    tab.SetText(GetPageString(pageInfo, pageInfo.Name));
                 }
             }
         }

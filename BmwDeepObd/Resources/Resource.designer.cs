@@ -7792,157 +7792,157 @@ namespace BmwDeepObd
 			public const int slide = 2131296910;
 			
 			// aapt resource value: 0x7F09028F
-			public const int sliding_tabs = 2131296911;
+			public const int snackbar_action = 2131296911;
 			
 			// aapt resource value: 0x7F090290
-			public const int snackbar_action = 2131296912;
+			public const int snackbar_text = 2131296912;
 			
 			// aapt resource value: 0x7F090291
-			public const int snackbar_text = 2131296913;
+			public const int snap = 2131296913;
 			
 			// aapt resource value: 0x7F090292
-			public const int snap = 2131296914;
+			public const int snapMargins = 2131296914;
 			
 			// aapt resource value: 0x7F090293
-			public const int snapMargins = 2131296915;
+			public const int south = 2131296915;
 			
 			// aapt resource value: 0x7F090294
-			public const int south = 2131296916;
+			public const int spacer = 2131296916;
 			
 			// aapt resource value: 0x7F090295
-			public const int spacer = 2131296917;
+			public const int special_effects_controller_view_tag = 2131296917;
 			
 			// aapt resource value: 0x7F090296
-			public const int special_effects_controller_view_tag = 2131296918;
+			public const int spinnerArgLimit = 2131296918;
 			
 			// aapt resource value: 0x7F090297
-			public const int spinnerArgLimit = 2131296919;
+			public const int spinnerArgument = 2131296919;
 			
 			// aapt resource value: 0x7F090298
-			public const int spinnerArgument = 2131296920;
+			public const int spinnerBlockNumber = 2131296920;
 			
 			// aapt resource value: 0x7F090299
-			public const int spinnerBlockNumber = 2131296921;
+			public const int spinnerBmwActuatorFunction = 2131296921;
 			
 			// aapt resource value: 0x7F09029A
-			public const int spinnerBmwActuatorFunction = 2131296922;
+			public const int spinnerCanAdapterBlockSize = 2131296922;
 			
 			// aapt resource value: 0x7F09029B
-			public const int spinnerCanAdapterBlockSize = 2131296923;
+			public const int spinnerCanAdapterMode = 2131296923;
 			
 			// aapt resource value: 0x7F09029C
-			public const int spinnerCanAdapterMode = 2131296924;
+			public const int spinnerCanAdapterSepTime = 2131296924;
 			
 			// aapt resource value: 0x7F09029D
-			public const int spinnerCanAdapterSepTime = 2131296925;
+			public const int spinnerFontSize = 2131296925;
 			
 			// aapt resource value: 0x7F09029E
-			public const int spinnerFontSize = 2131296926;
+			public const int spinnerFormatLength1 = 2131296926;
 			
 			// aapt resource value: 0x7F09029F
-			public const int spinnerFormatLength1 = 2131296927;
+			public const int spinnerFormatLength2 = 2131296927;
 			
 			// aapt resource value: 0x7F0902A0
-			public const int spinnerFormatLength2 = 2131296928;
+			public const int spinnerFormatPos = 2131296928;
 			
 			// aapt resource value: 0x7F0902A1
-			public const int spinnerFormatPos = 2131296929;
+			public const int spinnerFormatType = 2131296929;
 			
 			// aapt resource value: 0x7F0902A2
-			public const int spinnerFormatType = 2131296930;
+			public const int spinnerGridType = 2131296930;
 			
 			// aapt resource value: 0x7F0902A3
-			public const int spinnerGridType = 2131296931;
+			public const int spinnerJobResults = 2131296931;
 			
 			// aapt resource value: 0x7F0902A4
-			public const int spinnerJobResults = 2131296932;
+			public const int spinnerJobs = 2131296932;
 			
 			// aapt resource value: 0x7F0902A5
-			public const int spinnerJobs = 2131296933;
+			public const int spinnerResults = 2131296933;
 			
 			// aapt resource value: 0x7F0902A6
-			public const int spinnerResults = 2131296934;
+			public const int spinnerVagAdaptionChannel = 2131296934;
 			
 			// aapt resource value: 0x7F0902A7
-			public const int spinnerVagAdaptionChannel = 2131296935;
+			public const int spinnerVagAdaptionValueNew = 2131296935;
 			
 			// aapt resource value: 0x7F0902A8
-			public const int spinnerVagAdaptionValueNew = 2131296936;
+			public const int spinnerVagCodingSubsystem = 2131296936;
 			
 			// aapt resource value: 0x7F0902A9
-			public const int spinnerVagCodingSubsystem = 2131296937;
+			public const int spline = 2131296937;
 			
 			// aapt resource value: 0x7F0902AA
-			public const int spline = 2131296938;
+			public const int split_action_bar = 2131296938;
 			
 			// aapt resource value: 0x7F0902AB
-			public const int split_action_bar = 2131296939;
+			public const int spread = 2131296939;
 			
 			// aapt resource value: 0x7F0902AC
-			public const int spread = 2131296940;
+			public const int spread_inside = 2131296940;
 			
 			// aapt resource value: 0x7F0902AD
-			public const int spread_inside = 2131296941;
+			public const int spring = 2131296941;
 			
 			// aapt resource value: 0x7F0902AE
-			public const int spring = 2131296942;
+			public const int square = 2131296942;
 			
 			// aapt resource value: 0x7F0902AF
-			public const int square = 2131296943;
+			public const int src_atop = 2131296943;
 			
 			// aapt resource value: 0x7F0902B0
-			public const int src_atop = 2131296944;
+			public const int src_in = 2131296944;
 			
 			// aapt resource value: 0x7F0902B1
-			public const int src_in = 2131296945;
+			public const int src_over = 2131296945;
 			
 			// aapt resource value: 0x7F0902B2
-			public const int src_over = 2131296946;
+			public const int standard = 2131296946;
 			
 			// aapt resource value: 0x7F0902B3
-			public const int standard = 2131296947;
+			public const int start = 2131296947;
 			
 			// aapt resource value: 0x7F0902B4
-			public const int start = 2131296948;
+			public const int startHorizontal = 2131296948;
 			
 			// aapt resource value: 0x7F0902B5
-			public const int startHorizontal = 2131296949;
+			public const int startToEnd = 2131296949;
 			
 			// aapt resource value: 0x7F0902B6
-			public const int startToEnd = 2131296950;
+			public const int startVertical = 2131296950;
 			
 			// aapt resource value: 0x7F0902B7
-			public const int startVertical = 2131296951;
+			public const int staticLayout = 2131296951;
 			
 			// aapt resource value: 0x7F0902B8
-			public const int staticLayout = 2131296952;
+			public const int staticPostLayout = 2131296952;
 			
 			// aapt resource value: 0x7F0902B9
-			public const int staticPostLayout = 2131296953;
+			public const int statusText = 2131296953;
 			
 			// aapt resource value: 0x7F0902BA
-			public const int statusText = 2131296954;
+			public const int stop = 2131296954;
 			
 			// aapt resource value: 0x7F0902BB
-			public const int stop = 2131296955;
+			public const int stretch = 2131296955;
 			
 			// aapt resource value: 0x7F0902BC
-			public const int stretch = 2131296956;
+			public const int submenuarrow = 2131296956;
 			
 			// aapt resource value: 0x7F0902BD
-			public const int submenuarrow = 2131296957;
+			public const int submit_area = 2131296957;
 			
 			// aapt resource value: 0x7F0902BE
-			public const int submit_area = 2131296958;
-			
-			// aapt resource value: 0x7F0902BF
-			public const int supportScrollUp = 2131296959;
+			public const int supportScrollUp = 2131296958;
 			
 			// aapt resource value: 0x7F09000D
 			public const int SYM = 2131296269;
 			
+			// aapt resource value: 0x7F0902BF
+			public const int tabMode = 2131296959;
+			
 			// aapt resource value: 0x7F0902C0
-			public const int tabMode = 2131296960;
+			public const int tab_layout = 2131296960;
 			
 			// aapt resource value: 0x7F0902C1
 			public const int tag_accessibility_actions = 2131296961;
