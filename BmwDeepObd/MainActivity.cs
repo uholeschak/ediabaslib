@@ -28,6 +28,7 @@ using AndroidX.Core.View;
 using AndroidX.Fragment.App;
 using AndroidX.Lifecycle;
 using AndroidX.LocalBroadcastManager.Content;
+using AndroidX.RecyclerView.Widget;
 using AndroidX.ViewPager2.Adapter;
 using AndroidX.ViewPager2.Widget;
 using Base62;
@@ -568,7 +569,6 @@ namespace BmwDeepObd
             _fragmentStateAdapter.NotifyDataSetChanged();
             _tabLayout.Visibility = ViewStates.Gone;
 
-            int index = 0;
             foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
             {
                 int resourceId = Resource.Layout.tab_list;
@@ -581,10 +581,7 @@ namespace BmwDeepObd
                     resourceId = Resource.Layout.tab_activate;
                 }
 
-                Fragment fragmentPage = TabContentFragment.NewInstance(resourceId, index);
-                pageInfo.InfoObject = fragmentPage;
-                _fragmentStateAdapter.AddPage(fragmentPage, GetPageString(pageInfo, pageInfo.Name));
-                index++;
+                _fragmentStateAdapter.AddPage(pageInfo, resourceId, GetPageString(pageInfo, pageInfo.Name));
             }
             _tabLayout.Visibility = (ActivityCommon.JobReader.PageList.Count > 0) ? ViewStates.Visible : ViewStates.Gone;
             _fragmentStateAdapter.NotifyDataSetChanged();
@@ -6245,42 +6242,74 @@ namespace BmwDeepObd
         {
             private class TabPageInfo
             {
-                public TabPageInfo(Fragment fragment, string title)
+                public TabPageInfo(JobReader.PageInfo pageInfo, int resourceId, string title)
                 {
-                    Fragment = fragment;
+                    PageInfo = pageInfo;
+                    ResourceId = resourceId;
                     Title = title;
                 }
 
-                public Fragment Fragment { get; }
+                public JobReader.PageInfo PageInfo { get; }
+                public int ResourceId { get; }
                 public string Title { get; }
             }
 
             private readonly List<TabPageInfo> _pageList;
+            private long _idOffset;
 
             public TabsFragmentStateAdapter(FragmentManager fm, Lifecycle lifecycle) : base(fm, lifecycle)
             {
                 _pageList = new List<TabPageInfo>();
+                _idOffset = 0;
             }
 
             public override int ItemCount => _pageList.Count;
 
             public override Fragment CreateFragment(int position)
             {
-                if (position >= _pageList.Count)
+                if (position < 0 || position >= _pageList.Count)
                 {
                     return null;
                 }
-                return _pageList[position].Fragment;
+
+                TabPageInfo tabPageInfo = _pageList[position];
+                Fragment fragmentPage = TabContentFragment.NewInstance(tabPageInfo.ResourceId, position);
+                tabPageInfo.PageInfo.InfoObject = fragmentPage;
+                return fragmentPage;
+            }
+
+            public override long GetItemId(int position)
+            {
+                if (position < 0 || position >= _pageList.Count)
+                {
+                    return RecyclerView.NoId;
+                }
+
+                return position + _idOffset;
+            }
+
+            public override bool ContainsItem(long itemId)
+            {
+                if (itemId < _idOffset || itemId >= _pageList.Count + _idOffset)
+                {
+                    return false;
+                }
+
+                return true;
             }
 
             public void ClearPages()
             {
+                NotifyItemRangeRemoved(0, _pageList.Count);
                 _pageList.Clear();
             }
 
-            public void AddPage(Fragment fragment, string title)
+            public void AddPage(JobReader.PageInfo pageInfo, int resourceId, string title)
             {
-                _pageList.Add(new TabPageInfo(fragment, title));
+                int position = _pageList.Count;
+                _pageList.Add(new TabPageInfo(pageInfo, resourceId, title));
+                _idOffset++;
+                NotifyItemInserted(position);
             }
         }
 
