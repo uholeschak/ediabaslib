@@ -42,6 +42,7 @@ using AndroidX.Core.App;
 using BmwFileReader;
 using UdsFileReader;
 using AndroidX.AppCompat.App;
+using AndroidX.Core.Content.PM;
 using AndroidX.DocumentFile.Provider;
 using AndroidX.LocalBroadcastManager.Content;
 
@@ -4845,7 +4846,7 @@ namespace BmwDeepObd
                     {
                         formDownload.Add(new StringContent(AppId), "appid");
                         formDownload.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}",
-                            packageInfo != null ? AndroidX.Core.Content.PM.PackageInfoCompat.GetLongVersionCode(packageInfo) : 0)), "appver");
+                            packageInfo != null ? PackageInfoCompat.GetLongVersionCode(packageInfo) : 0)), "appver");
                         formDownload.Add(new StringContent(GetCurrentLanguage()), "lang");
                         formDownload.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", (long) Build.VERSION.SdkInt )), "android_ver");
                         formDownload.Add(new StringContent(Build.Fingerprint), "fingerprint");
@@ -4953,7 +4954,7 @@ namespace BmwDeepObd
                     sb.Append(string.Format("\nAndroid user: {0}", Build.User ?? string.Empty));
                     sb.Append(string.Format("\nApp version name: {0}", packageInfo?.VersionName ?? string.Empty));
                     sb.Append(string.Format("\nApp version code: {0}",
-                        packageInfo != null ? AndroidX.Core.Content.PM.PackageInfoCompat.GetLongVersionCode(packageInfo) : 0));
+                        packageInfo != null ? PackageInfoCompat.GetLongVersionCode(packageInfo) : 0));
                     sb.Append(string.Format("\nApp id: {0}", AppId));
                     sb.Append(string.Format("\nOBB: {0}", obbName));
                     sb.Append(string.Format("\nInstaller: {0}", installer ?? string.Empty));
@@ -5675,7 +5676,7 @@ namespace BmwDeepObd
                 {
                     { new StringContent(_activity?.PackageName), "package_name" },
                     { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}",
-                        packageInfo != null ? AndroidX.Core.Content.PM.PackageInfoCompat.GetLongVersionCode(packageInfo) : 0)), "app_ver" },
+                        packageInfo != null ? PackageInfoCompat.GetLongVersionCode(packageInfo) : 0)), "app_ver" },
                     { new StringContent(AppId), "app_id" },
                     { new StringContent(GetCurrentLanguage()), "lang" },
                     { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", (long) Build.VERSION.SdkInt)), "android_ver" },

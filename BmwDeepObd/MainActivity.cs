@@ -24,6 +24,7 @@ using Android.Widget;
 using AndroidX.AppCompat.App;
 using AndroidX.Core.App;
 using AndroidX.Core.Content;
+using AndroidX.Core.Content.PM;
 using AndroidX.Core.View;
 using AndroidX.Fragment.App;
 using AndroidX.Lifecycle;
@@ -2192,7 +2193,7 @@ namespace BmwDeepObd
         private void GetSettings()
         {
             PackageInfo packageInfo = PackageManager?.GetPackageInfo(PackageName ?? string.Empty, 0);
-            _currentVersionCode = packageInfo != null ? AndroidX.Core.Content.PM.PackageInfoCompat.GetLongVersionCode(packageInfo) : 0;
+            _currentVersionCode = packageInfo != null ? PackageInfoCompat.GetLongVersionCode(packageInfo) : 0;
             string assetFileName = ExpansionDownloaderActivity.GetAssetFilename();
             if (!string.IsNullOrEmpty(assetFileName))
             {
