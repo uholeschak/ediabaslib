@@ -792,6 +792,19 @@ namespace BmwDeepObd
                 _httpClient = null;
             }
             _extractZipCanceled = true;
+
+            if (_tabLayout != null)
+            {
+                try
+                {
+                    _tabLayout.RemoveOnTabSelectedListener(this);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+
             if (_activityCommon != null)
             {
                 _activityCommon.UnRegisterInternetCellular();
