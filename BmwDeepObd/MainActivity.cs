@@ -593,7 +593,7 @@ namespace BmwDeepObd
                     pageIndex = 0;
                 }
 
-                _updateHandler.Post(() =>
+                _updateHandler?.Post(() =>
                 {
                     if (!_activityActive)
                     {
@@ -695,11 +695,11 @@ namespace BmwDeepObd
             UpdateLockState();
             if (_compileCodePending)
             {
-                _updateHandler.Post(CompileCode);
+                _updateHandler?.Post(CompileCode);
             }
             if (_createTabsPending)
             {
-                _updateHandler.Post(CreateActionBarTabs);
+                _updateHandler?.Post(CreateActionBarTabs);
             }
             if (_startAlertDialog == null)
             {
@@ -4366,7 +4366,7 @@ namespace BmwDeepObd
             if (ActivityCommon.CommActive)
             {
                 UpdateJobReaderSettings();
-                _updateHandler.Post(CreateActionBarTabs);
+                _updateHandler?.Post(CreateActionBarTabs);
                 return;
             }
 
@@ -4436,7 +4436,7 @@ namespace BmwDeepObd
             }
             if (ActivityCommon.JobReader.PageList.Count == 0 && !_instanceData.CheckCpuUsage)
             {
-                _updateHandler.Post(CreateActionBarTabs);
+                _updateHandler?.Post(CreateActionBarTabs);
                 return;
             }
             StoreLastAppState(LastAppState.Compile);
@@ -4696,7 +4696,7 @@ namespace BmwDeepObd
                     {
                         return;
                     }
-                    CreateActionBarTabs();
+                    _updateHandler?.Post(CreateActionBarTabs);
                     _compileProgress.Dismiss();
                     _compileProgress.Dispose();
                     _compileProgress = null;
@@ -5844,7 +5844,7 @@ namespace BmwDeepObd
             ActivityCommon.JobReader.Clear();
             _instanceData.ConfigFileName = string.Empty;
             StoreSettings();
-            CreateActionBarTabs();
+            _updateHandler?.Post(CreateActionBarTabs);
             UpdateDirectories();
             UpdateOptionsMenu();
             UpdateDisplay();
@@ -6383,7 +6383,7 @@ namespace BmwDeepObd
                             }
                         }
                     }
-                    activityMain._updateHandler.Post(() =>
+                    activityMain._updateHandler?.Post(() =>
                     {
                         activityMain.UpdateDisplay();
                     });
