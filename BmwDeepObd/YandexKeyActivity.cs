@@ -49,6 +49,7 @@ namespace BmwDeepObd
         {
             SetTheme(ActivityCommon.SelectedThemeId);
             base.OnCreate(savedInstanceState);
+            _allowFullScreenMode = false;
             if (savedInstanceState != null)
             {
                 _activityRecreated = true;
