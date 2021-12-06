@@ -545,143 +545,15 @@ namespace PsdzClient
             UpdateCurrentOptions();
         }
 
-        private async Task<bool> StartProgrammingServiceTask(string dealerId)
+        private async Task<bool> StartProgrammingServiceTask(string istaFolder, string dealerId)
         {
-            return await Task.Run(() => StartProgrammingService(dealerId)).ConfigureAwait(false);
-        }
-
-        private bool StartProgrammingService(string dealerId)
-        {
-            StringBuilder sbResult = new StringBuilder();
-            try
-            {
-                sbResult.AppendLine("Starting programming service");
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "DealerId={0}", dealerId));
-                UpdateStatus(sbResult.ToString());
-
-                if (_programmingJobs.ProgrammingService != null && _programmingJobs.ProgrammingService.IsPsdzPsdzServiceHostInitialized())
-                {
-                    if (!StopProgrammingService())
-                    {
-                        sbResult.AppendLine("Stop host failed");
-                        UpdateStatus(sbResult.ToString());
-                        return false;
-                    }
-                }
-
-                _programmingJobs.ProgrammingService = new ProgrammingService(textBoxIstaFolder.Text, dealerId);
-                _programmingJobs.SetupLog4Net();
-                _programmingJobs.ProgrammingService.EventManager.ProgrammingEventRaised += (sender, args) =>
-                {
-                    if (args is ProgrammingTaskEventArgs programmingEventArgs)
-                    {
-                        BeginInvoke((Action)(() =>
-                        {
-                            progressBarEvent.Style = ProgressBarStyle.Blocks;
-                            if (programmingEventArgs.IsTaskFinished)
-                            {
-                                labelProgressEvent.Text = string.Empty;
-                                progressBarEvent.Value = progressBarEvent.Maximum;
-                            }
-                            else
-                            {
-                                int progress = (int) (programmingEventArgs.Progress * 100.0);
-                                labelProgressEvent.Text = string.Format(CultureInfo.InvariantCulture, "{0}%, {1}s", progress, programmingEventArgs.TimeLeftSec);
-                                progressBarEvent.Value = progress;
-                            }
-                        }));
-                    }
-                };
-
-                sbResult.AppendLine("Generating test module data ...");
-                UpdateStatus(sbResult.ToString());
-                bool result = _programmingJobs.ProgrammingService.PdszDatabase.GenerateTestModuleData(progress =>
-                {
-                    BeginInvoke((Action)(() =>
-                    {
-                        progressBarEvent.Style = ProgressBarStyle.Blocks;
-                        labelProgressEvent.Text = string.Format(CultureInfo.InvariantCulture, "{0}%", progress);
-                        progressBarEvent.Value = progress;
-                    }));
-
-                    if (_cts != null)
-                    {
-                        return _cts.Token.IsCancellationRequested;
-                    }
-                    return false;
-                });
-
-                BeginInvoke((Action)(() =>
-                {
-                    progressBarEvent.Style = ProgressBarStyle.Marquee;
-                    labelProgressEvent.Text = string.Empty;
-                }));
-
-                if (!result)
-                {
-                    sbResult.AppendLine("Generating test module data failed");
-                    UpdateStatus(sbResult.ToString());
-                    return false;
-                }
-
-                sbResult.AppendLine("Starting host ...");
-                UpdateStatus(sbResult.ToString());
-                if (!_programmingJobs.ProgrammingService.StartPsdzServiceHost())
-                {
-                    sbResult.AppendLine("Start host failed");
-                    UpdateStatus(sbResult.ToString());
-                    return false;
-                }
-
-                _programmingJobs.ProgrammingService.SetLogLevelToMax();
-                sbResult.AppendLine("Host started");
-                UpdateStatus(sbResult.ToString());
-
-                _programmingJobs.ProgrammingService.PdszDatabase.ResetXepRules();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Exception: {0}", ex.Message));
-                UpdateStatus(sbResult.ToString());
-                return false;
-            }
+            return await Task.Run(() => _programmingJobs.StartProgrammingService(_cts, istaFolder, dealerId)).ConfigureAwait(false);
         }
 
         private async Task<bool> StopProgrammingServiceTask()
         {
             // ReSharper disable once ConvertClosureToMethodGroup
-            return await Task.Run(() => StopProgrammingService()).ConfigureAwait(false);
-        }
-
-        private bool StopProgrammingService()
-        {
-            StringBuilder sbResult = new StringBuilder();
-            try
-            {
-                sbResult.AppendLine("Stopping host ...");
-                UpdateStatus(sbResult.ToString());
-
-                if (_programmingJobs.ProgrammingService != null)
-                {
-                    _programmingJobs.ProgrammingService.Psdz.Shutdown();
-                    _programmingJobs.ProgrammingService.CloseConnectionsToPsdzHost();
-                    _programmingJobs.ProgrammingService.Dispose();
-                    _programmingJobs.ProgrammingService = null;
-                    _programmingJobs.ClearProgrammingObjects();
-                }
-
-                sbResult.AppendLine("Host stopped");
-                UpdateStatus(sbResult.ToString());
-            }
-            catch (Exception ex)
-            {
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Exception: {0}", ex.Message));
-                UpdateStatus(sbResult.ToString());
-                return false;
-            }
-
-            return true;
+            return await Task.Run(() => _programmingJobs.StopProgrammingService(_cts)).ConfigureAwait(false);
         }
 
         private async Task<List<EdInterfaceEnet.EnetConnection>> SearchVehiclesTask()
@@ -1633,7 +1505,7 @@ namespace PsdzClient
         private void buttonStartHost_Click(object sender, EventArgs e)
         {
             _cts = new CancellationTokenSource();
-            StartProgrammingServiceTask(DealerId).ContinueWith(task =>
+            StartProgrammingServiceTask(textBoxIstaFolder.Text, DealerId).ContinueWith(task =>
             {
                 TaskActive = false;
                 _cts.Dispose();
