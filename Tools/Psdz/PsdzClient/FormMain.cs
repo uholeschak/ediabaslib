@@ -95,7 +95,7 @@ namespace PsdzClient
 
         private const string DealerId = "32395";
         private const string DefaultIp = @"127.0.0.1";
-        private ProgrammingJobs _programmingJobs = new ProgrammingJobs();
+        private readonly ProgrammingJobs _programmingJobs;
         private bool _taskActive;
         private bool TaskActive
         {
@@ -140,6 +140,10 @@ namespace PsdzClient
         public FormMain()
         {
             InitializeComponent();
+
+            _programmingJobs = new ProgrammingJobs();
+            _programmingJobs.UpdateStatusEvent += UpdateStatus;
+            _programmingJobs.ProgressEvent += UpdateProgress;
         }
 
         private void UpdateDisplay()
@@ -250,6 +254,30 @@ namespace PsdzClient
             textBoxStatus.ScrollToCaret();
 
             UpdateDisplay();
+        }
+
+        private void UpdateProgress(int percent, bool marquee, string message = null)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke((Action)(() =>
+                {
+                    UpdateProgress(percent, marquee, message);
+                }));
+                return;
+            }
+
+            if (marquee)
+            {
+                progressBarEvent.Style = ProgressBarStyle.Marquee;
+            }
+            else
+            {
+                progressBarEvent.Style = ProgressBarStyle.Blocks;
+            }
+            progressBarEvent.Value = percent;
+            labelProgressEvent.Text = message ?? string.Empty;
+
         }
 
         private void UpdateCurrentOptions()

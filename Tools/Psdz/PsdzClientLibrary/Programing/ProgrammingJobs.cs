@@ -15,7 +15,7 @@ namespace PsdzClient.Programing
     public class ProgrammingJobs : IDisposable
     {
         public delegate void UpdateStatusDelegate(string message = null);
-        public delegate void ProgressDelegate(int progresPercent, bool marquee, string message = null);
+        public delegate void ProgressDelegate(int percent, bool marquee, string message = null);
         public event UpdateStatusDelegate UpdateStatusEvent;
         public event ProgressDelegate ProgressEvent;
 
