@@ -10,7 +10,7 @@ using PsdzClient.Core;
 
 namespace PsdzClient.Programming
 {
-	public class ProgrammingService: IDisposable
+	public class ProgrammingService : IDisposable
 	{
 		public ProgrammingService(string istaFolder, string dealerId)
         {

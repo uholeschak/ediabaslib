@@ -239,6 +239,7 @@
     <Compile Include="Programing\ProgrammingEnumMapperBase.cs" />
     <Compile Include="Programing\ProgrammingEventArgs.cs" />
     <Compile Include="Programing\ProgrammingEventManager.cs" />
+    <Compile Include="Programing\ProgrammingJobs.cs" />
     <Compile Include="Programing\ProgrammingObjectBuilder.cs" />
     <Compile Include="Programing\ProgrammingService.cs" />
     <Compile Include="Programing\ProgrammingTaskEventArgs.cs" />
