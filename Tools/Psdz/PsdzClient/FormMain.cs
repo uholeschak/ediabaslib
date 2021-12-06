@@ -95,7 +95,7 @@ namespace PsdzClient
 
         private const string DealerId = "32395";
         private const string DefaultIp = @"127.0.0.1";
-        private ProgrammingJobs programmingJobs = new ProgrammingJobs();
+        private ProgrammingJobs _programmingJobs = new ProgrammingJobs();
         private bool _taskActive;
         private bool TaskActive
         {
@@ -125,7 +125,6 @@ namespace PsdzClient
 
         private bool _ignoreCheck = false;
         private bool _ignoreChange = false;
-        private PsdzContext _psdzContext;
         private CancellationTokenSource _cts;
         private Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>> _optionsDict;
         private List<OptionsItem> _selectedOptions;
@@ -152,13 +151,13 @@ namespace PsdzClient
             bool talPresent = false;
             if (!active)
             {
-                hostRunning = programmingJobs.ProgrammingService != null && programmingJobs.ProgrammingService.IsPsdzPsdzServiceHostInitialized();
+                hostRunning = _programmingJobs.ProgrammingService != null && _programmingJobs.ProgrammingService.IsPsdzPsdzServiceHostInitialized();
             }
 
-            if (_psdzContext?.Connection != null)
+            if (_programmingJobs.PsdzContext?.Connection != null)
             {
                 vehicleConnected = true;
-                talPresent = _psdzContext?.Tal != null;
+                talPresent = _programmingJobs.PsdzContext?.Tal != null;
             }
 
             bool ipEnabled = !active && !vehicleConnected;
@@ -337,7 +336,7 @@ namespace PsdzClient
             try
             {
                 List<PdszDatabase.SwiAction> selectedSwiActions = GetSelectedSwiActions();
-                List<PdszDatabase.SwiAction> linkedSwiActions = programmingJobs.ProgrammingService.PdszDatabase.ReadLinkedSwiActions(selectedSwiActions, _psdzContext.Vehicle, null);
+                List<PdszDatabase.SwiAction> linkedSwiActions = _programmingJobs.ProgrammingService.PdszDatabase.ReadLinkedSwiActions(selectedSwiActions, _programmingJobs.PsdzContext.Vehicle, null);
                 OptionsItem topItemCurrent = null;
                 int topIndexCurrent = checkedListBoxOptions.TopIndex;
                 if (topIndexCurrent >= 0 && topIndexCurrent < checkedListBoxOptions.Items.Count)
@@ -377,7 +376,7 @@ namespace PsdzClient
                                 }
                                 else
                                 {
-                                    if (!programmingJobs.ProgrammingService.PdszDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, _psdzContext.Vehicle, null))
+                                    if (!_programmingJobs.ProgrammingService.PdszDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, _programmingJobs.PsdzContext.Vehicle, null))
                                     {
                                         addItem = false;
                                     }
@@ -410,7 +409,7 @@ namespace PsdzClient
 
         private List<PdszDatabase.SwiAction> GetSelectedSwiActions()
         {
-            if (_psdzContext == null || _selectedOptions == null)
+            if (_programmingJobs.PsdzContext == null || _selectedOptions == null)
             {
                 return null;
             }
@@ -432,7 +431,7 @@ namespace PsdzClient
 
         private void UpdateTargetFa(bool reset = false)
         {
-            if (_psdzContext == null || _selectedOptions == null)
+            if (_programmingJobs.PsdzContext == null || _selectedOptions == null)
             {
                 return;
             }
@@ -442,8 +441,8 @@ namespace PsdzClient
                 _selectedOptions.Clear();
             }
 
-            _psdzContext.SetFaTarget(_psdzContext.FaActual);
-            programmingJobs.ProgrammingService.PdszDatabase.ResetXepRules();
+            _programmingJobs.PsdzContext.SetFaTarget(_programmingJobs.PsdzContext.FaActual);
+            _programmingJobs.ProgrammingService.PdszDatabase.ResetXepRules();
 
             foreach (OptionsItem optionsItem in _selectedOptions)
             {
@@ -454,7 +453,7 @@ namespace PsdzClient
                         if (infoInfoObj.LinkType == PdszDatabase.SwiInfoObj.SwiActionDatabaseLinkType.SwiActionActionSelectionLink)
                         {
                             string moduleName = infoInfoObj.ModuleName;
-                            PdszDatabase.TestModuleData testModuleData = programmingJobs.ProgrammingService.PdszDatabase.GetTestModuleData(moduleName);
+                            PdszDatabase.TestModuleData testModuleData = _programmingJobs.ProgrammingService.PdszDatabase.GetTestModuleData(moduleName);
                             if (testModuleData == null)
                             {
                                 log.ErrorFormat("UpdateTargetFa GetTestModuleData failed for: {0}", moduleName);
@@ -465,7 +464,7 @@ namespace PsdzClient
                                 optionsItem.Invalid = false;
                                 if (!string.IsNullOrEmpty(testModuleData.ModuleRef))
                                 {
-                                    PdszDatabase.SwiInfoObj swiInfoObj = programmingJobs.ProgrammingService.PdszDatabase.GetInfoObjectByControlId(testModuleData.ModuleRef, infoInfoObj.LinkType);
+                                    PdszDatabase.SwiInfoObj swiInfoObj = _programmingJobs.ProgrammingService.PdszDatabase.GetInfoObjectByControlId(testModuleData.ModuleRef, infoInfoObj.LinkType);
                                     if (swiInfoObj == null)
                                     {
                                         log.ErrorFormat("UpdateTargetFa No info object: {0}", testModuleData.ModuleRef);
@@ -476,7 +475,7 @@ namespace PsdzClient
                                     }
                                 }
 
-                                IFa ifaTarget = ProgrammingUtils.BuildFa(_psdzContext.FaTarget);
+                                IFa ifaTarget = ProgrammingUtils.BuildFa(_programmingJobs.PsdzContext.FaTarget);
                                 if (testModuleData.RefDict.TryGetValue("faElementsToRem", out List<string> remList))
                                 {
                                     if (!ProgrammingUtils.ModifyFa(ifaTarget, remList, false))
@@ -492,9 +491,9 @@ namespace PsdzClient
                                     }
                                 }
 
-                                IPsdzFa psdzFaTarget = programmingJobs.ProgrammingService.Psdz.ObjectBuilder.BuildFa(ifaTarget, _psdzContext.FaActual.Vin);
-                                _psdzContext.SetFaTarget(psdzFaTarget);
-                                programmingJobs.ProgrammingService.PdszDatabase.ResetXepRules();
+                                IPsdzFa psdzFaTarget = _programmingJobs.ProgrammingService.Psdz.ObjectBuilder.BuildFa(ifaTarget, _programmingJobs.PsdzContext.FaActual.Vin);
+                                _programmingJobs.PsdzContext.SetFaTarget(psdzFaTarget);
+                                _programmingJobs.ProgrammingService.PdszDatabase.ResetXepRules();
                             }
                         }
                     }
@@ -504,10 +503,10 @@ namespace PsdzClient
             _selectedOptions.RemoveAll(x => x.Invalid);
 
             {
-                log.InfoFormat("UpdateTargetFa FaTarget: {0}", _psdzContext.FaTarget.AsString);
+                log.InfoFormat("UpdateTargetFa FaTarget: {0}", _programmingJobs.PsdzContext.FaTarget.AsString);
 
-                IFa ifaTarget = ProgrammingUtils.BuildFa(_psdzContext.FaTarget);
-                IFa ifaActual = ProgrammingUtils.BuildFa(_psdzContext.FaActual);
+                IFa ifaTarget = ProgrammingUtils.BuildFa(_programmingJobs.PsdzContext.FaTarget);
+                IFa ifaActual = ProgrammingUtils.BuildFa(_programmingJobs.PsdzContext.FaActual);
                 string compareFa = ProgrammingUtils.CompareFa(ifaActual, ifaTarget);
                 if (!string.IsNullOrEmpty(compareFa))
                 {
@@ -516,21 +515,6 @@ namespace PsdzClient
             }
 
             UpdateCurrentOptions();
-        }
-
-        private void SetupLog4Net()
-        {
-            string appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            if (!string.IsNullOrEmpty(appDir))
-            {
-                string log4NetConfig = Path.Combine(appDir, "log4net.xml");
-                if (File.Exists(log4NetConfig))
-                {
-                    string logFile = Path.Combine(programmingJobs.ProgrammingService.GetPsdzServiceHostLogDir(), "PsdzClient.log");
-                    log4net.GlobalContext.Properties["LogFileName"] = logFile;
-                    XmlConfigurator.Configure(new FileInfo(log4NetConfig));
-                }
-            }
         }
 
         private async Task<bool> StartProgrammingServiceTask(string dealerId)
@@ -547,7 +531,7 @@ namespace PsdzClient
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "DealerId={0}", dealerId));
                 UpdateStatus(sbResult.ToString());
 
-                if (programmingJobs.ProgrammingService != null && programmingJobs.ProgrammingService.IsPsdzPsdzServiceHostInitialized())
+                if (_programmingJobs.ProgrammingService != null && _programmingJobs.ProgrammingService.IsPsdzPsdzServiceHostInitialized())
                 {
                     if (!StopProgrammingService())
                     {
@@ -557,9 +541,9 @@ namespace PsdzClient
                     }
                 }
 
-                programmingJobs.ProgrammingService = new ProgrammingService(textBoxIstaFolder.Text, dealerId);
-                SetupLog4Net();
-                programmingJobs.ProgrammingService.EventManager.ProgrammingEventRaised += (sender, args) =>
+                _programmingJobs.ProgrammingService = new ProgrammingService(textBoxIstaFolder.Text, dealerId);
+                _programmingJobs.SetupLog4Net();
+                _programmingJobs.ProgrammingService.EventManager.ProgrammingEventRaised += (sender, args) =>
                 {
                     if (args is ProgrammingTaskEventArgs programmingEventArgs)
                     {
@@ -583,7 +567,7 @@ namespace PsdzClient
 
                 sbResult.AppendLine("Generating test module data ...");
                 UpdateStatus(sbResult.ToString());
-                bool result = programmingJobs.ProgrammingService.PdszDatabase.GenerateTestModuleData(progress =>
+                bool result = _programmingJobs.ProgrammingService.PdszDatabase.GenerateTestModuleData(progress =>
                 {
                     BeginInvoke((Action)(() =>
                     {
@@ -614,18 +598,18 @@ namespace PsdzClient
 
                 sbResult.AppendLine("Starting host ...");
                 UpdateStatus(sbResult.ToString());
-                if (!programmingJobs.ProgrammingService.StartPsdzServiceHost())
+                if (!_programmingJobs.ProgrammingService.StartPsdzServiceHost())
                 {
                     sbResult.AppendLine("Start host failed");
                     UpdateStatus(sbResult.ToString());
                     return false;
                 }
 
-                programmingJobs.ProgrammingService.SetLogLevelToMax();
+                _programmingJobs.ProgrammingService.SetLogLevelToMax();
                 sbResult.AppendLine("Host started");
                 UpdateStatus(sbResult.ToString());
 
-                programmingJobs.ProgrammingService.PdszDatabase.ResetXepRules();
+                _programmingJobs.ProgrammingService.PdszDatabase.ResetXepRules();
                 return true;
             }
             catch (Exception ex)
@@ -650,13 +634,13 @@ namespace PsdzClient
                 sbResult.AppendLine("Stopping host ...");
                 UpdateStatus(sbResult.ToString());
 
-                if (programmingJobs.ProgrammingService != null)
+                if (_programmingJobs.ProgrammingService != null)
                 {
-                    programmingJobs.ProgrammingService.Psdz.Shutdown();
-                    programmingJobs.ProgrammingService.CloseConnectionsToPsdzHost();
-                    programmingJobs.ProgrammingService.Dispose();
-                    programmingJobs.ProgrammingService = null;
-                    ClearProgrammingObjects();
+                    _programmingJobs.ProgrammingService.Psdz.Shutdown();
+                    _programmingJobs.ProgrammingService.CloseConnectionsToPsdzHost();
+                    _programmingJobs.ProgrammingService.Dispose();
+                    _programmingJobs.ProgrammingService = null;
+                    _programmingJobs.ClearProgrammingObjects();
                 }
 
                 sbResult.AppendLine("Host stopped");
@@ -707,12 +691,12 @@ namespace PsdzClient
                     ipAddress, icomConnection));
                 UpdateStatus(sbResult.ToString());
 
-                if (programmingJobs.ProgrammingService == null)
+                if (_programmingJobs.ProgrammingService == null)
                 {
                     return false;
                 }
 
-                if (!InitProgrammingObjects(istaFolder))
+                if (!_programmingJobs.InitProgrammingObjects(istaFolder))
                 {
                     return false;
                 }
@@ -736,8 +720,8 @@ namespace PsdzClient
                     enetConnection = new EdInterfaceEnet.EnetConnection(interfaceType, IPAddress.Parse(ipAddress));
                 }
 
-                _psdzContext.DetectVehicle = new DetectVehicle(ecuPath, enetConnection);
-                _psdzContext.DetectVehicle.AbortRequest += () =>
+                _programmingJobs.PsdzContext.DetectVehicle = new DetectVehicle(ecuPath, enetConnection);
+                _programmingJobs.PsdzContext.DetectVehicle.AbortRequest += () =>
                 {
                     if (_cts != null)
                     {
@@ -746,7 +730,7 @@ namespace PsdzClient
                     return false;
                 };
 
-                bool detectResult = _psdzContext.DetectVehicle.DetectVehicleBmwFast();
+                bool detectResult = _programmingJobs.PsdzContext.DetectVehicle.DetectVehicleBmwFast();
                 _cts?.Token.ThrowIfCancellationRequested();
                 if (!detectResult)
                 {
@@ -757,16 +741,16 @@ namespace PsdzClient
 
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture,
                     "Detected vehicle: VIN={0}, GroupFile={1}, BR={2}, Series={3}, BuildDate={4}-{5}",
-                    _psdzContext.DetectVehicle.Vin ?? string.Empty, _psdzContext.DetectVehicle.GroupSgdb ?? string.Empty,
-                    _psdzContext.DetectVehicle.ModelSeries ?? string.Empty, _psdzContext.DetectVehicle.Series ?? string.Empty,
-                    _psdzContext.DetectVehicle.ConstructYear ?? string.Empty, _psdzContext.DetectVehicle.ConstructMonth ?? string.Empty));
+                    _programmingJobs.PsdzContext.DetectVehicle.Vin ?? string.Empty, _programmingJobs.PsdzContext.DetectVehicle.GroupSgdb ?? string.Empty,
+                    _programmingJobs.PsdzContext.DetectVehicle.ModelSeries ?? string.Empty, _programmingJobs.PsdzContext.DetectVehicle.Series ?? string.Empty,
+                    _programmingJobs.PsdzContext.DetectVehicle.ConstructYear ?? string.Empty, _programmingJobs.PsdzContext.DetectVehicle.ConstructMonth ?? string.Empty));
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture,
                     "Detected ILevel: Ship={0}, Current={1}, Backup={2}",
-                    _psdzContext.DetectVehicle.ILevelShip ?? string.Empty, _psdzContext.DetectVehicle.ILevelCurrent ?? string.Empty,
-                    _psdzContext.DetectVehicle.ILevelBackup ?? string.Empty));
+                    _programmingJobs.PsdzContext.DetectVehicle.ILevelShip ?? string.Empty, _programmingJobs.PsdzContext.DetectVehicle.ILevelCurrent ?? string.Empty,
+                    _programmingJobs.PsdzContext.DetectVehicle.ILevelBackup ?? string.Empty));
 
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecus: {0}", _psdzContext.DetectVehicle.EcuList.Count()));
-                foreach (PdszDatabase.EcuInfo ecuInfo in _psdzContext.DetectVehicle.EcuList)
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecus: {0}", _programmingJobs.PsdzContext.DetectVehicle.EcuList.Count()));
+                foreach (PdszDatabase.EcuInfo ecuInfo in _programmingJobs.PsdzContext.DetectVehicle.EcuList)
                 {
                     sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Ecu: Name={0}, Addr={1}, Sgdb={2}, Group={3}",
                         ecuInfo.Name, ecuInfo.Address, ecuInfo.Sgbd, ecuInfo.Grp));
@@ -775,7 +759,7 @@ namespace PsdzClient
                 UpdateStatus(sbResult.ToString());
                 _cts?.Token.ThrowIfCancellationRequested();
 
-                string series = _psdzContext.DetectVehicle.Series;
+                string series = _programmingJobs.PsdzContext.DetectVehicle.Series;
                 if (string.IsNullOrEmpty(series))
                 {
                     sbResult.AppendLine("Vehicle series not detected");
@@ -783,11 +767,11 @@ namespace PsdzClient
                     return false;
                 }
 
-                string mainSeries = programmingJobs.ProgrammingService.Psdz.ConfigurationService.RequestBaureihenverbund(series);
+                string mainSeries = _programmingJobs.ProgrammingService.Psdz.ConfigurationService.RequestBaureihenverbund(series);
                 IEnumerable<IPsdzTargetSelector> targetSelectors =
-                    programmingJobs.ProgrammingService.Psdz.ConnectionFactoryService.GetTargetSelectors();
-                _psdzContext.TargetSelectors = targetSelectors;
-                TargetSelectorChooser targetSelectorChooser = new TargetSelectorChooser(_psdzContext.TargetSelectors);
+                    _programmingJobs.ProgrammingService.Psdz.ConnectionFactoryService.GetTargetSelectors();
+                _programmingJobs.PsdzContext.TargetSelectors = targetSelectors;
+                TargetSelectorChooser targetSelectorChooser = new TargetSelectorChooser(_programmingJobs.PsdzContext.TargetSelectors);
                 IPsdzTargetSelector psdzTargetSelectorNewest =
                     targetSelectorChooser.GetNewestTargetSelectorByMainSeries(mainSeries);
                 if (psdzTargetSelectorNewest == null)
@@ -797,8 +781,8 @@ namespace PsdzClient
                     return false;
                 }
 
-                _psdzContext.ProjectName = psdzTargetSelectorNewest.Project;
-                _psdzContext.VehicleInfo = psdzTargetSelectorNewest.VehicleInfo;
+                _programmingJobs.PsdzContext.ProjectName = psdzTargetSelectorNewest.Project;
+                _programmingJobs.PsdzContext.VehicleInfo = psdzTargetSelectorNewest.VehicleInfo;
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture,
                     "Target selector: Project={0}, Vehicle={1}, Series={2}",
                     psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo,
@@ -806,20 +790,20 @@ namespace PsdzClient
                 UpdateStatus(sbResult.ToString());
                 _cts?.Token.ThrowIfCancellationRequested();
 
-                string bauIStufe = _psdzContext.DetectVehicle.ILevelShip;
+                string bauIStufe = _programmingJobs.PsdzContext.DetectVehicle.ILevelShip;
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "ILevel shipment: {0}", bauIStufe));
 
                 string url = string.Format(CultureInfo.InvariantCulture, "tcp://{0}:{1}", ipAddress, diagPort);
                 IPsdzConnection psdzConnection;
                 if (icomConnection)
                 {
-                    psdzConnection = programmingJobs.ProgrammingService.Psdz.ConnectionManagerService.ConnectOverIcom(
+                    psdzConnection = _programmingJobs.ProgrammingService.Psdz.ConnectionManagerService.ConnectOverIcom(
                         psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, 1000, series,
                         bauIStufe, IcomConnectionType.Ip, false);
                 }
                 else
                 {
-                    psdzConnection = programmingJobs.ProgrammingService.Psdz.ConnectionManagerService.ConnectOverEthernet(
+                    psdzConnection = _programmingJobs.ProgrammingService.Psdz.ConnectionManagerService.ConnectOverEthernet(
                         psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, series,
                         bauIStufe);
                 }
@@ -830,11 +814,11 @@ namespace PsdzClient
                 vehicle.VCI.IPAddress = ipAddress;
                 vehicle.VCI.Port = diagPort;
                 vehicle.VCI.NetworkType = "LAN";
-                vehicle.VCI.VIN = _psdzContext.DetectVehicle.Vin;
-                _psdzContext.Vehicle = vehicle;
+                vehicle.VCI.VIN = _programmingJobs.PsdzContext.DetectVehicle.Vin;
+                _programmingJobs.PsdzContext.Vehicle = vehicle;
 
-                programmingJobs.ProgrammingService.CreateEcuProgrammingInfos(_psdzContext.Vehicle);
-                _psdzContext.Connection = psdzConnection;
+                _programmingJobs.ProgrammingService.CreateEcuProgrammingInfos(_programmingJobs.PsdzContext.Vehicle);
+                _programmingJobs.PsdzContext.Connection = psdzConnection;
 
                 sbResult.AppendLine("Vehicle connected");
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Connection: Id={0}, Port={1}",
@@ -842,7 +826,7 @@ namespace PsdzClient
 
                 UpdateStatus(sbResult.ToString());
 
-                programmingJobs.ProgrammingService.AddListener(_psdzContext);
+                _programmingJobs.ProgrammingService.AddListener(_programmingJobs.PsdzContext);
                 return true;
             }
             catch (Exception ex)
@@ -856,11 +840,11 @@ namespace PsdzClient
                 log.InfoFormat("ConnectVehicle Finish - Ip: {0}, ICOM: {1}", ipAddress, icomConnection);
                 log.Info(Environment.NewLine + sbResult);
 
-                if (_psdzContext != null)
+                if (_programmingJobs.PsdzContext != null)
                 {
-                    if (_psdzContext.Connection == null)
+                    if (_programmingJobs.PsdzContext.Connection == null)
                     {
-                        ClearProgrammingObjects();
+                        _programmingJobs.ClearProgrammingObjects();
                     }
                 }
             }
@@ -882,24 +866,24 @@ namespace PsdzClient
                 sbResult.AppendLine("Disconnecting vehicle ...");
                 UpdateStatus(sbResult.ToString());
 
-                if (programmingJobs.ProgrammingService == null)
+                if (_programmingJobs.ProgrammingService == null)
                 {
                     sbResult.AppendLine("No Host");
                     UpdateStatus(sbResult.ToString());
                     return false;
                 }
 
-                if (_psdzContext?.Connection == null)
+                if (_programmingJobs.PsdzContext?.Connection == null)
                 {
                     sbResult.AppendLine("No connection");
                     UpdateStatus(sbResult.ToString());
                     return false;
                 }
 
-                programmingJobs.ProgrammingService.RemoveListener();
-                programmingJobs.ProgrammingService.Psdz.ConnectionManagerService.CloseConnection(_psdzContext.Connection);
+                _programmingJobs.ProgrammingService.RemoveListener();
+                _programmingJobs.ProgrammingService.Psdz.ConnectionManagerService.CloseConnection(_programmingJobs.PsdzContext.Connection);
 
-                ClearProgrammingObjects();
+                _programmingJobs.ClearProgrammingObjects();
                 sbResult.AppendLine("Vehicle disconnected");
                 UpdateStatus(sbResult.ToString());
                 return true;
@@ -915,11 +899,11 @@ namespace PsdzClient
                 log.Info("DisconnectVehicle Finish");
                 log.Info(Environment.NewLine + sbResult);
 
-                if (_psdzContext != null)
+                if (_programmingJobs.PsdzContext != null)
                 {
-                    if (_psdzContext.Connection == null)
+                    if (_programmingJobs.PsdzContext.Connection == null)
                     {
-                        ClearProgrammingObjects();
+                        _programmingJobs.ClearProgrammingObjects();
                     }
                 }
             }
@@ -940,21 +924,21 @@ namespace PsdzClient
                 sbResult.AppendLine("Executing vehicle functions ...");
                 UpdateStatus(sbResult.ToString());
 
-                if (programmingJobs.ProgrammingService == null)
+                if (_programmingJobs.ProgrammingService == null)
                 {
                     sbResult.AppendLine("No Host");
                     UpdateStatus(sbResult.ToString());
                     return false;
                 }
 
-                if (_psdzContext?.Connection == null)
+                if (_programmingJobs.PsdzContext?.Connection == null)
                 {
                     sbResult.AppendLine("No connection");
                     UpdateStatus(sbResult.ToString());
                     return false;
                 }
 
-                IPsdzVin psdzVin = programmingJobs.ProgrammingService.Psdz.VcmService.GetVinFromMaster(_psdzContext.Connection);
+                IPsdzVin psdzVin = _programmingJobs.ProgrammingService.Psdz.VcmService.GetVinFromMaster(_programmingJobs.PsdzContext.Connection);
                 if (string.IsNullOrEmpty(psdzVin?.Value))
                 {
                     sbResult.AppendLine("Reading VIN failed");
@@ -971,7 +955,7 @@ namespace PsdzClient
                     sbResult.AppendLine("Execute TAL");
                     UpdateStatus(sbResult.ToString());
 
-                    if (_psdzContext.Tal == null)
+                    if (_programmingJobs.PsdzContext.Tal == null)
                     {
                         sbResult.AppendLine("No TAL present");
                         UpdateStatus(sbResult.ToString());
@@ -979,7 +963,7 @@ namespace PsdzClient
                     }
 
                     DateTime calculationStartTime = DateTime.Now;
-                    IEnumerable<IPsdzEcuIdentifier> psdzEcuIdentifiersPrg = programmingJobs.ProgrammingService.Psdz.ProgrammingService.CheckProgrammingCounter(_psdzContext.Connection, _psdzContext.Tal);
+                    IEnumerable<IPsdzEcuIdentifier> psdzEcuIdentifiersPrg = _programmingJobs.ProgrammingService.Psdz.ProgrammingService.CheckProgrammingCounter(_programmingJobs.PsdzContext.Connection, _programmingJobs.PsdzContext.Tal);
                     sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "ProgCounter: {0}", psdzEcuIdentifiersPrg.Count()));
                     foreach (IPsdzEcuIdentifier ecuIdentifier in psdzEcuIdentifiersPrg)
                     {
@@ -989,8 +973,8 @@ namespace PsdzClient
                     UpdateStatus(sbResult.ToString());
                     _cts?.Token.ThrowIfCancellationRequested();
 
-                    PsdzSecureCodingConfigCto secureCodingConfig = SecureCodingConfigWrapper.GetSecureCodingConfig(programmingJobs.ProgrammingService);
-                    IPsdzCheckNcdResultEto psdzCheckNcdResultEto = programmingJobs.ProgrammingService.Psdz.SecureCodingService.CheckNcdAvailabilityForGivenTal(_psdzContext.Tal, secureCodingConfig.NcdRootDirectory, psdzVin);
+                    PsdzSecureCodingConfigCto secureCodingConfig = SecureCodingConfigWrapper.GetSecureCodingConfig(_programmingJobs.ProgrammingService);
+                    IPsdzCheckNcdResultEto psdzCheckNcdResultEto = _programmingJobs.ProgrammingService.Psdz.SecureCodingService.CheckNcdAvailabilityForGivenTal(_programmingJobs.PsdzContext.Tal, secureCodingConfig.NcdRootDirectory, psdzVin);
                     sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ncd EachSigned: {0}", psdzCheckNcdResultEto.isEachNcdSigned));
                     foreach (IPsdzDetailedNcdInfoEto detailedNcdInfo in psdzCheckNcdResultEto.DetailedNcdStatus)
                     {
@@ -1010,14 +994,14 @@ namespace PsdzClient
                     }
                     UpdateStatus(sbResult.ToString());
 #endif
-                    string secureCodingPath = SecureCodingConfigWrapper.GetSecureCodingPathWithVin(programmingJobs.ProgrammingService, psdzVin.Value);
+                    string secureCodingPath = SecureCodingConfigWrapper.GetSecureCodingPathWithVin(_programmingJobs.ProgrammingService, psdzVin.Value);
                     string jsonRequestFilePath = Path.Combine(secureCodingPath, string.Format(CultureInfo.InvariantCulture, "SecureCodingNCDCalculationRequest_{0}_{1}_{2}.json",
                         psdzVin.Value, DealerId, calculationStartTime.ToString("HHmmss", CultureInfo.InvariantCulture)));
                     PsdzBackendNcdCalculationEtoEnum backendNcdCalculationEtoEnumOld = secureCodingConfig.BackendNcdCalculationEtoEnum;
                     try
                     {
                         secureCodingConfig.BackendNcdCalculationEtoEnum = PsdzBackendNcdCalculationEtoEnum.ALLOW;
-                        IList<IPsdzSecurityBackendRequestFailureCto> psdzSecurityBackendRequestFailureList = programmingJobs.ProgrammingService.Psdz.SecureCodingService.RequestCalculationNcdAndSignatureOffline(requestNcdEtos, jsonRequestFilePath, secureCodingConfig, psdzVin, _psdzContext.FaTarget);
+                        IList<IPsdzSecurityBackendRequestFailureCto> psdzSecurityBackendRequestFailureList = _programmingJobs.ProgrammingService.Psdz.SecureCodingService.RequestCalculationNcdAndSignatureOffline(requestNcdEtos, jsonRequestFilePath, secureCodingConfig, psdzVin, _programmingJobs.PsdzContext.FaTarget);
                         int failureCount = psdzSecurityBackendRequestFailureList.Count;
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ncd failures: {0}", failureCount));
                         foreach (IPsdzSecurityBackendRequestFailureCto psdzSecurityBackendRequestFailure in psdzSecurityBackendRequestFailureList)
@@ -1063,7 +1047,7 @@ namespace PsdzClient
                         UpdateStatus(sbResult.ToString());
                         _cts?.Token.ThrowIfCancellationRequested();
 
-                        IEnumerable<IPsdzSgbmId> sweList = programmingJobs.ProgrammingService.Psdz.LogicService.RequestSweList(_psdzContext.Tal, true);
+                        IEnumerable<IPsdzSgbmId> sweList = _programmingJobs.ProgrammingService.Psdz.LogicService.RequestSweList(_programmingJobs.PsdzContext.Tal, true);
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Swe list: {0}", sweList.Count()));
                         foreach (IPsdzSgbmId psdzSgbmId in sweList)
                         {
@@ -1073,7 +1057,7 @@ namespace PsdzClient
                         _cts?.Token.ThrowIfCancellationRequested();
 
                         IEnumerable<IPsdzSgbmId> sgbmIds = ProgrammingUtils.RemoveCafdsCalculatedOnSCB(cafdCalculatedInSCB, sweList);
-                        IEnumerable<IPsdzSgbmId> softwareEntries = programmingJobs.ProgrammingService.Psdz.MacrosService.CheckSoftwareEntries(sgbmIds);
+                        IEnumerable<IPsdzSgbmId> softwareEntries = _programmingJobs.ProgrammingService.Psdz.MacrosService.CheckSoftwareEntries(sgbmIds);
                         int softwareEntryCount = softwareEntries.Count();
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Sw entries: {0}", softwareEntryCount));
                         foreach (IPsdzSgbmId psdzSgbmId in softwareEntries)
@@ -1092,9 +1076,9 @@ namespace PsdzClient
 
                         sbResult.AppendLine("Executing Backup Tal ...");
                         UpdateStatus(sbResult.ToString());
-                        TalExecutionSettings talExecutionSettings = ProgrammingUtils.GetTalExecutionSettings(programmingJobs.ProgrammingService);
-                        IPsdzTal backupTalResult = programmingJobs.ProgrammingService.Psdz.IndividualDataRestoreService.ExecuteAsyncBackupTal(
-                            _psdzContext.Connection, _psdzContext.IndividualDataBackupTal, null, _psdzContext.FaTarget, psdzVin, talExecutionSettings, _psdzContext.PathToBackupData);
+                        TalExecutionSettings talExecutionSettings = ProgrammingUtils.GetTalExecutionSettings(_programmingJobs.ProgrammingService);
+                        IPsdzTal backupTalResult = _programmingJobs.ProgrammingService.Psdz.IndividualDataRestoreService.ExecuteAsyncBackupTal(
+                            _programmingJobs.PsdzContext.Connection, _programmingJobs.PsdzContext.IndividualDataBackupTal, null, _programmingJobs.PsdzContext.FaTarget, psdzVin, talExecutionSettings, _programmingJobs.PsdzContext.PathToBackupData);
                         sbResult.AppendLine("Backup Tal result:");
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Size: {0}", backupTalResult.AsXml.Length));
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " State: {0}", backupTalResult.TalExecutionState));
@@ -1113,8 +1097,8 @@ namespace PsdzClient
 
                         sbResult.AppendLine("Executing Tal ...");
                         UpdateStatus(sbResult.ToString());
-                        IPsdzTal executeTalResult = programmingJobs.ProgrammingService.Psdz.TalExecutionService.ExecuteTal(_psdzContext.Connection, _psdzContext.Tal,
-                            null, psdzVin, _psdzContext.FaTarget, talExecutionSettings, _psdzContext.PathToBackupData, _cts.Token);
+                        IPsdzTal executeTalResult = _programmingJobs.ProgrammingService.Psdz.TalExecutionService.ExecuteTal(_programmingJobs.PsdzContext.Connection, _programmingJobs.PsdzContext.Tal,
+                            null, psdzVin, _programmingJobs.PsdzContext.FaTarget, talExecutionSettings, _programmingJobs.PsdzContext.PathToBackupData, _cts.Token);
                         sbResult.AppendLine("Exceute Tal result:");
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Size: {0}", executeTalResult.AsXml.Length));
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " State: {0}", executeTalResult.TalExecutionState));
@@ -1133,7 +1117,7 @@ namespace PsdzClient
 
                         try
                         {
-                            programmingJobs.ProgrammingService.Psdz.ProgrammingService.TslUpdate(_psdzContext.Connection, true, _psdzContext.SvtActual, _psdzContext.Sollverbauung.Svt);
+                            _programmingJobs.ProgrammingService.Psdz.ProgrammingService.TslUpdate(_programmingJobs.PsdzContext.Connection, true, _programmingJobs.PsdzContext.SvtActual, _programmingJobs.PsdzContext.Sollverbauung.Svt);
                             sbResult.AppendLine("Tsl updated");
                             UpdateStatus(sbResult.ToString());
                         }
@@ -1146,7 +1130,7 @@ namespace PsdzClient
 
                         try
                         {
-                            programmingJobs.ProgrammingService.Psdz.VcmService.WriteIStufen(_psdzContext.Connection, _psdzContext.IstufeShipment, _psdzContext.IstufeLast, _psdzContext.IstufeCurrent);
+                            _programmingJobs.ProgrammingService.Psdz.VcmService.WriteIStufen(_programmingJobs.PsdzContext.Connection, _programmingJobs.PsdzContext.IstufeShipment, _programmingJobs.PsdzContext.IstufeLast, _programmingJobs.PsdzContext.IstufeCurrent);
                             sbResult.AppendLine("ILevel updated");
                             UpdateStatus(sbResult.ToString());
                         }
@@ -1159,7 +1143,7 @@ namespace PsdzClient
 
                         try
                         {
-                            programmingJobs.ProgrammingService.Psdz.VcmService.WriteIStufenToBackup(_psdzContext.Connection, _psdzContext.IstufeShipment, _psdzContext.IstufeLast, _psdzContext.IstufeCurrent);
+                            _programmingJobs.ProgrammingService.Psdz.VcmService.WriteIStufenToBackup(_programmingJobs.PsdzContext.Connection, _programmingJobs.PsdzContext.IstufeShipment, _programmingJobs.PsdzContext.IstufeLast, _programmingJobs.PsdzContext.IstufeCurrent);
                             sbResult.AppendLine("ILevel backup updated");
                             UpdateStatus(sbResult.ToString());
                         }
@@ -1170,7 +1154,7 @@ namespace PsdzClient
                         }
                         _cts?.Token.ThrowIfCancellationRequested();
 
-                        IPsdzResponse piaResponse = programmingJobs.ProgrammingService.Psdz.EcuService.UpdatePiaPortierungsmaster(_psdzContext.Connection, _psdzContext.SvtActual);
+                        IPsdzResponse piaResponse = _programmingJobs.ProgrammingService.Psdz.EcuService.UpdatePiaPortierungsmaster(_programmingJobs.PsdzContext.Connection, _programmingJobs.PsdzContext.SvtActual);
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "PIA master update Success={0}, Cause={1}",
                             piaResponse.IsSuccessful, piaResponse.Cause));
                         UpdateStatus(sbResult.ToString());
@@ -1178,7 +1162,7 @@ namespace PsdzClient
 
                         try
                         {
-                            programmingJobs.ProgrammingService.Psdz.VcmService.WriteFa(_psdzContext.Connection, _psdzContext.FaTarget);
+                            _programmingJobs.ProgrammingService.Psdz.VcmService.WriteFa(_programmingJobs.PsdzContext.Connection, _programmingJobs.PsdzContext.FaTarget);
                             sbResult.AppendLine("FA written");
                             UpdateStatus(sbResult.ToString());
                         }
@@ -1191,7 +1175,7 @@ namespace PsdzClient
 
                         try
                         {
-                            programmingJobs.ProgrammingService.Psdz.VcmService.WriteFaToBackup(_psdzContext.Connection, _psdzContext.FaTarget);
+                            _programmingJobs.ProgrammingService.Psdz.VcmService.WriteFaToBackup(_programmingJobs.PsdzContext.Connection, _programmingJobs.PsdzContext.FaTarget);
                             sbResult.AppendLine("FA backup written");
                             UpdateStatus(sbResult.ToString());
                         }
@@ -1223,26 +1207,26 @@ namespace PsdzClient
                 }
 
                 bool bModifyFa = operationType == OperationType.BuildTalModFa;
-                IPsdzTalFilter psdzTalFilter = programmingJobs.ProgrammingService.Psdz.ObjectBuilder.BuildTalFilter();
+                IPsdzTalFilter psdzTalFilter = _programmingJobs.ProgrammingService.Psdz.ObjectBuilder.BuildTalFilter();
                 // disable backup
-                psdzTalFilter = programmingJobs.ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.FscBackup }, TalFilterOptions.MustNot, psdzTalFilter);
+                psdzTalFilter = _programmingJobs.ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.FscBackup }, TalFilterOptions.MustNot, psdzTalFilter);
                 if (bModifyFa)
                 {   // enable deploy
-                    psdzTalFilter = programmingJobs.ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.CdDeploy }, TalFilterOptions.Must, psdzTalFilter);
+                    psdzTalFilter = _programmingJobs.ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.CdDeploy }, TalFilterOptions.Must, psdzTalFilter);
                 }
-                _psdzContext.SetTalFilter(psdzTalFilter);
+                _programmingJobs.PsdzContext.SetTalFilter(psdzTalFilter);
 
-                IPsdzTalFilter psdzTalFilterEmpty = programmingJobs.ProgrammingService.Psdz.ObjectBuilder.BuildTalFilter();
-                _psdzContext.SetTalFilterForIndividualDataTal(psdzTalFilterEmpty);
+                IPsdzTalFilter psdzTalFilterEmpty = _programmingJobs.ProgrammingService.Psdz.ObjectBuilder.BuildTalFilter();
+                _programmingJobs.PsdzContext.SetTalFilterForIndividualDataTal(psdzTalFilterEmpty);
 
-                if (_psdzContext.TalFilter != null)
+                if (_programmingJobs.PsdzContext.TalFilter != null)
                 {
                     sbResult.AppendLine("TalFilter:");
-                    sbResult.Append(_psdzContext.TalFilter.AsXml);
+                    sbResult.Append(_programmingJobs.PsdzContext.TalFilter.AsXml);
                 }
 
-                _psdzContext.CleanupBackupData();
-                IPsdzIstufenTriple iStufenTriple = programmingJobs.ProgrammingService.Psdz.VcmService.GetIStufenTripleActual(_psdzContext.Connection);
+                _programmingJobs.PsdzContext.CleanupBackupData();
+                IPsdzIstufenTriple iStufenTriple = _programmingJobs.ProgrammingService.Psdz.VcmService.GetIStufenTripleActual(_programmingJobs.PsdzContext.Connection);
                 if (iStufenTriple == null)
                 {
                     sbResult.AppendLine("Reading ILevel failed");
@@ -1250,20 +1234,20 @@ namespace PsdzClient
                     return false;
                 }
 
-                _psdzContext.SetIstufen(iStufenTriple);
+                _programmingJobs.PsdzContext.SetIstufen(iStufenTriple);
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "ILevel: Current={0}, Last={1}, Shipment={2}",
                     iStufenTriple.Current, iStufenTriple.Last, iStufenTriple.Shipment));
 
-                if (!_psdzContext.SetPathToBackupData(psdzVin.Value))
+                if (!_programmingJobs.PsdzContext.SetPathToBackupData(psdzVin.Value))
                 {
                     sbResult.AppendLine("Create backup path failed");
                     UpdateStatus(sbResult.ToString());
                     return false;
                 }
 
-                IPsdzStandardFa standardFa = programmingJobs.ProgrammingService.Psdz.VcmService.GetStandardFaActual(_psdzContext.Connection);
-                IPsdzFa psdzFa = programmingJobs.ProgrammingService.Psdz.ObjectBuilder.BuildFa(standardFa, psdzVin.Value);
-                _psdzContext.SetFaActual(psdzFa);
+                IPsdzStandardFa standardFa = _programmingJobs.ProgrammingService.Psdz.VcmService.GetStandardFaActual(_programmingJobs.PsdzContext.Connection);
+                IPsdzFa psdzFa = _programmingJobs.ProgrammingService.Psdz.ObjectBuilder.BuildFa(standardFa, psdzVin.Value);
+                _programmingJobs.PsdzContext.SetFaActual(psdzFa);
                 sbResult.AppendLine("FA current:");
                 sbResult.Append(psdzFa.AsXml);
                 UpdateStatus(sbResult.ToString());
@@ -1271,8 +1255,8 @@ namespace PsdzClient
 
                 if (bModifyFa)
                 {
-                    IFa ifaActual = ProgrammingUtils.BuildFa(_psdzContext.FaActual);
-                    IFa ifaTarget = ProgrammingUtils.BuildFa(_psdzContext.FaTarget);
+                    IFa ifaActual = ProgrammingUtils.BuildFa(_programmingJobs.PsdzContext.FaActual);
+                    IFa ifaTarget = ProgrammingUtils.BuildFa(_programmingJobs.PsdzContext.FaTarget);
                     string compareFa = ProgrammingUtils.CompareFa(ifaActual, ifaTarget);
                     if (!string.IsNullOrEmpty(compareFa))
                     {
@@ -1282,13 +1266,13 @@ namespace PsdzClient
                 }
                 else
                 {   // reset target fa
-                    _psdzContext.SetFaTarget(psdzFa);
+                    _programmingJobs.PsdzContext.SetFaTarget(psdzFa);
                 }
 
-                programmingJobs.ProgrammingService.PdszDatabase.ResetXepRules();
+                _programmingJobs.ProgrammingService.PdszDatabase.ResetXepRules();
 
-                IEnumerable<IPsdzIstufe> psdzIstufes = programmingJobs.ProgrammingService.Psdz.LogicService.GetPossibleIntegrationLevel(_psdzContext.FaTarget);
-                _psdzContext.SetPossibleIstufenTarget(psdzIstufes);
+                IEnumerable<IPsdzIstufe> psdzIstufes = _programmingJobs.ProgrammingService.Psdz.LogicService.GetPossibleIntegrationLevel(_programmingJobs.PsdzContext.FaTarget);
+                _programmingJobs.PsdzContext.SetPossibleIstufenTarget(psdzIstufes);
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "ILevels: {0}", psdzIstufes.Count()));
                 foreach (IPsdzIstufe iStufe in psdzIstufes.OrderBy(x => x))
                 {
@@ -1300,7 +1284,7 @@ namespace PsdzClient
                 UpdateStatus(sbResult.ToString());
                 _cts?.Token.ThrowIfCancellationRequested();
 
-                string latestIstufeTarget = _psdzContext.LatestPossibleIstufeTarget;
+                string latestIstufeTarget = _programmingJobs.PsdzContext.LatestPossibleIstufeTarget;
                 if (string.IsNullOrEmpty(latestIstufeTarget))
                 {
                     sbResult.AppendLine("No target ILevels");
@@ -1309,16 +1293,16 @@ namespace PsdzClient
                 }
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "ILevel Latest: {0}", latestIstufeTarget));
 
-                IPsdzIstufe psdzIstufeShip = programmingJobs.ProgrammingService.Psdz.ObjectBuilder.BuildIstufe(_psdzContext.IstufeShipment);
+                IPsdzIstufe psdzIstufeShip = _programmingJobs.ProgrammingService.Psdz.ObjectBuilder.BuildIstufe(_programmingJobs.PsdzContext.IstufeShipment);
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "ILevel Ship: {0}", psdzIstufeShip.Value));
 
-                IPsdzIstufe psdzIstufeTarget = programmingJobs.ProgrammingService.Psdz.ObjectBuilder.BuildIstufe(bModifyFa ? _psdzContext.IstufeCurrent : latestIstufeTarget);
-                _psdzContext.Vehicle.TargetILevel = psdzIstufeTarget.Value;
+                IPsdzIstufe psdzIstufeTarget = _programmingJobs.ProgrammingService.Psdz.ObjectBuilder.BuildIstufe(bModifyFa ? _programmingJobs.PsdzContext.IstufeCurrent : latestIstufeTarget);
+                _programmingJobs.PsdzContext.Vehicle.TargetILevel = psdzIstufeTarget.Value;
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "ILevel Target: {0}", psdzIstufeTarget.Value));
                 UpdateStatus(sbResult.ToString());
                 _cts?.Token.ThrowIfCancellationRequested();
 
-                IEnumerable<IPsdzEcuIdentifier> psdzEcuIdentifiers = programmingJobs.ProgrammingService.Psdz.MacrosService.GetInstalledEcuList(_psdzContext.FaActual, psdzIstufeShip);
+                IEnumerable<IPsdzEcuIdentifier> psdzEcuIdentifiers = _programmingJobs.ProgrammingService.Psdz.MacrosService.GetInstalledEcuList(_programmingJobs.PsdzContext.FaActual, psdzIstufeShip);
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "EcuIds: {0}", psdzEcuIdentifiers.Count()));
                 foreach (IPsdzEcuIdentifier ecuIdentifier in psdzEcuIdentifiers)
                 {
@@ -1328,8 +1312,8 @@ namespace PsdzClient
                 UpdateStatus(sbResult.ToString());
                 _cts?.Token.ThrowIfCancellationRequested();
 
-                IPsdzStandardSvt psdzStandardSvt = programmingJobs.ProgrammingService.Psdz.EcuService.RequestSvt(_psdzContext.Connection, psdzEcuIdentifiers);
-                IPsdzStandardSvt psdzStandardSvtNames = programmingJobs.ProgrammingService.Psdz.LogicService.FillBntnNamesForMainSeries(_psdzContext.Connection.TargetSelector.Baureihenverbund, psdzStandardSvt);
+                IPsdzStandardSvt psdzStandardSvt = _programmingJobs.ProgrammingService.Psdz.EcuService.RequestSvt(_programmingJobs.PsdzContext.Connection, psdzEcuIdentifiers);
+                IPsdzStandardSvt psdzStandardSvtNames = _programmingJobs.ProgrammingService.Psdz.LogicService.FillBntnNamesForMainSeries(_programmingJobs.PsdzContext.Connection.TargetSelector.Baureihenverbund, psdzStandardSvt);
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Svt Ecus: {0}", psdzStandardSvtNames.Ecus.Count()));
                 foreach (IPsdzEcu ecu in psdzStandardSvtNames.Ecus)
                 {
@@ -1337,24 +1321,24 @@ namespace PsdzClient
                         ecu.BaseVariant, ecu.EcuVariant, ecu.BnTnName));
                 }
 
-                IPsdzSvt psdzSvt = programmingJobs.ProgrammingService.Psdz.ObjectBuilder.BuildSvt(psdzStandardSvtNames, psdzVin.Value);
-                _psdzContext.SetSvtActual(psdzSvt);
+                IPsdzSvt psdzSvt = _programmingJobs.ProgrammingService.Psdz.ObjectBuilder.BuildSvt(psdzStandardSvtNames, psdzVin.Value);
+                _programmingJobs.PsdzContext.SetSvtActual(psdzSvt);
                 UpdateStatus(sbResult.ToString());
                 _cts?.Token.ThrowIfCancellationRequested();
 
-                programmingJobs.ProgrammingService.PdszDatabase.LinkSvtEcus(_psdzContext.DetectVehicle.EcuList, psdzSvt);
-                programmingJobs.ProgrammingService.PdszDatabase.GetEcuVariants(_psdzContext.DetectVehicle.EcuList);
-                if (!_psdzContext.UpdateVehicle(programmingJobs.ProgrammingService, psdzStandardSvtNames))
+                _programmingJobs.ProgrammingService.PdszDatabase.LinkSvtEcus(_programmingJobs.PsdzContext.DetectVehicle.EcuList, psdzSvt);
+                _programmingJobs.ProgrammingService.PdszDatabase.GetEcuVariants(_programmingJobs.PsdzContext.DetectVehicle.EcuList);
+                if (!_programmingJobs.PsdzContext.UpdateVehicle(_programmingJobs.ProgrammingService, psdzStandardSvtNames))
                 {
                     sbResult.AppendLine("UpdateVehicle failed");
                     UpdateStatus(sbResult.ToString());
                     return true;
                 }
 
-                programmingJobs.ProgrammingService.PdszDatabase.ResetXepRules();
-                programmingJobs.ProgrammingService.PdszDatabase.GetEcuVariants(_psdzContext.DetectVehicle.EcuList, _psdzContext.Vehicle);
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecus: {0}", _psdzContext.DetectVehicle.EcuList.Count()));
-                foreach (PdszDatabase.EcuInfo ecuInfo in _psdzContext.DetectVehicle.EcuList)
+                _programmingJobs.ProgrammingService.PdszDatabase.ResetXepRules();
+                _programmingJobs.ProgrammingService.PdszDatabase.GetEcuVariants(_programmingJobs.PsdzContext.DetectVehicle.EcuList, _programmingJobs.PsdzContext.Vehicle);
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecus: {0}", _programmingJobs.PsdzContext.DetectVehicle.EcuList.Count()));
+                foreach (PdszDatabase.EcuInfo ecuInfo in _programmingJobs.PsdzContext.DetectVehicle.EcuList)
                 {
                     sbResult.AppendLine(ecuInfo.ToString(ClientContext.Language));
                 }
@@ -1362,10 +1346,10 @@ namespace PsdzClient
                 _cts?.Token.ThrowIfCancellationRequested();
                 if (operationType == OperationType.CreateOptions)
                 {
-                    programmingJobs.ProgrammingService.PdszDatabase.ReadSwiRegister(_psdzContext.Vehicle);
-                    if (programmingJobs.ProgrammingService.PdszDatabase.SwiRegisterTree != null)
+                    _programmingJobs.ProgrammingService.PdszDatabase.ReadSwiRegister(_programmingJobs.PsdzContext.Vehicle);
+                    if (_programmingJobs.ProgrammingService.PdszDatabase.SwiRegisterTree != null)
                     {
-                        string treeText = programmingJobs.ProgrammingService.PdszDatabase.SwiRegisterTree.ToString(ClientContext.Language);
+                        string treeText = _programmingJobs.ProgrammingService.PdszDatabase.SwiRegisterTree.ToString(ClientContext.Language);
                         if (!string.IsNullOrEmpty(treeText))
                         {
                             log.Info(Environment.NewLine + "Swi tree:" + Environment.NewLine + treeText);
@@ -1374,8 +1358,8 @@ namespace PsdzClient
                         Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>> optionsDict = new Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>>();
                         foreach (OptionType optionType in _optionTypes)
                         {
-                            optionType.SwiRegister = programmingJobs.ProgrammingService.PdszDatabase.FindNodeForRegister(optionType.SwiRegisterEnum);
-                            List<PdszDatabase.SwiAction> swiActions = programmingJobs.ProgrammingService.PdszDatabase.GetSwiActionsForRegister(optionType.SwiRegisterEnum, true);
+                            optionType.SwiRegister = _programmingJobs.ProgrammingService.PdszDatabase.FindNodeForRegister(optionType.SwiRegisterEnum);
+                            List<PdszDatabase.SwiAction> swiActions = _programmingJobs.ProgrammingService.PdszDatabase.GetSwiActionsForRegister(optionType.SwiRegisterEnum, true);
                             if (swiActions != null)
                             {
                                 sbResult.AppendLine();
@@ -1398,7 +1382,7 @@ namespace PsdzClient
                     return true;
                 }
 
-                IPsdzReadEcuUidResultCto psdzReadEcuUid = programmingJobs.ProgrammingService.Psdz.SecurityManagementService.readEcuUid(_psdzContext.Connection, psdzEcuIdentifiers, _psdzContext.SvtActual);
+                IPsdzReadEcuUidResultCto psdzReadEcuUid = _programmingJobs.ProgrammingService.Psdz.SecurityManagementService.readEcuUid(_programmingJobs.PsdzContext.Connection, psdzEcuIdentifiers, _programmingJobs.PsdzContext.SvtActual);
 
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "EcuUids: {0}", psdzReadEcuUid.EcuUids.Count));
                 foreach (KeyValuePair<IPsdzEcuIdentifier, IPsdzEcuUidCto> ecuUid in psdzReadEcuUid.EcuUids)
@@ -1418,7 +1402,7 @@ namespace PsdzClient
                 UpdateStatus(sbResult.ToString());
                 _cts?.Token.ThrowIfCancellationRequested();
 
-                IPsdzReadStatusResultCto psdzReadStatusResult = programmingJobs.ProgrammingService.Psdz.SecureFeatureActivationService.ReadStatus(PsdzStatusRequestFeatureTypeEtoEnum.ALL_FEATURES, _psdzContext.Connection, _psdzContext.SvtActual, psdzEcuIdentifiers, true, 3, 100);
+                IPsdzReadStatusResultCto psdzReadStatusResult = _programmingJobs.ProgrammingService.Psdz.SecureFeatureActivationService.ReadStatus(PsdzStatusRequestFeatureTypeEtoEnum.ALL_FEATURES, _programmingJobs.PsdzContext.Connection, _programmingJobs.PsdzContext.SvtActual, psdzEcuIdentifiers, true, 3, 100);
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Status failures: {0}", psdzReadStatusResult.Failures.Count()));
 #if false
                 foreach (IPsdzEcuFailureResponseCto failureResponse in psdzReadStatusResult.Failures)
@@ -1442,8 +1426,8 @@ namespace PsdzClient
                 _cts?.Token.ThrowIfCancellationRequested();
 
                 IPsdzTalFilter talFilterFlash = new PsdzTalFilter();
-                IPsdzSollverbauung psdzSollverbauung = programmingJobs.ProgrammingService.Psdz.LogicService.GenerateSollverbauungGesamtFlash(_psdzContext.Connection, psdzIstufeTarget, psdzIstufeShip, _psdzContext.SvtActual, _psdzContext.FaTarget, talFilterFlash);
-                _psdzContext.SetSollverbauung(psdzSollverbauung);
+                IPsdzSollverbauung psdzSollverbauung = _programmingJobs.ProgrammingService.Psdz.LogicService.GenerateSollverbauungGesamtFlash(_programmingJobs.PsdzContext.Connection, psdzIstufeTarget, psdzIstufeShip, _programmingJobs.PsdzContext.SvtActual, _programmingJobs.PsdzContext.FaTarget, talFilterFlash);
+                _programmingJobs.PsdzContext.SetSollverbauung(psdzSollverbauung);
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Target construction: Count={0}, Units={1}",
                     psdzSollverbauung.PsdzOrderList.BntnVariantInstances.Length, psdzSollverbauung.PsdzOrderList.NumberOfUnits));
                 foreach (IPsdzEcuVariantInstance bntnVariant in psdzSollverbauung.PsdzOrderList.BntnVariantInstances)
@@ -1454,7 +1438,7 @@ namespace PsdzClient
                 UpdateStatus(sbResult.ToString());
                 _cts?.Token.ThrowIfCancellationRequested();
 
-                IEnumerable<IPsdzEcuContextInfo> psdzEcuContextInfos = programmingJobs.ProgrammingService.Psdz.EcuService.RequestEcuContextInfos(_psdzContext.Connection, psdzEcuIdentifiers);
+                IEnumerable<IPsdzEcuContextInfo> psdzEcuContextInfos = _programmingJobs.ProgrammingService.Psdz.EcuService.RequestEcuContextInfos(_programmingJobs.PsdzContext.Connection, psdzEcuIdentifiers);
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecu contexts: {0}", psdzEcuContextInfos.Count()));
                 foreach (IPsdzEcuContextInfo ecuContextInfo in psdzEcuContextInfos)
                 {
@@ -1465,8 +1449,8 @@ namespace PsdzClient
                 UpdateStatus(sbResult.ToString());
                 _cts?.Token.ThrowIfCancellationRequested();
 
-                IPsdzSwtAction psdzSwtAction = programmingJobs.ProgrammingService.Psdz.ProgrammingService.RequestSwtAction(_psdzContext.Connection, true);
-                _psdzContext.SwtAction = psdzSwtAction;
+                IPsdzSwtAction psdzSwtAction = _programmingJobs.ProgrammingService.Psdz.ProgrammingService.RequestSwtAction(_programmingJobs.PsdzContext.Connection, true);
+                _programmingJobs.PsdzContext.SwtAction = psdzSwtAction;
                 if (psdzSwtAction?.SwtEcus != null)
                 {
                     sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Swt Ecus: {0}", psdzSwtAction.SwtEcus.Count()));
@@ -1484,8 +1468,8 @@ namespace PsdzClient
                 UpdateStatus(sbResult.ToString());
                 _cts?.Token.ThrowIfCancellationRequested();
 
-                IPsdzTal psdzTal = programmingJobs.ProgrammingService.Psdz.LogicService.GenerateTal(_psdzContext.Connection, _psdzContext.SvtActual, psdzSollverbauung, _psdzContext.SwtAction, _psdzContext.TalFilter, _psdzContext.FaActual.Vin);
-                _psdzContext.Tal = psdzTal;
+                IPsdzTal psdzTal = _programmingJobs.ProgrammingService.Psdz.LogicService.GenerateTal(_programmingJobs.PsdzContext.Connection, _programmingJobs.PsdzContext.SvtActual, psdzSollverbauung, _programmingJobs.PsdzContext.SwtAction, _programmingJobs.PsdzContext.TalFilter, _programmingJobs.PsdzContext.FaActual.Vin);
+                _programmingJobs.PsdzContext.Tal = psdzTal;
                 sbResult.AppendLine("Tal:");
                 //sbResult.AppendLine(psdzTal.AsXml);
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Size: {0}", psdzTal.AsXml.Length));
@@ -1525,15 +1509,15 @@ namespace PsdzClient
                 UpdateStatus(sbResult.ToString());
                 _cts?.Token.ThrowIfCancellationRequested();
 
-                IPsdzTal psdzBackupTal = programmingJobs.ProgrammingService.Psdz.IndividualDataRestoreService.GenerateBackupTal(_psdzContext.Connection, _psdzContext.PathToBackupData, _psdzContext.Tal, _psdzContext.TalFilter);
-                _psdzContext.IndividualDataBackupTal = psdzBackupTal;
+                IPsdzTal psdzBackupTal = _programmingJobs.ProgrammingService.Psdz.IndividualDataRestoreService.GenerateBackupTal(_programmingJobs.PsdzContext.Connection, _programmingJobs.PsdzContext.PathToBackupData, _programmingJobs.PsdzContext.Tal, _programmingJobs.PsdzContext.TalFilter);
+                _programmingJobs.PsdzContext.IndividualDataBackupTal = psdzBackupTal;
                 sbResult.AppendLine("Backup Tal:");
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Size: {0}", psdzBackupTal.AsXml.Length));
                 UpdateStatus(sbResult.ToString());
                 _cts?.Token.ThrowIfCancellationRequested();
 
-                IPsdzTal psdzRestorePrognosisTal = programmingJobs.ProgrammingService.Psdz.IndividualDataRestoreService.GenerateRestorePrognosisTal(_psdzContext.Connection, _psdzContext.PathToBackupData, _psdzContext.Tal, _psdzContext.IndividualDataBackupTal, _psdzContext.TalFilterForIndividualDataTal);
-                _psdzContext.IndividualDataRestorePrognosisTal = psdzRestorePrognosisTal;
+                IPsdzTal psdzRestorePrognosisTal = _programmingJobs.ProgrammingService.Psdz.IndividualDataRestoreService.GenerateRestorePrognosisTal(_programmingJobs.PsdzContext.Connection, _programmingJobs.PsdzContext.PathToBackupData, _programmingJobs.PsdzContext.Tal, _programmingJobs.PsdzContext.IndividualDataBackupTal, _programmingJobs.PsdzContext.TalFilterForIndividualDataTal);
+                _programmingJobs.PsdzContext.IndividualDataRestorePrognosisTal = psdzRestorePrognosisTal;
                 sbResult.AppendLine("Restore prognosis Tal:");
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " Size: {0}", psdzRestorePrognosisTal.AsXml.Length));
 
@@ -1547,7 +1531,7 @@ namespace PsdzClient
                 UpdateStatus(sbResult.ToString());
                 if (operationType != OperationType.ExecuteTal)
                 {
-                    _psdzContext.Tal = null;
+                    _programmingJobs.PsdzContext.Tal = null;
                 }
                 return false;
             }
@@ -1555,29 +1539,6 @@ namespace PsdzClient
             {
                 log.InfoFormat("VehicleFunctions Finish - Type: {0}", operationType);
                 log.Info(Environment.NewLine + sbResult);
-            }
-        }
-
-        private bool InitProgrammingObjects(string istaFolder)
-        {
-            try
-            {
-                _psdzContext = new PsdzContext(istaFolder);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        private void ClearProgrammingObjects()
-        {
-            if (_psdzContext != null)
-            {
-                _psdzContext.Dispose();
-                _psdzContext = null;
             }
         }
 
@@ -1681,7 +1642,7 @@ namespace PsdzClient
                 return;
             }
 
-            if (programmingJobs.ProgrammingService != null && programmingJobs.ProgrammingService.IsPsdzPsdzServiceHostInitialized())
+            if (_programmingJobs.ProgrammingService != null && _programmingJobs.ProgrammingService.IsPsdzPsdzServiceHostInitialized())
             {
                 buttonStopHost_Click(sender, null);
                 e.Cancel = true;
@@ -1690,7 +1651,7 @@ namespace PsdzClient
 
         private void buttonConnect_Click(object sender, EventArgs e)
         {
-            if (_psdzContext?.Connection != null)
+            if (_programmingJobs.PsdzContext?.Connection != null)
             {
                 return;
             }
@@ -1710,7 +1671,7 @@ namespace PsdzClient
 
         private void buttonDisconnect_Click(object sender, EventArgs e)
         {
-            if (_psdzContext?.Connection == null)
+            if (_programmingJobs.PsdzContext?.Connection == null)
             {
                 return;
             }
@@ -1726,7 +1687,7 @@ namespace PsdzClient
 
         private void buttonFunc_Click(object sender, EventArgs e)
         {
-            if (_psdzContext?.Connection == null)
+            if (_programmingJobs.PsdzContext?.Connection == null)
             {
                 return;
             }
