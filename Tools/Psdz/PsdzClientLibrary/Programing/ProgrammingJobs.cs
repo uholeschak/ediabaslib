@@ -105,8 +105,8 @@ namespace PsdzClient.Programing
 
         private bool _disposed;
         private string _dealerId;
-        public PsdzContext PsdzContext { get; set; }
-        public ProgrammingService ProgrammingService { get; set; }
+        public PsdzContext PsdzContext { get; private set; }
+        public ProgrammingService ProgrammingService { get; private set; }
         public static OptionType[] OptionTypes => _optionTypes;
 
 
