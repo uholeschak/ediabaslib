@@ -102,12 +102,13 @@ namespace PsdzClient.Programing
             new OptionType("Modification back", PdszDatabase.SwiRegisterEnum.VehicleModificationBackConversion),
             new OptionType("Retrofit", PdszDatabase.SwiRegisterEnum.VehicleModificationRetrofitting),
         };
+        public static OptionType[] OptionTypes => _optionTypes;
 
         private bool _disposed;
         private string _dealerId;
         public PsdzContext PsdzContext { get; private set; }
         public ProgrammingService ProgrammingService { get; private set; }
-        public static OptionType[] OptionTypes => _optionTypes;
+        public List<ProgrammingJobs.OptionsItem> SelectedOptions { get; set; }
 
 
         public ProgrammingJobs(string dealerId)
@@ -1080,6 +1081,92 @@ namespace PsdzClient.Programing
             {
                 log.InfoFormat("VehicleFunctions Finish - Type: {0}", operationType);
                 log.Info(Environment.NewLine + sbResult);
+            }
+        }
+
+        public void UpdateTargetFa(bool reset = false)
+        {
+            if (PsdzContext == null || SelectedOptions == null)
+            {
+                return;
+            }
+
+            if (reset)
+            {
+                SelectedOptions.Clear();
+            }
+
+            PsdzContext.SetFaTarget(PsdzContext.FaActual);
+            ProgrammingService.PdszDatabase.ResetXepRules();
+
+            foreach (ProgrammingJobs.OptionsItem optionsItem in SelectedOptions)
+            {
+                if (optionsItem.SwiAction.SwiInfoObjs != null)
+                {
+                    foreach (PdszDatabase.SwiInfoObj infoInfoObj in optionsItem.SwiAction.SwiInfoObjs)
+                    {
+                        if (infoInfoObj.LinkType == PdszDatabase.SwiInfoObj.SwiActionDatabaseLinkType.SwiActionActionSelectionLink)
+                        {
+                            string moduleName = infoInfoObj.ModuleName;
+                            PdszDatabase.TestModuleData testModuleData = ProgrammingService.PdszDatabase.GetTestModuleData(moduleName);
+                            if (testModuleData == null)
+                            {
+                                log.ErrorFormat("UpdateTargetFa GetTestModuleData failed for: {0}", moduleName);
+                                optionsItem.Invalid = true;
+                            }
+                            else
+                            {
+                                optionsItem.Invalid = false;
+                                if (!string.IsNullOrEmpty(testModuleData.ModuleRef))
+                                {
+                                    PdszDatabase.SwiInfoObj swiInfoObj = ProgrammingService.PdszDatabase.GetInfoObjectByControlId(testModuleData.ModuleRef, infoInfoObj.LinkType);
+                                    if (swiInfoObj == null)
+                                    {
+                                        log.ErrorFormat("UpdateTargetFa No info object: {0}", testModuleData.ModuleRef);
+                                    }
+                                    else
+                                    {
+                                        log.InfoFormat("UpdateTargetFa Info object: {0}", swiInfoObj.ToString(ClientContext.Language));
+                                    }
+                                }
+
+                                IFa ifaTarget = ProgrammingUtils.BuildFa(PsdzContext.FaTarget);
+                                if (testModuleData.RefDict.TryGetValue("faElementsToRem", out List<string> remList))
+                                {
+                                    if (!ProgrammingUtils.ModifyFa(ifaTarget, remList, false))
+                                    {
+                                        log.ErrorFormat("UpdateTargetFa Rem failed: {0}", remList.ToStringItems());
+                                    }
+                                }
+                                if (testModuleData.RefDict.TryGetValue("faElementsToAdd", out List<string> addList))
+                                {
+                                    if (!ProgrammingUtils.ModifyFa(ifaTarget, addList, true))
+                                    {
+                                        log.ErrorFormat("UpdateTargetFa Add failed: {0}", addList.ToStringItems());
+                                    }
+                                }
+
+                                IPsdzFa psdzFaTarget = ProgrammingService.Psdz.ObjectBuilder.BuildFa(ifaTarget, PsdzContext.FaActual.Vin);
+                                PsdzContext.SetFaTarget(psdzFaTarget);
+                                ProgrammingService.PdszDatabase.ResetXepRules();
+                            }
+                        }
+                    }
+                }
+            }
+
+            SelectedOptions.RemoveAll(x => x.Invalid);
+
+            {
+                log.InfoFormat("UpdateTargetFa FaTarget: {0}", PsdzContext.FaTarget.AsString);
+
+                IFa ifaTarget = ProgrammingUtils.BuildFa(PsdzContext.FaTarget);
+                IFa ifaActual = ProgrammingUtils.BuildFa(PsdzContext.FaActual);
+                string compareFa = ProgrammingUtils.CompareFa(ifaActual, ifaTarget);
+                if (!string.IsNullOrEmpty(compareFa))
+                {
+                    log.InfoFormat("UpdateTargetFa Compare FA: {0}", compareFa);
+                }
             }
         }
 

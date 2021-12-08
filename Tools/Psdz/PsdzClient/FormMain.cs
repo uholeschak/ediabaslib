@@ -75,7 +75,6 @@ namespace PsdzClient
         private bool _ignoreChange = false;
         private CancellationTokenSource _cts;
         private Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> _optionsDict;
-        private List<ProgrammingJobs.OptionsItem> _selectedOptions;
 
         public FormMain()
         {
@@ -287,7 +286,7 @@ namespace PsdzClient
             }
 
             _optionsDict = optionsDict;
-            _selectedOptions = new List<ProgrammingJobs.OptionsItem>();
+            _programmingJobs.SelectedOptions = new List<ProgrammingJobs.OptionsItem>();
             UpdateCurrentOptions();
         }
 
@@ -316,7 +315,7 @@ namespace PsdzClient
                 _ignoreCheck = true;
                 checkedListBoxOptions.BeginUpdate();
                 checkedListBoxOptions.Items.Clear();
-                if (_optionsDict != null && _selectedOptions != null && swiRegisterEnum.HasValue)
+                if (_optionsDict != null && _programmingJobs.SelectedOptions != null && swiRegisterEnum.HasValue)
                 {
                     if (_optionsDict.TryGetValue(swiRegisterEnum.Value, out List<ProgrammingJobs.OptionsItem> optionsItems))
                     {
@@ -324,10 +323,10 @@ namespace PsdzClient
                         {
                             CheckState checkState = CheckState.Unchecked;
                             bool addItem = true;
-                            int selectIndex = _selectedOptions.IndexOf(optionsItem);
+                            int selectIndex = _programmingJobs.SelectedOptions.IndexOf(optionsItem);
                             if (selectIndex >= 0)
                             {
-                                if (selectIndex == _selectedOptions.Count - 1)
+                                if (selectIndex == _programmingJobs.SelectedOptions.Count - 1)
                                 {
                                     checkState = CheckState.Checked;
                                 }
@@ -378,13 +377,13 @@ namespace PsdzClient
 
         private List<PdszDatabase.SwiAction> GetSelectedSwiActions()
         {
-            if (_programmingJobs.PsdzContext == null || _selectedOptions == null)
+            if (_programmingJobs.PsdzContext == null || _programmingJobs.SelectedOptions == null)
             {
                 return null;
             }
 
             List<PdszDatabase.SwiAction> selectedSwiActions = new List<PdszDatabase.SwiAction>();
-            foreach (ProgrammingJobs.OptionsItem optionsItem in _selectedOptions)
+            foreach (ProgrammingJobs.OptionsItem optionsItem in _programmingJobs.SelectedOptions)
             {
                 if (optionsItem.SwiAction != null)
                 {
@@ -400,89 +399,7 @@ namespace PsdzClient
 
         private void UpdateTargetFa(bool reset = false)
         {
-            if (_programmingJobs.PsdzContext == null || _selectedOptions == null)
-            {
-                return;
-            }
-
-            if (reset)
-            {
-                _selectedOptions.Clear();
-            }
-
-            _programmingJobs.PsdzContext.SetFaTarget(_programmingJobs.PsdzContext.FaActual);
-            _programmingJobs.ProgrammingService.PdszDatabase.ResetXepRules();
-
-            foreach (ProgrammingJobs.OptionsItem optionsItem in _selectedOptions)
-            {
-                if (optionsItem.SwiAction.SwiInfoObjs != null)
-                {
-                    foreach (PdszDatabase.SwiInfoObj infoInfoObj in optionsItem.SwiAction.SwiInfoObjs)
-                    {
-                        if (infoInfoObj.LinkType == PdszDatabase.SwiInfoObj.SwiActionDatabaseLinkType.SwiActionActionSelectionLink)
-                        {
-                            string moduleName = infoInfoObj.ModuleName;
-                            PdszDatabase.TestModuleData testModuleData = _programmingJobs.ProgrammingService.PdszDatabase.GetTestModuleData(moduleName);
-                            if (testModuleData == null)
-                            {
-                                log.ErrorFormat("UpdateTargetFa GetTestModuleData failed for: {0}", moduleName);
-                                optionsItem.Invalid = true;
-                            }
-                            else
-                            {
-                                optionsItem.Invalid = false;
-                                if (!string.IsNullOrEmpty(testModuleData.ModuleRef))
-                                {
-                                    PdszDatabase.SwiInfoObj swiInfoObj = _programmingJobs.ProgrammingService.PdszDatabase.GetInfoObjectByControlId(testModuleData.ModuleRef, infoInfoObj.LinkType);
-                                    if (swiInfoObj == null)
-                                    {
-                                        log.ErrorFormat("UpdateTargetFa No info object: {0}", testModuleData.ModuleRef);
-                                    }
-                                    else
-                                    {
-                                        log.InfoFormat("UpdateTargetFa Info object: {0}", swiInfoObj.ToString(ClientContext.Language));
-                                    }
-                                }
-
-                                IFa ifaTarget = ProgrammingUtils.BuildFa(_programmingJobs.PsdzContext.FaTarget);
-                                if (testModuleData.RefDict.TryGetValue("faElementsToRem", out List<string> remList))
-                                {
-                                    if (!ProgrammingUtils.ModifyFa(ifaTarget, remList, false))
-                                    {
-                                        log.ErrorFormat("UpdateTargetFa Rem failed: {0}", remList.ToStringItems());
-                                    }
-                                }
-                                if (testModuleData.RefDict.TryGetValue("faElementsToAdd", out List<string> addList))
-                                {
-                                    if (!ProgrammingUtils.ModifyFa(ifaTarget, addList, true))
-                                    {
-                                        log.ErrorFormat("UpdateTargetFa Add failed: {0}", addList.ToStringItems());
-                                    }
-                                }
-
-                                IPsdzFa psdzFaTarget = _programmingJobs.ProgrammingService.Psdz.ObjectBuilder.BuildFa(ifaTarget, _programmingJobs.PsdzContext.FaActual.Vin);
-                                _programmingJobs.PsdzContext.SetFaTarget(psdzFaTarget);
-                                _programmingJobs.ProgrammingService.PdszDatabase.ResetXepRules();
-                            }
-                        }
-                    }
-                }
-            }
-
-            _selectedOptions.RemoveAll(x => x.Invalid);
-
-            {
-                log.InfoFormat("UpdateTargetFa FaTarget: {0}", _programmingJobs.PsdzContext.FaTarget.AsString);
-
-                IFa ifaTarget = ProgrammingUtils.BuildFa(_programmingJobs.PsdzContext.FaTarget);
-                IFa ifaActual = ProgrammingUtils.BuildFa(_programmingJobs.PsdzContext.FaActual);
-                string compareFa = ProgrammingUtils.CompareFa(ifaActual, ifaTarget);
-                if (!string.IsNullOrEmpty(compareFa))
-                {
-                    log.InfoFormat("UpdateTargetFa Compare FA: {0}", compareFa);
-                }
-            }
-
+            _programmingJobs.UpdateTargetFa(reset);
             UpdateCurrentOptions();
         }
 
@@ -819,15 +736,15 @@ namespace PsdzClient
                     }
                     else
                     {
-                        if (_selectedOptions != null)
+                        if (_programmingJobs.SelectedOptions != null)
                         {
                             if (e.NewValue == CheckState.Checked)
                             {
-                                _selectedOptions.Add(optionsItem);
+                                _programmingJobs.SelectedOptions.Add(optionsItem);
                             }
                             else
                             {
-                                _selectedOptions.Remove(optionsItem);
+                                _programmingJobs.SelectedOptions.Remove(optionsItem);
                             }
                         }
                     }
