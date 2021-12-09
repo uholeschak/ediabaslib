@@ -183,7 +183,7 @@ namespace PsdzClient.Core
 
 		public bool SetVINRangeTypeFromVINRanges()
 		{
-            PdszDatabase database = ClientContext.Database;
+            PdszDatabase database = ClientContext.GetClientContext(this).Database;
 			if (database != null && !"XXXXXXX".Equals(this.VIN7) && !string.IsNullOrEmpty(this.VIN7) && !this.VIN7.Equals(this.vinRangeTypeLastResolvedType, StringComparison.OrdinalIgnoreCase))
 			{
                 PdszDatabase.VinRanges vinRangesByVin = database.GetVinRangesByVin17(this.VINType, this.VIN7, false);
@@ -1807,7 +1807,7 @@ namespace PsdzClient.Core
 
 		public bool getISTACharacteristics(decimal id, out string value, long datavalueId, ValidationRuleInternalResults internalResult)
 		{
-            PdszDatabase.CharacteristicRoots characteristicRootsById = ClientContext.Database?.GetCharacteristicRootsById(id.ToString(CultureInfo.InvariantCulture));
+            PdszDatabase.CharacteristicRoots characteristicRootsById = ClientContext.GetClientContext(this).Database?.GetCharacteristicRootsById(id.ToString(CultureInfo.InvariantCulture));
 			if (characteristicRootsById != null)
 			{
 				return new VehicleCharacteristicVehicleHelper().GetISTACharacteristics(characteristicRootsById, out value, id, this, datavalueId, internalResult);

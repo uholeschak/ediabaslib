@@ -21,14 +21,14 @@ namespace PsdzClient.Core
 				}
 				else
                 {
-					this.programmingVariant = ClientContext.Database?.GetEcuProgrammingVariantById(this.value.ToString(CultureInfo.InvariantCulture), vec, ffmResolver);
+					this.programmingVariant = ClientContext.GetClientContext(vec).Database?.GetEcuProgrammingVariantById(this.value.ToString(CultureInfo.InvariantCulture), vec, ffmResolver);
                     if (this.programmingVariant == null)
 					{
 						result = false;
 					}
 					else
 					{
-						this.ecuVariant = ClientContext.Database?.GetEcuVariantById(this.programmingVariant.EcuVarId);
+						this.ecuVariant = ClientContext.GetClientContext(vec).Database?.GetEcuVariantById(this.programmingVariant.EcuVarId);
 						if (this.ecuVariant == null)
 						{
 							result = false;

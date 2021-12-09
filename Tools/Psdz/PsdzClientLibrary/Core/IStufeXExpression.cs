@@ -35,8 +35,10 @@ namespace PsdzClient.Core
 			{
 				return false;
 			}
+
+            this.vecInfo = vec;
 			string ilevelOperand = this.GetILevelOperand(vec);
-			string istufeById = ClientContext.Database?.GetIStufeById(this.iLevelId.ToString(CultureInfo.InvariantCulture));
+			string istufeById = ClientContext.GetClientContext(this.vecInfo).Database?.GetIStufeById(this.iLevelId.ToString(CultureInfo.InvariantCulture));
 			if (string.IsNullOrEmpty(istufeById))
 			{
 				return false;
@@ -127,7 +129,7 @@ namespace PsdzClient.Core
 
 		public override string ToString()
 		{
-			string istufeById = ClientContext.Database?.GetIStufeById(this.iLevelId.ToString(CultureInfo.InvariantCulture));
+			string istufeById = ClientContext.GetClientContext(this.vecInfo).Database?.GetIStufeById(this.iLevelId.ToString(CultureInfo.InvariantCulture));
 			string ilevelTypeDescription = this.GetILevelTypeDescription();
 			return string.Format(CultureInfo.InvariantCulture, "IStufeX: {0}-I-Stufe {1} '{2}' [{3}]", new object[]
 			{
@@ -189,6 +191,8 @@ namespace PsdzClient.Core
 		private readonly long iLevelId;
 
 		private readonly IStufeXExpression.ILevelyType iLevelType;
+
+        private Vehicle vecInfo;
 
 		public enum ILevelyType : byte
 		{

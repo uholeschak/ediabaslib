@@ -140,7 +140,7 @@ namespace PsdzClient
             {
                 get
                 {
-                    return GetTitle(ClientContext.Language);
+                    return GetTitle(ClientContext.GetClientContext().Language);
                 }
             }
 
@@ -1181,7 +1181,7 @@ namespace PsdzClient
             _harmony = new Harmony("de.holeschak.PsdzClient");
             _xepRuleDict = null;
             SwiRegisterTree = null;
-            ClientContext.Database = this;
+            ClientContext.GetClientContext().Database = this;
 
             AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
             {
@@ -2617,7 +2617,7 @@ namespace PsdzClient
                 log.InfoFormat("GetVehicleCharacteristicsFromDatabase Count: {0}", characteristicsList.Count);
                 foreach (Characteristics characteristics in characteristicsList)
                 {
-                    log.InfoFormat("Characteristics: {0}", characteristics.ToString(ClientContext.Language));
+                    log.InfoFormat("Characteristics: {0}", characteristics.ToString(ClientContext.GetClientContext(vehicle).Language));
                 }
             }
 
@@ -3928,7 +3928,7 @@ namespace PsdzClient
                 {
                 }
 
-                ClientContext.Database = null;
+                ClientContext.GetClientContext().Database = null;
                 // Note disposing has been done.
                 _disposed = true;
             }

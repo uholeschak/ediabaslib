@@ -54,7 +54,7 @@ namespace PsdzClient.Programing
 
             public override string ToString()
             {
-                return SwiAction.EcuTranslation.GetTitle(ClientContext.Language);
+                return SwiAction.EcuTranslation.GetTitle(ClientContext.GetClientContext().Language);
             }
         }
 
@@ -78,7 +78,7 @@ namespace PsdzClient.Programing
                 PdszDatabase.SwiRegister swiRegister = SwiRegister;
                 if (swiRegister != null)
                 {
-                    return swiRegister.EcuTranslation.GetTitle(ClientContext.Language);
+                    return swiRegister.EcuTranslation.GetTitle(ClientContext.GetClientContext().Language);
                 }
                 return Name;
             }
@@ -882,7 +882,7 @@ namespace PsdzClient.Programing
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecus: {0}", PsdzContext.DetectVehicle.EcuList.Count()));
                 foreach (PdszDatabase.EcuInfo ecuInfo in PsdzContext.DetectVehicle.EcuList)
                 {
-                    sbResult.AppendLine(ecuInfo.ToString(ClientContext.Language));
+                    sbResult.AppendLine(ecuInfo.ToString(ClientContext.GetClientContext(PsdzContext.Vehicle).Language));
                 }
                 UpdateStatus(sbResult.ToString());
                 cts?.Token.ThrowIfCancellationRequested();
@@ -891,7 +891,7 @@ namespace PsdzClient.Programing
                     ProgrammingService.PdszDatabase.ReadSwiRegister(PsdzContext.Vehicle);
                     if (ProgrammingService.PdszDatabase.SwiRegisterTree != null)
                     {
-                        string treeText = ProgrammingService.PdszDatabase.SwiRegisterTree.ToString(ClientContext.Language);
+                        string treeText = ProgrammingService.PdszDatabase.SwiRegisterTree.ToString(ClientContext.GetClientContext(PsdzContext.Vehicle).Language);
                         if (!string.IsNullOrEmpty(treeText))
                         {
                             log.Info(Environment.NewLine + "Swi tree:" + Environment.NewLine + treeText);
@@ -909,7 +909,7 @@ namespace PsdzClient.Programing
                                 List<OptionsItem> optionsItems = new List<OptionsItem>();
                                 foreach (PdszDatabase.SwiAction swiAction in swiActions)
                                 {
-                                    sbResult.AppendLine(swiAction.ToString(ClientContext.Language));
+                                    sbResult.AppendLine(swiAction.ToString(ClientContext.GetClientContext(PsdzContext.Vehicle).Language));
                                     optionsItems.Add(new OptionsItem(swiAction));
                                 }
 
@@ -1126,7 +1126,7 @@ namespace PsdzClient.Programing
                                     }
                                     else
                                     {
-                                        log.InfoFormat("UpdateTargetFa Info object: {0}", swiInfoObj.ToString(ClientContext.Language));
+                                        log.InfoFormat("UpdateTargetFa Info object: {0}", swiInfoObj.ToString(ClientContext.GetClientContext(PsdzContext.Vehicle).Language));
                                     }
                                 }
 

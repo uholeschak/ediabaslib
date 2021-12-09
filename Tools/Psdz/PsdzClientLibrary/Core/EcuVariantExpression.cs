@@ -26,7 +26,7 @@ namespace PsdzClient.Core
 			{
 				if (string.IsNullOrEmpty(this.variantName))
 				{
-                    PdszDatabase.EcuVar ecuVariantById = ClientContext.Database?.GetEcuVariantById(this.value.ToString(CultureInfo.InvariantCulture));
+                    PdszDatabase.EcuVar ecuVariantById = ClientContext.GetClientContext(this.vecInfo).Database?.GetEcuVariantById(this.value.ToString(CultureInfo.InvariantCulture));
 					if (ecuVariantById != null)
 					{
 						this.variantName = ecuVariantById.Name;
@@ -42,8 +42,9 @@ namespace PsdzClient.Core
 		}
 
 		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, ValidationRuleInternalResults internalResult)
-		{
-            PdszDatabase database = ClientContext.Database;
+        {
+            this.vecInfo = vec;
+            PdszDatabase database = ClientContext.GetClientContext(this.vecInfo).Database;
             if (database == null)
             {
                 return false;
@@ -139,5 +140,7 @@ namespace PsdzClient.Core
 		}
 
 		private string variantName;
-	}
+
+        private Vehicle vecInfo;
+    }
 }

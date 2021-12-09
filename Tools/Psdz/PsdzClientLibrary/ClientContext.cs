@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PsdzClient.Core;
 using static PsdzClient.Core.CharacteristicExpression;
 
 namespace PsdzClient
 {
-    public static class ClientContext
+    public class ClientContext
     {
-        static ClientContext()
+        private static ClientContext _clientContext;
+
+        ClientContext()
         {
             Database = null;
             SelectedBrand = EnumBrand.BMWBMWiMINI;
@@ -17,12 +20,22 @@ namespace PsdzClient
             Language = "En";
         }
 
-        public static PdszDatabase Database { get; set; }
+        public static ClientContext GetClientContext(Vehicle vehicle = null)
+        {
+            if (_clientContext == null)
+            {
+                _clientContext = new ClientContext();
+            }
 
-        public static EnumBrand SelectedBrand { get; set; }
+            return _clientContext;
+        }
 
-        public static string OutletCountry { get; set; }
+        public PdszDatabase Database { get; set; }
 
-        public static string Language { get; set; }
+        public EnumBrand SelectedBrand { get; set; }
+
+        public string OutletCountry { get; set; }
+
+        public string Language { get; set; }
     }
 }

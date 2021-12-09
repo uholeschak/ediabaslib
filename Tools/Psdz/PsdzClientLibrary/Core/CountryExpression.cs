@@ -26,7 +26,7 @@ namespace PsdzClient.Core
             {
                 if (string.IsNullOrEmpty(this.countryCode))
                 {
-                    this.countryCode = ClientContext.Database?.GetCountryById(this.value.ToString(CultureInfo.InvariantCulture));
+                    this.countryCode = ClientContext.GetClientContext(this.vecInfo).Database?.GetCountryById(this.value.ToString(CultureInfo.InvariantCulture));
                     return this.countryCode;
                 }
                 return this.countryCode;
@@ -35,10 +35,11 @@ namespace PsdzClient.Core
 
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, ValidationRuleInternalResults internalResult)
         {
+            this.vecInfo = vec;
             bool flag = false;
             try
             {
-                string outletCountry = ClientContext.OutletCountry;
+                string outletCountry = ClientContext.GetClientContext(this.vecInfo).OutletCountry;
                 flag = (outletCountry == this.CountryCode);
             }
             catch (Exception)
@@ -76,5 +77,7 @@ namespace PsdzClient.Core
         }
 
         private string countryCode;
+
+        private Vehicle vecInfo;
     }
 }

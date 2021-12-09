@@ -145,7 +145,7 @@ namespace PsdzClient
                     checkBoxIcom.Checked = false;
                 }
 
-                ClientContext.Language = comboBoxLanguage.SelectedItem.ToString();
+                ClientContext.GetClientContext().Language = comboBoxLanguage.SelectedItem.ToString();
             }
             catch (Exception)
             {
@@ -481,6 +481,7 @@ namespace PsdzClient
 
         private void FormMain_Load(object sender, EventArgs e)
         {
+            _ignoreChange = true;
             comboBoxLanguage.BeginUpdate();
             comboBoxLanguage.Items.Clear();
             PropertyInfo[] langueProperties = typeof(PdszDatabase.EcuTranslation).GetProperties();
@@ -495,6 +496,7 @@ namespace PsdzClient
 
             comboBoxLanguage.SelectedIndex = 0;
             comboBoxLanguage.EndUpdate();
+            _ignoreChange = false;
 
             LoadSettings();
             UpdateDisplay();
@@ -777,7 +779,7 @@ namespace PsdzClient
                 return;
             }
 
-            ClientContext.Language = comboBoxLanguage.SelectedItem.ToString();
+            ClientContext.GetClientContext(_programmingJobs.PsdzContext?.Vehicle).Language = comboBoxLanguage.SelectedItem.ToString();
 
             BeginInvoke((Action)(() =>
             {

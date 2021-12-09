@@ -25,7 +25,7 @@ namespace PsdzClient.Core
             {
                 if (string.IsNullOrEmpty(this.iStufe))
                 {
-                    this.iStufe = ClientContext.Database?.GetIStufeById(this.value.ToString(CultureInfo.InvariantCulture));
+                    this.iStufe = ClientContext.GetClientContext(this.vecInfo).Database?.GetIStufeById(this.value.ToString(CultureInfo.InvariantCulture));
                     return this.iStufe;
                 }
                 return this.iStufe;
@@ -38,6 +38,8 @@ namespace PsdzClient.Core
             {
                 return false;
             }
+
+            this.vecInfo = vec;
             bool flag;
             if (!string.IsNullOrEmpty(vec.ILevel) && !(vec.ILevel == "0"))
             {
@@ -78,5 +80,7 @@ namespace PsdzClient.Core
         }
 
         private string iStufe;
+
+        private Vehicle vecInfo;
     }
 }

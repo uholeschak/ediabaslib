@@ -22,7 +22,7 @@ namespace PsdzClient.Core
 
 		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, ValidationRuleInternalResults internalResult)
 		{
-            PdszDatabase database = ClientContext.Database;
+            PdszDatabase database = ClientContext.GetClientContext(vec).Database;
             if (database == null)
             {
                 return false;

@@ -13,20 +13,20 @@ namespace PsdzClient.Core
 		public VehicleCharacteristicVehicleHelper()
 		{
 			//this.dbConnector = DatabaseProviderFactory.Instance;
-            database = ClientContext.Database;
 			this.characteristicValue = string.Empty;
             this.characteristicRoots = null;
 			this.vehicle = new Vehicle();
 			this.internalResult = new ValidationRuleInternalResults();
 		}
 
-		public bool GetISTACharacteristics(PdszDatabase.CharacteristicRoots characteristicRoots, out string value, decimal id, Vehicle vehicle, long dataValueId, ValidationRuleInternalResults internalResult)
+		public bool GetISTACharacteristics(PdszDatabase.CharacteristicRoots characteristicRoots, out string value, decimal id, Vehicle vec, long dataValueId, ValidationRuleInternalResults internalResult)
 		{
 			this.characteristicRoots = characteristicRoots;
 			this.characteristicId = id;
-			this.vehicle = vehicle;
+			this.vehicle = vec;
 			this.datavalueId = dataValueId;
 			this.internalResult = internalResult;
+            this.database = ClientContext.GetClientContext(vehicle).Database;
 			bool result = base.ComputeCharacteristic(characteristicRoots.NodeClass, Array.Empty<object>());
 			value = this.characteristicValue;
 			return result;

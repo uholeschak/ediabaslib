@@ -18,7 +18,7 @@ namespace PsdzClient.Core
 
 		public static IEcuVariantLocator CreateEcuVariantLocator(string ecuVariant, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
 		{
-			PdszDatabase.EcuVar ecuVariantByName = ClientContext.Database?.GetEcuVariantByName(ecuVariant);
+			PdszDatabase.EcuVar ecuVariantByName = ClientContext.GetClientContext(vecInfo).Database?.GetEcuVariantByName(ecuVariant);
 			if (ecuVariantByName != null)
 			{
 				return new EcuVariantLocator(ecuVariantByName, vecInfo, ffmResolver);
@@ -26,18 +26,18 @@ namespace PsdzClient.Core
 			return null;
 		}
 
-		public EcuVariantLocator(decimal id, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+		public EcuVariantLocator(decimal id, Vehicle vec, IFFMDynamicResolver ffmResolver)
 		{
-			this.ecuVariant = ClientContext.Database?.GetEcuVariantById(id.ToString(CultureInfo.InvariantCulture));
-			this.vecInfo = vecInfo;
+            this.vecInfo = vec;
+			this.ecuVariant = ClientContext.GetClientContext(this.vecInfo).Database?.GetEcuVariantById(id.ToString(CultureInfo.InvariantCulture));
 			this.ffmResolver = ffmResolver;
 		}
 
-		public EcuVariantLocator(PdszDatabase.EcuVar ecuVariant, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+		public EcuVariantLocator(PdszDatabase.EcuVar ecuVariant, Vehicle vec, IFFMDynamicResolver ffmResolver)
 		{
+            this.vecInfo = vec;
 			this.ecuVariant = ecuVariant;
 			//this.children = new ISPELocator[0];
-			this.vecInfo = vecInfo;
 			this.ffmResolver = ffmResolver;
 		}
 #if false
@@ -81,7 +81,7 @@ namespace PsdzClient.Core
 				List<ISPELocator> list = new List<ISPELocator>();
 				if (string.IsNullOrEmpty(this.ecuVariant.GroupId))
 				{
-					PdszDatabase.EcuGroup ecuGroupById = ClientContext.Database?.GetEcuGroupById(this.ecuVariant.GroupId);
+					PdszDatabase.EcuGroup ecuGroupById = ClientContext.GetClientContext(this.vecInfo).Database?.GetEcuGroupById(this.ecuVariant.GroupId);
 					if (ecuGroupById != null)
 					{
 						list.Add(new EcuGroupLocator(ecuGroupById, this.vecInfo, this.ffmResolver));
