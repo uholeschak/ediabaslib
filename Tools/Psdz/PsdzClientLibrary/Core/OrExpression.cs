@@ -42,7 +42,7 @@ namespace PsdzClient.Core
 			}
 		}
 
-		public new static OrExpression Deserialize(Stream ms)
+		public new static OrExpression Deserialize(Stream ms, Vehicle vec)
 		{
 			byte[] bytes = BitConverter.GetBytes(0);
 			ms.Read(bytes, 0, bytes.Length);
@@ -50,7 +50,7 @@ namespace PsdzClient.Core
 			OrExpression orExpression = new OrExpression();
 			for (int i = 0; i < num; i++)
 			{
-				orExpression.AddOperand(RuleExpression.Deserialize(ms));
+				orExpression.AddOperand(RuleExpression.Deserialize(ms, vec));
 			}
 			return orExpression;
 		}

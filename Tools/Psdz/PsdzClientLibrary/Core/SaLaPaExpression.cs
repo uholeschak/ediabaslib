@@ -46,7 +46,7 @@ namespace PsdzClient.Core
 			{
 				return false;
 			}
-			PdszDatabase.SaLaPa saLaPaById = ClientContext.GetClientContext(vec).Database?.GetSaLaPaById(this.value.ToString(CultureInfo.InvariantCulture));
+			PdszDatabase.SaLaPa saLaPaById = ClientContext.GetClientContext(vec)?.Database?.GetSaLaPaById(this.value.ToString(CultureInfo.InvariantCulture));
 			if (saLaPaById == null)
 			{
 				return false;

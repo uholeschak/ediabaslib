@@ -19,7 +19,7 @@ namespace PsdzClient.Core
 			this.datevalue = this.dateArgument.Ticks;
 		}
 
-		public new static ManufactoringDateExpression Deserialize(Stream ms)
+		public new static ManufactoringDateExpression Deserialize(Stream ms, Vehicle vec)
 		{
 			CompareExpression.ECompareOperator ecompareOperator = (CompareExpression.ECompareOperator)((byte)ms.ReadByte());
 			byte[] array = new byte[8];

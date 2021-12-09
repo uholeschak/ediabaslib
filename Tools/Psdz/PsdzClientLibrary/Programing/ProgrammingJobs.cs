@@ -42,19 +42,22 @@ namespace PsdzClient.Programing
 
         public class OptionsItem
         {
-            public OptionsItem(PdszDatabase.SwiAction swiAction)
+            public OptionsItem(PdszDatabase.SwiAction swiAction, ClientContext clientContext)
             {
                 SwiAction = swiAction;
+                ClientContext = clientContext;
                 Invalid = false;
             }
 
             public PdszDatabase.SwiAction SwiAction { get; private set; }
 
+            public ClientContext ClientContext { get; private set; }
+
             public bool Invalid { get; set; }
 
             public override string ToString()
             {
-                return SwiAction.EcuTranslation.GetTitle(ClientContext.GetClientContext().Language);
+                return SwiAction.EcuTranslation.GetTitle(ClientContext?.Language);
             }
         }
 
@@ -73,12 +76,14 @@ namespace PsdzClient.Programing
 
             public PdszDatabase.SwiRegister SwiRegister { get; set; }
 
+            public ClientContext ClientContext { get; set; }
+
             public override string ToString()
             {
                 PdszDatabase.SwiRegister swiRegister = SwiRegister;
                 if (swiRegister != null)
                 {
-                    return swiRegister.EcuTranslation.GetTitle(ClientContext.GetClientContext().Language);
+                    return swiRegister.EcuTranslation.GetTitle(ClientContext?.Language);
                 }
                 return Name;
             }
@@ -94,7 +99,7 @@ namespace PsdzClient.Programing
         public event UpdateOptionsDelegate UpdateOptionsEvent;
 
         private static readonly ILog log = LogManager.GetLogger(typeof(ProgrammingJobs));
-        private static OptionType[] _optionTypes =
+        private OptionType[] _optionTypes =
         {
             new OptionType("Coding", PdszDatabase.SwiRegisterEnum.VehicleModificationCodingConversion),
             new OptionType("Coding back", PdszDatabase.SwiRegisterEnum.VehicleModificationCodingBackConversion),
@@ -102,17 +107,18 @@ namespace PsdzClient.Programing
             new OptionType("Modification back", PdszDatabase.SwiRegisterEnum.VehicleModificationBackConversion),
             new OptionType("Retrofit", PdszDatabase.SwiRegisterEnum.VehicleModificationRetrofitting),
         };
-        public static OptionType[] OptionTypes => _optionTypes;
+        public OptionType[] OptionTypes => _optionTypes;
 
         private bool _disposed;
+        public ClientContext ClientContext { get; private set; }
         private string _dealerId;
         public PsdzContext PsdzContext { get; private set; }
         public ProgrammingService ProgrammingService { get; private set; }
         public List<ProgrammingJobs.OptionsItem> SelectedOptions { get; set; }
 
-
         public ProgrammingJobs(string dealerId)
         {
+            ClientContext = new ClientContext();
             _dealerId = dealerId;
             ProgrammingService = null;
         }
@@ -137,6 +143,7 @@ namespace PsdzClient.Programing
                 }
 
                 ProgrammingService = new ProgrammingService(istaFolder, _dealerId);
+                ClientContext.Database = ProgrammingService.PdszDatabase;
                 SetupLog4Net();
                 ProgrammingService.EventManager.ProgrammingEventRaised += (sender, args) =>
                 {
@@ -216,6 +223,7 @@ namespace PsdzClient.Programing
                     ProgrammingService.CloseConnectionsToPsdzHost();
                     ProgrammingService.Dispose();
                     ProgrammingService = null;
+                    ClientContext.Database = null;
                     ClearProgrammingObjects();
                 }
 
@@ -361,7 +369,7 @@ namespace PsdzClient.Programing
                         bauIStufe);
                 }
 
-                Vehicle vehicle = new Vehicle();
+                Vehicle vehicle = new Vehicle(ClientContext);
                 vehicle.VCI.VCIType = icomConnection ?
                     BMW.Rheingold.CoreFramework.Contracts.Vehicle.VCIDeviceType.ICOM : BMW.Rheingold.CoreFramework.Contracts.Vehicle.VCIDeviceType.ENET;
                 vehicle.VCI.IPAddress = ipAddress;
@@ -480,6 +488,7 @@ namespace PsdzClient.Programing
                     return false;
                 }
 
+                ClientContext clientContext = ClientContext.GetClientContext(PsdzContext.Vehicle);
                 IPsdzVin psdzVin = ProgrammingService.Psdz.VcmService.GetVinFromMaster(PsdzContext.Connection);
                 if (string.IsNullOrEmpty(psdzVin?.Value))
                 {
@@ -882,7 +891,7 @@ namespace PsdzClient.Programing
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ecus: {0}", PsdzContext.DetectVehicle.EcuList.Count()));
                 foreach (PdszDatabase.EcuInfo ecuInfo in PsdzContext.DetectVehicle.EcuList)
                 {
-                    sbResult.AppendLine(ecuInfo.ToString(ClientContext.GetClientContext(PsdzContext.Vehicle).Language));
+                    sbResult.AppendLine(ecuInfo.ToString(clientContext?.Language));
                 }
                 UpdateStatus(sbResult.ToString());
                 cts?.Token.ThrowIfCancellationRequested();
@@ -891,7 +900,7 @@ namespace PsdzClient.Programing
                     ProgrammingService.PdszDatabase.ReadSwiRegister(PsdzContext.Vehicle);
                     if (ProgrammingService.PdszDatabase.SwiRegisterTree != null)
                     {
-                        string treeText = ProgrammingService.PdszDatabase.SwiRegisterTree.ToString(ClientContext.GetClientContext(PsdzContext.Vehicle).Language);
+                        string treeText = ProgrammingService.PdszDatabase.SwiRegisterTree.ToString(clientContext?.Language);
                         if (!string.IsNullOrEmpty(treeText))
                         {
                             log.Info(Environment.NewLine + "Swi tree:" + Environment.NewLine + treeText);
@@ -900,6 +909,7 @@ namespace PsdzClient.Programing
                         Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>> optionsDict = new Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>>();
                         foreach (OptionType optionType in _optionTypes)
                         {
+                            optionType.ClientContext = clientContext;
                             optionType.SwiRegister = ProgrammingService.PdszDatabase.FindNodeForRegister(optionType.SwiRegisterEnum);
                             List<PdszDatabase.SwiAction> swiActions = ProgrammingService.PdszDatabase.GetSwiActionsForRegister(optionType.SwiRegisterEnum, true);
                             if (swiActions != null)
@@ -909,8 +919,8 @@ namespace PsdzClient.Programing
                                 List<OptionsItem> optionsItems = new List<OptionsItem>();
                                 foreach (PdszDatabase.SwiAction swiAction in swiActions)
                                 {
-                                    sbResult.AppendLine(swiAction.ToString(ClientContext.GetClientContext(PsdzContext.Vehicle).Language));
-                                    optionsItems.Add(new OptionsItem(swiAction));
+                                    sbResult.AppendLine(swiAction.ToString(clientContext?.Language));
+                                    optionsItems.Add(new OptionsItem(swiAction, clientContext));
                                 }
 
                                 optionsDict.Add(optionType.SwiRegisterEnum, optionsItems);
@@ -1126,7 +1136,7 @@ namespace PsdzClient.Programing
                                     }
                                     else
                                     {
-                                        log.InfoFormat("UpdateTargetFa Info object: {0}", swiInfoObj.ToString(ClientContext.GetClientContext(PsdzContext.Vehicle).Language));
+                                        log.InfoFormat("UpdateTargetFa Info object: {0}", swiInfoObj.ToString(ClientContext.GetClientContext(PsdzContext.Vehicle)?.Language));
                                     }
                                 }
 

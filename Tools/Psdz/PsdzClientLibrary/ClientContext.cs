@@ -3,36 +3,42 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using log4net;
 using PsdzClient.Core;
-using static PsdzClient.Core.CharacteristicExpression;
 
 namespace PsdzClient
 {
     public class ClientContext
     {
-        private static ClientContext _clientContext;
+        private static readonly ILog log = LogManager.GetLogger(typeof(ClientContext));
 
-        ClientContext()
+        public ClientContext()
         {
             Database = null;
-            SelectedBrand = EnumBrand.BMWBMWiMINI;
+            SelectedBrand = CharacteristicExpression.EnumBrand.BMWBMWiMINI;
             OutletCountry = string.Empty;
             Language = "En";
         }
 
-        public static ClientContext GetClientContext(Vehicle vehicle = null)
+        public static ClientContext GetClientContext(Vehicle vehicle)
         {
-            if (_clientContext == null)
+            if (vehicle != null)
             {
-                _clientContext = new ClientContext();
+                if (vehicle.ClientContext == null)
+                {
+                    log.ErrorFormat("GetClientContext ClientContext is null");
+                }
+
+                return vehicle.ClientContext;
             }
 
-            return _clientContext;
+            log.ErrorFormat("GetClientContext Vehicle is null");
+            return null;
         }
 
         public PdszDatabase Database { get; set; }
 
-        public EnumBrand SelectedBrand { get; set; }
+        public CharacteristicExpression.EnumBrand SelectedBrand { get; set; }
 
         public string OutletCountry { get; set; }
 

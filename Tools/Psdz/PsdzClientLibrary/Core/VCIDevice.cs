@@ -120,11 +120,11 @@ namespace PsdzClient.Core
 					}
 					text += this.VIN[6].ToString();
 					IL_141:
-                    List<PdszDatabase.Characteristics> vehicleIdentByTypeKey = ClientContext.GetClientContext().Database?.GetVehicleIdentByTypeKey(text, false);
+                    List<PdszDatabase.Characteristics> vehicleIdentByTypeKey = _clientContext?.Database?.GetVehicleIdentByTypeKey(text, false);
 					if (vehicleIdentByTypeKey != null)
 					{
 						BasicFeaturesVci basicFeaturesVci = new BasicFeaturesVci();
-						VehicleCharacteristicVCIDeviceHelper vehicleCharacteristicVCIDeviceHelper = new VehicleCharacteristicVCIDeviceHelper();
+						VehicleCharacteristicVCIDeviceHelper vehicleCharacteristicVCIDeviceHelper = new VehicleCharacteristicVCIDeviceHelper(_clientContext);
 						foreach (PdszDatabase.Characteristics xep_CHARACTERISTICS in vehicleIdentByTypeKey)
 						{
 							vehicleCharacteristicVCIDeviceHelper.AssignBasicFeaturesVciCharacteristic(xep_CHARACTERISTICS.RootNodeClass, basicFeaturesVci, xep_CHARACTERISTICS);
@@ -481,7 +481,7 @@ namespace PsdzClient.Core
 
 		public object Clone()
 		{
-			return new VCIDevice
+			return new VCIDevice(_clientContext)
 			{
 				CommunicationDisturbanceRecognized = this.CommunicationDisturbanceRecognized,
 				ConnectionLossRecognized = this.ConnectionLossRecognized,
@@ -545,8 +545,9 @@ namespace PsdzClient.Core
 			};
 		}
 
-		public VCIDevice()
-		{
+		public VCIDevice(ClientContext clientContext)
+        {
+            this._clientContext = clientContext;
 			this.vCITypeField = VCIDeviceType.UNKNOWN;
 			this.vCIReservationField = VCIReservationType.NONE;
 			this.portField = new int?(6801);
@@ -1767,5 +1768,7 @@ namespace PsdzClient.Core
 		private bool underVoltageRecognizedLastTimeFieldSpecified;
 
 		private bool communicationDisturbanceRecognizedField;
-	}
+
+        private ClientContext _clientContext;
+    }
 }

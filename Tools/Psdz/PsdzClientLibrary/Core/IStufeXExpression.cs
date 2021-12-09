@@ -12,21 +12,22 @@ namespace PsdzClient.Core
 	[Serializable]
 	public class IStufeXExpression : RuleExpression
 	{
-		public IStufeXExpression(CompareExpression.ECompareOperator compareOperator, long ilevelid, IStufeXExpression.ILevelyType iLevelType)
-		{
+		public IStufeXExpression(CompareExpression.ECompareOperator compareOperator, long ilevelid, IStufeXExpression.ILevelyType iLevelType, Vehicle vec)
+        {
 			this.iLevelId = ilevelid;
 			this.iLevelType = iLevelType;
 			this.compareOperator = compareOperator;
+            this.vecInfo = vec;
 		}
 
-		public new static IStufeXExpression Deserialize(Stream ms)
+		public new static IStufeXExpression Deserialize(Stream ms, Vehicle vec)
 		{
 			CompareExpression.ECompareOperator ecompareOperator = (CompareExpression.ECompareOperator)((byte)ms.ReadByte());
 			IStufeXExpression.ILevelyType levelyType = (IStufeXExpression.ILevelyType)ms.ReadByte();
 			byte[] array = new byte[8];
 			ms.Read(array, 0, 8);
 			long ilevelid = BitConverter.ToInt64(array, 0);
-			return new IStufeXExpression(ecompareOperator, ilevelid, levelyType);
+			return new IStufeXExpression(ecompareOperator, ilevelid, levelyType, vec);
 		}
 
 		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, ValidationRuleInternalResults internalResult)
@@ -38,7 +39,7 @@ namespace PsdzClient.Core
 
             this.vecInfo = vec;
 			string ilevelOperand = this.GetILevelOperand(vec);
-			string istufeById = ClientContext.GetClientContext(this.vecInfo).Database?.GetIStufeById(this.iLevelId.ToString(CultureInfo.InvariantCulture));
+			string istufeById = ClientContext.GetClientContext(this.vecInfo)?.Database?.GetIStufeById(this.iLevelId.ToString(CultureInfo.InvariantCulture));
 			if (string.IsNullOrEmpty(istufeById))
 			{
 				return false;
@@ -129,7 +130,7 @@ namespace PsdzClient.Core
 
 		public override string ToString()
 		{
-			string istufeById = ClientContext.GetClientContext(this.vecInfo).Database?.GetIStufeById(this.iLevelId.ToString(CultureInfo.InvariantCulture));
+			string istufeById = ClientContext.GetClientContext(this.vecInfo)?.Database?.GetIStufeById(this.iLevelId.ToString(CultureInfo.InvariantCulture));
 			string ilevelTypeDescription = this.GetILevelTypeDescription();
 			return string.Format(CultureInfo.InvariantCulture, "IStufeX: {0}-I-Stufe {1} '{2}' [{3}]", new object[]
 			{

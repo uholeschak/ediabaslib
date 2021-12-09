@@ -42,7 +42,7 @@ namespace PsdzClient.Core
 			}
 		}
 
-		public new static AndExpression Deserialize(Stream ms)
+		public new static AndExpression Deserialize(Stream ms, Vehicle vec)
 		{
 			byte[] bytes = BitConverter.GetBytes(0);
 			ms.Read(bytes, 0, bytes.Length);
@@ -50,7 +50,7 @@ namespace PsdzClient.Core
 			AndExpression andExpression = new AndExpression();
 			for (int i = 0; i < num; i++)
 			{
-				andExpression.AddOperand(RuleExpression.Deserialize(ms));
+				andExpression.AddOperand(RuleExpression.Deserialize(ms, vec));
 			}
 			return andExpression;
 		}

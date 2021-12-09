@@ -19,8 +19,8 @@ namespace PsdzClient.Core
 {
 	public class Vehicle : typeVehicle, INotifyPropertyChanged, IVehicle
 	{
-		public Vehicle()
-		{
+		public Vehicle(ClientContext clientContext) : base(clientContext)
+        {
 			base.ConnectState = VisibilityType.Collapsed;
 			//this.pKodeList = new ObservableCollectionEx<Fault>();
 			//this.FaultList = new List<Fault>();
@@ -183,7 +183,7 @@ namespace PsdzClient.Core
 
 		public bool SetVINRangeTypeFromVINRanges()
 		{
-            PdszDatabase database = ClientContext.GetClientContext(this).Database;
+            PdszDatabase database = ClientContext.GetClientContext(this)?.Database;
 			if (database != null && !"XXXXXXX".Equals(this.VIN7) && !string.IsNullOrEmpty(this.VIN7) && !this.VIN7.Equals(this.vinRangeTypeLastResolvedType, StringComparison.OrdinalIgnoreCase))
 			{
                 PdszDatabase.VinRanges vinRangesByVin = database.GetVinRangesByVin17(this.VINType, this.VIN7, false);
@@ -1807,10 +1807,10 @@ namespace PsdzClient.Core
 
 		public bool getISTACharacteristics(decimal id, out string value, long datavalueId, ValidationRuleInternalResults internalResult)
 		{
-            PdszDatabase.CharacteristicRoots characteristicRootsById = ClientContext.GetClientContext(this).Database?.GetCharacteristicRootsById(id.ToString(CultureInfo.InvariantCulture));
+            PdszDatabase.CharacteristicRoots characteristicRootsById = ClientContext.GetClientContext(this)?.Database?.GetCharacteristicRootsById(id.ToString(CultureInfo.InvariantCulture));
 			if (characteristicRootsById != null)
 			{
-				return new VehicleCharacteristicVehicleHelper().GetISTACharacteristics(characteristicRootsById, out value, id, this, datavalueId, internalResult);
+				return new VehicleCharacteristicVehicleHelper(this).GetISTACharacteristics(characteristicRootsById, out value, id, this, datavalueId, internalResult);
 			}
 			value = "???";
 			return false;
@@ -2790,7 +2790,7 @@ namespace PsdzClient.Core
 			return num;
 		}
 
-		public const string BnProgramming = "BN2020,BN2020_MOTORBIKE";
+        public const string BnProgramming = "BN2020,BN2020_MOTORBIKE";
 
 		private static readonly DateTime LciDateE36 = DateTime.Parse("1998-03-01", CultureInfo.InvariantCulture);
 
@@ -2863,5 +2863,5 @@ namespace PsdzClient.Core
 		private bool sp2021Enabled;
 
 		private static readonly DateTime lciRRS2 = DateTime.Parse("2012-05-31", CultureInfo.InvariantCulture);
-	}
+    }
 }

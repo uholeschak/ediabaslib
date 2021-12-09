@@ -23,7 +23,7 @@ namespace PsdzClient.Core
 		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, ValidationRuleInternalResults internalResult)
 		{
 			bool flag = false;
-			PdszDatabase database = ClientContext.GetClientContext(vec).Database;
+			PdszDatabase database = ClientContext.GetClientContext(vec)?.Database;
             if (database == null)
             {
                 return false;
@@ -42,7 +42,7 @@ namespace PsdzClient.Core
 			{
 				return false;
 			}
-            List<PdszDatabase.EcuVar> ecuVariantsByEcuCliquesId = ClientContext.GetClientContext(vec).Database?.GetEcuVariantsByEcuCliquesId(ecuClique.Id);
+            List<PdszDatabase.EcuVar> ecuVariantsByEcuCliquesId = ClientContext.GetClientContext(vec)?.Database?.GetEcuVariantsByEcuCliquesId(ecuClique.Id);
 			if (ecuVariantsByEcuCliquesId == null || ecuVariantsByEcuCliquesId.Count == 0)
 			{
 				return false;

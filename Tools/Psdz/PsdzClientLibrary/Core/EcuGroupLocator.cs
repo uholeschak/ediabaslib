@@ -18,7 +18,7 @@ namespace PsdzClient.Core
 
 		public EcuGroupLocator(decimal id, Vehicle vec, IFFMDynamicResolver ffmResolver)
 		{
-			this.ecuGroup = ClientContext.GetClientContext(vec).Database?.GetEcuGroupById(id.ToString(CultureInfo.InvariantCulture));
+			this.ecuGroup = ClientContext.GetClientContext(vec)?.Database?.GetEcuGroupById(id.ToString(CultureInfo.InvariantCulture));
 			//this.children = new ISPELocator[0];
             this.parents = null;
 			this.vecInfo = vec;

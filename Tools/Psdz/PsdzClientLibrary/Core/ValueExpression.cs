@@ -24,7 +24,7 @@ namespace PsdzClient.Core
             }
         }
 
-        public new static ValueExpression Deserialize(Stream ms)
+        public new static ValueExpression Deserialize(Stream ms, Vehicle vec)
         {
             ms.ReadByte();
             byte[] buffer = new byte[8];

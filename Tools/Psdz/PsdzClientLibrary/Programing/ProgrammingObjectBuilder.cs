@@ -274,7 +274,7 @@ namespace BMW.Rheingold.Programming.API
 			ecuObj.EcuStatusInfo = ((ecuInput.EcuStatusInfo != null) ? new EcuObjStatusInfo(ecuInput.EcuStatusInfo.ByteValue, ecuInput.EcuStatusInfo.HasIndividualData) : null);
 			ecuObj.EcuPdxInfo = this.Build(ecuInput.PsdzEcuPdxInfo);
 
-            PdszDatabase database = ClientContext.GetClientContext(this.vehicle).Database;
+            PdszDatabase database = ClientContext.GetClientContext(this.vehicle)?.Database;
             if (database != null)
             {
                 string bnTnName = ecuInput.BnTnName;

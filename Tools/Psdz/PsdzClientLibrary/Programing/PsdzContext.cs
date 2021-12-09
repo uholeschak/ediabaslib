@@ -330,7 +330,11 @@ namespace PsdzClient.Programming
                 brand = CharacteristicExpression.EnumBrand.BMWMotorrad;
             }
 
-            ClientContext.GetClientContext(Vehicle).SelectedBrand = brand;
+            ClientContext clientContext = ClientContext.GetClientContext(Vehicle);
+            if (clientContext != null)
+            {
+                clientContext.SelectedBrand = brand;
+            }
 
             for (int i = 0; i < 2; i++)
             {

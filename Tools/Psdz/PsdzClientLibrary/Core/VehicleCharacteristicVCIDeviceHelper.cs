@@ -6,8 +6,13 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Core
 {
-	public sealed class VehicleCharacteristicVCIDeviceHelper : VehicleCharacteristicAbstract
+	public class VehicleCharacteristicVCIDeviceHelper : VehicleCharacteristicAbstract
 	{
+        public VehicleCharacteristicVCIDeviceHelper(ClientContext clientContext)
+        {
+            _clientContext = clientContext;
+        }
+
 		public bool AssignBasicFeaturesVciCharacteristic(string vehicleCode, BasicFeaturesVci vehicle, PdszDatabase.Characteristics characteristic)
 		{
 			return base.ComputeCharacteristic(vehicleCode, new object[]
@@ -20,7 +25,7 @@ namespace PsdzClient.Core
 		protected override bool ComputeMotor(params object[] parameters)
 		{
 			this.GetVCIDeviceParameters(parameters);
-			this.basicFeatures.Motor = this.characteristic.EcuTranslation.Title;
+			this.basicFeatures.Motor = this.characteristic.EcuTranslation.GetTitle(_clientContext);
 			return true;
 		}
 
@@ -37,7 +42,7 @@ namespace PsdzClient.Core
 		protected override bool ComputeAEKurzbezeichnung(params object[] parameters)
 		{
 			this.GetVCIDeviceParameters(parameters);
-			this.basicFeatures.AEKurzbezeichnung = this.characteristic.EcuTranslation.Title;
+			this.basicFeatures.AEKurzbezeichnung = this.characteristic.EcuTranslation.GetTitle(_clientContext);
 			return true;
 		}
 
@@ -59,7 +64,7 @@ namespace PsdzClient.Core
 		protected override bool ComputeBaseVersion(params object[] parameters)
 		{
 			this.GetVCIDeviceParameters(parameters);
-			this.basicFeatures.BaseVersion = this.characteristic.EcuTranslation.Title;
+			this.basicFeatures.BaseVersion = this.characteristic.EcuTranslation.GetTitle(_clientContext);
 			return true;
 		}
 
@@ -71,7 +76,7 @@ namespace PsdzClient.Core
 		protected override bool ComputeBaureihe(params object[] parameters)
 		{
 			this.GetVCIDeviceParameters(parameters);
-			this.basicFeatures.Baureihe = this.characteristic.EcuTranslation.Title;
+			this.basicFeatures.Baureihe = this.characteristic.EcuTranslation.GetTitle(_clientContext);
 			return true;
 		}
 
@@ -93,14 +98,14 @@ namespace PsdzClient.Core
 		protected override bool ComputeBrandName(params object[] parameters)
 		{
 			this.GetVCIDeviceParameters(parameters);
-			this.basicFeatures.Marke = this.characteristic.EcuTranslation.Title;
+			this.basicFeatures.Marke = this.characteristic.EcuTranslation.GetTitle(_clientContext);
 			return true;
 		}
 
 		protected override bool ComputeCountryOfAssembly(params object[] parameters)
 		{
 			this.GetVCIDeviceParameters(parameters);
-			this.basicFeatures.CountryOfAssembly = this.characteristic.EcuTranslation.Title;
+			this.basicFeatures.CountryOfAssembly = this.characteristic.EcuTranslation.GetTitle(_clientContext);
 			return true;
 		}
 
@@ -157,14 +162,14 @@ namespace PsdzClient.Core
 		protected override bool ComputeEreihe(params object[] parameters)
 		{
 			this.GetVCIDeviceParameters(parameters);
-			this.basicFeatures.Ereihe = this.characteristic.EcuTranslation.Title;
+			this.basicFeatures.Ereihe = this.characteristic.EcuTranslation.GetTitle(_clientContext);
 			return true;
 		}
 
 		protected override bool ComputeGetriebe(params object[] parameters)
 		{
 			this.GetVCIDeviceParameters(parameters);
-			this.basicFeatures.Getriebe = this.characteristic.EcuTranslation.Title;
+			this.basicFeatures.Getriebe = this.characteristic.EcuTranslation.GetTitle(_clientContext);
 			return true;
 		}
 
@@ -181,7 +186,7 @@ namespace PsdzClient.Core
 		protected override bool ComputeKarosserie(params object[] parameters)
 		{
 			this.GetVCIDeviceParameters(parameters);
-			this.basicFeatures.Karosserie = this.characteristic.EcuTranslation.Title;
+			this.basicFeatures.Karosserie = this.characteristic.EcuTranslation.GetTitle(_clientContext);
 			return true;
 		}
 
@@ -193,7 +198,7 @@ namespace PsdzClient.Core
 		protected override bool ComputeLand(params object[] parameters)
 		{
 			this.GetVCIDeviceParameters(parameters);
-			this.basicFeatures.Land = this.characteristic.EcuTranslation.Title;
+			this.basicFeatures.Land = this.characteristic.EcuTranslation.GetTitle(_clientContext);
 			return true;
 		}
 
@@ -205,7 +210,7 @@ namespace PsdzClient.Core
 		protected override bool ComputeLenkung(params object[] parameters)
 		{
 			this.GetVCIDeviceParameters(parameters);
-			this.basicFeatures.Lenkung = this.characteristic.EcuTranslation.Title;
+			this.basicFeatures.Lenkung = this.characteristic.EcuTranslation.GetTitle(_clientContext);
 			return true;
 		}
 
@@ -232,7 +237,7 @@ namespace PsdzClient.Core
 		protected override bool ComputeProdart(params object[] parameters)
 		{
 			this.GetVCIDeviceParameters(parameters);
-			this.basicFeatures.Prodart = this.characteristic.EcuTranslation.Title;
+			this.basicFeatures.Prodart = this.characteristic.EcuTranslation.GetTitle(_clientContext);
 			return true;
 		}
 
@@ -254,7 +259,7 @@ namespace PsdzClient.Core
 		protected override bool ComputeTyp(params object[] parameters)
 		{
 			this.GetVCIDeviceParameters(parameters);
-			this.basicFeatures.TypeCode = this.characteristic.EcuTranslation.Title;
+			this.basicFeatures.TypeCode = this.characteristic.EcuTranslation.GetTitle(_clientContext);
 			return true;
 		}
 
@@ -266,7 +271,7 @@ namespace PsdzClient.Core
 		protected override bool ComputeVerkaufsBezeichnung(params object[] parameters)
 		{
 			this.GetVCIDeviceParameters(parameters);
-			this.basicFeatures.VerkaufsBezeichnung = this.characteristic.EcuTranslation.Title;
+			this.basicFeatures.VerkaufsBezeichnung = this.characteristic.EcuTranslation.GetTitle(_clientContext);
 			return true;
 		}
 
@@ -325,5 +330,7 @@ namespace PsdzClient.Core
 		private BasicFeaturesVci basicFeatures;
 
 		private PdszDatabase.Characteristics characteristic;
-	}
+
+        private ClientContext _clientContext;
+    }
 }

@@ -136,12 +136,9 @@ namespace PsdzClient
                 }
             }
 
-            public string Title
+            public string GetTitle(ClientContext clientContext)
             {
-                get
-                {
-                    return GetTitle(ClientContext.GetClientContext().Language);
-                }
+                return GetTitle(clientContext.Language);
             }
 
             public string TextDe { get; set; }
@@ -998,7 +995,7 @@ namespace PsdzClient
                     try
                     {
                         log.InfoFormat("EvaluateRule Create expression");
-                        RuleExpression = RuleExpression.Deserialize(new MemoryStream(Rule));
+                        RuleExpression = RuleExpression.Deserialize(new MemoryStream(Rule), vehicle);
                     }
                     catch (Exception e)
                     {
@@ -1181,7 +1178,6 @@ namespace PsdzClient
             _harmony = new Harmony("de.holeschak.PsdzClient");
             _xepRuleDict = null;
             SwiRegisterTree = null;
-            ClientContext.GetClientContext().Database = this;
 
             AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
             {
@@ -2617,7 +2613,7 @@ namespace PsdzClient
                 log.InfoFormat("GetVehicleCharacteristicsFromDatabase Count: {0}", characteristicsList.Count);
                 foreach (Characteristics characteristics in characteristicsList)
                 {
-                    log.InfoFormat("Characteristics: {0}", characteristics.ToString(ClientContext.GetClientContext(vehicle).Language));
+                    log.InfoFormat("Characteristics: {0}", characteristics.ToString(ClientContext.GetClientContext(vehicle)?.Language));
                 }
             }
 
@@ -3928,7 +3924,6 @@ namespace PsdzClient
                 {
                 }
 
-                ClientContext.GetClientContext().Database = null;
                 // Note disposing has been done.
                 _disposed = true;
             }

@@ -18,7 +18,7 @@ namespace PsdzClient.Core
 			}
 		}
 
-		public static RuleExpression Deserialize(Stream ms, EExpressionType type)
+		public static RuleExpression Deserialize(Stream ms, EExpressionType type, Vehicle vec)
 		{
 			byte[] buffer = new byte[8];
 			ms.Read(buffer, 0, 8);
@@ -66,6 +66,7 @@ namespace PsdzClient.Core
                     throw new Exception("Unknown expression type");
 			}
 			singleAssignmentExpression.value = num;
+            singleAssignmentExpression.vecInfo = vec;
 			return singleAssignmentExpression;
 		}
 
@@ -90,5 +91,7 @@ namespace PsdzClient.Core
 		}
 
 		protected long value;
-	}
+
+        protected Vehicle vecInfo;
+    }
 }

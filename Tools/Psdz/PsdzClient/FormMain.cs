@@ -145,7 +145,7 @@ namespace PsdzClient
                     checkBoxIcom.Checked = false;
                 }
 
-                ClientContext.GetClientContext().Language = comboBoxLanguage.SelectedItem.ToString();
+                _programmingJobs.ClientContext.Language = comboBoxLanguage.SelectedItem.ToString();
             }
             catch (Exception)
             {
@@ -239,7 +239,7 @@ namespace PsdzClient
                 comboBoxOptionType.Items.Clear();
                 if (_optionsDict != null)
                 {
-                    foreach (ProgrammingJobs.OptionType optionTypeUpdate in ProgrammingJobs.OptionTypes)
+                    foreach (ProgrammingJobs.OptionType optionTypeUpdate in _programmingJobs.OptionTypes)
                     {
                         comboBoxOptionType.Items.Add(optionTypeUpdate);
                     }
@@ -779,7 +779,7 @@ namespace PsdzClient
                 return;
             }
 
-            ClientContext.GetClientContext(_programmingJobs.PsdzContext?.Vehicle).Language = comboBoxLanguage.SelectedItem.ToString();
+            _programmingJobs.ClientContext.Language = comboBoxLanguage.SelectedItem.ToString();
 
             BeginInvoke((Action)(() =>
             {

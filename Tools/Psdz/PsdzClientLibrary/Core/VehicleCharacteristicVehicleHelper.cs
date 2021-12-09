@@ -10,12 +10,12 @@ namespace PsdzClient.Core
 {
 	public class VehicleCharacteristicVehicleHelper : VehicleCharacteristicAbstract
 	{
-		public VehicleCharacteristicVehicleHelper()
+		public VehicleCharacteristicVehicleHelper(Vehicle vec)
 		{
 			//this.dbConnector = DatabaseProviderFactory.Instance;
 			this.characteristicValue = string.Empty;
             this.characteristicRoots = null;
-			this.vehicle = new Vehicle();
+			this.vehicle = vec;
 			this.internalResult = new ValidationRuleInternalResults();
 		}
 
@@ -26,7 +26,7 @@ namespace PsdzClient.Core
 			this.vehicle = vec;
 			this.datavalueId = dataValueId;
 			this.internalResult = internalResult;
-            this.database = ClientContext.GetClientContext(vehicle).Database;
+            this.database = ClientContext.GetClientContext(vehicle)?.Database;
 			bool result = base.ComputeCharacteristic(characteristicRoots.NodeClass, Array.Empty<object>());
 			value = this.characteristicValue;
 			return result;

@@ -12,8 +12,9 @@ namespace PsdzClient.Core
 {
 	public abstract class typeVehicle : INotifyPropertyChanged
 	{
-		public typeVehicle()
-		{
+		public typeVehicle(ClientContext clientContext)
+        {
+            this._clientContext = clientContext;
 			//this.perceivedSymptomsField = new ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX>();
 			this.installedAdaptersField = new ObservableCollection<decimal>();
 			//this.combinedFaultsField = new ObservableCollection<DTC>();
@@ -21,7 +22,7 @@ namespace PsdzClient.Core
 			//this.serviceHistoryField = new ObservableCollection<typeServiceHistoryEntry>();
 			//this.technicalCampaignsField = new ObservableCollection<technicalCampaignType>();
 			//this.mIBField = new VCIDevice();
-			this.vCIField = new VCIDevice();
+			this.vCIField = new VCIDevice(clientContext);
 			//this.testplanField = new TestPlanType();
 			//this.historyInfoObjectsField = new ObservableCollection<InfoObject>();
 			//this.faField = new FA();
@@ -2846,7 +2847,12 @@ namespace PsdzClient.Core
 			}
 		}
 
-		private string vIN17Field;
+        public ClientContext ClientContext
+        {
+            get { return _clientContext; }
+        }
+
+        private string vIN17Field;
 
 		private bool isSendFastaDataForbiddenField;
 
@@ -3093,5 +3099,7 @@ namespace PsdzClient.Core
 		private DateTime vehicleLifeStartDate;
 
 		private List<DealerSessionProperty> dealerSessionProperties;
+
+        private ClientContext _clientContext;
 	}
 }
