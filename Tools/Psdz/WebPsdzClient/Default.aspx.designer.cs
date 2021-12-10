@@ -15,6 +15,15 @@ namespace WebPsdzClient
     {
 
         /// <summary>
+        /// UpdatePanelStatus-Steuerelement
+        /// </summary>
+        /// <remarks>
+        /// Automatisch generiertes Feld
+        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel UpdatePanelStatus;
+
+        /// <summary>
         /// TableButtons-Steuerelement
         /// </summary>
         /// <remarks>
@@ -40,15 +49,6 @@ namespace WebPsdzClient
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button ButtonStopHost;
-
-        /// <summary>
-        /// UpdatePanelStatus-Steuerelement
-        /// </summary>
-        /// <remarks>
-        /// Automatisch generiertes Feld
-        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
-        /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanelStatus;
 
         /// <summary>
         /// TableStatus-Steuerelement

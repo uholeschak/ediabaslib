@@ -60,6 +60,7 @@ namespace WebPsdzClient
             Session.Contents["Counter"] = counter;
 
             TextBoxStatus.Text = string.Format(CultureInfo.InvariantCulture, "Counter: {0}", counter);
+            ButtonStartHost.Enabled = (counter & 0x01) == 0;
         }
     }
 }
