@@ -19,7 +19,7 @@ namespace WebPsdzClient
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            AddKeepAlive();
+            UpdateStatus();
         }
 
         protected void Page_Unload(object sender, EventArgs e)
@@ -37,24 +37,29 @@ namespace WebPsdzClient
 
         }
 
-        private void AddKeepAlive()
+        protected void TimerUpdate_Tick(object sender, EventArgs e)
         {
-            int reloadTimeout = (this.Session.Timeout * 60000) - 30000;
-            string script = @"
-<script type='text/javascript'>
-    function Reload()
-    {
-        location.reload(true);
-    }
+            UpdateStatus(true);
+        }
 
-    window.setInterval('Reload()'," + reloadTimeout.ToString(CultureInfo.InvariantCulture) + @");
-</script>
-";
-
-            if (!ClientScript.IsClientScriptBlockRegistered(ReloadScriptName))
+        private void UpdateStatus(bool increment = false)
+        {
+            int? counter = Session.Contents["Counter"] as int?;
+            if (!counter.HasValue)
             {
-                ClientScript.RegisterClientScriptBlock(GetType(), ReloadScriptName, script);
+                counter = 0;
             }
+            else
+            {
+                if (increment)
+                {
+                    counter++;
+                }
+            }
+
+            Session.Contents["Counter"] = counter;
+
+            TextBoxStatus.Text = string.Format(CultureInfo.InvariantCulture, "Counter: {0}", counter);
         }
     }
 }

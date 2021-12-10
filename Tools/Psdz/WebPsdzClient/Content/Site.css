@@ -15,7 +15,11 @@ body {
 input,
 select,
 textarea {
-    max-width: 280px;
+    min-width: 100px;
+}
+
+button {
+    padding: 10px
 }
 
 
