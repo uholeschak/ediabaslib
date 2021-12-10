@@ -26,7 +26,7 @@ namespace PsdzClient.Core
 			this.vehicle = vec;
 			this.datavalueId = dataValueId;
 			this.internalResult = internalResult;
-            this.database = ClientContext.GetClientContext(vehicle)?.Database;
+            this.database = ClientContext.GetDatabase(vehicle);
 			bool result = base.ComputeCharacteristic(characteristicRoots.NodeClass, Array.Empty<object>());
 			value = this.characteristicValue;
 			return result;

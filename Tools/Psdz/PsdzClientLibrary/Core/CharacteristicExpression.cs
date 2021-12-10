@@ -151,7 +151,7 @@ namespace PsdzClient.Core
 			if (this.CharacteristicRoot.Equals("Marke"))
 			{
 				string text2;
-				switch (ClientContext.GetClientContext(vec)?.SelectedBrand)
+				switch (ClientContext.GetBrand(vec))
 				{
 					case EnumBrand.BMWBMWiMINI:
 						text2 = "BMW/BMW I/MINI";
@@ -304,7 +304,7 @@ namespace PsdzClient.Core
 		private string GetCharacteristicRootFromDb()
 		{
 			string result = string.Empty;
-            PdszDatabase.CharacteristicRoots characteristicRootsById = ClientContext.GetClientContext(this.vecInfo)?.Database?.GetCharacteristicRootsById(this.dataclassId.ToString(CultureInfo.InvariantCulture));
+            PdszDatabase.CharacteristicRoots characteristicRootsById = ClientContext.GetDatabase(this.vecInfo)?.GetCharacteristicRootsById(this.dataclassId.ToString(CultureInfo.InvariantCulture));
 			if (characteristicRootsById != null && !string.IsNullOrEmpty(characteristicRootsById.EcuTranslation.TextDe))
 			{
 				result = characteristicRootsById.EcuTranslation.TextDe;
@@ -314,7 +314,7 @@ namespace PsdzClient.Core
 
 		private string GetCharacteristicValueFromDb()
 		{
-			return ClientContext.GetClientContext(this.vecInfo)?.Database?.LookupVehicleCharDeDeById(this.datavalueId.ToString(CultureInfo.InvariantCulture));
+			return ClientContext.GetDatabase(this.vecInfo)?.LookupVehicleCharDeDeById(this.datavalueId.ToString(CultureInfo.InvariantCulture));
 		}
 
 		private readonly long dataclassId;

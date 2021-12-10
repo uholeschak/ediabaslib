@@ -25,7 +25,7 @@ namespace PsdzClient.Core
             {
                 if (string.IsNullOrEmpty(this.iStufe))
                 {
-                    this.iStufe = ClientContext.GetClientContext(this.vecInfo)?.Database?.GetIStufeById(this.value.ToString(CultureInfo.InvariantCulture));
+                    this.iStufe = ClientContext.GetDatabase(this.vecInfo)?.GetIStufeById(this.value.ToString(CultureInfo.InvariantCulture));
                     return this.iStufe;
                 }
                 return this.iStufe;

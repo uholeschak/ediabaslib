@@ -39,7 +39,7 @@ namespace PsdzClient.Core
 
             this.vecInfo = vec;
 			string ilevelOperand = this.GetILevelOperand(vec);
-			string istufeById = ClientContext.GetClientContext(this.vecInfo)?.Database?.GetIStufeById(this.iLevelId.ToString(CultureInfo.InvariantCulture));
+			string istufeById = ClientContext.GetDatabase(this.vecInfo)?.GetIStufeById(this.iLevelId.ToString(CultureInfo.InvariantCulture));
 			if (string.IsNullOrEmpty(istufeById))
 			{
 				return false;
@@ -130,7 +130,7 @@ namespace PsdzClient.Core
 
 		public override string ToString()
 		{
-			string istufeById = ClientContext.GetClientContext(this.vecInfo)?.Database?.GetIStufeById(this.iLevelId.ToString(CultureInfo.InvariantCulture));
+			string istufeById = ClientContext.GetDatabase(this.vecInfo)?.GetIStufeById(this.iLevelId.ToString(CultureInfo.InvariantCulture));
 			string ilevelTypeDescription = this.GetILevelTypeDescription();
 			return string.Format(CultureInfo.InvariantCulture, "IStufeX: {0}-I-Stufe {1} '{2}' [{3}]", new object[]
 			{

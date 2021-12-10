@@ -26,7 +26,7 @@ namespace PsdzClient.Core
             {
                 if (string.IsNullOrEmpty(this.countryCode))
                 {
-                    this.countryCode = ClientContext.GetClientContext(this.vecInfo)?.Database?.GetCountryById(this.value.ToString(CultureInfo.InvariantCulture));
+                    this.countryCode = ClientContext.GetDatabase(this.vecInfo)?.GetCountryById(this.value.ToString(CultureInfo.InvariantCulture));
                     return this.countryCode;
                 }
                 return this.countryCode;
@@ -39,7 +39,7 @@ namespace PsdzClient.Core
             bool flag = false;
             try
             {
-                string outletCountry = ClientContext.GetClientContext(this.vecInfo)?.OutletCountry;
+                string outletCountry = ClientContext.GetCountry(this.vecInfo);
                 flag = (outletCountry == this.CountryCode);
             }
             catch (Exception)

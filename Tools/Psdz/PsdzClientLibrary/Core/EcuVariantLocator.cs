@@ -18,7 +18,7 @@ namespace PsdzClient.Core
 
 		public static IEcuVariantLocator CreateEcuVariantLocator(string ecuVariant, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
 		{
-			PdszDatabase.EcuVar ecuVariantByName = ClientContext.GetClientContext(vecInfo)?.Database?.GetEcuVariantByName(ecuVariant);
+			PdszDatabase.EcuVar ecuVariantByName = ClientContext.GetDatabase(vecInfo)?.GetEcuVariantByName(ecuVariant);
 			if (ecuVariantByName != null)
 			{
 				return new EcuVariantLocator(ecuVariantByName, vecInfo, ffmResolver);
@@ -29,7 +29,7 @@ namespace PsdzClient.Core
 		public EcuVariantLocator(decimal id, Vehicle vec, IFFMDynamicResolver ffmResolver)
 		{
             this.vecInfo = vec;
-			this.ecuVariant = ClientContext.GetClientContext(this.vecInfo)?.Database?.GetEcuVariantById(id.ToString(CultureInfo.InvariantCulture));
+			this.ecuVariant = ClientContext.GetDatabase(this.vecInfo)?.GetEcuVariantById(id.ToString(CultureInfo.InvariantCulture));
 			this.ffmResolver = ffmResolver;
 		}
 
@@ -81,7 +81,7 @@ namespace PsdzClient.Core
 				List<ISPELocator> list = new List<ISPELocator>();
 				if (string.IsNullOrEmpty(this.ecuVariant.GroupId))
 				{
-					PdszDatabase.EcuGroup ecuGroupById = ClientContext.GetClientContext(this.vecInfo)?.Database?.GetEcuGroupById(this.ecuVariant.GroupId);
+					PdszDatabase.EcuGroup ecuGroupById = ClientContext.GetDatabase(this.vecInfo)?.GetEcuGroupById(this.ecuVariant.GroupId);
 					if (ecuGroupById != null)
 					{
 						list.Add(new EcuGroupLocator(ecuGroupById, this.vecInfo, this.ffmResolver));

@@ -2613,7 +2613,7 @@ namespace PsdzClient
                 log.InfoFormat("GetVehicleCharacteristicsFromDatabase Count: {0}", characteristicsList.Count);
                 foreach (Characteristics characteristics in characteristicsList)
                 {
-                    log.InfoFormat("Characteristics: {0}", characteristics.ToString(ClientContext.GetClientContext(vehicle)?.Language));
+                    log.InfoFormat("Characteristics: {0}", characteristics.ToString(ClientContext.GetLanguage(vehicle)));
                 }
             }
 
