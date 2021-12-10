@@ -9,7 +9,17 @@ namespace WebPsdzClient
 {
     public partial class _Default : Page
     {
+        protected void Page_Init(object sender, EventArgs e)
+        {
+
+        }
+
         protected void Page_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        protected void Page_Unload(object sender, EventArgs e)
         {
 
         }
