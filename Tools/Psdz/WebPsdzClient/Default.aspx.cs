@@ -9,6 +9,8 @@ namespace WebPsdzClient
 {
     public partial class _Default : Page
     {
+        private const string ReconnectScriptName = "Reconnect";
+
         protected void Page_Init(object sender, EventArgs e)
         {
 
@@ -48,9 +50,9 @@ namespace WebPsdzClient
         count++;
         if (count < max)
         {
-            window.status = 'Link to Server Refreshed ' + count.toString()+' time(s)' ;
+            window.status = 'Link to Server Refreshed ' + count.toString() +' time(s)' ;
             var img = new Image(1,1);
-            img.src = 'Reconnect.aspx';
+            img.src = 'Default.aspx';
         }
     }
 
@@ -58,7 +60,10 @@ namespace WebPsdzClient
 </script>
 ";
 
-            Page.RegisterClientScriptBlock("Reconnect", str_Script);
+            if (!ClientScript.IsClientScriptBlockRegistered(ReconnectScriptName))
+            {
+                ClientScript.RegisterClientScriptBlock(GetType(), ReconnectScriptName, str_Script);
+            }
         }
     }
 }
