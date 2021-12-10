@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -9,7 +10,7 @@ namespace WebPsdzClient
 {
     public partial class _Default : Page
     {
-        private const string ReconnectScriptName = "Reconnect";
+        private const string ReloadScriptName = "Reload";
 
         protected void Page_Init(object sender, EventArgs e)
         {
@@ -38,31 +39,21 @@ namespace WebPsdzClient
 
         private void AddKeepAlive()
         {
-            int int_MilliSecondsTimeOut = (this.Session.Timeout * 60000) - 30000;
-            string str_Script = @"
+            int reloadTimeout = (this.Session.Timeout * 60000) - 30000;
+            string script = @"
 <script type='text/javascript'>
-    //Number of Reconnects
-    var count=0;
-    //Maximum reconnects setting
-    var max = 5;
-    function Reconnect()
+    function Reload()
     {
-        count++;
-        if (count < max)
-        {
-            window.status = 'Link to Server Refreshed ' + count.toString() +' time(s)' ;
-            var img = new Image(1,1);
-            img.src = 'Default.aspx';
-        }
+        location.reload();
     }
 
-    window.setInterval('Reconnect()'," + int_MilliSecondsTimeOut.ToString() + @");
+    window.setTimeout('Reload()'," + reloadTimeout.ToString(CultureInfo.InvariantCulture) + @");
 </script>
 ";
 
-            if (!ClientScript.IsClientScriptBlockRegistered(ReconnectScriptName))
+            if (!ClientScript.IsClientScriptBlockRegistered(ReloadScriptName))
             {
-                ClientScript.RegisterClientScriptBlock(GetType(), ReconnectScriptName, str_Script);
+                ClientScript.RegisterClientScriptBlock(GetType(), ReloadScriptName, script);
             }
         }
     }
