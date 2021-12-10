@@ -44,10 +44,10 @@ namespace WebPsdzClient
 <script type='text/javascript'>
     function Reload()
     {
-        location.reload();
+        location.reload(true);
     }
 
-    window.setTimeout('Reload()'," + reloadTimeout.ToString(CultureInfo.InvariantCulture) + @");
+    window.setInterval('Reload()'," + reloadTimeout.ToString(CultureInfo.InvariantCulture) + @");
 </script>
 ";
 
