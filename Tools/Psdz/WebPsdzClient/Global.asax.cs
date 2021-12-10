@@ -6,11 +6,15 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using System.Web.Security;
 using System.Web.SessionState;
+using PsdzClient.Programing;
 
 namespace WebPsdzClient
 {
     public class Global : HttpApplication
     {
+        public const string DealerId = "32395";
+        public const string SessionJobsName = "ProgrammingJobs";
+
         public override void Init()
         {
             base.Init();
@@ -46,10 +50,18 @@ namespace WebPsdzClient
 
         protected void Session_Start(object sender, EventArgs e)
         {
+            ProgrammingJobs programmingJobs = new ProgrammingJobs(DealerId);
+            Session.Contents.Add(SessionJobsName, programmingJobs);
         }
 
         protected void Session_End(object sender, EventArgs e)
         {
+            ProgrammingJobs programmingJobs = Session.Contents[SessionJobsName] as ProgrammingJobs;
+            if (programmingJobs != null)
+            {
+                Session.Contents.Remove(SessionJobsName);
+                programmingJobs.Dispose();
+            }
         }
     }
 }
