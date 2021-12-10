@@ -16,7 +16,7 @@ namespace WebPsdzClient
 
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            AddKeepAlive();
         }
 
         protected void Page_Unload(object sender, EventArgs e)
@@ -32,6 +32,33 @@ namespace WebPsdzClient
         protected void ButtonStopHost_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void AddKeepAlive()
+        {
+            int int_MilliSecondsTimeOut = (this.Session.Timeout * 60000) - 30000;
+            string str_Script = @"
+<script type='text/javascript'>
+    //Number of Reconnects
+    var count=0;
+    //Maximum reconnects setting
+    var max = 5;
+    function Reconnect()
+    {
+        count++;
+        if (count < max)
+        {
+            window.status = 'Link to Server Refreshed ' + count.toString()+' time(s)' ;
+            var img = new Image(1,1);
+            img.src = 'Reconnect.aspx';
+        }
+    }
+
+    window.setInterval('Reconnect()'," + int_MilliSecondsTimeOut.ToString() + @");
+</script>
+";
+
+            Page.RegisterClientScriptBlock("Reconnect", str_Script);
         }
     }
 }
