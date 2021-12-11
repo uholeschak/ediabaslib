@@ -2,6 +2,8 @@
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 
+    <style>.text-left { width: 100%; max-width: 100% }</style>
+    <style>.table { border-width: 0; border-color: transparent; }</style>
     <div class="jumbotron">
         <h1>Toolbar</h1>
         <asp:UpdatePanel ID="UpdatePanelStatus" runat="server">
@@ -19,7 +21,7 @@
                 <asp:Table ID="TableStatus" runat="server" CssClass="table" HorizontalAlign="Center" Width="100%">
                     <asp:TableRow>
                         <asp:TableCell>
-                            <asp:TextBox ID="TextBoxStatus" runat="server" CssClass="text-left" ReadOnly="True" TextMode="MultiLine" Width="100%" Rows="10"></asp:TextBox>
+                            <asp:TextBox ID="TextBoxStatus" runat="server" CssClass="text-left" ReadOnly="True" TextMode="MultiLine" Rows="10"></asp:TextBox>
                         </asp:TableCell>
                     </asp:TableRow>
                 </asp:Table>
