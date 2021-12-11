@@ -2,7 +2,7 @@
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 
-    <style>.text-left { width: 100%; max-width: 100% }</style>
+    <style>.text-left { width: 100%; max-width: 100%; resize: none; }</style>
     <style>.table { border-width: 0; border-color: transparent; }</style>
     <div class="jumbotron">
         <h1>Toolbar</h1>
