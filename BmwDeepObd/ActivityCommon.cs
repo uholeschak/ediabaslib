@@ -4049,7 +4049,7 @@ namespace BmwDeepObd
 
                     if (!_usbPermissionRequestDisabled)
                     {
-                        Android.App.PendingIntent intent = Android.App.PendingIntent.GetBroadcast(_context, 0, new Intent(ActionUsbPermission), 0);
+                        Android.App.PendingIntent intent = Android.App.PendingIntent.GetBroadcast(_context, 0, new Intent(ActionUsbPermission), Android.App.PendingIntentFlags.Mutable);
                         try
                         {
                             _usbManager.RequestPermission(usbDevice, intent);
