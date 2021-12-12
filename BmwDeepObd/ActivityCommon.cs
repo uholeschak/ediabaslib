@@ -2661,7 +2661,8 @@ namespace BmwDeepObd
 
                 Intent notificationIntent = new Intent(_context, typeof(ActivityMain));
                 notificationIntent.SetFlags(ActivityFlags.NewTask);
-                Android.App.PendingIntent pendingIntent = Android.App.PendingIntent.GetActivity(_context, 0, notificationIntent, Android.App.PendingIntentFlags.UpdateCurrent);
+                Android.App.PendingIntent pendingIntent = Android.App.PendingIntent.GetActivity(_context, 0, notificationIntent,
+                    Android.App.PendingIntentFlags.UpdateCurrent | Android.App.PendingIntentFlags.Immutable);
 
                 Android.App.Notification notification = new NotificationCompat.Builder(_context, notificationChannel)
                     .SetContentTitle(title)
