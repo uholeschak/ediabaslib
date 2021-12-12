@@ -59,7 +59,6 @@ namespace BmwDeepObd
         private bool _storageAccessGranted;
         private bool _downloadStarted;
         private bool _activityActive;
-        private bool _destroyed;
 
         /// <summary>
         /// The downloader service.
@@ -331,12 +330,6 @@ namespace BmwDeepObd
             _activityActive = false;
         }
 
-        protected override void OnDestroy()
-        {
-            base.OnDestroy();
-            _destroyed = true;
-        }
-
         protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
         {
             switch ((ActivityRequest)requestCode)
@@ -349,7 +342,7 @@ namespace BmwDeepObd
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
         {
-            if (_destroyed)
+            if (_actvityDestroyed)
             {
                 return;
             }
@@ -388,7 +381,7 @@ namespace BmwDeepObd
 
                     alertDialog.DismissEvent += (sender, args) =>
                     {
-                        if (_destroyed)
+                        if (_actvityDestroyed)
                         {
                             return;
                         }
@@ -890,7 +883,7 @@ namespace BmwDeepObd
         {
             if (_permissionsExternalStorage.All(permission => ContextCompat.CheckSelfPermission(this, permission) == Permission.Granted))
             {
-                if (_destroyed)
+                if (_actvityDestroyed)
                 {
                     return;
                 }
@@ -998,7 +991,7 @@ namespace BmwDeepObd
                         .Show();
                     alertDialog.DismissEvent += (sender, args) =>
                     {
-                        if (_destroyed)
+                        if (_actvityDestroyed)
                         {
                             return;
                         }

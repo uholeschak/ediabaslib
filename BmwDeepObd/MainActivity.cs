@@ -49,7 +49,7 @@ using Mono.CSharp;
 namespace BmwDeepObd
 {
     [Android.App.Activity(Label = "@string/app_name", MainLauncher = false,
-            LaunchMode = LaunchMode.SingleTop,
+            FinishOnTaskLaunch = true,
             UiOptions=UiOptions.SplitActionBarWhenNarrow,
             ConfigurationChanges = ActivityConfigChanges)]
     [Android.App.MetaData("android.support.UI_OPTIONS", Value = "splitActionBarWhenNarrow")]
