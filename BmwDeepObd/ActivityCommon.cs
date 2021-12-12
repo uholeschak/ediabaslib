@@ -628,8 +628,8 @@ namespace BmwDeepObd
         private static TranslatorType _translatorType;
         private static Dictionary<string, UdsReader> _udsReaderDict;
         private static EcuFunctionReader _ecuFunctionReader;
-        private static List<string> _recentConfigList;
-        private static List<SerialInfoEntry> _serialInfoList;
+        private static readonly List<string> _recentConfigList;
+        private static readonly List<SerialInfoEntry> _serialInfoList;
         private readonly BluetoothAdapter _btAdapter;
         private readonly BluetoothManager _bluetoothManager;
         private readonly Java.Lang.Object _clipboardManager;
