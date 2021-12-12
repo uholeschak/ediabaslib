@@ -204,9 +204,9 @@ namespace BmwDeepObd
             try
             {
                 Intent intent = new Intent(this, typeof(ActivityMain));
-                intent.SetAction(Intent.ActionMain);
-                intent.AddCategory(Intent.CategoryLauncher);
-                intent.SetFlags(ActivityFlags.SingleTop | ActivityFlags.NewTask);
+                //intent.SetAction(Intent.ActionMain);
+                //intent.AddCategory(Intent.CategoryLauncher);
+                intent.SetFlags(ActivityFlags.SingleTop | ActivityFlags.NewTask | ActivityFlags.ClearTop);
                 intent.PutExtra(ActivityMain.ExtraStopComm, false);
                 intent.PutExtra(ActivityMain.ExtraShowTitle, true);
                 StartActivity(intent);
