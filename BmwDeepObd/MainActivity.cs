@@ -477,6 +477,7 @@ namespace BmwDeepObd
 
             _tabLayout.AddOnTabSelectedListener(this);
             _tabLayout.TabMode = TabLayout.ModeScrollable;
+            _tabLayout.TabGravity = TabLayout.GravityStart;
             _tabLayout.Visibility = ViewStates.Gone;
 
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
