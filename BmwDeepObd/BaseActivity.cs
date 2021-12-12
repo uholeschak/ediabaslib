@@ -129,6 +129,18 @@ namespace BmwDeepObd
         {
             base.OnDestroy();
             _actvityDestroyed = true;
+
+            if (_memoryCheckTimer != null)
+            {
+                _memoryCheckTimer.Dispose();
+                _memoryCheckTimer = null;
+            }
+
+            if (_autoFullScreenTimer != null)
+            {
+                _autoFullScreenTimer.Dispose();
+                _autoFullScreenTimer = null;
+            }
         }
 
         protected override void OnSaveInstanceState(Bundle outState)
