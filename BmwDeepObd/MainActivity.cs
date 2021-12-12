@@ -6234,9 +6234,13 @@ namespace BmwDeepObd
                 if (StoreXmlEditor)
                 {
                     Intent receiver = new Intent(Android.App.Application.Context, typeof(ChooseReceiver));
+                    Android.App.PendingIntentFlags intentFlags = Android.App.PendingIntentFlags.UpdateCurrent;
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
+                    {
+                        intentFlags |= Android.App.PendingIntentFlags.Mutable;
+                    }
                     Android.App.PendingIntent pendingIntent =
-                        Android.App.PendingIntent.GetBroadcast(Android.App.Application.Context, 0, receiver, 
-                            Android.App.PendingIntentFlags.UpdateCurrent | Android.App.PendingIntentFlags.Mutable);
+                        Android.App.PendingIntent.GetBroadcast(Android.App.Application.Context, 0, receiver, intentFlags);
                     chooseIntent = Intent.CreateChooser(viewIntent, GetString(Resource.String.choose_xml_editor), pendingIntent?.IntentSender);
                 }
                 else
