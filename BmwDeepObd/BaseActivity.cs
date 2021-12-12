@@ -48,6 +48,7 @@ namespace BmwDeepObd
         public const string InstanceDataKeyDefault = "InstanceData";
         public const string InstanceDataKeyBase = "InstanceDataBase";
         protected InstanceDataBase _instanceDataBase = new InstanceDataBase();
+        protected bool _actvityDestroyed;
         private GestureDetectorCompat _gestureDetector;
         protected Configuration _currentConfiguration;
         private Android.App.ActivityManager _activityManager;
@@ -124,6 +125,12 @@ namespace BmwDeepObd
             }
         }
 
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            _actvityDestroyed = true;
+        }
+
         protected override void OnSaveInstanceState(Bundle outState)
         {
             StoreInstanceState(outState, _instanceDataBase, InstanceDataKeyBase);
@@ -161,8 +168,18 @@ namespace BmwDeepObd
             {
                 _memoryCheckTimer = new Timer(state =>
                 {
+                    if (_actvityDestroyed)
+                    {
+                        return;
+                    }
+
                     RunOnUiThread(() =>
                     {
+                        if (_actvityDestroyed)
+                        {
+                            return;
+                        }
+
                         Android.App.ActivityManager.MemoryInfo memoryInfo = GetMemoryInfo();
                         if (memoryInfo != null)
                         {
@@ -182,8 +199,18 @@ namespace BmwDeepObd
                 {
                     _autoFullScreenTimer = new Timer(state =>
                     {
+                        if (_actvityDestroyed)
+                        {
+                            return;
+                        }
+
                         RunOnUiThread(() =>
                         {
+                            if (_actvityDestroyed)
+                            {
+                                return;
+                            }
+
                             if (_hasFocus)
                             {
                                 if (_autoFullScreenStarted)
