@@ -741,7 +741,7 @@ namespace BmwDeepObd
                 // Build PendingIntent used to open this activity when user 
                 // taps the notification.
                 Android.App.PendingIntent pendingIntent = Android.App.PendingIntent.GetActivity(
-                    this, 0, intent, Android.App.PendingIntentFlags.UpdateCurrent);
+                    this, 0, intent, Android.App.PendingIntentFlags.UpdateCurrent | Android.App.PendingIntentFlags.Mutable);
 
                 // Always force download of LVL
                 DownloadsDB.GetDB(this).UpdateMetadata(0, 0);
