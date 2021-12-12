@@ -296,7 +296,8 @@ namespace BmwDeepObd
         {
             Intent showMainActivityIntent = new Intent(this, GetType());
             showMainActivityIntent.SetAction(ActionShowMainActivity);
-            Android.App.PendingIntent pendingIntent = Android.App.PendingIntent.GetService(this, 0, showMainActivityIntent, Android.App.PendingIntentFlags.UpdateCurrent);
+            Android.App.PendingIntent pendingIntent = Android.App.PendingIntent.GetService(this, 0, showMainActivityIntent, 
+                Android.App.PendingIntentFlags.UpdateCurrent | Android.App.PendingIntentFlags.Mutable);
             return pendingIntent;
         }
 
@@ -309,7 +310,8 @@ namespace BmwDeepObd
         {
             Intent stopServiceIntent = new Intent(this, GetType());
             stopServiceIntent.SetAction(ActionStopService);
-            Android.App.PendingIntent stopServicePendingIntent = Android.App.PendingIntent.GetService(this, 0, stopServiceIntent, 0);
+            Android.App.PendingIntent stopServicePendingIntent = Android.App.PendingIntent.GetService(this, 0, stopServiceIntent,
+                Android.App.PendingIntentFlags.Mutable);
 
             var builder = new NotificationCompat.Action.Builder(Resource.Drawable.ic_stat_cancel,
                 GetText(Resource.String.service_stop_comm),
