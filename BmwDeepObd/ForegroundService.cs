@@ -296,8 +296,12 @@ namespace BmwDeepObd
         {
             Intent showMainActivityIntent = new Intent(this, GetType());
             showMainActivityIntent.SetAction(ActionShowMainActivity);
-            Android.App.PendingIntent pendingIntent = Android.App.PendingIntent.GetService(this, 0, showMainActivityIntent, 
-                Android.App.PendingIntentFlags.UpdateCurrent | Android.App.PendingIntentFlags.Mutable);
+            Android.App.PendingIntentFlags intentFlags = Android.App.PendingIntentFlags.UpdateCurrent;
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
+            {
+                intentFlags |= Android.App.PendingIntentFlags.Mutable;
+            }
+            Android.App.PendingIntent pendingIntent = Android.App.PendingIntent.GetService(this, 0, showMainActivityIntent, intentFlags);
             return pendingIntent;
         }
 
@@ -310,8 +314,12 @@ namespace BmwDeepObd
         {
             Intent stopServiceIntent = new Intent(this, GetType());
             stopServiceIntent.SetAction(ActionStopService);
-            Android.App.PendingIntent stopServicePendingIntent = Android.App.PendingIntent.GetService(this, 0, stopServiceIntent,
-                Android.App.PendingIntentFlags.Mutable);
+            Android.App.PendingIntentFlags intentFlags = Android.App.PendingIntentFlags.UpdateCurrent;
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
+            {
+                intentFlags |= Android.App.PendingIntentFlags.Mutable;
+            }
+            Android.App.PendingIntent stopServicePendingIntent = Android.App.PendingIntent.GetService(this, 0, stopServiceIntent, intentFlags);
 
             var builder = new NotificationCompat.Action.Builder(Resource.Drawable.ic_stat_cancel,
                 GetText(Resource.String.service_stop_comm),

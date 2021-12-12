@@ -2661,8 +2661,13 @@ namespace BmwDeepObd
 
                 Intent notificationIntent = new Intent(_context, typeof(ActivityMain));
                 notificationIntent.SetFlags(ActivityFlags.NewTask);
-                Android.App.PendingIntent pendingIntent = Android.App.PendingIntent.GetActivity(_context, 0, notificationIntent,
-                    Android.App.PendingIntentFlags.UpdateCurrent | Android.App.PendingIntentFlags.Immutable);
+
+                Android.App.PendingIntentFlags intentFlags = Android.App.PendingIntentFlags.UpdateCurrent;
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+                {
+                    intentFlags |= Android.App.PendingIntentFlags.Immutable;
+                }
+                Android.App.PendingIntent pendingIntent = Android.App.PendingIntent.GetActivity(_context, 0, notificationIntent, intentFlags);
 
                 Android.App.Notification notification = new NotificationCompat.Builder(_context, notificationChannel)
                     .SetContentTitle(title)
@@ -4049,7 +4054,12 @@ namespace BmwDeepObd
 
                     if (!_usbPermissionRequestDisabled)
                     {
-                        Android.App.PendingIntent intent = Android.App.PendingIntent.GetBroadcast(_context, 0, new Intent(ActionUsbPermission), Android.App.PendingIntentFlags.Mutable);
+                        Android.App.PendingIntentFlags intentFlags = 0;
+                        if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
+                        {
+                            intentFlags |= Android.App.PendingIntentFlags.Mutable;
+                        }
+                        Android.App.PendingIntent intent = Android.App.PendingIntent.GetBroadcast(_context, 0, new Intent(ActionUsbPermission), intentFlags);
                         try
                         {
                             _usbManager.RequestPermission(usbDevice, intent);
