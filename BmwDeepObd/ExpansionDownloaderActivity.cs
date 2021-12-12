@@ -25,6 +25,7 @@ namespace BmwDeepObd
 {
     [Android.App.Activity(Label = "@string/app_name",
         MainLauncher = true,
+        FinishOnTaskLaunch = true,
         Exported = true,
         Icon = "@drawable/icon",
         LaunchMode = LaunchMode.SingleTop,
