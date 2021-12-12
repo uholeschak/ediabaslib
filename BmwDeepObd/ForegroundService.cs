@@ -314,7 +314,7 @@ namespace BmwDeepObd
         {
             Intent stopServiceIntent = new Intent(this, GetType());
             stopServiceIntent.SetAction(ActionStopService);
-            Android.App.PendingIntentFlags intentFlags = Android.App.PendingIntentFlags.UpdateCurrent;
+            Android.App.PendingIntentFlags intentFlags = 0;
             if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
             {
                 intentFlags |= Android.App.PendingIntentFlags.Mutable;
