@@ -6413,6 +6413,14 @@ namespace BmwDeepObd
                             try
                             {
                                 Type pageType = pageInfo.ClassObject.GetType();
+                                MethodInfo destroyLayout = pageType.GetMethod("DestroyLayout");
+                                if (destroyLayout != null)
+                                {
+                                    object[] args = { pageInfo };
+                                    destroyLayout.Invoke(pageInfo.ClassObject, args);
+                                    //pageInfo.ClassObject.DestroyLayout(pageInfo);
+                                }
+
                                 MethodInfo createLayout = pageType.GetMethod("CreateLayout");
                                 if (createLayout != null)
                                 {
@@ -6459,15 +6467,6 @@ namespace BmwDeepObd
                                 {
                                     pageLayout.RemoveAllViews();
                                 }
-                            }
-
-                            Type pageType = pageInfo.ClassObject.GetType();
-                            MethodInfo destroyLayout = pageType.GetMethod("DestroyLayout");
-                            if (destroyLayout != null)
-                            {
-                                object[] args = { pageInfo };
-                                destroyLayout.Invoke(pageInfo.ClassObject, args);
-                                //pageInfo.ClassObject.DestroyLayout(pageInfo);
                             }
                         }
                         catch (Exception)
