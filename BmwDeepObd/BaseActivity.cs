@@ -543,18 +543,33 @@ namespace BmwDeepObd
 
             public override bool OnDown(MotionEvent e)
             {
+                if (_activity._actvityDestroyed)
+                {
+                    return true;
+                }
+
                 _activity.LongPress = false;
                 return true;
             }
 
             public override void OnLongPress(MotionEvent e)
             {
+                if (_activity._actvityDestroyed)
+                {
+                    return;
+                }
+
                 base.OnLongPress(e);
                 _activity.LongPress = true;
             }
 
             public override bool OnFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
             {
+                if (_activity._actvityDestroyed)
+                {
+                    return true;
+                }
+
                 if (!ActivityCommon.AutoHideTitleBar && !ActivityCommon.SuppressTitleBar)
                 {
                     return true;
