@@ -50,7 +50,8 @@ namespace BmwDeepObd
 {
     [Android.App.Activity(Label = "@string/app_name", MainLauncher = false,
             FinishOnTaskLaunch = true,
-            UiOptions=UiOptions.SplitActionBarWhenNarrow,
+            LaunchMode = LaunchMode.SingleTop,
+            UiOptions = UiOptions.SplitActionBarWhenNarrow,
             ConfigurationChanges = ActivityConfigChanges)]
     [Android.App.MetaData("android.support.UI_OPTIONS", Value = "splitActionBarWhenNarrow")]
     public class ActivityMain : BaseActivity, TabLayout.IOnTabSelectedListener
@@ -1649,10 +1650,16 @@ namespace BmwDeepObd
         // ReSharper disable once UnusedMember.Global
         public void OnActiveClick(View v)
         {
+            if (_activityCommon == null)
+            {
+                return;
+            }
+
             if (ActivityCommon.EdiabasThread == null)
             {
                 return;
             }
+
             ToggleButton button = v.FindViewById<ToggleButton>(Resource.Id.button_active);
             ActivityCommon.EdiabasThread.CommActive = button.Checked;
         }
@@ -1661,10 +1668,16 @@ namespace BmwDeepObd
         // ReSharper disable once UnusedMember.Global
         public void OnErrorResetClick(View v)
         {
+            if (_activityCommon == null)
+            {
+                return;
+            }
+
             if (!ActivityCommon.CommActive)
             {
                 return;
             }
+
             View parent = v.Parent as View;
             parent = parent?.Parent as View;
             ListView listViewResult = parent?.FindViewById<ListView>(Resource.Id.resultList);
@@ -1688,10 +1701,16 @@ namespace BmwDeepObd
         // ReSharper disable once UnusedMember.Global
         public void OnErrorResetAllClick(View v)
         {
+            if (_activityCommon == null)
+            {
+                return;
+            }
+
             if (!ActivityCommon.CommActive)
             {
                 return;
             }
+
             string sgbdFunctional = ActivityCommon.EdiabasThread.JobPageInfo?.ErrorsInfo?.SgbdFunctional;
             if (!string.IsNullOrEmpty(sgbdFunctional))
             {
@@ -1731,6 +1750,11 @@ namespace BmwDeepObd
         // ReSharper disable once UnusedMember.Global
         public void OnErrorSelectClick(View v)
         {
+            if (_activityCommon == null)
+            {
+                return;
+            }
+
             if (!ActivityCommon.CommActive)
             {
                 return;
@@ -1771,10 +1795,16 @@ namespace BmwDeepObd
         // ReSharper disable once UnusedMember.Global
         public void OnCopyErrorsClick(View v)
         {
+            if (_activityCommon == null)
+            {
+                return;
+            }
+
             if (!ActivityCommon.CommActive)
             {
                 return;
             }
+
             View parent = v.Parent as View;
             parent = parent?.Parent as View;
             ListView listViewResult = parent?.FindViewById<ListView>(Resource.Id.resultList);
