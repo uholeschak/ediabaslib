@@ -26,9 +26,9 @@ namespace BmwDeepObd
     [Android.App.Activity(Label = "@string/app_name",
         MainLauncher = true,
         FinishOnTaskLaunch = true,
+        LaunchMode = LaunchMode.SingleTop,
         Exported = true,
         Icon = "@drawable/icon",
-        LaunchMode = LaunchMode.SingleTop,
         ConfigurationChanges = ActivityConfigChanges)]
     [Android.App.IntentFilter(new[] { Intent.ActionMain }, Categories = new[] { Intent.CategoryLauncher })]
     public class ExpansionDownloaderActivity : BaseActivity, IDownloaderClient
