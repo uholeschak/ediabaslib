@@ -91,6 +91,11 @@
             buttonDown.TextOn = buttonDown.Text;
             buttonDown.Click += delegate
             {
+                if (buttonDown == null || buttonUp == null)
+                {
+                    return;
+                }
+
                 if (buttonDown.Checked)
                 {
                     buttonUp.Checked = false;
@@ -109,6 +114,11 @@
             buttonUp.TextOn = buttonUp.Text;
             buttonUp.Click += delegate
             {
+                if (buttonDown == null || buttonUp == null)
+                {
+                    return;
+                }
+
                 if (buttonUp.Checked)
                 {
                     buttonDown.Checked = false;
@@ -149,9 +159,16 @@
 
         public void DestroyLayout(JobReader.PageInfo pageInfo)
         {
+            buttonDown?.Dispose();
             buttonDown = null;
+
+            buttonUp?.Dispose();
             buttonUp = null;
+
+            buttonErrorReset?.Dispose();
             buttonErrorReset = null;
+
+            buttonEcuReset?.Dispose();
             buttonEcuReset = null;
             //Android.Util.Log.Info("Custom", "Destroyed");
         }
