@@ -6367,11 +6367,13 @@ namespace BmwDeepObd
         {
             private int _resourceId;
             private int _pageInfoIndex;
+            private View _view;
 
             public TabContentFragment()
             {
                 _resourceId = -1;
                 _pageInfoIndex = -1;
+                _view = null;
             }
 
             public static TabContentFragment NewInstance(int resourceId, int pageInfoIndex)
@@ -6389,17 +6391,24 @@ namespace BmwDeepObd
                 base.OnCreate(savedInstanceState);
                 _resourceId = Arguments.GetInt("ResourceId", -1);
                 _pageInfoIndex = Arguments.GetInt("PageInfoIndex", -1);
+                _view = null;
+#if DEBUG
+                Log.Info(Tag, string.Format("TabContentFragment OnCreate: {0}", _pageInfoIndex));
+#endif
             }
 
             public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
             {
+#if DEBUG
+                Log.Info(Tag, string.Format("TabContentFragment OnCreateView: {0}", _pageInfoIndex));
+#endif
                 View view = inflater.Inflate(_resourceId, null);
                 if (Activity is ActivityMain activityMain && activityMain == ActivityCommon.ActivityMainCurrent)
                 {
                     if (_pageInfoIndex >= 0 && _pageInfoIndex < ActivityCommon.JobReader.PageList.Count)
                     {
                         JobReader.PageInfo pageInfo = ActivityCommon.JobReader.PageList[_pageInfoIndex];
-                        if (pageInfo.ClassObject != null)
+                        if (pageInfo.ClassObject != null && view != null)
                         {
                             try
                             {
@@ -6425,13 +6434,16 @@ namespace BmwDeepObd
                     });
                 }
 
+                _view = view;
                 return view;
             }
 
             public override void OnDestroyView()
             {
                 base.OnDestroyView();
-
+#if DEBUG
+                Log.Info(Tag, string.Format("TabContentFragment OnDestroyView: {0}", _pageInfoIndex));
+#endif
                 if (Activity is ActivityMain activityMain && activityMain == ActivityCommon.ActivityMainCurrent &&
                     _pageInfoIndex >= 0 && _pageInfoIndex < ActivityCommon.JobReader.PageList.Count)
                 {
@@ -6440,6 +6452,15 @@ namespace BmwDeepObd
                     {
                         try
                         {
+                            if (_view != null)
+                            {
+                                LinearLayout pageLayout = _view.FindViewById<LinearLayout>(Resource.Id.listLayout);
+                                if (pageLayout != null)
+                                {
+                                    pageLayout.RemoveAllViews();
+                                }
+                            }
+
                             Type pageType = pageInfo.ClassObject.GetType();
                             MethodInfo destroyLayout = pageType.GetMethod("DestroyLayout");
                             if (destroyLayout != null)
@@ -6455,6 +6476,8 @@ namespace BmwDeepObd
                         }
                     }
                 }
+
+                _view = null;
             }
         }
 
