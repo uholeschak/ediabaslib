@@ -18,6 +18,8 @@ using AndroidX.AppCompat.App;
 namespace BmwDeepObd
 {
     [Android.App.Activity(
+        Name = ActivityCommon.AppNameSpace + "." + nameof(XmlToolEcuActivity),
+        ParentActivity = typeof(XmlToolActivity),
         WindowSoftInputMode = SoftInput.StateAlwaysHidden,
         ConfigurationChanges = ActivityConfigChanges)]
     public class XmlToolEcuActivity : BaseActivity, View.IOnTouchListener
