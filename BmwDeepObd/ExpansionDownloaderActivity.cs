@@ -24,6 +24,7 @@ using Xamarin.Google.Android.Play.Core.AssetPacks;
 namespace BmwDeepObd
 {
     [Android.App.Activity(Label = "@string/app_name",
+        Name = ActivityCommon.AppNameSpace + "." + nameof(ExpansionDownloaderActivity),
         MainLauncher = true,
         Exported = true,
         Icon = "@drawable/icon",

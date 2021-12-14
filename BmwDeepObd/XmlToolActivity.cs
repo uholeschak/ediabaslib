@@ -28,6 +28,8 @@ using BmwFileReader;
 namespace BmwDeepObd
 {
     [Android.App.Activity(Label = "@string/xml_tool_title",
+        Name = ActivityCommon.AppNameSpace + "." + nameof(XmlToolActivity),
+        ParentActivity = typeof(ActivityMain),
         ConfigurationChanges = ActivityConfigChanges)]
     public class XmlToolActivity : BaseActivity
     {
