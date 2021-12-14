@@ -155,7 +155,6 @@ namespace BmwDeepObd
             public bool CheckCpuUsage { get; set; }
             public bool VerifyEcuFiles { get; set; }
             public bool CommErrorsOccured { get; set; }
-            public bool StorageAccessGranted { get; set; }
             public bool AutoStart { get; set; }
             public bool VagInfoShown { get; set; }
             public string DataLogDir { get; set; }
@@ -391,6 +390,7 @@ namespace BmwDeepObd
         private long _currentVersionCode;
         private bool _activityActive;
         private bool _onResumeExecuted;
+        private bool _storageAccessGranted;
         private bool _createTabsPending;
         private bool _ignoreTabsChange;
         private bool _compileCodePending;
@@ -652,11 +652,8 @@ namespace BmwDeepObd
             base.OnStart();
 
             _onResumeExecuted = false;
+            _storageAccessGranted = false;
             _activityCommon?.StartMtcService();
-            if (_instanceData.StorageAccessGranted)
-            {
-                _activityCommon?.RequestUsbPermission(null);
-            }
         }
 
         protected override void OnStop()
@@ -692,8 +689,17 @@ namespace BmwDeepObd
                 RequestStoragePermissions();
             }
 
+            if (_storageAccessGranted)
+            {
+                _activityCommon?.RequestUsbPermission(null);
+            }
+
             _activityActive = true;
-            _activityCommon.MtcBtDisconnectWarnShown = false;
+            if (_activityCommon != null)
+            {
+                _activityCommon.MtcBtDisconnectWarnShown = false;
+            }
+
             UpdateLockState();
             if (_compileCodePending)
             {
@@ -2807,7 +2813,7 @@ namespace BmwDeepObd
 
         private void StoragePermissionGranted()
         {
-            _instanceData.StorageAccessGranted = true;
+            _storageAccessGranted = true;
             ActivityCommon.SetStoragePath();
             ActivityCommon.RecentConfigListCleanup();
             UpdateDirectories();
@@ -5537,7 +5543,7 @@ namespace BmwDeepObd
         // ReSharper disable once UnusedParameter.Local
         private bool CheckForEcuFiles(bool checkPackage = false)
         {
-            if (!_activityActive || !_instanceData.StorageAccessGranted || _downloadEcuAlertDialog != null)
+            if (!_activityActive || !_storageAccessGranted || _downloadEcuAlertDialog != null)
             {
                 return true;
             }
