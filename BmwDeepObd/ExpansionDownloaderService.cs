@@ -2,7 +2,9 @@
 
 namespace BmwDeepObd
 {
-    [Android.App.Service]
+    [Android.App.Service(
+        Name = ActivityCommon.AppNameSpace + "." + nameof(ExpansionDownloaderService)
+        )]
     public class ExpansionDownloaderService : DownloaderService
     {
         /// <summary>
