@@ -27,6 +27,7 @@ namespace BmwDeepObd
         Name = ActivityCommon.AppNameSpace + "." + nameof(ExpansionDownloaderActivity),
         MainLauncher = true,
         Exported = true,
+        AlwaysRetainTaskState = true,
         Icon = "@drawable/icon",
         ConfigurationChanges = ActivityConfigChanges)]
     [Android.App.IntentFilter(new[] { Intent.ActionMain }, Categories = new[] { Intent.CategoryLauncher })]
