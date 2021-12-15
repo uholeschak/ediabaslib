@@ -7,7 +7,10 @@ using AndroidX.LocalBroadcastManager.Content;
 
 namespace BmwDeepObd
 {
-    [Android.App.Service(Label = "@string/app_name")]
+    [Android.App.Service(
+        Label = "@string/app_name",
+        Name = ActivityCommon.AppNameSpace + "." + nameof(ForegroundService)
+    )]
     public class ForegroundService : Android.App.Service
     {
 #if DEBUG

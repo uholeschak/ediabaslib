@@ -5,14 +5,17 @@ using AndroidX.LocalBroadcastManager.Content;
 namespace BmwDeepObd
 {
 #if false
-    [BroadcastReceiver(Enabled = true, Exported = true, Name = ActivityCommon.AppNameSpace + ".GlobalBroadcastReceiver")]
+    [BroadcastReceiver(Enabled = true, Exported = true, ActivityCommon.AppNameSpace + "." + nameof(GlobalBroadcastReceiver))]
     [Android.App.IntentFilter(new[] {
         MtcBtSmallon,
         MtcBtSmalloff,
         MicBtReport
     }, Categories = new []{ Intent.CategoryDefault } )]
 #else
-    [BroadcastReceiver(Exported = false)]
+    [BroadcastReceiver(
+        Exported = false,
+        Name = ActivityCommon.AppNameSpace + "." + nameof(GlobalBroadcastReceiver)
+        )]
 #endif
     public class GlobalBroadcastReceiver : BroadcastReceiver
     {
