@@ -45,6 +45,7 @@ namespace BmwDeepObd
     /// Activity in the result Intent.
     /// </summary>
     [Android.App.Activity (Label = "@string/select_device",
+        Name = ActivityCommon.AppNameSpace + "." + nameof(DeviceListActivity),
         ConfigurationChanges = ActivityConfigChanges)]
     public class DeviceListActivity : BaseActivity, View.IOnClickListener
     {

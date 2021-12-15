@@ -24,6 +24,7 @@ using EdiabasLib;
 namespace BmwDeepObd
 {
     [Android.App.Activity(Label = "@string/tool_title",
+        Name = ActivityCommon.AppNameSpace + "." + nameof(EdiabasToolActivity),
         ConfigurationChanges = ActivityConfigChanges)]
     public class EdiabasToolActivity : BaseActivity, View.IOnTouchListener
     {

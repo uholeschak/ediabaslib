@@ -11,6 +11,7 @@ using BmwDeepObd.FilePicker;
 namespace BmwDeepObd
 {
     [Android.App.Activity(Label = "@string/settings_title",
+        Name = ActivityCommon.AppNameSpace + "." + nameof(GlobalSettingsActivity),
         WindowSoftInputMode = SoftInput.StateAlwaysHidden,
         ConfigurationChanges = ActivityConfigChanges)]
     public class GlobalSettingsActivity : BaseActivity

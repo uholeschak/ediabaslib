@@ -21,6 +21,7 @@ using BmwDeepObd.FilePicker;
 namespace BmwDeepObd
 {
     [Android.App.Activity(Label = "@string/can_adapter_title",
+        Name = ActivityCommon.AppNameSpace + "." + nameof(CanAdapterActivity),
         WindowSoftInputMode = SoftInput.StateAlwaysHidden,
         ConfigurationChanges = ActivityConfigChanges)]
     public class CanAdapterActivity : BaseActivity, View.IOnTouchListener

@@ -16,6 +16,7 @@ using EdiabasLib;
 namespace BmwDeepObd
 {
     [Android.App.Activity(Label = "@string/arg_assist_title",
+        Name = ActivityCommon.AppNameSpace + "." + nameof(ArgAssistControlActivity),
         WindowSoftInputMode = SoftInput.StateAlwaysHidden,
         ConfigurationChanges = ActivityConfigChanges)]
     public class ArgAssistControlActivity : ArgAssistBaseActivity

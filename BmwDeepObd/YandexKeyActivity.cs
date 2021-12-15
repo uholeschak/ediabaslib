@@ -11,6 +11,7 @@ using AndroidX.AppCompat.App;
 namespace BmwDeepObd
 {
     [Android.App.Activity(Label = "@string/yandex_api_key_title",
+        Name = ActivityCommon.AppNameSpace + "." + nameof(YandexKeyActivity),
         WindowSoftInputMode = SoftInput.StateAlwaysHidden,
         ConfigurationChanges = ActivityConfigChanges)]
     public class YandexKeyActivity : BaseActivity, View.IOnTouchListener

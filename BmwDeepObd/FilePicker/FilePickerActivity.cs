@@ -4,6 +4,7 @@ using Android.Views;
 namespace BmwDeepObd.FilePicker
 {
     [Android.App.Activity(Label = "@string/select_file",
+        Name = ActivityCommon.AppNameSpace + "." + nameof(FilePickerActivity),
         ConfigurationChanges = ActivityConfigChanges)]
     public class FilePickerActivity : BaseActivity
     {
