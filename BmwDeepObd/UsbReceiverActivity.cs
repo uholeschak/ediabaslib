@@ -12,6 +12,7 @@ namespace BmwDeepObd
     [Android.App.MetaData(UsbManager.ActionUsbDeviceAttached, Resource = "@xml/device_filter")]
 
     [Android.App.Activity(Label = "@string/app_name",
+        Name = ActivityCommon.AppNameSpace + "." + nameof(UsbReceiverActivity),
         Theme = "@style/Theme.Transparent",
         DirectBootAware = true,
         NoHistory = true,

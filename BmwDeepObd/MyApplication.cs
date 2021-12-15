@@ -3,7 +3,11 @@ using AndroidX.AppCompat.App;
 
 namespace BmwDeepObd
 {
-    [Android.App.Application(ResizeableActivity = true, LargeHeap = true)]
+    [Android.App.Application(
+        ResizeableActivity = true,
+        LargeHeap = true,
+        Name = ActivityCommon.AppNameSpace + ".DeepObd"
+        )]
     // ReSharper disable once UnusedMember.Global
     public class MyApplication : Android.App.Application
     {

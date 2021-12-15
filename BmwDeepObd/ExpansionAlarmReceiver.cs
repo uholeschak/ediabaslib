@@ -4,7 +4,10 @@ using Google.Android.Vending.Expansion.Downloader;
 
 namespace BmwDeepObd
 {
-    [BroadcastReceiver(Exported = false)]
+    [BroadcastReceiver(
+        Exported = false,
+        Name = ActivityCommon.AppNameSpace + "." + nameof(ExpansionAlarmReceiver)
+        )]
     public class ExpansionAlarmReceiver : BroadcastReceiver
     {
         /// <summary>
