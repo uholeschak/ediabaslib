@@ -17,6 +17,7 @@ using EdiabasLib;
 namespace BmwDeepObd
 {
     [Android.App.Activity(
+        Name = ActivityCommon.AppNameSpace + "." + nameof(BmwActuatorActivity),
         WindowSoftInputMode = SoftInput.StateAlwaysHidden,
         ConfigurationChanges = ActivityConfigChanges)]
     public class BmwActuatorActivity : BaseActivity, View.IOnTouchListener

@@ -17,6 +17,7 @@ using EdiabasLib;
 namespace BmwDeepObd
 {
     [Android.App.Activity(
+        Name = ActivityCommon.AppNameSpace + "." + nameof(VagCodingActivity),
         WindowSoftInputMode = SoftInput.StateAlwaysHidden,
         ConfigurationChanges = ActivityConfigChanges)]
     public class VagCodingActivity : BaseActivity, View.IOnTouchListener
