@@ -274,7 +274,9 @@ namespace BmwDeepObd
             {
                 try
                 {
-                    StartActivity(typeof(ActivityMain));
+                    Intent intent = new Intent(this, typeof(ActivityMain));
+                    intent.SetFlags(ActivityFlags.SingleTop | ActivityFlags.NewTask | ActivityFlags.ClearTop);
+                    StartActivity(intent);
                     Finish();
                 }
                 catch (Exception)
@@ -677,18 +679,20 @@ namespace BmwDeepObd
                 _pauseButton.Click -= OnButtonOnClick;
                 _pauseButton.Click += (sender, args) => 
                 {
-                    Finish();
                     if (result)
                     {
                         try
                         {
-                            StartActivity(typeof(ActivityMain));
+                            Intent intent = new Intent(this, typeof(ActivityMain));
+                            intent.SetFlags(ActivityFlags.SingleTop | ActivityFlags.NewTask | ActivityFlags.ClearTop);
+                            StartActivity(intent);
                         }
                         catch (Exception)
                         {
                             // ignored
                         }
                     }
+                    Finish();
                 };
 
                 _dashboardView.Visibility = ViewStates.Visible;
@@ -927,7 +931,9 @@ namespace BmwDeepObd
                 {
                     try
                     {
-                        StartActivity(typeof(ActivityMain));
+                        Intent intent = new Intent(this, typeof(ActivityMain));
+                        intent.SetFlags(ActivityFlags.SingleTop | ActivityFlags.NewTask | ActivityFlags.ClearTop);
+                        StartActivity(intent);
                         Finish();
                     }
                     catch (Exception)
