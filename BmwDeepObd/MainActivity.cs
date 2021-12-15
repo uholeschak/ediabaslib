@@ -59,6 +59,7 @@ namespace BmwDeepObd
         private enum ActivityRequest
         {
             RequestAppStorePermissions,
+            RequestOverlayPermission,
             RequestSelectDevice,
             RequestAdapterConfig,
             RequestSelectConfig,
@@ -391,6 +392,8 @@ namespace BmwDeepObd
         private bool _activityActive;
         private bool _onResumeExecuted;
         private bool _storageAccessGranted;
+        private bool _overlayPermissionRequested;
+        private bool _overlayPermissionGranted;
         private bool _createTabsPending;
         private bool _ignoreTabsChange;
         private bool _compileCodePending;
@@ -653,6 +656,8 @@ namespace BmwDeepObd
 
             _onResumeExecuted = false;
             _storageAccessGranted = false;
+            _overlayPermissionRequested = false;
+            _overlayPermissionGranted = false;
             _activityCommon?.StartMtcService();
         }
 
@@ -876,6 +881,13 @@ namespace BmwDeepObd
             {
                 case ActivityRequest.RequestAppStorePermissions:
                     RequestStoragePermissions(true);
+                    break;
+
+                case ActivityRequest.RequestOverlayPermission:
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
+                    {
+                        _overlayPermissionGranted = Android.Provider.Settings.CanDrawOverlays(this);
+                    }
                     break;
 
                 case ActivityRequest.RequestSelectDevice:
@@ -1618,6 +1630,11 @@ namespace BmwDeepObd
                     UpdateDisplay();
                     return;
                 }
+            }
+
+            if (RequestOverlayPermissions())
+            {
+                return;
             }
 
             if (!ActivityCommon.CommActive)
@@ -2792,6 +2809,40 @@ namespace BmwDeepObd
             {
                 errorMessage = EdiabasNet.GetExceptionText(ex);
             }
+            return false;
+        }
+
+        private bool RequestOverlayPermissions()
+        {
+            if (_overlayPermissionRequested || _overlayPermissionGranted)
+            {
+                return false;
+            }
+
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
+            {
+                if (Android.Provider.Settings.CanDrawOverlays(this))
+                {
+                    _overlayPermissionGranted = true;
+                }
+
+                if (!_overlayPermissionGranted && !_overlayPermissionRequested)
+                {
+                    _overlayPermissionRequested = true;
+                    try
+                    {
+                        Intent intent = new Intent(Android.Provider.Settings.ActionManageOverlayPermission,
+                            Android.Net.Uri.Parse("package:" + Android.App.Application.Context.PackageName));
+                        StartActivityForResult(intent, (int)ActivityRequest.RequestOverlayPermission);
+                        return true;
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+            }
+
             return false;
         }
 
