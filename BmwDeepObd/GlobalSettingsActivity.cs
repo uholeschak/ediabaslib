@@ -12,7 +12,6 @@ namespace BmwDeepObd
 {
     [Android.App.Activity(Label = "@string/settings_title",
         Name = ActivityCommon.AppNameSpace + "." + nameof(GlobalSettingsActivity),
-        ParentActivity = typeof(ActivityMain),
         WindowSoftInputMode = SoftInput.StateAlwaysHidden,
         ConfigurationChanges = ActivityConfigChanges)]
     public class GlobalSettingsActivity : BaseActivity
