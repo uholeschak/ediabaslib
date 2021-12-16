@@ -59,7 +59,7 @@ namespace BmwDeepObd
         private enum ActivityRequest
         {
             RequestAppStorePermissions,
-            RequestOverlayPermission,
+            RequestOverlayPermissions,
             RequestSelectDevice,
             RequestAdapterConfig,
             RequestSelectConfig,
@@ -629,7 +629,7 @@ namespace BmwDeepObd
                         if (ActivityCommon.JobReader.PageList.Count > 0 &&
                             !ActivityCommon.CommActive && _activityCommon.IsInterfaceAvailable())
                         {
-                            ButtonConnectClick(_connectButtonInfo.Button, new EventArgs());
+                            ButtonConnectClick(_connectButtonInfo.Button, EventArgs.Empty);
                             if (UseCommService() && ActivityCommon.SendDataBroadcast && ActivityCommon.CommActive &&
                                 _connectTypeRequest == ActivityCommon.AutoConnectType.ConnectClose)
                             {
@@ -883,11 +883,18 @@ namespace BmwDeepObd
                     RequestStoragePermissions(true);
                     break;
 
-                case ActivityRequest.RequestOverlayPermission:
+                case ActivityRequest.RequestOverlayPermissions:
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
                     {
                         _overlayPermissionGranted = Android.Provider.Settings.CanDrawOverlays(this);
+                        if (_overlayPermissionGranted && _instanceData.AutoStart)
+                        {
+                            ButtonConnectClick(_connectButtonInfo.Button, EventArgs.Empty);
+                            break;
+                        }
                     }
+
+                    _instanceData.AutoStart = false;
                     break;
 
                 case ActivityRequest.RequestSelectDevice:
@@ -906,7 +913,7 @@ namespace BmwDeepObd
                         }
                         else if (_instanceData.AutoStart)
                         {
-                            ButtonConnectClick(_connectButtonInfo.Button, new EventArgs());
+                            ButtonConnectClick(_connectButtonInfo.Button, EventArgs.Empty);
                         }
                     }
                     _instanceData.AutoStart = false;
@@ -1632,7 +1639,14 @@ namespace BmwDeepObd
                 }
             }
 
-            if (RequestOverlayPermissions())
+            if (RequestOverlayPermissions((o, args) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+                    ButtonConnectClick(sender, e);
+                }))
             {
                 return;
             }
@@ -2812,7 +2826,7 @@ namespace BmwDeepObd
             return false;
         }
 
-        private bool RequestOverlayPermissions()
+        private bool RequestOverlayPermissions(EventHandler<EventArgs> handler)
         {
             if (_overlayPermissionRequested || _overlayPermissionGranted)
             {
@@ -2829,17 +2843,42 @@ namespace BmwDeepObd
                 if (!_overlayPermissionGranted && !_overlayPermissionRequested)
                 {
                     _overlayPermissionRequested = true;
-                    try
+                    bool yesSelected = false;
+                    AlertDialog altertDialog = new AlertDialog.Builder(this)
+                        .SetPositiveButton(Resource.String.button_yes, (s, a) =>
+                        {
+                            try
+                            {
+                                Intent intent = new Intent(Android.Provider.Settings.ActionManageOverlayPermission,
+                                    Android.Net.Uri.Parse("package:" + Android.App.Application.Context.PackageName));
+                                StartActivityForResult(intent, (int)ActivityRequest.RequestOverlayPermissions);
+                                _instanceData.AutoStart = true;
+                                yesSelected = true;
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                        })
+                        .SetNegativeButton(Resource.String.button_no, (s, a) =>
+                        {
+                        })
+                        .SetCancelable(true)
+                        .SetMessage(Resource.String.access_denied_ext_storage)
+                        .SetTitle(Resource.String.alert_title_warning)
+                        .Show();
+                    altertDialog.DismissEvent += (o, eventArgs) =>
                     {
-                        Intent intent = new Intent(Android.Provider.Settings.ActionManageOverlayPermission,
-                            Android.Net.Uri.Parse("package:" + Android.App.Application.Context.PackageName));
-                        StartActivityForResult(intent, (int)ActivityRequest.RequestOverlayPermission);
-                        return true;
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+                        if (!yesSelected)
+                        {
+                            handler?.Invoke(o, eventArgs);
+                        }
+                    };
+                    return true;
                 }
             }
 
@@ -5729,7 +5768,7 @@ namespace BmwDeepObd
                         return;
                     }
                     _downloadEcuAlertDialog = null;
-                    handler?.Invoke(this, new EventArgs());
+                    handler?.Invoke(this, EventArgs.Empty);
                 };
 
                 _instanceData.UpdateSkipVersion = -1;
@@ -6585,7 +6624,7 @@ namespace BmwDeepObd
             {
                 // This is called if the host menu item placed in the overflow menu of the
                 // action bar is clicked and the host activity did not handle the click.
-                ((ActivityMain)Context).ButtonConnectClick(((ActivityMain)Context)._connectButtonInfo.Button, new EventArgs());
+                ((ActivityMain)Context).ButtonConnectClick(((ActivityMain)Context)._connectButtonInfo.Button, EventArgs.Empty);
                 return true;
             }
         }
