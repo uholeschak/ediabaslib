@@ -1639,16 +1639,19 @@ namespace BmwDeepObd
                 }
             }
 
-            if (RequestOverlayPermissions((o, args) =>
-                {
-                    if (_activityCommon == null)
-                    {
-                        return;
-                    }
-                    ButtonConnectClick(sender, e);
-                }))
+            if (UseCommService())
             {
-                return;
+                if (RequestOverlayPermissions((o, args) =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+                        ButtonConnectClick(sender, e);
+                    }))
+                {
+                    return;
+                }
             }
 
             if (!ActivityCommon.CommActive)
@@ -2864,7 +2867,7 @@ namespace BmwDeepObd
                         {
                         })
                         .SetCancelable(true)
-                        .SetMessage(Resource.String.access_denied_ext_storage)
+                        .SetMessage(Resource.String.overlay_permission_denied)
                         .SetTitle(Resource.String.alert_title_warning)
                         .Show();
                     altertDialog.DismissEvent += (o, eventArgs) =>
