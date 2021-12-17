@@ -2176,7 +2176,7 @@ namespace EdiabasLib
 
             if (ParTransmitFunc == null)
             {
-                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0006;
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
             }
 
             EdiabasNet.ErrorCodes errorCode = EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
@@ -2333,6 +2333,11 @@ namespace EdiabasLib
             else
             {
                 telLength += 3;
+            }
+
+            if (telLength > dataBuffer.Length)
+            {
+                telLength = dataBuffer.Length;
             }
             return telLength;
         }

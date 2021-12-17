@@ -4126,6 +4126,11 @@ namespace EdiabasLib
             {
                 telLength += 3;
             }
+
+            if (telLength > dataBuffer.Length)
+            {
+                telLength = dataBuffer.Length;
+            }
             return telLength;
         }
 
