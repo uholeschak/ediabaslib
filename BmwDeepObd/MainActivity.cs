@@ -377,14 +377,12 @@ namespace BmwDeepObd
             Android.Manifest.Permission.WriteExternalStorage
         };
 
-        public const string ExtraStopComm = "stop_communication";
         public const string ExtraShowTitle = "show_title";
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
         public static bool StoreXmlEditor = Build.VERSION.SdkInt >= BuildVersionCodes.LollipopMr1;
         private InstanceData _instanceData = new InstanceData();
         private bool _activityRecreated;
         private bool _updateOptionsMenu;
-        private bool _stopCommRequest;
         private ActivityCommon.AutoConnectType _connectTypeRequest;
         private bool _backPressed;
         private long _lastBackPressedTime;
@@ -526,7 +524,6 @@ namespace BmwDeepObd
                 });
             }
 
-            _stopCommRequest = Intent.GetBooleanExtra(ExtraStopComm, false);
             bool showTitleRequest = Intent.GetBooleanExtra(ExtraShowTitle, false);
             if (showTitleRequest)
             {
@@ -612,34 +609,24 @@ namespace BmwDeepObd
             _ignoreTabsChange = false;
             UpdateDisplay();
             StoreLastAppState(LastAppState.TabsCreated);
-            if (_stopCommRequest)
+
+            switch (_connectTypeRequest)
             {
-                _stopCommRequest = false;
-                if (ActivityCommon.CommActive)
-                {
-                    StopEdiabasThread(false);
-                }
-            }
-            else
-            {
-                switch (_connectTypeRequest)
-                {
-                    case ActivityCommon.AutoConnectType.Connect:
-                    case ActivityCommon.AutoConnectType.ConnectClose:
-                        if (ActivityCommon.JobReader.PageList.Count > 0 &&
-                            !ActivityCommon.CommActive && _activityCommon.IsInterfaceAvailable())
+                case ActivityCommon.AutoConnectType.Connect:
+                case ActivityCommon.AutoConnectType.ConnectClose:
+                    if (ActivityCommon.JobReader.PageList.Count > 0 &&
+                        !ActivityCommon.CommActive && _activityCommon.IsInterfaceAvailable())
+                    {
+                        ButtonConnectClick(_connectButtonInfo.Button, EventArgs.Empty);
+                        if (UseCommService() && ActivityCommon.SendDataBroadcast && ActivityCommon.CommActive &&
+                            _connectTypeRequest == ActivityCommon.AutoConnectType.ConnectClose)
                         {
-                            ButtonConnectClick(_connectButtonInfo.Button, EventArgs.Empty);
-                            if (UseCommService() && ActivityCommon.SendDataBroadcast && ActivityCommon.CommActive &&
-                                _connectTypeRequest == ActivityCommon.AutoConnectType.ConnectClose)
-                            {
-                                Finish();
-                            }
+                            Finish();
                         }
-                        break;
-                }
-                _connectTypeRequest = ActivityCommon.AutoConnectType.Offline;
+                    }
+                    break;
             }
+            _connectTypeRequest = ActivityCommon.AutoConnectType.Offline;
         }
 
         protected override void OnSaveInstanceState(Bundle outState)
@@ -872,6 +859,20 @@ namespace BmwDeepObd
             base.OnConfigurationChanged(newConfig);
 
             _updateHandler?.Post(() => { UpdateDisplay(true); });
+        }
+
+        protected override void OnNewIntent(Intent intent)
+        {
+            base.OnNewIntent(intent);
+
+            if (intent != null)
+            {
+                bool showTitleRequest = intent.GetBooleanExtra(ExtraShowTitle, false);
+                if (showTitleRequest)
+                {
+                    SupportActionBar.Show();
+                }
+            }
         }
 
         protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
@@ -3030,10 +3031,6 @@ namespace BmwDeepObd
                         if (request.Equals(ForegroundService.BroadcastStopComm))
                         {
                             StopEdiabasThread(false);
-                        }
-                        else if (request.Equals(ForegroundService.BroadcastShowTitle))
-                        {
-                            SupportActionBar.Show();
                         }
                     }
                     break;

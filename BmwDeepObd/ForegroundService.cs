@@ -19,7 +19,6 @@ namespace BmwDeepObd
         public const int ServiceRunningNotificationId = 10000;
         public const string BroadcastMessageKey = "broadcast_message";
         public const string BroadcastStopComm = "stop_communication";
-        public const string BroadcastShowTitle = "show_title";
         public const string NotificationBroadcastAction = ActivityCommon.AppNameSpace + ".Notification.Action";
         public const string ActionBroadcastCommand = ActivityCommon.AppNameSpace + ".Action.Command";
 
@@ -112,7 +111,6 @@ namespace BmwDeepObd
                     Android.Util.Log.Info(Tag, "OnStartCommand: Show main activity");
 #endif
                     ShowMainActivity();
-                    SendShowTitleBroadcast();
                     break;
                 }
             }
@@ -195,13 +193,6 @@ namespace BmwDeepObd
             LocalBroadcastManager.GetInstance(this).SendBroadcast(broadcastIntent);
         }
 
-        private void SendShowTitleBroadcast()
-        {
-            Intent broadcastIntent = new Intent(NotificationBroadcastAction);
-            broadcastIntent.PutExtra(BroadcastMessageKey, BroadcastShowTitle);
-            LocalBroadcastManager.GetInstance(this).SendBroadcast(broadcastIntent);
-        }
-
         private void ShowMainActivity()
         {
             try
@@ -210,7 +201,6 @@ namespace BmwDeepObd
                 //intent.SetAction(Intent.ActionMain);
                 //intent.AddCategory(Intent.CategoryLauncher);
                 intent.SetFlags(ActivityFlags.SingleTop | ActivityFlags.NewTask | ActivityFlags.ClearTop);
-                intent.PutExtra(ActivityMain.ExtraStopComm, false);
                 intent.PutExtra(ActivityMain.ExtraShowTitle, true);
                 StartActivity(intent);
             }
