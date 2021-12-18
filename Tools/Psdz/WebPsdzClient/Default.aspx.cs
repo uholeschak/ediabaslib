@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using WebPsdzClient.App_Data;
 
 namespace WebPsdzClient
 {
@@ -42,25 +43,31 @@ namespace WebPsdzClient
             UpdateStatus(true);
         }
 
+        private SessionContainer GetSessionContainer()
+        {
+            if (Session.Contents[Global.SessionContainerName] is SessionContainer sessionContainer)
+            {
+                return sessionContainer;
+            }
+
+            return null;
+        }
+
         private void UpdateStatus(bool increment = false)
         {
-            int? counter = Session.Contents["Counter"] as int?;
-            if (!counter.HasValue)
+            SessionContainer sessionContainer = GetSessionContainer();
+            if (sessionContainer == null)
             {
-                counter = 0;
-            }
-            else
-            {
-                if (increment)
-                {
-                    counter++;
-                }
+                return;
             }
 
-            Session.Contents["Counter"] = counter;
+            if (increment)
+            {
+                sessionContainer.TestCounter++;
+            }
 
-            TextBoxStatus.Text = string.Format(CultureInfo.InvariantCulture, "Counter: {0}", counter);
-            ButtonStartHost.Enabled = (counter & 0x01) == 0;
+            TextBoxStatus.Text = string.Format(CultureInfo.InvariantCulture, "Counter: {0}", sessionContainer.TestCounter);
+            ButtonStartHost.Enabled = (sessionContainer.TestCounter & 0x01) == 0;
         }
     }
 }

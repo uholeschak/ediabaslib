@@ -7,13 +7,14 @@ using System.Web.Routing;
 using System.Web.Security;
 using System.Web.SessionState;
 using PsdzClient.Programing;
+using WebPsdzClient.App_Data;
 
 namespace WebPsdzClient
 {
     public class Global : HttpApplication
     {
         public const string DealerId = "32395";
-        public const string SessionJobsName = "ProgrammingJobs";
+        public const string SessionContainerName = "SessionContainer";
 
         public override void Init()
         {
@@ -50,17 +51,19 @@ namespace WebPsdzClient
 
         protected void Session_Start(object sender, EventArgs e)
         {
-            ProgrammingJobs programmingJobs = new ProgrammingJobs(DealerId);
-            Session.Contents.Add(SessionJobsName, programmingJobs);
+            if (!(Session.Contents[SessionContainerName] is SessionContainer))
+            {
+                SessionContainer sessionContainer = new SessionContainer(DealerId);
+                Session.Contents.Add(SessionContainerName, sessionContainer);
+            }
         }
 
         protected void Session_End(object sender, EventArgs e)
         {
-            ProgrammingJobs programmingJobs = Session.Contents[SessionJobsName] as ProgrammingJobs;
-            if (programmingJobs != null)
+            if (Session.Contents[SessionContainerName] is SessionContainer sessionContainer)
             {
-                Session.Contents.Remove(SessionJobsName);
-                programmingJobs.Dispose();
+                Session.Contents.Remove(SessionContainerName);
+                sessionContainer.Dispose();
             }
         }
     }
