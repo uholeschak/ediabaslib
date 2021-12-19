@@ -1222,16 +1222,30 @@ namespace PsdzClient.Programing
 
         public void SetupLog4Net()
         {
-            string appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            if (!string.IsNullOrEmpty(appDir))
+            try
             {
-                string log4NetConfig = Path.Combine(appDir, "log4net.xml");
-                if (File.Exists(log4NetConfig))
+                string codeBase = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
+                if (!string.IsNullOrEmpty(codeBase))
                 {
-                    string logFile = Path.Combine(ProgrammingService.GetPsdzServiceHostLogDir(), "PsdzClient.log");
-                    log4net.GlobalContext.Properties["LogFileName"] = logFile;
-                    XmlConfigurator.Configure(new FileInfo(log4NetConfig));
+                    UriBuilder uri = new UriBuilder(codeBase);
+                    string path = Uri.UnescapeDataString(uri.Path);
+                    string appDir = Path.GetDirectoryName(path);
+
+                    if (!string.IsNullOrEmpty(appDir))
+                    {
+                        string log4NetConfig = Path.Combine(appDir, "log4net.xml");
+                        if (File.Exists(log4NetConfig))
+                        {
+                            string logFile = Path.Combine(ProgrammingService.GetPsdzServiceHostLogDir(), "PsdzClient.log");
+                            log4net.GlobalContext.Properties["LogFileName"] = logFile;
+                            XmlConfigurator.Configure(new FileInfo(log4NetConfig));
+                        }
+                    }
                 }
+            }
+            catch (Exception)
+            {
+                // ignored
             }
         }
 
