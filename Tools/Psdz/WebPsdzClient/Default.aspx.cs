@@ -55,7 +55,7 @@ namespace WebPsdzClient
 
         protected void TimerUpdate_Tick(object sender, EventArgs e)
         {
-            UpdateStatus(false);
+            UpdateStatus(true);
         }
 
         private SessionContainer GetSessionContainer()
@@ -74,8 +74,10 @@ namespace WebPsdzClient
             UpdateStatus();
         }
 
-        private void UpdateStatus(bool updatePanel = true)
+        private void UpdateStatus(bool fromTimer = false)
         {
+            log.InfoFormat("UpdateStatus FromTimer: {0}", fromTimer);
+
             try
             {
                 SessionContainer sessionContainer = GetSessionContainer();
@@ -98,10 +100,6 @@ namespace WebPsdzClient
                 ButtonStopHost.Enabled = !active && hostRunning;
 
                 TextBoxStatus.Text = sessionContainer.StatusText;
-                if (updatePanel && !UpdatePanelStatus.IsInPartialRendering)
-                {
-                    UpdatePanelStatus.Update();
-                }
             }
             catch (Exception e)
             {
