@@ -31,7 +31,7 @@ namespace WebPsdzClient.App_Data
         }
 
         private bool _disposed;
-        private object _lockObject = new object();
+        private readonly object _lockObject = new object();
         private string _statusText;
 
         public SessionContainer(string dealerId)

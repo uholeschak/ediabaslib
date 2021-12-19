@@ -29,8 +29,8 @@ namespace WebPsdzClient
                 return;
             }
 
-            sessionContainer.UpdateDisplayEvent += UpdateStatus;
-            UpdateStatus();
+            sessionContainer.UpdateDisplayEvent += UpdateDisplay;
+            UpdateDisplay();
         }
 
         protected void Page_Unload(object sender, EventArgs e)
@@ -42,7 +42,7 @@ namespace WebPsdzClient
                 return;
             }
 
-            sessionContainer.UpdateDisplayEvent -= UpdateStatus;
+            sessionContainer.UpdateDisplayEvent -= UpdateDisplay;
         }
 
         protected void ButtonStartHost_Click(object sender, EventArgs e)
@@ -59,11 +59,11 @@ namespace WebPsdzClient
                 sessionContainer.TaskActive = false;
                 sessionContainer.Cts.Dispose();
                 sessionContainer.Cts = null;
-                UpdateStatus();
+                UpdateDisplay();
             });
 
             sessionContainer.TaskActive = true;
-            UpdateStatus();
+            UpdateDisplay();
         }
 
         protected void ButtonStopHost_Click(object sender, EventArgs e)
@@ -77,16 +77,16 @@ namespace WebPsdzClient
             sessionContainer.StopProgrammingServiceTask().ContinueWith(task =>
             {
                 sessionContainer.TaskActive = false;
-                UpdateStatus();
+                UpdateDisplay();
             });
 
             sessionContainer.TaskActive = false;
-            UpdateStatus();
+            UpdateDisplay();
         }
 
         protected void TimerUpdate_Tick(object sender, EventArgs e)
         {
-            UpdateStatus();
+            UpdateStatus(false);
         }
 
         private SessionContainer GetSessionContainer()
@@ -100,7 +100,12 @@ namespace WebPsdzClient
             return null;
         }
 
-        private void UpdateStatus()
+        private void UpdateDisplay()
+        {
+            UpdateStatus();
+        }
+
+        private void UpdateStatus(bool updatePanel = true)
         {
             try
             {
@@ -124,6 +129,10 @@ namespace WebPsdzClient
                 ButtonStopHost.Enabled = !active && hostRunning;
 
                 TextBoxStatus.Text = sessionContainer.StatusText;
+                if (updatePanel && !UpdatePanelStatus.IsInPartialRendering)
+                {
+                    UpdatePanelStatus.Update();
+                }
             }
             catch (Exception e)
             {
