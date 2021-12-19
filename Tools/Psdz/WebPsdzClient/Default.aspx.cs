@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -30,17 +31,46 @@ namespace WebPsdzClient
 
         protected void ButtonStartHost_Click(object sender, EventArgs e)
         {
+            SessionContainer sessionContainer = GetSessionContainer();
+            if (sessionContainer == null)
+            {
+                return;
+            }
 
+            sessionContainer.Cts = new CancellationTokenSource();
+            sessionContainer.StartProgrammingServiceTask(Global.IstaFolder).ContinueWith(task =>
+            {
+                sessionContainer.TaskActive = false;
+                sessionContainer.Cts.Dispose();
+                sessionContainer.Cts = null;
+                UpdateStatus();
+            });
+
+            sessionContainer.TaskActive = true;
+            UpdateStatus();
         }
 
         protected void ButtonStopHost_Click(object sender, EventArgs e)
         {
+            SessionContainer sessionContainer = GetSessionContainer();
+            if (sessionContainer == null)
+            {
+                return;
+            }
 
+            sessionContainer.StopProgrammingServiceTask().ContinueWith(task =>
+            {
+                sessionContainer.TaskActive = false;
+                UpdateStatus();
+            });
+
+            sessionContainer.TaskActive = false;
+            UpdateStatus();
         }
 
         protected void TimerUpdate_Tick(object sender, EventArgs e)
         {
-            UpdateStatus(true);
+            UpdateStatus();
         }
 
         private SessionContainer GetSessionContainer()
@@ -53,7 +83,7 @@ namespace WebPsdzClient
             return null;
         }
 
-        private void UpdateStatus(bool increment = false)
+        private void UpdateStatus()
         {
             SessionContainer sessionContainer = GetSessionContainer();
             if (sessionContainer == null)
@@ -61,13 +91,21 @@ namespace WebPsdzClient
                 return;
             }
 
-            if (increment)
+            bool active = sessionContainer.TaskActive;
+            bool abortPossible = sessionContainer.Cts != null;
+            bool hostRunning = false;
+            bool vehicleConnected = false;
+            bool talPresent = false;
+            if (!active)
             {
-                sessionContainer.TestCounter++;
+                hostRunning = sessionContainer.ProgrammingJobs.ProgrammingService != null && sessionContainer.ProgrammingJobs.ProgrammingService.IsPsdzPsdzServiceHostInitialized();
             }
 
-            TextBoxStatus.Text = string.Format(CultureInfo.InvariantCulture, "Counter: {0}", sessionContainer.TestCounter);
-            ButtonStartHost.Enabled = (sessionContainer.TestCounter & 0x01) == 0;
+            ButtonStartHost.Enabled = !active && !hostRunning;
+            ButtonStopHost.Enabled = !active && hostRunning;
+
+            TextBoxStatus.Text = sessionContainer.StatusText;
+            UpdatePanelStatus.Update();
         }
     }
 }

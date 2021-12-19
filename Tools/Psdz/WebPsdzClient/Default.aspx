@@ -6,7 +6,7 @@
     <style>.table { border-width: 0; border-color: transparent; }</style>
     <div class="jumbotron">
         <h1>Toolbar</h1>
-        <asp:UpdatePanel ID="UpdatePanelStatus" runat="server">
+        <asp:UpdatePanel ID="UpdatePanelStatus" runat="server" UpdateMode="Conditional">
             <ContentTemplate>
                 <asp:Table ID="TableButtons" runat="server" CssClass="table" HorizontalAlign="Center" Width="0">
                     <asp:TableRow>

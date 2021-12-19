@@ -14,6 +14,7 @@ namespace WebPsdzClient
     public class Global : HttpApplication
     {
         public const string DealerId = "32395";
+        public const string IstaFolder = "E:\\ISTA-D-4.31.16";
         public const string SessionContainerName = "SessionContainer";
 
         public override void Init()
