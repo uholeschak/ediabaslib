@@ -512,6 +512,11 @@ namespace PsdzClient
 
         private void buttonStartHost_Click(object sender, EventArgs e)
         {
+            if (TaskActive)
+            {
+                return;
+            }
+
             _cts = new CancellationTokenSource();
             StartProgrammingServiceTask(textBoxIstaFolder.Text).ContinueWith(task =>
             {
@@ -526,6 +531,11 @@ namespace PsdzClient
 
         private void buttonStopHost_Click(object sender, EventArgs e)
         {
+            if (TaskActive)
+            {
+                return;
+            }
+
             StopProgrammingServiceTask().ContinueWith(task =>
             {
                 TaskActive = false;
@@ -559,6 +569,11 @@ namespace PsdzClient
 
         private void buttonConnect_Click(object sender, EventArgs e)
         {
+            if (TaskActive)
+            {
+                return;
+            }
+
             if (_programmingJobs.PsdzContext?.Connection != null)
             {
                 return;
@@ -579,6 +594,11 @@ namespace PsdzClient
 
         private void buttonDisconnect_Click(object sender, EventArgs e)
         {
+            if (TaskActive)
+            {
+                return;
+            }
+
             if (_programmingJobs.PsdzContext?.Connection == null)
             {
                 return;
@@ -595,6 +615,11 @@ namespace PsdzClient
 
         private void buttonFunc_Click(object sender, EventArgs e)
         {
+            if (TaskActive)
+            {
+                return;
+            }
+
             if (_programmingJobs.PsdzContext?.Connection == null)
             {
                 return;
@@ -634,8 +659,12 @@ namespace PsdzClient
 
         private void buttonVehicleSearch_Click(object sender, EventArgs e)
         {
-            bool preferIcom = checkBoxIcom.Checked;
+            if (TaskActive)
+            {
+                return;
+            }
 
+            bool preferIcom = checkBoxIcom.Checked;
             SearchVehiclesTask().ContinueWith(task =>
             {
                 TaskActive = false;

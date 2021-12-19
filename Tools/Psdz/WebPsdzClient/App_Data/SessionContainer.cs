@@ -54,6 +54,11 @@ namespace WebPsdzClient.App_Data
 
         public void StartProgrammingService(UpdateDisplayDelegate updateHandler, string istaFolder)
         {
+            if (TaskActive)
+            {
+                return;
+            }
+
             _updateDisplay = updateHandler;
             Cts = new CancellationTokenSource();
             StartProgrammingServiceTask(istaFolder).ContinueWith(task =>
@@ -76,6 +81,11 @@ namespace WebPsdzClient.App_Data
 
         public void StopProgrammingService(UpdateDisplayDelegate updateHandler)
         {
+            if (TaskActive)
+            {
+                return;
+            }
+
             _updateDisplay = updateHandler;
             StopProgrammingServiceTask().ContinueWith(task =>
             {
@@ -109,6 +119,8 @@ namespace WebPsdzClient.App_Data
             // Check to see if Dispose has already been called.
             if (!_disposed)
             {
+                StopProgrammingService(null);
+
                 if (ProgrammingJobs != null)
                 {
                     ProgrammingJobs.Dispose();
