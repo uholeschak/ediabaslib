@@ -8,10 +8,9 @@ namespace WebPsdzClient.App_Data
     public class SessionContainer : IDisposable
     {
         public delegate void UpdateDisplayDelegate();
-        public event UpdateDisplayDelegate UpdateDisplayEvent;
         public ProgrammingJobs ProgrammingJobs { get; private set; }
-        public CancellationTokenSource Cts { get; set; }
-        public bool TaskActive { get; set; }
+        public CancellationTokenSource Cts { get; private set; }
+        public bool TaskActive { get; private set; }
         public string StatusText
         {
             get
@@ -32,6 +31,7 @@ namespace WebPsdzClient.App_Data
 
         private bool _disposed;
         private readonly object _lockObject = new object();
+        private UpdateDisplayDelegate _updateDisplay;
         private string _statusText;
 
         public SessionContainer(string dealerId)
@@ -44,7 +44,29 @@ namespace WebPsdzClient.App_Data
         public void UpdateStatus(string message = null)
         {
             StatusText = message ?? string.Empty;
-            UpdateDisplayEvent?.Invoke();
+            UpdateDisplay();
+        }
+
+        public void UpdateDisplay()
+        {
+            _updateDisplay?.Invoke();
+        }
+
+        public void StartProgrammingService(UpdateDisplayDelegate updateHandler, string istaFolder)
+        {
+            _updateDisplay = updateHandler;
+            Cts = new CancellationTokenSource();
+            StartProgrammingServiceTask(istaFolder).ContinueWith(task =>
+            {
+                TaskActive = false;
+                Cts.Dispose();
+                Cts = null;
+                UpdateDisplay();
+                _updateDisplay = null;
+            });
+
+            TaskActive = true;
+            UpdateDisplay();
         }
 
         public async Task<bool> StartProgrammingServiceTask(string istaFolder)
@@ -52,9 +74,22 @@ namespace WebPsdzClient.App_Data
             return await Task.Run(() => ProgrammingJobs.StartProgrammingService(Cts, istaFolder)).ConfigureAwait(false);
         }
 
+        public void StopProgrammingService(UpdateDisplayDelegate updateHandler)
+        {
+            _updateDisplay = updateHandler;
+            StopProgrammingServiceTask().ContinueWith(task =>
+            {
+                TaskActive = false;
+                UpdateDisplay();
+                _updateDisplay = null;
+            });
+
+            TaskActive = true;
+            UpdateDisplay();
+        }
+
         public async Task<bool> StopProgrammingServiceTask()
         {
-            // ReSharper disable once ConvertClosureToMethodGroup
             return await Task.Run(() => ProgrammingJobs.StopProgrammingService(Cts)).ConfigureAwait(false);
         }
 

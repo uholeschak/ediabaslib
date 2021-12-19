@@ -23,26 +23,12 @@ namespace WebPsdzClient
         protected void Page_Load(object sender, EventArgs e)
         {
             log.InfoFormat("_Default Page_Load");
-            SessionContainer sessionContainer = GetSessionContainer();
-            if (sessionContainer == null)
-            {
-                return;
-            }
-
-            sessionContainer.UpdateDisplayEvent += UpdateDisplay;
             UpdateDisplay();
         }
 
         protected void Page_Unload(object sender, EventArgs e)
         {
             log.InfoFormat("_Default Page_Unload");
-            SessionContainer sessionContainer = GetSessionContainer();
-            if (sessionContainer == null)
-            {
-                return;
-            }
-
-            sessionContainer.UpdateDisplayEvent -= UpdateDisplay;
         }
 
         protected void ButtonStartHost_Click(object sender, EventArgs e)
@@ -53,17 +39,7 @@ namespace WebPsdzClient
                 return;
             }
 
-            sessionContainer.Cts = new CancellationTokenSource();
-            sessionContainer.StartProgrammingServiceTask(Global.IstaFolder).ContinueWith(task =>
-            {
-                sessionContainer.TaskActive = false;
-                sessionContainer.Cts.Dispose();
-                sessionContainer.Cts = null;
-                UpdateDisplay();
-            });
-
-            sessionContainer.TaskActive = true;
-            UpdateDisplay();
+            sessionContainer.StartProgrammingService(UpdateDisplay, Global.IstaFolder);
         }
 
         protected void ButtonStopHost_Click(object sender, EventArgs e)
@@ -74,14 +50,7 @@ namespace WebPsdzClient
                 return;
             }
 
-            sessionContainer.StopProgrammingServiceTask().ContinueWith(task =>
-            {
-                sessionContainer.TaskActive = false;
-                UpdateDisplay();
-            });
-
-            sessionContainer.TaskActive = false;
-            UpdateDisplay();
+            sessionContainer.StopProgrammingService(UpdateDisplay);
         }
 
         protected void TimerUpdate_Tick(object sender, EventArgs e)
