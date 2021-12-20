@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using PsdzClient;
 using PsdzClient.Programing;
 
 namespace WebPsdzClient.App_Data
@@ -8,6 +10,7 @@ namespace WebPsdzClient.App_Data
     public class SessionContainer : IDisposable
     {
         public delegate void UpdateDisplayDelegate();
+        public delegate void UpdateOptionsDelegate(PdszDatabase.SwiRegisterEnum swiRegisterEnum);
         public ProgrammingJobs ProgrammingJobs { get; private set; }
         public CancellationTokenSource Cts { get; private set; }
 
@@ -49,14 +52,35 @@ namespace WebPsdzClient.App_Data
             }
         }
 
+        private Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> _optionsDict;
+        public Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> OptionsDict
+        {
+            get
+            {
+                lock (_lockObject)
+                {
+                    return _optionsDict;
+                }
+            }
+            set
+            {
+                lock (_lockObject)
+                {
+                    _optionsDict = value;
+                }
+            }
+        }
+
         private bool _disposed;
         private readonly object _lockObject = new object();
         private UpdateDisplayDelegate _updateDisplay;
+        private UpdateOptionsDelegate _updateOptions;
 
         public SessionContainer(string dealerId)
         {
             ProgrammingJobs = new ProgrammingJobs(dealerId);
             ProgrammingJobs.UpdateStatusEvent += UpdateStatus;
+            ProgrammingJobs.UpdateOptionsEvent += UpdateOptions;
             StatusText = string.Empty;
         }
 
@@ -69,6 +93,18 @@ namespace WebPsdzClient.App_Data
         public void UpdateDisplay()
         {
             _updateDisplay?.Invoke();
+        }
+
+        public void UpdateOptions(Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict)
+        {
+            OptionsDict = optionsDict;
+            ProgrammingJobs.SelectedOptions = new List<ProgrammingJobs.OptionsItem>();
+            UpdateCurrentOptions();
+        }
+
+        private void UpdateCurrentOptions()
+        {
+            _updateOptions?.Invoke(PdszDatabase.SwiRegisterEnum.VehicleModificationCodingConversion);
         }
 
         public void StartProgrammingService(UpdateDisplayDelegate updateHandler, string istaFolder)

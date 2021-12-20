@@ -33,6 +33,20 @@
                         </asp:TableCell>
                     </asp:TableRow>
                 </asp:Table>
+                <asp:Table ID="TableOptions" runat="server" CssClass="table" HorizontalAlign="Center" Width="100%">
+                    <asp:TableRow>
+                        <asp:TableCell>
+                            <asp:CheckBoxList ID="CheckBoxListOptions" runat="server" CellPadding="5" CellSpacing="5" RepeatColumns="2" RepeatLayout="Flow" RepeatDirection="Vertical" TextAlign="Left" OnSelectedIndexChanged="CheckBoxListOptions_OnSelectedIndexChanged">
+                                <asp:ListItem>Item 1</asp:ListItem>
+                                <asp:ListItem>Item 2</asp:ListItem>
+                                <asp:ListItem>Item 3</asp:ListItem>
+                                <asp:ListItem>Item 4</asp:ListItem>
+                                <asp:ListItem>Item 5</asp:ListItem>
+                                <asp:ListItem>Item 6</asp:ListItem>
+                            </asp:CheckBoxList>
+                        </asp:TableCell>
+                    </asp:TableRow>
+                </asp:Table>
                 <asp:Table ID="TableStatus" runat="server" CssClass="table" HorizontalAlign="Center" Width="100%">
                     <asp:TableRow>
                         <asp:TableCell>
