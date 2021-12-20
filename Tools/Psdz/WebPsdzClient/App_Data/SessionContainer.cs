@@ -122,6 +122,69 @@ namespace WebPsdzClient.App_Data
             return await Task.Run(() => ProgrammingJobs.StopProgrammingService(Cts)).ConfigureAwait(false);
         }
 
+        public void ConnectVehicle(UpdateDisplayDelegate updateHandler, string istaFolder, string ipAddress, bool icomConnection)
+        {
+            if (TaskActive)
+            {
+                return;
+            }
+
+            if (ProgrammingJobs.PsdzContext?.Connection != null)
+            {
+                return;
+            }
+
+            _updateDisplay = updateHandler;
+            Cts = new CancellationTokenSource();
+            ConnectVehicleTask(istaFolder, ipAddress, icomConnection).ContinueWith(task =>
+            {
+                TaskActive = false;
+                Cts.Dispose();
+                Cts = null;
+                UpdateDisplay();
+                _updateDisplay = null;
+            });
+
+            TaskActive = true;
+            UpdateDisplay();
+        }
+
+        public async Task<bool> ConnectVehicleTask(string istaFolder, string ipAddress, bool icomConnection)
+        {
+            // ReSharper disable once ConvertClosureToMethodGroup
+            return await Task.Run(() => ProgrammingJobs.ConnectVehicle(Cts, istaFolder, ipAddress, icomConnection)).ConfigureAwait(false);
+        }
+
+        public void DisconnectVehicle(UpdateDisplayDelegate updateHandler)
+        {
+            if (TaskActive)
+            {
+                return;
+            }
+
+            if (ProgrammingJobs.PsdzContext?.Connection == null)
+            {
+                return;
+            }
+
+            _updateDisplay = updateHandler;
+            DisconnectVehicleTask().ContinueWith(task =>
+            {
+                TaskActive = false;
+                UpdateDisplay();
+                _updateDisplay = null;
+            });
+
+            TaskActive = true;
+            UpdateDisplay();
+        }
+
+        public async Task<bool> DisconnectVehicleTask()
+        {
+            // ReSharper disable once ConvertClosureToMethodGroup
+            return await Task.Run(() => ProgrammingJobs.DisconnectVehicle(Cts)).ConfigureAwait(false);
+        }
+
         public void Dispose()
         {
             Dispose(true);

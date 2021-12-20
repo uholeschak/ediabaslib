@@ -53,6 +53,28 @@ namespace WebPsdzClient
             sessionContainer.StopProgrammingService(UpdateDisplay);
         }
 
+        protected void ButtonConnect_OnClick(object sender, EventArgs e)
+        {
+            SessionContainer sessionContainer = GetSessionContainer();
+            if (sessionContainer == null)
+            {
+                return;
+            }
+
+            sessionContainer.ConnectVehicle(UpdateDisplay, Global.IstaFolder, Global.VehicleIp, false);
+        }
+
+        protected void ButtonDisconnect_OnClick(object sender, EventArgs e)
+        {
+            SessionContainer sessionContainer = GetSessionContainer();
+            if (sessionContainer == null)
+            {
+                return;
+            }
+
+            sessionContainer.DisconnectVehicle(UpdateDisplay);
+        }
+
         protected void TimerUpdate_Tick(object sender, EventArgs e)
         {
             UpdateStatus(true);
@@ -96,8 +118,16 @@ namespace WebPsdzClient
                     hostRunning = sessionContainer.ProgrammingJobs.ProgrammingService != null && sessionContainer.ProgrammingJobs.ProgrammingService.IsPsdzPsdzServiceHostInitialized();
                 }
 
+                if (sessionContainer.ProgrammingJobs.PsdzContext?.Connection != null)
+                {
+                    vehicleConnected = true;
+                    talPresent = sessionContainer.ProgrammingJobs.PsdzContext?.Tal != null;
+                }
+
                 ButtonStartHost.Enabled = !active && !hostRunning;
                 ButtonStopHost.Enabled = !active && hostRunning;
+                ButtonConnect.Enabled = !active && hostRunning && !vehicleConnected;
+                ButtonDisconnect.Enabled = !active && hostRunning && vehicleConnected;
 
                 TextBoxStatus.Text = sessionContainer.StatusText;
             }

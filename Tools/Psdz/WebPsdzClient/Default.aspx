@@ -16,6 +16,12 @@
                         <asp:TableCell>
                             <asp:Button ID="ButtonStopHost" runat="server" CssClass="btn" Text="Stop Host" OnClick="ButtonStopHost_Click" />
                         </asp:TableCell>
+                        <asp:TableCell>
+                            <asp:Button ID="ButtonConnect" runat="server" CssClass="btn" Text="Connect" OnClick="ButtonConnect_OnClick" />
+                        </asp:TableCell>
+                        <asp:TableCell>
+                            <asp:Button ID="ButtonDisconnect" runat="server" CssClass="btn" Text="Disconnect" OnClick="ButtonDisconnect_OnClick" />
+                        </asp:TableCell>
                     </asp:TableRow>
                 </asp:Table>
                 <asp:Table ID="TableStatus" runat="server" CssClass="table" HorizontalAlign="Center" Width="100%">

@@ -51,6 +51,24 @@ namespace WebPsdzClient
         protected global::System.Web.UI.WebControls.Button ButtonStopHost;
 
         /// <summary>
+        /// ButtonConnect-Steuerelement
+        /// </summary>
+        /// <remarks>
+        /// Automatisch generiertes Feld
+        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button ButtonConnect;
+
+        /// <summary>
+        /// ButtonDisconnect-Steuerelement
+        /// </summary>
+        /// <remarks>
+        /// Automatisch generiertes Feld
+        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button ButtonDisconnect;
+
+        /// <summary>
         /// TableStatus-Steuerelement
         /// </summary>
         /// <remarks>
