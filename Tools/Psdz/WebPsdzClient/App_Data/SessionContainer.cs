@@ -10,7 +10,27 @@ namespace WebPsdzClient.App_Data
         public delegate void UpdateDisplayDelegate();
         public ProgrammingJobs ProgrammingJobs { get; private set; }
         public CancellationTokenSource Cts { get; private set; }
-        public bool TaskActive { get; private set; }
+
+        private bool _taskActive;
+        public bool TaskActive
+        {
+            get
+            {
+                lock (_lockObject)
+                {
+                    return _taskActive;
+                }
+            }
+            private set
+            {
+                lock (_lockObject)
+                {
+                    _taskActive = value;
+                }
+            }
+        }
+
+        private string _statusText;
         public string StatusText
         {
             get
@@ -32,7 +52,6 @@ namespace WebPsdzClient.App_Data
         private bool _disposed;
         private readonly object _lockObject = new object();
         private UpdateDisplayDelegate _updateDisplay;
-        private string _statusText;
 
         public SessionContainer(string dealerId)
         {
@@ -119,6 +138,11 @@ namespace WebPsdzClient.App_Data
             // Check to see if Dispose has already been called.
             if (!_disposed)
             {
+                while (TaskActive)
+                {
+                    Thread.Sleep(100);
+                }
+
                 StopProgrammingService(null);
 
                 if (ProgrammingJobs != null)
