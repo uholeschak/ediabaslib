@@ -44,14 +44,25 @@ namespace PsdzClient
         private const string DealerId = "32395";
         private const string DefaultIp = @"127.0.0.1";
         private readonly ProgrammingJobs _programmingJobs;
+        private readonly object _lockObject = new object();
         private bool _taskActive;
         private bool TaskActive
         {
-            get { return _taskActive;}
+            get
+            {
+                lock (_lockObject)
+                {
+                    return _taskActive;
+                }
+            }
             set
             {
-                _taskActive = value;
-                if (_taskActive)
+                lock (_lockObject)
+                {
+                    _taskActive = value;
+                }
+
+                if (value)
                 {
                     BeginInvoke((Action)(() =>
                     {
