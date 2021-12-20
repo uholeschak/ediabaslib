@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using log4net;
+using PsdzClient.Programing;
 using WebPsdzClient.App_Data;
 
 namespace WebPsdzClient
@@ -75,6 +76,40 @@ namespace WebPsdzClient
             sessionContainer.DisconnectVehicle(UpdateDisplay);
         }
 
+        protected void ButtonCreateOptions_OnClick(object sender, EventArgs e)
+        {
+            SessionContainer sessionContainer = GetSessionContainer();
+            if (sessionContainer == null)
+            {
+                return;
+            }
+
+            sessionContainer.VehicleFunctions(UpdateDisplay, ProgrammingJobs.OperationType.CreateOptions);
+        }
+
+        protected void ButtonModifyFa_OnClick(object sender, EventArgs e)
+        {
+            SessionContainer sessionContainer = GetSessionContainer();
+            if (sessionContainer == null)
+            {
+                return;
+            }
+
+            sessionContainer.ProgrammingJobs.UpdateTargetFa();
+            sessionContainer.VehicleFunctions(UpdateDisplay, ProgrammingJobs.OperationType.BuildTalModFa);
+        }
+
+        protected void ButtonExecuteTal_OnClick(object sender, EventArgs e)
+        {
+            SessionContainer sessionContainer = GetSessionContainer();
+            if (sessionContainer == null)
+            {
+                return;
+            }
+
+            sessionContainer.VehicleFunctions(UpdateDisplay, ProgrammingJobs.OperationType.ExecuteTal);
+        }
+
         protected void TimerUpdate_Tick(object sender, EventArgs e)
         {
             UpdateStatus(true);
@@ -124,10 +159,15 @@ namespace WebPsdzClient
                     talPresent = sessionContainer.ProgrammingJobs.PsdzContext?.Tal != null;
                 }
 
+                bool modifyTal = !active && hostRunning && vehicleConnected; //&& _optionsDict != null;
+
                 ButtonStartHost.Enabled = !active && !hostRunning;
                 ButtonStopHost.Enabled = !active && hostRunning;
                 ButtonConnect.Enabled = !active && hostRunning && !vehicleConnected;
                 ButtonDisconnect.Enabled = !active && hostRunning && vehicleConnected;
+                ButtonCreateOptions.Enabled = !active && hostRunning && vehicleConnected; //&& _optionsDict == null;
+                ButtonModifyFa.Enabled = modifyTal;
+                ButtonExecuteTal.Enabled = modifyTal && talPresent;
 
                 TextBoxStatus.Text = sessionContainer.StatusText;
             }

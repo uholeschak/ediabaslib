@@ -116,6 +116,7 @@ namespace PsdzClient
             }
 
             bool ipEnabled = !active && !vehicleConnected;
+            bool modifyTal = !active && hostRunning && vehicleConnected && _optionsDict != null;
 
             textBoxIstaFolder.Enabled = !active && !hostRunning;
             comboBoxLanguage.Enabled = !active;
@@ -127,9 +128,9 @@ namespace PsdzClient
             buttonConnect.Enabled = !active && hostRunning && !vehicleConnected;
             buttonDisconnect.Enabled = !active && hostRunning && vehicleConnected;
             buttonCreateOptions.Enabled = !active && hostRunning && vehicleConnected && _optionsDict == null;
-            buttonModILevel.Enabled = !active && hostRunning && vehicleConnected && _optionsDict != null;
-            buttonModFa.Enabled = buttonModILevel.Enabled;
-            buttonExecuteTal.Enabled = buttonModILevel.Enabled && talPresent;
+            buttonModILevel.Enabled = modifyTal;
+            buttonModFa.Enabled = modifyTal;
+            buttonExecuteTal.Enabled = modifyTal && talPresent;
             buttonClose.Enabled = !active;
             buttonAbort.Enabled = active && abortPossible;
             checkedListBoxOptions.Enabled = !active && hostRunning && vehicleConnected;

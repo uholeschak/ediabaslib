@@ -22,6 +22,15 @@
                         <asp:TableCell>
                             <asp:Button ID="ButtonDisconnect" runat="server" CssClass="btn" Text="Disconnect" OnClick="ButtonDisconnect_OnClick" />
                         </asp:TableCell>
+                        <asp:TableCell>
+                            <asp:Button ID="ButtonCreateOptions" runat="server" CssClass="btn" Text="Create Options" OnClick="ButtonCreateOptions_OnClick" />
+                        </asp:TableCell>
+                        <asp:TableCell>
+                            <asp:Button ID="ButtonModifyFa" runat="server" CssClass="btn" Text="Modify FA" OnClick="ButtonModifyFa_OnClick" />
+                        </asp:TableCell>
+                        <asp:TableCell>
+                            <asp:Button ID="ButtonExecuteTal" runat="server" CssClass="btn" Text="Ececute TAL" OnClick="ButtonExecuteTal_OnClick" />
+                        </asp:TableCell>
                     </asp:TableRow>
                 </asp:Table>
                 <asp:Table ID="TableStatus" runat="server" CssClass="table" HorizontalAlign="Center" Width="100%">

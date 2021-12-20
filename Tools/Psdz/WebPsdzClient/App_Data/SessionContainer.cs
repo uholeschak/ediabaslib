@@ -185,6 +185,38 @@ namespace WebPsdzClient.App_Data
             return await Task.Run(() => ProgrammingJobs.DisconnectVehicle(Cts)).ConfigureAwait(false);
         }
 
+        public void VehicleFunctions(UpdateDisplayDelegate updateHandler, ProgrammingJobs.OperationType operationType)
+        {
+            if (TaskActive)
+            {
+                return;
+            }
+
+            if (ProgrammingJobs.PsdzContext?.Connection == null)
+            {
+                return;
+            }
+
+            _updateDisplay = updateHandler;
+            Cts = new CancellationTokenSource();
+            VehicleFunctionsTask(operationType).ContinueWith(task =>
+            {
+                TaskActive = false;
+                Cts.Dispose();
+                Cts = null;
+                UpdateDisplay();
+                _updateDisplay = null;
+            });
+
+            TaskActive = true;
+            UpdateDisplay();
+        }
+
+        public async Task<bool> VehicleFunctionsTask(ProgrammingJobs.OperationType operationType)
+        {
+            return await Task.Run(() => ProgrammingJobs.VehicleFunctions(Cts, operationType)).ConfigureAwait(false);
+        }
+
         public void Dispose()
         {
             Dispose(true);
