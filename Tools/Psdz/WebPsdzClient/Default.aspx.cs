@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -121,6 +122,24 @@ namespace WebPsdzClient
 
         protected void CheckBoxListOptions_OnSelectedIndexChanged(object sender, EventArgs e)
         {
+            SessionContainer sessionContainer = GetSessionContainer();
+            if (sessionContainer == null)
+            {
+                return;
+            }
+
+            ListItem listItem = CheckBoxListOptions.SelectedItem;
+            if (listItem != null)
+            {
+                string itemValue = listItem.Value;
+                if (!string.IsNullOrEmpty(itemValue))
+                {
+                    if (Int32.TryParse(itemValue, NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 itemIndex))
+                    {
+
+                    }
+                }
+            }
         }
 
         protected void TimerUpdate_Tick(object sender, EventArgs e)
@@ -220,6 +239,7 @@ namespace WebPsdzClient
                 {
                     if (optionsDict.TryGetValue(swiRegisterEnum.Value, out List<ProgrammingJobs.OptionsItem> optionsItems))
                     {
+                        int itemIndex = 0;
                         foreach (ProgrammingJobs.OptionsItem optionsItem in optionsItems)
                         {
                             bool itemSelected = false;
@@ -256,11 +276,13 @@ namespace WebPsdzClient
 
                             if (addItem)
                             {
-                                ListItem listItem = new ListItem(optionsItem.ToString());
+                                ListItem listItem = new ListItem(optionsItem.ToString(), itemIndex.ToString(CultureInfo.InvariantCulture));
                                 listItem.Selected = itemSelected;
                                 listItem.Enabled = itemEnabled;
                                 CheckBoxListOptions.Items.Add(listItem);
                             }
+
+                            itemIndex++;
                         }
                     }
                 }
@@ -297,6 +319,5 @@ namespace WebPsdzClient
 
             return selectedSwiActions;
         }
-
     }
 }
