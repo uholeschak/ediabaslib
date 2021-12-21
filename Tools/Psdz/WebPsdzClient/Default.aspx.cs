@@ -32,11 +32,8 @@ namespace WebPsdzClient
             sessionContainer.UpdateDisplayFunc = UpdateDisplay;
             sessionContainer.UpdateOptionsFunc = UpdateOptions;
 
-            if (!IsPostBack)
-            {
-                UpdateDisplay();
-                UpdateOptions(PdszDatabase.SwiRegisterEnum.VehicleModificationCodingConversion);
-            }
+            UpdateDisplay();
+            SelectOptions(sessionContainer.SelectedSwiRegister);
         }
 
         protected void Page_Unload(object sender, EventArgs e)
@@ -175,13 +172,12 @@ namespace WebPsdzClient
                     talPresent = sessionContainer.ProgrammingJobs.PsdzContext?.Tal != null;
                 }
 
-                bool modifyTal = !active && hostRunning && vehicleConnected; //&& _optionsDict != null;
-
+                bool modifyTal = !active && hostRunning && vehicleConnected && sessionContainer.SelectedSwiRegister != null;
                 ButtonStartHost.Enabled = !active && !hostRunning;
                 ButtonStopHost.Enabled = !active && hostRunning;
                 ButtonConnect.Enabled = !active && hostRunning && !vehicleConnected;
                 ButtonDisconnect.Enabled = !active && hostRunning && vehicleConnected;
-                ButtonCreateOptions.Enabled = !active && hostRunning && vehicleConnected; //&& _optionsDict == null;
+                ButtonCreateOptions.Enabled = !active && hostRunning && vehicleConnected && sessionContainer.SelectedSwiRegister == null;
                 ButtonModifyFa.Enabled = modifyTal;
                 ButtonExecuteTal.Enabled = modifyTal && talPresent;
 
@@ -193,9 +189,9 @@ namespace WebPsdzClient
             }
         }
 
-        private void UpdateOptions(PdszDatabase.SwiRegisterEnum? swiRegisterEnum)
+        private void UpdateOptions()
         {
-            SelectOptions(swiRegisterEnum);
+            Response.Redirect(Request.RawUrl, false);
         }
 
         private void SelectOptions(PdszDatabase.SwiRegisterEnum? swiRegisterEnum)
@@ -209,14 +205,7 @@ namespace WebPsdzClient
                 }
 
                 CheckBoxListOptions.Items.Clear();
-#if false
-                {
-                    ListItem listItem = new ListItem("Test");
-                    listItem.Selected = true;
-                    listItem.Enabled = true;
-                    CheckBoxListOptions.Items.Add(listItem);
-                }
-#endif
+
                 ProgrammingJobs programmingJobs = sessionContainer.ProgrammingJobs;
                 if (programmingJobs.ProgrammingService == null || programmingJobs.PsdzContext == null)
                 {

@@ -10,7 +10,7 @@ namespace WebPsdzClient.App_Data
     public class SessionContainer : IDisposable
     {
         public delegate void UpdateDisplayDelegate();
-        public delegate void UpdateOptionsDelegate(PdszDatabase.SwiRegisterEnum? swiRegisterEnum);
+        public delegate void UpdateOptionsDelegate();
         public ProgrammingJobs ProgrammingJobs { get; private set; }
         public CancellationTokenSource Cts { get; private set; }
 
@@ -71,8 +71,6 @@ namespace WebPsdzClient.App_Data
             }
         }
 
-        private bool _disposed;
-        private readonly object _lockObject = new object();
         private UpdateDisplayDelegate _updateDisplay;
         public UpdateDisplayDelegate UpdateDisplayFunc
         {
@@ -111,6 +109,28 @@ namespace WebPsdzClient.App_Data
             }
         }
 
+        private PdszDatabase.SwiRegisterEnum? _selectedSwiRegister;
+        public PdszDatabase.SwiRegisterEnum? SelectedSwiRegister
+        {
+            get
+            {
+                lock (_lockObject)
+                {
+                    return _selectedSwiRegister;
+                }
+            }
+            set
+            {
+                lock (_lockObject)
+                {
+                    _selectedSwiRegister = value;
+                }
+            }
+        }
+
+        private bool _disposed;
+        private readonly object _lockObject = new object();
+
         public SessionContainer(string dealerId)
         {
             ProgrammingJobs = new ProgrammingJobs(dealerId);
@@ -137,9 +157,23 @@ namespace WebPsdzClient.App_Data
             UpdateCurrentOptions();
         }
 
-        private void UpdateCurrentOptions()
+        private void UpdateCurrentOptions(bool reset = false)
         {
-            UpdateOptionsFunc?.Invoke(PdszDatabase.SwiRegisterEnum.VehicleModificationCodingConversion);
+            if (reset)
+            {
+                if (SelectedSwiRegister == null)
+                {
+                    return;
+                }
+
+                SelectedSwiRegister = null;
+            }
+            else
+            {
+                SelectedSwiRegister = PdszDatabase.SwiRegisterEnum.VehicleModificationCodingConversion;
+            }
+
+            UpdateOptionsFunc?.Invoke();
         }
 
         public void StartProgrammingService(string istaFolder)
@@ -155,6 +189,7 @@ namespace WebPsdzClient.App_Data
                 TaskActive = false;
                 Cts.Dispose();
                 Cts = null;
+                UpdateCurrentOptions(true);
                 UpdateDisplay();
             });
 
@@ -177,6 +212,7 @@ namespace WebPsdzClient.App_Data
             StopProgrammingServiceTask().ContinueWith(task =>
             {
                 TaskActive = false;
+                UpdateCurrentOptions(true);
                 UpdateDisplay();
             });
 
@@ -207,6 +243,7 @@ namespace WebPsdzClient.App_Data
                 TaskActive = false;
                 Cts.Dispose();
                 Cts = null;
+                UpdateCurrentOptions(true);
                 UpdateDisplay();
             });
 
@@ -235,6 +272,7 @@ namespace WebPsdzClient.App_Data
             DisconnectVehicleTask().ContinueWith(task =>
             {
                 TaskActive = false;
+                UpdateCurrentOptions(true);
                 UpdateDisplay();
             });
 
