@@ -218,7 +218,7 @@ namespace WebPsdzClient
                 }
 #endif
                 ProgrammingJobs programmingJobs = sessionContainer.ProgrammingJobs;
-                if (programmingJobs.ProgrammingService == null)
+                if (programmingJobs.ProgrammingService == null || programmingJobs.PsdzContext == null)
                 {
                     return;
                 }
@@ -274,6 +274,11 @@ namespace WebPsdzClient
                             }
                         }
                     }
+                }
+
+                if (!UpdatePanelStatus.IsInPartialRendering)
+                {
+                    UpdatePanelStatus.Update();
                 }
             }
             catch (Exception e)
