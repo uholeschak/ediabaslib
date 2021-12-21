@@ -32,7 +32,11 @@ namespace WebPsdzClient
             sessionContainer.UpdateDisplayFunc = UpdateDisplay;
             sessionContainer.UpdateOptionsFunc = UpdateOptions;
 
-            UpdateDisplay();
+            if (!IsPostBack)
+            {
+                UpdateDisplay();
+                UpdateOptions(PdszDatabase.SwiRegisterEnum.VehicleModificationCodingConversion);
+            }
         }
 
         protected void Page_Unload(object sender, EventArgs e)
@@ -208,7 +212,7 @@ namespace WebPsdzClient
                 Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = sessionContainer.OptionsDict;
 
                 List<PdszDatabase.SwiAction> selectedSwiActions = GetSelectedSwiActions(programmingJobs);
-                List<PdszDatabase.SwiAction> linkedSwiActions = programmingJobs.ProgrammingService.PdszDatabase.ReadLinkedSwiActions(selectedSwiActions, programmingJobs.PsdzContext.Vehicle, null);
+                List<PdszDatabase.SwiAction> linkedSwiActions = programmingJobs.ProgrammingService?.PdszDatabase.ReadLinkedSwiActions(selectedSwiActions, programmingJobs.PsdzContext.Vehicle, null);
 
                 CheckBoxListOptions.Items.Clear();
                 if (optionsDict != null && programmingJobs.SelectedOptions != null && swiRegisterEnum.HasValue)
