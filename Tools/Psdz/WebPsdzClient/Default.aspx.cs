@@ -208,13 +208,25 @@ namespace WebPsdzClient
                     return;
                 }
 
-                ProgrammingJobs programmingJobs = sessionContainer.ProgrammingJobs;
-                Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = sessionContainer.OptionsDict;
-
-                List<PdszDatabase.SwiAction> selectedSwiActions = GetSelectedSwiActions(programmingJobs);
-                List<PdszDatabase.SwiAction> linkedSwiActions = programmingJobs.ProgrammingService?.PdszDatabase.ReadLinkedSwiActions(selectedSwiActions, programmingJobs.PsdzContext.Vehicle, null);
-
                 CheckBoxListOptions.Items.Clear();
+#if false
+                {
+                    ListItem listItem = new ListItem("Test");
+                    listItem.Selected = true;
+                    listItem.Enabled = true;
+                    CheckBoxListOptions.Items.Add(listItem);
+                }
+#endif
+                ProgrammingJobs programmingJobs = sessionContainer.ProgrammingJobs;
+                if (programmingJobs.ProgrammingService == null)
+                {
+                    return;
+                }
+
+                Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = sessionContainer.OptionsDict;
+                List<PdszDatabase.SwiAction> selectedSwiActions = GetSelectedSwiActions(programmingJobs);
+                List<PdszDatabase.SwiAction> linkedSwiActions = programmingJobs.ProgrammingService.PdszDatabase.ReadLinkedSwiActions(selectedSwiActions, programmingJobs.PsdzContext.Vehicle, null);
+
                 if (optionsDict != null && programmingJobs.SelectedOptions != null && swiRegisterEnum.HasValue)
                 {
                     if (optionsDict.TryGetValue(swiRegisterEnum.Value, out List<ProgrammingJobs.OptionsItem> optionsItems))
