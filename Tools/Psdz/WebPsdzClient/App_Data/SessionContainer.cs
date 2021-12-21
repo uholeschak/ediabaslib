@@ -10,7 +10,7 @@ namespace WebPsdzClient.App_Data
     public class SessionContainer : IDisposable
     {
         public delegate void UpdateDisplayDelegate();
-        public delegate void UpdateOptionsDelegate(PdszDatabase.SwiRegisterEnum swiRegisterEnum);
+        public delegate void UpdateOptionsDelegate(PdszDatabase.SwiRegisterEnum? swiRegisterEnum);
         public ProgrammingJobs ProgrammingJobs { get; private set; }
         public CancellationTokenSource Cts { get; private set; }
 
@@ -74,7 +74,42 @@ namespace WebPsdzClient.App_Data
         private bool _disposed;
         private readonly object _lockObject = new object();
         private UpdateDisplayDelegate _updateDisplay;
+        public UpdateDisplayDelegate UpdateDisplayFunc
+        {
+            get
+            {
+                lock (_lockObject)
+                {
+                    return _updateDisplay;
+                }
+            }
+            set
+            {
+                lock (_lockObject)
+                {
+                    _updateDisplay = value;
+                }
+            }
+        }
+
         private UpdateOptionsDelegate _updateOptions;
+        public UpdateOptionsDelegate UpdateOptionsFunc
+        {
+            get
+            {
+                lock (_lockObject)
+                {
+                    return _updateOptions;
+                }
+            }
+            set
+            {
+                lock (_lockObject)
+                {
+                    _updateOptions = value;
+                }
+            }
+        }
 
         public SessionContainer(string dealerId)
         {
@@ -92,7 +127,7 @@ namespace WebPsdzClient.App_Data
 
         public void UpdateDisplay()
         {
-            _updateDisplay?.Invoke();
+            UpdateDisplayFunc?.Invoke();
         }
 
         public void UpdateOptions(Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict)
@@ -104,17 +139,16 @@ namespace WebPsdzClient.App_Data
 
         private void UpdateCurrentOptions()
         {
-            _updateOptions?.Invoke(PdszDatabase.SwiRegisterEnum.VehicleModificationCodingConversion);
+            UpdateOptionsFunc?.Invoke(PdszDatabase.SwiRegisterEnum.VehicleModificationCodingConversion);
         }
 
-        public void StartProgrammingService(UpdateDisplayDelegate updateHandler, string istaFolder)
+        public void StartProgrammingService(string istaFolder)
         {
             if (TaskActive)
             {
                 return;
             }
 
-            _updateDisplay = updateHandler;
             Cts = new CancellationTokenSource();
             StartProgrammingServiceTask(istaFolder).ContinueWith(task =>
             {
@@ -122,7 +156,6 @@ namespace WebPsdzClient.App_Data
                 Cts.Dispose();
                 Cts = null;
                 UpdateDisplay();
-                _updateDisplay = null;
             });
 
             TaskActive = true;
@@ -134,19 +167,17 @@ namespace WebPsdzClient.App_Data
             return await Task.Run(() => ProgrammingJobs.StartProgrammingService(Cts, istaFolder)).ConfigureAwait(false);
         }
 
-        public void StopProgrammingService(UpdateDisplayDelegate updateHandler)
+        public void StopProgrammingService()
         {
             if (TaskActive)
             {
                 return;
             }
 
-            _updateDisplay = updateHandler;
             StopProgrammingServiceTask().ContinueWith(task =>
             {
                 TaskActive = false;
                 UpdateDisplay();
-                _updateDisplay = null;
             });
 
             TaskActive = true;
@@ -158,7 +189,7 @@ namespace WebPsdzClient.App_Data
             return await Task.Run(() => ProgrammingJobs.StopProgrammingService(Cts)).ConfigureAwait(false);
         }
 
-        public void ConnectVehicle(UpdateDisplayDelegate updateHandler, string istaFolder, string ipAddress, bool icomConnection)
+        public void ConnectVehicle(string istaFolder, string ipAddress, bool icomConnection)
         {
             if (TaskActive)
             {
@@ -170,7 +201,6 @@ namespace WebPsdzClient.App_Data
                 return;
             }
 
-            _updateDisplay = updateHandler;
             Cts = new CancellationTokenSource();
             ConnectVehicleTask(istaFolder, ipAddress, icomConnection).ContinueWith(task =>
             {
@@ -178,7 +208,6 @@ namespace WebPsdzClient.App_Data
                 Cts.Dispose();
                 Cts = null;
                 UpdateDisplay();
-                _updateDisplay = null;
             });
 
             TaskActive = true;
@@ -203,12 +232,10 @@ namespace WebPsdzClient.App_Data
                 return;
             }
 
-            _updateDisplay = updateHandler;
             DisconnectVehicleTask().ContinueWith(task =>
             {
                 TaskActive = false;
                 UpdateDisplay();
-                _updateDisplay = null;
             });
 
             TaskActive = true;
@@ -233,7 +260,6 @@ namespace WebPsdzClient.App_Data
                 return;
             }
 
-            _updateDisplay = updateHandler;
             Cts = new CancellationTokenSource();
             VehicleFunctionsTask(operationType).ContinueWith(task =>
             {
@@ -241,7 +267,6 @@ namespace WebPsdzClient.App_Data
                 Cts.Dispose();
                 Cts = null;
                 UpdateDisplay();
-                _updateDisplay = null;
             });
 
             TaskActive = true;
@@ -274,7 +299,7 @@ namespace WebPsdzClient.App_Data
                     Thread.Sleep(100);
                 }
 
-                StopProgrammingService(null);
+                StopProgrammingService();
 
                 if (ProgrammingJobs != null)
                 {

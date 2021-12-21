@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Threading;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -25,6 +23,15 @@ namespace WebPsdzClient
         protected void Page_Load(object sender, EventArgs e)
         {
             log.InfoFormat("_Default Page_Load");
+            SessionContainer sessionContainer = GetSessionContainer();
+            if (sessionContainer == null)
+            {
+                return;
+            }
+
+            sessionContainer.UpdateDisplayFunc = UpdateDisplay;
+            sessionContainer.UpdateOptionsFunc = UpdateOptions;
+
             UpdateDisplay();
         }
 
@@ -41,7 +48,7 @@ namespace WebPsdzClient
                 return;
             }
 
-            sessionContainer.StartProgrammingService(UpdateDisplay, Global.IstaFolder);
+            sessionContainer.StartProgrammingService(Global.IstaFolder);
         }
 
         protected void ButtonStopHost_Click(object sender, EventArgs e)
@@ -52,7 +59,7 @@ namespace WebPsdzClient
                 return;
             }
 
-            sessionContainer.StopProgrammingService(UpdateDisplay);
+            sessionContainer.StopProgrammingService();
         }
 
         protected void ButtonConnect_OnClick(object sender, EventArgs e)
@@ -63,7 +70,7 @@ namespace WebPsdzClient
                 return;
             }
 
-            sessionContainer.ConnectVehicle(UpdateDisplay, Global.IstaFolder, Global.VehicleIp, false);
+            sessionContainer.ConnectVehicle(Global.IstaFolder, Global.VehicleIp, false);
         }
 
         protected void ButtonDisconnect_OnClick(object sender, EventArgs e)
@@ -180,6 +187,11 @@ namespace WebPsdzClient
             {
                 log.ErrorFormat("UpdateStatus Exception: {0}", e.Message);
             }
+        }
+
+        private void UpdateOptions(PdszDatabase.SwiRegisterEnum? swiRegisterEnum)
+        {
+            SelectOptions(swiRegisterEnum);
         }
 
         private void SelectOptions(PdszDatabase.SwiRegisterEnum? swiRegisterEnum)
