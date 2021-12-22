@@ -137,58 +137,76 @@ namespace WebPsdzClient
                 return;
             }
 
-            ProgrammingJobs programmingJobs = sessionContainer.ProgrammingJobs;
-            string swiActionId = null;
-            ListItem listItem = CheckBoxListOptions.SelectedItem;
-            if (listItem != null)
+            string eventArgs = Request.Form["__EVENTTARGET"];
+            if (string.IsNullOrEmpty(eventArgs))
             {
-                if (!listItem.Enabled)
-                {
-                    return;
-                }
-
-                swiActionId = listItem.Value;
+                return;
+            }
+            string[] checkedBox = eventArgs.Split('$');
+            if (checkedBox.Length < 1)
+            {
+                return;
             }
 
-            bool modified = false;
-            if (!string.IsNullOrEmpty(swiActionId))
+            if (!int.TryParse(checkedBox[checkedBox.Length - 1], NumberStyles.Integer, CultureInfo.InvariantCulture, out int selectedIndex))
             {
-                Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = sessionContainer.OptionsDict;
-                if (optionsDict != null && sessionContainer.SelectedSwiRegister.HasValue)
+                return;
+            }
+
+            if (selectedIndex < 0 || selectedIndex >= CheckBoxListOptions.Items.Count)
+            {
+                return;
+            }
+
+            ListItem listItem = CheckBoxListOptions.Items[selectedIndex];
+            if (!listItem.Enabled)
+            {
+                return;
+            }
+
+            string swiActionId = listItem.Value;
+            if (string.IsNullOrEmpty(swiActionId))
+            {
+                return;
+            }
+
+            ProgrammingJobs programmingJobs = sessionContainer.ProgrammingJobs;
+            bool modified = false;
+            Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = sessionContainer.OptionsDict;
+            if (optionsDict != null && sessionContainer.SelectedSwiRegister.HasValue)
+            {
+                if (optionsDict.TryGetValue(sessionContainer.SelectedSwiRegister.Value, out List<ProgrammingJobs.OptionsItem> optionsItems))
                 {
-                    if (optionsDict.TryGetValue(sessionContainer.SelectedSwiRegister.Value, out List<ProgrammingJobs.OptionsItem> optionsItems))
+                    foreach (ProgrammingJobs.OptionsItem optionsItem in optionsItems)
                     {
-                        foreach (ProgrammingJobs.OptionsItem optionsItem in optionsItems)
+                        if (string.Compare(optionsItem.SwiAction.Id, swiActionId, StringComparison.OrdinalIgnoreCase) == 0)
                         {
-                            if (string.Compare(optionsItem.SwiAction.Id, swiActionId, StringComparison.OrdinalIgnoreCase) == 0)
+                            if (programmingJobs.SelectedOptions != null)
                             {
-                                if (programmingJobs.SelectedOptions != null)
+                                if (listItem.Selected)
                                 {
-                                    if (listItem.Selected)
+                                    if (!programmingJobs.SelectedOptions.Contains(optionsItem))
                                     {
-                                        if (!programmingJobs.SelectedOptions.Contains(optionsItem))
-                                        {
-                                            programmingJobs.SelectedOptions.Add(optionsItem);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        programmingJobs.SelectedOptions.Remove(optionsItem);
+                                        programmingJobs.SelectedOptions.Add(optionsItem);
                                     }
                                 }
-
-                                modified = true;
-                                break;
+                                else
+                                {
+                                    programmingJobs.SelectedOptions.Remove(optionsItem);
+                                }
                             }
+
+                            modified = true;
+                            break;
                         }
                     }
                 }
+            }
 
-                if (modified)
-                {
-                    sessionContainer.ProgrammingJobs.UpdateTargetFa();
-                    UpdateOptions();
-                }
+            if (modified)
+            {
+                sessionContainer.ProgrammingJobs.UpdateTargetFa();
+                UpdateOptions();
             }
         }
 
