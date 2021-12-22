@@ -128,17 +128,48 @@ namespace WebPsdzClient
                 return;
             }
 
+            ProgrammingJobs programmingJobs = sessionContainer.ProgrammingJobs;
+            string swiActionId = null;
             ListItem listItem = CheckBoxListOptions.SelectedItem;
             if (listItem != null)
             {
-                string itemValue = listItem.Value;
-                if (!string.IsNullOrEmpty(itemValue))
+                if (!listItem.Enabled)
                 {
-                    if (Int32.TryParse(itemValue, NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 itemIndex))
-                    {
+                    return;
+                }
 
+                swiActionId = listItem.Value;
+            }
+
+            if (!string.IsNullOrEmpty(swiActionId))
+            {
+                Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = sessionContainer.OptionsDict;
+                if (optionsDict != null && sessionContainer.SelectedSwiRegister.HasValue)
+                {
+                    if (optionsDict.TryGetValue(sessionContainer.SelectedSwiRegister.Value, out List<ProgrammingJobs.OptionsItem> optionsItems))
+                    {
+                        foreach (ProgrammingJobs.OptionsItem optionsItem in optionsItems)
+                        {
+                            if (string.Compare(optionsItem.SwiAction.Id, swiActionId, StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                if (programmingJobs.SelectedOptions != null)
+                                {
+                                    if (listItem.Selected)
+                                    {
+                                        programmingJobs.SelectedOptions.Add(optionsItem);
+                                    }
+                                    else
+                                    {
+                                        programmingJobs.SelectedOptions.Remove(optionsItem);
+                                    }
+                                }
+                                break;
+                            }
+                        }
                     }
                 }
+
+                sessionContainer.ProgrammingJobs.UpdateTargetFa();
             }
         }
 
@@ -239,7 +270,6 @@ namespace WebPsdzClient
                 {
                     if (optionsDict.TryGetValue(swiRegisterEnum.Value, out List<ProgrammingJobs.OptionsItem> optionsItems))
                     {
-                        int itemIndex = 0;
                         foreach (ProgrammingJobs.OptionsItem optionsItem in optionsItems)
                         {
                             bool itemSelected = false;
@@ -276,13 +306,11 @@ namespace WebPsdzClient
 
                             if (addItem)
                             {
-                                ListItem listItem = new ListItem(optionsItem.ToString(), itemIndex.ToString(CultureInfo.InvariantCulture));
+                                ListItem listItem = new ListItem(optionsItem.ToString(), optionsItem.SwiAction.Id);
                                 listItem.Selected = itemSelected;
                                 listItem.Enabled = itemEnabled;
                                 CheckBoxListOptions.Items.Add(listItem);
                             }
-
-                            itemIndex++;
                         }
                     }
                 }
