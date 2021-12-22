@@ -129,6 +129,15 @@ namespace WebPsdzClient
             sessionContainer.VehicleFunctions(UpdateDisplay, ProgrammingJobs.OperationType.ExecuteTal);
         }
 
+        protected void DropDownListOptionType_OnSelectedIndexChanged(object sender, EventArgs e)
+        {
+            SessionContainer sessionContainer = GetSessionContainer();
+            if (sessionContainer == null)
+            {
+                return;
+            }
+        }
+
         protected void CheckBoxListOptions_OnSelectedIndexChanged(object sender, EventArgs e)
         {
             SessionContainer sessionContainer = GetSessionContainer();
