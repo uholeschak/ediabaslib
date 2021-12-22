@@ -13,6 +13,7 @@ namespace WebPsdzClient.App_Data
         public delegate void UpdateOptionsDelegate();
         public ProgrammingJobs ProgrammingJobs { get; private set; }
         public CancellationTokenSource Cts { get; private set; }
+        public bool RefreshOptions { get; set; }
 
         private bool _taskActive;
         public bool TaskActive

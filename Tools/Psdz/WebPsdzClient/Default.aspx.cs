@@ -33,8 +33,16 @@ namespace WebPsdzClient
             sessionContainer.UpdateDisplayFunc = UpdateDisplay;
             sessionContainer.UpdateOptionsFunc = UpdateOptions;
 
-            UpdateDisplay();
-            SelectOptions(sessionContainer.SelectedSwiRegister);
+            if (!IsPostBack)
+            {
+                UpdateDisplay();
+            }
+
+            if (sessionContainer.RefreshOptions)
+            {
+                SelectOptions(sessionContainer.SelectedSwiRegister);
+                sessionContainer.RefreshOptions = false;
+            }
         }
 
         protected void Page_Unload(object sender, EventArgs e)
@@ -170,6 +178,7 @@ namespace WebPsdzClient
                 }
 
                 sessionContainer.ProgrammingJobs.UpdateTargetFa();
+                UpdateOptions();
             }
         }
 
@@ -241,6 +250,13 @@ namespace WebPsdzClient
 
         private void UpdateOptions()
         {
+            SessionContainer sessionContainer = GetSessionContainer();
+            if (sessionContainer == null)
+            {
+                return;
+            }
+
+            sessionContainer.RefreshOptions = true;
             Response.Redirect(Request.RawUrl, false);
         }
 
@@ -254,7 +270,6 @@ namespace WebPsdzClient
                     return;
                 }
 
-                int selectedIndex = CheckBoxListOptions.SelectedIndex;
                 CheckBoxListOptions.Items.Clear();
 
                 ProgrammingJobs programmingJobs = sessionContainer.ProgrammingJobs;
@@ -313,14 +328,6 @@ namespace WebPsdzClient
                                 CheckBoxListOptions.Items.Add(listItem);
                             }
                         }
-                    }
-                }
-
-                if (IsPostBack)
-                {
-                    if (selectedIndex < CheckBoxListOptions.Items.Count)
-                    {
-                        CheckBoxListOptions.SelectedIndex = selectedIndex;
                     }
                 }
 
