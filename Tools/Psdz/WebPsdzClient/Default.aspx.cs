@@ -254,6 +254,7 @@ namespace WebPsdzClient
                     return;
                 }
 
+                int selectedIndex = CheckBoxListOptions.SelectedIndex;
                 CheckBoxListOptions.Items.Clear();
 
                 ProgrammingJobs programmingJobs = sessionContainer.ProgrammingJobs;
@@ -312,6 +313,14 @@ namespace WebPsdzClient
                                 CheckBoxListOptions.Items.Add(listItem);
                             }
                         }
+                    }
+                }
+
+                if (IsPostBack)
+                {
+                    if (selectedIndex < CheckBoxListOptions.Items.Count)
+                    {
+                        CheckBoxListOptions.SelectedIndex = selectedIndex;
                     }
                 }
 
