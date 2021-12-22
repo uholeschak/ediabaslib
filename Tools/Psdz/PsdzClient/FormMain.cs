@@ -783,7 +783,10 @@ namespace PsdzClient
                         {
                             if (e.NewValue == CheckState.Checked)
                             {
-                                _programmingJobs.SelectedOptions.Add(optionsItem);
+                                if (!_programmingJobs.SelectedOptions.Contains(optionsItem))
+                                {
+                                    _programmingJobs.SelectedOptions.Add(optionsItem);
+                                }
                             }
                             else
                             {

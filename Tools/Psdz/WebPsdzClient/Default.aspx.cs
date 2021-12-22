@@ -38,11 +38,12 @@ namespace WebPsdzClient
                 UpdateDisplay();
             }
 
-            if (sessionContainer.RefreshOptions)
+            if (!IsPostBack || sessionContainer.RefreshOptions)
             {
                 SelectOptions(sessionContainer.SelectedSwiRegister);
-                sessionContainer.RefreshOptions = false;
             }
+
+            sessionContainer.RefreshOptions = false;
         }
 
         protected void Page_Unload(object sender, EventArgs e)
@@ -149,6 +150,7 @@ namespace WebPsdzClient
                 swiActionId = listItem.Value;
             }
 
+            bool modified = false;
             if (!string.IsNullOrEmpty(swiActionId))
             {
                 Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = sessionContainer.OptionsDict;
@@ -164,21 +166,29 @@ namespace WebPsdzClient
                                 {
                                     if (listItem.Selected)
                                     {
-                                        programmingJobs.SelectedOptions.Add(optionsItem);
+                                        if (!programmingJobs.SelectedOptions.Contains(optionsItem))
+                                        {
+                                            programmingJobs.SelectedOptions.Add(optionsItem);
+                                        }
                                     }
                                     else
                                     {
                                         programmingJobs.SelectedOptions.Remove(optionsItem);
                                     }
                                 }
+
+                                modified = true;
                                 break;
                             }
                         }
                     }
                 }
 
-                sessionContainer.ProgrammingJobs.UpdateTargetFa();
-                UpdateOptions();
+                if (modified)
+                {
+                    sessionContainer.ProgrammingJobs.UpdateTargetFa();
+                    UpdateOptions();
+                }
             }
         }
 
