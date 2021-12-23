@@ -169,10 +169,6 @@ namespace WebPsdzClient.App_Data
 
                 SelectedSwiRegister = null;
             }
-            else
-            {
-                SelectedSwiRegister = PdszDatabase.SwiRegisterEnum.VehicleModificationCodingConversion;
-            }
 
             UpdateOptionsFunc?.Invoke();
         }

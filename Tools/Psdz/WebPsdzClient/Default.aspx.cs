@@ -268,12 +268,12 @@ namespace WebPsdzClient
                     talPresent = sessionContainer.ProgrammingJobs.PsdzContext?.Tal != null;
                 }
 
-                bool modifyTal = !active && hostRunning && vehicleConnected && sessionContainer.SelectedSwiRegister != null;
+                bool modifyTal = !active && hostRunning && vehicleConnected && sessionContainer.OptionsDict != null;
                 ButtonStartHost.Enabled = !active && !hostRunning;
                 ButtonStopHost.Enabled = !active && hostRunning;
                 ButtonConnect.Enabled = !active && hostRunning && !vehicleConnected;
                 ButtonDisconnect.Enabled = !active && hostRunning && vehicleConnected;
-                ButtonCreateOptions.Enabled = !active && hostRunning && vehicleConnected && sessionContainer.SelectedSwiRegister == null;
+                ButtonCreateOptions.Enabled = !active && hostRunning && vehicleConnected && sessionContainer.OptionsDict == null;
                 ButtonModifyFa.Enabled = modifyTal;
                 ButtonExecuteTal.Enabled = modifyTal && talPresent;
 
@@ -316,8 +316,25 @@ namespace WebPsdzClient
                     ListItem listItem = new ListItem(optionTypeUpdate.ToString(), optionTypeUpdate.SwiRegisterEnum.ToString());
                     DropDownListOptionType.Items.Add(listItem);
                 }
+
+                if (selectedIndex < 0 || selectedIndex >= DropDownListOptionType.Items.Count)
+                {
+                    selectedIndex = 0;
+                }
+
                 DropDownListOptionType.SelectedIndex = selectedIndex;
 
+                PdszDatabase.SwiRegisterEnum? selectedSwiRegister = null;
+                ListItem listItemSelect = DropDownListOptionType.SelectedItem;
+                if (listItemSelect != null)
+                {
+                    if (Enum.TryParse(listItemSelect.Value, true, out PdszDatabase.SwiRegisterEnum swiRegister))
+                    {
+                        selectedSwiRegister = swiRegister;
+                    }
+                }
+
+                sessionContainer.SelectedSwiRegister = selectedSwiRegister;
                 SelectOptions(sessionContainer.SelectedSwiRegister);
 
                 if (!UpdatePanelStatus.IsInPartialRendering)
