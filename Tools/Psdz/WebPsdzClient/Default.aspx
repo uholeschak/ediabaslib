@@ -40,6 +40,8 @@
                             <asp:DropDownList ID="DropDownListOptionType" CssClass="dropdown" runat="server" OnSelectedIndexChanged="DropDownListOptionType_OnSelectedIndexChanged" AutoPostBack="True">
                             </asp:DropDownList>
                         </asp:TableCell>
+                    </asp:TableRow>
+                    <asp:TableRow>
                         <asp:TableCell>
                             <asp:CheckBoxList ID="CheckBoxListOptions" runat="server" CellPadding="5" CellSpacing="5" RepeatColumns="1" RepeatLayout="Table" RepeatDirection="Horizontal" TextAlign="Right" OnSelectedIndexChanged="CheckBoxListOptions_OnSelectedIndexChanged" AutoPostBack="True">
                             </asp:CheckBoxList>

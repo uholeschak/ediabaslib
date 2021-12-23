@@ -136,6 +136,22 @@ namespace WebPsdzClient
             {
                 return;
             }
+
+            PdszDatabase.SwiRegisterEnum? selectedSwiRegister = null;
+            ListItem listItemSelect = DropDownListOptionType.SelectedItem;
+            if (listItemSelect != null)
+            {
+                if (Enum.TryParse(listItemSelect.Value, true, out PdszDatabase.SwiRegisterEnum swiRegister))
+                {
+                    selectedSwiRegister = swiRegister;
+                }
+            }
+
+            if (sessionContainer.SelectedSwiRegister != selectedSwiRegister)
+            {
+                sessionContainer.SelectedSwiRegister = selectedSwiRegister;
+                UpdateOptions();
+            }
         }
 
         protected void CheckBoxListOptions_OnSelectedIndexChanged(object sender, EventArgs e)
@@ -307,34 +323,30 @@ namespace WebPsdzClient
                     return;
                 }
 
-                int selectedIndex = DropDownListOptionType.SelectedIndex;
                 DropDownListOptionType.Items.Clear();
 
-                ProgrammingJobs programmingJobs = sessionContainer.ProgrammingJobs;
-                foreach (ProgrammingJobs.OptionType optionTypeUpdate in programmingJobs.OptionTypes)
+                if (sessionContainer.OptionsDict != null)
                 {
-                    ListItem listItem = new ListItem(optionTypeUpdate.ToString(), optionTypeUpdate.SwiRegisterEnum.ToString());
-                    DropDownListOptionType.Items.Add(listItem);
-                }
-
-                if (selectedIndex < 0 || selectedIndex >= DropDownListOptionType.Items.Count)
-                {
-                    selectedIndex = 0;
-                }
-
-                DropDownListOptionType.SelectedIndex = selectedIndex;
-
-                PdszDatabase.SwiRegisterEnum? selectedSwiRegister = null;
-                ListItem listItemSelect = DropDownListOptionType.SelectedItem;
-                if (listItemSelect != null)
-                {
-                    if (Enum.TryParse(listItemSelect.Value, true, out PdszDatabase.SwiRegisterEnum swiRegister))
+                    ProgrammingJobs programmingJobs = sessionContainer.ProgrammingJobs;
+                    if (sessionContainer.SelectedSwiRegister == null)
                     {
-                        selectedSwiRegister = swiRegister;
+                        sessionContainer.SelectedSwiRegister = programmingJobs.OptionTypes[0].SwiRegisterEnum;
+                    }
+                    foreach (ProgrammingJobs.OptionType optionTypeUpdate in programmingJobs.OptionTypes)
+                    {
+                        ListItem listItem = new ListItem(optionTypeUpdate.ToString(), optionTypeUpdate.SwiRegisterEnum.ToString());
+                        if (sessionContainer.SelectedSwiRegister == optionTypeUpdate.SwiRegisterEnum)
+                        {
+                            listItem.Selected = true;
+                        }
+                        DropDownListOptionType.Items.Add(listItem);
                     }
                 }
+                else
+                {
+                    sessionContainer.SelectedSwiRegister = null;
+                }
 
-                sessionContainer.SelectedSwiRegister = selectedSwiRegister;
                 SelectOptions(sessionContainer.SelectedSwiRegister);
 
                 if (!UpdatePanelStatus.IsInPartialRendering)
