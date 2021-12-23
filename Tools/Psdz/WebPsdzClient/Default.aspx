@@ -4,6 +4,7 @@
 
     <style>.text-left { width: 100%; max-width: 100%; resize: none; }</style>
     <style>.table { border-width: 0; border-color: transparent; }</style>
+    <style>.dropdown { width: 100%; max-width: 100%; }</style>
     <div class="jumbotron">
         <h1>Toolbar</h1>
         <asp:UpdatePanel ID="UpdatePanelStatus" runat="server" UpdateMode="Conditional">
@@ -36,7 +37,7 @@
                 <asp:Table ID="TableOptions" runat="server" CssClass="table" HorizontalAlign="Center" Width="100%">
                     <asp:TableRow>
                         <asp:TableCell>
-                            <asp:DropDownList ID="DropDownListOptionType" runat="server" Width="100%" OnSelectedIndexChanged="DropDownListOptionType_OnSelectedIndexChanged" AutoPostBack="True">
+                            <asp:DropDownList ID="DropDownListOptionType" CssClass="dropdown" runat="server" OnSelectedIndexChanged="DropDownListOptionType_OnSelectedIndexChanged" AutoPostBack="True">
                                 <asp:ListItem Selected="True" Value="White">Test</asp:ListItem>
                             </asp:DropDownList>
                         </asp:TableCell>
