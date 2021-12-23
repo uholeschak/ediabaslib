@@ -40,7 +40,7 @@ namespace WebPsdzClient
 
             if (!IsPostBack || sessionContainer.RefreshOptions)
             {
-                SelectOptions(sessionContainer.SelectedSwiRegister);
+                UpdateCurrentOptions();
             }
 
             sessionContainer.RefreshOptions = false;
@@ -295,6 +295,40 @@ namespace WebPsdzClient
 
             sessionContainer.RefreshOptions = true;
             Response.Redirect(Request.RawUrl, false);
+        }
+
+        private void UpdateCurrentOptions()
+        {
+            try
+            {
+                SessionContainer sessionContainer = GetSessionContainer();
+                if (sessionContainer == null)
+                {
+                    return;
+                }
+
+                int selectedIndex = DropDownListOptionType.SelectedIndex;
+                DropDownListOptionType.Items.Clear();
+
+                ProgrammingJobs programmingJobs = sessionContainer.ProgrammingJobs;
+                foreach (ProgrammingJobs.OptionType optionTypeUpdate in programmingJobs.OptionTypes)
+                {
+                    ListItem listItem = new ListItem(optionTypeUpdate.ToString(), optionTypeUpdate.SwiRegisterEnum.ToString());
+                    DropDownListOptionType.Items.Add(listItem);
+                }
+                DropDownListOptionType.SelectedIndex = selectedIndex;
+
+                SelectOptions(sessionContainer.SelectedSwiRegister);
+
+                if (!UpdatePanelStatus.IsInPartialRendering)
+                {
+                    UpdatePanelStatus.Update();
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("SelectOptions Exception: {0}", e.Message);
+            }
         }
 
         private void SelectOptions(PdszDatabase.SwiRegisterEnum? swiRegisterEnum)

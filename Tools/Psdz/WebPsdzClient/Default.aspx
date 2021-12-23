@@ -38,7 +38,6 @@
                     <asp:TableRow>
                         <asp:TableCell>
                             <asp:DropDownList ID="DropDownListOptionType" CssClass="dropdown" runat="server" OnSelectedIndexChanged="DropDownListOptionType_OnSelectedIndexChanged" AutoPostBack="True">
-                                <asp:ListItem Selected="True" Value="White">Test</asp:ListItem>
                             </asp:DropDownList>
                         </asp:TableCell>
                         <asp:TableCell>
