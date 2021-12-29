@@ -8,7 +8,10 @@
     <div class="jumbotron">
         <asp:UpdatePanel ID="UpdatePanelStatus" runat="server" UpdateMode="Conditional">
             <ContentTemplate>
-                <asp:Table ID="TableButtons" runat="server" CssClass="table" HorizontalAlign="Center" Width="0" Caption="Functions" CaptionAlign="Top">
+                <asp:Table ID="TableButtons" runat="server" CssClass="table" HorizontalAlign="Center" Width="0">
+                    <asp:TableHeaderRow runat="server">
+                        <asp:TableHeaderCell Scope="Column" ColumnSpan="7" Text="Functions" HorizontalAlign="Center" />
+                    </asp:TableHeaderRow>
                     <asp:TableRow>
                         <asp:TableCell>
                             <asp:Button ID="ButtonStartHost" runat="server" CssClass="btn" Text="Start Host" OnClick="ButtonStartHost_Click" />
