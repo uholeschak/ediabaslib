@@ -294,6 +294,11 @@ namespace WebPsdzClient
                 ButtonExecuteTal.Enabled = modifyTal && talPresent;
 
                 TextBoxStatus.Text = sessionContainer.StatusText;
+
+                if (!UpdatePanelStatus.IsInPartialRendering)
+                {
+                    UpdatePanelStatus.Update();
+                }
             }
             catch (Exception e)
             {

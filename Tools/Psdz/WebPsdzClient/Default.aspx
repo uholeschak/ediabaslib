@@ -8,7 +8,7 @@
     <style>.dropdown { width: 100%; max-width: 100%; }</style>
     <style>.checkbox label { text-indent: 30px }</style>
     <div class="jumbotron">
-        <asp:UpdatePanel ID="UpdatePanelStatus" runat="server" UpdateMode="Conditional">
+        <asp:UpdatePanel ID="UpdatePanelStatus" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="False">
             <ContentTemplate>
                 <asp:Table ID="TableButtons" runat="server" CssClass="table" HorizontalAlign="Center" Width="0">
                     <asp:TableHeaderRow runat="server">
