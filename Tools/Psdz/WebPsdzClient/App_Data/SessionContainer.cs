@@ -12,7 +12,6 @@ namespace WebPsdzClient.App_Data
         public delegate void UpdateDisplayDelegate();
         public delegate void UpdateOptionsDelegate();
         public ProgrammingJobs ProgrammingJobs { get; private set; }
-        public CancellationTokenSource Cts { get; private set; }
         public bool RefreshOptions { get; set; }
 
         private bool _taskActive;
@@ -51,6 +50,31 @@ namespace WebPsdzClient.App_Data
                     _statusText = value;
                 }
             }
+        }
+
+        private CancellationTokenSource _cts;
+        public CancellationTokenSource Cts
+        {
+            get
+            {
+                lock (_lockObject)
+                {
+                    return _cts;
+                }
+            }
+
+            private set
+            {
+                lock (_lockObject)
+                {
+                    if (_cts != null)
+                    {
+                        _cts.Dispose();
+                    }
+                    _cts = value;
+                }
+            }
+
         }
 
         private Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> _optionsDict;
@@ -170,6 +194,25 @@ namespace WebPsdzClient.App_Data
             UpdateOptionsFunc?.Invoke();
         }
 
+        public bool Cancel()
+        {
+            try
+            {
+                CancellationTokenSource cts = Cts;
+                if (cts != null)
+                {
+                    cts.Cancel();
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return false;
+        }
+
         public void StartProgrammingService(string istaFolder)
         {
             if (TaskActive)
@@ -181,7 +224,6 @@ namespace WebPsdzClient.App_Data
             StartProgrammingServiceTask(istaFolder).ContinueWith(task =>
             {
                 TaskActive = false;
-                Cts.Dispose();
                 Cts = null;
                 UpdateCurrentOptions();
                 UpdateDisplay();
@@ -235,7 +277,6 @@ namespace WebPsdzClient.App_Data
             ConnectVehicleTask(istaFolder, ipAddress, icomConnection).ContinueWith(task =>
             {
                 TaskActive = false;
-                Cts.Dispose();
                 Cts = null;
                 UpdateCurrentOptions();
                 UpdateDisplay();
@@ -296,7 +337,6 @@ namespace WebPsdzClient.App_Data
             VehicleFunctionsTask(operationType).ContinueWith(task =>
             {
                 TaskActive = false;
-                Cts.Dispose();
                 Cts = null;
                 UpdateCurrentOptions();
                 UpdateDisplay();

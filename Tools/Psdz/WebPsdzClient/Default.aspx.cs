@@ -129,6 +129,17 @@ namespace WebPsdzClient
             sessionContainer.VehicleFunctions(UpdateDisplay, ProgrammingJobs.OperationType.ExecuteTal);
         }
 
+        protected void ButtonAbort_OnClick(object sender, EventArgs e)
+        {
+            SessionContainer sessionContainer = GetSessionContainer();
+            if (sessionContainer == null)
+            {
+                return;
+            }
+
+            sessionContainer.Cancel();
+        }
+
         protected void DropDownListOptionType_OnSelectedIndexChanged(object sender, EventArgs e)
         {
             SessionContainer sessionContainer = GetSessionContainer();
@@ -292,6 +303,7 @@ namespace WebPsdzClient
                 ButtonCreateOptions.Enabled = !active && hostRunning && vehicleConnected && sessionContainer.OptionsDict == null;
                 ButtonModifyFa.Enabled = modifyTal;
                 ButtonExecuteTal.Enabled = modifyTal && talPresent;
+                ButtonAbort.Enabled = active && abortPossible;
 
                 TextBoxStatus.Text = sessionContainer.StatusText;
 

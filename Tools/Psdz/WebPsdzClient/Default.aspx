@@ -12,7 +12,7 @@
             <ContentTemplate>
                 <asp:Table ID="TableButtons" runat="server" CssClass="table" HorizontalAlign="Center" Width="0">
                     <asp:TableHeaderRow runat="server">
-                        <asp:TableHeaderCell Scope="Column" ColumnSpan="7" Text="Functions" HorizontalAlign="Center" />
+                        <asp:TableHeaderCell Scope="Column" ColumnSpan="8" Text="Functions" HorizontalAlign="Center" />
                     </asp:TableHeaderRow>
                     <asp:TableRow>
                         <asp:TableCell>
@@ -34,7 +34,10 @@
                             <asp:Button ID="ButtonModifyFa" runat="server" CssClass="btn" Text="Modify FA" OnClick="ButtonModifyFa_OnClick" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Button ID="ButtonExecuteTal" runat="server" CssClass="btn" Text="Ececute TAL" OnClick="ButtonExecuteTal_OnClick" />
+                            <asp:Button ID="ButtonExecuteTal" runat="server" CssClass="btn" Text="Execute TAL" OnClick="ButtonExecuteTal_OnClick" />
+                        </asp:TableCell>
+                        <asp:TableCell>
+                            <asp:Button ID="ButtonAbort" runat="server" CssClass="btn" Text="Abort" OnClick="ButtonAbort_OnClick" />
                         </asp:TableCell>
                     </asp:TableRow>
                 </asp:Table>
