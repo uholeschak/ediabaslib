@@ -6,6 +6,8 @@
     <style>.table { border-width: 0; border-color: transparent; }</style>
     <style>.table th { text-align: center }</style>
     <style>.dropdown { width: 100%; max-width: 100%; }</style>
+    <style>.checkbox input { position: relative; float: left; }</style>
+    <style>.checkbox label { position: relative; float: right; margin-left: 20px; }</style>
     <div class="jumbotron">
         <asp:UpdatePanel ID="UpdatePanelStatus" runat="server" UpdateMode="Conditional">
             <ContentTemplate>
@@ -46,7 +48,7 @@
                     </asp:TableRow>
                     <asp:TableRow>
                         <asp:TableCell>
-                            <asp:CheckBoxList ID="CheckBoxListOptions" runat="server" CellPadding="5" CellSpacing="5" RepeatColumns="1" RepeatLayout="Table" RepeatDirection="Horizontal" TextAlign="Right" OnSelectedIndexChanged="CheckBoxListOptions_OnSelectedIndexChanged" AutoPostBack="True">
+                            <asp:CheckBoxList ID="CheckBoxListOptions" runat="server" CssClass="checkbox" CellPadding="5" CellSpacing="5" RepeatColumns="1" RepeatLayout="Table" RepeatDirection="Horizontal" TextAlign="Right" OnSelectedIndexChanged="CheckBoxListOptions_OnSelectedIndexChanged" AutoPostBack="True">
                             </asp:CheckBoxList>
                         </asp:TableCell>
                     </asp:TableRow>
