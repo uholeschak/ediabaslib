@@ -6,8 +6,7 @@
     <style>.table { border-width: 0; border-color: transparent; }</style>
     <style>.table th { text-align: center }</style>
     <style>.dropdown { width: 100%; max-width: 100%; }</style>
-    <style>.checkbox input { position: relative; float: left; }</style>
-    <style>.checkbox label { position: relative; float: right; margin-left: 20px; }</style>
+    <style>.checkbox label { text-indent: 30px }</style>
     <div class="jumbotron">
         <asp:UpdatePanel ID="UpdatePanelStatus" runat="server" UpdateMode="Conditional">
             <ContentTemplate>
