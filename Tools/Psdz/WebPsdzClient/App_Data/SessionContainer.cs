@@ -30,6 +30,15 @@ namespace WebPsdzClient.App_Data
                 {
                     _taskActive = value;
                 }
+
+                if (value)
+                {
+                    UpdateProgress(0, true);
+                }
+                else
+                {
+                    UpdateProgress(0, false);
+                }
             }
         }
 
@@ -48,6 +57,25 @@ namespace WebPsdzClient.App_Data
                 lock (_lockObject)
                 {
                     _statusText = value;
+                }
+            }
+        }
+
+        private string _progressText;
+        public string ProgressText
+        {
+            get
+            {
+                lock (_lockObject)
+                {
+                    return _progressText;
+                }
+            }
+            set
+            {
+                lock (_lockObject)
+                {
+                    _progressText = value;
                 }
             }
         }
@@ -161,13 +189,19 @@ namespace WebPsdzClient.App_Data
             ProgrammingJobs = new ProgrammingJobs(dealerId);
             ProgrammingJobs.UpdateStatusEvent += UpdateStatus;
             ProgrammingJobs.UpdateOptionsEvent += UpdateOptions;
+            ProgrammingJobs.ProgressEvent += UpdateProgress;
             StatusText = string.Empty;
+            ProgressText = string.Empty;
         }
 
         public void UpdateStatus(string message = null)
         {
-            StatusText = message ?? string.Empty;
-            UpdateDisplay();
+            string text = message ?? string.Empty;
+            if (StatusText != text)
+            {
+                StatusText = text;
+                UpdateDisplay();
+            }
         }
 
         public void UpdateDisplay()
@@ -192,6 +226,29 @@ namespace WebPsdzClient.App_Data
             }
 
             UpdateOptionsFunc?.Invoke();
+        }
+
+        private void UpdateProgress(int percent, bool marquee, string message = null)
+        {
+            string text = string.Empty;
+
+            if (message != null)
+            {
+                text = message;
+            }
+            else
+            {
+                if (marquee)
+                {
+                    text = "Processing ...";
+                }
+            }
+
+            if (ProgressText != text)
+            {
+                ProgressText = text;
+                UpdateDisplayFunc.Invoke();
+            }
         }
 
         public bool Cancel()

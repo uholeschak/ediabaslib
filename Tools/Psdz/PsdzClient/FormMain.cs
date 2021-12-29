@@ -229,7 +229,6 @@ namespace PsdzClient
             }
             progressBarEvent.Value = percent;
             labelProgressEvent.Text = message ?? string.Empty;
-
         }
 
         private void UpdateCurrentOptions()
