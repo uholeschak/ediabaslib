@@ -6,10 +6,9 @@
     <style>.table { border-width: 0; border-color: transparent; }</style>
     <style>.dropdown { width: 100%; max-width: 100%; }</style>
     <div class="jumbotron">
-        <h1>Toolbar</h1>
         <asp:UpdatePanel ID="UpdatePanelStatus" runat="server" UpdateMode="Conditional">
             <ContentTemplate>
-                <asp:Table ID="TableButtons" runat="server" CssClass="table" HorizontalAlign="Center" Width="0">
+                <asp:Table ID="TableButtons" runat="server" CssClass="table" HorizontalAlign="Center" Width="0" Caption="Functions" CaptionAlign="Top">
                     <asp:TableRow>
                         <asp:TableCell>
                             <asp:Button ID="ButtonStartHost" runat="server" CssClass="btn" Text="Start Host" OnClick="ButtonStartHost_Click" />

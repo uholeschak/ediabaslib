@@ -348,6 +348,7 @@ namespace WebPsdzClient
                 }
 
                 SelectOptions(sessionContainer.SelectedSwiRegister);
+                TableOptions.Visible = sessionContainer.OptionsDict != null;
 
                 if (!UpdatePanelStatus.IsInPartialRendering)
                 {

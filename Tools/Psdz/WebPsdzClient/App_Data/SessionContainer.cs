@@ -158,15 +158,12 @@ namespace WebPsdzClient.App_Data
             UpdateCurrentOptions();
         }
 
-        private void UpdateCurrentOptions(bool reset = false)
+        private void UpdateCurrentOptions()
         {
-            if (reset)
+            bool vehicleConnected = ProgrammingJobs.PsdzContext?.Connection != null;
+            if (!vehicleConnected)
             {
-                if (SelectedSwiRegister == null)
-                {
-                    return;
-                }
-
+                OptionsDict = null;
                 SelectedSwiRegister = null;
             }
 
@@ -186,7 +183,7 @@ namespace WebPsdzClient.App_Data
                 TaskActive = false;
                 Cts.Dispose();
                 Cts = null;
-                UpdateCurrentOptions(true);
+                UpdateCurrentOptions();
                 UpdateDisplay();
             });
 
@@ -209,7 +206,7 @@ namespace WebPsdzClient.App_Data
             StopProgrammingServiceTask().ContinueWith(task =>
             {
                 TaskActive = false;
-                UpdateCurrentOptions(true);
+                UpdateCurrentOptions();
                 UpdateDisplay();
             });
 
@@ -240,7 +237,7 @@ namespace WebPsdzClient.App_Data
                 TaskActive = false;
                 Cts.Dispose();
                 Cts = null;
-                UpdateCurrentOptions(true);
+                UpdateCurrentOptions();
                 UpdateDisplay();
             });
 
@@ -269,7 +266,7 @@ namespace WebPsdzClient.App_Data
             DisconnectVehicleTask().ContinueWith(task =>
             {
                 TaskActive = false;
-                UpdateCurrentOptions(true);
+                UpdateCurrentOptions();
                 UpdateDisplay();
             });
 
@@ -301,6 +298,7 @@ namespace WebPsdzClient.App_Data
                 TaskActive = false;
                 Cts.Dispose();
                 Cts = null;
+                UpdateCurrentOptions();
                 UpdateDisplay();
             });
 
