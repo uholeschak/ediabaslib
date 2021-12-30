@@ -212,6 +212,7 @@ namespace WebPsdzClient.App_Data
 
                 _tcpListenerPort = 0;
                 _tcpListener = new TcpListener(IPAddress.Loopback, 0);
+                _tcpListener.Start();
                 IPEndPoint ipEndPoint = _tcpListener.LocalEndpoint as IPEndPoint;
                 if (ipEndPoint != null)
                 {
