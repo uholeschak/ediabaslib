@@ -184,8 +184,10 @@ namespace WebPsdzClient.App_Data
             }
         }
 
-        private TcpListener _tcpListener;
-        private int _tcpListenerPort;
+        private TcpListener _tcpListenerDiag;
+        private int _tcpListenerDiagPort;
+        private TcpListener _tcpListenerControl;
+        private int _tcpListenerControlPort;
         private bool _disposed;
         private readonly object _lockObject = new object();
         private static readonly ILog log = LogManager.GetLogger(typeof(_Default));
@@ -205,21 +207,34 @@ namespace WebPsdzClient.App_Data
         {
             try
             {
-                if (_tcpListener != null)
+                if (_tcpListenerDiag == null)
                 {
-                    return true;
+                    _tcpListenerDiagPort = 0;
+                    _tcpListenerDiag = new TcpListener(IPAddress.Loopback, 0);
+                    _tcpListenerDiag.Start();
+                    IPEndPoint ipEndPoint = _tcpListenerDiag.LocalEndpoint as IPEndPoint;
+                    if (ipEndPoint != null)
+                    {
+                        _tcpListenerDiagPort = ipEndPoint.Port;
+                    }
+
+                    log.InfoFormat("StartTcpListener Diag Port: {0}", _tcpListenerDiagPort);
                 }
 
-                _tcpListenerPort = 0;
-                _tcpListener = new TcpListener(IPAddress.Loopback, 0);
-                _tcpListener.Start();
-                IPEndPoint ipEndPoint = _tcpListener.LocalEndpoint as IPEndPoint;
-                if (ipEndPoint != null)
+                if (_tcpListenerControl == null)
                 {
-                    _tcpListenerPort = ipEndPoint.Port;
+                    _tcpListenerControlPort = 0;
+                    _tcpListenerControl = new TcpListener(IPAddress.Loopback, 0);
+                    _tcpListenerControl.Start();
+                    IPEndPoint ipEndPoint = _tcpListenerControl.LocalEndpoint as IPEndPoint;
+                    if (ipEndPoint != null)
+                    {
+                        _tcpListenerControlPort = ipEndPoint.Port;
+                    }
+
+                    log.InfoFormat("StartTcpListener Control Port: {0}", _tcpListenerControlPort);
                 }
 
-                log.InfoFormat("StartTcpListener Port: {0}", _tcpListenerPort);
                 return true;
             }
             catch (Exception ex)
@@ -234,12 +249,20 @@ namespace WebPsdzClient.App_Data
         {
             try
             {
-                if (_tcpListener != null)
+                if (_tcpListenerDiag != null)
                 {
-                    log.ErrorFormat("StopTcpListener Stopping Port: {0}", _tcpListenerPort);
-                    _tcpListener.Stop();
-                    _tcpListener = null;
-                    _tcpListenerPort = 0;
+                    log.ErrorFormat("StopTcpListener Stopping Diag Port: {0}", _tcpListenerDiagPort);
+                    _tcpListenerDiag.Stop();
+                    _tcpListenerDiag = null;
+                    _tcpListenerDiagPort = 0;
+                }
+
+                if (_tcpListenerControl != null)
+                {
+                    log.ErrorFormat("StopTcpListener Stopping Diag Port: {0}", _tcpListenerControlPort);
+                    _tcpListenerControl.Stop();
+                    _tcpListenerControl = null;
+                    _tcpListenerControlPort = 0;
                 }
 
                 return true;
