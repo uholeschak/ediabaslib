@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using log4net;
 using PsdzClient;
 using PsdzClient.Programing;
 
@@ -181,8 +184,11 @@ namespace WebPsdzClient.App_Data
             }
         }
 
+        private TcpListener _tcpListener;
+        private int _tcpListenerPort;
         private bool _disposed;
         private readonly object _lockObject = new object();
+        private static readonly ILog log = LogManager.GetLogger(typeof(_Default));
 
         public SessionContainer(string dealerId)
         {
@@ -192,6 +198,57 @@ namespace WebPsdzClient.App_Data
             ProgrammingJobs.ProgressEvent += UpdateProgress;
             StatusText = string.Empty;
             ProgressText = string.Empty;
+            StartTcpListener();
+        }
+
+        private bool StartTcpListener()
+        {
+            try
+            {
+                if (_tcpListener != null)
+                {
+                    return true;
+                }
+
+                _tcpListenerPort = 0;
+                _tcpListener = new TcpListener(IPAddress.Loopback, 0);
+                IPEndPoint ipEndPoint = _tcpListener.LocalEndpoint as IPEndPoint;
+                if (ipEndPoint != null)
+                {
+                    _tcpListenerPort = ipEndPoint.Port;
+                }
+
+                log.InfoFormat("StartTcpListener Port: {0}", _tcpListenerPort);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("StartTcpListener Exception: {0}", ex.Message);
+            }
+
+            return false;
+        }
+
+        private bool StopTcpListener()
+        {
+            try
+            {
+                if (_tcpListener != null)
+                {
+                    log.ErrorFormat("StopTcpListener Stopping Port: {0}", _tcpListenerPort);
+                    _tcpListener.Stop();
+                    _tcpListener = null;
+                    _tcpListenerPort = 0;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("StopTcpListener Exception: {0}", ex.Message);
+            }
+
+            return false;
         }
 
         public void UpdateStatus(string message = null)
@@ -436,6 +493,8 @@ namespace WebPsdzClient.App_Data
                     ProgrammingJobs.Dispose();
                     ProgrammingJobs = null;
                 }
+
+                StopTcpListener();
 
                 // If disposing equals true, dispose all managed
                 // and unmanaged resources.
