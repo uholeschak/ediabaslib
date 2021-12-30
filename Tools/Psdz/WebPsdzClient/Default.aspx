@@ -61,6 +61,11 @@
                             <asp:TextBox ID="TextBoxStatus" runat="server" CssClass="text-left" ReadOnly="True" TextMode="MultiLine" Rows="10"></asp:TextBox>
                         </asp:TableCell>
                     </asp:TableRow>
+                    <asp:TableRow>
+                        <asp:TableCell>
+                            <asp:TextBox ID="TextBoxProgress" runat="server" CssClass="text-left" ReadOnly="True" TextMode="SingleLine"></asp:TextBox>
+                        </asp:TableCell>
+                    </asp:TableRow>
                 </asp:Table>
                 <asp:Timer ID="TimerUpdate" runat="server" Interval="5000" OnTick="TimerUpdate_Tick">
                 </asp:Timer>

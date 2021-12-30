@@ -186,11 +186,20 @@ namespace WebPsdzClient.App_Data
 
         private TcpListener _tcpListenerDiag;
         private int _tcpListenerDiagPort;
+        private TcpClient _tcpClientDiag;
+        private NetworkStream _tcpClientDiagStream;
         private TcpListener _tcpListenerControl;
         private int _tcpListenerControlPort;
+        private TcpClient _tcpClientControl;
+        private NetworkStream _tcpClientControlStream;
+        private Thread _tcpThread;
+        private AutoResetEvent _tcpThreadStopEvent = new AutoResetEvent(false);
         private bool _disposed;
         private readonly object _lockObject = new object();
         private static readonly ILog log = LogManager.GetLogger(typeof(_Default));
+
+        private const int TcpSendBufferSize = 1400;
+        private const int TcpSendTimeout = 5000;
 
         public SessionContainer(string dealerId)
         {
@@ -200,7 +209,6 @@ namespace WebPsdzClient.App_Data
             ProgrammingJobs.ProgressEvent += UpdateProgress;
             StatusText = string.Empty;
             ProgressText = string.Empty;
-            StartTcpListener();
         }
 
         private bool StartTcpListener()
@@ -235,6 +243,13 @@ namespace WebPsdzClient.App_Data
                     log.InfoFormat("StartTcpListener Control Port: {0}", _tcpListenerControlPort);
                 }
 
+                if (_tcpThread == null)
+                {
+                    _tcpThreadStopEvent.Reset();
+                    _tcpThread = new Thread(TcpThread);
+                    _tcpThread.Priority = ThreadPriority.Normal;
+                    _tcpThread.Start();
+                }
                 return true;
             }
             catch (Exception ex)
@@ -249,6 +264,9 @@ namespace WebPsdzClient.App_Data
         {
             try
             {
+                TcpClientDiagDisconnect();
+                TcpClientControlDisconnect();
+
                 if (_tcpListenerDiag != null)
                 {
                     log.ErrorFormat("StopTcpListener Stopping Diag Port: {0}", _tcpListenerDiagPort);
@@ -265,6 +283,17 @@ namespace WebPsdzClient.App_Data
                     _tcpListenerControlPort = 0;
                 }
 
+                if (_tcpThread != null)
+                {
+                    _tcpThreadStopEvent.Set();
+                    if (!_tcpThread.Join(5000))
+                    {
+                        log.ErrorFormat("StopTcpListener Stopping thread failed");
+                    }
+
+                    _tcpThread = null;
+                }
+
                 return true;
             }
             catch (Exception ex)
@@ -273,6 +302,121 @@ namespace WebPsdzClient.App_Data
             }
 
             return false;
+        }
+
+        private bool TcpClientDiagDisconnect()
+        {
+            try
+            {
+                if (_tcpClientDiagStream != null)
+                {
+                    _tcpClientDiagStream.Close();
+                    _tcpClientDiagStream = null;
+                }
+
+                if (_tcpClientDiag != null)
+                {
+                    _tcpClientDiag.Close();
+                    _tcpClientDiag = null;
+                    log.InfoFormat("TcpClientDiagDisconnect port: {0}", _tcpListenerDiagPort);
+                }
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("TcpClientDiagDisconnect Exception: {0}", ex.Message);
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool TcpClientControlDisconnect()
+        {
+            try
+            {
+                if (_tcpClientControlStream != null)
+                {
+                    _tcpClientControlStream.Close();
+                    _tcpClientControlStream = null;
+                }
+
+                if (_tcpClientControl != null)
+                {
+                    _tcpClientControl.Close();
+                    _tcpClientControl = null;
+                    log.InfoFormat("TcpClientControlDisconnect port: {0}", _tcpListenerControlPort);
+                }
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("TcpClientControlDisconnect Exception: {0}", ex.Message);
+                return false;
+            }
+
+            return true;
+        }
+
+        private void TcpThread()
+        {
+            log.InfoFormat("TcpThread started");
+            for (;;)
+            {
+                if (_tcpThreadStopEvent.WaitOne(100))
+                {
+                    break;
+                }
+
+                try
+                {
+                    if (_tcpClientDiag != null)
+                    {
+                        if (!_tcpClientDiag.Connected)
+                        {
+                            TcpClientDiagDisconnect();
+                        }
+                    }
+
+                    if (_tcpClientDiag == null && _tcpListenerDiag.Pending())
+                    {
+                        _tcpClientDiag = _tcpListenerDiag.AcceptTcpClient();
+                        _tcpClientDiag.SendBufferSize = TcpSendBufferSize;
+                        _tcpClientDiag.SendTimeout = TcpSendTimeout;
+                        _tcpClientDiag.NoDelay = true;
+                        _tcpClientDiagStream = _tcpClientDiag.GetStream();
+                        log.InfoFormat("TcpThread Accept diag port: {0}", _tcpListenerDiagPort);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.ErrorFormat("TcpThread Accept Exception: {0}", ex.Message);
+                }
+
+                try
+                {
+                    if (_tcpClientControl != null)
+                    {
+                        if (!_tcpClientControl.Connected)
+                        {
+                            TcpClientControlDisconnect();
+                        }
+                    }
+
+                    if (_tcpClientControl == null && _tcpListenerControl.Pending())
+                    {
+                        _tcpClientControl = _tcpListenerControl.AcceptTcpClient();
+                        _tcpClientControl.SendBufferSize = TcpSendBufferSize;
+                        _tcpClientControl.SendTimeout = TcpSendTimeout;
+                        _tcpClientControl.NoDelay = true;
+                        _tcpClientControlStream = _tcpClientControl.GetStream();
+                        log.InfoFormat("TcpThread Accept control port: {0}", _tcpListenerControlPort);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.ErrorFormat("TcpThread Accept Exception: {0}", ex.Message);
+                }
+            }
+            log.InfoFormat("TcpThread stopped");
         }
 
         public void UpdateStatus(string message = null)
@@ -411,6 +555,11 @@ namespace WebPsdzClient.App_Data
                 return;
             }
 
+            if (!StartTcpListener())
+            {
+                return;
+            }
+
             Cts = new CancellationTokenSource();
             ConnectVehicleTask(istaFolder, ipAddress, icomConnection).ContinueWith(task =>
             {
@@ -445,6 +594,7 @@ namespace WebPsdzClient.App_Data
             DisconnectVehicleTask().ContinueWith(task =>
             {
                 TaskActive = false;
+                StopTcpListener();
                 UpdateCurrentOptions();
                 UpdateDisplay();
             });

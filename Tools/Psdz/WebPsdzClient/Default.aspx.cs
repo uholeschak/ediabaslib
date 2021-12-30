@@ -306,6 +306,7 @@ namespace WebPsdzClient
                 ButtonAbort.Enabled = active && abortPossible;
 
                 TextBoxStatus.Text = sessionContainer.StatusText;
+                TextBoxProgress.Text = sessionContainer.ProgressText;
 
                 if (!UpdatePanelStatus.IsInPartialRendering)
                 {
