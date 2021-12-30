@@ -22,6 +22,8 @@ namespace WebPsdzClient.App_Data
                 TcpClientStream = null;
                 LastTcpRecTick = DateTime.MinValue.Ticks;
                 LastTcpSendTick = DateTime.MinValue.Ticks;
+                ConnectFailure = false;
+                DataBuffer = new byte[0x200];
             }
 
             public readonly BmwTcpChannel BmpBmwTcpChannel;
@@ -30,6 +32,8 @@ namespace WebPsdzClient.App_Data
             public NetworkStream TcpClientStream;
             public long LastTcpRecTick;
             public long LastTcpSendTick;
+            public bool ConnectFailure;
+            public byte[] DataBuffer;
         }
 
         private class BmwTcpChannel
@@ -385,6 +389,11 @@ namespace WebPsdzClient.App_Data
                     return true;
                 }
 
+                if (bmwTcpClientData.ConnectFailure)
+                {
+                    TcpClientDisconnect(bmwTcpClientData, port);
+                }
+
                 if (!IsTcpClientConnected(bmwTcpClientData.TcpClientConnection))
                 {
                     TcpClientDisconnect(bmwTcpClientData, port);
@@ -393,11 +402,13 @@ namespace WebPsdzClient.App_Data
                         return true;
                     }
 
+                    bmwTcpClientData.ConnectFailure = false;
                     bmwTcpClientData.TcpClientConnection = bmwTcpListener.AcceptTcpClient();
                     bmwTcpClientData.TcpClientConnection.SendBufferSize = TcpSendBufferSize;
                     bmwTcpClientData.TcpClientConnection.SendTimeout = TcpSendTimeout;
                     bmwTcpClientData.TcpClientConnection.NoDelay = true;
                     bmwTcpClientData.TcpClientStream = bmwTcpClientData.TcpClientConnection.GetStream();
+                    TcpReceive(bmwTcpClientData);
                     log.InfoFormat("TcpThread Accept port: {0}", port);
                 }
             }
@@ -431,6 +442,8 @@ namespace WebPsdzClient.App_Data
                     bmwTcpClientData.TcpClientConnection = null;
                     log.ErrorFormat("TcpClientDiagDisconnect Client closed port: {0}", port);
                 }
+
+                bmwTcpClientData.ConnectFailure = false;
             }
             catch (Exception ex)
             {
@@ -439,6 +452,43 @@ namespace WebPsdzClient.App_Data
             }
 
             return true;
+        }
+
+        private bool TcpReceive(BmwTcpClientData bmwTcpClientData)
+        {
+            try
+            {
+                bmwTcpClientData.TcpClientStream.BeginRead(bmwTcpClientData.DataBuffer, 0, bmwTcpClientData.DataBuffer.Length, TcpReceiver, bmwTcpClientData);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("TcpReceive Exception: {0}", ex.Message);
+                bmwTcpClientData.ConnectFailure = true;
+                return false;
+            }
+        }
+
+        private void TcpReceiver(IAsyncResult ar)
+        {
+            try
+            {
+                if (ar.AsyncState is BmwTcpClientData bmwTcpClientData)
+                {
+                    int length = bmwTcpClientData.TcpClientStream.EndRead(ar);
+                    if (length > 0)
+                    {
+                        byte[] data = new byte[length];
+                        Array.Copy(bmwTcpClientData.DataBuffer, data, length);
+                    }
+
+                    TcpReceive(bmwTcpClientData);
+                }
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("TcpReceiver Exception: {0}", ex.Message);
+            }
         }
 
         private bool IsTcpClientConnected(TcpClient tcpClient)
