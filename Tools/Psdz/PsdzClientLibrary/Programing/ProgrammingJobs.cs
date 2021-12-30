@@ -292,6 +292,7 @@ namespace PsdzClient.Programing
                 };
 
                 bool detectResult = PsdzContext.DetectVehicle.DetectVehicleBmwFast();
+                PsdzContext.DetectVehicle.Disconnect();
                 cts?.Token.ThrowIfCancellationRequested();
                 if (!detectResult)
                 {

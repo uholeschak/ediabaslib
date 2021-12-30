@@ -472,6 +472,18 @@ namespace PsdzClient
             }
         }
 
+        public bool Disconnect()
+        {
+            try
+            {
+                return _ediabas.EdInterfaceClass.InterfaceDisconnect();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         private bool AbortEdiabasJob()
         {
             if (AbortRequest != null)
