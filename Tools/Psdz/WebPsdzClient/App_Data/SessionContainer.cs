@@ -12,56 +12,46 @@ namespace WebPsdzClient.App_Data
 {
     public class SessionContainer : IDisposable
     {
-        private class BmwTcpClientData
+        private class EnetTcpClientData
         {
-            public BmwTcpClientData(BmwTcpChannel bmwTcpChannel, int index)
+            public EnetTcpClientData(EnetTcpChannel enetTcpChannel, int index)
             {
-                BmpBmwTcpChannel = bmwTcpChannel;
+                EnetTcpChannel = enetTcpChannel;
                 Index = index;
                 TcpClientConnection = null;
                 TcpClientStream = null;
-                LastTcpRecTick = DateTime.MinValue.Ticks;
-                LastTcpSendTick = DateTime.MinValue.Ticks;
                 ConnectFailure = false;
                 DataBuffer = new byte[0x200];
                 RecQueue = new Queue<byte>();
             }
 
-            public readonly BmwTcpChannel BmpBmwTcpChannel;
+            public readonly EnetTcpChannel EnetTcpChannel;
             public readonly int Index;
             public TcpClient TcpClientConnection;
             public NetworkStream TcpClientStream;
-            public long LastTcpRecTick;
-            public long LastTcpSendTick;
             public bool ConnectFailure;
             public byte[] DataBuffer;
             public Queue<byte> RecQueue;
         }
 
-        private class BmwTcpChannel
+        private class EnetTcpChannel
         {
-            public BmwTcpChannel(bool control)
+            public EnetTcpChannel(bool control)
             {
                 Control = control;
-                DiagPort = 0;
-                ControlPort = 0;
-                TcpClientDiagList = new List<BmwTcpClientData>();
-                TcpClientControlList = new List<BmwTcpClientData>();
+                ServerPort = 0;
+                TcpClientList = new List<EnetTcpClientData>();
                 RecEvent = new AutoResetEvent(false);
                 for (int i = 0; i < 10; i++)
                 {
-                    TcpClientDiagList.Add(new BmwTcpClientData(this, i));
-                    TcpClientControlList.Add(new BmwTcpClientData(this, i));
+                    TcpClientList.Add(new EnetTcpClientData(this, i));
                 }
             }
 
             public bool Control;
-            public int DiagPort;
-            public int ControlPort;
-            public TcpListener TcpServerDiag;
-            public readonly List<BmwTcpClientData> TcpClientDiagList;
-            public TcpListener TcpServerControl;
-            public readonly List<BmwTcpClientData> TcpClientControlList;
+            public int ServerPort;
+            public TcpListener TcpServer;
+            public readonly List<EnetTcpClientData> TcpClientList;
             public AutoResetEvent RecEvent;
         }
 
@@ -237,7 +227,7 @@ namespace WebPsdzClient.App_Data
             }
         }
 
-        private List<BmwTcpChannel> _bmwTcpChannels = new List<BmwTcpChannel>();
+        private List<EnetTcpChannel> _bmwTcpChannels = new List<EnetTcpChannel>();
         private Thread _tcpThread;
         private bool _stopThread;
         private AutoResetEvent _tcpThreadStopEvent = new AutoResetEvent(false);
@@ -264,38 +254,24 @@ namespace WebPsdzClient.App_Data
             {
                 if (_bmwTcpChannels.Count == 0)
                 {
-                    _bmwTcpChannels.Add(new BmwTcpChannel(false));
-                    _bmwTcpChannels.Add(new BmwTcpChannel(true));
+                    _bmwTcpChannels.Add(new EnetTcpChannel(false));
+                    _bmwTcpChannels.Add(new EnetTcpChannel(true));
                 }
 
-                foreach (BmwTcpChannel bmwTcpChannel in _bmwTcpChannels)
+                foreach (EnetTcpChannel bmwTcpChannel in _bmwTcpChannels)
                 {
-                    if (bmwTcpChannel.TcpServerDiag == null)
+                    if (bmwTcpChannel.TcpServer == null)
                     {
-                        bmwTcpChannel.DiagPort = 0;
-                        bmwTcpChannel.TcpServerDiag = new TcpListener(IPAddress.Loopback, 0);
-                        bmwTcpChannel.TcpServerDiag.Start();
-                        IPEndPoint ipEndPoint = bmwTcpChannel.TcpServerDiag.LocalEndpoint as IPEndPoint;
+                        bmwTcpChannel.ServerPort = 0;
+                        bmwTcpChannel.TcpServer = new TcpListener(IPAddress.Loopback, 0);
+                        bmwTcpChannel.TcpServer.Start();
+                        IPEndPoint ipEndPoint = bmwTcpChannel.TcpServer.LocalEndpoint as IPEndPoint;
                         if (ipEndPoint != null)
                         {
-                            bmwTcpChannel.DiagPort = ipEndPoint.Port;
+                            bmwTcpChannel.ServerPort = ipEndPoint.Port;
                         }
 
-                        log.InfoFormat("StartTcpListener Diag Port: {0}", bmwTcpChannel.DiagPort);
-                    }
-
-                    if (bmwTcpChannel.TcpServerControl == null)
-                    {
-                        bmwTcpChannel.ControlPort = 0;
-                        bmwTcpChannel.TcpServerControl = new TcpListener(IPAddress.Loopback, 0);
-                        bmwTcpChannel.TcpServerControl.Start();
-                        IPEndPoint ipEndPoint = bmwTcpChannel.TcpServerControl.LocalEndpoint as IPEndPoint;
-                        if (ipEndPoint != null)
-                        {
-                            bmwTcpChannel.ControlPort = ipEndPoint.Port;
-                        }
-
-                        log.InfoFormat("StartTcpListener Control Port: {0}", bmwTcpChannel.ControlPort);
+                        log.InfoFormat("StartTcpListener Port: {0}, Control: {1}", bmwTcpChannel.ServerPort, bmwTcpChannel.Control);
                     }
                 }
 
@@ -326,25 +302,16 @@ namespace WebPsdzClient.App_Data
                     return true;
                 }
 
-                foreach (BmwTcpChannel bmwTcpChannel in _bmwTcpChannels)
+                foreach (EnetTcpChannel bmwTcpChannel in _bmwTcpChannels)
                 {
-                    TcpClientDiagDisconnect(bmwTcpChannel);
-                    TcpClientControlDisconnect(bmwTcpChannel);
+                    TcpClientsDisconnect(bmwTcpChannel);
 
-                    if (bmwTcpChannel.TcpServerDiag != null)
+                    if (bmwTcpChannel.TcpServer != null)
                     {
-                        log.ErrorFormat("StopTcpListener Stopping diag port: {0}", bmwTcpChannel.DiagPort);
-                        bmwTcpChannel.TcpServerDiag.Stop();
-                        bmwTcpChannel.TcpServerDiag = null;
-                        bmwTcpChannel.DiagPort = 0;
-                    }
-
-                    if (bmwTcpChannel.TcpServerControl != null)
-                    {
-                        log.ErrorFormat("StopTcpListener Stopping diag port: {0}", bmwTcpChannel.ControlPort);
-                        bmwTcpChannel.TcpServerControl.Stop();
-                        bmwTcpChannel.TcpServerControl = null;
-                        bmwTcpChannel.ControlPort = 0;
+                        log.ErrorFormat("StopTcpListener Stopping Port: {0}, Control: {1}", bmwTcpChannel.ServerPort, bmwTcpChannel.Control);
+                        bmwTcpChannel.TcpServer.Stop();
+                        bmwTcpChannel.TcpServer = null;
+                        bmwTcpChannel.ServerPort = 0;
                     }
                 }
 
@@ -372,33 +339,20 @@ namespace WebPsdzClient.App_Data
             return false;
         }
 
-        private void TcpClientDiagDisconnect(BmwTcpChannel bmwTcpChannel)
+        private void TcpClientsDisconnect(EnetTcpChannel bmwTcpChannel)
         {
             if (bmwTcpChannel == null)
             {
                 return;
             }
 
-            foreach (BmwTcpClientData bmwTcpClientData in bmwTcpChannel.TcpClientDiagList)
+            foreach (EnetTcpClientData bmwTcpClientData in bmwTcpChannel.TcpClientList)
             {
-                TcpClientDisconnect(bmwTcpClientData, bmwTcpChannel.DiagPort);
+                TcpClientDisconnect(bmwTcpClientData);
             }
         }
 
-        private void TcpClientControlDisconnect(BmwTcpChannel bmwTcpChannel)
-        {
-            if (bmwTcpChannel == null)
-            {
-                return;
-            }
-
-            foreach (BmwTcpClientData bmwTcpClientData in bmwTcpChannel.TcpClientControlList)
-            {
-                TcpClientDisconnect(bmwTcpClientData, bmwTcpChannel.ControlPort);
-            }
-        }
-
-        private bool TcpClientConnect(TcpListener bmwTcpListener, BmwTcpClientData bmwTcpClientData, int port)
+        private bool TcpClientConnect(TcpListener bmwTcpListener, EnetTcpClientData bmwTcpClientData)
         {
             try
             {
@@ -409,12 +363,12 @@ namespace WebPsdzClient.App_Data
 
                 if (bmwTcpClientData.ConnectFailure)
                 {
-                    TcpClientDisconnect(bmwTcpClientData, port);
+                    TcpClientDisconnect(bmwTcpClientData);
                 }
 
                 if (!IsTcpClientConnected(bmwTcpClientData.TcpClientConnection))
                 {
-                    TcpClientDisconnect(bmwTcpClientData, port);
+                    TcpClientDisconnect(bmwTcpClientData);
                     if (!bmwTcpListener.Pending())
                     {
                         return true;
@@ -431,7 +385,7 @@ namespace WebPsdzClient.App_Data
                     bmwTcpClientData.TcpClientConnection.NoDelay = true;
                     bmwTcpClientData.TcpClientStream = bmwTcpClientData.TcpClientConnection.GetStream();
                     TcpReceive(bmwTcpClientData);
-                    log.InfoFormat("TcpThread Accept port: {0}", port);
+                    log.InfoFormat("TcpThread Accept Port: {0}, Control: {1}", bmwTcpClientData.EnetTcpChannel.ServerPort, bmwTcpClientData.EnetTcpChannel.Control);
                 }
             }
             catch (Exception ex)
@@ -443,7 +397,7 @@ namespace WebPsdzClient.App_Data
             return true;
         }
 
-        private bool TcpClientDisconnect(BmwTcpClientData bmwTcpClientData, int port)
+        private bool TcpClientDisconnect(EnetTcpClientData bmwTcpClientData)
         {
             try
             {
@@ -462,7 +416,7 @@ namespace WebPsdzClient.App_Data
                 {
                     bmwTcpClientData.TcpClientConnection.Close();
                     bmwTcpClientData.TcpClientConnection = null;
-                    log.ErrorFormat("TcpClientDiagDisconnect Client closed port: {0}", port);
+                    log.ErrorFormat("TcpClientDiagDisconnect Client closed Port: {0}, Control: {1}", bmwTcpClientData.EnetTcpChannel.ServerPort, bmwTcpClientData.EnetTcpChannel.Control);
                 }
 
                 lock (bmwTcpClientData.RecQueue)
@@ -480,7 +434,7 @@ namespace WebPsdzClient.App_Data
             return true;
         }
 
-        private bool TcpReceive(BmwTcpClientData bmwTcpClientData)
+        private bool TcpReceive(EnetTcpClientData bmwTcpClientData)
         {
             try
             {
@@ -499,7 +453,7 @@ namespace WebPsdzClient.App_Data
         {
             try
             {
-                if (ar.AsyncState is BmwTcpClientData bmwTcpClientData)
+                if (ar.AsyncState is EnetTcpClientData bmwTcpClientData)
                 {
                     int length = bmwTcpClientData.TcpClientStream.EndRead(ar);
                     if (length > 0)
@@ -512,7 +466,7 @@ namespace WebPsdzClient.App_Data
                             }
                         }
 
-                        bmwTcpClientData.BmpBmwTcpChannel.RecEvent.Set();
+                        bmwTcpClientData.EnetTcpChannel.RecEvent.Set();
                     }
 
                     TcpReceive(bmwTcpClientData);
@@ -567,7 +521,7 @@ namespace WebPsdzClient.App_Data
                 int index = 0;
 
                 waitHandles[index++] = _tcpThreadStopEvent;
-                foreach (BmwTcpChannel bmwTcpChannel in _bmwTcpChannels)
+                foreach (EnetTcpChannel bmwTcpChannel in _bmwTcpChannels)
                 {
                     waitHandles[index++] = bmwTcpChannel.RecEvent;
                 }
@@ -579,30 +533,15 @@ namespace WebPsdzClient.App_Data
                     break;
                 }
 
-                foreach (BmwTcpChannel bmwTcpChannel in _bmwTcpChannels)
+                foreach (EnetTcpChannel bmwTcpChannel in _bmwTcpChannels)
                 {
                     try
                     {
-                        foreach (BmwTcpClientData bmwTcpClientData in bmwTcpChannel.TcpClientDiagList)
+                        foreach (EnetTcpClientData bmwTcpClientData in bmwTcpChannel.TcpClientList)
                         {
-                            if (bmwTcpChannel.TcpServerDiag.Pending())
+                            if (bmwTcpChannel.TcpServer.Pending())
                             {
-                                TcpClientConnect(bmwTcpChannel.TcpServerDiag, bmwTcpClientData, bmwTcpChannel.DiagPort);
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        log.ErrorFormat("TcpThread Accept Exception: {0}", ex.Message);
-                    }
-
-                    try
-                    {
-                        if (bmwTcpChannel.TcpServerControl.Pending())
-                        {
-                            foreach (BmwTcpClientData bmwTcpClientData in bmwTcpChannel.TcpClientControlList)
-                            {
-                                TcpClientConnect(bmwTcpChannel.TcpServerDiag, bmwTcpClientData, bmwTcpChannel.ControlPort);
+                                TcpClientConnect(bmwTcpChannel.TcpServer, bmwTcpClientData);
                             }
                         }
                     }
