@@ -117,7 +117,7 @@ namespace CarSimulator
         {
             public BmwTcpClientData(BmwTcpChannel bmwTcpChannel, int index)
             {
-                BmpBmwTcpChannel = bmwTcpChannel;
+                BmwTcpChannel = bmwTcpChannel;
                 Index = index;
                 TcpClientConnection = null;
                 TcpClientStream = null;
@@ -125,7 +125,7 @@ namespace CarSimulator
                 LastTcpSendTick = DateTime.MinValue.Ticks;
             }
 
-            public readonly BmwTcpChannel BmpBmwTcpChannel;
+            public readonly BmwTcpChannel BmwTcpChannel;
             public readonly int Index;
             public TcpClient TcpClientConnection;
             public NetworkStream TcpClientStream;
@@ -1529,10 +1529,10 @@ namespace CarSimulator
                         UdpRecover();
                         SrvLocRecover();
 
-                        foreach (BmwTcpClientData bmwTcpClientDataControl in bmwTcpClientData.BmpBmwTcpChannel.TcpClientControlList)
+                        foreach (BmwTcpClientData bmwTcpClientDataControl in bmwTcpClientData.BmwTcpChannel.TcpClientControlList)
                         {
-                            if (bmwTcpClientDataControl.BmpBmwTcpChannel != null ||
-                                bmwTcpClientData.BmpBmwTcpChannel.TcpServerControl.Pending())
+                            if (bmwTcpClientDataControl.BmwTcpChannel != null ||
+                                bmwTcpClientData.BmwTcpChannel.TcpServerControl.Pending())
                             {
                                 ReceiveEnetControl(bmwTcpClientDataControl);
                             }
@@ -2161,7 +2161,7 @@ namespace CarSimulator
             {
                 if (bmwTcpClientData.TcpClientConnection != null)
                 {
-                    Debug.WriteLine("Control Closed [{0}]: {1}", bmwTcpClientData.Index, bmwTcpClientData.BmpBmwTcpChannel.ControlPort);
+                    Debug.WriteLine("Control Closed [{0}]: {1}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.ControlPort);
                     bmwTcpClientData.TcpClientConnection.Close();
                     bmwTcpClientData.TcpClientConnection = null;
                 }
@@ -2180,11 +2180,11 @@ namespace CarSimulator
                 if (!IsTcpClientConnected(bmwTcpClientData.TcpClientConnection))
                 {
                     EnetControlClose(bmwTcpClientData);
-                    if (!bmwTcpClientData.BmpBmwTcpChannel.TcpServerControl.Pending())
+                    if (!bmwTcpClientData.BmwTcpChannel.TcpServerControl.Pending())
                     {
                         return false;
                     }
-                    bmwTcpClientData.TcpClientConnection = bmwTcpClientData.BmpBmwTcpChannel.TcpServerControl.AcceptTcpClient();
+                    bmwTcpClientData.TcpClientConnection = bmwTcpClientData.BmwTcpChannel.TcpServerControl.AcceptTcpClient();
                     bmwTcpClientData.TcpClientConnection.SendBufferSize = TcpSendBufferSize;
                     bmwTcpClientData.TcpClientConnection.SendTimeout = TcpSendTimeout;
                     bmwTcpClientData.TcpClientConnection.NoDelay = true;
@@ -2192,7 +2192,7 @@ namespace CarSimulator
                     bmwTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
                     bmwTcpClientData.LastTcpSendTick = DateTime.MinValue.Ticks;
                     Debug.WriteLine("Control connected [{0}], Port={1}, Local={2}, Remote={3}",
-                        bmwTcpClientData.Index, bmwTcpClientData.BmpBmwTcpChannel.ControlPort,
+                        bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.ControlPort,
                         bmwTcpClientData.TcpClientConnection.Client.LocalEndPoint.ToString(),
                         bmwTcpClientData.TcpClientConnection.Client.RemoteEndPoint.ToString());
                 }
@@ -2263,7 +2263,7 @@ namespace CarSimulator
             {
                 if (bmwTcpClientData.TcpClientConnection != null)
                 {
-                    Debug.WriteLine("Diag Closed[{0}]: {1}", bmwTcpClientData.Index, bmwTcpClientData.BmpBmwTcpChannel.DiagPort);
+                    Debug.WriteLine("Diag Closed[{0}]: {1}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DiagPort);
                     bmwTcpClientData.TcpClientConnection.Close();
                     bmwTcpClientData.TcpClientConnection = null;
                 }
@@ -2286,13 +2286,13 @@ namespace CarSimulator
                 if (!IsTcpClientConnected(bmwTcpClientData.TcpClientConnection))
                 {
                     EnetDiagClose(bmwTcpClientData);
-                    if (!bmwTcpClientData.BmpBmwTcpChannel.TcpServerDiag.Pending())
+                    if (!bmwTcpClientData.BmwTcpChannel.TcpServerDiag.Pending())
                     {
                         return false;
                     }
 
-                    Debug.WriteLine("Diag connect request [{0}], Port={1}", bmwTcpClientData.Index, bmwTcpClientData.BmpBmwTcpChannel.DiagPort);
-                    bmwTcpClientData.TcpClientConnection = bmwTcpClientData.BmpBmwTcpChannel.TcpServerDiag.AcceptTcpClient();
+                    Debug.WriteLine("Diag connect request [{0}], Port={1}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DiagPort);
+                    bmwTcpClientData.TcpClientConnection = bmwTcpClientData.BmwTcpChannel.TcpServerDiag.AcceptTcpClient();
                     bmwTcpClientData.TcpClientConnection.SendBufferSize = TcpSendBufferSize;
                     bmwTcpClientData.TcpClientConnection.SendTimeout = TcpSendTimeout;
                     bmwTcpClientData.TcpClientConnection.NoDelay = true;
@@ -2301,14 +2301,14 @@ namespace CarSimulator
                     bmwTcpClientData.LastTcpSendTick = DateTime.MinValue.Ticks;
                     bmwTcpClientData.TcpNackIndex = 0;
                     Debug.WriteLine("Diag connected [{0}], Port={1}, Local={2}, Remote={3}",
-                        bmwTcpClientData.Index, bmwTcpClientData.BmpBmwTcpChannel.DiagPort,
+                        bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DiagPort,
                         bmwTcpClientData.TcpClientConnection.Client.LocalEndPoint.ToString(),
                         bmwTcpClientData.TcpClientConnection.Client.RemoteEndPoint.ToString());
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Diag exception [{0}], Port={1}: {2}", bmwTcpClientData.Index, bmwTcpClientData.BmpBmwTcpChannel.DiagPort, ex.Message);
+                Debug.WriteLine("Diag exception [{0}], Port={1}: {2}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DiagPort, ex.Message);
                 EnetDiagClose(bmwTcpClientData);
             }
 
@@ -2329,13 +2329,13 @@ namespace CarSimulator
                         dataBuffer[6] = 0xF4;
                         dataBuffer[7] = 0x00;
                         WriteNetworkStream(bmwTcpClientData, dataBuffer, 0, dataBuffer.Length);
-                        Debug.WriteLine("Alive Check [{0}], Port={1}", bmwTcpClientData.Index, bmwTcpClientData.BmpBmwTcpChannel.DiagPort);
+                        Debug.WriteLine("Alive Check [{0}], Port={1}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DiagPort);
                     }
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Keep alive exception [{0}], Port={1}: {2}", bmwTcpClientData.Index, bmwTcpClientData.BmpBmwTcpChannel.DiagPort, ex.Message);
+                Debug.WriteLine("Keep alive exception [{0}], Port={1}: {2}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DiagPort, ex.Message);
                 // ignored
             }
 
@@ -4641,7 +4641,7 @@ namespace CarSimulator
 #if true
             if (bmwTcpClientData != null)
             {
-                Debug.WriteLine("Time[{0}], Port={1}: {2}", bmwTcpClientData.Index, bmwTcpClientData.BmpBmwTcpChannel.DiagPort, DateTime.Now.ToString("hh:mm:ss.fff"));
+                Debug.WriteLine("Time[{0}], Port={1}: {2}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DiagPort, DateTime.Now.ToString("hh:mm:ss.fff"));
             }
             else
             {
