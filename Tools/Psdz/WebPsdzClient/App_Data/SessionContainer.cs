@@ -598,6 +598,7 @@ namespace WebPsdzClient.App_Data
                                 lock (enetTcpClientData.SendQueue)
                                 {
                                     data = enetTcpClientData.SendQueue.ToArray();
+                                    enetTcpClientData.SendQueue.Clear();
                                 }
 
                                 if (data.Length > 0)
