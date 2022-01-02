@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -590,6 +591,89 @@ namespace WebPsdzClient.App_Data
             return packetBytes;
         }
 
+        private List<byte> CreateBmwFastTelegram(byte[] dataPacket)
+        {
+            if (dataPacket.Length < 8)
+            {
+                return null;
+            }
+
+            IEnumerable<byte> dataContent = dataPacket.Skip(8);
+            int dataLen = dataPacket.Length - 8;
+            byte sourceAddr = dataPacket[6];
+            byte targetAddr = dataPacket[7];
+            List<byte> telegram = new List<byte>();
+
+            if (sourceAddr == 0xF4)
+            {
+                sourceAddr = 0xF1;
+            }
+
+            if (dataLen > 0x3F)
+            {
+                if (dataLen > 0xFF)
+                {
+                    telegram.Add(0x80);
+                    telegram.Add(targetAddr);
+                    telegram.Add(sourceAddr);
+                    telegram.Add(0x00);
+                    telegram.Add((byte)(dataLen >> 8));
+                    telegram.Add((byte)(dataLen & 0xFF));
+                    telegram.AddRange(dataContent);
+                }
+                else
+                {
+                    telegram.Add(0x80);
+                    telegram.Add(targetAddr);
+                    telegram.Add(sourceAddr);
+                    telegram.Add((byte)dataLen);
+                    telegram.AddRange(dataContent);
+                }
+            }
+            else
+            {
+                telegram.Add((byte)(0x80 | dataLen));
+                telegram.Add(targetAddr);
+                telegram.Add(sourceAddr);
+                telegram.AddRange(dataContent);
+            }
+
+            if (IsFunctionalAddress(targetAddr))
+            {   // functional address
+                telegram[0] |= 0xC0;
+            }
+
+            byte checksum = CalcChecksumBmwFast(telegram, telegram.Count);
+            telegram.Add(checksum);
+
+            return telegram;
+        }
+
+        public static bool IsFunctionalAddress(byte address)
+        {
+            if (address == 0xDF)
+            {
+                return true;
+            }
+
+            if (address >= 0xE6 && address <= 0xEF)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public static byte CalcChecksumBmwFast(List<byte> data, int length)
+        {
+            byte sum = 0;
+            for (int i = 0; i < length; i++)
+            {
+                sum += data[i];
+            }
+            return sum;
+        }
+
         private void TcpThread()
         {
             log.InfoFormat("TcpThread started");
@@ -657,13 +741,30 @@ namespace WebPsdzClient.App_Data
                                     {
                                         if (payloadType == 0x0001)
                                         {   // request
-                                            byte[] ackPacket = (byte[])recPacket.Clone();
-                                            ackPacket[5] = 0x02;    // ack
-                                            lock (enetTcpClientData.SendQueue)
+                                            List<byte> bmwFastTel = CreateBmwFastTelegram(recPacket);
+
+                                            if (bmwFastTel == null)
                                             {
-                                                foreach (byte ackData in ackPacket)
+                                                byte[] nackPacket = new byte[6];
+                                                nackPacket[5] = 0xFF;
+                                                lock (enetTcpClientData.SendQueue)
                                                 {
-                                                    enetTcpClientData.SendQueue.Enqueue(ackData);
+                                                    foreach (byte ackData in nackPacket)
+                                                    {
+                                                        enetTcpClientData.SendQueue.Enqueue(ackData);
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                byte[] ackPacket = (byte[])recPacket.Clone();
+                                                ackPacket[5] = 0x02;    // ack
+                                                lock (enetTcpClientData.SendQueue)
+                                                {
+                                                    foreach (byte ackData in ackPacket)
+                                                    {
+                                                        enetTcpClientData.SendQueue.Enqueue(ackData);
+                                                    }
                                                 }
                                             }
 
