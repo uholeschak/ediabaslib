@@ -23,6 +23,7 @@ namespace WebPsdzClient.App_Data
                 ConnectFailure = false;
                 DataBuffer = new byte[0x200];
                 RecQueue = new Queue<byte>();
+                SendQueue = new Queue<byte>();
             }
 
             public readonly EnetTcpChannel EnetTcpChannel;
@@ -32,6 +33,7 @@ namespace WebPsdzClient.App_Data
             public bool ConnectFailure;
             public byte[] DataBuffer;
             public Queue<byte> RecQueue;
+            public Queue<byte> SendQueue;
         }
 
         private class EnetTcpChannel
@@ -42,6 +44,7 @@ namespace WebPsdzClient.App_Data
                 ServerPort = 0;
                 TcpClientList = new List<EnetTcpClientData>();
                 RecEvent = new AutoResetEvent(false);
+                SendEvent = new AutoResetEvent(false);
                 for (int i = 0; i < 10; i++)
                 {
                     TcpClientList.Add(new EnetTcpClientData(this, i));
@@ -53,6 +56,7 @@ namespace WebPsdzClient.App_Data
             public TcpListener TcpServer;
             public readonly List<EnetTcpClientData> TcpClientList;
             public AutoResetEvent RecEvent;
+            public AutoResetEvent SendEvent;
         }
 
         public delegate void UpdateDisplayDelegate();
@@ -379,6 +383,10 @@ namespace WebPsdzClient.App_Data
                     {
                         enetTcpClientData.RecQueue.Clear();
                     }
+                    lock (enetTcpClientData.SendQueue)
+                    {
+                        enetTcpClientData.SendQueue.Clear();
+                    }
                     enetTcpClientData.TcpClientConnection = tcpListener.AcceptTcpClient();
                     enetTcpClientData.TcpClientConnection.SendBufferSize = TcpSendBufferSize;
                     enetTcpClientData.TcpClientConnection.SendTimeout = TcpSendTimeout;
@@ -422,6 +430,10 @@ namespace WebPsdzClient.App_Data
                 lock (enetTcpClientData.RecQueue)
                 {
                     enetTcpClientData.RecQueue.Clear();
+                }
+                lock (enetTcpClientData.SendQueue)
+                {
+                    enetTcpClientData.SendQueue.Clear();
                 }
                 enetTcpClientData.ConnectFailure = false;
             }
@@ -512,18 +524,54 @@ namespace WebPsdzClient.App_Data
             }
         }
 
+        private void WriteNetworkStream(EnetTcpClientData enetTcpClientData, byte[] buffer, int offset, int size)
+        {
+            if (size == 0)
+            {
+                return;
+            }
+
+            int packetSize = enetTcpClientData.TcpClientConnection.SendBufferSize;
+            int pos = 0;
+            while (pos < size)
+            {
+                int length = size;
+                if (packetSize > 0)
+                {
+                    length = packetSize;
+                }
+
+                if (length > size - pos)
+                {
+                    length = size - pos;
+                }
+
+                try
+                {
+                    enetTcpClientData.TcpClientStream.Write(buffer, offset + pos, length);
+                    pos += length;
+                }
+                catch (Exception ex)
+                {
+                    log.ErrorFormat("WriteNetworkStream Exception: {0}", ex.Message);
+                    throw;
+                }
+            }
+        }
+
         private void TcpThread()
         {
             log.InfoFormat("TcpThread started");
             for (;;)
             {
-                WaitHandle[] waitHandles = new WaitHandle[1 + _enetTcpChannels.Count];
+                WaitHandle[] waitHandles = new WaitHandle[1 + _enetTcpChannels.Count * 2];
                 int index = 0;
 
                 waitHandles[index++] = _tcpThreadStopEvent;
                 foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
                 {
                     waitHandles[index++] = enetTcpChannel.RecEvent;
+                    waitHandles[index++] = enetTcpChannel.SendEvent;
                 }
 
                 WaitHandle.WaitAny(waitHandles, 100, false);
@@ -542,6 +590,20 @@ namespace WebPsdzClient.App_Data
                             if (enetTcpChannel.TcpServer.Pending())
                             {
                                 TcpClientConnect(enetTcpChannel.TcpServer, enetTcpClientData);
+                            }
+
+                            if (enetTcpClientData.TcpClientStream != null)
+                            {
+                                byte[] data;
+                                lock (enetTcpClientData.SendQueue)
+                                {
+                                    data = enetTcpClientData.SendQueue.ToArray();
+                                }
+
+                                if (data.Length > 0)
+                                {
+                                    WriteNetworkStream(enetTcpClientData, data, 0, data.Length);
+                                }
                             }
                         }
                     }
