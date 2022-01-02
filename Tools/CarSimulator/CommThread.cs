@@ -2427,12 +2427,26 @@ namespace CarSimulator
                     if (sourceAddr == TcpTesterAddr) sourceAddr = 0xF1;
                     if (dataLen > 0x3F)
                     {
-                        receiveData[0] = 0x80;
-                        receiveData[1] = targetAddr;
-                        receiveData[2] = sourceAddr;
-                        receiveData[3] = (byte)dataLen;
-                        Array.Copy(dataBuffer, 8, receiveData, 4, dataLen);
-                        len = dataLen + 4;
+                        if (dataLen > 0xFF)
+                        {
+                            receiveData[0] = 0x80;
+                            receiveData[1] = targetAddr;
+                            receiveData[2] = sourceAddr;
+                            receiveData[3] = 0;
+                            receiveData[4] = (byte)(dataLen >> 8);
+                            receiveData[5] = (byte)(dataLen & 0xFF);
+                            Array.Copy(dataBuffer, 8, receiveData, 6, dataLen);
+                            len = dataLen + 6;
+                        }
+                        else
+                        {
+                            receiveData[0] = 0x80;
+                            receiveData[1] = targetAddr;
+                            receiveData[2] = sourceAddr;
+                            receiveData[3] = (byte)dataLen;
+                            Array.Copy(dataBuffer, 8, receiveData, 4, dataLen);
+                            len = dataLen + 4;
+                        }
                     }
                     else
                     {
