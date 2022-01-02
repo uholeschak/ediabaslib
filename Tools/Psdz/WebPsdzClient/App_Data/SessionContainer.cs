@@ -559,6 +559,36 @@ namespace WebPsdzClient.App_Data
             }
         }
 
+        private byte[] GetQueuePayload(Queue<byte> queue)
+        {
+            if (queue.Count < 6)
+            {
+                return null;
+            }
+
+            byte[] data = queue.ToArray();
+            UInt32 payloadLength = (((UInt32)data[0] << 24) | ((UInt32)data[1] << 16) | ((UInt32)data[2] << 8) | data[3]);
+            if (payloadLength < data.Length - 6)
+            {
+                return null;
+            }
+
+            if (payloadLength < 6 || payloadLength > 0x00FFFFFF)
+            {
+                log.ErrorFormat("GetQueuePayload: Invald payload length: {0}", payloadLength);
+                throw new Exception("Invalid payload length");
+            }
+
+            byte[] payload = new byte[payloadLength - 4];
+            Array.Copy(data, 4, payload, 0, payloadLength - 4);
+            for (int i = 0; i < payloadLength + 6; i++)
+            {
+                queue.Dequeue();
+            }
+
+            return payload;
+        }
+
         private void TcpThread()
         {
             log.InfoFormat("TcpThread started");
@@ -604,6 +634,24 @@ namespace WebPsdzClient.App_Data
                                 if (data.Length > 0)
                                 {
                                     WriteNetworkStream(enetTcpClientData, data, 0, data.Length);
+                                }
+
+                                byte[] recPayload;
+                                lock (enetTcpClientData.RecQueue)
+                                {
+                                    recPayload = GetQueuePayload(enetTcpClientData.RecQueue);
+                                }
+
+                                if (recPayload != null && recPayload.Length > 2)
+                                {
+                                    UInt32 payloadType = ((UInt32)recPayload[0] << 8) | recPayload[1];
+                                    if (!enetTcpClientData.EnetTcpChannel.Control)
+                                    {
+                                        if (payloadType == 0x0001)
+                                        {
+
+                                        }
+                                    }
                                 }
                             }
                         }
