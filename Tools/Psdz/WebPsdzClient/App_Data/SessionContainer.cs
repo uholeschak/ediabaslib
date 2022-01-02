@@ -559,7 +559,7 @@ namespace WebPsdzClient.App_Data
             }
         }
 
-        private byte[] GetQueuePayload(Queue<byte> queue)
+        private byte[] GetQueuePacket(Queue<byte> queue)
         {
             if (queue.Count < 6)
             {
@@ -568,25 +568,26 @@ namespace WebPsdzClient.App_Data
 
             byte[] data = queue.ToArray();
             UInt32 payloadLength = (((UInt32)data[0] << 24) | ((UInt32)data[1] << 16) | ((UInt32)data[2] << 8) | data[3]);
-            if (payloadLength < data.Length - 6)
-            {
-                return null;
-            }
-
             if (payloadLength < 6 || payloadLength > 0x00FFFFFF)
             {
                 log.ErrorFormat("GetQueuePayload: Invald payload length: {0}", payloadLength);
                 throw new Exception("Invalid payload length");
             }
 
-            byte[] payload = new byte[payloadLength - 4];
-            Array.Copy(data, 4, payload, 0, payloadLength - 4);
-            for (int i = 0; i < payloadLength + 6; i++)
+            UInt32 packetLength = payloadLength + 6;
+            if (packetLength < data.Length)
+            {
+                return null;
+            }
+
+            byte[] packetBytes = new byte[packetLength];
+            Array.Copy(data, 0, packetBytes, 0, packetLength);
+            for (int i = 0; i < packetLength; i++)
             {
                 queue.Dequeue();
             }
 
-            return payload;
+            return packetBytes;
         }
 
         private void TcpThread()
@@ -624,34 +625,63 @@ namespace WebPsdzClient.App_Data
 
                             if (enetTcpClientData.TcpClientStream != null)
                             {
-                                byte[] data;
+                                byte[] recPacket;
+                                lock (enetTcpClientData.RecQueue)
+                                {
+                                    recPacket = GetQueuePacket(enetTcpClientData.RecQueue);
+                                }
+
+                                if (recPacket != null && recPacket.Length >= 6)
+                                {
+                                    UInt32 payloadType = ((UInt32)recPacket[4] << 8) | recPacket[5];
+                                    if (enetTcpClientData.EnetTcpChannel.Control)
+                                    {
+                                        if (payloadType == 0x0010)
+                                        {   // ignition state
+                                            byte[] statePacket = new byte[6 + 1];
+                                            statePacket[3] = 0x06;    // length
+                                            statePacket[5] = 0x10;    // state
+                                            statePacket[6] = 0x05;    // ignition on
+                                            lock (enetTcpClientData.SendQueue)
+                                            {
+                                                foreach (byte stateData in statePacket)
+                                                {
+                                                    enetTcpClientData.SendQueue.Enqueue(stateData);
+                                                }
+                                            }
+
+                                            enetTcpChannel.SendEvent.Set();
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (payloadType == 0x0001)
+                                        {   // request
+                                            byte[] ackPacket = (byte[])recPacket.Clone();
+                                            ackPacket[5] = 0x02;    // ack
+                                            lock (enetTcpClientData.SendQueue)
+                                            {
+                                                foreach (byte ackData in ackPacket)
+                                                {
+                                                    enetTcpClientData.SendQueue.Enqueue(ackData);
+                                                }
+                                            }
+
+                                            enetTcpChannel.SendEvent.Set();
+                                        }
+                                    }
+                                }
+
+                                byte[] sendData;
                                 lock (enetTcpClientData.SendQueue)
                                 {
-                                    data = enetTcpClientData.SendQueue.ToArray();
+                                    sendData = enetTcpClientData.SendQueue.ToArray();
                                     enetTcpClientData.SendQueue.Clear();
                                 }
 
-                                if (data.Length > 0)
+                                if (sendData.Length > 0)
                                 {
-                                    WriteNetworkStream(enetTcpClientData, data, 0, data.Length);
-                                }
-
-                                byte[] recPayload;
-                                lock (enetTcpClientData.RecQueue)
-                                {
-                                    recPayload = GetQueuePayload(enetTcpClientData.RecQueue);
-                                }
-
-                                if (recPayload != null && recPayload.Length > 2)
-                                {
-                                    UInt32 payloadType = ((UInt32)recPayload[0] << 8) | recPayload[1];
-                                    if (!enetTcpClientData.EnetTcpChannel.Control)
-                                    {
-                                        if (payloadType == 0x0001)
-                                        {
-
-                                        }
-                                    }
+                                    WriteNetworkStream(enetTcpClientData, sendData, 0, sendData.Length);
                                 }
                             }
                         }
