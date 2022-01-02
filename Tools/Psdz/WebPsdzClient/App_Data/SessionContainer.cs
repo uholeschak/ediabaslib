@@ -583,9 +583,9 @@ namespace WebPsdzClient.App_Data
 
                 foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
                 {
-                    try
+                    foreach (EnetTcpClientData enetTcpClientData in enetTcpChannel.TcpClientList)
                     {
-                        foreach (EnetTcpClientData enetTcpClientData in enetTcpChannel.TcpClientList)
+                        try
                         {
                             if (enetTcpChannel.TcpServer.Pending())
                             {
@@ -607,10 +607,11 @@ namespace WebPsdzClient.App_Data
                                 }
                             }
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        log.ErrorFormat("TcpThread Accept Exception: {0}", ex.Message);
+                        catch (Exception ex)
+                        {
+                            log.ErrorFormat("TcpThread WriteNetworkStream Exception: {0}", ex.Message);
+                            enetTcpClientData.ConnectFailure = true;
+                        }
                     }
                 }
             }
