@@ -254,7 +254,7 @@ namespace WebPsdzClient.App_Data
             StatusText = string.Empty;
             ProgressText = string.Empty;
 
-            EdInterfaceEnet edInterfaceEnet = new EdInterfaceEnet();
+            EdInterfaceEnet edInterfaceEnet = new EdInterfaceEnet(false);
             _ediabas = new EdiabasNet
             {
                 EdInterfaceClass = edInterfaceEnet,

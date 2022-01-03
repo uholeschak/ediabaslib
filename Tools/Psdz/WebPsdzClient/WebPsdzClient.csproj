@@ -242,6 +242,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\EdiabasLib\EdiabasLib\EdiabasLib.csproj">
+      <Project>{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}</Project>
+      <Name>EdiabasLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PsdzClientLibrary\PsdzClientLibrary.csproj">
       <Project>{eef1264d-d00f-44d4-b21c-d65cf54e149e}</Project>
       <Name>PsdzClientLibrary</Name>

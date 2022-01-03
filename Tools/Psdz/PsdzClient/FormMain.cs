@@ -434,7 +434,7 @@ namespace PsdzClient
         private List<EdInterfaceEnet.EnetConnection> SearchVehicles()
         {
             List<EdInterfaceEnet.EnetConnection> detectedVehicles;
-            using (EdInterfaceEnet edInterface = new EdInterfaceEnet())
+            using (EdInterfaceEnet edInterface = new EdInterfaceEnet(false))
             {
                 detectedVehicles = edInterface.DetectedVehicles("auto:all");
             }

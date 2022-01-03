@@ -58,7 +58,7 @@ namespace PsdzClient
 
         public DetectVehicle(string ecuPath, EdInterfaceEnet.EnetConnection enetConnection = null)
         {
-            EdInterfaceEnet edInterfaceEnet = new EdInterfaceEnet();
+            EdInterfaceEnet edInterfaceEnet = new EdInterfaceEnet(false);
             _ediabas = new EdiabasNet
             {
                 EdInterfaceClass = edInterfaceEnet,
