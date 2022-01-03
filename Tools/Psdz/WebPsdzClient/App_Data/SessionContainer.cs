@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using EdiabasLib;
 using log4net;
 using PsdzClient;
 using PsdzClient.Programing;
@@ -236,6 +237,7 @@ namespace WebPsdzClient.App_Data
         private Thread _tcpThread;
         private bool _stopThread;
         private AutoResetEvent _tcpThreadStopEvent = new AutoResetEvent(false);
+        private EdiabasNet _ediabas;
         private bool _disposed;
         private readonly object _lockObject = new object();
         private static readonly ILog log = LogManager.GetLogger(typeof(_Default));
@@ -251,6 +253,13 @@ namespace WebPsdzClient.App_Data
             ProgrammingJobs.ProgressEvent += UpdateProgress;
             StatusText = string.Empty;
             ProgressText = string.Empty;
+
+            EdInterfaceEnet edInterfaceEnet = new EdInterfaceEnet();
+            _ediabas = new EdiabasNet
+            {
+                EdInterfaceClass = edInterfaceEnet,
+                AbortJobFunc = AbortEdiabasJob
+            };
         }
 
         private bool StartTcpListener()
@@ -602,7 +611,7 @@ namespace WebPsdzClient.App_Data
             int dataLen = dataPacket.Length - 8;
             byte sourceAddr = dataPacket[6];
             byte targetAddr = dataPacket[7];
-            List<byte> telegram = new List<byte>();
+            List<byte> bmwFastTel = new List<byte>();
 
             if (sourceAddr == 0xF4)
             {
@@ -613,40 +622,40 @@ namespace WebPsdzClient.App_Data
             {
                 if (dataLen > 0xFF)
                 {
-                    telegram.Add(0x80);
-                    telegram.Add(targetAddr);
-                    telegram.Add(sourceAddr);
-                    telegram.Add(0x00);
-                    telegram.Add((byte)(dataLen >> 8));
-                    telegram.Add((byte)(dataLen & 0xFF));
-                    telegram.AddRange(dataContent);
+                    bmwFastTel.Add(0x80);
+                    bmwFastTel.Add(targetAddr);
+                    bmwFastTel.Add(sourceAddr);
+                    bmwFastTel.Add(0x00);
+                    bmwFastTel.Add((byte)(dataLen >> 8));
+                    bmwFastTel.Add((byte)(dataLen & 0xFF));
+                    bmwFastTel.AddRange(dataContent);
                 }
                 else
                 {
-                    telegram.Add(0x80);
-                    telegram.Add(targetAddr);
-                    telegram.Add(sourceAddr);
-                    telegram.Add((byte)dataLen);
-                    telegram.AddRange(dataContent);
+                    bmwFastTel.Add(0x80);
+                    bmwFastTel.Add(targetAddr);
+                    bmwFastTel.Add(sourceAddr);
+                    bmwFastTel.Add((byte)dataLen);
+                    bmwFastTel.AddRange(dataContent);
                 }
             }
             else
             {
-                telegram.Add((byte)(0x80 | dataLen));
-                telegram.Add(targetAddr);
-                telegram.Add(sourceAddr);
-                telegram.AddRange(dataContent);
+                bmwFastTel.Add((byte)(0x80 | dataLen));
+                bmwFastTel.Add(targetAddr);
+                bmwFastTel.Add(sourceAddr);
+                bmwFastTel.AddRange(dataContent);
             }
 
             if (IsFunctionalAddress(targetAddr))
             {   // functional address
-                telegram[0] |= 0xC0;
+                bmwFastTel[0] |= 0xC0;
             }
 
-            byte checksum = CalcChecksumBmwFast(telegram, telegram.Count);
-            telegram.Add(checksum);
+            byte checksum = CalcChecksumBmwFast(bmwFastTel, bmwFastTel.Count);
+            bmwFastTel.Add(checksum);
 
-            return telegram;
+            return bmwFastTel;
         }
 
         public static bool IsFunctionalAddress(byte address)
@@ -672,6 +681,11 @@ namespace WebPsdzClient.App_Data
                 sum += data[i];
             }
             return sum;
+        }
+
+        private bool AbortEdiabasJob()
+        {
+            return false;
         }
 
         private void TcpThread()
@@ -1047,6 +1061,12 @@ namespace WebPsdzClient.App_Data
                 }
 
                 StopTcpListener();
+
+                if (_ediabas != null)
+                {
+                    _ediabas.Dispose();
+                    _ediabas = null;
+                }
 
                 // If disposing equals true, dispose all managed
                 // and unmanaged resources.
