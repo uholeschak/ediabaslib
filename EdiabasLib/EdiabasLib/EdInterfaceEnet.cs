@@ -23,12 +23,12 @@ namespace EdiabasLib
 #if Android
         public class ConnectParameterType
         {
-            public ConnectParameterType(TcpClientWithTimeout.NetworkData networkData)
+            public ConnectParameterType(TcpClientWithTimeout.SharedDataActive.NetworkData SharedDataActive.NetworkData)
             {
-                NetworkData = networkData;
+                SharedDataActive.NetworkData = SharedDataActive.NetworkData;
             }
 
-            public TcpClientWithTimeout.NetworkData NetworkData { get; }
+            public TcpClientWithTimeout.SharedDataActive.NetworkData SharedDataActive.NetworkData { get; }
         }
 #endif
 
@@ -189,6 +189,44 @@ namespace EdiabasLib
 
         }
 
+        protected class SharedData
+        {
+            public SharedData()
+            {
+                HttpAllocCancelToken = new CancellationTokenSource();
+                TcpDiagStreamRecEvent = new AutoResetEvent(false);
+                TcpDiagStreamSendLock = new object();
+                TcpDiagStreamRecLock = new object();
+                TcpControlTimer = new Timer(TcpControlTimeout, this, Timeout.Infinite, Timeout.Infinite);
+                TcpControlTimerLock = new object();
+                TcpDiagBuffer = new byte[TransBufferSize];
+                TcpDiagRecLen = 0;
+                LastTcpDiagRecTime = DateTime.MinValue.Ticks;
+                TcpDiagRecQueue = new Queue<byte[]>();
+            }
+
+            public object NetworkData;
+            public EnetConnection EnetHostConn;
+            public HttpClient IcomAllocateDeviceHttpClient;
+            public CancellationTokenSource HttpAllocCancelToken;
+            public TcpClient TcpDiagClient;
+            public NetworkStream TcpDiagStream;
+            public AutoResetEvent TcpDiagStreamRecEvent;
+            public TcpClient TcpControlClient;
+            public NetworkStream TcpControlStream;
+            public Timer TcpControlTimer;
+            public bool TcpControlTimerEnabled;
+            public object TcpDiagStreamSendLock;
+            public object TcpDiagStreamRecLock;
+            public object TcpControlTimerLock;
+            public byte[] TcpDiagBuffer;
+            public int TcpDiagRecLen;
+            public long LastTcpDiagRecTime;
+            public Queue<byte[]> TcpDiagRecQueue;
+            public bool ReconnectRequired;
+            public bool IcomAllocateActive;
+        }
+
         protected delegate EdiabasNet.ErrorCodes TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength);
         protected delegate void ExecuteNetworkDelegate();
         public delegate void IcomAllocateDeviceDelegate(bool success, int statusCode = -1);
@@ -221,27 +259,9 @@ namespace EdiabasLib
         protected static readonly byte[] TcpControlIgnitReq = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x10 };
         protected static readonly long TickResolMs = Stopwatch.Frequency / 1000;
 
-        protected static object NetworkData;
-        protected static EnetConnection EnetHostConn;
-        protected static HttpClient IcomAllocateDeviceHttpClient;
-        protected static CancellationTokenSource HttpAllocCancelToken;
-        protected static TcpClient TcpDiagClient;
-        protected static NetworkStream TcpDiagStream;
-        protected static AutoResetEvent TcpDiagStreamRecEvent;
-        protected static TcpClient TcpControlClient;
-        protected static NetworkStream TcpControlStream;
-        protected static Timer TcpControlTimer;
-        protected static bool TcpControlTimerEnabled;
-        protected static object TcpDiagStreamSendLock;
-        protected static object TcpDiagStreamRecLock;
-        protected static object TcpControlTimerLock;
-        protected static byte[] TcpDiagBuffer;
-        protected static int TcpDiagRecLen;
-        protected static long LastTcpDiagRecTime;
-        protected static Queue<byte[]> TcpDiagRecQueue;
-        protected static bool ReconnectRequired;
-        protected static bool IcomAllocateActive;
+        protected static SharedData SharedDataStatic;
 
+        protected SharedData NonSharedData;
         protected Socket UdpSocket;
         protected byte[] UdpBuffer = new byte[1500];
         protected volatile List<EnetConnection> UdpRecIpListList = new List<EnetConnection>();
@@ -274,6 +294,14 @@ namespace EdiabasLib
         protected int ParRegenTime;
         protected int ParTimeoutNr78;
         protected int ParRetryNr78;
+
+        protected SharedData SharedDataActive
+        {
+            get
+            {
+                return NonSharedData ?? SharedDataStatic;
+            }
+        }
 
         public override EdiabasNet Ediabas
         {
@@ -541,12 +569,12 @@ namespace EdiabasLib
         {
             get
             {
-                if (ReconnectRequired)
+                if (SharedDataActive.ReconnectRequired)
                 {
                     InterfaceDisconnect(true);
                     if (!InterfaceConnect(true))
                     {
-                        ReconnectRequired = true;
+                        SharedDataActive.ReconnectRequired = true;
                         EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
                         return Int64.MinValue;
                     }
@@ -558,18 +586,18 @@ namespace EdiabasLib
                 }
                 try
                 {
-                    lock (TcpControlTimerLock)
+                    lock (SharedDataActive.TcpControlTimerLock)
                     {
-                        TcpControlTimerStop();
+                        TcpControlTimerStop(SharedDataActive);
                     }
                     if (!TcpControlConnect())
                     {
                         EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
                         return Int64.MinValue;
                     }
-                    WriteNetworkStream(TcpControlStream, TcpControlIgnitReq, 0, TcpControlIgnitReq.Length);
-                    TcpControlStream.ReadTimeout = 1000;
-                    int recLen = TcpControlStream.Read(RecBuffer, 0, 7);
+                    WriteNetworkStream(SharedDataActive.TcpControlStream, TcpControlIgnitReq, 0, TcpControlIgnitReq.Length);
+                    SharedDataActive.TcpControlStream.ReadTimeout = 1000;
+                    int recLen = SharedDataActive.TcpControlStream.Read(RecBuffer, 0, 7);
                     if (recLen < 7)
                     {
                         EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
@@ -592,7 +620,7 @@ namespace EdiabasLib
                 }
                 finally
                 {
-                    TcpControlTimerStart();
+                    TcpControlTimerStart(SharedDataActive);
                 }
                 return 0;
             }
@@ -631,7 +659,7 @@ namespace EdiabasLib
         {
             get
             {
-                return ((TcpDiagClient != null) && (TcpDiagStream != null)) || ReconnectRequired;
+                return ((SharedDataActive.TcpDiagClient != null) && (SharedDataActive.TcpDiagStream != null)) || SharedDataActive.ReconnectRequired;
             }
         }
 
@@ -653,21 +681,20 @@ namespace EdiabasLib
 #else
             _interfaceMutex = new Mutex(false, MutexName);
 #endif
-            HttpAllocCancelToken = new CancellationTokenSource();
-            TcpDiagStreamRecEvent = new AutoResetEvent(false);
-            TcpDiagStreamSendLock = new object();
-            TcpDiagStreamRecLock = new object();
-            TcpControlTimer = new Timer(TcpControlTimeout, null, Timeout.Infinite, Timeout.Infinite);
-            TcpControlTimerLock = new object();
-            TcpDiagBuffer = new byte[TransBufferSize];
-            TcpDiagRecLen = 0;
-            LastTcpDiagRecTime = DateTime.MinValue.Ticks;
-            TcpDiagRecQueue = new Queue<byte[]>();
+            SharedDataStatic = new SharedData();
         }
 
         ~EdInterfaceEnet()
         {
             Dispose(false);
+        }
+
+        public EdInterfaceEnet(bool shared = true)
+        {
+            if (!shared)
+            {
+                NonSharedData = new SharedData();
+            }
         }
 
         public override bool IsValidInterfaceName(string name)
@@ -692,21 +719,21 @@ namespace EdiabasLib
 
         public bool InterfaceConnect(bool reconnect)
         {
-            if (TcpDiagClient != null)
+            if (SharedDataActive.TcpDiagClient != null)
             {
                 return true;
             }
             try
             {
                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connect to: {0}", RemoteHostProtected);
-                NetworkData = null;
+                SharedDataActive.NetworkData = null;
 #if Android
                 if (ConnectParameter is ConnectParameterType connectParameter)
                 {
-                    NetworkData = connectParameter.NetworkData;
+                    SharedDataActive.NetworkData = connectParameter.SharedDataActive.NetworkData;
                 }
 #endif
-                EnetHostConn = null;
+                SharedDataActive.EnetHostConn = null;
                 if (RemoteHostProtected.StartsWith(AutoIp, StringComparison.OrdinalIgnoreCase))
                 {
                     List<EnetConnection> detectedVehicles = DetectedVehicles(RemoteHostProtected, 1, UdpDetectRetries);
@@ -714,8 +741,8 @@ namespace EdiabasLib
                     {
                         return false;
                     }
-                    EnetHostConn = detectedVehicles[0];
-                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Received: IP={0}:{1}", EnetHostConn.IpAddress, EnetHostConn.DiagPort));
+                    SharedDataActive.EnetHostConn = detectedVehicles[0];
+                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Received: IP={0}:{1}", SharedDataActive.EnetHostConn.IpAddress, SharedDataActive.EnetHostConn.DiagPort));
                 }
                 else
                 {
@@ -750,22 +777,22 @@ namespace EdiabasLib
                         }
                     }
 
-                    EnetHostConn = new EnetConnection(connectionType, IPAddress.Parse(hostIp), hostDiagPort, hostControlPort);
+                    SharedDataActive.EnetHostConn = new EnetConnection(connectionType, IPAddress.Parse(hostIp), hostDiagPort, hostControlPort);
                 }
 
                 int diagPort = DiagnosticPort;
-                if (EnetHostConn.DiagPort >= 0)
+                if (SharedDataActive.EnetHostConn.DiagPort >= 0)
                 {
-                    diagPort = EnetHostConn.DiagPort;
+                    diagPort = SharedDataActive.EnetHostConn.DiagPort;
                 }
 
-                if (IcomAllocate && !reconnect && EnetHostConn.DiagPort >= 0)
+                if (IcomAllocate && !reconnect && SharedDataActive.EnetHostConn.DiagPort >= 0)
                 {
-                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM at: {0}", EnetHostConn.IpAddress);
+                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM at: {0}", SharedDataActive.EnetHostConn.IpAddress);
                     IcomEvent.Reset();
                     using (CancellationTokenSource cts = new CancellationTokenSource())
                     {
-                        if (!IcomAllocateDevice(EnetHostConn.IpAddress.ToString(), true, cts, (success, code) =>
+                        if (!IcomAllocateDevice(SharedDataActive.EnetHostConn.IpAddress.ToString(), true, cts, (success, code) =>
                         {
                             if (success && code == 0)
                             {
@@ -792,24 +819,24 @@ namespace EdiabasLib
                     EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM finished");
                 }
 
-                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting to: {0}:{1}", EnetHostConn.IpAddress, diagPort);
+                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting to: {0}:{1}", SharedDataActive.EnetHostConn.IpAddress, diagPort);
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
-                    TcpDiagClient = new TcpClientWithTimeout(EnetHostConn.IpAddress, diagPort, ConnectTimeout, true).Connect();
-                }, EnetHostConn.IpAddress, NetworkData);
+                    SharedDataActive.TcpDiagClient = new TcpClientWithTimeout(SharedDataActive.EnetHostConn.IpAddress, diagPort, ConnectTimeout, true).Connect();
+                }, SharedDataActive.EnetHostConn.IpAddress, SharedDataActive.NetworkData);
 
-                TcpDiagClient.SendBufferSize = TcpSendBufferSize;
-                TcpDiagClient.NoDelay = true;
-                TcpDiagStream = TcpDiagClient.GetStream();
-                TcpDiagRecLen = 0;
-                LastTcpDiagRecTime = DateTime.MinValue.Ticks;
-                lock (TcpDiagStreamRecLock)
+                SharedDataActive.TcpDiagClient.SendBufferSize = TcpSendBufferSize;
+                SharedDataActive.TcpDiagClient.NoDelay = true;
+                SharedDataActive.TcpDiagStream = SharedDataActive.TcpDiagClient.GetStream();
+                SharedDataActive.TcpDiagRecLen = 0;
+                SharedDataActive.LastTcpDiagRecTime = DateTime.MinValue.Ticks;
+                lock (SharedDataActive.TcpDiagStreamRecLock)
                 {
-                    TcpDiagRecQueue.Clear();
+                    SharedDataActive.TcpDiagRecQueue.Clear();
                 }
                 StartReadTcpDiag(6);
-                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connected to: {0}:{1}", EnetHostConn.IpAddress.ToString(), diagPort);
-                ReconnectRequired = false;
+                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connected to: {0}:{1}", SharedDataActive.EnetHostConn.IpAddress.ToString(), diagPort);
+                SharedDataActive.ReconnectRequired = false;
             }
             catch (Exception ex)
             {
@@ -835,10 +862,10 @@ namespace EdiabasLib
 
             try
             {
-                if (TcpDiagStream != null)
+                if (SharedDataActive.TcpDiagStream != null)
                 {
-                    TcpDiagStream.Close();
-                    TcpDiagStream = null;
+                    SharedDataActive.TcpDiagStream.Close();
+                    SharedDataActive.TcpDiagStream = null;
                 }
             }
             catch (Exception)
@@ -848,10 +875,10 @@ namespace EdiabasLib
 
             try
             {
-                if (TcpDiagClient != null)
+                if (SharedDataActive.TcpDiagClient != null)
                 {
-                    TcpDiagClient.Close();
-                    TcpDiagClient = null;
+                    SharedDataActive.TcpDiagClient.Close();
+                    SharedDataActive.TcpDiagClient = null;
                 }
             }
             catch (Exception)
@@ -859,7 +886,7 @@ namespace EdiabasLib
                 result = false;
             }
 
-            if (!TcpControlDisconnect())
+            if (!TcpControlDisconnect(SharedDataActive))
             {
                 result = false;
             }
@@ -877,17 +904,17 @@ namespace EdiabasLib
                 result = false;
             }
 
-            if (IcomAllocate && !reconnect && EnetHostConn != null && EnetHostConn.DiagPort >= 0)
+            if (IcomAllocate && !reconnect && SharedDataActive.EnetHostConn != null && SharedDataActive.EnetHostConn.DiagPort >= 0)
             {
                 if (EdiabasProtected != null)
                 {
-                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM at: {0}", EnetHostConn.IpAddress);
+                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM at: {0}", SharedDataActive.EnetHostConn.IpAddress);
                 }
 
                 IcomEvent.Reset();
                 using (CancellationTokenSource cts = new CancellationTokenSource())
                 {
-                    if (!IcomAllocateDevice(EnetHostConn.IpAddress.ToString(), false, cts, (success, code) =>
+                    if (!IcomAllocateDevice(SharedDataActive.EnetHostConn.IpAddress.ToString(), false, cts, (success, code) =>
                     {
                         if (success)
                         {
@@ -930,8 +957,8 @@ namespace EdiabasLib
                 }
             }
 
-            EnetHostConn = null;
-            ReconnectRequired = false;
+            SharedDataActive.EnetHostConn = null;
+            SharedDataActive.ReconnectRequired = false;
             return result;
         }
 
@@ -968,12 +995,12 @@ namespace EdiabasLib
                 receiveData = cachedResponse;
                 return true;
             }
-            if (ReconnectRequired)
+            if (SharedDataActive.ReconnectRequired)
             {
                 InterfaceDisconnect(true);
                 if (!InterfaceConnect(true))
                 {
-                    ReconnectRequired = true;
+                    SharedDataActive.ReconnectRequired = true;
                     EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
                     return false;
                 }
@@ -984,7 +1011,7 @@ namespace EdiabasLib
             {
                 if (errorCode == EdiabasNet.ErrorCodes.EDIABAS_IFH_0003)
                 {
-                    ReconnectRequired = true;
+                    SharedDataActive.ReconnectRequired = true;
                 }
                 CacheTransmission(sendData, null, errorCode);
                 EdiabasProtected.SetError(errorCode);
@@ -1143,7 +1170,7 @@ namespace EdiabasLib
                                                     TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                                                     {
                                                         UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
-                                                    }, ipUdpIdent.Address, NetworkData);
+                                                    }, ipUdpIdent.Address, SharedDataActive.NetworkData);
 
                                                     EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending: '{0}': SrvLoc broadcast={1} Port={2}",
                                                         netInterface.Name, broadcastAddress, UdpSrvLocPort));
@@ -1152,7 +1179,7 @@ namespace EdiabasLib
                                                     TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                                                     {
                                                         UdpSocket.SendTo(UdpSvrLocReq, ipUdpSvrLoc);
-                                                    }, ipUdpSvrLoc.Address, NetworkData);
+                                                    }, ipUdpSvrLoc.Address, SharedDataActive.NetworkData);
 
                                                     broadcastSend = true;
                                                 }
@@ -1233,7 +1260,7 @@ namespace EdiabasLib
                             TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                             {
                                 UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
-                            }, ipUdpIdent.Address, NetworkData);
+                            }, ipUdpIdent.Address, SharedDataActive.NetworkData);
 
                             if (EdiabasProtected != null)
                             {
@@ -1242,7 +1269,7 @@ namespace EdiabasLib
                             TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                             {
                                 UdpSocket.SendTo(UdpSvrLocReq, ipUdpSvrLoc);
-                            }, ipUdpSvrLoc.Address, NetworkData);
+                            }, ipUdpSvrLoc.Address, SharedDataActive.NetworkData);
 
                             broadcastSend = true;
                         }
@@ -1465,7 +1492,7 @@ namespace EdiabasLib
         {
             try
             {
-                if (IcomAllocateActive)
+                if (SharedDataActive.IcomAllocateActive)
                 {
                     return false;
                 }
@@ -1491,9 +1518,9 @@ namespace EdiabasLib
                     return false;
                 }
 
-                if (IcomAllocateDeviceHttpClient == null)
+                if (SharedDataActive.IcomAllocateDeviceHttpClient == null)
                 {
-                    IcomAllocateDeviceHttpClient = new HttpClient(new HttpClientHandler());
+                    SharedDataActive.IcomAllocateDeviceHttpClient = new HttpClient(new HttpClientHandler());
                 }
 
                 MultipartFormDataContent formAllocate = new MultipartFormDataContent();
@@ -1527,11 +1554,11 @@ namespace EdiabasLib
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
                     string deviceUrl = "http://" + ipParts[0] + ":5302/nVm";
-                    System.Threading.Tasks.Task<HttpResponseMessage> taskAllocate = IcomAllocateDeviceHttpClient.PostAsync(deviceUrl, formAllocate, cts.Token);
-                    IcomAllocateActive = true;
+                    System.Threading.Tasks.Task<HttpResponseMessage> taskAllocate = SharedDataActive.IcomAllocateDeviceHttpClient.PostAsync(deviceUrl, formAllocate, cts.Token);
+                    SharedDataActive.IcomAllocateActive = true;
                     taskAllocate.ContinueWith((task) =>
                     {
-                        IcomAllocateActive = false;
+                        SharedDataActive.IcomAllocateActive = false;
                         try
                         {
                             HttpResponseMessage responseAllocate = taskAllocate.Result;
@@ -1555,11 +1582,11 @@ namespace EdiabasLib
                             handler.Invoke(false);
                         }
                     }, cts.Token, System.Threading.Tasks.TaskContinuationOptions.None, System.Threading.Tasks.TaskScheduler.Default);
-                }, clientIp, NetworkData);
+                }, clientIp, SharedDataActive.NetworkData);
             }
             catch (Exception)
             {
-                IcomAllocateActive = false;
+                SharedDataActive.IcomAllocateActive = false;
                 return false;
             }
 
@@ -1703,80 +1730,83 @@ namespace EdiabasLib
             return null;
         }
 
-        protected static void TcpControlTimerStop()
+        protected static void TcpControlTimerStop(SharedData sharedData)
         {
-            TcpControlTimerEnabled = false;
-            TcpControlTimer.Change(Timeout.Infinite, Timeout.Infinite);
+            sharedData.TcpControlTimerEnabled = false;
+            sharedData.TcpControlTimer.Change(Timeout.Infinite, Timeout.Infinite);
         }
 
-        protected static void TcpControlTimerStart()
+        protected static void TcpControlTimerStart(SharedData sharedData)
         {
-            TcpControlTimerEnabled = true;
-            TcpControlTimer.Change(2000, Timeout.Infinite);
+            sharedData.TcpControlTimerEnabled = true;
+            sharedData.TcpControlTimer.Change(2000, Timeout.Infinite);
         }
 
         protected static void TcpControlTimeout(Object stateInfo)
         {
-            lock (TcpControlTimerLock)
+            if (stateInfo is SharedData sharedData)
             {
-                if (TcpControlTimerEnabled)
+                lock (sharedData.TcpControlTimerLock)
                 {
-                    TcpControlDisconnect();
+                    if (sharedData.TcpControlTimerEnabled)
+                    {
+                        TcpControlDisconnect(sharedData);
+                    }
                 }
             }
         }
 
         protected bool TcpControlConnect()
         {
-            if (TcpControlClient != null)
+            if (SharedDataActive.TcpControlClient != null)
             {
                 return true;
             }
-            if (EnetHostConn == null)
+            if (SharedDataActive.EnetHostConn == null)
             {
                 return false;
             }
             try
             {
                 int controlPort = ControlPort;
-                if (EnetHostConn.ControlPort >= 0)
+                if (SharedDataActive.EnetHostConn.ControlPort >= 0)
                 {
-                    controlPort = EnetHostConn.ControlPort;
+                    controlPort = SharedDataActive.EnetHostConn.ControlPort;
                 }
 
-                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "TcpControlConnect: {0}:{1}", EnetHostConn.IpAddress.ToString(), controlPort);
-                lock (TcpControlTimerLock)
+                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "TcpControlConnect: {0}:{1}", SharedDataActive.EnetHostConn.IpAddress.ToString(), controlPort);
+                lock (SharedDataActive.TcpControlTimerLock)
                 {
-                    TcpControlTimerStop();
+                    TcpControlTimerStop(SharedDataActive);
                 }
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
-                    TcpControlClient = TcpDiagClient = new TcpClientWithTimeout(EnetHostConn.IpAddress, controlPort, ConnectTimeout, true).Connect();
-                }, EnetHostConn.IpAddress, NetworkData);
+                    SharedDataActive.TcpControlClient = SharedDataActive.TcpDiagClient = new TcpClientWithTimeout(SharedDataActive.EnetHostConn.IpAddress, controlPort, ConnectTimeout, true).Connect();
+                }, SharedDataActive.EnetHostConn.IpAddress, SharedDataActive.NetworkData);
 
-                TcpControlClient.SendBufferSize = TcpSendBufferSize;
-                TcpControlClient.NoDelay = true;
-                TcpControlStream = TcpControlClient.GetStream();
+                SharedDataActive.TcpControlClient.SendBufferSize = TcpSendBufferSize;
+                SharedDataActive.TcpControlClient.NoDelay = true;
+                SharedDataActive.TcpControlStream = SharedDataActive.TcpControlClient.GetStream();
             }
             catch (Exception ex)
             {
                 EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "TcpControlConnect exception: " + EdiabasNet.GetExceptionText(ex));
-                TcpControlDisconnect();
+                TcpControlDisconnect(SharedDataActive);
                 return false;
             }
             return true;
         }
 
-        protected static bool TcpControlDisconnect()
+        protected static bool TcpControlDisconnect(SharedData sharedData)
         {
             bool result = true;
-            TcpControlTimerStop();
+            TcpControlTimerStop(sharedData);
             try
             {
-                if (TcpControlStream != null)
+                if (sharedData.TcpControlStream != null)
                 {
-                    TcpControlStream.Close();
-                    TcpControlStream = null;
+                    sharedData.TcpControlStream.Close();
+                    sharedData.TcpControlStream = null;
                 }
             }
             catch (Exception)
@@ -1786,10 +1816,10 @@ namespace EdiabasLib
 
             try
             {
-                if (TcpControlClient != null)
+                if (sharedData.TcpControlClient != null)
                 {
-                    TcpControlClient.Close();
-                    TcpControlClient = null;
+                    sharedData.TcpControlClient.Close();
+                    sharedData.TcpControlClient = null;
                 }
             }
             catch (Exception)
@@ -1801,14 +1831,14 @@ namespace EdiabasLib
 
         protected bool StartReadTcpDiag(int telLength)
         {
-            NetworkStream localStream = TcpDiagStream;
+            NetworkStream localStream = SharedDataActive.TcpDiagStream;
             if (localStream == null)
             {
                 return false;
             }
             try
             {
-                localStream.BeginRead(TcpDiagBuffer, TcpDiagRecLen, telLength - TcpDiagRecLen, TcpDiagReceiver, TcpDiagStream);
+                localStream.BeginRead(SharedDataActive.TcpDiagBuffer, SharedDataActive.TcpDiagRecLen, telLength - SharedDataActive.TcpDiagRecLen, TcpDiagReceiver, SharedDataActive.TcpDiagStream);
             }
             catch (Exception)
             {
@@ -1821,80 +1851,80 @@ namespace EdiabasLib
         {
             try
             {
-                NetworkStream networkStream = TcpDiagStream;
+                NetworkStream networkStream = SharedDataActive.TcpDiagStream;
                 if (networkStream == null)
                 {
                     return;
                 }
-                if (TcpDiagRecLen > 0)
+                if (SharedDataActive.TcpDiagRecLen > 0)
                 {
-                    if ((Stopwatch.GetTimestamp() - LastTcpDiagRecTime) > 300 * TickResolMs)
+                    if ((Stopwatch.GetTimestamp() - SharedDataActive.LastTcpDiagRecTime) > 300 * TickResolMs)
                     {   // pending telegram parts too late
-                        TcpDiagRecLen = 0;
+                        SharedDataActive.TcpDiagRecLen = 0;
                     }
                 }
                 int recLen = networkStream.EndRead(ar);
                 if (recLen > 0)
                 {
-                    LastTcpDiagRecTime = Stopwatch.GetTimestamp();
-                    TcpDiagRecLen += recLen;
+                    SharedDataActive.LastTcpDiagRecTime = Stopwatch.GetTimestamp();
+                    SharedDataActive.TcpDiagRecLen += recLen;
                 }
                 int nextReadLength = 6;
-                if (TcpDiagRecLen >= 6)
+                if (SharedDataActive.TcpDiagRecLen >= 6)
                 {   // header received
-                    long telLen = (((long)TcpDiagBuffer[0] << 24) | ((long)TcpDiagBuffer[1] << 16) | ((long)TcpDiagBuffer[2] << 8) | TcpDiagBuffer[3]) + 6;
-                    if (TcpDiagRecLen == telLen)
+                    long telLen = (((long)SharedDataActive.TcpDiagBuffer[0] << 24) | ((long)SharedDataActive.TcpDiagBuffer[1] << 16) | ((long)SharedDataActive.TcpDiagBuffer[2] << 8) | SharedDataActive.TcpDiagBuffer[3]) + 6;
+                    if (SharedDataActive.TcpDiagRecLen == telLen)
                     {   // telegram received
-                        switch (TcpDiagBuffer[5])
+                        switch (SharedDataActive.TcpDiagBuffer[5])
                         {
                             case 0x01:  // diag data
                             case 0x02:  // ack
                             case 0xFF:  // nack
-                                lock (TcpDiagStreamRecLock)
+                                lock (SharedDataActive.TcpDiagStreamRecLock)
                                 {
-                                    if (TcpDiagRecQueue.Count > 256)
+                                    if (SharedDataActive.TcpDiagRecQueue.Count > 256)
                                     {
-                                        TcpDiagRecQueue.Dequeue();
+                                        SharedDataActive.TcpDiagRecQueue.Dequeue();
                                     }
                                     byte[] recTelTemp = new byte[telLen];
-                                    Array.Copy(TcpDiagBuffer, recTelTemp, TcpDiagRecLen);
-                                    TcpDiagRecQueue.Enqueue(recTelTemp);
-                                    TcpDiagStreamRecEvent.Set();
+                                    Array.Copy(SharedDataActive.TcpDiagBuffer, recTelTemp, SharedDataActive.TcpDiagRecLen);
+                                    SharedDataActive.TcpDiagRecQueue.Enqueue(recTelTemp);
+                                    SharedDataActive.TcpDiagStreamRecEvent.Set();
                                 }
                                 break;
 
                             case 0x12:  // alive check
-                                TcpDiagBuffer[0] = 0x00;
-                                TcpDiagBuffer[1] = 0x00;
-                                TcpDiagBuffer[2] = 0x00;
-                                TcpDiagBuffer[3] = 0x02;
-                                TcpDiagBuffer[4] = 0x00;
-                                TcpDiagBuffer[5] = 0x13;    // alive check response
-                                TcpDiagBuffer[6] = 0x00;
-                                TcpDiagBuffer[7] = (byte)TesterAddress;
-                                lock (TcpDiagStreamSendLock)
+                                SharedDataActive.TcpDiagBuffer[0] = 0x00;
+                                SharedDataActive.TcpDiagBuffer[1] = 0x00;
+                                SharedDataActive.TcpDiagBuffer[2] = 0x00;
+                                SharedDataActive.TcpDiagBuffer[3] = 0x02;
+                                SharedDataActive.TcpDiagBuffer[4] = 0x00;
+                                SharedDataActive.TcpDiagBuffer[5] = 0x13;    // alive check response
+                                SharedDataActive.TcpDiagBuffer[6] = 0x00;
+                                SharedDataActive.TcpDiagBuffer[7] = (byte)TesterAddress;
+                                lock (SharedDataActive.TcpDiagStreamSendLock)
                                 {
-                                    networkStream.Write(TcpDiagBuffer, 0, 8);
+                                    networkStream.Write(SharedDataActive.TcpDiagBuffer, 0, 8);
                                 }
                                 break;
 
                             default:
-                                EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, TcpDiagBuffer, 0, TcpDiagRecLen, "*** Ignoring unknown telegram type");
+                                EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, SharedDataActive.TcpDiagBuffer, 0, SharedDataActive.TcpDiagRecLen, "*** Ignoring unknown telegram type");
                                 break;
                         }
-                        TcpDiagRecLen = 0;
+                        SharedDataActive.TcpDiagRecLen = 0;
                     }
-                    else if (TcpDiagRecLen > telLen)
+                    else if (SharedDataActive.TcpDiagRecLen > telLen)
                     {
-                        TcpDiagRecLen = 0;
+                        SharedDataActive.TcpDiagRecLen = 0;
                     }
-                    else if (telLen > TcpDiagBuffer.Length)
+                    else if (telLen > SharedDataActive.TcpDiagBuffer.Length)
                     {   // telegram too large -> remove all
-                        while (TcpDiagStream.DataAvailable)
+                        while (SharedDataActive.TcpDiagStream.DataAvailable)
                         {
-                            TcpDiagStream.ReadByte();
+                            SharedDataActive.TcpDiagStream.ReadByte();
                         }
-                        TcpDiagRecLen = 0;
+                        SharedDataActive.TcpDiagRecLen = 0;
                     }
                     else
                     {
@@ -1905,23 +1935,23 @@ namespace EdiabasLib
             }
             catch (Exception)
             {
-                TcpDiagRecLen = 0;
+                SharedDataActive.TcpDiagRecLen = 0;
                 StartReadTcpDiag(6);
             }
         }
 
         protected bool SendData(byte[] sendData, int length, bool enableLogging)
         {
-            if (TcpDiagStream == null)
+            if (SharedDataActive.TcpDiagStream == null)
             {
                 return false;
             }
             try
             {
-                lock (TcpDiagStreamRecLock)
+                lock (SharedDataActive.TcpDiagStreamRecLock)
                 {
-                    TcpDiagStreamRecEvent.Reset();
-                    TcpDiagRecQueue.Clear();
+                    SharedDataActive.TcpDiagStreamRecEvent.Reset();
+                    SharedDataActive.TcpDiagRecQueue.Clear();
                 }
 
                 byte targetAddr = sendData[1];
@@ -1953,9 +1983,9 @@ namespace EdiabasLib
                 DataBuffer[7] = targetAddr;
                 Array.Copy(sendData, dataOffset, DataBuffer, 8, dataLength);
                 int sendLength = dataLength + 8;
-                lock (TcpDiagStreamSendLock)
+                lock (SharedDataActive.TcpDiagStreamSendLock)
                 {
-                    WriteNetworkStream(TcpDiagStream, DataBuffer, 0, sendLength);
+                    WriteNetworkStream(SharedDataActive.TcpDiagStream, DataBuffer, 0, sendLength);
                 }
 
                 // wait for ack
@@ -1967,14 +1997,14 @@ namespace EdiabasLib
                     if (!InterfaceConnect(true))
                     {
                         if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Reconnect failed");
-                        ReconnectRequired = true;
+                        SharedDataActive.ReconnectRequired = true;
                         return false;
                     }
 
                     if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnected: resending");
-                    lock (TcpDiagStreamSendLock)
+                    lock (SharedDataActive.TcpDiagStreamSendLock)
                     {
-                        WriteNetworkStream(TcpDiagStream, DataBuffer, 0, sendLength);
+                        WriteNetworkStream(SharedDataActive.TcpDiagStream, DataBuffer, 0, sendLength);
                     }
                     recLen = ReceiveAck(AckBuffer, ConnectTimeout + TcpAckTimeout, enableLogging);
                     if (recLen < 0)
@@ -1987,9 +2017,9 @@ namespace EdiabasLib
                 if ((recLen == 6) && (AckBuffer[5] == 0xFF))
                 {
                     if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Nack received: resending");
-                    lock (TcpDiagStreamSendLock)
+                    lock (SharedDataActive.TcpDiagStreamSendLock)
                     {
-                        WriteNetworkStream(TcpDiagStream, DataBuffer, 0, sendLength);
+                        WriteNetworkStream(SharedDataActive.TcpDiagStream, DataBuffer, 0, sendLength);
                     }
                     recLen = ReceiveAck(AckBuffer, ConnectTimeout + TcpAckTimeout, enableLogging);
                     if (recLen < 0)
@@ -2025,7 +2055,7 @@ namespace EdiabasLib
 
         protected bool ReceiveData(byte[] receiveData, int timeout)
         {
-            if (TcpDiagStream == null)
+            if (SharedDataActive.TcpDiagStream == null)
             {
                 return false;
             }
@@ -2098,7 +2128,7 @@ namespace EdiabasLib
 
         protected int ReceiveTelegram(byte[] receiveData, int timeout)
         {
-            if (TcpDiagStream == null)
+            if (SharedDataActive.TcpDiagStream == null)
             {
                 return -1;
             }
@@ -2106,26 +2136,26 @@ namespace EdiabasLib
             try
             {
                 int recTels;
-                lock (TcpDiagStreamRecLock)
+                lock (SharedDataActive.TcpDiagStreamRecLock)
                 {
-                    recTels = TcpDiagRecQueue.Count;
+                    recTels = SharedDataActive.TcpDiagRecQueue.Count;
                     if (recTels == 0)
                     {
-                        TcpDiagStreamRecEvent.Reset();
+                        SharedDataActive.TcpDiagStreamRecEvent.Reset();
                     }
                 }
                 if (recTels == 0)
                 {
-                    if (!TcpDiagStreamRecEvent.WaitOne(timeout, false))
+                    if (!SharedDataActive.TcpDiagStreamRecEvent.WaitOne(timeout, false))
                     {
                         return -1;
                     }
                 }
-                lock (TcpDiagStreamRecLock)
+                lock (SharedDataActive.TcpDiagStreamRecLock)
                 {
-                    if (TcpDiagRecQueue.Count > 0)
+                    if (SharedDataActive.TcpDiagRecQueue.Count > 0)
                     {
-                        byte[] recTelFirst = TcpDiagRecQueue.Dequeue();
+                        byte[] recTelFirst = SharedDataActive.TcpDiagRecQueue.Dequeue();
                         recLen = recTelFirst.Length;
                         Array.Copy(recTelFirst, receiveData, recLen);
                     }
@@ -2169,7 +2199,7 @@ namespace EdiabasLib
         protected EdiabasNet.ErrorCodes ObdTrans(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
         {
             receiveLength = 0;
-            if (TcpDiagStream == null)
+            if (SharedDataActive.TcpDiagStream == null)
             {
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
@@ -2263,7 +2293,7 @@ namespace EdiabasLib
             {
                 int timeout = (Nr78Dict.Count > 0) ? ParTimeoutNr78 : ParTimeoutStd;
                 //if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Timeout: {0}", timeout);
-                if (EnetHostConn.ConnectionType == EnetConnection.InterfaceType.Icom)
+                if (SharedDataActive.EnetHostConn.ConnectionType == EnetConnection.InterfaceType.Icom)
                 {
                     timeout += AddRecTimeoutIcom;
                 }
@@ -2412,17 +2442,17 @@ namespace EdiabasLib
             if (!_disposed)
             {
                 InterfaceDisconnect();
-                if (IcomAllocateDeviceHttpClient != null)
+                if (SharedDataActive.IcomAllocateDeviceHttpClient != null)
                 {
                     try
                     {
-                        IcomAllocateDeviceHttpClient.Dispose();
+                        SharedDataActive.IcomAllocateDeviceHttpClient.Dispose();
                     }
                     catch (Exception)
                     {
                         // ignored
                     }
-                    IcomAllocateDeviceHttpClient = null;
+                    SharedDataActive.IcomAllocateDeviceHttpClient = null;
                 }
                 // If disposing equals true, dispose all managed
                 // and unmanaged resources.
