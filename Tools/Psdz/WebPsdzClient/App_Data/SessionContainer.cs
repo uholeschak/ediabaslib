@@ -260,6 +260,8 @@ namespace WebPsdzClient.App_Data
                 EdInterfaceClass = edInterfaceEnet,
                 AbortJobFunc = AbortEdiabasJob
             };
+            edInterfaceEnet.RemoteHost = "127.0.0.1";
+            edInterfaceEnet.IcomAllocate = false;
         }
 
         private bool StartTcpListener()
@@ -685,12 +687,51 @@ namespace WebPsdzClient.App_Data
 
         private bool AbortEdiabasJob()
         {
+            if (_stopThread)
+            {
+                return true;
+            }
             return false;
+        }
+
+        public bool EdiabasConnect()
+        {
+            try
+            {
+                if (_ediabas.EdInterfaceClass.InterfaceConnect())
+                {
+                    log.InfoFormat("EdiabasConnect Connection ok");
+                    return true;
+                }
+
+                log.ErrorFormat("EdiabasConnect Connection failed");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("EdiabasConnect Exception: {0}", ex.Message);
+                return false;
+            }
+        }
+
+        public bool EdiabasDisconnect()
+        {
+            try
+            {
+                log.InfoFormat("EdiabasDisconnect");
+                return _ediabas.EdInterfaceClass.InterfaceDisconnect();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         private void TcpThread()
         {
             log.InfoFormat("TcpThread started");
+            EdiabasConnect();
+
             for (;;)
             {
                 WaitHandle[] waitHandles = new WaitHandle[1 + _enetTcpChannels.Count * 2];
@@ -808,6 +849,8 @@ namespace WebPsdzClient.App_Data
                     }
                 }
             }
+
+            EdiabasDisconnect();
             log.InfoFormat("TcpThread stopped");
         }
 
