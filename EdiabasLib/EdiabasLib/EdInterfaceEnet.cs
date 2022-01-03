@@ -23,12 +23,12 @@ namespace EdiabasLib
 #if Android
         public class ConnectParameterType
         {
-            public ConnectParameterType(TcpClientWithTimeout.SharedDataActive.NetworkData SharedDataActive.NetworkData)
+            public ConnectParameterType(TcpClientWithTimeout.NetworkData networkData)
             {
-                SharedDataActive.NetworkData = SharedDataActive.NetworkData;
+                NetworkData = networkData;
             }
 
-            public TcpClientWithTimeout.SharedDataActive.NetworkData SharedDataActive.NetworkData { get; }
+            public TcpClientWithTimeout.NetworkData NetworkData { get; }
         }
 #endif
 
@@ -730,7 +730,7 @@ namespace EdiabasLib
 #if Android
                 if (ConnectParameter is ConnectParameterType connectParameter)
                 {
-                    SharedDataActive.NetworkData = connectParameter.SharedDataActive.NetworkData;
+                    SharedDataActive.NetworkData = connectParameter.NetworkData;
                 }
 #endif
                 SharedDataActive.EnetHostConn = null;
