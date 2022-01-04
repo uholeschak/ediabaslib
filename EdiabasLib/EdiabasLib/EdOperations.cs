@@ -2498,13 +2498,15 @@ namespace EdiabasLib
             {
                 ediabas.SetTableFs(ediabas._sgbdBaseFs);
             }
+
             bool found;
             Int32 tableAddr = ediabas.GetTableIndex(ediabas.GetTableFs(), arg0.GetStringData(), out found);
-            if (!found)
+            if (!found && ediabas._sgbdBaseFs != null)
             {
                 ediabas.CloseTableFs();
                 tableAddr = ediabas.GetTableIndex(ediabas.GetTableFs(), arg0.GetStringData(), out found);
             }
+
             if (!found)
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_BIP_0010);
