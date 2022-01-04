@@ -293,7 +293,7 @@ namespace PsdzClient.Programing
 
                 if (hostParts.Length >= 3)
                 {
-                    Int64 portValue = EdiabasNet.StringToValue(hostParts[1], out bool valid);
+                    Int64 portValue = EdiabasNet.StringToValue(hostParts[2], out bool valid);
                     if (valid)
                     {
                         controlPort = (int)portValue;
@@ -314,7 +314,7 @@ namespace PsdzClient.Programing
                     enetConnection = new EdInterfaceEnet.EnetConnection(interfaceType, IPAddress.Parse(ipAddress));
                 }
 
-                PsdzContext.DetectVehicle = new DetectVehicle(ecuPath, enetConnection);
+                PsdzContext.DetectVehicle = new DetectVehicle(ecuPath, enetConnection, useIcom);
                 PsdzContext.DetectVehicle.AbortRequest += () =>
                 {
                     if (cts != null)

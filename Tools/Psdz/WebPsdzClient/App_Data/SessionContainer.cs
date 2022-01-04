@@ -600,9 +600,9 @@ namespace WebPsdzClient.App_Data
 
             byte[] data = queue.ToArray();
             UInt32 payloadLength = (((UInt32)data[0] << 24) | ((UInt32)data[1] << 16) | ((UInt32)data[2] << 8) | data[3]);
-            if (payloadLength < 6 || payloadLength > 0x00FFFFFF)
+            if (payloadLength < 1 || payloadLength > 0x00FFFFFF)
             {
-                log.ErrorFormat("GetQueuePayload: Invald payload length: {0}", payloadLength);
+                log.ErrorFormat("GetQueuePayload: Invalid payload length: {0}", payloadLength);
                 throw new Exception("Invalid payload length");
             }
 
@@ -825,7 +825,7 @@ namespace WebPsdzClient.App_Data
                         }
                         catch (Exception ex)
                         {
-                            log.ErrorFormat("TcpThread WriteNetworkStream Exception: {0}", ex.Message);
+                            log.ErrorFormat("TcpThread Exception: {0}", ex.Message);
                             enetTcpClientData.ConnectFailure = true;
                         }
                     }
@@ -1107,7 +1107,8 @@ namespace WebPsdzClient.App_Data
                 }
             }
 
-            string remoteHostInternal = string.Format(CultureInfo.InvariantCulture, "127.0.0.1:{0}:{1}", diagPort, controlPort);
+            //remoteHost = string.Format(CultureInfo.InvariantCulture, "127.0.0.1:{0}:{1}", diagPort, controlPort);
+            //useIcom = false;
             Cts = new CancellationTokenSource();
             ConnectVehicleTask(istaFolder, remoteHost, useIcom).ContinueWith(task =>
             {
