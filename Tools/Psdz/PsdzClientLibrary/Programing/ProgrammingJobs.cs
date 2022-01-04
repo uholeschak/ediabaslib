@@ -240,18 +240,25 @@ namespace PsdzClient.Programing
             return true;
         }
 
-        public bool ConnectVehicle(CancellationTokenSource cts, string istaFolder, string ipAddress, bool icomConnection)
+        public bool ConnectVehicle(CancellationTokenSource cts, string istaFolder, string remoteHost, bool useIcom)
         {
-            log.InfoFormat("ConnectVehicle Start - Ip: {0}, ICOM: {1}", ipAddress, icomConnection);
+            log.InfoFormat("ConnectVehicle Start - Ip: {0}, ICOM: {1}", remoteHost, useIcom);
             StringBuilder sbResult = new StringBuilder();
 
             try
             {
                 sbResult.AppendLine("Connecting vehicle ...");
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Ip={0}, ICOM={1}",
-                    ipAddress, icomConnection));
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Host={0}, ICOM={1}",
+                    remoteHost, useIcom));
                 UpdateStatus(sbResult.ToString());
 
+                string[] hostParts = remoteHost.Split(':');
+                if (hostParts.Length < 1)
+                {
+                    return false;
+                }
+
+                string ipAddress = hostParts[0];
                 if (ProgrammingService == null)
                 {
                     return false;
@@ -266,8 +273,34 @@ namespace PsdzClient.Programing
                 UpdateStatus(sbResult.ToString());
 
                 string ecuPath = Path.Combine(istaFolder, @"Ecu");
+                bool icomConnection = useIcom;
+                if (hostParts.Length > 1)
+                {
+                    icomConnection = true;
+                }
+
                 int diagPort = icomConnection ? 50160 : 6801;
                 int controlPort = icomConnection ? 50161 : 6811;
+
+                if (hostParts.Length >= 2)
+                {
+                    Int64 portValue = EdiabasNet.StringToValue(hostParts[1], out bool valid);
+                    if (valid)
+                    {
+                        diagPort = (int)portValue;
+                    }
+                }
+
+                if (hostParts.Length >= 3)
+                {
+                    Int64 portValue = EdiabasNet.StringToValue(hostParts[1], out bool valid);
+                    if (valid)
+                    {
+                        controlPort = (int)portValue;
+                    }
+                }
+
+                log.InfoFormat("ConnectVehicle Ip: {0}, Diag: {1}, Control: {2}, ICOM: {3}", ipAddress, diagPort, controlPort, icomConnection);
                 EdInterfaceEnet.EnetConnection.InterfaceType interfaceType =
                     icomConnection ? EdInterfaceEnet.EnetConnection.InterfaceType.Icom : EdInterfaceEnet.EnetConnection.InterfaceType.Direct;
                 EdInterfaceEnet.EnetConnection enetConnection;
@@ -399,7 +432,7 @@ namespace PsdzClient.Programing
             }
             finally
             {
-                log.InfoFormat("ConnectVehicle Finish - Ip: {0}, ICOM: {1}", ipAddress, icomConnection);
+                log.InfoFormat("ConnectVehicle Finish - Host: {0}, ICOM: {1}", remoteHost, useIcom);
                 log.Info(Environment.NewLine + sbResult);
 
                 if (PsdzContext != null)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -1075,7 +1076,7 @@ namespace WebPsdzClient.App_Data
             return await Task.Run(() => ProgrammingJobs.StopProgrammingService(Cts)).ConfigureAwait(false);
         }
 
-        public void ConnectVehicle(string istaFolder, string ipAddress, bool icomConnection)
+        public void ConnectVehicle(string istaFolder, string remoteHost, bool useIcom)
         {
             if (TaskActive)
             {
@@ -1092,8 +1093,23 @@ namespace WebPsdzClient.App_Data
                 return;
             }
 
+            int diagPort = 0;
+            int controlPort = 0;
+            foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
+            {
+                if (enetTcpChannel.Control)
+                {
+                    controlPort = enetTcpChannel.ServerPort;
+                }
+                else
+                {
+                    diagPort = enetTcpChannel.ServerPort;
+                }
+            }
+
+            string remoteHostInternal = string.Format(CultureInfo.InvariantCulture, "127.0.0.1:{0}:{1}", diagPort, controlPort);
             Cts = new CancellationTokenSource();
-            ConnectVehicleTask(istaFolder, ipAddress, icomConnection).ContinueWith(task =>
+            ConnectVehicleTask(istaFolder, remoteHost, useIcom).ContinueWith(task =>
             {
                 TaskActive = false;
                 Cts = null;
@@ -1105,10 +1121,10 @@ namespace WebPsdzClient.App_Data
             UpdateDisplay();
         }
 
-        public async Task<bool> ConnectVehicleTask(string istaFolder, string ipAddress, bool icomConnection)
+        public async Task<bool> ConnectVehicleTask(string istaFolder, string remoteHost, bool useIcom)
         {
             // ReSharper disable once ConvertClosureToMethodGroup
-            return await Task.Run(() => ProgrammingJobs.ConnectVehicle(Cts, istaFolder, ipAddress, icomConnection)).ConfigureAwait(false);
+            return await Task.Run(() => ProgrammingJobs.ConnectVehicle(Cts, istaFolder, remoteHost, useIcom)).ConfigureAwait(false);
         }
 
         public void DisconnectVehicle(UpdateDisplayDelegate updateHandler)

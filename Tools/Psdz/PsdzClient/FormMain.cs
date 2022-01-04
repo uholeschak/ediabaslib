@@ -442,10 +442,10 @@ namespace PsdzClient
             return detectedVehicles;
         }
 
-        private async Task<bool> ConnectVehicleTask(string istaFolder, string ipAddress, bool icomConnection)
+        private async Task<bool> ConnectVehicleTask(string istaFolder, string remoteHost, bool useIcom)
         {
             // ReSharper disable once ConvertClosureToMethodGroup
-            return await Task.Run(() => _programmingJobs.ConnectVehicle(_cts, istaFolder, ipAddress, icomConnection)).ConfigureAwait(false);
+            return await Task.Run(() => _programmingJobs.ConnectVehicle(_cts, istaFolder, remoteHost, useIcom)).ConfigureAwait(false);
         }
 
         private async Task<bool> DisconnectVehicleTask()
@@ -590,9 +590,9 @@ namespace PsdzClient
                 return;
             }
 
-            bool icomConnection = checkBoxIcom.Checked;
+            bool useIcom = checkBoxIcom.Checked;
             _cts = new CancellationTokenSource();
-            ConnectVehicleTask(textBoxIstaFolder.Text, ipAddressControlVehicleIp.Text, icomConnection).ContinueWith(task =>
+            ConnectVehicleTask(textBoxIstaFolder.Text, ipAddressControlVehicleIp.Text, useIcom).ContinueWith(task =>
             {
                 TaskActive = false;
                 _cts.Dispose();
