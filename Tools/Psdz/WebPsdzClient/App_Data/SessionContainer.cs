@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Net;
@@ -27,6 +28,7 @@ namespace WebPsdzClient.App_Data
                 DataBuffer = new byte[0x200];
                 RecQueue = new Queue<byte>();
                 SendQueue = new Queue<byte>();
+                LastTcpRecTick = DateTime.MinValue.Ticks;
             }
 
             public readonly EnetTcpChannel EnetTcpChannel;
@@ -37,6 +39,7 @@ namespace WebPsdzClient.App_Data
             public byte[] DataBuffer;
             public Queue<byte> RecQueue;
             public Queue<byte> SendQueue;
+            public long LastTcpRecTick;
         }
 
         private class EnetTcpChannel
@@ -244,6 +247,7 @@ namespace WebPsdzClient.App_Data
         private bool _disposed;
         private readonly object _lockObject = new object();
         private static readonly ILog log = LogManager.GetLogger(typeof(_Default));
+        private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
 
         private const int TcpSendBufferSize = 1400;
         private const int TcpSendTimeout = 5000;
@@ -398,11 +402,6 @@ namespace WebPsdzClient.App_Data
                     return true;
                 }
 
-                if (enetTcpClientData.ConnectFailure)
-                {
-                    TcpClientDisconnect(enetTcpClientData);
-                }
-
                 if (!IsTcpClientConnected(enetTcpClientData.TcpClientConnection))
                 {
                     TcpClientDisconnect(enetTcpClientData);
@@ -420,6 +419,8 @@ namespace WebPsdzClient.App_Data
                     {
                         enetTcpClientData.SendQueue.Clear();
                     }
+                    enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
+
                     enetTcpClientData.TcpClientConnection = tcpListener.AcceptTcpClient();
                     enetTcpClientData.TcpClientConnection.SendBufferSize = TcpSendBufferSize;
                     enetTcpClientData.TcpClientConnection.SendTimeout = TcpSendTimeout;
@@ -496,30 +497,35 @@ namespace WebPsdzClient.App_Data
 
         private void TcpReceiver(IAsyncResult ar)
         {
-            try
+            if (ar.AsyncState is EnetTcpClientData enetTcpClientData)
             {
-                if (ar.AsyncState is EnetTcpClientData enetTcpClientData)
+                try
                 {
-                    int length = enetTcpClientData.TcpClientStream.EndRead(ar);
-                    if (length > 0)
+                    if (!enetTcpClientData.ConnectFailure && enetTcpClientData.TcpClientStream != null)
                     {
-                        lock (enetTcpClientData.RecQueue)
+                        int length = enetTcpClientData.TcpClientStream.EndRead(ar);
+                        if (length > 0)
                         {
-                            for (int i = 0; i < length; i++)
+                            lock (enetTcpClientData.RecQueue)
                             {
-                                enetTcpClientData.RecQueue.Enqueue(enetTcpClientData.DataBuffer[i]);
+                                for (int i = 0; i < length; i++)
+                                {
+                                    enetTcpClientData.RecQueue.Enqueue(enetTcpClientData.DataBuffer[i]);
+                                }
                             }
+
+                            enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
+                            enetTcpClientData.EnetTcpChannel.RecEvent.Set();
                         }
 
-                        enetTcpClientData.EnetTcpChannel.RecEvent.Set();
+                        TcpReceive(enetTcpClientData);
                     }
-
-                    TcpReceive(enetTcpClientData);
                 }
-            }
-            catch (Exception ex)
-            {
-                log.ErrorFormat("TcpReceiver Exception: {0}", ex.Message);
+                catch (Exception ex)
+                {
+                    log.ErrorFormat("TcpReceiver Exception: {0}", ex.Message);
+                    enetTcpClientData.ConnectFailure = true;
+                }
             }
         }
 
@@ -823,6 +829,11 @@ namespace WebPsdzClient.App_Data
                     {
                         try
                         {
+                            if (enetTcpClientData.ConnectFailure)
+                            {
+                                TcpClientDisconnect(enetTcpClientData);
+                            }
+
                             if (enetTcpChannel.TcpServer.Pending())
                             {
                                 TcpClientConnect(enetTcpChannel.TcpServer, enetTcpClientData);
@@ -839,17 +850,50 @@ namespace WebPsdzClient.App_Data
                                 if (recPacket != null && recPacket.Length >= 6)
                                 {
                                     UInt32 payloadType = ((UInt32)recPacket[4] << 8) | recPacket[5];
-                                    if (enetTcpClientData.EnetTcpChannel.Control)
+                                    if (payloadType == 0x0010)
+                                    {   // ignition state
+                                        byte[] statePacket = new byte[6 + 1];
+                                        statePacket[3] = 0x06;    // length
+                                        statePacket[5] = 0x10;    // state
+                                        statePacket[6] = 0x05;    // ignition on
+                                        log.InfoFormat("VehicleThread Send ignition state");
+
+                                        lock (enetTcpClientData.SendQueue)
+                                        {
+                                            foreach (byte stateData in statePacket)
+                                            {
+                                                enetTcpClientData.SendQueue.Enqueue(stateData);
+                                            }
+                                        }
+
+                                        enetTcpChannel.SendEvent.Set();
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (enetTcpClientData.RecQueue.Count > 0)
+                                {
+                                    enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
+                                    _vehicleThreadWakeEvent.Set();
+                                }
+                                else
+                                {
+                                    if (enetTcpClientData.TcpClientStream != null)
                                     {
-                                        if (payloadType == 0x0010)
-                                        {   // ignition state
-                                            byte[] statePacket = new byte[6 + 1];
-                                            statePacket[3] = 0x06;    // length
-                                            statePacket[5] = 0x10;    // state
-                                            statePacket[6] = 0x05;    // ignition on
+                                        if ((Stopwatch.GetTimestamp() - enetTcpClientData.LastTcpRecTick) > 10000 * TickResolMs)
+                                        {
+                                            byte[] keepAlivePacket = new byte[6 + 2];
+                                            keepAlivePacket[3] = 0x02;
+                                            keepAlivePacket[5] = 0x12;   // Payoad type: alive check
+                                            keepAlivePacket[6] = 0xF4;
+                                            keepAlivePacket[7] = 0x00;
+
+                                            log.InfoFormat("VehicleThread Send keep alive");
+                                            enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
                                             lock (enetTcpClientData.SendQueue)
                                             {
-                                                foreach (byte stateData in statePacket)
+                                                foreach (byte stateData in keepAlivePacket)
                                                 {
                                                     enetTcpClientData.SendQueue.Enqueue(stateData);
                                                 }
@@ -858,13 +902,6 @@ namespace WebPsdzClient.App_Data
                                             enetTcpChannel.SendEvent.Set();
                                         }
                                     }
-                                }
-                            }
-                            else
-                            {
-                                if (enetTcpClientData.RecQueue.Count > 0)
-                                {
-                                    _vehicleThreadWakeEvent.Set();
                                 }
                             }
 
@@ -938,6 +975,7 @@ namespace WebPsdzClient.App_Data
 
                                         byte[] nackPacket = new byte[6];
                                         nackPacket[5] = 0xFF;
+                                        enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
                                         lock (enetTcpClientData.SendQueue)
                                         {
                                             foreach (byte ackData in nackPacket)
@@ -952,6 +990,7 @@ namespace WebPsdzClient.App_Data
                                     {
                                         byte[] ackPacket = (byte[])recPacket.Clone();
                                         ackPacket[5] = 0x02;    // ack
+                                        enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
                                         lock (enetTcpClientData.SendQueue)
                                         {
                                             foreach (byte ackData in ackPacket)
@@ -959,6 +998,7 @@ namespace WebPsdzClient.App_Data
                                                 enetTcpClientData.SendQueue.Enqueue(ackData);
                                             }
                                         }
+
                                         enetTcpChannel.SendEvent.Set();
 
                                         byte[] sendData = bmwFastTel;
@@ -981,6 +1021,7 @@ namespace WebPsdzClient.App_Data
                                                     else
                                                     {
                                                         log.InfoFormat("VehicleThread Receive Len={0}", enetTel.Length);
+                                                        enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
                                                         lock (enetTcpClientData.SendQueue)
                                                         {
                                                             foreach (byte enetData in enetTel)
@@ -988,6 +1029,7 @@ namespace WebPsdzClient.App_Data
                                                                 enetTcpClientData.SendQueue.Enqueue(enetData);
                                                             }
                                                         }
+
                                                         enetTcpChannel.SendEvent.Set();
                                                     }
                                                 }
