@@ -452,13 +452,14 @@ namespace WebPsdzClient.App_Data
                 {
                     enetTcpClientData.TcpClientStream.Close();
                     enetTcpClientData.TcpClientStream = null;
+                    log.ErrorFormat("TcpClientDiagDisconnect Client stream closed Port: {0}, Control: {1}", enetTcpClientData.EnetTcpChannel.ServerPort, enetTcpClientData.EnetTcpChannel.Control);
                 }
 
                 if (enetTcpClientData.TcpClientConnection != null)
                 {
                     enetTcpClientData.TcpClientConnection.Close();
                     enetTcpClientData.TcpClientConnection = null;
-                    log.ErrorFormat("TcpClientDiagDisconnect Client closed Port: {0}, Control: {1}", enetTcpClientData.EnetTcpChannel.ServerPort, enetTcpClientData.EnetTcpChannel.Control);
+                    log.ErrorFormat("TcpClientDiagDisconnect Client connection closed Port: {0}, Control: {1}", enetTcpClientData.EnetTcpChannel.ServerPort, enetTcpClientData.EnetTcpChannel.Control);
                 }
 
                 lock (enetTcpClientData.RecQueue)
@@ -614,8 +615,9 @@ namespace WebPsdzClient.App_Data
             }
 
             UInt32 packetLength = payloadLength + 6;
-            if (packetLength < data.Length)
+            if (data.Length < packetLength)
             {
+                log.InfoFormat("GetQueuePayload: More data required: {0} < {1}", data.Length, packetLength);
                 return null;
             }
 
@@ -956,6 +958,11 @@ namespace WebPsdzClient.App_Data
                     {
                         try
                         {
+                            if (enetTcpClientData.TcpClientStream == null)
+                            {
+                                continue;
+                            }
+
                             byte[] recPacket;
                             lock (enetTcpClientData.RecQueue)
                             {
