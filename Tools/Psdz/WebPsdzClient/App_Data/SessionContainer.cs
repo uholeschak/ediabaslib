@@ -235,8 +235,10 @@ namespace WebPsdzClient.App_Data
 
         private List<EnetTcpChannel> _enetTcpChannels = new List<EnetTcpChannel>();
         private Thread _tcpThread;
+        private Thread _vehicleThread;
         private bool _stopThread;
-        private AutoResetEvent _tcpThreadStopEvent = new AutoResetEvent(false);
+        private AutoResetEvent _tcpThreadWakeEvent = new AutoResetEvent(false);
+        private AutoResetEvent _vehicleThreadWakeEvent = new AutoResetEvent(false);
         private EdiabasNet _ediabas;
         private bool _disposed;
         private readonly object _lockObject = new object();
@@ -294,7 +296,12 @@ namespace WebPsdzClient.App_Data
                 if (_tcpThread == null)
                 {
                     _stopThread = false;
-                    _tcpThreadStopEvent.Reset();
+                    _vehicleThreadWakeEvent.Reset();
+                    _vehicleThread = new Thread(VehicleThread);
+                    _vehicleThread.Priority = ThreadPriority.Normal;
+                    _vehicleThread.Start();
+
+                    _tcpThreadWakeEvent.Reset();
                     _tcpThread = new Thread(TcpThread);
                     _tcpThread.Priority = ThreadPriority.Normal;
                     _tcpThread.Start();
@@ -336,13 +343,25 @@ namespace WebPsdzClient.App_Data
                 if (_tcpThread != null)
                 {
                     _stopThread = true;
-                    _tcpThreadStopEvent.Set();
+                    _tcpThreadWakeEvent.Set();
                     if (!_tcpThread.Join(5000))
                     {
                         log.ErrorFormat("StopTcpListener Stopping thread failed");
                     }
 
                     _tcpThread = null;
+                }
+
+                if (_vehicleThread != null)
+                {
+                    _stopThread = true;
+                    _vehicleThreadWakeEvent.Set();
+                    if (!_vehicleThread.Join(5000))
+                    {
+                        log.ErrorFormat("StopTcpListener Stopping vehicle thread failed");
+                    }
+
+                    _vehicleThread = null;
                 }
 
                 return true;
@@ -730,14 +749,13 @@ namespace WebPsdzClient.App_Data
         private void TcpThread()
         {
             log.InfoFormat("TcpThread started");
-            EdiabasConnect();
 
             for (;;)
             {
                 WaitHandle[] waitHandles = new WaitHandle[1 + _enetTcpChannels.Count * 2];
                 int index = 0;
 
-                waitHandles[index++] = _tcpThreadStopEvent;
+                waitHandles[index++] = _tcpThreadWakeEvent;
                 foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
                 {
                     waitHandles[index++] = enetTcpChannel.RecEvent;
@@ -762,7 +780,7 @@ namespace WebPsdzClient.App_Data
                                 TcpClientConnect(enetTcpChannel.TcpServer, enetTcpClientData);
                             }
 
-                            if (enetTcpClientData.TcpClientStream != null)
+                            if (enetTcpChannel.Control)
                             {
                                 byte[] recPacket;
                                 lock (enetTcpClientData.RecQueue)
@@ -792,42 +810,18 @@ namespace WebPsdzClient.App_Data
                                             enetTcpChannel.SendEvent.Set();
                                         }
                                     }
-                                    else
-                                    {
-                                        if (payloadType == 0x0001)
-                                        {   // request
-                                            List<byte> bmwFastTel = CreateBmwFastTelegram(recPacket);
-
-                                            if (bmwFastTel == null)
-                                            {
-                                                byte[] nackPacket = new byte[6];
-                                                nackPacket[5] = 0xFF;
-                                                lock (enetTcpClientData.SendQueue)
-                                                {
-                                                    foreach (byte ackData in nackPacket)
-                                                    {
-                                                        enetTcpClientData.SendQueue.Enqueue(ackData);
-                                                    }
-                                                }
-                                            }
-                                            else
-                                            {
-                                                byte[] ackPacket = (byte[])recPacket.Clone();
-                                                ackPacket[5] = 0x02;    // ack
-                                                lock (enetTcpClientData.SendQueue)
-                                                {
-                                                    foreach (byte ackData in ackPacket)
-                                                    {
-                                                        enetTcpClientData.SendQueue.Enqueue(ackData);
-                                                    }
-                                                }
-                                            }
-
-                                            enetTcpChannel.SendEvent.Set();
-                                        }
-                                    }
                                 }
+                            }
+                            else
+                            {
+                                if (enetTcpClientData.RecQueue.Count > 0)
+                                {
+                                    _vehicleThreadWakeEvent.Set();
+                                }
+                            }
 
+                            if (enetTcpClientData.TcpClientStream != null)
+                            {
                                 byte[] sendData;
                                 lock (enetTcpClientData.SendQueue)
                                 {
@@ -850,8 +844,124 @@ namespace WebPsdzClient.App_Data
                 }
             }
 
-            EdiabasDisconnect();
             log.InfoFormat("TcpThread stopped");
+        }
+
+        private void VehicleThread()
+        {
+            log.InfoFormat("VehicleThread started");
+            EdiabasConnect();
+
+            for (;;)
+            {
+                _vehicleThreadWakeEvent.WaitOne(100, false);
+                if (_stopThread)
+                {
+                    break;
+                }
+
+                foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
+                {
+                    if (enetTcpChannel.Control)
+                    {
+                        continue;
+                    }
+
+                    foreach (EnetTcpClientData enetTcpClientData in enetTcpChannel.TcpClientList)
+                    {
+                        try
+                        {
+                            byte[] recPacket;
+                            lock (enetTcpClientData.RecQueue)
+                            {
+                                recPacket = GetQueuePacket(enetTcpClientData.RecQueue);
+                            }
+
+                            if (recPacket != null && recPacket.Length >= 6)
+                            {
+                                UInt32 payloadType = ((UInt32)recPacket[4] << 8) | recPacket[5];
+                                if (payloadType == 0x0001)
+                                {   // request
+                                    List<byte> bmwFastTel = CreateBmwFastTelegram(recPacket);
+
+                                    if (bmwFastTel == null)
+                                    {
+                                        byte[] nackPacket = new byte[6];
+                                        nackPacket[5] = 0xFF;
+                                        lock (enetTcpClientData.SendQueue)
+                                        {
+                                            foreach (byte ackData in nackPacket)
+                                            {
+                                                enetTcpClientData.SendQueue.Enqueue(ackData);
+                                            }
+                                        }
+
+                                        enetTcpChannel.SendEvent.Set();
+                                    }
+                                    else
+                                    {
+                                        byte[] ackPacket = (byte[])recPacket.Clone();
+                                        ackPacket[5] = 0x02;    // ack
+                                        lock (enetTcpClientData.SendQueue)
+                                        {
+                                            foreach (byte ackData in ackPacket)
+                                            {
+                                                enetTcpClientData.SendQueue.Enqueue(ackData);
+                                            }
+                                        }
+                                        enetTcpChannel.SendEvent.Set();
+
+                                        byte[] sendData = bmwFastTel.ToArray();
+                                        bool funcAddress = (sendData[0] & 0xC0) == 0xC0;     // functional address
+                                        for (;;)
+                                        {
+                                            bool dataReceived = false;
+                                            try
+                                            {
+                                                if (_ediabas.EdInterfaceClass.TransmitData(sendData, out byte[] receiveData))
+                                                {
+                                                    dataReceived = true;
+                                                    lock (enetTcpClientData.SendQueue)
+                                                    {
+                                                        foreach (byte recData in receiveData)
+                                                        {
+                                                            enetTcpClientData.SendQueue.Enqueue(recData);
+                                                        }
+                                                    }
+                                                    enetTcpChannel.SendEvent.Set();
+                                                }
+                                            }
+                                            catch (Exception)
+                                            {
+                                                // ignored
+                                            }
+
+                                            if (!funcAddress || !dataReceived)
+                                            {
+                                                break;
+                                            }
+
+                                            if (AbortEdiabasJob())
+                                            {
+                                                break;
+                                            }
+
+                                            sendData = Array.Empty<byte>();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            log.ErrorFormat("VehicleThread Exception: {0}", ex.Message);
+                        }
+                    }
+                }
+            }
+
+            EdiabasDisconnect();
+            log.InfoFormat("VehicleThread stopped");
         }
 
         public void UpdateStatus(string message = null)
