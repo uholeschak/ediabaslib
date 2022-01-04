@@ -2502,6 +2502,11 @@ namespace EdiabasLib
             Int32 tableAddr = ediabas.GetTableIndex(ediabas.GetTableFs(), arg0.GetStringData(), out found);
             if (!found)
             {
+                ediabas.CloseTableFs();
+                tableAddr = ediabas.GetTableIndex(ediabas.GetTableFs(), arg0.GetStringData(), out found);
+            }
+            if (!found)
+            {
                 ediabas.SetError(ErrorCodes.EDIABAS_BIP_0010);
             }
             ediabas._tableIndex = tableAddr;
