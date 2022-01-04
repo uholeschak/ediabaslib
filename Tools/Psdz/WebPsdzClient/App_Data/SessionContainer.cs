@@ -247,6 +247,7 @@ namespace WebPsdzClient.App_Data
 
         private const int TcpSendBufferSize = 1400;
         private const int TcpSendTimeout = 5000;
+        private const int TcpTesterAddr = 0xF4;
 
         public SessionContainer(string dealerId)
         {
@@ -622,7 +623,7 @@ namespace WebPsdzClient.App_Data
             return packetBytes;
         }
 
-        private List<byte> CreateBmwFastTelegram(byte[] dataPacket)
+        private byte[] CreateBmwFastTelegram(byte[] dataPacket)
         {
             if (dataPacket.Length < 8)
             {
@@ -635,7 +636,7 @@ namespace WebPsdzClient.App_Data
             byte targetAddr = dataPacket[7];
             List<byte> bmwFastTel = new List<byte>();
 
-            if (sourceAddr == 0xF4)
+            if (sourceAddr == TcpTesterAddr)
             {
                 sourceAddr = 0xF1;
             }
@@ -674,7 +675,66 @@ namespace WebPsdzClient.App_Data
                 bmwFastTel[0] |= 0xC0;
             }
 
-            return bmwFastTel;
+            return bmwFastTel.ToArray();
+        }
+
+        private byte[] CreateEnetTelegram(byte[] bmwFastTel)
+        {
+            if (bmwFastTel.Length < 3)
+            {
+                return null;
+            }
+
+            byte targetAddr = bmwFastTel[1];
+            byte sourceAddr = bmwFastTel[2];
+            if (targetAddr == 0xF1)
+            {
+                targetAddr = TcpTesterAddr;
+            }
+            int dataOffset = 3;
+            int dataLength = bmwFastTel[0] & 0x3F;
+            if (dataLength == 0)
+            {   // with length byte
+                if (bmwFastTel[3] == 0)
+                {
+                    if (bmwFastTel.Length < 6)
+                    {
+                        return null;
+                    }
+
+                    dataLength = (bmwFastTel[4] << 8) | bmwFastTel[5];
+                    dataOffset = 6;
+                }
+                else
+                {
+                    if (bmwFastTel.Length < 4)
+                    {
+                        return null;
+                    }
+
+                    dataLength = bmwFastTel[3];
+                    dataOffset = 4;
+                }
+            }
+
+            if (bmwFastTel.Length < dataOffset + dataLength)
+            {
+                return null;
+            }
+
+            byte[] dataBuffer = new byte[dataLength + 8];
+            int payloadLength = dataLength + 2;
+            dataBuffer[0] = (byte)((payloadLength >> 24) & 0xFF);
+            dataBuffer[1] = (byte)((payloadLength >> 16) & 0xFF);
+            dataBuffer[2] = (byte)((payloadLength >> 8) & 0xFF);
+            dataBuffer[3] = (byte)(payloadLength & 0xFF);
+            dataBuffer[4] = 0x00;
+            dataBuffer[5] = 0x01;   // Payoad type: Diag message
+            dataBuffer[6] = sourceAddr;
+            dataBuffer[7] = targetAddr;
+            Array.Copy(bmwFastTel, dataOffset, dataBuffer, 8, dataLength);
+
+            return dataBuffer;
         }
 
         public static bool IsFunctionalAddress(byte address)
@@ -870,10 +930,12 @@ namespace WebPsdzClient.App_Data
                                 UInt32 payloadType = ((UInt32)recPacket[4] << 8) | recPacket[5];
                                 if (payloadType == 0x0001)
                                 {   // request
-                                    List<byte> bmwFastTel = CreateBmwFastTelegram(recPacket);
+                                    byte[] bmwFastTel = CreateBmwFastTelegram(recPacket);
 
                                     if (bmwFastTel == null)
                                     {
+                                        log.ErrorFormat("VehicleThread BmwFastTel invalid");
+
                                         byte[] nackPacket = new byte[6];
                                         nackPacket[5] = 0xFF;
                                         lock (enetTcpClientData.SendQueue)
@@ -899,7 +961,7 @@ namespace WebPsdzClient.App_Data
                                         }
                                         enetTcpChannel.SendEvent.Set();
 
-                                        byte[] sendData = bmwFastTel.ToArray();
+                                        byte[] sendData = bmwFastTel;
                                         bool funcAddress = (sendData[0] & 0xC0) == 0xC0;     // functional address
                                         for (;;)
                                         {
@@ -909,14 +971,22 @@ namespace WebPsdzClient.App_Data
                                                 if (_ediabas.EdInterfaceClass.TransmitData(sendData, out byte[] receiveData))
                                                 {
                                                     dataReceived = true;
-                                                    lock (enetTcpClientData.SendQueue)
+                                                    byte[] enetTel = CreateEnetTelegram(receiveData);
+                                                    if (enetTel == null)
                                                     {
-                                                        foreach (byte recData in receiveData)
-                                                        {
-                                                            enetTcpClientData.SendQueue.Enqueue(recData);
-                                                        }
+                                                        log.ErrorFormat("VehicleThread EnetTel invalid");
                                                     }
-                                                    enetTcpChannel.SendEvent.Set();
+                                                    else
+                                                    {
+                                                        lock (enetTcpClientData.SendQueue)
+                                                        {
+                                                            foreach (byte enetData in enetTel)
+                                                            {
+                                                                enetTcpClientData.SendQueue.Enqueue(enetData);
+                                                            }
+                                                        }
+                                                        enetTcpChannel.SendEvent.Set();
+                                                    }
                                                 }
                                             }
                                             catch (Exception)
@@ -1076,7 +1146,7 @@ namespace WebPsdzClient.App_Data
             return await Task.Run(() => ProgrammingJobs.StopProgrammingService(Cts)).ConfigureAwait(false);
         }
 
-        public void ConnectVehicle(string istaFolder, string remoteHost, bool useIcom)
+        public void ConnectVehicle(string istaFolder)
         {
             if (TaskActive)
             {
@@ -1107,10 +1177,9 @@ namespace WebPsdzClient.App_Data
                 }
             }
 
-            //remoteHost = string.Format(CultureInfo.InvariantCulture, "127.0.0.1:{0}:{1}", diagPort, controlPort);
-            //useIcom = false;
+            string remoteHost = string.Format(CultureInfo.InvariantCulture, "127.0.0.1:{0}:{1}", diagPort, controlPort);
             Cts = new CancellationTokenSource();
-            ConnectVehicleTask(istaFolder, remoteHost, useIcom).ContinueWith(task =>
+            ConnectVehicleTask(istaFolder, remoteHost, false).ContinueWith(task =>
             {
                 TaskActive = false;
                 Cts = null;

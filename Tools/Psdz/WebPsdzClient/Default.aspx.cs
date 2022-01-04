@@ -81,7 +81,7 @@ namespace WebPsdzClient
                 return;
             }
 
-            sessionContainer.ConnectVehicle(Global.IstaFolder, Global.VehicleIp, false);
+            sessionContainer.ConnectVehicle(Global.IstaFolder);
         }
 
         protected void ButtonDisconnect_OnClick(object sender, EventArgs e)
