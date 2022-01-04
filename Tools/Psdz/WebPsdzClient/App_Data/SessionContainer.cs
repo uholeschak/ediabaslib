@@ -673,9 +673,6 @@ namespace WebPsdzClient.App_Data
                 bmwFastTel[0] |= 0xC0;
             }
 
-            byte checksum = CalcChecksumBmwFast(bmwFastTel, bmwFastTel.Count);
-            bmwFastTel.Add(checksum);
-
             return bmwFastTel;
         }
 
@@ -692,16 +689,6 @@ namespace WebPsdzClient.App_Data
             }
 
             return false;
-        }
-
-        public static byte CalcChecksumBmwFast(List<byte> data, int length)
-        {
-            byte sum = 0;
-            for (int i = 0; i < length; i++)
-            {
-                sum += data[i];
-            }
-            return sum;
         }
 
         private bool AbortEdiabasJob()
