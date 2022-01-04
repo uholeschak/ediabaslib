@@ -173,76 +173,84 @@ namespace WebPsdzClient
                 return;
             }
 
-            string eventArgs = Request.Form["__EVENTTARGET"];
-            if (string.IsNullOrEmpty(eventArgs))
+            try
             {
-                return;
-            }
-            string[] checkedBox = eventArgs.Split('$');
-            if (checkedBox.Length < 1)
-            {
-                return;
-            }
-
-            if (!int.TryParse(checkedBox[checkedBox.Length - 1], NumberStyles.Integer, CultureInfo.InvariantCulture, out int selectedIndex))
-            {
-                return;
-            }
-
-            if (selectedIndex < 0 || selectedIndex >= CheckBoxListOptions.Items.Count)
-            {
-                return;
-            }
-
-            ListItem listItem = CheckBoxListOptions.Items[selectedIndex];
-            if (!listItem.Enabled)
-            {
-                return;
-            }
-
-            string swiActionId = listItem.Value;
-            if (string.IsNullOrEmpty(swiActionId))
-            {
-                return;
-            }
-
-            ProgrammingJobs programmingJobs = sessionContainer.ProgrammingJobs;
-            bool modified = false;
-            Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = sessionContainer.OptionsDict;
-            if (optionsDict != null && sessionContainer.SelectedSwiRegister.HasValue)
-            {
-                if (optionsDict.TryGetValue(sessionContainer.SelectedSwiRegister.Value, out List<ProgrammingJobs.OptionsItem> optionsItems))
+                Request.ValidateInput();
+                string eventArgs = Request.Form["__EVENTTARGET"];
+                if (string.IsNullOrEmpty(eventArgs))
                 {
-                    foreach (ProgrammingJobs.OptionsItem optionsItem in optionsItems)
+                    return;
+                }
+                string[] checkedBox = eventArgs.Split('$');
+                if (checkedBox.Length < 1)
+                {
+                    return;
+                }
+
+                if (!int.TryParse(checkedBox[checkedBox.Length - 1], NumberStyles.Integer, CultureInfo.InvariantCulture, out int selectedIndex))
+                {
+                    return;
+                }
+
+                if (selectedIndex < 0 || selectedIndex >= CheckBoxListOptions.Items.Count)
+                {
+                    return;
+                }
+
+                ListItem listItem = CheckBoxListOptions.Items[selectedIndex];
+                if (!listItem.Enabled)
+                {
+                    return;
+                }
+
+                string swiActionId = listItem.Value;
+                if (string.IsNullOrEmpty(swiActionId))
+                {
+                    return;
+                }
+
+                ProgrammingJobs programmingJobs = sessionContainer.ProgrammingJobs;
+                bool modified = false;
+                Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = sessionContainer.OptionsDict;
+                if (optionsDict != null && sessionContainer.SelectedSwiRegister.HasValue)
+                {
+                    if (optionsDict.TryGetValue(sessionContainer.SelectedSwiRegister.Value, out List<ProgrammingJobs.OptionsItem> optionsItems))
                     {
-                        if (string.Compare(optionsItem.SwiAction.Id, swiActionId, StringComparison.OrdinalIgnoreCase) == 0)
+                        foreach (ProgrammingJobs.OptionsItem optionsItem in optionsItems)
                         {
-                            if (programmingJobs.SelectedOptions != null)
+                            if (string.Compare(optionsItem.SwiAction.Id, swiActionId, StringComparison.OrdinalIgnoreCase) == 0)
                             {
-                                if (listItem.Selected)
+                                if (programmingJobs.SelectedOptions != null)
                                 {
-                                    if (!programmingJobs.SelectedOptions.Contains(optionsItem))
+                                    if (listItem.Selected)
                                     {
-                                        programmingJobs.SelectedOptions.Add(optionsItem);
+                                        if (!programmingJobs.SelectedOptions.Contains(optionsItem))
+                                        {
+                                            programmingJobs.SelectedOptions.Add(optionsItem);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        programmingJobs.SelectedOptions.Remove(optionsItem);
                                     }
                                 }
-                                else
-                                {
-                                    programmingJobs.SelectedOptions.Remove(optionsItem);
-                                }
-                            }
 
-                            modified = true;
-                            break;
+                                modified = true;
+                                break;
+                            }
                         }
                     }
                 }
-            }
 
-            if (modified)
+                if (modified)
+                {
+                    sessionContainer.ProgrammingJobs.UpdateTargetFa();
+                    UpdateOptions();
+                }
+            }
+            catch (Exception ex)
             {
-                sessionContainer.ProgrammingJobs.UpdateTargetFa();
-                UpdateOptions();
+                log.ErrorFormat("CheckBoxListOptions_OnSelectedIndexChanged Exception: {0}", ex.Message);
             }
         }
 
@@ -313,9 +321,9 @@ namespace WebPsdzClient
                     UpdatePanelStatus.Update();
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                log.ErrorFormat("UpdateStatus Exception: {0}", e.Message);
+                log.ErrorFormat("UpdateStatus Exception: {0}", ex.Message);
             }
         }
 
@@ -328,7 +336,19 @@ namespace WebPsdzClient
             }
 
             sessionContainer.RefreshOptions = true;
-            Response.Redirect(Request.RawUrl, false);
+            try
+            {
+                Request.ValidateInput();
+                string url = Request.RawUrl;
+                if (!string.IsNullOrEmpty(url))
+                {
+                    Response.Redirect(url, false);
+                }
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("UpdateOptions Exception: {0}", ex.Message);
+            }
         }
 
         private void UpdateCurrentOptions()
@@ -373,9 +393,9 @@ namespace WebPsdzClient
                     UpdatePanelStatus.Update();
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                log.ErrorFormat("SelectOptions Exception: {0}", e.Message);
+                log.ErrorFormat("SelectOptions Exception: {0}", ex.Message);
             }
         }
 
@@ -455,9 +475,9 @@ namespace WebPsdzClient
                     UpdatePanelStatus.Update();
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                log.ErrorFormat("SelectOptions Exception: {0}", e.Message);
+                log.ErrorFormat("SelectOptions Exception: {0}", ex.Message);
             }
         }
 
