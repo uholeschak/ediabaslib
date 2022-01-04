@@ -56,7 +56,7 @@ namespace PsdzClient
         public string ILevelCurrent { get; private set; }
         public string ILevelBackup { get; private set; }
 
-        public DetectVehicle(string ecuPath, EdInterfaceEnet.EnetConnection enetConnection = null, bool allowAllocate = true)
+        public DetectVehicle(string ecuPath, EdInterfaceEnet.EnetConnection enetConnection = null, bool allowAllocate = true, int addTimeout = 0)
         {
             EdInterfaceEnet edInterfaceEnet = new EdInterfaceEnet(false);
             _ediabas = new EdiabasNet
@@ -75,6 +75,8 @@ namespace PsdzClient
             }
             edInterfaceEnet.RemoteHost = hostAddress;
             edInterfaceEnet.IcomAllocate = icomAllocate;
+            edInterfaceEnet.AddRecTimeout += addTimeout;
+            edInterfaceEnet.AddRecTimeoutIcom += addTimeout;
             EcuList = new List<PdszDatabase.EcuInfo>();
 
             ResetValues();

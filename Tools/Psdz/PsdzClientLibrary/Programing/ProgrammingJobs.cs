@@ -240,7 +240,7 @@ namespace PsdzClient.Programing
             return true;
         }
 
-        public bool ConnectVehicle(CancellationTokenSource cts, string istaFolder, string remoteHost, bool useIcom)
+        public bool ConnectVehicle(CancellationTokenSource cts, string istaFolder, string remoteHost, bool useIcom, int addTimeout = 1000)
         {
             log.InfoFormat("ConnectVehicle Start - Ip: {0}, ICOM: {1}", remoteHost, useIcom);
             StringBuilder sbResult = new StringBuilder();
@@ -314,7 +314,7 @@ namespace PsdzClient.Programing
                     enetConnection = new EdInterfaceEnet.EnetConnection(interfaceType, IPAddress.Parse(ipAddress));
                 }
 
-                PsdzContext.DetectVehicle = new DetectVehicle(ecuPath, enetConnection, useIcom);
+                PsdzContext.DetectVehicle = new DetectVehicle(ecuPath, enetConnection, useIcom, addTimeout);
                 PsdzContext.DetectVehicle.AbortRequest += () =>
                 {
                     if (cts != null)
@@ -393,7 +393,7 @@ namespace PsdzClient.Programing
                 if (icomConnection)
                 {
                     psdzConnection = ProgrammingService.Psdz.ConnectionManagerService.ConnectOverIcom(
-                        psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, 1000, series,
+                        psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, addTimeout, series,
                         bauIStufe, IcomConnectionType.Ip, false);
                 }
                 else

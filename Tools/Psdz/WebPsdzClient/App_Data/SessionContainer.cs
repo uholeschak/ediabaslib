@@ -963,6 +963,8 @@ namespace WebPsdzClient.App_Data
 
                                         byte[] sendData = bmwFastTel;
                                         bool funcAddress = (sendData[0] & 0xC0) == 0xC0;     // functional address
+
+                                        log.InfoFormat("VehicleThread Transmit Len={0}, Func={1}", sendData.Length, funcAddress);
                                         for (;;)
                                         {
                                             bool dataReceived = false;
@@ -978,6 +980,7 @@ namespace WebPsdzClient.App_Data
                                                     }
                                                     else
                                                     {
+                                                        log.InfoFormat("VehicleThread Receive Len={0}", enetTel.Length);
                                                         lock (enetTcpClientData.SendQueue)
                                                         {
                                                             foreach (byte enetData in enetTel)
@@ -989,13 +992,20 @@ namespace WebPsdzClient.App_Data
                                                     }
                                                 }
                                             }
-                                            catch (Exception)
+                                            catch (Exception ex)
                                             {
-                                                // ignored
+                                                log.ErrorFormat("VehicleThread TransmitData Exception: {0}", ex.Message);
                                             }
 
                                             if (!funcAddress || !dataReceived)
                                             {
+                                                break;
+                                            }
+
+                                            int recLen = enetTcpClientData.RecQueue.Count;
+                                            if (recLen > 0)
+                                            {
+                                                log.ErrorFormat("VehicleThread Next request present");
                                                 break;
                                             }
 
