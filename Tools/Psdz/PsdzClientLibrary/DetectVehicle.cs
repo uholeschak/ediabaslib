@@ -75,7 +75,6 @@ namespace PsdzClient
             }
             edInterfaceEnet.RemoteHost = hostAddress;
             edInterfaceEnet.IcomAllocate = icomAllocate;
-            edInterfaceEnet.AddRecTimeout += addTimeout;
             edInterfaceEnet.AddRecTimeoutIcom += addTimeout;
             EcuList = new List<PdszDatabase.EcuInfo>();
 
