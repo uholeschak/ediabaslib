@@ -42,6 +42,15 @@
             <%: Scripts.RenderFormat("<script src='{0}' type='text/javascript'></script>", "~/bundles/SignalRScripts") %>
             <%: Scripts.RenderFormat("<script src='{0}' type='text/javascript'></script>", "~/signalr/hubs") %>
         </asp:PlaceHolder>
+        <script type="text/javascript">
+            var connection = $.hubConnection();
+            var hub = connection.createHubProxy("psdzVehicleHub");
+            hub.on("vehicleRequest", function (message)
+            {
+                console.log("Request message: ", message);
+            });
+            connection.start();
+        </script>
 
         <div class="navbar navbar-inverse navbar-fixed-top">
             <div class="container">

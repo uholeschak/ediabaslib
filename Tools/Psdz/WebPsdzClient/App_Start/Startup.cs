@@ -2,6 +2,7 @@
 using Owin;
 using System;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.SignalR;
 using Microsoft.Owin.Security.Cookies;
 
 [assembly: OwinStartup(typeof(WebPsdzClient.Startup))]
@@ -13,6 +14,8 @@ namespace WebPsdzClient
         public void Configuration(IAppBuilder app)
         {
             ConfigureAuth(app);
+            var hubConfiguration = new HubConfiguration();
+            hubConfiguration.EnableDetailedErrors = false;
             app.MapSignalR();
         }
 
