@@ -33,6 +33,9 @@ namespace WebPsdzClient
             // bereit für die Produktion, verwenden Sie das Buildtool unter https://modernizr.com, um nur die benötigten Tests auszuwählen.
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
                             "~/Scripts/modernizr-*"));
+
+            bundles.Add(new ScriptBundle("~/bundles/jquery.signalR").Include(
+                "~/Scripts/jquery.signalR*"));
         }
     }
 }
