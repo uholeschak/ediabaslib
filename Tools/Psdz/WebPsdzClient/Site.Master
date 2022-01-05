@@ -38,7 +38,9 @@
                 <%--Site Scripts--%>
             </Scripts>
         </asp:ScriptManager>
-        <%: Scripts.Render("~/bundles/SignalRScripts") %>
+        <asp:PlaceHolder runat="server">
+            <%: Scripts.RenderFormat("<script src='{0}' type='text/javascript'></script>", "~/bundles/SignalRScripts") %>
+        </asp:PlaceHolder>
 
         <div class="navbar navbar-inverse navbar-fixed-top">
             <div class="container">
