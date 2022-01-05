@@ -11,13 +11,7 @@ namespace WebPsdzClient
     {
         public void Configuration(IAppBuilder app)
         {
-#if false
-            app.Run(context =>
-            {
-                string t = DateTime.Now.Millisecond.ToString();
-                return context.Response.WriteAsync(t + " Production OWIN App");
-            });
-#endif
+            app.MapSignalR();
         }
     }
 }
