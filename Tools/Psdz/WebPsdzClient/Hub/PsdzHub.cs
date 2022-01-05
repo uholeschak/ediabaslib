@@ -8,18 +8,18 @@ using Microsoft.AspNet.SignalR.Hubs;
 
 namespace PsdzClient
 {
-    [HubName("PsdzVehicleHub")]
+    [HubName("psdzVehicleHub")]
     public class PsdzVehicleHub : Hub<IPsdzClient>
     {
-        [HubMethodName("vehicleMessage")]
-        public async Task VehicleMessage(string message)
+        [HubMethodName("vehicleResponse")]
+        public async Task VehicleResponse(string message)
         {
-            await Clients.All.VehicleMessage(message);
+            await Clients.All.vehicleRequest("Response: " + message);
         }
     }
 
     public interface IPsdzClient
     {
-        Task VehicleMessage(string message);
+        Task vehicleRequest(string message);
     }
 }

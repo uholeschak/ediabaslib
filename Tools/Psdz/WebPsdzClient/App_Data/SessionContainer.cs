@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using EdiabasLib;
 using log4net;
+using Microsoft.AspNet.SignalR;
 using PsdzClient;
 using PsdzClient.Programing;
 
@@ -939,6 +940,12 @@ namespace WebPsdzClient.App_Data
             log.InfoFormat("VehicleThread started");
             EdiabasConnect();
 
+            IHubContext hubContext = GlobalHost.ConnectionManager.GetHubContext<PsdzVehicleHub>();
+            if (hubContext != null)
+            {
+                hubContext.Clients.All.vehicleRequest("Connected");
+            }
+
             for (;;)
             {
                 _vehicleThreadWakeEvent.WaitOne(100, false);
@@ -1075,6 +1082,11 @@ namespace WebPsdzClient.App_Data
                         }
                     }
                 }
+            }
+
+            if (hubContext != null)
+            {
+                hubContext.Clients.All.vehicleRequest("Disconnected");
             }
 
             EdiabasDisconnect();

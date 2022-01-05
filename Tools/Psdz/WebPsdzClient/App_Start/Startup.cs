@@ -12,8 +12,8 @@ namespace WebPsdzClient
     {
         public void Configuration(IAppBuilder app)
         {
-            app.MapSignalR();
             ConfigureAuth(app);
+            app.MapSignalR();
         }
 
         public void ConfigureAuth(IAppBuilder app)
