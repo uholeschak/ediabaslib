@@ -38,6 +38,7 @@
                 <%--Site Scripts--%>
             </Scripts>
         </asp:ScriptManager>
+        <%: Scripts.Render("~/bundles/SignalRScripts") %>
 
         <div class="navbar navbar-inverse navbar-fixed-top">
             <div class="container">

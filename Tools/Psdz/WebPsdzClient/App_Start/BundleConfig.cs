@@ -34,7 +34,7 @@ namespace WebPsdzClient
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
                             "~/Scripts/modernizr-*"));
 
-            bundles.Add(new ScriptBundle("~/bundles/jquery.signalR").Include(
+            bundles.Add(new ScriptBundle("~/bundles/SignalRScripts").Include(
                 "~/Scripts/jquery.signalR*"));
         }
     }
