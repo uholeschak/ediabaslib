@@ -940,7 +940,7 @@ namespace WebPsdzClient.App_Data
             log.InfoFormat("VehicleThread started");
             EdiabasConnect();
 
-            IHubContext hubContext = GlobalHost.ConnectionManager.GetHubContext<PsdzVehicleHub>();
+            IHubContext<IPsdzClient> hubContext = GlobalHost.ConnectionManager.GetHubContext<PsdzVehicleHub, IPsdzClient>();
             if (hubContext != null)
             {
                 hubContext.Clients.All.vehicleRequest("Connected");
