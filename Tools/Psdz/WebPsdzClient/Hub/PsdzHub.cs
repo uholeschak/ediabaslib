@@ -17,6 +17,12 @@ namespace PsdzClient
             //await Clients.Caller.vehicleRequest("Response: " + message);
         }
 
+        [HubMethodName("sessionConnected")]
+        public async Task SessionConnected(string sessionId)
+        {
+            log.InfoFormat("Session connected: {0} {1}", sessionId, Context.ConnectionId);
+        }
+
         public override Task OnConnected()
         {
             log.InfoFormat("Connected ID: {0}", Context.ConnectionId);

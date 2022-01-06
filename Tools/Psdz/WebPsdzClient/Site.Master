@@ -51,7 +51,8 @@
             }
             $.connection.hub.start().done(function ()
                 {
-                    psdzVehicleHubProxy.server.vehicleResponse("Client connected");
+                    var sessionID = "<%=Session.SessionID%>";
+                    psdzVehicleHubProxy.server.sessionConnected(sessionID);
                 }
             );
         </script>
