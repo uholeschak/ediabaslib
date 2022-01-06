@@ -45,20 +45,58 @@
         <script type="text/javascript">
             var psdzVehicleHubProxy = $.connection.psdzVehicleHub;
 
+            function send_request(url, formData)
+            {
+                var request = new XMLHttpRequest();
+                request.onload = function ()
+                {
+                    if (request.status === 200)
+                    {
+                        console.log("Vehicle response: Xml=" + request.responseText);
+                        psdzVehicleHubProxy.server.vehicleReceive(request.responseText);
+                    }
+                    else
+                    {
+                        console.log("Vehicle response error: Code=" + request.status);
+                        psdzVehicleHubProxy.server.vehicleError(request.statusText);
+                    }
+                };
+                request.onerror = function ()
+                {
+                    console.log("Vehicle error");
+                    psdzVehicleHubProxy.server.vehicleError("Error");
+                };
+                request.abort = function ()
+                {
+                    console.log("Vehicle abort");
+                    psdzVehicleHubProxy.server.vehicleError("Abort");
+                };
+                request.open("POST", url, true);
+                request.send(formData);
+            }
+
             psdzVehicleHubProxy.client.vehicleConnect = function (url)
             {
                 console.log("Vehicle connect: Url=", url);
+                var formData = new FormData();
+                formData.append('connect', '1');
+                send_request(url, formData);
             }
 
             psdzVehicleHubProxy.client.vehicleDisconnect = function (url)
             {
                 console.log("Vehicle disconnect: Url=", url);
+                var formData = new FormData();
+                formData.append('disconnect', '1');
+                send_request(url, formData);
             }
 
             psdzVehicleHubProxy.client.vehicleSend = function (url, data)
             {
                 console.log("Vehicle send: Url=", url + ", Data=" + data);
-                psdzVehicleHubProxy.server.vehicleReceive(data);
+                var formData = new FormData();
+                formData.append('data', data);
+                send_request(url, formData);
             }
 
             var sessionID = "<%=Session.SessionID%>";

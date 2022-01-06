@@ -254,7 +254,7 @@ namespace WebPsdzClient.App_Data
         private const int TcpSendBufferSize = 1400;
         private const int TcpSendTimeout = 5000;
         private const int TcpTesterAddr = 0xF4;
-        private const string VehicleUrl = "http://localhost:8080";
+        private const string VehicleUrl = "https://holeschak.de/BmwDeepObd/VehicleTest.php";
 
         public SessionContainer(string sessionId, string dealerId)
         {
