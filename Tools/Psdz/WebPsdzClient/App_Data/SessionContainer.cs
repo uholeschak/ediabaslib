@@ -68,6 +68,7 @@ namespace WebPsdzClient.App_Data
 
         public delegate void UpdateDisplayDelegate();
         public delegate void UpdateOptionsDelegate();
+        public string SessionId { get; }
         public ProgrammingJobs ProgrammingJobs { get; private set; }
         public bool RefreshOptions { get; set; }
 
@@ -254,8 +255,9 @@ namespace WebPsdzClient.App_Data
         private const int TcpSendTimeout = 5000;
         private const int TcpTesterAddr = 0xF4;
 
-        public SessionContainer(string dealerId)
+        public SessionContainer(string sessionId, string dealerId)
         {
+            SessionId = sessionId;
             ProgrammingJobs = new ProgrammingJobs(dealerId);
             ProgrammingJobs.UpdateStatusEvent += UpdateStatus;
             ProgrammingJobs.UpdateOptionsEvent += UpdateOptions;
@@ -943,7 +945,11 @@ namespace WebPsdzClient.App_Data
             IHubContext<IPsdzClient> hubContext = GlobalHost.ConnectionManager.GetHubContext<PsdzVehicleHub, IPsdzClient>();
             if (hubContext != null)
             {
-                hubContext.Clients.All.VehicleRequest("Connected");
+                List<string> connectionIds = PsdzVehicleHub.GetConnectionIds(SessionId);
+                foreach (string connectionId in connectionIds)
+                {
+                    hubContext.Clients.Client(connectionId)?.VehicleRequest("Connected");
+                }
             }
 
             for (;;)
@@ -1086,7 +1092,11 @@ namespace WebPsdzClient.App_Data
 
             if (hubContext != null)
             {
-                hubContext.Clients.All.VehicleRequest("Disconnected");
+                List<string> connectionIds = PsdzVehicleHub.GetConnectionIds(SessionId);
+                foreach (string connectionId in connectionIds)
+                {
+                    hubContext.Clients.Client(connectionId)?.VehicleRequest("Disconnected");
+                }
             }
 
             EdiabasDisconnect();

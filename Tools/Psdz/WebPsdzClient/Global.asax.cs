@@ -54,7 +54,7 @@ namespace WebPsdzClient
         {
             if (!(Session.Contents[SessionContainerName] is SessionContainer))
             {
-                SessionContainer sessionContainer = new SessionContainer(DealerId);
+                SessionContainer sessionContainer = new SessionContainer(Session.SessionID, DealerId);
                 Session.Contents.Add(SessionContainerName, sessionContainer);
             }
         }

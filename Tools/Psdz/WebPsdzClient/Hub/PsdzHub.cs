@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNet.SignalR;
 using System.Threading.Tasks;
 using log4net;
@@ -11,6 +13,14 @@ namespace PsdzClient
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(PsdzVehicleHub));
         public static Dictionary<string, string> ConnectionDict { get; } = new Dictionary<string, string>();
+
+        public static List<string> GetConnectionIds(string sessionId)
+        {
+            List<string> connectionIds =
+                ConnectionDict.Where(pair => string.Compare(pair.Value, sessionId, StringComparison.Ordinal) == 0)
+                    .Select(pair => pair.Key).ToList();
+            return connectionIds;
+        }
 
         [HubMethodName("vehicleResponse")]
         public async Task VehicleResponse(string message)
