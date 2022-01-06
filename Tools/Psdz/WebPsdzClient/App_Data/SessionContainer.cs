@@ -250,6 +250,7 @@ namespace WebPsdzClient.App_Data
         private readonly object _lockObject = new object();
         private static readonly ILog log = LogManager.GetLogger(typeof(_Default));
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
+        private static readonly List<SessionContainer> SessionContainers = new List<SessionContainer>();
 
         private const int TcpSendBufferSize = 1400;
         private const int TcpSendTimeout = 5000;
@@ -274,6 +275,27 @@ namespace WebPsdzClient.App_Data
             };
             edInterfaceEnet.RemoteHost = "127.0.0.1";
             edInterfaceEnet.IcomAllocate = false;
+
+            lock (SessionContainers)
+            {
+                SessionContainers.Add(this);
+            }
+        }
+
+        public static SessionContainer GetSessionContainer(string sessionId)
+        {
+            lock (SessionContainers)
+            {
+                foreach (SessionContainer sessionContainer in SessionContainers)
+                {
+                    if (string.Compare(sessionId, sessionContainer.SessionId, StringComparison.Ordinal) == 0)
+                    {
+                        return sessionContainer;
+                    }
+                }
+            }
+
+            return null;
         }
 
         private bool StartTcpListener()
@@ -1384,6 +1406,11 @@ namespace WebPsdzClient.App_Data
                 {
                     _ediabas.Dispose();
                     _ediabas = null;
+                }
+
+                lock (SessionContainers)
+                {
+                    SessionContainers.Remove(this);
                 }
 
                 // If disposing equals true, dispose all managed

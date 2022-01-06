@@ -5,6 +5,7 @@ using Microsoft.AspNet.SignalR;
 using System.Threading.Tasks;
 using log4net;
 using Microsoft.AspNet.SignalR.Hubs;
+using WebPsdzClient.App_Data;
 
 namespace PsdzClient
 {
@@ -23,20 +24,30 @@ namespace PsdzClient
         }
 
         [HubMethodName("vehicleReceive")]
-        public async Task VehicleReceive(string data)
+        public async Task VehicleReceive(string sessionId, string data)
         {
             await Task.Run(() =>
             {
-                log.InfoFormat("Vehicle receive: {0}", data);
+                log.InfoFormat("VehicleReceive: Session={0}, Data={1}", sessionId, data);
+                SessionContainer sessionContainer = SessionContainer.GetSessionContainer(sessionId);
+                if (sessionContainer == null)
+                {
+                    log.ErrorFormat("VehicleReceive: Session not found: {0}", sessionId);
+                }
             });
         }
 
         [HubMethodName("vehicleError")]
-        public async Task VehicleError(string message)
+        public async Task VehicleError(string sessionId, string message)
         {
             await Task.Run(() =>
             {
-                log.InfoFormat("Vehicle error: {0}", message);
+                log.ErrorFormat("VehicleError: Session={0}, Data={1}", sessionId, message);
+                SessionContainer sessionContainer = SessionContainer.GetSessionContainer(sessionId);
+                if (sessionContainer == null)
+                {
+                    log.ErrorFormat("VehicleError: Session not found: {0}", sessionId);
+                }
             });
         }
 

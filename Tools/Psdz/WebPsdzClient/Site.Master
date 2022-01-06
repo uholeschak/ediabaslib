@@ -44,6 +44,7 @@
         </asp:PlaceHolder>
         <script type="text/javascript">
             var psdzVehicleHubProxy = $.connection.psdzVehicleHub;
+            var sessionID = "<%=Session.SessionID%>";
 
             function send_request(url, formData)
             {
@@ -53,23 +54,23 @@
                     if (request.status === 200)
                     {
                         console.log("Vehicle response: Xml=" + request.responseText);
-                        psdzVehicleHubProxy.server.vehicleReceive(request.responseText);
+                        psdzVehicleHubProxy.server.vehicleReceive(sessionID, request.responseText);
                     }
                     else
                     {
                         console.log("Vehicle response error: Code=" + request.status);
-                        psdzVehicleHubProxy.server.vehicleError(request.statusText);
+                        psdzVehicleHubProxy.server.vehicleError(sessionID, request.statusText);
                     }
                 };
                 request.onerror = function ()
                 {
                     console.log("Vehicle error");
-                    psdzVehicleHubProxy.server.vehicleError("Error");
+                    psdzVehicleHubProxy.server.vehicleError(sessionID, "Error");
                 };
                 request.abort = function ()
                 {
                     console.log("Vehicle abort");
-                    psdzVehicleHubProxy.server.vehicleError("Abort");
+                    psdzVehicleHubProxy.server.vehicleError(sessionID, "Abort");
                 };
                 request.open("POST", url, true);
                 request.send(formData);
@@ -99,7 +100,6 @@
                 send_request(url, formData);
             }
 
-            var sessionID = "<%=Session.SessionID%>";
             $.connection.hub.qs = { 'sessionId' : sessionID };
             $.connection.hub.start().done(function ()
                 {
