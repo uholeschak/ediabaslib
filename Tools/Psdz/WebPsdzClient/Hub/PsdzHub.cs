@@ -13,7 +13,8 @@ namespace PsdzClient
         [HubMethodName("vehicleResponse")]
         public async Task VehicleResponse(string message)
         {
-            await Clients.Caller.vehicleRequest("Response: " + message);
+            log.InfoFormat("Vehicle response: {0}", message);
+            //await Clients.Caller.vehicleRequest("Response: " + message);
         }
 
         public override Task OnConnected()

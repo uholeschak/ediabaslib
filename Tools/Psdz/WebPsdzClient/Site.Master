@@ -43,13 +43,17 @@
             <%: Scripts.RenderFormat("<script src='{0}' type='text/javascript'></script>", "~/signalr/hubs") %>
         </asp:PlaceHolder>
         <script type="text/javascript">
-            var connection = $.hubConnection();
-            var hub = connection.createHubProxy("psdzVehicleHub");
-            hub.on("vehicleRequest", function (message)
+            var psdzVehicleHubProxy = $.connection.psdzVehicleHub;
+            psdzVehicleHubProxy.client.vehicleRequest = function (message)
             {
                 console.log("Request message: ", message);
-            });
-            connection.start();
+                psdzVehicleHubProxy.server.vehicleResponse("Received: " + message);
+            }
+            $.connection.hub.start().done(function ()
+                {
+                    psdzVehicleHubProxy.server.vehicleResponse("Client connected");
+                }
+            );
         </script>
 
         <div class="navbar navbar-inverse navbar-fixed-top">
