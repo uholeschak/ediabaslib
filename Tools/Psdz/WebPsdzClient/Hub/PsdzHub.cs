@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.SignalR;
+﻿using System.Collections.Generic;
+using Microsoft.AspNet.SignalR;
 using System.Threading.Tasks;
 using log4net;
 using Microsoft.AspNet.SignalR.Hubs;
@@ -9,6 +10,7 @@ namespace PsdzClient
     public class PsdzVehicleHub : Hub<IPsdzClient>
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(PsdzVehicleHub));
+        public static Dictionary<string, string> ConnectionDict { get; } = new Dictionary<string, string>();
 
         [HubMethodName("vehicleResponse")]
         public async Task VehicleResponse(string message)
@@ -32,13 +34,33 @@ namespace PsdzClient
         public override Task OnConnected()
         {
             string sessionId = Context.QueryString["sessionId"];
-            log.InfoFormat("Connected ID: {0} {1}", sessionId, Context.ConnectionId);
+            string connectionId = Context.ConnectionId;
+
+            if (!string.IsNullOrEmpty(sessionId))
+            {
+                ConnectionDict[connectionId] = sessionId;
+            }
             return base.OnConnected();
+        }
+
+        public override Task OnReconnected()
+        {
+            string sessionId = Context.QueryString["sessionId"];
+            string connectionId = Context.ConnectionId;
+
+            if (!string.IsNullOrEmpty(sessionId))
+            {
+                ConnectionDict[connectionId] = sessionId;
+            }
+
+            return base.OnReconnected();
         }
 
         public override Task OnDisconnected(bool stopCalled)
         {
-            log.InfoFormat("Disconnected ID: {0}", Context.ConnectionId);
+            string connectionId = Context.ConnectionId;
+
+            ConnectionDict.Remove(connectionId);
             return base.OnDisconnected(stopCalled);
         }
     }
