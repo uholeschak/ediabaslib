@@ -254,6 +254,7 @@ namespace WebPsdzClient.App_Data
         private const int TcpSendBufferSize = 1400;
         private const int TcpSendTimeout = 5000;
         private const int TcpTesterAddr = 0xF4;
+        private const string VehicleUrl = "http://localhost:8080";
 
         public SessionContainer(string sessionId, string dealerId)
         {
@@ -948,7 +949,7 @@ namespace WebPsdzClient.App_Data
                 List<string> connectionIds = PsdzVehicleHub.GetConnectionIds(SessionId);
                 foreach (string connectionId in connectionIds)
                 {
-                    hubContext.Clients.Client(connectionId)?.VehicleRequest("Connected");
+                    hubContext.Clients.Client(connectionId)?.VehicleConnect(VehicleUrl);
                 }
             }
 
@@ -1020,6 +1021,16 @@ namespace WebPsdzClient.App_Data
                                         }
 
                                         enetTcpChannel.SendEvent.Set();
+
+                                        if (hubContext != null)
+                                        {
+                                            string dataString = BitConverter.ToString(bmwFastTel).Replace("-", " ");
+                                            List<string> connectionIds = PsdzVehicleHub.GetConnectionIds(SessionId);
+                                            foreach (string connectionId in connectionIds)
+                                            {
+                                                hubContext.Clients.Client(connectionId)?.VehicleSend(VehicleUrl, dataString);
+                                            }
+                                        }
 
                                         byte[] sendData = bmwFastTel;
                                         bool funcAddress = (sendData[0] & 0xC0) == 0xC0;     // functional address
@@ -1095,7 +1106,7 @@ namespace WebPsdzClient.App_Data
                 List<string> connectionIds = PsdzVehicleHub.GetConnectionIds(SessionId);
                 foreach (string connectionId in connectionIds)
                 {
-                    hubContext.Clients.Client(connectionId)?.VehicleRequest("Disconnected");
+                    hubContext.Clients.Client(connectionId)?.VehicleDisconnect(VehicleUrl);
                 }
             }
 

@@ -22,14 +22,22 @@ namespace PsdzClient
             return connectionIds;
         }
 
-        [HubMethodName("vehicleResponse")]
-        public async Task VehicleResponse(string message)
+        [HubMethodName("vehicleReceive")]
+        public async Task VehicleReceive(string data)
         {
             await Task.Run(() =>
             {
-                log.InfoFormat("Vehicle response: {0}", message);
+                log.InfoFormat("Vehicle receive: {0}", data);
             });
-            //await Clients.Caller.vehicleRequest("Response: " + message);
+        }
+
+        [HubMethodName("vehicleError")]
+        public async Task VehicleError(string message)
+        {
+            await Task.Run(() =>
+            {
+                log.InfoFormat("Vehicle error: {0}", message);
+            });
         }
 
         [HubMethodName("sessionConnected")]
@@ -77,7 +85,13 @@ namespace PsdzClient
 
     public interface IPsdzClient
     {
-        [HubMethodName("vehicleRequest")]
-        Task VehicleRequest(string message);
+        [HubMethodName("vehicleConnect")]
+        Task VehicleConnect(string url);
+
+        [HubMethodName("vehicleDisconnect")]
+        Task VehicleDisconnect(string url);
+
+        [HubMethodName("vehicleSend")]
+        Task VehicleSend(string url, string data);
     }
 }
