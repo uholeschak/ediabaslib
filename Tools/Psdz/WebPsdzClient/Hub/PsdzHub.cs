@@ -45,6 +45,7 @@ namespace PsdzClient
 
     public interface IPsdzClient
     {
-        Task vehicleRequest(string message);
+        [HubMethodName("vehicleRequest")]
+        Task VehicleRequest(string message);
     }
 }

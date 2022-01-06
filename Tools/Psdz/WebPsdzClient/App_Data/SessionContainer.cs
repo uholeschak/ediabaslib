@@ -943,7 +943,7 @@ namespace WebPsdzClient.App_Data
             IHubContext<IPsdzClient> hubContext = GlobalHost.ConnectionManager.GetHubContext<PsdzVehicleHub, IPsdzClient>();
             if (hubContext != null)
             {
-                hubContext.Clients.All.vehicleRequest("Connected");
+                hubContext.Clients.All.VehicleRequest("Connected");
             }
 
             for (;;)
@@ -1086,7 +1086,7 @@ namespace WebPsdzClient.App_Data
 
             if (hubContext != null)
             {
-                hubContext.Clients.All.vehicleRequest("Disconnected");
+                hubContext.Clients.All.VehicleRequest("Disconnected");
             }
 
             EdiabasDisconnect();
