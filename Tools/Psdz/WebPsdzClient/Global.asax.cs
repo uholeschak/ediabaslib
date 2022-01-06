@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
@@ -14,9 +15,9 @@ namespace WebPsdzClient
 {
     public class Global : HttpApplication
     {
-        public const string DealerId = "32395";
-        public const string IstaFolder = "E:\\ISTA-D-4.31.16";
         public const string SessionContainerName = "SessionContainer";
+        public static string DealerId { get; private set; }
+        public static string IstaFolder { get; private set; }
 
         public override void Init()
         {
@@ -31,6 +32,9 @@ namespace WebPsdzClient
         protected void Application_Start(object sender, EventArgs e)
         {
             // Code, der beim Anwendungsstart ausgeführt wird
+            DealerId = ConfigurationManager.AppSettings["DealerId"];
+            IstaFolder = ConfigurationManager.AppSettings["IstaFolder"];
+
             GlobalConfiguration.Configure(WebApiConfig.Register);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);

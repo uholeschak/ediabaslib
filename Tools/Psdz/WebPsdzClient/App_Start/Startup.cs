@@ -1,6 +1,9 @@
 ﻿using Microsoft.Owin;
 using Owin;
 using System;
+using System.Configuration;
+using System.Threading.Tasks;
+using System.Web.Cors;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.SignalR;
 using Microsoft.Owin.Cors;
@@ -22,7 +25,43 @@ namespace WebPsdzClient
 
         public void ConfigureAuth(IAppBuilder app)
         {
-            app.UseCors(CorsOptions.AllowAll);
+            string originsSetting = ConfigurationManager.AppSettings["Origins"];
+            if (!string.IsNullOrEmpty(originsSetting))
+            {
+                if (string.Compare(originsSetting.Trim(), "*", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    app.UseCors(CorsOptions.AllowAll);
+                }
+                else
+                {
+                    string[] allowedOrigins = originsSetting.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+
+                    CorsPolicy corsPolicy = new CorsPolicy()
+                    {
+                        AllowAnyHeader = true,
+                        AllowAnyMethod = true,
+                        SupportsCredentials = true
+                    };
+
+                    foreach (string origin in allowedOrigins)
+                    {
+                        corsPolicy.Origins.Add(origin.Trim());
+                    }
+
+                    CorsPolicyProvider policyProvider = new CorsPolicyProvider()
+                    {
+                        PolicyResolver = (context) => Task.FromResult(corsPolicy)
+                    };
+
+                    CorsOptions corsOptions = new CorsOptions()
+                    {
+                        PolicyProvider = policyProvider
+                    };
+
+                    app.UseCors(corsOptions);
+                }
+            }
+
             // Enable the application to use a cookie to store information for the signed in user
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
