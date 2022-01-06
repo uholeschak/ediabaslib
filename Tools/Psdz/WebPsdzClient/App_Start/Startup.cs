@@ -3,6 +3,7 @@ using Owin;
 using System;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.SignalR;
+using Microsoft.Owin.Cors;
 using Microsoft.Owin.Security.Cookies;
 
 [assembly: OwinStartup(typeof(WebPsdzClient.Startup))]
@@ -21,6 +22,7 @@ namespace WebPsdzClient
 
         public void ConfigureAuth(IAppBuilder app)
         {
+            app.UseCors(CorsOptions.AllowAll);
             // Enable the application to use a cookie to store information for the signed in user
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
