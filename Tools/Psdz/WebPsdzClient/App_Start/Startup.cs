@@ -25,42 +25,24 @@ namespace WebPsdzClient
 
         public void ConfigureAuth(IAppBuilder app)
         {
-            string originsSetting = ConfigurationManager.AppSettings["Origins"];
-            if (!string.IsNullOrEmpty(originsSetting))
+            CorsPolicy corsPolicy = new CorsPolicy()
             {
-                if (string.Compare(originsSetting.Trim(), "*", StringComparison.OrdinalIgnoreCase) == 0)
-                {
-                    app.UseCors(CorsOptions.AllowAll);
-                }
-                else
-                {
-                    string[] allowedOrigins = originsSetting.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                AllowAnyHeader = true,
+                AllowAnyMethod = true,
+                AllowAnyOrigin = true,
+            };
 
-                    CorsPolicy corsPolicy = new CorsPolicy()
-                    {
-                        AllowAnyHeader = true,
-                        AllowAnyMethod = true,
-                        SupportsCredentials = true
-                    };
+            CorsPolicyProvider policyProvider = new CorsPolicyProvider()
+            {
+                PolicyResolver = (context) => Task.FromResult(corsPolicy)
+            };
 
-                    foreach (string origin in allowedOrigins)
-                    {
-                        corsPolicy.Origins.Add(origin.Trim());
-                    }
+            CorsOptions corsOptions = new CorsOptions()
+            {
+                PolicyProvider = policyProvider
+            };
 
-                    CorsPolicyProvider policyProvider = new CorsPolicyProvider()
-                    {
-                        PolicyResolver = (context) => Task.FromResult(corsPolicy)
-                    };
-
-                    CorsOptions corsOptions = new CorsOptions()
-                    {
-                        PolicyProvider = policyProvider
-                    };
-
-                    app.UseCors(corsOptions);
-                }
-            }
+            app.UseCors(corsOptions);
 
             // Enable the application to use a cookie to store information for the signed in user
             app.UseCookieAuthentication(new CookieAuthenticationOptions
