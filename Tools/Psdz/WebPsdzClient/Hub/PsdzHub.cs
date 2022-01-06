@@ -13,14 +13,20 @@ namespace PsdzClient
         [HubMethodName("vehicleResponse")]
         public async Task VehicleResponse(string message)
         {
-            log.InfoFormat("Vehicle response: {0}", message);
+            await Task.Run(() =>
+            {
+                log.InfoFormat("Vehicle response: {0}", message);
+            });
             //await Clients.Caller.vehicleRequest("Response: " + message);
         }
 
         [HubMethodName("sessionConnected")]
         public async Task SessionConnected(string sessionId)
         {
-            log.InfoFormat("Session connected: {0} {1}", sessionId, Context.ConnectionId);
+            await Task.Run(() =>
+            {
+                log.InfoFormat("Session connected: {0} {1}", sessionId, Context.ConnectionId);
+            });
         }
 
         public override Task OnConnected()
