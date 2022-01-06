@@ -49,9 +49,10 @@
                 console.log("Request message: ", message);
                 psdzVehicleHubProxy.server.vehicleResponse("Received: " + message);
             }
+            var sessionID = "<%=Session.SessionID%>";
+            $.connection.hub.qs = { 'sessionId': sessionID };
             $.connection.hub.start().done(function ()
                 {
-                    var sessionID = "<%=Session.SessionID%>";
                     psdzVehicleHubProxy.server.sessionConnected(sessionID);
                 }
             );

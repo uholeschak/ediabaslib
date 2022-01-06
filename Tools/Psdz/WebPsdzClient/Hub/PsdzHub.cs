@@ -31,7 +31,8 @@ namespace PsdzClient
 
         public override Task OnConnected()
         {
-            log.InfoFormat("Connected ID: {0}", Context.ConnectionId);
+            string sessionId = Context.QueryString["sessionId"];
+            log.InfoFormat("Connected ID: {0} {1}", sessionId, Context.ConnectionId);
             return base.OnConnected();
         }
 
