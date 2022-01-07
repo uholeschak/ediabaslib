@@ -24,11 +24,11 @@ namespace PsdzClient
         }
 
         [HubMethodName("vehicleReceive")]
-        public async Task VehicleReceive(string sessionId, string data)
+        public async Task VehicleReceive(string sessionId, string id, string data)
         {
             await Task.Run(() =>
             {
-                log.InfoFormat("VehicleReceive: Session={0}, Data={1}", sessionId, data);
+                log.InfoFormat("VehicleReceive: Session={0}, Id={1}, Data={2}", sessionId, id, data);
                 SessionContainer sessionContainer = SessionContainer.GetSessionContainer(sessionId);
                 if (sessionContainer == null)
                 {
@@ -38,11 +38,11 @@ namespace PsdzClient
         }
 
         [HubMethodName("vehicleError")]
-        public async Task VehicleError(string sessionId, string message)
+        public async Task VehicleError(string sessionId, string id, string message)
         {
             await Task.Run(() =>
             {
-                log.ErrorFormat("VehicleError: Session={0}, Data={1}", sessionId, message);
+                log.ErrorFormat("VehicleError: Session={0}, Id={1}, Message={2}", sessionId, id, message);
                 SessionContainer sessionContainer = SessionContainer.GetSessionContainer(sessionId);
                 if (sessionContainer == null)
                 {
@@ -97,12 +97,12 @@ namespace PsdzClient
     public interface IPsdzClient
     {
         [HubMethodName("vehicleConnect")]
-        Task VehicleConnect(string url);
+        Task VehicleConnect(string url, string id);
 
         [HubMethodName("vehicleDisconnect")]
-        Task VehicleDisconnect(string url);
+        Task VehicleDisconnect(string url, string id);
 
         [HubMethodName("vehicleSend")]
-        Task VehicleSend(string url, string data);
+        Task VehicleSend(string url, string id, string data);
     }
 }

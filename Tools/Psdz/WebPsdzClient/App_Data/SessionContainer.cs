@@ -239,6 +239,32 @@ namespace WebPsdzClient.App_Data
             }
         }
 
+        private UInt64 _packetId;
+        private void ResetPacketId()
+        {
+            lock (_lockObject)
+            {
+                _packetId = 0;
+            }
+        }
+
+        private string GetPacketId()
+        {
+            lock (_lockObject)
+            {
+                return _packetId.ToString(CultureInfo.InvariantCulture);
+            }
+        }
+
+        private string GetNextPacketId()
+        {
+            lock (_lockObject)
+            {
+                _packetId++;
+                return _packetId.ToString(CultureInfo.InvariantCulture);
+            }
+        }
+
         private List<EnetTcpChannel> _enetTcpChannels = new List<EnetTcpChannel>();
         private Thread _tcpThread;
         private Thread _vehicleThread;
@@ -255,7 +281,7 @@ namespace WebPsdzClient.App_Data
         private const int TcpSendBufferSize = 1400;
         private const int TcpSendTimeout = 5000;
         private const int TcpTesterAddr = 0xF4;
-        private const string VehicleUrl = "https://holeschak.de/BmwDeepObd/VehicleTest.php";
+        private const string VehicleUrl = "http://127.0.0.1:8080";
 
         public SessionContainer(string sessionId, string dealerId)
         {
@@ -966,12 +992,13 @@ namespace WebPsdzClient.App_Data
             EdiabasConnect();
 
             IHubContext<IPsdzClient> hubContext = GlobalHost.ConnectionManager.GetHubContext<PsdzVehicleHub, IPsdzClient>();
+            ResetPacketId();
             if (hubContext != null)
             {
                 List<string> connectionIds = PsdzVehicleHub.GetConnectionIds(SessionId);
                 foreach (string connectionId in connectionIds)
                 {
-                    hubContext.Clients.Client(connectionId)?.VehicleConnect(VehicleUrl);
+                    hubContext.Clients.Client(connectionId)?.VehicleConnect(VehicleUrl, GetNextPacketId());
                 }
             }
 
@@ -1046,11 +1073,11 @@ namespace WebPsdzClient.App_Data
 
                                         if (hubContext != null)
                                         {
-                                            string dataString = BitConverter.ToString(bmwFastTel).Replace("-", " ");
+                                            string dataString = BitConverter.ToString(bmwFastTel).Replace("-", "");
                                             List<string> connectionIds = PsdzVehicleHub.GetConnectionIds(SessionId);
                                             foreach (string connectionId in connectionIds)
                                             {
-                                                hubContext.Clients.Client(connectionId)?.VehicleSend(VehicleUrl, dataString);
+                                                hubContext.Clients.Client(connectionId)?.VehicleSend(VehicleUrl, GetNextPacketId(), dataString);
                                             }
                                         }
 
@@ -1128,7 +1155,7 @@ namespace WebPsdzClient.App_Data
                 List<string> connectionIds = PsdzVehicleHub.GetConnectionIds(SessionId);
                 foreach (string connectionId in connectionIds)
                 {
-                    hubContext.Clients.Client(connectionId)?.VehicleDisconnect(VehicleUrl);
+                    hubContext.Clients.Client(connectionId)?.VehicleDisconnect(VehicleUrl, GetNextPacketId());
                 }
             }
 

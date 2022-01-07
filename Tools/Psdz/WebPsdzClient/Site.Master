@@ -46,7 +46,7 @@
             var psdzVehicleHubProxy = $.connection.psdzVehicleHub;
             var sessionID = "<%=Session.SessionID%>";
 
-            function send_request(url, formData)
+            function send_request(url, id, formData)
             {
                 var request = new XMLHttpRequest();
                 request.onload = function ()
@@ -54,50 +54,53 @@
                     if (request.status === 200)
                     {
                         console.log("Vehicle response: Xml=" + request.responseText);
-                        psdzVehicleHubProxy.server.vehicleReceive(sessionID, request.responseText);
+                        psdzVehicleHubProxy.server.vehicleReceive(sessionID, id, request.responseText);
                     }
                     else
                     {
                         console.log("Vehicle response error: Code=" + request.status);
-                        psdzVehicleHubProxy.server.vehicleError(sessionID, request.statusText);
+                        psdzVehicleHubProxy.server.vehicleError(sessionID, id, request.statusText);
                     }
                 };
                 request.onerror = function ()
                 {
                     console.log("Vehicle error");
-                    psdzVehicleHubProxy.server.vehicleError(sessionID, "Error");
+                    psdzVehicleHubProxy.server.vehicleError(sessionID, id, "Error");
                 };
                 request.abort = function ()
                 {
                     console.log("Vehicle abort");
-                    psdzVehicleHubProxy.server.vehicleError(sessionID, "Abort");
+                    psdzVehicleHubProxy.server.vehicleError(sessionID, id, "Abort");
                 };
                 request.open("POST", url, true);
                 request.send(formData);
             }
 
-            psdzVehicleHubProxy.client.vehicleConnect = function (url)
+            psdzVehicleHubProxy.client.vehicleConnect = function (url, id)
             {
-                console.log("Vehicle connect: Url=", url);
+                console.log("Vehicle connect: Url=" + url + ", Id=" + id);
                 var formData = new FormData();
+                formData.append('id', id);
                 formData.append('connect', '1');
-                send_request(url, formData);
+                send_request(url, id, formData);
             }
 
-            psdzVehicleHubProxy.client.vehicleDisconnect = function (url)
+            psdzVehicleHubProxy.client.vehicleDisconnect = function (url, id)
             {
-                console.log("Vehicle disconnect: Url=", url);
+                console.log("Vehicle connect: Url=" + url + ", Id=" + id);
                 var formData = new FormData();
+                formData.append('id', id);
                 formData.append('disconnect', '1');
-                send_request(url, formData);
+                send_request(url, id, formData);
             }
 
-            psdzVehicleHubProxy.client.vehicleSend = function (url, data)
+            psdzVehicleHubProxy.client.vehicleSend = function (url, id, data)
             {
-                console.log("Vehicle send: Url=", url + ", Data=" + data);
+                console.log("Vehicle send: Url=", url + ", Id=" + id + ", Data=" + data);
                 var formData = new FormData();
+                formData.append('id', id);
                 formData.append('data', data);
-                send_request(url, formData);
+                send_request(url, id, formData);
             }
 
             $.connection.hub.qs = { 'sessionId' : sessionID };
