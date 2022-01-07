@@ -239,6 +239,25 @@ namespace WebPsdzClient.App_Data
             }
         }
 
+        private string _localServerPort;
+        public string LocalServerPort
+        {
+            get
+            {
+                lock (_lockObject)
+                {
+                    return _localServerPort;
+                }
+            }
+            set
+            {
+                lock (_lockObject)
+                {
+                    _localServerPort = value;
+                }
+            }
+        }
+
         private UInt64 _packetId;
         private void ResetPacketId()
         {
@@ -281,7 +300,6 @@ namespace WebPsdzClient.App_Data
         private const int TcpSendBufferSize = 1400;
         private const int TcpSendTimeout = 5000;
         private const int TcpTesterAddr = 0xF4;
-        private const string VehicleUrl = "http://127.0.0.1:8080";
 
         public SessionContainer(string sessionId, string dealerId)
         {
@@ -986,6 +1004,16 @@ namespace WebPsdzClient.App_Data
             log.InfoFormat("TcpThread stopped");
         }
 
+        private string GetVehicleUrl()
+        {
+            if (string.IsNullOrEmpty(LocalServerPort))
+            {
+                LocalServerPort = "8080";
+            }
+
+            return string.Format(CultureInfo.InvariantCulture, "http://127.0.0.1:{0}", LocalServerPort);
+        }
+
         private void VehicleThread()
         {
             log.InfoFormat("VehicleThread started");
@@ -998,7 +1026,7 @@ namespace WebPsdzClient.App_Data
                 List<string> connectionIds = PsdzVehicleHub.GetConnectionIds(SessionId);
                 foreach (string connectionId in connectionIds)
                 {
-                    hubContext.Clients.Client(connectionId)?.VehicleConnect(VehicleUrl, GetNextPacketId());
+                    hubContext.Clients.Client(connectionId)?.VehicleConnect(GetVehicleUrl(), GetNextPacketId());
                 }
             }
 
@@ -1077,7 +1105,7 @@ namespace WebPsdzClient.App_Data
                                             List<string> connectionIds = PsdzVehicleHub.GetConnectionIds(SessionId);
                                             foreach (string connectionId in connectionIds)
                                             {
-                                                hubContext.Clients.Client(connectionId)?.VehicleSend(VehicleUrl, GetNextPacketId(), dataString);
+                                                hubContext.Clients.Client(connectionId)?.VehicleSend(GetVehicleUrl(), GetNextPacketId(), dataString);
                                             }
                                         }
 
@@ -1155,7 +1183,7 @@ namespace WebPsdzClient.App_Data
                 List<string> connectionIds = PsdzVehicleHub.GetConnectionIds(SessionId);
                 foreach (string connectionId in connectionIds)
                 {
-                    hubContext.Clients.Client(connectionId)?.VehicleDisconnect(VehicleUrl, GetNextPacketId());
+                    hubContext.Clients.Client(connectionId)?.VehicleDisconnect(GetVehicleUrl(), GetNextPacketId());
                 }
             }
 

@@ -162,7 +162,6 @@ namespace VehicleTestServer
 
                 if (valid)
                 {
-
                     if (!string.IsNullOrEmpty(idString))
                     {
                         sbBody.Append($" <request id=\"{System.Web.HttpUtility.HtmlEncode(idString)}\" />\r\n");

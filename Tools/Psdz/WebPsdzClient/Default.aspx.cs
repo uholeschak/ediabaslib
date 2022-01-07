@@ -35,6 +35,25 @@ namespace WebPsdzClient
 
             if (!IsPostBack)
             {
+                if (string.IsNullOrEmpty(sessionContainer.LocalServerPort))
+                {
+                    try
+                    {
+                        if (Request.QueryString.Count > 0)
+                        {
+                            string serverPort = Request.QueryString["serverport"];
+                            if (!string.IsNullOrEmpty(serverPort))
+                            {
+                                sessionContainer.LocalServerPort = serverPort;
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        log.ErrorFormat("Page_Load Exception: {0}", ex.Message);
+                    }
+                }
+
                 UpdateDisplay();
             }
 
