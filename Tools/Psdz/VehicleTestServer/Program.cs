@@ -9,6 +9,7 @@ using System.Reactive.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using EdiabasLib;
 using HttpMultipartParser;
 using ISimpleHttpListener.Rx.Enum;
 using ISimpleHttpListener.Rx.Model;
@@ -20,8 +21,14 @@ namespace VehicleTestServer
 {
     class Program
     {
+        private static object _ediabasLock = new object();
+        private static EdiabasNet _ediabas = null;
+        private static bool _ediabasAbort = false;
+        private static UInt64 _requestId = 0;
+
         static int Main(string[] args)
         {
+            EdiabasSetup();
             TcpListenerTest();
             Console.WriteLine("Press ESC to stop");
             do
@@ -33,10 +40,96 @@ namespace VehicleTestServer
             }
             while (Console.ReadKey(true).Key != ConsoleKey.Escape);
 
+            EdiabasDispose();
             return 0;
         }
 
-        static void TcpListenerTest()
+        private static void EdiabasSetup()
+        {
+            lock (_ediabasLock)
+            {
+                _ediabasAbort = false;
+                _requestId = 0;
+                EdInterfaceEnet edInterfaceEnet = new EdInterfaceEnet(false);
+                _ediabas = new EdiabasNet
+                {
+                    EdInterfaceClass = edInterfaceEnet,
+                    AbortJobFunc = AbortEdiabasJob
+                };
+                edInterfaceEnet.RemoteHost = "127.0.0.1";
+                edInterfaceEnet.IcomAllocate = false;
+            }
+        }
+
+        private static void EdiabasDispose()
+        {
+            lock (_ediabasLock)
+            {
+                if (_ediabas != null)
+                {
+                    _ediabas.Dispose();
+                    _ediabas = null;
+                }
+            }
+        }
+
+        private static bool AbortEdiabasJob()
+        {
+            return _ediabasAbort;
+        }
+
+        private static bool EdiabasConnect()
+        {
+            lock (_ediabasLock)
+            {
+                try
+                {
+                    if (_ediabas.EdInterfaceClass.InterfaceConnect())
+                    {
+                        Console.WriteLine($"Ediabas connected");
+                        return true;
+                    }
+
+                    Console.WriteLine($"Ediabas connect failed");
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Ediabas connect Exception: {0}", ex);
+                    return false;
+                }
+            }
+        }
+
+        private static bool EdiabasDisconnect()
+        {
+            lock (_ediabasLock)
+            {
+                try
+                {
+                    Console.WriteLine($"Ediabas disconnected");
+                    return _ediabas.EdInterfaceClass.InterfaceDisconnect();
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+        }
+
+        private static bool IsEdiabasConnected()
+        {
+            lock (_ediabasLock)
+            {
+                if (_ediabas == null)
+                {
+                    return false;
+                }
+                return _ediabas.EdInterfaceClass.Connected;
+            }
+        }
+
+        private static void TcpListenerTest()
         {
 
             var uri = new Uri("http://127.0.0.1:8080");
@@ -160,27 +253,75 @@ namespace VehicleTestServer
                     }
                 }
 
+                UInt64? requestId = null;
                 if (valid)
                 {
                     if (!string.IsNullOrEmpty(idString))
                     {
-                        sbBody.Append($" <request id=\"{System.Web.HttpUtility.HtmlEncode(idString)}\" />\r\n");
+                        if (UInt64.TryParse(idString, out UInt64 idValue))
+                        {
+                            requestId = idValue;
+                        }
                     }
+                }
 
+                if (!requestId.HasValue)
+                {
+                    Console.WriteLine("No request ID");
+                    valid = false;
+                }
+
+                if (valid)
+                {
+                    bool checkId = true;
                     if (!string.IsNullOrEmpty(connectString))
                     {
-                        sbBody.Append($" <status connect=\"{System.Web.HttpUtility.HtmlEncode(connectString)}\" />\r\n");
+                        if (int.TryParse(connectString, out int connectValue))
+                        {
+                            if (connectValue > 0)
+                            {
+                                EdiabasConnect();
+                                _requestId = requestId.Value;
+                                checkId = false;
+                            }
+                        }
                     }
+
+                    if (checkId && requestId.Value <= _requestId)
+                    {
+                        Console.WriteLine("Ignoring request ID: {0}", requestId.Value);
+                        valid = false;
+                    }
+                }
+
+                if (valid)
+                {
+                    _requestId = requestId.Value;
 
                     if (!string.IsNullOrEmpty(disconnectString))
                     {
-                        sbBody.Append($" <status disconnect=\"{System.Web.HttpUtility.HtmlEncode(disconnectString)}\" />\r\n");
+                        if (int.TryParse(disconnectString, out int disconnectValue))
+                        {
+                            if (disconnectValue > 0)
+                            {
+                                EdiabasDisconnect();
+                            }
+                        }
                     }
+
+                    bool connected = IsEdiabasConnected();
+                    string connectedState = connected ? "1" : "0";
+                    sbBody.Append($" <request valid=\"1\" id=\"{System.Web.HttpUtility.HtmlEncode(idString)}\" />\r\n");
+                    sbBody.Append($" <status connected=\"{System.Web.HttpUtility.HtmlEncode(connectedState)}\" />\r\n");
 
                     if (!string.IsNullOrEmpty(dataString))
                     {
                         sbBody.Append($" <data response=\"{System.Web.HttpUtility.HtmlEncode(dataString)}\" />\r\n");
                     }
+                }
+                else
+                {
+                    sbBody.Append($" <request valid=\"0\" />\r\n");
                 }
 
                 sbBody.Append("</vehicle_info>\r\n");
