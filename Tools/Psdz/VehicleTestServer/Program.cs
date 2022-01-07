@@ -9,6 +9,7 @@ using System.Reactive.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using HttpMultipartParser;
 using ISimpleHttpListener.Rx.Enum;
 using ISimpleHttpListener.Rx.Model;
 using SimpleHttpListener.Rx.Extension;
@@ -81,12 +82,50 @@ namespace VehicleTestServer
                 StringBuilder sbBody = new StringBuilder();
                 sbBody.Append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n");
                 sbBody.Append("<vehicle_info>\r\n");
-                if (!string.IsNullOrEmpty(request.QueryString))
+                string connectString = null;
+                string disconnectString = null;
+                string dataString = null;
+                bool valid = true;
+                if (string.Compare(request.Method, "GET", StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    NameValueCollection queryCollection = System.Web.HttpUtility.ParseQueryString(request.QueryString);
-                    string connectString = queryCollection.Get("connect");
-                    string disconnectString = queryCollection.Get("disconnect");
-                    string dataString = queryCollection.Get("data");
+                    Console.WriteLine("GET {0}", request.QueryString);
+                    try
+                    {
+                        NameValueCollection queryCollection = System.Web.HttpUtility.ParseQueryString(request.QueryString);
+                        connectString = queryCollection.Get("connect");
+                        disconnectString = queryCollection.Get("disconnect");
+                        dataString = queryCollection.Get("data");
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("POST Exception={0}", e.Message);
+                        valid = false;
+                    }
+                }
+
+                if (string.Compare(request.Method, "POST", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    if (request.Body != null)
+                    {
+                        Console.WriteLine("POST Length={0}", request.Body.Length);
+                        try
+                        {
+                            request.Body.Seek(0, SeekOrigin.Begin);
+                            MultipartFormDataParser parser = await MultipartFormDataParser.ParseAsync(request.Body).ConfigureAwait(false);
+                            connectString = parser.GetParameterValue("connect");
+                            disconnectString = parser.GetParameterValue("disconnect");
+                            dataString = parser.GetParameterValue("data");
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine("POST Exception={0}", e.Message);
+                            valid = false;
+                        }
+                    }
+                }
+
+                if (valid)
+                {
                     sbBody.Append(" <data");
                     if (!string.IsNullOrEmpty(connectString))
                     {
@@ -104,6 +143,7 @@ namespace VehicleTestServer
                     }
                     sbBody.Append(" />\r\n");
                 }
+
                 sbBody.Append("</vehicle_info>\r\n");
                 var response = new HttpResponse
                 {
