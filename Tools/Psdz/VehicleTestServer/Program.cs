@@ -280,6 +280,7 @@ namespace VehicleTestServer
                         {
                             if (connectValue > 0)
                             {
+                                EdiabasDisconnect();
                                 EdiabasConnect();
                                 _requestId = requestId.Value;
                                 checkId = false;
