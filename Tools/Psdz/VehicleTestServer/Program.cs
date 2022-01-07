@@ -84,6 +84,7 @@ namespace VehicleTestServer
             {
                 try
                 {
+                    _ediabasAbort = false;
                     if (_ediabas.EdInterfaceClass.InterfaceConnect())
                     {
                         Console.WriteLine($"Ediabas connected");
@@ -108,6 +109,7 @@ namespace VehicleTestServer
                 try
                 {
                     Console.WriteLine($"Ediabas disconnected");
+                    _ediabasAbort = true;
                     return _ediabas.EdInterfaceClass.InterfaceDisconnect();
                 }
                 catch (Exception)
@@ -127,6 +129,53 @@ namespace VehicleTestServer
                 }
                 return _ediabas.EdInterfaceClass.Connected;
             }
+        }
+
+        private static List<byte[]> EdiabasTransmit(byte[] requestData)
+        {
+            List<byte[]> responseList = new List<byte[]>();
+            if (requestData == null || requestData.Length < 3)
+            {
+                return responseList;
+            }
+
+            lock (_ediabasLock)
+            {
+                byte[] sendData = requestData;
+                bool funcAddress = (sendData[0] & 0xC0) == 0xC0;     // functional address
+
+                for (; ; )
+                {
+                    bool dataReceived = false;
+                    
+                    try
+                    {
+                        if (_ediabas.EdInterfaceClass.TransmitData(sendData, out byte[] receiveData))
+                        {
+                            responseList.Add(receiveData);
+                            dataReceived = true;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+
+                    if (!funcAddress || !dataReceived)
+                    {
+                        break;
+                    }
+
+                    if (AbortEdiabasJob())
+                    {
+                        break;
+                    }
+
+                    sendData = Array.Empty<byte>();
+                }
+            }
+
+            return responseList;
         }
 
         private static void TcpListenerTest()
@@ -295,6 +344,9 @@ namespace VehicleTestServer
                     }
                 }
 
+                string validReport = valid ? "1" : "0";
+                string idReport = idString ?? string.Empty;
+                sbBody.Append($" <request valid=\"{System.Web.HttpUtility.HtmlEncode(validReport)}\" id=\"{System.Web.HttpUtility.HtmlEncode(idReport)}\" />\r\n");
                 if (valid)
                 {
                     _requestId = requestId.Value;
@@ -312,17 +364,20 @@ namespace VehicleTestServer
 
                     bool connected = IsEdiabasConnected();
                     string connectedState = connected ? "1" : "0";
-                    sbBody.Append($" <request valid=\"1\" id=\"{System.Web.HttpUtility.HtmlEncode(idString)}\" />\r\n");
                     sbBody.Append($" <status connected=\"{System.Web.HttpUtility.HtmlEncode(connectedState)}\" />\r\n");
 
                     if (!string.IsNullOrEmpty(dataString))
                     {
-                        sbBody.Append($" <data response=\"{System.Web.HttpUtility.HtmlEncode(dataString)}\" />\r\n");
+                        string requestString = dataString.Replace("-", "");
+                        byte[] requestData = EdiabasNet.HexToByteArray(requestString);
+                        sbBody.Append($" <data request=\"{System.Web.HttpUtility.HtmlEncode(requestString)}\" />\r\n");
+                        List<byte[]> responseList = EdiabasTransmit(requestData);
+                        foreach (byte[] responseData in responseList)
+                        {
+                            string responseReport = BitConverter.ToString(responseData).Replace("-", "");
+                            sbBody.Append($" <data response=\"{System.Web.HttpUtility.HtmlEncode(responseReport)}\" />\r\n");
+                        }
                     }
-                }
-                else
-                {
-                    sbBody.Append($" <request valid=\"0\" />\r\n");
                 }
 
                 sbBody.Append("</vehicle_info>\r\n");
