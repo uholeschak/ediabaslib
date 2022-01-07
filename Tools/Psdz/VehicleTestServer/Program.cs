@@ -79,19 +79,76 @@ namespace VehicleTestServer
         {
             if (request.RequestType == RequestType.TCP)
             {
+                if (!request.Headers.TryGetValue("CONTENT-TYPE", out string contentType))
+                {
+                    contentType = string.Empty;
+                }
+
+                bool urlEncoded = contentType.Contains("application/x-www-form-urlencoded");
+                bool formData = contentType.Contains("multipart/form-data");
+
                 StringBuilder sbBody = new StringBuilder();
                 sbBody.Append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n");
                 sbBody.Append("<vehicle_info>\r\n");
+
+                string queryString = null;
+                string idString = null;
                 string connectString = null;
                 string disconnectString = null;
                 string dataString = null;
                 bool valid = true;
+
                 if (string.Compare(request.Method, "GET", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     Console.WriteLine("GET {0}", request.QueryString);
+                    queryString = request.QueryString;
+                }
+
+                if (string.Compare(request.Method, "POST", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    if (request.Body != null)
+                    {
+                        Console.WriteLine("POST FormData={0}, UrlEncoded={1}", formData, urlEncoded);
+                        if (formData)
+                        {
+                            try
+                            {
+                                request.Body.Seek(0, SeekOrigin.Begin);
+                                MultipartFormDataParser parser = await MultipartFormDataParser.ParseAsync(request.Body).ConfigureAwait(false);
+                                idString = parser.GetParameterValue("id");
+                                connectString = parser.GetParameterValue("connect");
+                                disconnectString = parser.GetParameterValue("disconnect");
+                                dataString = parser.GetParameterValue("data");
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine("Multipart Exception={0}", e.Message);
+                                valid = false;
+                            }
+                        }
+                        else if (urlEncoded)
+                        {
+                            try
+                            {
+                                request.Body.Seek(0, SeekOrigin.Begin);
+                                StreamReader sr = new StreamReader(request.Body);
+                                queryString = await sr.ReadToEndAsync().ConfigureAwait(false);
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine("POST Body Exception={0}", e.Message);
+                                valid = false;
+                            }
+                        }
+                    }
+                }
+
+                if (valid && !string.IsNullOrWhiteSpace(queryString))
+                {
                     try
                     {
-                        NameValueCollection queryCollection = System.Web.HttpUtility.ParseQueryString(request.QueryString);
+                        NameValueCollection queryCollection = System.Web.HttpUtility.ParseQueryString(queryString);
+                        idString = queryCollection.Get("id");
                         connectString = queryCollection.Get("connect");
                         disconnectString = queryCollection.Get("disconnect");
                         dataString = queryCollection.Get("data");
@@ -103,45 +160,28 @@ namespace VehicleTestServer
                     }
                 }
 
-                if (string.Compare(request.Method, "POST", StringComparison.OrdinalIgnoreCase) == 0)
-                {
-                    if (request.Body != null)
-                    {
-                        Console.WriteLine("POST Length={0}", request.Body.Length);
-                        try
-                        {
-                            request.Body.Seek(0, SeekOrigin.Begin);
-                            MultipartFormDataParser parser = await MultipartFormDataParser.ParseAsync(request.Body).ConfigureAwait(false);
-                            connectString = parser.GetParameterValue("connect");
-                            disconnectString = parser.GetParameterValue("disconnect");
-                            dataString = parser.GetParameterValue("data");
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine("POST Exception={0}", e.Message);
-                            valid = false;
-                        }
-                    }
-                }
-
                 if (valid)
                 {
-                    sbBody.Append(" <data");
+
+                    if (!string.IsNullOrEmpty(idString))
+                    {
+                        sbBody.Append($" <request id=\"{System.Web.HttpUtility.HtmlEncode(idString)}\" />\r\n");
+                    }
+
                     if (!string.IsNullOrEmpty(connectString))
                     {
-                        sbBody.Append($" connect =\"{connectString}\"");
+                        sbBody.Append($" <status connect=\"{System.Web.HttpUtility.HtmlEncode(connectString)}\" />\r\n");
                     }
 
                     if (!string.IsNullOrEmpty(disconnectString))
                     {
-                        sbBody.Append($" disconnect =\"{disconnectString}\"");
+                        sbBody.Append($" <status disconnect=\"{System.Web.HttpUtility.HtmlEncode(disconnectString)}\" />\r\n");
                     }
 
                     if (!string.IsNullOrEmpty(dataString))
                     {
-                        sbBody.Append($" data =\"{dataString}\"");
+                        sbBody.Append($" <data response=\"{System.Web.HttpUtility.HtmlEncode(dataString)}\" />\r\n");
                     }
-                    sbBody.Append(" />\r\n");
                 }
 
                 sbBody.Append("</vehicle_info>\r\n");
@@ -151,7 +191,7 @@ namespace VehicleTestServer
                     ResponseReason = HttpStatusCode.OK.ToString(),
                     Headers = new Dictionary<string, string>
                     {
-                        {"Date", DateTime.UtcNow.ToString("r")},
+                        {"Date", System.Web.HttpUtility.HtmlEncode(DateTime.UtcNow.ToString("r"))},
                         {"Content-Type", "text/xml" },
                         {"Access-Control-Allow-Origin", "*" },
                     },
