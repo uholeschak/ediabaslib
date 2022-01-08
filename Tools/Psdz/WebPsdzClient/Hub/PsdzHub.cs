@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNet.SignalR;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Linq;
 using log4net;
 using Microsoft.AspNet.SignalR.Hubs;
 using WebPsdzClient.App_Data;
@@ -12,6 +14,26 @@ namespace PsdzClient
     [HubName("psdzVehicleHub")]
     public class PsdzVehicleHub : Hub<IPsdzClient>
     {
+        public class VehicleResponse
+        {
+            public VehicleResponse()
+            {
+                Id = string.Empty;
+                Valid = false;
+                Connected = false;
+                ErrorMessage = string.Empty;
+                Request = string.Empty;
+                ResponseList = new List<string>();
+            }
+
+            public string Id { get; set; }
+            public bool Valid { get; set; }
+            public bool Connected { get; set; }
+            public string ErrorMessage { get; set; }
+            public string Request { get; set; }
+            public List<string> ResponseList { get; set; }
+        }
+
         private static readonly ILog log = LogManager.GetLogger(typeof(PsdzVehicleHub));
         public static Dictionary<string, string> ConnectionDict { get; } = new Dictionary<string, string>();
 
@@ -34,6 +56,11 @@ namespace PsdzClient
                 {
                     log.ErrorFormat("VehicleReceive: Session not found: {0}", sessionId);
                 }
+                else
+                {
+                    VehicleResponse vehicleResponse = ParseVehiceResponse(id, data);
+                    sessionContainer.VehicleResponseReceived(vehicleResponse);
+                }
             });
         }
 
@@ -47,6 +74,15 @@ namespace PsdzClient
                 if (sessionContainer == null)
                 {
                     log.ErrorFormat("VehicleError: Session not found: {0}", sessionId);
+                }
+                else
+                {
+                    VehicleResponse vehicleResponse = new VehicleResponse
+                    {
+                        Id = id,
+                        ErrorMessage = message
+                    };
+                    sessionContainer.VehicleResponseReceived(vehicleResponse);
                 }
             });
         }
@@ -91,6 +127,90 @@ namespace PsdzClient
 
             ConnectionDict.Remove(connectionId);
             return base.OnDisconnected(stopCalled);
+        }
+
+        public VehicleResponse ParseVehiceResponse(string id, string responseXml)
+        {
+            VehicleResponse vehicleResponse = new VehicleResponse();
+            try
+            {
+                if (string.IsNullOrEmpty(responseXml))
+                {
+                    return vehicleResponse;
+                }
+
+                XDocument xmlDoc = XDocument.Parse(responseXml);
+                if (xmlDoc.Root == null)
+                {
+                    return vehicleResponse;
+                }
+
+                XElement requestNode = xmlDoc.Root.Element("request");
+                if (requestNode != null)
+                {
+                    XAttribute validAttr = requestNode.Attribute("valid");
+                    if (validAttr != null)
+                    {
+                        try
+                        {
+                            vehicleResponse.Valid = XmlConvert.ToBoolean(validAttr.Value);
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    }
+
+                    XAttribute idAttr = requestNode.Attribute("id");
+                    if (idAttr != null)
+                    {
+                        vehicleResponse.Id = idAttr.Value;
+                    }
+                }
+
+                XElement statusNode = xmlDoc.Root.Element("status");
+                if (statusNode != null)
+                {
+                    XAttribute connectedAttr = statusNode.Attribute("connected");
+                    if (connectedAttr != null)
+                    {
+                        try
+                        {
+                            vehicleResponse.Connected = XmlConvert.ToBoolean(connectedAttr.Value);
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    }
+                }
+
+                foreach (XElement dataNode in xmlDoc.Root.Elements("data"))
+                {
+                    XAttribute requestAttr = dataNode.Attribute("request");
+                    if (requestAttr != null)
+                    {
+                        vehicleResponse.Request = requestAttr.Value;
+                    }
+
+                    XAttribute responseAttr = dataNode.Attribute("response");
+                    if (responseAttr != null)
+                    {
+                        vehicleResponse.ResponseList.Add(responseAttr.Value);
+                    }
+                }
+
+                if (string.Compare(id, vehicleResponse.Id, StringComparison.OrdinalIgnoreCase) != 0)
+                {
+                    vehicleResponse.Valid = false;
+                }
+            }
+            catch (Exception)
+            {
+                vehicleResponse.Valid = false;
+            }
+
+            return vehicleResponse;
         }
     }
 

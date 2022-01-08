@@ -290,6 +290,7 @@ namespace WebPsdzClient.App_Data
         private bool _stopThread;
         private AutoResetEvent _tcpThreadWakeEvent = new AutoResetEvent(false);
         private AutoResetEvent _vehicleThreadWakeEvent = new AutoResetEvent(false);
+        private Queue<PsdzVehicleHub.VehicleResponse> _vehicleResponses = new Queue<PsdzVehicleHub.VehicleResponse>();
         private EdiabasNet _ediabas;
         private bool _disposed;
         private readonly object _lockObject = new object();
@@ -1012,6 +1013,16 @@ namespace WebPsdzClient.App_Data
             }
 
             return string.Format(CultureInfo.InvariantCulture, "http://127.0.0.1:{0}", LocalServerPort);
+        }
+
+        public void VehicleResponseReceived(PsdzVehicleHub.VehicleResponse vehicleResponse)
+        {
+            lock (_lockObject)
+            {
+                _vehicleResponses.Enqueue(vehicleResponse);
+            }
+
+            _vehicleThreadWakeEvent.Set();
         }
 
         private void VehicleThread()
