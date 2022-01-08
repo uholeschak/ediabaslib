@@ -1015,6 +1015,14 @@ namespace WebPsdzClient.App_Data
             return string.Format(CultureInfo.InvariantCulture, "http://127.0.0.1:{0}", LocalServerPort);
         }
 
+        public void VehicleResponseClear()
+        {
+            lock (_lockObject)
+            {
+                _vehicleResponses.Clear();
+            }
+        }
+
         public void VehicleResponseReceived(PsdzVehicleHub.VehicleResponse vehicleResponse)
         {
             lock (_lockObject)
@@ -1025,12 +1033,25 @@ namespace WebPsdzClient.App_Data
             _vehicleThreadWakeEvent.Set();
         }
 
+        public PsdzVehicleHub.VehicleResponse VehicleResponseGet()
+        {
+            lock (_lockObject)
+            {
+                if (_vehicleResponses.Count == 0)
+                {
+                    return null;
+                }
+                return _vehicleResponses.Dequeue();
+            }
+        }
+
         private void VehicleThread()
         {
             log.InfoFormat("VehicleThread started");
             EdiabasConnect();
 
             IHubContext<IPsdzClient> hubContext = GlobalHost.ConnectionManager.GetHubContext<PsdzVehicleHub, IPsdzClient>();
+            VehicleResponseClear();
             ResetPacketId();
             if (hubContext != null)
             {
@@ -1063,6 +1084,25 @@ namespace WebPsdzClient.App_Data
                             if (enetTcpClientData.TcpClientStream == null)
                             {
                                 continue;
+                            }
+
+                            PsdzVehicleHub.VehicleResponse vehicleResponse = VehicleResponseGet();
+                            if (vehicleResponse != null)
+                            {
+                                if (string.Compare(vehicleResponse.Id, GetPacketId(), StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    log.InfoFormat("VehicleThread VehicleResponse Valid={0}, Error={1}, Connected={2}",
+                                        vehicleResponse.Valid, vehicleResponse.ErrorMessage, vehicleResponse.Connected);
+                                    if (!string.IsNullOrEmpty(vehicleResponse.Request))
+                                    {
+                                        log.InfoFormat("VehicleThread Request={0}", vehicleResponse.Request);
+                                    }
+
+                                    foreach (string response in vehicleResponse.ResponseList)
+                                    {
+                                        log.InfoFormat("VehicleThread Response={0}", response);
+                                    }
+                                }
                             }
 
                             byte[] recPacket;
