@@ -1291,34 +1291,41 @@ namespace WebPsdzClient.App_Data
                                                 hubContext.Clients.Client(connectionId)?.VehicleSend(GetVehicleUrl(), GetNextPacketId(), dataString);
                                             }
 
-                                            byte[] enetNr78Tel = CreateEnetTelegram(nr78Tel);
-                                            if (enetNr78Tel == null)
-                                            {
-                                                log.ErrorFormat("VehicleThread Enet NR78 Tel invalid");
-                                            }
-
                                             long nr78Time = DateTime.MinValue.Ticks;
                                             int nr78Count = 0;
                                             PsdzVehicleHub.VehicleResponse vehicleResponse = WaitForVehicleResponse(() =>
                                             {
-                                                if (enetNr78Tel != null && nr78Count < 3)
+                                                if (funcAddress || nr78Count < 3)
                                                 {
-                                                    if (nr78Count == 0 || ((Stopwatch.GetTimestamp() - nr78Time) > 1000 * TickResolMs))
-                                                    {
-                                                        string nr78String = BitConverter.ToString(nr78Tel).Replace("-", "");
-                                                        log.InfoFormat("VehicleThread Sending Nr78 Count={0}, Tel={1}", nr78Count, nr78String);
-                                                        nr78Time = Stopwatch.GetTimestamp();
-                                                        nr78Count++;
-                                                        enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
-                                                        lock (enetTcpClientData.SendQueue)
-                                                        {
-                                                            foreach (byte enetData in enetNr78Tel)
-                                                            {
-                                                                enetTcpClientData.SendQueue.Enqueue(enetData);
-                                                            }
-                                                        }
+                                                    if (funcAddress && nr78Count != 0 && nr78Count % 3 == 0)
+                                                    {   // prevent disconnect after 3 retries
+                                                        nr78Tel[2]++;
+                                                    }
 
-                                                        enetTcpChannel.SendEvent.Set();
+                                                    byte[] enetNr78Tel = CreateEnetTelegram(nr78Tel);
+                                                    if (enetNr78Tel == null)
+                                                    {
+                                                        log.ErrorFormat("VehicleThread Enet NR78 Tel invalid");
+                                                    }
+                                                    else
+                                                    {
+                                                        if (nr78Count == 0 || ((Stopwatch.GetTimestamp() - nr78Time) > 1000 * TickResolMs))
+                                                        {
+                                                            string nr78String = BitConverter.ToString(nr78Tel).Replace("-", "");
+                                                            log.InfoFormat("VehicleThread Sending Nr78 Count={0}, Tel={1}", nr78Count, nr78String);
+                                                            nr78Time = Stopwatch.GetTimestamp();
+                                                            nr78Count++;
+                                                            enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
+                                                            lock (enetTcpClientData.SendQueue)
+                                                            {
+                                                                foreach (byte enetData in enetNr78Tel)
+                                                                {
+                                                                    enetTcpClientData.SendQueue.Enqueue(enetData);
+                                                                }
+                                                            }
+
+                                                            enetTcpChannel.SendEvent.Set();
+                                                        }
                                                     }
                                                 }
 
