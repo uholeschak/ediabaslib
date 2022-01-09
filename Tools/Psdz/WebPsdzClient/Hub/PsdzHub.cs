@@ -16,10 +16,11 @@ namespace PsdzClient
     {
         public class VehicleResponse
         {
-            public VehicleResponse()
+            public VehicleResponse(string id, bool error)
             {
-                Id = string.Empty;
+                Id = id;
                 Valid = false;
+                Error = error;
                 Connected = false;
                 ErrorMessage = string.Empty;
                 Request = string.Empty;
@@ -28,6 +29,7 @@ namespace PsdzClient
 
             public string Id { get; set; }
             public bool Valid { get; set; }
+            public bool Error { get; set; }
             public bool Connected { get; set; }
             public string ErrorMessage { get; set; }
             public string Request { get; set; }
@@ -39,9 +41,17 @@ namespace PsdzClient
 
         public static List<string> GetConnectionIds(string sessionId)
         {
-            List<string> connectionIds =
-                ConnectionDict.Where(pair => string.Compare(pair.Value, sessionId, StringComparison.Ordinal) == 0)
-                    .Select(pair => pair.Key).ToList();
+            List<string> connectionIds = new List<string>();
+            lock (ConnectionDict)
+            {
+                foreach (KeyValuePair<string, string> pair in ConnectionDict)
+                {
+                    if (string.Compare(pair.Value, sessionId, StringComparison.Ordinal) == 0)
+                    {
+                        connectionIds.Add(pair.Key);
+                    }
+                }
+            }
             return connectionIds;
         }
 
@@ -77,9 +87,8 @@ namespace PsdzClient
                 }
                 else
                 {
-                    VehicleResponse vehicleResponse = new VehicleResponse
+                    VehicleResponse vehicleResponse = new VehicleResponse(id, true)
                     {
-                        Id = id,
                         ErrorMessage = message
                     };
                     sessionContainer.VehicleResponseReceived(vehicleResponse);
@@ -103,7 +112,10 @@ namespace PsdzClient
 
             if (!string.IsNullOrEmpty(sessionId))
             {
-                ConnectionDict[connectionId] = sessionId;
+                lock (ConnectionDict)
+                {
+                    ConnectionDict[connectionId] = sessionId;
+                }
             }
             return base.OnConnected();
         }
@@ -115,7 +127,10 @@ namespace PsdzClient
 
             if (!string.IsNullOrEmpty(sessionId))
             {
-                ConnectionDict[connectionId] = sessionId;
+                lock (ConnectionDict)
+                {
+                    ConnectionDict[connectionId] = sessionId;
+                }
             }
 
             return base.OnReconnected();
@@ -125,15 +140,19 @@ namespace PsdzClient
         {
             string connectionId = Context.ConnectionId;
 
-            ConnectionDict.Remove(connectionId);
+            lock (ConnectionDict)
+            {
+                ConnectionDict.Remove(connectionId);
+            }
             return base.OnDisconnected(stopCalled);
         }
 
         public VehicleResponse ParseVehiceResponse(string id, string responseXml)
         {
-            VehicleResponse vehicleResponse = new VehicleResponse();
+            VehicleResponse vehicleResponse = new VehicleResponse(id, false);
             try
             {
+                string responseId = string.Empty;
                 if (string.IsNullOrEmpty(responseXml))
                 {
                     return vehicleResponse;
@@ -164,7 +183,7 @@ namespace PsdzClient
                     XAttribute idAttr = requestNode.Attribute("id");
                     if (idAttr != null)
                     {
-                        vehicleResponse.Id = idAttr.Value;
+                        responseId = idAttr.Value;
                     }
                 }
 
@@ -200,7 +219,7 @@ namespace PsdzClient
                     }
                 }
 
-                if (string.Compare(id, vehicleResponse.Id, StringComparison.OrdinalIgnoreCase) != 0)
+                if (string.Compare(id, responseId, StringComparison.OrdinalIgnoreCase) != 0)
                 {
                     vehicleResponse.Valid = false;
                 }

@@ -1045,20 +1045,70 @@ namespace WebPsdzClient.App_Data
             }
         }
 
+        public PsdzVehicleHub.VehicleResponse WaitForVehicleResponse(int timeout = 10000)
+        {
+            log.InfoFormat("WaitForVehicleResponse Timeout={0}", timeout);
+            string packetId = GetPacketId();
+            long startTime = Stopwatch.GetTimestamp();
+            for (;;)
+            {
+                PsdzVehicleHub.VehicleResponse vehicleResponse = VehicleResponseGet();
+                if (vehicleResponse != null)
+                {
+                    GetPacketId();
+                    if (string.Compare(vehicleResponse.Id, packetId, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        if (vehicleResponse.Valid || vehicleResponse.Error)
+                        {
+                            log.InfoFormat("WaitForVehicleResponse Valid={0}, Error={1}", vehicleResponse.Valid, vehicleResponse.Error);
+                            return vehicleResponse;
+                        }
+                    }
+                }
+
+                List<string> connectionIds = PsdzVehicleHub.GetConnectionIds(SessionId);
+                if (connectionIds == null || connectionIds.Count == 0)
+                {
+                    log.InfoFormat("WaitForVehicleResponse Connection broken");
+                    return null;
+                }
+
+                if ((Stopwatch.GetTimestamp() - startTime) > timeout * TickResolMs)
+                {
+                    log.InfoFormat("WaitForVehicleResponse No Response");
+                    return null;
+                }
+
+                _vehicleThreadWakeEvent.WaitOne(100);
+            }
+        }
+
         private void VehicleThread()
         {
             log.InfoFormat("VehicleThread started");
+            IHubContext<IPsdzClient> hubContext = GlobalHost.ConnectionManager.GetHubContext<PsdzVehicleHub, IPsdzClient>();
+            if (hubContext == null)
+            {
+                log.ErrorFormat("VehicleThread No hub context");
+            }
+
             EdiabasConnect();
 
-            IHubContext<IPsdzClient> hubContext = GlobalHost.ConnectionManager.GetHubContext<PsdzVehicleHub, IPsdzClient>();
-            VehicleResponseClear();
-            ResetPacketId();
             if (hubContext != null)
             {
+                VehicleResponseClear();
+                ResetPacketId();
+
                 List<string> connectionIds = PsdzVehicleHub.GetConnectionIds(SessionId);
                 foreach (string connectionId in connectionIds)
                 {
                     hubContext.Clients.Client(connectionId)?.VehicleConnect(GetVehicleUrl(), GetNextPacketId());
+                }
+
+                PsdzVehicleHub.VehicleResponse vehicleResponse = WaitForVehicleResponse();
+                if (vehicleResponse == null || vehicleResponse.Error)
+                {
+                    log.ErrorFormat("VehicleThread Vehicle connect failed");
                 }
             }
 
@@ -1235,6 +1285,12 @@ namespace WebPsdzClient.App_Data
                 foreach (string connectionId in connectionIds)
                 {
                     hubContext.Clients.Client(connectionId)?.VehicleDisconnect(GetVehicleUrl(), GetNextPacketId());
+                }
+
+                PsdzVehicleHub.VehicleResponse vehicleResponse = WaitForVehicleResponse();
+                if (vehicleResponse == null || vehicleResponse.Error)
+                {
+                    log.ErrorFormat("VehicleThread Vehicle disconnect failed");
                 }
             }
 
