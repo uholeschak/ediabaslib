@@ -761,6 +761,31 @@ namespace WebPsdzClient.App_Data
             return bmwFastTel.ToArray();
         }
 
+        private byte[] CreateBmwFastNr78Tel(byte[] dataPacket)
+        {
+            if (dataPacket.Length < 8)
+            {
+                return null;
+            }
+
+            byte sourceAddr = dataPacket[6];
+            byte targetAddr = dataPacket[7];
+            List<byte> bmwFastTel = new List<byte>();
+
+            if (sourceAddr == TcpTesterAddr)
+            {
+                sourceAddr = 0xF1;
+            }
+
+            bmwFastTel.Add(0x83);
+            bmwFastTel.Add(sourceAddr);
+            bmwFastTel.Add(targetAddr);
+            bmwFastTel.Add(0x7F);
+            bmwFastTel.Add(dataPacket[8]);
+            bmwFastTel.Add(0x78);
+            return bmwFastTel.ToArray();
+        }
+
         private byte[] CreateEnetTelegram(byte[] bmwFastTel)
         {
             if (bmwFastTel.Length < 3)
@@ -1154,8 +1179,9 @@ namespace WebPsdzClient.App_Data
                                 if (payloadType == 0x0001)
                                 {   // request
                                     byte[] bmwFastTel = CreateBmwFastTelegram(recPacket);
+                                    byte[] nr78Tel = CreateBmwFastNr78Tel(recPacket);
 
-                                    if (bmwFastTel == null)
+                                    if (bmwFastTel == null || nr78Tel == null)
                                     {
                                         log.ErrorFormat("VehicleThread BmwFastTel invalid");
 
@@ -1253,6 +1279,27 @@ namespace WebPsdzClient.App_Data
                                             foreach (string connectionId in connectionIds)
                                             {
                                                 hubContext.Clients.Client(connectionId)?.VehicleSend(GetVehicleUrl(), GetNextPacketId(), dataString);
+                                            }
+
+                                            byte[] enetNr78Tel = CreateEnetTelegram(nr78Tel);
+                                            if (enetNr78Tel == null)
+                                            {
+                                                log.ErrorFormat("VehicleThread Enet NR78 Tel invalid");
+                                            }
+                                            else
+                                            {
+                                                string nr78String = BitConverter.ToString(nr78Tel).Replace("-", "");
+                                                log.InfoFormat("VehicleThread Sending Nr78 Tel={0}", nr78String);
+                                                enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
+                                                lock (enetTcpClientData.SendQueue)
+                                                {
+                                                    foreach (byte enetData in enetNr78Tel)
+                                                    {
+                                                        enetTcpClientData.SendQueue.Enqueue(enetData);
+                                                    }
+                                                }
+
+                                                enetTcpChannel.SendEvent.Set();
                                             }
 
                                             PsdzVehicleHub.VehicleResponse vehicleResponse = WaitForVehicleResponse();
