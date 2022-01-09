@@ -22,6 +22,7 @@ namespace VehicleTestServer
     class Program
     {
         private static object _ediabasLock = new object();
+        private static object _requestLock = new object();
         private static EdiabasNet _ediabas = null;
         private static bool _ediabasAbort = false;
         private static UInt64 _requestId = 0;
@@ -320,9 +321,9 @@ namespace VehicleTestServer
                     valid = false;
                 }
 
+                bool checkId = true;
                 if (valid)
                 {
-                    bool checkId = true;
                     if (!string.IsNullOrEmpty(connectString))
                     {
                         if (int.TryParse(connectString, out int connectValue))
@@ -336,11 +337,21 @@ namespace VehicleTestServer
                             }
                         }
                     }
+                }
 
-                    if (checkId && requestId.Value <= _requestId)
+                if (valid)
+                {
+                    lock (_requestLock)
                     {
-                        Console.WriteLine("Ignoring request ID: {0}", requestId.Value);
-                        valid = false;
+                        if (checkId && requestId.Value <= _requestId)
+                        {
+                            Console.WriteLine("Ignoring request ID: {0}", requestId.Value);
+                            valid = false;
+                        }
+                        else
+                        {
+                            _requestId = requestId.Value;
+                        }
                     }
                 }
 
@@ -349,8 +360,6 @@ namespace VehicleTestServer
                 sbBody.Append($" <request valid=\"{System.Web.HttpUtility.HtmlEncode(validReport)}\" id=\"{System.Web.HttpUtility.HtmlEncode(idReport)}\" />\r\n");
                 if (valid)
                 {
-                    _requestId = requestId.Value;
-
                     if (!string.IsNullOrEmpty(disconnectString))
                     {
                         if (int.TryParse(disconnectString, out int disconnectValue))
