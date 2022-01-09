@@ -1779,14 +1779,18 @@ namespace PsdzClient
 
                 GetSwiActionsForEcuVariant(ecuInfo);
                 GetSwiActionsForEcuGroup(ecuInfo);
-                foreach (EcuPrgVar ecuPrgVar in ecuInfo.EcuPrgVars)
+                if (ecuInfo.EcuPrgVars != null)
                 {
-                    List<SwiAction> swiActions = GetSwiActionsForEcuProgrammingVariant(ecuPrgVar.Id, vehicle, ffmDynamicResolver);
-                    if (swiActions != null)
+                    foreach (EcuPrgVar ecuPrgVar in ecuInfo.EcuPrgVars)
                     {
-                        ecuInfo.SwiActions.AddRange(swiActions);
+                        List<SwiAction> swiActions = GetSwiActionsForEcuProgrammingVariant(ecuPrgVar.Id, vehicle, ffmDynamicResolver);
+                        if (swiActions != null)
+                        {
+                            ecuInfo.SwiActions.AddRange(swiActions);
+                        }
                     }
                 }
+
                 foreach (SwiAction swiAction in ecuInfo.SwiActions)
                 {
                     swiAction.SwiInfoObjs = GetServiceProgramsForSwiAction(swiAction, vehicle, ffmDynamicResolver);
