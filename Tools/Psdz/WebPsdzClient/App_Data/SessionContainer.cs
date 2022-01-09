@@ -69,6 +69,7 @@ namespace WebPsdzClient.App_Data
 
         public delegate void UpdateDisplayDelegate();
         public delegate void UpdateOptionsDelegate();
+        public delegate bool VehicleResponseDelegate();
         public string SessionId { get; }
         public ProgrammingJobs ProgrammingJobs { get; private set; }
         public bool RefreshOptions { get; set; }
@@ -1075,7 +1076,7 @@ namespace WebPsdzClient.App_Data
             }
         }
 
-        public PsdzVehicleHub.VehicleResponse WaitForVehicleResponse(int timeout = 10000)
+        public PsdzVehicleHub.VehicleResponse WaitForVehicleResponse(VehicleResponseDelegate vehicleResponseDelegate = null, int timeout = 10000)
         {
             log.InfoFormat("WaitForVehicleResponse Timeout={0}", timeout);
             string packetId = GetPacketId();
@@ -1101,6 +1102,15 @@ namespace WebPsdzClient.App_Data
                 {
                     log.InfoFormat("WaitForVehicleResponse Connection broken");
                     return null;
+                }
+
+                if (vehicleResponseDelegate != null)
+                {
+                    if (vehicleResponseDelegate.Invoke())
+                    {
+                        log.InfoFormat("WaitForVehicleResponse Wait aborted");
+                        return null;
+                    }
                 }
 
                 if ((Stopwatch.GetTimestamp() - startTime) > timeout * TickResolMs)
@@ -1286,23 +1296,35 @@ namespace WebPsdzClient.App_Data
                                             {
                                                 log.ErrorFormat("VehicleThread Enet NR78 Tel invalid");
                                             }
-                                            else
+
+                                            long nr78Time = DateTime.MinValue.Ticks;
+                                            int nr78Count = 0;
+                                            PsdzVehicleHub.VehicleResponse vehicleResponse = WaitForVehicleResponse(() =>
                                             {
-                                                string nr78String = BitConverter.ToString(nr78Tel).Replace("-", "");
-                                                log.InfoFormat("VehicleThread Sending Nr78 Tel={0}", nr78String);
-                                                enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
-                                                lock (enetTcpClientData.SendQueue)
+                                                if (enetNr78Tel != null && nr78Count < 3)
                                                 {
-                                                    foreach (byte enetData in enetNr78Tel)
+                                                    if (nr78Count == 0 || ((Stopwatch.GetTimestamp() - nr78Time) > 1000 * TickResolMs))
                                                     {
-                                                        enetTcpClientData.SendQueue.Enqueue(enetData);
+                                                        string nr78String = BitConverter.ToString(nr78Tel).Replace("-", "");
+                                                        log.InfoFormat("VehicleThread Sending Nr78 Count={0}, Tel={1}", nr78Count, nr78String);
+                                                        nr78Time = Stopwatch.GetTimestamp();
+                                                        nr78Count++;
+                                                        enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
+                                                        lock (enetTcpClientData.SendQueue)
+                                                        {
+                                                            foreach (byte enetData in enetNr78Tel)
+                                                            {
+                                                                enetTcpClientData.SendQueue.Enqueue(enetData);
+                                                            }
+                                                        }
+
+                                                        enetTcpChannel.SendEvent.Set();
                                                     }
                                                 }
 
-                                                enetTcpChannel.SendEvent.Set();
-                                            }
+                                                return false;
+                                            });
 
-                                            PsdzVehicleHub.VehicleResponse vehicleResponse = WaitForVehicleResponse();
                                             if (vehicleResponse == null || vehicleResponse.Error || !vehicleResponse.Valid)
                                             {
                                                 log.ErrorFormat("VehicleThread Vehicle transmit failed");
