@@ -377,7 +377,7 @@ namespace VehicleTestServer
 
                     if (!string.IsNullOrEmpty(dataString))
                     {
-                        string requestString = dataString.Replace("-", "");
+                        string requestString = dataString.Replace(" ", "");
                         byte[] requestData = EdiabasNet.HexToByteArray(requestString);
                         sbBody.Append($" <data request=\"{System.Web.HttpUtility.HtmlEncode(requestString)}\" />\r\n");
                         List<byte[]> responseList = EdiabasTransmit(requestData);

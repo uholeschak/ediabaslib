@@ -1,4 +1,5 @@
-﻿using System;
+﻿//#define EDIABAS_CONNECTION
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -291,7 +292,9 @@ namespace WebPsdzClient.App_Data
         private AutoResetEvent _tcpThreadWakeEvent = new AutoResetEvent(false);
         private AutoResetEvent _vehicleThreadWakeEvent = new AutoResetEvent(false);
         private Queue<PsdzVehicleHub.VehicleResponse> _vehicleResponses = new Queue<PsdzVehicleHub.VehicleResponse>();
+#if EDIABAS_CONNECTION
         private EdiabasNet _ediabas;
+#endif
         private bool _disposed;
         private readonly object _lockObject = new object();
         private static readonly ILog log = LogManager.GetLogger(typeof(_Default));
@@ -312,6 +315,7 @@ namespace WebPsdzClient.App_Data
             StatusText = string.Empty;
             ProgressText = string.Empty;
 
+#if EDIABAS_CONNECTION
             EdInterfaceEnet edInterfaceEnet = new EdInterfaceEnet(false);
             _ediabas = new EdiabasNet
             {
@@ -320,7 +324,7 @@ namespace WebPsdzClient.App_Data
             };
             edInterfaceEnet.RemoteHost = "127.0.0.1";
             edInterfaceEnet.IcomAllocate = false;
-
+#endif
             lock (SessionContainers)
             {
                 SessionContainers.Add(this);
@@ -831,6 +835,7 @@ namespace WebPsdzClient.App_Data
             return false;
         }
 
+#if EDIABAS_CONNECTION
         private bool AbortEdiabasJob()
         {
             if (_stopThread)
@@ -872,7 +877,7 @@ namespace WebPsdzClient.App_Data
                 return false;
             }
         }
-
+#endif
         private void TcpThread()
         {
             log.InfoFormat("TcpThread started");
@@ -1086,13 +1091,14 @@ namespace WebPsdzClient.App_Data
         private void VehicleThread()
         {
             log.InfoFormat("VehicleThread started");
+#if EDIABAS_CONNECTION
+            EdiabasConnect();
+#else
             IHubContext<IPsdzClient> hubContext = GlobalHost.ConnectionManager.GetHubContext<PsdzVehicleHub, IPsdzClient>();
             if (hubContext == null)
             {
                 log.ErrorFormat("VehicleThread No hub context");
             }
-
-            EdiabasConnect();
 
             if (hubContext != null)
             {
@@ -1106,12 +1112,12 @@ namespace WebPsdzClient.App_Data
                 }
 
                 PsdzVehicleHub.VehicleResponse vehicleResponse = WaitForVehicleResponse();
-                if (vehicleResponse == null || vehicleResponse.Error)
+                if (vehicleResponse == null || vehicleResponse.Error || !vehicleResponse.Valid)
                 {
                     log.ErrorFormat("VehicleThread Vehicle connect failed");
                 }
             }
-
+#endif
             for (;;)
             {
                 _vehicleThreadWakeEvent.WaitOne(100, false);
@@ -1134,25 +1140,6 @@ namespace WebPsdzClient.App_Data
                             if (enetTcpClientData.TcpClientStream == null)
                             {
                                 continue;
-                            }
-
-                            PsdzVehicleHub.VehicleResponse vehicleResponse = VehicleResponseGet();
-                            if (vehicleResponse != null)
-                            {
-                                if (string.Compare(vehicleResponse.Id, GetPacketId(), StringComparison.OrdinalIgnoreCase) == 0)
-                                {
-                                    log.InfoFormat("VehicleThread VehicleResponse Valid={0}, Error={1}, Connected={2}",
-                                        vehicleResponse.Valid, vehicleResponse.ErrorMessage, vehicleResponse.Connected);
-                                    if (!string.IsNullOrEmpty(vehicleResponse.Request))
-                                    {
-                                        log.InfoFormat("VehicleThread Request={0}", vehicleResponse.Request);
-                                    }
-
-                                    foreach (string response in vehicleResponse.ResponseList)
-                                    {
-                                        log.InfoFormat("VehicleThread Response={0}", response);
-                                    }
-                                }
                             }
 
                             byte[] recPacket;
@@ -1200,20 +1187,11 @@ namespace WebPsdzClient.App_Data
 
                                         enetTcpChannel.SendEvent.Set();
 
-                                        if (hubContext != null)
-                                        {
-                                            string dataString = BitConverter.ToString(bmwFastTel).Replace("-", "");
-                                            List<string> connectionIds = PsdzVehicleHub.GetConnectionIds(SessionId);
-                                            foreach (string connectionId in connectionIds)
-                                            {
-                                                hubContext.Clients.Client(connectionId)?.VehicleSend(GetVehicleUrl(), GetNextPacketId(), dataString);
-                                            }
-                                        }
-
                                         byte[] sendData = bmwFastTel;
                                         bool funcAddress = (sendData[0] & 0xC0) == 0xC0;     // functional address
 
                                         log.InfoFormat("VehicleThread Transmit Len={0}, Func={1}", sendData.Length, funcAddress);
+#if EDIABAS_CONNECTION
                                         for (;;)
                                         {
                                             bool dataReceived = false;
@@ -1267,6 +1245,57 @@ namespace WebPsdzClient.App_Data
 
                                             sendData = Array.Empty<byte>();
                                         }
+#else
+                                        if (hubContext != null)
+                                        {
+                                            string dataString = BitConverter.ToString(bmwFastTel).Replace("-", "");
+                                            List<string> connectionIds = PsdzVehicleHub.GetConnectionIds(SessionId);
+                                            foreach (string connectionId in connectionIds)
+                                            {
+                                                hubContext.Clients.Client(connectionId)?.VehicleSend(GetVehicleUrl(), GetNextPacketId(), dataString);
+                                            }
+
+                                            PsdzVehicleHub.VehicleResponse vehicleResponse = WaitForVehicleResponse();
+                                            if (vehicleResponse == null || vehicleResponse.Error || !vehicleResponse.Valid)
+                                            {
+                                                log.ErrorFormat("VehicleThread Vehicle transmit failed");
+                                            }
+                                            else
+                                            {
+                                                if (vehicleResponse.ResponseList == null || vehicleResponse.ResponseList.Count == 0)
+                                                {
+                                                    log.ErrorFormat("VehicleThread Vehicle transmit no response");
+                                                }
+                                                else
+                                                {
+                                                    foreach (string responseData in vehicleResponse.ResponseList)
+                                                    {
+                                                        string responseString = responseData.Replace(" ", "");
+                                                        byte[] receiveData = EdiabasNet.HexToByteArray(responseString);
+                                                        byte[] enetTel = CreateEnetTelegram(receiveData);
+                                                        if (enetTel == null)
+                                                        {
+                                                            log.ErrorFormat("VehicleThread EnetTel invalid");
+                                                        }
+                                                        else
+                                                        {
+                                                            log.InfoFormat("VehicleThread Receive Len={0}", enetTel.Length);
+                                                            enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
+                                                            lock (enetTcpClientData.SendQueue)
+                                                            {
+                                                                foreach (byte enetData in enetTel)
+                                                                {
+                                                                    enetTcpClientData.SendQueue.Enqueue(enetData);
+                                                                }
+                                                            }
+
+                                                            enetTcpChannel.SendEvent.Set();
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+#endif
                                     }
                                 }
                             }
@@ -1279,6 +1308,9 @@ namespace WebPsdzClient.App_Data
                 }
             }
 
+#if EDIABAS_CONNECTION
+            EdiabasDisconnect();
+#else
             if (hubContext != null)
             {
                 List<string> connectionIds = PsdzVehicleHub.GetConnectionIds(SessionId);
@@ -1288,13 +1320,12 @@ namespace WebPsdzClient.App_Data
                 }
 
                 PsdzVehicleHub.VehicleResponse vehicleResponse = WaitForVehicleResponse();
-                if (vehicleResponse == null || vehicleResponse.Error)
+                if (vehicleResponse == null || vehicleResponse.Error || !vehicleResponse.Valid)
                 {
                     log.ErrorFormat("VehicleThread Vehicle disconnect failed");
                 }
             }
-
-            EdiabasDisconnect();
+#endif
             log.InfoFormat("VehicleThread stopped");
         }
 
@@ -1564,12 +1595,13 @@ namespace WebPsdzClient.App_Data
 
                 StopTcpListener();
 
+#if EDIABAS_CONNECTION
                 if (_ediabas != null)
                 {
                     _ediabas.Dispose();
                     _ediabas = null;
                 }
-
+#endif
                 lock (SessionContainers)
                 {
                     SessionContainers.Remove(this);
