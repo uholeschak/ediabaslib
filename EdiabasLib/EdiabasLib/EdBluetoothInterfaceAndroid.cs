@@ -640,10 +640,13 @@ namespace EdiabasLib
 
         public static bool InterfaceSendPulse(UInt64 dataBits, int length, int pulseWidth, bool setDtr, bool bothLines, int autoKeyByteDelay)
         {
-            if (_bluetoothInStream == null || _bluetoothOutStream == null)
+            if (!CustomAdapter.ReconnectRequired)
             {
-                CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Stream closed");
-                return false;
+                if (_bluetoothInStream == null || _bluetoothOutStream == null)
+                {
+                    CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Stream closed");
+                    return false;
+                }
             }
             if (_elm327Device)
             {
