@@ -262,6 +262,10 @@ namespace EdiabasLib
 
         public static bool InterfacePurgeInBuffer()
         {
+            if (CustomAdapter.ReconnectRequired)
+            {
+                return true;
+            }
             if (!IsInterfaceOpen())
             {
                 return false;
@@ -319,10 +323,13 @@ namespace EdiabasLib
 
         public static bool InterfaceSendData(byte[] sendData, int length, bool setDtr, double dtrTimeCorr)
         {
-            if (!IsInterfaceOpen())
+            if (!CustomAdapter.ReconnectRequired)
             {
-                Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Port closed");
-                return false;
+                if (!IsInterfaceOpen())
+                {
+                    Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Port closed");
+                    return false;
+                }
             }
 
             for (int retry = 0; retry < 2; retry++)
@@ -333,10 +340,12 @@ namespace EdiabasLib
                     InterfaceDisconnect(true);
                     if (!InterfaceConnect(_connectPort, null))
                     {
+                        Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Reconnect failed");
                         CustomAdapter.ReconnectRequired = true;
                         return false;
                     }
 
+                    Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnected");
                     CustomAdapter.ReconnectRequired = false;
                 }
 
@@ -366,10 +375,13 @@ namespace EdiabasLib
 
         public static bool InterfaceSendPulse(UInt64 dataBits, int length, int pulseWidth, bool setDtr, bool bothLines, int autoKeyByteDelay)
         {
-            if (!IsInterfaceOpen())
+            if (!CustomAdapter.ReconnectRequired)
             {
-                Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Port closed");
-                return false;
+                if (!IsInterfaceOpen())
+                {
+                    Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Port closed");
+                    return false;
+                }
             }
             if (CustomAdapter.ReconnectRequired)
             {
@@ -377,9 +389,12 @@ namespace EdiabasLib
                 InterfaceDisconnect(true);
                 if (!InterfaceConnect(_connectPort, null))
                 {
+                    Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Reconnect failed");
                     CustomAdapter.ReconnectRequired = true;
                     return false;
                 }
+
+                Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnected");
                 CustomAdapter.ReconnectRequired = false;
             }
 
