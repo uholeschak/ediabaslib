@@ -262,7 +262,7 @@
       <HintPath>packages\Xamarin.Google.Android.Play.Core.1.10.2.2\lib\monoandroid90\Xamarin.Google.Android.Play.Core.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Google.Guava.ListenableFuture, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.4\lib\monoandroid90\Xamarin.Google.Guava.ListenableFuture.dll</HintPath>
+      <HintPath>packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.5\lib\monoandroid90\Xamarin.Google.Guava.ListenableFuture.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Jetbrains.Annotations, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Xamarin.Jetbrains.Annotations.22.0.0.3\lib\monoandroid90\Xamarin.Jetbrains.Annotations.dll</HintPath>
@@ -382,6 +382,7 @@
       <Link>HexFiles\Type3\ELM327V15.X.production.hex</Link>
     </EmbeddedResource>
     <None Include=".editorconfig" />
+    <None Include="app.config" />
     <None Include="Assets\Ecu.bin" />
     <None Include="packages.config" />
     <ProguardConfiguration Include="proguard.cfg" />
@@ -808,7 +809,6 @@
     <Error Condition="!Exists('packages\Xamarin.AndroidX.SavedState.1.1.0.5\build\monoandroid90\Xamarin.AndroidX.SavedState.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.SavedState.1.1.0.5\build\monoandroid90\Xamarin.AndroidX.SavedState.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.Tracing.Tracing.1.0.0.4\build\monoandroid90\Xamarin.AndroidX.Tracing.Tracing.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.Tracing.Tracing.1.0.0.4\build\monoandroid90\Xamarin.AndroidX.Tracing.Tracing.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.VersionedParcelable.1.1.1.11\build\monoandroid90\Xamarin.AndroidX.VersionedParcelable.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.VersionedParcelable.1.1.1.11\build\monoandroid90\Xamarin.AndroidX.VersionedParcelable.targets'))" />
-    <Error Condition="!Exists('packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.4\build\monoandroid90\Xamarin.Google.Guava.ListenableFuture.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.4\build\monoandroid90\Xamarin.Google.Guava.ListenableFuture.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.Concurrent.Futures.1.1.0.6\build\monoandroid90\Xamarin.AndroidX.Concurrent.Futures.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.Concurrent.Futures.1.1.0.6\build\monoandroid90\Xamarin.AndroidX.Concurrent.Futures.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.Core.1.7.0.1\build\monoandroid90\Xamarin.AndroidX.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.Core.1.7.0.1\build\monoandroid90\Xamarin.AndroidX.Core.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.CustomView.1.1.0.10\build\monoandroid90\Xamarin.AndroidX.CustomView.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.CustomView.1.1.0.10\build\monoandroid90\Xamarin.AndroidX.CustomView.targets'))" />
@@ -837,6 +837,7 @@
     <Error Condition="!Exists('packages\Xamarin.Build.Download.0.11.0\build\Xamarin.Build.Download.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Build.Download.0.11.0\build\Xamarin.Build.Download.props'))" />
     <Error Condition="!Exists('packages\Xamarin.Build.Download.0.11.0\build\Xamarin.Build.Download.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Build.Download.0.11.0\build\Xamarin.Build.Download.targets'))" />
     <Error Condition="!Exists('packages\System.Text.Json.6.0.1\build\System.Text.Json.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\System.Text.Json.6.0.1\build\System.Text.Json.targets'))" />
+    <Error Condition="!Exists('packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.5\build\monoandroid90\Xamarin.Google.Guava.ListenableFuture.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.5\build\monoandroid90\Xamarin.Google.Guava.ListenableFuture.targets'))" />
   </Target>
   <PropertyGroup>
     <PostBuildEvent>copy /y "$(ProjectDir)Xml\BmwDeepObd.xsd" "$(ProjectDir)Xml\E61R\"</PostBuildEvent>
@@ -863,7 +864,6 @@
   <Import Project="packages\Xamarin.AndroidX.SavedState.1.1.0.5\build\monoandroid90\Xamarin.AndroidX.SavedState.targets" Condition="Exists('packages\Xamarin.AndroidX.SavedState.1.1.0.5\build\monoandroid90\Xamarin.AndroidX.SavedState.targets')" />
   <Import Project="packages\Xamarin.AndroidX.Tracing.Tracing.1.0.0.4\build\monoandroid90\Xamarin.AndroidX.Tracing.Tracing.targets" Condition="Exists('packages\Xamarin.AndroidX.Tracing.Tracing.1.0.0.4\build\monoandroid90\Xamarin.AndroidX.Tracing.Tracing.targets')" />
   <Import Project="packages\Xamarin.AndroidX.VersionedParcelable.1.1.1.11\build\monoandroid90\Xamarin.AndroidX.VersionedParcelable.targets" Condition="Exists('packages\Xamarin.AndroidX.VersionedParcelable.1.1.1.11\build\monoandroid90\Xamarin.AndroidX.VersionedParcelable.targets')" />
-  <Import Project="packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.4\build\monoandroid90\Xamarin.Google.Guava.ListenableFuture.targets" Condition="Exists('packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.4\build\monoandroid90\Xamarin.Google.Guava.ListenableFuture.targets')" />
   <Import Project="packages\Xamarin.AndroidX.Concurrent.Futures.1.1.0.6\build\monoandroid90\Xamarin.AndroidX.Concurrent.Futures.targets" Condition="Exists('packages\Xamarin.AndroidX.Concurrent.Futures.1.1.0.6\build\monoandroid90\Xamarin.AndroidX.Concurrent.Futures.targets')" />
   <Import Project="packages\Xamarin.AndroidX.Core.1.7.0.1\build\monoandroid90\Xamarin.AndroidX.Core.targets" Condition="Exists('packages\Xamarin.AndroidX.Core.1.7.0.1\build\monoandroid90\Xamarin.AndroidX.Core.targets')" />
   <Import Project="packages\Xamarin.AndroidX.CustomView.1.1.0.10\build\monoandroid90\Xamarin.AndroidX.CustomView.targets" Condition="Exists('packages\Xamarin.AndroidX.CustomView.1.1.0.10\build\monoandroid90\Xamarin.AndroidX.CustomView.targets')" />
@@ -891,4 +891,5 @@
   <Import Project="packages\Xamarin.Google.Android.Material.1.4.0.5\build\monoandroid90\Xamarin.Google.Android.Material.targets" Condition="Exists('packages\Xamarin.Google.Android.Material.1.4.0.5\build\monoandroid90\Xamarin.Google.Android.Material.targets')" />
   <Import Project="packages\Xamarin.Build.Download.0.11.0\build\Xamarin.Build.Download.targets" Condition="Exists('packages\Xamarin.Build.Download.0.11.0\build\Xamarin.Build.Download.targets')" />
   <Import Project="packages\System.Text.Json.6.0.1\build\System.Text.Json.targets" Condition="Exists('packages\System.Text.Json.6.0.1\build\System.Text.Json.targets')" />
+  <Import Project="packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.5\build\monoandroid90\Xamarin.Google.Guava.ListenableFuture.targets" Condition="Exists('packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.5\build\monoandroid90\Xamarin.Google.Guava.ListenableFuture.targets')" />
 </Project>
