@@ -460,6 +460,10 @@ namespace EdiabasLib
 
         public static bool InterfacePurgeInBuffer()
         {
+            if (CustomAdapter.ReconnectRequired)
+            {
+                return true;
+            }
             if (_bluetoothInStream == null || _bluetoothOutStream == null)
             {
                 return false;
@@ -541,10 +545,15 @@ namespace EdiabasLib
 
         public static bool InterfaceSendData(byte[] sendData, int length, bool setDtr, double dtrTimeCorr)
         {
-            if (_bluetoothInStream == null || _bluetoothOutStream == null)
+            if (!CustomAdapter.ReconnectRequired)
             {
-                return false;
+                if (_bluetoothInStream == null || _bluetoothOutStream == null)
+                {
+                    CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Stream closed");
+                    return false;
+                }
             }
+
             if (_elm327Device)
             {
                 if ((CustomAdapter.CurrentProtocol != EdInterfaceObd.Protocol.Uart) ||
@@ -552,19 +561,30 @@ namespace EdiabasLib
                 {
                     return false;
                 }
-                if (_edElmInterface == null)
+
+                if (_edElmInterface != null && _edElmInterface.StreamFailure)
                 {
-                    return false;
+                    CustomAdapter.ReconnectRequired = true;
                 }
-                if (_edElmInterface.StreamFailure)
+
+                if (CustomAdapter.ReconnectRequired)
                 {
                     CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnecting");
                     InterfaceDisconnect();
-                    if (!InterfaceConnect(_connectPort, null))
+                    if (!InterfaceConnect(_connectPort, _connectParameter))
                     {
-                        _edElmInterface.StreamFailure = true;
+                        CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Reconnect failed");
+                        CustomAdapter.ReconnectRequired = true;
                         return false;
                     }
+
+                    CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnected");
+                    CustomAdapter.ReconnectRequired = false;
+                }
+
+                if (_edElmInterface == null)
+                {
+                    return false;
                 }
                 return _edElmInterface.InterfaceSendData(sendData, length, setDtr, dtrTimeCorr);
             }
@@ -575,12 +595,14 @@ namespace EdiabasLib
                 {
                     CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnecting");
                     InterfaceDisconnect();
-                    if (!InterfaceConnect(_connectPort, null))
+                    if (!InterfaceConnect(_connectPort, _connectParameter))
                     {
+                        CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Reconnect failed");
                         CustomAdapter.ReconnectRequired = true;
                         return false;
                     }
 
+                    CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnected");
                     CustomAdapter.ReconnectRequired = false;
                 }
 
@@ -620,6 +642,7 @@ namespace EdiabasLib
         {
             if (_bluetoothInStream == null || _bluetoothOutStream == null)
             {
+                CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Stream closed");
                 return false;
             }
             if (_elm327Device)
@@ -630,11 +653,14 @@ namespace EdiabasLib
             {
                 CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnecting");
                 InterfaceDisconnect();
-                if (!InterfaceConnect(_connectPort, null))
+                if (!InterfaceConnect(_connectPort, _connectParameter))
                 {
+                    CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Reconnect failed");
                     CustomAdapter.ReconnectRequired = true;
                     return false;
                 }
+
+                CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnected");
                 CustomAdapter.ReconnectRequired = false;
             }
             return CustomAdapter.InterfaceSendPulse(dataBits, length, pulseWidth, setDtr, bothLines, autoKeyByteDelay);
