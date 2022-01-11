@@ -666,6 +666,7 @@
 
   <!-- BMW Coding Activity -->
   <string name="bmw_coding_title">BMW Coding</string>
+  <string name="bmw_coding_network_error">Loading web page failed.\nPlease check your network connection.</string>
 
   <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">Adapter configuration</string>
