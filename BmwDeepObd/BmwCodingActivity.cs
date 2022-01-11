@@ -130,7 +130,7 @@ namespace BmwDeepObd
             }
         }
 
-        public class WebViewClientImpl : WebViewClient
+        public class WebViewClientImpl : WebViewClientCompat
         {
             private Android.App.Activity _activity;
 
