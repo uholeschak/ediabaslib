@@ -688,6 +688,9 @@
   <string name="bmw_actuator_button_stop">Stop</string>
   <string name="bmw_actuator_operation_failed">Der Vorgang ist fehlgeschlagen</string>
 
+  <!-- BMW Coding Activity -->
+  <string name="bmw_coding_title">BMW Kodieren</string>
+
   <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">Adapter Konfiguration</string>
   <string name="can_adapter_mode_name">CAN Betriebsart</string>

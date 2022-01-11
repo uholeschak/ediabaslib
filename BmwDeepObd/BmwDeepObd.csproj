@@ -277,6 +277,9 @@
     <Reference Include="Xamarin.AndroidX.ViewPager2, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Xamarin.AndroidX.ViewPager2.1.0.0.13\lib\monoandroid90\Xamarin.AndroidX.ViewPager2.dll</HintPath>
     </Reference>
+    <Reference Include="Xamarin.AndroidX.WebKit, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Xamarin.AndroidX.WebKit.1.4.0.4\lib\monoandroid90\Xamarin.AndroidX.WebKit.dll</HintPath>
+    </Reference>
     <Reference Include="Xamarin.Google.Android.Material, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Xamarin.Google.Android.Material.1.4.0.5\lib\monoandroid90\Xamarin.Google.Android.Material.dll</HintPath>
     </Reference>
@@ -343,6 +346,7 @@
     <Compile Include="FilePicker\Helpers.cs" />
     <Compile Include="FileSizeFormatProvider.cs" />
     <Compile Include="GlobalBroadcastReceiver.cs" />
+    <Compile Include="BmwCodingActivity.cs" />
     <Compile Include="GlobalSettingsActivity.cs" />
     <Compile Include="JobReader.cs" />
     <Compile Include="AndroidUtility.cs" />
@@ -806,6 +810,11 @@
   <ItemGroup>
     <AndroidResource Include="Resources\xml\filepaths.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\bmw_coding.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>Dieses Projekt verweist auf mindestens ein NuGet-Paket, das auf diesem Computer fehlt. Verwenden Sie die Wiederherstellung von NuGet-Paketen, um die fehlenden Dateien herunterzuladen. Weitere Informationen finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=322105". Die fehlende Datei ist "{0}".</ErrorText>
@@ -862,6 +871,7 @@
     <Error Condition="!Exists('packages\Xamarin.Build.Download.0.11.0\build\Xamarin.Build.Download.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Build.Download.0.11.0\build\Xamarin.Build.Download.targets'))" />
     <Error Condition="!Exists('packages\System.Text.Json.6.0.1\build\System.Text.Json.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\System.Text.Json.6.0.1\build\System.Text.Json.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.5\build\monoandroid90\Xamarin.Google.Guava.ListenableFuture.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.5\build\monoandroid90\Xamarin.Google.Guava.ListenableFuture.targets'))" />
+    <Error Condition="!Exists('packages\Xamarin.AndroidX.WebKit.1.4.0.4\build\monoandroid90\Xamarin.AndroidX.WebKit.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.WebKit.1.4.0.4\build\monoandroid90\Xamarin.AndroidX.WebKit.targets'))" />
   </Target>
   <PropertyGroup>
     <PostBuildEvent>copy /y "$(ProjectDir)Xml\BmwDeepObd.xsd" "$(ProjectDir)Xml\E61R\"</PostBuildEvent>
@@ -916,4 +926,5 @@
   <Import Project="packages\Xamarin.Build.Download.0.11.0\build\Xamarin.Build.Download.targets" Condition="Exists('packages\Xamarin.Build.Download.0.11.0\build\Xamarin.Build.Download.targets')" />
   <Import Project="packages\System.Text.Json.6.0.1\build\System.Text.Json.targets" Condition="Exists('packages\System.Text.Json.6.0.1\build\System.Text.Json.targets')" />
   <Import Project="packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.5\build\monoandroid90\Xamarin.Google.Guava.ListenableFuture.targets" Condition="Exists('packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.5\build\monoandroid90\Xamarin.Google.Guava.ListenableFuture.targets')" />
+  <Import Project="packages\Xamarin.AndroidX.WebKit.1.4.0.4\build\monoandroid90\Xamarin.AndroidX.WebKit.targets" Condition="Exists('packages\Xamarin.AndroidX.WebKit.1.4.0.4\build\monoandroid90\Xamarin.AndroidX.WebKit.targets')" />
 </Project>
