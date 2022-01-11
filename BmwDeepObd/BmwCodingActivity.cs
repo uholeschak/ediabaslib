@@ -143,6 +143,11 @@ namespace BmwDeepObd
             {
                 return false;
             }
+
+            public override void OnReceivedError(WebView view, IWebResourceRequest request, WebResourceErrorCompat error)
+            {
+                Toast.MakeText(_activity, _activity.GetString(Resource.String.bmw_coding_network_error), ToastLength.Long)?.Show();
+            }
         }
     }
 }

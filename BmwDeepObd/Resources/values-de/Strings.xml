@@ -690,8 +690,9 @@
 
   <!-- BMW Coding Activity -->
   <string name="bmw_coding_title">BMW Kodieren</string>
+  <string name="bmw_coding_network_error">Das Laden der Webseite ist fehlgeschlagen.\nBitte überprüfen Sie Ihre Netzwerkverbindung.</string>
 
-  <!-- CAN Adapter Activity -->
+    <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">Adapter Konfiguration</string>
   <string name="can_adapter_mode_name">CAN Betriebsart</string>
   <string name="can_adapter_sep_time">Telegrammabstand [ms]</string>
