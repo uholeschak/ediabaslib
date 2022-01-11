@@ -8,7 +8,6 @@ using System.Reactive.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using EdiabasLib;
 using HttpMultipartParser;
 using ISimpleHttpListener.Rx.Enum;
 using ISimpleHttpListener.Rx.Model;
@@ -16,9 +15,9 @@ using SimpleHttpListener.Rx.Extension;
 using SimpleHttpListener.Rx.Model;
 using SimpleHttpListener.Rx.Service;
 
-namespace VehicleTestServer
+namespace EdiabasLib
 {
-    public class EdiabasWebServer: IDisposable
+    public class EdWebServer: IDisposable
     {
         private bool _disposed;
         private object _ediabasLock = new object();
@@ -28,7 +27,7 @@ namespace VehicleTestServer
         private bool _ediabasAbort;
         private UInt64 _requestId;
 
-        public EdiabasWebServer(EdiabasNet ediabas, TextWriter outWriter)
+        public EdWebServer(EdiabasNet ediabas, TextWriter outWriter)
         {
             _ediabas = ediabas;
             _ediabas.AbortJobFunc = AbortEdiabasJob;

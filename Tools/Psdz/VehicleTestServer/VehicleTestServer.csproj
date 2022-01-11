@@ -84,7 +84,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EdiabasWebServer.cs" />
+    <Compile Include="..\..\..\EdiabasLib\EdiabasLib\EdWebServer.cs">
+      <Link>EdWebServer.cs</Link>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
