@@ -145,6 +145,7 @@
       <HintPath>packages\System.Text.Json.6.0.1\lib\netstandard2.0\System.Text.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="Mono.Android" />
@@ -307,6 +308,9 @@
     </Compile>
     <Compile Include="..\EdiabasLib\BmwFileReader\VehicleInfoBmw.cs">
       <Link>VehicleInfoBmw.cs</Link>
+    </Compile>
+    <Compile Include="..\EdiabasLib\EdiabasLib\EdWebServer.cs">
+      <Link>EdWebServer.cs</Link>
     </Compile>
     <Compile Include="..\EdiabasLib\UdsFileReader\DataReader.cs">
       <Link>DataReader.cs</Link>
