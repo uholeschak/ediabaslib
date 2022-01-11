@@ -26,12 +26,14 @@ namespace VehicleTestServer
         private static EdiabasNet _ediabas = null;
         private static bool _ediabasAbort = false;
         private static UInt64 _requestId = 0;
+        private static TextWriter _outWriter;
 
         static int Main(string[] args)
         {
+            _outWriter = Console.Out;
             EdiabasSetup();
             TcpListenerTest();
-            Console.WriteLine("Press ESC to stop");
+            _outWriter?.WriteLine("Press ESC to stop");
             do
             {
                 while (!Console.KeyAvailable)
@@ -88,16 +90,16 @@ namespace VehicleTestServer
                     _ediabasAbort = false;
                     if (_ediabas.EdInterfaceClass.InterfaceConnect())
                     {
-                        Console.WriteLine($"Ediabas connected");
+                        _outWriter?.WriteLine($"Ediabas connected");
                         return true;
                     }
 
-                    Console.WriteLine($"Ediabas connect failed");
+                    _outWriter?.WriteLine($"Ediabas connect failed");
                     return false;
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Ediabas connect Exception: {0}", ex);
+                    _outWriter?.WriteLine("Ediabas connect Exception: {0}", ex);
                     return false;
                 }
             }
@@ -109,7 +111,7 @@ namespace VehicleTestServer
             {
                 try
                 {
-                    Console.WriteLine($"Ediabas disconnected");
+                    _outWriter?.WriteLine($"Ediabas disconnected");
                     _ediabasAbort = true;
                     return _ediabas.EdInterfaceClass.InterfaceDisconnect();
                 }
@@ -197,24 +199,24 @@ namespace VehicleTestServer
                 .ToHttpListenerObservable(cts.Token)
                 .Do(r =>
                 {
-                    Console.WriteLine($"Remote Address: {r.RemoteIpEndPoint.Address}");
-                    Console.WriteLine($"Remote Port: {r.RemoteIpEndPoint.Port}");
-                    Console.WriteLine("--------------***-------------");
+                    _outWriter?.WriteLine($"Remote Address: {r.RemoteIpEndPoint.Address}");
+                    _outWriter?.WriteLine($"Remote Port: {r.RemoteIpEndPoint.Port}");
+                    _outWriter?.WriteLine("--------------***-------------");
                 })
                 // Send reply to browser
                 .Select(r => Observable.FromAsync(() => SendResponseAsync(r, httpSender)))
                 .Concat()
                 .Subscribe(r =>
                     {
-                        Console.WriteLine("Reply sent.");
+                        _outWriter?.WriteLine("Reply sent.");
                     },
                     ex =>
                     {
-                        Console.WriteLine($"Exception: {ex}");
+                        _outWriter?.WriteLine($"Exception: {ex}");
                     },
                     () =>
                     {
-                        Console.WriteLine("Completed.");
+                        _outWriter?.WriteLine("Completed.");
                     });
         }
 
@@ -243,7 +245,7 @@ namespace VehicleTestServer
 
                 if (string.Compare(request.Method, "GET", StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    Console.WriteLine("GET {0}", request.QueryString);
+                    _outWriter?.WriteLine("GET {0}", request.QueryString);
                     queryString = request.QueryString;
                 }
 
@@ -251,7 +253,7 @@ namespace VehicleTestServer
                 {
                     if (request.Body != null)
                     {
-                        Console.WriteLine("POST FormData={0}, UrlEncoded={1}", formData, urlEncoded);
+                        _outWriter?.WriteLine("POST FormData={0}, UrlEncoded={1}", formData, urlEncoded);
                         if (formData)
                         {
                             try
@@ -265,7 +267,7 @@ namespace VehicleTestServer
                             }
                             catch (Exception e)
                             {
-                                Console.WriteLine("Multipart Exception={0}", e.Message);
+                                _outWriter?.WriteLine("Multipart Exception={0}", e.Message);
                                 valid = false;
                             }
                         }
@@ -279,7 +281,7 @@ namespace VehicleTestServer
                             }
                             catch (Exception e)
                             {
-                                Console.WriteLine("POST Body Exception={0}", e.Message);
+                                _outWriter?.WriteLine("POST Body Exception={0}", e.Message);
                                 valid = false;
                             }
                         }
@@ -298,7 +300,7 @@ namespace VehicleTestServer
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine("POST Exception={0}", e.Message);
+                        _outWriter?.WriteLine("POST Exception={0}", e.Message);
                         valid = false;
                     }
                 }
@@ -317,7 +319,7 @@ namespace VehicleTestServer
 
                 if (!requestId.HasValue)
                 {
-                    Console.WriteLine("No request ID");
+                    _outWriter?.WriteLine("No request ID");
                     valid = false;
                 }
 
@@ -345,7 +347,7 @@ namespace VehicleTestServer
                     {
                         if (checkId && requestId.Value <= _requestId)
                         {
-                            Console.WriteLine("Ignoring request ID: {0}", requestId.Value);
+                            _outWriter?.WriteLine("Ignoring request ID: {0}", requestId.Value);
                             valid = false;
                         }
                         else
