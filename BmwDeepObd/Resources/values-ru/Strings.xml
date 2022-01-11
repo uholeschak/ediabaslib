@@ -686,6 +686,9 @@
   <string name="bmw_actuator_button_stop">Остановить</string>
   <string name="bmw_actuator_operation_failed">Ошибка выполнения операции</string>
 
+  <!-- BMW Coding Activity -->
+  <string name="bmw_coding_title">Кодирование BMW</string>
+
   <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">Настройки устройства</string>
   <string name="can_adapter_mode_name">Режим работы CAN</string>

@@ -65,6 +65,7 @@ namespace BmwDeepObd
             RequestSelectConfig,
             RequestXmlTool,
             RequestEdiabasTool,
+            RequestBmwCoding,
             RequestYandexKey,
             RequestGlobalSettings,
             RequestEditConfig,
@@ -973,6 +974,11 @@ namespace BmwDeepObd
                     UpdateOptionsMenu();
                     break;
 
+                case ActivityRequest.RequestBmwCoding:
+                    UpdateOptionsMenu();
+                    UpdateDisplay();
+                    break;
+
                 case ActivityRequest.RequestYandexKey:
                     ActivityCommon.EnableTranslation = ActivityCommon.IsTranslationAvailable();
                     StoreSettings();
@@ -1489,6 +1495,7 @@ namespace BmwDeepObd
 
                 case Resource.Id.menu_global_settings:
                     EditGlobalSettings();
+                    //StartBmwCoding();
                     return true;
 
                 case Resource.Id.menu_submenu_help:
@@ -6314,6 +6321,13 @@ namespace BmwDeepObd
             {
                 // ignored
             }
+        }
+
+        private void StartBmwCoding()
+        {
+            Intent serverIntent = new Intent(this, typeof(BmwCodingActivity));
+            serverIntent.PutExtra(BmwCodingActivity.ExtraAppDataDir, _instanceData.AppDataPath);
+            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestBmwCoding);
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
