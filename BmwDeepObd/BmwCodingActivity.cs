@@ -39,8 +39,8 @@ namespace BmwDeepObd
         private InstanceData _instanceData = new InstanceData();
         private ActivityCommon _activityCommon;
         private EdiabasNet _ediabas;
+        private EdWebServer _edWebServer;
         private Thread _jobThread;
-        private bool _ediabasJobAbort;
         private string _ecuDir;
         private string _appDataDir;
         private string _deviceName;
@@ -95,6 +95,8 @@ namespace BmwDeepObd
             {
                 // ignored
             }
+
+            StartWebServer();
         }
 
         protected override void OnSaveInstanceState(Bundle outState)
@@ -106,12 +108,12 @@ namespace BmwDeepObd
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            _ediabasJobAbort = true;
             if (IsJobRunning())
             {
                 _jobThread.Join();
             }
-            EdiabasClose();
+
+            StopWebServer();
 
             _activityCommon?.Dispose();
             _activityCommon = null;
@@ -161,14 +163,13 @@ namespace BmwDeepObd
             }
         }
 
-        private void EdiabasOpen()
+        private void EdiabasInit()
         {
             if (_ediabas == null)
             {
                 _ediabas = new EdiabasNet
                 {
                     EdInterfaceClass = _activityCommon.GetEdiabasInterfaceClass(),
-                    AbortJobFunc = AbortEdiabasJob
                 };
                 _ediabas.SetConfigProperty("EcuPath", _ecuDir);
                 string traceDir = Path.Combine(_appDataDir, "LogBmwCoding");
@@ -187,21 +188,6 @@ namespace BmwDeepObd
             _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress);
         }
 
-        // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool EdiabasClose()
-        {
-            if (IsJobRunning())
-            {
-                return false;
-            }
-            if (_ediabas != null)
-            {
-                _ediabas.Dispose();
-                _ediabas = null;
-            }
-            return true;
-        }
-
         private bool IsJobRunning()
         {
             if (_jobThread == null)
@@ -216,15 +202,42 @@ namespace BmwDeepObd
             return false;
         }
 
-        private bool AbortEdiabasJob()
+        private bool StartWebServer()
         {
-            if (_ediabasJobAbort)
+            try
             {
+                EdiabasInit();
+                if (_ediabas == null)
+                {
+                    return false;
+                }
+
+                _edWebServer = new EdWebServer(_ediabas, null);
+                _edWebServer.StartTcpListener("http://127.0.0.1:8080");
                 return true;
             }
-            return false;
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
+        private bool StopWebServer()
+        {
+            try
+            {
+                if (_edWebServer != null)
+                {
+                    _edWebServer.Dispose();
+                    _edWebServer = null;
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
 
         public class WebViewClientImpl : WebViewClientCompat
         {

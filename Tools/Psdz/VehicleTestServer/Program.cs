@@ -25,8 +25,8 @@ namespace VehicleTestServer
         {
             TextWriter outWriter = Console.Out;
             EdiabasNet ediabas = EdiabasSetup();
-            EdWebServer ediabasWebServer = new EdWebServer(ediabas, Console.Out);
-            ediabasWebServer.StartTcpListener("http://127.0.0.1:8080");
+            EdWebServer edWebServer = new EdWebServer(ediabas, Console.Out);
+            edWebServer.StartTcpListener("http://127.0.0.1:8080");
             outWriter?.WriteLine("Press ESC to stop");
             do
             {
@@ -37,7 +37,7 @@ namespace VehicleTestServer
             }
             while (Console.ReadKey(true).Key != ConsoleKey.Escape);
 
-            ediabasWebServer.Dispose();
+            edWebServer.Dispose();
             return 0;
         }
 
