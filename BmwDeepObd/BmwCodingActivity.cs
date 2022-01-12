@@ -84,6 +84,8 @@ namespace BmwDeepObd
             _deviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
             _activityCommon.SelectedEnetIp = Intent.GetStringExtra(ExtraEnetIp);
 
+            StartWebServer();
+
             _webViewCoding = FindViewById<WebView>(Resource.Id.webViewCoding);
 
             try
@@ -106,8 +108,6 @@ namespace BmwDeepObd
             {
                 // ignored
             }
-
-            StartWebServer();
         }
 
         protected override void OnSaveInstanceState(Bundle outState)
