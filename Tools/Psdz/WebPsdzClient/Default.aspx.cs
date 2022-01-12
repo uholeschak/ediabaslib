@@ -39,12 +39,19 @@ namespace WebPsdzClient
                 {
                     try
                     {
-                        if (Request.QueryString.Count > 0)
+                        if (Request.UserAgent != null)
                         {
-                            string serverPort = Request.QueryString["serverport"];
-                            if (!string.IsNullOrEmpty(serverPort))
+                            if (Request.UserAgent.StartsWith("DeepObd"))
                             {
-                                sessionContainer.LocalServerPort = serverPort;
+                                string[] parts = Request.UserAgent.Split(':');
+                                if (parts.Length > 1)
+                                {
+                                    string serverPort = parts[1];
+                                    if (!string.IsNullOrEmpty(serverPort))
+                                    {
+                                        sessionContainer.LocalServerPort = serverPort;
+                                    }
+                                }
                             }
                         }
                     }

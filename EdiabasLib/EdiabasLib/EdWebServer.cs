@@ -19,19 +19,32 @@ namespace EdiabasLib
 {
     public class EdWebServer: IDisposable
     {
+        public delegate void MessageDelegate(string message);
+
         private bool _disposed;
         private object _ediabasLock = new object();
         private object _requestLock = new object();
         private EdiabasNet _ediabas;
-        private TextWriter _outWriter;
+        private MessageDelegate _messageHandler;
         private bool _ediabasAbort;
         private UInt64 _requestId;
 
-        public EdWebServer(EdiabasNet ediabas, TextWriter outWriter)
+        public EdiabasNet Ediabas
+        {
+            get
+            {
+                lock (_ediabasLock)
+                {
+                    return _ediabas;
+                }
+            }
+        }
+
+        public EdWebServer(EdiabasNet ediabas, MessageDelegate messageHandler)
         {
             _ediabas = ediabas;
             _ediabas.AbortJobFunc = AbortEdiabasJob;
-            _outWriter = outWriter;
+            _messageHandler = messageHandler;
             _ediabasAbort = false;
             _requestId = 0;
         }
@@ -62,16 +75,16 @@ namespace EdiabasLib
                     _ediabasAbort = false;
                     if (_ediabas.EdInterfaceClass.InterfaceConnect())
                     {
-                        _outWriter?.WriteLine($"Ediabas connected");
+                        _messageHandler?.Invoke($"Ediabas connected");
                         return true;
                     }
 
-                    _outWriter?.WriteLine($"Ediabas connect failed");
+                    _messageHandler?.Invoke($"Ediabas connect failed");
                     return false;
                 }
                 catch (Exception ex)
                 {
-                    _outWriter?.WriteLine("Ediabas connect Exception: {0}", ex);
+                    _messageHandler?.Invoke($"Ediabas connect Exception: {ex.Message}");
                     return false;
                 }
             }
@@ -83,7 +96,7 @@ namespace EdiabasLib
             {
                 try
                 {
-                    _outWriter?.WriteLine($"Ediabas disconnected");
+                    _messageHandler?.Invoke($"Ediabas disconnected");
                     _ediabasAbort = true;
                     return _ediabas.EdInterfaceClass.InterfaceDisconnect();
                 }
@@ -171,24 +184,24 @@ namespace EdiabasLib
                 .ToHttpListenerObservable(cts.Token)
                 .Do(r =>
                 {
-                    _outWriter?.WriteLine($"Remote Address: {r.RemoteIpEndPoint.Address}");
-                    _outWriter?.WriteLine($"Remote Port: {r.RemoteIpEndPoint.Port}");
-                    _outWriter?.WriteLine("--------------***-------------");
+                    _messageHandler?.Invoke($"Remote Address: {r.RemoteIpEndPoint.Address}");
+                    _messageHandler?.Invoke($"Remote Port: {r.RemoteIpEndPoint.Port}");
+                    _messageHandler?.Invoke("--------------***-------------");
                 })
                 // Send reply to browser
                 .Select(r => Observable.FromAsync(() => SendResponseAsync(r, httpSender)))
                 .Concat()
                 .Subscribe(r =>
                 {
-                    _outWriter?.WriteLine("Reply sent.");
+                    _messageHandler?.Invoke($"Reply sent.");
                 },
                     ex =>
                     {
-                        _outWriter?.WriteLine($"Exception: {ex}");
+                        _messageHandler?.Invoke($"Exception: {ex.Message}");
                     },
                     () =>
                     {
-                        _outWriter?.WriteLine("Completed.");
+                        _messageHandler?.Invoke($"Completed.");
                     });
 
             int port = -1;
@@ -226,7 +239,7 @@ namespace EdiabasLib
 
                 if (string.Compare(request.Method, "GET", StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    _outWriter?.WriteLine("GET {0}", request.QueryString);
+                    _messageHandler?.Invoke($"GET {request.QueryString}");
                     queryString = request.QueryString;
                 }
 
@@ -234,7 +247,7 @@ namespace EdiabasLib
                 {
                     if (request.Body != null)
                     {
-                        _outWriter?.WriteLine("POST FormData={0}, UrlEncoded={1}", formData, urlEncoded);
+                        _messageHandler?.Invoke($"POST FormData={formData}, UrlEncoded={urlEncoded}");
                         if (formData)
                         {
                             try
@@ -248,7 +261,7 @@ namespace EdiabasLib
                             }
                             catch (Exception e)
                             {
-                                _outWriter?.WriteLine("Multipart Exception={0}", e.Message);
+                                _messageHandler?.Invoke($"Multipart Exception={e.Message}");
                                 valid = false;
                             }
                         }
@@ -262,7 +275,7 @@ namespace EdiabasLib
                             }
                             catch (Exception e)
                             {
-                                _outWriter?.WriteLine("POST Body Exception={0}", e.Message);
+                                _messageHandler?.Invoke($"POST Body Exception={e.Message}");
                                 valid = false;
                             }
                         }
@@ -281,7 +294,7 @@ namespace EdiabasLib
                     }
                     catch (Exception e)
                     {
-                        _outWriter?.WriteLine("POST Exception={0}", e.Message);
+                        _messageHandler?.Invoke($"POST Exception={e.Message}");
                         valid = false;
                     }
                 }
@@ -300,7 +313,7 @@ namespace EdiabasLib
 
                 if (!requestId.HasValue)
                 {
-                    _outWriter?.WriteLine("No request ID");
+                    _messageHandler?.Invoke($"No request ID");
                     valid = false;
                 }
 
@@ -328,7 +341,7 @@ namespace EdiabasLib
                     {
                         if (checkId && requestId.Value <= _requestId)
                         {
-                            _outWriter?.WriteLine("Ignoring request ID: {0}", requestId.Value);
+                            _messageHandler?.Invoke($"Ignoring request ID: {requestId.Value}");
                             valid = false;
                         }
                         else
