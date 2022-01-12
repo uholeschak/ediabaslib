@@ -203,7 +203,10 @@ namespace BmwDeepObd
             try
             {
                 EdiabasNet ediabas = EdiabasSetup();
-                _edWebServer = new EdWebServer(ediabas, null);
+                _edWebServer = new EdWebServer(ediabas, message =>
+                {
+                    _edWebServer.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, message);
+                });
                 int usedPort = _edWebServer.StartTcpListener("http://127.0.0.1:" + listenPort.ToString(CultureInfo.InvariantCulture));
                 return usedPort;
             }
