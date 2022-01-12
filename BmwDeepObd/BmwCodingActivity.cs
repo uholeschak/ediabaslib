@@ -8,6 +8,7 @@ using AndroidX.WebKit;
 using AndroidX.DocumentFile.Provider;
 using BmwDeepObd.FilePicker;
 using Android.Webkit;
+using Java.Interop;
 
 namespace BmwDeepObd
 {
@@ -68,6 +69,7 @@ namespace BmwDeepObd
                     webSettings.JavaScriptCanOpenWindowsAutomatically = true;
                 }
 
+                _webViewCoding.AddJavascriptInterface(new WebViewJSInterface(this), "deepObd");
                 _webViewCoding.SetWebViewClient(new WebViewClientImpl(this));
                 _webViewCoding.LoadUrl(@"https:://www.holeschak.de");
             }
@@ -147,6 +149,23 @@ namespace BmwDeepObd
             public override void OnReceivedError(WebView view, IWebResourceRequest request, WebResourceErrorCompat error)
             {
                 Toast.MakeText(_activity, _activity.GetString(Resource.String.bmw_coding_network_error), ToastLength.Long)?.Show();
+            }
+        }
+
+        class WebViewJSInterface : Java.Lang.Object
+        {
+            Context context;
+
+            public WebViewJSInterface(Context context)
+            {
+                this.context = context;
+            }
+
+            [JavascriptInterface]
+            [Export]
+            public void DebugMessage(string msg)
+            {
+
             }
         }
     }
