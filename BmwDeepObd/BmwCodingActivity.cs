@@ -35,7 +35,6 @@ namespace BmwDeepObd
 #if DEBUG
         private static readonly string Tag = typeof(BmwCodingActivity).FullName;
 #endif
-        private const string TcpPort = "8080";
 
         private enum ActivityRequest
         {
@@ -45,7 +44,6 @@ namespace BmwDeepObd
         private InstanceData _instanceData = new InstanceData();
         private ActivityCommon _activityCommon;
         private EdWebServer _edWebServer;
-        private Thread _jobThread;
         private string _ecuDir;
         private string _appDataDir;
         private string _deviceName;
@@ -84,7 +82,7 @@ namespace BmwDeepObd
             _deviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
             _activityCommon.SelectedEnetIp = Intent.GetStringExtra(ExtraEnetIp);
 
-            StartWebServer();
+            int listenPort = StartWebServer();
 
             _webViewCoding = FindViewById<WebView>(Resource.Id.webViewCoding);
 
@@ -96,7 +94,7 @@ namespace BmwDeepObd
                     webSettings.JavaScriptEnabled = true;
                     webSettings.JavaScriptCanOpenWindowsAutomatically = true;
                     webSettings.DomStorageEnabled = true;
-                    webSettings.UserAgentString = "DeepObd:" + TcpPort;
+                    webSettings.UserAgentString = string.Format(CultureInfo.InvariantCulture, "DeepObd:{0}", listenPort);
                 }
 
                 _webViewCoding.AddJavascriptInterface(new WebViewJSInterface(this), "app");
@@ -119,10 +117,6 @@ namespace BmwDeepObd
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            if (IsJobRunning())
-            {
-                _jobThread.Join();
-            }
 
             StopWebServer();
 
@@ -132,10 +126,11 @@ namespace BmwDeepObd
 
         public override void OnBackPressed()
         {
-            if (IsJobRunning())
+            if (_edWebServer != null && _edWebServer.IsEdiabasConnected())
             {
                 return;
             }
+
             base.OnBackPressed();
         }
 
@@ -144,6 +139,11 @@ namespace BmwDeepObd
             switch (item.ItemId)
             {
                 case Android.Resource.Id.Home:
+                    if (_edWebServer != null && _edWebServer.IsEdiabasConnected())
+                    {
+                        return true;
+                    }
+
                     Finish();
                     return true;
             }
@@ -198,32 +198,18 @@ namespace BmwDeepObd
             return ediabas;
         }
 
-        private bool IsJobRunning()
-        {
-            if (_jobThread == null)
-            {
-                return false;
-            }
-            if (_jobThread.IsAlive)
-            {
-                return true;
-            }
-            _jobThread = null;
-            return false;
-        }
-
-        private bool StartWebServer()
+        private int StartWebServer(int listenPort = 8080)
         {
             try
             {
                 EdiabasNet ediabas = EdiabasSetup();
                 _edWebServer = new EdWebServer(ediabas, null);
-                _edWebServer.StartTcpListener("http://127.0.0.1:" + TcpPort);
-                return true;
+                int usedPort = _edWebServer.StartTcpListener("http://127.0.0.1:" + listenPort.ToString(CultureInfo.InvariantCulture));
+                return usedPort;
             }
             catch (Exception)
             {
-                return false;
+                return -1;
             }
         }
 

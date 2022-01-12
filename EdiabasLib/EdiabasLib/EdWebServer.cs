@@ -153,7 +153,7 @@ namespace EdiabasLib
             return responseList;
         }
 
-        public void StartTcpListener(string url)
+        public int StartTcpListener(string url)
         {
 
             var uri = new Uri(url);
@@ -190,6 +190,15 @@ namespace EdiabasLib
                     {
                         _outWriter?.WriteLine("Completed.");
                     });
+
+            int port = -1;
+            IPEndPoint ipEndPoint = tcpListener.LocalEndpoint as IPEndPoint;
+            if (ipEndPoint != null)
+            {
+                port = ipEndPoint.Port;
+            }
+
+            return port;
         }
 
         private async Task SendResponseAsync(IHttpRequestResponse request, HttpSender httpSender)
