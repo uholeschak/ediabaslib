@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 using Android.Content;
@@ -30,6 +31,11 @@ namespace BmwDeepObd
         public const string ExtraDeviceName = "device_name";
         public const string ExtraDeviceAddress = "device_address";
         public const string ExtraEnetIp = "enet_ip";
+
+#if DEBUG
+        private static readonly string Tag = typeof(BmwCodingActivity).FullName;
+#endif
+        private const string TcpPort = "8080";
 
         private enum ActivityRequest
         {
@@ -88,10 +94,12 @@ namespace BmwDeepObd
                     webSettings.JavaScriptEnabled = true;
                     webSettings.JavaScriptCanOpenWindowsAutomatically = true;
                     webSettings.DomStorageEnabled = true;
+                    webSettings.UserAgentString = "DeepObd:" + TcpPort;
                 }
 
-                _webViewCoding.AddJavascriptInterface(new WebViewJSInterface(this), "deepObd");
+                _webViewCoding.AddJavascriptInterface(new WebViewJSInterface(this), "app");
                 _webViewCoding.SetWebViewClient(new WebViewClientImpl(this));
+                _webViewCoding.SetWebChromeClient(new WebChromeClientImpl(this));
                 _webViewCoding.LoadUrl(@"https:://www.holeschak.de");
             }
             catch (Exception)
@@ -210,7 +218,7 @@ namespace BmwDeepObd
             {
                 EdiabasNet ediabas = EdiabasSetup();
                 _edWebServer = new EdWebServer(ediabas, null);
-                _edWebServer.StartTcpListener("http://127.0.0.1:8080");
+                _edWebServer.StartTcpListener("http://127.0.0.1:" + TcpPort);
                 return true;
             }
             catch (Exception)
@@ -256,11 +264,27 @@ namespace BmwDeepObd
             }
         }
 
+        public class WebChromeClientImpl : WebChromeClient
+        {
+            private Android.App.Activity _activity;
+
+            public WebChromeClientImpl(Android.App.Activity activity)
+            {
+                _activity = activity;
+            }
+
+            public override bool OnConsoleMessage(ConsoleMessage consoleMessage)
+            {
+#if DEBUG
+                string message = string.Format(CultureInfo.InvariantCulture, "Message: {0}, Line: {1}, Source: {2}", consoleMessage.Message(), consoleMessage.LineNumber(), consoleMessage.SourceId());
+                Android.Util.Log.Debug(Tag, message);
+#endif
+                return true;
+            }
+        }
+
         class WebViewJSInterface : Java.Lang.Object
         {
-#if DEBUG
-            private static readonly string Tag = typeof(WebViewJSInterface).FullName;
-#endif
             Context _context;
 
             public WebViewJSInterface(Context context)
