@@ -67,6 +67,9 @@ namespace BmwDeepObd
 
             _activityCommon = new ActivityCommon(this);
 
+            _activityCommon.UpdateRegisterInternetCellular();
+            _activityCommon.SetPreferredNetworkInterface();
+
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
             _activityCommon.SelectedInterface = (ActivityCommon.InterfaceType)
