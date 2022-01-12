@@ -87,6 +87,7 @@ namespace BmwDeepObd
                 {
                     webSettings.JavaScriptEnabled = true;
                     webSettings.JavaScriptCanOpenWindowsAutomatically = true;
+                    webSettings.DomStorageEnabled = true;
                 }
 
                 _webViewCoding.AddJavascriptInterface(new WebViewJSInterface(this), "deepObd");
