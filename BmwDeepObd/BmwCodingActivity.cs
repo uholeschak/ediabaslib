@@ -38,7 +38,6 @@ namespace BmwDeepObd
 
         private InstanceData _instanceData = new InstanceData();
         private ActivityCommon _activityCommon;
-        private EdiabasNet _ediabas;
         private EdWebServer _edWebServer;
         private Thread _jobThread;
         private string _ecuDir;
@@ -163,29 +162,28 @@ namespace BmwDeepObd
             }
         }
 
-        private void EdiabasInit()
+        private EdiabasNet EdiabasSetup()
         {
-            if (_ediabas == null)
+            EdiabasNet ediabas = new EdiabasNet
             {
-                _ediabas = new EdiabasNet
-                {
-                    EdInterfaceClass = _activityCommon.GetEdiabasInterfaceClass(),
-                };
-                _ediabas.SetConfigProperty("EcuPath", _ecuDir);
-                string traceDir = Path.Combine(_appDataDir, "LogBmwCoding");
-                if (!string.IsNullOrEmpty(traceDir))
-                {
-                    _ediabas.SetConfigProperty("TracePath", traceDir);
-                    _ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.EdLogLevel.Error));
-                    _ediabas.SetConfigProperty("CompressTrace", "1");
-                }
-                else
-                {
-                    _ediabas.SetConfigProperty("IfhTrace", "0");
-                }
+                EdInterfaceClass = _activityCommon.GetEdiabasInterfaceClass(),
+            };
+            ediabas.SetConfigProperty("EcuPath", _ecuDir);
+            string traceDir = Path.Combine(_appDataDir, "LogBmwCoding");
+            if (!string.IsNullOrEmpty(traceDir))
+            {
+                ediabas.SetConfigProperty("TracePath", traceDir);
+                ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.EdLogLevel.Error));
+                ediabas.SetConfigProperty("CompressTrace", "1");
+            }
+            else
+            {
+                ediabas.SetConfigProperty("IfhTrace", "0");
             }
 
-            _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress);
+            _activityCommon.SetEdiabasInterface(ediabas, _deviceAddress);
+
+            return ediabas;
         }
 
         private bool IsJobRunning()
@@ -206,13 +204,8 @@ namespace BmwDeepObd
         {
             try
             {
-                EdiabasInit();
-                if (_ediabas == null)
-                {
-                    return false;
-                }
-
-                _edWebServer = new EdWebServer(_ediabas, null);
+                EdiabasNet ediabas = EdiabasSetup();
+                _edWebServer = new EdWebServer(ediabas, null);
                 _edWebServer.StartTcpListener("http://127.0.0.1:8080");
                 return true;
             }
