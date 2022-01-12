@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 using Android.Content;
@@ -31,6 +32,10 @@ namespace BmwDeepObd
         public const string ExtraDeviceAddress = "device_address";
         public const string ExtraEnetIp = "enet_ip";
 
+#if DEBUG
+        private static readonly string Tag = typeof(BmwCodingActivity).FullName;
+#endif
+
         private enum ActivityRequest
         {
             RequestDevelopmentSettings,
@@ -38,9 +43,7 @@ namespace BmwDeepObd
 
         private InstanceData _instanceData = new InstanceData();
         private ActivityCommon _activityCommon;
-        private EdiabasNet _ediabas;
         private EdWebServer _edWebServer;
-        private Thread _jobThread;
         private string _ecuDir;
         private string _appDataDir;
         private string _deviceName;
@@ -68,6 +71,9 @@ namespace BmwDeepObd
 
             _activityCommon = new ActivityCommon(this);
 
+            _activityCommon.UpdateRegisterInternetCellular();
+            _activityCommon.SetPreferredNetworkInterface();
+
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
             _activityCommon.SelectedInterface = (ActivityCommon.InterfaceType)
@@ -75,6 +81,8 @@ namespace BmwDeepObd
             _deviceName = Intent.GetStringExtra(ExtraDeviceName);
             _deviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
             _activityCommon.SelectedEnetIp = Intent.GetStringExtra(ExtraEnetIp);
+
+            int listenPort = StartWebServer();
 
             _webViewCoding = FindViewById<WebView>(Resource.Id.webViewCoding);
 
@@ -85,18 +93,19 @@ namespace BmwDeepObd
                 {
                     webSettings.JavaScriptEnabled = true;
                     webSettings.JavaScriptCanOpenWindowsAutomatically = true;
+                    webSettings.DomStorageEnabled = true;
+                    webSettings.UserAgentString = string.Format(CultureInfo.InvariantCulture, "DeepObd:{0}", listenPort);
                 }
 
-                _webViewCoding.AddJavascriptInterface(new WebViewJSInterface(this), "deepObd");
+                _webViewCoding.AddJavascriptInterface(new WebViewJSInterface(this), "app");
                 _webViewCoding.SetWebViewClient(new WebViewClientImpl(this));
+                _webViewCoding.SetWebChromeClient(new WebChromeClientImpl(this));
                 _webViewCoding.LoadUrl(@"https:://www.holeschak.de");
             }
             catch (Exception)
             {
                 // ignored
             }
-
-            StartWebServer();
         }
 
         protected override void OnSaveInstanceState(Bundle outState)
@@ -108,10 +117,6 @@ namespace BmwDeepObd
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            if (IsJobRunning())
-            {
-                _jobThread.Join();
-            }
 
             StopWebServer();
 
@@ -121,10 +126,11 @@ namespace BmwDeepObd
 
         public override void OnBackPressed()
         {
-            if (IsJobRunning())
+            if (_edWebServer != null && _edWebServer.IsEdiabasConnected())
             {
                 return;
             }
+
             base.OnBackPressed();
         }
 
@@ -133,6 +139,11 @@ namespace BmwDeepObd
             switch (item.ItemId)
             {
                 case Android.Resource.Id.Home:
+                    if (_edWebServer != null && _edWebServer.IsEdiabasConnected())
+                    {
+                        return true;
+                    }
+
                     Finish();
                     return true;
             }
@@ -163,62 +174,42 @@ namespace BmwDeepObd
             }
         }
 
-        private void EdiabasInit()
+        private EdiabasNet EdiabasSetup()
         {
-            if (_ediabas == null)
+            EdiabasNet ediabas = new EdiabasNet
             {
-                _ediabas = new EdiabasNet
-                {
-                    EdInterfaceClass = _activityCommon.GetEdiabasInterfaceClass(),
-                };
-                _ediabas.SetConfigProperty("EcuPath", _ecuDir);
-                string traceDir = Path.Combine(_appDataDir, "LogBmwCoding");
-                if (!string.IsNullOrEmpty(traceDir))
-                {
-                    _ediabas.SetConfigProperty("TracePath", traceDir);
-                    _ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.EdLogLevel.Error));
-                    _ediabas.SetConfigProperty("CompressTrace", "1");
-                }
-                else
-                {
-                    _ediabas.SetConfigProperty("IfhTrace", "0");
-                }
+                EdInterfaceClass = _activityCommon.GetEdiabasInterfaceClass(),
+            };
+            ediabas.SetConfigProperty("EcuPath", _ecuDir);
+            string traceDir = Path.Combine(_appDataDir, "LogBmwCoding");
+            if (!string.IsNullOrEmpty(traceDir))
+            {
+                ediabas.SetConfigProperty("TracePath", traceDir);
+                ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.EdLogLevel.Error));
+                ediabas.SetConfigProperty("CompressTrace", "1");
+            }
+            else
+            {
+                ediabas.SetConfigProperty("IfhTrace", "0");
             }
 
-            _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress);
+            _activityCommon.SetEdiabasInterface(ediabas, _deviceAddress);
+
+            return ediabas;
         }
 
-        private bool IsJobRunning()
-        {
-            if (_jobThread == null)
-            {
-                return false;
-            }
-            if (_jobThread.IsAlive)
-            {
-                return true;
-            }
-            _jobThread = null;
-            return false;
-        }
-
-        private bool StartWebServer()
+        private int StartWebServer(int listenPort = 8080)
         {
             try
             {
-                EdiabasInit();
-                if (_ediabas == null)
-                {
-                    return false;
-                }
-
-                _edWebServer = new EdWebServer(_ediabas, null);
-                _edWebServer.StartTcpListener("http://127.0.0.1:8080");
-                return true;
+                EdiabasNet ediabas = EdiabasSetup();
+                _edWebServer = new EdWebServer(ediabas, null);
+                int usedPort = _edWebServer.StartTcpListener("http://127.0.0.1:" + listenPort.ToString(CultureInfo.InvariantCulture));
+                return usedPort;
             }
             catch (Exception)
             {
-                return false;
+                return -1;
             }
         }
 
@@ -259,11 +250,27 @@ namespace BmwDeepObd
             }
         }
 
+        public class WebChromeClientImpl : WebChromeClient
+        {
+            private Android.App.Activity _activity;
+
+            public WebChromeClientImpl(Android.App.Activity activity)
+            {
+                _activity = activity;
+            }
+
+            public override bool OnConsoleMessage(ConsoleMessage consoleMessage)
+            {
+#if DEBUG
+                string message = string.Format(CultureInfo.InvariantCulture, "Message: {0}, Line: {1}, Source: {2}", consoleMessage.Message(), consoleMessage.LineNumber(), consoleMessage.SourceId());
+                Android.Util.Log.Debug(Tag, message);
+#endif
+                return true;
+            }
+        }
+
         class WebViewJSInterface : Java.Lang.Object
         {
-#if DEBUG
-            private static readonly string Tag = typeof(WebViewJSInterface).FullName;
-#endif
             Context _context;
 
             public WebViewJSInterface(Context context)
