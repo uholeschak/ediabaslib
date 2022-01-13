@@ -105,10 +105,18 @@
 
             psdzVehicleHubProxy.client.vehicleConnect = function (url, id)
             {
-                console.log("Vehicle connect: Url=" + url + ", Id=" + id);
+                var logMessage = "Vehicle connect: Url=" + url + ", Id=" + id;
+                console.log(logMessage);
                 if (isDebugMessageAvailable())
                 {
-                    app.DebugMessage("Vehicle connect: Url=" + url + ", Id=" + id);
+                    try
+                    {
+                        app.DebugMessage(logMessage);
+                    }
+                    catch (e)
+                    {
+                        console.log("DebugMessage Exception: " + e.message);
+                    }
                 }
                 var formData = new FormData();
                 formData.append('id', id);
@@ -118,10 +126,18 @@
 
             psdzVehicleHubProxy.client.vehicleDisconnect = function (url, id)
             {
-                console.log("Vehicle disconnect: Url=" + url + ", Id=" + id);
+                var logMessage = "Vehicle disconnect: Url=" + url + ", Id=" + id;
+                console.log(logMessage);
                 if (isDebugMessageAvailable())
                 {
-                    app.DebugMessage("Vehicle disconnect: Url=" + url + ", Id=" + id);
+                    try
+                    {
+                        app.DebugMessage(logMessage);
+                    }
+                    catch (e)
+                    {
+                        console.log("DebugMessage Exception: " + e.message);
+                    }
                 }
                 var formData = new FormData();
                 formData.append('id', id);
@@ -131,10 +147,18 @@
 
             psdzVehicleHubProxy.client.vehicleSend = function (url, id, data)
             {
-                console.log("Vehicle send: Url=", url + ", Id=" + id + ", Data=" + data);
+                var logMessage = "Vehicle send: Url=" + url + ", Id=" + id + ", Data=" + data;
+                console.log(logMessage);
                 if (isDebugMessageAvailable())
                 {
-                    app.DebugMessage("Vehicle send: Url=", url + ", Id=" + id + ", Data=" + data);
+                    try
+                    {
+                        app.DebugMessage(logMessage);
+                    }
+                    catch (e)
+                    {
+                        console.log("DebugMessage Exception: " + e.message);
+                    }
                 }
                 var formData = new FormData();
                 formData.append('id', id);
