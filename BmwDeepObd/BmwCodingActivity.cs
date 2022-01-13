@@ -94,7 +94,7 @@ namespace BmwDeepObd
                     webSettings.JavaScriptEnabled = true;
                     webSettings.JavaScriptCanOpenWindowsAutomatically = true;
                     webSettings.DomStorageEnabled = true;
-                    webSettings.UserAgentString = string.Format(CultureInfo.InvariantCulture, "DeepObd:{0}", listenPort);
+                    //webSettings.UserAgentString = string.Format(CultureInfo.InvariantCulture, "DeepObd:{0}", listenPort);
                 }
 
                 _webViewCoding.AddJavascriptInterface(new WebViewJSInterface(this), "app");
