@@ -76,9 +76,40 @@
                 request.send(formData);
             }
 
+            function isAppBound()
+            {
+                if (typeof app !== "undefined")
+                {
+                    console.log("App is bound");
+                    return true;
+                }
+
+                console.log("App not bound");
+                return false;
+            }
+
+            function isDebugMessageAvailable()
+            {
+                if (!isAppBound())
+                {
+                    return false;
+                }
+
+                if (typeof app.DebugMessage === "function")
+                {
+                    return true;
+                }
+
+                return false;
+            }
+
             psdzVehicleHubProxy.client.vehicleConnect = function (url, id)
             {
                 console.log("Vehicle connect: Url=" + url + ", Id=" + id);
+                if (isDebugMessageAvailable())
+                {
+                    app.DebugMessage("Vehicle connect: Url=" + url + ", Id=" + id);
+                }
                 var formData = new FormData();
                 formData.append('id', id);
                 formData.append('connect', '1');
@@ -87,7 +118,11 @@
 
             psdzVehicleHubProxy.client.vehicleDisconnect = function (url, id)
             {
-                console.log("Vehicle connect: Url=" + url + ", Id=" + id);
+                console.log("Vehicle disconnect: Url=" + url + ", Id=" + id);
+                if (isDebugMessageAvailable())
+                {
+                    app.DebugMessage("Vehicle disconnect: Url=" + url + ", Id=" + id);
+                }
                 var formData = new FormData();
                 formData.append('id', id);
                 formData.append('disconnect', '1');
@@ -97,6 +132,10 @@
             psdzVehicleHubProxy.client.vehicleSend = function (url, id, data)
             {
                 console.log("Vehicle send: Url=", url + ", Id=" + id + ", Data=" + data);
+                if (isDebugMessageAvailable())
+                {
+                    app.DebugMessage("Vehicle send: Url=", url + ", Id=" + id + ", Data=" + data);
+                }
                 var formData = new FormData();
                 formData.append('id', id);
                 formData.append('data', data);

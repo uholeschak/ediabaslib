@@ -15,10 +15,10 @@ namespace WebPsdzClient
     {
 
         /// <summary>
-        /// MainContent-Steuerelement
+        /// MainContent-Steuerelement.
         /// </summary>
         /// <remarks>
-        /// Automatisch generiertes Feld
+        /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ContentPlaceHolder MainContent;
