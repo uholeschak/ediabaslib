@@ -35,7 +35,7 @@ namespace WebPsdzClient
 
             if (!IsPostBack)
             {
-                if (string.IsNullOrEmpty(sessionContainer.LocalServerPort))
+                if (!sessionContainer.DeepObdApp)
                 {
                     try
                     {
@@ -43,6 +43,7 @@ namespace WebPsdzClient
                         {
                             if (Request.UserAgent.StartsWith("DeepObd"))
                             {
+                                sessionContainer.DeepObdApp = true;
                                 string[] parts = Request.UserAgent.Split(':');
                                 if (parts.Length > 1)
                                 {

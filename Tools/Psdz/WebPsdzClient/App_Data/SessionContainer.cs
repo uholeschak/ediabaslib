@@ -241,6 +241,25 @@ namespace WebPsdzClient.App_Data
             }
         }
 
+        private bool _deepObdApp;
+        public bool DeepObdApp
+        {
+            get
+            {
+                lock (_lockObject)
+                {
+                    return _deepObdApp;
+                }
+            }
+            set
+            {
+                lock (_lockObject)
+                {
+                    _deepObdApp = value;
+                }
+            }
+        }
+
         private string _localServerPort;
         public string LocalServerPort
         {
