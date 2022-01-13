@@ -100,7 +100,8 @@ namespace BmwDeepObd
                 _webViewCoding.AddJavascriptInterface(new WebViewJSInterface(this), "app");
                 _webViewCoding.SetWebViewClient(new WebViewClientImpl(this));
                 _webViewCoding.SetWebChromeClient(new WebChromeClientImpl(this));
-                _webViewCoding.LoadUrl(@"https:://www.holeschak.de");
+                //_webViewCoding.LoadUrl(@"https://www.holeschak.de");
+                _webViewCoding.LoadUrl(@"http://ulrich3.local.holeschak.de:3000");
             }
             catch (Exception)
             {
