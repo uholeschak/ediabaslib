@@ -1523,6 +1523,7 @@ namespace WebPsdzClient.App_Data
             StopProgrammingServiceTask().ContinueWith(task =>
             {
                 TaskActive = false;
+                StopTcpListener();
                 UpdateCurrentOptions();
                 UpdateDisplay();
             });
