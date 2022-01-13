@@ -1448,11 +1448,18 @@ namespace WebPsdzClient.App_Data
 
         private void UpdateCurrentOptions()
         {
-            bool vehicleConnected = ProgrammingJobs.PsdzContext?.Connection != null;
-            if (!vehicleConnected)
+            try
             {
-                OptionsDict = null;
-                SelectedSwiRegister = null;
+                bool vehicleConnected = ProgrammingJobs?.PsdzContext?.Connection != null;
+                if (!vehicleConnected)
+                {
+                    OptionsDict = null;
+                    SelectedSwiRegister = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("UpdateCurrentOptions Exception: {0}", ex.Message);
             }
 
             UpdateOptionsFunc?.Invoke();
