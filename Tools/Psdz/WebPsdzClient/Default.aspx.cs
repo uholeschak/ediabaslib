@@ -35,31 +35,16 @@ namespace WebPsdzClient
 
             if (!IsPostBack)
             {
-                if (!sessionContainer.DeepObdApp)
+                try
                 {
-                    try
+                    if (Request.UserAgent != null)
                     {
-                        if (Request.UserAgent != null)
-                        {
-                            if (Request.UserAgent.StartsWith("DeepObd"))
-                            {
-                                sessionContainer.DeepObdApp = true;
-                                string[] parts = Request.UserAgent.Split(':');
-                                if (parts.Length > 1)
-                                {
-                                    string serverPort = parts[1];
-                                    if (!string.IsNullOrEmpty(serverPort))
-                                    {
-                                        sessionContainer.LocalServerPort = serverPort;
-                                    }
-                                }
-                            }
-                        }
+                        System.Diagnostics.Debug.WriteLine($"User Agent: {Request.UserAgent}");
                     }
-                    catch (Exception ex)
-                    {
-                        log.ErrorFormat("Page_Load Exception: {0}", ex.Message);
-                    }
+                }
+                catch (Exception ex)
+                {
+                    log.ErrorFormat("Page_Load Exception: {0}", ex.Message);
                 }
 
                 UpdateDisplay();
