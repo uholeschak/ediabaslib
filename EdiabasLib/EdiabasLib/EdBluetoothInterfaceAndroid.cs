@@ -68,6 +68,11 @@ namespace EdiabasLib
 
         public static bool InterfaceConnect(string port, object parameter)
         {
+            return InterfaceConnect(port, parameter, false);
+        }
+
+        public static bool InterfaceConnect(string port, object parameter, bool reconnect)
+        {
             if (_bluetoothInStream != null && _bluetoothOutStream != null)
             {
                 return true;
@@ -247,6 +252,7 @@ namespace EdiabasLib
                     }
                 }
 
+                int maxRetries = reconnect ? 1 : 20;
                 if (_elm327Device)
                 {
                     if (_bluetoothSocket != null)
@@ -259,7 +265,7 @@ namespace EdiabasLib
                     if (mtcBtService && !usedRfCommSocket && _bluetoothSocket != null)
                     {
                         bool connected = false;
-                        for (int retry = 0; retry < 20; retry++)
+                        for (int retry = 0; retry < maxRetries; retry++)
                         {
                             CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Test connection");
                             if (_edElmInterface.Elm327Init())
@@ -307,7 +313,7 @@ namespace EdiabasLib
                     if (!CustomAdapter.RawMode && mtcBtService && !usedRfCommSocket && _bluetoothSocket != null)
                     {
                         bool connected = false;
-                        for (int retry = 0; retry < 20; retry++)
+                        for (int retry = 0; retry < maxRetries; retry++)
                         {
                             CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Test connection");
                             CustomAdapter.EscapeMode = mtcBtEscapeMode;
@@ -571,7 +577,7 @@ namespace EdiabasLib
                 {
                     CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnecting");
                     InterfaceDisconnect();
-                    if (!InterfaceConnect(_connectPort, _connectParameter))
+                    if (!InterfaceConnect(_connectPort, _connectParameter, true))
                     {
                         CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Reconnect failed");
                         CustomAdapter.ReconnectRequired = true;
@@ -595,7 +601,7 @@ namespace EdiabasLib
                 {
                     CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnecting");
                     InterfaceDisconnect();
-                    if (!InterfaceConnect(_connectPort, _connectParameter))
+                    if (!InterfaceConnect(_connectPort, _connectParameter, true))
                     {
                         CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Reconnect failed");
                         CustomAdapter.ReconnectRequired = true;
@@ -656,7 +662,7 @@ namespace EdiabasLib
             {
                 CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnecting");
                 InterfaceDisconnect();
-                if (!InterfaceConnect(_connectPort, _connectParameter))
+                if (!InterfaceConnect(_connectPort, _connectParameter, true))
                 {
                     CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Reconnect failed");
                     CustomAdapter.ReconnectRequired = true;
