@@ -94,13 +94,19 @@ namespace BmwDeepObd
                     webSettings.JavaScriptEnabled = true;
                     webSettings.JavaScriptCanOpenWindowsAutomatically = true;
                     webSettings.DomStorageEnabled = true;
-                    webSettings.UserAgentString = string.Format(CultureInfo.InvariantCulture, "DeepObd:{0}", listenPort);
+                    string userAgent = webSettings.UserAgentString;
+                    if (!string.IsNullOrEmpty(userAgent))
+                    {
+                        userAgent += " DeepObd";
+                        webSettings.UserAgentString = userAgent;
+                    }
                 }
 
                 _webViewCoding.AddJavascriptInterface(new WebViewJSInterface(this), "app");
                 _webViewCoding.SetWebViewClient(new WebViewClientImpl(this));
                 _webViewCoding.SetWebChromeClient(new WebChromeClientImpl(this));
-                _webViewCoding.LoadUrl(@"https:://www.holeschak.de");
+                //_webViewCoding.LoadUrl(@"https://www.holeschak.de");
+                _webViewCoding.LoadUrl(@"http://ulrich3.local.holeschak.de:3000");
             }
             catch (Exception)
             {
@@ -274,11 +280,11 @@ namespace BmwDeepObd
 
         class WebViewJSInterface : Java.Lang.Object
         {
-            Context _context;
+            BmwCodingActivity _activity;
 
-            public WebViewJSInterface(Context context)
+            public WebViewJSInterface(BmwCodingActivity activity)
             {
-                _context = context;
+                _activity = activity;
             }
 
             [JavascriptInterface]
@@ -286,7 +292,7 @@ namespace BmwDeepObd
             public void DebugMessage(string msg)
             {
 #if DEBUG
-                Android.Util.Log.Debug(Tag, "Message: " + msg);
+                Android.Util.Log.Debug(Tag, "DebugMessage: " + msg);
 #endif
             }
         }

@@ -6,6 +6,7 @@ namespace BmwDeepObd
     [Android.App.Application(
         ResizeableActivity = true,
         LargeHeap = true,
+        UsesCleartextTraffic = true,
         Name = ActivityCommon.AppNameSpace + ".DeepObd"
         )]
     // ReSharper disable once UnusedMember.Global
