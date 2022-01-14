@@ -46,7 +46,13 @@
             var psdzVehicleHubProxy = $.connection.psdzVehicleHub;
             var sessionID = "<%=Session.SessionID%>";
 
-            function send_request(url, id, formData)
+            function sendVehicleResponse(response)
+            {
+                console.log("sendVehicleResponse: " + response);
+                return "OK";
+            }
+
+            function sendRequest(url, id, formData)
             {
                 var request = new XMLHttpRequest();
                 request.onload = function ()
@@ -114,7 +120,7 @@
                 var formData = new FormData();
                 formData.append('id', id);
                 formData.append('connect', '1');
-                send_request(url, id, formData);
+                sendRequest(url, id, formData);
             }
 
             psdzVehicleHubProxy.client.vehicleDisconnect = function (url, id)
@@ -143,7 +149,7 @@
                 var formData = new FormData();
                 formData.append('id', id);
                 formData.append('disconnect', '1');
-                send_request(url, id, formData);
+                sendRequest(url, id, formData);
             }
 
             psdzVehicleHubProxy.client.vehicleSend = function (url, id, data)
@@ -172,7 +178,7 @@
                 var formData = new FormData();
                 formData.append('id', id);
                 formData.append('data', data);
-                send_request(url, id, formData);
+                sendRequest(url, id, formData);
             }
 
             $.connection.hub.qs = { 'sessionId' : sessionID };
