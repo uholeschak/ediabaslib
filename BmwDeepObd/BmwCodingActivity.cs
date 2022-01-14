@@ -180,6 +180,28 @@ namespace BmwDeepObd
             }
         }
 
+        private void SendVehicleResponseThread(string response)
+        {
+            RunOnUiThread(() =>
+            {
+                SendVehicleResponse(response);
+            });
+        }
+
+        private bool SendVehicleResponse(string response)
+        {
+            try
+            {
+                string script = string.Format(CultureInfo.InvariantCulture, "sendVehicleResponse('{0}');", response);
+                _webViewCoding.EvaluateJavascript(script, new VehicleSendCallback());
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         private EdiabasNet EdiabasSetup()
         {
             EdiabasNet ediabas = new EdiabasNet
@@ -239,7 +261,7 @@ namespace BmwDeepObd
             }
         }
 
-        public class WebViewClientImpl : WebViewClientCompat
+        private class WebViewClientImpl : WebViewClientCompat
         {
             private Android.App.Activity _activity;
 
@@ -259,7 +281,7 @@ namespace BmwDeepObd
             }
         }
 
-        public class WebChromeClientImpl : WebChromeClient
+        private class WebChromeClientImpl : WebChromeClient
         {
             private Android.App.Activity _activity;
 
@@ -278,7 +300,17 @@ namespace BmwDeepObd
             }
         }
 
-        class WebViewJSInterface : Java.Lang.Object
+        private class VehicleSendCallback : Java.Lang.Object, IValueCallback
+        {
+            public void OnReceiveValue(Java.Lang.Object value)
+            {
+#if DEBUG
+                Android.Util.Log.Debug(Tag, string.Format("VehicleSendCallback: {0}", value));
+#endif
+            }
+        }
+
+        private class WebViewJSInterface : Java.Lang.Object
         {
             BmwCodingActivity _activity;
 
@@ -294,6 +326,7 @@ namespace BmwDeepObd
 #if DEBUG
                 Android.Util.Log.Debug(Tag, string.Format("VehicleConnect: Id={0}", id));
 #endif
+                _activity.SendVehicleResponseThread("VehicleConnect response");
                 return string.Empty;
             }
 
@@ -304,6 +337,7 @@ namespace BmwDeepObd
 #if DEBUG
                 Android.Util.Log.Debug(Tag, string.Format("VehicleDisconnect: Id={0}", id));
 #endif
+                _activity.SendVehicleResponseThread("VehicleDisconnect response");
                 return string.Empty;
             }
 
@@ -314,6 +348,7 @@ namespace BmwDeepObd
 #if DEBUG
                 Android.Util.Log.Debug(Tag, string.Format("VehicleSend: Id={0}, Data={1}", id, data));
 #endif
+                _activity.SendVehicleResponseThread("VehicleSend response");
                 return string.Empty;
             }
         }
