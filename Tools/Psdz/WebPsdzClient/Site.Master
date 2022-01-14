@@ -88,36 +88,29 @@
                 return false;
             }
 
-            function isDebugMessageAvailable()
-            {
-                if (!isAppBound())
-                {
-                    return false;
-                }
-
-                if (typeof app.DebugMessage === "function")
-                {
-                    return true;
-                }
-
-                return false;
-            }
-
             psdzVehicleHubProxy.client.vehicleConnect = function (url, id)
             {
                 var logMessage = "Vehicle connect: Url=" + url + ", Id=" + id;
                 console.log(logMessage);
-                if (isDebugMessageAvailable())
+                if (isAppBound())
                 {
+                    var errorMessage = null;
                     try
                     {
-                        app.DebugMessage(logMessage);
+                        errorMessage = app.VehicleConnect(id);
                     }
                     catch (e)
                     {
-                        console.log("DebugMessage Exception: " + e.message);
+                        errorMessage = e.message;
+                    }
+
+                    if (!!errorMessage)
+                    {
+                        console.log("VehicleConnect Error: " + errorMessage);
+                        psdzVehicleHubProxy.server.vehicleError(sessionID, id, errorMessage);
                     }
                 }
+
                 var formData = new FormData();
                 formData.append('id', id);
                 formData.append('connect', '1');
@@ -128,17 +121,25 @@
             {
                 var logMessage = "Vehicle disconnect: Url=" + url + ", Id=" + id;
                 console.log(logMessage);
-                if (isDebugMessageAvailable())
+                if (isAppBound())
                 {
+                    var errorMessage = null;
                     try
                     {
-                        app.DebugMessage(logMessage);
+                        errorMessage = app.VehicleDisconnect(id);
                     }
                     catch (e)
                     {
-                        console.log("DebugMessage Exception: " + e.message);
+                        errorMessage = e.message;
+                    }
+
+                    if (!!errorMessage)
+                    {
+                        console.log("VehicleDisconnect Error: " + errorMessage);
+                        psdzVehicleHubProxy.server.vehicleError(sessionID, id, errorMessage);
                     }
                 }
+
                 var formData = new FormData();
                 formData.append('id', id);
                 formData.append('disconnect', '1');
@@ -149,17 +150,25 @@
             {
                 var logMessage = "Vehicle send: Url=" + url + ", Id=" + id + ", Data=" + data;
                 console.log(logMessage);
-                if (isDebugMessageAvailable())
+                if (isAppBound())
                 {
+                    var errorMessage = null;
                     try
                     {
-                        app.DebugMessage(logMessage);
+                        errorMessage = app.VehicleSend(id, data);
                     }
                     catch (e)
                     {
-                        console.log("DebugMessage Exception: " + e.message);
+                        errorMessage = e.message;
+                    }
+
+                    if (!!errorMessage)
+                    {
+                        console.log("VehicleSend Error: " + errorMessage);
+                        psdzVehicleHubProxy.server.vehicleError(sessionID, id, errorMessage);
                     }
                 }
+
                 var formData = new FormData();
                 formData.append('id', id);
                 formData.append('data', data);

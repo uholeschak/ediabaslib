@@ -289,11 +289,32 @@ namespace BmwDeepObd
 
             [JavascriptInterface]
             [Export]
-            public void DebugMessage(string msg)
+            public string VehicleConnect(string id)
             {
 #if DEBUG
-                Android.Util.Log.Debug(Tag, "DebugMessage: " + msg);
+                Android.Util.Log.Debug(Tag, string.Format("VehicleConnect: Id={0}", id));
 #endif
+                return string.Empty;
+            }
+
+            [JavascriptInterface]
+            [Export]
+            public string VehicleDisconnect(string id)
+            {
+#if DEBUG
+                Android.Util.Log.Debug(Tag, string.Format("VehicleDisconnect: Id={0}", id));
+#endif
+                return string.Empty;
+            }
+
+            [JavascriptInterface]
+            [Export]
+            public string VehicleSend(string id, string data)
+            {
+#if DEBUG
+                Android.Util.Log.Debug(Tag, string.Format("VehicleSend: Id={0}, Data={1}", id, data));
+#endif
+                return string.Empty;
             }
         }
     }
