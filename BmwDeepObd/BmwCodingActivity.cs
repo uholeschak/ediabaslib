@@ -100,7 +100,6 @@ namespace BmwDeepObd
                         userAgent += " DeepObd";
                         webSettings.UserAgentString = userAgent;
                     }
-                    //webSettings.UserAgentString = "Mozilla/5.0 (Linux; Android 12; SM-G996B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36";
                 }
 
                 _webViewCoding.AddJavascriptInterface(new WebViewJSInterface(this), "app");
@@ -293,7 +292,7 @@ namespace BmwDeepObd
             public void DebugMessage(string msg)
             {
 #if DEBUG
-                Android.Util.Log.Debug(Tag, "Message: " + msg);
+                Android.Util.Log.Debug(Tag, "DebugMessage: " + msg);
 #endif
             }
         }
