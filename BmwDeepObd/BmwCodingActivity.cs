@@ -94,10 +94,16 @@ namespace BmwDeepObd
                     webSettings.JavaScriptEnabled = true;
                     webSettings.JavaScriptCanOpenWindowsAutomatically = true;
                     webSettings.DomStorageEnabled = true;
-                    webSettings.UserAgentString = "Mozilla/5.0 (Linux; Android 12; SM-G996B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36";
+                    string userAgent = webSettings.UserAgentString;
+                    if (!string.IsNullOrEmpty(userAgent))
+                    {
+                        userAgent += " DeepObd";
+                        webSettings.UserAgentString = userAgent;
+                    }
+                    //webSettings.UserAgentString = "Mozilla/5.0 (Linux; Android 12; SM-G996B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36";
                 }
 
-                //_webViewCoding.AddJavascriptInterface(new WebViewJSInterface(this), "app");
+                _webViewCoding.AddJavascriptInterface(new WebViewJSInterface(this), "app");
                 _webViewCoding.SetWebViewClient(new WebViewClientImpl(this));
                 _webViewCoding.SetWebChromeClient(new WebChromeClientImpl(this));
                 //_webViewCoding.LoadUrl(@"https://www.holeschak.de");
@@ -275,11 +281,11 @@ namespace BmwDeepObd
 
         class WebViewJSInterface : Java.Lang.Object
         {
-            Context _context;
+            BmwCodingActivity _activity;
 
-            public WebViewJSInterface(Context context)
+            public WebViewJSInterface(BmwCodingActivity activity)
             {
-                _context = context;
+                _activity = activity;
             }
 
             [JavascriptInterface]
