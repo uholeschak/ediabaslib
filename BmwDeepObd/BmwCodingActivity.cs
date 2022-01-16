@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Threading;
@@ -19,6 +20,27 @@ namespace BmwDeepObd
         ConfigurationChanges = ActivityConfigChanges)]
     public class BmwCodingActivity : BaseActivity
     {
+        private class VehicleRequest
+        {
+            public enum VehicleRequestType
+            {
+                Connect,
+                Disconnect,
+                Transmit
+            }
+
+            public VehicleRequest(VehicleRequestType requestType, string id, string data = null)
+            {
+                RequestType = requestType;
+                Id = id;
+                Data = data;
+            }
+
+            public VehicleRequestType RequestType { get; }
+            public string Id { get; }
+            public string Data { get; }
+        }
+
         public class InstanceData
         {
             public string Url { get; set; }
@@ -48,6 +70,12 @@ namespace BmwDeepObd
         private string _appDataDir;
         private string _deviceName;
         private string _deviceAddress;
+        private EdiabasNet _ediabas;
+        private volatile bool _ediabasJobAbort;
+        private Thread _ediabasThread;
+        private AutoResetEvent _ediabasThreadWakeEvent = new AutoResetEvent(false);
+        private object _requestLock = new object();
+        private Queue<VehicleRequest> _requestQueue = new Queue<VehicleRequest>();
 
         private WebView _webViewCoding;
 
@@ -83,6 +111,7 @@ namespace BmwDeepObd
             _activityCommon.SelectedEnetIp = Intent.GetStringExtra(ExtraEnetIp);
 
             int listenPort = StartWebServer();
+            StartEdiabasThread();
 
             _webViewCoding = FindViewById<WebView>(Resource.Id.webViewCoding);
 
@@ -125,6 +154,7 @@ namespace BmwDeepObd
             base.OnDestroy();
 
             StopWebServer();
+            StopEdiabasThread();
 
             _activityCommon?.Dispose();
             _activityCommon = null;
@@ -202,28 +232,20 @@ namespace BmwDeepObd
             }
         }
 
-        private EdiabasNet EdiabasSetup()
+        private string EnqueueVehicleRequest(VehicleRequest vehicleRequest)
         {
-            EdiabasNet ediabas = new EdiabasNet
+            lock (_requestLock)
             {
-                EdInterfaceClass = _activityCommon.GetEdiabasInterfaceClass(),
-            };
-            ediabas.SetConfigProperty("EcuPath", _ecuDir);
-            string traceDir = Path.Combine(_appDataDir, "LogBmwCoding");
-            if (!string.IsNullOrEmpty(traceDir))
-            {
-                ediabas.SetConfigProperty("TracePath", traceDir);
-                ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.EdLogLevel.Error));
-                ediabas.SetConfigProperty("CompressTrace", "1");
-            }
-            else
-            {
-                ediabas.SetConfigProperty("IfhTrace", "0");
+                if (_requestQueue.Count > 0)
+                {
+                    return "Request queue full";
+                }
+
+                _requestQueue.Enqueue(vehicleRequest);
+                _ediabasThreadWakeEvent.Set();
             }
 
-            _activityCommon.SetEdiabasInterface(ediabas, _deviceAddress);
-
-            return ediabas;
+            return string.Empty;
         }
 
         private int StartWebServer(int listenPort = 8080)
@@ -258,6 +280,112 @@ namespace BmwDeepObd
             catch (Exception)
             {
                 return false;
+            }
+        }
+
+        private EdiabasNet EdiabasSetup()
+        {
+            EdiabasNet ediabas = new EdiabasNet
+            {
+                EdInterfaceClass = _activityCommon.GetEdiabasInterfaceClass(),
+                AbortJobFunc = AbortEdiabasJob
+            };
+            ediabas.SetConfigProperty("EcuPath", _ecuDir);
+            string traceDir = Path.Combine(_appDataDir, "LogBmwCoding");
+            if (!string.IsNullOrEmpty(traceDir))
+            {
+                ediabas.SetConfigProperty("TracePath", traceDir);
+                ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.EdLogLevel.Error));
+                ediabas.SetConfigProperty("CompressTrace", "1");
+            }
+            else
+            {
+                ediabas.SetConfigProperty("IfhTrace", "0");
+            }
+
+            _activityCommon.SetEdiabasInterface(ediabas, _deviceAddress);
+
+            return ediabas;
+        }
+
+        private bool StartEdiabasThread()
+        {
+            if (IsEdiabasThreadRunning())
+            {
+                return true;
+            }
+
+            if (_ediabas == null)
+            {
+                _ediabas = EdiabasSetup();
+            }
+
+            _ediabasJobAbort = false;
+            _ediabasThreadWakeEvent.Reset();
+            _ediabasThread = new Thread(EdiabasThread);
+            _ediabasThread.Start();
+
+            return true;
+        }
+
+        private bool StopEdiabasThread()
+        {
+            _ediabasJobAbort = true;
+            _ediabasThreadWakeEvent.Set();
+            if (IsEdiabasThreadRunning())
+            {
+                _ediabasThread.Join();
+            }
+
+            return true;
+        }
+
+        private bool IsEdiabasThreadRunning()
+        {
+            if (_ediabasThread == null)
+            {
+                return false;
+            }
+            if (_ediabasThread.IsAlive)
+            {
+                return true;
+            }
+            _ediabasThread = null;
+            return false;
+        }
+
+        private bool AbortEdiabasJob()
+        {
+            if (_ediabasJobAbort)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private void EdiabasThread()
+        {
+            for (;;)
+            {
+                _ediabasThreadWakeEvent.WaitOne(100);
+                if (_ediabasJobAbort)
+                {
+                    break;
+                }
+
+                VehicleRequest vehicleRequest = null;
+                lock (_requestLock)
+                {
+                    if (!_requestQueue.TryDequeue(out vehicleRequest))
+                    {
+                        vehicleRequest = null;
+                    }
+                }
+
+                if (vehicleRequest != null)
+                {
+                    SendVehicleResponseThread("Response: Id="+ vehicleRequest.Id);
+                }
             }
         }
 
@@ -326,8 +454,7 @@ namespace BmwDeepObd
 #if DEBUG
                 Android.Util.Log.Debug(Tag, string.Format("VehicleConnect: Id={0}", id));
 #endif
-                _activity.SendVehicleResponseThread("VehicleConnect response");
-                return string.Empty;
+                return _activity.EnqueueVehicleRequest(new VehicleRequest(VehicleRequest.VehicleRequestType.Connect, id));
             }
 
             [JavascriptInterface]
@@ -337,8 +464,7 @@ namespace BmwDeepObd
 #if DEBUG
                 Android.Util.Log.Debug(Tag, string.Format("VehicleDisconnect: Id={0}", id));
 #endif
-                _activity.SendVehicleResponseThread("VehicleDisconnect response");
-                return string.Empty;
+                return _activity.EnqueueVehicleRequest(new VehicleRequest(VehicleRequest.VehicleRequestType.Disconnect, id));
             }
 
             [JavascriptInterface]
@@ -348,8 +474,7 @@ namespace BmwDeepObd
 #if DEBUG
                 Android.Util.Log.Debug(Tag, string.Format("VehicleSend: Id={0}, Data={1}", id, data));
 #endif
-                _activity.SendVehicleResponseThread("VehicleSend response");
-                return string.Empty;
+                return _activity.EnqueueVehicleRequest(new VehicleRequest(VehicleRequest.VehicleRequestType.Transmit, id, data));
             }
         }
     }
