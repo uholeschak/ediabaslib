@@ -157,6 +157,9 @@ static uint16_t can_rec_rec_len;
 static uint16_t can_rec_data_len;
 static bool can_rec_tel_valid;
 
+// BMW terminal status
+static uint8_t can_clamp_status;
+
 static const uint8_t can_filter[] PROGMEM =
 {
     // Group 0
@@ -164,13 +167,13 @@ static const uint8_t can_filter[] PROGMEM =
     MCP2515_FILTER(0x0600),      // Filter 1
 
     // Group 1
-    MCP2515_FILTER(0),      // Filter 2
+    MCP2515_FILTER(0x0130),      // Filter 2 (CAN-ID 0x130 terminal status)
     MCP2515_FILTER(0),      // Filter 3
     MCP2515_FILTER(0),      // Filter 4
     MCP2515_FILTER(0),      // Filter 5
 
-    MCP2515_FILTER(0x0700), // Mask 0 (for group 0)
-    MCP2515_FILTER(0x07FF), // Mask 1 (for group 1), disabled used for overflow
+    MCP2515_FILTER(0x0700),     // Mask 0 (for group 0)
+    MCP2515_FILTER(0x07FF),     // Mask 1 (for group 1), disabled used for overflow
 };
 
 void do_idle()
@@ -320,7 +323,8 @@ void update_led()
         }
     }
 #endif
-    if (IGNITION_STATE())
+
+    if ((IGNITION_STATE()) || ((can_clamp_status & 0x0C) == 0x04))
     {
         DSR_ON();
     }
@@ -552,8 +556,8 @@ bool internal_telegram(uint16_t len)
             return true;
         }
         if ((temp_buffer[3] == 0xFE) && (temp_buffer[4] == 0xFE))
-        {      // read ignition state
-            temp_buffer[4] = IGNITION_STATE() ? 0x01 : 0x00;
+        {   // read ignition state
+            temp_buffer[4] = ((IGNITION_STATE()) || ((can_clamp_status & 0x0C) == 0x04)) ? 0x01 : 0x00;
             temp_buffer[len - 1] = calc_checkum(temp_buffer, len - 1);
             uart_send(temp_buffer, len);
             return true;
@@ -746,6 +750,12 @@ void can_receiver(bool new_can_msg)
     }
     if (new_can_msg)
     {
+        if ((msg_rec.id == 0x0130) && (msg_rec.length >= 5))
+        {   // 0x0130 terminal state
+            can_clamp_status = msg_rec.data[0];
+            return;
+        }
+
         if (((msg_rec.id & 0xFF00) == 0x0600) && (msg_rec.length >= 2))
         {
             uint8_t frame_type = (msg_rec.data[1] >> 4) & 0x0F;
