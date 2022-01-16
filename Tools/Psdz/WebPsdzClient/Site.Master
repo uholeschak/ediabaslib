@@ -46,10 +46,18 @@
             var psdzVehicleHubProxy = $.connection.psdzVehicleHub;
             var sessionID = "<%=Session.SessionID%>";
 
-            function sendVehicleResponse(response)
+            function sendVehicleResponse(id, response)
             {
-                console.log("sendVehicleResponse: " + response);
-                return "OK";
+                console.log("Vehicle response: Xml=" + response);
+                try
+                {
+                    psdzVehicleHubProxy.server.vehicleReceive(sessionID, id, response);
+                }
+                catch (e)
+                {
+                    return e.message;
+                }
+                return "";
             }
 
             function sendRequest(url, id, formData)
@@ -115,6 +123,7 @@
                         console.log("VehicleConnect Error: " + errorMessage);
                         psdzVehicleHubProxy.server.vehicleError(sessionID, id, errorMessage);
                     }
+                    return;
                 }
 
                 var formData = new FormData();
@@ -144,6 +153,7 @@
                         console.log("VehicleDisconnect Error: " + errorMessage);
                         psdzVehicleHubProxy.server.vehicleError(sessionID, id, errorMessage);
                     }
+                    return;
                 }
 
                 var formData = new FormData();
@@ -173,6 +183,7 @@
                         console.log("VehicleSend Error: " + errorMessage);
                         psdzVehicleHubProxy.server.vehicleError(sessionID, id, errorMessage);
                     }
+                    return;
                 }
 
                 var formData = new FormData();

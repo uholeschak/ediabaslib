@@ -1,4 +1,5 @@
-﻿using System;
+﻿#define USE_WEBSERVER
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -66,11 +67,13 @@ namespace BmwDeepObd
 
         private InstanceData _instanceData = new InstanceData();
         private ActivityCommon _activityCommon;
-        private EdWebServer _edWebServer;
         private string _ecuDir;
         private string _appDataDir;
         private string _deviceName;
         private string _deviceAddress;
+#if USE_WEBSERVER
+        private EdWebServer _edWebServer;
+#endif
         private EdiabasNet _ediabas;
         private volatile bool _ediabasJobAbort;
         private Thread _ediabasThread;
@@ -112,8 +115,11 @@ namespace BmwDeepObd
             _deviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
             _activityCommon.SelectedEnetIp = Intent.GetStringExtra(ExtraEnetIp);
 
+#if USE_WEBSERVER
             int listenPort = StartWebServer();
+#else
             StartEdiabasThread();
+#endif
 
             _webViewCoding = FindViewById<WebView>(Resource.Id.webViewCoding);
 
@@ -128,15 +134,17 @@ namespace BmwDeepObd
                     string userAgent = webSettings.UserAgentString;
                     if (!string.IsNullOrEmpty(userAgent))
                     {
-                        userAgent += " DeepObd";
+                        string userAgentAppend = " DeepObd";
+                        userAgent += userAgentAppend;
                         webSettings.UserAgentString = userAgent;
                     }
                 }
 
+#if !USE_WEBSERVER
                 _webViewCoding.AddJavascriptInterface(new WebViewJSInterface(this), "app");
+#endif
                 _webViewCoding.SetWebViewClient(new WebViewClientImpl(this));
                 _webViewCoding.SetWebChromeClient(new WebChromeClientImpl(this));
-                //_webViewCoding.LoadUrl(@"https://www.holeschak.de");
                 _webViewCoding.LoadUrl(@"http://ulrich3.local.holeschak.de:3000");
             }
             catch (Exception)
@@ -155,8 +163,11 @@ namespace BmwDeepObd
         {
             base.OnDestroy();
 
+#if USE_WEBSERVER
             StopWebServer();
+#else
             StopEdiabasThread();
+#endif
 
             _activityCommon?.Dispose();
             _activityCommon = null;
@@ -169,10 +180,12 @@ namespace BmwDeepObd
                 return;
             }
 
+#if USE_WEBSERVER
             if (_edWebServer != null && _edWebServer.IsEdiabasConnected())
             {
                 return;
             }
+#endif
 
             base.OnBackPressed();
         }
@@ -186,11 +199,12 @@ namespace BmwDeepObd
                     {
                         return true;
                     }
-
+#if USE_WEBSERVER
                     if (_edWebServer != null && _edWebServer.IsEdiabasConnected())
                     {
                         return true;
                     }
+#endif
 
                     Finish();
                     return true;
@@ -222,19 +236,19 @@ namespace BmwDeepObd
             }
         }
 
-        private void SendVehicleResponseThread(string response)
+        private void SendVehicleResponseThread(string id, string response)
         {
             RunOnUiThread(() =>
             {
-                SendVehicleResponse(response);
+                SendVehicleResponse(id, response);
             });
         }
 
-        private bool SendVehicleResponse(string response)
+        private bool SendVehicleResponse(string id, string response)
         {
             try
             {
-                string script = string.Format(CultureInfo.InvariantCulture, "sendVehicleResponse('{0}');", response);
+                string script = string.Format(CultureInfo.InvariantCulture, "sendVehicleResponse('{0}', '{1}');", id, response);
                 _webViewCoding.EvaluateJavascript(script, new VehicleSendCallback());
                 return true;
             }
@@ -260,6 +274,7 @@ namespace BmwDeepObd
             return string.Empty;
         }
 
+#if USE_WEBSERVER
         private int StartWebServer(int listenPort = 8080)
         {
             try
@@ -294,6 +309,7 @@ namespace BmwDeepObd
                 return false;
             }
         }
+#endif
 
         private EdiabasNet EdiabasSetup()
         {
@@ -541,7 +557,7 @@ namespace BmwDeepObd
                     sbBody.Append($" <status connected=\"{System.Web.HttpUtility.HtmlEncode(connectedState)}\" />\r\n");
                     sbBody.Append("</vehicle_info>\r\n");
 
-                    SendVehicleResponseThread(sbBody.ToString());
+                    SendVehicleResponseThread(vehicleRequest.Id, sbBody.ToString());
                 }
             }
         }
