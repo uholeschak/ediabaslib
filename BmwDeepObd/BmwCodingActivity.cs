@@ -1,4 +1,4 @@
-﻿#define USE_WEBSERVER
+﻿//#define USE_WEBSERVER
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -248,7 +248,7 @@ namespace BmwDeepObd
         {
             try
             {
-                string script = string.Format(CultureInfo.InvariantCulture, "sendVehicleResponse('{0}', '{1}');", id, response);
+                string script = string.Format(CultureInfo.InvariantCulture, "sendVehicleResponse(`{0}`, `{1}`);", id, response);
                 _webViewCoding.EvaluateJavascript(script, new VehicleSendCallback());
                 return true;
             }
