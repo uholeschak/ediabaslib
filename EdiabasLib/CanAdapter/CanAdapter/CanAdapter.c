@@ -163,14 +163,14 @@ static uint8_t can_clamp_status;
 static const uint8_t can_filter[] PROGMEM =
 {
     // Group 0
-    MCP2515_FILTER(0x0600),      // Filter 0
-    MCP2515_FILTER(0x0600),      // Filter 1
+    MCP2515_FILTER(0x0600),     // Filter 0
+    MCP2515_FILTER(0x0600),     // Filter 1
 
     // Group 1
-    MCP2515_FILTER(0x0130),      // Filter 2 (CAN-ID 0x130 terminal status)
-    MCP2515_FILTER(0),      // Filter 3
-    MCP2515_FILTER(0),      // Filter 4
-    MCP2515_FILTER(0),      // Filter 5
+    MCP2515_FILTER(0x0130),     // Filter 2 (CAN-ID 0x130 terminal status)
+    MCP2515_FILTER(0),          // Filter 3
+    MCP2515_FILTER(0),          // Filter 4
+    MCP2515_FILTER(0),          // Filter 5
 
     MCP2515_FILTER(0x0700),     // Mask 0 (for group 0)
     MCP2515_FILTER(0x07FF),     // Mask 1 (for group 1), disabled used for overflow
