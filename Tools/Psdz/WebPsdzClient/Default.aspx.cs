@@ -172,6 +172,11 @@ namespace WebPsdzClient
                 return;
             }
 
+            if (sessionContainer.TaskActive)
+            {
+                return;
+            }
+
             PdszDatabase.SwiRegisterEnum? selectedSwiRegister = null;
             ListItem listItemSelect = DropDownListOptionType.SelectedItem;
             if (listItemSelect != null)
@@ -199,6 +204,11 @@ namespace WebPsdzClient
 
             try
             {
+                if (sessionContainer.TaskActive)
+                {
+                    return;
+                }
+
                 Request.ValidateInput();
                 string eventArgs = Request.Form["__EVENTTARGET"];
                 if (string.IsNullOrEmpty(eventArgs))
