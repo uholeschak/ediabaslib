@@ -58,9 +58,10 @@ namespace PsdzClient
         [HubMethodName("vehicleReceive")]
         public async Task VehicleReceive(string sessionId, string id, string data)
         {
+            string transport = Context.QueryString["transport"] ?? string.Empty;
             await Task.Run(() =>
             {
-                log.InfoFormat("VehicleReceive: Session={0}, Id={1}, Data={2}", sessionId, id, data);
+                log.InfoFormat("VehicleReceive: Session={0}, Id={1}, Transport={2}, Data={3}", sessionId, id, transport, data);
                 SessionContainer sessionContainer = SessionContainer.GetSessionContainer(sessionId);
                 if (sessionContainer == null)
                 {
@@ -77,9 +78,10 @@ namespace PsdzClient
         [HubMethodName("vehicleError")]
         public async Task VehicleError(string sessionId, string id, string message)
         {
+            string transport = Context.QueryString["transport"] ?? string.Empty;
             await Task.Run(() =>
             {
-                log.ErrorFormat("VehicleError: Session={0}, Id={1}, Message={2}", sessionId, id, message);
+                log.ErrorFormat("VehicleError: Session={0}, Id={1}, Transport={2}, Message={3}", sessionId, id, transport, message);
                 SessionContainer sessionContainer = SessionContainer.GetSessionContainer(sessionId);
                 if (sessionContainer == null)
                 {
@@ -99,9 +101,11 @@ namespace PsdzClient
         [HubMethodName("sessionConnected")]
         public async Task SessionConnected(string sessionId)
         {
+            string transport = Context.QueryString["transport"];
             await Task.Run(() =>
             {
-                log.InfoFormat("Session connected: {0} {1}", sessionId, Context.ConnectionId);
+                log.InfoFormat("Session connected: SessionId={0}, ConnectionId={1}, Transport={2}",
+                    sessionId ?? string.Empty, Context.ConnectionId ?? string.Empty, transport ?? string.Empty);
             });
         }
 
@@ -110,7 +114,7 @@ namespace PsdzClient
             string sessionId = Context.QueryString["sessionId"];
             string connectionId = Context.ConnectionId;
 
-            if (!string.IsNullOrEmpty(sessionId))
+            if (!string.IsNullOrEmpty(sessionId) && !string.IsNullOrEmpty(connectionId))
             {
                 lock (ConnectionDict)
                 {
@@ -125,7 +129,7 @@ namespace PsdzClient
             string sessionId = Context.QueryString["sessionId"];
             string connectionId = Context.ConnectionId;
 
-            if (!string.IsNullOrEmpty(sessionId))
+            if (!string.IsNullOrEmpty(sessionId) && !string.IsNullOrEmpty(connectionId))
             {
                 lock (ConnectionDict)
                 {
@@ -140,9 +144,12 @@ namespace PsdzClient
         {
             string connectionId = Context.ConnectionId;
 
-            lock (ConnectionDict)
+            if (!string.IsNullOrEmpty(connectionId))
             {
-                ConnectionDict.Remove(connectionId);
+                lock (ConnectionDict)
+                {
+                    ConnectionDict.Remove(connectionId);
+                }
             }
             return base.OnDisconnected(stopCalled);
         }
