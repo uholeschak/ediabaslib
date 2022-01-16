@@ -6,11 +6,13 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using Android.Content;
+using Android.Content.PM;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
 using AndroidX.WebKit;
 using Android.Webkit;
+using AndroidX.Core.Content.PM;
 using EdiabasLib;
 using Java.Interop;
 
@@ -134,7 +136,14 @@ namespace BmwDeepObd
                     string userAgent = webSettings.UserAgentString;
                     if (!string.IsNullOrEmpty(userAgent))
                     {
-                        string userAgentAppend = " DeepObd";
+                        PackageInfo packageInfo = PackageManager?.GetPackageInfo(PackageName ?? string.Empty, 0);
+                        long packageVersion = -1;
+                        if (packageInfo != null)
+                        {
+                            packageVersion = PackageInfoCompat.GetLongVersionCode(packageInfo);
+                        }
+
+                        string userAgentAppend = string.Format(CultureInfo.InvariantCulture, " DeepObd/{0}", packageVersion);
                         userAgent += userAgentAppend;
                         webSettings.UserAgentString = userAgent;
                     }
@@ -249,7 +258,14 @@ namespace BmwDeepObd
             try
             {
                 string script = string.Format(CultureInfo.InvariantCulture, "sendVehicleResponse(`{0}`, `{1}`);", id, response);
-                _webViewCoding.EvaluateJavascript(script, new VehicleSendCallback());
+                if (Build.VERSION.SdkInt < BuildVersionCodes.Kitkat)
+                {
+                    _webViewCoding.LoadUrl("javascript:" + script);
+                }
+                else
+                {
+                    _webViewCoding.EvaluateJavascript(script, new VehicleSendCallback());
+                }
                 return true;
             }
             catch (Exception)
