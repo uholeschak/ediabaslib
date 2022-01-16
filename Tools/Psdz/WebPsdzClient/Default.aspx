@@ -20,21 +20,13 @@
                     <asp:Button ID="ButtonExecuteTal" runat="server" CssClass="btn" Text="Execute TAL" OnClick="ButtonExecuteTal_OnClick" />
                     <asp:Button ID="ButtonAbort" runat="server" CssClass="btn" Text="Abort" OnClick="ButtonAbort_OnClick" />
                 </asp:Panel>
-                <asp:Table ID="TableOptions" runat="server" CssClass="table" HorizontalAlign="Center" Width="100%">
-                    <asp:TableRow>
-                        <asp:TableCell>
-                            <asp:DropDownList ID="DropDownListOptionType" CssClass="dropdown" runat="server" OnSelectedIndexChanged="DropDownListOptionType_OnSelectedIndexChanged" AutoPostBack="True">
-                            </asp:DropDownList>
-                        </asp:TableCell>
-                    </asp:TableRow>
-                    <asp:TableRow>
-                        <asp:TableCell>
-                            <asp:CheckBoxList ID="CheckBoxListOptions" runat="server" CssClass="checkbox" CellPadding="5" CellSpacing="5" RepeatColumns="1" RepeatLayout="Table" RepeatDirection="Horizontal" TextAlign="Right" OnSelectedIndexChanged="CheckBoxListOptions_OnSelectedIndexChanged" AutoPostBack="True">
-                            </asp:CheckBoxList>
-                        </asp:TableCell>
-                    </asp:TableRow>
-                </asp:Table>
-                <asp:Panel ID="PanelStatus" runat="server" CssClass="panel-body" HorizontalAlign="Center" ScrollBars="Auto" >
+                <asp:Panel ID="PanelOptions" runat="server" CssClass="panel-body" HorizontalAlign="Left" >
+                    <asp:DropDownList ID="DropDownListOptionType" CssClass="dropdown" runat="server" OnSelectedIndexChanged="DropDownListOptionType_OnSelectedIndexChanged" AutoPostBack="True">
+                    </asp:DropDownList>
+                    <asp:CheckBoxList ID="CheckBoxListOptions" runat="server" CssClass="checkbox" CellPadding="5" CellSpacing="5" RepeatColumns="1" RepeatLayout="Table" RepeatDirection="Horizontal" TextAlign="Right" OnSelectedIndexChanged="CheckBoxListOptions_OnSelectedIndexChanged" AutoPostBack="True">
+                    </asp:CheckBoxList>
+                </asp:Panel>
+                <asp:Panel ID="PanelStatus" runat="server" CssClass="panel-body" HorizontalAlign="Center" >
                     <asp:TextBox ID="TextBoxStatus" runat="server" CssClass="text-left" ReadOnly="True" TextMode="MultiLine" Rows="10"></asp:TextBox>
                     <asp:TextBox ID="TextBoxProgress" runat="server" CssClass="text-left" ReadOnly="True" TextMode="SingleLine"></asp:TextBox>
                 </asp:Panel>
