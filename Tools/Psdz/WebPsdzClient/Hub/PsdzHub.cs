@@ -112,7 +112,10 @@ namespace PsdzClient
         public override Task OnConnected()
         {
             string sessionId = Context.QueryString["sessionId"];
+            string transport = Context.QueryString["transport"];
             string connectionId = Context.ConnectionId;
+            log.InfoFormat("OnConnected: SessionId={0}, ConnectionId={1}, Transport={2}",
+                sessionId ?? string.Empty, Context.ConnectionId ?? string.Empty, transport ?? string.Empty);
 
             if (!string.IsNullOrEmpty(sessionId) && !string.IsNullOrEmpty(connectionId))
             {
@@ -127,7 +130,10 @@ namespace PsdzClient
         public override Task OnReconnected()
         {
             string sessionId = Context.QueryString["sessionId"];
+            string transport = Context.QueryString["transport"];
             string connectionId = Context.ConnectionId;
+            log.InfoFormat("OnReconnected: SessionId={0}, ConnectionId={1}, Transport={2}",
+                sessionId ?? string.Empty, Context.ConnectionId ?? string.Empty, transport ?? string.Empty);
 
             if (!string.IsNullOrEmpty(sessionId) && !string.IsNullOrEmpty(connectionId))
             {
@@ -143,6 +149,7 @@ namespace PsdzClient
         public override Task OnDisconnected(bool stopCalled)
         {
             string connectionId = Context.ConnectionId;
+            log.InfoFormat("OnDisconnected: ConnectionId={0}", Context.ConnectionId ?? string.Empty);
 
             if (!string.IsNullOrEmpty(connectionId))
             {
