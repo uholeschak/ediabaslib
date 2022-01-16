@@ -40,6 +40,18 @@ namespace WebPsdzClient
                     if (Request.UserAgent != null)
                     {
                         System.Diagnostics.Debug.WriteLine($"User Agent: {Request.UserAgent}");
+                        if (string.IsNullOrEmpty(sessionContainer.DeepObdApp))
+                        {
+                            string[] agentParts = Request.UserAgent.Split(' ');
+                            foreach (string part in agentParts)
+                            {
+                                if (part.StartsWith("DeepObd"))
+                                {
+                                    sessionContainer.DeepObdApp = part;
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
                 catch (Exception ex)

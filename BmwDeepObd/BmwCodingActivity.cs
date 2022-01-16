@@ -133,6 +133,7 @@ namespace BmwDeepObd
                     webSettings.JavaScriptEnabled = true;
                     webSettings.JavaScriptCanOpenWindowsAutomatically = true;
                     webSettings.DomStorageEnabled = true;
+#if !USE_WEBSERVER
                     string userAgent = webSettings.UserAgentString;
                     if (!string.IsNullOrEmpty(userAgent))
                     {
@@ -145,8 +146,10 @@ namespace BmwDeepObd
 
                         string userAgentAppend = string.Format(CultureInfo.InvariantCulture, " DeepObd/{0}", packageVersion);
                         userAgent += userAgentAppend;
+
                         webSettings.UserAgentString = userAgent;
                     }
+#endif
                 }
 
 #if !USE_WEBSERVER

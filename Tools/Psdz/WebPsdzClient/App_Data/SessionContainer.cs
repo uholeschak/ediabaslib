@@ -241,21 +241,21 @@ namespace WebPsdzClient.App_Data
             }
         }
 
-        private string _localServerPort;
-        public string LocalServerPort
+        private string _deepObdApp;
+        public string DeepObdApp
         {
             get
             {
                 lock (_lockObject)
                 {
-                    return _localServerPort;
+                    return _deepObdApp;
                 }
             }
             set
             {
                 lock (_lockObject)
                 {
-                    _localServerPort = value;
+                    _deepObdApp = value;
                 }
             }
         }
@@ -1038,12 +1038,12 @@ namespace WebPsdzClient.App_Data
 
         private string GetVehicleUrl()
         {
-            if (string.IsNullOrEmpty(LocalServerPort))
+            if (!string.IsNullOrEmpty(DeepObdApp))
             {
-                LocalServerPort = "8080";
+                return string.Empty;
             }
 
-            return string.Format(CultureInfo.InvariantCulture, "http://127.0.0.1:{0}", LocalServerPort);
+            return string.Format(CultureInfo.InvariantCulture, "http://127.0.0.1:8080");
         }
 
         public void VehicleResponseClear()
