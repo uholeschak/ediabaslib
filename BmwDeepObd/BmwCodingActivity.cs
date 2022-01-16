@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Threading;
 using Android.Content;
 using Android.OS;
@@ -74,6 +75,7 @@ namespace BmwDeepObd
         private volatile bool _ediabasJobAbort;
         private Thread _ediabasThread;
         private AutoResetEvent _ediabasThreadWakeEvent = new AutoResetEvent(false);
+        private object _ediabasLock = new object();
         private object _requestLock = new object();
         private Queue<VehicleRequest> _requestQueue = new Queue<VehicleRequest>();
 
@@ -162,6 +164,11 @@ namespace BmwDeepObd
 
         public override void OnBackPressed()
         {
+            if (IsEdiabasConnected())
+            {
+                return;
+            }
+
             if (_edWebServer != null && _edWebServer.IsEdiabasConnected())
             {
                 return;
@@ -175,6 +182,11 @@ namespace BmwDeepObd
             switch (item.ItemId)
             {
                 case Android.Resource.Id.Home:
+                    if (IsEdiabasConnected())
+                    {
+                        return true;
+                    }
+
                     if (_edWebServer != null && _edWebServer.IsEdiabasConnected())
                     {
                         return true;
@@ -363,6 +375,105 @@ namespace BmwDeepObd
             return false;
         }
 
+        public bool EdiabasConnect()
+        {
+            lock (_ediabasLock)
+            {
+                try
+                {
+                    if (_ediabas.EdInterfaceClass.InterfaceConnect())
+                    {
+                        _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Ediabas connected");
+                        return true;
+                    }
+
+                    _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Ediabas connect failed");
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ediabas connect Exception: {0}", EdiabasNet.GetExceptionText(ex));
+                    return false;
+                }
+            }
+        }
+
+        public bool EdiabasDisconnect()
+        {
+            lock (_ediabasLock)
+            {
+                try
+                {
+                    _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Ediabas disconnect");
+                    return _ediabas.EdInterfaceClass.InterfaceDisconnect();
+                }
+                catch (Exception ex)
+                {
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ediabas disconnect Exception: {0}", EdiabasNet.GetExceptionText(ex));
+                    return false;
+                }
+            }
+        }
+
+        public bool IsEdiabasConnected()
+        {
+            lock (_ediabasLock)
+            {
+                if (_ediabas == null)
+                {
+                    return false;
+                }
+                return _ediabas.EdInterfaceClass.Connected;
+            }
+        }
+
+        public List<byte[]> EdiabasTransmit(byte[] requestData)
+        {
+            List<byte[]> responseList = new List<byte[]>();
+            if (requestData == null || requestData.Length < 3)
+            {
+                return responseList;
+            }
+
+            lock (_ediabasLock)
+            {
+                byte[] sendData = requestData;
+                bool funcAddress = (sendData[0] & 0xC0) == 0xC0;     // functional address
+
+                for (; ; )
+                {
+                    bool dataReceived = false;
+
+                    try
+                    {
+                        if (_ediabas.EdInterfaceClass.TransmitData(sendData, out byte[] receiveData))
+                        {
+                            responseList.Add(receiveData);
+                            dataReceived = true;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+
+                    if (!funcAddress || !dataReceived)
+                    {
+                        break;
+                    }
+
+                    if (AbortEdiabasJob())
+                    {
+                        break;
+                    }
+
+                    sendData = Array.Empty<byte>();
+                }
+            }
+
+            return responseList;
+        }
+
         private void EdiabasThread()
         {
             for (;;)
@@ -384,7 +495,53 @@ namespace BmwDeepObd
 
                 if (vehicleRequest != null)
                 {
-                    SendVehicleResponseThread("Response: Id="+ vehicleRequest.Id);
+                    StringBuilder sbBody = new StringBuilder();
+                    sbBody.Append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n");
+                    sbBody.Append("<vehicle_info>\r\n");
+
+                    bool valid = true;
+                    switch (vehicleRequest.RequestType)
+                    {
+                        case VehicleRequest.VehicleRequestType.Connect:
+                            EdiabasDisconnect();
+                            EdiabasConnect();
+                            break;
+
+                        case VehicleRequest.VehicleRequestType.Disconnect:
+                            EdiabasDisconnect();
+                            break;
+
+                        case VehicleRequest.VehicleRequestType.Transmit:
+                        {
+                            if (string.IsNullOrEmpty(vehicleRequest.Data))
+                            {
+                                valid = false;
+                                break;
+                            }
+
+                            string requestString = vehicleRequest.Data.Replace(" ", "");
+                            byte[] requestData = EdiabasNet.HexToByteArray(requestString);
+                            sbBody.Append($" <data request=\"{System.Web.HttpUtility.HtmlEncode(requestString)}\" />\r\n");
+                            List<byte[]> responseList = EdiabasTransmit(requestData);
+                            foreach (byte[] responseData in responseList)
+                            {
+                                string responseReport = BitConverter.ToString(responseData).Replace("-", "");
+                                sbBody.Append($" <data response=\"{System.Web.HttpUtility.HtmlEncode(responseReport)}\" />\r\n");
+                            }
+                            break;
+                        }
+                    }
+
+                    string validReport = valid ? "1" : "0";
+                    string idReport = vehicleRequest.Id ?? string.Empty;
+                    sbBody.Append($" <request valid=\"{System.Web.HttpUtility.HtmlEncode(validReport)}\" id=\"{System.Web.HttpUtility.HtmlEncode(idReport)}\" />\r\n");
+
+                    bool connected = IsEdiabasConnected();
+                    string connectedState = connected ? "1" : "0";
+                    sbBody.Append($" <status connected=\"{System.Web.HttpUtility.HtmlEncode(connectedState)}\" />\r\n");
+                    sbBody.Append("</vehicle_info>\r\n");
+
+                    SendVehicleResponseThread(sbBody.ToString());
                 }
             }
         }
