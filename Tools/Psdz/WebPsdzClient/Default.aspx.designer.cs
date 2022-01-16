@@ -15,154 +15,154 @@ namespace WebPsdzClient
     {
 
         /// <summary>
-        /// UpdatePanelStatus-Steuerelement
+        /// UpdatePanelStatus-Steuerelement.
         /// </summary>
         /// <remarks>
-        /// Automatisch generiertes Feld
+        /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.UpdatePanel UpdatePanelStatus;
 
         /// <summary>
-        /// TableButtons-Steuerelement
+        /// PanelButtons-Steuerelement.
         /// </summary>
         /// <remarks>
-        /// Automatisch generiertes Feld
+        /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Table TableButtons;
+        protected global::System.Web.UI.WebControls.Panel PanelButtons;
 
         /// <summary>
-        /// ButtonStartHost-Steuerelement
+        /// ButtonStartHost-Steuerelement.
         /// </summary>
         /// <remarks>
-        /// Automatisch generiertes Feld
+        /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button ButtonStartHost;
 
         /// <summary>
-        /// ButtonStopHost-Steuerelement
+        /// ButtonStopHost-Steuerelement.
         /// </summary>
         /// <remarks>
-        /// Automatisch generiertes Feld
+        /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button ButtonStopHost;
 
         /// <summary>
-        /// ButtonConnect-Steuerelement
+        /// ButtonConnect-Steuerelement.
         /// </summary>
         /// <remarks>
-        /// Automatisch generiertes Feld
+        /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button ButtonConnect;
 
         /// <summary>
-        /// ButtonDisconnect-Steuerelement
+        /// ButtonDisconnect-Steuerelement.
         /// </summary>
         /// <remarks>
-        /// Automatisch generiertes Feld
+        /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button ButtonDisconnect;
 
         /// <summary>
-        /// ButtonCreateOptions-Steuerelement
+        /// ButtonCreateOptions-Steuerelement.
         /// </summary>
         /// <remarks>
-        /// Automatisch generiertes Feld
+        /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button ButtonCreateOptions;
 
         /// <summary>
-        /// ButtonModifyFa-Steuerelement
+        /// ButtonModifyFa-Steuerelement.
         /// </summary>
         /// <remarks>
-        /// Automatisch generiertes Feld
+        /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button ButtonModifyFa;
 
         /// <summary>
-        /// ButtonExecuteTal-Steuerelement
+        /// ButtonExecuteTal-Steuerelement.
         /// </summary>
         /// <remarks>
-        /// Automatisch generiertes Feld
+        /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button ButtonExecuteTal;
 
         /// <summary>
-        /// ButtonAbort-Steuerelement
+        /// ButtonAbort-Steuerelement.
         /// </summary>
         /// <remarks>
-        /// Automatisch generiertes Feld
+        /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button ButtonAbort;
 
         /// <summary>
-        /// TableOptions-Steuerelement
+        /// TableOptions-Steuerelement.
         /// </summary>
         /// <remarks>
-        /// Automatisch generiertes Feld
+        /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Table TableOptions;
 
         /// <summary>
-        /// DropDownListOptionType-Steuerelement
+        /// DropDownListOptionType-Steuerelement.
         /// </summary>
         /// <remarks>
-        /// Automatisch generiertes Feld
+        /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList DropDownListOptionType;
 
         /// <summary>
-        /// CheckBoxListOptions-Steuerelement
+        /// CheckBoxListOptions-Steuerelement.
         /// </summary>
         /// <remarks>
-        /// Automatisch generiertes Feld
+        /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBoxList CheckBoxListOptions;
 
         /// <summary>
-        /// TableStatus-Steuerelement
+        /// TableStatus-Steuerelement.
         /// </summary>
         /// <remarks>
-        /// Automatisch generiertes Feld
+        /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Table TableStatus;
 
         /// <summary>
-        /// TextBoxStatus-Steuerelement
+        /// TextBoxStatus-Steuerelement.
         /// </summary>
         /// <remarks>
-        /// Automatisch generiertes Feld
+        /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox TextBoxStatus;
 
         /// <summary>
-        /// TextBoxProgress-Steuerelement
+        /// TextBoxProgress-Steuerelement.
         /// </summary>
         /// <remarks>
-        /// Automatisch generiertes Feld
+        /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox TextBoxProgress;
 
         /// <summary>
-        /// TimerUpdate-Steuerelement
+        /// TimerUpdate-Steuerelement.
         /// </summary>
         /// <remarks>
-        /// Automatisch generiertes Feld
+        /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.Timer TimerUpdate;

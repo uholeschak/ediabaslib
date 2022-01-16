@@ -10,37 +10,16 @@
     <div class="jumbotron">
         <asp:UpdatePanel ID="UpdatePanelStatus" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="False">
             <ContentTemplate>
-                <asp:Table ID="TableButtons" runat="server" CssClass="table" HorizontalAlign="Center" Width="0">
-                    <asp:TableHeaderRow runat="server">
-                        <asp:TableHeaderCell Scope="Column" ColumnSpan="8" Text="Functions" HorizontalAlign="Center" />
-                    </asp:TableHeaderRow>
-                    <asp:TableRow>
-                        <asp:TableCell>
-                            <asp:Button ID="ButtonStartHost" runat="server" CssClass="btn" Text="Start Host" OnClick="ButtonStartHost_Click" />
-                        </asp:TableCell>
-                        <asp:TableCell>
-                            <asp:Button ID="ButtonStopHost" runat="server" CssClass="btn" Text="Stop Host" OnClick="ButtonStopHost_Click" />
-                        </asp:TableCell>
-                        <asp:TableCell>
-                            <asp:Button ID="ButtonConnect" runat="server" CssClass="btn" Text="Connect" OnClick="ButtonConnect_OnClick" />
-                        </asp:TableCell>
-                        <asp:TableCell>
-                            <asp:Button ID="ButtonDisconnect" runat="server" CssClass="btn" Text="Disconnect" OnClick="ButtonDisconnect_OnClick" />
-                        </asp:TableCell>
-                        <asp:TableCell>
-                            <asp:Button ID="ButtonCreateOptions" runat="server" CssClass="btn" Text="Create Options" OnClick="ButtonCreateOptions_OnClick" />
-                        </asp:TableCell>
-                        <asp:TableCell>
-                            <asp:Button ID="ButtonModifyFa" runat="server" CssClass="btn" Text="Modify FA" OnClick="ButtonModifyFa_OnClick" />
-                        </asp:TableCell>
-                        <asp:TableCell>
-                            <asp:Button ID="ButtonExecuteTal" runat="server" CssClass="btn" Text="Execute TAL" OnClick="ButtonExecuteTal_OnClick" />
-                        </asp:TableCell>
-                        <asp:TableCell>
-                            <asp:Button ID="ButtonAbort" runat="server" CssClass="btn" Text="Abort" OnClick="ButtonAbort_OnClick" />
-                        </asp:TableCell>
-                    </asp:TableRow>
-                </asp:Table>
+                <asp:Panel ID="PanelButtons" runat="server" CssClass="panel-body" HorizontalAlign="Center">
+                    <asp:Button ID="ButtonStartHost" runat="server" CssClass="btn" Text="Start Host" OnClick="ButtonStartHost_Click" />
+                    <asp:Button ID="ButtonStopHost" runat="server" CssClass="btn" Text="Stop Host" OnClick="ButtonStopHost_Click" />
+                    <asp:Button ID="ButtonConnect" runat="server" CssClass="btn" Text="Connect" OnClick="ButtonConnect_OnClick" />
+                    <asp:Button ID="ButtonDisconnect" runat="server" CssClass="btn" Text="Disconnect" OnClick="ButtonDisconnect_OnClick" />
+                    <asp:Button ID="ButtonCreateOptions" runat="server" CssClass="btn" Text="Create Options" OnClick="ButtonCreateOptions_OnClick" />
+                    <asp:Button ID="ButtonModifyFa" runat="server" CssClass="btn" Text="Modify FA" OnClick="ButtonModifyFa_OnClick" />
+                    <asp:Button ID="ButtonExecuteTal" runat="server" CssClass="btn" Text="Execute TAL" OnClick="ButtonExecuteTal_OnClick" />
+                    <asp:Button ID="ButtonAbort" runat="server" CssClass="btn" Text="Abort" OnClick="ButtonAbort_OnClick" />
+                </asp:Panel>
                 <asp:Table ID="TableOptions" runat="server" CssClass="table" HorizontalAlign="Center" Width="100%">
                     <asp:TableRow>
                         <asp:TableCell>
