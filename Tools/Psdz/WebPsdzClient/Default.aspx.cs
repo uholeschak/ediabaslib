@@ -346,6 +346,8 @@ namespace WebPsdzClient
                 ButtonModifyFa.Enabled = modifyTal;
                 ButtonExecuteTal.Enabled = modifyTal && talPresent;
                 ButtonAbort.Enabled = active && abortPossible;
+                DropDownListOptionType.Enabled = !active && hostRunning && vehicleConnected;
+                CheckBoxListOptions.Enabled = !active && hostRunning && vehicleConnected;
 
                 TextBoxStatus.Text = sessionContainer.StatusText;
                 TextBoxProgress.Text = sessionContainer.ProgressText;
