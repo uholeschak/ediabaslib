@@ -105,7 +105,7 @@ namespace BmwDeepObd
             public XElement InfoXml { get; }
         }
 
-        class ConnectButtonInfo
+        private class ConnectButtonInfo
         {
             public ToggleButton Button { get; set; }
             public bool Enabled { get; set; }
