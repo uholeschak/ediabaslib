@@ -1076,7 +1076,7 @@ namespace WebPsdzClient.App_Data
             }
         }
 
-        public PsdzVehicleHub.VehicleResponse WaitForVehicleResponse(VehicleResponseDelegate vehicleResponseDelegate = null, int timeout = 10000)
+        public PsdzVehicleHub.VehicleResponse WaitForVehicleResponse(VehicleResponseDelegate vehicleResponseDelegate = null, int timeout = 20000)
         {
             log.InfoFormat("WaitForVehicleResponse Timeout={0}", timeout);
             string packetId = GetPacketId();
