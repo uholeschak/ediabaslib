@@ -48,16 +48,18 @@
 
             function sendVehicleResponse(id, response)
             {
-                console.log("Vehicle response: Xml=" + response);
+                var logMessage = "Vehicle response: Id=" + id + ", Xml=" + response;
+                console.log(logMessage);
+                var errorMessage = "";
                 try
                 {
                     psdzVehicleHubProxy.server.vehicleReceive(sessionID, id, response);
                 }
                 catch (e)
                 {
-                    return e.message;
+                    errorMessage = e.message;
                 }
-                return "";
+                return errorMessage;
             }
 
             function sendRequest(url, id, formData)
