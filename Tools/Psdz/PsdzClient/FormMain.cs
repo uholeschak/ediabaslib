@@ -499,14 +499,10 @@ namespace PsdzClient
             _ignoreChange = true;
             comboBoxLanguage.BeginUpdate();
             comboBoxLanguage.Items.Clear();
-            PropertyInfo[] langueProperties = typeof(PdszDatabase.EcuTranslation).GetProperties();
-            foreach (PropertyInfo propertyInfo in langueProperties)
+            List<string> langList = PdszDatabase.EcuTranslation.GetLanguages();
+            foreach (string lang in langList)
             {
-                string name = propertyInfo.Name;
-                if (name.StartsWith("Text", StringComparison.OrdinalIgnoreCase))
-                {
-                    comboBoxLanguage.Items.Add(name.Substring(4));
-                }
+                comboBoxLanguage.Items.Add(lang);
             }
 
             comboBoxLanguage.SelectedIndex = 0;

@@ -40,15 +40,20 @@ namespace WebPsdzClient
                     if (Request.UserAgent != null)
                     {
                         log.InfoFormat("_Default User agent: {0}", Request.UserAgent);
-                        if (string.IsNullOrEmpty(sessionContainer.DeepObdApp))
+                        if (string.IsNullOrEmpty(sessionContainer.DeepObdVersion))
                         {
                             string[] agentParts = Request.UserAgent.Split(' ');
                             foreach (string part in agentParts)
                             {
                                 if (part.StartsWith("DeepObd"))
                                 {
-                                    log.InfoFormat("_Default Storing agent: {0}", part);
-                                    sessionContainer.DeepObdApp = part;
+                                    string[] subParts = part.Split('/');
+                                    if (subParts.Length >= 3)
+                                    {
+                                        log.InfoFormat("_Default Storing App: Ver={0}, Lang={1}", subParts[1], subParts[2]);
+                                        sessionContainer.DeepObdVersion = subParts[1];
+                                        sessionContainer.SetLanguage(subParts[2]);
+                                    }
                                     break;
                                 }
                             }

@@ -241,22 +241,44 @@ namespace WebPsdzClient.App_Data
             }
         }
 
-        private string _deepObdApp;
-        public string DeepObdApp
+        private string _deepObdVersion;
+        public string DeepObdVersion
         {
             get
             {
                 lock (_lockObject)
                 {
-                    return _deepObdApp;
+                    return _deepObdVersion;
                 }
             }
             set
             {
                 lock (_lockObject)
                 {
-                    _deepObdApp = value;
+                    _deepObdVersion = value;
                 }
+            }
+        }
+
+        public void SetLanguage(string language)
+        {
+            List<string> langList = PdszDatabase.EcuTranslation.GetLanguages();
+            bool matched = false;
+
+            foreach (string lang in langList)
+            {
+                if (language.StartsWith(lang, StringComparison.OrdinalIgnoreCase))
+                {
+                    ProgrammingJobs.ClientContext.Language = lang;
+                    matched = true;
+                    log.InfoFormat("SetLanguage matched: {0}", lang);
+                    break;
+                }
+            }
+
+            if (!matched)
+            {
+                log.ErrorFormat("SetLanguage Language not found: {0}", language);
             }
         }
 
@@ -1038,7 +1060,7 @@ namespace WebPsdzClient.App_Data
 
         private string GetVehicleUrl()
         {
-            if (!string.IsNullOrEmpty(DeepObdApp))
+            if (!string.IsNullOrEmpty(_deepObdVersion))
             {
                 return string.Empty;
             }

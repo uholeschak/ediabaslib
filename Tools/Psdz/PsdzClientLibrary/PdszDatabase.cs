@@ -141,6 +141,22 @@ namespace PsdzClient
                 return GetTitle(clientContext.Language);
             }
 
+            public static List<string> GetLanguages()
+            {
+                List<string> langList = new List<string>();
+                PropertyInfo[] langueProperties = typeof(EcuTranslation).GetProperties();
+                foreach (PropertyInfo propertyInfo in langueProperties)
+                {
+                    string name = propertyInfo.Name;
+                    if (name.StartsWith("Text", StringComparison.OrdinalIgnoreCase))
+                    {
+                        langList.Add(name.Substring(4));
+                    }
+                }
+
+                return langList;
+            }
+
             public string TextDe { get; set; }
             public string TextEn { get; set; }
             public string TextFr { get; set; }
