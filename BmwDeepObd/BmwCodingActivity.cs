@@ -542,7 +542,7 @@ namespace BmwDeepObd
                             EdiabasConnect();
                             RunOnUiThread(() =>
                             {
-                                _activityCommon.SetLock(ActivityCommon.LockType.Cpu);
+                                _activityCommon.SetLock(ActivityCommon.LockType.ScreenDim);
                             });
                             break;
 
