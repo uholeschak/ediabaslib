@@ -122,7 +122,7 @@ namespace WebPsdzClient
                 return;
             }
 
-            sessionContainer.DisconnectVehicle(UpdateDisplay);
+            sessionContainer.DisconnectVehicle();
         }
 
         protected void ButtonCreateOptions_OnClick(object sender, EventArgs e)
@@ -133,7 +133,7 @@ namespace WebPsdzClient
                 return;
             }
 
-            sessionContainer.VehicleFunctions(UpdateDisplay, ProgrammingJobs.OperationType.CreateOptions);
+            sessionContainer.VehicleFunctions(ProgrammingJobs.OperationType.CreateOptions);
         }
 
         protected void ButtonModifyFa_OnClick(object sender, EventArgs e)
@@ -145,7 +145,7 @@ namespace WebPsdzClient
             }
 
             sessionContainer.ProgrammingJobs.UpdateTargetFa();
-            sessionContainer.VehicleFunctions(UpdateDisplay, ProgrammingJobs.OperationType.BuildTalModFa);
+            sessionContainer.VehicleFunctions(ProgrammingJobs.OperationType.BuildTalModFa);
         }
 
         protected void ButtonExecuteTal_OnClick(object sender, EventArgs e)
@@ -156,7 +156,7 @@ namespace WebPsdzClient
                 return;
             }
 
-            sessionContainer.VehicleFunctions(UpdateDisplay, ProgrammingJobs.OperationType.ExecuteTal);
+            sessionContainer.VehicleFunctions(ProgrammingJobs.OperationType.ExecuteTal);
         }
 
         protected void ButtonAbort_OnClick(object sender, EventArgs e)
@@ -358,6 +358,33 @@ namespace WebPsdzClient
                 TextBoxStatus.Text = sessionContainer.StatusText;
                 TextBoxProgress.Text = sessionContainer.ProgressText;
 
+                UpdatePanels(fromTimer);
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("UpdateStatus Exception: {0}", ex.Message);
+            }
+        }
+
+        private void UpdatePanels(bool fromTimer = false)
+        {
+            if (!fromTimer)
+            {
+                try
+                {
+                    if (!UpdatePanelHeader.IsInPartialRendering)
+                    {
+                        UpdatePanelHeader.Update();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.ErrorFormat("UpdatePanels Exception: {0}", ex.Message);
+                }
+            }
+
+            try
+            {
                 if (!UpdatePanelStatus.IsInPartialRendering)
                 {
                     UpdatePanelStatus.Update();
@@ -365,7 +392,7 @@ namespace WebPsdzClient
             }
             catch (Exception ex)
             {
-                log.ErrorFormat("UpdateStatus Exception: {0}", ex.Message);
+                log.ErrorFormat("UpdatePanels Exception: {0}", ex.Message);
             }
         }
 
@@ -430,10 +457,7 @@ namespace WebPsdzClient
                 SelectOptions(sessionContainer.SelectedSwiRegister);
                 PanelOptions.Visible = sessionContainer.OptionsDict != null;
 
-                if (!UpdatePanelStatus.IsInPartialRendering)
-                {
-                    UpdatePanelStatus.Update();
-                }
+                UpdatePanels();
             }
             catch (Exception ex)
             {
@@ -512,10 +536,7 @@ namespace WebPsdzClient
                     }
                 }
 
-                if (!UpdatePanelStatus.IsInPartialRendering)
-                {
-                    UpdatePanelStatus.Update();
-                }
+                UpdatePanels();
             }
             catch (Exception ex)
             {

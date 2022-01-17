@@ -1610,7 +1610,7 @@ namespace WebPsdzClient.App_Data
             return await Task.Run(() => ProgrammingJobs.ConnectVehicle(Cts, istaFolder, remoteHost, useIcom)).ConfigureAwait(false);
         }
 
-        public void DisconnectVehicle(UpdateDisplayDelegate updateHandler)
+        public void DisconnectVehicle()
         {
             if (TaskActive)
             {
@@ -1640,7 +1640,7 @@ namespace WebPsdzClient.App_Data
             return await Task.Run(() => ProgrammingJobs.DisconnectVehicle(Cts)).ConfigureAwait(false);
         }
 
-        public void VehicleFunctions(UpdateDisplayDelegate updateHandler, ProgrammingJobs.OperationType operationType)
+        public void VehicleFunctions(ProgrammingJobs.OperationType operationType)
         {
             if (TaskActive)
             {
