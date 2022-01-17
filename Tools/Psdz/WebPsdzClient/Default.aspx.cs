@@ -39,7 +39,7 @@ namespace WebPsdzClient
                 {
                     if (Request.UserAgent != null)
                     {
-                        System.Diagnostics.Debug.WriteLine($"User Agent: {Request.UserAgent}");
+                        log.InfoFormat("_Default User agent: {0}", Request.UserAgent);
                         if (string.IsNullOrEmpty(sessionContainer.DeepObdApp))
                         {
                             string[] agentParts = Request.UserAgent.Split(' ');
@@ -47,6 +47,7 @@ namespace WebPsdzClient
                             {
                                 if (part.StartsWith("DeepObd"))
                                 {
+                                    log.InfoFormat("_Default Storing agent: {0}", part);
                                     sessionContainer.DeepObdApp = part;
                                     break;
                                 }
