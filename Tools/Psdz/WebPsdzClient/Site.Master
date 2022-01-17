@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%: Page.Title %> - Eigene ASP.NET-Anwendung</title>
+    <title><%: Page.Title %></title>
 
     <asp:PlaceHolder runat="server">
         <%: Scripts.Render("~/bundles/modernizr") %>
@@ -201,7 +201,7 @@
                 }
             );
         </script>
-
+<!--
         <div class="navbar navbar-inverse navbar-fixed-top">
             <div class="container">
                 <div class="navbar-header">
@@ -221,13 +221,16 @@
                 </div>
             </div>
         </div>
+-->
         <div class="container body-content">
             <asp:ContentPlaceHolder ID="MainContent" runat="server">
             </asp:ContentPlaceHolder>
+<!--
             <hr />
             <footer>
                 <p>&copy; <%: DateTime.Now.Year %> - PsdzClient</p>
             </footer>
+-->
         </div>
     </form>
 </body>
