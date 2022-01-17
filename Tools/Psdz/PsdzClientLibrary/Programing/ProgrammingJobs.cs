@@ -144,7 +144,8 @@ namespace PsdzClient.Programing
 
                 ProgrammingService = new ProgrammingService(istaFolder, _dealerId);
                 ClientContext.Database = ProgrammingService.PdszDatabase;
-                SetupLog4Net();
+                string logFile = Path.Combine(ProgrammingService.GetPsdzServiceHostLogDir(), "PsdzClient.log");
+                SetupLog4Net(logFile);
                 ProgrammingService.EventManager.ProgrammingEventRaised += (sender, args) =>
                 {
                     if (args is ProgrammingTaskEventArgs programmingEventArgs)
@@ -1245,7 +1246,7 @@ namespace PsdzClient.Programing
             UpdateOptionsEvent?.Invoke(optionsDict);
         }
 
-        public void SetupLog4Net()
+        public void SetupLog4Net(string logFile)
         {
             try
             {
@@ -1261,7 +1262,6 @@ namespace PsdzClient.Programing
                         string log4NetConfig = Path.Combine(appDir, "log4net.xml");
                         if (File.Exists(log4NetConfig))
                         {
-                            string logFile = Path.Combine(ProgrammingService.GetPsdzServiceHostLogDir(), "PsdzClient.log");
                             log4net.GlobalContext.Properties["LogFileName"] = logFile;
                             XmlConfigurator.Configure(new FileInfo(log4NetConfig));
                         }
