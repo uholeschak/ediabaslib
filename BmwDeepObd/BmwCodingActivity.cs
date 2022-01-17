@@ -540,10 +540,18 @@ namespace BmwDeepObd
                         case VehicleRequest.VehicleRequestType.Connect:
                             EdiabasDisconnect();
                             EdiabasConnect();
+                            RunOnUiThread(() =>
+                            {
+                                _activityCommon.SetLock(ActivityCommon.LockType.ScreenDim);
+                            });
                             break;
 
                         case VehicleRequest.VehicleRequestType.Disconnect:
                             EdiabasDisconnect();
+                            RunOnUiThread(() =>
+                            {
+                                _activityCommon.SetLock(ActivityCommon.LockType.None);
+                            });
                             break;
 
                         case VehicleRequest.VehicleRequestType.Transmit:
