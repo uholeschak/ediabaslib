@@ -416,7 +416,11 @@ namespace PsdzClient
 
         private async Task<bool> StartProgrammingServiceTask(string istaFolder)
         {
-            return await Task.Run(() => _programmingJobs.StartProgrammingService(_cts, istaFolder)).ConfigureAwait(false);
+            return await Task.Run(() => _programmingJobs.StartProgrammingService(_cts, istaFolder, service =>
+            {
+                string logFile = Path.Combine(service.GetPsdzServiceHostLogDir(), "PsdzClient.log");
+                ProgrammingJobs.SetupLog4Net(logFile);
+            })).ConfigureAwait(false);
         }
 
         private async Task<bool> StopProgrammingServiceTask()

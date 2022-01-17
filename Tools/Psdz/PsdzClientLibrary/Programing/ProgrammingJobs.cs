@@ -98,6 +98,8 @@ namespace PsdzClient.Programing
         public delegate void UpdateOptionsDelegate(Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>> optionsDict);
         public event UpdateOptionsDelegate UpdateOptionsEvent;
 
+        public delegate void ServiceInitialized(ProgrammingService programmingService);
+
         private static readonly ILog log = LogManager.GetLogger(typeof(ProgrammingJobs));
         private OptionType[] _optionTypes =
         {
@@ -123,7 +125,7 @@ namespace PsdzClient.Programing
             ProgrammingService = null;
         }
 
-        public bool StartProgrammingService(CancellationTokenSource cts, string istaFolder)
+        public bool StartProgrammingService(CancellationTokenSource cts, string istaFolder, ServiceInitialized serviceInitializedHandler = null)
         {
             StringBuilder sbResult = new StringBuilder();
             try
@@ -144,8 +146,11 @@ namespace PsdzClient.Programing
 
                 ProgrammingService = new ProgrammingService(istaFolder, _dealerId);
                 ClientContext.Database = ProgrammingService.PdszDatabase;
-                string logFile = Path.Combine(ProgrammingService.GetPsdzServiceHostLogDir(), "PsdzClient.log");
-                SetupLog4Net(logFile);
+                if (serviceInitializedHandler != null)
+                {
+                    serviceInitializedHandler.Invoke(ProgrammingService);
+                }
+
                 ProgrammingService.EventManager.ProgrammingEventRaised += (sender, args) =>
                 {
                     if (args is ProgrammingTaskEventArgs programmingEventArgs)
@@ -1246,7 +1251,7 @@ namespace PsdzClient.Programing
             UpdateOptionsEvent?.Invoke(optionsDict);
         }
 
-        public void SetupLog4Net(string logFile)
+        public static void SetupLog4Net(string logFile)
         {
             try
             {
