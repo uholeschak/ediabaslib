@@ -1264,7 +1264,7 @@ namespace PsdzClient.Programing
 
                     if (!string.IsNullOrEmpty(appDir))
                     {
-                        string log4NetConfig = Path.Combine(appDir, "log4net.xml");
+                        string log4NetConfig = Path.Combine(appDir, "log4net_config.xml");
                         if (File.Exists(log4NetConfig))
                         {
                             log4net.GlobalContext.Properties["LogFileName"] = logFile;

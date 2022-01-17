@@ -123,7 +123,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="log4net.xml">
+    <None Include="log4net_config.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
