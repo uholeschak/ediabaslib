@@ -1366,11 +1366,25 @@ namespace WebPsdzClient.App_Data
                                             }
                                             else
                                             {
+                                                bool sendResponse = true;
+                                                int recLength;
+                                                lock (enetTcpClientData.RecQueue)
+                                                {
+                                                    recLength = enetTcpClientData.RecQueue.Count;
+                                                }
+
                                                 if (vehicleResponse.ResponseList == null || vehicleResponse.ResponseList.Count == 0)
                                                 {
+                                                    sendResponse = false;
                                                     log.ErrorFormat("VehicleThread Vehicle transmit no response");
                                                 }
-                                                else
+                                                else if (recLength > 0)
+                                                {
+                                                    sendResponse = false;
+                                                    log.ErrorFormat("VehicleThread Request bytes {0} present, sending no response", recLength);
+                                                }
+
+                                                if (sendResponse)
                                                 {
                                                     foreach (string responseData in vehicleResponse.ResponseList)
                                                     {
