@@ -1323,21 +1323,23 @@ namespace WebPsdzClient.App_Data
                                             int nr78Count = 0;
                                             PsdzVehicleHub.VehicleResponse vehicleResponse = WaitForVehicleResponse(() =>
                                             {
-                                                if (funcAddress || nr78Count < 3)
+                                                if ((Stopwatch.GetTimestamp() - nr78Time) > 1000 * TickResolMs)
                                                 {
-                                                    if (funcAddress && nr78Count != 0 && nr78Count % 3 == 0)
-                                                    {   // prevent disconnect after 3 retries
-                                                        nr78Tel[2]++;
-                                                    }
+                                                    nr78Time = Stopwatch.GetTimestamp();
+                                                    if (funcAddress || nr78Count < 3)
+                                                    {
+                                                        if (funcAddress && nr78Count != 0 && nr78Count % 3 == 0)
+                                                        {   // prevent disconnect after 3 retries
+                                                            nr78Tel[2]++;
+                                                            log.InfoFormat("VehicleThread Nr78 Inc={0}", nr78Tel[2]);
+                                                        }
 
-                                                    byte[] enetNr78Tel = CreateEnetTelegram(nr78Tel);
-                                                    if (enetNr78Tel == null)
-                                                    {
-                                                        log.ErrorFormat("VehicleThread Enet NR78 Tel invalid");
-                                                    }
-                                                    else
-                                                    {
-                                                        if (nr78Count == 0 || ((Stopwatch.GetTimestamp() - nr78Time) > 1000 * TickResolMs))
+                                                        byte[] enetNr78Tel = CreateEnetTelegram(nr78Tel);
+                                                        if (enetNr78Tel == null)
+                                                        {
+                                                            log.ErrorFormat("VehicleThread Enet NR78 Tel invalid");
+                                                        }
+                                                        else
                                                         {
                                                             string nr78String = BitConverter.ToString(nr78Tel).Replace("-", " ");
                                                             log.InfoFormat("VehicleThread Sending Nr78 Count={0}, Tel={1}", nr78Count, nr78String);
