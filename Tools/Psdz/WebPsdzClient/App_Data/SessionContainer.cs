@@ -605,7 +605,8 @@ namespace WebPsdzClient.App_Data
                         int length = enetTcpClientData.TcpClientStream.EndRead(ar);
                         if (length > 0)
                         {
-                            log.InfoFormat("TcpReceiver Received TCP Length={0}", length);
+                            string recString = BitConverter.ToString(enetTcpClientData.DataBuffer, 0, length).Replace("-", " ");
+                            log.InfoFormat("TcpReceiver Received TCP Data={0}", recString);
                             lock (enetTcpClientData.RecQueue)
                             {
                                 for (int i = 0; i < length; i++)
@@ -1043,7 +1044,8 @@ namespace WebPsdzClient.App_Data
 
                                 if (sendData.Length > 0)
                                 {
-                                    log.InfoFormat("VehicleThread Sending TCP Length={0}", sendData.Length);
+                                    string sendString = BitConverter.ToString(sendData).Replace("-", " ");
+                                    log.InfoFormat("VehicleThread Sending TCP Data={0}", sendString);
                                     WriteNetworkStream(enetTcpClientData, sendData, 0, sendData.Length);
                                 }
                             }
@@ -1250,7 +1252,7 @@ namespace WebPsdzClient.App_Data
                                         byte[] sendData = bmwFastTel;
                                         bool funcAddress = (sendData[0] & 0xC0) == 0xC0;     // functional address
 
-                                        string sendString = BitConverter.ToString(sendData).Replace("-", "");
+                                        string sendString = BitConverter.ToString(sendData).Replace("-", " ");
                                         log.InfoFormat("VehicleThread Transmit Data={0}", sendString);
 #if EDIABAS_CONNECTION
                                         for (;;)
@@ -1268,7 +1270,7 @@ namespace WebPsdzClient.App_Data
                                                     }
                                                     else
                                                     {
-                                                        string recString = BitConverter.ToString(enetTel).Replace("-", "");
+                                                        string recString = BitConverter.ToString(enetTel).Replace("-", " ");
                                                         log.InfoFormat("VehicleThread Receive Data={0}", recString);
                                                         enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
                                                         lock (enetTcpClientData.SendQueue)
@@ -1337,7 +1339,7 @@ namespace WebPsdzClient.App_Data
                                                     {
                                                         if (nr78Count == 0 || ((Stopwatch.GetTimestamp() - nr78Time) > 1000 * TickResolMs))
                                                         {
-                                                            string nr78String = BitConverter.ToString(nr78Tel).Replace("-", "");
+                                                            string nr78String = BitConverter.ToString(nr78Tel).Replace("-", " ");
                                                             log.InfoFormat("VehicleThread Sending Nr78 Count={0}, Tel={1}", nr78Count, nr78String);
                                                             nr78Time = Stopwatch.GetTimestamp();
                                                             nr78Count++;
@@ -1381,7 +1383,7 @@ namespace WebPsdzClient.App_Data
                                                         }
                                                         else
                                                         {
-                                                            string recString = BitConverter.ToString(enetTel).Replace("-", "");
+                                                            string recString = BitConverter.ToString(enetTel).Replace("-", " ");
                                                             log.InfoFormat("VehicleThread Receive Data={0}", recString);
                                                             enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
                                                             lock (enetTcpClientData.SendQueue)
