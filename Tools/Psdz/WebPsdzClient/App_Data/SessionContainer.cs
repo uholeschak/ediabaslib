@@ -1219,7 +1219,7 @@ namespace WebPsdzClient.App_Data
 
                                     if (bmwFastTel == null || nr78Tel == null)
                                     {
-                                        log.ErrorFormat("VehicleThread BmwFastTel invalid");
+                                        log.ErrorFormat("VehicleThread BmwFastTel invalid, sending NACK");
 
                                         byte[] nackPacket = new byte[6];
                                         nackPacket[5] = 0xFF;
@@ -1382,6 +1382,7 @@ namespace WebPsdzClient.App_Data
                                                 {
                                                     sendResponse = false;
                                                     log.ErrorFormat("VehicleThread Request bytes {0} present, sending no response", recLength);
+                                                    bool sendNack = false;
                                                     lock (enetTcpClientData.RecQueue)
                                                     {
                                                         for (;;)
@@ -1391,9 +1392,28 @@ namespace WebPsdzClient.App_Data
                                                             {
                                                                 break;
                                                             }
+
+                                                            sendNack = true;
                                                             string removeString = BitConverter.ToString(removePacket).Replace("-", " ");
                                                             log.InfoFormat("VehicleThread Removing Packet={0}", removeString);
                                                         }
+                                                    }
+
+                                                    if (sendNack)
+                                                    {
+                                                        log.ErrorFormat("VehicleThread Sending NACK");
+                                                        byte[] nackPacket = new byte[6];
+                                                        nackPacket[5] = 0xFF;
+                                                        enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
+                                                        lock (enetTcpClientData.SendQueue)
+                                                        {
+                                                            foreach (byte ackData in nackPacket)
+                                                            {
+                                                                enetTcpClientData.SendQueue.Enqueue(ackData);
+                                                            }
+                                                        }
+
+                                                        enetTcpChannel.SendEvent.Set();
                                                     }
                                                 }
 
