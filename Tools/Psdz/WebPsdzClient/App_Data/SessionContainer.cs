@@ -1378,10 +1378,23 @@ namespace WebPsdzClient.App_Data
                                                     sendResponse = false;
                                                     log.ErrorFormat("VehicleThread Vehicle transmit no response");
                                                 }
-                                                else if (recLength > 0)
+                                                if (recLength > 0)
                                                 {
                                                     sendResponse = false;
                                                     log.ErrorFormat("VehicleThread Request bytes {0} present, sending no response", recLength);
+                                                    lock (enetTcpClientData.RecQueue)
+                                                    {
+                                                        for (;;)
+                                                        {
+                                                            byte[] removePacket = GetQueuePacket(enetTcpClientData.RecQueue);
+                                                            if (removePacket == null)
+                                                            {
+                                                                break;
+                                                            }
+                                                            string removeString = BitConverter.ToString(removePacket).Replace("-", " ");
+                                                            log.InfoFormat("VehicleThread Removing Packet={0}", removeString);
+                                                        }
+                                                    }
                                                 }
 
                                                 if (sendResponse)
