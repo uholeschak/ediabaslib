@@ -605,6 +605,7 @@ namespace WebPsdzClient.App_Data
                         int length = enetTcpClientData.TcpClientStream.EndRead(ar);
                         if (length > 0)
                         {
+                            log.InfoFormat("TcpReceiver Received TCP Length={0}", length);
                             lock (enetTcpClientData.RecQueue)
                             {
                                 for (int i = 0; i < length; i++)
@@ -708,14 +709,14 @@ namespace WebPsdzClient.App_Data
             UInt32 payloadLength = (((UInt32)data[0] << 24) | ((UInt32)data[1] << 16) | ((UInt32)data[2] << 8) | data[3]);
             if (payloadLength < 1 || payloadLength > 0x00FFFFFF)
             {
-                log.ErrorFormat("GetQueuePayload: Invalid payload length: {0}", payloadLength);
+                log.ErrorFormat("GetQueuePacket: Invalid payload length: {0}", payloadLength);
                 throw new Exception("Invalid payload length");
             }
 
             UInt32 packetLength = payloadLength + 6;
             if (data.Length < packetLength)
             {
-                log.InfoFormat("GetQueuePayload: More data required: {0} < {1}", data.Length, packetLength);
+                log.InfoFormat("GetQueuePacket: More data required: {0} < {1}", data.Length, packetLength);
                 return null;
             }
 
@@ -1042,6 +1043,7 @@ namespace WebPsdzClient.App_Data
 
                                 if (sendData.Length > 0)
                                 {
+                                    log.InfoFormat("VehicleThread Sending TCP Length={0}", sendData.Length);
                                     WriteNetworkStream(enetTcpClientData, sendData, 0, sendData.Length);
                                 }
                             }
