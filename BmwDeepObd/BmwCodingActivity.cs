@@ -20,6 +20,8 @@ namespace BmwDeepObd
 {
     [Android.App.Activity(Label = "@string/bmw_coding_title",
         Name = ActivityCommon.AppNameSpace + "." + nameof(BmwCodingActivity),
+        LaunchMode = LaunchMode.SingleInstance,
+        AlwaysRetainTaskState = true,
         WindowSoftInputMode = SoftInput.StateAlwaysHidden,
         ConfigurationChanges = ActivityConfigChanges)]
     public class BmwCodingActivity : BaseActivity
@@ -159,14 +161,15 @@ namespace BmwDeepObd
 #endif
                 _webViewCoding.SetWebViewClient(new WebViewClientImpl(this));
                 _webViewCoding.SetWebChromeClient(new WebChromeClientImpl(this));
+                string url = @"http://ulrich3.local.holeschak.de:3000";
                 if (savedInstanceState != null)
                 {
-                    _webViewCoding.RestoreState(savedInstanceState);
+                    if (!string.IsNullOrWhiteSpace(_instanceData.Url))
+                    {
+                        url = _instanceData.Url;
+                    }
                 }
-                else
-                {
-                    _webViewCoding.LoadUrl(@"http://ulrich3.local.holeschak.de:3000");
-                }
+                _webViewCoding.LoadUrl(url);
             }
             catch (Exception)
             {
@@ -176,7 +179,6 @@ namespace BmwDeepObd
 
         protected override void OnSaveInstanceState(Bundle outState)
         {
-            _webViewCoding.SaveState(outState);
             StoreInstanceState(outState, _instanceData);
             base.OnSaveInstanceState(outState);
         }
@@ -601,9 +603,9 @@ namespace BmwDeepObd
 
         private class WebViewClientImpl : WebViewClientCompat
         {
-            private Android.App.Activity _activity;
+            private BmwCodingActivity _activity;
 
-            public WebViewClientImpl(Android.App.Activity activity)
+            public WebViewClientImpl(BmwCodingActivity activity)
             {
                 _activity = activity;
             }
@@ -617,13 +619,22 @@ namespace BmwDeepObd
             {
                 Toast.MakeText(_activity, _activity.GetString(Resource.String.bmw_coding_network_error), ToastLength.Long)?.Show();
             }
+
+            public override void DoUpdateVisitedHistory(WebView view, string url, bool isReload)
+            {
+#if DEBUG
+                Android.Util.Log.Debug(Tag, string.Format("DoUpdateVisitedHistory: {0}", url));
+#endif
+                _activity._instanceData.Url = url;
+                base.DoUpdateVisitedHistory(view, url, isReload);
+            }
         }
 
         private class WebChromeClientImpl : WebChromeClient
         {
-            private Android.App.Activity _activity;
+            private BmwCodingActivity _activity;
 
-            public WebChromeClientImpl(Android.App.Activity activity)
+            public WebChromeClientImpl(BmwCodingActivity activity)
             {
                 _activity = activity;
             }
