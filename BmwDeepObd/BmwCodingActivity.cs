@@ -159,7 +159,14 @@ namespace BmwDeepObd
 #endif
                 _webViewCoding.SetWebViewClient(new WebViewClientImpl(this));
                 _webViewCoding.SetWebChromeClient(new WebChromeClientImpl(this));
-                _webViewCoding.LoadUrl(@"http://ulrich3.local.holeschak.de:3000");
+                if (savedInstanceState != null)
+                {
+                    _webViewCoding.RestoreState(savedInstanceState);
+                }
+                else
+                {
+                    _webViewCoding.LoadUrl(@"http://ulrich3.local.holeschak.de:3000");
+                }
             }
             catch (Exception)
             {
@@ -169,6 +176,7 @@ namespace BmwDeepObd
 
         protected override void OnSaveInstanceState(Bundle outState)
         {
+            _webViewCoding.SaveState(outState);
             StoreInstanceState(outState, _instanceData);
             base.OnSaveInstanceState(outState);
         }
