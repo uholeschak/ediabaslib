@@ -731,6 +731,69 @@ namespace WebPsdzClient.App_Data
             return packetBytes;
         }
 
+        private void SendAckPacket(EnetTcpClientData enetTcpClientData, byte[] recPacket)
+        {
+            byte[] ackPacket = (byte[])recPacket.Clone();
+            ackPacket[5] = 0x02;    // ack
+
+            string ackString = BitConverter.ToString(ackPacket).Replace("-", " ");
+            log.InfoFormat("SendAckPacket Sending Ack Data={0}", ackString);
+            enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
+            lock (enetTcpClientData.SendQueue)
+            {
+                foreach (byte ackData in ackPacket)
+                {
+                    enetTcpClientData.SendQueue.Enqueue(ackData);
+                }
+            }
+
+            enetTcpClientData.EnetTcpChannel.SendEvent.Set();
+        }
+
+        private void SendNackPacket(EnetTcpClientData enetTcpClientData)
+        {
+            byte[] nackPacket = new byte[6];
+            nackPacket[5] = 0xFF;
+
+            string nackString = BitConverter.ToString(nackPacket).Replace("-", " ");
+            log.InfoFormat("SendNackPacket Sending Nack Data={0}", nackString);
+            enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
+            lock (enetTcpClientData.SendQueue)
+            {
+                foreach (byte ackData in nackPacket)
+                {
+                    enetTcpClientData.SendQueue.Enqueue(ackData);
+                }
+            }
+
+            enetTcpClientData.EnetTcpChannel.SendEvent.Set();
+        }
+
+        private byte[] ProcessQueuePacket(EnetTcpClientData enetTcpClientData, bool accept = true)
+        {
+            byte[] queuePacket = null;
+            lock (enetTcpClientData.RecQueue)
+            {
+                queuePacket = GetQueuePacket(enetTcpClientData.RecQueue);
+            }
+            if (queuePacket != null)
+            {
+                string queueString = BitConverter.ToString(queuePacket).Replace("-", " ");
+                if (accept)
+                {
+                    log.InfoFormat("ProcessQueuePacket Accept Data={0}", queueString);
+                    SendAckPacket(enetTcpClientData, queuePacket);
+                }
+                else
+                {
+                    log.InfoFormat("ProcessQueuePacket Reject Data={0}", queueString);
+                    SendNackPacket(enetTcpClientData);
+                }
+            }
+
+            return queuePacket;
+        }
+
         private byte[] CreateBmwFastTelegram(byte[] dataPacket)
         {
             if (dataPacket.Length < 8)
@@ -1203,12 +1266,7 @@ namespace WebPsdzClient.App_Data
                                 continue;
                             }
 
-                            byte[] recPacket;
-                            lock (enetTcpClientData.RecQueue)
-                            {
-                                recPacket = GetQueuePacket(enetTcpClientData.RecQueue);
-                            }
-
+                            byte[] recPacket = ProcessQueuePacket(enetTcpClientData);
                             if (recPacket != null && recPacket.Length >= 6)
                             {
                                 UInt32 payloadType = ((UInt32)recPacket[4] << 8) | recPacket[5];
@@ -1219,36 +1277,10 @@ namespace WebPsdzClient.App_Data
 
                                     if (bmwFastTel == null || nr78Tel == null)
                                     {
-                                        log.ErrorFormat("VehicleThread BmwFastTel invalid, sending NACK");
-
-                                        byte[] nackPacket = new byte[6];
-                                        nackPacket[5] = 0xFF;
-                                        enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
-                                        lock (enetTcpClientData.SendQueue)
-                                        {
-                                            foreach (byte ackData in nackPacket)
-                                            {
-                                                enetTcpClientData.SendQueue.Enqueue(ackData);
-                                            }
-                                        }
-
-                                        enetTcpChannel.SendEvent.Set();
+                                        log.ErrorFormat("VehicleThread BmwFastTel invalid");
                                     }
                                     else
                                     {
-                                        byte[] ackPacket = (byte[])recPacket.Clone();
-                                        ackPacket[5] = 0x02;    // ack
-                                        enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
-                                        lock (enetTcpClientData.SendQueue)
-                                        {
-                                            foreach (byte ackData in ackPacket)
-                                            {
-                                                enetTcpClientData.SendQueue.Enqueue(ackData);
-                                            }
-                                        }
-
-                                        enetTcpChannel.SendEvent.Set();
-
                                         byte[] sendData = bmwFastTel;
                                         bool funcAddress = (sendData[0] & 0xC0) == 0xC0;     // functional address
 
@@ -1319,10 +1351,11 @@ namespace WebPsdzClient.App_Data
                                                 hubContext.Clients.Client(connectionId)?.VehicleSend(GetVehicleUrl(), GetNextPacketId(), dataString);
                                             }
 
-                                            long nr78Time = DateTime.MinValue.Ticks;
+                                            long nr78Time = Stopwatch.GetTimestamp();
                                             int nr78Count = 0;
                                             PsdzVehicleHub.VehicleResponse vehicleResponse = WaitForVehicleResponse(() =>
                                             {
+                                                ProcessQueuePacket(enetTcpClientData, false);
                                                 if ((Stopwatch.GetTimestamp() - nr78Time) > 1000 * TickResolMs)
                                                 {
                                                     nr78Time = Stopwatch.GetTimestamp();
@@ -1368,59 +1401,13 @@ namespace WebPsdzClient.App_Data
                                             }
                                             else
                                             {
-                                                bool sendResponse = true;
-                                                int recLength;
-                                                lock (enetTcpClientData.RecQueue)
-                                                {
-                                                    recLength = enetTcpClientData.RecQueue.Count;
-                                                }
-
                                                 if (vehicleResponse.ResponseList == null || vehicleResponse.ResponseList.Count == 0)
                                                 {
-                                                    sendResponse = false;
                                                     log.ErrorFormat("VehicleThread Vehicle transmit no response");
                                                 }
-                                                if (recLength > 0)
+                                                else
                                                 {
-                                                    sendResponse = false;
-                                                    log.ErrorFormat("VehicleThread Request bytes {0} present, sending no response", recLength);
-                                                    bool sendNack = false;
-                                                    lock (enetTcpClientData.RecQueue)
-                                                    {
-                                                        for (;;)
-                                                        {
-                                                            byte[] removePacket = GetQueuePacket(enetTcpClientData.RecQueue);
-                                                            if (removePacket == null)
-                                                            {
-                                                                break;
-                                                            }
-
-                                                            sendNack = true;
-                                                            string removeString = BitConverter.ToString(removePacket).Replace("-", " ");
-                                                            log.InfoFormat("VehicleThread Removing Packet={0}", removeString);
-                                                        }
-                                                    }
-
-                                                    if (sendNack)
-                                                    {
-                                                        log.ErrorFormat("VehicleThread Sending NACK");
-                                                        byte[] nackPacket = new byte[6];
-                                                        nackPacket[5] = 0xFF;
-                                                        enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
-                                                        lock (enetTcpClientData.SendQueue)
-                                                        {
-                                                            foreach (byte ackData in nackPacket)
-                                                            {
-                                                                enetTcpClientData.SendQueue.Enqueue(ackData);
-                                                            }
-                                                        }
-
-                                                        enetTcpChannel.SendEvent.Set();
-                                                    }
-                                                }
-
-                                                if (sendResponse)
-                                                {
+                                                    log.InfoFormat("VehicleThread Sending back responses:{0}", vehicleResponse.ResponseList.Count);
                                                     foreach (string responseData in vehicleResponse.ResponseList)
                                                     {
                                                         string responseString = responseData.Replace(" ", "");
