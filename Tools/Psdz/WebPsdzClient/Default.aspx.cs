@@ -82,17 +82,6 @@ namespace WebPsdzClient
             log.InfoFormat("_Default Page_Unload");
         }
 
-        protected void ButtonStartHost_Click(object sender, EventArgs e)
-        {
-            SessionContainer sessionContainer = GetSessionContainer();
-            if (sessionContainer == null)
-            {
-                return;
-            }
-
-            sessionContainer.StartProgrammingService(Global.IstaFolder);
-        }
-
         protected void ButtonStopHost_Click(object sender, EventArgs e)
         {
             SessionContainer sessionContainer = GetSessionContainer();
@@ -345,9 +334,8 @@ namespace WebPsdzClient
                 }
 
                 bool modifyTal = !active && hostRunning && vehicleConnected && sessionContainer.OptionsDict != null;
-                ButtonStartHost.Enabled = !active && !hostRunning;
                 ButtonStopHost.Enabled = !active && hostRunning;
-                ButtonConnect.Enabled = !active && hostRunning && !vehicleConnected;
+                ButtonConnect.Enabled = !active && !vehicleConnected;
                 ButtonDisconnect.Enabled = !active && hostRunning && vehicleConnected;
                 ButtonCreateOptions.Enabled = !active && hostRunning && vehicleConnected && sessionContainer.OptionsDict == null;
                 ButtonModifyFa.Enabled = modifyTal;

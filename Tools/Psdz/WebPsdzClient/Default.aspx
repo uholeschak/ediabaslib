@@ -11,7 +11,6 @@
         <asp:UpdatePanel ID="UpdatePanelHeader" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="False">
             <ContentTemplate>
                 <asp:Panel ID="PanelButtons" runat="server" CssClass="panel-body" HorizontalAlign="Center">
-                    <asp:Button ID="ButtonStartHost" runat="server" CssClass="btn" Text="Start Host" OnClick="ButtonStartHost_Click" />
                     <asp:Button ID="ButtonStopHost" runat="server" CssClass="btn" Text="Stop Host" OnClick="ButtonStopHost_Click" />
                     <asp:Button ID="ButtonConnect" runat="server" CssClass="btn" Text="Connect" OnClick="ButtonConnect_OnClick" />
                     <asp:Button ID="ButtonDisconnect" runat="server" CssClass="btn" Text="Disconnect" OnClick="ButtonDisconnect_OnClick" />
