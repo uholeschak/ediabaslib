@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using BMW.Rheingold.Psdz.Client;
 using log4net;
 using PsdzClient;
 using PsdzClient.Programing;
@@ -334,7 +335,7 @@ namespace WebPsdzClient
                 bool talPresent = false;
                 if (!active)
                 {
-                    hostRunning = sessionContainer.ProgrammingJobs.ProgrammingService != null && sessionContainer.ProgrammingJobs.ProgrammingService.IsPsdzPsdzServiceHostInitialized();
+                    hostRunning = PsdzServiceStarter.IsServerInstanceRunning();
                 }
 
                 if (sessionContainer.ProgrammingJobs.PsdzContext?.Connection != null)
