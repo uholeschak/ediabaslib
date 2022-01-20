@@ -397,14 +397,26 @@ namespace WebPsdzClient.App_Data
                     }
                 }
 
-                if (_tcpThread == null)
+                if (_vehicleThread != null)
+                {
+                    if (!_vehicleThread.IsAlive)
+                    {
+                        _vehicleThread = null;
+                    }
+                }
+
+                if (_vehicleThread == null)
                 {
                     _stopThread = false;
                     _vehicleThreadWakeEvent.Reset();
                     _vehicleThread = new Thread(VehicleThread);
                     _vehicleThread.Priority = ThreadPriority.Normal;
                     _vehicleThread.Start();
+                }
 
+                if (_tcpThread == null)
+                {
+                    _stopThread = false;
                     _tcpThreadWakeEvent.Reset();
                     _tcpThread = new Thread(TcpThread);
                     _tcpThread.Priority = ThreadPriority.Normal;
@@ -1108,7 +1120,7 @@ namespace WebPsdzClient.App_Data
                                 if (sendData.Length > 0)
                                 {
                                     string sendString = BitConverter.ToString(sendData).Replace("-", " ");
-                                    log.InfoFormat("VehicleThread Sending TCP Data={0}", sendString);
+                                    log.InfoFormat("TcpThread Sending TCP Data={0}", sendString);
                                     WriteNetworkStream(enetTcpClientData, sendData, 0, sendData.Length);
                                 }
                             }
@@ -1239,6 +1251,7 @@ namespace WebPsdzClient.App_Data
                 if (vehicleResponse == null || vehicleResponse.Error || !vehicleResponse.Valid)
                 {
                     log.ErrorFormat("VehicleThread Vehicle connect failed");
+                    return;
                 }
             }
 #endif
