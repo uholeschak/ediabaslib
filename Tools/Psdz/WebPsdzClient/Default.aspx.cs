@@ -90,7 +90,7 @@ namespace WebPsdzClient
                 return;
             }
 
-            sessionContainer.StopProgrammingService();
+            sessionContainer.StopProgrammingService(Global.IstaFolder);
         }
 
         protected void ButtonConnect_OnClick(object sender, EventArgs e)

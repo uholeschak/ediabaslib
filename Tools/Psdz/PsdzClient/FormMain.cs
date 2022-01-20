@@ -420,10 +420,10 @@ namespace PsdzClient
             UpdateCurrentOptions();
         }
 
-        private async Task<bool> StopProgrammingServiceTask()
+        private async Task<bool> StopProgrammingServiceTask(string istaFolder)
         {
             // ReSharper disable once ConvertClosureToMethodGroup
-            return await Task.Run(() => _programmingJobs.StopProgrammingService(_cts)).ConfigureAwait(false);
+            return await Task.Run(() => _programmingJobs.StopProgrammingService(_cts, istaFolder)).ConfigureAwait(false);
         }
 
         private async Task<List<EdInterfaceEnet.EnetConnection>> SearchVehiclesTask()
@@ -525,7 +525,7 @@ namespace PsdzClient
                 return;
             }
 
-            StopProgrammingServiceTask().ContinueWith(task =>
+            StopProgrammingServiceTask(textBoxIstaFolder.Text).ContinueWith(task =>
             {
                 TaskActive = false;
                 if (e == null)

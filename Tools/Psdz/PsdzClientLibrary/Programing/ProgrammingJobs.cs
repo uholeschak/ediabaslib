@@ -216,13 +216,18 @@ namespace PsdzClient.Programing
             }
         }
 
-        public bool StopProgrammingService(CancellationTokenSource cts)
+        public bool StopProgrammingService(CancellationTokenSource cts, string istaFolder)
         {
             StringBuilder sbResult = new StringBuilder();
             try
             {
                 sbResult.AppendLine("Stopping host ...");
                 UpdateStatus(sbResult.ToString());
+
+                if (ProgrammingService == null && PsdzServiceStarter.IsServerInstanceRunning())
+                {
+                    ProgrammingService = new ProgrammingService(istaFolder, _dealerId);
+                }
 
                 if (ProgrammingService != null)
                 {

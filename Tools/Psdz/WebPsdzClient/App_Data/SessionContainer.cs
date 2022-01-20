@@ -1628,14 +1628,14 @@ namespace WebPsdzClient.App_Data
             return await Task.Run(() => ProgrammingJobs.StartProgrammingService(Cts, istaFolder)).ConfigureAwait(false);
         }
 
-        public void StopProgrammingService()
+        public void StopProgrammingService(string istaFolder)
         {
             if (TaskActive)
             {
                 return;
             }
 
-            StopProgrammingServiceTask().ContinueWith(task =>
+            StopProgrammingServiceTask(istaFolder).ContinueWith(task =>
             {
                 TaskActive = false;
                 StopTcpListener();
@@ -1647,9 +1647,9 @@ namespace WebPsdzClient.App_Data
             UpdateDisplay();
         }
 
-        public async Task<bool> StopProgrammingServiceTask()
+        public async Task<bool> StopProgrammingServiceTask(string istaFolder)
         {
-            return await Task.Run(() => ProgrammingJobs.StopProgrammingService(Cts)).ConfigureAwait(false);
+            return await Task.Run(() => ProgrammingJobs.StopProgrammingService(Cts, istaFolder)).ConfigureAwait(false);
         }
 
         public void ConnectVehicle(string istaFolder)
@@ -1791,7 +1791,7 @@ namespace WebPsdzClient.App_Data
                     Thread.Sleep(100);
                 }
 
-                StopProgrammingService();
+                StopProgrammingService(Global.IstaFolder);
 
                 if (ProgrammingJobs != null)
                 {
