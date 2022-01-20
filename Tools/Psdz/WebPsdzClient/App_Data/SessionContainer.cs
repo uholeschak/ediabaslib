@@ -451,25 +451,7 @@ namespace WebPsdzClient.App_Data
             {
                 lock (_threadLockObject)
                 {
-                    if (_enetTcpChannels.Count == 0)
-                    {
-                        return true;
-                    }
-
-                    foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
-                    {
-                        TcpClientsDisconnect(enetTcpChannel);
-
-                        if (enetTcpChannel.TcpServer != null)
-                        {
-                            log.ErrorFormat("StopTcpListener Stopping Port: {0}, Control: {1}", enetTcpChannel.ServerPort, enetTcpChannel.Control);
-                            enetTcpChannel.TcpServer.Stop();
-                            enetTcpChannel.TcpServer = null;
-                            enetTcpChannel.ServerPort = 0;
-                        }
-                    }
-
-                    _enetTcpChannels.Clear();
+                    StopTcpServers();
 
                     if (_tcpThread != null)
                     {
@@ -504,6 +486,29 @@ namespace WebPsdzClient.App_Data
             }
 
             return false;
+        }
+
+        private void StopTcpServers()
+        {
+            if (_enetTcpChannels.Count == 0)
+            {
+                return;
+            }
+
+            foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
+            {
+                TcpClientsDisconnect(enetTcpChannel);
+
+                if (enetTcpChannel.TcpServer != null)
+                {
+                    log.ErrorFormat("StopTcpListener Stopping Port: {0}, Control: {1}", enetTcpChannel.ServerPort, enetTcpChannel.Control);
+                    enetTcpChannel.TcpServer.Stop();
+                    enetTcpChannel.TcpServer = null;
+                    enetTcpChannel.ServerPort = 0;
+                }
+            }
+
+            _enetTcpChannels.Clear();
         }
 
         private void TcpClientsDisconnect(EnetTcpChannel enetTcpChannel)
@@ -1161,9 +1166,9 @@ namespace WebPsdzClient.App_Data
                 }
             }
 
-            foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
+            lock (_threadLockObject)
             {
-                TcpClientsDisconnect(enetTcpChannel);
+                StopTcpServers();
             }
 
             log.InfoFormat("TcpThread stopped");
