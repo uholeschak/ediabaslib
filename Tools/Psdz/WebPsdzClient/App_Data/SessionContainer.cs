@@ -1075,7 +1075,21 @@ namespace WebPsdzClient.App_Data
                             }
                             else
                             {
-                                if (enetTcpClientData.RecQueue.Count > 0)
+                                if (!_vehicleThread.IsAlive)
+                                {
+                                    lock (enetTcpClientData.RecQueue)
+                                    {
+                                        GetQueuePacket(enetTcpClientData.RecQueue);
+                                    }
+                                }
+
+                                int recCount;
+                                lock (enetTcpClientData.RecQueue)
+                                {
+                                    recCount = enetTcpClientData.RecQueue.Count;
+                                }
+
+                                if (recCount > 0)
                                 {
                                     enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
                                     _vehicleThreadWakeEvent.Set();
