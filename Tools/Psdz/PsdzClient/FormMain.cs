@@ -95,6 +95,7 @@ namespace PsdzClient
             _programmingJobs.UpdateStatusEvent += UpdateStatus;
             _programmingJobs.ProgressEvent += UpdateProgress;
             _programmingJobs.UpdateOptionsEvent += UpdateOptions;
+            _programmingJobs.ServiceInitializedEvent += ServiceInitialized;
         }
 
         private void UpdateDisplay()
@@ -123,9 +124,8 @@ namespace PsdzClient
             ipAddressControlVehicleIp.Enabled = ipEnabled;
             checkBoxIcom.Enabled = ipEnabled;
             buttonVehicleSearch.Enabled = ipEnabled;
-            buttonStartHost.Enabled = !active && !hostRunning;
             buttonStopHost.Enabled = !active && hostRunning;
-            buttonConnect.Enabled = !active && hostRunning && !vehicleConnected;
+            buttonConnect.Enabled = !active && !vehicleConnected;
             buttonDisconnect.Enabled = !active && hostRunning && vehicleConnected;
             buttonCreateOptions.Enabled = !active && hostRunning && vehicleConnected && _optionsDict == null;
             buttonModILevel.Enabled = modifyTal;
@@ -229,6 +229,12 @@ namespace PsdzClient
             }
             progressBarEvent.Value = percent;
             labelProgressEvent.Text = message ?? string.Empty;
+        }
+
+        private void ServiceInitialized(ProgrammingService programmingService)
+        {
+            string logFile = Path.Combine(programmingService.GetPsdzServiceHostLogDir(), "PsdzClient.log");
+            ProgrammingJobs.SetupLog4Net(logFile);
         }
 
         private void UpdateCurrentOptions()
@@ -414,15 +420,6 @@ namespace PsdzClient
             UpdateCurrentOptions();
         }
 
-        private async Task<bool> StartProgrammingServiceTask(string istaFolder)
-        {
-            return await Task.Run(() => _programmingJobs.StartProgrammingService(_cts, istaFolder, service =>
-            {
-                string logFile = Path.Combine(service.GetPsdzServiceHostLogDir(), "PsdzClient.log");
-                ProgrammingJobs.SetupLog4Net(logFile);
-            })).ConfigureAwait(false);
-        }
-
         private async Task<bool> StopProgrammingServiceTask()
         {
             // ReSharper disable once ConvertClosureToMethodGroup
@@ -518,25 +515,6 @@ namespace PsdzClient
 
         private void timerUpdate_Tick(object sender, EventArgs e)
         {
-            UpdateDisplay();
-        }
-
-        private void buttonStartHost_Click(object sender, EventArgs e)
-        {
-            if (TaskActive)
-            {
-                return;
-            }
-
-            _cts = new CancellationTokenSource();
-            StartProgrammingServiceTask(textBoxIstaFolder.Text).ContinueWith(task =>
-            {
-                TaskActive = false;
-                _cts.Dispose();
-                _cts = null;
-            });
-
-            TaskActive = true;
             UpdateDisplay();
         }
 

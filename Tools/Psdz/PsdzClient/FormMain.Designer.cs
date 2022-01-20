@@ -36,7 +36,6 @@ namespace PsdzClient
             this.buttonAbort = new System.Windows.Forms.Button();
             this.folderBrowserDialogIsta = new System.Windows.Forms.FolderBrowserDialog();
             this.buttonIstaFolder = new System.Windows.Forms.Button();
-            this.buttonStartHost = new System.Windows.Forms.Button();
             this.buttonStopHost = new System.Windows.Forms.Button();
             this.timerUpdate = new System.Windows.Forms.Timer(this.components);
             this.textBoxStatus = new System.Windows.Forms.TextBox();
@@ -104,19 +103,9 @@ namespace PsdzClient
             this.buttonIstaFolder.UseVisualStyleBackColor = true;
             this.buttonIstaFolder.Click += new System.EventHandler(this.buttonIstaFolder_Click);
             // 
-            // buttonStartHost
-            // 
-            this.buttonStartHost.Location = new System.Drawing.Point(12, 97);
-            this.buttonStartHost.Name = "buttonStartHost";
-            this.buttonStartHost.Size = new System.Drawing.Size(75, 23);
-            this.buttonStartHost.TabIndex = 11;
-            this.buttonStartHost.Text = "Start Host";
-            this.buttonStartHost.UseVisualStyleBackColor = true;
-            this.buttonStartHost.Click += new System.EventHandler(this.buttonStartHost_Click);
-            // 
             // buttonStopHost
             // 
-            this.buttonStopHost.Location = new System.Drawing.Point(93, 97);
+            this.buttonStopHost.Location = new System.Drawing.Point(12, 97);
             this.buttonStopHost.Name = "buttonStopHost";
             this.buttonStopHost.Size = new System.Drawing.Size(75, 23);
             this.buttonStopHost.TabIndex = 12;
@@ -167,7 +156,7 @@ namespace PsdzClient
             // 
             // buttonConnect
             // 
-            this.buttonConnect.Location = new System.Drawing.Point(174, 97);
+            this.buttonConnect.Location = new System.Drawing.Point(93, 97);
             this.buttonConnect.Name = "buttonConnect";
             this.buttonConnect.Size = new System.Drawing.Size(75, 23);
             this.buttonConnect.TabIndex = 13;
@@ -177,7 +166,7 @@ namespace PsdzClient
             // 
             // buttonDisconnect
             // 
-            this.buttonDisconnect.Location = new System.Drawing.Point(255, 97);
+            this.buttonDisconnect.Location = new System.Drawing.Point(174, 97);
             this.buttonDisconnect.Name = "buttonDisconnect";
             this.buttonDisconnect.Size = new System.Drawing.Size(75, 23);
             this.buttonDisconnect.TabIndex = 14;
@@ -187,7 +176,7 @@ namespace PsdzClient
             // 
             // buttonModILevel
             // 
-            this.buttonModILevel.Location = new System.Drawing.Point(417, 97);
+            this.buttonModILevel.Location = new System.Drawing.Point(336, 97);
             this.buttonModILevel.Name = "buttonModILevel";
             this.buttonModILevel.Size = new System.Drawing.Size(75, 23);
             this.buttonModILevel.TabIndex = 16;
@@ -206,7 +195,7 @@ namespace PsdzClient
             // 
             // buttonModFa
             // 
-            this.buttonModFa.Location = new System.Drawing.Point(498, 97);
+            this.buttonModFa.Location = new System.Drawing.Point(417, 97);
             this.buttonModFa.Name = "buttonModFa";
             this.buttonModFa.Size = new System.Drawing.Size(75, 23);
             this.buttonModFa.TabIndex = 17;
@@ -216,7 +205,7 @@ namespace PsdzClient
             // 
             // buttonExecuteTal
             // 
-            this.buttonExecuteTal.Location = new System.Drawing.Point(579, 97);
+            this.buttonExecuteTal.Location = new System.Drawing.Point(498, 97);
             this.buttonExecuteTal.Name = "buttonExecuteTal";
             this.buttonExecuteTal.Size = new System.Drawing.Size(75, 23);
             this.buttonExecuteTal.TabIndex = 18;
@@ -264,7 +253,7 @@ namespace PsdzClient
             // 
             // buttonCreateOptions
             // 
-            this.buttonCreateOptions.Location = new System.Drawing.Point(336, 97);
+            this.buttonCreateOptions.Location = new System.Drawing.Point(255, 97);
             this.buttonCreateOptions.Name = "buttonCreateOptions";
             this.buttonCreateOptions.Size = new System.Drawing.Size(75, 23);
             this.buttonCreateOptions.TabIndex = 15;
@@ -350,7 +339,6 @@ namespace PsdzClient
             this.Controls.Add(this.ipAddressControlVehicleIp);
             this.Controls.Add(this.textBoxStatus);
             this.Controls.Add(this.buttonStopHost);
-            this.Controls.Add(this.buttonStartHost);
             this.Controls.Add(this.buttonIstaFolder);
             this.Controls.Add(this.buttonAbort);
             this.Controls.Add(this.buttonClose);
@@ -375,7 +363,6 @@ namespace PsdzClient
         private System.Windows.Forms.Button buttonAbort;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialogIsta;
         private System.Windows.Forms.Button buttonIstaFolder;
-        private System.Windows.Forms.Button buttonStartHost;
         private System.Windows.Forms.Button buttonStopHost;
         private System.Windows.Forms.Timer timerUpdate;
         private System.Windows.Forms.TextBox textBoxStatus;

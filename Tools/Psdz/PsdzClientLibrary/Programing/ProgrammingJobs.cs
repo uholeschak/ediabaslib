@@ -99,6 +99,7 @@ namespace PsdzClient.Programing
         public event UpdateOptionsDelegate UpdateOptionsEvent;
 
         public delegate void ServiceInitialized(ProgrammingService programmingService);
+        public event ServiceInitialized ServiceInitializedEvent;
 
         private static readonly ILog log = LogManager.GetLogger(typeof(ProgrammingJobs));
         private OptionType[] _optionTypes =
@@ -125,7 +126,7 @@ namespace PsdzClient.Programing
             ProgrammingService = null;
         }
 
-        public bool StartProgrammingService(CancellationTokenSource cts, string istaFolder, ServiceInitialized serviceInitializedHandler = null)
+        public bool StartProgrammingService(CancellationTokenSource cts, string istaFolder)
         {
             StringBuilder sbResult = new StringBuilder();
             try
@@ -142,9 +143,9 @@ namespace PsdzClient.Programing
                 {
                     ProgrammingService = new ProgrammingService(istaFolder, _dealerId);
                     ClientContext.Database = ProgrammingService.PdszDatabase;
-                    if (serviceInitializedHandler != null)
+                    if (ServiceInitializedEvent != null)
                     {
-                        serviceInitializedHandler.Invoke(ProgrammingService);
+                        ServiceInitializedEvent.Invoke(ProgrammingService);
                     }
 
                     ProgrammingService.EventManager.ProgrammingEventRaised += (sender, args) =>
@@ -250,6 +251,14 @@ namespace PsdzClient.Programing
         {
             log.InfoFormat("ConnectVehicle Start - Ip: {0}, ICOM: {1}", remoteHost, useIcom);
             StringBuilder sbResult = new StringBuilder();
+
+            if (ProgrammingService == null)
+            {
+                if (!StartProgrammingService(cts, istaFolder))
+                {
+                    return false;
+                }
+            }
 
             try
             {
