@@ -134,75 +134,75 @@ namespace PsdzClient.Programing
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "DealerId={0}", _dealerId));
                 UpdateStatus(sbResult.ToString());
 
-                if (ProgrammingService != null && ProgrammingService.IsPsdzPsdzServiceHostInitialized())
+                if (ProgrammingService != null)
                 {
-                    if (!StopProgrammingService(cts))
+                    sbResult.AppendLine("Programming service already existing");
+                }
+                else
+                {
+                    ProgrammingService = new ProgrammingService(istaFolder, _dealerId);
+                    ClientContext.Database = ProgrammingService.PdszDatabase;
+                    if (serviceInitializedHandler != null)
                     {
-                        sbResult.AppendLine("Stop host failed");
+                        serviceInitializedHandler.Invoke(ProgrammingService);
+                    }
+
+                    ProgrammingService.EventManager.ProgrammingEventRaised += (sender, args) =>
+                    {
+                        if (args is ProgrammingTaskEventArgs programmingEventArgs)
+                        {
+                            if (programmingEventArgs.IsTaskFinished)
+                            {
+                                ProgressEvent?.Invoke(100, false);
+                            }
+                            else
+                            {
+                                int progress = (int)(programmingEventArgs.Progress * 100.0);
+                                string message = string.Format(CultureInfo.InvariantCulture, "{0}%, {1}s", progress, programmingEventArgs.TimeLeftSec);
+                                ProgressEvent?.Invoke(progress, false, message);
+                            }
+                        }
+                    };
+
+                    sbResult.AppendLine("Generating test module data ...");
+                    UpdateStatus(sbResult.ToString());
+                    bool result = ProgrammingService.PdszDatabase.GenerateTestModuleData(progress =>
+                    {
+                        string message = string.Format(CultureInfo.InvariantCulture, "{0}%", progress);
+                        ProgressEvent?.Invoke(progress, false, message);
+
+                        if (cts != null)
+                        {
+                            return cts.Token.IsCancellationRequested;
+                        }
+                        return false;
+                    });
+
+                    ProgressEvent?.Invoke(0, true);
+
+                    if (!result)
+                    {
+                        sbResult.AppendLine("Generating test module data failed");
                         UpdateStatus(sbResult.ToString());
                         return false;
                     }
                 }
 
-                ProgrammingService = new ProgrammingService(istaFolder, _dealerId);
-                ClientContext.Database = ProgrammingService.PdszDatabase;
-                if (serviceInitializedHandler != null)
+                if (!PsdzServiceStarter.IsServerInstanceRunning())
                 {
-                    serviceInitializedHandler.Invoke(ProgrammingService);
-                }
-
-                ProgrammingService.EventManager.ProgrammingEventRaised += (sender, args) =>
-                {
-                    if (args is ProgrammingTaskEventArgs programmingEventArgs)
-                    {
-                        if (programmingEventArgs.IsTaskFinished)
-                        {
-                            ProgressEvent?.Invoke(100, false);
-                        }
-                        else
-                        {
-                            int progress = (int)(programmingEventArgs.Progress * 100.0);
-                            string message = string.Format(CultureInfo.InvariantCulture, "{0}%, {1}s", progress, programmingEventArgs.TimeLeftSec);
-                            ProgressEvent?.Invoke(progress, false, message);
-                        }
-                    }
-                };
-
-                sbResult.AppendLine("Generating test module data ...");
-                UpdateStatus(sbResult.ToString());
-                bool result = ProgrammingService.PdszDatabase.GenerateTestModuleData(progress =>
-                {
-                    string message = string.Format(CultureInfo.InvariantCulture, "{0}%", progress);
-                    ProgressEvent?.Invoke(progress, false, message);
-
-                    if (cts != null)
-                    {
-                        return cts.Token.IsCancellationRequested;
-                    }
-                    return false;
-                });
-
-                ProgressEvent?.Invoke(0, true);
-
-                if (!result)
-                {
-                    sbResult.AppendLine("Generating test module data failed");
+                    sbResult.AppendLine("Starting host ...");
                     UpdateStatus(sbResult.ToString());
-                    return false;
-                }
+                    if (!ProgrammingService.StartPsdzServiceHost())
+                    {
+                        sbResult.AppendLine("Start host failed");
+                        UpdateStatus(sbResult.ToString());
+                        return false;
+                    }
 
-                sbResult.AppendLine("Starting host ...");
-                UpdateStatus(sbResult.ToString());
-                if (!ProgrammingService.StartPsdzServiceHost())
-                {
-                    sbResult.AppendLine("Start host failed");
+                    ProgrammingService.SetLogLevelToMax();
+                    sbResult.AppendLine("Host started");
                     UpdateStatus(sbResult.ToString());
-                    return false;
                 }
-
-                ProgrammingService.SetLogLevelToMax();
-                sbResult.AppendLine("Host started");
-                UpdateStatus(sbResult.ToString());
 
                 ProgrammingService.PdszDatabase.ResetXepRules();
                 return true;
