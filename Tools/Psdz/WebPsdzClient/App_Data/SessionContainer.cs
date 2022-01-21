@@ -610,6 +610,11 @@ namespace WebPsdzClient.App_Data
         {
             try
             {
+                if (enetTcpClientData.TcpClientStream == null)
+                {
+                    return false;
+                }
+
                 enetTcpClientData.TcpClientStream.BeginRead(enetTcpClientData.DataBuffer, 0, enetTcpClientData.DataBuffer.Length, TcpReceiver, enetTcpClientData);
                 return true;
             }
@@ -1057,6 +1062,11 @@ namespace WebPsdzClient.App_Data
                                 TcpClientConnect(enetTcpChannel.TcpServer, enetTcpClientData);
                             }
 
+                            if (!_vehicleThread.IsAlive)
+                            {
+                                TcpClientDisconnect(enetTcpClientData);
+                            }
+
                             if (enetTcpChannel.Control)
                             {
                                 byte[] recPacket;
@@ -1090,11 +1100,6 @@ namespace WebPsdzClient.App_Data
                             }
                             else
                             {
-                                if (!_vehicleThread.IsAlive)
-                                {
-                                    _stopThread = true;
-                                }
-
                                 int recCount;
                                 lock (enetTcpClientData.RecQueue)
                                 {
@@ -1158,11 +1163,6 @@ namespace WebPsdzClient.App_Data
                         }
                     }
                 }
-            }
-
-            foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
-            {
-                TcpClientsDisconnect(enetTcpChannel);
             }
 
             log.InfoFormat("TcpThread stopped");
