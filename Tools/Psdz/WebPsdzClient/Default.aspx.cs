@@ -62,8 +62,6 @@ namespace WebPsdzClient
                 {
                     log.ErrorFormat("Page_Load Exception: {0}", ex.Message);
                 }
-
-                UpdateStatus();
             }
 
             if (!IsPostBack || sessionContainer.RefreshOptions)
@@ -284,6 +282,14 @@ namespace WebPsdzClient
         protected void TimerUpdate_Tick(object sender, EventArgs e)
         {
             log.InfoFormat("_Default TimerUpdate_Tick");
+
+            SessionContainer sessionContainer = GetSessionContainer();
+            if (sessionContainer == null)
+            {
+                return;
+            }
+
+            sessionContainer.UpdateDisplay(false);
         }
 
         private SessionContainer GetSessionContainer()
@@ -297,9 +303,9 @@ namespace WebPsdzClient
             return null;
         }
 
-        private void UpdateStatus(bool withButtons = false)
+        private void UpdateStatus()
         {
-            log.InfoFormat("UpdateStatus Buttons: {0}", withButtons);
+            log.InfoFormat("UpdateStatus");
 
             try
             {
@@ -340,7 +346,7 @@ namespace WebPsdzClient
                 TextBoxStatus.Text = sessionContainer.StatusText;
                 TextBoxProgress.Text = sessionContainer.ProgressText;
 
-                UpdatePanels(withButtons);
+                UpdatePanels();
             }
             catch (Exception ex)
             {
@@ -348,23 +354,8 @@ namespace WebPsdzClient
             }
         }
 
-        private void UpdatePanels(bool withButtons = false)
+        private void UpdatePanels()
         {
-            if (withButtons)
-            {
-                try
-                {
-                    if (!UpdatePanelHeader.IsInPartialRendering)
-                    {
-                        UpdatePanelHeader.Update();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    log.ErrorFormat("UpdatePanels Exception: {0}", ex.Message);
-                }
-            }
-
             try
             {
                 if (!UpdatePanelStatus.IsInPartialRendering)
@@ -546,11 +537,6 @@ namespace WebPsdzClient
             log.InfoFormat("GetSelectedSwiActions Count: {0}", selectedSwiActions.Count);
 
             return selectedSwiActions;
-        }
-
-        protected void UpdatePanelHeader_OnLoad(object sender, EventArgs e)
-        {
-            UpdateStatus(true);
         }
 
         protected void UpdatePanelStatus_OnLoad(object sender, EventArgs e)

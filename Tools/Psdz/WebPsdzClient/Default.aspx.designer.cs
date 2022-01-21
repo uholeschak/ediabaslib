@@ -15,13 +15,13 @@ namespace WebPsdzClient
     {
 
         /// <summary>
-        /// UpdatePanelHeader-Steuerelement.
+        /// UpdatePanelStatus-Steuerelement.
         /// </summary>
         /// <remarks>
         /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanelHeader;
+        protected global::System.Web.UI.UpdatePanel UpdatePanelStatus;
 
         /// <summary>
         /// PanelButtons-Steuerelement.
@@ -121,15 +121,6 @@ namespace WebPsdzClient
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBoxList CheckBoxListOptions;
-
-        /// <summary>
-        /// UpdatePanelStatus-Steuerelement.
-        /// </summary>
-        /// <remarks>
-        /// Automatisch generiertes Feld.
-        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
-        /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanelStatus;
 
         /// <summary>
         /// PanelStatus-Steuerelement.

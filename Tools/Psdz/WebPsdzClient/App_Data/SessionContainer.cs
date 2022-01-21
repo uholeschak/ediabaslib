@@ -1484,7 +1484,7 @@ namespace WebPsdzClient.App_Data
             }
         }
 
-        public void UpdateDisplay(bool withHeader = false)
+        public void UpdateDisplay(bool updatePanel = true)
         {
             try
             {
@@ -1498,7 +1498,7 @@ namespace WebPsdzClient.App_Data
                 List<string> connectionIds = PsdzVehicleHub.GetConnectionIds(SessionId);
                 foreach (string connectionId in connectionIds)
                 {
-                    hubContext.Clients.Client(connectionId)?.UpdatePanels(withHeader, !withHeader);
+                    hubContext.Clients.Client(connectionId)?.UpdatePanels(updatePanel);
                 }
             }
             catch (Exception ex)
@@ -1531,7 +1531,7 @@ namespace WebPsdzClient.App_Data
             }
 
             RefreshOptions = true;
-            UpdateDisplay(true);
+            UpdateDisplay();
         }
 
         private void UpdateProgress(int percent, bool marquee, string message = null)

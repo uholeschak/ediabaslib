@@ -194,21 +194,10 @@
                 sendRequest(url, id, formData);
             }
 
-            psdzVehicleHubProxy.client.updatePanels = function (header, status)
+            psdzVehicleHubProxy.client.updatePanels = function (status)
             {
-                var logMessage = "Update Panels: Header=" + header + ", Status=" + status;
+                var logMessage = "Update Panels: Status=" + status;
                 console.log(logMessage);
-                if (header)
-                {
-                    if (typeof updatePanelHeader === "function")
-                    {
-                        updatePanelHeader();
-                    }
-                    else
-                    {
-                        console.log("updatePanelHeader not existing");
-                    }
-                }
 
                 if (status)
                 {
