@@ -257,5 +257,8 @@ namespace PsdzClient
 
         [HubMethodName("vehicleSend")]
         Task VehicleSend(string url, string id, string data);
+
+        [HubMethodName("updatePanels")]
+        Task UpdatePanels(bool header, bool status);
     }
 }

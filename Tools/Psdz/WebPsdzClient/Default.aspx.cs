@@ -31,9 +31,6 @@ namespace WebPsdzClient
                 return;
             }
 
-            sessionContainer.UpdateDisplayFunc = UpdateDisplay;
-            sessionContainer.UpdateOptionsFunc = UpdateOptions;
-
             if (!IsPostBack)
             {
                 try
@@ -66,7 +63,7 @@ namespace WebPsdzClient
                     log.ErrorFormat("Page_Load Exception: {0}", ex.Message);
                 }
 
-                UpdateDisplay();
+                UpdateStatus();
             }
 
             if (!IsPostBack || sessionContainer.RefreshOptions)
@@ -286,7 +283,7 @@ namespace WebPsdzClient
 
         protected void TimerUpdate_Tick(object sender, EventArgs e)
         {
-            UpdateStatus(true);
+            log.InfoFormat("_Default TimerUpdate_Tick");
         }
 
         private SessionContainer GetSessionContainer()
@@ -300,14 +297,9 @@ namespace WebPsdzClient
             return null;
         }
 
-        private void UpdateDisplay()
+        private void UpdateStatus(bool withButtons = false)
         {
-            UpdateStatus();
-        }
-
-        private void UpdateStatus(bool fromTimer = false)
-        {
-            log.InfoFormat("UpdateStatus FromTimer: {0}", fromTimer);
+            log.InfoFormat("UpdateStatus Buttons: {0}", withButtons);
 
             try
             {
@@ -348,7 +340,7 @@ namespace WebPsdzClient
                 TextBoxStatus.Text = sessionContainer.StatusText;
                 TextBoxProgress.Text = sessionContainer.ProgressText;
 
-                UpdatePanels(fromTimer);
+                UpdatePanels(withButtons);
             }
             catch (Exception ex)
             {
@@ -356,9 +348,9 @@ namespace WebPsdzClient
             }
         }
 
-        private void UpdatePanels(bool fromTimer = false)
+        private void UpdatePanels(bool withButtons = false)
         {
-            if (!fromTimer)
+            if (withButtons)
             {
                 try
                 {
@@ -554,6 +546,16 @@ namespace WebPsdzClient
             log.InfoFormat("GetSelectedSwiActions Count: {0}", selectedSwiActions.Count);
 
             return selectedSwiActions;
+        }
+
+        protected void UpdatePanelHeader_OnLoad(object sender, EventArgs e)
+        {
+            UpdateStatus(true);
+        }
+
+        protected void UpdatePanelStatus_OnLoad(object sender, EventArgs e)
+        {
+            UpdateStatus();
         }
     }
 }

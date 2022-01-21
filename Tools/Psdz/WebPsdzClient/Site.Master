@@ -194,6 +194,35 @@
                 sendRequest(url, id, formData);
             }
 
+            psdzVehicleHubProxy.client.updatePanels = function (header, status)
+            {
+                var logMessage = "Update Panels: Header=" + header + ", Status=" + status;
+                console.log(logMessage);
+                if (header)
+                {
+                    if (typeof updatePanelHeader === "function")
+                    {
+                        updatePanelHeader();
+                    }
+                    else
+                    {
+                        console.log("updatePanelHeader not existing");
+                    }
+                }
+
+                if (status)
+                {
+                    if (typeof updatePanelStatus === "function")
+                    {
+                        updatePanelStatus();
+                    }
+                    else
+                    {
+                        console.log("updatePanelStatus not existing");
+                    }
+                }
+            }
+
             $.connection.hub.qs = { 'sessionId' : sessionID };
             $.connection.hub.start().done(function ()
                 {

@@ -67,8 +67,6 @@ namespace WebPsdzClient.App_Data
             public AutoResetEvent SendEvent;
         }
 
-        public delegate void UpdateDisplayDelegate();
-        public delegate void UpdateOptionsDelegate();
         public delegate bool VehicleResponseDelegate();
         public string SessionId { get; }
         public ProgrammingJobs ProgrammingJobs { get; private set; }
@@ -180,44 +178,6 @@ namespace WebPsdzClient.App_Data
                 lock (_lockObject)
                 {
                     _optionsDict = value;
-                }
-            }
-        }
-
-        private UpdateDisplayDelegate _updateDisplay;
-        public UpdateDisplayDelegate UpdateDisplayFunc
-        {
-            get
-            {
-                lock (_lockObject)
-                {
-                    return _updateDisplay;
-                }
-            }
-            set
-            {
-                lock (_lockObject)
-                {
-                    _updateDisplay = value;
-                }
-            }
-        }
-
-        private UpdateOptionsDelegate _updateOptions;
-        public UpdateOptionsDelegate UpdateOptionsFunc
-        {
-            get
-            {
-                lock (_lockObject)
-                {
-                    return _updateOptions;
-                }
-            }
-            set
-            {
-                lock (_lockObject)
-                {
-                    _updateOptions = value;
                 }
             }
         }
@@ -1524,9 +1484,27 @@ namespace WebPsdzClient.App_Data
             }
         }
 
-        public void UpdateDisplay()
+        public void UpdateDisplay(bool withHeader = false)
         {
-            UpdateDisplayFunc?.Invoke();
+            try
+            {
+                IHubContext<IPsdzClient> hubContext = GlobalHost.ConnectionManager.GetHubContext<PsdzVehicleHub, IPsdzClient>();
+                if (hubContext == null)
+                {
+                    log.ErrorFormat("UpdateDisplay No hub context");
+                    return;
+                }
+
+                List<string> connectionIds = PsdzVehicleHub.GetConnectionIds(SessionId);
+                foreach (string connectionId in connectionIds)
+                {
+                    hubContext.Clients.Client(connectionId)?.UpdatePanels(withHeader, !withHeader);
+                }
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("UpdateDisplay Exception: {0}", ex.Message);
+            }
         }
 
         public void UpdateOptions(Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict)
@@ -1552,7 +1530,8 @@ namespace WebPsdzClient.App_Data
                 log.ErrorFormat("UpdateCurrentOptions Exception: {0}", ex.Message);
             }
 
-            UpdateOptionsFunc?.Invoke();
+            RefreshOptions = true;
+            UpdateDisplay(true);
         }
 
         private void UpdateProgress(int percent, bool marquee, string message = null)
@@ -1574,7 +1553,7 @@ namespace WebPsdzClient.App_Data
             if (ProgressText != text)
             {
                 ProgressText = text;
-                UpdateDisplayFunc.Invoke();
+                UpdateDisplay();
             }
         }
 
