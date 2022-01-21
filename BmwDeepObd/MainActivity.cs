@@ -1494,8 +1494,8 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_global_settings:
-                    EditGlobalSettings();
-                    //StartBmwCoding();
+                    //EditGlobalSettings();
+                    StartBmwCoding();
                     return true;
 
                 case Resource.Id.menu_submenu_help:

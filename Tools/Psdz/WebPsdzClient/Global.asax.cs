@@ -24,16 +24,6 @@ namespace WebPsdzClient
 
         private static readonly ILog log = LogManager.GetLogger(typeof(Global));
 
-        public override void Init()
-        {
-            base.Init();
-        }
-
-        public override void Dispose()
-        {
-            base.Dispose();
-        }
-
         protected void Application_Start(object sender, EventArgs e)
         {
             // Code, der beim Anwendungsstart ausgeführt wird
@@ -64,6 +54,11 @@ namespace WebPsdzClient
         protected void Application_End(object sender, EventArgs e)
         {
             log.InfoFormat("Application_End");
+        }
+
+        protected void Application_Disposed(object sender, EventArgs e)
+        {
+            log.InfoFormat("Application_Disposed");
         }
 
         protected void Session_Start(object sender, EventArgs e)
