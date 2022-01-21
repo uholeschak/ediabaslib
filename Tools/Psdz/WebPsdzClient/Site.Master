@@ -229,6 +229,19 @@
                     psdzVehicleHubProxy.server.sessionConnected(sessionID);
                 }
             );
+            $.connection.hub.disconnected(function ()
+                {
+                    console.log("Hub disconnected");
+                    setTimeout(function ()
+                    {
+                        console.log("Reconnecting hub");
+                        $.connection.hub.start().done(function ()
+                        {
+                            psdzVehicleHubProxy.server.sessionConnected(sessionID);
+                        });
+                    }, 5000);
+                }
+            );
         </script>
 <!--
         <div class="navbar navbar-inverse navbar-fixed-top">
