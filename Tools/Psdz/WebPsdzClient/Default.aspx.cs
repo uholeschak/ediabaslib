@@ -95,6 +95,11 @@ namespace WebPsdzClient
                 return;
             }
 
+            if (sessionContainer.TaskActive)
+            {
+                return;
+            }
+
             sessionContainer.StopProgrammingService(Global.IstaFolder);
         }
 
@@ -102,6 +107,11 @@ namespace WebPsdzClient
         {
             SessionContainer sessionContainer = GetSessionContainer();
             if (sessionContainer == null)
+            {
+                return;
+            }
+
+            if (sessionContainer.TaskActive)
             {
                 return;
             }
@@ -117,6 +127,11 @@ namespace WebPsdzClient
                 return;
             }
 
+            if (sessionContainer.TaskActive)
+            {
+                return;
+            }
+
             sessionContainer.DisconnectVehicle();
         }
 
@@ -128,6 +143,11 @@ namespace WebPsdzClient
                 return;
             }
 
+            if (sessionContainer.TaskActive)
+            {
+                return;
+            }
+
             sessionContainer.VehicleFunctions(ProgrammingJobs.OperationType.CreateOptions);
         }
 
@@ -135,6 +155,11 @@ namespace WebPsdzClient
         {
             SessionContainer sessionContainer = GetSessionContainer();
             if (sessionContainer == null)
+            {
+                return;
+            }
+
+            if (sessionContainer.TaskActive)
             {
                 return;
             }
@@ -151,6 +176,11 @@ namespace WebPsdzClient
                 return;
             }
 
+            if (sessionContainer.TaskActive)
+            {
+                return;
+            }
+
             sessionContainer.VehicleFunctions(ProgrammingJobs.OperationType.ExecuteTal);
         }
 
@@ -158,6 +188,11 @@ namespace WebPsdzClient
         {
             SessionContainer sessionContainer = GetSessionContainer();
             if (sessionContainer == null)
+            {
+                return;
+            }
+
+            if (!sessionContainer.TaskActive)
             {
                 return;
             }
