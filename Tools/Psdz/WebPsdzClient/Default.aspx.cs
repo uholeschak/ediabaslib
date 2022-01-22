@@ -62,6 +62,16 @@ namespace WebPsdzClient
                 {
                     log.ErrorFormat("Page_Load Exception: {0}", ex.Message);
                 }
+
+                UpdateStatus();
+            }
+            else
+            {
+                Control postbackControl = GetPostBackControl(this);
+                if (postbackControl == UpdatePanelStatus)
+                {
+                    UpdateStatus(true);
+                }
             }
 
             if (!IsPostBack || sessionContainer.RefreshOptions)
@@ -303,9 +313,9 @@ namespace WebPsdzClient
             return null;
         }
 
-        private void UpdateStatus()
+        private void UpdateStatus(bool fromUpdatePanel = false)
         {
-            log.InfoFormat("UpdateStatus");
+            log.InfoFormat("UpdateStatus From Panel: {0}", fromUpdatePanel);
 
             try
             {
@@ -346,7 +356,10 @@ namespace WebPsdzClient
                 TextBoxStatus.Text = sessionContainer.StatusText;
                 TextBoxProgress.Text = sessionContainer.ProgressText;
 
-                UpdatePanels();
+                if (fromUpdatePanel)
+                {
+                    UpdatePanels();
+                }
             }
             catch (Exception ex)
             {
@@ -539,9 +552,29 @@ namespace WebPsdzClient
             return selectedSwiActions;
         }
 
-        protected void UpdatePanelStatus_OnLoad(object sender, EventArgs e)
+        public static Control GetPostBackControl(Page page)
         {
-            UpdateStatus();
+            Control control = null;
+            string ctrlname = page.Request.Params.Get("__EVENTTARGET");
+            if (!string.IsNullOrEmpty(ctrlname))
+            {
+                control = page.FindControl(ctrlname);
+            }
+            else
+            {
+                foreach (string ctl in page.Request.Form)
+                {
+                    Control c = page.FindControl(ctl);
+                    if (c is System.Web.UI.WebControls.Button)
+                    {
+                        control = c;
+                        break;
+                    }
+                }
+
+            }
+
+            return control;
         }
     }
 }
