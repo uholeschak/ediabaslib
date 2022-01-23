@@ -19,12 +19,12 @@ namespace WebPsdzClient
 
         protected void Page_Init(object sender, EventArgs e)
         {
-            log.InfoFormat("_Default Page_Init");
+            //log.InfoFormat("_Default Page_Init");
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            log.InfoFormat("_Default Page_Load");
+            //log.InfoFormat("_Default Page_Load");
             SessionContainer sessionContainer = GetSessionContainer();
             if (sessionContainer == null)
             {
@@ -86,7 +86,7 @@ namespace WebPsdzClient
 
         protected void Page_Unload(object sender, EventArgs e)
         {
-            log.InfoFormat("_Default Page_Unload");
+            //log.InfoFormat("_Default Page_Unload");
         }
 
         protected void ButtonStopHost_Click(object sender, EventArgs e)
