@@ -64,6 +64,7 @@ namespace WebPsdzClient
                 }
 
                 UpdateStatus();
+                UpdateCurrentOptions();
             }
             else
             {
@@ -72,11 +73,11 @@ namespace WebPsdzClient
                 {
                     UpdateStatus(true);
                 }
-            }
 
-            if (!IsPostBack || sessionContainer.RefreshOptions)
-            {
-                UpdateCurrentOptions();
+                if (sessionContainer.RefreshOptions)
+                {
+                    UpdateCurrentOptions(true);
+                }
             }
 
             sessionContainer.RefreshOptions = false;
@@ -348,9 +349,9 @@ namespace WebPsdzClient
             return null;
         }
 
-        private void UpdateStatus(bool fromUpdatePanel = false)
+        private void UpdateStatus(bool updatePanel = false)
         {
-            log.InfoFormat("UpdateStatus From Panel: {0}", fromUpdatePanel);
+            log.InfoFormat("UpdateStatus Update panel: {0}", updatePanel);
 
             try
             {
@@ -391,7 +392,7 @@ namespace WebPsdzClient
                 TextBoxStatus.Text = sessionContainer.StatusText;
                 TextBoxProgress.Text = sessionContainer.ProgressText;
 
-                if (fromUpdatePanel)
+                if (updatePanel)
                 {
                     UpdatePanels();
                 }
@@ -441,7 +442,7 @@ namespace WebPsdzClient
             }
         }
 
-        private void UpdateCurrentOptions()
+        private void UpdateCurrentOptions(bool updatePanel = false)
         {
             try
             {
@@ -478,7 +479,10 @@ namespace WebPsdzClient
                 SelectOptions(sessionContainer.SelectedSwiRegister);
                 PanelOptions.Visible = sessionContainer.OptionsDict != null;
 
-                UpdatePanels();
+                if (updatePanel)
+                {
+                    UpdatePanels();
+                }
             }
             catch (Exception ex)
             {
