@@ -1763,8 +1763,6 @@ namespace WebPsdzClient.App_Data
                     Thread.Sleep(100);
                 }
 
-                StopProgrammingService(Global.IstaFolder);
-
                 if (ProgrammingJobs != null)
                 {
                     ProgrammingJobs.Dispose();
