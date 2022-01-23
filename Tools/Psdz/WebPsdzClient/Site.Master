@@ -223,6 +223,21 @@
                 }
             }
 
+            psdzVehicleHubProxy.client.scrollTextBox = function (status)
+            {
+                var logMessage = "Scroll text box=" + status;
+                console.log(logMessage);
+
+                if (typeof scrollTextBox === "function")
+                {
+                    scrollTextBox(status);
+                }
+                else
+                {
+                    console.log("scrollTextBox not existing");
+                }
+            }
+
             $.connection.hub.qs = { 'sessionId' : sessionID };
             $.connection.hub.start().done(function ()
                 {

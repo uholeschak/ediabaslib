@@ -260,5 +260,8 @@ namespace PsdzClient
 
         [HubMethodName("updatePanels")]
         Task UpdatePanels(bool status);
+
+        [HubMethodName("scrollTextBox")]
+        Task ScrollTextBox(bool status);
     }
 }

@@ -71,6 +71,7 @@ namespace WebPsdzClient.App_Data
         public string SessionId { get; }
         public ProgrammingJobs ProgrammingJobs { get; private set; }
         public bool RefreshOptions { get; set; }
+        public bool ScrollTextBoxRequired { get; set; }
 
         private bool _taskActive;
         public bool TaskActive
@@ -1504,6 +1505,29 @@ namespace WebPsdzClient.App_Data
             catch (Exception ex)
             {
                 log.ErrorFormat("UpdateDisplay Exception: {0}", ex.Message);
+            }
+        }
+
+        public void ScrollTextBox(bool statusText = true)
+        {
+            try
+            {
+                IHubContext<IPsdzClient> hubContext = GlobalHost.ConnectionManager.GetHubContext<PsdzVehicleHub, IPsdzClient>();
+                if (hubContext == null)
+                {
+                    log.ErrorFormat("ScrollTextBox No hub context");
+                    return;
+                }
+
+                List<string> connectionIds = PsdzVehicleHub.GetConnectionIds(SessionId);
+                foreach (string connectionId in connectionIds)
+                {
+                    hubContext.Clients.Client(connectionId)?.ScrollTextBox(statusText);
+                }
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("ScrollTextBox Exception: {0}", ex.Message);
             }
         }
 

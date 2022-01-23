@@ -73,6 +73,7 @@ namespace WebPsdzClient
                 if (postbackControl == UpdatePanelStatus)
                 {
                     UpdateStatus(true);
+                    sessionContainer.ScrollTextBoxRequired = true;
                 }
 
                 if (sessionContainer.RefreshOptions)
@@ -337,6 +338,11 @@ namespace WebPsdzClient
             }
 
             sessionContainer.UpdateDisplay(false);
+            if (sessionContainer.ScrollTextBoxRequired)
+            {
+                sessionContainer.ScrollTextBoxRequired = false;
+                sessionContainer.ScrollTextBox();
+            }
 
             UpdateTimerPanel();
         }
