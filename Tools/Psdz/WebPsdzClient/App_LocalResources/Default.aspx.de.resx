@@ -118,43 +118,43 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ButtonAbortDefault.Text" xml:space="preserve">
-    <value>Abort</value>
+    <value>Abbrechen</value>
   </data>
   <data name="ButtonAbortDefault.ToolTip" xml:space="preserve">
     <value />
   </data>
   <data name="ButtonConnectDefault.Text" xml:space="preserve">
-    <value>Connect</value>
+    <value>Verbinden</value>
   </data>
   <data name="ButtonConnectDefault.ToolTip" xml:space="preserve">
     <value />
   </data>
   <data name="ButtonCreateOptionsDefault.Text" xml:space="preserve">
-    <value>Create Options</value>
+    <value>Optionen erzeugen</value>
   </data>
   <data name="ButtonCreateOptionsDefault.ToolTip" xml:space="preserve">
     <value />
   </data>
   <data name="ButtonDisconnectDefault.Text" xml:space="preserve">
-    <value>Disconnect</value>
+    <value>Trennen</value>
   </data>
   <data name="ButtonDisconnectDefault.ToolTip" xml:space="preserve">
     <value />
   </data>
   <data name="ButtonExecuteTal.Text" xml:space="preserve">
-    <value>Execute TAL</value>
+    <value>TAL ausführen</value>
   </data>
   <data name="ButtonExecuteTalDefault.ToolTip" xml:space="preserve">
     <value />
   </data>
   <data name="ButtonModifyFaDefault.Text" xml:space="preserve">
-    <value>Update FA</value>
+    <value>FA aktualisieren</value>
   </data>
   <data name="ButtonModifyFaDefault.ToolTip" xml:space="preserve">
     <value />
   </data>
   <data name="ButtonStopHostDefault.Text" xml:space="preserve">
-    <value>Stop Host</value>
+    <value>Host stoppen</value>
   </data>
   <data name="ButtonStopHostDefault.ToolTip" xml:space="preserve">
     <value />

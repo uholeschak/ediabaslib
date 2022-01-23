@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -16,6 +17,33 @@ namespace WebPsdzClient
     public partial class _Default : Page
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(_Default));
+
+        protected override void InitializeCulture()
+        {
+            SessionContainer sessionContainer = GetSessionContainer();
+            if (sessionContainer == null)
+            {
+                return;
+            }
+
+            string language = sessionContainer.ProgrammingJobs.ClientContext.Language;
+            if (!string.IsNullOrEmpty(language))
+            {
+                try
+                {
+                    CultureInfo culture = CultureInfo.CreateSpecificCulture(language.ToLowerInvariant());
+                    Thread.CurrentThread.CurrentCulture = culture;
+                    Thread.CurrentThread.CurrentUICulture = culture;
+                    Culture = culture.TwoLetterISOLanguageName;
+                    UICulture = culture.TwoLetterISOLanguageName;
+                }
+                catch (Exception ex)
+                {
+                    log.ErrorFormat("InitializeCulture Exception: {0}", ex.Message);
+                }
+            }
+            base.InitializeCulture();
+        }
 
         protected void Page_Init(object sender, EventArgs e)
         {
