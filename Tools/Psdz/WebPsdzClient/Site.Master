@@ -210,6 +210,17 @@
                         console.log("updatePanelStatus not existing");
                     }
                 }
+
+                if (isAppBound())
+                {
+                    try
+                    {
+                        app.UpdateStatus(status);
+                    }
+                    catch (e)
+                    {
+                    }
+                }
             }
 
             $.connection.hub.qs = { 'sessionId' : sessionID };
