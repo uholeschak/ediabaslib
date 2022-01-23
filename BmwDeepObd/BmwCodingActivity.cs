@@ -1,6 +1,7 @@
 ﻿//#define USE_WEBSERVER
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -49,8 +50,15 @@ namespace BmwDeepObd
 
         public class InstanceData
         {
+            public InstanceData()
+            {
+                Url = @"http://ulrich3.local.holeschak.de:3000";
+            }
+
             public string Url { get; set; }
         }
+
+        private const int ConnectionTimeout = 15000;
 
         // Intent extra
         public const string ExtraEcuDir = "ecu_dir";
@@ -84,7 +92,10 @@ namespace BmwDeepObd
         private AutoResetEvent _ediabasThreadWakeEvent = new AutoResetEvent(false);
         private object _ediabasLock = new object();
         private object _requestLock = new object();
+        private object _timeLock = new object();
         private Queue<VehicleRequest> _requestQueue = new Queue<VehicleRequest>();
+        private Timer _connectionCheckTimer;
+        public long _connectionUpdateTime;
 
         private WebView _webViewCoding;
 
@@ -161,26 +172,67 @@ namespace BmwDeepObd
 #endif
                 _webViewCoding.SetWebViewClient(new WebViewClientImpl(this));
                 _webViewCoding.SetWebChromeClient(new WebChromeClientImpl(this));
-                string url = @"http://ulrich3.local.holeschak.de:3000";
-                if (savedInstanceState != null)
-                {
-                    if (!string.IsNullOrWhiteSpace(_instanceData.Url))
-                    {
-                        url = _instanceData.Url;
-                    }
-                }
-                _webViewCoding.LoadUrl(url);
+                _webViewCoding.LoadUrl(_instanceData.Url);
             }
             catch (Exception)
             {
                 // ignored
             }
+
+            UpdateConnectTime();
         }
 
         protected override void OnSaveInstanceState(Bundle outState)
         {
             StoreInstanceState(outState, _instanceData);
             base.OnSaveInstanceState(outState);
+        }
+
+        protected override void OnResume()
+        {
+            base.OnResume();
+            UpdateConnectTime();
+
+            if (_connectionCheckTimer == null)
+            {
+                _connectionCheckTimer = new Timer(state =>
+                {
+                    RunOnUiThread(() =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
+                        long connectTime = GetConnectTime();
+                        if (Stopwatch.GetTimestamp() - connectTime >= ConnectionTimeout * ActivityCommon.TickResolMs)
+                        {
+                            try
+                            {
+                                UpdateConnectTime();
+                                Toast.MakeText(this, GetString(Resource.String.bmw_coding_network_error), ToastLength.Long)?.Show();
+                                _webViewCoding.LoadUrl(_instanceData.Url);
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                        }
+                    });
+                }, null, 500, 500);
+            }
+
+        }
+
+        protected override void OnPause()
+        {
+            base.OnPause();
+
+            if (_connectionCheckTimer != null)
+            {
+                _connectionCheckTimer.Dispose();
+                _connectionCheckTimer = null;
+            }
         }
 
         protected override void OnDestroy()
@@ -291,6 +343,8 @@ namespace BmwDeepObd
 
         private string EnqueueVehicleRequest(VehicleRequest vehicleRequest)
         {
+            UpdateConnectTime();
+
             lock (_requestLock)
             {
                 if (_requestQueue.Count > 0)
@@ -601,6 +655,22 @@ namespace BmwDeepObd
             }
         }
 
+        private void UpdateConnectTime(bool reset = false)
+        {
+            lock (_timeLock)
+            {
+                _connectionUpdateTime = reset ? DateTime.MinValue.Ticks : Stopwatch.GetTimestamp();
+            }
+        }
+
+        private long GetConnectTime()
+        {
+            lock (_timeLock)
+            {
+                return _connectionUpdateTime;
+            }
+        }
+
         private class WebViewClientImpl : WebViewClientCompat
         {
             private BmwCodingActivity _activity;
@@ -617,7 +687,7 @@ namespace BmwDeepObd
 
             public override void OnReceivedError(WebView view, IWebResourceRequest request, WebResourceErrorCompat error)
             {
-                Toast.MakeText(_activity, _activity.GetString(Resource.String.bmw_coding_network_error), ToastLength.Long)?.Show();
+                _activity.UpdateConnectTime(true);
             }
 
             public override void DoUpdateVisitedHistory(WebView view, string url, bool isReload)
@@ -625,7 +695,11 @@ namespace BmwDeepObd
 #if DEBUG
                 Android.Util.Log.Debug(Tag, string.Format("DoUpdateVisitedHistory: {0}", url));
 #endif
-                _activity._instanceData.Url = url;
+                if (!string.IsNullOrEmpty(url))
+                {
+                    _activity._instanceData.Url = url;
+                }
+
                 base.DoUpdateVisitedHistory(view, url, isReload);
             }
         }
@@ -696,6 +770,16 @@ namespace BmwDeepObd
                 Android.Util.Log.Debug(Tag, string.Format("VehicleSend: Id={0}, Data={1}", id, data));
 #endif
                 return _activity.EnqueueVehicleRequest(new VehicleRequest(VehicleRequest.VehicleRequestType.Transmit, id, data));
+            }
+
+            [JavascriptInterface]
+            [Export]
+            public void UpdateStatus(bool status)
+            {
+#if DEBUG
+                Android.Util.Log.Debug(Tag, string.Format("UpdateStatus: Status={0}", status));
+#endif
+                _activity.UpdateConnectTime();
             }
         }
     }
