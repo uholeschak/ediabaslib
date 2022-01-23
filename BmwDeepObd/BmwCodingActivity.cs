@@ -58,7 +58,7 @@ namespace BmwDeepObd
             public string Url { get; set; }
         }
 
-        private const int ConnectionTimeout = 15000;
+        private const int ConnectionTimeout = 6000;
 
         // Intent extra
         public const string ExtraEcuDir = "ecu_dir";
