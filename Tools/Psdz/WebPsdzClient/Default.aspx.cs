@@ -65,6 +65,7 @@ namespace WebPsdzClient
 
                 UpdateStatus();
                 UpdateCurrentOptions();
+                UpdateTimerPanel();
             }
             else
             {
@@ -336,6 +337,8 @@ namespace WebPsdzClient
             }
 
             sessionContainer.UpdateDisplay(false);
+
+            UpdateTimerPanel();
         }
 
         private SessionContainer GetSessionContainer()
@@ -415,6 +418,24 @@ namespace WebPsdzClient
             catch (Exception ex)
             {
                 log.ErrorFormat("UpdatePanels Exception: {0}", ex.Message);
+            }
+
+            UpdateTimerPanel();
+        }
+
+        private void UpdateTimerPanel()
+        {
+            try
+            {
+                LabelLastUpdate.Text = DateTime.UtcNow.ToString("HH:mm:ss");
+                if (!UpdatePanelTimer.IsInPartialRendering)
+                {
+                    UpdatePanelTimer.Update();
+                }
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("UpdateTimerPanel Exception: {0}", ex.Message);
             }
         }
 

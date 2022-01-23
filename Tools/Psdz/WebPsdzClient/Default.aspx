@@ -31,9 +31,12 @@
                 </asp:Panel>
             </ContentTemplate>
         </asp:UpdatePanel>
-        <asp:UpdatePanel ID="TimerUpdatePanel" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="False">
+        <asp:UpdatePanel ID="UpdatePanelTimer" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="False">
             <ContentTemplate>
-                <asp:Timer ID="TimerUpdate" runat="server" Interval="5000" OnTick="TimerUpdate_Tick">
+                <asp:Panel ID="PanelHeader" runat="server" CssClass="panel-collapse" HorizontalAlign="Left">
+                    <asp:Label ID="LabelLastUpdate" runat="server" CssClass="label"></asp:Label>
+                </asp:Panel>
+                <asp:Timer ID="TimerUpdate" runat="server" Interval="2000" OnTick="TimerUpdate_Tick">
                 </asp:Timer>
             </ContentTemplate>
         </asp:UpdatePanel>

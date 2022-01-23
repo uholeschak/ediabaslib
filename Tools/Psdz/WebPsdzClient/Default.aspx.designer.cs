@@ -150,13 +150,31 @@ namespace WebPsdzClient
         protected global::System.Web.UI.WebControls.TextBox TextBoxProgress;
 
         /// <summary>
-        /// TimerUpdatePanel-Steuerelement.
+        /// UpdatePanelTimer-Steuerelement.
         /// </summary>
         /// <remarks>
         /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel TimerUpdatePanel;
+        protected global::System.Web.UI.UpdatePanel UpdatePanelTimer;
+
+        /// <summary>
+        /// PanelHeader-Steuerelement.
+        /// </summary>
+        /// <remarks>
+        /// Automatisch generiertes Feld.
+        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel PanelHeader;
+
+        /// <summary>
+        /// LabelLastUpdate-Steuerelement.
+        /// </summary>
+        /// <remarks>
+        /// Automatisch generiertes Feld.
+        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label LabelLastUpdate;
 
         /// <summary>
         /// TimerUpdate-Steuerelement.
