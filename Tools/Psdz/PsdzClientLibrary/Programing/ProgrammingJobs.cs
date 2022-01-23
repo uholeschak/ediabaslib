@@ -930,7 +930,6 @@ namespace PsdzClient.Programing
 
                 IPsdzSvt psdzSvt = ProgrammingService.Psdz.ObjectBuilder.BuildSvt(psdzStandardSvtNames, psdzVin.Value);
                 PsdzContext.SetSvtActual(psdzSvt);
-                UpdateStatus(sbResult.ToString());
                 cts?.Token.ThrowIfCancellationRequested();
 
                 ProgrammingService.PdszDatabase.LinkSvtEcus(PsdzContext.DetectVehicle.EcuList, psdzSvt);
@@ -949,8 +948,8 @@ namespace PsdzClient.Programing
                 {
                     log.Info(ecuInfo.ToString(clientContext.Language));
                 }
-                UpdateStatus(sbResult.ToString());
                 cts?.Token.ThrowIfCancellationRequested();
+
                 if (operationType == OperationType.CreateOptions)
                 {
                     ProgrammingService.PdszDatabase.ReadSwiRegister(PsdzContext.Vehicle);
@@ -970,7 +969,6 @@ namespace PsdzClient.Programing
                             List<PdszDatabase.SwiAction> swiActions = ProgrammingService.PdszDatabase.GetSwiActionsForRegister(optionType.SwiRegisterEnum, true);
                             if (swiActions != null)
                             {
-                                sbResult.AppendLine();
                                 log.InfoFormat(CultureInfo.InvariantCulture, "Swi actions: {0}", optionType.Name);
                                 List<OptionsItem> optionsItems = new List<OptionsItem>();
                                 foreach (PdszDatabase.SwiAction swiAction in swiActions)
