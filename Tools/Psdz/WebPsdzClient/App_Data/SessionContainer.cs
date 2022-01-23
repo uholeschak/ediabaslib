@@ -243,6 +243,11 @@ namespace WebPsdzClient.App_Data
             }
         }
 
+        public string GetLanguage()
+        {
+            return ProgrammingJobs.ClientContext.Language;
+        }
+
         private UInt64 _packetId;
         private void ResetPacketId()
         {
