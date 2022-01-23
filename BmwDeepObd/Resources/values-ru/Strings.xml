@@ -688,7 +688,7 @@
 
   <!-- BMW Coding Activity -->
   <string name="bmw_coding_title">Кодирование BMW</string>
-  <string name="bmw_coding_network_error">Не удалось загрузить веб-страницу.\nПожалуйста, проверьте подключение к сети.</string>
+  <string name="bmw_coding_network_error">Загрузка веб-страницы не удалась, повторная попытка.</string>
 
     <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">Настройки устройства</string>

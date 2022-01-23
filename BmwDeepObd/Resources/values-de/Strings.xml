@@ -690,7 +690,7 @@
 
   <!-- BMW Coding Activity -->
   <string name="bmw_coding_title">BMW Kodieren</string>
-  <string name="bmw_coding_network_error">Das Laden der Webseite ist fehlgeschlagen.\nBitte überprüfen Sie Ihre Netzwerkverbindung.</string>
+  <string name="bmw_coding_network_error">Das Laden der Webseite ist fehlgeschlagen, wiederholen.</string>
 
     <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">Adapter Konfiguration</string>

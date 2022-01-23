@@ -210,7 +210,7 @@ namespace BmwDeepObd
                             try
                             {
                                 UpdateConnectTime();
-                                Toast.MakeText(this, GetString(Resource.String.bmw_coding_network_error), ToastLength.Long)?.Show();
+                                Toast.MakeText(this, GetString(Resource.String.bmw_coding_network_error), ToastLength.Short)?.Show();
                                 _webViewCoding.LoadUrl(_instanceData.Url);
                             }
                             catch (Exception)
@@ -683,6 +683,11 @@ namespace BmwDeepObd
             public override bool ShouldOverrideUrlLoading(WebView view, IWebResourceRequest request)
             {
                 return false;
+            }
+
+            public override void OnPageFinished(WebView? view, string? url)
+            {
+                _activity.UpdateConnectTime();
             }
 
             public override void OnReceivedError(WebView view, IWebResourceRequest request, WebResourceErrorCompat error)
