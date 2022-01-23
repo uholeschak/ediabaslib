@@ -47,5 +47,14 @@
             console.log("updatePanelStatus called");
             __doPostBack("<%=UpdatePanelStatus.UniqueID %>", "");
         }
+
+        function endRequestHandler(sender, args)
+        {
+            console.log("endRequestHandler called");
+            var textarea = document.getElementById('<%=TextBoxStatus.ClientID %>');
+            textarea.scrollTop = textarea.scrollHeight;
+        }
+
+        Sys.WebForms.PageRequestManager.getInstance().add_endRequest(endRequestHandler);
     </script>
 </asp:Content>
