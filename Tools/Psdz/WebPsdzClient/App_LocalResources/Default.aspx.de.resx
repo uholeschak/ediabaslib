@@ -117,97 +117,97 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ButtonAbortDefault.Text" xml:space="preserve">
+  <data name="ButtonAbortResource.Text" xml:space="preserve">
     <value>Abbrechen</value>
   </data>
-  <data name="ButtonAbortDefault.ToolTip" xml:space="preserve">
+  <data name="ButtonAbortResource.ToolTip" xml:space="preserve">
     <value />
   </data>
-  <data name="ButtonConnectDefault.Text" xml:space="preserve">
+  <data name="ButtonConnectResource.Text" xml:space="preserve">
     <value>Verbinden</value>
   </data>
-  <data name="ButtonConnectDefault.ToolTip" xml:space="preserve">
+  <data name="ButtonConnectResource.ToolTip" xml:space="preserve">
     <value />
   </data>
-  <data name="ButtonCreateOptionsDefault.Text" xml:space="preserve">
+  <data name="ButtonCreateOptionsResource.Text" xml:space="preserve">
     <value>Optionen erzeugen</value>
   </data>
-  <data name="ButtonCreateOptionsDefault.ToolTip" xml:space="preserve">
+  <data name="ButtonCreateOptionsResource.ToolTip" xml:space="preserve">
     <value />
   </data>
-  <data name="ButtonDisconnectDefault.Text" xml:space="preserve">
+  <data name="ButtonDisconnectResource.Text" xml:space="preserve">
     <value>Trennen</value>
   </data>
-  <data name="ButtonDisconnectDefault.ToolTip" xml:space="preserve">
+  <data name="ButtonDisconnectResource.ToolTip" xml:space="preserve">
     <value />
   </data>
-  <data name="ButtonExecuteTalDefault.Text" xml:space="preserve">
+  <data name="ButtonExecuteTalResource.Text" xml:space="preserve">
     <value>TAL ausführen</value>
   </data>
-  <data name="ButtonExecuteTalDefault.ToolTip" xml:space="preserve">
+  <data name="ButtonExecuteTalResource.ToolTip" xml:space="preserve">
     <value />
   </data>
-  <data name="ButtonModifyFaDefault.Text" xml:space="preserve">
+  <data name="ButtonModifyFaResource.Text" xml:space="preserve">
     <value>FA aktualisieren</value>
   </data>
-  <data name="ButtonModifyFaDefault.ToolTip" xml:space="preserve">
+  <data name="ButtonModifyFaResource.ToolTip" xml:space="preserve">
     <value />
   </data>
-  <data name="ButtonStopHostDefault.Text" xml:space="preserve">
+  <data name="ButtonStopHostResource.Text" xml:space="preserve">
     <value>Host stoppen</value>
   </data>
-  <data name="ButtonStopHostDefault.ToolTip" xml:space="preserve">
+  <data name="ButtonStopHostResource.ToolTip" xml:space="preserve">
     <value />
   </data>
-  <data name="CheckBoxListOptionsResource1.ToolTip" xml:space="preserve">
+  <data name="CheckBoxListOptionsResource.ToolTip" xml:space="preserve">
     <value />
   </data>
-  <data name="DropDownListOptionTypeResource1.ToolTip" xml:space="preserve">
+  <data name="DropDownListOptionTypeResource.ToolTip" xml:space="preserve">
     <value />
   </data>
-  <data name="LabelLastUpdateResource1.Text" xml:space="preserve">
+  <data name="LabelLastUpdateResource.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="LabelLastUpdateResource1.ToolTip" xml:space="preserve">
+  <data name="LabelLastUpdateResource.ToolTip" xml:space="preserve">
     <value />
   </data>
-  <data name="PageResourceDefault.Title" xml:space="preserve">
+  <data name="PageResource.Title" xml:space="preserve">
     <value>Psdz</value>
   </data>
-  <data name="PanelButtonsResource1.GroupingText" xml:space="preserve">
+  <data name="PanelButtonsResource.GroupingText" xml:space="preserve">
     <value />
   </data>
-  <data name="PanelButtonsResource1.ToolTip" xml:space="preserve">
+  <data name="PanelButtonsResource.ToolTip" xml:space="preserve">
     <value />
   </data>
-  <data name="PanelHeaderResource1.GroupingText" xml:space="preserve">
+  <data name="PanelHeaderResource.GroupingText" xml:space="preserve">
     <value />
   </data>
-  <data name="PanelHeaderResource1.ToolTip" xml:space="preserve">
+  <data name="PanelHeaderResource.ToolTip" xml:space="preserve">
     <value />
   </data>
-  <data name="PanelOptionsResource1.GroupingText" xml:space="preserve">
+  <data name="PanelOptionsResource.GroupingText" xml:space="preserve">
     <value />
   </data>
-  <data name="PanelOptionsResource1.ToolTip" xml:space="preserve">
+  <data name="PanelOptionsResource.ToolTip" xml:space="preserve">
     <value />
   </data>
-  <data name="PanelStatusResource1.GroupingText" xml:space="preserve">
+  <data name="PanelStatusResource.GroupingText" xml:space="preserve">
     <value />
   </data>
-  <data name="PanelStatusResource1.ToolTip" xml:space="preserve">
+  <data name="PanelStatusResource.ToolTip" xml:space="preserve">
     <value />
   </data>
-  <data name="TextBoxProgressResource1.Text" xml:space="preserve">
+  <data name="TextBoxProgressResource.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="TextBoxProgressResource1.ToolTip" xml:space="preserve">
+  <data name="TextBoxProgressResource.ToolTip" xml:space="preserve">
     <value />
   </data>
-  <data name="TextBoxStatusResource1.Text" xml:space="preserve">
+  <data name="TextBoxStatusResource.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="TextBoxStatusResource1.ToolTip" xml:space="preserve">
+  <data name="TextBoxStatusResource.ToolTip" xml:space="preserve">
     <value />
   </data>
 </root>
