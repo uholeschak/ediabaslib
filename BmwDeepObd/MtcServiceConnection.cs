@@ -456,6 +456,26 @@ namespace BmwDeepObd
             return CommandGetString(ApiVersion > 2 ? 12 : 8);
         }
 
+        public string GetModuleName()
+        {
+            return CommandGetString(ApiVersion > 2 ? 27 + ApiOffset : 18);
+        }
+
+        public string GetModulePassword()
+        {
+            return CommandGetString(ApiVersion > 2 ? 28 + ApiOffset : 19);
+        }
+
+        public void SetModuleName(string name)
+        {
+            CommandMac(ApiVersion > 2 ? 29 + ApiOffset : 20, name);
+        }
+
+        public void SetModulePassword(string name)
+        {
+            CommandMac(ApiVersion > 2 ? 30 + ApiOffset : 21, name);
+        }
+
         public void SetAutoConnect(bool auto)
         {
             CommandSetInt(ApiVersion > 2 ? 31 + ApiOffset : 22, auto ? 1 : 0);
