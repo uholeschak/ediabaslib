@@ -1197,6 +1197,22 @@ namespace BmwDeepObd
                         {
                             break;
                         }
+
+                        string sgbdFunctional = null;
+                        foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
+                        {
+                            if (pageInfo.ErrorsInfo != null)
+                            {
+                                sgbdFunctional = pageInfo.ErrorsInfo.SgbdFunctional;
+                                break;
+                            }
+                        }
+
+                        if (string.IsNullOrEmpty(sgbdFunctional))
+                        {
+                            break;
+                        }
+
                         allowCoding = true;
                         break;
                 }
