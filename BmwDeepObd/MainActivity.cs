@@ -1188,8 +1188,21 @@ namespace BmwDeepObd
             IMenuItem cfgPageBmwCodingMenu = menu.FindItem(Resource.Id.menu_cfg_page_bmw_coding);
             if (cfgPageBmwCodingMenu != null)
             {
+                bool allowCoding = false;
+                switch (_activityCommon.SelectedInterface)
+                {
+                    case ActivityCommon.InterfaceType.Bluetooth:
+                    case ActivityCommon.InterfaceType.Enet:
+                        if (_activityCommon.IsElmDevice(_instanceData.DeviceAddress))
+                        {
+                            break;
+                        }
+                        allowCoding = true;
+                        break;
+                }
+
                 cfgPageBmwActuatorMenu.SetEnabled(interfaceAvailable && !commActive);
-                cfgPageBmwActuatorMenu.SetVisible(bmwVisible);
+                cfgPageBmwActuatorMenu.SetVisible(bmwVisible && allowCoding);
             }
 
             bool vagVisible = ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw && selectedPageFuncAvail && !string.IsNullOrEmpty(_instanceData.ConfigFileName);
