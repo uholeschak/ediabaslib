@@ -468,12 +468,12 @@ namespace BmwDeepObd
 
         public void SetModuleName(string name)
         {
-            CommandMac(ApiVersion > 2 ? 29 + ApiOffset : 20, name);
+            CommandSetString(ApiVersion > 2 ? 29 + ApiOffset : 20, name);
         }
 
         public void SetModulePassword(string name)
         {
-            CommandMac(ApiVersion > 2 ? 30 + ApiOffset : 21, name);
+            CommandSetString(ApiVersion > 2 ? 30 + ApiOffset : 21, name);
         }
 
         public void SetAutoConnect(bool auto)
@@ -498,32 +498,32 @@ namespace BmwDeepObd
 
         public void ConnectBt(string mac)
         {
-            CommandMac(ApiVersion > 2 ? 35 + ApiOffset : 26, mac);
+            CommandSetString(ApiVersion > 2 ? 35 + ApiOffset : 26, mac);
         }
 
         public void DisconnectBt(string mac)
         {
-            CommandMac(ApiVersion > 2 ? 36 + ApiOffset : 27, mac);
+            CommandSetString(ApiVersion > 2 ? 36 + ApiOffset : 27, mac);
         }
 
         public void ConnectObd(string mac)
         {
-            CommandMac(ApiVersion > 2 ? 37 + ApiOffset : 28, mac);
+            CommandSetString(ApiVersion > 2 ? 37 + ApiOffset : 28, mac);
         }
 
         public void DisconnectObd(string mac)
         {
-            CommandMac(ApiVersion > 2 ? 38 + ApiOffset : 29, mac);
+            CommandSetString(ApiVersion > 2 ? 38 + ApiOffset : 29, mac);
         }
 
         public void DeleteObd(string mac)
         {
-            CommandMac(ApiVersion > 2 ? 39 + ApiOffset : 30, mac);
+            CommandSetString(ApiVersion > 2 ? 39 + ApiOffset : 30, mac);
         }
 
         public void DeleteBt(string mac)
         {
-            CommandMac(ApiVersion > 2 ? 40 + ApiOffset : 31, mac);
+            CommandSetString(ApiVersion > 2 ? 40 + ApiOffset : 31, mac);
         }
 
         public void SyncMatchList()
@@ -709,7 +709,7 @@ namespace BmwDeepObd
             }
         }
 
-        private void CommandMac(int code, string mac)
+        private void CommandSetString(int code, string text)
         {
             if (_binder == null)
             {
@@ -720,10 +720,10 @@ namespace BmwDeepObd
             try
             {
 #if DEBUG
-                Android.Util.Log.Info(Tag, string.Format("SetMac({0}, {1})", code, mac));
+                Android.Util.Log.Info(Tag, string.Format("SetMac({0}, {1})", code, text));
 #endif
                 data.WriteInterfaceToken(InterfaceToken);
-                data.WriteString(mac);
+                data.WriteString(text);
                 _binder.Transact(code, data, reply, 0);
                 reply.ReadException();
             }

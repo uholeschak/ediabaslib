@@ -84,6 +84,7 @@ namespace BmwDeepObd
             public bool LocationProviderShown { get; set; }
             public bool MtcAntennaInfoShown { get; set; }
             public bool MtcBtModuleErrorShown { get; set; }
+            public bool MtcBtPwdMismatchShown { get; set; }
             public bool MtcBtEscapeModeShown { get; set; }
             public bool MtcErrorShown { get; set; }
             public bool MtcOffline { get; set; }
@@ -91,6 +92,7 @@ namespace BmwDeepObd
 
         private static readonly Java.Util.UUID SppUuid = Java.Util.UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
         private static readonly Java.Util.UUID ZeroUuid = Java.Util.UUID.FromString("00000000-0000-0000-0000-000000000000");
+        private const string DefaultModulePwd = "1234";
         private const int ResponseTimeout = 1000;
         private const int RequestPermissionBluetooth = 0;
         private readonly string[] _permissionsLocation =
@@ -600,19 +602,19 @@ namespace BmwDeepObd
                 FindViewById<View>(Resource.Id.layout_new_devices).Visibility = ViewStates.Visible;
 
                 bool autoConnect = mtcServiceConnection.GetAutoConnect();
-#if DEBUG
-                string btPin = mtcServiceConnection.CarManagerGetBtPin() ?? string.Empty;
                 string modulePwd = mtcServiceConnection.GetModulePassword() ?? string.Empty;
-                string btName = mtcServiceConnection.CarManagerGetBtName() ?? string.Empty;
+#if DEBUG
                 string moduleName = mtcServiceConnection.GetModuleName() ?? string.Empty;
+                string btPin = mtcServiceConnection.CarManagerGetBtPin() ?? string.Empty;
+                string btName = mtcServiceConnection.CarManagerGetBtName() ?? string.Empty;
                 sbyte btState = mtcServiceConnection.GetBtState();
                 Android.Util.Log.Info(Tag, string.Format("UpdateMtcDevices: api={0}, time={1:yyyy-MM-dd HH:mm:ss}", mtcServiceConnection.ApiVersion, DateTime.Now));
                 Android.Util.Log.Info(Tag, string.Format("BtState: {0}", btState));
                 Android.Util.Log.Info(Tag, string.Format("AutoConnect: {0}", autoConnect));
-                Android.Util.Log.Info(Tag, string.Format("Bt Pin: {0}", btPin));
                 Android.Util.Log.Info(Tag, string.Format("Module Pwd: {0}", modulePwd));
-                Android.Util.Log.Info(Tag, string.Format("Bt Name: {0}", btName));
                 Android.Util.Log.Info(Tag, string.Format("Module Name: {0}", moduleName));
+                Android.Util.Log.Info(Tag, string.Format("Bt Pin: {0}", btPin));
+                Android.Util.Log.Info(Tag, string.Format("Bt Name: {0}", btName));
 #endif
                 bool oldOffline = _instanceData.MtcOffline;
                 bool newOffline = false;
@@ -669,11 +671,40 @@ namespace BmwDeepObd
                     _activityCommon.ShowAlert(GetString(Resource.String.bt_mtc_module_error), Resource.String.alert_title_warning);
                 }
 #endif
-                if (!_instanceData.MtcBtEscapeModeShown && _activityCommon.MtcBtEscapeMode)
+
+                if (!_instanceData.MtcBtPwdMismatchShown &&
+                    !string.IsNullOrEmpty(modulePwd) && string.Compare(modulePwd, DefaultModulePwd, StringComparison.OrdinalIgnoreCase) != 0)
                 {
-                    _instanceData.MtcBtEscapeModeShown = true;
-                    string message = string.Format(GetString(Resource.String.bt_mtc_module_escape_mode), _activityCommon.MtcBtModuleName);
-                    _activityCommon.ShowAlert(message, Resource.String.alert_title_info);
+                    _instanceData.MtcBtPwdMismatchShown = true;
+                    string message = string.Format(GetString(Resource.String.bt_mtc_module_pwd), modulePwd, DefaultModulePwd);
+                    new AlertDialog.Builder(this)
+                        .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                        {
+                            try
+                            {
+                                mtcServiceConnection.SetModulePassword(DefaultModulePwd);
+                            }
+                            catch (Exception)
+                            {
+                                _instanceData.MtcBtPwdMismatchShown = false;
+                            }
+                        })
+                        .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                        {
+                        })
+                        .SetCancelable(true)
+                        .SetMessage(message)
+                        .SetTitle(Resource.String.alert_title_warning)
+                        .Show();
+                }
+                else
+                {
+                    if (!_instanceData.MtcBtEscapeModeShown && _activityCommon.MtcBtEscapeMode)
+                    {
+                        _instanceData.MtcBtEscapeModeShown = true;
+                        string message = string.Format(GetString(Resource.String.bt_mtc_module_escape_mode), _activityCommon.MtcBtModuleName);
+                        _activityCommon.ShowAlert(message, Resource.String.alert_title_info);
+                    }
                 }
 
                 if (oldOffline != _instanceData.MtcOffline)
