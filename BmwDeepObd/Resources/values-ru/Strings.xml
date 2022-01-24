@@ -689,8 +689,9 @@
   <!-- BMW Coding Activity -->
   <string name="bmw_coding_title">Кодирование BMW</string>
   <string name="bmw_coding_network_error">Загрузка веб-страницы не удалась, повторная попытка.</string>
+  <string name="bmw_coding_connection_active">Соединение с автомобилем активно.\nПри выходе со страницы общение будет прервано.\nСначала закройте соединение.\nВы все еще хотите покинуть страницу?</string>
 
-    <!-- CAN Adapter Activity -->
+  <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">Настройки устройства</string>
   <string name="can_adapter_mode_name">Режим работы CAN</string>
   <string name="can_adapter_sep_time">Интервал между пакетами данных [мс]</string>

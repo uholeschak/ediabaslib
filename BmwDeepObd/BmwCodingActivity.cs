@@ -13,6 +13,7 @@ using Android.Views;
 using Android.Widget;
 using AndroidX.WebKit;
 using Android.Webkit;
+using AndroidX.AppCompat.App;
 using AndroidX.Core.Content.PM;
 using EdiabasLib;
 using Java.Interop;
@@ -57,6 +58,8 @@ namespace BmwDeepObd
 
             public string Url { get; set; }
         }
+
+        public delegate void AcceptDelegate(bool accepted);
 
         private const int ConnectionTimeout = 6000;
 
@@ -251,19 +254,18 @@ namespace BmwDeepObd
 
         public override void OnBackPressed()
         {
-            if (IsEdiabasConnected())
+            ConnectionActiveWarn(accepted =>
             {
-                return;
-            }
+                if (_activityCommon == null)
+                {
+                    return;
+                }
 
-#if USE_WEBSERVER
-            if (_edWebServer != null && _edWebServer.IsEdiabasConnected())
-            {
-                return;
-            }
-#endif
-
-            base.OnBackPressed();
+                if (accepted)
+                {
+                    base.OnBackPressed();
+                }
+            });
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)
@@ -271,20 +273,21 @@ namespace BmwDeepObd
             switch (item.ItemId)
             {
                 case Android.Resource.Id.Home:
-                    if (IsEdiabasConnected())
+                    ConnectionActiveWarn(accepted =>
                     {
-                        return true;
-                    }
-#if USE_WEBSERVER
-                    if (_edWebServer != null && _edWebServer.IsEdiabasConnected())
-                    {
-                        return true;
-                    }
-#endif
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
 
-                    Finish();
+                        if (accepted)
+                        {
+                            Finish();
+                        }
+                    });
                     return true;
             }
+
             return base.OnOptionsItemSelected(item);
         }
 
@@ -295,6 +298,35 @@ namespace BmwDeepObd
                 case ActivityRequest.RequestDevelopmentSettings:
                     break;
             }
+        }
+
+        private void ConnectionActiveWarn(AcceptDelegate handler)
+        {
+            if (!IsEdiabasConnected())
+            {
+                handler.Invoke(true);
+                return;
+            }
+
+#if USE_WEBSERVER
+            if (_edWebServer != null && _edWebServer.IsEdiabasConnected())
+            {
+                handler.Invoke(true);
+                return;
+            }
+#endif
+            new AlertDialog.Builder(this)
+                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                {
+                    handler(true);
+                })
+                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                {
+                    handler(false);
+                })
+                .SetMessage(Resource.String.bmw_coding_connection_active)
+                .SetTitle(Resource.String.alert_title_warning)
+                .Show();
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
@@ -685,7 +717,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            public override void OnPageFinished(WebView? view, string? url)
+            public override void OnPageFinished(WebView view, string url)
             {
                 _activity.UpdateConnectTime();
             }
