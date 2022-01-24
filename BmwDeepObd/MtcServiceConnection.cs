@@ -388,6 +388,38 @@ namespace BmwDeepObd
             }
         }
 
+        public string CarManagerGetBtPin()
+        {
+            try
+            {
+                string result = CarManagerGetParameters("sta_bt_pin=");
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format("STA Bt Pin: {0}", result));
+#endif
+                return result;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public string CarManagerGetBtName()
+        {
+            try
+            {
+                string result = CarManagerGetParameters("sta_bt_name=");
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format("STA Bt Name: {0}", result));
+#endif
+                return result;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         public byte[] CommandTest(int code)
         {
             try
