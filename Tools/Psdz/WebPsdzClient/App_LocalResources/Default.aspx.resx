@@ -141,7 +141,7 @@
   <data name="ButtonDisconnectDefault.ToolTip" xml:space="preserve">
     <value />
   </data>
-  <data name="ButtonExecuteTal.Text" xml:space="preserve">
+  <data name="ButtonExecuteTalDefault.Text" xml:space="preserve">
     <value>Execute TAL</value>
   </data>
   <data name="ButtonExecuteTalDefault.ToolTip" xml:space="preserve">
