@@ -601,10 +601,14 @@ namespace BmwDeepObd
 
                 bool autoConnect = mtcServiceConnection.GetAutoConnect();
 #if DEBUG
+                string btPin = mtcServiceConnection.CarManagerGetBtPin() ?? string.Empty;
+                string btName = mtcServiceConnection.CarManagerGetBtName() ?? string.Empty;
                 sbyte btState = mtcServiceConnection.GetBtState();
                 Android.Util.Log.Info(Tag, string.Format("UpdateMtcDevices: api={0}, time={1:yyyy-MM-dd HH:mm:ss}", mtcServiceConnection.ApiVersion, DateTime.Now));
                 Android.Util.Log.Info(Tag, string.Format("BtState: {0}", btState));
                 Android.Util.Log.Info(Tag, string.Format("AutoConnect: {0}", autoConnect));
+                Android.Util.Log.Info(Tag, string.Format("Bt Pin: {0}", btPin));
+                Android.Util.Log.Info(Tag, string.Format("Bt Name: {0}", btName));
 #endif
                 bool oldOffline = _instanceData.MtcOffline;
                 bool newOffline = false;
