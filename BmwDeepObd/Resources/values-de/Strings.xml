@@ -691,7 +691,7 @@
   <!-- BMW Coding Activity -->
   <string name="bmw_coding_title">BMW Kodieren</string>
   <string name="bmw_coding_network_error">Das Laden der Webseite ist fehlgeschlagen, wiederholen.</string>
-  <string name="bmw_coding_connection_active">Die Verbindung zum Fahrzeug is aktiv.\nWenn Sie die Seite verlassen wird die Verbindung unterbrochen.\nBitte trennen Sie die Verbindung zuerst.\Wollen Sie trotzdem die Seite verlassen?</string>
+  <string name="bmw_coding_connection_active">Die Verbindung zum Fahrzeug is aktiv.\nWenn Sie die Seite verlassen wird die Verbindung unterbrochen.\nBitte trennen Sie die Verbindung zuerst.\nWollen Sie trotzdem die Seite verlassen?</string>
 
   <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">Adapter Konfiguration</string>
