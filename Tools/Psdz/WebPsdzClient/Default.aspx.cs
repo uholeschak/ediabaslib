@@ -100,17 +100,10 @@ namespace WebPsdzClient
             }
             else
             {
-                if (sessionContainer.ScrollTextBoxRequired)
-                {
-                    sessionContainer.ScrollTextBoxRequired = false;
-                    sessionContainer.ScrollTextBox();
-                }
-
                 Control postbackControl = GetPostBackControl(this);
                 if (postbackControl == UpdatePanelStatus)
                 {
                     UpdateStatus(true);
-                    sessionContainer.ScrollTextBoxRequired = true;
                 }
 
                 if (sessionContainer.RefreshOptions)

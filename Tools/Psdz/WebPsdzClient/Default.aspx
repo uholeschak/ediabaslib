@@ -48,14 +48,55 @@
             __doPostBack("<%=UpdatePanelStatus.UniqueID %>", "");
         }
 
-        function scrollTextBox(status)
+        function scrollStatusPanel()
         {
-            console.log("scrollTextBox called, Status=" + status);
-            if (status)
+            console.log("Scroll status panel");
+            var textarea = document.getElementById('<%=TextBoxStatus.ClientID %>');
+            if (textarea)
             {
-                var textarea = document.getElementById('<%=TextBoxStatus.ClientID %>');
                 textarea.scrollTop = textarea.scrollHeight;
             }
         }
+
+        var postBackId = null;
+        function beginRequestHandler(sender, args)
+        {
+            var postBackElem = args.get_postBackElement();
+            postBackId = null;
+            if (postBackElem)
+            {
+                postBackId = postBackElem.id;
+            }
+            console.log("beginRequestHandler Id=" + postBackId);
+        }
+
+        function endRequestHandler(sender, args)
+        {
+            console.log("endRequestHandler Id=" + postBackId);
+            if (postBackId)
+            {
+                if (postBackId.indexOf("UpdatePanelStatus") !== -1)
+                {
+                    scrollStatusPanel();
+                }
+            }
+        }
+
+        var requestManager = Sys.WebForms.PageRequestManager.getInstance();
+        if (requestManager)
+        {
+            requestManager.add_beginRequest(beginRequestHandler);
+            requestManager.add_endRequest(endRequestHandler);
+        }
+
+        window.addEventListener('load', function ()
+        {
+            scrollStatusPanel();
+        });
+
+        window.addEventListener('resize', function (event)
+        {
+            scrollStatusPanel();
+        }, true);
     </script>
 </asp:Content>
