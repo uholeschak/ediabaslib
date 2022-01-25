@@ -249,8 +249,12 @@ namespace BmwDeepObd
             StopEdiabasThread();
 #endif
 
-            _activityCommon?.Dispose();
-            _activityCommon = null;
+            if (_activityCommon != null)
+            {
+                _activityCommon.UnRegisterInternetCellular();
+                _activityCommon.Dispose();
+                _activityCommon = null;
+            }
         }
 
         public override void OnBackPressed()
