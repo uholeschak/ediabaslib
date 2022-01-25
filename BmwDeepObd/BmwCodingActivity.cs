@@ -348,6 +348,11 @@ namespace BmwDeepObd
         {
             RunOnUiThread(() =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
                 SendVehicleResponse(id, response);
             });
         }
@@ -371,6 +376,26 @@ namespace BmwDeepObd
             {
                 return false;
             }
+        }
+
+        private void ReloadPage()
+        {
+            RunOnUiThread(() =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                try
+                {
+                    _webViewCoding.Reload();
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            });
         }
 
         private string EnqueueVehicleRequest(VehicleRequest vehicleRequest)
@@ -817,6 +842,16 @@ namespace BmwDeepObd
                 Android.Util.Log.Debug(Tag, string.Format("UpdateStatus: Status={0}", status));
 #endif
                 _activity.UpdateConnectTime();
+            }
+
+            [JavascriptInterface]
+            [Export]
+            public void ReloadPage()
+            {
+#if DEBUG
+                Android.Util.Log.Debug(Tag, "ReloadPage");
+#endif
+                _activity.ReloadPage();
             }
         }
     }

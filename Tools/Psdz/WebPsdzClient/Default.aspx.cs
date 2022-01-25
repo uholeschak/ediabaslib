@@ -483,19 +483,26 @@ namespace WebPsdzClient
                 return;
             }
 
-            try
+            if (!string.IsNullOrEmpty(sessionContainer.DeepObdVersion))
             {
-                Request.ValidateInput();
-                string url = Request.RawUrl;
-                log.InfoFormat("UpdateOptions Reload Url: {0}", url);
-                if (!string.IsNullOrEmpty(url))
-                {
-                    Response.Redirect(url, false);
-                }
+                sessionContainer.ReloadPage();
             }
-            catch (Exception ex)
+            else
             {
-                log.ErrorFormat("UpdateOptions Exception: {0}", ex.Message);
+                try
+                {
+                    Request.ValidateInput();
+                    string url = Request.RawUrl;
+                    log.InfoFormat("UpdateOptions Reload Url: {0}", url);
+                    if (!string.IsNullOrEmpty(url))
+                    {
+                        Response.Redirect(url, false);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.ErrorFormat("UpdateOptions Exception: {0}", ex.Message);
+                }
             }
         }
 

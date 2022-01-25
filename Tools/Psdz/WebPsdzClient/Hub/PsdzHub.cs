@@ -263,5 +263,8 @@ namespace PsdzClient
 
         [HubMethodName("scrollTextBox")]
         Task ScrollTextBox(bool status);
+
+        [HubMethodName("reloadPage")]
+        Task ReloadPage();
     }
 }

@@ -1536,6 +1536,31 @@ namespace WebPsdzClient.App_Data
             }
         }
 
+        public void ReloadPage()
+        {
+            log.InfoFormat("ReloadPage");
+
+            try
+            {
+                IHubContext<IPsdzClient> hubContext = GlobalHost.ConnectionManager.GetHubContext<PsdzVehicleHub, IPsdzClient>();
+                if (hubContext == null)
+                {
+                    log.ErrorFormat("ReloadPage No hub context");
+                    return;
+                }
+
+                List<string> connectionIds = PsdzVehicleHub.GetConnectionIds(SessionId);
+                foreach (string connectionId in connectionIds)
+                {
+                    hubContext.Clients.Client(connectionId)?.ReloadPage();
+                }
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("ReloadPage Exception: {0}", ex.Message);
+            }
+        }
+
         public void UpdateOptions(Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict)
         {
             OptionsDict = optionsDict;

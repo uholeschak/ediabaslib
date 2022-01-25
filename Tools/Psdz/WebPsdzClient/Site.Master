@@ -238,7 +238,22 @@
                 }
             }
 
-            $.connection.hub.qs = { 'sessionId' : sessionID };
+            psdzVehicleHubProxy.client.reloadPage = function ()
+            {
+                console.log("Reload Page");
+                if (isAppBound())
+                {
+                    try
+                    {
+                        app.ReloadPage();
+                    }
+                    catch (e)
+                    {
+                    }
+                }
+            }
+
+            $.connection.hub.qs = { 'sessionId': sessionID };
             $.connection.hub.start().done(function ()
                 {
                     psdzVehicleHubProxy.server.sessionConnected(sessionID);
