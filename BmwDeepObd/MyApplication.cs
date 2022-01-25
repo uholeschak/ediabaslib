@@ -9,6 +9,8 @@ namespace BmwDeepObd
         UsesCleartextTraffic = true,
         Name = ActivityCommon.AppNameSpace + ".DeepObd"
         )]
+    [Android.App.MetaData("android.webkit.WebView.EnableSafeBrowsing", Value = "false")]
+    [Android.App.MetaData("android.webkit.WebView.MetricsOptOut", Value = "true")]
     // ReSharper disable once UnusedMember.Global
     public class MyApplication : Android.App.Application
     {
