@@ -1218,8 +1218,8 @@ namespace BmwDeepObd
                         break;
                 }
 
-                cfgPageBmwActuatorMenu.SetEnabled(interfaceAvailable && !commActive);
-                cfgPageBmwActuatorMenu.SetVisible(bmwVisible && allowCoding);
+                cfgPageBmwCodingMenu.SetEnabled(interfaceAvailable && !commActive);
+                cfgPageBmwCodingMenu.SetVisible(bmwVisible && allowCoding);
             }
 
             bool vagVisible = ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw && selectedPageFuncAvail && !string.IsNullOrEmpty(_instanceData.ConfigFileName);

@@ -115,11 +115,10 @@ namespace WebPsdzClient
 
                 if (sessionContainer.RefreshOptions)
                 {
-                    UpdateCurrentOptions(true);
+                    sessionContainer.RefreshOptions = false;
+                    UpdateOptions();
                 }
             }
-
-            sessionContainer.RefreshOptions = false;
         }
 
         protected void Page_Unload(object sender, EventArgs e)
@@ -484,7 +483,6 @@ namespace WebPsdzClient
                 return;
             }
 
-            sessionContainer.RefreshOptions = true;
             try
             {
                 Request.ValidateInput();
