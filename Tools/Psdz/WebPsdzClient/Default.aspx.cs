@@ -487,6 +487,7 @@ namespace WebPsdzClient
             {
                 Request.ValidateInput();
                 string url = Request.RawUrl;
+                log.InfoFormat("UpdateOptions Reload Url: {0}", url);
                 if (!string.IsNullOrEmpty(url))
                 {
                     Response.Redirect(url, false);
