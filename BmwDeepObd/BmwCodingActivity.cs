@@ -730,7 +730,7 @@ namespace BmwDeepObd
             public override void DoUpdateVisitedHistory(WebView view, string url, bool isReload)
             {
 #if DEBUG
-                Android.Util.Log.Debug(Tag, string.Format("DoUpdateVisitedHistory: {0}", url));
+                Android.Util.Log.Debug(Tag, string.Format("DoUpdateVisitedHistory: Url={0}, Reload={1}", url, isReload));
 #endif
                 if (!string.IsNullOrEmpty(url))
                 {
