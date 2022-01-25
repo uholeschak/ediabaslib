@@ -54,6 +54,7 @@ namespace BmwDeepObd
             public InstanceData()
             {
                 Url = @"http://ulrich3.local.holeschak.de:3000";
+                //Url = @"http://holeschak.dedyn.io:3000";
             }
 
             public string Url { get; set; }
