@@ -127,7 +127,7 @@ namespace BmwDeepObd
             {
             }, BroadcastReceived);
 
-            _activityCommon.UpdateRegisterInternetCellular();
+            _activityCommon.RegisterInternetCellular();
             _activityCommon.SetPreferredNetworkInterface();
 
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
