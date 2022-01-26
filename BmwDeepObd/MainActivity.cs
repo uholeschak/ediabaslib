@@ -1193,6 +1193,7 @@ namespace BmwDeepObd
                 {
                     case ActivityCommon.InterfaceType.Bluetooth:
                     case ActivityCommon.InterfaceType.Enet:
+                    case ActivityCommon.InterfaceType.Ftdi:
                         if (_activityCommon.IsElmDevice(_instanceData.DeviceAddress))
                         {
                             break;
@@ -1218,7 +1219,8 @@ namespace BmwDeepObd
                         break;
                 }
 
-                cfgPageBmwCodingMenu.SetEnabled(interfaceAvailable && !commActive);
+                bool networkPresent = _activityCommon.IsNetworkPresent();
+                cfgPageBmwCodingMenu.SetEnabled(interfaceAvailable && !commActive && networkPresent);
                 cfgPageBmwCodingMenu.SetVisible(bmwVisible && allowCoding);
             }
 
