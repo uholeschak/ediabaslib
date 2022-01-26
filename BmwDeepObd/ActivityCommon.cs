@@ -1186,32 +1186,37 @@ namespace BmwDeepObd
             _selectedInterface = InterfaceType.None;
             _yandexTransDict = cacheActivity?._yandexTransDict ?? new Dictionary<string, Dictionary<string, string>>();
 
-            if (context != null && ((_bcReceiverUpdateDisplayHandler != null) || (_bcReceiverReceivedHandler != null)))
+            if (context != null)
             {
-                // android 8 rejects global receivers, so we register it locally
-                _gbcReceiver = new GlobalBroadcastReceiver();
-                context.RegisterReceiver(_gbcReceiver, new IntentFilter(GlobalBroadcastReceiver.MtcBtSmallon));
-                context.RegisterReceiver(_gbcReceiver, new IntentFilter(GlobalBroadcastReceiver.MtcBtSmalloff));
-                context.RegisterReceiver(_gbcReceiver, new IntentFilter(GlobalBroadcastReceiver.MicBtReport));
-
                 _bcReceiver = new Receiver(this);
-                LocalBroadcastManager.GetInstance(context).RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.NotificationBroadcastAction));
-                LocalBroadcastManager.GetInstance(context).RegisterReceiver(_bcReceiver, new IntentFilter(ActionPackageName));
-                context.RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.ActionBroadcastCommand));
-                context.RegisterReceiver(_bcReceiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));
-                context.RegisterReceiver(_bcReceiver, new IntentFilter(GlobalBroadcastReceiver.NotificationBroadcastAction));
                 RegisterWifiEnetNetworkCallback();
-                if (UsbSupport)
-                {   // usb handling
-                    context.RegisterReceiver(_bcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceDetached));
-                    context.RegisterReceiver(_bcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceAttached));
-                    context.RegisterReceiver(_bcReceiver, new IntentFilter(ActionUsbPermission));
-                    if (Build.VERSION.SdkInt < BuildVersionCodes.Kitkat)
-                    {   // attached event fails
-                        _usbCheckTimer = new Timer(UsbCheckEvent, null, 1000, 1000);
+
+                if ((_bcReceiverUpdateDisplayHandler != null) || (_bcReceiverReceivedHandler != null))
+                {
+                    // android 8 rejects global receivers, so we register it locally
+                    _gbcReceiver = new GlobalBroadcastReceiver();
+                    context.RegisterReceiver(_gbcReceiver, new IntentFilter(GlobalBroadcastReceiver.MtcBtSmallon));
+                    context.RegisterReceiver(_gbcReceiver, new IntentFilter(GlobalBroadcastReceiver.MtcBtSmalloff));
+                    context.RegisterReceiver(_gbcReceiver, new IntentFilter(GlobalBroadcastReceiver.MicBtReport));
+
+                    LocalBroadcastManager.GetInstance(context).RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.NotificationBroadcastAction));
+                    LocalBroadcastManager.GetInstance(context).RegisterReceiver(_bcReceiver, new IntentFilter(ActionPackageName));
+                    context.RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.ActionBroadcastCommand));
+                    context.RegisterReceiver(_bcReceiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));
+                    context.RegisterReceiver(_bcReceiver, new IntentFilter(GlobalBroadcastReceiver.NotificationBroadcastAction));
+                    if (UsbSupport)
+                    {   // usb handling
+                        context.RegisterReceiver(_bcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceDetached));
+                        context.RegisterReceiver(_bcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceAttached));
+                        context.RegisterReceiver(_bcReceiver, new IntentFilter(ActionUsbPermission));
+                        if (Build.VERSION.SdkInt < BuildVersionCodes.Kitkat)
+                        {   // attached event fails
+                            _usbCheckTimer = new Timer(UsbCheckEvent, null, 1000, 1000);
+                        }
                     }
                 }
             }
+
             if (context != null && MtcBtService)
             {
                 _mtcServiceConnection = new MtcServiceConnection(_context, connected =>
