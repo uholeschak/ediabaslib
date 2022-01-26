@@ -54,8 +54,7 @@ namespace BmwDeepObd
         {
             public InstanceData()
             {
-                Url = @"http://ulrich3.local.holeschak.de:3000";
-                //Url = @"http://holeschak.dedyn.io:3000";
+                Url = string.Empty;
             }
 
             public string Url { get; set; }
@@ -227,7 +226,7 @@ namespace BmwDeepObd
                             {
                                 UpdateConnectTime();
                                 Toast.MakeText(this, GetString(Resource.String.bmw_coding_network_error), ToastLength.Short)?.Show();
-                                if (_activityCommon.IsNetworkPresent())
+                                if (_activityCommon.IsNetworkPresent(out _))
                                 {
                                     _activityCommon.SetPreferredNetworkInterface();
                                     _webViewCoding.LoadUrl(_instanceData.Url);
@@ -386,13 +385,25 @@ namespace BmwDeepObd
                 return;
             }
 
-            if (!_activityCommon.IsNetworkPresent())
+            if (!_activityCommon.IsNetworkPresent(out string domains))
             {
                 return;
             }
 
             try
             {
+                if (string.IsNullOrEmpty(_instanceData.Url))
+                {
+                    if (!string.IsNullOrEmpty(domains) && domains.Contains("local.holeschak.de", StringComparison.OrdinalIgnoreCase))
+                    {
+                        _instanceData.Url = @"http://ulrich3.local.holeschak.de:3000";
+                    }
+                    else
+                    {
+                        _instanceData.Url = @"http://holeschak.dedyn.io:3000";
+                    }
+                }
+
                 _activityCommon.SetPreferredNetworkInterface();
                 _webViewCoding.LoadUrl(_instanceData.Url);
                 _urlLoaded = true;
