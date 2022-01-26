@@ -2940,7 +2940,7 @@ namespace BmwDeepObd
                               _networkData.ActiveWifiNetworks.Count > 0 ||
                               _networkData.ActiveEthernetNetworks.Count > 0;
 
-                    if (present)
+                    if (present && _networkData.ActiveCellularNetworks.Count == 0)
                     {
                         foreach (Network network in _networkData.ActiveWifiNetworks)
                         {
