@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using Android.Content;
 using Android.Content.PM;
+using Android.Hardware.Usb;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
@@ -98,6 +99,7 @@ namespace BmwDeepObd
         private object _requestLock = new object();
         private object _timeLock = new object();
         private Queue<VehicleRequest> _requestQueue = new Queue<VehicleRequest>();
+        private bool _activityActive;
         private bool _urlLoaded;
         private Timer _connectionCheckTimer;
         public long _connectionUpdateTime;
@@ -122,7 +124,9 @@ namespace BmwDeepObd
 
             SetResult(Android.App.Result.Canceled);
 
-            _activityCommon = new ActivityCommon(this);
+            _activityCommon = new ActivityCommon(this, () =>
+            {
+            }, BroadcastReceived);
 
             _activityCommon.UpdateRegisterInternetCellular();
             _activityCommon.SetPreferredNetworkInterface();
@@ -195,6 +199,7 @@ namespace BmwDeepObd
         protected override void OnResume()
         {
             base.OnResume();
+            _activityActive = true;
             UpdateConnectTime();
             LoadWebServerUrl();
 
@@ -238,6 +243,7 @@ namespace BmwDeepObd
         protected override void OnPause()
         {
             base.OnPause();
+            _activityActive = false;
 
             if (_connectionCheckTimer != null)
             {
@@ -428,6 +434,31 @@ namespace BmwDeepObd
                     // ignored
                 }
             });
+        }
+
+        private void BroadcastReceived(Context context, Intent intent)
+        {
+            if (intent == null)
+            {   // from usb check timer
+                if (_activityActive)
+                {
+                    _activityCommon.RequestUsbPermission(null);
+                }
+                return;
+            }
+            string action = intent.Action;
+            switch (action)
+            {
+                case UsbManager.ActionUsbDeviceAttached:
+                    if (_activityActive)
+                    {
+                        if (intent.GetParcelableExtra(UsbManager.ExtraDevice) is UsbDevice usbDevice)
+                        {
+                            _activityCommon.RequestUsbPermission(usbDevice);
+                        }
+                    }
+                    break;
+            }
         }
 
         private string EnqueueVehicleRequest(VehicleRequest vehicleRequest)
