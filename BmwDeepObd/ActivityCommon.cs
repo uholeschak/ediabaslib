@@ -2923,6 +2923,31 @@ namespace BmwDeepObd
             return true;
         }
 
+        public bool IsNetworkPresent()
+        {
+            try
+            {
+                if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+                {
+                    return true;
+                }
+
+                bool present;
+                lock (_networkData.LockObject)
+                {
+                    present = _networkData.ActiveCellularNetworks.Count > 0 ||
+                              _networkData.ActiveWifiNetworks.Count > 0 ||
+                              _networkData.ActiveEthernetNetworks.Count > 0;
+                }
+
+                return present;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public bool IsConnectedToWifiAdapter()
         {
             if (!string.IsNullOrEmpty(GetEnetAdapterIp(out string _)))

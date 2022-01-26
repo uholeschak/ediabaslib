@@ -201,7 +201,6 @@ namespace BmwDeepObd
             base.OnResume();
             _activityActive = true;
             UpdateConnectTime();
-            LoadWebServerUrl();
 
             if (_connectionCheckTimer == null)
             {
@@ -213,6 +212,8 @@ namespace BmwDeepObd
                         {
                             return;
                         }
+
+                        LoadWebServerUrl();
 
                         if (!_urlLoaded)
                         {
@@ -226,8 +227,11 @@ namespace BmwDeepObd
                             {
                                 UpdateConnectTime();
                                 Toast.MakeText(this, GetString(Resource.String.bmw_coding_network_error), ToastLength.Short)?.Show();
-                                _activityCommon.SetPreferredNetworkInterface();
-                                _webViewCoding.LoadUrl(_instanceData.Url);
+                                if (_activityCommon.IsNetworkPresent())
+                                {
+                                    _activityCommon.SetPreferredNetworkInterface();
+                                    _webViewCoding.LoadUrl(_instanceData.Url);
+                                }
                             }
                             catch (Exception)
                             {
@@ -378,6 +382,11 @@ namespace BmwDeepObd
         private void LoadWebServerUrl()
         {
             if (_urlLoaded)
+            {
+                return;
+            }
+
+            if (!_activityCommon.IsNetworkPresent())
             {
                 return;
             }
