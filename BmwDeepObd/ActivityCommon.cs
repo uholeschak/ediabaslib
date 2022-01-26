@@ -2923,8 +2923,9 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool IsNetworkPresent()
+        public bool IsNetworkPresent(out string domains)
         {
+            domains = null;
             try
             {
                 if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
@@ -2938,6 +2939,22 @@ namespace BmwDeepObd
                     present = _networkData.ActiveCellularNetworks.Count > 0 ||
                               _networkData.ActiveWifiNetworks.Count > 0 ||
                               _networkData.ActiveEthernetNetworks.Count > 0;
+
+                    if (present)
+                    {
+                        foreach (Network network in _networkData.ActiveWifiNetworks)
+                        {
+                            NetworkCapabilities networkCapabilities = _maConnectivity.GetNetworkCapabilities(network);
+                            LinkProperties linkProperties = _maConnectivity.GetLinkProperties(network);
+                            if (networkCapabilities != null && linkProperties != null && linkProperties.DhcpServerAddress != null)
+                            {
+                                if (!string.IsNullOrEmpty(linkProperties.Domains))
+                                {
+                                    domains = linkProperties.Domains;
+                                }
+                            }
+                        }
+                    }
                 }
 
                 return present;

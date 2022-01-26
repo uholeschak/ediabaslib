@@ -1219,7 +1219,7 @@ namespace BmwDeepObd
                         break;
                 }
 
-                bool networkPresent = _activityCommon.IsNetworkPresent();
+                bool networkPresent = _activityCommon.IsNetworkPresent(out _);
                 cfgPageBmwCodingMenu.SetEnabled(interfaceAvailable && !commActive && networkPresent);
                 cfgPageBmwCodingMenu.SetVisible(bmwVisible && allowCoding);
             }
