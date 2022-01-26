@@ -2210,7 +2210,7 @@ namespace BmwDeepObd
                 ActivityCommon.LockType lockType = ActivityCommon.LockType.None;
                 if (_downloadProgress != null || _compileProgress != null)
                 {
-                    lockType = ActivityCommon.LockType.Cpu;
+                    lockType = ActivityCommon.LockType.ScreenDim;
                 }
                 _activityCommon.SetLock(lockType);
             }

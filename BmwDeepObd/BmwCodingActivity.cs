@@ -98,6 +98,7 @@ namespace BmwDeepObd
         private object _requestLock = new object();
         private object _timeLock = new object();
         private Queue<VehicleRequest> _requestQueue = new Queue<VehicleRequest>();
+        private bool _urlLoaded;
         private Timer _connectionCheckTimer;
         public long _connectionUpdateTime;
 
@@ -176,7 +177,6 @@ namespace BmwDeepObd
 #endif
                 _webViewCoding.SetWebViewClient(new WebViewClientImpl(this));
                 _webViewCoding.SetWebChromeClient(new WebChromeClientImpl(this));
-                _webViewCoding.LoadUrl(_instanceData.Url);
             }
             catch (Exception)
             {
@@ -196,6 +196,7 @@ namespace BmwDeepObd
         {
             base.OnResume();
             UpdateConnectTime();
+            LoadWebServerUrl();
 
             if (_connectionCheckTimer == null)
             {
@@ -208,6 +209,11 @@ namespace BmwDeepObd
                             return;
                         }
 
+                        if (!_urlLoaded)
+                        {
+                            return;
+                        }
+
                         long connectTime = GetConnectTime();
                         if (Stopwatch.GetTimestamp() - connectTime >= ConnectionTimeout * ActivityCommon.TickResolMs)
                         {
@@ -215,6 +221,7 @@ namespace BmwDeepObd
                             {
                                 UpdateConnectTime();
                                 Toast.MakeText(this, GetString(Resource.String.bmw_coding_network_error), ToastLength.Short)?.Show();
+                                _activityCommon.SetPreferredNetworkInterface();
                                 _webViewCoding.LoadUrl(_instanceData.Url);
                             }
                             catch (Exception)
@@ -362,10 +369,30 @@ namespace BmwDeepObd
             });
         }
 
+        private void LoadWebServerUrl()
+        {
+            if (_urlLoaded)
+            {
+                return;
+            }
+
+            try
+            {
+                _activityCommon.SetPreferredNetworkInterface();
+                _webViewCoding.LoadUrl(_instanceData.Url);
+                _urlLoaded = true;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
         private bool SendVehicleResponse(string id, string response)
         {
             try
             {
+                _activityCommon.SetPreferredNetworkInterface();
                 string script = string.Format(CultureInfo.InvariantCulture, "sendVehicleResponse(`{0}`, `{1}`);", id, response);
                 if (Build.VERSION.SdkInt < BuildVersionCodes.Kitkat)
                 {
