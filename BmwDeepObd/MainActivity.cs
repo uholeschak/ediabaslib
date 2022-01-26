@@ -507,7 +507,6 @@ namespace BmwDeepObd
             }
 
             GetSettings();
-            _activityCommon.UpdateRegisterInternetCellular();
             _activityCommon.SetPreferredNetworkInterface();
 
             StoreLastAppState(LastAppState.Init);
@@ -807,12 +806,9 @@ namespace BmwDeepObd
                 }
             }
 
-            if (_activityCommon != null)
-            {
-                _activityCommon.UnRegisterInternetCellular();
-                _activityCommon.Dispose();
-                _activityCommon = null;
-            }
+            _activityCommon?.Dispose();
+            _activityCommon = null;
+
             if (_updateHandler != null)
             {
                 try

@@ -646,14 +646,12 @@ namespace BmwDeepObd
         private PowerManager.WakeLock _wakeLockScreenDim;
         private PowerManager.WakeLock _wakeLockCpu;
         private readonly Tuple<LockType, PowerManager.WakeLock>[] _lockArray;
-        private bool _internetCellularRegistered;
         private CellularCallback _cellularCallback;
         private WifiCallback _wifiCallback;
         private EthernetCallback _ethernetCallback;
         private readonly TcpClientWithTimeout.NetworkData _networkData;
         private Handler _btUpdateHandler;
         private Timer _usbCheckTimer;
-        private Timer _networkTimer;
         private int _usbDeviceDetectCount;
         private GlobalBroadcastReceiver _gbcReceiver;
         private Receiver _bcReceiver;
@@ -1078,11 +1076,6 @@ namespace BmwDeepObd
                 }
                 _selectedInterface = value;
                 SetPreferredNetworkInterface();
-
-                if (_activity is ActivityMain)
-                {
-                    UpdateRegisterInternetCellular();
-                }
             }
         }
 
@@ -1189,6 +1182,7 @@ namespace BmwDeepObd
             if (context != null)
             {
                 _bcReceiver = new Receiver(this);
+                RegisterInternetCellularCallback();
                 RegisterWifiEnetNetworkCallback();
 
                 if ((_bcReceiverUpdateDisplayHandler != null) || (_bcReceiverReceivedHandler != null))
@@ -1350,6 +1344,7 @@ namespace BmwDeepObd
                         _transLoginHttpClient = null;
                     }
 
+                    UnRegisterInternetCellularCallback();
                     UnRegisterWifiEnetCallback();
                     if (_context != null)
                     {
@@ -2243,32 +2238,7 @@ namespace BmwDeepObd
             }
         }
 
-        public bool UpdateRegisterInternetCellular()
-        {
-            bool registerRequired = IsNetworkAdapter();
-            if (registerRequired == _internetCellularRegistered)
-            {
-                return true;
-            }
-
-            if (!registerRequired)
-            {
-                if (_internetCellularRegistered)
-                {
-                    UnRegisterInternetCellular();
-                }
-                return true;
-            }
-
-            if (!_internetCellularRegistered)
-            {
-                RegisterInternetCellular();
-            }
-
-            return true;
-        }
-
-        public bool RegisterInternetCellular()
+        public bool RegisterInternetCellularCallback()
         {
             if (IsEmulator())
             {
@@ -2282,27 +2252,10 @@ namespace BmwDeepObd
 
             if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
             {
-                if (_networkTimer == null)
-                {
-                    _networkTimer = new Timer(NetworkTimerEvent, null, 2000, 2000);
-                }
-                try
-                {
-#pragma warning disable 618
-                    if (_maConnectivity.StartUsingNetworkFeature(ConnectivityType.Mobile, "enableHIPRI") < 0)
-                    {
-                        return false;
-                    }
-#pragma warning restore 618
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-                _internetCellularRegistered = true;
-                return true;
+                return false;
             }
-            UnRegisterInternetCellular();
+
+            UnRegisterInternetCellularCallback();
             try
             {
                 NetworkRequest.Builder builder = new NetworkRequest.Builder();
@@ -2317,11 +2270,11 @@ namespace BmwDeepObd
             {
                 return false;
             }
-            _internetCellularRegistered = true;
+
             return true;
         }
 
-        public bool UnRegisterInternetCellular()
+        public bool UnRegisterInternetCellularCallback()
         {
             if (IsEmulator())
             {
@@ -2333,26 +2286,11 @@ namespace BmwDeepObd
                 return false;
             }
 
-            _internetCellularRegistered = false;
             if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
             {
-                if (_networkTimer != null)
-                {
-                    _networkTimer.Dispose();
-                    _networkTimer = null;
-                }
-                try
-                {
-#pragma warning disable 618
-                    _maConnectivity.StopUsingNetworkFeature(ConnectivityType.Mobile, "enableHIPRI");
-#pragma warning restore 618
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
                 return true;
             }
+
             if (_cellularCallback != null)
             {
                 try
@@ -2464,7 +2402,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool SetPreferredNetworkInterface(bool hipri = true)
+        public bool SetPreferredNetworkInterface()
         {
             if (IsEmulator())
             {
@@ -2475,23 +2413,7 @@ namespace BmwDeepObd
 
             if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
             {
-                if (hipri)
-                {
-                    try
-                    {
-#pragma warning disable 618
-                        if (_maConnectivity.StartUsingNetworkFeature(ConnectivityType.Mobile, "enableHIPRI") < 0)
-                        {
-                            return false;
-                        }
-#pragma warning restore 618
-                    }
-                    catch (Exception)
-                    {
-                        return false;
-                    }
-                }
-                return true;
+                return false;
             }
 
             Network defaultNetwork = null;
@@ -9724,7 +9646,7 @@ namespace BmwDeepObd
             }
         }
 
-        private void NetworkStateChanged(bool wifi)
+        private void NetworkStateChanged()
         {
             _activity?.RunOnUiThread(() =>
             {
@@ -9749,11 +9671,8 @@ namespace BmwDeepObd
                         break;
                     }
                 }
-                if (wifi)
-                {
-                    // using hipri here could create endless loop (and is set by timer anyway)
-                    SetPreferredNetworkInterface(false);
-                }
+
+                SetPreferredNetworkInterface();
             });
         }
 
@@ -9779,35 +9698,6 @@ namespace BmwDeepObd
             });
         }
 
-        private void NetworkTimerEvent(Object state)
-        {
-            if (IsEmulator())
-            {
-                return;
-            }
-
-            if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
-            {
-                switch (_selectedInterface)
-                {
-                    case InterfaceType.Enet:
-                    case InterfaceType.ElmWifi:
-                    case InterfaceType.DeepObdWifi:
-                        try
-                        {
-#pragma warning disable 618
-                            _maConnectivity?.StartUsingNetworkFeature(ConnectivityType.Mobile, "enableHIPRI");
-#pragma warning restore 618
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
-                        break;
-                }
-            }
-        }
-
         public class Receiver : BroadcastReceiver
         {
             readonly ActivityCommon _activityCommon;
@@ -9827,7 +9717,7 @@ namespace BmwDeepObd
                     case BluetoothAdapter.ActionStateChanged:
 #pragma warning disable CS0618 // Typ oder Element ist veraltet
                     case ConnectivityManager.ConnectivityAction:
-                        _activityCommon.NetworkStateChanged(action == ConnectivityManager.ConnectivityAction);
+                        _activityCommon.NetworkStateChanged();
 #pragma warning restore CS0618 // Typ oder Element ist veraltet
                         if (action == BluetoothAdapter.ActionStateChanged)
                         {
@@ -9929,7 +9819,7 @@ namespace BmwDeepObd
                     Android.Util.Log.Info(Tag, string.Format("Added WiFi network: hash={0}, count={1}", network.GetHashCode(), _activityCommon._networkData.ActiveWifiNetworks.Count));
 #endif
                 }
-                _activityCommon.NetworkStateChanged(true);
+                _activityCommon.NetworkStateChanged();
             }
 
             public override void OnLost(Network network)
@@ -9941,7 +9831,7 @@ namespace BmwDeepObd
                     Android.Util.Log.Info(Tag, string.Format("Removed WiFi network: hash={0}, count={1}", network.GetHashCode(), _activityCommon._networkData.ActiveWifiNetworks.Count));
 #endif
                 }
-                _activityCommon.NetworkStateChanged(true);
+                _activityCommon.NetworkStateChanged();
             }
         }
 
@@ -9965,7 +9855,7 @@ namespace BmwDeepObd
 #endif
                 }
 
-                _activityCommon.NetworkStateChanged(true);
+                _activityCommon.NetworkStateChanged();
             }
 
             public override void OnLost(Network network)
@@ -9978,7 +9868,7 @@ namespace BmwDeepObd
 #endif
                 }
 
-                _activityCommon.NetworkStateChanged(true);
+                _activityCommon.NetworkStateChanged();
             }
         }
     }
