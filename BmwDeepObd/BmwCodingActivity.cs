@@ -127,9 +127,6 @@ namespace BmwDeepObd
             {
             }, BroadcastReceived);
 
-            _activityCommon.RegisterInternetCellular();
-            _activityCommon.SetPreferredNetworkInterface();
-
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
             _activityCommon.SelectedInterface = (ActivityCommon.InterfaceType)
@@ -137,6 +134,8 @@ namespace BmwDeepObd
             _deviceName = Intent.GetStringExtra(ExtraDeviceName);
             _deviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
             _activityCommon.SelectedEnetIp = Intent.GetStringExtra(ExtraEnetIp);
+
+            _activityCommon.SetPreferredNetworkInterface();
 
 #if USE_WEBSERVER
             int listenPort = StartWebServer();
@@ -265,12 +264,8 @@ namespace BmwDeepObd
             StopEdiabasThread();
 #endif
 
-            if (_activityCommon != null)
-            {
-                _activityCommon.UnRegisterInternetCellular();
-                _activityCommon.Dispose();
-                _activityCommon = null;
-            }
+            _activityCommon?.Dispose();
+            _activityCommon = null;
         }
 
         public override void OnBackPressed()

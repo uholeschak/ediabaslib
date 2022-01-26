@@ -290,7 +290,6 @@ namespace BmwDeepObd
                 _instanceData.DeviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
             }
             _activityCommon.SelectedEnetIp = Intent.GetStringExtra(ExtraEnetIp);
-            _activityCommon.UpdateRegisterInternetCellular();
             _activityCommon.SetPreferredNetworkInterface();
 
             EdiabasClose(_instanceData.ForceAppend);
@@ -365,12 +364,8 @@ namespace BmwDeepObd
             }
             EdiabasClose(true);
 
-            if (_activityCommon != null)
-            {
-                _activityCommon.UnRegisterInternetCellular();
-                _activityCommon.Dispose();
-                _activityCommon = null;
-            }
+            _activityCommon?.Dispose();
+            _activityCommon = null;
         }
 
         public override void OnBackPressed()
