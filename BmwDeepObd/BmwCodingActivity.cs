@@ -632,6 +632,7 @@ namespace BmwDeepObd
             _ediabasThreadWakeEvent.Reset();
             _ediabasThread = new Thread(EdiabasThread);
             _ediabasThread.Start();
+            UpdateOptionsMenu();
 
             return true;
         }
@@ -653,6 +654,7 @@ namespace BmwDeepObd
                     _ediabas = null;
                 }
             }
+            UpdateOptionsMenu();
 
             return true;
         }
@@ -839,6 +841,7 @@ namespace BmwDeepObd
                                     _instanceData.CommErrorsOccured = true;
                                 }
                                 _activityCommon.SetLock(ActivityCommon.LockType.ScreenDim);
+                                UpdateOptionsMenu();
                             });
                             break;
                         }
@@ -853,6 +856,7 @@ namespace BmwDeepObd
                                 }
 
                                 _activityCommon.SetLock(ActivityCommon.LockType.None);
+                                UpdateOptionsMenu();
                             });
                             break;
 
