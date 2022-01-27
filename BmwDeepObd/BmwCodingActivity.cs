@@ -282,20 +282,24 @@ namespace BmwDeepObd
 
                 if (accepted)
                 {
-                    if (!SendTraceFile((sender, args) =>
-                        {
-                            if (_activityCommon == null)
-                            {
-                                return;
-                            }
-
-                            base.OnBackPressed();
-                        }))
-                    {
-                        base.OnBackPressed();
-                    }
+                    OnBackPressedContinue();
                 }
             });
+        }
+
+        private void OnBackPressedContinue()
+        {
+            if (!SendTraceFile((sender, args) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+                    base.OnBackPressed();
+                }))
+            {
+                base.OnBackPressed();
+            }
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)
@@ -312,24 +316,28 @@ namespace BmwDeepObd
 
                         if (accepted)
                         {
-                            if (!SendTraceFile((sender, args) =>
-                                {
-                                    if (_activityCommon == null)
-                                    {
-                                        return;
-                                    }
-
-                                    Finish();
-                                }))
-                            {
-                                Finish();
-                            }
+                            FinishContinue();
                         }
                     });
                     return true;
             }
 
             return base.OnOptionsItemSelected(item);
+        }
+
+        private void FinishContinue()
+        {
+            if (!SendTraceFile((sender, args) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+                    Finish();
+                }))
+            {
+                Finish();
+            }
         }
 
         protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
