@@ -620,6 +620,15 @@ namespace BmwDeepObd
                 _ediabasThread.Join();
             }
 
+            lock (_ediabasLock)
+            {
+                if (_ediabas != null)
+                {
+                    _ediabas.Dispose();
+                    _ediabas = null;
+                }
+            }
+
             return true;
         }
 
