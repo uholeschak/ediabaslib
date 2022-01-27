@@ -416,6 +416,7 @@ namespace BmwDeepObd
             new AlertDialog.Builder(this)
                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                 {
+                    _instanceData.CommErrorsOccured = true;
                     handler(true);
                 })
                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
@@ -773,6 +774,8 @@ namespace BmwDeepObd
                 byte[] sendData = requestData;
                 bool funcAddress = (sendData[0] & 0xC0) == 0xC0;     // functional address
 
+                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ediabas transmit, Func={0}", funcAddress);
+
                 for (; ; )
                 {
                     bool dataReceived = false;
@@ -789,10 +792,16 @@ namespace BmwDeepObd
                             responseList.Add(receiveData);
                             dataReceived = true;
                         }
+                        else
+                        {
+                            if (!funcAddress)
+                            {
+                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** No response");
+                            }
+                        }
                     }
                     catch (Exception)
                     {
-                        // ignored
                     }
 
                     if (!funcAddress || !dataReceived)
