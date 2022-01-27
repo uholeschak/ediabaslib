@@ -1181,7 +1181,6 @@ namespace BmwDeepObd
 
             if (context != null)
             {
-                _bcReceiver = new Receiver(this);
                 RegisterInternetCellularCallback();
                 RegisterWifiEnetNetworkCallback();
 
@@ -1193,6 +1192,7 @@ namespace BmwDeepObd
                     context.RegisterReceiver(_gbcReceiver, new IntentFilter(GlobalBroadcastReceiver.MtcBtSmalloff));
                     context.RegisterReceiver(_gbcReceiver, new IntentFilter(GlobalBroadcastReceiver.MicBtReport));
 
+                    _bcReceiver = new Receiver(this);
                     LocalBroadcastManager.GetInstance(context).RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.NotificationBroadcastAction));
                     LocalBroadcastManager.GetInstance(context).RegisterReceiver(_bcReceiver, new IntentFilter(ActionPackageName));
                     context.RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.ActionBroadcastCommand));
