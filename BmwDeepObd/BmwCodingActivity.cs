@@ -58,6 +58,9 @@ namespace BmwDeepObd
             }
 
             public string Url { get; set; }
+            public string TraceDir { get; set; }
+            public bool TraceActive { get; set; }
+            public bool CommErrorsOccured { get; set; }
         }
 
         public delegate void AcceptDelegate(bool accepted);
@@ -539,15 +542,17 @@ namespace BmwDeepObd
                 AbortJobFunc = AbortEdiabasJob
             };
             ediabas.SetConfigProperty("EcuPath", _ecuDir);
-            string traceDir = Path.Combine(_appDataDir, "LogBmwCoding");
-            if (!string.IsNullOrEmpty(traceDir))
+            _instanceData.TraceDir = Path.Combine(_appDataDir, "LogBmwCoding");
+            if (!string.IsNullOrEmpty(_instanceData.TraceDir))
             {
-                ediabas.SetConfigProperty("TracePath", traceDir);
+                _instanceData.TraceActive = true;
+                ediabas.SetConfigProperty("TracePath", _instanceData.TraceDir);
                 ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.EdLogLevel.Error));
                 ediabas.SetConfigProperty("CompressTrace", "1");
             }
             else
             {
+                _instanceData.TraceActive = false;
                 ediabas.SetConfigProperty("IfhTrace", "0");
             }
 
@@ -739,13 +744,19 @@ namespace BmwDeepObd
                     switch (vehicleRequest.RequestType)
                     {
                         case VehicleRequest.VehicleRequestType.Connect:
+                        {
                             EdiabasDisconnect();
-                            EdiabasConnect();
+                            bool isConnected = EdiabasConnect();
                             RunOnUiThread(() =>
                             {
+                                if (!isConnected)
+                                {
+                                    _instanceData.CommErrorsOccured = true;
+                                }
                                 _activityCommon.SetLock(ActivityCommon.LockType.ScreenDim);
                             });
                             break;
+                        }
 
                         case VehicleRequest.VehicleRequestType.Disconnect:
                             EdiabasDisconnect();
@@ -788,6 +799,38 @@ namespace BmwDeepObd
                     SendVehicleResponseThread(vehicleRequest.Id, sbBody.ToString());
                 }
             }
+        }
+
+        private bool SendTraceFile(EventHandler<EventArgs> handler)
+        {
+            if (_instanceData.CommErrorsOccured && _instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir))
+            {
+                if (!StopEdiabasThread())
+                {
+                    return false;
+                }
+                return _activityCommon.RequestSendTraceFile(_appDataDir, _instanceData.TraceDir, GetType(), handler);
+            }
+            return false;
+        }
+
+        private bool SendTraceFileAlways(EventHandler<EventArgs> handler)
+        {
+            if (IsEdiabasConnected())
+            {
+                return false;
+            }
+
+            if (ActivityCommon.CollectDebugInfo ||
+                (_instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir)))
+            {
+                if (!StopEdiabasThread())
+                {
+                    return false;
+                }
+                return _activityCommon.SendTraceFile(_appDataDir, _instanceData.TraceDir, GetType(), handler);
+            }
+            return false;
         }
 
         private void UpdateConnectTime(bool reset = false)
