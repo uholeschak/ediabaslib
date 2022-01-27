@@ -325,6 +325,21 @@ namespace BmwDeepObd
                         }
                     });
                     return true;
+
+                case Resource.Id.menu_send_trace:
+                    if (IsEdiabasConnected())
+                    {
+                        return true;
+                    }
+                    SendTraceFileAlways((sender, args) =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+                        UpdateOptionsMenu();
+                    });
+                    return true;
             }
 
             return base.OnOptionsItemSelected(item);
