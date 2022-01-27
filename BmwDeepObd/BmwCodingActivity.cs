@@ -81,10 +81,11 @@ namespace BmwDeepObd
 
         private enum ActivityRequest
         {
-            RequestDevelopmentSettings,
+            RequestDummy,
         }
 
         private InstanceData _instanceData = new InstanceData();
+        private bool _updateOptionsMenu;
         private ActivityCommon _activityCommon;
         private string _ecuDir;
         private string _appDataDir;
@@ -128,6 +129,10 @@ namespace BmwDeepObd
 
             _activityCommon = new ActivityCommon(this, () =>
             {
+                if (_activityActive)
+                {
+                    UpdateOptionsMenu();
+                }
             }, BroadcastReceived);
 
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
@@ -145,7 +150,6 @@ namespace BmwDeepObd
 #else
             StartEdiabasThread();
 #endif
-
             _webViewCoding = FindViewById<WebView>(Resource.Id.webViewCoding);
 
             try
@@ -189,6 +193,7 @@ namespace BmwDeepObd
             }
 
             UpdateConnectTime();
+            UpdateOptionsMenu();
         }
 
         protected override void OnSaveInstanceState(Bundle outState)
@@ -344,9 +349,38 @@ namespace BmwDeepObd
         {
             switch ((ActivityRequest)requestCode)
             {
-                case ActivityRequest.RequestDevelopmentSettings:
+                case ActivityRequest.RequestDummy:
+                    UpdateOptionsMenu();
                     break;
             }
+        }
+
+        public override bool OnCreateOptionsMenu(IMenu menu)
+        {
+            var inflater = MenuInflater;
+            inflater.Inflate(Resource.Menu.bmw_coding_menu, menu);
+            return true;
+        }
+
+        public override bool OnMenuOpened(int featureId, IMenu menu)
+        {
+            if (_updateOptionsMenu)
+            {
+                _updateOptionsMenu = false;
+                OnPrepareOptionsMenu(menu);
+            }
+            return base.OnMenuOpened(featureId, menu);
+        }
+
+        public override bool OnPrepareOptionsMenu(IMenu menu)
+        {
+            bool commActive = IsEdiabasConnected();
+            bool interfaceAvailable = _activityCommon.IsInterfaceAvailable();
+
+            IMenuItem sendTraceMenu = menu.FindItem(Resource.Id.menu_send_trace);
+            sendTraceMenu?.SetEnabled(interfaceAvailable && !commActive && _instanceData.TraceActive && ActivityCommon.IsTraceFilePresent(_instanceData.TraceDir));
+
+            return base.OnPrepareOptionsMenu(menu);
         }
 
         private void ConnectionActiveWarn(AcceptDelegate handler)
@@ -378,19 +412,9 @@ namespace BmwDeepObd
                 .Show();
         }
 
-        // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool ShowDevelopmentSettings()
+        private void UpdateOptionsMenu()
         {
-            try
-            {
-                Intent intent = new Intent(Android.Provider.Settings.ActionApplicationDevelopmentSettings);
-                StartActivityForResult(intent, (int)ActivityRequest.RequestDevelopmentSettings);
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+            _updateOptionsMenu = true;
         }
 
         private void SendVehicleResponseThread(string id, string response)
@@ -503,6 +527,7 @@ namespace BmwDeepObd
                         if (intent.GetParcelableExtra(UsbManager.ExtraDevice) is UsbDevice usbDevice)
                         {
                             _activityCommon.RequestUsbPermission(usbDevice);
+                            UpdateOptionsMenu();
                         }
                     }
                     break;

@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+  <item android:id="@+id/action_menu_tool"
+        android:icon="@android:drawable/ic_menu_preferences"
+        android:title="@string/menu_settings"
+        app:showAsAction="always">
+    <menu>
+        <item android:id="@+id/menu_send_trace"
+              android:icon="@android:drawable/ic_menu_save"
+              android:title="@string/menu_send_trace" />
+    </menu>
+  </item>
+</menu>
