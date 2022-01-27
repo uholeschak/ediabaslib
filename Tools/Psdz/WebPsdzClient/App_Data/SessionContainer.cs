@@ -1715,6 +1715,7 @@ namespace WebPsdzClient.App_Data
             {
                 if (!task.Result)
                 {
+                    ReportError("ConnectVehicle failed");
                     StopTcpListener();
                 }
 
@@ -1749,6 +1750,11 @@ namespace WebPsdzClient.App_Data
 
             DisconnectVehicleTask().ContinueWith(task =>
             {
+                if (!task.Result)
+                {
+                    ReportError("DisconnectVehicle failed");
+                }
+
                 TaskActive = false;
                 StopTcpListener();
                 UpdateCurrentOptions();
@@ -1780,6 +1786,11 @@ namespace WebPsdzClient.App_Data
             Cts = new CancellationTokenSource();
             VehicleFunctionsTask(operationType).ContinueWith(task =>
             {
+                if (!task.Result)
+                {
+                    ReportError(string.Format(CultureInfo.InvariantCulture, "VehicleFunctions: {0} failed", operationType));
+                }
+
                 TaskActive = false;
                 Cts = null;
                 UpdateCurrentOptions();
