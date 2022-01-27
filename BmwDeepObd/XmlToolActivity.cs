@@ -2233,7 +2233,7 @@ namespace BmwDeepObd
                 progress.SetMessage(GetString(Resource.String.xml_tool_aborting));
             };
             progress.Show();
-            _activityCommon.SetLock(ActivityCommon.LockTypeCommunication);
+            _activityCommon.SetLock(ActivityCommon.LockType.ScreenDim);
 
             _ediabasJobAbort = false;
             _jobThread = new Thread(() =>
@@ -3670,7 +3670,7 @@ namespace BmwDeepObd
                 progress.SetMessage(GetString(Resource.String.xml_tool_aborting));
             };
             progress.Show();
-            _activityCommon.SetLock(ActivityCommon.LockTypeCommunication);
+            _activityCommon.SetLock(ActivityCommon.LockType.ScreenDim);
 
             _ediabasJobAbort = false;
             _jobThread = new Thread(() =>
@@ -4004,7 +4004,7 @@ namespace BmwDeepObd
                 progress.SetMessage(GetString(Resource.String.xml_tool_aborting));
             };
             progress.Show();
-            _activityCommon.SetLock(ActivityCommon.LockTypeCommunication);
+            _activityCommon.SetLock(ActivityCommon.LockType.ScreenDim);
 
             _ediabasJobAbort = false;
             _jobThread = new Thread(() =>
