@@ -282,7 +282,18 @@ namespace BmwDeepObd
 
                 if (accepted)
                 {
-                    base.OnBackPressed();
+                    if (!SendTraceFile((sender, args) =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+
+                            base.OnBackPressed();
+                        }))
+                    {
+                        base.OnBackPressed();
+                    }
                 }
             });
         }
@@ -301,7 +312,18 @@ namespace BmwDeepObd
 
                         if (accepted)
                         {
-                            Finish();
+                            if (!SendTraceFile((sender, args) =>
+                                {
+                                    if (_activityCommon == null)
+                                    {
+                                        return;
+                                    }
+
+                                    Finish();
+                                }))
+                            {
+                                Finish();
+                            }
                         }
                     });
                     return true;

@@ -374,6 +374,11 @@ namespace BmwDeepObd
             {
                 if (!SendTraceFile((sender, args) =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
                     base.OnBackPressed();
                 }))
                 {
@@ -602,6 +607,11 @@ namespace BmwDeepObd
                     }
                     if (!SendTraceFile((sender, args) =>
                     {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
                         Finish();
                     }))
                     {
