@@ -194,6 +194,23 @@
                 sendRequest(url, id, formData);
             }
 
+            psdzVehicleHubProxy.client.reportError = function (msg)
+            {
+                var logMessage = "Report error: Msg=" + msg;
+                console.log(logMessage);
+
+                if (isAppBound())
+                {
+                    try
+                    {
+                        app.ReportError(msg);
+                    }
+                    catch (e)
+                    {
+                    }
+                }
+            }
+
             psdzVehicleHubProxy.client.updatePanels = function (status)
             {
                 var logMessage = "Update Panels: Status=" + status;
@@ -220,21 +237,6 @@
                     catch (e)
                     {
                     }
-                }
-            }
-
-            psdzVehicleHubProxy.client.scrollTextBox = function (status)
-            {
-                var logMessage = "Scroll text box=" + status;
-                console.log(logMessage);
-
-                if (typeof scrollTextBox === "function")
-                {
-                    scrollTextBox(status);
-                }
-                else
-                {
-                    console.log("scrollTextBox not existing");
                 }
             }
 

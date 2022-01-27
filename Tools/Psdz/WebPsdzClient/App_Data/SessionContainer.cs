@@ -1489,6 +1489,29 @@ namespace WebPsdzClient.App_Data
             }
         }
 
+        public void ReportError(string msg)
+        {
+            try
+            {
+                IHubContext<IPsdzClient> hubContext = GlobalHost.ConnectionManager.GetHubContext<PsdzVehicleHub, IPsdzClient>();
+                if (hubContext == null)
+                {
+                    log.ErrorFormat("ReportError No hub context");
+                    return;
+                }
+
+                List<string> connectionIds = PsdzVehicleHub.GetConnectionIds(SessionId);
+                foreach (string connectionId in connectionIds)
+                {
+                    hubContext.Clients.Client(connectionId)?.ReportError(msg);
+                }
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("ReportError Exception: {0}", ex.Message);
+            }
+        }
+
         public void UpdateDisplay(bool updatePanel = true)
         {
             try
