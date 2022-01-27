@@ -1,5 +1,4 @@
-﻿//#define USE_WEBSERVER
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -91,9 +90,6 @@ namespace BmwDeepObd
         private string _appDataDir;
         private string _deviceName;
         private string _deviceAddress;
-#if USE_WEBSERVER
-        private EdWebServer _edWebServer;
-#endif
         private EdiabasNet _ediabas;
         private volatile bool _ediabasJobAbort;
         private Thread _ediabasThread;
@@ -145,13 +141,9 @@ namespace BmwDeepObd
 
             _activityCommon.SetPreferredNetworkInterface();
 
-#if USE_WEBSERVER
-            int listenPort = StartWebServer();
-#else
             StartEdiabasThread();
-#endif
-            _webViewCoding = FindViewById<WebView>(Resource.Id.webViewCoding);
 
+            _webViewCoding = FindViewById<WebView>(Resource.Id.webViewCoding);
             try
             {
                 WebSettings webSettings = _webViewCoding?.Settings;
@@ -161,7 +153,7 @@ namespace BmwDeepObd
                     webSettings.JavaScriptCanOpenWindowsAutomatically = true;
                     webSettings.DomStorageEnabled = true;
                     webSettings.CacheMode = CacheModes.NoCache;
-#if !USE_WEBSERVER
+
                     string userAgent = webSettings.UserAgentString;
                     if (!string.IsNullOrEmpty(userAgent))
                     {
@@ -178,12 +170,9 @@ namespace BmwDeepObd
 
                         webSettings.UserAgentString = userAgent;
                     }
-#endif
                 }
 
-#if !USE_WEBSERVER
                 _webViewCoding.AddJavascriptInterface(new WebViewJSInterface(this), "app");
-#endif
                 _webViewCoding.SetWebViewClient(new WebViewClientImpl(this));
                 _webViewCoding.SetWebChromeClient(new WebChromeClientImpl(this));
             }
@@ -266,11 +255,7 @@ namespace BmwDeepObd
         {
             base.OnDestroy();
 
-#if USE_WEBSERVER
-            StopWebServer();
-#else
             StopEdiabasThread();
-#endif
 
             _activityCommon?.Dispose();
             _activityCommon = null;
@@ -406,13 +391,6 @@ namespace BmwDeepObd
                 return;
             }
 
-#if USE_WEBSERVER
-            if (_edWebServer != null && _edWebServer.IsEdiabasConnected())
-            {
-                handler.Invoke(true);
-                return;
-            }
-#endif
             new AlertDialog.Builder(this)
                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                 {
@@ -567,43 +545,6 @@ namespace BmwDeepObd
 
             return string.Empty;
         }
-
-#if USE_WEBSERVER
-        private int StartWebServer(int listenPort = 8080)
-        {
-            try
-            {
-                EdiabasNet ediabas = EdiabasSetup();
-                _edWebServer = new EdWebServer(ediabas, message =>
-                {
-                    _edWebServer.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, message);
-                });
-                int usedPort = _edWebServer.StartTcpListener("http://127.0.0.1:" + listenPort.ToString(CultureInfo.InvariantCulture));
-                return usedPort;
-            }
-            catch (Exception)
-            {
-                return -1;
-            }
-        }
-
-        private bool StopWebServer()
-        {
-            try
-            {
-                if (_edWebServer != null)
-                {
-                    _edWebServer.Dispose();
-                    _edWebServer = null;
-                }
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-#endif
 
         private EdiabasNet EdiabasSetup()
         {
