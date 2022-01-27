@@ -642,6 +642,11 @@ namespace BmwDeepObd
         {
             lock (_ediabasLock)
             {
+                if (_ediabas == null)
+                {
+                    return false;
+                }
+
                 try
                 {
                     if (_ediabas.EdInterfaceClass.InterfaceConnect())
@@ -665,6 +670,11 @@ namespace BmwDeepObd
         {
             lock (_ediabasLock)
             {
+                if (_ediabas == null)
+                {
+                    return false;
+                }
+
                 try
                 {
                     _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Ediabas disconnect");
@@ -686,6 +696,7 @@ namespace BmwDeepObd
                 {
                     return false;
                 }
+
                 return _ediabas.EdInterfaceClass.Connected;
             }
         }
@@ -706,6 +717,11 @@ namespace BmwDeepObd
                 for (; ; )
                 {
                     bool dataReceived = false;
+
+                    if (_ediabas == null)
+                    {
+                        break;
+                    }
 
                     try
                     {
@@ -771,6 +787,11 @@ namespace BmwDeepObd
                             bool isConnected = EdiabasConnect();
                             RunOnUiThread(() =>
                             {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
+
                                 if (!isConnected)
                                 {
                                     _instanceData.CommErrorsOccured = true;
@@ -784,6 +805,11 @@ namespace BmwDeepObd
                             EdiabasDisconnect();
                             RunOnUiThread(() =>
                             {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
+
                                 _activityCommon.SetLock(ActivityCommon.LockType.None);
                             });
                             break;
@@ -855,6 +881,24 @@ namespace BmwDeepObd
             return false;
         }
 
+        private void ReportError(string msg)
+        {
+            RunOnUiThread(() =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                _instanceData.CommErrorsOccured = true;
+
+                lock (_ediabasLock)
+                {
+                    _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ReportError: {0}", msg);
+                }
+            });
+        }
+
         private void UpdateConnectTime(bool reset = false)
         {
             lock (_timeLock)
@@ -921,7 +965,7 @@ namespace BmwDeepObd
             public override bool OnConsoleMessage(ConsoleMessage consoleMessage)
             {
 #if DEBUG
-                string message = string.Format(CultureInfo.InvariantCulture, "Message: {0}, Line: {1}, Source: {2}", consoleMessage.Message(), consoleMessage.LineNumber(), consoleMessage.SourceId());
+                string message = string.Format(CultureInfo.InvariantCulture, "Message: {0}, Line: {1}", consoleMessage.Message(), consoleMessage.LineNumber());
                 Android.Util.Log.Debug(Tag, message);
 #endif
                 return true;
@@ -975,6 +1019,16 @@ namespace BmwDeepObd
                 Android.Util.Log.Debug(Tag, string.Format("VehicleSend: Id={0}, Data={1}", id, data));
 #endif
                 return _activity.EnqueueVehicleRequest(new VehicleRequest(VehicleRequest.VehicleRequestType.Transmit, id, data));
+            }
+
+            [JavascriptInterface]
+            [Export]
+            public void ReportError(string msg)
+            {
+#if DEBUG
+                Android.Util.Log.Debug(Tag, string.Format("ReportError: Msg={0}", msg));
+#endif
+                _activity.ReportError(msg);
             }
 
             [JavascriptInterface]
