@@ -132,13 +132,13 @@ namespace PsdzClient.Programing
             StringBuilder sbResult = new StringBuilder();
             try
             {
-                log.InfoFormat("Start programming service DealerId={0}", _dealerId);
+                log.InfoFormat(CultureInfo.InvariantCulture, "Start programming service DealerId={0}", _dealerId);
                 sbResult.AppendLine(Strings.HostStarting);
                 UpdateStatus(sbResult.ToString());
 
                 if (ProgrammingService != null)
                 {
-                    log.InfoFormat("Programming service already existing");
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Programming service already existing");
                 }
                 else
                 {
@@ -191,7 +191,7 @@ namespace PsdzClient.Programing
 
                 if (!PsdzServiceStarter.IsServerInstanceRunning())
                 {
-                    log.InfoFormat("Starting host");
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Starting host");
                     if (!ProgrammingService.StartPsdzServiceHost())
                     {
                         sbResult.AppendLine(Strings.HostStartFailed);
@@ -200,7 +200,7 @@ namespace PsdzClient.Programing
                     }
 
                     ProgrammingService.SetLogLevelToMax();
-                    log.InfoFormat("Host started");
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Host started");
                 }
 
                 sbResult.AppendLine(Strings.HostStarted);
@@ -255,7 +255,7 @@ namespace PsdzClient.Programing
 
         public bool ConnectVehicle(CancellationTokenSource cts, string istaFolder, string remoteHost, bool useIcom, int addTimeout = 1000)
         {
-            log.InfoFormat("ConnectVehicle Start - Ip: {0}, ICOM: {1}", remoteHost, useIcom);
+            log.InfoFormat(CultureInfo.InvariantCulture, "ConnectVehicle Start - Ip: {0}, ICOM: {1}", remoteHost, useIcom);
             StringBuilder sbResult = new StringBuilder();
 
             if (ProgrammingService == null)
@@ -271,7 +271,7 @@ namespace PsdzClient.Programing
                 sbResult.AppendLine(Strings.VehicleConnecting);
                 UpdateStatus(sbResult.ToString());
 
-                log.InfoFormat("Connecting to: Host={0}, ICOM={1}", remoteHost, useIcom);
+                log.InfoFormat(CultureInfo.InvariantCulture, "Connecting to: Host={0}, ICOM={1}", remoteHost, useIcom);
                 string[] hostParts = remoteHost.Split(':');
                 if (hostParts.Length < 1)
                 {
@@ -320,7 +320,7 @@ namespace PsdzClient.Programing
                     }
                 }
 
-                log.InfoFormat("ConnectVehicle Ip: {0}, Diag: {1}, Control: {2}, ICOM: {3}", ipAddress, diagPort, controlPort, icomConnection);
+                log.InfoFormat(CultureInfo.InvariantCulture, "ConnectVehicle Ip: {0}, Diag: {1}, Control: {2}, ICOM: {3}", ipAddress, diagPort, controlPort, icomConnection);
                 EdInterfaceEnet.EnetConnection.InterfaceType interfaceType =
                     icomConnection ? EdInterfaceEnet.EnetConnection.InterfaceType.Icom : EdInterfaceEnet.EnetConnection.InterfaceType.Direct;
                 EdInterfaceEnet.EnetConnection enetConnection;
@@ -354,14 +354,14 @@ namespace PsdzClient.Programing
                     return false;
                 }
 
-                log.InfoFormat("Detected vehicle: VIN={0}, GroupFile={1}, BR={2}, Series={3}, BuildDate={4}-{5}",
+                log.InfoFormat(CultureInfo.InvariantCulture, "Detected vehicle: VIN={0}, GroupFile={1}, BR={2}, Series={3}, BuildDate={4}-{5}",
                     PsdzContext.DetectVehicle.Vin ?? string.Empty, PsdzContext.DetectVehicle.GroupSgdb ?? string.Empty,
                     PsdzContext.DetectVehicle.ModelSeries ?? string.Empty,
                     PsdzContext.DetectVehicle.Series ?? string.Empty,
                     PsdzContext.DetectVehicle.ConstructYear ?? string.Empty,
                     PsdzContext.DetectVehicle.ConstructMonth ?? string.Empty);
 
-                log.InfoFormat("Detected ILevel: Ship={0}, Current={1}, Backup={2}",
+                log.InfoFormat(CultureInfo.InvariantCulture, "Detected ILevel: Ship={0}, Current={1}, Backup={2}",
                     PsdzContext.DetectVehicle.ILevelShip ?? string.Empty, PsdzContext.DetectVehicle.ILevelCurrent ?? string.Empty,
                     PsdzContext.DetectVehicle.ILevelBackup ?? string.Empty);
 
@@ -405,7 +405,7 @@ namespace PsdzClient.Programing
 
                 PsdzContext.ProjectName = psdzTargetSelectorNewest.Project;
                 PsdzContext.VehicleInfo = psdzTargetSelectorNewest.VehicleInfo;
-                log.InfoFormat("Target selector: Project={0}, Vehicle={1}, Series={2}",
+                log.InfoFormat(CultureInfo.InvariantCulture, "Target selector: Project={0}, Vehicle={1}, Series={2}",
                     psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo,
                     psdzTargetSelectorNewest.Baureihenverbund);
                 cts?.Token.ThrowIfCancellationRequested();
@@ -440,7 +440,7 @@ namespace PsdzClient.Programing
 
                 sbResult.AppendLine(Strings.VehicleConnected);
                 UpdateStatus(sbResult.ToString());
-                log.InfoFormat("Connection: Id={0}, Port={1}", psdzConnection.Id, psdzConnection.Port);
+                log.InfoFormat(CultureInfo.InvariantCulture, "Connection: Id={0}, Port={1}", psdzConnection.Id, psdzConnection.Port);
 
                 ProgrammingService.AddListener(PsdzContext);
                 return true;
@@ -453,7 +453,7 @@ namespace PsdzClient.Programing
             }
             finally
             {
-                log.InfoFormat("ConnectVehicle Finish - Host: {0}, ICOM: {1}", remoteHost, useIcom);
+                log.InfoFormat(CultureInfo.InvariantCulture, "ConnectVehicle Finish - Host: {0}, ICOM: {1}", remoteHost, useIcom);
                 log.Info(Environment.NewLine + sbResult);
 
                 if (PsdzContext != null)
@@ -521,12 +521,12 @@ namespace PsdzClient.Programing
 
         public bool VehicleFunctions(CancellationTokenSource cts, OperationType operationType)
         {
-            log.InfoFormat("VehicleFunctions Start - Type: {0}", operationType);
+            log.InfoFormat(CultureInfo.InvariantCulture, "VehicleFunctions Start - Type: {0}", operationType);
             StringBuilder sbResult = new StringBuilder();
 
             try
             {
-                sbResult.AppendLine("Executing vehicle functions ...");
+                sbResult.AppendLine(Strings.ExecutingVehicleFunc);
                 UpdateStatus(sbResult.ToString());
 
                 if (ProgrammingService == null)
@@ -546,7 +546,7 @@ namespace PsdzClient.Programing
                 ClientContext clientContext = ClientContext.GetClientContext(PsdzContext.Vehicle);
                 if (clientContext == null)
                 {
-                    sbResult.AppendLine("No client context");
+                    sbResult.AppendLine(Strings.ContextMissing);
                     UpdateStatus(sbResult.ToString());
                     return false;
                 }
@@ -554,23 +554,22 @@ namespace PsdzClient.Programing
                 IPsdzVin psdzVin = ProgrammingService.Psdz.VcmService.GetVinFromMaster(PsdzContext.Connection);
                 if (string.IsNullOrEmpty(psdzVin?.Value))
                 {
-                    sbResult.AppendLine("Reading VIN failed");
+                    sbResult.AppendLine(Strings.ReadVinFailed);
                     UpdateStatus(sbResult.ToString());
                     return false;
                 }
 
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Vin: {0}", psdzVin.Value));
-                UpdateStatus(sbResult.ToString());
+                log.InfoFormat(CultureInfo.InvariantCulture, "Vin: {0}", psdzVin.Value);
                 cts?.Token.ThrowIfCancellationRequested();
 
                 if (operationType == OperationType.ExecuteTal)
                 {
-                    sbResult.AppendLine("Execute TAL");
+                    sbResult.AppendLine(Strings.ExecutingTal);
                     UpdateStatus(sbResult.ToString());
 
                     if (PsdzContext.Tal == null)
                     {
-                        sbResult.AppendLine("No TAL present");
+                        sbResult.AppendLine(Strings.TalMissing);
                         UpdateStatus(sbResult.ToString());
                         return false;
                     }
@@ -623,14 +622,14 @@ namespace PsdzClient.Programing
 
                         if (failureCount > 0)
                         {
-                            sbResult.AppendLine("Ncd failures present");
+                            sbResult.AppendLine(Strings.NcdFailures);
                             UpdateStatus(sbResult.ToString());
                             return false;
                         }
 
                         if (!File.Exists(jsonRequestFilePath))
                         {
-                            sbResult.AppendLine("Ncd request file not generated");
+                            sbResult.AppendLine(Strings.NoNcdRequestFile);
                             UpdateStatus(sbResult.ToString());
                             return false;
                         }
@@ -638,11 +637,11 @@ namespace PsdzClient.Programing
                         RequestJson requestJson = new JsonHelper().ReadRequestJson(jsonRequestFilePath);
                         if (requestJson == null || !ProgrammingUtils.CheckIfThereAreAnyNcdInTheRequest(requestJson))
                         {
-                            sbResult.AppendLine("No ecu data in the request json file. Ncd calculation not required");
+                            log.InfoFormat(CultureInfo.InvariantCulture, "No ecu data in the request json file. Ncd calculation not required");
                         }
                         else
                         {
-                            sbResult.AppendLine("Ncd online calculation required, aborting");
+                            sbResult.AppendLine(Strings.NcdOnlineCalculation);
                             UpdateStatus(sbResult.ToString());
                             return false;
                         }
@@ -675,12 +674,12 @@ namespace PsdzClient.Programing
 
                         if (softwareEntryCount > 0)
                         {
-                            sbResult.AppendLine("Software failures present");
+                            sbResult.AppendLine(Strings.SoftwareFailures);
                             UpdateStatus(sbResult.ToString());
                             return false;
                         }
 
-                        sbResult.AppendLine("Executing Backup Tal ...");
+                        sbResult.AppendLine(Strings.ExecutingBackupTal);
                         UpdateStatus(sbResult.ToString());
                         TalExecutionSettings talExecutionSettings = ProgrammingUtils.GetTalExecutionSettings(ProgrammingService);
                         IPsdzTal backupTalResult = ProgrammingService.Psdz.IndividualDataRestoreService.ExecuteAsyncBackupTal(
@@ -700,7 +699,7 @@ namespace PsdzClient.Programing
                         }
                         cts?.Token.ThrowIfCancellationRequested();
 
-                        sbResult.AppendLine("Executing Tal ...");
+                        sbResult.AppendLine(Strings.ExecutingTal);
                         UpdateStatus(sbResult.ToString());
                         IPsdzTal executeTalResult = ProgrammingService.Psdz.TalExecutionService.ExecuteTal(PsdzContext.Connection, PsdzContext.Tal,
                             null, psdzVin, PsdzContext.FaTarget, talExecutionSettings, PsdzContext.PathToBackupData, cts.Token);
@@ -863,7 +862,7 @@ namespace PsdzClient.Programing
                     string compareFa = ProgrammingUtils.CompareFa(ifaActual, ifaTarget);
                     if (!string.IsNullOrEmpty(compareFa))
                     {
-                        log.InfoFormat("Compare FA: {0}", compareFa);
+                        log.InfoFormat(CultureInfo.InvariantCulture, "Compare FA: {0}", compareFa);
                     }
                 }
                 else
@@ -1140,7 +1139,7 @@ namespace PsdzClient.Programing
             }
             finally
             {
-                log.InfoFormat("VehicleFunctions Finish - Type: {0}", operationType);
+                log.InfoFormat(CultureInfo.InvariantCulture, "VehicleFunctions Finish - Type: {0}", operationType);
                 log.Info(Environment.NewLine + sbResult);
             }
         }
@@ -1172,7 +1171,7 @@ namespace PsdzClient.Programing
                             PdszDatabase.TestModuleData testModuleData = ProgrammingService.PdszDatabase.GetTestModuleData(moduleName);
                             if (testModuleData == null)
                             {
-                                log.ErrorFormat("UpdateTargetFa GetTestModuleData failed for: {0}", moduleName);
+                                log.ErrorFormat(CultureInfo.InvariantCulture, "UpdateTargetFa GetTestModuleData failed for: {0}", moduleName);
                                 optionsItem.Invalid = true;
                             }
                             else
@@ -1183,11 +1182,11 @@ namespace PsdzClient.Programing
                                     PdszDatabase.SwiInfoObj swiInfoObj = ProgrammingService.PdszDatabase.GetInfoObjectByControlId(testModuleData.ModuleRef, infoInfoObj.LinkType);
                                     if (swiInfoObj == null)
                                     {
-                                        log.ErrorFormat("UpdateTargetFa No info object: {0}", testModuleData.ModuleRef);
+                                        log.ErrorFormat(CultureInfo.InvariantCulture, "UpdateTargetFa No info object: {0}", testModuleData.ModuleRef);
                                     }
                                     else
                                     {
-                                        log.InfoFormat("UpdateTargetFa Info object: {0}", swiInfoObj.ToString(ClientContext.GetLanguage(PsdzContext.Vehicle)));
+                                        log.InfoFormat(CultureInfo.InvariantCulture, "UpdateTargetFa Info object: {0}", swiInfoObj.ToString(ClientContext.GetLanguage(PsdzContext.Vehicle)));
                                     }
                                 }
 
@@ -1196,14 +1195,14 @@ namespace PsdzClient.Programing
                                 {
                                     if (!ProgrammingUtils.ModifyFa(ifaTarget, remList, false))
                                     {
-                                        log.ErrorFormat("UpdateTargetFa Rem failed: {0}", remList.ToStringItems());
+                                        log.ErrorFormat(CultureInfo.InvariantCulture, "UpdateTargetFa Rem failed: {0}", remList.ToStringItems());
                                     }
                                 }
                                 if (testModuleData.RefDict.TryGetValue("faElementsToAdd", out List<string> addList))
                                 {
                                     if (!ProgrammingUtils.ModifyFa(ifaTarget, addList, true))
                                     {
-                                        log.ErrorFormat("UpdateTargetFa Add failed: {0}", addList.ToStringItems());
+                                        log.ErrorFormat(CultureInfo.InvariantCulture, "UpdateTargetFa Add failed: {0}", addList.ToStringItems());
                                     }
                                 }
 
@@ -1219,14 +1218,14 @@ namespace PsdzClient.Programing
             SelectedOptions.RemoveAll(x => x.Invalid);
 
             {
-                log.InfoFormat("UpdateTargetFa FaTarget: {0}", PsdzContext.FaTarget.AsString);
+                log.InfoFormat(CultureInfo.InvariantCulture, "UpdateTargetFa FaTarget: {0}", PsdzContext.FaTarget.AsString);
 
                 IFa ifaTarget = ProgrammingUtils.BuildFa(PsdzContext.FaTarget);
                 IFa ifaActual = ProgrammingUtils.BuildFa(PsdzContext.FaActual);
                 string compareFa = ProgrammingUtils.CompareFa(ifaActual, ifaTarget);
                 if (!string.IsNullOrEmpty(compareFa))
                 {
-                    log.InfoFormat("UpdateTargetFa Compare FA: {0}", compareFa);
+                    log.InfoFormat(CultureInfo.InvariantCulture, "UpdateTargetFa Compare FA: {0}", compareFa);
                 }
             }
         }

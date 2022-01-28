@@ -61,6 +61,42 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Context not found. ähnelt.
+        /// </summary>
+        internal static string ContextMissing {
+            get {
+                return ResourceManager.GetString("ContextMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Executing backup TAL ... ähnelt.
+        /// </summary>
+        internal static string ExecutingBackupTal {
+            get {
+                return ResourceManager.GetString("ExecutingBackupTal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Executing TAL ... ähnelt.
+        /// </summary>
+        internal static string ExecutingTal {
+            get {
+                return ResourceManager.GetString("ExecutingTal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Executing vehicle operation ... ähnelt.
+        /// </summary>
+        internal static string ExecutingVehicleFunc {
+            get {
+                return ResourceManager.GetString("ExecutingVehicleFunc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Service host started. ähnelt.
         /// </summary>
         internal static string HostStarted {
@@ -102,6 +138,60 @@ namespace PsdzClientLibrary.Resources {
         internal static string HostStopping {
             get {
                 return ResourceManager.GetString("HostStopping", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Detected Ncd failures. ähnelt.
+        /// </summary>
+        internal static string NcdFailures {
+            get {
+                return ResourceManager.GetString("NcdFailures", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Ncd online calculation required. ähnelt.
+        /// </summary>
+        internal static string NcdOnlineCalculation {
+            get {
+                return ResourceManager.GetString("NcdOnlineCalculation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Ncd request file missing. ähnelt.
+        /// </summary>
+        internal static string NoNcdRequestFile {
+            get {
+                return ResourceManager.GetString("NoNcdRequestFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Reading VIN failed. ähnelt.
+        /// </summary>
+        internal static string ReadVinFailed {
+            get {
+                return ResourceManager.GetString("ReadVinFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Detected software failures. ähnelt.
+        /// </summary>
+        internal static string SoftwareFailures {
+            get {
+                return ResourceManager.GetString("SoftwareFailures", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die TAL not present. ähnelt.
+        /// </summary>
+        internal static string TalMissing {
+            get {
+                return ResourceManager.GetString("TalMissing", resourceCulture);
             }
         }
         

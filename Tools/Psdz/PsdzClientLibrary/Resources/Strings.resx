@@ -117,6 +117,18 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ContextMissing" xml:space="preserve">
+    <value>Context not found.</value>
+  </data>
+  <data name="ExecutingBackupTal" xml:space="preserve">
+    <value>Executing backup TAL ...</value>
+  </data>
+  <data name="ExecutingTal" xml:space="preserve">
+    <value>Executing TAL ...</value>
+  </data>
+  <data name="ExecutingVehicleFunc" xml:space="preserve">
+    <value>Executing vehicle operation ...</value>
+  </data>
   <data name="HostStarted" xml:space="preserve">
     <value>Service host started.</value>
   </data>
@@ -131,6 +143,24 @@
   </data>
   <data name="HostStopping" xml:space="preserve">
     <value>Stopping service host ...</value>
+  </data>
+  <data name="NcdFailures" xml:space="preserve">
+    <value>Detected Ncd failures.</value>
+  </data>
+  <data name="NcdOnlineCalculation" xml:space="preserve">
+    <value>Ncd online calculation required.</value>
+  </data>
+  <data name="NoNcdRequestFile" xml:space="preserve">
+    <value>Ncd request file missing.</value>
+  </data>
+  <data name="ReadVinFailed" xml:space="preserve">
+    <value>Reading VIN failed.</value>
+  </data>
+  <data name="SoftwareFailures" xml:space="preserve">
+    <value>Detected software failures.</value>
+  </data>
+  <data name="TalMissing" xml:space="preserve">
+    <value>TAL not present.</value>
   </data>
   <data name="VehicleConnected" xml:space="preserve">
     <value>Vehicle connected.</value>
