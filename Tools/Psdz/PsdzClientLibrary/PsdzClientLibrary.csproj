@@ -551,6 +551,11 @@
     <Compile Include="Psdz\TalExecutionSettings.cs" />
     <Compile Include="Psdz\TestRunParams.cs" />
     <Compile Include="Psdz\VcmServiceClient.cs" />
+    <Compile Include="Resources\Strings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
     <Compile Include="SerializableDictionary.cs" />
     <Compile Include="Utility\FormatConverter.cs" />
     <Compile Include="Utility\SgbmIdParser.cs" />
@@ -590,6 +595,12 @@
       <Project>{3c2e9ae9-8252-451f-9b8f-92ebb56d245d}</Project>
       <Name>EdiabasLib</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Strings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

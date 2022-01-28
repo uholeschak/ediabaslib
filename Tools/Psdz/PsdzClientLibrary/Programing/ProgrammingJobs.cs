@@ -27,6 +27,7 @@ using log4net;
 using log4net.Config;
 using PsdzClient.Core;
 using PsdzClient.Programming;
+using PsdzClientLibrary.Resources;
 
 namespace PsdzClient.Programing
 {
@@ -267,11 +268,10 @@ namespace PsdzClient.Programing
 
             try
             {
-                sbResult.AppendLine("Connecting vehicle ...");
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Host={0}, ICOM={1}",
-                    remoteHost, useIcom));
+                sbResult.AppendLine(Strings.VehicleConnecting);
                 UpdateStatus(sbResult.ToString());
 
+                log.InfoFormat("Connecting to: Host={0}, ICOM={1}", remoteHost, useIcom);
                 string[] hostParts = remoteHost.Split(':');
                 if (hostParts.Length < 1)
                 {
@@ -289,7 +289,7 @@ namespace PsdzClient.Programing
                     return false;
                 }
 
-                sbResult.AppendLine("Detecting vehicle ...");
+                sbResult.AppendLine(Strings.VehicleDetecting);
                 UpdateStatus(sbResult.ToString());
 
                 string ecuPath = Path.Combine(istaFolder, @"Ecu");
@@ -349,7 +349,7 @@ namespace PsdzClient.Programing
                 cts?.Token.ThrowIfCancellationRequested();
                 if (!detectResult)
                 {
-                    sbResult.AppendLine("Vehicle detection failed");
+                    sbResult.AppendLine(Strings.VehicleDetectionFailed);
                     UpdateStatus(sbResult.ToString());
                     return false;
                 }
@@ -377,7 +377,7 @@ namespace PsdzClient.Programing
                 string series = PsdzContext.DetectVehicle.Series;
                 if (string.IsNullOrEmpty(series))
                 {
-                    sbResult.AppendLine("Vehicle series not detected");
+                    sbResult.AppendLine(Strings.VehicleSeriesNotDetected);
                     UpdateStatus(sbResult.ToString());
                     return false;
                 }
