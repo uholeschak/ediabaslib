@@ -61,6 +61,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Vehicle connected. ähnelt.
+        /// </summary>
+        internal static string VehicleConnected {
+            get {
+                return ResourceManager.GetString("VehicleConnected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Connecting vehicle ... ähnelt.
         /// </summary>
         internal static string VehicleConnecting {
@@ -84,6 +93,24 @@ namespace PsdzClientLibrary.Resources {
         internal static string VehicleDetectionFailed {
             get {
                 return ResourceManager.GetString("VehicleDetectionFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die VIN={0}, Series={1}, ILevel ship={2} current={3} ähnelt.
+        /// </summary>
+        internal static string VehicleInfo {
+            get {
+                return ResourceManager.GetString("VehicleInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Target selector not detected. ähnelt.
+        /// </summary>
+        internal static string VehicleNoTargetSelector {
+            get {
+                return ResourceManager.GetString("VehicleNoTargetSelector", resourceCulture);
             }
         }
         

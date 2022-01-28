@@ -354,15 +354,22 @@ namespace PsdzClient.Programing
                     return false;
                 }
 
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture,
-                    "Detected vehicle: VIN={0}, GroupFile={1}, BR={2}, Series={3}, BuildDate={4}-{5}",
+                log.InfoFormat("Detected vehicle: VIN={0}, GroupFile={1}, BR={2}, Series={3}, BuildDate={4}-{5}",
                     PsdzContext.DetectVehicle.Vin ?? string.Empty, PsdzContext.DetectVehicle.GroupSgdb ?? string.Empty,
-                    PsdzContext.DetectVehicle.ModelSeries ?? string.Empty, PsdzContext.DetectVehicle.Series ?? string.Empty,
-                    PsdzContext.DetectVehicle.ConstructYear ?? string.Empty, PsdzContext.DetectVehicle.ConstructMonth ?? string.Empty));
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture,
-                    "Detected ILevel: Ship={0}, Current={1}, Backup={2}",
+                    PsdzContext.DetectVehicle.ModelSeries ?? string.Empty,
+                    PsdzContext.DetectVehicle.Series ?? string.Empty,
+                    PsdzContext.DetectVehicle.ConstructYear ?? string.Empty,
+                    PsdzContext.DetectVehicle.ConstructMonth ?? string.Empty);
+
+                log.InfoFormat("Detected ILevel: Ship={0}, Current={1}, Backup={2}",
                     PsdzContext.DetectVehicle.ILevelShip ?? string.Empty, PsdzContext.DetectVehicle.ILevelCurrent ?? string.Empty,
-                    PsdzContext.DetectVehicle.ILevelBackup ?? string.Empty));
+                    PsdzContext.DetectVehicle.ILevelBackup ?? string.Empty);
+
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.VehicleInfo,
+                    PsdzContext.DetectVehicle.Vin ?? string.Empty,
+                    PsdzContext.DetectVehicle.Series ?? string.Empty,
+                    PsdzContext.DetectVehicle.ILevelShip ?? string.Empty,
+                    PsdzContext.DetectVehicle.ILevelCurrent ?? string.Empty));
 
                 log.InfoFormat(CultureInfo.InvariantCulture, "Ecus: {0}", PsdzContext.DetectVehicle.EcuList.Count());
                 foreach (PdszDatabase.EcuInfo ecuInfo in PsdzContext.DetectVehicle.EcuList)
@@ -391,23 +398,20 @@ namespace PsdzClient.Programing
                     targetSelectorChooser.GetNewestTargetSelectorByMainSeries(mainSeries);
                 if (psdzTargetSelectorNewest == null)
                 {
-                    sbResult.AppendLine("No target selector");
+                    sbResult.AppendLine(Strings.VehicleNoTargetSelector);
                     UpdateStatus(sbResult.ToString());
                     return false;
                 }
 
                 PsdzContext.ProjectName = psdzTargetSelectorNewest.Project;
                 PsdzContext.VehicleInfo = psdzTargetSelectorNewest.VehicleInfo;
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture,
-                    "Target selector: Project={0}, Vehicle={1}, Series={2}",
+                log.InfoFormat("Target selector: Project={0}, Vehicle={1}, Series={2}",
                     psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo,
-                    psdzTargetSelectorNewest.Baureihenverbund));
+                    psdzTargetSelectorNewest.Baureihenverbund);
                 UpdateStatus(sbResult.ToString());
                 cts?.Token.ThrowIfCancellationRequested();
 
                 string bauIStufe = PsdzContext.DetectVehicle.ILevelShip;
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "ILevel shipment: {0}", bauIStufe));
-
                 string url = string.Format(CultureInfo.InvariantCulture, "tcp://{0}:{1}", ipAddress, diagPort);
                 IPsdzConnection psdzConnection;
                 if (icomConnection)
@@ -435,11 +439,9 @@ namespace PsdzClient.Programing
                 ProgrammingService.CreateEcuProgrammingInfos(PsdzContext.Vehicle);
                 PsdzContext.Connection = psdzConnection;
 
-                sbResult.AppendLine("Vehicle connected");
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Connection: Id={0}, Port={1}",
-                    psdzConnection.Id, psdzConnection.Port));
-
+                sbResult.AppendLine(Strings.VehicleConnected);
                 UpdateStatus(sbResult.ToString());
+                log.InfoFormat("Connection: Id={0}, Port={1}", psdzConnection.Id, psdzConnection.Port);
 
                 ProgrammingService.AddListener(PsdzContext);
                 return true;

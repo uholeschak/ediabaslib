@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="VehicleConnected" xml:space="preserve">
+    <value>Vehicle connected.</value>
+  </data>
   <data name="VehicleConnecting" xml:space="preserve">
     <value>Connecting vehicle ...</value>
   </data>
@@ -125,6 +128,12 @@
   </data>
   <data name="VehicleDetectionFailed" xml:space="preserve">
     <value>Vehicle detection failed.</value>
+  </data>
+  <data name="VehicleInfo" xml:space="preserve">
+    <value>VIN={0}, Series={1}, ILevel ship={2} current={3}</value>
+  </data>
+  <data name="VehicleNoTargetSelector" xml:space="preserve">
+    <value>Target selector not detected.</value>
   </data>
   <data name="VehicleSeriesNotDetected" xml:space="preserve">
     <value>Vehicle series not detected.</value>
