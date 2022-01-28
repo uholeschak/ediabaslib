@@ -126,6 +126,12 @@
   <data name="HostStarting" xml:space="preserve">
     <value>Starting service host ...</value>
   </data>
+  <data name="HostStopped" xml:space="preserve">
+    <value>Service host stopped.</value>
+  </data>
+  <data name="HostStopping" xml:space="preserve">
+    <value>Stopping service host ...</value>
+  </data>
   <data name="VehicleConnected" xml:space="preserve">
     <value>Vehicle connected.</value>
   </data>

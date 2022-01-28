@@ -222,7 +222,7 @@ namespace PsdzClient.Programing
             StringBuilder sbResult = new StringBuilder();
             try
             {
-                sbResult.AppendLine("Stopping host ...");
+                sbResult.AppendLine(Strings.HostStopping);
                 UpdateStatus(sbResult.ToString());
 
                 if (ProgrammingService == null && PsdzServiceStarter.IsServerInstanceRunning())
@@ -240,7 +240,7 @@ namespace PsdzClient.Programing
                     ClearProgrammingObjects();
                 }
 
-                sbResult.AppendLine("Host stopped");
+                sbResult.AppendLine(Strings.HostStopped);
                 UpdateStatus(sbResult.ToString());
             }
             catch (Exception ex)
@@ -531,14 +531,14 @@ namespace PsdzClient.Programing
 
                 if (ProgrammingService == null)
                 {
-                    sbResult.AppendLine("No Host");
+                    sbResult.AppendLine(Strings.VehicleNotConnected);
                     UpdateStatus(sbResult.ToString());
                     return false;
                 }
 
                 if (PsdzContext?.Connection == null)
                 {
-                    sbResult.AppendLine("No connection");
+                    sbResult.AppendLine(Strings.VehicleNotConnected);
                     UpdateStatus(sbResult.ToString());
                     return false;
                 }

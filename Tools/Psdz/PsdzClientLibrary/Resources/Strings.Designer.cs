@@ -88,6 +88,24 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Service host stopped. ähnelt.
+        /// </summary>
+        internal static string HostStopped {
+            get {
+                return ResourceManager.GetString("HostStopped", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Stopping service host ... ähnelt.
+        /// </summary>
+        internal static string HostStopping {
+            get {
+                return ResourceManager.GetString("HostStopping", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Vehicle connected. ähnelt.
         /// </summary>
         internal static string VehicleConnected {
