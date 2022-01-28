@@ -721,12 +721,13 @@ namespace PsdzClient.Programing
                         try
                         {
                             ProgrammingService.Psdz.ProgrammingService.TslUpdate(PsdzContext.Connection, true, PsdzContext.SvtActual, PsdzContext.Sollverbauung.Svt);
-                            sbResult.AppendLine("Tsl updated");
+                            sbResult.AppendLine(Strings.TslUpdated);
                             UpdateStatus(sbResult.ToString());
                         }
                         catch (Exception ex)
                         {
-                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Tsl update failure: {0}", ex.Message));
+                            log.ErrorFormat(CultureInfo.InvariantCulture, "Tsl update failure: {0}", ex.Message);
+                            sbResult.AppendLine(Strings.TslUpdateFailed);
                             UpdateStatus(sbResult.ToString());
                         }
                         cts?.Token.ThrowIfCancellationRequested();
@@ -734,12 +735,13 @@ namespace PsdzClient.Programing
                         try
                         {
                             ProgrammingService.Psdz.VcmService.WriteIStufen(PsdzContext.Connection, PsdzContext.IstufeShipment, PsdzContext.IstufeLast, PsdzContext.IstufeCurrent);
-                            sbResult.AppendLine("ILevel updated");
+                            sbResult.AppendLine(Strings.ILevelUpdated);
                             UpdateStatus(sbResult.ToString());
                         }
                         catch (Exception ex)
                         {
-                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Write ILevel failure: {0}", ex.Message));
+                            log.ErrorFormat(CultureInfo.InvariantCulture, "Write ILevel failure: {0}", ex.Message);
+                            sbResult.AppendLine(Strings.ILevelUpdateFailed);
                             UpdateStatus(sbResult.ToString());
                         }
                         cts?.Token.ThrowIfCancellationRequested();
@@ -747,31 +749,35 @@ namespace PsdzClient.Programing
                         try
                         {
                             ProgrammingService.Psdz.VcmService.WriteIStufenToBackup(PsdzContext.Connection, PsdzContext.IstufeShipment, PsdzContext.IstufeLast, PsdzContext.IstufeCurrent);
-                            sbResult.AppendLine("ILevel backup updated");
+                            sbResult.AppendLine(Strings.ILevelBackupUpdated);
                             UpdateStatus(sbResult.ToString());
                         }
                         catch (Exception ex)
                         {
-                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Write ILevel backup failure: {0}", ex.Message));
+                            log.ErrorFormat(CultureInfo.InvariantCulture, "Write ILevel backup failure: {0}", ex.Message);
+                            sbResult.AppendLine(Strings.ILevelBackupFailed);
                             UpdateStatus(sbResult.ToString());
                         }
                         cts?.Token.ThrowIfCancellationRequested();
 
                         IPsdzResponse piaResponse = ProgrammingService.Psdz.EcuService.UpdatePiaPortierungsmaster(PsdzContext.Connection, PsdzContext.SvtActual);
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "PIA master update Success={0}, Cause={1}",
-                            piaResponse.IsSuccessful, piaResponse.Cause));
+                        log.ErrorFormat(CultureInfo.InvariantCulture, "PIA master update Success={0}, Cause={1}",
+                            piaResponse.IsSuccessful, piaResponse.Cause);
+
+                        sbResult.AppendLine(piaResponse.IsSuccessful ? Strings.PiaMasterUpdated : Strings.PiaMasterUpdateFailed);
                         UpdateStatus(sbResult.ToString());
                         cts?.Token.ThrowIfCancellationRequested();
 
                         try
                         {
                             ProgrammingService.Psdz.VcmService.WriteFa(PsdzContext.Connection, PsdzContext.FaTarget);
-                            sbResult.AppendLine("FA written");
+                            sbResult.AppendLine(Strings.FaWritten);
                             UpdateStatus(sbResult.ToString());
                         }
                         catch (Exception ex)
                         {
-                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "FA write failure: {0}", ex.Message));
+                            log.ErrorFormat(CultureInfo.InvariantCulture, "FA write failure: {0}", ex.Message);
+                            sbResult.AppendLine(Strings.FaWriteFailed);
                             UpdateStatus(sbResult.ToString());
                         }
                         cts?.Token.ThrowIfCancellationRequested();
@@ -779,12 +785,13 @@ namespace PsdzClient.Programing
                         try
                         {
                             ProgrammingService.Psdz.VcmService.WriteFaToBackup(PsdzContext.Connection, PsdzContext.FaTarget);
-                            sbResult.AppendLine("FA backup written");
+                            sbResult.AppendLine(Strings.FaBackupWritten);
                             UpdateStatus(sbResult.ToString());
                         }
                         catch (Exception ex)
                         {
-                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "FA backup write failure: {0}", ex.Message));
+                            log.ErrorFormat(CultureInfo.InvariantCulture, "FA backup write failure: {0}", ex.Message);
+                            sbResult.AppendLine(Strings.FaBackupWriteFailed);
                             UpdateStatus(sbResult.ToString());
                         }
                         cts?.Token.ThrowIfCancellationRequested();

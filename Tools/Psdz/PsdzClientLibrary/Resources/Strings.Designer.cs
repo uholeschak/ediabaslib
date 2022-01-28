@@ -97,6 +97,42 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die FA backup write failed. ähnelt.
+        /// </summary>
+        internal static string FaBackupWriteFailed {
+            get {
+                return ResourceManager.GetString("FaBackupWriteFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die FA backup written. ähnelt.
+        /// </summary>
+        internal static string FaBackupWritten {
+            get {
+                return ResourceManager.GetString("FaBackupWritten", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die FA write failed. ähnelt.
+        /// </summary>
+        internal static string FaWriteFailed {
+            get {
+                return ResourceManager.GetString("FaWriteFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die FA written. ähnelt.
+        /// </summary>
+        internal static string FaWritten {
+            get {
+                return ResourceManager.GetString("FaWritten", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Service host started. ähnelt.
         /// </summary>
         internal static string HostStarted {
@@ -142,6 +178,42 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die ILevel backup failed. ähnelt.
+        /// </summary>
+        internal static string ILevelBackupFailed {
+            get {
+                return ResourceManager.GetString("ILevelBackupFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die ILevel backup updated. ähnelt.
+        /// </summary>
+        internal static string ILevelBackupUpdated {
+            get {
+                return ResourceManager.GetString("ILevelBackupUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die ILevel updated. ähnelt.
+        /// </summary>
+        internal static string ILevelUpdated {
+            get {
+                return ResourceManager.GetString("ILevelUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die ILevel update failed. ähnelt.
+        /// </summary>
+        internal static string ILevelUpdateFailed {
+            get {
+                return ResourceManager.GetString("ILevelUpdateFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Detected Ncd failures. ähnelt.
         /// </summary>
         internal static string NcdFailures {
@@ -169,6 +241,24 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die PIA master updated. ähnelt.
+        /// </summary>
+        internal static string PiaMasterUpdated {
+            get {
+                return ResourceManager.GetString("PiaMasterUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die PIA master update failed. ähnelt.
+        /// </summary>
+        internal static string PiaMasterUpdateFailed {
+            get {
+                return ResourceManager.GetString("PiaMasterUpdateFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Reading VIN failed. ähnelt.
         /// </summary>
         internal static string ReadVinFailed {
@@ -192,6 +282,24 @@ namespace PsdzClientLibrary.Resources {
         internal static string TalMissing {
             get {
                 return ResourceManager.GetString("TalMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die TSL updated. ähnelt.
+        /// </summary>
+        internal static string TslUpdated {
+            get {
+                return ResourceManager.GetString("TslUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die TSL update failed. ähnelt.
+        /// </summary>
+        internal static string TslUpdateFailed {
+            get {
+                return ResourceManager.GetString("TslUpdateFailed", resourceCulture);
             }
         }
         
