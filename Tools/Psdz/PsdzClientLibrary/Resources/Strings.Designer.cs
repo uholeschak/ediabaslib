@@ -61,6 +61,33 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Service host started. ähnelt.
+        /// </summary>
+        internal static string HostStarted {
+            get {
+                return ResourceManager.GetString("HostStarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Starting host failed. ähnelt.
+        /// </summary>
+        internal static string HostStartFailed {
+            get {
+                return ResourceManager.GetString("HostStartFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Starting service host ... ähnelt.
+        /// </summary>
+        internal static string HostStarting {
+            get {
+                return ResourceManager.GetString("HostStarting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Vehicle connected. ähnelt.
         /// </summary>
         internal static string VehicleConnected {

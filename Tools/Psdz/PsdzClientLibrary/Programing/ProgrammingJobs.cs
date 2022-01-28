@@ -132,13 +132,13 @@ namespace PsdzClient.Programing
             StringBuilder sbResult = new StringBuilder();
             try
             {
-                sbResult.AppendLine("Starting programming service");
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "DealerId={0}", _dealerId));
+                log.InfoFormat("Start programming service DealerId={0}", _dealerId);
+                sbResult.AppendLine(Strings.HostStarting);
                 UpdateStatus(sbResult.ToString());
 
                 if (ProgrammingService != null)
                 {
-                    sbResult.AppendLine("Programming service already existing");
+                    log.InfoFormat("Programming service already existing");
                 }
                 else
                 {
@@ -166,8 +166,6 @@ namespace PsdzClient.Programing
                         }
                     };
 
-                    sbResult.AppendLine("Generating test module data ...");
-                    UpdateStatus(sbResult.ToString());
                     bool result = ProgrammingService.PdszDatabase.GenerateTestModuleData(progress =>
                     {
                         string message = string.Format(CultureInfo.InvariantCulture, "{0}%", progress);
@@ -184,7 +182,8 @@ namespace PsdzClient.Programing
 
                     if (!result)
                     {
-                        sbResult.AppendLine("Generating test module data failed");
+                        log.ErrorFormat("Generating test module data failed");
+                        sbResult.AppendLine(Strings.HostStartFailed);
                         UpdateStatus(sbResult.ToString());
                         return false;
                     }
@@ -192,19 +191,20 @@ namespace PsdzClient.Programing
 
                 if (!PsdzServiceStarter.IsServerInstanceRunning())
                 {
-                    sbResult.AppendLine("Starting host ...");
-                    UpdateStatus(sbResult.ToString());
+                    log.InfoFormat("Starting host");
                     if (!ProgrammingService.StartPsdzServiceHost())
                     {
-                        sbResult.AppendLine("Start host failed");
+                        sbResult.AppendLine(Strings.HostStartFailed);
                         UpdateStatus(sbResult.ToString());
                         return false;
                     }
 
                     ProgrammingService.SetLogLevelToMax();
-                    sbResult.AppendLine("Host started");
-                    UpdateStatus(sbResult.ToString());
+                    log.InfoFormat("Host started");
                 }
+
+                sbResult.AppendLine(Strings.HostStarted);
+                UpdateStatus(sbResult.ToString());
 
                 ProgrammingService.PdszDatabase.ResetXepRules();
                 return true;
@@ -408,7 +408,6 @@ namespace PsdzClient.Programing
                 log.InfoFormat("Target selector: Project={0}, Vehicle={1}, Series={2}",
                     psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo,
                     psdzTargetSelectorNewest.Baureihenverbund);
-                UpdateStatus(sbResult.ToString());
                 cts?.Token.ThrowIfCancellationRequested();
 
                 string bauIStufe = PsdzContext.DetectVehicle.ILevelShip;
