@@ -118,133 +118,133 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ContextMissing" xml:space="preserve">
-    <value>Context not found.</value>
+    <value>Kontext nicht gefunden.</value>
   </data>
   <data name="CreateBackupPathFailed" xml:space="preserve">
-    <value>Creating backup path failed.</value>
+    <value>Erzeugen des Backupverzeichnisses fehlgeschlagen.</value>
   </data>
   <data name="DetectInstalledEcusFailed" xml:space="preserve">
-    <value>Detecting installed ECUs failed.</value>
+    <value>Erkennen der installierten ECUs fehlgeschlagen.</value>
   </data>
   <data name="ExecutingBackupTal" xml:space="preserve">
-    <value>Executing backup TAL ...</value>
+    <value>Backup TAL wird ausgeführt ...</value>
   </data>
   <data name="ExecutingTal" xml:space="preserve">
-    <value>Executing TAL ...</value>
+    <value>TAL wird ausgeführt ...</value>
   </data>
   <data name="ExecutingVehicleFunc" xml:space="preserve">
-    <value>Executing vehicle operation ...</value>
+    <value>Fahrzeug-Vorgang wird ausgeführt ...</value>
   </data>
   <data name="FaBackupWriteFailed" xml:space="preserve">
-    <value>FA backup write failed.</value>
+    <value>Backup FA schreiben fehlgeschlagen.</value>
   </data>
   <data name="FaBackupWritten" xml:space="preserve">
-    <value>FA backup written.</value>
+    <value>Backup FA geschrieben.</value>
   </data>
   <data name="FaWriteFailed" xml:space="preserve">
-    <value>FA write failed.</value>
+    <value>FA schreiben fehlgeschlagen.</value>
   </data>
   <data name="FaWritten" xml:space="preserve">
-    <value>FA written.</value>
+    <value>FA geschrieben.</value>
   </data>
   <data name="HostStarted" xml:space="preserve">
-    <value>Service host started.</value>
+    <value>Service Host gestartet.</value>
   </data>
   <data name="HostStartFailed" xml:space="preserve">
-    <value>Starting host failed.</value>
+    <value>Host starten fehlgeschlagen.</value>
   </data>
   <data name="HostStarting" xml:space="preserve">
-    <value>Starting service host ...</value>
+    <value>Service Host starten ...</value>
   </data>
   <data name="HostStopped" xml:space="preserve">
-    <value>Service host stopped.</value>
+    <value>Service Host gestoppt.</value>
   </data>
   <data name="HostStopping" xml:space="preserve">
-    <value>Stopping service host ...</value>
+    <value>Service Host stoppen ...</value>
   </data>
   <data name="ILevelBackupFailed" xml:space="preserve">
-    <value>ILevel backup failed.</value>
+    <value>IStufe Backup fehlgeschlagen.</value>
   </data>
   <data name="ILevelBackupUpdated" xml:space="preserve">
-    <value>ILevel backup updated.</value>
+    <value>IStufe Backup aktualisiert.</value>
   </data>
   <data name="ILevelUpdated" xml:space="preserve">
-    <value>ILevel updated.</value>
+    <value>IStufe aktualisiert.</value>
   </data>
   <data name="ILevelUpdateFailed" xml:space="preserve">
-    <value>ILevel update failed.</value>
+    <value>IStufen aktualisieren fehlgeschlagen.</value>
   </data>
   <data name="NcdFailures" xml:space="preserve">
-    <value>Detected Ncd failures.</value>
+    <value>NCD Fehler erkannt.</value>
   </data>
   <data name="NcdOnlineCalculation" xml:space="preserve">
-    <value>NCD online calculation required.</value>
+    <value>NCD Online Berechnung notwendig.</value>
   </data>
   <data name="NoNcdRequestFile" xml:space="preserve">
-    <value>NCD request file missing.</value>
+    <value>NCD Anfrage-Datei fehlt.</value>
   </data>
   <data name="NoTargetILevel" xml:space="preserve">
-    <value>No target ILevel present.</value>
+    <value>Keine Ziel IStufe vorhanden.</value>
   </data>
   <data name="PiaMasterUpdated" xml:space="preserve">
-    <value>PIA master updated.</value>
+    <value>PIA Master aktualisiert.</value>
   </data>
   <data name="PiaMasterUpdateFailed" xml:space="preserve">
-    <value>PIA master update failed.</value>
+    <value>PIA Master aktualisieren fehlgeschlagen.</value>
   </data>
   <data name="ReadILevelFailed" xml:space="preserve">
-    <value>Reading ILevel failed.</value>
+    <value>IStufe lesen fehlgeschlagen.</value>
   </data>
   <data name="ReadVinFailed" xml:space="preserve">
-    <value>Reading VIN failed.</value>
+    <value>FG-NR lesen fehlgeschlagen.</value>
   </data>
   <data name="RequestEcuContextFailed" xml:space="preserve">
-    <value>Requesting ECU context failed.</value>
+    <value>ECU Kontext anfragen fehlgeschlagen.</value>
   </data>
   <data name="SoftwareFailures" xml:space="preserve">
-    <value>Detected software failures.</value>
+    <value>Softwarefehler erkannt..</value>
   </data>
   <data name="TalMissing" xml:space="preserve">
-    <value>TAL not present.</value>
+    <value>TAL nicht vorhanden.</value>
   </data>
   <data name="TslUpdated" xml:space="preserve">
-    <value>TSL updated.</value>
+    <value>TSL aktualisiert.</value>
   </data>
   <data name="TslUpdateFailed" xml:space="preserve">
-    <value>TSL update failed.</value>
+    <value>TSL aktualisieren fehlgeschlagen.</value>
   </data>
   <data name="UpdateVehicleDataFailed" xml:space="preserve">
-    <value>Updating vehicle data failed.</value>
+    <value>Fahrzeugdaten aktualisieren fehlgeschlagen.</value>
   </data>
   <data name="VehicleConnected" xml:space="preserve">
-    <value>Vehicle connected.</value>
+    <value>Fahrzeug verbunden.</value>
   </data>
   <data name="VehicleConnecting" xml:space="preserve">
-    <value>Connecting vehicle ...</value>
+    <value>Fahrzeug verbinden ...</value>
   </data>
   <data name="VehicleDetecting" xml:space="preserve">
-    <value>Detecting vehicle ...</value>
+    <value>Fahrzeug erkennen ...</value>
   </data>
   <data name="VehicleDetectionFailed" xml:space="preserve">
-    <value>Vehicle detection failed.</value>
+    <value>Fahrzeug erkennen fehlgeschlagen.</value>
   </data>
   <data name="VehicleDisconnected" xml:space="preserve">
-    <value>Vehicle disconnected.</value>
+    <value>Fahrzeug getrennt.</value>
   </data>
   <data name="VehicleDisconnecting" xml:space="preserve">
-    <value>Disconnecting vehicle ...</value>
+    <value>Fahrzeug trennen ...</value>
   </data>
   <data name="VehicleInfo" xml:space="preserve">
-    <value>VIN={0}, Series={1}
-ILevel ship={2} current={3}</value>
+    <value>FG-NR={0}, Serie={1}
+IStufe produktion={2} aktuell={3}</value>
   </data>
   <data name="VehicleNoTargetSelector" xml:space="preserve">
-    <value>Target selector not detected.</value>
+    <value>Target Selector nicht erkannt.</value>
   </data>
   <data name="VehicleNotConnected" xml:space="preserve">
-    <value>Vehicle not connected.</value>
+    <value>Fahrzeug nicht verbunden.</value>
   </data>
   <data name="VehicleSeriesNotDetected" xml:space="preserve">
-    <value>Vehicle series not detected.</value>
+    <value>Fahrzeugserie nicht erkannt.</value>
   </data>
 </root>

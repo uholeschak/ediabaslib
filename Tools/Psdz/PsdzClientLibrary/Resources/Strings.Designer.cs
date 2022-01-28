@@ -241,7 +241,7 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Ncd online calculation required. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die NCD online calculation required. ähnelt.
         /// </summary>
         internal static string NcdOnlineCalculation {
             get {
@@ -250,7 +250,7 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Ncd request file missing. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die NCD request file missing. ähnelt.
         /// </summary>
         internal static string NoNcdRequestFile {
             get {
