@@ -474,19 +474,19 @@ namespace PsdzClient.Programing
 
             try
             {
-                sbResult.AppendLine("Disconnecting vehicle ...");
+                sbResult.AppendLine(Strings.VehicleDisconnecting);
                 UpdateStatus(sbResult.ToString());
 
                 if (ProgrammingService == null)
                 {
-                    sbResult.AppendLine("No Host");
+                    sbResult.AppendLine(Strings.VehicleNotConnected);
                     UpdateStatus(sbResult.ToString());
                     return false;
                 }
 
                 if (PsdzContext?.Connection == null)
                 {
-                    sbResult.AppendLine("No connection");
+                    sbResult.AppendLine(Strings.VehicleNotConnected);
                     UpdateStatus(sbResult.ToString());
                     return false;
                 }
@@ -495,7 +495,7 @@ namespace PsdzClient.Programing
                 ProgrammingService.Psdz.ConnectionManagerService.CloseConnection(PsdzContext.Connection);
 
                 ClearProgrammingObjects();
-                sbResult.AppendLine("Vehicle disconnected");
+                sbResult.AppendLine(Strings.VehicleDisconnected);
                 UpdateStatus(sbResult.ToString());
                 return true;
             }

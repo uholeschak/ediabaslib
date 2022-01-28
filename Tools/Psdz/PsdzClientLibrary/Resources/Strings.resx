@@ -129,11 +129,21 @@
   <data name="VehicleDetectionFailed" xml:space="preserve">
     <value>Vehicle detection failed.</value>
   </data>
+  <data name="VehicleDisconnected" xml:space="preserve">
+    <value>Vehicle disconnected.</value>
+  </data>
+  <data name="VehicleDisconnecting" xml:space="preserve">
+    <value>Disconnecting vehicle ...</value>
+  </data>
   <data name="VehicleInfo" xml:space="preserve">
-    <value>VIN={0}, Series={1}, ILevel ship={2} current={3}</value>
+    <value>VIN={0}, Series={1}
+ILevel ship={2} current={3}</value>
   </data>
   <data name="VehicleNoTargetSelector" xml:space="preserve">
     <value>Target selector not detected.</value>
+  </data>
+  <data name="VehicleNotConnected" xml:space="preserve">
+    <value>Vehicle not connected.</value>
   </data>
   <data name="VehicleSeriesNotDetected" xml:space="preserve">
     <value>Vehicle series not detected.</value>
