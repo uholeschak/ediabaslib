@@ -70,6 +70,24 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Creating backup path failed. ähnelt.
+        /// </summary>
+        internal static string CreateBackupPathFailed {
+            get {
+                return ResourceManager.GetString("CreateBackupPathFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Detecting installed ECUs failed. ähnelt.
+        /// </summary>
+        internal static string DetectInstalledEcusFailed {
+            get {
+                return ResourceManager.GetString("DetectInstalledEcusFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Executing backup TAL ... ähnelt.
         /// </summary>
         internal static string ExecutingBackupTal {
@@ -241,6 +259,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die No target ILevel present. ähnelt.
+        /// </summary>
+        internal static string NoTargetILevel {
+            get {
+                return ResourceManager.GetString("NoTargetILevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die PIA master updated. ähnelt.
         /// </summary>
         internal static string PiaMasterUpdated {
@@ -259,11 +286,29 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Reading ILevel failed. ähnelt.
+        /// </summary>
+        internal static string ReadILevelFailed {
+            get {
+                return ResourceManager.GetString("ReadILevelFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Reading VIN failed. ähnelt.
         /// </summary>
         internal static string ReadVinFailed {
             get {
                 return ResourceManager.GetString("ReadVinFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Requesting ECU context failed. ähnelt.
+        /// </summary>
+        internal static string RequestEcuContextFailed {
+            get {
+                return ResourceManager.GetString("RequestEcuContextFailed", resourceCulture);
             }
         }
         
@@ -300,6 +345,15 @@ namespace PsdzClientLibrary.Resources {
         internal static string TslUpdateFailed {
             get {
                 return ResourceManager.GetString("TslUpdateFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Updating vehicle data failed. ähnelt.
+        /// </summary>
+        internal static string UpdateVehicleDataFailed {
+            get {
+                return ResourceManager.GetString("UpdateVehicleDataFailed", resourceCulture);
             }
         }
         

@@ -120,6 +120,12 @@
   <data name="ContextMissing" xml:space="preserve">
     <value>Context not found.</value>
   </data>
+  <data name="CreateBackupPathFailed" xml:space="preserve">
+    <value>Creating backup path failed.</value>
+  </data>
+  <data name="DetectInstalledEcusFailed" xml:space="preserve">
+    <value>Detecting installed ECUs failed.</value>
+  </data>
   <data name="ExecutingBackupTal" xml:space="preserve">
     <value>Executing backup TAL ...</value>
   </data>
@@ -177,14 +183,23 @@
   <data name="NoNcdRequestFile" xml:space="preserve">
     <value>Ncd request file missing.</value>
   </data>
+  <data name="NoTargetILevel" xml:space="preserve">
+    <value>No target ILevel present.</value>
+  </data>
   <data name="PiaMasterUpdated" xml:space="preserve">
     <value>PIA master updated.</value>
   </data>
   <data name="PiaMasterUpdateFailed" xml:space="preserve">
     <value>PIA master update failed.</value>
   </data>
+  <data name="ReadILevelFailed" xml:space="preserve">
+    <value>Reading ILevel failed.</value>
+  </data>
   <data name="ReadVinFailed" xml:space="preserve">
     <value>Reading VIN failed.</value>
+  </data>
+  <data name="RequestEcuContextFailed" xml:space="preserve">
+    <value>Requesting ECU context failed.</value>
   </data>
   <data name="SoftwareFailures" xml:space="preserve">
     <value>Detected software failures.</value>
@@ -197,6 +212,9 @@
   </data>
   <data name="TslUpdateFailed" xml:space="preserve">
     <value>TSL update failed.</value>
+  </data>
+  <data name="UpdateVehicleDataFailed" xml:space="preserve">
+    <value>Updating vehicle data failed.</value>
   </data>
   <data name="VehicleConnected" xml:space="preserve">
     <value>Vehicle connected.</value>

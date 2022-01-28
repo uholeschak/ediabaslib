@@ -839,7 +839,7 @@ namespace PsdzClient.Programing
                 IPsdzIstufenTriple iStufenTriple = ProgrammingService.Psdz.VcmService.GetIStufenTripleActual(PsdzContext.Connection);
                 if (iStufenTriple == null)
                 {
-                    sbResult.AppendLine("Reading ILevel failed");
+                    sbResult.AppendLine(Strings.ReadILevelFailed);
                     UpdateStatus(sbResult.ToString());
                     return false;
                 }
@@ -850,7 +850,7 @@ namespace PsdzClient.Programing
 
                 if (!PsdzContext.SetPathToBackupData(psdzVin.Value))
                 {
-                    sbResult.AppendLine("Create backup path failed");
+                    sbResult.AppendLine(Strings.CreateBackupPathFailed);
                     UpdateStatus(sbResult.ToString());
                     return false;
                 }
@@ -881,39 +881,37 @@ namespace PsdzClient.Programing
 
                 IEnumerable<IPsdzIstufe> psdzIstufes = ProgrammingService.Psdz.LogicService.GetPossibleIntegrationLevel(PsdzContext.FaTarget);
                 PsdzContext.SetPossibleIstufenTarget(psdzIstufes);
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "ILevels: {0}", psdzIstufes.Count()));
+                log.InfoFormat(CultureInfo.InvariantCulture, "ILevels: {0}", psdzIstufes.Count());
                 foreach (IPsdzIstufe iStufe in psdzIstufes.OrderBy(x => x))
                 {
                     if (iStufe.IsValid)
                     {
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, " ILevel: {0}", iStufe.Value));
+                        log.InfoFormat(CultureInfo.InvariantCulture, " ILevel: {0}", iStufe.Value);
                     }
                 }
-                UpdateStatus(sbResult.ToString());
                 cts?.Token.ThrowIfCancellationRequested();
 
                 string latestIstufeTarget = PsdzContext.LatestPossibleIstufeTarget;
                 if (string.IsNullOrEmpty(latestIstufeTarget))
                 {
-                    sbResult.AppendLine("No target ILevels");
+                    sbResult.AppendLine(Strings.NoTargetILevel);
                     UpdateStatus(sbResult.ToString());
                     return false;
                 }
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "ILevel Latest: {0}", latestIstufeTarget));
+                log.InfoFormat(CultureInfo.InvariantCulture, "ILevel Latest: {0}", latestIstufeTarget);
 
                 IPsdzIstufe psdzIstufeShip = ProgrammingService.Psdz.ObjectBuilder.BuildIstufe(PsdzContext.IstufeShipment);
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "ILevel Ship: {0}", psdzIstufeShip.Value));
+                log.InfoFormat(CultureInfo.InvariantCulture, "ILevel Ship: {0}", psdzIstufeShip.Value);
 
                 IPsdzIstufe psdzIstufeTarget = ProgrammingService.Psdz.ObjectBuilder.BuildIstufe(bModifyFa ? PsdzContext.IstufeCurrent : latestIstufeTarget);
                 PsdzContext.Vehicle.TargetILevel = psdzIstufeTarget.Value;
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "ILevel Target: {0}", psdzIstufeTarget.Value));
-                UpdateStatus(sbResult.ToString());
+                log.InfoFormat(CultureInfo.InvariantCulture, "ILevel Target: {0}", psdzIstufeTarget.Value);
                 cts?.Token.ThrowIfCancellationRequested();
 
                 IEnumerable<IPsdzEcuIdentifier> psdzEcuIdentifiers = ProgrammingService.Psdz.MacrosService.GetInstalledEcuList(PsdzContext.FaActual, psdzIstufeShip);
                 if (psdzEcuIdentifiers == null)
                 {
-                    sbResult.AppendLine("Get installed Ecus failed");
+                    sbResult.AppendLine(Strings.DetectInstalledEcusFailed);
                     UpdateStatus(sbResult.ToString());
                     return true;
                 }
@@ -943,7 +941,7 @@ namespace PsdzClient.Programing
                 ProgrammingService.PdszDatabase.GetEcuVariants(PsdzContext.DetectVehicle.EcuList);
                 if (!PsdzContext.UpdateVehicle(ProgrammingService, psdzStandardSvtNames))
                 {
-                    sbResult.AppendLine("UpdateVehicle failed");
+                    sbResult.AppendLine(Strings.UpdateVehicleDataFailed);
                     UpdateStatus(sbResult.ToString());
                     return true;
                 }
@@ -1050,7 +1048,7 @@ namespace PsdzClient.Programing
                 IEnumerable<IPsdzEcuContextInfo> psdzEcuContextInfos = ProgrammingService.Psdz.EcuService.RequestEcuContextInfos(PsdzContext.Connection, psdzEcuIdentifiers);
                 if (psdzEcuContextInfos == null)
                 {
-                    sbResult.AppendLine("Request Ecu context failed");
+                    sbResult.AppendLine(Strings.RequestEcuContextFailed);
                     UpdateStatus(sbResult.ToString());
                     return true;
                 }
