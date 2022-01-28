@@ -293,6 +293,8 @@ namespace WebPsdzClient.App_Data
         private const int TcpSendTimeout = 5000;
         private const int TcpTesterAddr = 0xF4;
 
+        public const string ResourceProcessing = "[Processing]";
+
         public SessionContainer(string sessionId, string dealerId)
         {
             SessionId = sessionId;
@@ -1599,7 +1601,7 @@ namespace WebPsdzClient.App_Data
             {
                 if (marquee)
                 {
-                    text = "Processing ...";
+                    text = ResourceProcessing;
                 }
             }
 

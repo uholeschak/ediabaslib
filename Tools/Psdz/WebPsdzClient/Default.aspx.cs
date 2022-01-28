@@ -422,7 +422,12 @@ namespace WebPsdzClient
                 CheckBoxListOptions.Enabled = !active && hostRunning && vehicleConnected;
 
                 TextBoxStatus.Text = sessionContainer.StatusText;
-                TextBoxProgress.Text = sessionContainer.ProgressText;
+                string progressText = sessionContainer.ProgressText;
+                if (!string.IsNullOrEmpty(progressText) && string.Compare(progressText, SessionContainer.ResourceProcessing, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    progressText = GetGlobalResourceObject("Global", "Processing") as string ?? string.Empty;
+                }
+                TextBoxProgress.Text = progressText;
 
                 if (updatePanel)
                 {
