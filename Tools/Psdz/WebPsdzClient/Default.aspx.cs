@@ -34,7 +34,7 @@ namespace WebPsdzClient
                     {
                         if (string.IsNullOrEmpty(sessionContainer.DeepObdVersion))
                         {
-                            log.InfoFormat("_Default User agent: {0}", Request.UserAgent);
+                            //log.InfoFormat("_Default User agent: {0}", Request.UserAgent);
                             string[] agentParts = Request.UserAgent.Split(' ');
                             foreach (string part in agentParts)
                             {
