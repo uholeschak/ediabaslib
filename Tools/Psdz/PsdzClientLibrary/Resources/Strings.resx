@@ -216,6 +216,9 @@
   <data name="SwtActionFailed" xml:space="preserve">
     <value>Request SWT action failed.</value>
   </data>
+  <data name="SwtActions" xml:space="preserve">
+    <value>SWT actions: {0}</value>
+  </data>
   <data name="TalBackupGenerating" xml:space="preserve">
     <value>Generating backup TAL ...</value>
   </data>

@@ -1078,7 +1078,7 @@ namespace PsdzClient.Programing
 
                 sbResult.AppendLine(Strings.SwtAction);
                 UpdateStatus(sbResult.ToString());
-                IPsdzSwtAction psdzSwtAction = ProgrammingService.Psdz.ProgrammingService.RequestSwtAction(PsdzContext.Connection, false);
+                IPsdzSwtAction psdzSwtAction = ProgrammingService.Psdz.ProgrammingService.RequestSwtAction(PsdzContext.Connection, true);
                 if (psdzSwtAction == null)
                 {
                     sbResult.AppendLine(Strings.SwtActionFailed);
@@ -1089,6 +1089,9 @@ namespace PsdzClient.Programing
                 PsdzContext.SwtAction = psdzSwtAction;
                 if (psdzSwtAction?.SwtEcus != null)
                 {
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.SwtAction, psdzSwtAction.SwtEcus.Count()));
+                    UpdateStatus(sbResult.ToString());
+
                     log.InfoFormat(CultureInfo.InvariantCulture, "Swt Ecus: {0}", psdzSwtAction.SwtEcus.Count());
                     foreach (IPsdzSwtEcu psdzSwtEcu in psdzSwtAction.SwtEcus)
                     {

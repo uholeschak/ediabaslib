@@ -358,6 +358,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die SWT actions: {0} ähnelt.
+        /// </summary>
+        internal static string SwtActions {
+            get {
+                return ResourceManager.GetString("SwtActions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Generating backup TAL ... ähnelt.
         /// </summary>
         internal static string TalBackupGenerating {

@@ -216,6 +216,9 @@
   <data name="SwtActionFailed" xml:space="preserve">
     <value>SWT Aktionen abrufen fehlgeschlagen.</value>
   </data>
+  <data name="SwtActions" xml:space="preserve">
+    <value>SWT Aktionen: {0}</value>
+  </data>
   <data name="TalBackupGenerating" xml:space="preserve">
     <value>Generiere Backup TAL ...</value>
   </data>
