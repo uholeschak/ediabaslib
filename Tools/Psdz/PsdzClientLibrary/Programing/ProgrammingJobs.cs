@@ -937,8 +937,10 @@ namespace PsdzClient.Programing
                 cts?.Token.ThrowIfCancellationRequested();
 
                 IPsdzStandardSvt psdzStandardSvt = ProgrammingService.Psdz.EcuService.RequestSvt(PsdzContext.Connection, psdzEcuIdentifiers);
+                log.InfoFormat(CultureInfo.InvariantCulture, "Svt Ecus: {0}", psdzStandardSvt.Ecus.Count());
+
                 IPsdzStandardSvt psdzStandardSvtNames = ProgrammingService.Psdz.LogicService.FillBntnNamesForMainSeries(PsdzContext.Connection.TargetSelector.Baureihenverbund, psdzStandardSvt);
-                log.InfoFormat(CultureInfo.InvariantCulture, "Svt Ecus: {0}", psdzStandardSvtNames.Ecus.Count());
+                log.InfoFormat(CultureInfo.InvariantCulture, "Svt Ecus names: {0}", psdzStandardSvtNames.Ecus.Count());
                 foreach (IPsdzEcu ecu in psdzStandardSvtNames.Ecus)
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, " Variant: BaseVar={0}, Var={1}, Name={2}",
