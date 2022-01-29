@@ -210,14 +210,32 @@
   <data name="SoftwareFailures" xml:space="preserve">
     <value>Detected software failures.</value>
   </data>
+  <data name="TalBackupGenerating" xml:space="preserve">
+    <value>Generating backup TAL ...</value>
+  </data>
+  <data name="TalBackupGenerationFailed" xml:space="preserve">
+    <value>Backup TAL generation failed.</value>
+  </data>
   <data name="TalExecuteError" xml:space="preserve">
     <value>TAL execution finished with errors.</value>
   </data>
   <data name="TalExecuteOk" xml:space="preserve">
     <value>TAL execution finished ok.</value>
   </data>
+  <data name="TalGenerationFailed" xml:space="preserve">
+    <value>TAL generation failed.</value>
+  </data>
+  <data name="TalGenrating" xml:space="preserve">
+    <value>Generating TAL ...</value>
+  </data>
   <data name="TalMissing" xml:space="preserve">
     <value>TAL not present.</value>
+  </data>
+  <data name="TalRestoreGenerationFailed" xml:space="preserve">
+    <value>Restore TAL generation failed.</value>
+  </data>
+  <data name="TalRestoreGenrating" xml:space="preserve">
+    <value>Generating restore TAL ...</value>
   </data>
   <data name="TslUpdated" xml:space="preserve">
     <value>TSL updated.</value>

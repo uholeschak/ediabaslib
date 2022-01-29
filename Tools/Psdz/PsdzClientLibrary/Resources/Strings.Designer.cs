@@ -340,6 +340,24 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Generating backup TAL ... ähnelt.
+        /// </summary>
+        internal static string TalBackupGenerating {
+            get {
+                return ResourceManager.GetString("TalBackupGenerating", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Backup TAL generation failed. ähnelt.
+        /// </summary>
+        internal static string TalBackupGenerationFailed {
+            get {
+                return ResourceManager.GetString("TalBackupGenerationFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die TAL execution finished with errors. ähnelt.
         /// </summary>
         internal static string TalExecuteError {
@@ -358,11 +376,47 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die TAL generation failed. ähnelt.
+        /// </summary>
+        internal static string TalGenerationFailed {
+            get {
+                return ResourceManager.GetString("TalGenerationFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Generating TAL ... ähnelt.
+        /// </summary>
+        internal static string TalGenrating {
+            get {
+                return ResourceManager.GetString("TalGenrating", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die TAL not present. ähnelt.
         /// </summary>
         internal static string TalMissing {
             get {
                 return ResourceManager.GetString("TalMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Restore TAL generation failed. ähnelt.
+        /// </summary>
+        internal static string TalRestoreGenerationFailed {
+            get {
+                return ResourceManager.GetString("TalRestoreGenerationFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Generating restore TAL ... ähnelt.
+        /// </summary>
+        internal static string TalRestoreGenrating {
+            get {
+                return ResourceManager.GetString("TalRestoreGenrating", resourceCulture);
             }
         }
         

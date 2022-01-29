@@ -1006,21 +1006,24 @@ namespace PsdzClient.Programing
                     return true;
                 }
 
+                PsdzContext.Tal = null;
                 IPsdzReadEcuUidResultCto psdzReadEcuUid = ProgrammingService.Psdz.SecurityManagementService.readEcuUid(PsdzContext.Connection, psdzEcuIdentifiers, PsdzContext.SvtActual);
-
-                log.InfoFormat(CultureInfo.InvariantCulture, "EcuUids: {0}", psdzReadEcuUid.EcuUids.Count);
-                foreach (KeyValuePair<IPsdzEcuIdentifier, IPsdzEcuUidCto> ecuUid in psdzReadEcuUid.EcuUids)
+                if (psdzReadEcuUid != null)
                 {
-                    log.InfoFormat(CultureInfo.InvariantCulture, " EcuId: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, Uid={3}",
-                        ecuUid.Key.BaseVariant, ecuUid.Key.DiagAddrAsInt, ecuUid.Key.DiagnosisAddress.Offset, ecuUid.Value.EcuUid);
-                }
+                    log.InfoFormat(CultureInfo.InvariantCulture, "EcuUids: {0}", psdzReadEcuUid.EcuUids.Count);
+                    foreach (KeyValuePair<IPsdzEcuIdentifier, IPsdzEcuUidCto> ecuUid in psdzReadEcuUid.EcuUids)
+                    {
+                        log.InfoFormat(CultureInfo.InvariantCulture, " EcuId: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, Uid={3}",
+                            ecuUid.Key.BaseVariant, ecuUid.Key.DiagAddrAsInt, ecuUid.Key.DiagnosisAddress.Offset, ecuUid.Value.EcuUid);
+                    }
 
-                log.InfoFormat(CultureInfo.InvariantCulture, "EcuUid failures: {0}", psdzReadEcuUid.FailureResponse.Count());
-                foreach (IPsdzEcuFailureResponseCto failureResponse in psdzReadEcuUid.FailureResponse)
-                {
-                    log.InfoFormat(CultureInfo.InvariantCulture, " Fail: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, Cause={3}",
-                        failureResponse.EcuIdentifierCto.BaseVariant, failureResponse.EcuIdentifierCto.DiagAddrAsInt, failureResponse.EcuIdentifierCto.DiagnosisAddress.Offset,
-                        failureResponse.Cause.Description);
+                    log.InfoFormat(CultureInfo.InvariantCulture, "EcuUid failures: {0}", psdzReadEcuUid.FailureResponse.Count());
+                    foreach (IPsdzEcuFailureResponseCto failureResponse in psdzReadEcuUid.FailureResponse)
+                    {
+                        log.InfoFormat(CultureInfo.InvariantCulture, " Fail: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, Cause={3}",
+                            failureResponse.EcuIdentifierCto.BaseVariant, failureResponse.EcuIdentifierCto.DiagAddrAsInt, failureResponse.EcuIdentifierCto.DiagnosisAddress.Offset,
+                            failureResponse.Cause.Description);
+                    }
                 }
 
                 cts?.Token.ThrowIfCancellationRequested();
@@ -1091,7 +1094,16 @@ namespace PsdzClient.Programing
                 }
                 cts?.Token.ThrowIfCancellationRequested();
 
+                sbResult.AppendLine(Strings.TalGenrating);
+                UpdateStatus(sbResult.ToString());
                 IPsdzTal psdzTal = ProgrammingService.Psdz.LogicService.GenerateTal(PsdzContext.Connection, PsdzContext.SvtActual, psdzSollverbauung, PsdzContext.SwtAction, PsdzContext.TalFilter, PsdzContext.FaActual.Vin);
+                if (psdzTal == null)
+                {
+                    sbResult.AppendLine(Strings.TalGenerationFailed);
+                    UpdateStatus(sbResult.ToString());
+                    return false;
+                }
+
                 PsdzContext.Tal = psdzTal;
                 log.Info("Tal:");
                 log.Info(psdzTal.AsXml);
@@ -1130,13 +1142,31 @@ namespace PsdzClient.Programing
                 }
                 cts?.Token.ThrowIfCancellationRequested();
 
+                sbResult.AppendLine(Strings.TalBackupGenerating);
+                UpdateStatus(sbResult.ToString());
                 IPsdzTal psdzBackupTal = ProgrammingService.Psdz.IndividualDataRestoreService.GenerateBackupTal(PsdzContext.Connection, PsdzContext.PathToBackupData, PsdzContext.Tal, PsdzContext.TalFilter);
+                if (psdzBackupTal == null)
+                {
+                    sbResult.AppendLine(Strings.TalGenerationFailed);
+                    UpdateStatus(sbResult.ToString());
+                    return false;
+                }
+
                 PsdzContext.IndividualDataBackupTal = psdzBackupTal;
                 log.Info("Backup Tal:");
                 log.InfoFormat(CultureInfo.InvariantCulture, " Size: {0}", psdzBackupTal.AsXml.Length);
                 cts?.Token.ThrowIfCancellationRequested();
 
+                sbResult.AppendLine(Strings.TalRestoreGenrating);
+                UpdateStatus(sbResult.ToString());
                 IPsdzTal psdzRestorePrognosisTal = ProgrammingService.Psdz.IndividualDataRestoreService.GenerateRestorePrognosisTal(PsdzContext.Connection, PsdzContext.PathToBackupData, PsdzContext.Tal, PsdzContext.IndividualDataBackupTal, PsdzContext.TalFilterForIndividualDataTal);
+                if (psdzRestorePrognosisTal == null)
+                {
+                    sbResult.AppendLine(Strings.TalRestoreGenerationFailed);
+                    UpdateStatus(sbResult.ToString());
+                    return false;
+                }
+
                 PsdzContext.IndividualDataRestorePrognosisTal = psdzRestorePrognosisTal;
                 log.Info("Restore prognosis Tal:");
                 log.InfoFormat(CultureInfo.InvariantCulture, " Size: {0}", psdzRestorePrognosisTal.AsXml.Length);
