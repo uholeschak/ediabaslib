@@ -813,6 +813,8 @@ namespace PsdzClient.Programing
                         }
                     }
 
+                    sbResult.AppendLine(Strings.ExecutingVehicleFuncFinished);
+                    UpdateStatus(sbResult.ToString());
                     return true;
                 }
 
@@ -845,8 +847,8 @@ namespace PsdzClient.Programing
                 }
 
                 PsdzContext.SetIstufen(iStufenTriple);
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "ILevel: Current={0}, Last={1}, Shipment={2}",
-                    iStufenTriple.Current, iStufenTriple.Last, iStufenTriple.Shipment));
+                log.InfoFormat(CultureInfo.InvariantCulture, "ILevel: Current={0}, Last={1}, Shipment={2}",
+                    iStufenTriple.Current, iStufenTriple.Last, iStufenTriple.Shipment);
 
                 if (!PsdzContext.SetPathToBackupData(psdzVin.Value))
                 {
@@ -913,7 +915,7 @@ namespace PsdzClient.Programing
                 {
                     sbResult.AppendLine(Strings.DetectInstalledEcusFailed);
                     UpdateStatus(sbResult.ToString());
-                    return true;
+                    return false;
                 }
 
                 log.InfoFormat(CultureInfo.InvariantCulture, "EcuIds: {0}", psdzEcuIdentifiers.Count());
@@ -943,7 +945,7 @@ namespace PsdzClient.Programing
                 {
                     sbResult.AppendLine(Strings.UpdateVehicleDataFailed);
                     UpdateStatus(sbResult.ToString());
-                    return true;
+                    return false;
                 }
 
                 ProgrammingService.PdszDatabase.ResetXepRules();
@@ -989,6 +991,7 @@ namespace PsdzClient.Programing
                         UpdateOptions(optionsDict);
                     }
 
+                    sbResult.AppendLine(Strings.ExecutingVehicleFuncFinished);
                     UpdateStatus(sbResult.ToString());
                     return true;
                 }
@@ -1050,7 +1053,7 @@ namespace PsdzClient.Programing
                 {
                     sbResult.AppendLine(Strings.RequestEcuContextFailed);
                     UpdateStatus(sbResult.ToString());
-                    return true;
+                    return false;
                 }
 
                 log.InfoFormat(CultureInfo.InvariantCulture, "Ecu contexts: {0}", psdzEcuContextInfos.Count());
@@ -1130,6 +1133,9 @@ namespace PsdzClient.Programing
                 log.Info("Restore prognosis Tal:");
                 log.InfoFormat(CultureInfo.InvariantCulture, " Size: {0}", psdzRestorePrognosisTal.AsXml.Length);
                 cts?.Token.ThrowIfCancellationRequested();
+
+                sbResult.AppendLine(Strings.ExecutingVehicleFuncFinished);
+                UpdateStatus(sbResult.ToString());
                 return true;
             }
             catch (Exception ex)

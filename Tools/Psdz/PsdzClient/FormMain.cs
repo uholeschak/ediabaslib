@@ -157,7 +157,8 @@ namespace PsdzClient
                     checkBoxIcom.Checked = false;
                 }
 
-                _programmingJobs.ClientContext.Language = comboBoxLanguage.SelectedItem.ToString();
+                string language = comboBoxLanguage.SelectedItem.ToString();
+                SetLanguage(language);
             }
             catch (Exception)
             {
@@ -187,6 +188,24 @@ namespace PsdzClient
             }
 
             return true;
+        }
+
+        private void SetLanguage(string language)
+        {
+            _programmingJobs.ClientContext.Language = language;
+            if (!string.IsNullOrEmpty(language))
+            {
+                try
+                {
+                    CultureInfo culture = CultureInfo.CreateSpecificCulture(language.ToLowerInvariant());
+                    Thread.CurrentThread.CurrentCulture = culture;
+                    Thread.CurrentThread.CurrentUICulture = culture;
+                }
+                catch (Exception ex)
+                {
+                    log.ErrorFormat("InitializeCulture Exception: {0}", ex.Message);
+                }
+            }
         }
 
         private void UpdateStatus(string message = null)
@@ -800,7 +819,8 @@ namespace PsdzClient
                 return;
             }
 
-            _programmingJobs.ClientContext.Language = comboBoxLanguage.SelectedItem.ToString();
+            string language = comboBoxLanguage.SelectedItem.ToString();
+            SetLanguage(language);
 
             BeginInvoke((Action)(() =>
             {
