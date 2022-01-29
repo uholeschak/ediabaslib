@@ -564,9 +564,6 @@ namespace PsdzClient.Programing
 
                 if (operationType == OperationType.ExecuteTal)
                 {
-                    sbResult.AppendLine(Strings.ExecutingTal);
-                    UpdateStatus(sbResult.ToString());
-
                     if (PsdzContext.Tal == null)
                     {
                         sbResult.AppendLine(Strings.TalMissing);
