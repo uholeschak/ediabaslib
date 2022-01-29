@@ -340,6 +340,24 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Request SWT action. ähnelt.
+        /// </summary>
+        internal static string SwtAction {
+            get {
+                return ResourceManager.GetString("SwtAction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Request SWT action failed. ähnelt.
+        /// </summary>
+        internal static string SwtActionFailed {
+            get {
+                return ResourceManager.GetString("SwtActionFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Generating backup TAL ... ähnelt.
         /// </summary>
         internal static string TalBackupGenerating {

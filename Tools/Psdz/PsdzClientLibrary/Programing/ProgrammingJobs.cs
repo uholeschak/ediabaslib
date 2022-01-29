@@ -1076,7 +1076,16 @@ namespace PsdzClient.Programing
                 }
                 cts?.Token.ThrowIfCancellationRequested();
 
-                IPsdzSwtAction psdzSwtAction = ProgrammingService.Psdz.ProgrammingService.RequestSwtAction(PsdzContext.Connection, true);
+                sbResult.AppendLine(Strings.SwtAction);
+                UpdateStatus(sbResult.ToString());
+                IPsdzSwtAction psdzSwtAction = ProgrammingService.Psdz.ProgrammingService.RequestSwtAction(PsdzContext.Connection, false);
+                if (psdzSwtAction == null)
+                {
+                    sbResult.AppendLine(Strings.SwtActionFailed);
+                    UpdateStatus(sbResult.ToString());
+                    return false;
+                }
+
                 PsdzContext.SwtAction = psdzSwtAction;
                 if (psdzSwtAction?.SwtEcus != null)
                 {

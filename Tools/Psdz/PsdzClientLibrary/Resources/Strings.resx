@@ -210,6 +210,12 @@
   <data name="SoftwareFailures" xml:space="preserve">
     <value>Detected software failures.</value>
   </data>
+  <data name="SwtAction" xml:space="preserve">
+    <value>Request SWT action.</value>
+  </data>
+  <data name="SwtActionFailed" xml:space="preserve">
+    <value>Request SWT action failed.</value>
+  </data>
   <data name="TalBackupGenerating" xml:space="preserve">
     <value>Generating backup TAL ...</value>
   </data>
