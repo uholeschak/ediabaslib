@@ -32,9 +32,9 @@ namespace WebPsdzClient
                 {
                     if (Request.UserAgent != null)
                     {
-                        log.InfoFormat("_Default User agent: {0}", Request.UserAgent);
                         if (string.IsNullOrEmpty(sessionContainer.DeepObdVersion))
                         {
+                            log.InfoFormat("_Default User agent: {0}", Request.UserAgent);
                             string[] agentParts = Request.UserAgent.Split(' ');
                             foreach (string part in agentParts)
                             {
@@ -358,7 +358,7 @@ namespace WebPsdzClient
 
         protected void TimerUpdate_Tick(object sender, EventArgs e)
         {
-            log.InfoFormat("_Default TimerUpdate_Tick");
+            //log.InfoFormat("_Default TimerUpdate_Tick");
 
             SessionContainer sessionContainer = GetSessionContainer();
             if (sessionContainer == null)
