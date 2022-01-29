@@ -133,7 +133,10 @@
     <value>TAL wird ausgeführt ...</value>
   </data>
   <data name="ExecutingVehicleFunc" xml:space="preserve">
-    <value>Fahrzeug-Vorgang wird ausgeführt ...</value>
+    <value>Vorgang wird ausgeführt ...</value>
+  </data>
+  <data name="ExecutingVehicleFuncFinished" xml:space="preserve">
+    <value>Vorgang abgeschlossen.</value>
   </data>
   <data name="FaBackupWriteFailed" xml:space="preserve">
     <value>Backup FA schreiben fehlgeschlagen.</value>

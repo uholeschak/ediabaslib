@@ -106,11 +106,20 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Executing vehicle operation ... ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Executing operation ... ähnelt.
         /// </summary>
         internal static string ExecutingVehicleFunc {
             get {
                 return ResourceManager.GetString("ExecutingVehicleFunc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Operation finished. ähnelt.
+        /// </summary>
+        internal static string ExecutingVehicleFuncFinished {
+            get {
+                return ResourceManager.GetString("ExecutingVehicleFuncFinished", resourceCulture);
             }
         }
         
