@@ -126,6 +126,9 @@
   <data name="DetectInstalledEcusFailed" xml:space="preserve">
     <value>Erkennen der installierten ECUs fehlgeschlagen.</value>
   </data>
+  <data name="ExceptionMsg" xml:space="preserve">
+    <value>Fehler: {0}</value>
+  </data>
   <data name="ExecutingBackupTal" xml:space="preserve">
     <value>Backup TAL wird ausgeführt ...</value>
   </data>

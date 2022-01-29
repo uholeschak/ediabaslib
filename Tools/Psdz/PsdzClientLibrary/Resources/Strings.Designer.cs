@@ -88,6 +88,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Error: {0} ähnelt.
+        /// </summary>
+        internal static string ExceptionMsg {
+            get {
+                return ResourceManager.GetString("ExceptionMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Executing backup TAL ... ähnelt.
         /// </summary>
         internal static string ExecutingBackupTal {

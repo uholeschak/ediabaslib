@@ -1209,7 +1209,7 @@ namespace BmwDeepObd
                         {
                             break;
                         }
-#if DEBUG
+#if true //DEBUG
                         allowCoding = true;
 #endif
                         break;

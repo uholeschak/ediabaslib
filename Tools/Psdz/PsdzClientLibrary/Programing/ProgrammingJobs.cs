@@ -211,7 +211,7 @@ namespace PsdzClient.Programing
             }
             catch (Exception ex)
             {
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Exception: {0}", ex.Message));
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.ExceptionMsg, ex.Message));
                 UpdateStatus(sbResult.ToString());
                 return false;
             }
@@ -245,7 +245,7 @@ namespace PsdzClient.Programing
             }
             catch (Exception ex)
             {
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Exception: {0}", ex.Message));
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.ExceptionMsg, ex.Message));
                 UpdateStatus(sbResult.ToString());
                 return false;
             }
@@ -447,7 +447,7 @@ namespace PsdzClient.Programing
             }
             catch (Exception ex)
             {
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Exception: {0}", ex.Message));
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.ExceptionMsg, ex.Message));
                 UpdateStatus(sbResult.ToString());
                 return false;
             }
@@ -500,7 +500,7 @@ namespace PsdzClient.Programing
             }
             catch (Exception ex)
             {
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Exception: {0}", ex.Message));
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.ExceptionMsg, ex.Message));
                 UpdateStatus(sbResult.ToString());
                 return false;
             }
@@ -818,8 +818,7 @@ namespace PsdzClient.Programing
                             }
                             catch (Exception ex)
                             {
-                                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Directory exception: {0}", ex.Message));
-                                UpdateStatus(sbResult.ToString());
+                                log.ErrorFormat(CultureInfo.InvariantCulture, "Directory exception: {0}", ex.Message);
                             }
                         }
                     }
@@ -1149,7 +1148,7 @@ namespace PsdzClient.Programing
             }
             catch (Exception ex)
             {
-                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, "Exception: {0}", ex.Message));
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.ExceptionMsg, ex.Message));
                 UpdateStatus(sbResult.ToString());
                 if (operationType != OperationType.ExecuteTal)
                 {
