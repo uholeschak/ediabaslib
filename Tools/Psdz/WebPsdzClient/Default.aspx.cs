@@ -20,6 +20,7 @@ namespace WebPsdzClient
 
         protected override void InitializeCulture()
         {
+            SessionContainer.SetLogInfo(Session.SessionID);
             SessionContainer sessionContainer = GetSessionContainer();
             if (sessionContainer == null)
             {

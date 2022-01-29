@@ -63,6 +63,7 @@ namespace WebPsdzClient
 
         protected void Session_Start(object sender, EventArgs e)
         {
+            SessionContainer.SetLogInfo(Session.SessionID);
             log.InfoFormat("Session_Start: SessionId={0}", Session.SessionID);
             if (!(Session.Contents[SessionContainerName] is SessionContainer))
             {
@@ -73,6 +74,7 @@ namespace WebPsdzClient
 
         protected void Session_End(object sender, EventArgs e)
         {
+            SessionContainer.SetLogInfo(Session.SessionID);
             log.InfoFormat("Session_End: SessionId={0}", Session.SessionID);
             if (Session.Contents[SessionContainerName] is SessionContainer sessionContainer)
             {

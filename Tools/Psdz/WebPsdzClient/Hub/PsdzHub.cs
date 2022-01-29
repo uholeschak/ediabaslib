@@ -58,6 +58,7 @@ namespace PsdzClient
         [HubMethodName("vehicleReceive")]
         public async Task VehicleReceive(string sessionId, string id, string data)
         {
+            SessionContainer.SetLogInfo(sessionId);
             string transport = Context.QueryString["transport"] ?? string.Empty;
             await Task.Run(() =>
             {
@@ -78,6 +79,7 @@ namespace PsdzClient
         [HubMethodName("vehicleError")]
         public async Task VehicleError(string sessionId, string id, string message)
         {
+            SessionContainer.SetLogInfo(sessionId);
             string transport = Context.QueryString["transport"] ?? string.Empty;
             await Task.Run(() =>
             {
@@ -101,6 +103,7 @@ namespace PsdzClient
         [HubMethodName("sessionConnected")]
         public async Task SessionConnected(string sessionId)
         {
+            SessionContainer.SetLogInfo(sessionId);
             string transport = Context.QueryString["transport"];
             await Task.Run(() =>
             {
@@ -114,6 +117,7 @@ namespace PsdzClient
             string sessionId = Context.QueryString["sessionId"];
             string transport = Context.QueryString["transport"];
             string connectionId = Context.ConnectionId;
+            SessionContainer.SetLogInfo(sessionId);
             log.InfoFormat("OnConnected: SessionId={0}, ConnectionId={1}, Transport={2}",
                 sessionId ?? string.Empty, Context.ConnectionId ?? string.Empty, transport ?? string.Empty);
 
@@ -132,6 +136,7 @@ namespace PsdzClient
             string sessionId = Context.QueryString["sessionId"];
             string transport = Context.QueryString["transport"];
             string connectionId = Context.ConnectionId;
+            SessionContainer.SetLogInfo(sessionId);
             log.InfoFormat("OnReconnected: SessionId={0}, ConnectionId={1}, Transport={2}",
                 sessionId ?? string.Empty, Context.ConnectionId ?? string.Empty, transport ?? string.Empty);
 
@@ -149,6 +154,17 @@ namespace PsdzClient
         public override Task OnDisconnected(bool stopCalled)
         {
             string connectionId = Context.ConnectionId;
+            if (!string.IsNullOrEmpty(connectionId))
+            {
+                lock (ConnectionDict)
+                {
+                    if (ConnectionDict.TryGetValue(connectionId, out string sessionId))
+                    {
+                        SessionContainer.SetLogInfo(sessionId);
+                    }
+                }
+            }
+
             log.InfoFormat("OnDisconnected: ConnectionId={0}", Context.ConnectionId ?? string.Empty);
 
             if (!string.IsNullOrEmpty(connectionId))
