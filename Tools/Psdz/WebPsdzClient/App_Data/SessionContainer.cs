@@ -337,6 +337,11 @@ namespace WebPsdzClient.App_Data
             return null;
         }
 
+        public static void SetLogInfo(string sessionId)
+        {
+            LogicalThreadContext.Properties["session"] = sessionId;
+        }
+
         private bool StartTcpListener()
         {
             try
@@ -992,6 +997,7 @@ namespace WebPsdzClient.App_Data
 #endif
         private void TcpThread()
         {
+            SetLogInfo(SessionId);
             log.InfoFormat("TcpThread started");
 
             for (;;)
@@ -1224,6 +1230,7 @@ namespace WebPsdzClient.App_Data
 
         private void VehicleThread()
         {
+            SetLogInfo(SessionId);
             log.InfoFormat("VehicleThread started");
 #if EDIABAS_CONNECTION
             EdiabasConnect();
