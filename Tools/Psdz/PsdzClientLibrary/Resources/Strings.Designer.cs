@@ -349,20 +349,20 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die SWT actions: {0} ähnelt.
+        /// </summary>
+        internal static string SwtActionCount {
+            get {
+                return ResourceManager.GetString("SwtActionCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Request SWT action failed. ähnelt.
         /// </summary>
         internal static string SwtActionFailed {
             get {
                 return ResourceManager.GetString("SwtActionFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die SWT actions: {0} ähnelt.
-        /// </summary>
-        internal static string SwtActions {
-            get {
-                return ResourceManager.GetString("SwtActions", resourceCulture);
             }
         }
         

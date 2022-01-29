@@ -1089,7 +1089,7 @@ namespace PsdzClient.Programing
                 PsdzContext.SwtAction = psdzSwtAction;
                 if (psdzSwtAction?.SwtEcus != null)
                 {
-                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.SwtAction, psdzSwtAction.SwtEcus.Count()));
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.SwtActionCount, psdzSwtAction.SwtEcus.Count()));
                     UpdateStatus(sbResult.ToString());
 
                     log.InfoFormat(CultureInfo.InvariantCulture, "Swt Ecus: {0}", psdzSwtAction.SwtEcus.Count());
