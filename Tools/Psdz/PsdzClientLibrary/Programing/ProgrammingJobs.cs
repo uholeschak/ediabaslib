@@ -693,6 +693,13 @@ namespace PsdzClient.Programing
                         if (backupTalResult.TalExecutionState != PsdzTalExecutionState.Finished)
                         {
                             log.Info(backupTalResult.AsXml);
+                            sbResult.AppendLine(Strings.TalExecuteError);
+                            UpdateStatus(sbResult.ToString());
+                        }
+                        else
+                        {
+                            sbResult.AppendLine(Strings.TalExecuteOk);
+                            UpdateStatus(sbResult.ToString());
                         }
                         cts?.Token.ThrowIfCancellationRequested();
 
@@ -712,6 +719,13 @@ namespace PsdzClient.Programing
                         if (executeTalResult.TalExecutionState != PsdzTalExecutionState.Finished)
                         {
                             log.Info(executeTalResult.AsXml);
+                            sbResult.AppendLine(Strings.TalExecuteError);
+                            UpdateStatus(sbResult.ToString());
+                        }
+                        else
+                        {
+                            sbResult.AppendLine(Strings.TalExecuteOk);
+                            UpdateStatus(sbResult.ToString());
                         }
                         cts?.Token.ThrowIfCancellationRequested();
 
@@ -1021,8 +1035,6 @@ namespace PsdzClient.Programing
                         failureResponse.EcuIdentifierCto.BaseVariant, failureResponse.EcuIdentifierCto.DiagAddrAsInt, failureResponse.EcuIdentifierCto.DiagnosisAddress.Offset,
                         failureResponse.Cause.Description);
                 }
-
-                cts?.Token.ThrowIfCancellationRequested();
 
                 log.InfoFormat(CultureInfo.InvariantCulture, "Status features: {0}", psdzReadStatusResult.FeatureStatusSet.Count());
                 foreach (IPsdzFeatureLongStatusCto featureLongStatus in psdzReadStatusResult.FeatureStatusSet)

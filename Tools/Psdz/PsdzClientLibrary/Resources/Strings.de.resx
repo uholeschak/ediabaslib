@@ -207,6 +207,12 @@
   <data name="SoftwareFailures" xml:space="preserve">
     <value>Softwarefehler erkannt..</value>
   </data>
+  <data name="TalExecuteError" xml:space="preserve">
+    <value>TAL Ausführung mit Fehlern beendet.</value>
+  </data>
+  <data name="TalExecuteOk" xml:space="preserve">
+    <value>TAL Ausführung ohne Fehler beendet.</value>
+  </data>
   <data name="TalMissing" xml:space="preserve">
     <value>TAL nicht vorhanden.</value>
   </data>

@@ -331,6 +331,24 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die TAL execution finished with errors. ähnelt.
+        /// </summary>
+        internal static string TalExecuteError {
+            get {
+                return ResourceManager.GetString("TalExecuteError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die TAL execution finished ok. ähnelt.
+        /// </summary>
+        internal static string TalExecuteOk {
+            get {
+                return ResourceManager.GetString("TalExecuteOk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die TAL not present. ähnelt.
         /// </summary>
         internal static string TalMissing {
