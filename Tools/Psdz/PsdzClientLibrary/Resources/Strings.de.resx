@@ -211,7 +211,7 @@
     <value>Softwarefehler erkannt..</value>
   </data>
   <data name="TalBackupGenerating" xml:space="preserve">
-    <value>Generating Backup TAL ...</value>
+    <value>Generiere Backup TAL ...</value>
   </data>
   <data name="TalBackupGenerationFailed" xml:space="preserve">
     <value>Backup TAL Generierung fehlgeschlagen.</value>
@@ -226,7 +226,7 @@
     <value>TAL Generierung fehlgeschlagen.</value>
   </data>
   <data name="TalGenrating" xml:space="preserve">
-    <value>Generating TAL ...</value>
+    <value>Generiere TAL ...</value>
   </data>
   <data name="TalMissing" xml:space="preserve">
     <value>TAL nicht vorhanden.</value>
