@@ -446,7 +446,8 @@ namespace BmwDeepObd
                     }
                     else
                     {
-                        _instanceData.Url = @"http://holeschak.dedyn.io:3000";
+                        //_instanceData.Url = @"http://holeschak.dedyn.io:3000";
+                        _instanceData.Url = @"http://holeschak.dedyn.io:8008";
                     }
                 }
 
