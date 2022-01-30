@@ -462,7 +462,7 @@ namespace WebPsdzClient
         {
             try
             {
-                LabelLastUpdate.Text = DateTime.UtcNow.ToString("HH:mm:ss");
+                LabelLastUpdate.Text = DateTime.Now.ToString("HH:mm:ss");
                 if (!UpdatePanelTimer.IsInPartialRendering)
                 {
                     UpdatePanelTimer.Update();
