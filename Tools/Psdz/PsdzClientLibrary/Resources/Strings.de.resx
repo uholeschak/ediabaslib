@@ -207,6 +207,9 @@
   <data name="RequestEcuContextFailed" xml:space="preserve">
     <value>ECU Kontext anfragen fehlgeschlagen.</value>
   </data>
+  <data name="RequestedFlashSetupFailed" xml:space="preserve">
+    <value>Sollverbauung abrufen fehlgeschlagen.</value>
+  </data>
   <data name="SoftwareFailures" xml:space="preserve">
     <value>Softwarefehler erkannt..</value>
   </data>

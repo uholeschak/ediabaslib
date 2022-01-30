@@ -207,6 +207,9 @@
   <data name="RequestEcuContextFailed" xml:space="preserve">
     <value>Requesting ECU context failed.</value>
   </data>
+  <data name="RequestedPlannedConstructionFailed" xml:space="preserve">
+    <value>Requesting planned construction failed.</value>
+  </data>
   <data name="SoftwareFailures" xml:space="preserve">
     <value>Detected software failures.</value>
   </data>

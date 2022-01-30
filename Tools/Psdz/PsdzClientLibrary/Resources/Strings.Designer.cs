@@ -331,6 +331,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Requesting planned construction failed. ähnelt.
+        /// </summary>
+        internal static string RequestedPlannedConstructionFailed {
+            get {
+                return ResourceManager.GetString("RequestedPlannedConstructionFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Detected software failures. ähnelt.
         /// </summary>
         internal static string SoftwareFailures {
