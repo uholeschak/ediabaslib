@@ -68,5 +68,14 @@ namespace Resources {
                 return ResourceManager.GetString("Processing", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///    Sucht eine lokalisierte Zeichenfolge, die Time: {0}, UTC: {1} ähnelt.
+        /// </summary>
+        internal static string TimeDisplay {
+            get {
+                return ResourceManager.GetString("TimeDisplay", resourceCulture);
+            }
+        }
     }
 }

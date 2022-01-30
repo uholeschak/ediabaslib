@@ -462,7 +462,13 @@ namespace WebPsdzClient
         {
             try
             {
-                LabelLastUpdate.Text = DateTime.Now.ToString("HH:mm:ss");
+                DateTime localTime = DateTime.Now;
+                DateTime utcTime = localTime.ToUniversalTime();
+                string localString = localTime.ToString("HH:mm:ss");
+                string utcString = utcTime.ToString("HH:mm:ss");
+
+                string timeFormat = GetGlobalResourceObject("Global", "TimeDisplay") as string ?? string.Empty;
+                LabelLastUpdate.Text = string.Format(CultureInfo.InvariantCulture, timeFormat, localString, utcString);
                 if (!UpdatePanelTimer.IsInPartialRendering)
                 {
                     UpdatePanelTimer.Update();
