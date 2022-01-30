@@ -1112,6 +1112,7 @@ namespace PsdzClient.Programing
 
                 sbResult.AppendLine(Strings.SwtAction);
                 UpdateStatus(sbResult.ToString());
+                log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Swt action");
                 IPsdzSwtAction psdzSwtAction = ProgrammingService.Psdz.ProgrammingService.RequestSwtAction(PsdzContext.Connection, true);
                 if (psdzSwtAction == null)
                 {
@@ -1145,6 +1146,7 @@ namespace PsdzClient.Programing
 
                 sbResult.AppendLine(Strings.TalGenrating);
                 UpdateStatus(sbResult.ToString());
+                log.InfoFormat(CultureInfo.InvariantCulture, "Generating TAL");
                 IPsdzTal psdzTal = ProgrammingService.Psdz.LogicService.GenerateTal(PsdzContext.Connection, PsdzContext.SvtActual, psdzSollverbauung, PsdzContext.SwtAction, PsdzContext.TalFilter, PsdzContext.FaActual.Vin);
                 if (psdzTal == null)
                 {
@@ -1193,6 +1195,7 @@ namespace PsdzClient.Programing
 
                 sbResult.AppendLine(Strings.TalBackupGenerating);
                 UpdateStatus(sbResult.ToString());
+                log.InfoFormat(CultureInfo.InvariantCulture, "Generating backup TAL");
                 IPsdzTal psdzBackupTal = ProgrammingService.Psdz.IndividualDataRestoreService.GenerateBackupTal(PsdzContext.Connection, PsdzContext.PathToBackupData, PsdzContext.Tal, PsdzContext.TalFilter);
                 if (psdzBackupTal == null)
                 {
@@ -1208,6 +1211,7 @@ namespace PsdzClient.Programing
 
                 sbResult.AppendLine(Strings.TalRestoreGenrating);
                 UpdateStatus(sbResult.ToString());
+                log.InfoFormat(CultureInfo.InvariantCulture, "Generating restore TAL");
                 IPsdzTal psdzRestorePrognosisTal = ProgrammingService.Psdz.IndividualDataRestoreService.GenerateRestorePrognosisTal(PsdzContext.Connection, PsdzContext.PathToBackupData, PsdzContext.Tal, PsdzContext.IndividualDataBackupTal, PsdzContext.TalFilterForIndividualDataTal);
                 if (psdzRestorePrognosisTal == null)
                 {
