@@ -804,16 +804,16 @@ namespace WebPsdzClient.App_Data
                         if (bmwFastTel != null)
                         {
                             string sendString = BitConverter.ToString(bmwFastTel).Replace("-", "");
-                            List<string> responseList;
+                            List<string> cachedResponseList;
                             lock (_lockObject)
                             {
-                                _vehicleResponseDict.TryGetValue(sendString, out responseList);
+                                _vehicleResponseDict.TryGetValue(sendString, out cachedResponseList);
                             }
 
-                            if (responseList != null)
+                            if (cachedResponseList != null)
                             {
                                 log.InfoFormat("ProcessQueuePacket Using cached response for Request={0}", sendString);
-                                cachedList.AddRange(responseList);
+                                cachedList.AddRange(cachedResponseList);
                                 SendAckPacket(enetTcpClientData, recPacket);
                                 accepted = true;
                             }
@@ -1409,56 +1409,78 @@ namespace WebPsdzClient.App_Data
                                         if (hubContext != null)
                                         {
                                             string sendDataString = BitConverter.ToString(bmwFastTel).Replace("-", "");
-                                            List<string> connectionIds = PsdzVehicleHub.GetConnectionIds(SessionId);
-                                            foreach (string connectionId in connectionIds)
+                                            List<string> cachedResponseList;
+                                            lock (_lockObject)
                                             {
-                                                hubContext.Clients.Client(connectionId)?.VehicleSend(GetVehicleUrl(), GetNextPacketId(), sendDataString);
+                                                _vehicleResponseDict.TryGetValue(sendDataString, out cachedResponseList);
                                             }
 
-                                            long nr78Time = Stopwatch.GetTimestamp();
-                                            int nr78Count = 0;
+                                            PsdzVehicleHub.VehicleResponse vehicleResponse;
                                             List<string> cachedList = new List<string>();
-                                            PsdzVehicleHub.VehicleResponse vehicleResponse = WaitForVehicleResponse(() =>
+                                            if (cachedResponseList != null)
                                             {
-                                                ProcessQueuePacket(enetTcpClientData, cachedList);
-                                                if ((Stopwatch.GetTimestamp() - nr78Time) > 1000 * TickResolMs)
+                                                log.InfoFormat("VehicleThread Using cached response for Request={0}", sendDataString);
+                                                vehicleResponse = new PsdzVehicleHub.VehicleResponse(GetPacketId(), false)
                                                 {
-                                                    nr78Time = Stopwatch.GetTimestamp();
-                                                    if (funcAddress || nr78Count < 3)
-                                                    {
-                                                        if (funcAddress && nr78Count != 0 && nr78Count % 3 == 0)
-                                                        {   // prevent disconnect after 3 retries
-                                                            nr78Tel[2]++;
-                                                            log.InfoFormat("VehicleThread Nr78 Inc={0}", nr78Tel[2]);
-                                                        }
-
-                                                        byte[] enetNr78Tel = CreateEnetTelegram(nr78Tel);
-                                                        if (enetNr78Tel == null)
-                                                        {
-                                                            log.ErrorFormat("VehicleThread Enet NR78 Tel invalid");
-                                                        }
-                                                        else
-                                                        {
-                                                            string nr78String = BitConverter.ToString(nr78Tel).Replace("-", " ");
-                                                            log.InfoFormat("VehicleThread Sending Nr78 Count={0}, Tel={1}", nr78Count, nr78String);
-                                                            nr78Time = Stopwatch.GetTimestamp();
-                                                            nr78Count++;
-                                                            enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
-                                                            lock (enetTcpClientData.SendQueue)
-                                                            {
-                                                                foreach (byte enetData in enetNr78Tel)
-                                                                {
-                                                                    enetTcpClientData.SendQueue.Enqueue(enetData);
-                                                                }
-                                                            }
-
-                                                            enetTcpChannel.SendEvent.Set();
-                                                        }
-                                                    }
+                                                    Valid = true,
+                                                    Connected = true,
+                                                    Request = sendDataString,
+                                                    ResponseList = cachedResponseList
+                                                };
+                                            }
+                                            else
+                                            {
+                                                List<string> connectionIds = PsdzVehicleHub.GetConnectionIds(SessionId);
+                                                foreach (string connectionId in connectionIds)
+                                                {
+                                                    hubContext.Clients.Client(connectionId)?.VehicleSend(GetVehicleUrl(), GetNextPacketId(), sendDataString);
                                                 }
 
-                                                return false;
-                                            });
+                                                long nr78Time = Stopwatch.GetTimestamp();
+                                                int nr78Count = 0;
+                                                vehicleResponse = WaitForVehicleResponse(() =>
+                                                {
+                                                    ProcessQueuePacket(enetTcpClientData, cachedList);
+                                                    if ((Stopwatch.GetTimestamp() - nr78Time) > 1000 * TickResolMs)
+                                                    {
+                                                        nr78Time = Stopwatch.GetTimestamp();
+                                                        if (funcAddress || nr78Count < 3)
+                                                        {
+                                                            if (funcAddress && nr78Count != 0 && nr78Count % 3 == 0)
+                                                            {   // prevent disconnect after 3 retries
+                                                                nr78Tel[2]++;
+                                                                log.InfoFormat("VehicleThread Nr78 Inc={0}", nr78Tel[2]);
+                                                            }
+
+                                                            byte[] enetNr78Tel = CreateEnetTelegram(nr78Tel);
+                                                            if (enetNr78Tel == null)
+                                                            {
+                                                                log.ErrorFormat("VehicleThread Enet NR78 Tel invalid");
+                                                            }
+                                                            else
+                                                            {
+                                                                string nr78String = BitConverter.ToString(nr78Tel).Replace("-", " ");
+                                                                log.InfoFormat("VehicleThread Sending Nr78 Count={0}, Tel={1}", nr78Count, nr78String);
+                                                                nr78Time = Stopwatch.GetTimestamp();
+                                                                nr78Count++;
+                                                                enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
+                                                                lock (enetTcpClientData.SendQueue)
+                                                                {
+                                                                    foreach (byte enetData in enetNr78Tel)
+                                                                    {
+                                                                        enetTcpClientData.SendQueue.Enqueue(enetData);
+                                                                    }
+                                                                }
+
+                                                                enetTcpChannel.SendEvent.Set();
+                                                            }
+                                                        }
+                                                    }
+
+                                                    return false;
+                                                });
+                                            }
+
 
                                             if (vehicleResponse == null || vehicleResponse.Error || !vehicleResponse.Valid)
                                             {
@@ -1472,7 +1494,7 @@ namespace WebPsdzClient.App_Data
                                                 }
                                                 else
                                                 {
-                                                    if (funcAddress)
+                                                    if (funcAddress && cachedResponseList == null)
                                                     {
                                                         log.InfoFormat("VehicleThread Caching Request={0}", sendDataString);
                                                         lock (_lockObject)
