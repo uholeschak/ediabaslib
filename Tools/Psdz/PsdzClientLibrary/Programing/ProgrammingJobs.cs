@@ -1137,7 +1137,7 @@ namespace PsdzClient.Programing
                             foreach (IPsdzSwtApplication swtApplication in psdzSwtEcu.SwtApplications)
                             {
                                 log.InfoFormat(CultureInfo.InvariantCulture, " Fsc: Type={0}, State={1}, Length={2}",
-                                    swtApplication.SwtType, swtApplication.FscState, swtApplication.Fsc.Length);
+                                    swtApplication.SwtType, swtApplication.FscState, swtApplication.Fsc?.Length);
                             }
                         }
                     }
