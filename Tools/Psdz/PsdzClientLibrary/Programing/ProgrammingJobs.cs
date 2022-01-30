@@ -920,6 +920,9 @@ namespace PsdzClient.Programing
                 log.InfoFormat(CultureInfo.InvariantCulture, "ILevel Target: {0}", psdzIstufeTarget.Value);
                 cts?.Token.ThrowIfCancellationRequested();
 
+                sbResult.AppendLine(Strings.DetectingInstalledEcus);
+                UpdateStatus(sbResult.ToString());
+                log.InfoFormat(CultureInfo.InvariantCulture, "Requesting ECU list");
                 IEnumerable<IPsdzEcuIdentifier> psdzEcuIdentifiers = ProgrammingService.Psdz.MacrosService.GetInstalledEcuList(PsdzContext.FaActual, psdzIstufeShip);
                 if (psdzEcuIdentifiers == null)
                 {
@@ -936,9 +939,11 @@ namespace PsdzClient.Programing
                 }
                 cts?.Token.ThrowIfCancellationRequested();
 
+                log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Svt");
                 IPsdzStandardSvt psdzStandardSvt = ProgrammingService.Psdz.EcuService.RequestSvt(PsdzContext.Connection, psdzEcuIdentifiers);
                 log.InfoFormat(CultureInfo.InvariantCulture, "Svt Ecus: {0}", psdzStandardSvt.Ecus.Count());
 
+                log.InfoFormat(CultureInfo.InvariantCulture, "Requesting names");
                 IPsdzStandardSvt psdzStandardSvtNames = ProgrammingService.Psdz.LogicService.FillBntnNamesForMainSeries(PsdzContext.Connection.TargetSelector.Baureihenverbund, psdzStandardSvt);
                 log.InfoFormat(CultureInfo.InvariantCulture, "Svt Ecus names: {0}", psdzStandardSvtNames.Ecus.Count());
                 foreach (IPsdzEcu ecu in psdzStandardSvtNames.Ecus)
@@ -1009,6 +1014,7 @@ namespace PsdzClient.Programing
                 }
 
                 PsdzContext.Tal = null;
+                log.InfoFormat(CultureInfo.InvariantCulture, "Reading ECU Ids");
                 IPsdzReadEcuUidResultCto psdzReadEcuUid = ProgrammingService.Psdz.SecurityManagementService.readEcuUid(PsdzContext.Connection, psdzEcuIdentifiers, PsdzContext.SvtActual);
                 if (psdzReadEcuUid != null)
                 {
@@ -1036,6 +1042,7 @@ namespace PsdzClient.Programing
 
                 cts?.Token.ThrowIfCancellationRequested();
 
+                log.InfoFormat(CultureInfo.InvariantCulture, "Reading status");
                 IPsdzReadStatusResultCto psdzReadStatusResult = ProgrammingService.Psdz.SecureFeatureActivationService.ReadStatus(PsdzStatusRequestFeatureTypeEtoEnum.ALL_FEATURES, PsdzContext.Connection, PsdzContext.SvtActual, psdzEcuIdentifiers, true, 3, 100);
                 if (psdzReadStatusResult.Failures != null)
                 {
@@ -1061,6 +1068,7 @@ namespace PsdzClient.Programing
                 cts?.Token.ThrowIfCancellationRequested();
 
                 IPsdzTalFilter talFilterFlash = new PsdzTalFilter();
+                log.InfoFormat(CultureInfo.InvariantCulture, "Requesting planned construction");
                 IPsdzSollverbauung psdzSollverbauung = ProgrammingService.Psdz.LogicService.GenerateSollverbauungGesamtFlash(PsdzContext.Connection, psdzIstufeTarget, psdzIstufeShip, PsdzContext.SvtActual, PsdzContext.FaTarget, talFilterFlash);
                 if (psdzSollverbauung == null)
                 {
@@ -1082,6 +1090,9 @@ namespace PsdzClient.Programing
                 }
                 cts?.Token.ThrowIfCancellationRequested();
 
+                sbResult.AppendLine(Strings.RequestingEcuContext);
+                UpdateStatus(sbResult.ToString());
+                log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Ecu context");
                 IEnumerable<IPsdzEcuContextInfo> psdzEcuContextInfos = ProgrammingService.Psdz.EcuService.RequestEcuContextInfos(PsdzContext.Connection, psdzEcuIdentifiers);
                 if (psdzEcuContextInfos == null)
                 {

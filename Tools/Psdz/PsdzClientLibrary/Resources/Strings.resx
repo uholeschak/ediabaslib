@@ -123,6 +123,9 @@
   <data name="CreateBackupPathFailed" xml:space="preserve">
     <value>Creating backup path failed.</value>
   </data>
+  <data name="DetectingInstalledEcus" xml:space="preserve">
+    <value>Detecting installed ECUs ...</value>
+  </data>
   <data name="DetectInstalledEcusFailed" xml:space="preserve">
     <value>Detecting installed ECUs failed.</value>
   </data>
@@ -210,11 +213,14 @@
   <data name="RequestedPlannedConstructionFailed" xml:space="preserve">
     <value>Requesting planned construction failed.</value>
   </data>
+  <data name="RequestingEcuContext" xml:space="preserve">
+    <value>Requesting ECU context ...</value>
+  </data>
   <data name="SoftwareFailures" xml:space="preserve">
     <value>Detected software failures.</value>
   </data>
   <data name="SwtAction" xml:space="preserve">
-    <value>Request SWT action.</value>
+    <value>Requesting SWT action ...</value>
   </data>
   <data name="SwtActionCount" xml:space="preserve">
     <value>SWT actions: {0}</value>

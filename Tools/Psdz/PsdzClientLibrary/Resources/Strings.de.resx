@@ -123,6 +123,9 @@
   <data name="CreateBackupPathFailed" xml:space="preserve">
     <value>Erzeugen des Backupverzeichnisses fehlgeschlagen.</value>
   </data>
+  <data name="DetectingInstalledEcus" xml:space="preserve">
+    <value>Installierte Steuergeräte erkennen ...</value>
+  </data>
   <data name="DetectInstalledEcusFailed" xml:space="preserve">
     <value>Erkennen der installierten ECUs fehlgeschlagen.</value>
   </data>
@@ -205,16 +208,19 @@
     <value>FG-NR lesen fehlgeschlagen.</value>
   </data>
   <data name="RequestEcuContextFailed" xml:space="preserve">
-    <value>ECU Kontext anfragen fehlgeschlagen.</value>
+    <value>Steuergeräte Kontext anfragen fehlgeschlagen.</value>
   </data>
   <data name="RequestedFlashSetupFailed" xml:space="preserve">
     <value>Sollverbauung abrufen fehlgeschlagen.</value>
+  </data>
+  <data name="RequestingEcuContext" xml:space="preserve">
+    <value>Steuergeräte Kontext anfragen ...</value>
   </data>
   <data name="SoftwareFailures" xml:space="preserve">
     <value>Softwarefehler erkannt..</value>
   </data>
   <data name="SwtAction" xml:space="preserve">
-    <value>SWT Aktionen abrufen.</value>
+    <value>SWT Aktionen abrufen ...</value>
   </data>
   <data name="SwtActionCount" xml:space="preserve">
     <value>SWT Aktionen: {0}</value>

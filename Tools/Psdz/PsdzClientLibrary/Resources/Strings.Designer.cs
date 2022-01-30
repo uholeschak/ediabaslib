@@ -79,6 +79,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Detecting installed ECUs ... ähnelt.
+        /// </summary>
+        internal static string DetectingInstalledEcus {
+            get {
+                return ResourceManager.GetString("DetectingInstalledEcus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Detecting installed ECUs failed. ähnelt.
         /// </summary>
         internal static string DetectInstalledEcusFailed {
@@ -340,6 +349,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Requesting ECU context ... ähnelt.
+        /// </summary>
+        internal static string RequestingEcuContext {
+            get {
+                return ResourceManager.GetString("RequestingEcuContext", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Detected software failures. ähnelt.
         /// </summary>
         internal static string SoftwareFailures {
@@ -349,7 +367,7 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Request SWT action. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Requesting SWT action ... ähnelt.
         /// </summary>
         internal static string SwtAction {
             get {
