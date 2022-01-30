@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -86,7 +87,9 @@ namespace WebPsdzClient
         private void SetupLog4Net()
         {
             string logDir = Path.Combine(IstaFolder, @"logs\client");
-            string logFile = Path.Combine(logDir, "PsdzClient.log");
+            string dateString = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture);
+            string fileName = string.Format(CultureInfo.InvariantCulture, "PsdzClient-{0}.log", dateString);
+            string logFile = Path.Combine(logDir, fileName);
             ProgrammingJobs.SetupLog4Net(logFile);
         }
     }
