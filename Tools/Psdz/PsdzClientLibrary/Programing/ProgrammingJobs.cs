@@ -1099,10 +1099,13 @@ namespace PsdzClient.Programing
                     {
                         log.InfoFormat(CultureInfo.InvariantCulture, " Ecu: Id={0}, Vin={1}, CertState={2}, SwSig={3}",
                             psdzSwtEcu.EcuIdentifier, psdzSwtEcu.Vin, psdzSwtEcu.RootCertState, psdzSwtEcu.SoftwareSigState);
-                        foreach (IPsdzSwtApplication swtApplication in psdzSwtEcu.SwtApplications)
+                        if (psdzSwtEcu.SwtApplications != null)
                         {
-                            log.InfoFormat(CultureInfo.InvariantCulture, " Fsc: Type={0}, State={1}, Length={2}",
-                                swtApplication.SwtType, swtApplication.FscState, swtApplication.Fsc.Length);
+                            foreach (IPsdzSwtApplication swtApplication in psdzSwtEcu.SwtApplications)
+                            {
+                                log.InfoFormat(CultureInfo.InvariantCulture, " Fsc: Type={0}, State={1}, Length={2}",
+                                    swtApplication.SwtType, swtApplication.FscState, swtApplication.Fsc.Length);
+                            }
                         }
                     }
                 }
