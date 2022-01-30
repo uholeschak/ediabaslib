@@ -148,7 +148,7 @@
     <value />
   </data>
   <data name="ButtonModifyFaResource.Text" xml:space="preserve">
-    <value>Update FA</value>
+    <value>Generate TAL</value>
   </data>
   <data name="ButtonModifyFaResource.ToolTip" xml:space="preserve">
     <value />
