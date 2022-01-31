@@ -618,6 +618,7 @@ namespace PsdzClient.Programing
                     }
 
                     DateTime calculationStartTime = DateTime.Now;
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Checking programming counter");
                     IEnumerable<IPsdzEcuIdentifier> psdzEcuIdentifiersPrg = ProgrammingService.Psdz.ProgrammingService.CheckProgrammingCounter(PsdzContext.Connection, PsdzContext.Tal);
                     log.InfoFormat(CultureInfo.InvariantCulture, "ProgCounter: {0}", psdzEcuIdentifiersPrg.Count());
                     foreach (IPsdzEcuIdentifier ecuIdentifier in psdzEcuIdentifiersPrg)
@@ -627,6 +628,7 @@ namespace PsdzClient.Programing
                     }
                     cts?.Token.ThrowIfCancellationRequested();
 
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Checking NCD availability");
                     PsdzSecureCodingConfigCto secureCodingConfig = SecureCodingConfigWrapper.GetSecureCodingConfig(ProgrammingService);
                     IPsdzCheckNcdResultEto psdzCheckNcdResultEto = ProgrammingService.Psdz.SecureCodingService.CheckNcdAvailabilityForGivenTal(PsdzContext.Tal, secureCodingConfig.NcdRootDirectory, psdzVin);
                     log.InfoFormat(CultureInfo.InvariantCulture, "Ncd EachSigned: {0}", psdzCheckNcdResultEto.isEachNcdSigned);
@@ -637,6 +639,7 @@ namespace PsdzClient.Programing
                     }
                     cts?.Token.ThrowIfCancellationRequested();
 
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Checking requested NCD ETOS");
                     List<IPsdzRequestNcdEto> requestNcdEtos = ProgrammingUtils.CreateRequestNcdEtos(psdzCheckNcdResultEto);
                     log.InfoFormat(CultureInfo.InvariantCulture, "Ncd Requests: {0}", requestNcdEtos.Count);
                     foreach (IPsdzRequestNcdEto requestNcdEto in requestNcdEtos)
@@ -697,6 +700,7 @@ namespace PsdzClient.Programing
                         }
                         cts?.Token.ThrowIfCancellationRequested();
 
+                        log.InfoFormat(CultureInfo.InvariantCulture, "Requesting SWE list");
                         IEnumerable<IPsdzSgbmId> sweList = ProgrammingService.Psdz.LogicService.RequestSweList(PsdzContext.Tal, true);
                         log.InfoFormat(CultureInfo.InvariantCulture, "Swe list: {0}", sweList.Count());
                         foreach (IPsdzSgbmId psdzSgbmId in sweList)
@@ -724,6 +728,7 @@ namespace PsdzClient.Programing
 
                         sbResult.AppendLine(Strings.ExecutingBackupTal);
                         UpdateStatus(sbResult.ToString());
+                        log.InfoFormat(CultureInfo.InvariantCulture, "Executing backup TAL");
                         TalExecutionSettings talExecutionSettings = ProgrammingUtils.GetTalExecutionSettings(ProgrammingService);
                         IPsdzTal backupTalResult = ProgrammingService.Psdz.IndividualDataRestoreService.ExecuteAsyncBackupTal(
                             PsdzContext.Connection, PsdzContext.IndividualDataBackupTal, null, PsdzContext.FaTarget, psdzVin, talExecutionSettings, PsdzContext.PathToBackupData);
@@ -751,10 +756,11 @@ namespace PsdzClient.Programing
 
                         sbResult.AppendLine(Strings.ExecutingTal);
                         UpdateStatus(sbResult.ToString());
+                        log.InfoFormat(CultureInfo.InvariantCulture, "Executing TAL");
                         CacheResponseAllow = false;
                         IPsdzTal executeTalResult = ProgrammingService.Psdz.TalExecutionService.ExecuteTal(PsdzContext.Connection, PsdzContext.Tal,
                             null, psdzVin, PsdzContext.FaTarget, talExecutionSettings, PsdzContext.PathToBackupData, cts.Token);
-                        log.Info("Exceute Tal result:");
+                        log.Info("Execute Tal result:");
                         log.InfoFormat(CultureInfo.InvariantCulture, " Size: {0}", executeTalResult.AsXml.Length);
                         log.InfoFormat(CultureInfo.InvariantCulture, " State: {0}", executeTalResult.TalExecutionState);
                         log.InfoFormat(CultureInfo.InvariantCulture, " Ecus: {0}", executeTalResult.AffectedEcus.Count());
@@ -778,6 +784,7 @@ namespace PsdzClient.Programing
 
                         try
                         {
+                            log.InfoFormat(CultureInfo.InvariantCulture, "Updating TSL");
                             ProgrammingService.Psdz.ProgrammingService.TslUpdate(PsdzContext.Connection, true, PsdzContext.SvtActual, PsdzContext.Sollverbauung.Svt);
                             sbResult.AppendLine(Strings.TslUpdated);
                             UpdateStatus(sbResult.ToString());
@@ -792,6 +799,7 @@ namespace PsdzClient.Programing
 
                         try
                         {
+                            log.InfoFormat(CultureInfo.InvariantCulture, "Writing ILevels");
                             ProgrammingService.Psdz.VcmService.WriteIStufen(PsdzContext.Connection, PsdzContext.IstufeShipment, PsdzContext.IstufeLast, PsdzContext.IstufeCurrent);
                             sbResult.AppendLine(Strings.ILevelUpdated);
                             UpdateStatus(sbResult.ToString());
@@ -806,6 +814,7 @@ namespace PsdzClient.Programing
 
                         try
                         {
+                            log.InfoFormat(CultureInfo.InvariantCulture, "Writing ILevels backup");
                             ProgrammingService.Psdz.VcmService.WriteIStufenToBackup(PsdzContext.Connection, PsdzContext.IstufeShipment, PsdzContext.IstufeLast, PsdzContext.IstufeCurrent);
                             sbResult.AppendLine(Strings.ILevelBackupUpdated);
                             UpdateStatus(sbResult.ToString());
@@ -818,6 +827,7 @@ namespace PsdzClient.Programing
                         }
                         cts?.Token.ThrowIfCancellationRequested();
 
+                        log.InfoFormat(CultureInfo.InvariantCulture, "Updating PIA master");
                         IPsdzResponse piaResponse = ProgrammingService.Psdz.EcuService.UpdatePiaPortierungsmaster(PsdzContext.Connection, PsdzContext.SvtActual);
                         log.ErrorFormat(CultureInfo.InvariantCulture, "PIA master update Success={0}, Cause={1}",
                             piaResponse.IsSuccessful, piaResponse.Cause);
@@ -828,6 +838,7 @@ namespace PsdzClient.Programing
 
                         try
                         {
+                            log.InfoFormat(CultureInfo.InvariantCulture, "Writing FA");
                             ProgrammingService.Psdz.VcmService.WriteFa(PsdzContext.Connection, PsdzContext.FaTarget);
                             sbResult.AppendLine(Strings.FaWritten);
                             UpdateStatus(sbResult.ToString());
@@ -842,6 +853,7 @@ namespace PsdzClient.Programing
 
                         try
                         {
+                            log.InfoFormat(CultureInfo.InvariantCulture, "Writing FA backup");
                             ProgrammingService.Psdz.VcmService.WriteFaToBackup(PsdzContext.Connection, PsdzContext.FaTarget);
                             sbResult.AppendLine(Strings.FaBackupWritten);
                             UpdateStatus(sbResult.ToString());
