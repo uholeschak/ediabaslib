@@ -1019,7 +1019,7 @@ namespace PsdzClient.Programing
                         break;
                     }
 
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Cache retry: {0}", cacheRetry);
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Cache retry: {0}", cacheRetry + 1);
                 }
 
                 if (psdzStandardSvt == null)
@@ -1210,7 +1210,7 @@ namespace PsdzClient.Programing
                         break;
                     }
 
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Cache retry: {0}", cacheRetry);
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Cache retry: {0}", cacheRetry + 1);
                 }
 
                 if (psdzEcuContextInfos == null)
@@ -1242,7 +1242,7 @@ namespace PsdzClient.Programing
                         break;
                     }
 
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Cache retry: {0}", cacheRetry);
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Cache retry: {0}", cacheRetry + 1);
                 }
 
                 if (psdzSwtAction == null)
