@@ -804,10 +804,19 @@ namespace WebPsdzClient.App_Data
                         if (bmwFastTel != null)
                         {
                             string sendString = BitConverter.ToString(bmwFastTel).Replace("-", "");
-                            List<string> cachedResponseList;
-                            lock (_lockObject)
+                            List<string> cachedResponseList = null;
+
+                            if (!ProgrammingJobs.CacheResponseAllow)
                             {
-                                _vehicleResponseDict.TryGetValue(sendString, out cachedResponseList);
+                                log.InfoFormat("ProcessQueuePacket Caching disabled");
+                                VehicleResponseDictClear();
+                            }
+                            else
+                            {
+                                lock (_lockObject)
+                                {
+                                    _vehicleResponseDict.TryGetValue(sendString, out cachedResponseList);
+                                }
                             }
 
                             if (cachedResponseList != null)
@@ -820,6 +829,7 @@ namespace WebPsdzClient.App_Data
                             else
                             {
                                 log.InfoFormat("ProcessQueuePacket No cache found for Request={0}", sendString);
+                                ProgrammingJobs.CacheResponseMismatch = true;
                             }
                         }
 
@@ -1287,6 +1297,7 @@ namespace WebPsdzClient.App_Data
             }
 
             VehicleResponseDictClear();
+            ProgrammingJobs.CacheResponseMismatch = false;
             if (hubContext != null)
             {
                 VehicleResponseClear();
@@ -1409,10 +1420,18 @@ namespace WebPsdzClient.App_Data
                                         if (hubContext != null)
                                         {
                                             string sendDataString = BitConverter.ToString(bmwFastTel).Replace("-", "");
-                                            List<string> cachedResponseList;
-                                            lock (_lockObject)
+                                            List<string> cachedResponseList = null;
+                                            if (!ProgrammingJobs.CacheResponseAllow)
                                             {
-                                                _vehicleResponseDict.TryGetValue(sendDataString, out cachedResponseList);
+                                                log.InfoFormat("VehicleThread Caching disabled");
+                                                VehicleResponseDictClear();
+                                            }
+                                            else
+                                            {
+                                                lock (_lockObject)
+                                                {
+                                                    _vehicleResponseDict.TryGetValue(sendDataString, out cachedResponseList);
+                                                }
                                             }
 
                                             PsdzVehicleHub.VehicleResponse vehicleResponse;

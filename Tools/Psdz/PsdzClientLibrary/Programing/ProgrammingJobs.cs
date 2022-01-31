@@ -116,9 +116,50 @@ namespace PsdzClient.Programing
         private bool _disposed;
         public ClientContext ClientContext { get; private set; }
         private string _dealerId;
+        private object _cacheLock = new object();
         public PsdzContext PsdzContext { get; private set; }
         public ProgrammingService ProgrammingService { get; private set; }
         public List<ProgrammingJobs.OptionsItem> SelectedOptions { get; set; }
+
+        private bool _cacheResponseMismatch;
+        public bool CacheResponseMismatch
+        {
+            get
+            {
+                lock (_cacheLock)
+                {
+                    return _cacheResponseMismatch;
+                }
+            }
+
+            set
+            {
+                lock (_cacheLock)
+                {
+                    _cacheResponseMismatch = value;
+                }
+            }
+        }
+
+        private bool _cacheResponseAllow;
+        public bool CacheResponseAllow
+        {
+            get
+            {
+                lock (_cacheLock)
+                {
+                    return _cacheResponseAllow;
+                }
+            }
+
+            set
+            {
+                lock (_cacheLock)
+                {
+                    _cacheResponseAllow = value;
+                }
+            }
+        }
 
         public ProgrammingJobs(string dealerId)
         {
@@ -292,6 +333,7 @@ namespace PsdzClient.Programing
                 sbResult.AppendLine(Strings.VehicleDetecting);
                 UpdateStatus(sbResult.ToString());
 
+                CacheResponseAllow = true;
                 string ecuPath = Path.Combine(istaFolder, @"Ecu");
                 bool icomConnection = useIcom;
                 if (hostParts.Length > 1)
@@ -476,6 +518,7 @@ namespace PsdzClient.Programing
                 sbResult.AppendLine(Strings.VehicleDisconnecting);
                 UpdateStatus(sbResult.ToString());
 
+                CacheResponseAllow = true;
                 if (ProgrammingService == null)
                 {
                     sbResult.AppendLine(Strings.VehicleNotConnected);
@@ -529,6 +572,7 @@ namespace PsdzClient.Programing
                 sbResult.AppendLine(Strings.ExecutingVehicleFunc);
                 UpdateStatus(sbResult.ToString());
 
+                CacheResponseAllow = true;
                 if (ProgrammingService == null)
                 {
                     sbResult.AppendLine(Strings.VehicleNotConnected);
@@ -705,6 +749,7 @@ namespace PsdzClient.Programing
 
                         sbResult.AppendLine(Strings.ExecutingTal);
                         UpdateStatus(sbResult.ToString());
+                        CacheResponseAllow = false;
                         IPsdzTal executeTalResult = ProgrammingService.Psdz.TalExecutionService.ExecuteTal(PsdzContext.Connection, PsdzContext.Tal,
                             null, psdzVin, PsdzContext.FaTarget, talExecutionSettings, PsdzContext.PathToBackupData, cts.Token);
                         log.Info("Exceute Tal result:");
@@ -809,6 +854,7 @@ namespace PsdzClient.Programing
                     }
                     finally
                     {
+                        CacheResponseAllow = true;
                         secureCodingConfig.BackendNcdCalculationEtoEnum = backendNcdCalculationEtoEnumOld;
                         if (Directory.Exists(secureCodingPath))
                         {
