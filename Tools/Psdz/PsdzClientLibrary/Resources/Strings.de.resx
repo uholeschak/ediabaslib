@@ -201,6 +201,9 @@
   <data name="PiaMasterUpdateFailed" xml:space="preserve">
     <value>PIA Master aktualisieren fehlgeschlagen.</value>
   </data>
+  <data name="ReadFaFailed" xml:space="preserve">
+    <value>FA lesen fehlgeschlagen.</value>
+  </data>
   <data name="ReadILevelFailed" xml:space="preserve">
     <value>IStufe lesen fehlgeschlagen.</value>
   </data>

@@ -868,7 +868,21 @@ namespace PsdzClient.Programing
                 }
 
                 IPsdzStandardFa standardFa = ProgrammingService.Psdz.VcmService.GetStandardFaActual(PsdzContext.Connection);
+                if (standardFa == null)
+                {
+                    sbResult.AppendLine(Strings.ReadFaFailed);
+                    UpdateStatus(sbResult.ToString());
+                    return false;
+                }
+
                 IPsdzFa psdzFa = ProgrammingService.Psdz.ObjectBuilder.BuildFa(standardFa, psdzVin.Value);
+                if (psdzFa == null)
+                {
+                    sbResult.AppendLine(Strings.ReadFaFailed);
+                    UpdateStatus(sbResult.ToString());
+                    return false;
+                }
+
                 PsdzContext.SetFaActual(psdzFa);
                 log.Info("FA current:");
                 log.Info(psdzFa.AsXml);

@@ -313,6 +313,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Reading FA failed. ähnelt.
+        /// </summary>
+        internal static string ReadFaFailed {
+            get {
+                return ResourceManager.GetString("ReadFaFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Reading ILevel failed. ähnelt.
         /// </summary>
         internal static string ReadILevelFailed {
