@@ -906,6 +906,13 @@ namespace PsdzClient.Programing
                 ProgrammingService.PdszDatabase.ResetXepRules();
 
                 IEnumerable<IPsdzIstufe> psdzIstufes = ProgrammingService.Psdz.LogicService.GetPossibleIntegrationLevel(PsdzContext.FaTarget);
+                if (psdzIstufes == null)
+                {
+                    sbResult.AppendLine(Strings.ReadILevelFailed);
+                    UpdateStatus(sbResult.ToString());
+                    return false;
+                }
+
                 PsdzContext.SetPossibleIstufenTarget(psdzIstufes);
                 log.InfoFormat(CultureInfo.InvariantCulture, "ILevels: {0}", psdzIstufes.Count());
                 foreach (IPsdzIstufe iStufe in psdzIstufes.OrderBy(x => x))
@@ -1150,8 +1157,13 @@ namespace PsdzClient.Programing
                         {
                             foreach (IPsdzSwtApplication swtApplication in psdzSwtEcu.SwtApplications)
                             {
+                                int fscLength = 0;
+                                if (swtApplication.Fsc != null)
+                                {
+                                    fscLength = swtApplication.Fsc.Length;
+                                }
                                 log.InfoFormat(CultureInfo.InvariantCulture, " Fsc: Type={0}, State={1}, Length={2}",
-                                    swtApplication.SwtType, swtApplication.FscState, swtApplication.Fsc?.Length);
+                                    swtApplication.SwtType, swtApplication.FscState, fscLength);
                             }
                         }
                     }
