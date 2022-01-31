@@ -809,22 +809,19 @@ namespace WebPsdzClient.App_Data
 
                             if (funcAddress)
                             {
-                                if (!ProgrammingJobs.CacheResponseAllow)
+                                lock (_lockObject)
                                 {
-                                    log.InfoFormat("ProcessQueuePacket Caching disabled");
-                                    VehicleResponseDictClear();
-                                }
-                                else
-                                {
-                                    lock (_lockObject)
-                                    {
-                                        _vehicleResponseDict.TryGetValue(sendString, out cachedResponseList);
-                                    }
+                                    _vehicleResponseDict.TryGetValue(sendString, out cachedResponseList);
                                 }
                             }
 
                             if (cachedResponseList != null)
                             {
+                                if (!ProgrammingJobs.CacheResponseAllow)
+                                {
+                                    log.InfoFormat("ProcessQueuePacket Caching disabled but no response, force using cache");
+                                }
+
                                 log.InfoFormat("ProcessQueuePacket Using cached response for Request={0}", sendString);
                                 cachedList.AddRange(cachedResponseList);
                                 SendAckPacket(enetTcpClientData, recPacket);
@@ -1365,6 +1362,13 @@ namespace WebPsdzClient.App_Data
 
                                         string sendString = BitConverter.ToString(sendData).Replace("-", " ");
                                         log.InfoFormat("VehicleThread Transmit Data={0}", sendString);
+
+                                        if (ProgrammingJobs.CacheClearRequired)
+                                        {
+                                            log.InfoFormat("VehicleThread Clearing response cache");
+                                            VehicleResponseDictClear();
+                                            ProgrammingJobs.CacheClearRequired = false;
+                                        }
 #if EDIABAS_CONNECTION
                                         for (;;)
                                         {
@@ -1430,7 +1434,6 @@ namespace WebPsdzClient.App_Data
                                                 if (!ProgrammingJobs.CacheResponseAllow)
                                                 {
                                                     log.InfoFormat("VehicleThread Caching disabled");
-                                                    VehicleResponseDictClear();
                                                 }
                                                 else
                                                 {

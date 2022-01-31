@@ -163,6 +163,26 @@ namespace PsdzClient.Programing
             }
         }
 
+        private bool _cacheClearRequired;
+        public bool CacheClearRequired
+        {
+            get
+            {
+                lock (_cacheLock)
+                {
+                    return _cacheClearRequired;
+                }
+            }
+
+            set
+            {
+                lock (_cacheLock)
+                {
+                    _cacheClearRequired = value;
+                }
+            }
+        }
+
         public ProgrammingJobs(string dealerId)
         {
             ClientContext = new ClientContext();
@@ -728,6 +748,7 @@ namespace PsdzClient.Programing
 
                         sbResult.AppendLine(Strings.ExecutingBackupTal);
                         UpdateStatus(sbResult.ToString());
+                        CacheResponseAllow = false;
                         log.InfoFormat(CultureInfo.InvariantCulture, "Executing backup TAL");
                         TalExecutionSettings talExecutionSettings = ProgrammingUtils.GetTalExecutionSettings(ProgrammingService);
                         IPsdzTal backupTalResult = ProgrammingService.Psdz.IndividualDataRestoreService.ExecuteAsyncBackupTal(
@@ -757,7 +778,6 @@ namespace PsdzClient.Programing
                         sbResult.AppendLine(Strings.ExecutingTal);
                         UpdateStatus(sbResult.ToString());
                         log.InfoFormat(CultureInfo.InvariantCulture, "Executing TAL");
-                        CacheResponseAllow = false;
                         IPsdzTal executeTalResult = ProgrammingService.Psdz.TalExecutionService.ExecuteTal(PsdzContext.Connection, PsdzContext.Tal,
                             null, psdzVin, PsdzContext.FaTarget, talExecutionSettings, PsdzContext.PathToBackupData, cts.Token);
                         log.Info("Execute Tal result:");
@@ -868,6 +888,7 @@ namespace PsdzClient.Programing
                     }
                     finally
                     {
+                        CacheClearRequired = true;
                         CacheResponseAllow = true;
                         secureCodingConfig.BackendNcdCalculationEtoEnum = backendNcdCalculationEtoEnumOld;
                         if (Directory.Exists(secureCodingPath))
