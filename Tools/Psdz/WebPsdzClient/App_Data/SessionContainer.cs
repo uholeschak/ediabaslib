@@ -804,18 +804,22 @@ namespace WebPsdzClient.App_Data
                         if (bmwFastTel != null)
                         {
                             string sendString = BitConverter.ToString(bmwFastTel).Replace("-", "");
+                            bool funcAddress = (bmwFastTel[0] & 0xC0) == 0xC0;     // functional address
                             List<string> cachedResponseList = null;
 
-                            if (!ProgrammingJobs.CacheResponseAllow)
+                            if (funcAddress)
                             {
-                                log.InfoFormat("ProcessQueuePacket Caching disabled");
-                                VehicleResponseDictClear();
-                            }
-                            else
-                            {
-                                lock (_lockObject)
+                                if (!ProgrammingJobs.CacheResponseAllow)
                                 {
-                                    _vehicleResponseDict.TryGetValue(sendString, out cachedResponseList);
+                                    log.InfoFormat("ProcessQueuePacket Caching disabled");
+                                    VehicleResponseDictClear();
+                                }
+                                else
+                                {
+                                    lock (_lockObject)
+                                    {
+                                        _vehicleResponseDict.TryGetValue(sendString, out cachedResponseList);
+                                    }
                                 }
                             }
 
@@ -1421,16 +1425,19 @@ namespace WebPsdzClient.App_Data
                                         {
                                             string sendDataString = BitConverter.ToString(bmwFastTel).Replace("-", "");
                                             List<string> cachedResponseList = null;
-                                            if (!ProgrammingJobs.CacheResponseAllow)
+                                            if (funcAddress)
                                             {
-                                                log.InfoFormat("VehicleThread Caching disabled");
-                                                VehicleResponseDictClear();
-                                            }
-                                            else
-                                            {
-                                                lock (_lockObject)
+                                                if (!ProgrammingJobs.CacheResponseAllow)
                                                 {
-                                                    _vehicleResponseDict.TryGetValue(sendDataString, out cachedResponseList);
+                                                    log.InfoFormat("VehicleThread Caching disabled");
+                                                    VehicleResponseDictClear();
+                                                }
+                                                else
+                                                {
+                                                    lock (_lockObject)
+                                                    {
+                                                        _vehicleResponseDict.TryGetValue(sendDataString, out cachedResponseList);
+                                                    }
                                                 }
                                             }
 
