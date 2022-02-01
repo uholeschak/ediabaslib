@@ -20,6 +20,7 @@ namespace WebPsdzClient
     public class Global : HttpApplication
     {
         public const string SessionContainerName = "SessionContainer";
+        public const int MaxSessions = 20;
         public static string DealerId { get; private set; }
         public static string IstaFolder { get; private set; }
 
@@ -68,6 +69,14 @@ namespace WebPsdzClient
             log.InfoFormat("Session_Start: SessionId={0}", Session.SessionID);
             if (!(Session.Contents[SessionContainerName] is SessionContainer))
             {
+                int sessions = SessionContainer.GetSessionContainerCount();
+                if (sessions > MaxSessions)
+                {
+                    log.InfoFormat("Session_Start: SessionCount exceeded={0}", sessions);
+                    Session.Abandon();
+                    return;
+                }
+
                 SessionContainer sessionContainer = new SessionContainer(Session.SessionID, DealerId);
                 Session.Contents.Add(SessionContainerName, sessionContainer);
             }

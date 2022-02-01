@@ -338,6 +338,14 @@ namespace WebPsdzClient.App_Data
             return null;
         }
 
+        public static int GetSessionContainerCount()
+        {
+            lock (SessionContainers)
+            {
+                return SessionContainers.Count;
+            }
+        }
+
         public static void SetLogInfo(string sessionId)
         {
             LogicalThreadContext.Properties["session"] = sessionId;
