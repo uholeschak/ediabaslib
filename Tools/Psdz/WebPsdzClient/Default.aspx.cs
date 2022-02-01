@@ -379,7 +379,7 @@ namespace WebPsdzClient
 
                 bool modifyTal = !active && hostRunning && vehicleConnected && sessionContainer.OptionsDict != null;
                 ButtonStopHost.Enabled = !active && hostRunning;
-                ButtonStopHost.Visible = string.IsNullOrEmpty(sessionContainer.DeepObdVersion);
+                ButtonStopHost.Visible = sessionContainer.DeepObdVersion <= 0;
                 ButtonConnect.Enabled = !active && !vehicleConnected;
                 ButtonDisconnect.Enabled = !active && hostRunning && vehicleConnected;
                 ButtonCreateOptions.Enabled = !active && hostRunning && vehicleConnected && sessionContainer.OptionsDict == null;
@@ -455,7 +455,7 @@ namespace WebPsdzClient
                 return;
             }
 
-            if (!string.IsNullOrEmpty(sessionContainer.DeepObdVersion))
+            if (sessionContainer.DeepObdVersion > 0)
             {
                 sessionContainer.ReloadPage();
             }

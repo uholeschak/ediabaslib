@@ -21,6 +21,7 @@ namespace WebPsdzClient
     {
         public const string SessionContainerName = "SessionContainer";
         public const int MaxSessions = 20;
+        public const int MinAppVer = 361;
         public static string DealerId { get; private set; }
         public static string IstaFolder { get; private set; }
 
@@ -126,10 +127,22 @@ namespace WebPsdzClient
                 }
 
                 SessionContainer sessionContainer = new SessionContainer(Session.SessionID, DealerId);
+                Int64 appVersion = 0;
                 if (!string.IsNullOrEmpty(deepObdVersion))
                 {
-                    log.InfoFormat("Session_Start Storing App: Ver={0}, Lang={1}", deepObdVersion, deepObdLanguage);
-                    sessionContainer.DeepObdVersion = deepObdVersion;
+                    if (Int64.TryParse(deepObdVersion, out Int64 version))
+                    {
+                        appVersion = version;
+                        if (appVersion < MinAppVer)
+                        {
+                            log.InfoFormat("Session_Start: Invalid app version");
+                            Response.Redirect("AppUpdate.aspx", false);
+                            return;
+                        }
+                    }
+
+                    log.InfoFormat("Session_Start Storing App: Ver={0}, Lang={1}", appVersion, deepObdLanguage);
+                    sessionContainer.DeepObdVersion = appVersion;
                     sessionContainer.SetLanguage(deepObdLanguage);
                 }
 

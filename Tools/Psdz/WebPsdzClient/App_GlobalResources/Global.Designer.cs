@@ -70,6 +70,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///    Sucht eine lokalisierte Zeichenfolge, die An update of the app is required to use this service. ähnelt.
+        /// </summary>
+        internal static string AppUpdateRequired {
+            get {
+                return ResourceManager.GetString("AppUpdateRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///    Sucht eine lokalisierte Zeichenfolge, die Processing ... ähnelt.
         /// </summary>
         internal static string Processing {

@@ -172,6 +172,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AccessDenied.aspx" />
+    <Content Include="AppUpdate.aspx" />
     <Content Include="SessionsExceeded.aspx" />
     <Content Include="About.aspx" />
     <Content Include="Contact.aspx" />
@@ -239,6 +240,13 @@
     </Compile>
     <Compile Include="AccessDenied.aspx.designer.cs">
       <DependentUpon>AccessDenied.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AppUpdate.aspx.cs">
+      <DependentUpon>AppUpdate.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AppUpdate.aspx.designer.cs">
+      <DependentUpon>AppUpdate.aspx</DependentUpon>
     </Compile>
     <Compile Include="SessionsExceeded.aspx.cs">
       <DependentUpon>SessionsExceeded.aspx</DependentUpon>

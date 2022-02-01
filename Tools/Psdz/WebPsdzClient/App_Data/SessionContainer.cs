@@ -201,8 +201,8 @@ namespace WebPsdzClient.App_Data
             }
         }
 
-        private string _deepObdVersion;
-        public string DeepObdVersion
+        private Int64 _deepObdVersion;
+        public Int64 DeepObdVersion
         {
             get
             {
@@ -1199,7 +1199,7 @@ namespace WebPsdzClient.App_Data
 
         private string GetVehicleUrl()
         {
-            if (!string.IsNullOrEmpty(_deepObdVersion))
+            if (DeepObdVersion <= 0)
             {
                 return string.Empty;
             }
