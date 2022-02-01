@@ -120,7 +120,13 @@
   <data name="Processing" xml:space="preserve">
     <value>Verarbeiten ...</value>
   </data>
+  <data name="SessionsExceeded" xml:space="preserve">
+    <value>Die maximale Anzahl an Sitzungen wurde überschritten.</value>
+  </data>
   <data name="TimeDisplay" xml:space="preserve">
     <value>Zeit: {0}, UTC: {1}</value>
+  </data>
+  <data name="TryAgainLater" xml:space="preserve">
+    <value>Bitte versuchen Sie es später noch einmal.</value>
   </data>
 </root>

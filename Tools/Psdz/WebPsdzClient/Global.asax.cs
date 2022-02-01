@@ -70,7 +70,7 @@ namespace WebPsdzClient
             if (!(Session.Contents[SessionContainerName] is SessionContainer))
             {
                 int sessions = SessionContainer.GetSessionContainerCount();
-                if (sessions > MaxSessions)
+                //if (sessions > MaxSessions)
                 {
                     log.InfoFormat("Session_Start: SessionCount exceeded={0}", sessions);
                     Response.Redirect("SessionsExceeded.aspx", false);

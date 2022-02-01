@@ -2,7 +2,7 @@
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <div class="jumbotron">
-        <h3>Maximum number of sessions exceeded.</h3>
-        <h3>Please try again later.</h3>
+        <h3><asp:Literal ID="LiteralSessionsExceeded" runat="server" Text="<%$Resources:Global,SessionsExceeded%>"></asp:Literal></h3>
+        <h3><asp:Literal ID="LiteralTryAgainLater" runat="server" Text="<%$Resources:Global,TryAgainLater%>"></asp:Literal></h3>
     </div>
 </asp:Content>

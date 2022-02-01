@@ -70,11 +70,29 @@ namespace Resources {
         }
         
         /// <summary>
+        ///    Sucht eine lokalisierte Zeichenfolge, die Maximum number of sessions has been exceeded. ähnelt.
+        /// </summary>
+        internal static string SessionsExceeded {
+            get {
+                return ResourceManager.GetString("SessionsExceeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///    Sucht eine lokalisierte Zeichenfolge, die Time: {0}, UTC: {1} ähnelt.
         /// </summary>
         internal static string TimeDisplay {
             get {
                 return ResourceManager.GetString("TimeDisplay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Sucht eine lokalisierte Zeichenfolge, die Please try again later. ähnelt.
+        /// </summary>
+        internal static string TryAgainLater {
+            get {
+                return ResourceManager.GetString("TryAgainLater", resourceCulture);
             }
         }
     }

@@ -13,5 +13,23 @@ namespace WebPsdzClient
 
     public partial class SessionsExceeded
     {
+
+        /// <summary>
+        /// LiteralSessionsExceeded-Steuerelement.
+        /// </summary>
+        /// <remarks>
+        /// Automatisch generiertes Feld.
+        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal LiteralSessionsExceeded;
+
+        /// <summary>
+        /// LiteralTryAgainLater-Steuerelement.
+        /// </summary>
+        /// <remarks>
+        /// Automatisch generiertes Feld.
+        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal LiteralTryAgainLater;
     }
 }
