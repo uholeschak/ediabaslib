@@ -79,9 +79,10 @@ namespace WebPsdzClient
 
                 string deepObdVersion = null;
                 string deepObdLanguage = null;
+                string hostAddress = null;
                 try
                 {
-                    if (Request.UserAgent != null)
+                    if (!string.IsNullOrEmpty(Request.UserAgent))
                     {
                         log.InfoFormat("Session_Start User agent: {0}", Request.UserAgent);
                         string[] agentParts = Request.UserAgent.Split(' ');
@@ -99,10 +100,29 @@ namespace WebPsdzClient
                             }
                         }
                     }
+
+                    if (!string.IsNullOrEmpty(Request.UserHostAddress))
+                    {
+                        log.InfoFormat("Session_Start User host address: {0}", Request.UserHostAddress);
+                        hostAddress = Request.UserHostAddress;
+                    }
                 }
                 catch (Exception ex)
                 {
                     log.ErrorFormat("Session_Start Exception: {0}", ex.Message);
+                }
+
+                bool valid = !string.IsNullOrEmpty(deepObdVersion);
+                if (!string.IsNullOrEmpty(hostAddress) && string.Compare(hostAddress.Trim(), "127.0.0.1", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    valid = true;
+                }
+
+                if (!valid)
+                {
+                    log.InfoFormat("Session_Start: Invalid host");
+                    Response.Redirect("SessionsExceeded.aspx", false);
+                    return;
                 }
 
                 SessionContainer sessionContainer = new SessionContainer(Session.SessionID, DealerId);
