@@ -121,7 +121,7 @@ namespace WebPsdzClient
                 if (!valid)
                 {
                     log.InfoFormat("Session_Start: Invalid host");
-                    Response.Redirect("SessionsExceeded.aspx", false);
+                    Response.Redirect("AccessDenied.aspx", false);
                     return;
                 }
 

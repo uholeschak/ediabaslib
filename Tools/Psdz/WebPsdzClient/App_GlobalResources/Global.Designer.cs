@@ -61,6 +61,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///    Sucht eine lokalisierte Zeichenfolge, die Access denied. ähnelt.
+        /// </summary>
+        internal static string AccessDenied {
+            get {
+                return ResourceManager.GetString("AccessDenied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///    Sucht eine lokalisierte Zeichenfolge, die Processing ... ähnelt.
         /// </summary>
         internal static string Processing {
