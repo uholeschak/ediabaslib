@@ -171,6 +171,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="SessionsExceeded.aspx" />
     <Content Include="About.aspx" />
     <Content Include="Contact.aspx" />
     <Content Include="Content\bootstrap-theme.css" />
@@ -231,6 +232,13 @@
     <Content Include="Site.Mobile.Master" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SessionsExceeded.aspx.cs">
+      <DependentUpon>SessionsExceeded.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SessionsExceeded.aspx.designer.cs">
+      <DependentUpon>SessionsExceeded.aspx</DependentUpon>
+    </Compile>
     <Compile Include="App_Data\SessionContainer.cs" />
     <Compile Include="App_GlobalResources\Global.de.designer.cs">
       <DependentUpon>Global.de.resx</DependentUpon>

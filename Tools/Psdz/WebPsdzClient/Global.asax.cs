@@ -73,7 +73,7 @@ namespace WebPsdzClient
                 if (sessions > MaxSessions)
                 {
                     log.InfoFormat("Session_Start: SessionCount exceeded={0}", sessions);
-                    Response.Redirect("About.aspx", false);
+                    Response.Redirect("SessionsExceeded.aspx", false);
                     return;
                 }
 
