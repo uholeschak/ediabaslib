@@ -77,7 +77,42 @@ namespace WebPsdzClient
                     return;
                 }
 
+                string deepObdVersion = null;
+                string deepObdLanguage = null;
+                try
+                {
+                    if (Request.UserAgent != null)
+                    {
+                        log.InfoFormat("Session_Start User agent: {0}", Request.UserAgent);
+                        string[] agentParts = Request.UserAgent.Split(' ');
+                        foreach (string part in agentParts)
+                        {
+                            if (part.StartsWith("DeepObd"))
+                            {
+                                string[] subParts = part.Split('/');
+                                if (subParts.Length >= 3)
+                                {
+                                    deepObdVersion = subParts[1];
+                                    deepObdLanguage = subParts[2];
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.ErrorFormat("Session_Start Exception: {0}", ex.Message);
+                }
+
                 SessionContainer sessionContainer = new SessionContainer(Session.SessionID, DealerId);
+                if (!string.IsNullOrEmpty(deepObdVersion))
+                {
+                    log.InfoFormat("Session_Start Storing App: Ver={0}, Lang={1}", deepObdVersion, deepObdLanguage);
+                    sessionContainer.DeepObdVersion = deepObdVersion;
+                    sessionContainer.SetLanguage(deepObdLanguage);
+                }
+
                 Session.Contents.Add(SessionContainerName, sessionContainer);
             }
         }
