@@ -22,6 +22,7 @@ namespace PsdzClient
                 Valid = false;
                 Error = error;
                 Connected = false;
+                AdapterSerial = string.Empty;
                 ErrorMessage = string.Empty;
                 Request = string.Empty;
                 ResponseList = new List<string>();
@@ -31,6 +32,7 @@ namespace PsdzClient
             public bool Valid { get; set; }
             public bool Error { get; set; }
             public bool Connected { get; set; }
+            public string AdapterSerial { get; set; }
             public string ErrorMessage { get; set; }
             public string Request { get; set; }
             public List<string> ResponseList { get; set; }
@@ -231,6 +233,12 @@ namespace PsdzClient
                         {
                             // ignored
                         }
+                    }
+
+                    XAttribute adapterSerialAttr = statusNode.Attribute("adapter_serial");
+                    if (adapterSerialAttr != null)
+                    {
+                        vehicleResponse.AdapterSerial = adapterSerialAttr.Value;
                     }
                 }
 
