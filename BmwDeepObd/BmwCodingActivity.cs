@@ -853,7 +853,18 @@ namespace BmwDeepObd
 
                     bool connected = IsEdiabasConnected();
                     string connectedState = connected ? "1" : "0";
-                    sbBody.Append($" <status connected=\"{System.Web.HttpUtility.HtmlEncode(connectedState)}\" />\r\n");
+                    string adapterSerialState = string.Empty;
+                    if (connected)
+                    {
+                        adapterSerialState = ActivityCommon.LastAdapterSerial ?? string.Empty;
+                    }
+
+                    sbBody.Append($" <status connected=\"{System.Web.HttpUtility.HtmlEncode(connectedState)}\"");
+                    if (!string.IsNullOrEmpty(adapterSerialState))
+                    {
+                        sbBody.Append($" adapter_serial=\"{System.Web.HttpUtility.HtmlEncode(adapterSerialState)}\"");
+                    }
+                    sbBody.Append(" />\r\n");
                     sbBody.Append("</vehicle_info>\r\n");
 
                     SendVehicleResponseThread(vehicleRequest.Id, sbBody.ToString());
