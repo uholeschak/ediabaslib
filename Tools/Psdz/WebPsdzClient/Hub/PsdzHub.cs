@@ -240,7 +240,7 @@ namespace PsdzClient
                     XAttribute appIdAttr = statusNode.Attribute("app_id");
                     if (appIdAttr != null)
                     {
-                        vehicleResponse.AdapterSerial = appIdAttr.Value;
+                        vehicleResponse.AppId = appIdAttr.Value;
                     }
 
                     XAttribute adapterSerialAttr = statusNode.Attribute("adapter_serial");
