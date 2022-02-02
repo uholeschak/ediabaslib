@@ -16,7 +16,7 @@ namespace WebPsdzClient
 
         protected void Page_Unload(object sender, EventArgs e)
         {
-            Session.Clear();
+            Global.ClearSession(Session);
         }
     }
 }

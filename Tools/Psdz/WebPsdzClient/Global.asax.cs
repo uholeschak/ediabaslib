@@ -154,9 +154,17 @@ namespace WebPsdzClient
         {
             SessionContainer.SetLogInfo(Session.SessionID);
             log.InfoFormat("Session_End: SessionId={0}", Session.SessionID);
-            if (Session.Contents[SessionContainerName] is SessionContainer sessionContainer)
+            ClearSession(Session);
+        }
+
+        public static void ClearSession(HttpSessionState session)
+        {
+            SessionContainer.SetLogInfo(session.SessionID);
+            log.InfoFormat("ClearSession: SessionId={0}", session.SessionID);
+
+            if (session.Contents[SessionContainerName] is SessionContainer sessionContainer)
             {
-                Session.Contents.Remove(SessionContainerName);
+                session.Contents.Remove(SessionContainerName);
                 sessionContainer.Dispose();
             }
         }
