@@ -114,6 +114,7 @@
 #define ALLOW_FACTORY_RESET
 //#define REQUIRES_BT_FACTORY
 #define REQUIRES_BT_BAUD
+#define REQUIRES_BT_BAUD_AT
 //#define REQUIRES_BT_CRLF
 //#define REQUIRES_BT_ASSIGN
 //#define REQUIRES_BT_NAME_0
@@ -1758,7 +1759,11 @@ bool set_bt_baud()
     SPBRG1 = old_baudl;
     RCSTAbits.SPEN = 1;
 
+#if defined (REQUIRES_BT_BAUD_AT)
+    return send_bt_config((uint8_t *) bt_baud, 2, BT_CONFIG_RETRIES_BAUD);
+#else
     return send_bt_config((uint8_t *) bt_baud, sizeof(bt_baud) - 1, BT_CONFIG_RETRIES_BAUD);
+#endif
 }
 #endif
 
