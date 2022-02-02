@@ -13,5 +13,10 @@ namespace WebPsdzClient
         {
 
         }
+
+        protected void Page_Unload(object sender, EventArgs e)
+        {
+            Session.Clear();
+        }
     }
 }
