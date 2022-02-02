@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="AppUpdate.aspx.cs" Inherits="WebPsdzClient.AppUpdate" %>
+﻿<%@ Page Title="<%$Resources:Global,AppUpdateRequired%>" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="AppUpdate.aspx.cs" Inherits="WebPsdzClient.AppUpdate" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <div class="jumbotron">
