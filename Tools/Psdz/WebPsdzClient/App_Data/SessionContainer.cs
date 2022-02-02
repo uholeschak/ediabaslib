@@ -220,6 +220,44 @@ namespace WebPsdzClient.App_Data
             }
         }
 
+        private string _appId;
+        public string AppId
+        {
+            get
+            {
+                lock (_lockObject)
+                {
+                    return _appId;
+                }
+            }
+            set
+            {
+                lock (_lockObject)
+                {
+                    _appId = value;
+                }
+            }
+        }
+
+        private string _adapterSerial;
+        public string AdapterSerial
+        {
+            get
+            {
+                lock (_lockObject)
+                {
+                    return _adapterSerial;
+                }
+            }
+            set
+            {
+                lock (_lockObject)
+                {
+                    _adapterSerial = value;
+                }
+            }
+        }
+
         public void SetLanguage(string language)
         {
             List<string> langList = PdszDatabase.EcuTranslation.GetLanguages();
@@ -1319,6 +1357,13 @@ namespace WebPsdzClient.App_Data
                 }
 
                 PsdzVehicleHub.VehicleResponse vehicleResponse = WaitForVehicleResponse();
+                if (vehicleResponse != null)
+                {
+                    AppId = vehicleResponse.AppId;
+                    AdapterSerial = vehicleResponse.AdapterSerial;
+                    log.InfoFormat("VehicleThread AppId={0}, AdapterSerial={1}", AppId ?? string.Empty, AdapterSerial ?? string.Empty);
+                }
+
                 if (vehicleResponse == null || vehicleResponse.Error || !vehicleResponse.Valid)
                 {
                     log.ErrorFormat("VehicleThread Vehicle connect failed");

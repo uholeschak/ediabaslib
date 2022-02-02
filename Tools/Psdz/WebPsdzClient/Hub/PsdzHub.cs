@@ -22,6 +22,7 @@ namespace PsdzClient
                 Valid = false;
                 Error = error;
                 Connected = false;
+                AppId = string.Empty;
                 AdapterSerial = string.Empty;
                 ErrorMessage = string.Empty;
                 Request = string.Empty;
@@ -32,6 +33,7 @@ namespace PsdzClient
             public bool Valid { get; set; }
             public bool Error { get; set; }
             public bool Connected { get; set; }
+            public string AppId { get; set; }
             public string AdapterSerial { get; set; }
             public string ErrorMessage { get; set; }
             public string Request { get; set; }
@@ -233,6 +235,12 @@ namespace PsdzClient
                         {
                             // ignored
                         }
+                    }
+
+                    XAttribute appIdAttr = statusNode.Attribute("app_id");
+                    if (appIdAttr != null)
+                    {
+                        vehicleResponse.AdapterSerial = appIdAttr.Value;
                     }
 
                     XAttribute adapterSerialAttr = statusNode.Attribute("adapter_serial");
