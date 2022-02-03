@@ -885,6 +885,10 @@ namespace PsdzClient.Programing
                             UpdateStatus(sbResult.ToString());
                         }
                         cts?.Token.ThrowIfCancellationRequested();
+
+                        // finally reset TAL
+                        PsdzContext.Tal = null;
+                        UpdateOptions(null);
                     }
                     finally
                     {
