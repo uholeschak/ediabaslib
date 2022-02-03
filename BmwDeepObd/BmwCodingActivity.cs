@@ -9,6 +9,7 @@ using Android.Content;
 using Android.Content.PM;
 using Android.Hardware.Usb;
 using Android.OS;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using AndroidX.WebKit;
@@ -54,11 +55,13 @@ namespace BmwDeepObd
             public InstanceData()
             {
                 Url = string.Empty;
+                TraceActive = true;
             }
 
             public string Url { get; set; }
             public string TraceDir { get; set; }
             public bool TraceActive { get; set; }
+            public bool TraceAppend { get; set; }
             public bool CommErrorsOccured { get; set; }
         }
 
@@ -547,31 +550,56 @@ namespace BmwDeepObd
             return string.Empty;
         }
 
-        private EdiabasNet EdiabasSetup()
+        private void EdiabasOpen()
         {
-            EdiabasNet ediabas = new EdiabasNet
+            if (_ediabas == null)
             {
-                EdInterfaceClass = _activityCommon.GetEdiabasInterfaceClass(),
-                AbortJobFunc = AbortEdiabasJob
-            };
-            ediabas.SetConfigProperty("EcuPath", _ecuDir);
-            _instanceData.TraceDir = Path.Combine(_appDataDir, "LogBmwCoding");
+                _ediabas = new EdiabasNet
+                {
+                    EdInterfaceClass = _activityCommon.GetEdiabasInterfaceClass(),
+                    AbortJobFunc = AbortEdiabasJob
+                };
+                _ediabas.SetConfigProperty("EcuPath", _ecuDir);
+                UpdateLogInfo();
+            }
+
+            _ediabas.EdInterfaceClass.EnableTransmitCache = false;
+            _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress);
+        }
+
+        private void UpdateLogInfo()
+        {
+            if (_ediabas == null)
+            {
+                return;
+            }
+            string logDir = Path.Combine(_appDataDir, "LogBmwCoding");
+            try
+            {
+                Directory.CreateDirectory(logDir);
+            }
+            catch (Exception)
+            {
+                logDir = string.Empty;
+            }
+
+            _instanceData.TraceDir = string.Empty;
+            if (_instanceData.TraceActive)
+            {
+                _instanceData.TraceDir = logDir;
+            }
+
             if (!string.IsNullOrEmpty(_instanceData.TraceDir))
             {
-                _instanceData.TraceActive = true;
-                ediabas.SetConfigProperty("TracePath", _instanceData.TraceDir);
-                ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.EdLogLevel.Error));
-                ediabas.SetConfigProperty("CompressTrace", "1");
+                _ediabas.SetConfigProperty("TracePath", _instanceData.TraceDir);
+                _ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.EdLogLevel.Error));
+                _ediabas.SetConfigProperty("AppendTrace", _instanceData.TraceAppend ? "1" : "0");
+                _ediabas.SetConfigProperty("CompressTrace", "1");
             }
             else
             {
-                _instanceData.TraceActive = false;
-                ediabas.SetConfigProperty("IfhTrace", "0");
+                _ediabas.SetConfigProperty("IfhTrace", "0");
             }
-
-            _activityCommon.SetEdiabasInterface(ediabas, _deviceAddress);
-
-            return ediabas;
         }
 
         private bool StartEdiabasThread()
@@ -581,10 +609,7 @@ namespace BmwDeepObd
                 return true;
             }
 
-            if (_ediabas == null)
-            {
-                _ediabas = EdiabasSetup();
-            }
+            EdiabasOpen();
 
             _ediabasJobAbort = false;
             _ediabasThreadWakeEvent.Reset();
@@ -868,6 +893,56 @@ namespace BmwDeepObd
                     SendVehicleResponseThread(vehicleRequest.Id, sbBody.ToString());
                 }
             }
+        }
+
+        private void SelectDataLogging()
+        {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.SetTitle(Resource.String.menu_submenu_log);
+            ListView listView = new ListView(this);
+
+            List<string> logNames = new List<string>
+            {
+                GetString(Resource.String.datalog_enable_trace),
+                GetString(Resource.String.datalog_append_trace),
+            };
+            ArrayAdapter<string> adapter = new ArrayAdapter<string>(this,
+                Android.Resource.Layout.SimpleListItemMultipleChoice, logNames.ToArray());
+            listView.Adapter = adapter;
+            listView.ChoiceMode = ChoiceMode.Multiple;
+            listView.SetItemChecked(0, _instanceData.TraceActive);
+            listView.SetItemChecked(1, _instanceData.TraceAppend);
+
+            builder.SetView(listView);
+            builder.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+                SparseBooleanArray sparseArray = listView.CheckedItemPositions;
+                for (int i = 0; i < sparseArray.Size(); i++)
+                {
+                    bool value = sparseArray.ValueAt(i);
+                    switch (sparseArray.KeyAt(i))
+                    {
+                        case 0:
+                            _instanceData.TraceActive = value;
+                            break;
+
+                        case 1:
+                            _instanceData.TraceAppend = value;
+                            break;
+                    }
+                }
+
+                UpdateLogInfo();
+                UpdateOptionsMenu();
+            });
+            builder.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
+            {
+            });
+            builder.Show();
         }
 
         private bool SendTraceFile(EventHandler<EventArgs> handler)
