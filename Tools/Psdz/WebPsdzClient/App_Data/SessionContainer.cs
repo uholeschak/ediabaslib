@@ -1237,7 +1237,7 @@ namespace WebPsdzClient.App_Data
 
         private string GetVehicleUrl()
         {
-            if (DeepObdVersion <= 0)
+            if (DeepObdVersion > 0)
             {
                 return string.Empty;
             }
