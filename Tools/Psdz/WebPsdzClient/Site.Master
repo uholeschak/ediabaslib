@@ -113,7 +113,7 @@
                     var errorMessage = null;
                     try
                     {
-                        errorMessage = app.VehicleConnect(id);
+                        errorMessage = app.VehicleConnect(sessionID, id);
                     }
                     catch (e)
                     {
@@ -143,7 +143,7 @@
                     var errorMessage = null;
                     try
                     {
-                        errorMessage = app.VehicleDisconnect(id);
+                        errorMessage = app.VehicleDisconnect(sessionID, id);
                     }
                     catch (e)
                     {
@@ -173,7 +173,7 @@
                     var errorMessage = null;
                     try
                     {
-                        errorMessage = app.VehicleSend(id, data);
+                        errorMessage = app.VehicleSend(sessionID, id, data);
                     }
                     catch (e)
                     {
@@ -203,7 +203,7 @@
                 {
                     try
                     {
-                        app.ReportError(msg);
+                        app.ReportError(sessionID, msg);
                     }
                     catch (e)
                     {
