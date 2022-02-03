@@ -314,6 +314,14 @@ namespace BmwDeepObd
                     });
                     return true;
 
+                case Resource.Id.menu_submenu_log:
+                    if (IsEdiabasConnected())
+                    {
+                        return true;
+                    }
+                    SelectDataLogging();
+                    return true;
+
                 case Resource.Id.menu_send_trace:
                     if (IsEdiabasConnected())
                     {
@@ -379,6 +387,9 @@ namespace BmwDeepObd
         {
             bool commActive = IsEdiabasConnected();
             bool interfaceAvailable = _activityCommon.IsInterfaceAvailable();
+
+            IMenuItem logSubMenu = menu.FindItem(Resource.Id.menu_submenu_log);
+            logSubMenu?.SetEnabled(interfaceAvailable && !commActive);
 
             IMenuItem sendTraceMenu = menu.FindItem(Resource.Id.menu_send_trace);
             sendTraceMenu?.SetEnabled(interfaceAvailable && !commActive && _instanceData.TraceActive && ActivityCommon.IsTraceFilePresent(_instanceData.TraceDir));
