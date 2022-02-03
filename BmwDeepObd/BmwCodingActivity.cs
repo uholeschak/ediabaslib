@@ -38,14 +38,16 @@ namespace BmwDeepObd
                 Transmit
             }
 
-            public VehicleRequest(VehicleRequestType requestType, string id, string data = null)
+            public VehicleRequest(VehicleRequestType requestType, string sessionId, string id, string data = null)
             {
                 RequestType = requestType;
+                SessionId = sessionId;
                 Id = id;
                 Data = data;
             }
 
             public VehicleRequestType RequestType { get; }
+            public string SessionId { get; }
             public string Id { get; }
             public string Data { get; }
         }
@@ -676,7 +678,7 @@ namespace BmwDeepObd
             return false;
         }
 
-        public bool EdiabasConnect()
+        public bool EdiabasConnect(string sessionId)
         {
             lock (_ediabasLock)
             {
@@ -684,6 +686,8 @@ namespace BmwDeepObd
                 {
                     return false;
                 }
+
+                _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ediabas connect, SessionId={0}", sessionId);
 
                 try
                 {
@@ -704,7 +708,7 @@ namespace BmwDeepObd
             }
         }
 
-        public bool EdiabasDisconnect()
+        public bool EdiabasDisconnect(string sessionId)
         {
             lock (_ediabasLock)
             {
@@ -712,6 +716,8 @@ namespace BmwDeepObd
                 {
                     return false;
                 }
+
+                _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ediabas disconnect, SessionId={0}", sessionId);
 
                 try
                 {
@@ -739,7 +745,7 @@ namespace BmwDeepObd
             }
         }
 
-        public List<byte[]> EdiabasTransmit(byte[] requestData)
+        public List<byte[]> EdiabasTransmit(string sessionId, byte[] requestData)
         {
             List<byte[]> responseList = new List<byte[]>();
             if (requestData == null || requestData.Length < 3)
@@ -752,7 +758,7 @@ namespace BmwDeepObd
                 byte[] sendData = requestData;
                 bool funcAddress = (sendData[0] & 0xC0) == 0xC0;     // functional address
 
-                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ediabas transmit, Func={0}", funcAddress);
+                _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ediabas transmit, SessionId={0}, Func={1}", sessionId, funcAddress);
 
                 for (; ; )
                 {
@@ -829,8 +835,8 @@ namespace BmwDeepObd
                     {
                         case VehicleRequest.VehicleRequestType.Connect:
                         {
-                            EdiabasDisconnect();
-                            bool isConnected = EdiabasConnect();
+                            EdiabasDisconnect(vehicleRequest.SessionId);
+                            bool isConnected = EdiabasConnect(vehicleRequest.SessionId);
                             RunOnUiThread(() =>
                             {
                                 if (_activityCommon == null)
@@ -849,7 +855,7 @@ namespace BmwDeepObd
                         }
 
                         case VehicleRequest.VehicleRequestType.Disconnect:
-                            EdiabasDisconnect();
+                            EdiabasDisconnect(vehicleRequest.SessionId);
                             RunOnUiThread(() =>
                             {
                                 if (_activityCommon == null)
@@ -873,7 +879,7 @@ namespace BmwDeepObd
                             string requestString = vehicleRequest.Data.Replace(" ", "");
                             byte[] requestData = EdiabasNet.HexToByteArray(requestString);
                             sbBody.Append($" <data request=\"{System.Web.HttpUtility.HtmlEncode(requestString)}\" />\r\n");
-                            List<byte[]> responseList = EdiabasTransmit(requestData);
+                            List<byte[]> responseList = EdiabasTransmit(vehicleRequest.SessionId, requestData);
                             foreach (byte[] responseData in responseList)
                             {
                                 string responseReport = BitConverter.ToString(responseData).Replace("-", "");
@@ -1100,40 +1106,40 @@ namespace BmwDeepObd
 
             [JavascriptInterface]
             [Export]
-            public string VehicleConnect(string id)
+            public string VehicleConnect(string sessionId, string id)
             {
 #if DEBUG
-                Android.Util.Log.Debug(Tag, string.Format("VehicleConnect: Id={0}", id));
+                Android.Util.Log.Debug(Tag, string.Format("VehicleConnect: SessionId={0}, Id={1}", sessionId, id));
 #endif
-                return _activity.EnqueueVehicleRequest(new VehicleRequest(VehicleRequest.VehicleRequestType.Connect, id));
+                return _activity.EnqueueVehicleRequest(new VehicleRequest(VehicleRequest.VehicleRequestType.Connect, sessionId, id));
             }
 
             [JavascriptInterface]
             [Export]
-            public string VehicleDisconnect(string id)
+            public string VehicleDisconnect(string sessionId, string id)
             {
 #if DEBUG
-                Android.Util.Log.Debug(Tag, string.Format("VehicleDisconnect: Id={0}", id));
+                Android.Util.Log.Debug(Tag, string.Format("VehicleDisconnect: SessionId={0}, Id={1}", sessionId, id));
 #endif
-                return _activity.EnqueueVehicleRequest(new VehicleRequest(VehicleRequest.VehicleRequestType.Disconnect, id));
+                return _activity.EnqueueVehicleRequest(new VehicleRequest(VehicleRequest.VehicleRequestType.Disconnect, sessionId, id));
             }
 
             [JavascriptInterface]
             [Export]
-            public string VehicleSend(string id, string data)
+            public string VehicleSend(string sessionId, string id, string data)
             {
 #if DEBUG
-                Android.Util.Log.Debug(Tag, string.Format("VehicleSend: Id={0}, Data={1}", id, data));
+                Android.Util.Log.Debug(Tag, string.Format("VehicleSend: SessionId={0}, Id={1}, Data={2}", sessionId, id, data));
 #endif
-                return _activity.EnqueueVehicleRequest(new VehicleRequest(VehicleRequest.VehicleRequestType.Transmit, id, data));
+                return _activity.EnqueueVehicleRequest(new VehicleRequest(VehicleRequest.VehicleRequestType.Transmit, sessionId, id, data));
             }
 
             [JavascriptInterface]
             [Export]
-            public void ReportError(string msg)
+            public void ReportError(string sessionId, string msg)
             {
 #if DEBUG
-                Android.Util.Log.Debug(Tag, string.Format("ReportError: Msg={0}", msg));
+                Android.Util.Log.Debug(Tag, string.Format("ReportError: SessionId={0}, Msg={1}", sessionId, msg));
 #endif
                 _activity.ReportError(msg);
             }
