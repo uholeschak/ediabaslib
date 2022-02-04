@@ -40,6 +40,7 @@ namespace EdiabasLib
         private const int ReadTimeoutOffsetLong = 1000;
         private const int ReadTimeoutOffsetShort = 100;
         protected const int EchoTimeout = 500;
+        protected const int ConnectRetries = 20;
         private static readonly EdCustomAdapterCommon CustomAdapter =
             new EdCustomAdapterCommon(SendData, ReceiveData, DiscardInBuffer, ReadInBuffer, ReadTimeoutOffsetLong, ReadTimeoutOffsetShort, EchoTimeout, false);
         private static BtLeGattSpp _btLeGattSpp;
@@ -252,7 +253,6 @@ namespace EdiabasLib
                     }
                 }
 
-                int maxRetries = reconnect ? 1 : 20;
                 if (_elm327Device)
                 {
                     if (_bluetoothSocket != null)
@@ -262,10 +262,10 @@ namespace EdiabasLib
                     }
 
                     _edElmInterface = new EdElmInterface(CustomAdapter.Ediabas, _bluetoothInStream, _bluetoothOutStream);
-                    if (mtcBtService && !usedRfCommSocket && _bluetoothSocket != null)
+                    if (mtcBtService && !reconnect && !usedRfCommSocket && _bluetoothSocket != null)
                     {
                         bool connected = false;
-                        for (int retry = 0; retry < maxRetries; retry++)
+                        for (int retry = 0; retry < ConnectRetries; retry++)
                         {
                             CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Test connection");
                             if (_edElmInterface.Elm327Init())
@@ -310,10 +310,10 @@ namespace EdiabasLib
                         _bluetoothOutStream = new BtEscapeStreamWriter(_bluetoothSocket.OutputStream);
                     }
 
-                    if (!CustomAdapter.RawMode && mtcBtService && !usedRfCommSocket && _bluetoothSocket != null)
+                    if (!CustomAdapter.RawMode && mtcBtService && !reconnect && !usedRfCommSocket && _bluetoothSocket != null)
                     {
                         bool connected = false;
-                        for (int retry = 0; retry < maxRetries; retry++)
+                        for (int retry = 0; retry < ConnectRetries; retry++)
                         {
                             CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Test connection");
                             CustomAdapter.EscapeMode = mtcBtEscapeMode;
