@@ -314,6 +314,11 @@ namespace WebPsdzClient
 
                 if (modified)
                 {
+                    if (sessionContainer.ProgrammingJobs.PsdzContext != null)
+                    {
+                        sessionContainer.ProgrammingJobs.PsdzContext.Tal = null;
+                    }
+
                     sessionContainer.ProgrammingJobs.UpdateTargetFa();
                     UpdateOptions();
                 }

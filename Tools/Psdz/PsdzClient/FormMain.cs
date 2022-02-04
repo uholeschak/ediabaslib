@@ -765,6 +765,7 @@ namespace PsdzClient
                 return;
             }
 
+            bool modified = false;
             if (e.Index >= 0 && e.Index < checkedListBoxOptions.Items.Count)
             {
                 if (checkedListBoxOptions.Items[e.Index] is ProgrammingJobs.OptionsItem optionsItem)
@@ -789,14 +790,24 @@ namespace PsdzClient
                                 _programmingJobs.SelectedOptions.Remove(optionsItem);
                             }
                         }
+
+                        modified = true;
                     }
                 }
             }
 
-            BeginInvoke((Action)(() =>
+            if (modified)
             {
-                UpdateTargetFa();
-            }));
+                if (_programmingJobs.PsdzContext != null)
+                {
+                    _programmingJobs.PsdzContext.Tal = null;
+                }
+
+                BeginInvoke((Action)(() =>
+                {
+                    UpdateTargetFa();
+                }));
+            }
         }
 
         private void comboBoxOptionType_SelectedIndexChanged(object sender, EventArgs e)
