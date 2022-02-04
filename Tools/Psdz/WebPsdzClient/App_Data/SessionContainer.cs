@@ -331,6 +331,8 @@ namespace WebPsdzClient.App_Data
         private const int TcpSendBufferSize = 1400;
         private const int TcpSendTimeout = 5000;
         private const int TcpTesterAddr = 0xF4;
+        private const int VehicleReceiveTimeout = 20000;
+        private const int ThreadFinishTimeout = VehicleReceiveTimeout + 5000;
 
         public const string ResourceProcessing = "[Processing]";
 
@@ -470,7 +472,7 @@ namespace WebPsdzClient.App_Data
                 {
                     _stopThread = true;
                     _tcpThreadWakeEvent.Set();
-                    if (!_tcpThread.Join(5000))
+                    if (!_tcpThread.Join(ThreadFinishTimeout))
                     {
                         log.ErrorFormat("StopTcpListener Stopping thread failed");
                     }
@@ -482,7 +484,7 @@ namespace WebPsdzClient.App_Data
                 {
                     _stopThread = true;
                     _vehicleThreadWakeEvent.Set();
-                    if (!_vehicleThread.Join(5000))
+                    if (!_vehicleThread.Join(ThreadFinishTimeout))
                     {
                         log.ErrorFormat("StopTcpListener Stopping vehicle thread failed");
                     }
@@ -1283,7 +1285,7 @@ namespace WebPsdzClient.App_Data
             }
         }
 
-        public PsdzVehicleHub.VehicleResponse WaitForVehicleResponse(VehicleResponseDelegate vehicleResponseDelegate = null, int timeout = 20000)
+        public PsdzVehicleHub.VehicleResponse WaitForVehicleResponse(VehicleResponseDelegate vehicleResponseDelegate = null, int timeout = VehicleReceiveTimeout)
         {
             log.InfoFormat("WaitForVehicleResponse Timeout={0}", timeout);
             string packetId = GetPacketId();
