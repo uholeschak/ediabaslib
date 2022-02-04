@@ -565,19 +565,29 @@ namespace BmwDeepObd
 
         private void EdiabasOpen()
         {
-            if (_ediabas == null)
+            lock (_ediabasLock)
             {
-                _ediabas = new EdiabasNet
+                if (_ediabas == null)
                 {
-                    EdInterfaceClass = _activityCommon.GetEdiabasInterfaceClass(),
-                    AbortJobFunc = AbortEdiabasJob
-                };
-                _ediabas.SetConfigProperty("EcuPath", _ecuDir);
-                UpdateLogInfo();
-            }
+                    _ediabas = new EdiabasNet
+                    {
+                        EdInterfaceClass = _activityCommon.GetEdiabasInterfaceClass(),
+                        AbortJobFunc = AbortEdiabasJob
+                    };
+                    _ediabas.SetConfigProperty("EcuPath", _ecuDir);
+                    UpdateLogInfo();
+                }
 
-            _ediabas.EdInterfaceClass.EnableTransmitCache = false;
-            _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress);
+                _ediabas.EdInterfaceClass.EnableTransmitCache = false;
+                _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress);
+                if (_ediabas.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
+                {
+                    edInterfaceObd.CommParameter =
+                        new UInt32[] { 0x0000010F, 0x0001C200, 0x000004B0, 0x00000014, 0x0000000A, 0x00000002, 0x00001388 };
+                    edInterfaceObd.CommAnswerLen =
+                        new Int16[] { 0x0000, 0x0000 };
+                }
+            }
         }
 
         private void UpdateLogInfo()
