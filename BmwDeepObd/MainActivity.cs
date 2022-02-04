@@ -1211,6 +1211,15 @@ namespace BmwDeepObd
                         }
 #if DEBUG
                         allowCoding = true;
+#else
+                        if (!string.IsNullOrEmpty(_instanceData.ConfigFileName))
+                        {
+                            string fileName = Path.GetFileNameWithoutExtension(_instanceData.ConfigFileName);
+                            if (!string.IsNullOrEmpty(fileName) && fileName.StartsWith("G31", StringComparison.OrdinalIgnoreCase))
+                            {
+                                allowCoding = true;
+                            }
+                        }
 #endif
                         break;
                 }
