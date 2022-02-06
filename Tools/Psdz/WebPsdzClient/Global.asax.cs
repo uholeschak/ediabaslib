@@ -105,7 +105,7 @@ namespace WebPsdzClient
                     if (!string.IsNullOrEmpty(Request.UserHostAddress))
                     {
                         log.InfoFormat("Session_Start User host address: {0}", Request.UserHostAddress);
-                        hostAddress = Request.UserHostAddress;
+                        hostAddress = Request.UserHostAddress.Trim();
                     }
                 }
                 catch (Exception ex)
@@ -114,7 +114,9 @@ namespace WebPsdzClient
                 }
 
                 bool valid = !string.IsNullOrEmpty(deepObdVersion);
-                if (!string.IsNullOrEmpty(hostAddress) && string.Compare(hostAddress.Trim(), "127.0.0.1", StringComparison.OrdinalIgnoreCase) == 0)
+                if (!string.IsNullOrEmpty(hostAddress) &&
+                    (string.Compare(hostAddress, "127.0.0.1", StringComparison.OrdinalIgnoreCase) == 0 ||
+                     string.Compare(hostAddress, "::1", StringComparison.OrdinalIgnoreCase) == 0))
                 {
                     valid = true;
                 }
