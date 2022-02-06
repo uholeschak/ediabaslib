@@ -159,6 +159,18 @@
   <data name="ButtonStopHostResource.ToolTip" xml:space="preserve">
     <value />
   </data>
+  <data name="ButtonTalHintNo.Text" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="ButtonTalHintNo.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ButtonTalHintYes.Text" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="ButtonTalHintYes.ToolTip" xml:space="preserve">
+    <value />
+  </data>
   <data name="CheckBoxListOptionsResource.ToolTip" xml:space="preserve">
     <value />
   </data>
@@ -170,6 +182,11 @@
   </data>
   <data name="LabelLastUpdateResource.ToolTip" xml:space="preserve">
     <value />
+  </data>
+  <data name="LiteralTalHint.Text" xml:space="preserve">
+    <value>Make sure that the ignition is switched on and a charger with at least 60A is connected to the vehicle.&lt;br&gt;
+Don't close or minimize this page, because this will interrupt vehicle communcation!&lt;br&gt;
+Do you want to continue?</value>
   </data>
   <data name="PageResource.Title" xml:space="preserve">
     <value>BMW Coding</value>

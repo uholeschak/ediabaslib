@@ -1,5 +1,7 @@
 ﻿<%@ Page Title="BMW Coding" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="WebPsdzClient._Default" culture="auto" meta:resourcekey="PageResource" uiculture="auto" %>
 
+<%@ Register assembly="AjaxControlToolkit" namespace="AjaxControlToolkit" tagprefix="ajaxToolkit" %>
+
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 
     <style>.text-left { width: 100%; max-width: 100%; resize: none; overflow: auto; }</style>
@@ -8,6 +10,20 @@
     <style>.dropdown { width: 100%; max-width: 100%; }</style>
     <style>.checkbox label { text-indent: 30px }</style>
     <div class="jumbotron">
+        <asp:LinkButton ID="LinkButtonDummy" runat="server"></asp:LinkButton>
+        <asp:Panel ID="PanelTalHint" runat="server" CssClass="modal-dialog" style="display:none;">
+            <div class="jumbotron">
+                <asp:Panel ID="PanelTalHintText" runat="server" CssClass="panel-body" HorizontalAlign="Center">
+                    <asp:Literal ID="LiteralTalHint" runat="server" meta:resourcekey="LiteralTalHint"></asp:Literal>
+                </asp:Panel>
+                <asp:Panel ID="PanelTalHintButtons" runat="server" CssClass="panel-body" HorizontalAlign="Center">
+                    <asp:Button ID="ButtonTalHintYes" runat="server" CssClass="btn" Text="Yes" meta:resourcekey="ButtonTalHintYes" />
+                    <asp:Button ID="ButtonTalHintNo" runat="server" CssClass="btn" Text="No" meta:resourcekey="ButtonTalHintNo" />
+                </asp:Panel>
+            </div>
+        </asp:Panel>
+        <ajaxToolkit:ModalPopupExtender ID="ModalPopupExtenderTalHint" DropShadow="true" runat="server" TargetControlID="LinkButtonDummy" PopupControlID="PanelTalHint" OkControlID="ButtonTalHintYes" CancelControlID="ButtonTalHintNo">
+        </ajaxToolkit:ModalPopupExtender>
         <asp:UpdatePanel ID="UpdatePanelStatus" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="False">
             <ContentTemplate>
                 <asp:Panel ID="PanelButtons" runat="server" CssClass="panel-body" HorizontalAlign="Center" meta:resourcekey="PanelButtonsResource">
