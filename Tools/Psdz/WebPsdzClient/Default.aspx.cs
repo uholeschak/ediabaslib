@@ -181,7 +181,7 @@ namespace WebPsdzClient
                 return;
             }
 
-            sessionContainer.VehicleFunctions(ProgrammingJobs.OperationType.ExecuteTal);
+            ModalPopupExtenderTalHint.Show();
         }
 
         protected void ButtonAbort_OnClick(object sender, EventArgs e)
@@ -198,6 +198,33 @@ namespace WebPsdzClient
             }
 
             sessionContainer.Cancel();
+        }
+
+        protected void ButtonTalHintYes_OnClick(object sender, EventArgs e)
+        {
+            log.InfoFormat("_Default ButtonTalHintYes_OnClick");
+
+            SessionContainer sessionContainer = GetSessionContainer();
+            if (sessionContainer == null)
+            {
+                return;
+            }
+
+            ModalPopupExtenderTalHint.Hide();
+
+            if (sessionContainer.TaskActive)
+            {
+                return;
+            }
+
+            sessionContainer.VehicleFunctions(ProgrammingJobs.OperationType.ExecuteTal);
+        }
+
+        protected void ButtonTalHintNo_OnClick(object sender, EventArgs e)
+        {
+            log.InfoFormat("_Default ButtonTalHintNo_OnClick");
+
+            ModalPopupExtenderTalHint.Hide();
         }
 
         protected void DropDownListOptionType_OnSelectedIndexChanged(object sender, EventArgs e)
