@@ -159,6 +159,12 @@
   <data name="ButtonStopHostResource.ToolTip" xml:space="preserve">
     <value />
   </data>
+  <data name="ButtonTailFailOk.Text" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="ButtonTailFailOk.ToolTip" xml:space="preserve">
+    <value />
+  </data>
   <data name="ButtonTalHintNo.Text" xml:space="preserve">
     <value>No</value>
   </data>
@@ -182,6 +188,10 @@
   </data>
   <data name="LabelLastUpdateResource.ToolTip" xml:space="preserve">
     <value />
+  </data>
+  <data name="LiteralTailFail.Text" xml:space="preserve">
+    <value>TAL execution failed.&lt;br&gt;
+You could try to execute the TAL again to fix the errors.</value>
   </data>
   <data name="LiteralTalHint.Text" xml:space="preserve">
     <value>Make sure that the ignition is switched on and a charger with at least 60A is connected to the vehicle.&lt;br&gt;

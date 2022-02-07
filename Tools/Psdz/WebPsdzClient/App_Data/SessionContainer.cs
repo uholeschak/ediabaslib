@@ -201,6 +201,25 @@ namespace WebPsdzClient.App_Data
             }
         }
 
+        private bool _showTalFailureInfo;
+        public bool ShowTalFailureInfo
+        {
+            get
+            {
+                lock (_lockObject)
+                {
+                    return _showTalFailureInfo;
+                }
+            }
+            set
+            {
+                lock (_lockObject)
+                {
+                    _showTalFailureInfo = value;
+                }
+            }
+        }
+
         private Int64 _deepObdVersion;
         public Int64 DeepObdVersion
         {
@@ -1964,12 +1983,18 @@ namespace WebPsdzClient.App_Data
                 return;
             }
 
+            ShowTalFailureInfo = false;
             Cts = new CancellationTokenSource();
             VehicleFunctionsTask(operationType).ContinueWith(task =>
             {
                 if (!task.Result)
                 {
                     ReportError(string.Format(CultureInfo.InvariantCulture, "VehicleFunctions: {0} failed", operationType));
+                }
+
+                if (ProgrammingJobs.TalExecutionFailed && ProgrammingJobs.PsdzContext?.Tal != null)
+                {
+                    ShowTalFailureInfo = true;
                 }
 
                 TaskActive = false;

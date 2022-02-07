@@ -31,6 +31,7 @@
                     <asp:TextBox ID="TextBoxStatus" runat="server" CssClass="text-left" ReadOnly="True" TextMode="MultiLine" Rows="10" meta:resourcekey="TextBoxStatusResource"></asp:TextBox>
                     <asp:TextBox ID="TextBoxProgress" runat="server" CssClass="text-left" ReadOnly="True" meta:resourcekey="TextBoxProgressResource"></asp:TextBox>
                 </asp:Panel>
+
                 <asp:LinkButton ID="LinkButtonDummy" runat="server"></asp:LinkButton>
                 <asp:Panel ID="PanelTalHint" runat="server" CssClass="modal-dialog" style="display:none;">
                     <div class="jumbotron">
@@ -44,6 +45,19 @@
                     </div>
                 </asp:Panel>
                 <ajaxToolkit:ModalPopupExtender ID="ModalPopupExtenderTalHint" DropShadow="true" runat="server" TargetControlID="LinkButtonDummy" PopupControlID="PanelTalHint">
+                </ajaxToolkit:ModalPopupExtender>
+
+                <asp:Panel ID="PanelTailFail" runat="server" CssClass="modal-dialog" style="display:none;">
+                    <div class="jumbotron">
+                        <asp:Panel ID="PanelTailFailText" runat="server" CssClass="panel-body" HorizontalAlign="Center">
+                            <asp:Literal ID="LiteralTailFail" runat="server" meta:resourcekey="LiteralTailFail"></asp:Literal>
+                        </asp:Panel>
+                        <asp:Panel ID="PanelTalFailButtons" runat="server" CssClass="panel-body" HorizontalAlign="Center">
+                            <asp:Button ID="ButtonTailFailOk" runat="server" CssClass="btn" Text="Yes" meta:resourcekey="ButtonTailFailOk" OnClick="ButtonTailFailOk_OnClick" />
+                        </asp:Panel>
+                    </div>
+                </asp:Panel>
+                <ajaxToolkit:ModalPopupExtender ID="ModalPopupExtenderTailFail" DropShadow="true" runat="server" TargetControlID="LinkButtonDummy" PopupControlID="PanelTailFail">
                 </ajaxToolkit:ModalPopupExtender>
             </ContentTemplate>
         </asp:UpdatePanel>

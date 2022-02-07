@@ -222,6 +222,60 @@ namespace WebPsdzClient
         protected global::AjaxControlToolkit.ModalPopupExtender ModalPopupExtenderTalHint;
 
         /// <summary>
+        /// PanelTailFail-Steuerelement.
+        /// </summary>
+        /// <remarks>
+        /// Automatisch generiertes Feld.
+        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel PanelTailFail;
+
+        /// <summary>
+        /// PanelTailFailText-Steuerelement.
+        /// </summary>
+        /// <remarks>
+        /// Automatisch generiertes Feld.
+        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel PanelTailFailText;
+
+        /// <summary>
+        /// LiteralTailFail-Steuerelement.
+        /// </summary>
+        /// <remarks>
+        /// Automatisch generiertes Feld.
+        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal LiteralTailFail;
+
+        /// <summary>
+        /// PanelTalFailButtons-Steuerelement.
+        /// </summary>
+        /// <remarks>
+        /// Automatisch generiertes Feld.
+        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel PanelTalFailButtons;
+
+        /// <summary>
+        /// ButtonTailFailOk-Steuerelement.
+        /// </summary>
+        /// <remarks>
+        /// Automatisch generiertes Feld.
+        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button ButtonTailFailOk;
+
+        /// <summary>
+        /// ModalPopupExtenderTailFail-Steuerelement.
+        /// </summary>
+        /// <remarks>
+        /// Automatisch generiertes Feld.
+        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
+        /// </remarks>
+        protected global::AjaxControlToolkit.ModalPopupExtender ModalPopupExtenderTailFail;
+
+        /// <summary>
         /// UpdatePanelTimer-Steuerelement.
         /// </summary>
         /// <remarks>

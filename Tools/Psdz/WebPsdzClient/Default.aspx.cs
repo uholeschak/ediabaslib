@@ -65,6 +65,12 @@ namespace WebPsdzClient
                 UpdateStatus();
                 UpdateCurrentOptions();
                 UpdateTimerPanel();
+
+                if (sessionContainer.ShowTalFailureInfo)
+                {
+                    sessionContainer.ShowTalFailureInfo = false;
+                    ModalPopupExtenderTailFail.Show();
+                }
             }
             else
             {
@@ -225,6 +231,13 @@ namespace WebPsdzClient
             log.InfoFormat("_Default ButtonTalHintNo_OnClick");
 
             ModalPopupExtenderTalHint.Hide();
+        }
+
+        protected void ButtonTailFailOk_OnClick(object sender, EventArgs e)
+        {
+            log.InfoFormat("_Default ButtonTailFailOk_OnClick");
+
+            ModalPopupExtenderTailFail.Hide();
         }
 
         protected void DropDownListOptionType_OnSelectedIndexChanged(object sender, EventArgs e)
