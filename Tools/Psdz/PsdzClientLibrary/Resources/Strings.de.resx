@@ -201,6 +201,12 @@
   <data name="PiaMasterUpdateFailed" xml:space="preserve">
     <value>PIA Master aktualisieren fehlgeschlagen.</value>
   </data>
+  <data name="PrgCounterReadFailed" xml:space="preserve">
+    <value>Lesen der Programmierzähler fehlgeschlagen.</value>
+  </data>
+  <data name="PrgCounters" xml:space="preserve">
+    <value>Programmierzähler: {0}</value>
+  </data>
   <data name="ReadFaFailed" xml:space="preserve">
     <value>FA lesen fehlgeschlagen.</value>
   </data>

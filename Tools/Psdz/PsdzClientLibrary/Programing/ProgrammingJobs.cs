@@ -640,7 +640,18 @@ namespace PsdzClient.Programing
                     DateTime calculationStartTime = DateTime.Now;
                     log.InfoFormat(CultureInfo.InvariantCulture, "Checking programming counter");
                     IEnumerable<IPsdzEcuIdentifier> psdzEcuIdentifiersPrg = ProgrammingService.Psdz.ProgrammingService.CheckProgrammingCounter(PsdzContext.Connection, PsdzContext.Tal);
-                    log.InfoFormat(CultureInfo.InvariantCulture, "ProgCounter: {0}", psdzEcuIdentifiersPrg.Count());
+                    if (psdzEcuIdentifiersPrg == null)
+                    {
+                        sbResult.AppendLine(Strings.PrgCounterReadFailed);
+                        UpdateStatus(sbResult.ToString());
+                        return false;
+                    }
+
+                    int prgCounter = psdzEcuIdentifiersPrg.Count();
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.PrgCounters, prgCounter));
+                    UpdateStatus(sbResult.ToString());
+
+                    log.InfoFormat(CultureInfo.InvariantCulture, "ProgCounter: {0}", prgCounter);
                     foreach (IPsdzEcuIdentifier ecuIdentifier in psdzEcuIdentifiersPrg)
                     {
                         log.InfoFormat(CultureInfo.InvariantCulture, " EcuId: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
