@@ -32,7 +32,7 @@
                     <asp:TextBox ID="TextBoxProgress" runat="server" CssClass="text-left" ReadOnly="True" meta:resourcekey="TextBoxProgressResource"></asp:TextBox>
                 </asp:Panel>
 
-                <asp:LinkButton ID="LinkButtonDummy" runat="server"></asp:LinkButton>
+                <asp:LinkButton ID="LinkButtonTalHint" runat="server"></asp:LinkButton>
                 <asp:Panel ID="PanelTalHint" runat="server" CssClass="modal-dialog" style="display:none;">
                     <div class="jumbotron">
                         <asp:Panel ID="PanelTalHintText" runat="server" CssClass="panel-body" HorizontalAlign="Center">
@@ -44,9 +44,10 @@
                         </asp:Panel>
                     </div>
                 </asp:Panel>
-                <ajaxToolkit:ModalPopupExtender ID="ModalPopupExtenderTalHint" DropShadow="true" runat="server" TargetControlID="LinkButtonDummy" PopupControlID="PanelTalHint">
+                <ajaxToolkit:ModalPopupExtender ID="ModalPopupExtenderTalHint" DropShadow="true" runat="server" TargetControlID="LinkButtonTalHint" PopupControlID="PanelTalHint">
                 </ajaxToolkit:ModalPopupExtender>
 
+                <asp:LinkButton ID="LinkButtonTailFail" runat="server"></asp:LinkButton>
                 <asp:Panel ID="PanelTailFail" runat="server" CssClass="modal-dialog" style="display:none;">
                     <div class="jumbotron">
                         <asp:Panel ID="PanelTailFailText" runat="server" CssClass="panel-body" HorizontalAlign="Center">
@@ -57,7 +58,7 @@
                         </asp:Panel>
                     </div>
                 </asp:Panel>
-                <ajaxToolkit:ModalPopupExtender ID="ModalPopupExtenderTailFail" DropShadow="true" runat="server" TargetControlID="LinkButtonDummy" PopupControlID="PanelTailFail">
+                <ajaxToolkit:ModalPopupExtender ID="ModalPopupExtenderTailFail" DropShadow="true" runat="server" TargetControlID="LinkButtonTailFail" PopupControlID="PanelTailFail">
                 </ajaxToolkit:ModalPopupExtender>
             </ContentTemplate>
         </asp:UpdatePanel>

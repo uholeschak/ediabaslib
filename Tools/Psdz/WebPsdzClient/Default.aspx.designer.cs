@@ -150,13 +150,13 @@ namespace WebPsdzClient
         protected global::System.Web.UI.WebControls.TextBox TextBoxProgress;
 
         /// <summary>
-        /// LinkButtonDummy-Steuerelement.
+        /// LinkButtonTalHint-Steuerelement.
         /// </summary>
         /// <remarks>
         /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton LinkButtonDummy;
+        protected global::System.Web.UI.WebControls.LinkButton LinkButtonTalHint;
 
         /// <summary>
         /// PanelTalHint-Steuerelement.
@@ -220,6 +220,15 @@ namespace WebPsdzClient
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::AjaxControlToolkit.ModalPopupExtender ModalPopupExtenderTalHint;
+
+        /// <summary>
+        /// LinkButtonTailFail-Steuerelement.
+        /// </summary>
+        /// <remarks>
+        /// Automatisch generiertes Feld.
+        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton LinkButtonTailFail;
 
         /// <summary>
         /// PanelTailFail-Steuerelement.
