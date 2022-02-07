@@ -757,6 +757,7 @@ namespace PsdzClient.Programing
                             return false;
                         }
 
+                        bool talExecutionFailed = false;
                         sbResult.AppendLine(Strings.ExecutingBackupTal);
                         UpdateStatus(sbResult.ToString());
                         CacheResponseAllow = false;
@@ -775,6 +776,7 @@ namespace PsdzClient.Programing
                         }
                         if (backupTalResult.TalExecutionState != PsdzTalExecutionState.Finished)
                         {
+                            talExecutionFailed = true;
                             log.Info(backupTalResult.AsXml);
                             sbResult.AppendLine(Strings.TalExecuteError);
                             UpdateStatus(sbResult.ToString());
@@ -802,6 +804,7 @@ namespace PsdzClient.Programing
                         }
                         if (executeTalResult.TalExecutionState != PsdzTalExecutionState.Finished)
                         {
+                            talExecutionFailed = true;
                             log.Info(executeTalResult.AsXml);
                             sbResult.AppendLine(Strings.TalExecuteError);
                             UpdateStatus(sbResult.ToString());
@@ -822,6 +825,7 @@ namespace PsdzClient.Programing
                         }
                         catch (Exception ex)
                         {
+                            talExecutionFailed = true;
                             log.ErrorFormat(CultureInfo.InvariantCulture, "Tsl update failure: {0}", ex.Message);
                             sbResult.AppendLine(Strings.TslUpdateFailed);
                             UpdateStatus(sbResult.ToString());
@@ -837,6 +841,7 @@ namespace PsdzClient.Programing
                         }
                         catch (Exception ex)
                         {
+                            talExecutionFailed = true;
                             log.ErrorFormat(CultureInfo.InvariantCulture, "Write ILevel failure: {0}", ex.Message);
                             sbResult.AppendLine(Strings.ILevelUpdateFailed);
                             UpdateStatus(sbResult.ToString());
@@ -852,6 +857,7 @@ namespace PsdzClient.Programing
                         }
                         catch (Exception ex)
                         {
+                            talExecutionFailed = true;
                             log.ErrorFormat(CultureInfo.InvariantCulture, "Write ILevel backup failure: {0}", ex.Message);
                             sbResult.AppendLine(Strings.ILevelBackupFailed);
                             UpdateStatus(sbResult.ToString());
@@ -876,6 +882,7 @@ namespace PsdzClient.Programing
                         }
                         catch (Exception ex)
                         {
+                            talExecutionFailed = true;
                             log.ErrorFormat(CultureInfo.InvariantCulture, "FA write failure: {0}", ex.Message);
                             sbResult.AppendLine(Strings.FaWriteFailed);
                             UpdateStatus(sbResult.ToString());
@@ -891,15 +898,19 @@ namespace PsdzClient.Programing
                         }
                         catch (Exception ex)
                         {
+                            talExecutionFailed = true;
                             log.ErrorFormat(CultureInfo.InvariantCulture, "FA backup write failure: {0}", ex.Message);
                             sbResult.AppendLine(Strings.FaBackupWriteFailed);
                             UpdateStatus(sbResult.ToString());
                         }
                         cts?.Token.ThrowIfCancellationRequested();
 
-                        // finally reset TAL
-                        PsdzContext.Tal = null;
-                        UpdateOptions(null);
+                        if (!talExecutionFailed)
+                        {
+                            // finally reset TAL
+                            PsdzContext.Tal = null;
+                            UpdateOptions(null);
+                        }
                     }
                     finally
                     {
