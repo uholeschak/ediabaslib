@@ -201,11 +201,11 @@
   <data name="PiaMasterUpdateFailed" xml:space="preserve">
     <value>PIA master update failed.</value>
   </data>
-  <data name="PrgCounterReadFailed" xml:space="preserve">
-    <value>Read programming counter failed.</value>
+  <data name="PrgCounterCheckFailed" xml:space="preserve">
+    <value>Check programming counter failed.</value>
   </data>
   <data name="PrgCounters" xml:space="preserve">
-    <value>Programming counter failures: {0}</value>
+    <value>Programming counters: {0}</value>
   </data>
   <data name="ReadFaFailed" xml:space="preserve">
     <value>Reading FA failed.</value>

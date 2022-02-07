@@ -642,7 +642,7 @@ namespace PsdzClient.Programing
                     IEnumerable<IPsdzEcuIdentifier> psdzEcuIdentifiersPrg = ProgrammingService.Psdz.ProgrammingService.CheckProgrammingCounter(PsdzContext.Connection, PsdzContext.Tal);
                     if (psdzEcuIdentifiersPrg == null)
                     {
-                        sbResult.AppendLine(Strings.PrgCounterReadFailed);
+                        sbResult.AppendLine(Strings.PrgCounterCheckFailed);
                         UpdateStatus(sbResult.ToString());
                         return false;
                     }

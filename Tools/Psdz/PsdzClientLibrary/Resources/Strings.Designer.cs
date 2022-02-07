@@ -313,16 +313,16 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Read programming counter failed. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Check programming counter failed. ähnelt.
         /// </summary>
-        internal static string PrgCounterReadFailed {
+        internal static string PrgCounterCheckFailed {
             get {
-                return ResourceManager.GetString("PrgCounterReadFailed", resourceCulture);
+                return ResourceManager.GetString("PrgCounterCheckFailed", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Programming counter failures: {0} ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Programming counters: {0} ähnelt.
         /// </summary>
         internal static string PrgCounters {
             get {
