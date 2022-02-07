@@ -60,17 +60,20 @@ namespace WebPsdzClient
                 return;
             }
 
-            if (!IsPostBack)
+            if (!sessionContainer.RefreshOptions)
             {
-                UpdateStatus();
-                UpdateCurrentOptions();
-                UpdateTimerPanel();
-
                 if (sessionContainer.ShowTalFailureInfo)
                 {
                     sessionContainer.ShowTalFailureInfo = false;
                     ModalPopupExtenderTailFail.Show();
                 }
+            }
+
+            if (!IsPostBack)
+            {
+                UpdateStatus();
+                UpdateCurrentOptions();
+                UpdateTimerPanel();
             }
             else
             {
