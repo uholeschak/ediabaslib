@@ -780,7 +780,6 @@ namespace PsdzClient.Programing
 
                         sbResult.AppendLine(Strings.ExecutingBackupTal);
                         UpdateStatus(sbResult.ToString());
-                        CacheResponseAllow = false;
                         log.InfoFormat(CultureInfo.InvariantCulture, "Executing backup TAL");
                         TalExecutionSettings talExecutionSettings = ProgrammingUtils.GetTalExecutionSettings(ProgrammingService);
                         IPsdzTal backupTalResult = ProgrammingService.Psdz.IndividualDataRestoreService.ExecuteAsyncBackupTal(
@@ -810,6 +809,7 @@ namespace PsdzClient.Programing
 
                         sbResult.AppendLine(Strings.ExecutingTal);
                         UpdateStatus(sbResult.ToString());
+                        CacheResponseAllow = false;
                         log.InfoFormat(CultureInfo.InvariantCulture, "Executing TAL");
                         IPsdzTal executeTalResult = ProgrammingService.Psdz.TalExecutionService.ExecuteTal(PsdzContext.Connection, PsdzContext.Tal,
                             null, psdzVin, PsdzContext.FaTarget, talExecutionSettings, PsdzContext.PathToBackupData, cts.Token);
