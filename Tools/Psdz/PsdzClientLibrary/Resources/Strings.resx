@@ -226,7 +226,7 @@
     <value>Requesting ECU context ...</value>
   </data>
   <data name="SoftwareFailures" xml:space="preserve">
-    <value>Detected software failures.</value>
+    <value>Detected {0} software failures.</value>
   </data>
   <data name="SwtAction" xml:space="preserve">
     <value>Requesting SWT action ...</value>

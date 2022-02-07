@@ -226,7 +226,7 @@
     <value>Steuergeräte Kontext anfragen ...</value>
   </data>
   <data name="SoftwareFailures" xml:space="preserve">
-    <value>Softwarefehler erkannt..</value>
+    <value>{0} Softwarefehler erkannt.</value>
   </data>
   <data name="SwtAction" xml:space="preserve">
     <value>SWT Aktionen abrufen ...</value>

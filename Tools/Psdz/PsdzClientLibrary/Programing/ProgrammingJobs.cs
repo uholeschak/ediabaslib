@@ -752,7 +752,7 @@ namespace PsdzClient.Programing
 
                         if (softwareEntryCount > 0)
                         {
-                            sbResult.AppendLine(Strings.SoftwareFailures);
+                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.SoftwareFailures, softwareEntryCount));
                             UpdateStatus(sbResult.ToString());
                             return false;
                         }

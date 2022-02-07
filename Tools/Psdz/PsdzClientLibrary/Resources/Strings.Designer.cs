@@ -385,7 +385,7 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Detected software failures. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Detected {0} software failures. ähnelt.
         /// </summary>
         internal static string SoftwareFailures {
             get {
