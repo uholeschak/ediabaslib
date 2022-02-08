@@ -5306,6 +5306,77 @@ namespace CarSimulator
                 {
                     if (
                         (_receiveData[0] & 0xC0) == 0x80 &&
+                        (_receiveData[0] & 0x3F) >= 3 &&
+                        _receiveData[2] == 0xF1 &&
+                        _receiveData[3] == 0x35)
+                    {
+                        // dummy ok response for service 35 (request upload, RU_IDR)
+                        Debug.WriteLine("Dummy service 35: Format={0:X02}: AFID={1}, LFID={2}", _receiveData[4], _receiveData[5], _receiveData[5] >> 4);
+                        _sendData[0] = 0x86;
+                        _sendData[1] = 0xF1;
+                        _sendData[2] = _receiveData[1];
+                        _sendData[3] = 0x75;
+                        _sendData[4] = 0x40;    // 4 bytes block length
+                        _sendData[5] = 0x00;
+                        _sendData[6] = 0x00;
+                        _sendData[7] = 0x0F;
+                        _sendData[8] = 0x58;    // length 0x0F58
+
+                        ObdSend(_sendData, bmwTcpClientData);
+                        found = true;
+                    }
+                }
+
+                if (!found)
+                {
+                    if (
+                        (_receiveData[0] & 0xC0) == 0x80 &&
+                        (_receiveData[0] & 0x3F) >= 2 &&
+                        _receiveData[2] == 0xF1 &&
+                        _receiveData[3] == 0x36)
+                    {
+                        byte sequence = _receiveData[4];
+                        // dummy ok response for service 36 (transfer data, TD)
+                        Debug.WriteLine("Dummy service 36: Seq={0}", sequence);
+                        _sendData[0] = 0x82 + 0x30;
+                        _sendData[1] = 0xF1;
+                        _sendData[2] = _receiveData[1];
+                        _sendData[3] = 0x76;
+                        _sendData[4] = sequence; // block sequence
+                        for (int idx = 0; idx < 0x30; idx++)
+                        {
+                            _sendData[5+idx] = (byte) (idx + sequence);
+                        }
+
+                        ObdSend(_sendData, bmwTcpClientData);
+                        found = true;
+                    }
+                }
+
+                if (!found)
+                {
+                    if (
+                        (_receiveData[0] & 0xC0) == 0x80 &&
+                        (_receiveData[0] & 0x3F) >= 1 &&
+                        _receiveData[2] == 0xF1 &&
+                        _receiveData[3] == 0x37)
+                    {
+                        // dummy ok response for service 37 (transfer exit, RTE)
+                        Debug.WriteLine("Dummy service 37");
+                        _sendData[0] = 0x81;
+                        _sendData[1] = 0xF1;
+                        _sendData[2] = _receiveData[1];
+                        _sendData[3] = 0x77;
+
+                        ObdSend(_sendData, bmwTcpClientData);
+                        found = true;
+                    }
+                }
+
+                if (!found)
+                {
+                    if (
+                        (_receiveData[0] & 0xC0) == 0x80 &&
                         (_receiveData[0] & 0x3F) >= 2 &&
                         _receiveData[2] == 0xF1 &&
                         _receiveData[3] == 0x3B)
