@@ -5266,13 +5266,28 @@ namespace CarSimulator
                     {
                         // dummy ok response for service 31 (routine control)
                         Debug.WriteLine("Dummy service 31: {0:X02}: {1:X02}{2:X02}", _receiveData[4], _receiveData[5], _receiveData[6]);
-                        _sendData[0] = 0x84;
-                        _sendData[1] = 0xF1;
-                        _sendData[2] = _receiveData[1];
-                        _sendData[3] = 0x71;
-                        _sendData[4] = _receiveData[4];
-                        _sendData[5] = _receiveData[5];
-                        _sendData[6] = _receiveData[6];
+                        if (_receiveData[4] == 0x01 && _receiveData[5] == 0x10 && _receiveData[5] == 0x02)
+                        {
+                            Debug.WriteLine("Dummy RC_RLEBI_IDR response");
+                            byte[] response =
+                            {
+                                0x9F, 0xF1, 0x63, 0x71, 0x01, 0x10, 0x02, 0x01,
+                                0x00, 0x02, 0x58, 0x0E, 0x10, 0x0E, 0x10, 0xFF,
+                                0xFF, 0x00, 0x46, 0x10, 0x02, 0x00, 0x00, 0x00,
+                                0x02, 0x00, 0x00, 0x00, 0x00, 0x04, 0xFE, 0x0E, 0x00, 0x01
+                            };
+                            Array.Copy(response, _sendData, response.Length);
+                        }
+                        else
+                        {
+                            _sendData[0] = 0x84;
+                            _sendData[1] = 0xF1;
+                            _sendData[2] = _receiveData[1];
+                            _sendData[3] = 0x71;
+                            _sendData[4] = _receiveData[4];
+                            _sendData[5] = _receiveData[5];
+                            _sendData[6] = _receiveData[6];
+                        }
 
                         ObdSend(_sendData, bmwTcpClientData);
                         found = true;
