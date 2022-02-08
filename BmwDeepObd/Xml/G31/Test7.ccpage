@@ -33,12 +33,17 @@
       <job id="0" name="IDENT" raw_telegrams="82 63 F1 10 03">
         <display name="label_tel_1" result="RAW_TELEGRAM_1" format="" />
       </job>
-      <job id="1" name="IDENT" raw_telegrams="85 63 F1 31 01 0F 1F 0E;85 63 F1 31 01 0F 1F 04;91 63 F1 31 01 70 00 01 06 10 02 00 00 00 01 04 FE 0E 00 01;8C 63 F1 31 01 10 02 02 06 10 02 00 00 00 01;89 63 F1 31 01 10 02 01 00 00 00 01">
+      <job id="1" name="IDENT" raw_telegrams="89 63 F1 31 01 10 02 01 00 00 00 00;89 63 F1 31 01 10 02 01 00 00 00 01;89 63 F1 31 01 10 02 01 00 00 00 01;89 63 F1 31 01 10 02 01 00 00 00 02;89 63 F1 31 01 10 02 01 00 00 00 03;89 63 F1 31 01 10 02 01 00 00 00 04;89 63 F1 31 01 10 02 01 00 00 00 05;89 63 F1 31 01 10 02 01 00 00 00 06;89 63 F1 31 01 10 02 01 00 00 00 07;89 63 F1 31 01 10 02 01 00 00 00 08;89 63 F1 31 01 10 02 01 00 00 00 09">
         <display name="label_tel_1" result="RAW_TELEGRAM_1" format="" />
         <display name="label_tel_2" result="RAW_TELEGRAM_2" format="" />
         <display name="label_tel_3" result="RAW_TELEGRAM_3" format="" />
         <display name="label_tel_4" result="RAW_TELEGRAM_4" format="" />
         <display name="label_tel_5" result="RAW_TELEGRAM_5" format="" />
+        <display name="label_tel_6" result="RAW_TELEGRAM_6" format="" />
+        <display name="label_tel_7" result="RAW_TELEGRAM_7" format="" />
+        <display name="label_tel_8" result="RAW_TELEGRAM_8" format="" />
+        <display name="label_tel_9" result="RAW_TELEGRAM_9" format="" />
+        <display name="label_tel_10" result="RAW_TELEGRAM_10" format="" />
       </job>
     </jobs>
   </page>
