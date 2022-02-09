@@ -5320,6 +5320,23 @@ namespace CarSimulator
                             }
                         }
 
+                        if (!found && _receiveData[4] == 0x01 && _receiveData[5] == 0x0F && _receiveData[6] == 0x01)
+                        {
+                            Debug.WriteLine("MCD3_FinalizeECUCoding");
+                            _sendData[0] = 0x87;
+                            _sendData[1] = 0xF1;
+                            _sendData[2] = _receiveData[1];
+                            _sendData[3] = 0x71;
+                            _sendData[4] = _receiveData[4];
+                            _sendData[5] = _receiveData[5];
+                            _sendData[6] = _receiveData[6];
+                            _sendData[7] = 0x00;
+                            _sendData[8] = 0x00;
+                            _sendData[9] = 0x00;
+
+                            found = true;
+                        }
+
                         if (!found)
                         {
                             _sendData[0] = 0x84;
