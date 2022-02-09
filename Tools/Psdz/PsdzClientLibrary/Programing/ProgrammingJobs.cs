@@ -793,7 +793,8 @@ namespace PsdzClient.Programing
                             log.InfoFormat(CultureInfo.InvariantCulture, "  Affected Ecu: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
                                 ecuIdentifier.BaseVariant, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset);
                         }
-                        if (backupTalResult.TalExecutionState != PsdzTalExecutionState.Finished)
+                        if (backupTalResult.TalExecutionState != PsdzTalExecutionState.Finished &&
+                            backupTalResult.TalExecutionState != PsdzTalExecutionState.FinishedWithWarnings)
                         {
                             TalExecutionFailed = true;
                             log.Info(backupTalResult.AsXml);
@@ -822,7 +823,8 @@ namespace PsdzClient.Programing
                             log.InfoFormat(CultureInfo.InvariantCulture, "  Affected Ecu: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
                                 ecuIdentifier.BaseVariant, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset);
                         }
-                        if (executeTalResult.TalExecutionState != PsdzTalExecutionState.Finished)
+                        if (executeTalResult.TalExecutionState != PsdzTalExecutionState.Finished &&
+                            executeTalResult.TalExecutionState != PsdzTalExecutionState.FinishedWithWarnings)
                         {
                             TalExecutionFailed = true;
                             log.Info(executeTalResult.AsXml);
