@@ -249,6 +249,9 @@
   <data name="TalExecuteOk" xml:space="preserve">
     <value>TAL Ausführung ohne Fehler beendet.</value>
   </data>
+  <data name="TalExecuteWarning" xml:space="preserve">
+    <value>TAL Ausführung mit Warnungen beendet.</value>
+  </data>
   <data name="TalGenerationFailed" xml:space="preserve">
     <value>TAL Generierung fehlgeschlagen.</value>
   </data>

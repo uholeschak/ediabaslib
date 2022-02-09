@@ -803,7 +803,15 @@ namespace PsdzClient.Programing
                         }
                         else
                         {
-                            sbResult.AppendLine(Strings.TalExecuteOk);
+                            if (backupTalResult.TalExecutionState != PsdzTalExecutionState.Finished)
+                            {
+                                sbResult.AppendLine(Strings.TalExecuteWarning);
+                            }
+                            else
+                            {
+                                sbResult.AppendLine(Strings.TalExecuteOk);
+                            }
+
                             UpdateStatus(sbResult.ToString());
                         }
                         cts?.Token.ThrowIfCancellationRequested();
@@ -833,7 +841,15 @@ namespace PsdzClient.Programing
                         }
                         else
                         {
-                            sbResult.AppendLine(Strings.TalExecuteOk);
+                            if (executeTalResult.TalExecutionState != PsdzTalExecutionState.Finished)
+                            {
+                                sbResult.AppendLine(Strings.TalExecuteWarning);
+                            }
+                            else
+                            {
+                                sbResult.AppendLine(Strings.TalExecuteOk);
+                            }
+
                             UpdateStatus(sbResult.ToString());
                         }
                         cts?.Token.ThrowIfCancellationRequested();
