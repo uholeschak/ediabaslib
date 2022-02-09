@@ -5282,7 +5282,7 @@ namespace CarSimulator
                                     0x00, 0x01
                                 };
 
-                                if (index > 10)
+                                if (index > 0)
                                 {
                                     response[8] = 0x02; // final (0x01=not valid and not final)
                                 }
