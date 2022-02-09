@@ -5163,11 +5163,12 @@ namespace CarSimulator
 
                 if (!found)
                 {
-                    if (_receiveData.Length >= 6 && (_receiveData[0] & 0x80) == 0x80 && _receiveData[3] == 0x27)
+                    int offset = _receiveData[0] == 0x80 ? 1 : 0;
+                    if (_receiveData.Length >= 6 && (_receiveData[0] & 0x80) == 0x80 && _receiveData[3 + offset] == 0x27)
                     {   // service 27 (security access)
                         found = true;
 
-                        byte subFunction = _receiveData[4];
+                        byte subFunction = _receiveData[4 + offset];
                         bool requestSeed = false;
                         switch (subFunction)
                         {
@@ -5181,16 +5182,17 @@ namespace CarSimulator
 
                         if (requestSeed)
                         {
-                            if (_receiveData[0] == 0x86 && subFunction == 0x01 && _receiveData[5] == 0xFF && _receiveData[6] == 0xFF && _receiveData[7] == 0xFF && _receiveData[8] == 0xFF)
+                            if (_receiveData[0] == 0x86 && subFunction == 0x01 &&
+                                _receiveData[5 + offset] == 0xFF && _receiveData[6 + offset] == 0xFF && _receiveData[7 + offset] == 0xFF && _receiveData[8 + offset] == 0xFF)
                             {
                                 Debug.WriteLine("Request seed 8 SubFunc: {0:X02}", subFunction);
-                                byte[] dummyResponse = { 0x8A, _receiveData[2], _receiveData[1], 0x67, _receiveData[4], 0x12, 0x34, 0x56, 0x78, 0x12, 0x34, 0x56, 0x78, 0x00 };   // send seed
+                                byte[] dummyResponse = { 0x8A, _receiveData[2], _receiveData[1], 0x67, _receiveData[4 + offset], 0x12, 0x34, 0x56, 0x78, 0x12, 0x34, 0x56, 0x78, 0x00 };   // send seed
                                 ObdSend(dummyResponse, bmwTcpClientData);
                             }
                             else
                             {
                                 Debug.WriteLine("Request seed 4 SubFunc: {0:X02}", subFunction);
-                                byte[] dummyResponse = { 0x86, _receiveData[2], _receiveData[1], 0x67, _receiveData[4], 0x12, 0x34, 0x56, 0x78, 0x00 };   // send seed
+                                byte[] dummyResponse = { 0x86, _receiveData[2], _receiveData[1], 0x67, _receiveData[4 + offset], 0x12, 0x34, 0x56, 0x78, 0x00 };   // send seed
                                 ObdSend(dummyResponse, bmwTcpClientData);
                             }
                         }
@@ -5199,7 +5201,7 @@ namespace CarSimulator
                             if (_receiveData[0] == 0x86)
                             {
                                 Debug.WriteLine("Receive key SubFunc: {0:X02}, key: {1:X02} {2:X02} {3:X02} {4:X02}",
-                                    subFunction, _receiveData[5], _receiveData[6], _receiveData[7], _receiveData[8]);
+                                    subFunction, _receiveData[5 + offset], _receiveData[6 + offset], _receiveData[7 + offset], _receiveData[8 + offset]);
                             }
                             else
                             {
