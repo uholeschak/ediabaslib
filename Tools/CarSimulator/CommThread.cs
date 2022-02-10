@@ -5349,9 +5349,9 @@ namespace CarSimulator
                             _sendData[6] = _receiveData[6];
                             _sendData[7] = 0x00;
                             _sendData[8] = 0x00;
-                            _sendData[9] = 0x00;
-                            _sendData[10] = 0x00;
-                            _sendData[11] = 0x00;
+                            _sendData[9] = 0x02;
+                            _sendData[10] = 0x01;
+                            _sendData[11] = 0x0B;
 
                             found = true;
                         }
