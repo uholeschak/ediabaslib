@@ -7896,7 +7896,20 @@ namespace CarSimulator
                 _receiveData[3] == 0x31)
             {
                 // dummy ok response for service 31 (routine control)
-                Debug.WriteLine("Dummy service 31: {0:X02}: {1:X02}{2:X02}", _receiveData[4], _receiveData[5], _receiveData[6]);
+                Debug.WriteLine("Dummy service 31 (G31): {0:X02}: {1:X02}{2:X02}", _receiveData[4], _receiveData[5], _receiveData[6]);
+
+                if (_receiveData[4] == 0x01 && _receiveData[5] == 0x10 && _receiveData[6] == 0x02)
+                {
+                    Debug.WriteLine("Using default handler");
+                    return false;
+                }
+
+                if (_receiveData[4] == 0x01 && _receiveData[5] == 0x0F && _receiveData[6] == 0x01)
+                {
+                    Debug.WriteLine("Using default handler");
+                    return false;
+                }
+
                 _sendData[0] = 0x84;
                 _sendData[1] = 0xF1;
                 _sendData[2] = _receiveData[1];
