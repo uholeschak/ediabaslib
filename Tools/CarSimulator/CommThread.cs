@@ -5182,12 +5182,25 @@ namespace CarSimulator
 
                         if (requestSeed)
                         {
-                            if (_receiveData[0] == 0x86 && subFunction == 0x01 &&
+                            if (_receiveData[0] == 0x86 &&
                                 _receiveData[5 + offset] == 0xFF && _receiveData[6 + offset] == 0xFF && _receiveData[7 + offset] == 0xFF && _receiveData[8 + offset] == 0xFF)
                             {
-                                Debug.WriteLine("Request seed 8 SubFunc: {0:X02}", subFunction);
-                                byte[] dummyResponse = { 0x8A, _receiveData[2], _receiveData[1], 0x67, _receiveData[4 + offset], 0x12, 0x34, 0x56, 0x78, 0x12, 0x34, 0x56, 0x78, 0x00 };   // send seed
-                                ObdSend(dummyResponse, bmwTcpClientData);
+                                if (subFunction == 0x01)
+                                {
+                                    Debug.WriteLine("Request seed 8 SubFunc: {0:X02}", subFunction);
+                                    byte[] dummyResponse = { 0x8A, _receiveData[2], _receiveData[1], 0x67, _receiveData[4 + offset], 0x12, 0x34, 0x56, 0x78, 0x12, 0x34, 0x56, 0x78, 0x00 };   // send seed
+                                    ObdSend(dummyResponse, bmwTcpClientData);
+                                }
+                                else
+                                {
+                                    Debug.WriteLine("Request seed 24 SubFunc: {0:X02}", subFunction);
+                                    byte[] dummyResponse = { 0x9A, _receiveData[2], _receiveData[1], 0x67, _receiveData[4 + offset],
+                                        0x12, 0x34, 0x56, 0x78, 0x12, 0x34, 0x56, 0x78,
+                                        0x12, 0x34, 0x56, 0x78, 0x12, 0x34, 0x56, 0x78,
+                                        0x12, 0x34, 0x56, 0x78, 0x12, 0x34, 0x56, 0x78,
+                                        0x00 };   // send seed
+                                    ObdSend(dummyResponse, bmwTcpClientData);
+                                }
                             }
                             else
                             {
