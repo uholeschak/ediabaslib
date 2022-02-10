@@ -805,6 +805,7 @@ namespace PsdzClient.Programing
                         {
                             if (backupTalResult.TalExecutionState != PsdzTalExecutionState.Finished)
                             {
+                                log.Info(backupTalResult.AsXml);
                                 sbResult.AppendLine(Strings.TalExecuteWarning);
                             }
                             else
@@ -843,6 +844,7 @@ namespace PsdzClient.Programing
                         {
                             if (executeTalResult.TalExecutionState != PsdzTalExecutionState.Finished)
                             {
+                                log.Info(backupTalResult.AsXml);
                                 sbResult.AppendLine(Strings.TalExecuteWarning);
                             }
                             else
