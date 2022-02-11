@@ -68,6 +68,9 @@ namespace WebPsdzClient
                     messageText = messageText.Replace("\r\n", "<br>");
                     sessionContainer.ShowMessageNoWait = null;
                     LiteralMsgOk.Text = messageText;
+                    ButtonMsgOk.Visible = true;
+                    ButtonMsgYes.Visible = false;
+                    ButtonMsgNo.Visible = false;
                     ModalPopupExtenderMsgOk.Show();
                 }
             }
@@ -242,6 +245,20 @@ namespace WebPsdzClient
         protected void ButtonMsgOk_OnClick(object sender, EventArgs e)
         {
             log.InfoFormat("_Default ButtonMsgOk_OnClick");
+
+            ModalPopupExtenderMsgOk.Hide();
+        }
+
+        protected void ButtonMsgYes_OnClick(object sender, EventArgs e)
+        {
+            log.InfoFormat("_Default ButtonMsgYes_OnClick");
+
+            ModalPopupExtenderMsgOk.Hide();
+        }
+
+        protected void ButtonMsgNo_OnClick(object sender, EventArgs e)
+        {
+            log.InfoFormat("_Default ButtonMsgNo_OnClick");
 
             ModalPopupExtenderMsgOk.Hide();
         }

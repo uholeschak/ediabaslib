@@ -55,6 +55,8 @@
                         </asp:Panel>
                         <asp:Panel ID="PanelMsgOkButtons" runat="server" CssClass="panel-body" HorizontalAlign="Center">
                             <asp:Button ID="ButtonMsgOk" runat="server" CssClass="btn" Text="Yes" meta:resourcekey="ButtonMsgOk" OnClick="ButtonMsgOk_OnClick" />
+                            <asp:Button ID="ButtonMsgYes" runat="server" CssClass="btn" Text="Yes" meta:resourcekey="ButtonMsgYes" OnClick="ButtonMsgYes_OnClick" />
+                            <asp:Button ID="ButtonMsgNo" runat="server" CssClass="btn" Text="No" meta:resourcekey="ButtonMsgNo" OnClick="ButtonMsgNo_OnClick" />
                         </asp:Panel>
                     </div>
                 </asp:Panel>
