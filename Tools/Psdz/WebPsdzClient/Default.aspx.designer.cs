@@ -222,67 +222,67 @@ namespace WebPsdzClient
         protected global::AjaxControlToolkit.ModalPopupExtender ModalPopupExtenderTalHint;
 
         /// <summary>
-        /// LinkButtonTailFail-Steuerelement.
+        /// LinkButtonMsgOk-Steuerelement.
         /// </summary>
         /// <remarks>
         /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton LinkButtonTailFail;
+        protected global::System.Web.UI.WebControls.LinkButton LinkButtonMsgOk;
 
         /// <summary>
-        /// PanelTailFail-Steuerelement.
+        /// PanelMsgOk-Steuerelement.
         /// </summary>
         /// <remarks>
         /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel PanelTailFail;
+        protected global::System.Web.UI.WebControls.Panel PanelMsgOk;
 
         /// <summary>
-        /// PanelTailFailText-Steuerelement.
+        /// PanelMsgOkText-Steuerelement.
         /// </summary>
         /// <remarks>
         /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel PanelTailFailText;
+        protected global::System.Web.UI.WebControls.Panel PanelMsgOkText;
 
         /// <summary>
-        /// LiteralTailFail-Steuerelement.
+        /// LiteralMsgOk-Steuerelement.
         /// </summary>
         /// <remarks>
         /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal LiteralTailFail;
+        protected global::System.Web.UI.WebControls.Literal LiteralMsgOk;
 
         /// <summary>
-        /// PanelTalFailButtons-Steuerelement.
+        /// PanelMsgOkButtons-Steuerelement.
         /// </summary>
         /// <remarks>
         /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel PanelTalFailButtons;
+        protected global::System.Web.UI.WebControls.Panel PanelMsgOkButtons;
 
         /// <summary>
-        /// ButtonTailFailOk-Steuerelement.
+        /// ButtonMsgOk-Steuerelement.
         /// </summary>
         /// <remarks>
         /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button ButtonTailFailOk;
+        protected global::System.Web.UI.WebControls.Button ButtonMsgOk;
 
         /// <summary>
-        /// ModalPopupExtenderTailFail-Steuerelement.
+        /// ModalPopupExtenderMsgOk-Steuerelement.
         /// </summary>
         /// <remarks>
         /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
-        protected global::AjaxControlToolkit.ModalPopupExtender ModalPopupExtenderTailFail;
+        protected global::AjaxControlToolkit.ModalPopupExtender ModalPopupExtenderMsgOk;
 
         /// <summary>
         /// UpdatePanelTimer-Steuerelement.

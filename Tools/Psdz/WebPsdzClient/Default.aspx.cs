@@ -62,10 +62,12 @@ namespace WebPsdzClient
 
             if (!sessionContainer.RefreshOptions)
             {
-                if (sessionContainer.ShowTalFailureInfo)
+                string messageText = sessionContainer.ShowMessageNoWait;
+                if (!string.IsNullOrEmpty(messageText))
                 {
-                    sessionContainer.ShowTalFailureInfo = false;
-                    ModalPopupExtenderTailFail.Show();
+                    sessionContainer.ShowMessageNoWait = null;
+                    LiteralMsgOk.Text = messageText;
+                    ModalPopupExtenderMsgOk.Show();
                 }
             }
 
@@ -236,11 +238,11 @@ namespace WebPsdzClient
             ModalPopupExtenderTalHint.Hide();
         }
 
-        protected void ButtonTailFailOk_OnClick(object sender, EventArgs e)
+        protected void ButtonMsgOk_OnClick(object sender, EventArgs e)
         {
-            log.InfoFormat("_Default ButtonTailFailOk_OnClick");
+            log.InfoFormat("_Default ButtonMsgOk_OnClick");
 
-            ModalPopupExtenderTailFail.Hide();
+            ModalPopupExtenderMsgOk.Hide();
         }
 
         protected void DropDownListOptionType_OnSelectedIndexChanged(object sender, EventArgs e)

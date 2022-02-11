@@ -201,21 +201,21 @@ namespace WebPsdzClient.App_Data
             }
         }
 
-        private bool _showTalFailureInfo;
-        public bool ShowTalFailureInfo
+        private string _showMessageNoWait;
+        public string ShowMessageNoWait
         {
             get
             {
                 lock (_lockObject)
                 {
-                    return _showTalFailureInfo;
+                    return _showMessageNoWait;
                 }
             }
             set
             {
                 lock (_lockObject)
                 {
-                    _showTalFailureInfo = value;
+                    _showMessageNoWait = value;
                 }
             }
         }
@@ -360,8 +360,9 @@ namespace WebPsdzClient.App_Data
             SessionId = sessionId;
             ProgrammingJobs = new ProgrammingJobs(dealerId);
             ProgrammingJobs.UpdateStatusEvent += UpdateStatus;
-            ProgrammingJobs.UpdateOptionsEvent += UpdateOptions;
             ProgrammingJobs.ProgressEvent += UpdateProgress;
+            ProgrammingJobs.UpdateOptionsEvent += UpdateOptions;
+            ProgrammingJobs.ShowMessageEvent += ShowMessageEvent;
             StatusText = string.Empty;
             ProgressText = string.Empty;
 
@@ -1767,6 +1768,16 @@ namespace WebPsdzClient.App_Data
             UpdateCurrentOptions();
         }
 
+        private bool ShowMessageEvent(CancellationTokenSource cts, string message, bool wait)
+        {
+            if (!wait)
+            {
+                ShowMessageNoWait = message;
+                UpdateDisplay();
+            }
+            return true;
+        }
+
         private void UpdateCurrentOptions()
         {
             try
@@ -1983,18 +1994,12 @@ namespace WebPsdzClient.App_Data
                 return;
             }
 
-            ShowTalFailureInfo = false;
             Cts = new CancellationTokenSource();
             VehicleFunctionsTask(operationType).ContinueWith(task =>
             {
                 if (!task.Result)
                 {
                     ReportError(string.Format(CultureInfo.InvariantCulture, "VehicleFunctions: {0} failed", operationType));
-                }
-
-                if (ProgrammingJobs.TalExecutionFailed && ProgrammingJobs.PsdzContext?.Tal != null)
-                {
-                    ShowTalFailureInfo = true;
                 }
 
                 TaskActive = false;

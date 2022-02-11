@@ -186,26 +186,6 @@ namespace PsdzClient.Programing
             }
         }
 
-        private bool _talExecutionFailed;
-        public bool TalExecutionFailed
-        {
-            get
-            {
-                lock (_cacheLock)
-                {
-                    return _talExecutionFailed;
-                }
-            }
-
-            private set
-            {
-                lock (_cacheLock)
-                {
-                    _talExecutionFailed = value;
-                }
-            }
-        }
-
         public ProgrammingJobs(string dealerId)
         {
             ClientContext = new ClientContext();
@@ -609,7 +589,6 @@ namespace PsdzClient.Programing
 
         public bool VehicleFunctions(CancellationTokenSource cts, OperationType operationType)
         {
-            TalExecutionFailed = false;
             log.InfoFormat(CultureInfo.InvariantCulture, "VehicleFunctions Start - Type: {0}", operationType);
             StringBuilder sbResult = new StringBuilder();
 
@@ -654,6 +633,7 @@ namespace PsdzClient.Programing
 
                 if (operationType == OperationType.ExecuteTal)
                 {
+                    bool talExecutionFailed = false;
                     if (PsdzContext.Tal == null)
                     {
                         sbResult.AppendLine(Strings.TalMissing);
@@ -801,7 +781,7 @@ namespace PsdzClient.Programing
                         if (backupTalResult.TalExecutionState != PsdzTalExecutionState.Finished &&
                             backupTalResult.TalExecutionState != PsdzTalExecutionState.FinishedWithWarnings)
                         {
-                            TalExecutionFailed = true;
+                            talExecutionFailed = true;
                             log.Info(backupTalResult.AsXml);
                             sbResult.AppendLine(Strings.TalExecuteError);
                             UpdateStatus(sbResult.ToString());
@@ -840,7 +820,7 @@ namespace PsdzClient.Programing
                         if (executeTalResult.TalExecutionState != PsdzTalExecutionState.Finished &&
                             executeTalResult.TalExecutionState != PsdzTalExecutionState.FinishedWithWarnings)
                         {
-                            TalExecutionFailed = true;
+                            talExecutionFailed = true;
                             log.Info(executeTalResult.AsXml);
                             sbResult.AppendLine(Strings.TalExecuteError);
                             UpdateStatus(sbResult.ToString());
@@ -870,7 +850,7 @@ namespace PsdzClient.Programing
                         }
                         catch (Exception ex)
                         {
-                            TalExecutionFailed = true;
+                            talExecutionFailed = true;
                             log.ErrorFormat(CultureInfo.InvariantCulture, "Tsl update failure: {0}", ex.Message);
                             sbResult.AppendLine(Strings.TslUpdateFailed);
                             UpdateStatus(sbResult.ToString());
@@ -886,7 +866,7 @@ namespace PsdzClient.Programing
                         }
                         catch (Exception ex)
                         {
-                            TalExecutionFailed = true;
+                            talExecutionFailed = true;
                             log.ErrorFormat(CultureInfo.InvariantCulture, "Write ILevel failure: {0}", ex.Message);
                             sbResult.AppendLine(Strings.ILevelUpdateFailed);
                             UpdateStatus(sbResult.ToString());
@@ -902,7 +882,7 @@ namespace PsdzClient.Programing
                         }
                         catch (Exception ex)
                         {
-                            TalExecutionFailed = true;
+                            talExecutionFailed = true;
                             log.ErrorFormat(CultureInfo.InvariantCulture, "Write ILevel backup failure: {0}", ex.Message);
                             sbResult.AppendLine(Strings.ILevelBackupFailed);
                             UpdateStatus(sbResult.ToString());
@@ -927,7 +907,7 @@ namespace PsdzClient.Programing
                         }
                         catch (Exception ex)
                         {
-                            TalExecutionFailed = true;
+                            talExecutionFailed = true;
                             log.ErrorFormat(CultureInfo.InvariantCulture, "FA write failure: {0}", ex.Message);
                             sbResult.AppendLine(Strings.FaWriteFailed);
                             UpdateStatus(sbResult.ToString());
@@ -943,14 +923,14 @@ namespace PsdzClient.Programing
                         }
                         catch (Exception ex)
                         {
-                            TalExecutionFailed = true;
+                            talExecutionFailed = true;
                             log.ErrorFormat(CultureInfo.InvariantCulture, "FA backup write failure: {0}", ex.Message);
                             sbResult.AppendLine(Strings.FaBackupWriteFailed);
                             UpdateStatus(sbResult.ToString());
                         }
                         cts?.Token.ThrowIfCancellationRequested();
 
-                        if (!TalExecutionFailed)
+                        if (!talExecutionFailed)
                         {
                             // finally reset TAL
                             PsdzContext.Tal = null;

@@ -47,18 +47,18 @@
                 <ajaxToolkit:ModalPopupExtender ID="ModalPopupExtenderTalHint" DropShadow="true" runat="server" TargetControlID="LinkButtonTalHint" PopupControlID="PanelTalHint">
                 </ajaxToolkit:ModalPopupExtender>
 
-                <asp:LinkButton ID="LinkButtonTailFail" runat="server"></asp:LinkButton>
-                <asp:Panel ID="PanelTailFail" runat="server" CssClass="modal-dialog" style="display:none;">
+                <asp:LinkButton ID="LinkButtonMsgOk" runat="server"></asp:LinkButton>
+                <asp:Panel ID="PanelMsgOk" runat="server" CssClass="modal-dialog" style="display:none;">
                     <div class="jumbotron">
-                        <asp:Panel ID="PanelTailFailText" runat="server" CssClass="panel-body" HorizontalAlign="Center">
-                            <asp:Literal ID="LiteralTailFail" runat="server" meta:resourcekey="LiteralTailFail"></asp:Literal>
+                        <asp:Panel ID="PanelMsgOkText" runat="server" CssClass="panel-body" HorizontalAlign="Center">
+                            <asp:Literal ID="LiteralMsgOk" runat="server"></asp:Literal>
                         </asp:Panel>
-                        <asp:Panel ID="PanelTalFailButtons" runat="server" CssClass="panel-body" HorizontalAlign="Center">
-                            <asp:Button ID="ButtonTailFailOk" runat="server" CssClass="btn" Text="Yes" meta:resourcekey="ButtonTailFailOk" OnClick="ButtonTailFailOk_OnClick" />
+                        <asp:Panel ID="PanelMsgOkButtons" runat="server" CssClass="panel-body" HorizontalAlign="Center">
+                            <asp:Button ID="ButtonMsgOk" runat="server" CssClass="btn" Text="Yes" meta:resourcekey="ButtonMsgOk" OnClick="ButtonMsgOk_OnClick" />
                         </asp:Panel>
                     </div>
                 </asp:Panel>
-                <ajaxToolkit:ModalPopupExtender ID="ModalPopupExtenderTailFail" DropShadow="true" runat="server" TargetControlID="LinkButtonTailFail" PopupControlID="PanelTailFail">
+                <ajaxToolkit:ModalPopupExtender ID="ModalPopupExtenderMsgOk" DropShadow="true" runat="server" TargetControlID="LinkButtonMsgOk" PopupControlID="PanelMsgOk">
                 </ajaxToolkit:ModalPopupExtender>
             </ContentTemplate>
         </asp:UpdatePanel>

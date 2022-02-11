@@ -153,16 +153,16 @@
   <data name="ButtonModifyFaResource.ToolTip" xml:space="preserve">
     <value />
   </data>
+  <data name="ButtonMsgOk.Text" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="ButtonMsgOk.ToolTip" xml:space="preserve">
+    <value />
+  </data>
   <data name="ButtonStopHostResource.Text" xml:space="preserve">
     <value>Host stoppen</value>
   </data>
   <data name="ButtonStopHostResource.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="ButtonTailFailOk.Text" xml:space="preserve">
-    <value>OK</value>
-  </data>
-  <data name="ButtonTailFailOk.ToolTip" xml:space="preserve">
     <value />
   </data>
   <data name="ButtonTalHintNo.Text" xml:space="preserve">
@@ -188,10 +188,6 @@
   </data>
   <data name="LabelLastUpdateResource.ToolTip" xml:space="preserve">
     <value />
-  </data>
-  <data name="LiteralTailFail.Text" xml:space="preserve">
-    <value>Die Ausführung der TAL ist fehlgeschlagen.&lt;br&gt;
-Sie können versuchen die TAL nochmals auszuführen, um die Fehler zu beheben.</value>
   </data>
   <data name="LiteralTalHint.Text" xml:space="preserve">
     <value>Stellen Sie sicher, dass die Zündung eingeschaltet und eine Ladegerät mit mindestens 60 A mit dem Fahrzeug verbunden ist.&lt;br&gt;
