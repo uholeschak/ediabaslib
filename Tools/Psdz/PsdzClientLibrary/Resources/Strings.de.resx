@@ -252,6 +252,10 @@
   <data name="TalExecuteWarning" xml:space="preserve">
     <value>TAL Ausführung mit Warnungen beendet.</value>
   </data>
+  <data name="TalExecutionFailMessage" xml:space="preserve">
+    <value>Die Ausführung der TAL ist fehlgeschlagen.
+Sie können versuchen die TAL nochmals auszuführen, um die Fehler zu beheben.</value>
+  </data>
   <data name="TalGenerationFailed" xml:space="preserve">
     <value>TAL Generierung fehlgeschlagen.</value>
   </data>

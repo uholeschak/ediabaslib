@@ -99,6 +99,9 @@ namespace PsdzClient.Programing
         public delegate void UpdateOptionsDelegate(Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>> optionsDict);
         public event UpdateOptionsDelegate UpdateOptionsEvent;
 
+        public delegate bool ShowMessageDelegate(CancellationTokenSource cts, string message, bool allowAbort = false);
+        public event ShowMessageDelegate ShowMessageEvent;
+
         public delegate void ServiceInitialized(ProgrammingService programmingService);
         public event ServiceInitialized ServiceInitializedEvent;
 
@@ -952,6 +955,17 @@ namespace PsdzClient.Programing
                             // finally reset TAL
                             PsdzContext.Tal = null;
                             UpdateOptions(null);
+                        }
+                        else
+                        {
+                            if (ShowMessageEvent != null)
+                            {
+                                if (!ShowMessageEvent.Invoke(cts, Strings.TalExecutionFailMessage))
+                                {
+                                    log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecutionFailMessage aborted");
+                                    return false;
+                                }
+                            }
                         }
                     }
                     finally
