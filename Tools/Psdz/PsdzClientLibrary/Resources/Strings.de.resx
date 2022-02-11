@@ -256,6 +256,11 @@
     <value>Die Ausführung der TAL ist fehlgeschlagen.
 Sie können versuchen die TAL nochmals auszuführen, um die Fehler zu beheben.</value>
   </data>
+  <data name="TalExecutionHint" xml:space="preserve">
+    <value>Stellen Sie sicher, dass die Zündung eingeschaltet und eine Ladegerät mit mindestens 60 A mit dem Fahrzeug verbunden ist.
+Schließen oder minimieren Sie diese Seite nicht, weil dies die Verbindung zum Fahrzeug unterbricht!
+Wollen Sie Fortfahren?</value>
+  </data>
   <data name="TalGenerationFailed" xml:space="preserve">
     <value>TAL Generierung fehlgeschlagen.</value>
   </data>

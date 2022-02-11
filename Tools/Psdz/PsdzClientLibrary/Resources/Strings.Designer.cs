@@ -476,6 +476,17 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Make sure that the ignition is switched on and a charger with at least 60A is connected to the vehicle.
+        ///Don&apos;t close or minimize this page, because this will interrupt vehicle communcation!
+        ///Do you want to continue? ähnelt.
+        /// </summary>
+        internal static string TalExecutionHint {
+            get {
+                return ResourceManager.GetString("TalExecutionHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die TAL generation failed. ähnelt.
         /// </summary>
         internal static string TalGenerationFailed {

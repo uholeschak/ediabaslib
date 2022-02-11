@@ -761,6 +761,15 @@ namespace PsdzClient.Programing
                             return false;
                         }
 
+                        if (ShowMessageEvent != null)
+                        {
+                            if (!ShowMessageEvent.Invoke(cts, Strings.TalExecutionHint, true))
+                            {
+                                log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecutionHint aborted");
+                                return false;
+                            }
+                        }
+
                         sbResult.AppendLine(Strings.ExecutingBackupTal);
                         UpdateStatus(sbResult.ToString());
                         log.InfoFormat(CultureInfo.InvariantCulture, "Executing backup TAL");

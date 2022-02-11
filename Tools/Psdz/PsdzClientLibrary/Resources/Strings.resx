@@ -256,6 +256,11 @@
     <value>TAL execution failed.
 You could try to execute the TAL again to fix the errors.</value>
   </data>
+  <data name="TalExecutionHint" xml:space="preserve">
+    <value>Make sure that the ignition is switched on and a charger with at least 60A is connected to the vehicle.
+Don't close or minimize this page, because this will interrupt vehicle communcation!
+Do you want to continue?</value>
+  </data>
   <data name="TalGenerationFailed" xml:space="preserve">
     <value>TAL generation failed.</value>
   </data>
