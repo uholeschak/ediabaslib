@@ -99,7 +99,7 @@ namespace PsdzClient.Programing
         public delegate void UpdateOptionsDelegate(Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>> optionsDict);
         public event UpdateOptionsDelegate UpdateOptionsEvent;
 
-        public delegate bool ShowMessageDelegate(CancellationTokenSource cts, string message, bool allowAbort = false);
+        public delegate bool ShowMessageDelegate(CancellationTokenSource cts, string message, bool wait = false);
         public event ShowMessageDelegate ShowMessageEvent;
 
         public delegate void ServiceInitialized(ProgrammingService programmingService);

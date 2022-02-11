@@ -95,6 +95,7 @@ namespace PsdzClient
             _programmingJobs.UpdateStatusEvent += UpdateStatus;
             _programmingJobs.ProgressEvent += UpdateProgress;
             _programmingJobs.UpdateOptionsEvent += UpdateOptions;
+            _programmingJobs.ShowMessageEvent += ShowMessageEvent;
             _programmingJobs.ServiceInitializedEvent += ServiceInitialized;
         }
 
@@ -324,6 +325,32 @@ namespace PsdzClient
             _optionsDict = optionsDict;
             _programmingJobs.SelectedOptions = new List<ProgrammingJobs.OptionsItem>();
             UpdateCurrentOptions();
+        }
+
+        private bool ShowMessageEvent(CancellationTokenSource cts, string message, bool wait)
+        {
+            if (wait)
+            {
+                bool invokeResult = (bool) Invoke(new Func<bool>(() =>
+                {
+                    DialogResult dialogResult = MessageBox.Show(this, message, Text, MessageBoxButtons.YesNo);
+                    if (dialogResult == DialogResult.Yes)
+                    {
+                        return true;
+                    }
+
+                    return false;
+                }));
+
+                return invokeResult;
+            }
+
+            BeginInvoke((Action)(() =>
+            {
+                MessageBox.Show(this, message, Text, MessageBoxButtons.OK);
+            }));
+
+            return true;
         }
 
         private void SelectOptions(PdszDatabase.SwiRegisterEnum? swiRegisterEnum)
