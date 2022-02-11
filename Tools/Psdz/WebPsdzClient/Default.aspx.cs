@@ -65,6 +65,7 @@ namespace WebPsdzClient
                 string messageText = sessionContainer.ShowMessageNoWait;
                 if (!string.IsNullOrEmpty(messageText))
                 {
+                    messageText = messageText.Replace("\r\n", "<br>");
                     sessionContainer.ShowMessageNoWait = null;
                     LiteralMsgOk.Text = messageText;
                     ModalPopupExtenderMsgOk.Show();
