@@ -150,121 +150,49 @@ namespace WebPsdzClient
         protected global::System.Web.UI.WebControls.TextBox TextBoxProgress;
 
         /// <summary>
-        /// LinkButtonTalHint-Steuerelement.
+        /// LinkButtonMsgModal-Steuerelement.
         /// </summary>
         /// <remarks>
         /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton LinkButtonTalHint;
+        protected global::System.Web.UI.WebControls.LinkButton LinkButtonMsgModal;
 
         /// <summary>
-        /// PanelTalHint-Steuerelement.
+        /// PanelMsgModal-Steuerelement.
         /// </summary>
         /// <remarks>
         /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel PanelTalHint;
+        protected global::System.Web.UI.WebControls.Panel PanelMsgModal;
 
         /// <summary>
-        /// PanelTalHintText-Steuerelement.
+        /// PanelMsgModalText-Steuerelement.
         /// </summary>
         /// <remarks>
         /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel PanelTalHintText;
+        protected global::System.Web.UI.WebControls.Panel PanelMsgModalText;
 
         /// <summary>
-        /// LiteralTalHint-Steuerelement.
+        /// LiteralMsgModal-Steuerelement.
         /// </summary>
         /// <remarks>
         /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal LiteralTalHint;
+        protected global::System.Web.UI.WebControls.Literal LiteralMsgModal;
 
         /// <summary>
-        /// PanelTalHintButtons-Steuerelement.
+        /// PanelMsgModalButtons-Steuerelement.
         /// </summary>
         /// <remarks>
         /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel PanelTalHintButtons;
-
-        /// <summary>
-        /// ButtonTalHintYes-Steuerelement.
-        /// </summary>
-        /// <remarks>
-        /// Automatisch generiertes Feld.
-        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button ButtonTalHintYes;
-
-        /// <summary>
-        /// ButtonTalHintNo-Steuerelement.
-        /// </summary>
-        /// <remarks>
-        /// Automatisch generiertes Feld.
-        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button ButtonTalHintNo;
-
-        /// <summary>
-        /// ModalPopupExtenderTalHint-Steuerelement.
-        /// </summary>
-        /// <remarks>
-        /// Automatisch generiertes Feld.
-        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
-        /// </remarks>
-        protected global::AjaxControlToolkit.ModalPopupExtender ModalPopupExtenderTalHint;
-
-        /// <summary>
-        /// LinkButtonMsgOk-Steuerelement.
-        /// </summary>
-        /// <remarks>
-        /// Automatisch generiertes Feld.
-        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton LinkButtonMsgOk;
-
-        /// <summary>
-        /// PanelMsgOk-Steuerelement.
-        /// </summary>
-        /// <remarks>
-        /// Automatisch generiertes Feld.
-        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel PanelMsgOk;
-
-        /// <summary>
-        /// PanelMsgOkText-Steuerelement.
-        /// </summary>
-        /// <remarks>
-        /// Automatisch generiertes Feld.
-        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel PanelMsgOkText;
-
-        /// <summary>
-        /// LiteralMsgOk-Steuerelement.
-        /// </summary>
-        /// <remarks>
-        /// Automatisch generiertes Feld.
-        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal LiteralMsgOk;
-
-        /// <summary>
-        /// PanelMsgOkButtons-Steuerelement.
-        /// </summary>
-        /// <remarks>
-        /// Automatisch generiertes Feld.
-        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel PanelMsgOkButtons;
+        protected global::System.Web.UI.WebControls.Panel PanelMsgModalButtons;
 
         /// <summary>
         /// ButtonMsgOk-Steuerelement.

@@ -32,35 +32,20 @@
                     <asp:TextBox ID="TextBoxProgress" runat="server" CssClass="text-left" ReadOnly="True" meta:resourcekey="TextBoxProgressResource"></asp:TextBox>
                 </asp:Panel>
 
-                <asp:LinkButton ID="LinkButtonTalHint" runat="server"></asp:LinkButton>
-                <asp:Panel ID="PanelTalHint" runat="server" CssClass="modal-dialog" style="display:none;">
+                <asp:LinkButton ID="LinkButtonMsgModal" runat="server"></asp:LinkButton>
+                <asp:Panel ID="PanelMsgModal" runat="server" CssClass="modal-dialog" style="display:none;">
                     <div class="jumbotron">
-                        <asp:Panel ID="PanelTalHintText" runat="server" CssClass="panel-body" HorizontalAlign="Center">
-                            <asp:Literal ID="LiteralTalHint" runat="server" meta:resourcekey="LiteralTalHint"></asp:Literal>
+                        <asp:Panel ID="PanelMsgModalText" runat="server" CssClass="panel-body" HorizontalAlign="Center">
+                            <asp:Literal ID="LiteralMsgModal" runat="server"></asp:Literal>
                         </asp:Panel>
-                        <asp:Panel ID="PanelTalHintButtons" runat="server" CssClass="panel-body" HorizontalAlign="Center">
-                            <asp:Button ID="ButtonTalHintYes" runat="server" CssClass="btn" Text="Yes" meta:resourcekey="ButtonTalHintYes" OnClick="ButtonTalHintYes_OnClick" />
-                            <asp:Button ID="ButtonTalHintNo" runat="server" CssClass="btn" Text="No" meta:resourcekey="ButtonTalHintNo" OnClick="ButtonTalHintNo_OnClick" />
-                        </asp:Panel>
-                    </div>
-                </asp:Panel>
-                <ajaxToolkit:ModalPopupExtender ID="ModalPopupExtenderTalHint" DropShadow="true" runat="server" TargetControlID="LinkButtonTalHint" PopupControlID="PanelTalHint">
-                </ajaxToolkit:ModalPopupExtender>
-
-                <asp:LinkButton ID="LinkButtonMsgOk" runat="server"></asp:LinkButton>
-                <asp:Panel ID="PanelMsgOk" runat="server" CssClass="modal-dialog" style="display:none;">
-                    <div class="jumbotron">
-                        <asp:Panel ID="PanelMsgOkText" runat="server" CssClass="panel-body" HorizontalAlign="Center">
-                            <asp:Literal ID="LiteralMsgOk" runat="server"></asp:Literal>
-                        </asp:Panel>
-                        <asp:Panel ID="PanelMsgOkButtons" runat="server" CssClass="panel-body" HorizontalAlign="Center">
+                        <asp:Panel ID="PanelMsgModalButtons" runat="server" CssClass="panel-body" HorizontalAlign="Center">
                             <asp:Button ID="ButtonMsgOk" runat="server" CssClass="btn" Text="Yes" meta:resourcekey="ButtonMsgOk" OnClick="ButtonMsgOk_OnClick" />
                             <asp:Button ID="ButtonMsgYes" runat="server" CssClass="btn" Text="Yes" meta:resourcekey="ButtonMsgYes" OnClick="ButtonMsgYes_OnClick" />
                             <asp:Button ID="ButtonMsgNo" runat="server" CssClass="btn" Text="No" meta:resourcekey="ButtonMsgNo" OnClick="ButtonMsgNo_OnClick" />
                         </asp:Panel>
                     </div>
                 </asp:Panel>
-                <ajaxToolkit:ModalPopupExtender ID="ModalPopupExtenderMsgOk" DropShadow="true" runat="server" TargetControlID="LinkButtonMsgOk" PopupControlID="PanelMsgOk">
+                <ajaxToolkit:ModalPopupExtender ID="ModalPopupExtenderMsgOk" DropShadow="true" runat="server" TargetControlID="LinkButtonMsgModal" PopupControlID="PanelMsgModal">
                 </ajaxToolkit:ModalPopupExtender>
             </ContentTemplate>
         </asp:UpdatePanel>

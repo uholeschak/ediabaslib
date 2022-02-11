@@ -201,11 +201,6 @@
   <data name="LabelLastUpdateResource.ToolTip" xml:space="preserve">
     <value />
   </data>
-  <data name="LiteralTalHint.Text" xml:space="preserve">
-    <value>Stellen Sie sicher, dass die Zündung eingeschaltet und eine Ladegerät mit mindestens 60 A mit dem Fahrzeug verbunden ist.&lt;br&gt;
-Schließen oder minimieren Sie diese Seite nicht, weil dies die Verbindung zum Fahrzeug unterbricht!&lt;br&gt;
-Wollen Sie Fortfahren?</value>
-  </data>
   <data name="PageResource.Title" xml:space="preserve">
     <value>BMW Kodieren</value>
   </data>

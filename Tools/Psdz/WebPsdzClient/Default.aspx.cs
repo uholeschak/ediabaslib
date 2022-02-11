@@ -62,15 +62,18 @@ namespace WebPsdzClient
 
             if (!sessionContainer.RefreshOptions)
             {
-                string messageText = sessionContainer.ShowMessageNoWait;
+                string messageText = sessionContainer.ShowMessageModal;
                 if (!string.IsNullOrEmpty(messageText))
                 {
+
                     messageText = messageText.Replace("\r\n", "<br>");
-                    sessionContainer.ShowMessageNoWait = null;
-                    LiteralMsgOk.Text = messageText;
-                    ButtonMsgOk.Visible = true;
-                    ButtonMsgYes.Visible = false;
-                    ButtonMsgNo.Visible = false;
+                    bool messageWait = sessionContainer.ShowMessageModalWait;
+                    sessionContainer.ShowMessageModal = null;
+
+                    LiteralMsgModal.Text = messageText;
+                    ButtonMsgOk.Visible = !messageWait;
+                    ButtonMsgYes.Visible = messageWait;
+                    ButtonMsgNo.Visible = messageWait;
                     ModalPopupExtenderMsgOk.Show();
                 }
             }
@@ -196,7 +199,12 @@ namespace WebPsdzClient
                 return;
             }
 
-            ModalPopupExtenderTalHint.Show();
+            if (sessionContainer.TaskActive)
+            {
+                return;
+            }
+
+            sessionContainer.VehicleFunctions(ProgrammingJobs.OperationType.ExecuteTal);
         }
 
         protected void ButtonAbort_OnClick(object sender, EventArgs e)
@@ -215,9 +223,11 @@ namespace WebPsdzClient
             sessionContainer.Cancel();
         }
 
-        protected void ButtonTalHintYes_OnClick(object sender, EventArgs e)
+        protected void ButtonMsgOk_OnClick(object sender, EventArgs e)
         {
-            log.InfoFormat("_Default ButtonTalHintYes_OnClick");
+            log.InfoFormat("_Default ButtonMsgOk_OnClick");
+
+            ModalPopupExtenderMsgOk.Hide();
 
             SessionContainer sessionContainer = GetSessionContainer();
             if (sessionContainer == null)
@@ -225,28 +235,8 @@ namespace WebPsdzClient
                 return;
             }
 
-            ModalPopupExtenderTalHint.Hide();
-
-            if (sessionContainer.TaskActive)
-            {
-                return;
-            }
-
-            sessionContainer.VehicleFunctions(ProgrammingJobs.OperationType.ExecuteTal);
-        }
-
-        protected void ButtonTalHintNo_OnClick(object sender, EventArgs e)
-        {
-            log.InfoFormat("_Default ButtonTalHintNo_OnClick");
-
-            ModalPopupExtenderTalHint.Hide();
-        }
-
-        protected void ButtonMsgOk_OnClick(object sender, EventArgs e)
-        {
-            log.InfoFormat("_Default ButtonMsgOk_OnClick");
-
-            ModalPopupExtenderMsgOk.Hide();
+            sessionContainer.ShowMessageModalResult = true;
+            sessionContainer.MessageWaitEvent.Set();
         }
 
         protected void ButtonMsgYes_OnClick(object sender, EventArgs e)
@@ -254,6 +244,15 @@ namespace WebPsdzClient
             log.InfoFormat("_Default ButtonMsgYes_OnClick");
 
             ModalPopupExtenderMsgOk.Hide();
+
+            SessionContainer sessionContainer = GetSessionContainer();
+            if (sessionContainer == null)
+            {
+                return;
+            }
+
+            sessionContainer.ShowMessageModalResult = true;
+            sessionContainer.MessageWaitEvent.Set();
         }
 
         protected void ButtonMsgNo_OnClick(object sender, EventArgs e)
@@ -261,6 +260,15 @@ namespace WebPsdzClient
             log.InfoFormat("_Default ButtonMsgNo_OnClick");
 
             ModalPopupExtenderMsgOk.Hide();
+
+            SessionContainer sessionContainer = GetSessionContainer();
+            if (sessionContainer == null)
+            {
+                return;
+            }
+
+            sessionContainer.ShowMessageModalResult = false;
+            sessionContainer.MessageWaitEvent.Set();
         }
 
         protected void DropDownListOptionType_OnSelectedIndexChanged(object sender, EventArgs e)

@@ -71,6 +71,7 @@ namespace WebPsdzClient.App_Data
         public string SessionId { get; }
         public ProgrammingJobs ProgrammingJobs { get; private set; }
         public bool RefreshOptions { get; set; }
+        public AutoResetEvent MessageWaitEvent { get; private set; } = new AutoResetEvent(false);
 
         private bool _taskActive;
         public bool TaskActive
@@ -201,21 +202,59 @@ namespace WebPsdzClient.App_Data
             }
         }
 
-        private string _showMessageNoWait;
-        public string ShowMessageNoWait
+        private string _showMessageModal;
+        public string ShowMessageModal
         {
             get
             {
                 lock (_lockObject)
                 {
-                    return _showMessageNoWait;
+                    return _showMessageModal;
                 }
             }
             set
             {
                 lock (_lockObject)
                 {
-                    _showMessageNoWait = value;
+                    _showMessageModal = value;
+                }
+            }
+        }
+
+        private bool _showMessageModalWait;
+        public bool ShowMessageModalWait
+        {
+            get
+            {
+                lock (_lockObject)
+                {
+                    return _showMessageModalWait;
+                }
+            }
+            set
+            {
+                lock (_lockObject)
+                {
+                    _showMessageModalWait = value;
+                }
+            }
+        }
+
+        private bool _showMessageModalResult;
+        public bool ShowMessageModalResult
+        {
+            get
+            {
+                lock (_lockObject)
+                {
+                    return _showMessageModalResult;
+                }
+            }
+            set
+            {
+                lock (_lockObject)
+                {
+                    _showMessageModalResult = value;
                 }
             }
         }
@@ -1770,12 +1809,24 @@ namespace WebPsdzClient.App_Data
 
         private bool ShowMessageEvent(CancellationTokenSource cts, string message, bool wait)
         {
-            if (!wait)
+            log.InfoFormat("ShowMessageEvent Wait={0}, Message='{1}'", wait, message);
+
+            ShowMessageModalResult = true;
+            ShowMessageModalWait = wait;
+            ShowMessageModal = message;
+            UpdateDisplay();
+
+            if (!wait || cts == null)
             {
-                ShowMessageNoWait = message;
-                UpdateDisplay();
+                return true;
             }
-            return true;
+
+            WaitHandle.WaitAny(new WaitHandle[]
+            {
+                MessageWaitEvent, cts.Token.WaitHandle
+            });
+
+            return ShowMessageModalResult;
         }
 
         private void UpdateCurrentOptions()
