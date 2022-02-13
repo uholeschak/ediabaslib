@@ -771,6 +771,41 @@ namespace PsdzClient.Programing
                             }
                         }
 
+#if false
+                        for (int i = 0; i < 0xFF; i++)
+                        {
+                            bool invalidSeed = false;
+                            try
+                            {
+                                log.InfoFormat(CultureInfo.InvariantCulture, "Updating TSL");
+                                ProgrammingService.Psdz.ProgrammingService.TslUpdate(PsdzContext.Connection, true, PsdzContext.SvtActual, PsdzContext.Sollverbauung.Svt);
+                                sbResult.AppendLine(Strings.TslUpdated);
+                                UpdateStatus(sbResult.ToString());
+                            }
+                            catch (Exception ex)
+                            {
+                                log.ErrorFormat(CultureInfo.InvariantCulture, "Tsl update failure: {0}", ex.Message);
+                                sbResult.AppendLine(Strings.TslUpdateFailed);
+                                UpdateStatus(sbResult.ToString());
+
+                                if (ex.Message.Contains("Invalid parameter SEED"))
+                                {
+                                    log.ErrorFormat(CultureInfo.InvariantCulture, "Invalid seed detected: Count={0}", i);
+                                    invalidSeed = true;
+                                }
+                            }
+                            cts?.Token.ThrowIfCancellationRequested();
+
+                            if (!invalidSeed)
+                            {
+                                log.InfoFormat(CultureInfo.InvariantCulture, "Seed Ok!: Count={0}", i);
+                                sbResult.AppendLine("Seed Ok!");
+                                UpdateStatus(sbResult.ToString());
+                                return true;
+                            }
+                        }
+#endif
+
                         sbResult.AppendLine(Strings.ExecutingBackupTal);
                         UpdateStatus(sbResult.ToString());
                         log.InfoFormat(CultureInfo.InvariantCulture, "Executing backup TAL");
