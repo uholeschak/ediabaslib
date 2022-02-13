@@ -634,6 +634,7 @@ namespace PsdzClient.Programing
                 if (operationType == OperationType.ExecuteTal)
                 {
                     bool talExecutionFailed = false;
+                    bool talExecutionWarning = false;
                     if (PsdzContext.Tal == null)
                     {
                         sbResult.AppendLine(Strings.TalMissing);
@@ -799,6 +800,7 @@ namespace PsdzClient.Programing
                         {
                             if (backupTalResult.TalExecutionState != PsdzTalExecutionState.Finished)
                             {
+                                talExecutionWarning = true;
                                 log.Info(backupTalResult.AsXml);
                                 sbResult.AppendLine(Strings.TalExecuteWarning);
                             }
@@ -810,6 +812,18 @@ namespace PsdzClient.Programing
                             UpdateStatus(sbResult.ToString());
                         }
                         cts?.Token.ThrowIfCancellationRequested();
+
+                        if (talExecutionFailed || talExecutionWarning)
+                        {
+                            if (ShowMessageEvent != null)
+                            {
+                                if (!ShowMessageEvent.Invoke(cts, Strings.TalExecuteContinue, true))
+                                {
+                                    log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecuteContinue aborted");
+                                    return false;
+                                }
+                            }
+                        }
 
                         sbResult.AppendLine(Strings.ExecutingTal);
                         UpdateStatus(sbResult.ToString());

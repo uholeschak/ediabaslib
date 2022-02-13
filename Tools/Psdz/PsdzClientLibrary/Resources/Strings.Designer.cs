@@ -439,6 +439,16 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Problems have occured in the preparation phase.
+        ///Do you still wan to continue with TAL execution? ähnelt.
+        /// </summary>
+        internal static string TalExecuteContinue {
+            get {
+                return ResourceManager.GetString("TalExecuteContinue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die TAL execution finished with errors. ähnelt.
         /// </summary>
         internal static string TalExecuteError {
