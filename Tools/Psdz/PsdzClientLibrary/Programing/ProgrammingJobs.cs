@@ -1557,6 +1557,7 @@ namespace PsdzClient.Programing
                 sbResult.AppendLine(Strings.TalBackupGenerating);
                 UpdateStatus(sbResult.ToString());
                 log.InfoFormat(CultureInfo.InvariantCulture, "Generating backup TAL");
+                PsdzContext.CleanupBackupData();
                 IPsdzTal psdzBackupTal = ProgrammingService.Psdz.IndividualDataRestoreService.GenerateBackupTal(PsdzContext.Connection, PsdzContext.PathToBackupData, PsdzContext.Tal, PsdzContext.TalFilter);
                 if (psdzBackupTal == null)
                 {
