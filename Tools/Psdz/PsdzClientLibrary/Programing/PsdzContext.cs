@@ -243,6 +243,35 @@ namespace PsdzClient.Programming
 			}
 		}
 
+        public bool RemoveBackupData()
+        {
+            if (!string.IsNullOrEmpty(this.PathToBackupData) && this.hasVinBackupDataFolder)
+            {
+                try
+                {
+                    DirectoryInfo directoryInfo = new DirectoryInfo(this.PathToBackupData);
+                    if (directoryInfo.Exists)
+                    {
+                        foreach (FileInfo file in directoryInfo.GetFiles())
+                        {
+                            file.Delete();
+                        }
+
+                        foreach (DirectoryInfo dir in directoryInfo.GetDirectories())
+                        {
+                            dir.Delete();
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+        
         public void SetFaActual(IPsdzFa fa)
 		{
 			this.FaActual = fa;
