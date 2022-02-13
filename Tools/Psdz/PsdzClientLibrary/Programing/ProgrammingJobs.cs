@@ -872,6 +872,16 @@ namespace PsdzClient.Programing
 
                         if (!backupFailed)
                         {
+                            IPsdzTal psdzRestoreTal = ProgrammingService.Psdz.IndividualDataRestoreService.GenerateRestoreTal(PsdzContext.Connection, PsdzContext.PathToBackupData, PsdzContext.Tal, PsdzContext.TalFilter);
+                            if (psdzRestoreTal == null)
+                            {
+                                sbResult.AppendLine(Strings.TalGenerationFailed);
+                                UpdateStatus(sbResult.ToString());
+                                return false;
+                            }
+
+                            PsdzContext.IndividualDataRestoreTal = psdzRestoreTal;
+
                             sbResult.AppendLine(Strings.ExecutingRestoreTal);
                             UpdateStatus(sbResult.ToString());
                             log.InfoFormat(CultureInfo.InvariantCulture, "Executing restore TAL");
