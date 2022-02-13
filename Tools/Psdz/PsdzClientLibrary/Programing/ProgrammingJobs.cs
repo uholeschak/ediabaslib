@@ -814,6 +814,14 @@ namespace PsdzClient.Programing
 
                         IPsdzTal backupTalResult = ProgrammingService.Psdz.IndividualDataRestoreService.ExecuteAsyncBackupTal(
                             PsdzContext.Connection, PsdzContext.IndividualDataBackupTal, null, PsdzContext.FaTarget, psdzVin, talExecutionSettings, PsdzContext.PathToBackupData);
+                        if (backupTalResult == null)
+                        {
+                            log.ErrorFormat("Execute backup TAL failed");
+                            sbResult.AppendLine(Strings.TalExecuteError);
+                            UpdateStatus(sbResult.ToString());
+                            return false;
+                        }
+
                         log.Info("Backup Tal result:");
                         log.InfoFormat(CultureInfo.InvariantCulture, " Size: {0}", backupTalResult.AsXml.Length);
                         log.InfoFormat(CultureInfo.InvariantCulture, " State: {0}", backupTalResult.TalExecutionState);
@@ -827,7 +835,7 @@ namespace PsdzClient.Programing
                             backupTalResult.TalExecutionState != PsdzTalExecutionState.FinishedWithWarnings)
                         {
                             talExecutionFailed = true;
-                            log.Info(backupTalResult.AsXml);
+                            log.Error(backupTalResult.AsXml);
                             sbResult.AppendLine(Strings.TalExecuteError);
                             UpdateStatus(sbResult.ToString());
                         }
@@ -879,7 +887,7 @@ namespace PsdzClient.Programing
                             executeTalResult.TalExecutionState != PsdzTalExecutionState.FinishedWithWarnings)
                         {
                             talExecutionFailed = true;
-                            log.Info(executeTalResult.AsXml);
+                            log.Error(executeTalResult.AsXml);
                             sbResult.AppendLine(Strings.TalExecuteError);
                             UpdateStatus(sbResult.ToString());
                         }
