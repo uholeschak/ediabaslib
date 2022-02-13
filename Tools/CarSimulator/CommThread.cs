@@ -5193,12 +5193,11 @@ namespace CarSimulator
                                 }
                                 else
                                 {
-                                    Debug.WriteLine("Request seed 24 SubFunc: {0:X02}", subFunction);
-                                    byte[] dummyResponse = { 0x9A, _receiveData[2], _receiveData[1], 0x67, _receiveData[4 + offset],
+                                    Debug.WriteLine("Request seed 20 SubFunc: {0:X02}", subFunction);
+                                    byte[] dummyResponse = { 0x96, _receiveData[2], _receiveData[1], 0x67, _receiveData[4 + offset],
                                         0x12, 0x34, 0x56, 0x78, 0x12, 0x34, 0x56, 0x78,
                                         0x12, 0x34, 0x56, 0x78, 0x12, 0x34, 0x56, 0x78,
-                                        0x12, 0x34, 0x56, 0x78, 0x12, 0x34, 0x56, 0x78,
-                                        0x00 };   // send seed
+                                        0x12, 0x34, 0x56, 0x78, 0x00 };   // send seed
                                     ObdSend(dummyResponse, bmwTcpClientData);
                                 }
                             }
