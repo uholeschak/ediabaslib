@@ -1826,6 +1826,11 @@ namespace WebPsdzClient.App_Data
                 MessageWaitEvent, cts.Token.WaitHandle
             });
 
+            if (cts.IsCancellationRequested)
+            {
+                return false;
+            }
+
             return ShowMessageModalResult;
         }
 
