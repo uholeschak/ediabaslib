@@ -886,7 +886,7 @@ namespace PsdzClient.Programing
                                 return false;
                             }
 
-                            log.Info("Backup Tal result:");
+                            log.Info("Restore Tal result:");
                             log.InfoFormat(CultureInfo.InvariantCulture, " Size: {0}", restoreTalResult.AsXml.Length);
                             log.InfoFormat(CultureInfo.InvariantCulture, " State: {0}", restoreTalResult.TalExecutionState);
                             log.InfoFormat(CultureInfo.InvariantCulture, " Ecus: {0}", restoreTalResult.AffectedEcus.Count());
