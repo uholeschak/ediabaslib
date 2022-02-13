@@ -870,67 +870,6 @@ namespace PsdzClient.Programing
                             }
                         }
 
-                        if (!backupFailed)
-                        {
-                            IPsdzTal psdzRestoreTal = ProgrammingService.Psdz.IndividualDataRestoreService.GenerateRestoreTal(PsdzContext.Connection, PsdzContext.PathToBackupData, PsdzContext.Tal, PsdzContext.TalFilter);
-                            if (psdzRestoreTal == null)
-                            {
-                                sbResult.AppendLine(Strings.TalGenerationFailed);
-                                UpdateStatus(sbResult.ToString());
-                                return false;
-                            }
-
-                            PsdzContext.IndividualDataRestoreTal = psdzRestoreTal;
-
-                            sbResult.AppendLine(Strings.ExecutingRestoreTal);
-                            UpdateStatus(sbResult.ToString());
-                            log.InfoFormat(CultureInfo.InvariantCulture, "Executing restore TAL");
-
-                            IPsdzTal restoreTalResult = ProgrammingService.Psdz.IndividualDataRestoreService.ExecuteAsyncRestoreTal(
-                                PsdzContext.Connection, PsdzContext.IndividualDataRestoreTal, null, PsdzContext.FaTarget, psdzVin, talExecutionSettings);
-                            if (restoreTalResult == null)
-                            {
-                                log.ErrorFormat("Execute restore TAL failed");
-                                sbResult.AppendLine(Strings.TalExecuteError);
-                                UpdateStatus(sbResult.ToString());
-                                return false;
-                            }
-
-                            log.Info("Restore Tal result:");
-                            log.InfoFormat(CultureInfo.InvariantCulture, " Size: {0}", restoreTalResult.AsXml.Length);
-                            log.InfoFormat(CultureInfo.InvariantCulture, " State: {0}", restoreTalResult.TalExecutionState);
-                            log.InfoFormat(CultureInfo.InvariantCulture, " Ecus: {0}", restoreTalResult.AffectedEcus.Count());
-                            foreach (IPsdzEcuIdentifier ecuIdentifier in restoreTalResult.AffectedEcus)
-                            {
-                                log.InfoFormat(CultureInfo.InvariantCulture, "  Affected Ecu: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
-                                    ecuIdentifier.BaseVariant, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset);
-                            }
-
-                            if (restoreTalResult.TalExecutionState != PsdzTalExecutionState.Finished &&
-                                restoreTalResult.TalExecutionState != PsdzTalExecutionState.FinishedWithWarnings)
-                            {
-                                talExecutionFailed = true;
-                                log.Error(restoreTalResult.AsXml);
-                                sbResult.AppendLine(Strings.TalExecuteError);
-                                UpdateStatus(sbResult.ToString());
-                            }
-                            else
-                            {
-                                if (restoreTalResult.TalExecutionState != PsdzTalExecutionState.Finished)
-                                {
-                                    log.Info(restoreTalResult.AsXml);
-                                    sbResult.AppendLine(Strings.TalExecuteWarning);
-                                }
-                                else
-                                {
-                                    sbResult.AppendLine(Strings.TalExecuteOk);
-                                }
-
-                                UpdateStatus(sbResult.ToString());
-                            }
-                            cts?.Token.ThrowIfCancellationRequested();
-                        }
-
                         sbResult.AppendLine(Strings.ExecutingTal);
                         UpdateStatus(sbResult.ToString());
                         //CacheResponseAllow = false;
@@ -969,6 +908,68 @@ namespace PsdzClient.Programing
                             UpdateStatus(sbResult.ToString());
                         }
                         cts?.Token.ThrowIfCancellationRequested();
+
+                        if (!backupFailed)
+                        {
+                            IPsdzTal psdzRestoreTal = ProgrammingService.Psdz.IndividualDataRestoreService.GenerateRestoreTal(PsdzContext.Connection, PsdzContext.PathToBackupData, PsdzContext.Tal, PsdzContext.TalFilter);
+                            if (psdzRestoreTal == null)
+                            {
+                                sbResult.AppendLine(Strings.TalGenerationFailed);
+                                UpdateStatus(sbResult.ToString());
+                            }
+                            else
+                            {
+                                PsdzContext.IndividualDataRestoreTal = psdzRestoreTal;
+
+                                sbResult.AppendLine(Strings.ExecutingRestoreTal);
+                                UpdateStatus(sbResult.ToString());
+                                log.InfoFormat(CultureInfo.InvariantCulture, "Executing restore TAL");
+
+                                IPsdzTal restoreTalResult = ProgrammingService.Psdz.IndividualDataRestoreService.ExecuteAsyncRestoreTal(
+                                    PsdzContext.Connection, PsdzContext.IndividualDataRestoreTal, null, PsdzContext.FaTarget, psdzVin, talExecutionSettings);
+                                if (restoreTalResult == null)
+                                {
+                                    log.ErrorFormat("Execute restore TAL failed");
+                                    sbResult.AppendLine(Strings.TalExecuteError);
+                                    UpdateStatus(sbResult.ToString());
+                                    return false;
+                                }
+
+                                log.Info("Restore Tal result:");
+                                log.InfoFormat(CultureInfo.InvariantCulture, " Size: {0}", restoreTalResult.AsXml.Length);
+                                log.InfoFormat(CultureInfo.InvariantCulture, " State: {0}", restoreTalResult.TalExecutionState);
+                                log.InfoFormat(CultureInfo.InvariantCulture, " Ecus: {0}", restoreTalResult.AffectedEcus.Count());
+                                foreach (IPsdzEcuIdentifier ecuIdentifier in restoreTalResult.AffectedEcus)
+                                {
+                                    log.InfoFormat(CultureInfo.InvariantCulture, "  Affected Ecu: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
+                                        ecuIdentifier.BaseVariant, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset);
+                                }
+
+                                if (restoreTalResult.TalExecutionState != PsdzTalExecutionState.Finished &&
+                                    restoreTalResult.TalExecutionState != PsdzTalExecutionState.FinishedWithWarnings)
+                                {
+                                    talExecutionFailed = true;
+                                    log.Error(restoreTalResult.AsXml);
+                                    sbResult.AppendLine(Strings.TalExecuteError);
+                                    UpdateStatus(sbResult.ToString());
+                                }
+                                else
+                                {
+                                    if (restoreTalResult.TalExecutionState != PsdzTalExecutionState.Finished)
+                                    {
+                                        log.Info(restoreTalResult.AsXml);
+                                        sbResult.AppendLine(Strings.TalExecuteWarning);
+                                    }
+                                    else
+                                    {
+                                        sbResult.AppendLine(Strings.TalExecuteOk);
+                                    }
+
+                                    UpdateStatus(sbResult.ToString());
+                                }
+                                cts?.Token.ThrowIfCancellationRequested();
+                            }
+                        }
 
                         try
                         {
