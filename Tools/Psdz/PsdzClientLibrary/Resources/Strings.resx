@@ -135,6 +135,9 @@
   <data name="ExecutingBackupTal" xml:space="preserve">
     <value>Executing backup TAL ...</value>
   </data>
+  <data name="ExecutingRestoreTal" xml:space="preserve">
+    <value>Executing restore TAL ...</value>
+  </data>
   <data name="ExecutingTal" xml:space="preserve">
     <value>Executing TAL ...</value>
   </data>

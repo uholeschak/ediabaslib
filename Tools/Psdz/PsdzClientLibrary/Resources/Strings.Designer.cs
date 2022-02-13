@@ -115,6 +115,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Executing restore TAL ... ähnelt.
+        /// </summary>
+        internal static string ExecutingRestoreTal {
+            get {
+                return ResourceManager.GetString("ExecutingRestoreTal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Executing TAL ... ähnelt.
         /// </summary>
         internal static string ExecutingTal {
