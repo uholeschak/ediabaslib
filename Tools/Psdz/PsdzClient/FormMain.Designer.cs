@@ -257,7 +257,7 @@ namespace PsdzClient
             this.buttonCreateOptions.Name = "buttonCreateOptions";
             this.buttonCreateOptions.Size = new System.Drawing.Size(75, 23);
             this.buttonCreateOptions.TabIndex = 15;
-            this.buttonCreateOptions.Text = "List Options";
+            this.buttonCreateOptions.Text = "Create Opt.";
             this.buttonCreateOptions.UseVisualStyleBackColor = true;
             this.buttonCreateOptions.Click += new System.EventHandler(this.buttonFunc_Click);
             // 
