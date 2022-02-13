@@ -234,14 +234,15 @@ namespace PsdzClient.Programming
             return true;
         }
 
-		public void CleanupBackupData()
-		{
-			if (!string.IsNullOrEmpty(this.PathToBackupData) && this.hasVinBackupDataFolder && !Directory.EnumerateFileSystemEntries(this.PathToBackupData).Any<string>())
-			{
-				Directory.Delete(this.PathToBackupData);
-				this.hasVinBackupDataFolder = false;
-			}
-		}
+        public void CleanupBackupData()
+        {
+            if (!string.IsNullOrEmpty(this.PathToBackupData) && this.hasVinBackupDataFolder &&
+                Directory.Exists(this.PathToBackupData) && !Directory.EnumerateFileSystemEntries(this.PathToBackupData).Any<string>())
+            {
+                Directory.Delete(this.PathToBackupData);
+                this.hasVinBackupDataFolder = false;
+            }
+        }
 
         public bool RemoveBackupData()
         {
