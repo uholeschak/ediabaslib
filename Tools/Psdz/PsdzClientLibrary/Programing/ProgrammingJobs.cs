@@ -560,6 +560,7 @@ namespace PsdzClient.Programing
 
                 ProgrammingService.RemoveListener();
                 ProgrammingService.Psdz.ConnectionManagerService.CloseConnection(PsdzContext.Connection);
+                PsdzContext?.CleanupBackupData();
 
                 ClearProgrammingObjects();
                 sbResult.AppendLine(Strings.VehicleDisconnected);

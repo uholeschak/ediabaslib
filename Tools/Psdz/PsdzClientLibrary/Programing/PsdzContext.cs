@@ -482,7 +482,6 @@ namespace PsdzClient.Programming
             // Check to see if Dispose has already been called.
             if (!_disposed)
             {
-                CleanupBackupData();
                 if (DetectVehicle != null)
                 {
                     DetectVehicle.Dispose();
