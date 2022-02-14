@@ -1120,7 +1120,6 @@ namespace PsdzClient.Programing
                     log.Info(PsdzContext.TalFilter.AsXml);
                 }
 
-                PsdzContext.CleanupBackupData();
                 IPsdzIstufenTriple iStufenTriple = ProgrammingService.Psdz.VcmService.GetIStufenTripleActual(PsdzContext.Connection);
                 if (iStufenTriple == null)
                 {
@@ -1140,6 +1139,7 @@ namespace PsdzClient.Programing
                     return false;
                 }
 
+                PsdzContext.RemoveBackupData();
                 IPsdzStandardFa standardFa = ProgrammingService.Psdz.VcmService.GetStandardFaActual(PsdzContext.Connection);
                 if (standardFa == null)
                 {
@@ -1557,7 +1557,6 @@ namespace PsdzClient.Programing
                 sbResult.AppendLine(Strings.TalBackupGenerating);
                 UpdateStatus(sbResult.ToString());
                 log.InfoFormat(CultureInfo.InvariantCulture, "Generating backup TAL");
-                PsdzContext.RemoveBackupData();
                 IPsdzTal psdzBackupTal = ProgrammingService.Psdz.IndividualDataRestoreService.GenerateBackupTal(PsdzContext.Connection, PsdzContext.PathToBackupData, PsdzContext.Tal, PsdzContext.TalFilter);
                 if (psdzBackupTal == null)
                 {
