@@ -5416,8 +5416,8 @@ namespace CarSimulator
                         _sendData[4] = 0x40;    // 4 bytes block length
                         _sendData[5] = 0x00;
                         _sendData[6] = 0x00;
-                        _sendData[7] = 0x0F;
-                        _sendData[8] = 0x58;    // length 0x0F58
+                        _sendData[7] = 0x00;
+                        _sendData[8] = 0x30;    // length 0x0030
 
                         ObdSend(_sendData, bmwTcpClientData);
                         found = true;
