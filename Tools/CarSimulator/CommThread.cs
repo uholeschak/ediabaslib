@@ -5349,6 +5349,21 @@ namespace CarSimulator
                             found = true;
                         }
 
+                        if (!found && _receiveData[4] == 0x01 && _receiveData[5] == 0x70 && _receiveData[6] == 0x00)
+                        {
+                            Debug.WriteLine("RC_PAD processingApplicationData");
+                            _sendData[0] = 0x85;
+                            _sendData[1] = 0xF1;
+                            _sendData[2] = _receiveData[1];
+                            _sendData[3] = 0x71;
+                            _sendData[4] = _receiveData[4];
+                            _sendData[5] = _receiveData[5];
+                            _sendData[6] = _receiveData[6];
+                            _sendData[7] = 0x01;
+
+                            found = true;
+                        }
+
                         if (!found && _receiveData[4] == 0x01 && _receiveData[5] == 0x02 && _receiveData[6] == 0x33)
                         {
                             Debug.WriteLine("RC_GET_PARAM_N11_CSM");
