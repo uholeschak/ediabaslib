@@ -465,19 +465,8 @@ namespace WebPsdzClient
                 DropDownListOptionType.Enabled = !active && hostRunning && vehicleConnected;
                 CheckBoxListOptions.Enabled = !active && hostRunning && vehicleConnected;
 
-                string statusText = sessionContainer.StatusText;
-                if (!string.IsNullOrEmpty(statusText) && string.Compare(statusText, SessionContainer.ResourceVinActive, StringComparison.OrdinalIgnoreCase) == 0)
-                {
-                    statusText = GetGlobalResourceObject("Global", "VinInstanceActive") as string ?? string.Empty;
-                }
-                TextBoxStatus.Text = statusText;
-
-                string progressText = sessionContainer.ProgressText;
-                if (!string.IsNullOrEmpty(progressText) && string.Compare(progressText, SessionContainer.ResourceProcessing, StringComparison.OrdinalIgnoreCase) == 0)
-                {
-                    progressText = GetGlobalResourceObject("Global", "Processing") as string ?? string.Empty;
-                }
-                TextBoxProgress.Text = progressText;
+                TextBoxStatus.Text = sessionContainer.StatusText;
+                TextBoxProgress.Text = sessionContainer.ProgressText;
 
                 if (updatePanel)
                 {

@@ -226,7 +226,7 @@ namespace PsdzClient.Programing
                             else
                             {
                                 int progress = (int)(programmingEventArgs.Progress * 100.0);
-                                string message = string.Format(CultureInfo.InvariantCulture, "{0}%, {1}s", progress, programmingEventArgs.TimeLeftSec);
+                                string message = string.Format(CultureInfo.InvariantCulture, "{0}%, {1:0}s", progress, programmingEventArgs.TimeLeftSec);
                                 ProgressEvent?.Invoke(progress, false, message);
                             }
                         }

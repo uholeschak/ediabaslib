@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using EdiabasLib;
 using log4net;
 using Microsoft.AspNet.SignalR;
@@ -405,9 +406,6 @@ namespace WebPsdzClient.App_Data
         private const int TcpTesterAddr = 0xF4;
         private const int VehicleReceiveTimeout = 20000;
         private const int ThreadFinishTimeout = VehicleReceiveTimeout + 5000;
-
-        public const string ResourceProcessing = "[Processing]";
-        public const string ResourceVinActive = "[VinActive]";
 
         public SessionContainer(string sessionId, string dealerId)
         {
@@ -1906,7 +1904,7 @@ namespace WebPsdzClient.App_Data
             {
                 if (marquee)
                 {
-                    text = ResourceProcessing;
+                    text = HttpContext.GetGlobalResourceObject("Global", "Processing") as string ?? string.Empty;
                 }
             }
 
@@ -2095,7 +2093,7 @@ namespace WebPsdzClient.App_Data
             {
                 if (IsVinActive(vin, this))
                 {
-                    StatusText = ResourceVinActive;
+                    StatusText = HttpContext.GetGlobalResourceObject("Global", "VinInstanceActive") as string ?? string.Empty;
                     UpdateDisplay();
                     return;
                 }
