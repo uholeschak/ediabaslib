@@ -343,6 +343,20 @@ namespace WebPsdzClient.App_Data
             return ProgrammingJobs.ClientContext.Language;
         }
 
+        public string GetActiveVin()
+        {
+            string vin = null;
+            lock (_lockObject)
+            {
+                if (_taskActive)
+                {
+                    vin = ProgrammingJobs?.PsdzContext?.DetectVehicle?.Vin;
+                }
+            }
+
+            return vin;
+        }
+
         private UInt64 _packetId;
         private void ResetPacketId()
         {
