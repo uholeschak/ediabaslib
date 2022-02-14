@@ -449,7 +449,7 @@ namespace PsdzClientLibrary.Resources {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Problems have occured in the preparation phase.
-        ///Do you still wan to continue with TAL execution? ähnelt.
+        ///Do you still want to continue with TAL execution? ähnelt.
         /// </summary>
         internal static string TalExecuteContinue {
             get {

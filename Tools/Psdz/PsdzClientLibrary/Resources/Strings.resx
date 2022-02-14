@@ -248,7 +248,7 @@
   </data>
   <data name="TalExecuteContinue" xml:space="preserve">
     <value>Problems have occured in the preparation phase.
-Do you still wan to continue with TAL execution?</value>
+Do you still want to continue with TAL execution?</value>
   </data>
   <data name="TalExecuteError" xml:space="preserve">
     <value>TAL execution finished with errors.</value>
