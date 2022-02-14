@@ -459,6 +459,31 @@ namespace WebPsdzClient.App_Data
             }
         }
 
+        public static bool IsVinActive(string vin, SessionContainer excludeContainer)
+        {
+            lock (SessionContainers)
+            {
+                foreach (SessionContainer sessionContainer in SessionContainers)
+                {
+                    if (excludeContainer != null && sessionContainer == excludeContainer)
+                    {
+                        continue;
+                    }
+
+                    string activeVin = sessionContainer.GetActiveVin();
+                    if (!string.IsNullOrEmpty(activeVin))
+                    {
+                        if (string.Compare(vin, activeVin, StringComparison.Ordinal) == 0)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
         public static void SetLogInfo(string sessionId)
         {
             LogicalThreadContext.Properties["session"] = sessionId;
