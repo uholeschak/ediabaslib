@@ -135,4 +135,8 @@
   <data name="TryAgainLater" xml:space="preserve">
     <value>Bitte versuchen Sie es später noch einmal.</value>
   </data>
+  <data name="VinInstanceActive" xml:space="preserve">
+    <value>Eine andere Instanz mit der gleichen FG-NR ist bereits aktiv.
+Versuchen Sie es später noch einmal.</value>
+  </data>
 </root>

@@ -407,6 +407,7 @@ namespace WebPsdzClient.App_Data
         private const int ThreadFinishTimeout = VehicleReceiveTimeout + 5000;
 
         public const string ResourceProcessing = "[Processing]";
+        public const string ResourceVinActive = "[VinActive]";
 
         public SessionContainer(string sessionId, string dealerId)
         {
@@ -459,7 +460,7 @@ namespace WebPsdzClient.App_Data
             }
         }
 
-        public static bool IsVinActive(string vin, SessionContainer excludeContainer)
+        public static bool IsVinActive(string vin, SessionContainer excludeContainer = null)
         {
             lock (SessionContainers)
             {
@@ -2087,6 +2088,17 @@ namespace WebPsdzClient.App_Data
             if (ProgrammingJobs.PsdzContext?.Connection == null)
             {
                 return;
+            }
+
+            string vin = ProgrammingJobs?.PsdzContext?.DetectVehicle?.Vin;
+            if (!string.IsNullOrEmpty(vin))
+            {
+                if (IsVinActive(vin, this))
+                {
+                    StatusText = ResourceVinActive;
+                    UpdateDisplay();
+                    return;
+                }
             }
 
             Cts = new CancellationTokenSource();
