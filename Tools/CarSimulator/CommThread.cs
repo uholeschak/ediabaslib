@@ -5186,11 +5186,10 @@ namespace CarSimulator
                         _receiveData[3] == 0x22)
                     {
                         // dummy error response for service 22
-                        Debug.WriteLine("Dummy service 22: {0:X02}", _receiveData[4]);
-                        if (_receiveData[5] == 0x17 && _receiveData[6] == 0x1F)
+                        Debug.WriteLine("Dummy service 22: {0:X02}{1:X02}", _receiveData[4], _receiveData[5]);
+                        if (_receiveData[4] == 0x17 && _receiveData[5] == 0x1F)
                         {
                             Debug.WriteLine("RDBI_CERT ZGW Zertifikat");
-
                             int telLength = _zgwCert.Length + 2;
 
                             _sendData[0] = 0x80;
