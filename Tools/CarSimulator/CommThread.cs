@@ -5372,20 +5372,21 @@ namespace CarSimulator
 
                 if (!found)
                 {
+                    int offset = _receiveData[0] == 0x80 ? 1 : 0;
                     if (
                         (_receiveData[0] & 0xC0) == 0x80 &&
                         (_receiveData[0] & 0x3F) >= 3 &&
                         _receiveData[2] == 0xF1 &&
-                        _receiveData[3] == 0x31)
+                        _receiveData[3 + offset] == 0x31)
                     {
                         // dummy ok response for service 31 (routine control)
-                        Debug.WriteLine("Dummy service 31: {0:X02}: {1:X02}{2:X02}", _receiveData[4], _receiveData[5], _receiveData[6]);
-                        if (_receiveData[4] == 0x01 && _receiveData[5] == 0x10 && _receiveData[6] == 0x02)
+                        Debug.WriteLine("Dummy service 31: {0:X02}: {1:X02}{2:X02}", _receiveData[4 + offset], _receiveData[5 + offset], _receiveData[6 + offset]);
+                        if (_receiveData[4 + offset] == 0x01 && _receiveData[5 + offset] == 0x10 && _receiveData[6 + offset] == 0x02)
                         {
-                            byte idType = _receiveData[7];
+                            byte idType = _receiveData[7 + offset];
                             if (idType == 0x01) // index
                             {
-                                int index = (_receiveData[10] << 8) | _receiveData[11];
+                                int index = (_receiveData[10 + offset] << 8) | _receiveData[11 + offset];
                                 Debug.WriteLine("RC_RLEBI_IDR Index:{0}", index);
                                 byte[] response =
                                 {
@@ -5410,16 +5411,16 @@ namespace CarSimulator
                             }
                         }
 
-                        if (!found && _receiveData[4] == 0x01 && _receiveData[5] == 0x0F && _receiveData[6] == 0x01)
+                        if (!found && _receiveData[4 + offset] == 0x01 && _receiveData[5 + offset] == 0x0F && _receiveData[6 + offset] == 0x01)
                         {
                             Debug.WriteLine("MCD3_FinalizeECUCoding");
                             _sendData[0] = 0x87;
                             _sendData[1] = 0xF1;
                             _sendData[2] = _receiveData[1];
                             _sendData[3] = 0x71;
-                            _sendData[4] = _receiveData[4];
-                            _sendData[5] = _receiveData[5];
-                            _sendData[6] = _receiveData[6];
+                            _sendData[4] = _receiveData[4 + offset];
+                            _sendData[5] = _receiveData[5 + offset];
+                            _sendData[6] = _receiveData[6 + offset];
                             _sendData[7] = 0x00;
                             _sendData[8] = 0x00;
                             _sendData[9] = 0x00;
@@ -5427,31 +5428,31 @@ namespace CarSimulator
                             found = true;
                         }
 
-                        if (!found && _receiveData[4] == 0x01 && _receiveData[5] == 0x70 && _receiveData[6] == 0x00)
+                        if (!found && _receiveData[4 + offset] == 0x01 && _receiveData[5 + offset] == 0x70 && _receiveData[6 + offset] == 0x00)
                         {
                             Debug.WriteLine("RC_PAD processingApplicationData");
                             _sendData[0] = 0x85;
                             _sendData[1] = 0xF1;
                             _sendData[2] = _receiveData[1];
                             _sendData[3] = 0x71;
-                            _sendData[4] = _receiveData[4];
-                            _sendData[5] = _receiveData[5];
-                            _sendData[6] = _receiveData[6];
+                            _sendData[4] = _receiveData[4 + offset];
+                            _sendData[5] = _receiveData[5 + offset];
+                            _sendData[6] = _receiveData[6 + offset];
                             _sendData[7] = 0x01;
 
                             found = true;
                         }
 
-                        if (!found && _receiveData[4] == 0x01 && _receiveData[5] == 0x02 && _receiveData[6] == 0x33)
+                        if (!found && _receiveData[4 + offset] == 0x01 && _receiveData[5 + offset] == 0x02 && _receiveData[6 + offset] == 0x33)
                         {
                             Debug.WriteLine("RC_GET_PARAM_N11_CSM");
                             _sendData[0] = 0x89;
                             _sendData[1] = 0xF1;
                             _sendData[2] = _receiveData[1];
                             _sendData[3] = 0x71;
-                            _sendData[4] = _receiveData[4];
-                            _sendData[5] = _receiveData[5];
-                            _sendData[6] = _receiveData[6];
+                            _sendData[4] = _receiveData[4 + offset];
+                            _sendData[5] = _receiveData[5 + offset];
+                            _sendData[6] = _receiveData[6 + offset];
                             _sendData[7] = 0x00;
                             _sendData[8] = 0x00;
                             _sendData[9] = 0x02;
@@ -5467,9 +5468,9 @@ namespace CarSimulator
                             _sendData[1] = 0xF1;
                             _sendData[2] = _receiveData[1];
                             _sendData[3] = 0x71;
-                            _sendData[4] = _receiveData[4];
-                            _sendData[5] = _receiveData[5];
-                            _sendData[6] = _receiveData[6];
+                            _sendData[4] = _receiveData[4 + offset];
+                            _sendData[5] = _receiveData[5 + offset];
+                            _sendData[6] = _receiveData[6 + offset];
                         }
 
                         ObdSend(_sendData, bmwTcpClientData);
