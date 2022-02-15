@@ -5375,7 +5375,6 @@ namespace CarSimulator
                     int offset = _receiveData[0] == 0x80 ? 1 : 0;
                     if (
                         (_receiveData[0] & 0xC0) == 0x80 &&
-                        (_receiveData[0] & 0x3F) >= 3 &&
                         _receiveData[2] == 0xF1 &&
                         _receiveData[3 + offset] == 0x31)
                     {
@@ -5458,6 +5457,40 @@ namespace CarSimulator
                             _sendData[9] = 0x02;
                             _sendData[10] = 0x01;
                             _sendData[11] = 0x0B;
+
+                            found = true;
+                        }
+
+                        if (!found && _receiveData[4 + offset] == 0x01 && _receiveData[5 + offset] == 0x02 && _receiveData[6 + offset] == 0x12)
+                        {
+                            Debug.WriteLine("RC_STKL StoreTransportKeyList");
+                            _sendData[0] = 0x87;
+                            _sendData[1] = 0xF1;
+                            _sendData[2] = _receiveData[1];
+                            _sendData[3] = 0x71;
+                            _sendData[4] = _receiveData[4 + offset];
+                            _sendData[5] = _receiveData[5 + offset];
+                            _sendData[6] = _receiveData[6 + offset];
+                            _sendData[7] = 0x00;
+                            _sendData[8] = 0x00;
+                            _sendData[9] = 0x00;
+
+                            found = true;
+                        }
+
+                        if (!found && _receiveData[5 + offset] == 0x02 && _receiveData[6 + offset] == 0x0C)
+                        {
+                            Debug.WriteLine("RC_SKE StartKeyExchange");
+                            _sendData[0] = 0x87;
+                            _sendData[1] = 0xF1;
+                            _sendData[2] = _receiveData[1];
+                            _sendData[3] = 0x71;
+                            _sendData[4] = _receiveData[4 + offset];
+                            _sendData[5] = _receiveData[5 + offset];
+                            _sendData[6] = _receiveData[6 + offset];
+                            _sendData[7] = 0x00;
+                            _sendData[8] = 0x00;
+                            _sendData[9] = 0x00;
 
                             found = true;
                         }
