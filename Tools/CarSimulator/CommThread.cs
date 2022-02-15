@@ -5190,7 +5190,7 @@ namespace CarSimulator
                         if (_receiveData[4] == 0x17 && _receiveData[5] == 0x1F)
                         {
                             Debug.WriteLine("RDBI_CERT ZGW Zertifikat");
-                            int telLength = _zgwCert.Length + 2;
+                            int telLength = _zgwCert.Length + 3;
 
                             _sendData[0] = 0x80;
                             _sendData[1] = 0xF1;
@@ -5199,7 +5199,9 @@ namespace CarSimulator
                             _sendData[4] = (byte)(telLength >> 8);
                             _sendData[5] = (byte)(telLength & 0xFF);
                             _sendData[6] = 0x62;
-                            Array.Copy(_zgwCert, 0, _sendData, 7, _zgwCert.Length);
+                            _sendData[7] = _receiveData[4];
+                            _sendData[8] = _receiveData[5];
+                            Array.Copy(_zgwCert, 0, _sendData, 9, _zgwCert.Length);
                         }
                         else
                         {
