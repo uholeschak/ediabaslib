@@ -5520,7 +5520,24 @@ namespace CarSimulator
                         {
                             byte state = _receiveData[4 + offset];
                             Debug.WriteLine("RC_EXT_INIT, Externer Init F25 {0}", state);
-                            _sendData[0] = 0x87;
+                            _sendData[0] = 0x86;
+                            _sendData[1] = 0xF1;
+                            _sendData[2] = _receiveData[1];
+                            _sendData[3] = 0x71;
+                            _sendData[4] = _receiveData[4 + offset];
+                            _sendData[5] = _receiveData[5 + offset];
+                            _sendData[6] = _receiveData[6 + offset];
+                            _sendData[7] = 0x00;
+                            _sendData[8] = 0x00;
+
+                            found = true;
+                        }
+
+                        if (!found && _receiveData[5 + offset] == 0x02 && _receiveData[6 + offset] == 0x11)
+                        {
+                            byte state = _receiveData[4 + offset];
+                            Debug.WriteLine("RC_EA, ExternalAuthentication {0}", state);
+                            _sendData[0] = 0x86;
                             _sendData[1] = 0xF1;
                             _sendData[2] = _receiveData[1];
                             _sendData[3] = 0x71;
