@@ -5495,6 +5495,25 @@ namespace CarSimulator
                             found = true;
                         }
 
+                        if (!found && _receiveData[5 + offset] == 0x02 && _receiveData[6 + offset] == 0x13)
+                        {
+                            Debug.WriteLine("InitSignalKeyDeployment");
+                            _sendData[0] = 0x89;
+                            _sendData[1] = 0xF1;
+                            _sendData[2] = _receiveData[1];
+                            _sendData[3] = 0x71;
+                            _sendData[4] = _receiveData[4 + offset];
+                            _sendData[5] = _receiveData[5 + offset];
+                            _sendData[6] = _receiveData[6 + offset];
+                            _sendData[7] = 0x00;
+                            _sendData[8] = 0x00;
+                            _sendData[9] = 0x02;
+                            _sendData[10] = 0x01;
+                            _sendData[11] = 0x0B;
+
+                            found = true;
+                        }
+
                         if (!found)
                         {
                             _sendData[0] = 0x84;
