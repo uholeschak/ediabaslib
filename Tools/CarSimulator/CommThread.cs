@@ -5497,8 +5497,9 @@ namespace CarSimulator
 
                         if (!found && _receiveData[5 + offset] == 0x02 && _receiveData[6 + offset] == 0x13)
                         {
-                            Debug.WriteLine("InitSignalKeyDeployment");
-                            _sendData[0] = 0x89;
+                            byte state = _receiveData[4 + offset];
+                            Debug.WriteLine("InitSignalKeyDeployment {0}", state);
+                            _sendData[0] = 0x8A;
                             _sendData[1] = 0xF1;
                             _sendData[2] = _receiveData[1];
                             _sendData[3] = 0x71;
@@ -5507,9 +5508,10 @@ namespace CarSimulator
                             _sendData[6] = _receiveData[6 + offset];
                             _sendData[7] = 0x00;
                             _sendData[8] = 0x00;
-                            _sendData[9] = 0x02;
-                            _sendData[10] = 0x01;
-                            _sendData[11] = 0x0B;
+                            _sendData[9] = 0x01;
+                            _sendData[10] = 0x10;
+                            _sendData[11] = 0x00;
+                            _sendData[12] = 0x04;
 
                             found = true;
                         }
