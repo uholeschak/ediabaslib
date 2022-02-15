@@ -5191,14 +5191,16 @@ namespace CarSimulator
                         {
                             Debug.WriteLine("RDBI_CERT ZGW Zertifikat");
 
-                            int certSize = _zgwCert.Length;
+                            int telLength = _zgwCert.Length + 2;
 
                             _sendData[0] = 0x80;
                             _sendData[1] = 0xF1;
-                            _sendData[2] = (byte)(certSize + 2);
-                            _sendData[3] = _receiveData[1];
-                            _sendData[4] = 0x62;
-                            Array.Copy(_zgwCert, 0, _sendData, 4, certSize);
+                            _sendData[2] = _receiveData[1];
+                            _sendData[3] = 0x00;
+                            _sendData[4] = (byte)(telLength >> 8);
+                            _sendData[5] = (byte)(telLength & 0xFF);
+                            _sendData[6] = 0x62;
+                            Array.Copy(_zgwCert, 0, _sendData, 7, _zgwCert.Length);
                         }
                         else
                         {
