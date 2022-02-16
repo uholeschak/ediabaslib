@@ -5516,6 +5516,23 @@ namespace CarSimulator
                             found = true;
                         }
 
+                        if (!found && _receiveData[5 + offset] == 0x02 && _receiveData[6 + offset] == 0x32)
+                        {
+                            Debug.WriteLine("RC_RESET_STATE_CSM Reset State F11 CSM {0}", state);
+                            _sendData[0] = 0x87;
+                            _sendData[1] = 0xF1;
+                            _sendData[2] = _receiveData[1];
+                            _sendData[3] = 0x71;
+                            _sendData[4] = _receiveData[4 + offset];
+                            _sendData[5] = _receiveData[5 + offset];
+                            _sendData[6] = _receiveData[6 + offset];
+                            _sendData[7] = 0x00;
+                            _sendData[8] = 0x00;
+                            _sendData[9] = 0x01;
+
+                            found = true;
+                        }
+
                         if (!found && _receiveData[5 + offset] == 0x02 && _receiveData[6 + offset] == 0x34)
                         {
                             Debug.WriteLine("RC_EXT_INIT, Externer Init F25 {0}", state);
