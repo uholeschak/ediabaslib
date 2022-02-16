@@ -1286,12 +1286,28 @@ namespace WebPsdzClient.App_Data
                                     if (payloadType == 0x0001)
                                     {
                                         SendAckPacket(enetTcpClientData, recPacket);
+
+                                        bool enqueued = false;
                                         lock (enetTcpClientData.RecPacketQueue)
                                         {
-                                            enetTcpClientData.RecPacketQueue.Enqueue(recPacket);
+                                            if (!enetTcpClientData.RecPacketQueue.Contains(recPacket))
+                                            {
+                                                enetTcpClientData.RecPacketQueue.Enqueue(recPacket);
+                                                enqueued = true;
+                                            }
                                         }
-                                        enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
-                                        _vehicleThreadWakeEvent.Set();
+
+                                        string recString = BitConverter.ToString(recPacket).Replace("-", " ");
+                                        if (enqueued)
+                                        {
+                                            log.InfoFormat("TcpThread Enqueued Data={0}", recString);
+                                            enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
+                                            _vehicleThreadWakeEvent.Set();
+                                        }
+                                        else
+                                        {
+                                            log.InfoFormat("TcpThread Already in queue Data={0}", recString);
+                                        }
                                     }
                                 }
 #else
@@ -1570,8 +1586,7 @@ namespace WebPsdzClient.App_Data
                                             {
                                                 lock (_lockObject)
                                                 {
-                                                    _vehicleResponseDict.TryGetValue(sendDataString,
-                                                        out cachedResponseList);
+                                                    _vehicleResponseDict.TryGetValue(sendDataString, out cachedResponseList);
                                                 }
                                             }
                                         }
@@ -1579,8 +1594,7 @@ namespace WebPsdzClient.App_Data
                                         PsdzVehicleHub.VehicleResponse vehicleResponse;
                                         if (cachedResponseList != null)
                                         {
-                                            log.InfoFormat("VehicleThread Using cached response for Request={0}",
-                                                sendDataString);
+                                            log.InfoFormat("VehicleThread Using cached response for Request={0}", sendDataString);
                                             vehicleResponse = new PsdzVehicleHub.VehicleResponse(GetPacketId(), false)
                                             {
                                                 Valid = true,
