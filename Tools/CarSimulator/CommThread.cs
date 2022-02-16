@@ -5446,18 +5446,34 @@ namespace CarSimulator
                         if (!found && _receiveData[4 + offset] == 0x01 && _receiveData[5 + offset] == 0x02 && _receiveData[6 + offset] == 0x33)
                         {
                             Debug.WriteLine("RC_GET_PARAM_N11_CSM {0}", state);
-                            _sendData[0] = 0x89;
+                            int parLen = 16 * 2;
+                            _sendData[0] = 0x80;
                             _sendData[1] = 0xF1;
                             _sendData[2] = _receiveData[1];
-                            _sendData[3] = 0x71;
-                            _sendData[4] = _receiveData[4 + offset];
-                            _sendData[5] = _receiveData[5 + offset];
-                            _sendData[6] = _receiveData[6 + offset];
-                            _sendData[7] = 0x00;
+                            _sendData[3] = (byte)(parLen + 3);
+                            _sendData[4] = 0x71;
+                            _sendData[5] = _receiveData[4 + offset];
+                            _sendData[6] = _receiveData[5 + offset];
+                            _sendData[7] = _receiveData[6 + offset];
                             _sendData[8] = 0x00;
-                            _sendData[9] = 0x02;
-                            _sendData[10] = 0x01;
-                            _sendData[11] = 0x0B;
+                            _sendData[9] = 0x00;
+                            _sendData[10] = (byte)parLen;
+
+                            int idx = 11;
+                            _sendData[idx++] = 0x01;
+                            _sendData[idx++] = 0x0B;
+
+                            for (int i = 0; i < 3; i++)
+                            {
+                                _sendData[idx++] = (byte)(i + 0x20);
+                                _sendData[idx++] = 0x00;
+                            }
+
+                            for (int i = 0; i < 12; i++)
+                            {
+                                _sendData[idx++] = (byte)(i + 0x40);
+                                _sendData[idx++] = 0x00;
+                            }
 
                             found = true;
                         }
