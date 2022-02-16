@@ -1288,6 +1288,7 @@ namespace WebPsdzClient.App_Data
                                         SendAckPacket(enetTcpClientData, recPacket);
 
                                         bool enqueued = false;
+                                        int queueSize = 0;
                                         lock (enetTcpClientData.RecPacketQueue)
                                         {
                                             if (!enetTcpClientData.RecPacketQueue.Contains(recPacket))
@@ -1295,18 +1296,20 @@ namespace WebPsdzClient.App_Data
                                                 enetTcpClientData.RecPacketQueue.Enqueue(recPacket);
                                                 enqueued = true;
                                             }
+
+                                            queueSize = enetTcpClientData.RecPacketQueue.Count;
                                         }
 
                                         string recString = BitConverter.ToString(recPacket).Replace("-", " ");
                                         if (enqueued)
                                         {
-                                            log.InfoFormat("TcpThread Enqueued Data={0}", recString);
+                                            log.InfoFormat("TcpThread Enqueued QueueSize={0}, Data={1}", queueSize, recString);
                                             enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
                                             _vehicleThreadWakeEvent.Set();
                                         }
                                         else
                                         {
-                                            log.InfoFormat("TcpThread Already in queue Data={0}", recString);
+                                            log.InfoFormat("TcpThread Already in queue QueueSize={0}, Data={1}", queueSize, recString);
                                         }
                                     }
                                 }
