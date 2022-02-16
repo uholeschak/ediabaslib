@@ -5379,7 +5379,8 @@ namespace CarSimulator
                         _receiveData[3 + offset] == 0x31)
                     {
                         // dummy ok response for service 31 (routine control)
-                        Debug.WriteLine("Dummy service 31: {0:X02}: {1:X02}{2:X02}", _receiveData[4 + offset], _receiveData[5 + offset], _receiveData[6 + offset]);
+                        byte state = _receiveData[4 + offset];
+                        Debug.WriteLine("Dummy service 31: {0:X02}: {1:X02}{2:X02}", state, _receiveData[5 + offset], _receiveData[6 + offset]);
                         if (_receiveData[4 + offset] == 0x01 && _receiveData[5 + offset] == 0x10 && _receiveData[6 + offset] == 0x02)
                         {
                             byte idType = _receiveData[7 + offset];
@@ -5412,7 +5413,7 @@ namespace CarSimulator
 
                         if (!found && _receiveData[4 + offset] == 0x01 && _receiveData[5 + offset] == 0x0F && _receiveData[6 + offset] == 0x01)
                         {
-                            Debug.WriteLine("MCD3_FinalizeECUCoding");
+                            Debug.WriteLine("MCD3_FinalizeECUCoding {0}", state);
                             _sendData[0] = 0x87;
                             _sendData[1] = 0xF1;
                             _sendData[2] = _receiveData[1];
@@ -5429,7 +5430,7 @@ namespace CarSimulator
 
                         if (!found && _receiveData[4 + offset] == 0x01 && _receiveData[5 + offset] == 0x70 && _receiveData[6 + offset] == 0x00)
                         {
-                            Debug.WriteLine("RC_PAD processingApplicationData");
+                            Debug.WriteLine("RC_PAD processingApplicationData {0}", state);
                             _sendData[0] = 0x85;
                             _sendData[1] = 0xF1;
                             _sendData[2] = _receiveData[1];
@@ -5444,7 +5445,7 @@ namespace CarSimulator
 
                         if (!found && _receiveData[4 + offset] == 0x01 && _receiveData[5 + offset] == 0x02 && _receiveData[6 + offset] == 0x33)
                         {
-                            Debug.WriteLine("RC_GET_PARAM_N11_CSM");
+                            Debug.WriteLine("RC_GET_PARAM_N11_CSM {0}", state);
                             _sendData[0] = 0x89;
                             _sendData[1] = 0xF1;
                             _sendData[2] = _receiveData[1];
@@ -5463,7 +5464,7 @@ namespace CarSimulator
 
                         if (!found && _receiveData[4 + offset] == 0x01 && _receiveData[5 + offset] == 0x02 && _receiveData[6 + offset] == 0x12)
                         {
-                            Debug.WriteLine("RC_STKL StoreTransportKeyList");
+                            Debug.WriteLine("RC_STKL StoreTransportKeyList {0}", state);
                             _sendData[0] = 0x87;
                             _sendData[1] = 0xF1;
                             _sendData[2] = _receiveData[1];
@@ -5480,7 +5481,7 @@ namespace CarSimulator
 
                         if (!found && _receiveData[5 + offset] == 0x02 && _receiveData[6 + offset] == 0x0C)
                         {
-                            Debug.WriteLine("RC_SKE StartKeyExchange");
+                            Debug.WriteLine("RC_SKE StartKeyExchange {0}", state);
                             _sendData[0] = 0x87;
                             _sendData[1] = 0xF1;
                             _sendData[2] = _receiveData[1];
@@ -5497,7 +5498,6 @@ namespace CarSimulator
 
                         if (!found && _receiveData[5 + offset] == 0x02 && _receiveData[6 + offset] == 0x13)
                         {
-                            byte state = _receiveData[4 + offset];
                             Debug.WriteLine("InitSignalKeyDeployment {0}", state);
                             _sendData[0] = 0x8A;
                             _sendData[1] = 0xF1;
@@ -5518,7 +5518,6 @@ namespace CarSimulator
 
                         if (!found && _receiveData[5 + offset] == 0x02 && _receiveData[6 + offset] == 0x34)
                         {
-                            byte state = _receiveData[4 + offset];
                             Debug.WriteLine("RC_EXT_INIT, Externer Init F25 {0}", state);
                             _sendData[0] = 0x86;
                             _sendData[1] = 0xF1;
@@ -5535,7 +5534,6 @@ namespace CarSimulator
 
                         if (!found && _receiveData[5 + offset] == 0x02 && _receiveData[6 + offset] == 0x11)
                         {
-                            byte state = _receiveData[4 + offset];
                             Debug.WriteLine("RC_EA, ExternalAuthentication {0}", state);
                             _sendData[0] = 0x86;
                             _sendData[1] = 0xF1;
@@ -5552,6 +5550,7 @@ namespace CarSimulator
 
                         if (!found)
                         {
+                            Debug.WriteLine("Default response {0}", state);
                             _sendData[0] = 0x84;
                             _sendData[1] = 0xF1;
                             _sendData[2] = _receiveData[1];
