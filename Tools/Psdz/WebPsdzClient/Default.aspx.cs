@@ -69,7 +69,7 @@ namespace WebPsdzClient
                     {
                         messageText = messageText.Replace("\r\n", "<br>");
                         bool messageWait = sessionContainer.ShowMessageModalWait;
-                        log.InfoFormat("_Default Page_Load Show Message='{0}'", messageText);
+                        log.InfoFormat("_Default Page_Load ShowMessage Wait={0}, Message='{1}'", messageWait, messageText);
 
                         LiteralMsgModal.Text = messageText;
                         ButtonMsgOk.Visible = !messageWait;
@@ -81,7 +81,7 @@ namespace WebPsdzClient
                     }
                     catch (Exception ex)
                     {
-                        log.ErrorFormat("Show Message Exception: {0}", ex.Message);
+                        log.ErrorFormat("ShowMessageException: {0}", ex.Message);
                     }
                 }
             }
