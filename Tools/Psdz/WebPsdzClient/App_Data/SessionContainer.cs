@@ -1,5 +1,5 @@
 ﻿//#define EDIABAS_CONNECTION
-//#define DIRECT_ACK
+#define DIRECT_ACK
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -912,6 +912,7 @@ namespace WebPsdzClient.App_Data
             enetTcpClientData.EnetTcpChannel.SendEvent.Set();
         }
 
+#if !DIRECT_ACK
         private void SendNackPacket(EnetTcpClientData enetTcpClientData)
         {
             byte[] nackPacket = new byte[6];
@@ -997,7 +998,7 @@ namespace WebPsdzClient.App_Data
 
             return recPacket;
         }
-
+#endif
         private byte[] CreateBmwFastTelegram(byte[] dataPacket)
         {
             if (dataPacket.Length < 8)
@@ -1053,29 +1054,47 @@ namespace WebPsdzClient.App_Data
             return bmwFastTel.ToArray();
         }
 
-        private byte[] CreateBmwFastNr78Tel(byte[] dataPacket)
+        private byte[] CreateNr78Tel(byte[] bmwFastTel)
         {
-            if (dataPacket.Length < 8)
+            if (bmwFastTel == null || bmwFastTel.Length < 3)
             {
                 return null;
             }
 
-            byte sourceAddr = dataPacket[6];
-            byte targetAddr = dataPacket[7];
-            List<byte> bmwFastTel = new List<byte>();
+            byte sourceAddr = bmwFastTel[1];
+            byte targetAddr = bmwFastTel[2];
+            int dataOffset = 3;
+            int dataLength = bmwFastTel[0] & 0x3F;
+            if (dataLength == 0)
+            {   // with length byte
+                if (bmwFastTel[3] == 0)
+                {
+                    if (bmwFastTel.Length < 6)
+                    {
+                        return null;
+                    }
 
-            if (sourceAddr == TcpTesterAddr)
-            {
-                sourceAddr = 0xF1;
+                    dataOffset = 6;
+                }
+                else
+                {
+                    if (bmwFastTel.Length < 4)
+                    {
+                        return null;
+                    }
+
+                    dataOffset = 4;
+                }
             }
 
-            bmwFastTel.Add(0x83);
-            bmwFastTel.Add(sourceAddr);
-            bmwFastTel.Add(targetAddr);
-            bmwFastTel.Add(0x7F);
-            bmwFastTel.Add(dataPacket[8]);
-            bmwFastTel.Add(0x78);
-            return bmwFastTel.ToArray();
+            List<byte> nr78Tel = new List<byte>();
+            nr78Tel.Add(0x83);
+            nr78Tel.Add(sourceAddr);
+            nr78Tel.Add(targetAddr);
+            nr78Tel.Add(0x7F);
+            nr78Tel.Add(bmwFastTel[dataOffset]);
+            nr78Tel.Add(0x78);
+            return nr78Tel.ToArray();
         }
 
         private byte[] CreateEnetTelegram(byte[] bmwFastTel)
@@ -1287,29 +1306,61 @@ namespace WebPsdzClient.App_Data
                                     {
                                         SendAckPacket(enetTcpClientData, recPacket);
 
-                                        bool enqueued = false;
-                                        int queueSize = 0;
-                                        lock (enetTcpClientData.RecPacketQueue)
+                                        byte[] bmwFastTel = CreateBmwFastTelegram(recPacket);
+                                        byte[] nr78Tel = CreateNr78Tel(bmwFastTel);
+                                        if (bmwFastTel == null || nr78Tel == null)
                                         {
-                                            if (!enetTcpClientData.RecPacketQueue.Contains(recPacket))
-                                            {
-                                                enetTcpClientData.RecPacketQueue.Enqueue(recPacket);
-                                                enqueued = true;
-                                            }
-
-                                            queueSize = enetTcpClientData.RecPacketQueue.Count;
-                                        }
-
-                                        string recString = BitConverter.ToString(recPacket).Replace("-", " ");
-                                        if (enqueued)
-                                        {
-                                            log.InfoFormat("TcpThread Enqueued QueueSize={0}, Data={1}", queueSize, recString);
-                                            enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
-                                            _vehicleThreadWakeEvent.Set();
+                                            log.ErrorFormat("TcpThread BmwFastTel invalid");
                                         }
                                         else
                                         {
-                                            log.InfoFormat("TcpThread Already in queue QueueSize={0}, Data={1}", queueSize, recString);
+                                            bool funcAddress = (bmwFastTel[0] & 0xC0) == 0xC0; // functional address
+                                            List<string> cachedResponseList = null;
+                                            string sendDataString = BitConverter.ToString(bmwFastTel).Replace("-", "");
+                                            if (funcAddress)
+                                            {
+                                                if (!ProgrammingJobs.CacheResponseAllow)
+                                                {
+                                                    log.InfoFormat("TcpThread Caching disabled");
+                                                }
+                                                else
+                                                {
+                                                    lock (_lockObject)
+                                                    {
+                                                        _vehicleResponseDict.TryGetValue(sendDataString, out cachedResponseList);
+                                                    }
+                                                }
+                                            }
+
+                                            string recString = BitConverter.ToString(bmwFastTel).Replace("-", " ");
+                                            if (cachedResponseList != null)
+                                            {
+                                                log.InfoFormat("TcpThread Cache entry found for Data={0}", recString);
+                                            }
+
+                                            bool enqueued = false;
+                                            int queueSize;
+                                            lock (enetTcpClientData.RecPacketQueue)
+                                            {
+                                                if (!enetTcpClientData.RecPacketQueue.Contains(bmwFastTel))
+                                                {
+                                                    enetTcpClientData.RecPacketQueue.Enqueue(bmwFastTel);
+                                                    enqueued = true;
+                                                }
+
+                                                queueSize = enetTcpClientData.RecPacketQueue.Count;
+                                            }
+
+                                            if (enqueued)
+                                            {
+                                                log.InfoFormat("TcpThread Enqueued QueueSize={0}, Data={1}", queueSize, recString);
+                                                enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
+                                                _vehicleThreadWakeEvent.Set();
+                                            }
+                                            else
+                                            {
+                                                log.InfoFormat("TcpThread Already in queue QueueSize={0}, Data={1}", queueSize, recString);
+                                            }
                                         }
                                     }
                                 }
@@ -1543,22 +1594,21 @@ namespace WebPsdzClient.App_Data
                             }
 
 #if DIRECT_ACK
-                            byte[] recPacket = null;
+                            byte[] bmwFastTel = null;
                             lock (enetTcpClientData.RecPacketQueue)
                             {
                                 if (enetTcpClientData.RecPacketQueue.Count > 0)
                                 {
-                                    recPacket = enetTcpClientData.RecPacketQueue.Dequeue();
+                                    bmwFastTel = enetTcpClientData.RecPacketQueue.Dequeue();
                                 }
                             }
 
-                            if (recPacket != null)
+                            if (bmwFastTel != null)
                             {
-                                byte[] bmwFastTel = CreateBmwFastTelegram(recPacket);
-                                byte[] nr78Tel = CreateBmwFastNr78Tel(recPacket);
-                                if (bmwFastTel == null || nr78Tel == null)
+                                byte[] nr78Tel = CreateNr78Tel(bmwFastTel);
+                                if (nr78Tel == null)
                                 {
-                                    log.ErrorFormat("VehicleThread BmwFastTel invalid");
+                                    log.ErrorFormat("VehicleThread nr78Tel invalid");
                                 }
                                 else
                                 {
@@ -1721,7 +1771,7 @@ namespace WebPsdzClient.App_Data
                                 if (payloadType == 0x0001)
                                 {   // request
                                     byte[] bmwFastTel = CreateBmwFastTelegram(recPacket);
-                                    byte[] nr78Tel = CreateBmwFastNr78Tel(recPacket);
+                                    byte[] nr78Tel = CreateNr78Tel(bmwFastTel);
 
                                     if (bmwFastTel == null || nr78Tel == null)
                                     {
