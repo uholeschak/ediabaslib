@@ -65,16 +65,24 @@ namespace WebPsdzClient
                 string messageText = sessionContainer.ShowMessageModal;
                 if (!string.IsNullOrEmpty(messageText))
                 {
+                    try
+                    {
+                        messageText = messageText.Replace("\r\n", "<br>");
+                        bool messageWait = sessionContainer.ShowMessageModalWait;
+                        log.InfoFormat("_Default Page_Load Show Message='{0}'", messageText);
 
-                    messageText = messageText.Replace("\r\n", "<br>");
-                    bool messageWait = sessionContainer.ShowMessageModalWait;
-                    sessionContainer.ShowMessageModal = null;
+                        LiteralMsgModal.Text = messageText;
+                        ButtonMsgOk.Visible = !messageWait;
+                        ButtonMsgYes.Visible = messageWait;
+                        ButtonMsgNo.Visible = messageWait;
+                        ModalPopupExtenderMsgOk.Show();
 
-                    LiteralMsgModal.Text = messageText;
-                    ButtonMsgOk.Visible = !messageWait;
-                    ButtonMsgYes.Visible = messageWait;
-                    ButtonMsgNo.Visible = messageWait;
-                    ModalPopupExtenderMsgOk.Show();
+                        sessionContainer.ShowMessageModal = null;
+                    }
+                    catch (Exception ex)
+                    {
+                        log.ErrorFormat("Show Message Exception: {0}", ex.Message);
+                    }
                 }
             }
 
