@@ -81,7 +81,7 @@ namespace WebPsdzClient
                     }
                     catch (Exception ex)
                     {
-                        log.ErrorFormat("ShowMessageException: {0}", ex.Message);
+                        log.ErrorFormat("ShowMessage Exception: {0}", ex.Message);
                     }
                 }
             }
