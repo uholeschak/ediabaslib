@@ -1254,6 +1254,7 @@ namespace PsdzClient.Programing
 
                 if (psdzStandardSvt == null)
                 {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting SVT failed");
                     sbResult.AppendLine(Strings.DetectInstalledEcusFailed);
                     UpdateStatus(sbResult.ToString());
                     return false;
@@ -1277,6 +1278,7 @@ namespace PsdzClient.Programing
 
                 if (psdzStandardSvtNames == null)
                 {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting names failed");
                     sbResult.AppendLine(Strings.DetectInstalledEcusFailed);
                     UpdateStatus(sbResult.ToString());
                     return false;
@@ -1289,7 +1291,16 @@ namespace PsdzClient.Programing
                         ecu.BaseVariant, ecu.EcuVariant, ecu.BnTnName);
                 }
 
+                log.InfoFormat(CultureInfo.InvariantCulture, "Building SVT");
                 IPsdzSvt psdzSvt = ProgrammingService.Psdz.ObjectBuilder.BuildSvt(psdzStandardSvtNames, psdzVin.Value);
+                if (psdzSvt == null)
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "Building SVT failed");
+                    sbResult.AppendLine(Strings.DetectInstalledEcusFailed);
+                    UpdateStatus(sbResult.ToString());
+                    return false;
+                }
+
                 PsdzContext.SetSvtActual(psdzSvt);
                 cts?.Token.ThrowIfCancellationRequested();
 
@@ -1303,8 +1314,9 @@ namespace PsdzClient.Programing
                 }
 
                 ProgrammingService.PdszDatabase.ResetXepRules();
+                log.InfoFormat(CultureInfo.InvariantCulture, "Getting ECU variants");
                 ProgrammingService.PdszDatabase.GetEcuVariants(PsdzContext.DetectVehicle.EcuList, PsdzContext.Vehicle);
-                log.InfoFormat(CultureInfo.InvariantCulture, "Ecus: {0}", PsdzContext.DetectVehicle.EcuList.Count());
+                log.InfoFormat(CultureInfo.InvariantCulture, "Ecu variants: {0}", PsdzContext.DetectVehicle.EcuList.Count());
                 foreach (PdszDatabase.EcuInfo ecuInfo in PsdzContext.DetectVehicle.EcuList)
                 {
                     log.Info(ecuInfo.ToString(clientContext.Language));
@@ -1445,6 +1457,7 @@ namespace PsdzClient.Programing
 
                 if (psdzEcuContextInfos == null)
                 {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed");
                     sbResult.AppendLine(Strings.RequestEcuContextFailed);
                     UpdateStatus(sbResult.ToString());
                     return false;
@@ -1477,6 +1490,7 @@ namespace PsdzClient.Programing
 
                 if (psdzSwtAction == null)
                 {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting Swt action failed");
                     sbResult.AppendLine(Strings.SwtActionFailed);
                     UpdateStatus(sbResult.ToString());
                     return false;

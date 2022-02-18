@@ -1136,9 +1136,10 @@ namespace WebPsdzClient.App_Data
 
         private bool SendEnetResponses(EnetTcpClientData enetTcpClientData, List<string> responseList)
         {
-            if (responseList == null)
+            if (responseList == null || responseList.Count == 0)
             {
-                log.ErrorFormat("SendEnetResponses No response list");
+                log.ErrorFormat("SendEnetResponses Empty response list, ignoring");
+                return false;
             }
 
             bool result = true;
@@ -1803,7 +1804,16 @@ namespace WebPsdzClient.App_Data
                                     {
                                         if (vehicleResponse.ResponseList == null || vehicleResponse.ResponseList.Count == 0)
                                         {
-                                            log.ErrorFormat("VehicleThread Vehicle transmit no response");
+                                            log.ErrorFormat("VehicleThread Vehicle transmit no response for Request={0}", sendDataString);
+
+                                            if (funcAddress)
+                                            {
+                                                log.InfoFormat("VehicleThread Cache disable Request={0}", sendDataString);
+                                                lock (_lockObject)
+                                                {
+                                                    _vehicleResponseDict[sendDataString] = new List<string>();
+                                                }
+                                            }
                                         }
                                         else
                                         {
@@ -2000,6 +2010,14 @@ namespace WebPsdzClient.App_Data
                                                 if (vehicleResponse.ResponseList == null || vehicleResponse.ResponseList.Count == 0)
                                                 {
                                                     log.ErrorFormat("VehicleThread Vehicle transmit no response");
+                                                    if (funcAddress && cachedResponseList == null)
+                                                    {
+                                                        log.InfoFormat("VehicleThread Cache disable Request={0}", sendDataString);
+                                                        lock (_lockObject)
+                                                        {
+                                                            _vehicleResponseDict[sendDataString] = new List<string>();
+                                                        }
+                                                    }
                                                 }
                                                 else
                                                 {
@@ -2190,7 +2208,7 @@ namespace WebPsdzClient.App_Data
 
             for (;;)
             {
-                ShowModalPopup();
+                //ShowModalPopup();
                 int waitResult = WaitHandle.WaitAny(new WaitHandle[]
                 {
                     MessageWaitEvent, cts.Token.WaitHandle
