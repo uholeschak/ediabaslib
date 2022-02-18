@@ -459,6 +459,7 @@ namespace BmwDeepObd
                     if (!string.IsNullOrEmpty(domains) && domains.Contains("local.holeschak.de", StringComparison.OrdinalIgnoreCase))
                     {
                         _instanceData.Url = @"http://ulrich3.local.holeschak.de:3000";
+                        //_instanceData.Url = @"http://ulrich3.local.holeschak.de:8008";
                     }
                     else
                     {
