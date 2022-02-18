@@ -247,6 +247,25 @@ namespace WebPsdzClient.App_Data
             }
         }
 
+        private bool _showMessageModalOkBtn;
+        public bool ShowMessageModalOkBtn
+        {
+            get
+            {
+                lock (_lockObject)
+                {
+                    return _showMessageModalOkBtn;
+                }
+            }
+            set
+            {
+                lock (_lockObject)
+                {
+                    _showMessageModalOkBtn = value;
+                }
+            }
+        }
+
         private bool _showMessageModalWait;
         public bool ShowMessageModalWait
         {
@@ -2154,13 +2173,14 @@ namespace WebPsdzClient.App_Data
             UpdateCurrentOptions();
         }
 
-        private bool ShowMessageEvent(CancellationTokenSource cts, string message, bool wait)
+        private bool ShowMessageEvent(CancellationTokenSource cts, string message, bool okBtn, bool wait)
         {
-            log.InfoFormat("ShowMessageEvent Wait={0}, Message='{1}'", wait, message);
+            log.InfoFormat("ShowMessageEvent OKButton={0}, Wait={1}, Message='{2}'", okBtn, wait, message);
 
             ShowMessageModalResult = true;
             ShowMessageModalWait = wait;
             ShowMessageModal = message;
+            ShowMessageModalOkBtn = okBtn;
             UpdateDisplay();
 
             if (!wait || cts == null)
@@ -2181,6 +2201,8 @@ namespace WebPsdzClient.App_Data
                     break;
                 }
             }
+
+            ShowMessageModal = null;
 
             if (cts.IsCancellationRequested)
             {

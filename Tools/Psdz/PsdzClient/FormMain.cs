@@ -327,13 +327,15 @@ namespace PsdzClient
             UpdateCurrentOptions();
         }
 
-        private bool ShowMessageEvent(CancellationTokenSource cts, string message, bool wait)
+        private bool ShowMessageEvent(CancellationTokenSource cts, string message, bool okBtn, bool wait)
         {
+            MessageBoxButtons buttons = okBtn ? MessageBoxButtons.OK : MessageBoxButtons.YesNo;
+
             if (wait)
             {
                 bool invokeResult = (bool) Invoke(new Func<bool>(() =>
                 {
-                    DialogResult dialogResult = MessageBox.Show(this, message, Text, MessageBoxButtons.YesNo);
+                    DialogResult dialogResult = MessageBox.Show(this, message, Text, buttons);
                     if (dialogResult == DialogResult.Yes)
                     {
                         return true;
@@ -347,7 +349,7 @@ namespace PsdzClient
 
             BeginInvoke((Action)(() =>
             {
-                MessageBox.Show(this, message, Text, MessageBoxButtons.OK);
+                MessageBox.Show(this, message, Text, buttons);
             }));
 
             return true;

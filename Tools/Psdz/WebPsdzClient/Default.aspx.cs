@@ -60,32 +60,6 @@ namespace WebPsdzClient
                 return;
             }
 
-            if (!sessionContainer.RefreshOptions)
-            {
-                string messageText = sessionContainer.ShowMessageModal;
-                if (!string.IsNullOrEmpty(messageText))
-                {
-                    try
-                    {
-                        messageText = messageText.Replace("\r\n", "<br>");
-                        bool messageWait = sessionContainer.ShowMessageModalWait;
-                        log.InfoFormat("_Default Page_Load ShowMessage Wait={0}, Message='{1}'", messageWait, messageText);
-
-                        LiteralMsgModal.Text = messageText;
-                        ButtonMsgOk.Visible = !messageWait;
-                        ButtonMsgYes.Visible = messageWait;
-                        ButtonMsgNo.Visible = messageWait;
-                        ModalPopupExtenderMsg.Show();
-
-                        sessionContainer.ShowMessageModal = null;
-                    }
-                    catch (Exception ex)
-                    {
-                        log.ErrorFormat("ShowMessage Exception: {0}", ex.Message);
-                    }
-                }
-            }
-
             if (!IsPostBack)
             {
                 UpdateStatus();
@@ -104,6 +78,36 @@ namespace WebPsdzClient
                 {
                     sessionContainer.RefreshOptions = false;
                     UpdateOptions();
+                }
+            }
+
+            if (!sessionContainer.RefreshOptions)
+            {
+                string messageText = sessionContainer.ShowMessageModal;
+                if (!string.IsNullOrEmpty(messageText))
+                {
+                    try
+                    {
+                        messageText = messageText.Replace("\r\n", "<br>");
+                        bool okBtn = sessionContainer.ShowMessageModalOkBtn;
+                        bool messageWait = sessionContainer.ShowMessageModalWait;
+                        log.InfoFormat("_Default Page_Load ShowMessage OKButton={0}, Wait={1}, Message='{2}'", okBtn, messageWait, messageText);
+
+                        LiteralMsgModal.Text = messageText;
+                        ButtonMsgOk.Visible = okBtn;
+                        ButtonMsgYes.Visible = !okBtn;
+                        ButtonMsgNo.Visible = !okBtn;
+                        ModalPopupExtenderMsg.Show();
+
+                        if (!messageWait)
+                        {
+                            sessionContainer.ShowMessageModal = null;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        log.ErrorFormat("ShowMessage Exception: {0}", ex.Message);
+                    }
                 }
             }
         }
@@ -243,6 +247,7 @@ namespace WebPsdzClient
                 return;
             }
 
+            sessionContainer.ShowMessageModal = null;
             sessionContainer.ShowMessageModalResult = true;
             sessionContainer.MessageWaitEvent.Set();
         }
@@ -259,6 +264,7 @@ namespace WebPsdzClient
                 return;
             }
 
+            sessionContainer.ShowMessageModal = null;
             sessionContainer.ShowMessageModalResult = true;
             sessionContainer.MessageWaitEvent.Set();
         }
@@ -275,6 +281,7 @@ namespace WebPsdzClient
                 return;
             }
 
+            sessionContainer.ShowMessageModal = null;
             sessionContainer.ShowMessageModalResult = false;
             sessionContainer.MessageWaitEvent.Set();
         }

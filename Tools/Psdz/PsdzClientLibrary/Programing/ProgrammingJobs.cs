@@ -99,7 +99,7 @@ namespace PsdzClient.Programing
         public delegate void UpdateOptionsDelegate(Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>> optionsDict);
         public event UpdateOptionsDelegate UpdateOptionsEvent;
 
-        public delegate bool ShowMessageDelegate(CancellationTokenSource cts, string message, bool wait = false);
+        public delegate bool ShowMessageDelegate(CancellationTokenSource cts, string message, bool okBtn, bool wait);
         public event ShowMessageDelegate ShowMessageEvent;
 
         public delegate void ServiceInitialized(ProgrammingService programmingService);
@@ -765,7 +765,7 @@ namespace PsdzClient.Programing
 
                         if (ShowMessageEvent != null)
                         {
-                            if (!ShowMessageEvent.Invoke(cts, Strings.TalExecutionHint, true))
+                            if (!ShowMessageEvent.Invoke(cts, Strings.TalExecutionHint, false, true))
                             {
                                 log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecutionHint aborted");
                                 return false;
@@ -863,7 +863,7 @@ namespace PsdzClient.Programing
                         {
                             if (ShowMessageEvent != null)
                             {
-                                if (!ShowMessageEvent.Invoke(cts, Strings.TalExecuteContinue, true))
+                                if (!ShowMessageEvent.Invoke(cts, Strings.TalExecuteContinue, false, true))
                                 {
                                     log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecuteContinue aborted");
                                     return false;
@@ -1071,7 +1071,7 @@ namespace PsdzClient.Programing
                         {
                             if (ShowMessageEvent != null)
                             {
-                                if (!ShowMessageEvent.Invoke(cts, Strings.TalExecutionFailMessage))
+                                if (!ShowMessageEvent.Invoke(cts, Strings.TalExecutionFailMessage, true, true))
                                 {
                                     log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecutionFailMessage aborted");
                                     return false;
