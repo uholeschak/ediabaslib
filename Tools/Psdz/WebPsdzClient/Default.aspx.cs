@@ -60,27 +60,6 @@ namespace WebPsdzClient
                 return;
             }
 
-            if (!IsPostBack)
-            {
-                UpdateStatus();
-                UpdateCurrentOptions();
-                UpdateTimerPanel();
-            }
-            else
-            {
-                Control postbackControl = GetPostBackControl(this);
-                if (postbackControl == UpdatePanelStatus)
-                {
-                    UpdateStatus(true);
-                }
-
-                if (sessionContainer.RefreshOptions)
-                {
-                    sessionContainer.RefreshOptions = false;
-                    UpdateOptions();
-                }
-            }
-
             if (!sessionContainer.RefreshOptions)
             {
                 string messageText = sessionContainer.ShowMessageModal;
@@ -108,6 +87,27 @@ namespace WebPsdzClient
                     {
                         log.ErrorFormat("ShowMessage Exception: {0}", ex.Message);
                     }
+                }
+            }
+
+            if (!IsPostBack)
+            {
+                UpdateStatus();
+                UpdateCurrentOptions();
+                UpdateTimerPanel();
+            }
+            else
+            {
+                Control postbackControl = GetPostBackControl(this);
+                if (postbackControl == UpdatePanelStatus)
+                {
+                    UpdateStatus(true);
+                }
+
+                if (sessionContainer.RefreshOptions)
+                {
+                    sessionContainer.RefreshOptions = false;
+                    UpdateOptions();
                 }
             }
         }
