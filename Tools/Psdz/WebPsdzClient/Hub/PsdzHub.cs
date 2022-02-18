@@ -296,6 +296,9 @@ namespace PsdzClient
         [HubMethodName("updatePanels")]
         Task UpdatePanels(bool status);
 
+        [HubMethodName("showModalPopup")]
+        Task ShowModalPopup(bool show);
+
         [HubMethodName("reloadPage")]
         Task ReloadPage();
     }

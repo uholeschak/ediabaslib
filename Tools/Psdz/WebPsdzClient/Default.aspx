@@ -45,7 +45,7 @@
                         </asp:Panel>
                     </div>
                 </asp:Panel>
-                <ajaxToolkit:ModalPopupExtender ID="ModalPopupExtenderMsgOk" DropShadow="true" runat="server" TargetControlID="LinkButtonMsgModal" PopupControlID="PanelMsgModal">
+                <ajaxToolkit:ModalPopupExtender ID="ModalPopupExtenderMsg" BehaviorID="ModalPopupExtenderMsgBehaviour" DropShadow="true" runat="server" TargetControlID="LinkButtonMsgModal" PopupControlID="PanelMsgModal">
                 </ajaxToolkit:ModalPopupExtender>
             </ContentTemplate>
         </asp:UpdatePanel>
@@ -73,6 +73,29 @@
             if (textarea)
             {
                 textarea.scrollTop = textarea.scrollHeight;
+            }
+        }
+
+        function showPopupMsgModal(show)
+        {
+            console.log("Show modal message popup: Show=" + show);
+            var modalPopup = $find('ModalPopupExtenderMsgBehaviour');
+            if (modalPopup)
+            {
+                if (show)
+                {
+                    console.log("Show modal popup");
+                    modalPopup.show();
+                }
+                else
+                {
+                    console.log("Hide modal popup");
+                    modalPopup.hide();
+                }
+            }
+            else
+            {
+                console.log("ModalPopupExtenderMsg not found");
             }
         }
 

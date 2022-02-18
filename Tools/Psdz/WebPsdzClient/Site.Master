@@ -240,6 +240,21 @@
                 }
             }
 
+            psdzVehicleHubProxy.client.showModalPopup = function (show)
+            {
+                var logMessage = "Show modal popup: Show=" + show;
+                console.log(logMessage);
+
+                if (typeof showPopupMsgModal === "function")
+                {
+                    showPopupMsgModal(show);
+                }
+                else
+                {
+                    console.log("showPopupMsgModal not existing");
+                }
+            }
+
             psdzVehicleHubProxy.client.reloadPage = function ()
             {
                 console.log("Reload Page");

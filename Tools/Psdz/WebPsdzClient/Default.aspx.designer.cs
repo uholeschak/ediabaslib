@@ -222,13 +222,13 @@ namespace WebPsdzClient
         protected global::System.Web.UI.WebControls.Button ButtonMsgNo;
 
         /// <summary>
-        /// ModalPopupExtenderMsgOk-Steuerelement.
+        /// ModalPopupExtenderMsg-Steuerelement.
         /// </summary>
         /// <remarks>
         /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
-        protected global::AjaxControlToolkit.ModalPopupExtender ModalPopupExtenderMsgOk;
+        protected global::AjaxControlToolkit.ModalPopupExtender ModalPopupExtenderMsg;
 
         /// <summary>
         /// UpdatePanelTimer-Steuerelement.

@@ -75,7 +75,7 @@ namespace WebPsdzClient
                         ButtonMsgOk.Visible = !messageWait;
                         ButtonMsgYes.Visible = messageWait;
                         ButtonMsgNo.Visible = messageWait;
-                        ModalPopupExtenderMsgOk.Show();
+                        ModalPopupExtenderMsg.Show();
 
                         sessionContainer.ShowMessageModal = null;
                     }
@@ -235,7 +235,7 @@ namespace WebPsdzClient
         {
             log.InfoFormat("_Default ButtonMsgOk_OnClick");
 
-            ModalPopupExtenderMsgOk.Hide();
+            ModalPopupExtenderMsg.Hide();
 
             SessionContainer sessionContainer = GetSessionContainer();
             if (sessionContainer == null)
@@ -251,7 +251,7 @@ namespace WebPsdzClient
         {
             log.InfoFormat("_Default ButtonMsgYes_OnClick");
 
-            ModalPopupExtenderMsgOk.Hide();
+            ModalPopupExtenderMsg.Hide();
 
             SessionContainer sessionContainer = GetSessionContainer();
             if (sessionContainer == null)
@@ -267,7 +267,7 @@ namespace WebPsdzClient
         {
             log.InfoFormat("_Default ButtonMsgNo_OnClick");
 
-            ModalPopupExtenderMsgOk.Hide();
+            ModalPopupExtenderMsg.Hide();
 
             SessionContainer sessionContainer = GetSessionContainer();
             if (sessionContainer == null)

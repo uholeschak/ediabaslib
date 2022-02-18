@@ -2099,6 +2099,29 @@ namespace WebPsdzClient.App_Data
             }
         }
 
+        public void ShowModalPopup(bool show = true)
+        {
+            try
+            {
+                IHubContext<IPsdzClient> hubContext = GlobalHost.ConnectionManager.GetHubContext<PsdzVehicleHub, IPsdzClient>();
+                if (hubContext == null)
+                {
+                    log.ErrorFormat("ShowModalPopup No hub context");
+                    return;
+                }
+
+                List<string> connectionIds = PsdzVehicleHub.GetConnectionIds(SessionId);
+                foreach (string connectionId in connectionIds)
+                {
+                    hubContext.Clients.Client(connectionId)?.ShowModalPopup(show);
+                }
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("ShowModalPopup Exception: {0}", ex.Message);
+            }
+        }
+
         public void ReloadPage()
         {
             log.InfoFormat("ReloadPage");
@@ -2145,10 +2168,19 @@ namespace WebPsdzClient.App_Data
                 return true;
             }
 
-            WaitHandle.WaitAny(new WaitHandle[]
+            for (;;)
             {
-                MessageWaitEvent, cts.Token.WaitHandle
-            });
+                ShowModalPopup();
+                int waitResult = WaitHandle.WaitAny(new WaitHandle[]
+                {
+                    MessageWaitEvent, cts.Token.WaitHandle
+                }, 500);
+
+                if (waitResult != WaitHandle.WaitTimeout)
+                {
+                    break;
+                }
+            }
 
             if (cts.IsCancellationRequested)
             {
