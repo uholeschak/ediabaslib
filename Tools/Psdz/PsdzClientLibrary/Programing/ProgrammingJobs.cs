@@ -870,7 +870,11 @@ namespace PsdzClient.Programing
                                 }
                             }
                         }
-
+#if false
+                        sbResult.AppendLine("Test mode, abort execution");
+                        UpdateStatus(sbResult.ToString());
+                        return false;
+#endif
                         sbResult.AppendLine(Strings.ExecutingTal);
                         UpdateStatus(sbResult.ToString());
                         //CacheResponseAllow = false;
