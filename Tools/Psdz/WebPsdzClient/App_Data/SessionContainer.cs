@@ -247,6 +247,25 @@ namespace WebPsdzClient.App_Data
             }
         }
 
+        private int _showMessageModalCount;
+        public int ShowMessageModalCount
+        {
+            get
+            {
+                lock (_lockObject)
+                {
+                    return _showMessageModalCount;
+                }
+            }
+            set
+            {
+                lock (_lockObject)
+                {
+                    _showMessageModalCount = value;
+                }
+            }
+        }
+
         private bool _showMessageModalOkBtn;
         public bool ShowMessageModalOkBtn
         {
@@ -2195,6 +2214,7 @@ namespace WebPsdzClient.App_Data
         {
             log.InfoFormat("ShowMessageEvent OKButton={0}, Wait={1}, Message='{2}'", okBtn, wait, message);
 
+            ShowMessageModalCount++;
             ShowMessageModalResult = true;
             ShowMessageModalWait = wait;
             ShowMessageModal = message;

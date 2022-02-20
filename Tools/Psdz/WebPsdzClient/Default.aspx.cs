@@ -210,7 +210,6 @@ namespace WebPsdzClient
             log.InfoFormat("_Default ButtonMsgOk_OnClick");
 
             ModalPopupExtenderMsg.Hide();
-            LinkButtonMsgModal.Text = string.Empty;
 
             SessionContainer sessionContainer = GetSessionContainer();
             if (sessionContainer == null)
@@ -228,7 +227,6 @@ namespace WebPsdzClient
             log.InfoFormat("_Default ButtonMsgYes_OnClick");
 
             ModalPopupExtenderMsg.Hide();
-            LinkButtonMsgModal.Text = string.Empty;
 
             SessionContainer sessionContainer = GetSessionContainer();
             if (sessionContainer == null)
@@ -246,7 +244,6 @@ namespace WebPsdzClient
             log.InfoFormat("_Default ButtonMsgNo_OnClick");
 
             ModalPopupExtenderMsg.Hide();
-            LinkButtonMsgModal.Text = string.Empty;
 
             SessionContainer sessionContainer = GetSessionContainer();
             if (sessionContainer == null)
@@ -459,20 +456,21 @@ namespace WebPsdzClient
                 string messageText = sessionContainer.ShowMessageModal;
                 if (!string.IsNullOrEmpty(messageText))
                 {
-                    if (string.IsNullOrEmpty(LinkButtonMsgModal.Text))
+                    string modalCount = sessionContainer.ShowMessageModalCount.ToString(CultureInfo.InvariantCulture);
+                    if (string.Compare(HiddenFieldMsgModal.Value, modalCount, StringComparison.Ordinal) != 0)
                     {
                         bool okBtn = sessionContainer.ShowMessageModalOkBtn;
                         bool messageWait = sessionContainer.ShowMessageModalWait;
                         messageText = messageText.Replace("\r\n", "<br>");
 
-                        log.InfoFormat("_Default Page_Load UpdateStatus OKButton={0}, Wait={1}, Message='{2}'", okBtn, messageWait, messageText);
+                        log.InfoFormat("_Default Page_Load UpdateStatus Count={0}, OKButton={1}, Wait={2}, Message='{3}'", modalCount, okBtn, messageWait, messageText);
 
                         LiteralMsgModal.Text = messageText;
                         ButtonMsgOk.Visible = okBtn;
                         ButtonMsgYes.Visible = !okBtn;
                         ButtonMsgNo.Visible = !okBtn;
                         ModalPopupExtenderMsg.Show();
-                        LinkButtonMsgModal.Text = @"1";
+                        HiddenFieldMsgModal.Value = modalCount;
                     }
                 }
 

@@ -43,6 +43,7 @@
                             <asp:Button ID="ButtonMsgYes" runat="server" CssClass="btn" Text="Yes" meta:resourcekey="ButtonMsgYes" OnClick="ButtonMsgYes_OnClick" />
                             <asp:Button ID="ButtonMsgNo" runat="server" CssClass="btn" Text="No" meta:resourcekey="ButtonMsgNo" OnClick="ButtonMsgNo_OnClick" />
                         </asp:Panel>
+                        <asp:HiddenField ID="HiddenFieldMsgModal" runat="server"></asp:HiddenField>
                     </div>
                 </asp:Panel>
                 <ajaxToolkit:ModalPopupExtender ID="ModalPopupExtenderMsg" BehaviorID="ModalPopupExtenderMsgBehaviour" DropShadow="true" runat="server" TargetControlID="LinkButtonMsgModal" PopupControlID="PanelMsgModal">
