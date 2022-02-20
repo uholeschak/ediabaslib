@@ -22,12 +22,12 @@ namespace EdiabasLib
         private readonly bool? _noDelay;
         private readonly int? _sendBufferSize;
         private TcpClient _connection;
-#if !(Android || NET45_OR_GREATER)
+#if !(__ANDROID__ || NET45_OR_GREATER || NET6_0_OR_GREATER)
         private bool _connected;
         private Exception _exception;
 #endif
 
-#if Android
+#if __ANDROID__
         public class NetworkData
         {
             public NetworkData(Android.Net.ConnectivityManager connectivityManager)
@@ -77,7 +77,7 @@ namespace EdiabasLib
                 _connection.SendBufferSize = _sendBufferSize.Value;
             }
 
-#if Android || NET45_OR_GREATER
+#if __ANDROID__ || NET45_OR_GREATER || NET6_0_OR_GREATER
             System.Threading.Tasks.Task connectTask = _connection.ConnectAsync(_host, _port);
             if (!connectTask.Wait(_timeoutMilliseconds))
             {
@@ -121,7 +121,7 @@ namespace EdiabasLib
 #endif
         }
 
-#if !(Android || NET45_OR_GREATER)
+#if !(__ANDROID__ || NET45_OR_GREATER || NET6_0_OR_GREATER)
         private void BeginConnect()
         {
             try
@@ -141,7 +141,7 @@ namespace EdiabasLib
 
         public static void ExecuteNetworkCommand(ExecuteNetworkDelegate command, IPAddress ipAddr, object networkDataObject)
         {
-#if Android
+#if __ANDROID__
             if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.Lollipop)
             {
                 command();
@@ -253,7 +253,7 @@ namespace EdiabasLib
 #endif
         }
 
-#if Android
+#if __ANDROID__
         public static string ConvertIpAddress(int ipAddress)
         {
             if (Java.Nio.ByteOrder.NativeOrder().Equals(Java.Nio.ByteOrder.LittleEndian))
