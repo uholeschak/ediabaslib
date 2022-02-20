@@ -5393,12 +5393,13 @@ namespace CarSimulator
                                     0x9F, 0xF1, 0x63, 0x71, 0x01, 0x10, 0x02, 0x01,
                                     0x00, 0x02, 0x58, 0x0E, 0x10, 0x0E, 0x10, 0xFF,
                                     0xFF, 0x00, 0x46, 0x10, 0x02, 0x00, 0x00, 0x00,
-                                    0x01, 0x00, 0x00, 0x00, 0x00, 0x04, 0xFE, 0x0E,
+                                    (byte)(index + 1), 0x00, 0x00, 0x00, 0x00, 0x04, 0xFE, 0x0E,
                                     0x00, 0x01
                                 };
 
-                                if (index >= 0)
+                                if (index >= 5)
                                 {
+                                    Debug.WriteLine("RC_RLEBI_IDR Final entry");
                                     response[8] = 0x02; // final (0x01=not valid and not final)
                                 }
 
