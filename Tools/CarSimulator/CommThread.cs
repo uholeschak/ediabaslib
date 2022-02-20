@@ -5384,31 +5384,56 @@ namespace CarSimulator
                         if (_receiveData[4 + offset] == 0x01 && _receiveData[5 + offset] == 0x10 && _receiveData[6 + offset] == 0x02)
                         {
                             byte idType = _receiveData[7 + offset];
-                            if (idType == 0x01) // index
+                            switch (idType)
                             {
-                                int index = (_receiveData[10 + offset] << 8) | _receiveData[11 + offset];
-                                Debug.WriteLine("RC_RLEBI_IDR Index:{0}", index);
-                                byte[] response =
+                                case 0x01:
                                 {
-                                    0x9F, 0xF1, 0x63, 0x71, 0x01, 0x10, 0x02, 0x01,
-                                    0x00, 0x02, 0x58, 0x0E, 0x10, 0x0E, 0x10, 0xFF,
-                                    0xFF, 0x00, 0x46, 0x10, 0x02, 0x00, 0x00, 0x00,
-                                    (byte)(index + 1), 0x00, 0x00, 0x00, 0x00, 0x04, 0xFE, 0x0E,
-                                    0x00, 0x01
-                                };
+                                    int index = (_receiveData[10 + offset] << 8) | _receiveData[11 + offset];
+                                    Debug.WriteLine("RC_RLEBI_IDR Type1 Index:{0}", index);
+                                    byte[] response =
+                                    {
+                                        0x9F, 0xF1, 0x63, 0x71, 0x01, 0x10, 0x02, 0x01,
+                                        0x00, 0x02, 0x58, 0x0E, 0x10, 0x0E, 0x10, 0xFF,
+                                        0xFF, 0x00, 0x46, 0x10, 0x02, 0x00, 0x00, 0x00,
+                                        (byte)(index + 1), 0x00, 0x00, 0x00, 0x00, 0x04, 0xFE, 0x0E,
+                                        0x00, 0x01
+                                    };
 
-                                if (index >= 5)
-                                {
-                                    Debug.WriteLine("RC_RLEBI_IDR Final entry");
-                                    response[8] = 0x02; // final (0x01=not valid and not final)
+                                    if (index >= 5)
+                                    {
+                                        Debug.WriteLine("RC_RLEBI_IDR Final entry");
+                                        response[8] = 0x02; // final (0x01=not valid and not final)
+                                    }
+
+                                    Array.Clear(_sendData, 0, _sendData.Length);
+                                    Array.Copy(response, _sendData, response.Length);
+                                    found = true;
+                                    break;
                                 }
 
-                                Array.Copy(response, _sendData, response.Length);
-                                found = true;
-                            }
-                            else
-                            {
-                                Debug.WriteLine("Ignoring RC_RLEBI_IDR Type:{0}", idType);
+                                case 0x02:
+                                {
+                                    int index = (_receiveData[10 + offset] << 8) | _receiveData[11 + offset];
+                                    Debug.WriteLine("RC_RLEBI_IDR Type2 Index:{0}", index);
+                                    byte[] response =
+                                    {
+                                        0x9F, 0xF1, 0x63, 0x71, 0x01, 0x10, 0x02, 0x02,
+                                        0x00, 0x02, 0x58, 0x0E, 0x10, 0x0E, 0x10, 0xFF,
+                                        0xFF, 0x00, 0x46, 0x10, 0x02, 0x00, 0x00, 0x00,
+                                        (byte)(index + 1), 0x00, 0x00, 0x0F, 0x98, 0x04, 0xFE, 0x0E,
+                                        0x00, 0x01
+                                    };
+
+                                    Array.Clear(_sendData, 0, _sendData.Length);
+                                    Array.Copy(response, _sendData, response.Length);
+                                    found = true;
+                                    break;
+                                }
+
+                                default:
+                                    Debug.WriteLine("Ignoring RC_RLEBI_IDR Type:{0}", idType);
+                                    break;
+
                             }
                         }
 
