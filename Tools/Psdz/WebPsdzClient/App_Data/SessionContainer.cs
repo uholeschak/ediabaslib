@@ -1647,6 +1647,37 @@ namespace WebPsdzClient.App_Data
             }
         }
 
+        public bool HubVehicleConnect(IHubContext<IPsdzClient> hubContext)
+        {
+            if (hubContext == null)
+            {
+                log.ErrorFormat("HubVehicleConnect No hub context");
+                return false;
+            }
+
+            List<string> connectionIds = PsdzVehicleHub.GetConnectionIds(SessionId);
+            foreach (string connectionId in connectionIds)
+            {
+                hubContext.Clients.Client(connectionId)?.VehicleConnect(GetVehicleUrl(), GetNextPacketId());
+            }
+
+            PsdzVehicleHub.VehicleResponse vehicleResponse = WaitForVehicleResponse();
+            if (vehicleResponse != null)
+            {
+                AppId = vehicleResponse.AppId;
+                AdapterSerial = vehicleResponse.AdapterSerial;
+                log.InfoFormat("HubVehicleConnect AppId={0}, AdapterSerial={1}", AppId ?? string.Empty, AdapterSerial ?? string.Empty);
+            }
+
+            if (vehicleResponse == null || vehicleResponse.Error || !vehicleResponse.Valid || !vehicleResponse.Connected)
+            {
+                log.ErrorFormat("HubVehicleConnect Vehicle connect failed");
+                return false;
+            }
+
+            return true;
+        }
+
         public PsdzVehicleHub.VehicleResponse WaitForVehicleResponse(VehicleResponseDelegate vehicleResponseDelegate = null, int timeout = VehicleReceiveTimeout)
         {
             log.InfoFormat("WaitForVehicleResponse Timeout={0}", timeout);
@@ -1714,24 +1745,9 @@ namespace WebPsdzClient.App_Data
                 VehicleResponseClear();
                 ResetPacketId();
 
-                List<string> connectionIds = PsdzVehicleHub.GetConnectionIds(SessionId);
-                foreach (string connectionId in connectionIds)
-                {
-                    hubContext.Clients.Client(connectionId)?.VehicleConnect(GetVehicleUrl(), GetNextPacketId());
-                }
-
-                PsdzVehicleHub.VehicleResponse vehicleResponse = WaitForVehicleResponse();
-                if (vehicleResponse != null)
-                {
-                    AppId = vehicleResponse.AppId;
-                    AdapterSerial = vehicleResponse.AdapterSerial;
-                    log.InfoFormat("VehicleThread AppId={0}, AdapterSerial={1}", AppId ?? string.Empty, AdapterSerial ?? string.Empty);
-                }
-
-                if (vehicleResponse == null || vehicleResponse.Error || !vehicleResponse.Valid)
+                if (!HubVehicleConnect(hubContext))
                 {
                     log.ErrorFormat("VehicleThread Vehicle connect failed");
-                    return;
                 }
             }
 #endif
@@ -1821,7 +1837,15 @@ namespace WebPsdzClient.App_Data
                                     }
                                     else
                                     {
-                                        if (vehicleResponse.ResponseList == null || vehicleResponse.ResponseList.Count == 0)
+                                        if (!vehicleResponse.Connected)
+                                        {
+                                            log.ErrorFormat("VehicleThread Vehicle disconnected, reconnecting");
+                                            if (!HubVehicleConnect(hubContext))
+                                            {
+                                                log.ErrorFormat("VehicleThread Vehicle reconnect failed");
+                                            }
+                                        }
+                                        else if (vehicleResponse.ResponseList == null || vehicleResponse.ResponseList.Count == 0)
                                         {
                                             log.ErrorFormat("VehicleThread Vehicle transmit no response for Request={0}", sendDataString);
 
