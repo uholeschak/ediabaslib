@@ -22,10 +22,12 @@ namespace EdiabasLib
         private readonly bool? _noDelay;
         private readonly int? _sendBufferSize;
         private TcpClient _connection;
+#if !(__ANDROID__ || NET45_OR_GREATER || NET6_0_OR_GREATER)
         private bool _connected;
         private Exception _exception;
+#endif
 
-#if Android
+#if __ANDROID__
         public class NetworkData
         {
             public NetworkData(Android.Net.ConnectivityManager connectivityManager)
@@ -65,6 +67,25 @@ namespace EdiabasLib
 
         public TcpClient Connect()
         {
+            _connection = new TcpClient();
+            if (_noDelay.HasValue)
+            {
+                _connection.NoDelay = _noDelay.Value;
+            }
+            if (_sendBufferSize.HasValue)
+            {
+                _connection.SendBufferSize = _sendBufferSize.Value;
+            }
+
+#if __ANDROID__ || NET45_OR_GREATER || NET6_0_OR_GREATER
+            System.Threading.Tasks.Task connectTask = _connection.ConnectAsync(_host, _port);
+            if (!connectTask.Wait(_timeoutMilliseconds))
+            {
+                throw new TimeoutException("Connect timeout");
+            }
+
+            return _connection;
+#else
             // kick off the thread that tries to connect
             _connected = false;
             _exception = null;
@@ -97,21 +118,14 @@ namespace EdiabasLib
                 thread.Abort();
                 throw new TimeoutException("Connect timeout");
             }
+#endif
         }
 
+#if !(__ANDROID__ || NET45_OR_GREATER || NET6_0_OR_GREATER)
         private void BeginConnect()
         {
             try
             {
-                _connection = new TcpClient();
-                if (_noDelay.HasValue)
-                {
-                    _connection.NoDelay = _noDelay.Value;
-                }
-                if (_sendBufferSize.HasValue)
-                {
-                    _connection.SendBufferSize = _sendBufferSize.Value;
-                }
                 IPEndPoint ipTcp = new IPEndPoint(_host, _port);
                 _connection.Connect(ipTcp);
                 // record that it succeeded, for the main thread to return to the caller
@@ -123,10 +137,11 @@ namespace EdiabasLib
                 _exception = ex;
             }
         }
+#endif
 
         public static void ExecuteNetworkCommand(ExecuteNetworkDelegate command, IPAddress ipAddr, object networkDataObject)
         {
-#if Android
+#if __ANDROID__
             if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.Lollipop)
             {
                 command();
@@ -238,7 +253,7 @@ namespace EdiabasLib
 #endif
         }
 
-#if Android
+#if __ANDROID__
         public static string ConvertIpAddress(int ipAddress)
         {
             if (Java.Nio.ByteOrder.NativeOrder().Equals(Java.Nio.ByteOrder.LittleEndian))
