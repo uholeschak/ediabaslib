@@ -5413,14 +5413,14 @@ namespace CarSimulator
 
                                 case 0x02:
                                 {
-                                    int index = (_receiveData[10 + offset] << 8) | _receiveData[11 + offset];
+                                    int index = (_receiveData[13 + offset] << 8) | _receiveData[14 + offset];
                                     Debug.WriteLine("RC_RLEBI_IDR Type2 Index:{0}", index);
                                     byte[] response =
                                     {
                                         0x9F, 0xF1, 0x63, 0x71, 0x01, 0x10, 0x02, 0x02,
                                         0x00, 0x02, 0x58, 0x0E, 0x10, 0x0E, 0x10, 0xFF,
-                                        0xFF, 0x00, 0x46, 0x10, 0x02, 0x00, 0x00, 0x00,
-                                        (byte)(index + 1), 0x00, 0x00, 0x0F, 0x98, 0x04, 0xFE, 0x0E,
+                                        0xFF, 0x00, 0x46, 0x10, 0x02, 0x00, 0x00, (byte)(index >> 8),
+                                        (byte)index, 0x00, 0x00, 0x0F, 0x98, 0x04, 0xFE, 0x0E,
                                         0x00, 0x01
                                     };
 
