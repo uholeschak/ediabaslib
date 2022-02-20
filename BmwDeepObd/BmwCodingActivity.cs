@@ -157,6 +157,7 @@ namespace BmwDeepObd
                     webSettings.JavaScriptEnabled = true;
                     webSettings.JavaScriptCanOpenWindowsAutomatically = true;
                     webSettings.DomStorageEnabled = true;
+                    webSettings.BuiltInZoomControls = true;
                     webSettings.CacheMode = CacheModes.NoCache;
 
                     string userAgent = webSettings.UserAgentString;
@@ -177,6 +178,8 @@ namespace BmwDeepObd
                     }
                 }
 
+                _webViewCoding.ScrollBarStyle = ScrollbarStyles.OutsideOverlay;
+                _webViewCoding.ScrollbarFadingEnabled = false;
                 _webViewCoding.AddJavascriptInterface(new WebViewJSInterface(this), "app");
                 _webViewCoding.SetWebViewClient(new WebViewClientImpl(this));
                 _webViewCoding.SetWebChromeClient(new WebChromeClientImpl(this));
