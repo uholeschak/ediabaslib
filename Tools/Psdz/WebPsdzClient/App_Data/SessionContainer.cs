@@ -1117,8 +1117,8 @@ namespace WebPsdzClient.App_Data
                 return null;
             }
 
-            byte sourceAddr = bmwFastTel[1];
-            byte targetAddr = bmwFastTel[2];
+            byte sourceAddr = bmwFastTel[2];
+            byte targetAddr = bmwFastTel[1];
             int dataOffset = 3;
             int dataLength = bmwFastTel[0] & 0x3F;
             if (dataLength == 0)
