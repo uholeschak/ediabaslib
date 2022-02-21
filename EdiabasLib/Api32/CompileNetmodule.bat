@@ -2,7 +2,7 @@
 SETLOCAL EnableDelayedExpansion
 
 set BATPATH=%~dp0
-set ASSEM_PATH=%ProgramFiles(x86)%\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client
+set ASSEM_PATH=%ProgramFiles(x86)%\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2
 
 echo "Output: %1"
 echo "Configuration: %2"
