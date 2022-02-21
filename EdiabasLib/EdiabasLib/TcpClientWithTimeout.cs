@@ -22,7 +22,7 @@ namespace EdiabasLib
         private readonly bool? _noDelay;
         private readonly int? _sendBufferSize;
         private TcpClient _connection;
-#if !(__ANDROID__ || NET45_OR_GREATER || NET6_0_OR_GREATER)
+#if WindowsCE
         private bool _connected;
         private Exception _exception;
 #endif
@@ -77,7 +77,7 @@ namespace EdiabasLib
                 _connection.SendBufferSize = _sendBufferSize.Value;
             }
 
-#if __ANDROID__ || NET45_OR_GREATER || NET6_0_OR_GREATER
+#if !WindowsCE
             System.Threading.Tasks.Task connectTask = _connection.ConnectAsync(_host, _port);
             if (!connectTask.Wait(_timeoutMilliseconds))
             {
@@ -121,7 +121,7 @@ namespace EdiabasLib
 #endif
         }
 
-#if !(__ANDROID__ || NET45_OR_GREATER || NET6_0_OR_GREATER)
+#if WindowsCE
         private void BeginConnect()
         {
             try
