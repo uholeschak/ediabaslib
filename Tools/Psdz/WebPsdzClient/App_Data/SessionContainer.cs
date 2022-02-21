@@ -1497,7 +1497,17 @@ namespace WebPsdzClient.App_Data
                                                 int queueSize;
                                                 lock (enetTcpClientData.RecPacketQueue)
                                                 {
-                                                    if (!enetTcpClientData.RecPacketQueue.Contains(bmwFastTel))
+                                                    bool found = false;
+                                                    foreach (byte[] queueData in enetTcpClientData.RecPacketQueue)
+                                                    {
+                                                        if (queueData.Length == bmwFastTel.Length && queueData.SequenceEqual(bmwFastTel))
+                                                        {
+                                                            found = true;
+                                                            break;
+                                                        }
+                                                    }
+
+                                                    if (!found)
                                                     {
                                                         enetTcpClientData.RecPacketQueue.Enqueue(bmwFastTel);
                                                         enqueued = true;
@@ -1781,7 +1791,8 @@ namespace WebPsdzClient.App_Data
                             {
                                 if (enetTcpClientData.RecPacketQueue.Count > 0)
                                 {
-                                    bmwFastTel = enetTcpClientData.RecPacketQueue.Dequeue();
+                                    // keep the packet until processed
+                                    bmwFastTel = enetTcpClientData.RecPacketQueue.Peek();
                                 }
                             }
 
@@ -1881,6 +1892,14 @@ namespace WebPsdzClient.App_Data
                                         }
 
                                         break;
+                                    }
+                                }
+
+                                lock (enetTcpClientData.RecPacketQueue)
+                                {
+                                    if (enetTcpClientData.RecPacketQueue.Count > 0)
+                                    {
+                                        enetTcpClientData.RecPacketQueue.Dequeue();
                                     }
                                 }
                             }
