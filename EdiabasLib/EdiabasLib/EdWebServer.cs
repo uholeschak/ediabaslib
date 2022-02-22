@@ -373,11 +373,8 @@ namespace EdiabasLib
 
                     bool connected = IsEdiabasConnected();
                     string connectedState = connected ? "1" : "0";
-                    stopwatchOperation.Stop();
-                    string processingInfo = string.Format(CultureInfo.InvariantCulture, "Time: {0} ms", stopwatchOperation.ElapsedMilliseconds);
-
-                    sbBody.Append($" <status connected=\"{System.Web.HttpUtility.HtmlEncode(connectedState)}\"");
-                    sbBody.Append($" info_msg=\"{System.Web.HttpUtility.HtmlEncode(processingInfo)}\"");
+                    sbBody.Append($" <status");
+                    sbBody.Append($" connected=\"{System.Web.HttpUtility.HtmlEncode(connectedState)}\"");
                     sbBody.Append(" />\r\n");
 
                     if (!string.IsNullOrEmpty(dataString))
@@ -393,6 +390,12 @@ namespace EdiabasLib
                         }
                     }
                 }
+
+                stopwatchOperation.Stop();
+                string processingInfo = string.Format(CultureInfo.InvariantCulture, "Time: {0} ms", stopwatchOperation.ElapsedMilliseconds);
+                sbBody.Append($" <info");
+                sbBody.Append($" message=\"{System.Web.HttpUtility.HtmlEncode(processingInfo)}\"");
+                sbBody.Append(" />\r\n");
 
                 sbBody.Append("</vehicle_info>\r\n");
                 var response = new HttpResponse
