@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -351,6 +353,8 @@ namespace EdiabasLib
                     }
                 }
 
+                Stopwatch stopwatchOperation = new Stopwatch();
+                stopwatchOperation.Start();
                 string validReport = valid ? "1" : "0";
                 string idReport = idString ?? string.Empty;
                 sbBody.Append($" <request valid=\"{System.Web.HttpUtility.HtmlEncode(validReport)}\" id=\"{System.Web.HttpUtility.HtmlEncode(idReport)}\" />\r\n");
@@ -369,7 +373,12 @@ namespace EdiabasLib
 
                     bool connected = IsEdiabasConnected();
                     string connectedState = connected ? "1" : "0";
-                    sbBody.Append($" <status connected=\"{System.Web.HttpUtility.HtmlEncode(connectedState)}\" />\r\n");
+                    stopwatchOperation.Stop();
+                    string processingInfo = string.Format(CultureInfo.InvariantCulture, "Time: {0} ms", stopwatchOperation.ElapsedMilliseconds);
+
+                    sbBody.Append($" <status connected=\"{System.Web.HttpUtility.HtmlEncode(connectedState)}\"");
+                    sbBody.Append($" info_msg=\"{System.Web.HttpUtility.HtmlEncode(processingInfo)}\"");
+                    sbBody.Append(" />\r\n");
 
                     if (!string.IsNullOrEmpty(dataString))
                     {
