@@ -5243,6 +5243,10 @@ namespace CarSimulator
                 if (!found)
                 {
                     int offset = _receiveData[0] == 0x80 ? 1 : 0;
+                    if (offset > 0 && _receiveData[3] == 0x00)
+                    {
+                        offset += 2;
+                    }
                     if (_receiveData.Length >= 6 && (_receiveData[0] & 0x80) == 0x80 && _receiveData[3 + offset] == 0x27)
                     {   // service 27 (security access)
                         found = true;
