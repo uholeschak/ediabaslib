@@ -467,7 +467,7 @@ namespace WebPsdzClient.App_Data
         private const int TcpSendBufferSize = 1400;
         private const int TcpSendTimeout = 5000;
         private const int TcpTesterAddr = 0xF4;
-        private const int VehicleReceiveTimeout = 20000;
+        private const int VehicleReceiveTimeout = 25000;
         private const int ThreadFinishTimeout = VehicleReceiveTimeout + 5000;
 
         public SessionContainer(string sessionId, string dealerId)
@@ -1233,7 +1233,7 @@ namespace WebPsdzClient.App_Data
 
                     enetTcpClientData.EnetTcpChannel.SendEvent.Set();
                     nr78Data.Count++;
-                    if (nr78Data.Count > 3)
+                    if (nr78Data.Count > 10)
                     {
                         removeTel = true;
                     }
