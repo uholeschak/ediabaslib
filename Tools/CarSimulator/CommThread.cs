@@ -275,6 +275,7 @@ namespace CarSimulator
         // Make sure that on the OBD interface side of the ICOM only the IP4 protocol ist enabled in the interface!
         // Otherwise ther is packet loss in the ICOM internally!
         // Use PC connection via WiFi or 100Mbit network, this also reduces the traffic.
+        private const int MaxBufferLength = 0x10000;
         private const int TcpSendBufferSize = 1400;
         private const int TcpSendTimeout = 5000;
         private const int Kwp2000Nr2123Retries = 3;
@@ -759,8 +760,8 @@ namespace CarSimulator
             _serialPort.DataReceived += SerialDataReceived;
             _serialReceiveEvent = new AutoResetEvent(false);
             _pcanReceiveEvent = new AutoResetEvent(false);
-            _sendData = new byte[0x400];
-            _receiveData = new byte[0x400];
+            _sendData = new byte[MaxBufferLength];
+            _receiveData = new byte[MaxBufferLength];
             _receiveDataMotorBackup = new byte[_receiveData.Length];
             _noResponseCount = 0;
             _nr2123SendCount = 0;
@@ -2265,7 +2266,7 @@ namespace CarSimulator
             {
                 if (bmwTcpClientData.TcpClientStream != null && bmwTcpClientData.TcpClientStream.DataAvailable)
                 {
-                    byte[] dataBuffer = new byte[0x200];
+                    byte[] dataBuffer = new byte[MaxBufferLength];
                     int recLen = bmwTcpClientData.TcpClientStream.Read(dataBuffer, 0, dataBuffer.Length);
 #if true
                     DebugLogData("Ctrl Rec: ", dataBuffer, recLen);
@@ -2403,7 +2404,7 @@ namespace CarSimulator
                 if (bmwTcpClientData.TcpClientStream != null && bmwTcpClientData.TcpClientStream.DataAvailable)
                 {
                     bmwTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
-                    byte[] dataBuffer = new byte[0x200];
+                    byte[] dataBuffer = new byte[MaxBufferLength];
                     int recLen = bmwTcpClientData.TcpClientStream.Read(dataBuffer, 0, 6);
                     if (recLen < 6)
                     {

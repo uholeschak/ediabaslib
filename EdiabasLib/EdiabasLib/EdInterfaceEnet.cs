@@ -2342,6 +2342,7 @@ namespace EdiabasLib
             }
 
             receiveLength = TelLengthBmwFast(receiveData) + 1;
+            receiveData[receiveLength - 1] = 0;
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         }
 

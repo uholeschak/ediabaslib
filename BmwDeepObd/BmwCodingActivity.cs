@@ -788,7 +788,13 @@ namespace BmwDeepObd
                     {
                         if (_ediabas.EdInterfaceClass.TransmitData(sendData, out byte[] receiveData))
                         {
-                            responseList.Add(receiveData);
+                            if (receiveData.Length > 0)
+                            {
+                                byte[] responseData = new byte[receiveData.Length - 1];
+                                Array.Copy(receiveData, responseData, responseData.Length);
+                                responseList.Add(responseData);
+                            }
+
                             dataReceived = true;
                         }
                         else

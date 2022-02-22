@@ -142,7 +142,13 @@ namespace EdiabasLib
                     {
                         if (_ediabas.EdInterfaceClass.TransmitData(sendData, out byte[] receiveData))
                         {
-                            responseList.Add(receiveData);
+                            if (receiveData.Length > 0)
+                            {
+                                byte[] responseData = new byte[receiveData.Length - 1];
+                                Array.Copy(receiveData, responseData, responseData.Length);
+                                responseList.Add(responseData);
+                            }
+
                             dataReceived = true;
                         }
                     }
@@ -385,8 +391,11 @@ namespace EdiabasLib
                         List<byte[]> responseList = EdiabasTransmit(requestData);
                         foreach (byte[] responseData in responseList)
                         {
-                            string responseReport = BitConverter.ToString(responseData).Replace("-", "");
-                            sbBody.Append($" <data response=\"{System.Web.HttpUtility.HtmlEncode(responseReport)}\" />\r\n");
+                            if (responseData.Length > 0)
+                            {
+                                string responseReport = BitConverter.ToString(responseData).Replace("-", "");
+                                sbBody.Append($" <data response=\"{System.Web.HttpUtility.HtmlEncode(responseReport)}\" />\r\n");
+                            }
                         }
                     }
                 }
