@@ -21,18 +21,25 @@ namespace WebPsdzClient.App_Data
     {
         private class Nr78Data
         {
-            public Nr78Data(byte addr, byte[] nr78Tel)
+            public Nr78Data(byte addr, byte[] nr78Tel, long firstDelay = Nr78Delay)
             {
                 Addr = addr;
                 Nr78Tel = nr78Tel;
                 Count = 0;
                 LastTcpSendTick = Stopwatch.GetTimestamp();
+                FirstDelay = firstDelay;
+            }
+
+            public long GetDelay()
+            {
+                return Count == 0 ? FirstDelay : Nr78Delay;
             }
 
             public byte Addr;
             public byte[] Nr78Tel;
             public int Count;
             public long LastTcpSendTick;
+            public long FirstDelay;
         }
 
         private class EnetTcpClientData
@@ -463,8 +470,8 @@ namespace WebPsdzClient.App_Data
         private const int TcpSendTimeout = 5000;
         private const int TcpTesterAddr = 0xF4;
         private const int VehicleReceiveTimeout = 25000;
-        private const int Nr78Delay = 1000;
-        private const int Nr78RetryMax = VehicleReceiveTimeout / Nr78Delay;
+        private const long Nr78Delay = 1000;
+        private const long Nr78RetryMax = VehicleReceiveTimeout / Nr78Delay;
         private const int ThreadFinishTimeout = VehicleReceiveTimeout + 5000;
 
         public SessionContainer(string sessionId, string dealerId)
@@ -1111,7 +1118,7 @@ namespace WebPsdzClient.App_Data
                 foreach (KeyValuePair<byte,Nr78Data> keyValuePair in enetTcpClientData.Nr78Dict)
                 {
                     Nr78Data nr78Data = keyValuePair.Value;
-                    if ((Stopwatch.GetTimestamp() - nr78Data.LastTcpSendTick) > Nr78Delay * TickResolMs)
+                    if ((Stopwatch.GetTimestamp() - nr78Data.LastTcpSendTick) > nr78Data.GetDelay() * TickResolMs)
                     {
                         nr78Data.LastTcpSendTick = Stopwatch.GetTimestamp();
                         nr78SendList.Add(nr78Data);
@@ -1431,7 +1438,7 @@ namespace WebPsdzClient.App_Data
                                                     int nr78DictSize;
                                                     lock (enetTcpClientData.Nr78Dict)
                                                     {
-                                                        enetTcpClientData.Nr78Dict[sourceAddr] = new Nr78Data(sourceAddr, nr78Tel);
+                                                        enetTcpClientData.Nr78Dict[sourceAddr] = new Nr78Data(sourceAddr, nr78Tel, funcAddress ? Nr78Delay : 5000);
                                                         nr78DictSize = enetTcpClientData.Nr78Dict.Count;
                                                     }
 
