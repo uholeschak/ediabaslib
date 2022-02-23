@@ -126,26 +126,6 @@ namespace PsdzClient.Programing
         public ProgrammingService ProgrammingService { get; private set; }
         public List<ProgrammingJobs.OptionsItem> SelectedOptions { get; set; }
 
-        private bool _cacheResponseMismatch;
-        public bool CacheResponseMismatch
-        {
-            get
-            {
-                lock (_cacheLock)
-                {
-                    return _cacheResponseMismatch;
-                }
-            }
-
-            set
-            {
-                lock (_cacheLock)
-                {
-                    _cacheResponseMismatch = value;
-                }
-            }
-        }
-
         private bool _cacheResponseAllow;
         public bool CacheResponseAllow
         {
@@ -1239,19 +1219,7 @@ namespace PsdzClient.Programing
                 cts?.Token.ThrowIfCancellationRequested();
 
                 log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Svt");
-                IPsdzStandardSvt psdzStandardSvt = null;
-                for (int cacheRetry = 0; cacheRetry < MaxCacheRetries; cacheRetry++)
-                {
-                    CacheResponseMismatch = false;
-                    psdzStandardSvt = ProgrammingService.Psdz.EcuService.RequestSvt(PsdzContext.Connection, psdzEcuIdentifiers);
-                    if (!CacheResponseMismatch)
-                    {
-                        break;
-                    }
-
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Cache retry: {0}", cacheRetry + 1);
-                }
-
+                IPsdzStandardSvt psdzStandardSvt = ProgrammingService.Psdz.EcuService.RequestSvt(PsdzContext.Connection, psdzEcuIdentifiers);
                 if (psdzStandardSvt == null)
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting SVT failed");
@@ -1263,19 +1231,7 @@ namespace PsdzClient.Programing
                 log.InfoFormat(CultureInfo.InvariantCulture, "Svt Ecus: {0}", psdzStandardSvt.Ecus.Count());
 
                 log.InfoFormat(CultureInfo.InvariantCulture, "Requesting names");
-                IPsdzStandardSvt psdzStandardSvtNames = null;
-                for (int cacheRetry = 0; cacheRetry < MaxCacheRetries; cacheRetry++)
-                {
-                    CacheResponseMismatch = false;
-                    psdzStandardSvtNames = ProgrammingService.Psdz.LogicService.FillBntnNamesForMainSeries(PsdzContext.Connection.TargetSelector.Baureihenverbund, psdzStandardSvt);
-                    if (!CacheResponseMismatch)
-                    {
-                        break;
-                    }
-
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Cache retry: {0}", cacheRetry + 1);
-                }
-
+                IPsdzStandardSvt psdzStandardSvtNames = ProgrammingService.Psdz.LogicService.FillBntnNamesForMainSeries(PsdzContext.Connection.TargetSelector.Baureihenverbund, psdzStandardSvt);
                 if (psdzStandardSvtNames == null)
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting names failed");
@@ -1442,19 +1398,7 @@ namespace PsdzClient.Programing
                 sbResult.AppendLine(Strings.RequestingEcuContext);
                 UpdateStatus(sbResult.ToString());
                 log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Ecu context");
-                IEnumerable<IPsdzEcuContextInfo> psdzEcuContextInfos = null;
-                for (int cacheRetry = 0; cacheRetry < MaxCacheRetries; cacheRetry++)
-                {
-                    CacheResponseMismatch = false;
-                    psdzEcuContextInfos = ProgrammingService.Psdz.EcuService.RequestEcuContextInfos(PsdzContext.Connection, psdzEcuIdentifiers);
-                    if (!CacheResponseMismatch)
-                    {
-                        break;
-                    }
-
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Cache retry: {0}", cacheRetry + 1);
-                }
-
+                IEnumerable<IPsdzEcuContextInfo> psdzEcuContextInfos = psdzEcuContextInfos = ProgrammingService.Psdz.EcuService.RequestEcuContextInfos(PsdzContext.Connection, psdzEcuIdentifiers);
                 if (psdzEcuContextInfos == null)
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed");
@@ -1475,19 +1419,7 @@ namespace PsdzClient.Programing
                 sbResult.AppendLine(Strings.SwtAction);
                 UpdateStatus(sbResult.ToString());
                 log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Swt action");
-                IPsdzSwtAction psdzSwtAction = null;
-                for (int cacheRetry = 0; cacheRetry < MaxCacheRetries; cacheRetry++)
-                {
-                    CacheResponseMismatch = false;
-                    psdzSwtAction = ProgrammingService.Psdz.ProgrammingService.RequestSwtAction(PsdzContext.Connection, true);
-                    if (!CacheResponseMismatch)
-                    {
-                        break;
-                    }
-
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Cache retry: {0}", cacheRetry + 1);
-                }
-
+                IPsdzSwtAction psdzSwtAction = ProgrammingService.Psdz.ProgrammingService.RequestSwtAction(PsdzContext.Connection, true);
                 if (psdzSwtAction == null)
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting Swt action failed");

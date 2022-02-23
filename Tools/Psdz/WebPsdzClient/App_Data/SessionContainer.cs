@@ -1653,7 +1653,6 @@ namespace WebPsdzClient.App_Data
             }
 
             VehicleResponseDictClear();
-            ProgrammingJobs.CacheResponseMismatch = false;
             if (hubContext != null)
             {
                 VehicleResponseClear();
