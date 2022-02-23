@@ -468,6 +468,8 @@ namespace WebPsdzClient.App_Data
         private const int TcpSendTimeout = 5000;
         private const int TcpTesterAddr = 0xF4;
         private const int VehicleReceiveTimeout = 25000;
+        private const int Nr78Delay = 1000;
+        private const int Nr78RetryMax = VehicleReceiveTimeout / Nr78Delay;
         private const int ThreadFinishTimeout = VehicleReceiveTimeout + 5000;
 
         public SessionContainer(string sessionId, string dealerId)
@@ -1201,7 +1203,7 @@ namespace WebPsdzClient.App_Data
                 foreach (KeyValuePair<byte,Nr78Data> keyValuePair in enetTcpClientData.Nr78Dict)
                 {
                     Nr78Data nr78Data = keyValuePair.Value;
-                    if ((Stopwatch.GetTimestamp() - nr78Data.LastTcpSendTick) > 1000 * TickResolMs)
+                    if ((Stopwatch.GetTimestamp() - nr78Data.LastTcpSendTick) > Nr78Delay * TickResolMs)
                     {
                         nr78Data.LastTcpSendTick = Stopwatch.GetTimestamp();
                         nr78SendList.Add(nr78Data);
@@ -1233,7 +1235,7 @@ namespace WebPsdzClient.App_Data
 
                     enetTcpClientData.EnetTcpChannel.SendEvent.Set();
                     nr78Data.Count++;
-                    if (nr78Data.Count > 10)
+                    if (nr78Data.Count > Nr78RetryMax)
                     {
                         removeTel = true;
                     }
