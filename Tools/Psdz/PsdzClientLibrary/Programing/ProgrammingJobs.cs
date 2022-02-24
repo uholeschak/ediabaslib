@@ -864,7 +864,7 @@ namespace PsdzClient.Programing
 #endif
                         sbResult.AppendLine(Strings.ExecutingTal);
                         UpdateStatus(sbResult.ToString());
-                        //CacheResponseAllow = false;
+                        CacheResponseType = CacheType.NoResponse;
                         log.InfoFormat(CultureInfo.InvariantCulture, "Executing TAL");
                         IPsdzTal executeTalResult = ProgrammingService.Psdz.TalExecutionService.ExecuteTal(PsdzContext.Connection, PsdzContext.Tal,
                             null, psdzVin, PsdzContext.FaTarget, talExecutionSettings, PsdzContext.PathToBackupData, cts.Token);
