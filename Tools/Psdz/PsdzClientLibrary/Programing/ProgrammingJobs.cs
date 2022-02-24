@@ -899,6 +899,8 @@ namespace PsdzClient.Programing
 
                             UpdateStatus(sbResult.ToString());
                         }
+
+                        CacheClearRequired = true;
                         cts?.Token.ThrowIfCancellationRequested();
 
                         if (!backupFailed)
@@ -959,6 +961,8 @@ namespace PsdzClient.Programing
 
                                     UpdateStatus(sbResult.ToString());
                                 }
+
+                                CacheClearRequired = true;
                                 cts?.Token.ThrowIfCancellationRequested();
                             }
                         }
