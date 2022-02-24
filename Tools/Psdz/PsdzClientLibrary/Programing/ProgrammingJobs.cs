@@ -796,6 +796,8 @@ namespace PsdzClient.Programing
 
                         sbResult.AppendLine(Strings.ExecutingBackupTal);
                         UpdateStatus(sbResult.ToString());
+
+                        CacheResponseType = CacheType.NoResponse;
                         log.InfoFormat(CultureInfo.InvariantCulture, "Executing backup TAL");
                         TalExecutionSettings talExecutionSettings = ProgrammingUtils.GetTalExecutionSettings(ProgrammingService);
                         talExecutionSettings.Parallel = false;
@@ -844,6 +846,8 @@ namespace PsdzClient.Programing
 
                             UpdateStatus(sbResult.ToString());
                         }
+
+                        CacheClearRequired = true;
                         cts?.Token.ThrowIfCancellationRequested();
 
                         if (talExecutionFailed || talExecutionWarning)
@@ -864,7 +868,6 @@ namespace PsdzClient.Programing
 #endif
                         sbResult.AppendLine(Strings.ExecutingTal);
                         UpdateStatus(sbResult.ToString());
-                        CacheResponseType = CacheType.NoResponse;
                         log.InfoFormat(CultureInfo.InvariantCulture, "Executing TAL");
                         IPsdzTal executeTalResult = ProgrammingService.Psdz.TalExecutionService.ExecuteTal(PsdzContext.Connection, PsdzContext.Tal,
                             null, psdzVin, PsdzContext.FaTarget, talExecutionSettings, PsdzContext.PathToBackupData, cts.Token);
@@ -981,6 +984,8 @@ namespace PsdzClient.Programing
                             sbResult.AppendLine(Strings.TslUpdateFailed);
                             UpdateStatus(sbResult.ToString());
                         }
+
+                        CacheClearRequired = true;
                         cts?.Token.ThrowIfCancellationRequested();
 
                         try
@@ -997,6 +1002,8 @@ namespace PsdzClient.Programing
                             sbResult.AppendLine(Strings.ILevelUpdateFailed);
                             UpdateStatus(sbResult.ToString());
                         }
+
+                        CacheClearRequired = true;
                         cts?.Token.ThrowIfCancellationRequested();
 
                         try
@@ -1013,6 +1020,8 @@ namespace PsdzClient.Programing
                             sbResult.AppendLine(Strings.ILevelBackupFailed);
                             UpdateStatus(sbResult.ToString());
                         }
+
+                        CacheClearRequired = true;
                         cts?.Token.ThrowIfCancellationRequested();
 
                         log.InfoFormat(CultureInfo.InvariantCulture, "Updating PIA master");
@@ -1038,6 +1047,8 @@ namespace PsdzClient.Programing
                             sbResult.AppendLine(Strings.FaWriteFailed);
                             UpdateStatus(sbResult.ToString());
                         }
+
+                        CacheClearRequired = true;
                         cts?.Token.ThrowIfCancellationRequested();
 
                         try
@@ -1054,6 +1065,8 @@ namespace PsdzClient.Programing
                             sbResult.AppendLine(Strings.FaBackupWriteFailed);
                             UpdateStatus(sbResult.ToString());
                         }
+
+                        CacheClearRequired = true;
                         cts?.Token.ThrowIfCancellationRequested();
 
                         if (!talExecutionFailed)
