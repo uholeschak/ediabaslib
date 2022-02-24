@@ -1388,7 +1388,8 @@ namespace WebPsdzClient.App_Data
                                             string sendDataString = BitConverter.ToString(bmwFastTel).Replace("-", "");
                                             if (funcAddress)
                                             {
-                                                if (!ProgrammingJobs.CacheResponseAllow)
+                                                ProgrammingJobs.CacheType cacheType = ProgrammingJobs.CacheResponseType;
+                                                if (cacheType == ProgrammingJobs.CacheType.None)
                                                 {
                                                     log.InfoFormat("TcpThread Caching disabled");
                                                 }
@@ -1397,6 +1398,15 @@ namespace WebPsdzClient.App_Data
                                                     lock (_lockObject)
                                                     {
                                                         _vehicleResponseDict.TryGetValue(sendDataString, out cachedResponseList);
+                                                    }
+
+                                                    if (cacheType == ProgrammingJobs.CacheType.NoResponse)
+                                                    {
+                                                        if (cachedResponseList.Count > 0)
+                                                        {
+                                                            log.InfoFormat("TcpThread Only none response caches are allowed");
+                                                            cachedResponseList = null;
+                                                        }
                                                     }
                                                 }
                                             }

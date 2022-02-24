@@ -41,6 +41,13 @@ namespace PsdzClient.Programing
             ExecuteTal,
         }
 
+        public enum CacheType
+        {
+            None,
+            NoResponse,
+            FuncAddress,
+        }
+
         public class OptionsItem
         {
             public OptionsItem(PdszDatabase.SwiAction swiAction, ClientContext clientContext)
@@ -126,14 +133,14 @@ namespace PsdzClient.Programing
         public ProgrammingService ProgrammingService { get; private set; }
         public List<ProgrammingJobs.OptionsItem> SelectedOptions { get; set; }
 
-        private bool _cacheResponseAllow;
-        public bool CacheResponseAllow
+        private CacheType _cacheResponseType;
+        public CacheType CacheResponseType
         {
             get
             {
                 lock (_cacheLock)
                 {
-                    return _cacheResponseAllow;
+                    return _cacheResponseType;
                 }
             }
 
@@ -141,7 +148,7 @@ namespace PsdzClient.Programing
             {
                 lock (_cacheLock)
                 {
-                    _cacheResponseAllow = value;
+                    _cacheResponseType = value;
                 }
             }
         }
@@ -338,7 +345,7 @@ namespace PsdzClient.Programing
                 sbResult.AppendLine(Strings.VehicleDetecting);
                 UpdateStatus(sbResult.ToString());
 
-                CacheResponseAllow = true;
+                CacheResponseType = CacheType.FuncAddress;
                 string ecuPath = Path.Combine(istaFolder, @"Ecu");
                 bool icomConnection = useIcom;
                 if (hostParts.Length > 1)
@@ -523,7 +530,7 @@ namespace PsdzClient.Programing
                 sbResult.AppendLine(Strings.VehicleDisconnecting);
                 UpdateStatus(sbResult.ToString());
 
-                CacheResponseAllow = true;
+                CacheResponseType = CacheType.FuncAddress;
                 if (ProgrammingService == null)
                 {
                     sbResult.AppendLine(Strings.VehicleNotConnected);
@@ -578,7 +585,7 @@ namespace PsdzClient.Programing
                 sbResult.AppendLine(Strings.ExecutingVehicleFunc);
                 UpdateStatus(sbResult.ToString());
 
-                CacheResponseAllow = true;
+                CacheResponseType = CacheType.FuncAddress;
                 if (ProgrammingService == null)
                 {
                     sbResult.AppendLine(Strings.VehicleNotConnected);
@@ -1066,7 +1073,7 @@ namespace PsdzClient.Programing
                     finally
                     {
                         CacheClearRequired = true;
-                        CacheResponseAllow = true;
+                        CacheResponseType = CacheType.FuncAddress;
                         secureCodingConfig.BackendNcdCalculationEtoEnum = backendNcdCalculationEtoEnumOld;
                         if (Directory.Exists(secureCodingPath))
                         {
