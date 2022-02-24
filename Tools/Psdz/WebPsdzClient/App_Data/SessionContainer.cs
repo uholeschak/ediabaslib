@@ -1400,7 +1400,7 @@ namespace WebPsdzClient.App_Data
                                                         _vehicleResponseDict.TryGetValue(sendDataString, out cachedResponseList);
                                                     }
 
-                                                    if (cacheType == ProgrammingJobs.CacheType.NoResponse)
+                                                    if (cachedResponseList != null && cacheType == ProgrammingJobs.CacheType.NoResponse)
                                                     {
                                                         if (cachedResponseList.Count > 0)
                                                         {
