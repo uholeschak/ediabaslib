@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Net.Http;
 using System.Text;
 using System.Threading;
+using System.Xml.Linq;
 using Android.Content;
 using Android.Content.PM;
 using Android.Hardware.Usb;
@@ -68,6 +70,7 @@ namespace BmwDeepObd
         }
 
         public delegate void AcceptDelegate(bool accepted);
+        public delegate void InfoCheckDelegate(bool success, string codingUrl, string message);
 
         private const int ConnectionTimeout = 6000;
 
@@ -79,6 +82,7 @@ namespace BmwDeepObd
         public const string ExtraDeviceAddress = "device_address";
         public const string ExtraEnetIp = "enet_ip";
 
+        private const string InfoCodingUrl = @"https://www.holeschak.de/BmwDeepObd/BmwCoding.php";
 #if DEBUG
         private static readonly string Tag = typeof(BmwCodingActivity).FullName;
 #endif
@@ -104,6 +108,8 @@ namespace BmwDeepObd
         private object _timeLock = new object();
         private Queue<VehicleRequest> _requestQueue = new Queue<VehicleRequest>();
         private bool _activityActive;
+        private HttpClient _infoHttpClient;
+        private bool _infoCheckActive;
         private bool _urlLoaded;
         private Timer _connectionCheckTimer;
         public long _connectionUpdateTime;
@@ -265,8 +271,22 @@ namespace BmwDeepObd
 
             StopEdiabasThread();
 
+            if (_infoHttpClient != null)
+            {
+                try
+                {
+                    _infoHttpClient.Dispose();
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+                _infoHttpClient = null;
+            }
+
             _activityCommon?.Dispose();
             _activityCommon = null;
+
         }
 
         public override void OnBackPressed()
@@ -428,6 +448,118 @@ namespace BmwDeepObd
         private void UpdateOptionsMenu()
         {
             _updateOptionsMenu = true;
+        }
+
+        public bool GetConnectionInfo(InfoCheckDelegate handler)
+        {
+            try
+            {
+                if (_infoCheckActive)
+                {
+                    return false;
+                }
+
+                if (handler == null)
+                {
+                    return false;
+                }
+
+                if (_infoHttpClient == null)
+                {
+                    _infoHttpClient = new HttpClient(new HttpClientHandler()
+                    {
+                        SslProtocols = ActivityCommon.DefaultSslProtocols,
+                        ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true
+                    });
+                }
+
+                PackageInfo packageInfo = _activityCommon.GetPackageInfo();
+                MultipartFormDataContent formInfo = new MultipartFormDataContent
+                {
+                    { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}",
+                        packageInfo != null ? PackageInfoCompat.GetLongVersionCode(packageInfo) : 0)), "app_ver" },
+                    { new StringContent(ActivityCommon.AppId), "app_id" },
+                    { new StringContent(ActivityCommon.GetCurrentLanguage()), "lang" },
+                    { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", (long) Build.VERSION.SdkInt)), "android_ver" },
+                };
+
+                System.Threading.Tasks.Task<HttpResponseMessage> taskDownload = _infoHttpClient.PostAsync(InfoCodingUrl, formInfo);
+                _infoCheckActive = true;
+                taskDownload.ContinueWith((task, o) =>
+                {
+                    InfoCheckDelegate handlerLocal = o as InfoCheckDelegate;
+                    _infoCheckActive = false;
+                    try
+                    {
+                        HttpResponseMessage responseUpdate = task.Result;
+                        responseUpdate.EnsureSuccessStatusCode();
+                        string responseInfoXml = responseUpdate.Content.ReadAsStringAsync().Result;
+                        bool success = GetCodingInfo(responseInfoXml, out string codingUrl, out string errorMessage);
+                        handlerLocal?.Invoke(success, codingUrl, errorMessage);
+                    }
+                    catch (Exception)
+                    {
+                        handlerLocal?.Invoke(false, null, null);
+                    }
+                }, handler, System.Threading.Tasks.TaskContinuationOptions.None);
+            }
+            catch (Exception)
+            {
+                _infoCheckActive = false;
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool GetCodingInfo(string xmlResult, out string codingUrl, out string errorMessage)
+        {
+            codingUrl = null;
+            errorMessage = null;
+
+            try
+            {
+                if (string.IsNullOrEmpty(xmlResult))
+                {
+                    return false;
+                }
+
+                XDocument xmlDoc = XDocument.Parse(xmlResult);
+                if (xmlDoc.Root == null)
+                {
+                    return false;
+                }
+
+                bool success = false;
+                XElement infoNode = xmlDoc.Root.Element("info");
+                if (infoNode != null)
+                {
+                    XAttribute urlAttr = infoNode.Attribute("url");
+                    if (urlAttr != null && !string.IsNullOrEmpty(urlAttr.Value))
+                    {
+                        codingUrl = urlAttr.Value;
+                        success = true;
+                    }
+                }
+
+                XElement errorNode = xmlDoc.Root.Element("error");
+                // ReSharper disable once UseNullPropagation
+                if (errorNode != null)
+                {
+                    XAttribute messageAttr = errorNode.Attribute("message");
+                    if (messageAttr != null && !string.IsNullOrEmpty(messageAttr.Value))
+                    {
+                        errorMessage = messageAttr.Value;
+                        success = true;
+                    }
+                }
+
+                return success;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         private void SendVehicleResponseThread(string id, string response)
