@@ -109,7 +109,6 @@ namespace BmwDeepObd
         private Queue<VehicleRequest> _requestQueue = new Queue<VehicleRequest>();
         private bool _activityActive;
         private HttpClient _infoHttpClient;
-        private bool _infoCheckActive;
         private bool _urlLoaded;
         private Timer _connectionCheckTimer;
         public long _connectionUpdateTime;
@@ -452,63 +451,98 @@ namespace BmwDeepObd
 
         public bool GetConnectionInfo(InfoCheckDelegate handler)
         {
-            try
+            if (handler == null)
             {
-                if (_infoCheckActive)
-                {
-                    return false;
-                }
-
-                if (handler == null)
-                {
-                    return false;
-                }
-
-                if (_infoHttpClient == null)
-                {
-                    _infoHttpClient = new HttpClient(new HttpClientHandler()
-                    {
-                        SslProtocols = ActivityCommon.DefaultSslProtocols,
-                        ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true
-                    });
-                }
-
-                PackageInfo packageInfo = _activityCommon.GetPackageInfo();
-                MultipartFormDataContent formInfo = new MultipartFormDataContent
-                {
-                    { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}",
-                        packageInfo != null ? PackageInfoCompat.GetLongVersionCode(packageInfo) : 0)), "app_ver" },
-                    { new StringContent(ActivityCommon.AppId), "app_id" },
-                    { new StringContent(ActivityCommon.GetCurrentLanguage()), "lang" },
-                    { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", (long) Build.VERSION.SdkInt)), "android_ver" },
-                };
-
-                System.Threading.Tasks.Task<HttpResponseMessage> taskDownload = _infoHttpClient.PostAsync(InfoCodingUrl, formInfo);
-                _infoCheckActive = true;
-                taskDownload.ContinueWith((task, o) =>
-                {
-                    InfoCheckDelegate handlerLocal = o as InfoCheckDelegate;
-                    _infoCheckActive = false;
-                    try
-                    {
-                        HttpResponseMessage responseUpdate = task.Result;
-                        responseUpdate.EnsureSuccessStatusCode();
-                        string responseInfoXml = responseUpdate.Content.ReadAsStringAsync().Result;
-                        bool success = GetCodingInfo(responseInfoXml, out string codingUrl, out string message);
-                        handlerLocal?.Invoke(success, codingUrl, message);
-                    }
-                    catch (Exception)
-                    {
-                        handlerLocal?.Invoke(false, null, null);
-                    }
-                }, handler, System.Threading.Tasks.TaskContinuationOptions.None);
-            }
-            catch (Exception)
-            {
-                _infoCheckActive = false;
                 return false;
             }
 
+            if (_infoHttpClient == null)
+            {
+                _infoHttpClient = new HttpClient(new HttpClientHandler()
+                {
+                    SslProtocols = ActivityCommon.DefaultSslProtocols,
+                    ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true
+                });
+            }
+
+            PackageInfo packageInfo = _activityCommon.GetPackageInfo();
+
+            CustomProgressDialog progress = new CustomProgressDialog(this);
+            progress.SetMessage(GetString(Resource.String.send_trace_file));
+            progress.ButtonAbort.Enabled = false;
+            progress.Show();
+            _activityCommon.SetLock(ActivityCommon.LockTypeCommunication);
+            _activityCommon.SetPreferredNetworkInterface();
+
+            Thread sendThread = new Thread(() =>
+            {
+                try
+                {
+                    MultipartFormDataContent formInfo = new MultipartFormDataContent
+                    {
+                        { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}",
+                            packageInfo != null ? PackageInfoCompat.GetLongVersionCode(packageInfo) : 0)), "app_ver" },
+                        { new StringContent(ActivityCommon.AppId), "app_id" },
+                        { new StringContent(ActivityCommon.GetCurrentLanguage()), "lang" },
+                        { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", (long) Build.VERSION.SdkInt)), "android_ver" },
+                    };
+
+                    System.Threading.Tasks.Task<HttpResponseMessage> taskDownload = _infoHttpClient.PostAsync(InfoCodingUrl, formInfo);
+
+                    CustomProgressDialog progressLocal = progress;
+                    if (progressLocal != null)
+                    {
+                        progress.AbortClick = sender =>
+                        {
+                            try
+                            {
+                                _infoHttpClient.CancelPendingRequests();
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                        };
+                        progressLocal.ButtonAbort.Enabled = true;
+                    }
+
+                    HttpResponseMessage responseUpload = taskDownload.Result;
+                    responseUpload.EnsureSuccessStatusCode();
+                    string responseInfoXml = responseUpload.Content.ReadAsStringAsync().Result;
+                    bool success = GetCodingInfo(responseInfoXml, out string codingUrl, out string message);
+                    handler?.Invoke(success, codingUrl, message);
+
+                    if (progress != null)
+                    {
+                        progress.Dismiss();
+                        progress.Dispose();
+                        progress = null;
+                        _activityCommon.SetLock(ActivityCommon.LockType.None);
+                    }
+                }
+                catch (Exception)
+                {
+                    RunOnUiThread(() =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
+                        if (progress != null)
+                        {
+                            progress.Dismiss();
+                            progress.Dispose();
+                            progress = null;
+                            _activityCommon.SetLock(ActivityCommon.LockType.None);
+                        }
+
+                        handler?.Invoke(false, null, null);
+                    });
+                }
+            });
+
+            sendThread.Start();
             return true;
         }
 
