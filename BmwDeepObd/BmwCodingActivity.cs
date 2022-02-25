@@ -494,8 +494,8 @@ namespace BmwDeepObd
                         HttpResponseMessage responseUpdate = task.Result;
                         responseUpdate.EnsureSuccessStatusCode();
                         string responseInfoXml = responseUpdate.Content.ReadAsStringAsync().Result;
-                        bool success = GetCodingInfo(responseInfoXml, out string codingUrl, out string errorMessage);
-                        handlerLocal?.Invoke(success, codingUrl, errorMessage);
+                        bool success = GetCodingInfo(responseInfoXml, out string codingUrl, out string message);
+                        handlerLocal?.Invoke(success, codingUrl, message);
                     }
                     catch (Exception)
                     {
@@ -512,10 +512,10 @@ namespace BmwDeepObd
             return true;
         }
 
-        private bool GetCodingInfo(string xmlResult, out string codingUrl, out string errorMessage)
+        private bool GetCodingInfo(string xmlResult, out string codingUrl, out string message)
         {
             codingUrl = null;
-            errorMessage = null;
+            message = null;
 
             try
             {
@@ -540,16 +540,11 @@ namespace BmwDeepObd
                         codingUrl = urlAttr.Value;
                         success = true;
                     }
-                }
 
-                XElement errorNode = xmlDoc.Root.Element("error");
-                // ReSharper disable once UseNullPropagation
-                if (errorNode != null)
-                {
-                    XAttribute messageAttr = errorNode.Attribute("message");
+                    XAttribute messageAttr = infoNode.Attribute("message");
                     if (messageAttr != null && !string.IsNullOrEmpty(messageAttr.Value))
                     {
-                        errorMessage = messageAttr.Value;
+                        message = messageAttr.Value;
                         success = true;
                     }
                 }
