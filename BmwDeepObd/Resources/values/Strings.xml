@@ -669,9 +669,12 @@
   <!-- BMW Coding Activity -->
   <string name="bmw_coding_title">BMW Coding</string>
   <string name="bmw_coding_network_error">Loading web page failed, retrying.</string>
+  <string name="bmw_coding_connect_request">BMW coding is an online service and requires a fast and stable internet connection.\nDo you want to continue?</string>
+  <string name="bmw_coding_connecting">Establish connection.</string>
+  <string name="bmw_coding_connect_failed">Establish connection failed.\nPlease check your network connection.</string>
   <string name="bmw_coding_connection_active">The connection to the vehicle is active.\nWhen leaving the page the communication will be interrupted.\nPlease close the connection first.\nDo you still want to leave the page?</string>
 
-    <!-- CAN Adapter Activity -->
+  <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">Adapter configuration</string>
   <string name="can_adapter_mode_name">CAN mode</string>
   <string name="can_adapter_sep_time">Separation time [ms]</string>
