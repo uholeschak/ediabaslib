@@ -156,7 +156,7 @@ namespace BmwDeepObd
             public bool DataLogTemporaryShown { get; set; }
             public bool CheckCpuUsage { get; set; }
             public bool VerifyEcuFiles { get; set; }
-            public bool CommErrorsOccured { get; set; }
+            public bool CommErrorsOccurred { get; set; }
             public bool AutoStart { get; set; }
             public bool VagInfoShown { get; set; }
             public string DataLogDir { get; set; }
@@ -2059,7 +2059,7 @@ namespace BmwDeepObd
         private bool StartEdiabasThread()
         {
             _instanceData.AutoStart = false;
-            _instanceData.CommErrorsOccured = false;
+            _instanceData.CommErrorsOccurred = false;
             try
             {
                 if (ActivityCommon.EdiabasThread == null)
@@ -3177,7 +3177,7 @@ namespace BmwDeepObd
             _translatedList = null;
 
             UpdateCheck();
-            if (_instanceData.CommErrorsOccured && _instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir))
+            if (_instanceData.CommErrorsOccurred && _instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir))
             {
                 _activityCommon.RequestSendTraceFile(_instanceData.AppDataPath, _instanceData.TraceDir, GetType());
             }
@@ -3489,7 +3489,7 @@ namespace BmwDeepObd
                     }
                     if (ActivityCommon.IsCommunicationError(errorMessage))
                     {
-                        _instanceData.CommErrorsOccured = true;
+                        _instanceData.CommErrorsOccurred = true;
                     }
 
                     MethodInfo formatErrorResult = null;
@@ -3556,7 +3556,7 @@ namespace BmwDeepObd
                                 }
                                 if (ActivityCommon.IsCommunicationError(errorReport.ExecptionText))
                                 {
-                                    _instanceData.CommErrorsOccured = true;
+                                    _instanceData.CommErrorsOccurred = true;
                                 }
 
                                 bool shadow = errorReport is EdiabasThread.EdiabasErrorShadowReport;

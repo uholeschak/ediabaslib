@@ -152,8 +152,8 @@
   <string name="del_document_request">The file or folder:\n{0}\nwill be deleted.\nDo you want to continue?</string>
 
   <!-- Send trace file -->
-  <string name="send_trace_file_request">Communication errors have occured.\nDo you want to send a compressed and anonymous trace file (size {0:fs0}) to allow improvement of the product?</string>
-  <string name="send_message_request">Communication errors have occured.\nDo you want to send anonymous data to allow improvement of the product?</string>
+  <string name="send_trace_file_request">Communication errors have occurred.\nDo you want to send a compressed and anonymous trace file (size {0:fs0}) to allow improvement of the product?</string>
+  <string name="send_message_request">Communication errors have occurred.\nDo you want to send anonymous data to allow improvement of the product?</string>
   <string name="send_trace_file">Sending trace file</string>
   <string name="compress_trace_file_failed">Compressing trace file failed.</string>
   <string name="send_trace_file_failed">Sending trace file failed.</string>
@@ -688,8 +688,8 @@
   <string name="can_adapter_type">Adapter type</string>
   <string name="can_adapter_type_unknown">Unknown</string>
   <string name="can_adapter_expert">Expert mode</string>
-  <string name="can_adapter_comm_error">A communication error occured</string>
-  <string name="can_adapter_comm_error_std">A communication error occured.\nAdapter configuration is only possible,\nif the adapter LED is active after power on.</string>
+  <string name="can_adapter_comm_error">A communication error occurred</string>
+  <string name="can_adapter_comm_error_std">A communication error occurred.\nAdapter configuration is only possible,\nif the adapter LED is active after power on.</string>
   <string name="can_adapter_blacklisted">The adapter is invalid.</string>
   <string name="can_adapter_ignition_on">Ignition on</string>
   <string name="can_adapter_ignition_off">Ignition off</string>

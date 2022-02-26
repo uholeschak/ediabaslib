@@ -365,7 +365,7 @@ namespace BmwDeepObd
             public string Vin { get; set; }
             public string VehicleType { get; set; }
             public string CDate { get; set; }
-            public bool CommErrorsOccured { get; set; }
+            public bool CommErrorsOccurred { get; set; }
         }
 
         private static readonly Encoding VagUdsEncoding = Encoding.GetEncoding(1252);
@@ -1399,7 +1399,7 @@ namespace BmwDeepObd
 
         private bool SendTraceFile(EventHandler<EventArgs> handler)
         {
-            if (_instanceData.CommErrorsOccured && _instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir))
+            if (_instanceData.CommErrorsOccurred && _instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir))
             {
                 if (!EdiabasClose())
                 {
@@ -2649,7 +2649,7 @@ namespace BmwDeepObd
                     {
                         if (ecuListBest == null)
                         {
-                            _instanceData.CommErrorsOccured = true;
+                            _instanceData.CommErrorsOccurred = true;
                             if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth && _activityCommon.MtcBtService)
                             {
                                 if (IsPageSelectionActive())
@@ -2713,7 +2713,7 @@ namespace BmwDeepObd
                             }
                             else if (bestInvalidCount > 0)
                             {
-                                _instanceData.CommErrorsOccured = true;
+                                _instanceData.CommErrorsOccurred = true;
                                 if (!IsPageSelectionActive())
                                 {
                                     ShowAlert(Resource.String.alert_title_warning, Resource.String.xml_tool_msg_ecu_error);
@@ -3919,7 +3919,7 @@ namespace BmwDeepObd
 
                     if (!_ediabasJobAbort && ((_ecuList.Count == 0) || (detectCount == 0)))
                     {
-                        _instanceData.CommErrorsOccured = true;
+                        _instanceData.CommErrorsOccurred = true;
                         ShowAlert(Resource.String.alert_title_error, Resource.String.xml_tool_no_response);
                     }
                 });
@@ -6316,7 +6316,7 @@ namespace BmwDeepObd
                     UpdateDisplay();
                     if (readFailed)
                     {
-                        _instanceData.CommErrorsOccured = true;
+                        _instanceData.CommErrorsOccurred = true;
                         ShowAlert(Resource.String.alert_title_error, Resource.String.xml_tool_read_ecu_info_failed);
                     }
                     handler?.Invoke(readFailed);

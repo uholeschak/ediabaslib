@@ -3389,7 +3389,7 @@ namespace EdiabasLib
             {
                 errorFunc(errorCode);
             }
-            throw new Exception(string.Format(Culture, "Error occured: {0}", errorCode));
+            throw new Exception(string.Format(Culture, "Error occurred: {0}", errorCode));
         }
 
         public static string GetErrorDescription(ErrorCodes errorCode)
