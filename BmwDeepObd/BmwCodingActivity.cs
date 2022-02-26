@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Net.Http;
 using System.Text;
 using System.Threading;
+using System.Xml.Linq;
 using Android.Content;
 using Android.Content.PM;
 using Android.Hardware.Usb;
@@ -56,10 +58,12 @@ namespace BmwDeepObd
         {
             public InstanceData()
             {
+                CodingUrl = string.Empty;
                 Url = string.Empty;
                 TraceActive = true;
             }
 
+            public string CodingUrl { get; set; }
             public string Url { get; set; }
             public string TraceDir { get; set; }
             public bool TraceActive { get; set; }
@@ -68,6 +72,7 @@ namespace BmwDeepObd
         }
 
         public delegate void AcceptDelegate(bool accepted);
+        public delegate void InfoCheckDelegate(bool success, bool cancelled, string codingUrl, string message);
 
         private const int ConnectionTimeout = 6000;
 
@@ -79,6 +84,7 @@ namespace BmwDeepObd
         public const string ExtraDeviceAddress = "device_address";
         public const string ExtraEnetIp = "enet_ip";
 
+        private const string InfoCodingUrl = @"https://www.holeschak.de/BmwDeepObd/BmwCoding.php";
 #if DEBUG
         private static readonly string Tag = typeof(BmwCodingActivity).FullName;
 #endif
@@ -104,6 +110,7 @@ namespace BmwDeepObd
         private object _timeLock = new object();
         private Queue<VehicleRequest> _requestQueue = new Queue<VehicleRequest>();
         private bool _activityActive;
+        private HttpClient _infoHttpClient;
         private bool _urlLoaded;
         private Timer _connectionCheckTimer;
         public long _connectionUpdateTime;
@@ -199,6 +206,20 @@ namespace BmwDeepObd
             base.OnSaveInstanceState(outState);
         }
 
+        protected override void OnStart()
+        {
+            base.OnStart();
+            if (_activityCommon != null)
+            {
+                if (_activityCommon.MtcBtService)
+                {
+                    _activityCommon.StartMtcService();
+                }
+
+                GetConnectionInfoRequest();
+            }
+        }
+
         protected override void OnResume()
         {
             base.OnResume();
@@ -259,14 +280,37 @@ namespace BmwDeepObd
             }
         }
 
+        protected override void OnStop()
+        {
+            base.OnStop();
+            if (_activityCommon != null && _activityCommon.MtcBtService)
+            {
+                _activityCommon.StopMtcService();
+            }
+        }
+
         protected override void OnDestroy()
         {
             base.OnDestroy();
 
             StopEdiabasThread();
 
+            if (_infoHttpClient != null)
+            {
+                try
+                {
+                    _infoHttpClient.Dispose();
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+                _infoHttpClient = null;
+            }
+
             _activityCommon?.Dispose();
             _activityCommon = null;
+
         }
 
         public override void OnBackPressed()
@@ -430,6 +474,243 @@ namespace BmwDeepObd
             _updateOptionsMenu = true;
         }
 
+        public bool GetConnectionInfoRequest()
+        {
+            if (!string.IsNullOrEmpty(_instanceData.CodingUrl))
+            {
+                return true;
+            }
+
+            try
+            {
+                bool ignoreDismiss = false;
+                AlertDialog alertDialog = new AlertDialog.Builder(this)
+                    .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
+                        ignoreDismiss = true;
+                        GetConnectionInfo((success, cancelled, url, message) =>
+                        {
+                            RunOnUiThread(() =>
+                            {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
+
+                                if (cancelled)
+                                {
+                                    Finish();
+                                }
+
+                                if (success && !string.IsNullOrEmpty(url))
+                                {
+                                    _instanceData.CodingUrl = url;
+                                    return;
+                                }
+
+                                string messageText = message;
+                                if (string.IsNullOrEmpty(messageText))
+                                {
+                                    messageText = GetString(Resource.String.bmw_coding_connect_failed);
+                                }
+
+                                AlertDialog alertDialogError = new AlertDialog.Builder(this)
+                                    .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+                                    {
+                                    })
+                                    .SetCancelable(true)
+                                    .SetMessage(messageText)
+                                    .SetTitle(Resource.String.alert_title_error)
+                                    .Show();
+                                alertDialogError.DismissEvent += (sender, args) =>
+                                {
+                                    if (_activityCommon == null)
+                                    {
+                                        return;
+                                    }
+
+                                    Finish();
+                                };
+                            });
+                        });
+                    })
+                    .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                    {
+                    })
+                    .SetMessage(Resource.String.bmw_coding_connect_request)
+                    .SetTitle(Resource.String.alert_title_info)
+                    .Show();
+                alertDialog.DismissEvent += (sender, args) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    if (!ignoreDismiss)
+                    {
+                        Finish();
+                    }
+                };
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public bool GetConnectionInfo(InfoCheckDelegate handler)
+        {
+            if (handler == null)
+            {
+                return false;
+            }
+
+            if (_infoHttpClient == null)
+            {
+                _infoHttpClient = new HttpClient(new HttpClientHandler()
+                {
+                    SslProtocols = ActivityCommon.DefaultSslProtocols,
+                    ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true
+                });
+            }
+
+            PackageInfo packageInfo = _activityCommon.GetPackageInfo();
+
+            CustomProgressDialog progress = new CustomProgressDialog(this);
+            progress.SetMessage(GetString(Resource.String.bmw_coding_connecting));
+            progress.ButtonAbort.Enabled = false;
+            progress.Show();
+            _activityCommon.SetLock(ActivityCommon.LockTypeCommunication);
+            _activityCommon.SetPreferredNetworkInterface();
+
+            Thread sendThread = new Thread(() =>
+            {
+                try
+                {
+                    MultipartFormDataContent formInfo = new MultipartFormDataContent
+                    {
+                        { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}",
+                            packageInfo != null ? PackageInfoCompat.GetLongVersionCode(packageInfo) : 0)), "app_ver" },
+                        { new StringContent(ActivityCommon.AppId), "app_id" },
+                        { new StringContent(ActivityCommon.GetCurrentLanguage()), "lang" },
+                        { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", (long) Build.VERSION.SdkInt)), "android_ver" },
+                    };
+
+                    System.Threading.Tasks.Task<HttpResponseMessage> taskDownload = _infoHttpClient.PostAsync(InfoCodingUrl, formInfo);
+
+                    CustomProgressDialog progressLocal = progress;
+                    RunOnUiThread(() =>
+                    {
+                        if (progressLocal != null)
+                        {
+                            progressLocal.AbortClick = sender =>
+                            {
+                                try
+                                {
+                                    _infoHttpClient.CancelPendingRequests();
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
+                            };
+                            progressLocal.ButtonAbort.Enabled = true;
+                        }
+                    });
+
+                    HttpResponseMessage responseUpload = taskDownload.Result;
+                    responseUpload.EnsureSuccessStatusCode();
+                    string responseInfoXml = responseUpload.Content.ReadAsStringAsync().Result;
+                    bool success = GetCodingInfo(responseInfoXml, out string codingUrl, out string message);
+                    handler?.Invoke(success, false, codingUrl, message);
+
+                    if (progress != null)
+                    {
+                        progress.Dismiss();
+                        progress.Dispose();
+                        progress = null;
+                        _activityCommon.SetLock(ActivityCommon.LockType.None);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    RunOnUiThread(() =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
+                        if (progress != null)
+                        {
+                            progress.Dismiss();
+                            progress.Dispose();
+                            progress = null;
+                            _activityCommon.SetLock(ActivityCommon.LockType.None);
+                        }
+
+                        bool cancelled = ex.InnerException is System.Threading.Tasks.TaskCanceledException;
+                        handler?.Invoke(false, cancelled, null, null);
+                    });
+                }
+            });
+
+            sendThread.Start();
+            return true;
+        }
+
+        private bool GetCodingInfo(string xmlResult, out string codingUrl, out string message)
+        {
+            codingUrl = null;
+            message = null;
+
+            try
+            {
+                if (string.IsNullOrEmpty(xmlResult))
+                {
+                    return false;
+                }
+
+                XDocument xmlDoc = XDocument.Parse(xmlResult);
+                if (xmlDoc.Root == null)
+                {
+                    return false;
+                }
+
+                bool success = false;
+                XElement infoNode = xmlDoc.Root.Element("info");
+                if (infoNode != null)
+                {
+                    XAttribute urlAttr = infoNode.Attribute("url");
+                    if (urlAttr != null && !string.IsNullOrEmpty(urlAttr.Value))
+                    {
+                        codingUrl = urlAttr.Value;
+                        success = true;
+                    }
+
+                    XAttribute messageAttr = infoNode.Attribute("message");
+                    if (messageAttr != null && !string.IsNullOrEmpty(messageAttr.Value))
+                    {
+                        message = messageAttr.Value;
+                        success = true;
+                    }
+                }
+
+                return success;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         private void SendVehicleResponseThread(string id, string response)
         {
             RunOnUiThread(() =>
@@ -445,6 +726,11 @@ namespace BmwDeepObd
 
         private void LoadWebServerUrl()
         {
+            if (string.IsNullOrEmpty(_instanceData.CodingUrl))
+            {
+                return;
+            }
+
             if (_urlLoaded)
             {
                 return;
@@ -466,8 +752,8 @@ namespace BmwDeepObd
                     }
                     else
                     {
-                        //_instanceData.Url = @"http://holeschak.dedyn.io:3000";
-                        _instanceData.Url = @"http://holeschak.dedyn.io:8008";
+                        //_instanceData.Url = @"http://holeschak.dedyn.io:8008";
+                        _instanceData.Url = _instanceData.CodingUrl;
                     }
                 }
 

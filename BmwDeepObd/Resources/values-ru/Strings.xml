@@ -692,6 +692,9 @@
   <!-- BMW Coding Activity -->
   <string name="bmw_coding_title">Кодирование BMW</string>
   <string name="bmw_coding_network_error">Загрузка веб-страницы не удалась, повторная попытка.</string>
+  <string name="bmw_coding_connect_request">Кодирование BMW — это онлайн-сервис, требующий быстрого и стабильного подключения к Интернету.\nВы хотите продолжить?</string>
+  <string name="bmw_coding_connecting">Establish connection.</string>
+  <string name="bmw_coding_connect_failed">Не удалось установить соединение.\nПожалуйста, проверьте подключение к сети.</string>
   <string name="bmw_coding_connection_active">Соединение с автомобилем активно.\nПри выходе со страницы общение будет прервано.\nСначала закройте соединение.\nВы все еще хотите покинуть страницу?</string>
 
   <!-- CAN Adapter Activity -->
