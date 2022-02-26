@@ -68,7 +68,7 @@ namespace BmwDeepObd
             public string TraceDir { get; set; }
             public bool TraceActive { get; set; }
             public bool TraceAppend { get; set; }
-            public bool CommErrorsOccured { get; set; }
+            public bool CommErrorsOccurred { get; set; }
         }
 
         public delegate void AcceptDelegate(bool accepted);
@@ -457,7 +457,7 @@ namespace BmwDeepObd
             new AlertDialog.Builder(this)
                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                 {
-                    _instanceData.CommErrorsOccured = true;
+                    _instanceData.CommErrorsOccurred = true;
                     handler(true);
                 })
                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
@@ -1153,7 +1153,7 @@ namespace BmwDeepObd
 
                                 if (!isConnected)
                                 {
-                                    _instanceData.CommErrorsOccured = true;
+                                    _instanceData.CommErrorsOccurred = true;
                                 }
                                 _activityCommon.SetLock(ActivityCommon.LockType.ScreenDim);
                                 UpdateOptionsMenu();
@@ -1271,7 +1271,7 @@ namespace BmwDeepObd
 
         private bool SendTraceFile(EventHandler<EventArgs> handler)
         {
-            if (_instanceData.CommErrorsOccured && _instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir))
+            if (_instanceData.CommErrorsOccurred && _instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir))
             {
                 if (!StopEdiabasThread())
                 {
@@ -1310,7 +1310,7 @@ namespace BmwDeepObd
                     return;
                 }
 
-                _instanceData.CommErrorsOccured = true;
+                _instanceData.CommErrorsOccurred = true;
 
                 lock (_ediabasLock)
                 {

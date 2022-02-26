@@ -125,7 +125,7 @@ namespace BmwDeepObd
             public bool TraceActive { get; set; }
             public bool TraceAppend { get; set; }
             public bool DataLogActive { get; set; }
-            public bool CommErrorsOccured { get; set; }
+            public bool CommErrorsOccurred { get; set; }
         }
 
         // Intent extra
@@ -897,7 +897,7 @@ namespace BmwDeepObd
 
         private bool SendTraceFile(EventHandler<EventArgs> handler)
         {
-            if (_instanceData.CommErrorsOccured && _instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir))
+            if (_instanceData.CommErrorsOccurred && _instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir))
             {
                 if (!EdiabasClose())
                 {
@@ -2132,7 +2132,7 @@ namespace BmwDeepObd
                     messageList.Add(exceptionText);
                     if (ActivityCommon.IsCommunicationError(exceptionText))
                     {
-                        _instanceData.CommErrorsOccured = true;
+                        _instanceData.CommErrorsOccurred = true;
                     }
                 }
 
@@ -2338,7 +2338,7 @@ namespace BmwDeepObd
                         messageList.Add(exceptionText);
                         if (ActivityCommon.IsCommunicationError(exceptionText))
                         {
-                            _instanceData.CommErrorsOccured = true;
+                            _instanceData.CommErrorsOccurred = true;
                         }
                         _runContinuous = false;
                     }
