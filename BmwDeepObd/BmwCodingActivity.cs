@@ -493,7 +493,12 @@ namespace BmwDeepObd
             _alertDialogConnectError = new AlertDialog.Builder(this)
                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                 {
-                    LoadWebServerUrl();
+                    if (_activityCommon.IsNetworkPresent(out _))
+                    {
+                        _activityCommon.SetPreferredNetworkInterface();
+                        _webViewCoding.LoadUrl(_instanceData.Url);
+                    }
+
                     ignoreDismiss = true;
                 })
                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
@@ -1421,10 +1426,14 @@ namespace BmwDeepObd
                         return;
                     }
 
+                    _activity.UpdateConnectTime();
                     if (!string.IsNullOrEmpty(url))
                     {
                         _activity._instanceData.Url = url;
-                        _activity._instanceData.ServerConnected = true;
+                        if (url.EndsWith("/default", StringComparison.OrdinalIgnoreCase))
+                        {
+                            _activity._instanceData.ServerConnected = true;
+                        }
                     }
                 });
 
