@@ -696,9 +696,10 @@
   <string name="bmw_coding_connect_request">BMW Kodieren ist ein Online Dienst und benötigt eine stabile und schnelle Internetverbindung.\nEs ist nur für F Modelle oder höher verfügbar.\nEin Hochstrom Ladegerät ist während der Kodierung notwendig.\nIn der Testphase ist es kostenlos, später wird eine Lizenz benötigt, um die Serverkosten zu decken.\nWollen Sie fortfahren?</string>
   <string name="bmw_coding_connecting">Verbindungsaufbau.</string>
   <string name="bmw_coding_connect_failed">Verbindungsaufbau fehlgeschlagen.\nBitte überprüfen Sie Ihre Netzwerkverbindung.</string>
+  <string name="bmw_coding_connect_url_failed">Die Verbindung zum Server ist fehlgeschlagen.\nWollen Sie es noch einmal versuchen?</string>
   <string name="bmw_coding_connection_active">Die Verbindung zum Fahrzeug is aktiv.\nWenn Sie die Seite verlassen wird die Verbindung unterbrochen.\nBitte trennen Sie die Verbindung zuerst.\nWollen Sie trotzdem die Seite verlassen?</string>
 
-    <!-- CAN Adapter Activity -->
+  <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">Adapter Konfiguration</string>
   <string name="can_adapter_mode_name">CAN Betriebsart</string>
   <string name="can_adapter_sep_time">Telegrammabstand [ms]</string>
