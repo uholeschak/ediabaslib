@@ -59,11 +59,13 @@ namespace BmwDeepObd
             public InstanceData()
             {
                 CodingUrl = string.Empty;
+                InitialUrl = string.Empty;
                 Url = string.Empty;
                 TraceActive = true;
             }
 
             public string CodingUrl { get; set; }
+            public string InitialUrl { get; set; }
             public string Url { get; set; }
             public bool ServerConnected { get; set; }
             public string TraceDir { get; set; }
@@ -800,16 +802,20 @@ namespace BmwDeepObd
             {
                 if (string.IsNullOrEmpty(_instanceData.Url))
                 {
+                    string url;
                     if (!string.IsNullOrEmpty(domains) && domains.Contains("local.holeschak.de", StringComparison.OrdinalIgnoreCase))
                     {
-                        _instanceData.Url = @"http://ulrich3.local.holeschak.de:3000";
-                        //_instanceData.Url = @"http://ulrich3.local.holeschak.de:8008";
+                        url = @"http://ulrich3.local.holeschak.de:3000";
+                        //url = @"http://ulrich3.local.holeschak.de:8008";
                     }
                     else
                     {
-                        //_instanceData.Url = @"http://holeschak.dedyn.io:8008";
-                        _instanceData.Url = _instanceData.CodingUrl;
+                        //url = @"http://holeschak.dedyn.io:8008";
+                        url = _instanceData.CodingUrl;
                     }
+
+                    _instanceData.InitialUrl = url;
+                    _instanceData.Url = url;
                 }
 
                 _activityCommon.SetPreferredNetworkInterface();
@@ -1430,7 +1436,8 @@ namespace BmwDeepObd
                     if (!string.IsNullOrEmpty(url))
                     {
                         _activity._instanceData.Url = url;
-                        if (url.EndsWith("/default", StringComparison.OrdinalIgnoreCase))
+                        string compareUrl = url.TrimEnd(' ', '/');
+                        if (string.Compare(compareUrl, _activity._instanceData.InitialUrl, StringComparison.OrdinalIgnoreCase) != 0)
                         {
                             _activity._instanceData.ServerConnected = true;
                         }
