@@ -246,15 +246,21 @@
   <data name="TalBackupGenerationFailed" xml:space="preserve">
     <value>Backup TAL generation failed.</value>
   </data>
-  <data name="TalExecuteContinue" xml:space="preserve">
-    <value>Problems have occured in the preparation phase.
-Do you still want to continue with TAL execution?</value>
-  </data>
   <data name="TalExecuteError" xml:space="preserve">
     <value>TAL execution finished with errors.</value>
   </data>
+  <data name="TalExecuteErrorContinue" xml:space="preserve">
+    <value>Problems have occured in the preparation phase.
+No liability in case of failure or problems after coding!
+Do you still want to continue with TAL execution?</value>
+  </data>
   <data name="TalExecuteOk" xml:space="preserve">
     <value>TAL execution finished ok.</value>
+  </data>
+  <data name="TalExecuteOkContinue" xml:space="preserve">
+    <value>Perparation has been finshied successfully.
+No liability in case of failure or problems after coding!
+Do you want to continue with TAL execution?</value>
   </data>
   <data name="TalExecuteWarning" xml:space="preserve">
     <value>TAL execution finished with warnings.</value>

@@ -246,15 +246,21 @@
   <data name="TalBackupGenerationFailed" xml:space="preserve">
     <value>Backup TAL Generierung fehlgeschlagen.</value>
   </data>
-  <data name="TalExecuteContinue" xml:space="preserve">
-    <value>Es sind Probleme in der Vorbereitsungspahse auftegreten.
-Woll Sie trotzdem die TAL ausführen?</value>
-  </data>
   <data name="TalExecuteError" xml:space="preserve">
     <value>TAL Ausführung mit Fehlern beendet.</value>
   </data>
+  <data name="TalExecuteErrorContinue" xml:space="preserve">
+    <value>Es sind Probleme in der Vorbereitsungspahse auftegetreten.
+Keine Haftung bei Schäden oder Problemen nach der Kodierung!
+Wollen Sie trotzdem die TAL ausführen?</value>
+  </data>
   <data name="TalExecuteOk" xml:space="preserve">
     <value>TAL Ausführung ohne Fehler beendet.</value>
+  </data>
+  <data name="TalExecuteOkContinue" xml:space="preserve">
+    <value>Die Vorbereitung wurde erfolgreich abgeschlossen.
+Keine Haftung bei Schäden oder Problemen nach der Kodierung!
+Wollen Sie die TAL ausführen?</value>
   </data>
   <data name="TalExecuteWarning" xml:space="preserve">
     <value>TAL Ausführung mit Warnungen beendet.</value>

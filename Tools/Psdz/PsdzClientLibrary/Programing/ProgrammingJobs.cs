@@ -852,7 +852,18 @@ namespace PsdzClient.Programing
                         {
                             if (ShowMessageEvent != null)
                             {
-                                if (!ShowMessageEvent.Invoke(cts, Strings.TalExecuteContinue, false, true))
+                                if (!ShowMessageEvent.Invoke(cts, Strings.TalExecuteErrorContinue, false, true))
+                                {
+                                    log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecuteContinue aborted");
+                                    return false;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (ShowMessageEvent != null)
+                            {
+                                if (!ShowMessageEvent.Invoke(cts, Strings.TalExecuteOkContinue, false, true))
                                 {
                                     log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecuteContinue aborted");
                                     return false;

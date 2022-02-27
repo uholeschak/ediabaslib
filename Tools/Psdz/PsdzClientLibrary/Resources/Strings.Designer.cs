@@ -448,16 +448,6 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Problems have occured in the preparation phase.
-        ///Do you still want to continue with TAL execution? ähnelt.
-        /// </summary>
-        internal static string TalExecuteContinue {
-            get {
-                return ResourceManager.GetString("TalExecuteContinue", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die TAL execution finished with errors. ähnelt.
         /// </summary>
         internal static string TalExecuteError {
@@ -467,11 +457,33 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Problems have occured in the preparation phase.
+        ///No liability in case of failure or problems after coding!
+        ///Do you still want to continue with TAL execution? ähnelt.
+        /// </summary>
+        internal static string TalExecuteErrorContinue {
+            get {
+                return ResourceManager.GetString("TalExecuteErrorContinue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die TAL execution finished ok. ähnelt.
         /// </summary>
         internal static string TalExecuteOk {
             get {
                 return ResourceManager.GetString("TalExecuteOk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Perparation has been finshied successfully.
+        ///No liability in case of failure or problems after coding!
+        ///Do you want to continue with TAL execution? ähnelt.
+        /// </summary>
+        internal static string TalExecuteOkContinue {
+            get {
+                return ResourceManager.GetString("TalExecuteOkContinue", resourceCulture);
             }
         }
         
