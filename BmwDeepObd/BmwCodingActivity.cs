@@ -567,6 +567,18 @@ namespace BmwDeepObd
                                 if (success && !string.IsNullOrEmpty(url))
                                 {
                                     _instanceData.CodingUrl = url;
+
+                                    if (!string.IsNullOrEmpty(message))
+                                    {
+                                        new AlertDialog.Builder(this)
+                                            .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+                                            {
+                                            })
+                                            .SetCancelable(true)
+                                            .SetMessage(message)
+                                            .SetTitle(Resource.String.alert_title_info)
+                                            .Show();
+                                    }
                                     return;
                                 }
 
