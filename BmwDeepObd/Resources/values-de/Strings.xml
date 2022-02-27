@@ -693,7 +693,7 @@
   <!-- BMW Coding Activity -->
   <string name="bmw_coding_title">BMW Kodieren</string>
   <string name="bmw_coding_network_error">Das Laden der Webseite ist fehlgeschlagen, wiederholen.</string>
-  <string name="bmw_coding_connect_request">BMW Kodieren ist ein Online Dienst und benötigt eine stabile und schnelle Internetverbindung.\nWollen Sie fortfahren?</string>
+  <string name="bmw_coding_connect_request">BMW Kodieren ist ein Online Dienst und benötigt eine stabile und schnelle Internetverbindung.\nEs ist nur für F Modelle oder höher verfügbar.\nEin Hochstrom Ladegerät ist während der Kodierung notwendig.\nIn der Testphase ist es kostenlos, später wird eine Lizenz benötigt, um die Serverkosten zu decken.\nWollen Sie fortfahren?</string>
   <string name="bmw_coding_connecting">Verbindungsaufbau.</string>
   <string name="bmw_coding_connect_failed">Verbindungsaufbau fehlgeschlagen.\nBitte überprüfen Sie Ihre Netzwerkverbindung.</string>
   <string name="bmw_coding_connection_active">Die Verbindung zum Fahrzeug is aktiv.\nWenn Sie die Seite verlassen wird die Verbindung unterbrochen.\nBitte trennen Sie die Verbindung zuerst.\nWollen Sie trotzdem die Seite verlassen?</string>
