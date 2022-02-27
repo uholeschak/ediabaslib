@@ -65,6 +65,7 @@ namespace BmwDeepObd
 
             public string CodingUrl { get; set; }
             public string Url { get; set; }
+            public bool ServerConnected { get; set; }
             public string TraceDir { get; set; }
             public bool TraceActive { get; set; }
             public bool TraceAppend { get; set; }
@@ -74,6 +75,7 @@ namespace BmwDeepObd
         public delegate void AcceptDelegate(bool accepted);
         public delegate void InfoCheckDelegate(bool success, bool cancelled, string codingUrl, string message);
 
+        private const int FirstConnectTimeout = 20000;
         private const int ConnectionTimeout = 6000;
 
         // Intent extra
@@ -112,6 +114,7 @@ namespace BmwDeepObd
         private bool _activityActive;
         private HttpClient _infoHttpClient;
         private bool _urlLoaded;
+        private AlertDialog _alertDialogConnectError;
         private Timer _connectionCheckTimer;
         public long _connectionUpdateTime;
 
@@ -244,22 +247,32 @@ namespace BmwDeepObd
                             return;
                         }
 
+                        bool serverConnected = _instanceData.ServerConnected;
                         long connectTime = GetConnectTime();
-                        if (Stopwatch.GetTimestamp() - connectTime >= ConnectionTimeout * ActivityCommon.TickResolMs)
+                        long timeout = serverConnected ? ConnectionTimeout : FirstConnectTimeout;
+
+                        if (Stopwatch.GetTimestamp() - connectTime >= timeout * ActivityCommon.TickResolMs)
                         {
-                            try
+                            if (!serverConnected)
                             {
-                                UpdateConnectTime();
-                                Toast.MakeText(this, GetString(Resource.String.bmw_coding_network_error), ToastLength.Short)?.Show();
-                                if (_activityCommon.IsNetworkPresent(out _))
-                                {
-                                    _activityCommon.SetPreferredNetworkInterface();
-                                    _webViewCoding.LoadUrl(_instanceData.Url);
-                                }
+                                ConnectionFailMessage();
                             }
-                            catch (Exception)
+                            else
                             {
-                                // ignored
+                                try
+                                {
+                                    UpdateConnectTime();
+                                    Toast.MakeText(this, GetString(Resource.String.bmw_coding_network_error), ToastLength.Short)?.Show();
+                                    if (_activityCommon.IsNetworkPresent(out _))
+                                    {
+                                        _activityCommon.SetPreferredNetworkInterface();
+                                        _webViewCoding.LoadUrl(_instanceData.Url);
+                                    }
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
                             }
                         }
                     });
@@ -467,6 +480,43 @@ namespace BmwDeepObd
                 .SetMessage(Resource.String.bmw_coding_connection_active)
                 .SetTitle(Resource.String.alert_title_warning)
                 .Show();
+        }
+
+        private void ConnectionFailMessage()
+        {
+            if (_alertDialogConnectError != null)
+            {
+                return;
+            }
+
+            bool ignoreDismiss = false;
+            _alertDialogConnectError = new AlertDialog.Builder(this)
+                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                {
+                    LoadWebServerUrl();
+                    ignoreDismiss = true;
+                })
+                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                {
+                })
+                .SetMessage(Resource.String.bmw_coding_connect_url_failed)
+                .SetTitle(Resource.String.alert_title_error)
+                .Show();
+
+            _alertDialogConnectError.DismissEvent += (sender, args) =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                _alertDialogConnectError = null;
+                UpdateConnectTime();
+                if (!ignoreDismiss)
+                {
+                    Finish();
+                }
+            };
         }
 
         private void UpdateOptionsMenu()
@@ -1364,10 +1414,19 @@ namespace BmwDeepObd
 #if DEBUG
                 Android.Util.Log.Debug(Tag, string.Format("DoUpdateVisitedHistory: Url={0}, Reload={1}", url, isReload));
 #endif
-                if (!string.IsNullOrEmpty(url))
+                _activity.RunOnUiThread(() =>
                 {
-                    _activity._instanceData.Url = url;
-                }
+                    if (_activity._activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    if (!string.IsNullOrEmpty(url))
+                    {
+                        _activity._instanceData.Url = url;
+                        _activity._instanceData.ServerConnected = true;
+                    }
+                });
 
                 base.DoUpdateVisitedHistory(view, url, isReload);
             }
