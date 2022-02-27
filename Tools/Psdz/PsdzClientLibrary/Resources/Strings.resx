@@ -264,7 +264,7 @@ Do you still want to continue with TAL execution?</value>
 You could try to execute the TAL again to fix the errors.</value>
   </data>
   <data name="TalExecutionHint" xml:space="preserve">
-    <value>Make sure that the ignition is switched on and a charger with at least 60A is connected to the vehicle.
+    <value>Make sure that the ignition is switched on, the motor is stopped and a charger with at least 60A is connected to the vehicle.
 Don't close or minimize this page, because this will interrupt vehicle communcation!
 Do you want to continue?</value>
   </data>
