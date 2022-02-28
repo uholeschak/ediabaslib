@@ -1641,17 +1641,27 @@ namespace PsdzClient
 
                 Assembly moduleAssembly = Assembly.LoadFrom(moduleFile);
                 Type[] exportedTypes = moduleAssembly.GetExportedTypes();
+                Type moduleType = null;
                 foreach (Type type in exportedTypes)
                 {
                     log.InfoFormat("ReadTestModule Exported type: {0}", type.FullName);
+                    if (moduleType == null)
+                    {
+                        if (!string.IsNullOrEmpty(type.FullName) &&
+                            type.FullName.StartsWith("BMW.Rheingold.Module.", StringComparison.OrdinalIgnoreCase))
+                        {
+                            moduleType = type;
+                        }
+                    }
                 }
 
-                if (exportedTypes.Length != 1)
+                if (moduleType == null)
                 {
-                    log.ErrorFormat("ReadTestModule Exported types: {0}", exportedTypes.Length);
+                    log.ErrorFormat("ReadTestModule No module type found");
                     return null;
                 }
 
+                log.InfoFormat("ReadTestModule Using module type: {0}", moduleType.FullName);
                 Type moduleParamContainerType = coreFrameworkAssembly.GetType("BMW.Rheingold.CoreFramework.ParameterContainer");
                 if (moduleParamContainerType == null)
                 {
@@ -1728,7 +1738,6 @@ namespace PsdzClient
                 methodSetParameter.Invoke(moduleParamInst, new object[] { parameterNameVehicle, vehicleInst });
                 methodContainerSetParameter.Invoke(moduleParamContainerInst, new object[] { "__RheinGoldCoreModuleParameters__", moduleParamInst });
 
-                Type moduleType = exportedTypes[0];
                 MethodInfo methodeTestModuleStartType = moduleType.GetMethod("Start");
                 if (methodeTestModuleStartType == null)
                 {
