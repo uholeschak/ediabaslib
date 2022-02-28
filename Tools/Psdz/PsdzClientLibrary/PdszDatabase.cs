@@ -1549,6 +1549,12 @@ namespace PsdzClient
                 }
 
                 log.InfoFormat("ConvertAllTestModules Count: {0}", moduleDataDict.Count);
+                if (moduleDataDict.Count == 0)
+                {
+                    log.ErrorFormat("ConvertAllTestModules No test modules generated");
+                    return null;
+                }
+
                 return new TestModules(moduleDataDict);
             }
             catch (Exception e)
