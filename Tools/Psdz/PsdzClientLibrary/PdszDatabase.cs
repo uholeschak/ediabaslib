@@ -1180,8 +1180,18 @@ namespace PsdzClient
             _frameworkPath = Path.Combine(istaFolder, "TesterGUI", "bin","ReleaseMod");
             if (!Directory.Exists(_frameworkPath))
             {
-                _frameworkPath = Path.Combine(istaFolder, "TesterGUI", "bin", "ReleaseMod");
+                _frameworkPath = Path.Combine(istaFolder, "TesterGUI", "bin", "Release");
             }
+
+            if (!Directory.Exists(_frameworkPath))
+            {
+                log.ErrorFormat("PdszDatabase: Framework path not existing: {0}", _frameworkPath);
+            }
+            else
+            {
+                log.InfoFormat("PdszDatabase: Framework path: {0}", _frameworkPath);
+            }
+
             string databaseFile = Path.Combine(_databasePath, "DiagDocDb.sqlite");
             string connection = "Data Source=\"" + databaseFile + "\";";
             _mDbConnection = new SQLiteConnection(connection);
