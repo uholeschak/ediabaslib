@@ -2263,7 +2263,6 @@ namespace BmwDeepObd
                 builder.AddTransportType(Android.Net.TransportType.Cellular);
                 NetworkRequest networkRequest = builder.Build();
                 _cellularCallback = new CellularCallback(this);
-                _maConnectivity.RequestNetwork(networkRequest, _cellularCallback);
                 _maConnectivity.RegisterNetworkCallback(networkRequest, _cellularCallback);
             }
             catch (Exception)
@@ -2340,7 +2339,7 @@ namespace BmwDeepObd
                 builderWifi.AddTransportType(Android.Net.TransportType.Wifi);
                 NetworkRequest networkWifiRequest = builderWifi.Build();
                 _wifiCallback = new WifiCallback(this);
-                _maConnectivity.RequestNetwork(networkWifiRequest, _wifiCallback);
+                _maConnectivity.RegisterNetworkCallback(networkWifiRequest, _wifiCallback);
 
                 NetworkRequest.Builder builderEthernet = new NetworkRequest.Builder();
                 builderEthernet.AddCapability(NetCapability.Internet);
