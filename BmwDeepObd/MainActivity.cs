@@ -1195,6 +1195,11 @@ namespace BmwDeepObd
                             break;
                         }
 
+                        if (_activityCommon.MtcBtService)
+                        {
+                            break;
+                        }
+
                         string sgbdFunctional = null;
                         foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
                         {
@@ -1209,18 +1214,8 @@ namespace BmwDeepObd
                         {
                             break;
                         }
-#if DEBUG
+
                         allowCoding = true;
-#else
-                        if (!string.IsNullOrEmpty(_instanceData.ConfigFileName))
-                        {
-                            string fileName = Path.GetFileNameWithoutExtension(_instanceData.ConfigFileName);
-                            if (!string.IsNullOrEmpty(fileName) && fileName.StartsWith("G31", StringComparison.OrdinalIgnoreCase))
-                            {
-                                allowCoding = true;
-                            }
-                        }
-#endif
                         break;
                 }
 
