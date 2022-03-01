@@ -1190,14 +1190,17 @@ namespace BmwDeepObd
                     case ActivityCommon.InterfaceType.Bluetooth:
                     case ActivityCommon.InterfaceType.Enet:
                     case ActivityCommon.InterfaceType.Ftdi:
-                        if (_activityCommon.IsElmDevice(_instanceData.DeviceAddress))
+                        if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth)
                         {
-                            break;
-                        }
+                            if (_activityCommon.MtcBtService)
+                            {
+                                break;
+                            }
 
-                        if (_activityCommon.MtcBtService)
-                        {
-                            break;
+                            if (_activityCommon.IsElmDevice(_instanceData.DeviceAddress))
+                            {
+                                break;
+                            }
                         }
 
                         string sgbdFunctional = null;
