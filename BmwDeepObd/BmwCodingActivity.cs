@@ -59,12 +59,14 @@ namespace BmwDeepObd
             public InstanceData()
             {
                 CodingUrl = string.Empty;
+                CodingUrlTest = string.Empty;
                 InitialUrl = string.Empty;
                 Url = string.Empty;
                 TraceActive = true;
             }
 
             public string CodingUrl { get; set; }
+            public string CodingUrlTest { get; set; }
             public string InitialUrl { get; set; }
             public string Url { get; set; }
             public bool ServerConnected { get; set; }
@@ -75,7 +77,7 @@ namespace BmwDeepObd
         }
 
         public delegate void AcceptDelegate(bool accepted);
-        public delegate void InfoCheckDelegate(bool success, bool cancelled, string codingUrl, string message);
+        public delegate void InfoCheckDelegate(bool success, bool cancelled, string codingUrl, string codingUrlTest, string message);
 
         private const int FirstConnectTimeout = 20000;
         private const int ConnectionTimeout = 6000;
@@ -550,7 +552,7 @@ namespace BmwDeepObd
                         }
 
                         ignoreDismiss = true;
-                        GetConnectionInfo((success, cancelled, url, message) =>
+                        GetConnectionInfo((success, cancelled, url, urlTest, message) =>
                         {
                             RunOnUiThread(() =>
                             {
@@ -567,6 +569,7 @@ namespace BmwDeepObd
                                 if (success && !string.IsNullOrEmpty(url))
                                 {
                                     _instanceData.CodingUrl = url;
+                                    _instanceData.CodingUrlTest = urlTest;
 
                                     if (!string.IsNullOrEmpty(message))
                                     {
@@ -697,8 +700,8 @@ namespace BmwDeepObd
                     HttpResponseMessage responseUpload = taskDownload.Result;
                     responseUpload.EnsureSuccessStatusCode();
                     string responseInfoXml = responseUpload.Content.ReadAsStringAsync().Result;
-                    bool success = GetCodingInfo(responseInfoXml, out string codingUrl, out string message);
-                    handler?.Invoke(success, false, codingUrl, message);
+                    bool success = GetCodingInfo(responseInfoXml, out string codingUrl, out string codingUrlTest, out string message);
+                    handler?.Invoke(success, false, codingUrl, codingUrlTest, message);
 
                     if (progress != null)
                     {
@@ -726,7 +729,7 @@ namespace BmwDeepObd
                         }
 
                         bool cancelled = ex.InnerException is System.Threading.Tasks.TaskCanceledException;
-                        handler?.Invoke(false, cancelled, null, null);
+                        handler?.Invoke(false, cancelled, null, null, null);
                     });
                 }
             });
@@ -735,9 +738,10 @@ namespace BmwDeepObd
             return true;
         }
 
-        private bool GetCodingInfo(string xmlResult, out string codingUrl, out string message)
+        private bool GetCodingInfo(string xmlResult, out string codingUrl, out string codingUrlTest, out string message)
         {
             codingUrl = null;
+            codingUrlTest = null;
             message = null;
 
             try
@@ -762,6 +766,12 @@ namespace BmwDeepObd
                     {
                         codingUrl = urlAttr.Value;
                         success = true;
+                    }
+
+                    XAttribute urlTestAttr = infoNode.Attribute("url_test");
+                    if (urlTestAttr != null && !string.IsNullOrEmpty(urlTestAttr.Value))
+                    {
+                        codingUrlTest = urlTestAttr.Value;
                     }
 
                     XAttribute messageAttr = infoNode.Attribute("message");
@@ -817,9 +827,16 @@ namespace BmwDeepObd
                     string url;
                     if (!string.IsNullOrEmpty(domains) && domains.Contains("local.holeschak.de", StringComparison.OrdinalIgnoreCase))
                     {
-                        url = @"http://ulrich3.local.holeschak.de:3000";
-                        //url = @"http://ulrich3.local.holeschak.de:8008";
-                        //url = @"http://coding-server.local.holeschak.de:8008";
+                        if (!string.IsNullOrEmpty(_instanceData.CodingUrlTest))
+                        {
+                            url = _instanceData.CodingUrlTest;
+                        }
+                        else
+                        {
+                            url = @"http://ulrich3.local.holeschak.de:3000";
+                            //url = @"http://ulrich3.local.holeschak.de:8008";
+                            //url = @"http://coding-server.local.holeschak.de:8008";
+                        }
                     }
                     else
                     {
