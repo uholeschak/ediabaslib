@@ -219,6 +219,7 @@ namespace BmwDeepObd
         // Intent extra
         public const string ExtraEcuName = "ecu_name";
         public const string ExtraEcuDir = "ecu_dir";
+        public const string ExtraVehicleType = "vehicle_type";
         public const string ExtraTraceDir = "trace_dir";
         public const string ExtraTraceAppend = "trace_append";
         public const string ExtraInterface = "interface";
@@ -286,6 +287,7 @@ namespace BmwDeepObd
         private TextView _textViewTestFormatOutput;
         private Button _buttonEdiabasTool;
         private Button _buttonBmwActuator;
+        private Button _buttonBmwCoding;
         private Button _buttonCoding;
         private Button _buttonCoding2;
         private Button _buttonAdaption;
@@ -300,6 +302,7 @@ namespace BmwDeepObd
         private bool _activityActive;
         private bool _ediabasJobAbort;
         private string _ecuDir;
+        private string _vehicleType;
         private string _traceDir;
         private bool _traceAppend;
         private string _deviceAddress;
@@ -341,6 +344,7 @@ namespace BmwDeepObd
             }, BroadcastReceived);
 
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
+            _vehicleType = Intent.GetStringExtra(ExtraVehicleType);
             _traceDir = Intent.GetStringExtra(ExtraTraceDir);
             _traceAppend = Intent.GetBooleanExtra(ExtraTraceAppend, true);
             _activityCommon.SelectedInterface = (ActivityCommon.InterfaceType)
@@ -657,6 +661,27 @@ namespace BmwDeepObd
             _buttonBmwActuator.Click += (sender, args) =>
             {
                 StartBmwActuator();
+            };
+
+            bool bmwCodingEnabled = false;
+            if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
+            {
+                if (!string.IsNullOrEmpty(_vehicleType) && _vehicleType.Length > 0)
+                {
+                    char typeChar = char.ToUpperInvariant(_vehicleType[0]);
+                    if (char.IsLetter(typeChar) && typeChar > 'E')
+                    {
+                        bmwCodingEnabled = true;
+                    }
+                }
+            }
+
+            _buttonBmwCoding = FindViewById<Button>(Resource.Id.buttonBmwCoding);
+            _buttonBmwCoding.Visibility = bmwButtonsVisibility;
+            _buttonBmwCoding.Enabled = bmwCodingEnabled;
+            _buttonBmwCoding.Click += (sender, args) =>
+            {
+                //StartBmwCoding();
             };
 
             bool vagCodingEnabled = _ecuInfo.HasVagCoding();
