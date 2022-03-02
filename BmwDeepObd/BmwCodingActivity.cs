@@ -10,6 +10,7 @@ using System.Xml.Linq;
 using Android.Content;
 using Android.Content.PM;
 using Android.Hardware.Usb;
+using Android.Net.Http;
 using Android.OS;
 using Android.Util;
 using Android.Views;
@@ -1448,6 +1449,14 @@ namespace BmwDeepObd
             public override void OnReceivedError(WebView view, IWebResourceRequest request, WebResourceErrorCompat error)
             {
                 _activity.UpdateConnectTime(true);
+            }
+
+            public override void OnReceivedSslError(WebView view, SslErrorHandler handler, SslError error)
+            {
+#if DEBUG
+                Android.Util.Log.Debug(Tag, string.Format("OnReceivedSslError: Url={0}", error?.Url ?? string.Empty));
+#endif
+                handler.Proceed();
             }
 
             public override void DoUpdateVisitedHistory(WebView view, string url, bool isReload)
