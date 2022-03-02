@@ -2865,14 +2865,20 @@ namespace BmwDeepObd
                     {
                         foreach (Network network in _networkData.ActiveWifiNetworks)
                         {
-                            NetworkCapabilities networkCapabilities = _maConnectivity.GetNetworkCapabilities(network);
-                            LinkProperties linkProperties = _maConnectivity.GetLinkProperties(network);
-                            if (networkCapabilities != null && linkProperties != null && linkProperties.DhcpServerAddress != null)
+                            try
                             {
-                                if (!string.IsNullOrEmpty(linkProperties.Domains))
+                                LinkProperties linkProperties = _maConnectivity.GetLinkProperties(network);
+                                if (linkProperties != null)
                                 {
-                                    domains = linkProperties.Domains;
+                                    if (!string.IsNullOrEmpty(linkProperties.Domains))
+                                    {
+                                        domains = linkProperties.Domains;
+                                    }
                                 }
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
                             }
                         }
                     }
@@ -2922,6 +2928,7 @@ namespace BmwDeepObd
                         return !string.IsNullOrEmpty(dhcpServerAddress);
                     }
 #pragma warning restore 618
+                    return false;
                 }
 
                 lock (_networkData.LockObject)
