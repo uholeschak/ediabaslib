@@ -1730,7 +1730,10 @@ namespace BmwDeepObd
                 Intent serverIntent = new Intent(this, typeof(XmlToolEcuActivity));
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuName, ecuInfo.Name);
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuDir, _ecuDir);
-                serverIntent.PutExtra(XmlToolEcuActivity.ExtraVehicleType, _instanceData.VehicleType);
+                if (!string.IsNullOrEmpty(_instanceData.VehicleType))
+                {
+                    serverIntent.PutExtra(XmlToolEcuActivity.ExtraVehicleType, _instanceData.VehicleType);
+                }
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraTraceDir, _instanceData.TraceDir);
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraTraceAppend, _instanceData.TraceAppend || _instanceData.ForceAppend);
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
