@@ -664,7 +664,7 @@ namespace BmwDeepObd
             };
 
             bool bmwCodingEnabled = false;
-            if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
+            if (_activityCommon.IsBmwCodingInterface(_deviceAddress))
             {
                 if (!string.IsNullOrEmpty(_vehicleType) && _vehicleType.Length > 0)
                 {

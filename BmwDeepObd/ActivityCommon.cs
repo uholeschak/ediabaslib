@@ -2709,6 +2709,39 @@ namespace BmwDeepObd
             return false;
         }
 
+        public bool IsBmwCodingInterface(string deviceAddress)
+        {
+            bool allowCoding = false;
+
+            if (SelectedManufacturer == ManufacturerType.Bmw)
+            {
+                switch (_selectedInterface)
+                {
+                    case InterfaceType.Bluetooth:
+                    case InterfaceType.Enet:
+                    case InterfaceType.Ftdi:
+                        if (_selectedInterface == InterfaceType.Bluetooth)
+                        {
+                            if (MtcBtService)
+                            {
+                                break;
+                            }
+
+                            if (IsElmDevice(deviceAddress))
+                            {
+                                break;
+                            }
+                        }
+
+                        allowCoding = true;
+                        break;
+                }
+            }
+
+            return allowCoding;
+        }
+
+
         public string GetEnetAdapterIp(out string defaultPassword)
         {
             defaultPassword = null;
