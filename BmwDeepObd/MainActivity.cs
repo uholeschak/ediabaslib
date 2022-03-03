@@ -1184,47 +1184,28 @@ namespace BmwDeepObd
             IMenuItem cfgPageBmwCodingMenu = menu.FindItem(Resource.Id.menu_cfg_page_bmw_coding);
             if (cfgPageBmwCodingMenu != null)
             {
-                bool allowCoding = false;
-                switch (_activityCommon.SelectedInterface)
+                bool bmwCodingEnabled = false;
+                if (_activityCommon.IsBmwCodingInterface(_instanceData.DeviceAddress))
                 {
-                    case ActivityCommon.InterfaceType.Bluetooth:
-                    case ActivityCommon.InterfaceType.Enet:
-                    case ActivityCommon.InterfaceType.Ftdi:
-                        if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth)
+                    string sgbdFunctional = null;
+                    foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
+                    {
+                        if (pageInfo.ErrorsInfo != null)
                         {
-                            if (_activityCommon.MtcBtService)
-                            {
-                                break;
-                            }
-
-                            if (_activityCommon.IsElmDevice(_instanceData.DeviceAddress))
-                            {
-                                break;
-                            }
-                        }
-
-                        string sgbdFunctional = null;
-                        foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
-                        {
-                            if (pageInfo.ErrorsInfo != null)
-                            {
-                                sgbdFunctional = pageInfo.ErrorsInfo.SgbdFunctional;
-                                break;
-                            }
-                        }
-
-                        if (string.IsNullOrEmpty(sgbdFunctional))
-                        {
+                            sgbdFunctional = pageInfo.ErrorsInfo.SgbdFunctional;
                             break;
                         }
+                    }
 
-                        allowCoding = true;
-                        break;
+                    if (!string.IsNullOrEmpty(sgbdFunctional))
+                    {
+                        bmwCodingEnabled = true;
+                    }
                 }
 
                 bool networkPresent = _activityCommon.IsNetworkPresent(out _);
                 cfgPageBmwCodingMenu.SetEnabled(interfaceAvailable && !commActive && networkPresent);
-                cfgPageBmwCodingMenu.SetVisible(bmwVisible && allowCoding);
+                cfgPageBmwCodingMenu.SetVisible(bmwVisible && bmwCodingEnabled);
             }
 
             bool vagVisible = ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw && selectedPageFuncAvail && !string.IsNullOrEmpty(_instanceData.ConfigFileName);
