@@ -194,6 +194,7 @@ namespace BmwDeepObd
         private enum ActivityRequest
         {
             RequestBmwActuator,
+            RequestBmwCoding,
             RequestVagCoding,
             RequestVagAdaption,
         }
@@ -217,6 +218,7 @@ namespace BmwDeepObd
         public delegate void AcceptDelegate(bool accepted);
 
         // Intent extra
+        public const string ExtraAppDataDir = "app_data_dir";
         public const string ExtraEcuName = "ecu_name";
         public const string ExtraEcuDir = "ecu_dir";
         public const string ExtraVehicleType = "vehicle_type";
@@ -301,6 +303,7 @@ namespace BmwDeepObd
         private Thread _jobThread;
         private bool _activityActive;
         private bool _ediabasJobAbort;
+        private string _appDataDir;
         private string _ecuDir;
         private string _vehicleType;
         private string _traceDir;
@@ -343,6 +346,7 @@ namespace BmwDeepObd
 
             }, BroadcastReceived);
 
+            _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
             _vehicleType = Intent.GetStringExtra(ExtraVehicleType);
             _traceDir = Intent.GetStringExtra(ExtraTraceDir);
@@ -681,7 +685,7 @@ namespace BmwDeepObd
             _buttonBmwCoding.Enabled = bmwCodingEnabled;
             _buttonBmwCoding.Click += (sender, args) =>
             {
-                //StartBmwCoding();
+                StartBmwCoding();
             };
 
             bool vagCodingEnabled = _ecuInfo.HasVagCoding();
@@ -922,6 +926,7 @@ namespace BmwDeepObd
             switch ((ActivityRequest) requestCode)
             {
                 case ActivityRequest.RequestBmwActuator:
+                case ActivityRequest.RequestBmwCoding:
                 case ActivityRequest.RequestVagCoding:
                 case ActivityRequest.RequestVagAdaption:
                     if (resultCode == Android.App.Result.Ok || _ecuFuncCall != XmlToolActivity.EcuFunctionCallType.None)
@@ -2412,6 +2417,28 @@ namespace BmwDeepObd
                 serverIntent.PutExtra(BmwActuatorActivity.ExtraDeviceAddress, _deviceAddress);
                 serverIntent.PutExtra(BmwActuatorActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
                 StartActivityForResult(serverIntent, (int)ActivityRequest.RequestBmwActuator);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private bool StartBmwCoding()
+        {
+            try
+            {
+                StoreResults();
+                EdiabasClose();
+
+                Intent serverIntent = new Intent(this, typeof(BmwCodingActivity));
+                serverIntent.PutExtra(BmwCodingActivity.ExtraAppDataDir, _appDataDir);
+                serverIntent.PutExtra(BmwCodingActivity.ExtraEcuDir, _ecuDir);
+                serverIntent.PutExtra(BmwCodingActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
+                serverIntent.PutExtra(BmwCodingActivity.ExtraDeviceAddress, _deviceAddress);
+                serverIntent.PutExtra(BmwCodingActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
+                StartActivityForResult(serverIntent, (int)ActivityRequest.RequestBmwCoding);
                 return true;
             }
             catch (Exception)
