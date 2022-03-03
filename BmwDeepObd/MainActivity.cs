@@ -1181,33 +1181,6 @@ namespace BmwDeepObd
                 cfgPageBmwActuatorMenu.SetVisible(bmwVisible);
             }
 
-            IMenuItem cfgPageBmwCodingMenu = menu.FindItem(Resource.Id.menu_cfg_page_bmw_coding);
-            if (cfgPageBmwCodingMenu != null)
-            {
-                bool bmwCodingEnabled = false;
-                if (_activityCommon.IsBmwCodingInterface(_instanceData.DeviceAddress))
-                {
-                    string sgbdFunctional = null;
-                    foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
-                    {
-                        if (pageInfo.ErrorsInfo != null)
-                        {
-                            sgbdFunctional = pageInfo.ErrorsInfo.SgbdFunctional;
-                            break;
-                        }
-                    }
-
-                    if (!string.IsNullOrEmpty(sgbdFunctional))
-                    {
-                        bmwCodingEnabled = true;
-                    }
-                }
-
-                bool networkPresent = _activityCommon.IsNetworkPresent(out _);
-                cfgPageBmwCodingMenu.SetEnabled(interfaceAvailable && !commActive && networkPresent);
-                cfgPageBmwCodingMenu.SetVisible(bmwVisible && bmwCodingEnabled);
-            }
-
             bool vagVisible = ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw && selectedPageFuncAvail && !string.IsNullOrEmpty(_instanceData.ConfigFileName);
             IMenuItem cfgPageVagCodingMenu = menu.FindItem(Resource.Id.menu_cfg_page_vag_coding);
             if (cfgPageVagCodingMenu != null)
@@ -1271,6 +1244,34 @@ namespace BmwDeepObd
 
             IMenuItem ediabasToolMenu = menu.FindItem(Resource.Id.menu_ediabas_tool);
             ediabasToolMenu?.SetEnabled(!commActive);
+
+            IMenuItem cfgPageBmwCodingMenu = menu.FindItem(Resource.Id.menu_bmw_coding);
+            if (cfgPageBmwCodingMenu != null)
+            {
+                bool bmwCodingEnabled = false;
+                if (_activityCommon.IsBmwCodingInterface(_instanceData.DeviceAddress) &&
+                    !string.IsNullOrEmpty(_instanceData.ConfigFileName))
+                {
+                    string sgbdFunctional = null;
+                    foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
+                    {
+                        if (pageInfo.ErrorsInfo != null)
+                        {
+                            sgbdFunctional = pageInfo.ErrorsInfo.SgbdFunctional;
+                            break;
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(sgbdFunctional))
+                    {
+                        bmwCodingEnabled = true;
+                    }
+                }
+
+                bool networkPresent = _activityCommon.IsNetworkPresent(out _);
+                cfgPageBmwCodingMenu.SetEnabled(bmwCodingEnabled && interfaceAvailable && !commActive && networkPresent);
+                cfgPageBmwCodingMenu.SetVisible(ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw);
+            }
 
             IMenuItem downloadEcu = menu.FindItem(Resource.Id.menu_download_ecu);
             if (downloadEcu != null)
@@ -1414,10 +1415,6 @@ namespace BmwDeepObd
                     StartXmlTool(XmlToolActivity.EcuFunctionCallType.BmwActuator);
                     return true;
 
-                case Resource.Id.menu_cfg_page_bmw_coding:
-                    StartBmwCoding();
-                    return true;
-
                 case Resource.Id.menu_cfg_page_vag_coding:
                     StartXmlTool(XmlToolActivity.EcuFunctionCallType.VagCoding);
                     return true;
@@ -1475,6 +1472,10 @@ namespace BmwDeepObd
 
                 case Resource.Id.menu_ediabas_tool:
                     StartEdiabasTool();
+                    return true;
+
+                case Resource.Id.menu_bmw_coding:
+                    StartBmwCoding();
                     return true;
 
                 case Resource.Id.menu_download_ecu:

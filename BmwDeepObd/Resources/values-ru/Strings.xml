@@ -281,7 +281,6 @@
   <string name="menu_cfg_page_functions">Функции страницы</string>
   <string name="menu_cfg_page_ediabas">Ediabas утилита</string>
   <string name="menu_cfg_page_bmw_actuator">Функции актуатора</string>
-  <string name="menu_cfg_page_bmw_coding">Кодировать</string>
   <string name="menu_cfg_page_vag_coding">Кодировать</string>
   <string name="menu_cfg_page_vag_coding2">Кодировать 2</string>
   <string name="menu_cfg_page_vag_adaption">Адаптация</string>
@@ -296,6 +295,7 @@
   <string name="menu_cfg_close">Закрыть</string>
   <string name="menu_xml_tool">Генератор конфигураций</string>
   <string name="menu_ediabas_tool">Ediabas утилита</string>
+  <string name="menu_bmw_coding">Кодировать</string>
   <string name="menu_download_ecu">Скачать ECU файл.</string>
   <string name="menu_extract_ecu">Извлечь файлы ECU</string>
   <string name="menu_submenu_log">Протокол данных</string>

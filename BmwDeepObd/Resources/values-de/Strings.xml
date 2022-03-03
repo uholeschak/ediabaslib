@@ -282,7 +282,6 @@
   <string name="menu_cfg_page_functions">Funktionen der Seite</string>
   <string name="menu_cfg_page_ediabas">Ediabas Tool</string>
   <string name="menu_cfg_page_bmw_actuator">Aktuator Funktionen</string>
-  <string name="menu_cfg_page_bmw_coding">Kodieren</string>
   <string name="menu_cfg_page_vag_coding">Kodieren</string>
   <string name="menu_cfg_page_vag_coding2">Kodieren 2</string>
   <string name="menu_cfg_page_vag_adaption">Adaption</string>
@@ -297,6 +296,7 @@
   <string name="menu_cfg_close">Schließen</string>
   <string name="menu_xml_tool">Konfigurationsgenerator</string>
   <string name="menu_ediabas_tool">Ediabas Tool</string>
+  <string name="menu_bmw_coding">Kodieren</string>
   <string name="menu_download_ecu">ECU Dateien herunterladen</string>
   <string name="menu_extract_ecu">ECU Dateien entpacken</string>
   <string name="menu_submenu_log">Datenaufzeichnung</string>
