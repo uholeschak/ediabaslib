@@ -7123,22 +7123,22 @@ namespace BmwDeepObd
 			public const int menu_adapter_config = 2131296692;
 			
 			// aapt resource value: 0x7F0901B5
-			public const int menu_cfg_close = 2131296693;
+			public const int menu_bmw_coding = 2131296693;
 			
 			// aapt resource value: 0x7F0901B6
-			public const int menu_cfg_edit = 2131296694;
+			public const int menu_cfg_close = 2131296694;
 			
 			// aapt resource value: 0x7F0901B7
-			public const int menu_cfg_edit_reset = 2131296695;
+			public const int menu_cfg_edit = 2131296695;
+			
+			// aapt resource value: 0x7F0901B8
+			public const int menu_cfg_edit_reset = 2131296696;
 			
 			// aapt resource value: 0x7F0901C2
 			public const int menu_cfg_pages_edit = 2131296706;
 			
-			// aapt resource value: 0x7F0901B8
-			public const int menu_cfg_page_bmw_actuator = 2131296696;
-			
 			// aapt resource value: 0x7F0901B9
-			public const int menu_cfg_page_bmw_coding = 2131296697;
+			public const int menu_cfg_page_bmw_actuator = 2131296697;
 			
 			// aapt resource value: 0x7F0901BA
 			public const int menu_cfg_page_ediabas = 2131296698;
@@ -10253,22 +10253,22 @@ namespace BmwDeepObd
 			public const int menu_adapter_config = 2131755319;
 			
 			// aapt resource value: 0x7F100138
-			public const int menu_cfg_close = 2131755320;
+			public const int menu_bmw_coding = 2131755320;
 			
 			// aapt resource value: 0x7F100139
-			public const int menu_cfg_edit = 2131755321;
+			public const int menu_cfg_close = 2131755321;
 			
 			// aapt resource value: 0x7F10013A
-			public const int menu_cfg_edit_reset = 2131755322;
+			public const int menu_cfg_edit = 2131755322;
+			
+			// aapt resource value: 0x7F10013B
+			public const int menu_cfg_edit_reset = 2131755323;
 			
 			// aapt resource value: 0x7F100145
 			public const int menu_cfg_pages_edit = 2131755333;
 			
-			// aapt resource value: 0x7F10013B
-			public const int menu_cfg_page_bmw_actuator = 2131755323;
-			
 			// aapt resource value: 0x7F10013C
-			public const int menu_cfg_page_bmw_coding = 2131755324;
+			public const int menu_cfg_page_bmw_actuator = 2131755324;
 			
 			// aapt resource value: 0x7F10013D
 			public const int menu_cfg_page_ediabas = 2131755325;
