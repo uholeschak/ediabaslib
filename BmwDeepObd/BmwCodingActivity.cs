@@ -84,10 +84,9 @@ namespace BmwDeepObd
         private const int ConnectionTimeout = 6000;
 
         // Intent extra
-        public const string ExtraEcuDir = "ecu_dir";
         public const string ExtraAppDataDir = "app_data_dir";
+        public const string ExtraEcuDir = "ecu_dir";
         public const string ExtraInterface = "interface";
-        public const string ExtraDeviceName = "device_name";
         public const string ExtraDeviceAddress = "device_address";
         public const string ExtraEnetIp = "enet_ip";
 
@@ -106,7 +105,6 @@ namespace BmwDeepObd
         private ActivityCommon _activityCommon;
         private string _ecuDir;
         private string _appDataDir;
-        private string _deviceName;
         private string _deviceAddress;
         private EdiabasNet _ediabas;
         private volatile bool _ediabasJobAbort;
@@ -141,7 +139,7 @@ namespace BmwDeepObd
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SetContentView(Resource.Layout.bmw_coding);
 
-            SetResult(Android.App.Result.Canceled);
+            SetResult(Android.App.Result.Ok);
 
             _activityCommon = new ActivityCommon(this, () =>
             {
@@ -155,7 +153,6 @@ namespace BmwDeepObd
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
             _activityCommon.SelectedInterface = (ActivityCommon.InterfaceType)
                 Intent.GetIntExtra(ExtraInterface, (int)ActivityCommon.InterfaceType.None);
-            _deviceName = Intent.GetStringExtra(ExtraDeviceName);
             _deviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
             _activityCommon.SelectedEnetIp = Intent.GetStringExtra(ExtraEnetIp);
 

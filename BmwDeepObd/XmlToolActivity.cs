@@ -1728,6 +1728,7 @@ namespace BmwDeepObd
                 }
                 XmlToolEcuActivity.IntentEcuInfo = ecuInfo;
                 Intent serverIntent = new Intent(this, typeof(XmlToolEcuActivity));
+                serverIntent.PutExtra(XmlToolEcuActivity.ExtraAppDataDir, _appDataDir);
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuName, ecuInfo.Name);
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuDir, _ecuDir);
                 if (!string.IsNullOrEmpty(_instanceData.VehicleType))

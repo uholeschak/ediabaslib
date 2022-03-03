@@ -6359,10 +6359,9 @@ namespace BmwDeepObd
                 }
 
                 Intent serverIntent = new Intent(this, typeof(BmwCodingActivity));
-                serverIntent.PutExtra(BmwCodingActivity.ExtraEcuDir, _instanceData.EcuPath);
                 serverIntent.PutExtra(BmwCodingActivity.ExtraAppDataDir, _instanceData.AppDataPath);
+                serverIntent.PutExtra(BmwCodingActivity.ExtraEcuDir, _instanceData.EcuPath);
                 serverIntent.PutExtra(BmwCodingActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
-                serverIntent.PutExtra(BmwCodingActivity.ExtraDeviceName, _instanceData.DeviceName);
                 serverIntent.PutExtra(BmwCodingActivity.ExtraDeviceAddress, _instanceData.DeviceAddress);
                 serverIntent.PutExtra(BmwCodingActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
                 StartActivityForResult(serverIntent, (int)ActivityRequest.RequestBmwCoding);
