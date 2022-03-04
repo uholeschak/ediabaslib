@@ -4,11 +4,14 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading;
 using System.Web;
+using log4net;
 
-namespace WebPsdzClient
+namespace WebHostBasicAuth.Modules
 {
     public class BasicAuthHttpModule : IHttpModule
     {
+        private static readonly ILog log = LogManager.GetLogger(typeof(BasicAuthHttpModule));
+
         public void Init(HttpApplication context)
         {
             // Register event handlers
@@ -27,7 +30,27 @@ namespace WebPsdzClient
 
         private static bool CheckPassword(string username, string password)
         {
-            return username == "deepobd" && password == "deepobdbmw";
+            log.InfoFormat("CheckPassword Name: {0}, Password: {1}", username, password);
+
+            bool passwordAccepted = false;
+            if (string.Compare(username, "deepobd", StringComparison.Ordinal) == 0)
+            {
+                if (string.Compare(password, "deepobdbmw", StringComparison.Ordinal) == 0)
+                {
+                    passwordAccepted = true;
+                }
+            }
+
+            if (passwordAccepted)
+            {
+                log.InfoFormat("CheckPassword Accepted");
+            }
+            else
+            {
+                log.ErrorFormat("CheckPassword Rejected");
+            }
+
+            return passwordAccepted;
         }
 
         private static void AuthenticateUser(string credentials)
@@ -52,8 +75,9 @@ namespace WebPsdzClient
                     HttpContext.Current.Response.StatusCode = 401;
                 }
             }
-            catch (FormatException)
+            catch (FormatException ex)
             {
+                log.ErrorFormat("AuthenticateUser Exception: {0}", ex.Message);
                 // Credentials were not formatted correctly.
                 HttpContext.Current.Response.StatusCode = 401;
             }
@@ -65,6 +89,7 @@ namespace WebPsdzClient
             string authHeader = request.Headers["Authorization"];
             if (!string.IsNullOrEmpty(authHeader))
             {
+                log.InfoFormat("OnApplicationAuthenticateRequest Header: {0}", authHeader);
                 try
                 {
                     AuthenticationHeaderValue authHeaderVal = AuthenticationHeaderValue.Parse(authHeader);
@@ -76,9 +101,9 @@ namespace WebPsdzClient
                         AuthenticateUser(authHeaderVal.Parameter);
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    // ignored
+                    log.ErrorFormat("OnApplicationAuthenticateRequest Exception: {0}", ex.Message);
                 }
             }
         }
@@ -87,7 +112,7 @@ namespace WebPsdzClient
         // to the response.
         private static void OnApplicationEndRequest(object sender, EventArgs e)
         {
-            var response = HttpContext.Current.Response;
+            HttpResponse response = HttpContext.Current.Response;
             if (response.StatusCode == 401)
             {
                 response.Headers.Add("WWW-Authenticate", "Basic");
