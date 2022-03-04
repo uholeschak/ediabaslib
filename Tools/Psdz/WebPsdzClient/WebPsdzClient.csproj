@@ -251,6 +251,7 @@
     <Compile Include="AppUpdate.aspx.designer.cs">
       <DependentUpon>AppUpdate.aspx</DependentUpon>
     </Compile>
+    <Compile Include="App_Start\BasicAuthHttpModule.cs" />
     <Compile Include="SessionsExceeded.aspx.cs">
       <DependentUpon>SessionsExceeded.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
