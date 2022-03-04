@@ -14,6 +14,7 @@ namespace WebHostBasicAuth.Modules
 
         public void Init(HttpApplication context)
         {
+            log.InfoFormat("BasicAuthHttpModule Init");
             // Register event handlers
             context.AuthenticateRequest += OnApplicationAuthenticateRequest;
             context.EndRequest += OnApplicationEndRequest;
