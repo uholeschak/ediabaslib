@@ -17,7 +17,7 @@ namespace WebPsdzClient
     {
         public void Configuration(IAppBuilder app)
         {
-            //ConfigureAuth(app);
+            ConfigureAuth(app);
             var hubConfiguration = new HubConfiguration();
             hubConfiguration.EnableDetailedErrors = false;
             app.MapSignalR();
@@ -44,6 +44,7 @@ namespace WebPsdzClient
 
             app.UseCors(corsOptions);
 
+#if false
             // Enable the application to use a cookie to store information for the signed in user
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
@@ -52,7 +53,7 @@ namespace WebPsdzClient
             });
             // Use a cookie to temporarily store information about a user logging in with a third party login provider
             app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
-
+#endif
             // Uncomment the following lines to enable logging in with third party login providers
             //app.UseMicrosoftAccountAuthentication(
             // clientId: "",
