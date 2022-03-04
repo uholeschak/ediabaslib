@@ -83,6 +83,9 @@ namespace BmwDeepObd
         private const int FirstConnectTimeout = 20000;
         private const int ConnectionTimeout = 6000;
 
+        private const string AuthUser = "DeepObd";
+        private const string AuthPwd = "BmwCoding";
+
         // Intent extra
         public const string ExtraAppDataDir = "app_data_dir";
         public const string ExtraEcuDir = "ecu_dir";
@@ -1454,6 +1457,14 @@ namespace BmwDeepObd
                 Android.Util.Log.Debug(Tag, string.Format("OnReceivedSslError: Url={0}", error?.Url ?? string.Empty));
 #endif
                 handler.Proceed();
+            }
+
+            public override void OnReceivedHttpAuthRequest(WebView view, HttpAuthHandler handler, string host, string realm)
+            {
+#if DEBUG
+                Android.Util.Log.Debug(Tag, string.Format("OnReceivedHttpAuthRequest: Host={0}, Realm={1}", host, realm));
+#endif
+                handler.Proceed(AuthUser, AuthPwd);
             }
 
             public override void DoUpdateVisitedHistory(WebView view, string url, bool isReload)

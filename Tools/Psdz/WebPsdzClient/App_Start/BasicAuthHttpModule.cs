@@ -34,9 +34,9 @@ namespace WebHostBasicAuth.Modules
             log.InfoFormat("CheckPassword Name: {0}, Password: {1}", username, password);
 
             bool passwordAccepted = false;
-            if (string.Compare(username, "deepobd", StringComparison.Ordinal) == 0)
+            if (string.Compare(username, "DeepObd", StringComparison.Ordinal) == 0)
             {
-                if (string.Compare(password, "deepobdbmw", StringComparison.Ordinal) == 0)
+                if (string.Compare(password, "BmwCoding", StringComparison.Ordinal) == 0)
                 {
                     passwordAccepted = true;
                 }
