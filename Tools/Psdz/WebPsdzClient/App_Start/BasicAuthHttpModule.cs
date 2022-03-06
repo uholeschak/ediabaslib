@@ -38,26 +38,46 @@ namespace WebHostBasicAuth.Modules
             bool passwordAccepted = false;
             if (string.Compare(username, AuthUser, StringComparison.Ordinal) == 0)
             {
-                try
+                for (int dateType = 0; dateType < 3; dateType++)
                 {
-                    DateTime date = DateTime.Now;
-                    string dayString = date.ToString("yyyy-MM-dd");
-                    string encodeString = AuthPwd + dayString;
-                    byte[] pwdArray = Encoding.ASCII.GetBytes(encodeString);
-                    string md5Pwd;
-                    using (MD5 md5 = MD5.Create())
+                    try
                     {
-                        md5Pwd = BitConverter.ToString(md5.ComputeHash(pwdArray)).Replace("-", "");
-                    }
+                        DateTime date = DateTime.Now;
+                        switch (dateType)
+                        {
+                            case 1:
+                                date = date.AddDays(1);
+                                break;
 
-                    if (string.Compare(password, md5Pwd, StringComparison.Ordinal) == 0)
-                    {
-                        passwordAccepted = true;
+                            case 2:
+                                date = date.AddDays(-1);
+                                break;
+                        }
+
+                        string dayString = date.ToString("yyyy-MM-dd");
+                        string encodeString = AuthPwd + dayString;
+                        byte[] pwdArray = Encoding.ASCII.GetBytes(encodeString);
+                        string md5Pwd;
+                        using (MD5 md5 = MD5.Create())
+                        {
+                            md5Pwd = BitConverter.ToString(md5.ComputeHash(pwdArray)).Replace("-", "");
+                        }
+
+                        if (string.Compare(password, md5Pwd, StringComparison.Ordinal) == 0)
+                        {
+                            if (dateType > 0)
+                            {
+                                log.InfoFormat("CheckPassword Accepted date: {0}", dayString);
+                            }
+
+                            passwordAccepted = true;
+                            break;
+                        }
                     }
-                }
-                catch (Exception ex)
-                {
-                    log.ErrorFormat("CheckPassword Exception: {0}", ex.Message);
+                    catch (Exception ex)
+                    {
+                        log.ErrorFormat("CheckPassword Exception: {0}", ex.Message);
+                    }
                 }
 
                 if (string.Compare(password, AuthPwd, StringComparison.Ordinal) == 0)
