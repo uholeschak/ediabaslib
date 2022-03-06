@@ -665,6 +665,7 @@ namespace WebPsdzClient
 
                             if (addItem)
                             {
+                                log.InfoFormat("SelectOptions Add item: {0}", optionsItem);
                                 ListItem listItem = new ListItem(optionsItem.ToString(), optionsItem.SwiAction.Id);
                                 listItem.Selected = itemSelected;
                                 listItem.Enabled = itemEnabled;
