@@ -85,6 +85,7 @@ namespace PsdzClient
 
         public bool DetectVehicleBmwFast()
         {
+            log.InfoFormat(CultureInfo.InvariantCulture, "DetectVehicleBmwFast Start");
             ResetValues();
             HashSet<string> invalidSgbdSet = new HashSet<string>();
 
@@ -140,6 +141,7 @@ namespace PsdzClient
 
                 if (string.IsNullOrEmpty(detectedVin))
                 {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "No VIN detected");
                     return false;
                 }
 
@@ -468,6 +470,7 @@ namespace PsdzClient
                     return false;
                 }
 
+                log.InfoFormat(CultureInfo.InvariantCulture, "DetectVehicleBmwFast Finish");
                 return true;
             }
             catch (Exception)
