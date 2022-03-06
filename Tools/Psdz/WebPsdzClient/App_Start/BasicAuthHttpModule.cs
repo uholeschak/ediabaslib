@@ -31,8 +31,6 @@ namespace WebHostBasicAuth.Modules
 
         private static bool CheckPassword(string username, string password)
         {
-            log.InfoFormat("CheckPassword Name: {0}, Password: {1}", username, password);
-
             bool passwordAccepted = false;
             if (string.Compare(username, "DeepObd", StringComparison.Ordinal) == 0)
             {
@@ -42,13 +40,9 @@ namespace WebHostBasicAuth.Modules
                 }
             }
 
-            if (passwordAccepted)
+            if (!passwordAccepted)
             {
-                log.InfoFormat("CheckPassword Accepted");
-            }
-            else
-            {
-                log.ErrorFormat("CheckPassword Rejected");
+                log.ErrorFormat("CheckPassword Rejected Name: {0}, Password: {1}", username, password);
             }
 
             return passwordAccepted;
@@ -90,7 +84,6 @@ namespace WebHostBasicAuth.Modules
             string authHeader = request.Headers["Authorization"];
             if (!string.IsNullOrEmpty(authHeader))
             {
-                log.InfoFormat("OnApplicationAuthenticateRequest Header: {0}", authHeader);
                 try
                 {
                     AuthenticationHeaderValue authHeaderVal = AuthenticationHeaderValue.Parse(authHeader);
@@ -100,6 +93,10 @@ namespace WebHostBasicAuth.Modules
                         authHeaderVal.Parameter != null)
                     {
                         AuthenticateUser(authHeaderVal.Parameter);
+                    }
+                    else
+                    {
+                        log.ErrorFormat("OnApplicationAuthenticateRequest Invalid auth header: {0}", authHeader);
                     }
                 }
                 catch (Exception ex)
