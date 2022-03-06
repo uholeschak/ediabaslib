@@ -78,7 +78,7 @@ namespace BmwDeepObd
         }
 
         public delegate void AcceptDelegate(bool accepted);
-        public delegate void InfoCheckDelegate(bool success, bool cancelled, string codingUrl, string codingUrlTest, string message);
+        public delegate void InfoCheckDelegate(bool success, bool cancelled, string codingUrl = null, string codingUrlTest = null, string message = null, string dayString = null);
 
         private const int FirstConnectTimeout = 20000;
         private const int ConnectionTimeout = 6000;
@@ -553,7 +553,7 @@ namespace BmwDeepObd
                         }
 
                         ignoreDismiss = true;
-                        GetConnectionInfo((success, cancelled, url, urlTest, message) =>
+                        GetConnectionInfo((success, cancelled, url, urlTest, message, dayString) =>
                         {
                             RunOnUiThread(() =>
                             {
@@ -701,8 +701,8 @@ namespace BmwDeepObd
                     HttpResponseMessage responseUpload = taskDownload.Result;
                     responseUpload.EnsureSuccessStatusCode();
                     string responseInfoXml = responseUpload.Content.ReadAsStringAsync().Result;
-                    bool success = GetCodingInfo(responseInfoXml, out string codingUrl, out string codingUrlTest, out string message);
-                    handler?.Invoke(success, false, codingUrl, codingUrlTest, message);
+                    bool success = GetCodingInfo(responseInfoXml, out string codingUrl, out string codingUrlTest, out string message, out string dayString);
+                    handler?.Invoke(success, false, codingUrl, codingUrlTest, message, dayString);
 
                     if (progress != null)
                     {
@@ -730,7 +730,7 @@ namespace BmwDeepObd
                         }
 
                         bool cancelled = ex.InnerException is System.Threading.Tasks.TaskCanceledException;
-                        handler?.Invoke(false, cancelled, null, null, null);
+                        handler?.Invoke(false, cancelled);
                     });
                 }
             });
@@ -739,11 +739,12 @@ namespace BmwDeepObd
             return true;
         }
 
-        private bool GetCodingInfo(string xmlResult, out string codingUrl, out string codingUrlTest, out string message)
+        private bool GetCodingInfo(string xmlResult, out string codingUrl, out string codingUrlTest, out string message, out string dayString)
         {
             codingUrl = null;
             codingUrlTest = null;
             message = null;
+            dayString = null;
 
             try
             {
@@ -780,6 +781,12 @@ namespace BmwDeepObd
                     {
                         message = messageAttr.Value;
                         success = true;
+                    }
+
+                    XAttribute dayAttr = infoNode.Attribute("day");
+                    if (dayAttr != null && !string.IsNullOrEmpty(dayAttr.Value))
+                    {
+                        dayString = dayAttr.Value;
                     }
                 }
 
