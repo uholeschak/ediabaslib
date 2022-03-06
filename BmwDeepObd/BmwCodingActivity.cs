@@ -72,6 +72,7 @@ namespace BmwDeepObd
             public string CodingUrl { get; set; }
             public string CodingUrlTest { get; set; }
             public string DayString { get; set; }
+            public bool SerialValid { get; set; }
             public string InitialUrl { get; set; }
             public string Url { get; set; }
             public bool ServerConnected { get; set; }
@@ -576,6 +577,7 @@ namespace BmwDeepObd
                                     _instanceData.CodingUrl = url;
                                     _instanceData.CodingUrlTest = urlTest;
                                     _instanceData.DayString = dayString;
+                                    _instanceData.SerialValid = serialValid;
 
                                     if (!string.IsNullOrEmpty(message))
                                     {
@@ -831,7 +833,10 @@ namespace BmwDeepObd
 
                     if (!string.IsNullOrEmpty(serial) && !string.IsNullOrEmpty(oem) && !disabled)
                     {
-                        serialValid = true;
+                        if (string.Compare(ActivityCommon.LastAdapterSerial, serial, StringComparison.Ordinal) == 0)
+                        {
+                            serialValid = true;
+                        }
                     }
                 }
 
@@ -1352,8 +1357,10 @@ namespace BmwDeepObd
                     {
                         string appIdState = ActivityCommon.AppId ?? string.Empty;
                         string adapterSerialState = ActivityCommon.LastAdapterSerial ?? string.Empty;
+                        string serialValidState = _instanceData.SerialValid ? "1" : "0";
                         sbBody.Append($" app_id=\"{System.Web.HttpUtility.HtmlEncode(appIdState)}\"");
                         sbBody.Append($" adapter_serial=\"{System.Web.HttpUtility.HtmlEncode(adapterSerialState)}\"");
+                        sbBody.Append($" serial_valid=\"{System.Web.HttpUtility.HtmlEncode(serialValidState)}\"");
                     }
                     sbBody.Append(" />\r\n");
                     sbBody.Append("</vehicle_info>\r\n");
