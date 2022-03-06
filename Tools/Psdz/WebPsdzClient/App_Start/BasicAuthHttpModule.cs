@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http.Headers;
+using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Text;
 using System.Threading;
@@ -11,6 +12,9 @@ namespace WebHostBasicAuth.Modules
     public class BasicAuthHttpModule : IHttpModule
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(BasicAuthHttpModule));
+
+        private const string AuthUser = "DeepObd";
+        private const string AuthPwd = "BmwCoding";
 
         public void Init(HttpApplication context)
         {
@@ -32,9 +36,31 @@ namespace WebHostBasicAuth.Modules
         private static bool CheckPassword(string username, string password)
         {
             bool passwordAccepted = false;
-            if (string.Compare(username, "DeepObd", StringComparison.Ordinal) == 0)
+            if (string.Compare(username, AuthUser, StringComparison.Ordinal) == 0)
             {
-                if (string.Compare(password, "BmwCoding", StringComparison.Ordinal) == 0)
+                try
+                {
+                    DateTime date = DateTime.Now;
+                    string dayString = date.ToString("yyyy-MM-dd");
+                    string encodeString = AuthPwd + dayString;
+                    byte[] pwdArray = Encoding.ASCII.GetBytes(encodeString);
+                    string md5Pwd;
+                    using (MD5 md5 = MD5.Create())
+                    {
+                        md5Pwd = BitConverter.ToString(md5.ComputeHash(pwdArray)).Replace("-", "");
+                    }
+
+                    if (string.Compare(password, md5Pwd, StringComparison.Ordinal) == 0)
+                    {
+                        passwordAccepted = true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.ErrorFormat("CheckPassword Exception: {0}", ex.Message);
+                }
+
+                if (string.Compare(password, AuthPwd, StringComparison.Ordinal) == 0)
                 {
                     passwordAccepted = true;
                 }
