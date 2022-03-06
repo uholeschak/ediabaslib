@@ -7,11 +7,13 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BmwFileReader;
 using EdiabasLib;
+using log4net;
 
 namespace PsdzClient
 {
     public class DetectVehicle : IDisposable
     {
+        private static readonly ILog log = LogManager.GetLogger(typeof(DetectVehicle));
         private readonly Regex _vinRegex = new Regex(@"^(?!0{7,})([a-zA-Z0-9]{7,})$");
         private static readonly Tuple<string, string, string>[] ReadVinJobsBmwFast =
         {
@@ -122,7 +124,7 @@ namespace PsdzClient
                                 if (!string.IsNullOrEmpty(vin) && _vinRegex.IsMatch(vin))
                                 {
                                     detectedVin = vin;
-                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected VIN: {0}", detectedVin);
+                                    log.InfoFormat(CultureInfo.InvariantCulture, "Detected VIN: {0}", detectedVin);
                                     break;
                                 }
                             }
@@ -131,7 +133,7 @@ namespace PsdzClient
                     catch (Exception)
                     {
                         invalidSgbdSet.Add(job.Item1);
-                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No VIN response");
+                        log.ErrorFormat(CultureInfo.InvariantCulture, "No VIN response");
                         // ignored
                     }
                 }
@@ -153,10 +155,10 @@ namespace PsdzClient
                         return false;
                     }
 
-                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read BR job: {0},{1}", job.Item1, job.Item2);
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Read BR job: {0},{1}", job.Item1, job.Item2);
                     if (invalidSgbdSet.Contains(job.Item1))
                     {
-                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Job ignored: {0}", job.Item1);
+                        log.InfoFormat(CultureInfo.InvariantCulture, "Job ignored: {0}", job.Item1);
                         continue;
                     }
                     try
@@ -197,11 +199,11 @@ namespace PsdzClient
                                                 string br = resultDataBa.OpData as string;
                                                 if (!string.IsNullOrEmpty(br))
                                                 {
-                                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected BR: {0}", br);
+                                                    log.InfoFormat(CultureInfo.InvariantCulture, "Detected BR: {0}", br);
                                                     string vtype = VehicleInfoBmw.GetVehicleTypeFromBrName(br, _ediabas);
                                                     if (!string.IsNullOrEmpty(vtype))
                                                     {
-                                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected vehicle type: {0}", vtype);
+                                                        log.InfoFormat(CultureInfo.InvariantCulture, "Detected vehicle type: {0}", vtype);
                                                         modelSeries = br;
                                                         vehicleType = vtype;
                                                     }
@@ -215,7 +217,7 @@ namespace PsdzClient
                                                 {
                                                     if (DateTime.TryParseExact(cDateStr, "MMyy", null, DateTimeStyles.None, out DateTime dateTime))
                                                     {
-                                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected construction date: {0}",
+                                                        log.InfoFormat(CultureInfo.InvariantCulture, "Detected construction date: {0}",
                                                             dateTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
                                                         cDate = dateTime;
                                                     }
@@ -234,11 +236,11 @@ namespace PsdzClient
                                     string br = resultData.OpData as string;
                                     if (!string.IsNullOrEmpty(br))
                                     {
-                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected BR: {0}", br);
+                                        log.InfoFormat(CultureInfo.InvariantCulture, "Detected BR: {0}", br);
                                         string vtype = VehicleInfoBmw.GetVehicleTypeFromBrName(br, _ediabas);
                                         if (!string.IsNullOrEmpty(vtype))
                                         {
-                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected vehicle type: {0}", vtype);
+                                            log.InfoFormat(CultureInfo.InvariantCulture, "Detected vehicle type: {0}", vtype);
                                             modelSeries = br;
                                             vehicleType = vtype;
                                             break;
@@ -250,7 +252,7 @@ namespace PsdzClient
                     }
                     catch (Exception)
                     {
-                        _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "No BR response");
+                        log.ErrorFormat(CultureInfo.InvariantCulture, "No BR response");
                         // ignored
                     }
                 }
@@ -266,10 +268,11 @@ namespace PsdzClient
                 string groupSgbd = VehicleInfoBmw.GetGroupSgbdFromVehicleType(vehicleType, detectedVin, cDate, _ediabas, out VehicleInfoBmw.BnType bnType);
                 if (string.IsNullOrEmpty(groupSgbd))
                 {
-                    _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "No group SGBD found");
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "No group SGBD found");
                     return false;
                 }
-                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Group SGBD: {0}", groupSgbd);
+
+                log.InfoFormat(CultureInfo.InvariantCulture, "Group SGBD: {0}", groupSgbd);
                 GroupSgdb = groupSgbd;
                 BnType = bnType;
 
@@ -359,7 +362,7 @@ namespace PsdzClient
                 }
                 catch (Exception)
                 {
-                    _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "No ident response");
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "No ident response");
                     return false;
                 }
 
@@ -373,10 +376,10 @@ namespace PsdzClient
                         return false;
                     }
 
-                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read ILevel job: {0},{1}", job.Item1, job.Item2);
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Read ILevel job: {0},{1}", job.Item1, job.Item2);
                     if (invalidSgbdSet.Contains(job.Item1))
                     {
-                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Job ignored: {0}", job.Item1);
+                        log.InfoFormat(CultureInfo.InvariantCulture, "Job ignored: {0}", job.Item1);
                         continue;
                     }
                     try
@@ -404,7 +407,7 @@ namespace PsdzClient
                                     string.Compare(iLevel, VehicleInfoBmw.ResultUnknown, StringComparison.OrdinalIgnoreCase) != 0)
                                 {
                                     iLevelShip = iLevel;
-                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected ILevel ship: {0}", iLevelShip);
+                                    log.InfoFormat(CultureInfo.InvariantCulture, "Detected ILevel ship: {0}", iLevelShip);
                                 }
                             }
 
@@ -417,7 +420,7 @@ namespace PsdzClient
                                         string.Compare(iLevel, VehicleInfoBmw.ResultUnknown, StringComparison.OrdinalIgnoreCase) != 0)
                                     {
                                         iLevelCurrent = iLevel;
-                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected ILevel current: {0}", iLevelCurrent);
+                                        log.InfoFormat(CultureInfo.InvariantCulture, "Detected ILevel current: {0}", iLevelCurrent);
                                     }
                                 }
 
@@ -433,7 +436,7 @@ namespace PsdzClient
                                         string.Compare(iLevel, VehicleInfoBmw.ResultUnknown, StringComparison.OrdinalIgnoreCase) != 0)
                                     {
                                         iLevelBackup = iLevel;
-                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected ILevel backup: {0}", iLevelBackup);
+                                        log.InfoFormat(CultureInfo.InvariantCulture, "Detected ILevel backup: {0}", iLevelBackup);
                                     }
                                 }
 
@@ -443,18 +446,18 @@ namespace PsdzClient
                     }
                     catch (Exception)
                     {
-                        _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "No ILevel response");
+                        log.ErrorFormat(CultureInfo.InvariantCulture, "No ILevel response");
                         // ignored
                     }
                 }
 
                 if (string.IsNullOrEmpty(iLevelShip))
                 {
-                    _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "ILevel not found");
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "ILevel not found");
                     return false;
                 }
 
-                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ILevel: Ship={0}, Current={1}, Backup={2}", iLevelShip, iLevelCurrent, iLevelBackup);
+                log.InfoFormat(CultureInfo.InvariantCulture, "ILevel: Ship={0}, Current={1}, Backup={2}", iLevelShip, iLevelCurrent, iLevelBackup);
 
                 ILevelShip = iLevelShip;
                 ILevelCurrent = iLevelCurrent;
