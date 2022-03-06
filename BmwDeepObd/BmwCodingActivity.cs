@@ -61,6 +61,7 @@ namespace BmwDeepObd
             {
                 CodingUrl = string.Empty;
                 CodingUrlTest = string.Empty;
+                DayString = string.Empty;
                 InitialUrl = string.Empty;
                 Url = string.Empty;
                 TraceActive = true;
@@ -68,6 +69,7 @@ namespace BmwDeepObd
 
             public string CodingUrl { get; set; }
             public string CodingUrlTest { get; set; }
+            public string DayString { get; set; }
             public string InitialUrl { get; set; }
             public string Url { get; set; }
             public bool ServerConnected { get; set; }
@@ -571,6 +573,7 @@ namespace BmwDeepObd
                                 {
                                     _instanceData.CodingUrl = url;
                                     _instanceData.CodingUrlTest = urlTest;
+                                    _instanceData.DayString = dayString;
 
                                     if (!string.IsNullOrEmpty(message))
                                     {
