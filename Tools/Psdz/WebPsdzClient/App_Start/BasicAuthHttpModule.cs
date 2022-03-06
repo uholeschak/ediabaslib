@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Security.Principal;
@@ -15,6 +16,7 @@ namespace WebHostBasicAuth.Modules
 
         private const string AuthUser = "DeepObd";
         private const string AuthPwd = "BmwCoding";
+        public static string AccessPwd { get; private set; }
 
         public void Init(HttpApplication context)
         {
@@ -22,6 +24,7 @@ namespace WebHostBasicAuth.Modules
             // Register event handlers
             context.AuthenticateRequest += OnApplicationAuthenticateRequest;
             context.EndRequest += OnApplicationEndRequest;
+            AccessPwd = ConfigurationManager.AppSettings["AccessPwd"];
         }
 
         private static void SetPrincipal(IPrincipal principal)
@@ -80,9 +83,13 @@ namespace WebHostBasicAuth.Modules
                     }
                 }
 
-                if (string.Compare(password, AuthPwd, StringComparison.Ordinal) == 0)
+                if (!string.IsNullOrEmpty(AccessPwd))
                 {
-                    passwordAccepted = true;
+                    if (string.Compare(password, AccessPwd, StringComparison.Ordinal) == 0)
+                    {
+                        log.InfoFormat("CheckPassword Accepted: {0}", AccessPwd);
+                        passwordAccepted = true;
+                    }
                 }
             }
 
