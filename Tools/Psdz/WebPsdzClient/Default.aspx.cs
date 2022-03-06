@@ -315,26 +315,31 @@ namespace WebPsdzClient
 
                 if (!int.TryParse(checkedBox[checkedBox.Length - 1], NumberStyles.Integer, CultureInfo.InvariantCulture, out int selectedIndex))
                 {
+                    log.ErrorFormat("CheckBoxListOptions_OnSelectedIndexChanged Invalid checkbox: {0}", checkedBox[checkedBox.Length - 1]);
                     return;
                 }
 
                 if (selectedIndex < 0 || selectedIndex >= CheckBoxListOptions.Items.Count)
                 {
+                    log.ErrorFormat("CheckBoxListOptions_OnSelectedIndexChanged Invalid index: {0}", selectedIndex);
                     return;
                 }
 
                 ListItem listItem = CheckBoxListOptions.Items[selectedIndex];
                 if (!listItem.Enabled)
                 {
+                    log.ErrorFormat("CheckBoxListOptions_OnSelectedIndexChanged Disabled: {0}", listItem.Text);
                     return;
                 }
 
                 string swiActionId = listItem.Value;
                 if (string.IsNullOrEmpty(swiActionId))
                 {
+                    log.ErrorFormat("CheckBoxListOptions_OnSelectedIndexChanged No action ID for: {0}", listItem.Text);
                     return;
                 }
 
+                log.InfoFormat("CheckBoxListOptions_OnSelectedIndexChanged Selected: {0}", listItem.Text);
                 ProgrammingJobs programmingJobs = sessionContainer.ProgrammingJobs;
                 bool modified = false;
                 Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = sessionContainer.OptionsDict;
@@ -370,6 +375,7 @@ namespace WebPsdzClient
 
                 if (modified)
                 {
+                    log.InfoFormat("CheckBoxListOptions_OnSelectedIndexChanged Modified, Updating FA");
                     if (sessionContainer.ProgrammingJobs.PsdzContext != null)
                     {
                         sessionContainer.ProgrammingJobs.PsdzContext.Tal = null;
