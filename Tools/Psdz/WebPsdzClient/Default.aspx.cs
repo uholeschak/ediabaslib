@@ -665,11 +665,12 @@ namespace WebPsdzClient
 
                             if (addItem)
                             {
-                                log.InfoFormat("SelectOptions Add item: {0}", optionsItem);
                                 ListItem listItem = new ListItem(optionsItem.ToString(), optionsItem.SwiAction.Id);
                                 listItem.Selected = itemSelected;
                                 listItem.Enabled = itemEnabled;
                                 CheckBoxListOptions.Items.Add(listItem);
+
+                                log.InfoFormat("SelectOptions Added: Text={0}, Selected={1}, Enabled={2}", listItem.Text, listItem.Selected, listItem.Enabled);
                             }
                         }
                     }
