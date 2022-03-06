@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
+using System.Xml;
 using System.Xml.Linq;
 using Android.Content;
 using Android.Content.PM;
@@ -81,7 +82,7 @@ namespace BmwDeepObd
         }
 
         public delegate void AcceptDelegate(bool accepted);
-        public delegate void InfoCheckDelegate(bool success, bool cancelled, string codingUrl = null, string codingUrlTest = null, string message = null, string dayString = null);
+        public delegate void InfoCheckDelegate(bool success, bool cancelled, string codingUrl = null, string codingUrlTest = null, string message = null, string dayString = null, bool serialValid = false);
 
         private const int FirstConnectTimeout = 20000;
         private const int ConnectionTimeout = 6000;
@@ -556,7 +557,7 @@ namespace BmwDeepObd
                         }
 
                         ignoreDismiss = true;
-                        GetConnectionInfo((success, cancelled, url, urlTest, message, dayString) =>
+                        GetConnectionInfo((success, cancelled, url, urlTest, message, dayString, serialValid) =>
                         {
                             RunOnUiThread(() =>
                             {
@@ -678,6 +679,8 @@ namespace BmwDeepObd
                         { new StringContent(ActivityCommon.AppId), "app_id" },
                         { new StringContent(ActivityCommon.GetCurrentLanguage()), "lang" },
                         { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", (long) Build.VERSION.SdkInt)), "android_ver" },
+                        { new StringContent(_activityCommon.SelectedInterface.ToDescriptionString()), "interface_type" },
+                        { new StringContent(ActivityCommon.LastAdapterSerial ?? string.Empty), "adapter_serial" },
                     };
 
                     System.Threading.Tasks.Task<HttpResponseMessage> taskDownload = _infoHttpClient.PostAsync(InfoCodingUrl, formInfo);
@@ -705,8 +708,8 @@ namespace BmwDeepObd
                     HttpResponseMessage responseUpload = taskDownload.Result;
                     responseUpload.EnsureSuccessStatusCode();
                     string responseInfoXml = responseUpload.Content.ReadAsStringAsync().Result;
-                    bool success = GetCodingInfo(responseInfoXml, out string codingUrl, out string codingUrlTest, out string message, out string dayString);
-                    handler?.Invoke(success, false, codingUrl, codingUrlTest, message, dayString);
+                    bool success = GetCodingInfo(responseInfoXml, out string codingUrl, out string codingUrlTest, out string message, out string dayString, out bool serialValid);
+                    handler?.Invoke(success, false, codingUrl, codingUrlTest, message, dayString, serialValid);
 
                     if (progress != null)
                     {
@@ -743,12 +746,13 @@ namespace BmwDeepObd
             return true;
         }
 
-        private bool GetCodingInfo(string xmlResult, out string codingUrl, out string codingUrlTest, out string message, out string dayString)
+        private bool GetCodingInfo(string xmlResult, out string codingUrl, out string codingUrlTest, out string message, out string dayString, out bool serialValid)
         {
             codingUrl = null;
             codingUrlTest = null;
             message = null;
             dayString = null;
+            serialValid = false;
 
             try
             {
@@ -791,6 +795,43 @@ namespace BmwDeepObd
                     if (dayAttr != null && !string.IsNullOrEmpty(dayAttr.Value))
                     {
                         dayString = dayAttr.Value;
+                    }
+                }
+
+                XElement serialInfoNode = xmlDoc.Root?.Element("serial_info");
+                if (serialInfoNode != null)
+                {
+                    string serial = string.Empty;
+                    XAttribute serialAttr = serialInfoNode.Attribute("serial");
+                    if (serialAttr != null)
+                    {
+                        serial = serialAttr.Value;
+                    }
+
+                    string oem = string.Empty;
+                    XAttribute oemAttr = serialInfoNode.Attribute("oem");
+                    if (oemAttr != null)
+                    {
+                        oem = oemAttr.Value;
+                    }
+
+                    bool disabled = false;
+                    XAttribute disabledAttr = serialInfoNode.Attribute("disabled");
+                    if (disabledAttr != null)
+                    {
+                        try
+                        {
+                            disabled = XmlConvert.ToBoolean(disabledAttr.Value);
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(serial) && !string.IsNullOrEmpty(oem) && !disabled)
+                    {
+                        serialValid = true;
                     }
                 }
 

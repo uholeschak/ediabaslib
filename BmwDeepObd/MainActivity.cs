@@ -254,7 +254,7 @@ namespace BmwDeepObd
                 }
 
                 InstanceData instanceData = activityMain._instanceData;
-                ActivityCommon activityCommon = activityMain.ActivityCommon;
+                ActivityCommon activityCommon = activityMain.ActivityCommonMain;
 
                 if (instanceData == null || activityCommon == null)
                 {
@@ -421,7 +421,7 @@ namespace BmwDeepObd
         private List<string> _translationList;
         private List<string> _translatedList;
 
-        public ActivityCommon ActivityCommon => _activityCommon;
+        public ActivityCommon ActivityCommonMain => _activityCommon;
 
         private string ManufacturerEcuDirName
         {
@@ -998,12 +998,12 @@ namespace BmwDeepObd
                                     message += "\r\n" + errorMessage;
                                 }
 
-                                ActivityCommon.ShowAlert(message, Resource.String.alert_title_error);
+                                _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
                             }
                             else
                             {
                                 string message = GetString(Resource.String.store_settings_filename) + "\r\n" + exportFileName;
-                                ActivityCommon.ShowAlert(message, Resource.String.alert_title_info);
+                                _activityCommon.ShowAlert(message, Resource.String.alert_title_info);
                             }
                         }
                         else if (!string.IsNullOrEmpty(importFileName))
@@ -4488,7 +4488,7 @@ namespace BmwDeepObd
             ActivityCommon activityCommon = null;
             if (context is ActivityMain mainActivity)
             {
-                activityCommon = mainActivity.ActivityCommon;
+                activityCommon = mainActivity.ActivityCommonMain;
             }
             else if (context is ForegroundService foregroundService)
             {
@@ -4978,7 +4978,7 @@ namespace BmwDeepObd
                             { new StringContent(Build.Fingerprint), "fingerprint" },
                             { new StringContent(obbName), "obb_name" },
                             { new StringContent(installer ?? string.Empty), "installer" },
-                            { new StringContent(ActivityCommon.SelectedInterface.ToDescriptionString() ?? string.Empty), "interface_type" },
+                            { new StringContent(_activityCommon.SelectedInterface.ToDescriptionString() ?? string.Empty), "interface_type" },
                             { new StringContent(ActivityCommon.LastAdapterSerial ?? string.Empty), "adapter_serial" }
                         };
 
