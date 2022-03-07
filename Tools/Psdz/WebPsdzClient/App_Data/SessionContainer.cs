@@ -382,6 +382,25 @@ namespace WebPsdzClient.App_Data
             }
         }
 
+        private bool _adapterSerialValid;
+        public bool AdapterSerialValid
+        {
+            get
+            {
+                lock (_lockObject)
+                {
+                    return _adapterSerialValid;
+                }
+            }
+            set
+            {
+                lock (_lockObject)
+                {
+                    _adapterSerialValid = value;
+                }
+            }
+        }
+
         public void SetLanguage(string language)
         {
             List<string> langList = PdszDatabase.EcuTranslation.GetLanguages();
@@ -1590,7 +1609,8 @@ namespace WebPsdzClient.App_Data
             {
                 AppId = vehicleResponse.AppId;
                 AdapterSerial = vehicleResponse.AdapterSerial;
-                log.InfoFormat("HubVehicleConnect AppId={0}, AdapterSerial={1}", AppId ?? string.Empty, AdapterSerial ?? string.Empty);
+                AdapterSerialValid = vehicleResponse.SerialValid;
+                log.InfoFormat("HubVehicleConnect AppId={0}, AdapterSerial={1}, Valid={2}", AppId ?? string.Empty, AdapterSerial ?? string.Empty, AdapterSerialValid);
             }
 
             if (vehicleResponse == null || vehicleResponse.Error || !vehicleResponse.Valid || !vehicleResponse.Connected)
