@@ -148,6 +148,17 @@ namespace WebPsdzClient.App_Data
             }
         }
 
+        public void AppendStatusTextLine(string line)
+        {
+            if (!string.IsNullOrEmpty(line))
+            {
+                lock (_lockObject)
+                {
+                    _statusText += "\r\n" + line;
+                }
+            }
+        }
+
         private string _progressText;
         public string ProgressText
         {
@@ -2327,14 +2338,7 @@ namespace WebPsdzClient.App_Data
                 }
                 else
                 {
-                    string licenseText = GetAdapterLicenseText();
-                    if (!string.IsNullOrEmpty(licenseText))
-                    {
-                        lock (_lockObject)
-                        {
-                            _statusText += "\r\n" + licenseText;
-                        }
-                    }
+                    AppendStatusTextLine(GetAdapterLicenseText());
                 }
 
                 TaskActive = false;
