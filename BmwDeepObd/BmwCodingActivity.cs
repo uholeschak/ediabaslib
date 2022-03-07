@@ -72,7 +72,7 @@ namespace BmwDeepObd
             public string CodingUrl { get; set; }
             public string CodingUrlTest { get; set; }
             public string DayString { get; set; }
-            public bool SerialValid { get; set; }
+            public string ValidSerial { get; set; }
             public string InitialUrl { get; set; }
             public string Url { get; set; }
             public bool ServerConnected { get; set; }
@@ -83,7 +83,7 @@ namespace BmwDeepObd
         }
 
         public delegate void AcceptDelegate(bool accepted);
-        public delegate void InfoCheckDelegate(bool success, bool cancelled, string codingUrl = null, string codingUrlTest = null, string message = null, string dayString = null, bool serialValid = false);
+        public delegate void InfoCheckDelegate(bool success, bool cancelled, string codingUrl = null, string codingUrlTest = null, string message = null, string dayString = null, string validSerial = null);
 
         private const int FirstConnectTimeout = 20000;
         private const int ConnectionTimeout = 6000;
@@ -558,7 +558,7 @@ namespace BmwDeepObd
                         }
 
                         ignoreDismiss = true;
-                        GetConnectionInfo((success, cancelled, url, urlTest, message, dayString, serialValid) =>
+                        GetConnectionInfo((success, cancelled, url, urlTest, message, dayString, validSerial) =>
                         {
                             RunOnUiThread(() =>
                             {
@@ -577,7 +577,7 @@ namespace BmwDeepObd
                                     _instanceData.CodingUrl = url;
                                     _instanceData.CodingUrlTest = urlTest;
                                     _instanceData.DayString = dayString;
-                                    _instanceData.SerialValid = serialValid;
+                                    _instanceData.ValidSerial = validSerial;
 
                                     if (!string.IsNullOrEmpty(message))
                                     {
@@ -710,8 +710,8 @@ namespace BmwDeepObd
                     HttpResponseMessage responseUpload = taskDownload.Result;
                     responseUpload.EnsureSuccessStatusCode();
                     string responseInfoXml = responseUpload.Content.ReadAsStringAsync().Result;
-                    bool success = GetCodingInfo(responseInfoXml, out string codingUrl, out string codingUrlTest, out string message, out string dayString, out bool serialValid);
-                    handler?.Invoke(success, false, codingUrl, codingUrlTest, message, dayString, serialValid);
+                    bool success = GetCodingInfo(responseInfoXml, out string codingUrl, out string codingUrlTest, out string message, out string dayString, out string validSerial);
+                    handler?.Invoke(success, false, codingUrl, codingUrlTest, message, dayString, validSerial);
 
                     if (progress != null)
                     {
@@ -748,13 +748,13 @@ namespace BmwDeepObd
             return true;
         }
 
-        private bool GetCodingInfo(string xmlResult, out string codingUrl, out string codingUrlTest, out string message, out string dayString, out bool serialValid)
+        private bool GetCodingInfo(string xmlResult, out string codingUrl, out string codingUrlTest, out string message, out string dayString, out string validSerial)
         {
             codingUrl = null;
             codingUrlTest = null;
             message = null;
             dayString = null;
-            serialValid = false;
+            validSerial = null;
 
             try
             {
@@ -835,7 +835,7 @@ namespace BmwDeepObd
                     {
                         if (string.Compare(ActivityCommon.LastAdapterSerial, serial, StringComparison.Ordinal) == 0)
                         {
-                            serialValid = true;
+                            validSerial = serial;
                         }
                     }
                 }
@@ -1357,7 +1357,12 @@ namespace BmwDeepObd
                     {
                         string appIdState = ActivityCommon.AppId ?? string.Empty;
                         string adapterSerialState = ActivityCommon.LastAdapterSerial ?? string.Empty;
-                        string serialValidState = _instanceData.SerialValid ? "1" : "0";
+                        string serialValidState = "0";
+                        if (!string.IsNullOrEmpty(_instanceData.ValidSerial) && string.Compare(_instanceData.ValidSerial, adapterSerialState, StringComparison.Ordinal) == 0)
+                        {
+                            serialValidState = "1";
+                        }
+
                         sbBody.Append($" app_id=\"{System.Web.HttpUtility.HtmlEncode(appIdState)}\"");
                         sbBody.Append($" adapter_serial=\"{System.Web.HttpUtility.HtmlEncode(adapterSerialState)}\"");
                         sbBody.Append($" serial_valid=\"{System.Web.HttpUtility.HtmlEncode(serialValidState)}\"");
