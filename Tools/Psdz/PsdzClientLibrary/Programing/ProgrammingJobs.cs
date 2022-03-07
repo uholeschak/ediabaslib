@@ -401,8 +401,26 @@ namespace PsdzClient.Programing
                 bool detectResult = PsdzContext.DetectVehicle.DetectVehicleBmwFast();
                 PsdzContext.DetectVehicle.Disconnect();
                 cts?.Token.ThrowIfCancellationRequested();
+
+                string series = PsdzContext.DetectVehicle.Series;
+                if (string.IsNullOrEmpty(series))
+                {
+                    sbResult.AppendLine(Strings.VehicleSeriesNotDetected);
+                    UpdateStatus(sbResult.ToString());
+                    return false;
+                }
+
                 if (!detectResult)
                 {
+                    if (series.Length > 0)
+                    {
+                        char seriesChar = char.ToUpperInvariant(series[0]);
+                        if (char.IsLetter(seriesChar) && seriesChar <= 'E')
+                        {
+                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.VehicleSeriesInvalid, series));
+                        }
+                    }
+
                     sbResult.AppendLine(Strings.VehicleDetectionFailed);
                     UpdateStatus(sbResult.ToString());
                     return false;
@@ -434,14 +452,6 @@ namespace PsdzClient.Programing
 
                 UpdateStatus(sbResult.ToString());
                 cts?.Token.ThrowIfCancellationRequested();
-
-                string series = PsdzContext.DetectVehicle.Series;
-                if (string.IsNullOrEmpty(series))
-                {
-                    sbResult.AppendLine(Strings.VehicleSeriesNotDetected);
-                    UpdateStatus(sbResult.ToString());
-                    return false;
-                }
 
                 string mainSeries = ProgrammingService.Psdz.ConfigurationService.RequestBaureihenverbund(series);
                 IEnumerable<IPsdzTargetSelector> targetSelectors =

@@ -672,6 +672,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Vehicle series invalid: {0} ähnelt.
+        /// </summary>
+        internal static string VehicleSeriesInvalid {
+            get {
+                return ResourceManager.GetString("VehicleSeriesInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Vehicle series not detected. ähnelt.
         /// </summary>
         internal static string VehicleSeriesNotDetected {

@@ -326,6 +326,9 @@ ILevel ship={2} current={3}</value>
   <data name="VehicleNotConnected" xml:space="preserve">
     <value>Vehicle not connected.</value>
   </data>
+  <data name="VehicleSeriesInvalid" xml:space="preserve">
+    <value>Vehicle series invalid: {0}</value>
+  </data>
   <data name="VehicleSeriesNotDetected" xml:space="preserve">
     <value>Vehicle series not detected.</value>
   </data>

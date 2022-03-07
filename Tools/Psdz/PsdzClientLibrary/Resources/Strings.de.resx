@@ -326,6 +326,9 @@ IStufe produktion={2} aktuell={3}</value>
   <data name="VehicleNotConnected" xml:space="preserve">
     <value>Fahrzeug nicht verbunden.</value>
   </data>
+  <data name="VehicleSeriesInvalid" xml:space="preserve">
+    <value>Fahrzeugserie ungültig: {0}</value>
+  </data>
   <data name="VehicleSeriesNotDetected" xml:space="preserve">
     <value>Fahrzeugserie nicht erkannt.</value>
   </data>
