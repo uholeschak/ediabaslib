@@ -154,7 +154,7 @@ namespace WebPsdzClient.App_Data
             {
                 lock (_lockObject)
                 {
-                    _statusText += "\r\n" + line;
+                    _statusText += line + Environment.NewLine;
                 }
             }
         }
@@ -2253,6 +2253,10 @@ namespace WebPsdzClient.App_Data
                     ReportError("ConnectVehicle failed");
                     StopTcpListener();
                 }
+                else
+                {
+                    AppendStatusTextLine(GetAdapterLicenseText());
+                }
 
                 TaskActive = false;
                 Cts = null;
@@ -2335,10 +2339,6 @@ namespace WebPsdzClient.App_Data
                 if (!task.Result)
                 {
                     ReportError(string.Format(CultureInfo.InvariantCulture, "VehicleFunctions: {0} failed", operationType));
-                }
-                else
-                {
-                    AppendStatusTextLine(GetAdapterLicenseText());
                 }
 
                 TaskActive = false;

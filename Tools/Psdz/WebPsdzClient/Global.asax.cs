@@ -21,7 +21,7 @@ namespace WebPsdzClient
     {
         public const string SessionContainerName = "SessionContainer";
         public const int MaxSessions = 20;
-        public const int MinAppVer = 361;
+        public const int MinAppVer = 369;
         public static string DealerId { get; private set; }
         public static string IstaFolder { get; private set; }
 
