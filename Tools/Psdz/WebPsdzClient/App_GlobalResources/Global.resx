@@ -120,6 +120,12 @@
   <data name="AccessDenied" xml:space="preserve">
     <value>Access denied.</value>
   </data>
+  <data name="AdapterLicensed" xml:space="preserve">
+    <value>Licensed OBD adapter detected.</value>
+  </data>
+  <data name="AdapterNotLicensed" xml:space="preserve">
+    <value>No licensed OBD adapter detected.</value>
+  </data>
   <data name="AppUpdateRequired" xml:space="preserve">
     <value>An update of the app is required to use this service.</value>
   </data>

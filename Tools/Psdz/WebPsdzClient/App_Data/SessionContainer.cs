@@ -2115,6 +2115,25 @@ namespace WebPsdzClient.App_Data
             }
         }
 
+        public string GetAdapterLicenseText()
+        {
+            string licenseText = string.Empty;
+            if (DeepObdVersion > 0)
+            {
+                if (!string.IsNullOrEmpty(AdapterSerial) && AdapterSerialValid)
+                {
+                    licenseText = HttpContext.GetGlobalResourceObject("Global", "AdapterLicensed") as string ?? string.Empty;
+                }
+                else
+                {
+                    licenseText = HttpContext.GetGlobalResourceObject("Global", "AdapterNotLicensed") as string ?? string.Empty;
+                }
+            }
+
+            log.InfoFormat("GetAdapterLicenseText: '{0}'", licenseText);
+            return licenseText;
+        }
+
         public bool Cancel()
         {
             try
@@ -2305,6 +2324,17 @@ namespace WebPsdzClient.App_Data
                 if (!task.Result)
                 {
                     ReportError(string.Format(CultureInfo.InvariantCulture, "VehicleFunctions: {0} failed", operationType));
+                }
+                else
+                {
+                    string licenseText = GetAdapterLicenseText();
+                    if (!string.IsNullOrEmpty(licenseText))
+                    {
+                        lock (_lockObject)
+                        {
+                            _statusText += "\r\n" + licenseText;
+                        }
+                    }
                 }
 
                 TaskActive = false;
