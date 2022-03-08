@@ -14,6 +14,7 @@ using System.Web;
 using EdiabasLib;
 using log4net;
 using Microsoft.AspNet.SignalR;
+using MySqlConnector;
 using PsdzClient;
 using PsdzClient.Programing;
 
@@ -2016,6 +2017,41 @@ namespace WebPsdzClient.App_Data
             VehicleResponseDictClear();
             CloseVehicleLog();
             log.InfoFormat("VehicleThread stopped");
+        }
+
+        public bool CheckLicense(string connectionString)
+        {
+            try
+            {
+                using (var connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (var command = new MySqlCommand("SELECT * FROM bmw_coding.license;", connection))
+                    {
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                StringBuilder sb = new StringBuilder();
+                                sb.Append("License data:");
+                                for (int i = 0; i < reader.FieldCount; i++)
+                                {
+                                    sb.Append(string.Format(CultureInfo.InvariantCulture, " [{0}]={1}", reader.GetName(i), reader[i]));
+                                }
+
+                                log.InfoFormat(sb.ToString());
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("CheckLicense Exception: {0}", ex.Message);
+            }
+
+            return true;
         }
 
         public void UpdateStatus(string message = null)
