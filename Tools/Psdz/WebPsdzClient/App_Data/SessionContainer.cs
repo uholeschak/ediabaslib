@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -493,6 +494,7 @@ namespace WebPsdzClient.App_Data
         private bool _disposed;
         private readonly object _lockObject = new object();
         private readonly object _vehicleLogObject = new object();
+        private FileStream _fsVehicleLog;
         private static readonly ILog log = LogManager.GetLogger(typeof(_Default));
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private static readonly List<SessionContainer> SessionContainers = new List<SessionContainer>();
@@ -1685,7 +1687,20 @@ namespace WebPsdzClient.App_Data
         {
             lock (_vehicleLogObject)
             {
-
+                try
+                {
+                    if (_fsVehicleLog == null)
+                    {
+                        string dateString = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture);
+                        string fileName = string.Format(CultureInfo.InvariantCulture, "{0}-{1}.txt", dateString, SessionId);
+                        string logFile = Path.Combine(ProgrammingJobs.ProgrammingService.GetPsdzServiceHostLogDir(), fileName);
+                        _fsVehicleLog = File.Create(logFile);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.ErrorFormat("LogVehicleResponse Exception: {0}", ex.Message);
+                }
             }
         }
 
