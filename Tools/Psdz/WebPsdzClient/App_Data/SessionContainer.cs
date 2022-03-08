@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -494,7 +495,7 @@ namespace WebPsdzClient.App_Data
         private bool _disposed;
         private readonly object _lockObject = new object();
         private readonly object _vehicleLogObject = new object();
-        private FileStream _fsVehicleLog;
+        private StreamWriter _swVehicleLog;
         private static readonly ILog log = LogManager.GetLogger(typeof(_Default));
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private static readonly List<SessionContainer> SessionContainers = new List<SessionContainer>();
@@ -1685,17 +1686,38 @@ namespace WebPsdzClient.App_Data
 
         private void LogVehicleResponse(PsdzVehicleHub.VehicleResponse vehicleResponse)
         {
+            if (vehicleResponse == null)
+            {
+                return;
+            }
+            if (string.IsNullOrEmpty(vehicleResponse.Request) || vehicleResponse.ResponseList.Count == 0)
+            {
+                log.ErrorFormat("LogVehicleResponse No Data");
+                return;
+            }
+
             lock (_vehicleLogObject)
             {
                 try
                 {
-                    if (_fsVehicleLog == null)
+                    if (_swVehicleLog == null)
                     {
                         string dateString = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture);
                         string fileName = string.Format(CultureInfo.InvariantCulture, "Vehicle-{0}-{1}.txt", dateString, SessionId);
                         string logFile = Path.Combine(ProgrammingJobs.ProgrammingService.GetPsdzServiceHostLogDir(), fileName);
-                        _fsVehicleLog = File.Create(logFile);
+                        _swVehicleLog = new StreamWriter(logFile, true, Encoding.ASCII);
                     }
+
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append(vehicleResponse.Request);
+                    sb.Append(" :");
+                    foreach (string response in vehicleResponse.ResponseList)
+                    {
+                        sb.Append(" ");
+                        sb.Append(response);
+                    }
+
+                    _swVehicleLog.Write(sb.ToString());
                 }
                 catch (Exception ex)
                 {
@@ -1710,11 +1732,11 @@ namespace WebPsdzClient.App_Data
             {
                 try
                 {
-                    if (_fsVehicleLog != null)
+                    if (_swVehicleLog != null)
                     {
-                        _fsVehicleLog.Close();
-                        _fsVehicleLog.Dispose();
-                        _fsVehicleLog = null;
+                        _swVehicleLog.Close();
+                        _swVehicleLog.Dispose();
+                        _swVehicleLog = null;
                     }
                 }
                 catch (Exception ex)
