@@ -1712,7 +1712,9 @@ namespace WebPsdzClient.App_Data
                     byte[] requestData = EdiabasNet.HexToByteArray(vehicleResponse.Request);
                     string requestString = BitConverter.ToString(requestData).Replace("-", " ");
                     sb.Append(requestString);
-                    sb.Append(" 00");   // dummy checksum
+
+                    byte requestChecksum = EdCustomAdapterCommon.CalcChecksumBmwFast(requestData, 0, requestData.Length);
+                    sb.Append(string.Format(CultureInfo.InvariantCulture, " {0:X2}", requestChecksum));
                     sb.Append(" :");
 
                     foreach (string response in vehicleResponse.ResponseList)
@@ -1722,7 +1724,9 @@ namespace WebPsdzClient.App_Data
 
                         sb.Append(" ");
                         sb.Append(responseString);
-                        sb.Append(" 00");   // dummy checksum
+
+                        byte responseChecksum = EdCustomAdapterCommon.CalcChecksumBmwFast(responseData, 0, responseData.Length);
+                        sb.Append(string.Format(CultureInfo.InvariantCulture, " {0:X2}", responseChecksum));
                     }
 
                     _swVehicleLog.WriteLine(sb.ToString());
