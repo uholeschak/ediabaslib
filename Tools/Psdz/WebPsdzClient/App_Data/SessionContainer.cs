@@ -1692,7 +1692,7 @@ namespace WebPsdzClient.App_Data
                     if (_fsVehicleLog == null)
                     {
                         string dateString = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture);
-                        string fileName = string.Format(CultureInfo.InvariantCulture, "{0}-{1}.txt", dateString, SessionId);
+                        string fileName = string.Format(CultureInfo.InvariantCulture, "Vehicle-{0}-{1}.txt", dateString, SessionId);
                         string logFile = Path.Combine(ProgrammingJobs.ProgrammingService.GetPsdzServiceHostLogDir(), fileName);
                         _fsVehicleLog = File.Create(logFile);
                     }
@@ -1700,6 +1700,26 @@ namespace WebPsdzClient.App_Data
                 catch (Exception ex)
                 {
                     log.ErrorFormat("LogVehicleResponse Exception: {0}", ex.Message);
+                }
+            }
+        }
+
+        private void CloseVehicleLog()
+        {
+            lock (_vehicleLogObject)
+            {
+                try
+                {
+                    if (_fsVehicleLog != null)
+                    {
+                        _fsVehicleLog.Close();
+                        _fsVehicleLog.Dispose();
+                        _fsVehicleLog = null;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.ErrorFormat("CloseVehicleLog Exception: {0}", ex.Message);
                 }
             }
         }
@@ -1954,6 +1974,7 @@ namespace WebPsdzClient.App_Data
             }
 #endif
             VehicleResponseDictClear();
+            CloseVehicleLog();
             log.InfoFormat("VehicleThread stopped");
         }
 
@@ -2401,6 +2422,8 @@ namespace WebPsdzClient.App_Data
                 {
                     Thread.Sleep(100);
                 }
+
+                CloseVehicleLog();
 
                 if (ProgrammingJobs != null)
                 {
