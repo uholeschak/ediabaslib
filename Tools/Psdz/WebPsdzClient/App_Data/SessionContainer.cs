@@ -1703,7 +1703,7 @@ namespace WebPsdzClient.App_Data
                     if (_swVehicleLog == null)
                     {
                         string dateString = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture);
-                        string fileName = string.Format(CultureInfo.InvariantCulture, "Vehicle-{0}-{1}.txt", dateString, SessionId);
+                        string fileName = string.Format(CultureInfo.InvariantCulture, "Vehicle-{0}-[{1}].txt", dateString, SessionId);
                         string logFile = Path.Combine(ProgrammingJobs.ProgrammingService.GetPsdzServiceHostLogDir(), fileName);
                         _swVehicleLog = new StreamWriter(logFile, true, Encoding.ASCII);
                     }
@@ -1715,18 +1715,24 @@ namespace WebPsdzClient.App_Data
 
                     byte requestChecksum = EdCustomAdapterCommon.CalcChecksumBmwFast(requestData, 0, requestData.Length);
                     sb.Append(string.Format(CultureInfo.InvariantCulture, " {0:X2}", requestChecksum));
-                    sb.Append(" :");
+                    sb.Append(" : ");
 
+                    int index = 0;
                     foreach (string response in vehicleResponse.ResponseList)
                     {
                         byte[] responseData = EdiabasNet.HexToByteArray(response);
                         string responseString = BitConverter.ToString(responseData).Replace("-", " ");
 
-                        sb.Append(" ");
+                        if (index > 0)
+                        {
+                            sb.Append("  ");
+                        }
+
                         sb.Append(responseString);
 
                         byte responseChecksum = EdCustomAdapterCommon.CalcChecksumBmwFast(responseData, 0, responseData.Length);
                         sb.Append(string.Format(CultureInfo.InvariantCulture, " {0:X2}", responseChecksum));
+                        index++;
                     }
 
                     _swVehicleLog.WriteLine(sb.ToString());
