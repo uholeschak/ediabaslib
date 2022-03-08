@@ -1709,15 +1709,23 @@ namespace WebPsdzClient.App_Data
                     }
 
                     StringBuilder sb = new StringBuilder();
-                    sb.Append(vehicleResponse.Request);
+                    byte[] requestData = EdiabasNet.HexToByteArray(vehicleResponse.Request);
+                    string requestString = BitConverter.ToString(requestData).Replace("-", " ");
+                    sb.Append(requestString);
+                    sb.Append(" 00");   // dummy checksum
                     sb.Append(" :");
+
                     foreach (string response in vehicleResponse.ResponseList)
                     {
+                        byte[] responseData = EdiabasNet.HexToByteArray(response);
+                        string responseString = BitConverter.ToString(responseData).Replace("-", " ");
+
                         sb.Append(" ");
-                        sb.Append(response);
+                        sb.Append(responseString);
+                        sb.Append(" 00");   // dummy checksum
                     }
 
-                    _swVehicleLog.Write(sb.ToString());
+                    _swVehicleLog.WriteLine(sb.ToString());
                 }
                 catch (Exception ex)
                 {
