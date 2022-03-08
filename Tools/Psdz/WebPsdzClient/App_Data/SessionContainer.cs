@@ -492,6 +492,7 @@ namespace WebPsdzClient.App_Data
 #endif
         private bool _disposed;
         private readonly object _lockObject = new object();
+        private readonly object _vehicleLogObject = new object();
         private static readonly ILog log = LogManager.GetLogger(typeof(_Default));
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private static readonly List<SessionContainer> SessionContainers = new List<SessionContainer>();
@@ -1680,6 +1681,14 @@ namespace WebPsdzClient.App_Data
             }
         }
 
+        private void LogVehicleResponse(PsdzVehicleHub.VehicleResponse vehicleResponse)
+        {
+            lock (_vehicleLogObject)
+            {
+
+            }
+        }
+
         private void VehicleThread()
         {
             SetLogInfo(SessionId);
@@ -1821,6 +1830,7 @@ namespace WebPsdzClient.App_Data
                                             }
                                             else
                                             {
+                                                LogVehicleResponse(vehicleResponse);
                                                 if (funcAddress)
                                                 {
                                                     log.InfoFormat("VehicleThread Caching Request={0}", sendDataString);
