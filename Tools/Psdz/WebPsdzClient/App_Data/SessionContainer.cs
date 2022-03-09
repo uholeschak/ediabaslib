@@ -2032,6 +2032,12 @@ namespace WebPsdzClient.App_Data
 
             try
             {
+                if (string.IsNullOrEmpty(Global.SqlServer))
+                {
+                    log.ErrorFormat("CheckLicense No SqlServer");
+                    return false;
+                }
+
                 string connectionString = Global.SqlServer + SqlDataBase;
                 using (var connection = new MySqlConnection(connectionString))
                 {
@@ -2085,6 +2091,12 @@ namespace WebPsdzClient.App_Data
 
             try
             {
+                if (string.IsNullOrEmpty(Global.SqlServer))
+                {
+                    log.ErrorFormat("AddLicense No SqlServer");
+                    return false;
+                }
+
                 string connectionString = Global.SqlServer + SqlDataBase;
                 using (var connection = new MySqlConnection(connectionString))
                 {
