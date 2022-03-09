@@ -2070,6 +2070,13 @@ namespace WebPsdzClient.App_Data
 
             try
             {
+                if (string.IsNullOrEmpty(Global.SqlServer))
+                {
+                    log.ErrorFormat("ProcessLicense No SqlServer");
+                    LicenseValid = false;
+                    return;
+                }
+
                 string connectionString = Global.SqlServer + SqlDataBase;
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
@@ -2109,12 +2116,6 @@ namespace WebPsdzClient.App_Data
 
             try
             {
-                if (string.IsNullOrEmpty(Global.SqlServer))
-                {
-                    log.ErrorFormat("CheckLicense No SqlServer");
-                    return false;
-                }
-
                 string sqlSelect = string.Format(CultureInfo.InvariantCulture, "SELECT vin, serial FROM bmw_coding.licenses WHERE UPPER(vin) = UPPER('{0}')", vin);
                 using (MySqlCommand command = new MySqlCommand(sqlSelect, connection))
                 {
@@ -2163,12 +2164,6 @@ namespace WebPsdzClient.App_Data
 
             try
             {
-                if (string.IsNullOrEmpty(Global.SqlServer))
-                {
-                    log.ErrorFormat("AddLicense No SqlServer");
-                    return false;
-                }
-
                 string serialUsedVin = null;
                 if (!string.IsNullOrEmpty(serial) && !registerAll)
                 {
