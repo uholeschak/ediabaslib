@@ -415,6 +415,44 @@ namespace WebPsdzClient.App_Data
             }
         }
 
+        private string _detectedVin;
+        public string DetectedVin
+        {
+            get
+            {
+                lock (_lockObject)
+                {
+                    return _detectedVin;
+                }
+            }
+            set
+            {
+                lock (_lockObject)
+                {
+                    _detectedVin = value;
+                }
+            }
+        }
+
+        private bool _licenseValid;
+        public bool LicenseValid
+        {
+            get
+            {
+                lock (_lockObject)
+                {
+                    return _licenseValid;
+                }
+            }
+            set
+            {
+                lock (_lockObject)
+                {
+                    _licenseValid = value;
+                }
+            }
+        }
+
         public void SetLanguage(string language)
         {
             List<string> langList = PdszDatabase.EcuTranslation.GetLanguages();
@@ -536,7 +574,6 @@ namespace WebPsdzClient.App_Data
                 SessionContainers.Add(this);
             }
 
-            CheckLicense("1234", out _);
             AddLicense("VIN3", "abc2");
         }
 
@@ -2476,6 +2513,8 @@ namespace WebPsdzClient.App_Data
                 else
                 {
                     AppendStatusTextLine(GetAdapterLicenseText());
+                    DetectedVin = ProgrammingJobs.PsdzContext?.DetectVehicle?.Vin;
+                    LicenseValid = CheckLicense(DetectedVin, out _);
                 }
 
                 TaskActive = false;
