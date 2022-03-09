@@ -537,7 +537,7 @@ namespace WebPsdzClient.App_Data
             }
 
             CheckLicense("1234", out _);
-            AddLicense("VIN1", "abc1");
+            AddLicense("VIN3", "abc2");
         }
 
         public static SessionContainer GetSessionContainer(string sessionId)
@@ -2067,9 +2067,21 @@ namespace WebPsdzClient.App_Data
             return true;
         }
 
-        public bool AddLicense(string vin, string serial)
+        public bool AddLicense(string vin, string serial = null)
         {
             log.InfoFormat("AddLicense VIN={0}, Serial={1}", vin ?? string.Empty, serial ?? string.Empty);
+
+            if (string.IsNullOrEmpty(vin))
+            {
+                log.ErrorFormat("AddLicense No VIN");
+                return false;
+            }
+
+            if (CheckLicense(vin, out _))
+            {
+                log.InfoFormat("AddLicense VIN {0} already present", vin);
+                return true;
+            }
 
             try
             {
@@ -2081,7 +2093,7 @@ namespace WebPsdzClient.App_Data
                     string serialUsedVin = null;
                     if (!string.IsNullOrEmpty(serial))
                     {
-                        string sqlSelect = string.Format(CultureInfo.InvariantCulture, "SELECT vin, serial FROM bmw_coding.license WHERE UPPER(serial) = UPPER('{0}')", serial);
+                        string sqlSelect = string.Format(CultureInfo.InvariantCulture, "SELECT vin, serial FROM bmw_coding.license WHERE serial = '{0}'", serial);
                         using (MySqlCommand command = new MySqlCommand(sqlSelect, connection))
                         {
                             using (MySqlDataReader reader = command.ExecuteReader())
@@ -2106,7 +2118,7 @@ namespace WebPsdzClient.App_Data
                     }
 
                     string serialValue = string.IsNullOrEmpty(serial) ? "NULL" : "'" + serial + "'";
-                    string sqlUpdate = string.Format(CultureInfo.InvariantCulture, "INSERT INTO bmw_coding.license (vin, serial) VALUES ('{0}', {1})", vin, serialValue);
+                    string sqlUpdate = string.Format(CultureInfo.InvariantCulture, "INSERT INTO bmw_coding.license (vin, serial) VALUES (UPPER('{0}'), {1})", vin, serialValue);
                     using (MySqlCommand command = new MySqlCommand(sqlUpdate, connection))
                     {
                         int modifiedRows = command.ExecuteNonQuery();
@@ -2124,6 +2136,7 @@ namespace WebPsdzClient.App_Data
                 return false;
             }
 
+            log.InfoFormat("AddLicense VIN: {0} added", vin);
             return true;
         }
 
