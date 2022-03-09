@@ -573,8 +573,6 @@ namespace WebPsdzClient.App_Data
             {
                 SessionContainers.Add(this);
             }
-
-            AddLicense("VIN3", "abc2");
         }
 
         public static SessionContainer GetSessionContainer(string sessionId)
@@ -2060,7 +2058,49 @@ namespace WebPsdzClient.App_Data
             log.InfoFormat("VehicleThread stopped");
         }
 
-        public bool CheckLicense(string vin, out string serial)
+        public void ProcessLicense()
+        {
+            bool registerAll = !string.IsNullOrEmpty(Global.TestLicenses);
+            log.InfoFormat("ProcessLicense RegisterAll={0}", registerAll);
+
+            bool licenseValid = false;
+            string vin = DetectedVin;
+            bool serialValid = AdapterSerialValid;
+            string adapterSerial = serialValid ? AdapterSerial : null;
+
+            try
+            {
+                string connectionString = Global.SqlServer + SqlDataBase;
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    licenseValid = CheckLicense(connection, vin, out _);
+                    if (!licenseValid && (serialValid || registerAll))
+                    {
+                        log.InfoFormat("ProcessLicense Adding Vin={0}, Serial={1}", vin, adapterSerial);
+                        if (AddLicense(connection, vin, adapterSerial, registerAll))
+                        {
+                            licenseValid = true;
+                        }
+                        else
+                        {
+                            log.InfoFormat("ProcessLicense Adding failed Vin={0}, Serial={1}", vin, adapterSerial);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("ProcessLicense Exception: {0}", ex.Message);
+                licenseValid = false;
+            }
+
+            LicenseValid = licenseValid;
+            log.InfoFormat("ProcessLicense Valid={0}", licenseValid);
+        }
+
+        public bool CheckLicense(MySqlConnection connection, string vin, out string serial)
         {
             log.InfoFormat("CheckLicense VIN={0}", vin);
 
@@ -2075,22 +2115,16 @@ namespace WebPsdzClient.App_Data
                     return false;
                 }
 
-                string connectionString = Global.SqlServer + SqlDataBase;
-                using (var connection = new MySqlConnection(connectionString))
+                string sqlSelect = string.Format(CultureInfo.InvariantCulture, "SELECT vin, serial FROM bmw_coding.licenses WHERE UPPER(vin) = UPPER('{0}')", vin);
+                using (MySqlCommand command = new MySqlCommand(sqlSelect, connection))
                 {
-                    connection.Open();
-
-                    string sqlSelect = string.Format(CultureInfo.InvariantCulture, "SELECT vin, serial FROM bmw_coding.license WHERE UPPER(vin) = UPPER('{0}')", vin);
-                    using (MySqlCommand command = new MySqlCommand(sqlSelect, connection))
+                    using (MySqlDataReader reader = command.ExecuteReader())
                     {
-                        using (MySqlDataReader reader = command.ExecuteReader())
+                        while (reader.Read())
                         {
-                            while (reader.Read())
-                            {
-                                matchVin = reader["vin"].ToString();
-                                serial = reader["serial"].ToString();
-                                break;
-                            }
+                            matchVin = reader["vin"].ToString();
+                            serial = reader["serial"].ToString();
+                            break;
                         }
                     }
                 }
@@ -2101,18 +2135,19 @@ namespace WebPsdzClient.App_Data
                 return false;
             }
 
-            log.InfoFormat("CheckLicense Vin={0}, Serial={1}", matchVin ?? string.Empty, serial ?? string.Empty);
             if (string.IsNullOrEmpty(matchVin))
             {
+                log.ErrorFormat("CheckLicense Not valid");
                 return false;
             }
 
+            log.InfoFormat("CheckLicense Valid");
             return true;
         }
 
-        public bool AddLicense(string vin, string serial = null)
+        public bool AddLicense(MySqlConnection connection, string vin, string serial, bool registerAll)
         {
-            log.InfoFormat("AddLicense VIN={0}, Serial={1}", vin ?? string.Empty, serial ?? string.Empty);
+            log.InfoFormat("AddLicense VIN={0}, Serial={1}, RegisterAll={2}", vin ?? string.Empty, serial ?? string.Empty, registerAll);
 
             if (string.IsNullOrEmpty(vin))
             {
@@ -2120,7 +2155,7 @@ namespace WebPsdzClient.App_Data
                 return false;
             }
 
-            if (CheckLicense(vin, out _))
+            if (CheckLicense(connection, vin, out _))
             {
                 log.InfoFormat("AddLicense VIN {0} already present", vin);
                 return true;
@@ -2134,48 +2169,42 @@ namespace WebPsdzClient.App_Data
                     return false;
                 }
 
-                string connectionString = Global.SqlServer + SqlDataBase;
-                using (var connection = new MySqlConnection(connectionString))
+                string serialUsedVin = null;
+                if (!string.IsNullOrEmpty(serial) && !registerAll)
                 {
-                    connection.Open();
-
-                    string serialUsedVin = null;
-                    if (!string.IsNullOrEmpty(serial))
+                    string sqlSelect = string.Format(CultureInfo.InvariantCulture, "SELECT vin, serial FROM bmw_coding.licenses WHERE serial = '{0}'", serial);
+                    using (MySqlCommand command = new MySqlCommand(sqlSelect, connection))
                     {
-                        string sqlSelect = string.Format(CultureInfo.InvariantCulture, "SELECT vin, serial FROM bmw_coding.license WHERE serial = '{0}'", serial);
-                        using (MySqlCommand command = new MySqlCommand(sqlSelect, connection))
+                        using (MySqlDataReader reader = command.ExecuteReader())
                         {
-                            using (MySqlDataReader reader = command.ExecuteReader())
+                            while (reader.Read())
                             {
-                                while (reader.Read())
+                                string matchVin = reader["vin"].ToString();
+                                if (string.Compare(matchVin, vin, StringComparison.OrdinalIgnoreCase) != 0)
                                 {
-                                    string matchVin = reader["vin"].ToString();
-                                    if (string.Compare(matchVin, vin, StringComparison.OrdinalIgnoreCase) != 0)
-                                    {
-                                        serialUsedVin = matchVin;
-                                        break;
-                                    }
+                                    serialUsedVin = matchVin;
+                                    break;
                                 }
                             }
                         }
                     }
+                }
 
-                    if (!string.IsNullOrEmpty(serialUsedVin))
+                if (!string.IsNullOrEmpty(serialUsedVin))
+                {
+                    log.ErrorFormat("AddLicense Serial used by VIN: {0}", serialUsedVin);
+                    return false;
+                }
+
+                string serialValue = string.IsNullOrEmpty(serial) ? "NULL" : "'" + serial + "'";
+                string sqlUpdate = string.Format(CultureInfo.InvariantCulture, "INSERT INTO bmw_coding.licenses (vin, serial) VALUES (UPPER('{0}'), {1})", vin, serialValue);
+                using (MySqlCommand command = new MySqlCommand(sqlUpdate, connection))
+                {
+                    int modifiedRows = command.ExecuteNonQuery();
+                    if (modifiedRows < 1)
                     {
-                        log.ErrorFormat("AddLicense Serial used by VIN: {0}", serialUsedVin);
+                        log.ErrorFormat("AddLicense Adding VIN failed: {0}", vin);
                         return false;
-                    }
-
-                    string serialValue = string.IsNullOrEmpty(serial) ? "NULL" : "'" + serial + "'";
-                    string sqlUpdate = string.Format(CultureInfo.InvariantCulture, "INSERT INTO bmw_coding.license (vin, serial) VALUES (UPPER('{0}'), {1})", vin, serialValue);
-                    using (MySqlCommand command = new MySqlCommand(sqlUpdate, connection))
-                    {
-                        int modifiedRows = command.ExecuteNonQuery();
-                        if (modifiedRows < 1)
-                        {
-                            log.ErrorFormat("AddLicense Adding VIN failed: {0}", vin);
-                            return false;
-                        }
                     }
                 }
             }
@@ -2383,23 +2412,48 @@ namespace WebPsdzClient.App_Data
             }
         }
 
-        public string GetAdapterLicenseText()
+        public string GetLicenseText()
         {
-            string licenseText = string.Empty;
+            StringBuilder sb = new StringBuilder();
             if (DeepObdVersion > 0)
             {
+                string adapterText;
                 if (!string.IsNullOrEmpty(AdapterSerial) && AdapterSerialValid)
                 {
-                    licenseText = HttpContext.GetGlobalResourceObject("Global", "AdapterLicensed") as string ?? string.Empty;
+                    adapterText = HttpContext.GetGlobalResourceObject("Global", "AdapterLicensed") as string ?? string.Empty;
                 }
                 else
                 {
-                    licenseText = HttpContext.GetGlobalResourceObject("Global", "AdapterNotLicensed") as string ?? string.Empty;
+                    adapterText = HttpContext.GetGlobalResourceObject("Global", "AdapterNotLicensed") as string ?? string.Empty;
+                }
+
+                if (!string.IsNullOrEmpty(adapterText))
+                {
+                    sb.Append(adapterText);
                 }
             }
 
-            log.InfoFormat("GetAdapterLicenseText: '{0}'", licenseText);
-            return licenseText;
+            string vehicleText;
+            if (LicenseValid)
+            {
+                vehicleText = HttpContext.GetGlobalResourceObject("Global", "VehicleLicensed") as string ?? string.Empty;
+            }
+            else
+            {
+                vehicleText = HttpContext.GetGlobalResourceObject("Global", "VehicleNotLicensed") as string ?? string.Empty;
+            }
+
+            if (!string.IsNullOrEmpty(vehicleText))
+            {
+                if (sb.Length > 0)
+                {
+                    sb.AppendLine();
+                }
+                sb.Append(vehicleText);
+            }
+
+            log.InfoFormat("GetLicenseText: '{0}'", sb);
+            return sb.ToString();
         }
 
         public bool Cancel()
@@ -2512,9 +2566,9 @@ namespace WebPsdzClient.App_Data
                 }
                 else
                 {
-                    AppendStatusTextLine(GetAdapterLicenseText());
                     DetectedVin = ProgrammingJobs.PsdzContext?.DetectVehicle?.Vin;
-                    LicenseValid = CheckLicense(DetectedVin, out _);
+                    ProcessLicense();
+                    AppendStatusTextLine(GetLicenseText());
                 }
 
                 TaskActive = false;

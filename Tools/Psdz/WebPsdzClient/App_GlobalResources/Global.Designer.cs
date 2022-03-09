@@ -133,6 +133,24 @@ namespace Resources {
         }
         
         /// <summary>
+        ///    Sucht eine lokalisierte Zeichenfolge, die Vehicle licensed. ähnelt.
+        /// </summary>
+        internal static string VehicleLicensed {
+            get {
+                return ResourceManager.GetString("VehicleLicensed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Sucht eine lokalisierte Zeichenfolge, die Vehicle not licensed. ähnelt.
+        /// </summary>
+        internal static string VehicleNotLicensed {
+            get {
+                return ResourceManager.GetString("VehicleNotLicensed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///    Sucht eine lokalisierte Zeichenfolge, die Another instance with the same VIN is already active.
         ///Please try again later. ähnelt.
         /// </summary>

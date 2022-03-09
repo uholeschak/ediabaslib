@@ -141,6 +141,12 @@
   <data name="TryAgainLater" xml:space="preserve">
     <value>Bitte versuchen Sie es später noch einmal.</value>
   </data>
+  <data name="VehicleLicensed" xml:space="preserve">
+    <value>Fahrzeug lizensiert.</value>
+  </data>
+  <data name="VehicleNotLicensed" xml:space="preserve">
+    <value>Fahrzeug nicht lizensiert.</value>
+  </data>
   <data name="VinInstanceActive" xml:space="preserve">
     <value>Eine andere Instanz mit der gleichen FG-NR ist bereits aktiv.
 Versuchen Sie es später noch einmal.</value>

@@ -25,6 +25,7 @@ namespace WebPsdzClient
         public static string DealerId { get; private set; }
         public static string IstaFolder { get; private set; }
         public static string SqlServer { get; private set; }
+        public static string TestLicenses { get; private set; }
 
         private static readonly ILog log = LogManager.GetLogger(typeof(Global));
 
@@ -34,6 +35,7 @@ namespace WebPsdzClient
             DealerId = ConfigurationManager.AppSettings["DealerId"];
             IstaFolder = ConfigurationManager.AppSettings["IstaFolder"];
             SqlServer = ConfigurationManager.AppSettings["SqlServer"];
+            TestLicenses = ConfigurationManager.AppSettings["TestLicenses"];
 
             SetupLog4Net();
             log.InfoFormat("Application_Start");

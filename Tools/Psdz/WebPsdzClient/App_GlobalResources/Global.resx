@@ -141,6 +141,12 @@
   <data name="TryAgainLater" xml:space="preserve">
     <value>Please try again later.</value>
   </data>
+  <data name="VehicleLicensed" xml:space="preserve">
+    <value>Vehicle licensed.</value>
+  </data>
+  <data name="VehicleNotLicensed" xml:space="preserve">
+    <value>Vehicle not licensed.</value>
+  </data>
   <data name="VinInstanceActive" xml:space="preserve">
     <value>Another instance with the same VIN is already active.
 Please try again later.</value>
