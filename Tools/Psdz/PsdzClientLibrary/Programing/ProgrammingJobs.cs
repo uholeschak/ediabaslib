@@ -173,6 +173,26 @@ namespace PsdzClient.Programing
             }
         }
 
+        private bool _licenseValid;
+        public bool LicenseValid
+        {
+            get
+            {
+                lock (_cacheLock)
+                {
+                    return _licenseValid;
+                }
+            }
+
+            set
+            {
+                lock (_cacheLock)
+                {
+                    _licenseValid = value;
+                }
+            }
+        }
+
         public ProgrammingJobs(string dealerId)
         {
             ClientContext = new ClientContext();

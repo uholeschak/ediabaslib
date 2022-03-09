@@ -682,6 +682,7 @@ namespace PsdzClient
                 operationType = ProgrammingJobs.OperationType.ExecuteTal;
             }
 
+            _programmingJobs.LicenseValid = true;
             _cts = new CancellationTokenSource();
             VehicleFunctionsTask(operationType).ContinueWith(task =>
             {

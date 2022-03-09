@@ -2646,6 +2646,7 @@ namespace WebPsdzClient.App_Data
                 }
             }
 
+            ProgrammingJobs.LicenseValid = LicenseValid;
             Cts = new CancellationTokenSource();
             VehicleFunctionsTask(operationType).ContinueWith(task =>
             {
