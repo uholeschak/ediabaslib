@@ -535,7 +535,7 @@ namespace WebPsdzClient.App_Data
                 SessionContainers.Add(this);
             }
 
-            CheckLicense("1234");
+            CheckLicense("1234", out _);
         }
 
         public static SessionContainer GetSessionContainer(string sessionId)
@@ -2021,9 +2021,12 @@ namespace WebPsdzClient.App_Data
             log.InfoFormat("VehicleThread stopped");
         }
 
-        public bool CheckLicense(string vin)
+        public bool CheckLicense(string vin, out string serial)
         {
-            bool licValid = false;
+            log.InfoFormat("CheckLicense VIN: {0}", vin);
+
+            serial = null;
+            string matchVin = null;
             try
             {
                 string connectionString = Global.SqlServer + ";Database=bmw_coding";
@@ -2034,19 +2037,13 @@ namespace WebPsdzClient.App_Data
                     string sql = string.Format(CultureInfo.InvariantCulture, "SELECT vin, serial FROM bmw_coding.license WHERE UPPER(vin) = UPPER('{0}')", vin);
                     using (var command = new MySqlCommand(sql, connection))
                     {
-                        using (var reader = command.ExecuteReader())
+                        using (MySqlDataReader reader = command.ExecuteReader())
                         {
                             while (reader.Read())
                             {
-                                StringBuilder sb = new StringBuilder();
-                                sb.Append("License data:");
-                                for (int i = 0; i < reader.FieldCount; i++)
-                                {
-                                    sb.Append(string.Format(CultureInfo.InvariantCulture, " [{0}]={1}", reader.GetName(i), reader[i]));
-                                }
-
-                                log.InfoFormat(sb.ToString());
-                                licValid = true;
+                                matchVin = reader["vin"].ToString();
+                                serial = reader["serial"].ToString();
+                                break;
                             }
                         }
                     }
@@ -2055,10 +2052,16 @@ namespace WebPsdzClient.App_Data
             catch (Exception ex)
             {
                 log.ErrorFormat("CheckLicense Exception: {0}", ex.Message);
-                licValid = false;
+                return false;
             }
 
-            return licValid;
+            log.InfoFormat("CheckLicense Vin={0}, Serial={1}", matchVin ?? string.Empty, serial ?? string.Empty);
+            if (string.IsNullOrEmpty(matchVin))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public void UpdateStatus(string message = null)
