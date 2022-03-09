@@ -24,6 +24,7 @@ namespace WebPsdzClient
         public const int MinAppVer = 369;
         public static string DealerId { get; private set; }
         public static string IstaFolder { get; private set; }
+        public static string SqlServer { get; private set; }
 
         private static readonly ILog log = LogManager.GetLogger(typeof(Global));
 
@@ -32,6 +33,7 @@ namespace WebPsdzClient
             // Code, der beim Anwendungsstart ausgeführt wird
             DealerId = ConfigurationManager.AppSettings["DealerId"];
             IstaFolder = ConfigurationManager.AppSettings["IstaFolder"];
+            SqlServer = ConfigurationManager.AppSettings["SqlServer"];
 
             SetupLog4Net();
             log.InfoFormat("Application_Start");

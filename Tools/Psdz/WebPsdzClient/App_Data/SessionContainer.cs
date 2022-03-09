@@ -534,6 +534,8 @@ namespace WebPsdzClient.App_Data
             {
                 SessionContainers.Add(this);
             }
+
+            CheckLicense("1234");
         }
 
         public static SessionContainer GetSessionContainer(string sessionId)
@@ -2019,15 +2021,18 @@ namespace WebPsdzClient.App_Data
             log.InfoFormat("VehicleThread stopped");
         }
 
-        public bool CheckLicense(string connectionString)
+        public bool CheckLicense(string vin)
         {
+            bool licValid = false;
             try
             {
+                string connectionString = Global.SqlServer + ";Database=bmw_coding";
                 using (var connection = new MySqlConnection(connectionString))
                 {
                     connection.Open();
 
-                    using (var command = new MySqlCommand("SELECT * FROM bmw_coding.license;", connection))
+                    string sql = string.Format(CultureInfo.InvariantCulture, "SELECT vin, serial FROM bmw_coding.license WHERE UPPER(vin) = UPPER('{0}')", vin);
+                    using (var command = new MySqlCommand(sql, connection))
                     {
                         using (var reader = command.ExecuteReader())
                         {
@@ -2041,6 +2046,7 @@ namespace WebPsdzClient.App_Data
                                 }
 
                                 log.InfoFormat(sb.ToString());
+                                licValid = true;
                             }
                         }
                     }
@@ -2049,9 +2055,10 @@ namespace WebPsdzClient.App_Data
             catch (Exception ex)
             {
                 log.ErrorFormat("CheckLicense Exception: {0}", ex.Message);
+                licValid = false;
             }
 
-            return true;
+            return licValid;
         }
 
         public void UpdateStatus(string message = null)
