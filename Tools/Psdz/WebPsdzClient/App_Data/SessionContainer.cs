@@ -508,6 +508,7 @@ namespace WebPsdzClient.App_Data
         private const long Nr78Delay = 1000;
         private const long Nr78RetryMax = VehicleReceiveTimeout / Nr78Delay;
         private const int ThreadFinishTimeout = VehicleReceiveTimeout + 5000;
+        private const string SqlDataBase = ";Database=bmw_coding";
 
         public SessionContainer(string sessionId, string dealerId)
         {
@@ -536,6 +537,7 @@ namespace WebPsdzClient.App_Data
             }
 
             CheckLicense("1234", out _);
+            AddLicense("VIN1", "abc1");
         }
 
         public static SessionContainer GetSessionContainer(string sessionId)
@@ -2023,19 +2025,20 @@ namespace WebPsdzClient.App_Data
 
         public bool CheckLicense(string vin, out string serial)
         {
-            log.InfoFormat("CheckLicense VIN: {0}", vin);
+            log.InfoFormat("CheckLicense VIN={0}", vin);
 
             serial = null;
             string matchVin = null;
+
             try
             {
-                string connectionString = Global.SqlServer + ";Database=bmw_coding";
+                string connectionString = Global.SqlServer + SqlDataBase;
                 using (var connection = new MySqlConnection(connectionString))
                 {
                     connection.Open();
 
-                    string sql = string.Format(CultureInfo.InvariantCulture, "SELECT vin, serial FROM bmw_coding.license WHERE UPPER(vin) = UPPER('{0}')", vin);
-                    using (var command = new MySqlCommand(sql, connection))
+                    string sqlSelect = string.Format(CultureInfo.InvariantCulture, "SELECT vin, serial FROM bmw_coding.license WHERE UPPER(vin) = UPPER('{0}')", vin);
+                    using (MySqlCommand command = new MySqlCommand(sqlSelect, connection))
                     {
                         using (MySqlDataReader reader = command.ExecuteReader())
                         {
@@ -2058,6 +2061,66 @@ namespace WebPsdzClient.App_Data
             log.InfoFormat("CheckLicense Vin={0}, Serial={1}", matchVin ?? string.Empty, serial ?? string.Empty);
             if (string.IsNullOrEmpty(matchVin))
             {
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool AddLicense(string vin, string serial)
+        {
+            log.InfoFormat("AddLicense VIN={0}, Serial={1}", vin ?? string.Empty, serial ?? string.Empty);
+
+            try
+            {
+                string connectionString = Global.SqlServer + SqlDataBase;
+                using (var connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    string serialUsedVin = null;
+                    if (!string.IsNullOrEmpty(serial))
+                    {
+                        string sqlSelect = string.Format(CultureInfo.InvariantCulture, "SELECT vin, serial FROM bmw_coding.license WHERE UPPER(serial) = UPPER('{0}')", serial);
+                        using (MySqlCommand command = new MySqlCommand(sqlSelect, connection))
+                        {
+                            using (MySqlDataReader reader = command.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    string matchVin = reader["vin"].ToString();
+                                    if (string.Compare(matchVin, vin, StringComparison.OrdinalIgnoreCase) != 0)
+                                    {
+                                        serialUsedVin = matchVin;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(serialUsedVin))
+                    {
+                        log.ErrorFormat("AddLicense Serial used by VIN: {0}", serialUsedVin);
+                        return false;
+                    }
+
+                    string serialValue = string.IsNullOrEmpty(serial) ? "NULL" : "'" + serial + "'";
+                    string sqlUpdate = string.Format(CultureInfo.InvariantCulture, "INSERT INTO bmw_coding.license (vin, serial) VALUES ('{0}', {1})", vin, serialValue);
+                    using (MySqlCommand command = new MySqlCommand(sqlUpdate, connection))
+                    {
+                        int modifiedRows = command.ExecuteNonQuery();
+                        if (modifiedRows < 1)
+                        {
+                            log.ErrorFormat("AddLicense Adding VIN failed: {0}", vin);
+                            return false;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("AddLicense Exception: {0}", ex.Message);
                 return false;
             }
 
