@@ -2116,7 +2116,7 @@ namespace WebPsdzClient.App_Data
 
             try
             {
-                string sqlSelect = string.Format(CultureInfo.InvariantCulture, "SELECT vin, serial FROM bmw_coding.licenses WHERE UPPER(vin) = UPPER('{0}')", vin);
+                string sqlSelect = string.Format(CultureInfo.InvariantCulture, "SELECT `vin`, `serial` FROM `bmw_coding`.`licenses` WHERE UPPER(`vin`) = UPPER('{0}')", vin);
                 using (MySqlCommand command = new MySqlCommand(sqlSelect, connection))
                 {
                     using (MySqlDataReader reader = command.ExecuteReader())
@@ -2156,18 +2156,12 @@ namespace WebPsdzClient.App_Data
                 return false;
             }
 
-            if (CheckLicense(connection, vin, out _))
-            {
-                log.InfoFormat("AddLicense VIN {0} already present", vin);
-                return true;
-            }
-
             try
             {
                 string serialUsedVin = null;
                 if (!string.IsNullOrEmpty(serial) && !registerAll)
                 {
-                    string sqlSelect = string.Format(CultureInfo.InvariantCulture, "SELECT vin, serial FROM bmw_coding.licenses WHERE serial = '{0}'", serial);
+                    string sqlSelect = string.Format(CultureInfo.InvariantCulture, "SELECT `vin`, `serial` FROM `bmw_coding`.`licenses` WHERE `serial` = '{0}'", serial);
                     using (MySqlCommand command = new MySqlCommand(sqlSelect, connection))
                     {
                         using (MySqlDataReader reader = command.ExecuteReader())
@@ -2191,12 +2185,19 @@ namespace WebPsdzClient.App_Data
                     return false;
                 }
 
-                string serialValue = string.IsNullOrEmpty(serial) ? "NULL" : "'" + serial + "'";
-                string sqlUpdate = string.Format(CultureInfo.InvariantCulture, "INSERT INTO bmw_coding.licenses (vin, serial) VALUES (UPPER('{0}'), {1})", vin, serialValue);
+                string sqlUpdate;
+                if (string.IsNullOrEmpty(serial))
+                {
+                    sqlUpdate = string.Format(CultureInfo.InvariantCulture, "INSERT INTO `bmw_coding`.`licenses` (`vin`) VALUES (UPPER('{0}')) ON DUPLICATE KEY UPDATE `vin` = VALUES(`vin`)", vin);
+                }
+                else
+                {
+                    sqlUpdate = string.Format(CultureInfo.InvariantCulture, "INSERT INTO `bmw_coding`.`licenses` (`vin`, `serial`) VALUES (UPPER('{0}'), '{1}') ON DUPLICATE KEY UPDATE `vin` = VALUES(`vin`), `serial` = '{1}'", vin, serial);
+                }
                 using (MySqlCommand command = new MySqlCommand(sqlUpdate, connection))
                 {
                     int modifiedRows = command.ExecuteNonQuery();
-                    if (modifiedRows < 1)
+                    if (modifiedRows < 0)
                     {
                         log.ErrorFormat("AddLicense Adding VIN failed: {0}", vin);
                         return false;
