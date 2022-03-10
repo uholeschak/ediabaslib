@@ -11,6 +11,8 @@
 	string sqlUrl = "url";
 	string sqlUser = "user";
 	string sqlPassword = "password";
+	string accessPassword = string.Empty;
+	string istaLocation = "C:\\ISTA-D";
 
 	try
 	{
@@ -40,6 +42,26 @@
 					sqlPassword = attribPassword.Value;
 				}
 			}
+
+			XmlNode nodeAuth = doc.SelectSingleNode("/credentials_info/authentication");
+			if (nodeAuth != null)
+			{
+				XmlAttribute attribPassword = nodeAuth.Attributes["password"];
+				if (attribPassword != null)
+				{
+					accessPassword = attribPassword.Value;
+				}
+			}
+
+			XmlNode nodeIsta = doc.SelectSingleNode("/credentials_info/ista");
+			if (nodeIsta != null)
+			{
+				XmlAttribute attribLocation = nodeIsta.Attributes["location"];
+				if (attribLocation != null)
+				{
+					istaLocation = attribLocation.Value;
+				}
+			}
 		}
 	}
 	catch (Exception ex)
@@ -50,8 +72,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appSettings>
   <add key="DealerId" value="32395"/>
-  <add key="IstaFolder" value="E:\ISTA-D-4.31.16"/>
+  <add key="IstaFolder" value="<#= istaLocation #>;"/>
   <add key="SqlServer" value="Server=<#= sqlUrl #>;User ID=<#= sqlUser #>;Password=<#= sqlPassword #>"/>
   <add key="TestLicenses" value="1"/>
-  <add key="AccessPwd" value="BmwCoding"/>
+  <add key="AccessPwd" value="<#= accessPassword #>"/>
 </appSettings>
