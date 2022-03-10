@@ -1,0 +1,57 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Xml" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Xml" #>
+<#@ import namespace="System.IO" #>
+<#@ output extension=".config" #>
+<#
+	string sqlUrl = "url";
+	string sqlUser = "user";
+	string sqlPassword = "password";
+
+	try
+	{
+		string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".apk", "psdz_credentials.xml");
+		if (File.Exists(fileName))
+		{
+			XmlDocument doc = new XmlDocument();
+			doc.Load(fileName);
+			XmlNode nodeSqlServer = doc.SelectSingleNode("/credentials_info/sqlserver");
+			if (nodeSqlServer != null)
+			{
+				XmlAttribute attribUrl = nodeSqlServer.Attributes["url"];
+				if (attribUrl != null)
+				{
+					sqlUrl = attribUrl.Value;
+				}
+
+				XmlAttribute attribName = nodeSqlServer.Attributes["name"];
+				if (attribName != null)
+				{
+					sqlUser = attribName.Value;
+				}
+
+				XmlAttribute attribPassword = nodeSqlServer.Attributes["password"];
+				if (attribPassword != null)
+				{
+					sqlPassword = attribPassword.Value;
+				}
+			}
+		}
+	}
+	catch (Exception ex)
+	{
+		Write("Exception: {0}", ex.Message);
+	}
+#>
+<?xml version="1.0" encoding="utf-8"?>
+<appSettings>
+  <add key="DealerId" value="32395"/>
+  <add key="IstaFolder" value="E:\ISTA-D-4.31.16"/>
+  <add key="SqlServer" value="Server=<#= sqlUrl #>;User ID=<#= sqlUser #>;Password=<#= sqlPassword #>"/>
+  <add key="TestLicenses" value="1"/>
+  <add key="AccessPwd" value="BmwCoding"/>
+</appSettings>
