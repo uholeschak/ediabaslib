@@ -8,11 +8,12 @@
 <#@ import namespace="System.IO" #>
 <#@ output extension=".config" #>
 <#
+	string istaLocation = "C:\\ISTA-D";
 	string sqlUrl = "url";
 	string sqlUser = "user";
 	string sqlPassword = "password";
 	string accessPassword = string.Empty;
-	string istaLocation = "C:\\ISTA-D";
+	string testLic = string.Empty;
 
 	try
 	{
@@ -22,6 +23,16 @@
 			XmlDocument doc = new XmlDocument();
 			doc.Load(fileName);
 			XmlNode nodeSqlServer = doc.SelectSingleNode("/credentials_info/sqlserver");
+			XmlNode nodeIsta = doc.SelectSingleNode("/credentials_info/ista");
+			if (nodeIsta != null)
+			{
+				XmlAttribute attribLocation = nodeIsta.Attributes["location"];
+				if (attribLocation != null)
+				{
+					istaLocation = attribLocation.Value;
+				}
+			}
+
 			if (nodeSqlServer != null)
 			{
 				XmlAttribute attribUrl = nodeSqlServer.Attributes["url"];
@@ -53,13 +64,13 @@
 				}
 			}
 
-			XmlNode nodeIsta = doc.SelectSingleNode("/credentials_info/ista");
-			if (nodeIsta != null)
+			XmlNode nodeLic = doc.SelectSingleNode("/credentials_info/licenses");
+			if (nodeLic != null)
 			{
-				XmlAttribute attribLocation = nodeIsta.Attributes["location"];
-				if (attribLocation != null)
+				XmlAttribute attribTest = nodeLic.Attributes["test"];
+				if (attribTest != null)
 				{
-					istaLocation = attribLocation.Value;
+					testLic = attribTest.Value;
 				}
 			}
 		}
@@ -72,8 +83,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appSettings>
   <add key="DealerId" value="32395"/>
-  <add key="IstaFolder" value="<#= istaLocation #>;"/>
+  <add key="IstaFolder" value="<#= istaLocation #>"/>
   <add key="SqlServer" value="Server=<#= sqlUrl #>;User ID=<#= sqlUser #>;Password=<#= sqlPassword #>"/>
-  <add key="TestLicenses" value="1"/>
   <add key="AccessPwd" value="<#= accessPassword #>"/>
+  <add key="TestLicenses" value="<#= testLic #>"/>
 </appSettings>
