@@ -198,6 +198,9 @@
   <data name="NoTargetILevel" xml:space="preserve">
     <value>Keine Ziel IStufe vorhanden.</value>
   </data>
+  <data name="NoVehiceLicense" xml:space="preserve">
+    <value>Keine gültige Lizenz für dieses Fahrzeg vorhanden.</value>
+  </data>
   <data name="PiaMasterUpdated" xml:space="preserve">
     <value>PIA Master aktualisiert.</value>
   </data>

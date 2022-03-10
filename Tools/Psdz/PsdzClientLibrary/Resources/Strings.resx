@@ -198,6 +198,9 @@
   <data name="NoTargetILevel" xml:space="preserve">
     <value>No target ILevel present.</value>
   </data>
+  <data name="NoVehiceLicense" xml:space="preserve">
+    <value>Not valid license for vehicle present.</value>
+  </data>
   <data name="PiaMasterUpdated" xml:space="preserve">
     <value>PIA master updated.</value>
   </data>

@@ -878,6 +878,14 @@ namespace PsdzClient.Programing
                         CacheClearRequired = true;
                         cts?.Token.ThrowIfCancellationRequested();
 
+                        if (!LicenseValid)
+                        {
+                            log.ErrorFormat(CultureInfo.InvariantCulture, "No valid license for TAL execution");
+                            sbResult.AppendLine(Strings.NoVehiceLicense);
+                            UpdateStatus(sbResult.ToString());
+                            return false;
+                        }
+
                         if (talExecutionFailed)
                         {
                             if (ShowMessageEvent != null)

@@ -304,6 +304,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Not valid license for vehicle present. ähnelt.
+        /// </summary>
+        internal static string NoVehiceLicense {
+            get {
+                return ResourceManager.GetString("NoVehiceLicense", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die PIA master updated. ähnelt.
         /// </summary>
         internal static string PiaMasterUpdated {
