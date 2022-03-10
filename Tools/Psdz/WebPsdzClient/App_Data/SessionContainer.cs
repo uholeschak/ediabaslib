@@ -2188,11 +2188,11 @@ namespace WebPsdzClient.App_Data
                 string sqlUpdate;
                 if (string.IsNullOrEmpty(serial))
                 {
-                    sqlUpdate = string.Format(CultureInfo.InvariantCulture, "INSERT INTO `bmw_coding`.`licenses` (`vin`) VALUES (UPPER('{0}')) ON DUPLICATE KEY UPDATE `vin` = VALUES(`vin`)", vin);
+                    sqlUpdate = string.Format(CultureInfo.InvariantCulture, "INSERT INTO `bmw_coding`.`licenses` (`vin`) VALUES (UPPER('{0}')) AS `new` ON DUPLICATE KEY UPDATE `vin` = `new`.`vin`", vin);
                 }
                 else
                 {
-                    sqlUpdate = string.Format(CultureInfo.InvariantCulture, "INSERT INTO `bmw_coding`.`licenses` (`vin`, `serial`) VALUES (UPPER('{0}'), '{1}') ON DUPLICATE KEY UPDATE `vin` = VALUES(`vin`), `serial` = '{1}'", vin, serial);
+                    sqlUpdate = string.Format(CultureInfo.InvariantCulture, "INSERT INTO `bmw_coding`.`licenses` (`vin`, `serial`) VALUES (UPPER('{0}'), '{1}') AS `new` ON DUPLICATE KEY UPDATE `vin` = `new`.`vin`, `serial` = '{1}'", vin, serial);
                 }
                 using (MySqlCommand command = new MySqlCommand(sqlUpdate, connection))
                 {
