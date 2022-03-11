@@ -10,6 +10,7 @@ Table of contents:
 	* [Configuration generator](Configuration_Generator.md)
 	* [HowTo create Deep OBD for BMW and VAG pages](Page_specification.md)
 	* [Ediabas tool](EdiabasTool.md)
+	* [BMW coding](BMW_Coding.md)
 * [Log and trace files location](#log-and-trace-files-location)
 * [Background image](#background-image)
 
@@ -69,6 +70,7 @@ The application has a configuration menu with the following options:
 	* _Reset XML editor_: Resets the last selected XML editor. A new editor has be to be selected again when editing files.
 	* _Close_: Close the current configuration.
 * _Ediabas tool_: This is a port of the tool32.exe windows application. Selecting the menu will open the [Ediabas tool](EdiabasTool.md) page.
+* _Coding_: This submenu allow to access the [BMW coding](BMW_Coding.md) online service.
 * _Extract ECU files_: The EUC files are very large, so they have to be extraced at first app start. With this menu item files could be extracted again. An internet connection is required to check for update information.
 * _Data logging_: Selecting this menu entry will open a sub menu with multiple data logging options:
 	* _Create trace file_: If the checkbox of this menu is active, a _ifh.trc_ file will be created when the application is connected. The trace file will be created in the _Log_ subdirectory.
