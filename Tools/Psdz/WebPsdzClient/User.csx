@@ -1,8 +1,8 @@
 ﻿using System.IO;
 using System.Xml;
 
-Output.BuildAction = BuildAction.Content;
 Output.SetExtension(".config");
+Output.BuildAction = BuildAction.Content;
 
 string istaLocation = "C:\\ISTA-D";
 string sqlUrl = "url";
