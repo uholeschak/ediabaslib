@@ -1,6 +1,7 @@
 # Documentation table of contents
-* _[Deep OBD for BMW and VAG](Deep_OBD_for_BMW_and_VAG.md)_
-	* [HowTo create Deep OBD for BMW and VAG pages](Page_specification.md)
+* _[Deep OBD](Deep_OBD_for_BMW_and_VAG.md)_
+	* [HowTo create Deep OBD pages](Page_specification.md)
+    * [BMW coding](BMW_Coding.md)
 * [Ediabas result types and formats](EDIABAS_result_types_and_formats.md)
 * [Supported adapter types](AdapterTypes.md)
 * [Replacement firmware for ELM327](Replacement_firmware_for_ELM327.md)

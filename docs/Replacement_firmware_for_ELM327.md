@@ -20,7 +20,7 @@ For programming the firmware see: [programming](#programming-elm327-adapter-with
 
 ## Buy a preprogrammed adapter
 You could buy the preprogrammed [Bluetooth or WiFi adapter](https://www.ebay.de/itm/255420699260) also at EBAY.  
-Adapters from this link include a **license** for the future **BMW Online Coding** function of one F or G series vehicle.  
+Adapters from this link include a **license** for the [BMW coding](BMW_Coding.md) function of one F series or higher vehicle.  
 If the link is outdated (what it is most of the time) all adapters are sold, in this case please simply wait for an update of the link.  
 
 Vehicles `E36`, `E38`, `E39`, `E46`, `E52`, `E53`, `E83` , `E85` and `E86` additionally require a connection between OBD pin 7 and 8 (or a pin7-pin8 adapter) to access all ECUs.  
