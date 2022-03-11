@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28922.388
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdiabasLib", "EdiabasLib\EdiabasLib.csproj", "{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}"
 EndProject
@@ -27,6 +27,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{7B9636BF-0907-48A9-99D4-28DBAEA781F7}"
 	ProjectSection(SolutionItems) = preProject
 		..\docs\AdapterTypes.md = ..\docs\AdapterTypes.md
+		..\docs\BMW_Coding.md = ..\docs\BMW_Coding.md
 		..\docs\Build_Bluetooth_D-CAN_adapter.md = ..\docs\Build_Bluetooth_D-CAN_adapter.md
 		..\docs\Build_Bluetooth_D-CAN_adapter_AdapterSmall.png = ..\docs\Build_Bluetooth_D-CAN_adapter_AdapterSmall.png
 		..\docs\Build_Bluetooth_D-CAN_adapter_BluetoothConnectionSmall.png = ..\docs\Build_Bluetooth_D-CAN_adapter_BluetoothConnectionSmall.png
