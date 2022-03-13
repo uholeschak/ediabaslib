@@ -76,6 +76,7 @@ namespace BmwDeepObd
             public string InitialUrl { get; set; }
             public string Url { get; set; }
             public bool ServerConnected { get; set; }
+            public int ConnectTimeouts { get; set; }
             public string TraceDir { get; set; }
             public bool TraceActive { get; set; }
             public bool TraceAppend { get; set; }
@@ -121,6 +122,7 @@ namespace BmwDeepObd
         private object _ediabasLock = new object();
         private object _requestLock = new object();
         private object _timeLock = new object();
+        private object _instanceLock = new object();
         private Queue<VehicleRequest> _requestQueue = new Queue<VehicleRequest>();
         private bool _activityActive;
         private HttpClient _infoHttpClient;
@@ -257,7 +259,12 @@ namespace BmwDeepObd
                             return;
                         }
 
-                        bool serverConnected = _instanceData.ServerConnected;
+                        bool serverConnected;
+                        lock (_instanceLock)
+                        {
+                            serverConnected = _instanceData.ServerConnected;
+                        }
+
                         long connectTime = GetConnectTime();
                         long timeout = serverConnected ? ConnectionTimeout : FirstConnectTimeout;
 
@@ -271,12 +278,19 @@ namespace BmwDeepObd
                             {
                                 try
                                 {
+                                    string loadUrl;
+                                    lock (_instanceLock)
+                                    {
+                                        loadUrl = _instanceData.Url;
+                                        _instanceData.ConnectTimeouts++;
+                                    }
+
                                     UpdateConnectTime();
                                     Toast.MakeText(this, GetString(Resource.String.bmw_coding_network_error), ToastLength.Short)?.Show();
                                     if (_activityCommon.IsNetworkPresent(out _))
                                     {
                                         _activityCommon.SetPreferredNetworkInterface();
-                                        _webViewCoding.LoadUrl(_instanceData.Url);
+                                        _webViewCoding.LoadUrl(loadUrl);
                                     }
                                 }
                                 catch (Exception)
@@ -574,10 +588,13 @@ namespace BmwDeepObd
 
                                 if (success && !string.IsNullOrEmpty(url))
                                 {
-                                    _instanceData.CodingUrl = url;
-                                    _instanceData.CodingUrlTest = urlTest;
-                                    _instanceData.DayString = dayString;
-                                    _instanceData.ValidSerial = validSerial;
+                                    lock (_instanceLock)
+                                    {
+                                        _instanceData.CodingUrl = url;
+                                        _instanceData.CodingUrlTest = urlTest;
+                                        _instanceData.DayString = dayString;
+                                        _instanceData.ValidSerial = validSerial;
+                                    }
 
                                     if (!string.IsNullOrEmpty(message))
                                     {
@@ -880,34 +897,40 @@ namespace BmwDeepObd
 
             try
             {
-                if (string.IsNullOrEmpty(_instanceData.Url))
+                string loadUrl;
+                lock (_instanceLock)
                 {
-                    string url;
-                    if (!string.IsNullOrEmpty(domains) && domains.Contains("local.holeschak.de", StringComparison.OrdinalIgnoreCase))
+                    if (string.IsNullOrEmpty(_instanceData.Url))
                     {
-                        if (!string.IsNullOrEmpty(_instanceData.CodingUrlTest))
+                        string url;
+                        if (!string.IsNullOrEmpty(domains) && domains.Contains("local.holeschak.de", StringComparison.OrdinalIgnoreCase))
                         {
-                            url = _instanceData.CodingUrlTest;
+                            if (!string.IsNullOrEmpty(_instanceData.CodingUrlTest))
+                            {
+                                url = _instanceData.CodingUrlTest;
+                            }
+                            else
+                            {
+                                url = @"http://ulrich3.local.holeschak.de:3000";
+                                //url = @"http://ulrich3.local.holeschak.de:8008";
+                                //url = @"http://coding-server.local.holeschak.de:8008";
+                            }
                         }
                         else
                         {
-                            url = @"http://ulrich3.local.holeschak.de:3000";
-                            //url = @"http://ulrich3.local.holeschak.de:8008";
-                            //url = @"http://coding-server.local.holeschak.de:8008";
+                            //url = @"http://holeschak.dedyn.io:8008";
+                            url = _instanceData.CodingUrl;
                         }
-                    }
-                    else
-                    {
-                        //url = @"http://holeschak.dedyn.io:8008";
-                        url = _instanceData.CodingUrl;
+
+                        _instanceData.InitialUrl = url;
+                        _instanceData.Url = url;
                     }
 
-                    _instanceData.InitialUrl = url;
-                    _instanceData.Url = url;
+                    loadUrl = _instanceData.Url;
                 }
 
                 _activityCommon.SetPreferredNetworkInterface();
-                _webViewCoding.LoadUrl(_instanceData.Url);
+                _webViewCoding.LoadUrl(loadUrl);
                 _urlLoaded = true;
             }
             catch (Exception)
@@ -1353,12 +1376,26 @@ namespace BmwDeepObd
                     string connectedState = connected ? "1" : "0";
 
                     sbBody.Append($" <status connected=\"{System.Web.HttpUtility.HtmlEncode(connectedState)}\"");
+
+                    string connectTimeoutsState;
+                    lock (_instanceLock)
+                    {
+                        connectTimeoutsState = string.Format(CultureInfo.InvariantCulture, "{0}", _instanceData.ConnectTimeouts);
+                    }
+                    sbBody.Append($" timeouts=\"{System.Web.HttpUtility.HtmlEncode(connectTimeoutsState)}\"");
+
                     if (vehicleRequest.RequestType == VehicleRequest.VehicleRequestType.Connect)
                     {
                         string appIdState = ActivityCommon.AppId ?? string.Empty;
                         string adapterSerialState = ActivityCommon.LastAdapterSerial ?? string.Empty;
+                        string validSerial;
+                        lock (_instanceLock)
+                        {
+                            validSerial = _instanceData.ValidSerial ?? string.Empty;
+                        }
+
                         string serialValidState = "0";
-                        if (!string.IsNullOrEmpty(_instanceData.ValidSerial) && string.Compare(_instanceData.ValidSerial, adapterSerialState, StringComparison.Ordinal) == 0)
+                        if (!string.IsNullOrEmpty(validSerial) && string.Compare(validSerial, adapterSerialState, StringComparison.Ordinal) == 0)
                         {
                             serialValidState = "1";
                         }
@@ -1567,11 +1604,14 @@ namespace BmwDeepObd
                     _activity.UpdateConnectTime();
                     if (!string.IsNullOrEmpty(url))
                     {
-                        _activity._instanceData.Url = url;
-                        string compareUrl = url.TrimEnd(' ', '/');
-                        if (string.Compare(compareUrl, _activity._instanceData.InitialUrl, StringComparison.OrdinalIgnoreCase) != 0)
+                        lock (_activity._instanceLock)
                         {
-                            _activity._instanceData.ServerConnected = true;
+                            _activity._instanceData.Url = url;
+                            string compareUrl = url.TrimEnd(' ', '/');
+                            if (string.Compare(compareUrl, _activity._instanceData.InitialUrl, StringComparison.OrdinalIgnoreCase) != 0)
+                            {
+                                _activity._instanceData.ServerConnected = true;
+                            }
                         }
                     }
                 });
