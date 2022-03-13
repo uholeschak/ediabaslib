@@ -1252,17 +1252,19 @@ namespace BmwDeepObd
                 if (_activityCommon.IsBmwCodingInterface(_instanceData.DeviceAddress) &&
                     !string.IsNullOrEmpty(_instanceData.ConfigFileName))
                 {
+                    bool errorPage = false;
                     string sgbdFunctional = null;
                     foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
                     {
                         if (pageInfo.ErrorsInfo != null)
                         {
+                            errorPage = true;
                             sgbdFunctional = pageInfo.ErrorsInfo.SgbdFunctional;
                             break;
                         }
                     }
 
-                    if (!string.IsNullOrEmpty(sgbdFunctional))
+                    if (!errorPage || !string.IsNullOrEmpty(sgbdFunctional))
                     {
                         bmwCodingEnabled = true;
                     }
