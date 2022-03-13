@@ -261,7 +261,7 @@ Do you still want to continue with TAL execution?</value>
     <value>TAL execution finished ok.</value>
   </data>
   <data name="TalExecuteOkContinue" xml:space="preserve">
-    <value>Perparation has been finshied successfully.
+    <value>Preparation has been finshied successfully.
 No liability in case of failure or problems after coding!
 Do you want to continue with TAL execution?</value>
   </data>
@@ -330,7 +330,7 @@ ILevel ship={2} current={3}</value>
     <value>Vehicle not connected.</value>
   </data>
   <data name="VehicleSeriesInvalid" xml:space="preserve">
-    <value>Vehicle series invalid: {0}</value>
+    <value>Detected vehicle series : {0}. Coding is available only for F series or higher.</value>
   </data>
   <data name="VehicleSeriesNotDetected" xml:space="preserve">
     <value>Vehicle series not detected.</value>

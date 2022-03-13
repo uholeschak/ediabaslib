@@ -486,7 +486,7 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Perparation has been finshied successfully.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Preparation has been finshied successfully.
         ///No liability in case of failure or problems after coding!
         ///Do you want to continue with TAL execution? ähnelt.
         /// </summary>
@@ -681,7 +681,7 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Vehicle series invalid: {0} ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Detected vehicle series : {0}. Coding is available only for F series or higher. ähnelt.
         /// </summary>
         internal static string VehicleSeriesInvalid {
             get {
