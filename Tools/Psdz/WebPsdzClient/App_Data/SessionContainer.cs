@@ -377,6 +377,25 @@ namespace WebPsdzClient.App_Data
             }
         }
 
+        private int? _connectTimeouts;
+        public int? ConnectTimeouts
+        {
+            get
+            {
+                lock (_lockObject)
+                {
+                    return _connectTimeouts;
+                }
+            }
+            set
+            {
+                lock (_lockObject)
+                {
+                    _connectTimeouts = value;
+                }
+            }
+        }
+
         private string _adapterSerial;
         public string AdapterSerial
         {
@@ -1946,6 +1965,11 @@ namespace WebPsdzClient.App_Data
                                             else
                                             {
                                                 LogVehicleResponse(vehicleResponse);
+                                                if (vehicleResponse.ConnectTimeouts.HasValue)
+                                                {
+                                                    ConnectTimeouts = vehicleResponse.ConnectTimeouts;
+                                                }
+
                                                 if (funcAddress)
                                                 {
                                                     log.InfoFormat("VehicleThread Caching Request={0}", sendDataString);

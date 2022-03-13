@@ -22,6 +22,7 @@ namespace PsdzClient
                 Valid = false;
                 Error = error;
                 Connected = false;
+                ConnectTimeouts = null;
                 AppId = string.Empty;
                 AdapterSerial = string.Empty;
                 SerialValid = false;
@@ -34,6 +35,7 @@ namespace PsdzClient
             public bool Valid { get; set; }
             public bool Error { get; set; }
             public bool Connected { get; set; }
+            public int? ConnectTimeouts { get; set; }
             public string AppId { get; set; }
             public string AdapterSerial { get; set; }
             public bool SerialValid { get; set; }
@@ -232,6 +234,19 @@ namespace PsdzClient
                         try
                         {
                             vehicleResponse.Connected = XmlConvert.ToBoolean(connectedAttr.Value);
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    }
+
+                    XAttribute timeoutsAttr = statusNode.Attribute("timeouts");
+                    if (timeoutsAttr != null)
+                    {
+                        try
+                        {
+                            vehicleResponse.ConnectTimeouts = XmlConvert.ToInt32(timeoutsAttr.Value);
                         }
                         catch (Exception)
                         {
