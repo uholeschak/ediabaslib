@@ -2083,6 +2083,7 @@ namespace WebPsdzClient.App_Data
                 }
             }
 #endif
+            ConnectTimeouts = null;
             VehicleResponseDictClear();
             CloseVehicleLog();
             log.InfoFormat("VehicleThread stopped");
