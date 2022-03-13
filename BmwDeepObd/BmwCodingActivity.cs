@@ -128,6 +128,7 @@ namespace BmwDeepObd
         private bool _activityActive;
         private HttpClient _infoHttpClient;
         private bool _urlLoaded;
+        private AlertDialog _alertDialogInfo;
         private AlertDialog _alertDialogConnectError;
         private Timer _connectionCheckTimer;
         public long _connectionUpdateTime;
@@ -556,6 +557,11 @@ namespace BmwDeepObd
 
         public bool GetConnectionInfoRequest()
         {
+            if (_alertDialogInfo != null)
+            {
+                return true;
+            }
+
             if (!string.IsNullOrEmpty(_instanceData.CodingUrl))
             {
                 return true;
@@ -565,7 +571,7 @@ namespace BmwDeepObd
             {
                 bool ignoreDismiss = false;
                 string infoMessage = GetString(Resource.String.bmw_coding_connect_request).Replace("\n", "<br>"); ;
-                AlertDialog alertDialog = new AlertDialog.Builder(this)
+                _alertDialogInfo = new AlertDialog.Builder(this)
                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                     {
                         if (_activityCommon == null)
@@ -644,20 +650,21 @@ namespace BmwDeepObd
                     .SetMessage(ActivityCommon.FromHtml(infoMessage))
                     .SetTitle(Resource.String.alert_title_info)
                     .Show();
-                alertDialog.DismissEvent += (sender, args) =>
+                _alertDialogInfo.DismissEvent += (sender, args) =>
                 {
                     if (_activityCommon == null)
                     {
                         return;
                     }
 
+                    _alertDialogInfo = null;
                     if (!ignoreDismiss)
                     {
                         Finish();
                     }
                 };
 
-                TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
+                TextView messageView = _alertDialogInfo.FindViewById<TextView>(Android.Resource.Id.Message);
                 if (messageView != null)
                 {
                     messageView.MovementMethod = new LinkMovementMethod();
