@@ -63,7 +63,7 @@
 \n\nChanges in this version:\n</string>
   <string name="version_last_changes">- Added BMW test coding.\n- Fixed minor problems</string>
   <string name="app_info_message">Deep OBD for BMW and VAG\nVersion: {0}\nId: {1}</string>
-  <string formatted="false" name="vag_mode_info">The VAG mode ist still experimental and only for vehicles until {0}.\nA &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;Deep OBD Adapter&lt;/a&gt; with at least firmware version 0.11 is required.\nAt the moment only the protocols KWP2000, KWP1281, TP2.0 and UDS are supported.\nConfigurations have to regenerated for the new VAG mode\n.It\'s possible to select the old VAG mode again in the settings dialog.</string>
+  <string formatted="false" name="vag_mode_info">The VAG mode ist still experimental and only for vehicles until {0}.\nA &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;Deep OBD adapter&lt;/a&gt; with at least firmware version 0.11 is required.\nAt the moment only the protocols KWP2000, KWP1281, TP2.0 and UDS are supported.\nConfigurations have to regenerated for the new VAG mode\n.It\'s possible to select the old VAG mode again in the settings dialog.</string>
 
   <!-- Update info -->
   <string name="update_header">An update is available at Google Play.</string>
@@ -670,7 +670,7 @@
   <!-- BMW Coding Activity -->
   <string name="bmw_coding_title">BMW Coding</string>
   <string name="bmw_coding_network_error">Loading web page failed, retrying.</string>
-  <string name="bmw_coding_connect_request">BMW coding is an online service and requires a fast and stable internet connection.\nIt\'s only available for F series or higher.\nWhile coding a high current charger is required.\nIn the testing phase it will be free, later a license will be required to pay the server costs.\nDo you want to continue?</string>
+  <string formatted="false" name="bmw_coding_connect_request">BMW coding is an online service and requires a fast and stable internet connection.\nIt\'s only available for F series or higher.\nWhile coding a high current charger is required.\nIn the testing phase it will be free, later a license will be required to pay the server costs.\nOriginal &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md#buy-a-preprogrammed-adapter\'&gt;Deep OBD adapters&lt;/a&gt; contain a license for coding of one vehicle.\nDo you want to continue?</string>
   <string name="bmw_coding_connecting">Establish connection.</string>
   <string name="bmw_coding_connect_failed">Establish connection failed.\nPlease check your network connection.</string>
   <string name="bmw_coding_connect_url_failed">Connection to the server failed.\nDo you want to try it again?</string>

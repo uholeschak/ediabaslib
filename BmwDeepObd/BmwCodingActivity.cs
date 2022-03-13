@@ -14,6 +14,7 @@ using Android.Content.PM;
 using Android.Hardware.Usb;
 using Android.Net.Http;
 using Android.OS;
+using Android.Text.Method;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
@@ -563,6 +564,7 @@ namespace BmwDeepObd
             try
             {
                 bool ignoreDismiss = false;
+                string infoMessage = GetString(Resource.String.bmw_coding_connect_request).Replace("\n", "<br>"); ;
                 AlertDialog alertDialog = new AlertDialog.Builder(this)
                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                     {
@@ -610,10 +612,10 @@ namespace BmwDeepObd
                                     return;
                                 }
 
-                                string messageText = message;
-                                if (string.IsNullOrEmpty(messageText))
+                                string errorMessage = message;
+                                if (string.IsNullOrEmpty(errorMessage))
                                 {
-                                    messageText = GetString(Resource.String.bmw_coding_connect_failed);
+                                    errorMessage = GetString(Resource.String.bmw_coding_connect_failed);
                                 }
 
                                 AlertDialog alertDialogError = new AlertDialog.Builder(this)
@@ -621,7 +623,7 @@ namespace BmwDeepObd
                                     {
                                     })
                                     .SetCancelable(true)
-                                    .SetMessage(messageText)
+                                    .SetMessage(errorMessage)
                                     .SetTitle(Resource.String.alert_title_error)
                                     .Show();
                                 alertDialogError.DismissEvent += (sender, args) =>
@@ -639,7 +641,7 @@ namespace BmwDeepObd
                     .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                     {
                     })
-                    .SetMessage(Resource.String.bmw_coding_connect_request)
+                    .SetMessage(ActivityCommon.FromHtml(infoMessage))
                     .SetTitle(Resource.String.alert_title_info)
                     .Show();
                 alertDialog.DismissEvent += (sender, args) =>
@@ -654,6 +656,12 @@ namespace BmwDeepObd
                         Finish();
                     }
                 };
+
+                TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
+                if (messageView != null)
+                {
+                    messageView.MovementMethod = new LinkMovementMethod();
+                }
             }
             catch (Exception)
             {

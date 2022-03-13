@@ -693,7 +693,7 @@
   <!-- BMW Coding Activity -->
   <string name="bmw_coding_title">Кодирование BMW</string>
   <string name="bmw_coding_network_error">Загрузка веб-страницы не удалась, повторная попытка.</string>
-  <string name="bmw_coding_connect_request">Кодирование BMW — это онлайн-сервис, требующий быстрого и стабильного подключения к Интернету.\nЭто доступно только для серии F или выше.\nПри кодировании требуется сильноточное зарядное устройство.\nНа этапе тестирования это будет бесплатно, позже потребуется лицензия для оплаты стоимости сервера.\nВы хотите продолжить?</string>
+  <string formatted="false" name="bmw_coding_connect_request">Кодирование BMW — это онлайн-сервис, требующий быстрого и стабильного подключения к Интернету.\nЭто доступно только для серии F или выше.\nПри кодировании требуется сильноточное зарядное устройство.\nНа этапе тестирования это будет бесплатно, позже потребуется лицензия для оплаты стоимости сервера.\Оригинальные &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md#buy-a-preprogrammed-adapter\'&gt;адаптеры Deep OBD&lt;/a&gt; содержат лицензию на кодирование одного автомобиля.\nВы хотите продолжить?</string>
   <string name="bmw_coding_connecting">Establish connection.</string>
   <string name="bmw_coding_connect_url_failed">Не удалось подключиться к серверу.\nХотите попробовать еще раз?</string>
   <string name="bmw_coding_connect_failed">Не удалось установить соединение.\nПожалуйста, проверьте подключение к сети.</string>

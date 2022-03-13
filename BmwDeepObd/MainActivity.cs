@@ -5896,7 +5896,7 @@ namespace BmwDeepObd
         {
             if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw && !_instanceData.VagInfoShown)
             {
-                string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.vag_mode_info), ActivityCommon.VagEndDate).Replace("\n", "<br>"); ;
+                string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.vag_mode_info), ActivityCommon.VagEndDate).Replace("\n", "<br>");
                 AlertDialog alertDialog = new AlertDialog.Builder(this)
                     .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
                     {
