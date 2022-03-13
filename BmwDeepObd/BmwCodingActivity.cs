@@ -1323,9 +1323,13 @@ namespace BmwDeepObd
                                     return;
                                 }
 
-                                if (!isConnected)
+                                lock (_instanceLock)
                                 {
-                                    _instanceData.CommErrorsOccurred = true;
+                                    _instanceData.ConnectTimeouts = 0;
+                                    if (!isConnected)
+                                    {
+                                        _instanceData.CommErrorsOccurred = true;
+                                    }
                                 }
                                 _activityCommon.SetLock(ActivityCommon.LockType.ScreenDim);
                                 UpdateOptionsMenu();
