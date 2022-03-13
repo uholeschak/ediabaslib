@@ -97,6 +97,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///    Sucht eine lokalisierte Zeichenfolge, die Internet timeouts: {0} ähnelt.
+        /// </summary>
+        internal static string InternetTimeouts {
+            get {
+                return ResourceManager.GetString("InternetTimeouts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///    Sucht eine lokalisierte Zeichenfolge, die Processing ... ähnelt.
         /// </summary>
         internal static string Processing {

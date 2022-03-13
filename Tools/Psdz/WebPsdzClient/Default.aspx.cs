@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Web;
 using System.Web.UI;
@@ -467,7 +468,7 @@ namespace WebPsdzClient
                     {
                         bool okBtn = sessionContainer.ShowMessageModalOkBtn;
                         bool messageWait = sessionContainer.ShowMessageModalWait;
-                        messageText = messageText.Replace("\r\n", "<br>");
+                        messageText = messageText.Replace("\r\n", "<br/>");
 
                         log.InfoFormat("_Default Page_Load UpdateStatus Count={0}, OKButton={1}, Wait={2}, Message='{3}'", modalCount, okBtn, messageWait, messageText);
 
@@ -512,13 +513,30 @@ namespace WebPsdzClient
         {
             try
             {
+                SessionContainer sessionContainer = GetSessionContainer();
+                if (sessionContainer == null)
+                {
+                    return;
+                }
+
                 DateTime localTime = DateTime.Now;
                 DateTime utcTime = localTime.ToUniversalTime();
                 string localString = localTime.ToString("HH:mm:ss");
                 string utcString = utcTime.ToString("HH:mm:ss");
 
                 string timeFormat = GetGlobalResourceObject("Global", "TimeDisplay") as string ?? string.Empty;
-                LabelLastUpdate.Text = string.Format(CultureInfo.InvariantCulture, timeFormat, localString, utcString);
+                StringBuilder sb = new StringBuilder();
+                sb.Append(string.Format(CultureInfo.InvariantCulture, timeFormat, localString, utcString));
+
+                int? connectTimeouts = sessionContainer.ConnectTimeouts;
+                if (connectTimeouts != null && connectTimeouts.Value > 0)
+                {
+                    sb.Append("<br/>");
+                    string connectFailFormat = GetGlobalResourceObject("Global", "InternetTimeouts") as string ?? string.Empty;
+                    sb.Append(string.Format(CultureInfo.InvariantCulture, connectFailFormat, connectTimeouts.Value));
+                }
+
+                LabelLastUpdate.Text = sb.ToString();
                 if (!UpdatePanelTimer.IsInPartialRendering)
                 {
                     UpdatePanelTimer.Update();

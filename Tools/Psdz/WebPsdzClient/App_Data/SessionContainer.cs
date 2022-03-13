@@ -1678,9 +1678,15 @@ namespace WebPsdzClient.App_Data
                 hubContext.Clients.Client(connectionId)?.VehicleConnect(GetVehicleUrl(), GetNextPacketId());
             }
 
+            ConnectTimeouts = null;
             PsdzVehicleHub.VehicleResponse vehicleResponse = WaitForVehicleResponse();
             if (vehicleResponse != null)
             {
+                if (vehicleResponse.ConnectTimeouts.HasValue)
+                {
+                    ConnectTimeouts = vehicleResponse.ConnectTimeouts;
+                }
+
                 AppId = vehicleResponse.AppId;
                 AdapterSerial = vehicleResponse.AdapterSerial;
                 AdapterSerialValid = vehicleResponse.SerialValid;

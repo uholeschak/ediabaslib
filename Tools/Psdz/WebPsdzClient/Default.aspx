@@ -53,7 +53,7 @@
         <asp:UpdatePanel ID="UpdatePanelTimer" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="False">
             <ContentTemplate>
                 <asp:Panel ID="PanelHeader" runat="server" CssClass="panel-collapse" HorizontalAlign="Left" meta:resourcekey="PanelHeaderResource">
-                    <asp:Label ID="LabelLastUpdate" runat="server" CssClass="label" meta:resourcekey="LabelLastUpdateResource"></asp:Label>
+                    <asp:Label ID="LabelLastUpdate" runat="server" CssClass="text-left" meta:resourcekey="LabelLastUpdateResource"></asp:Label>
                 </asp:Panel>
                 <asp:Timer ID="TimerUpdate" runat="server" Interval="2000" OnTick="TimerUpdate_Tick">
                 </asp:Timer>

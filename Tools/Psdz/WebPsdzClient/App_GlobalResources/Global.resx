@@ -129,6 +129,9 @@
   <data name="AppUpdateRequired" xml:space="preserve">
     <value>An update of the app is required to use this service.</value>
   </data>
+  <data name="InternetTimeouts" xml:space="preserve">
+    <value>Internet timeouts: {0}</value>
+  </data>
   <data name="Processing" xml:space="preserve">
     <value>Processing ...</value>
   </data>
