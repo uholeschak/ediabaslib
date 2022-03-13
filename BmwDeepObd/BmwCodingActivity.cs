@@ -424,6 +424,25 @@ namespace BmwDeepObd
                         UpdateOptionsMenu();
                     });
                     return true;
+
+                case Resource.Id.menu_submenu_help:
+                    _activityCommon.ShowWifiConnectedWarning(() =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
+                        try
+                        {
+                            StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://github.com/uholeschak/ediabaslib/blob/master/docs/BMW_Coding.md")));
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    });
+                    return true;
             }
 
             return base.OnOptionsItemSelected(item);
