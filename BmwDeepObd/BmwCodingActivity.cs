@@ -939,7 +939,6 @@ namespace BmwDeepObd
                         string url;
                         if (!string.IsNullOrEmpty(domains) && domains.Contains("local.holeschak.de", StringComparison.OrdinalIgnoreCase))
                         {
-                            _instanceData.CodingUrlTest = null;
                             if (!string.IsNullOrEmpty(_instanceData.CodingUrlTest))
                             {
                                 url = _instanceData.CodingUrlTest;
