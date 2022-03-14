@@ -995,6 +995,28 @@ namespace BmwDeepObd
             }
         }
 
+        private bool SendConnectStatus(int connectTimeouts)
+        {
+            try
+            {
+                _activityCommon.SetPreferredNetworkInterface();
+                string script = string.Format(CultureInfo.InvariantCulture, "sendConnectStatus(`{0}`);", connectTimeouts);
+                if (Build.VERSION.SdkInt < BuildVersionCodes.Kitkat)
+                {
+                    _webViewCoding.LoadUrl("javascript:" + script);
+                }
+                else
+                {
+                    _webViewCoding.EvaluateJavascript(script, new VehicleSendCallback());
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         private void ReloadPage()
         {
             RunOnUiThread(() =>
@@ -1642,6 +1664,7 @@ namespace BmwDeepObd
                     _activity.UpdateConnectTime();
                     if (!string.IsNullOrEmpty(url))
                     {
+                        int connectTimeouts;
                         lock (_activity._instanceLock)
                         {
                             _activity._instanceData.Url = url;
@@ -1650,7 +1673,11 @@ namespace BmwDeepObd
                             {
                                 _activity._instanceData.ServerConnected = true;
                             }
+
+                            connectTimeouts = _activity._instanceData.ConnectTimeouts;
                         }
+
+                        _activity.SendConnectStatus(connectTimeouts);
                     }
                 });
 
