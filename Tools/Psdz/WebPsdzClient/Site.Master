@@ -62,6 +62,22 @@
                 return errorMessage;
             }
 
+            function sendConnectStatus(connectTimeouts)
+            {
+                var logMessage = "Connect status: Timeouts=" + connectTimeouts;
+                console.log(logMessage);
+                var errorMessage = "";
+                try
+                {
+                    psdzVehicleHubProxy.server.connectStatus(sessionID, connectTimeouts);
+                }
+                catch (e)
+                {
+                    errorMessage = e.message;
+                }
+                return errorMessage;
+            }
+
             function sendRequest(url, id, formData)
             {
                 var request = new XMLHttpRequest();

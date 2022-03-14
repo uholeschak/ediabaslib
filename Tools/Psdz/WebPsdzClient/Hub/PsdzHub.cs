@@ -84,6 +84,26 @@ namespace PsdzClient
             });
         }
 
+        [HubMethodName("connectStatus")]
+        public async Task ConnectStatus(string sessionId, int connectTimeouts)
+        {
+            SessionContainer.SetLogInfo(sessionId);
+            string transport = Context.QueryString["transport"] ?? string.Empty;
+            await Task.Run(() =>
+            {
+                log.InfoFormat("ConnectStatus: Session={0}, ConnectTimeouts={1}, ", sessionId, connectTimeouts);
+                SessionContainer sessionContainer = SessionContainer.GetSessionContainer(sessionId);
+                if (sessionContainer == null)
+                {
+                    log.ErrorFormat("ConnectStatus: Session not found: {0}", sessionId);
+                }
+                else
+                {
+                    sessionContainer.ConnectTimeouts = connectTimeouts;
+                }
+            });
+        }
+
         [HubMethodName("vehicleError")]
         public async Task VehicleError(string sessionId, string id, string message)
         {
