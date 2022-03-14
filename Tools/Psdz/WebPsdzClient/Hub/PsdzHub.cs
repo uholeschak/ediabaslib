@@ -91,7 +91,7 @@ namespace PsdzClient
             string transport = Context.QueryString["transport"] ?? string.Empty;
             await Task.Run(() =>
             {
-                log.InfoFormat("ConnectStatus: Session={0}, ConnectTimeouts={1}, ", sessionId, connectTimeouts);
+                log.InfoFormat("ConnectStatus: Session={0}, ConnectTimeouts={1}, Transport={2}", sessionId, connectTimeouts, transport);
                 SessionContainer sessionContainer = SessionContainer.GetSessionContainer(sessionId);
                 if (sessionContainer == null)
                 {
