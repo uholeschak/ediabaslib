@@ -1380,6 +1380,11 @@ namespace BmwDeepObd
                                     return;
                                 }
 
+                                lock (_instanceLock)
+                                {
+                                    _instanceData.ConnectTimeouts = 0;
+                                }
+
                                 _activityCommon.SetLock(ActivityCommon.LockType.None);
                                 UpdateOptionsMenu();
                             });
