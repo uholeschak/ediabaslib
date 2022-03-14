@@ -1000,14 +1000,14 @@ namespace BmwDeepObd
             try
             {
                 _activityCommon.SetPreferredNetworkInterface();
-                string script = string.Format(CultureInfo.InvariantCulture, "sendConnectStatus(`{0}`);", connectTimeouts);
+                string script = string.Format(CultureInfo.InvariantCulture, "sendConnectStatus({0});", connectTimeouts);
                 if (Build.VERSION.SdkInt < BuildVersionCodes.Kitkat)
                 {
                     _webViewCoding.LoadUrl("javascript:" + script);
                 }
                 else
                 {
-                    _webViewCoding.EvaluateJavascript(script, new VehicleSendCallback());
+                    _webViewCoding.EvaluateJavascript(script, new ConnectStatusCallback());
                 }
                 return true;
             }
@@ -1604,7 +1604,23 @@ namespace BmwDeepObd
 
             public override void OnPageFinished(WebView view, string url)
             {
+#if DEBUG
+                Android.Util.Log.Debug(Tag, string.Format("OnPageFinished: Url={0}", url));
+#endif
                 _activity.UpdateConnectTime();
+
+                bool serverConnected;
+                int connectTimeouts;
+                lock (_activity._instanceLock)
+                {
+                    serverConnected = _activity._instanceData.ServerConnected;
+                    connectTimeouts = _activity._instanceData.ConnectTimeouts;
+                }
+
+                if (serverConnected)
+                {
+                    _activity.SendConnectStatus(connectTimeouts);
+                }
             }
 
             public override void OnReceivedError(WebView view, IWebResourceRequest request, WebResourceErrorCompat error)
@@ -1664,7 +1680,6 @@ namespace BmwDeepObd
                     _activity.UpdateConnectTime();
                     if (!string.IsNullOrEmpty(url))
                     {
-                        int connectTimeouts;
                         lock (_activity._instanceLock)
                         {
                             _activity._instanceData.Url = url;
@@ -1673,11 +1688,7 @@ namespace BmwDeepObd
                             {
                                 _activity._instanceData.ServerConnected = true;
                             }
-
-                            connectTimeouts = _activity._instanceData.ConnectTimeouts;
                         }
-
-                        _activity.SendConnectStatus(connectTimeouts);
                     }
                 });
 
@@ -1710,6 +1721,16 @@ namespace BmwDeepObd
             {
 #if DEBUG
                 Android.Util.Log.Debug(Tag, string.Format("VehicleSendCallback: {0}", value));
+#endif
+            }
+        }
+
+        private class ConnectStatusCallback : Java.Lang.Object, IValueCallback
+        {
+            public void OnReceiveValue(Java.Lang.Object value)
+            {
+#if DEBUG
+                Android.Util.Log.Debug(Tag, string.Format("ConnectStatusCallback: {0}", value));
 #endif
             }
         }
