@@ -62,22 +62,6 @@
                 return errorMessage;
             }
 
-            function sendConnectStatus(connectTimeouts)
-            {
-                var logMessage = "Connect status: Timeouts=" + connectTimeouts;
-                console.log(logMessage);
-                var errorMessage = "";
-                try
-                {
-                    psdzVehicleHubProxy.server.connectStatus(sessionID, connectTimeouts);
-                }
-                catch (e)
-                {
-                    errorMessage = e.message;
-                }
-                return errorMessage;
-            }
-
             function sendRequest(url, id, formData)
             {
                 var request = new XMLHttpRequest();
@@ -106,6 +90,28 @@
                 };
                 request.open("POST", url, true);
                 request.send(formData);
+            }
+
+            function sendConnectStatus()
+            {
+                if (isAppBound())
+                {
+                    var errorMessage = null;
+                    try
+                    {
+                        var connectTimeouts = app.GetConnectTimeouts();
+                        psdzVehicleHubProxy.server.connectStatus(sessionID, connectTimeouts);
+                    }
+                    catch (e)
+                    {
+                        errorMessage = e.message;
+                    }
+
+                    if (!!errorMessage)
+                    {
+                        console.log("sendConnectStatus Error: " + errorMessage);
+                    }
+                }
             }
 
             function isAppBound()
@@ -290,6 +296,7 @@
             $.connection.hub.start().done(function ()
                 {
                     psdzVehicleHubProxy.server.sessionConnected(sessionID);
+                    sendConnectStatus();
                 }
             );
             $.connection.hub.disconnected(function ()
@@ -301,6 +308,7 @@
                         $.connection.hub.start().done(function ()
                         {
                             psdzVehicleHubProxy.server.sessionConnected(sessionID);
+                            sendConnectStatus();
                         });
                     }, 5000);
                 }

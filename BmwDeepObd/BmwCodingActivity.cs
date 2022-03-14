@@ -939,6 +939,7 @@ namespace BmwDeepObd
                         string url;
                         if (!string.IsNullOrEmpty(domains) && domains.Contains("local.holeschak.de", StringComparison.OrdinalIgnoreCase))
                         {
+                            _instanceData.CodingUrlTest = null;
                             if (!string.IsNullOrEmpty(_instanceData.CodingUrlTest))
                             {
                                 url = _instanceData.CodingUrlTest;
@@ -986,28 +987,6 @@ namespace BmwDeepObd
                 else
                 {
                     _webViewCoding.EvaluateJavascript(script, new VehicleSendCallback());
-                }
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        private bool SendConnectStatus(int connectTimeouts)
-        {
-            try
-            {
-                _activityCommon.SetPreferredNetworkInterface();
-                string script = string.Format(CultureInfo.InvariantCulture, "sendConnectStatus({0});", connectTimeouts);
-                if (Build.VERSION.SdkInt < BuildVersionCodes.Kitkat)
-                {
-                    _webViewCoding.LoadUrl("javascript:" + script);
-                }
-                else
-                {
-                    _webViewCoding.EvaluateJavascript(script, new ConnectStatusCallback());
                 }
                 return true;
             }
@@ -1608,19 +1587,6 @@ namespace BmwDeepObd
                 Android.Util.Log.Debug(Tag, string.Format("OnPageFinished: Url={0}", url));
 #endif
                 _activity.UpdateConnectTime();
-
-                bool serverConnected;
-                int connectTimeouts;
-                lock (_activity._instanceLock)
-                {
-                    serverConnected = _activity._instanceData.ServerConnected;
-                    connectTimeouts = _activity._instanceData.ConnectTimeouts;
-                }
-
-                if (serverConnected)
-                {
-                    _activity.SendConnectStatus(connectTimeouts);
-                }
             }
 
             public override void OnReceivedError(WebView view, IWebResourceRequest request, WebResourceErrorCompat error)
@@ -1802,6 +1768,22 @@ namespace BmwDeepObd
                 Android.Util.Log.Debug(Tag, "ReloadPage");
 #endif
                 _activity.ReloadPage();
+            }
+
+            [JavascriptInterface]
+            [Export]
+            public int GetConnectTimeouts()
+            {
+                int connectTimeouts;
+                lock (_activity._instanceLock)
+                {
+                    connectTimeouts = _activity._instanceData.ConnectTimeouts;
+                }
+
+#if DEBUG
+                Android.Util.Log.Debug(Tag, "GetConnectTimeouts: Timeouts={0}", connectTimeouts);
+#endif
+                return connectTimeouts;
             }
         }
     }
