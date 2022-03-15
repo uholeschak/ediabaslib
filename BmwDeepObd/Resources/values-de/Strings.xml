@@ -693,6 +693,7 @@
 
   <!-- BMW Coding Activity -->
   <string name="bmw_coding_title">BMW Kodieren</string>
+  <string name="bmw_coding_requirement">BMW Kodieren ist nur verfügbar für F Modelle oder höher.</string>
   <string name="bmw_coding_network_error">Das Laden der Webseite ist fehlgeschlagen, wiederholen.</string>
   <string formatted="false" name="bmw_coding_connect_request">BMW Kodieren ist ein Online Dienst und benötigt eine stabile und schnelle Internetverbindung.\nEs ist nur für F Modelle oder höher verfügbar.\nEin Hochstrom Ladegerät ist während der Kodierung notwendig.\nIn der Testphase ist es kostenlos, später wird eine Lizenz benötigt, um die Serverkosten zu decken.\nOriginale &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md#buy-a-preprogrammed-adapter\'&gt;Deep OBD Adapter&lt;/a&gt; enthalten eine Lizenz um ein Fahrzeug zu kodieren.\nWollen Sie fortfahren?</string>
   <string name="bmw_coding_connecting">Verbindungsaufbau.</string>
