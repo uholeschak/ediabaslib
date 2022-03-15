@@ -2720,19 +2720,6 @@ namespace BmwDeepObd
                     case InterfaceType.Bluetooth:
                     case InterfaceType.Enet:
                     case InterfaceType.Ftdi:
-                        if (_selectedInterface == InterfaceType.Bluetooth)
-                        {
-                            if (MtcBtService)
-                            {
-                                break;
-                            }
-
-                            if (IsElmDevice(deviceAddress))
-                            {
-                                break;
-                            }
-                        }
-
                         allowCoding = true;
                         break;
                 }
