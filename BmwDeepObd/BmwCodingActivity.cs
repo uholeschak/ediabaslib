@@ -716,13 +716,13 @@ namespace BmwDeepObd
                     handler.Invoke(false, false, null, null, message);
                     return true;
                 }
+            }
 
-                if (_activityCommon.IsElmDevice(_deviceAddress))
-                {
-                    string message = GetString(Resource.String.bmw_coding_elm_reject);
-                    handler.Invoke(false, false, null, null, message);
-                    return true;
-                }
+            if (_activityCommon.IsElmDevice(_deviceAddress))
+            {
+                string message = GetString(Resource.String.bmw_coding_elm_reject);
+                handler.Invoke(false, false, null, null, message);
+                return true;
             }
 
             if (_infoHttpClient == null)
