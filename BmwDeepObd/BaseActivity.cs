@@ -41,10 +41,14 @@ namespace BmwDeepObd
             private bool _actionBarVisible;
         }
 
+#if DEBUG
+        private static readonly string Tag = typeof(BaseActivity).FullName;
+#endif
         public const ConfigChanges ActivityConfigChanges =
             ConfigChanges.KeyboardHidden | ConfigChanges.Orientation | ConfigChanges.ScreenLayout |
             ConfigChanges.ScreenSize | ConfigChanges.SmallestScreenSize;
         private const int AutoFullScreenTimeout = 3000;
+        private const int LongPressTimeout = 2000;
         public const string InstanceDataKeyDefault = "InstanceData";
         public const string InstanceDataKeyBase = "InstanceDataBase";
         protected InstanceDataBase _instanceDataBase = new InstanceDataBase();
@@ -59,30 +63,12 @@ namespace BmwDeepObd
         protected bool _longPress;
         protected bool _fullScreen;
         protected bool _hasFocus;
+        protected long _downStartTime;
+        protected bool _downPressed;
         protected bool _autoFullScreenStarted;
         protected long _autoFullScreenStartTime;
         protected Timer _autoFullScreenTimer;
         protected Timer _memoryCheckTimer;
-
-        public bool LongPress
-        {
-            get => _longPress;
-            set
-            {
-                if (value && !_longPress)
-                {
-                    if (ActivityCommon.AutoHideTitleBar || ActivityCommon.SuppressTitleBar)
-                    {
-                        if (_touchShowTitle && !SupportActionBar.IsShowing)
-                        {
-                            Toast.MakeText(this, GetString(Resource.String.release_show_title), ToastLength.Short)?.Show();
-                        }
-                    }
-                }
-
-                _longPress = value;
-            }
-        }
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -297,22 +283,33 @@ namespace BmwDeepObd
         public override bool DispatchTouchEvent(MotionEvent ev)
         {
             _gestureDetector.OnTouchEvent(ev);
-            if (ev.Action == MotionEventActions.Up)
+#if DEBUG
+            Android.Util.Log.Debug(Tag, string.Format("DispatchTouchEvent: {0}", ev.Action));
+#endif
+            switch (ev.Action)
             {
-                if (LongPress)
-                {
-                    if (ActivityCommon.AutoHideTitleBar || ActivityCommon.SuppressTitleBar)
+                case MotionEventActions.Up:
+                    if (_downPressed && Stopwatch.GetTimestamp() - _downStartTime >= LongPressTimeout * ActivityCommon.TickResolMs)
                     {
-                        if (_touchShowTitle && !SupportActionBar.IsShowing)
+                        if (ActivityCommon.AutoHideTitleBar || ActivityCommon.SuppressTitleBar)
                         {
-                            SupportActionBar.Show();
-                            _instanceDataBase.ActionBarVisible = true;
+                            if (_touchShowTitle && !SupportActionBar.IsShowing)
+                            {
+                                SupportActionBar.Show();
+                                _instanceDataBase.ActionBarVisible = true;
+                            }
                         }
                     }
-                }
 
-                LongPress = false;
+                    _downPressed = false;
+                    break;
+
+                case MotionEventActions.Down:
+                    _downPressed = true;
+                    _downStartTime = Stopwatch.GetTimestamp();
+                    break;
             }
+
             return base.DispatchTouchEvent(ev);
         }
 
@@ -541,26 +538,24 @@ namespace BmwDeepObd
                 }
             }
 
-            public override bool OnDown(MotionEvent e)
-            {
-                if (_activity._actvityDestroyed)
-                {
-                    return true;
-                }
-
-                _activity.LongPress = false;
-                return true;
-            }
-
             public override void OnLongPress(MotionEvent e)
             {
                 if (_activity._actvityDestroyed)
                 {
                     return;
                 }
+#if DEBUG
+                Android.Util.Log.Debug(Tag, string.Format("OnLongPress: {0}", e.Action));
+#endif
+                if (ActivityCommon.AutoHideTitleBar || ActivityCommon.SuppressTitleBar)
+                {
+                    if (_activity._touchShowTitle && !_activity.SupportActionBar.IsShowing)
+                    {
+                        Toast.MakeText(_activity, _activity.GetString(Resource.String.release_show_title), ToastLength.Short)?.Show();
+                    }
+                }
 
                 base.OnLongPress(e);
-                _activity.LongPress = true;
             }
 
             public override bool OnFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
