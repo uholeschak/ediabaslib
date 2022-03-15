@@ -330,7 +330,8 @@ ILevel ship={2} current={3}</value>
     <value>Vehicle not connected.</value>
   </data>
   <data name="VehicleSeriesInvalid" xml:space="preserve">
-    <value>Detected vehicle series : {0}. Coding is available only for F series or higher.</value>
+    <value>Detected vehicle series : {0}.
+Coding is available only for F series or higher.</value>
   </data>
   <data name="VehicleSeriesNotDetected" xml:space="preserve">
     <value>Vehicle series not detected.</value>

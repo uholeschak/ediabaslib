@@ -330,7 +330,8 @@ IStufe produktion={2} aktuell={3}</value>
     <value>Fahrzeug nicht verbunden.</value>
   </data>
   <data name="VehicleSeriesInvalid" xml:space="preserve">
-    <value>Erkannte Fahrzeugserie: {0}. Kodieren ist nur verfügbar für F Modelle oder höher.</value>
+    <value>Erkannte Fahrzeugserie: {0}.
+Kodieren ist nur verfügbar für F Modelle oder höher.</value>
   </data>
   <data name="VehicleSeriesNotDetected" xml:space="preserve">
     <value>Fahrzeugserie nicht erkannt.</value>

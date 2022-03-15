@@ -681,7 +681,8 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Detected vehicle series : {0}. Coding is available only for F series or higher. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Detected vehicle series : {0}.
+        ///Coding is available only for F series or higher. ähnelt.
         /// </summary>
         internal static string VehicleSeriesInvalid {
             get {
