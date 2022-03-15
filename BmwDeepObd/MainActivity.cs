@@ -1248,29 +1248,10 @@ namespace BmwDeepObd
             IMenuItem cfgPageBmwCodingMenu = menu.FindItem(Resource.Id.menu_bmw_coding);
             if (cfgPageBmwCodingMenu != null)
             {
-                bool bmwCodingEnabled = false;
-                if (_activityCommon.IsBmwCodingInterface(_instanceData.DeviceAddress) &&
-                    !string.IsNullOrEmpty(_instanceData.ConfigFileName))
-                {
-                    bool errorPage = false;
-                    string sgbdFunctional = null;
-                    foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
-                    {
-                        if (pageInfo.ErrorsInfo != null)
-                        {
-                            errorPage = true;
-                            sgbdFunctional = pageInfo.ErrorsInfo.SgbdFunctional;
-                            break;
-                        }
-                    }
-
-                    if (!errorPage || !string.IsNullOrEmpty(sgbdFunctional))
-                    {
-                        bmwCodingEnabled = true;
-                    }
-                }
-
+                bool bmwCodingEnabled =
+                    _activityCommon.IsBmwCodingInterface(_instanceData.DeviceAddress) && !string.IsNullOrEmpty(_instanceData.ConfigFileName);
                 bool networkPresent = _activityCommon.IsNetworkPresent(out _);
+
                 cfgPageBmwCodingMenu.SetEnabled(bmwCodingEnabled && interfaceAvailable && !commActive && networkPresent);
                 cfgPageBmwCodingMenu.SetVisible(ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw);
             }
@@ -1477,8 +1458,34 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_bmw_coding:
+                {
+                    bool allowBmwCoding = false;
+                    bool errorPage = false;
+                    string sgbdFunctional = null;
+                    foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
+                    {
+                        if (pageInfo.ErrorsInfo != null)
+                        {
+                            errorPage = true;
+                            sgbdFunctional = pageInfo.ErrorsInfo.SgbdFunctional;
+                            break;
+                        }
+                    }
+
+                    if (!errorPage || !string.IsNullOrEmpty(sgbdFunctional))
+                    {
+                        allowBmwCoding = true;
+                    }
+
+                    if (!allowBmwCoding)
+                    {
+                        _activityCommon.ShowAlert(GetString(Resource.String.bmw_coding_requirement), Resource.String.alert_title_error);
+                        return true;
+                    }
+
                     StartBmwCoding();
                     return true;
+                }
 
                 case Resource.Id.menu_download_ecu:
                     DownloadEcuFiles(true);
