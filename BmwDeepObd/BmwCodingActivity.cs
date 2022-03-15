@@ -708,6 +708,23 @@ namespace BmwDeepObd
                 return false;
             }
 
+            if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth)
+            {
+                if (_activityCommon.MtcBtService)
+                {
+                    string message = GetString(Resource.String.bmw_coding_mtc_reject);
+                    handler.Invoke(false, false, null, null, message);
+                    return true;
+                }
+
+                if (_activityCommon.IsElmDevice(_deviceAddress))
+                {
+                    string message = GetString(Resource.String.bmw_coding_elm_reject);
+                    handler.Invoke(false, false, null, null, message);
+                    return true;
+                }
+            }
+
             if (_infoHttpClient == null)
             {
                 _infoHttpClient = new HttpClient(new HttpClientHandler()

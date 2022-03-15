@@ -699,6 +699,8 @@
   <string name="bmw_coding_connect_url_failed">Не удалось подключиться к серверу.\nХотите попробовать еще раз?</string>
   <string name="bmw_coding_connect_failed">Не удалось установить соединение.\nПожалуйста, проверьте подключение к сети.</string>
   <string name="bmw_coding_connection_active">Соединение с автомобилем активно.\nПри выходе со страницы общение будет прервано.\nСначала закройте соединение.\nВы все еще хотите покинуть страницу?</string>
+  <string name="bmw_coding_mtc_reject">Bluetooth-соединение Android-радио недостаточно стабильно для кодирования.\nВместо этого используйте смартфон.</string>
+  <string name="bmw_coding_elm_reject">Адаптеры ELM327 недостаточно стабильны для кодирования.\nПожалуйста, используйте адаптер Deep OBD, ENET или FTDI.</string>
 
   <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">Настройки устройства</string>
