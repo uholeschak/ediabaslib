@@ -599,7 +599,7 @@ namespace BmwDeepObd
                         }
 
                         ignoreDismiss = true;
-                        GetConnectionInfo((success, cancelled, url, urlTest, message, dayString, validSerial) =>
+                        bool infoResult = GetConnectionInfo((success, cancelled, url, urlTest, message, dayString, validSerial) =>
                         {
                             RunOnUiThread(() =>
                             {
@@ -662,6 +662,11 @@ namespace BmwDeepObd
                                 };
                             });
                         });
+
+                        if (!infoResult)
+                        {
+                            Finish();
+                        }
                     })
                     .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                     {
