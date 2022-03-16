@@ -1491,7 +1491,14 @@ namespace BmwDeepObd
 
                     if (!allowBmwCoding)
                     {
-                        _activityCommon.ShowAlert(GetString(Resource.String.bmw_coding_requirement), Resource.String.alert_title_error);
+                        string message = string.Empty;
+                        if (!string.IsNullOrEmpty(vehicleSeries))
+                        {
+                            message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.bmw_coding_series), vehicleSeries) + "\n";
+                        }
+
+                        message += GetString(Resource.String.bmw_coding_requirement);
+                        _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
                         return true;
                     }
 
