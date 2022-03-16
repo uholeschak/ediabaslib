@@ -65,7 +65,7 @@
 
       <string name="uw_rpm">Drehzahl</string>
     </strings>
-    <read_errors sgbd_functional="e60.prg" >
+    <read_errors sgbd_functional="e60.prg" vehicle_series="E61" >
       <ecu name="CAS" sgbd="d_cas" />
       <ecu name="DDE" sgbd="d_motor" results="F_UW_KM;F_UW_ANZ" />
       <ecu name="EKPS" sgbd="d_ekp" />

@@ -557,6 +557,13 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+    <xs:attribute name="vehicle_series" type="string1-type" use="optional">
+      <xs:annotation>
+          <xs:documentation>
+              Vehicle series name.
+          </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="code-type" mixed="true">
