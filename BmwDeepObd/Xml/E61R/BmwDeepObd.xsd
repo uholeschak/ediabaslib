@@ -234,14 +234,21 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-      <xs:attribute name="search_abort_index" type="xs:int" default="-1" use="optional">
-          <xs:annotation>
-              <xs:documentation>
-                  Index of the last search abort (VAG only). A values of -1 specifies no abort.
-                  If omitted -1 is the default.
-              </xs:documentation>
-          </xs:annotation>
-      </xs:attribute>
+    <xs:attribute name="search_abort_index" type="xs:int" default="-1" use="optional">
+      <xs:annotation>
+          <xs:documentation>
+              Index of the last search abort (VAG only). A values of -1 specifies no abort.
+              If omitted -1 is the default.
+          </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="vehicle_series" type="string1-type" use="optional">
+      <xs:annotation>
+          <xs:documentation>
+              Vehicle series name.
+          </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="display-type">

@@ -7715,6 +7715,8 @@ namespace BmwDeepObd
                     attr?.Remove();
                     attr = globalNode.Attribute("search_abort_index");
                     attr?.Remove();
+                    attr = globalNode.Attribute("vehicle_series");
+                    attr?.Remove();
                 }
 
                 XAttribute logPathAttr = globalNode.Attribute("log_path");
@@ -7775,6 +7777,11 @@ namespace BmwDeepObd
                 if (_instanceData.EcuSearchAbortIndex >= 0)
                 {
                     globalNode.Add(new XAttribute("search_abort_index", _instanceData.EcuSearchAbortIndex));
+                }
+
+                if (!string.IsNullOrEmpty(_instanceData.VehicleType))
+                {
+                    globalNode.Add(new XAttribute("vehicle_series", _instanceData.VehicleType));
                 }
 
                 XElement includeNode = document.Root.Element(ns + "include");
