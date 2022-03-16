@@ -7345,11 +7345,19 @@ namespace BmwDeepObd
                 {
                     errorsNodeNew.ReplaceAttributes(from el in errorsNodeOld.Attributes() select new XAttribute(el));
                 }
+
                 XAttribute attrSgbdFunc = errorsNodeNew.Attribute("sgbd_functional");
                 attrSgbdFunc?.Remove();
                 if (!string.IsNullOrEmpty(_instanceData.SgbdFunctional))
                 {
                     errorsNodeNew.Add(new XAttribute("sgbd_functional", _instanceData.SgbdFunctional));
+                }
+
+                XAttribute attrVehicleSeries = errorsNodeNew.Attribute("vehicle_series");
+                attrVehicleSeries?.Remove();
+                if (!string.IsNullOrEmpty(_instanceData.VehicleType))
+                {
+                    errorsNodeNew.Add(new XAttribute("vehicle_series", _instanceData.VehicleType));
                 }
 
                 foreach (EcuInfo ecuInfo in _ecuList)
