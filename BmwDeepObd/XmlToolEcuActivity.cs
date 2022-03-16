@@ -670,13 +670,9 @@ namespace BmwDeepObd
             bool bmwCodingEnabled = false;
             if (_activityCommon.IsBmwCodingInterface(_deviceAddress))
             {
-                if (!string.IsNullOrEmpty(_vehicleType) && _vehicleType.Length > 0)
+                if (ActivityCommon.IsBmwCodingSeries(_vehicleType))
                 {
-                    char typeChar = char.ToUpperInvariant(_vehicleType[0]);
-                    if (char.IsLetter(typeChar) && typeChar > 'E')
-                    {
-                        bmwCodingEnabled = true;
-                    }
+                    bmwCodingEnabled = true;
                 }
             }
 
