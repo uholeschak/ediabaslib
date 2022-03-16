@@ -669,6 +669,7 @@
 
   <!-- BMW Coding Activity -->
   <string name="bmw_coding_title">BMW Coding</string>
+  <string name="bmw_coding_series">The current vehicle series is: {0}.</string>
   <string name="bmw_coding_requirement">BMW coding is only available for F series or higher.</string>
   <string name="bmw_coding_network_error">Loading web page failed, retrying.</string>
   <string formatted="false" name="bmw_coding_connect_request">BMW coding is an online service and requires a fast and stable internet connection.\nIt\'s only available for F series or higher.\nWhile coding a high current charger is required.\nIn the testing phase it will be free, later a license will be required to pay the server costs.\nOriginal &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md#buy-a-preprogrammed-adapter\'&gt;Deep OBD adapters&lt;/a&gt; contain a license for coding of one vehicle.\nDo you want to continue?</string>
