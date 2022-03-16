@@ -1462,19 +1462,32 @@ namespace BmwDeepObd
                     bool allowBmwCoding = false;
                     bool errorPage = false;
                     string sgbdFunctional = null;
+                    string vehicleSeries = null;
                     foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
                     {
                         if (pageInfo.ErrorsInfo != null)
                         {
                             errorPage = true;
                             sgbdFunctional = pageInfo.ErrorsInfo.SgbdFunctional;
+                            vehicleSeries = pageInfo.ErrorsInfo.VehicleSeries;
                             break;
                         }
                     }
 
-                    if (!errorPage || !string.IsNullOrEmpty(sgbdFunctional))
+                    if (!string.IsNullOrEmpty(vehicleSeries) && vehicleSeries.Length > 0)
                     {
-                        allowBmwCoding = true;
+                        char typeChar = char.ToUpperInvariant(vehicleSeries[0]);
+                        if (char.IsLetter(typeChar) && typeChar > 'E')
+                        {
+                            allowBmwCoding = true;
+                        }
+                    }
+                    else
+                    {
+                        if (!errorPage || !string.IsNullOrEmpty(sgbdFunctional))
+                        {
+                            allowBmwCoding = true;
+                        }
                     }
 
                     if (!allowBmwCoding)
