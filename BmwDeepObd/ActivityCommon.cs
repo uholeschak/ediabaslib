@@ -2728,6 +2728,19 @@ namespace BmwDeepObd
             return allowCoding;
         }
 
+        public static bool IsBmwCodingSeries(string series)
+        {
+            if (!string.IsNullOrEmpty(series) && series.Length > 0)
+            {
+                char typeChar = char.ToUpperInvariant(series[0]);
+                if (char.IsLetter(typeChar) && typeChar > 'E')
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
         public string GetEnetAdapterIp(out string defaultPassword)
         {

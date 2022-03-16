@@ -1476,8 +1476,7 @@ namespace BmwDeepObd
 
                     if (!string.IsNullOrEmpty(vehicleSeries) && vehicleSeries.Length > 0)
                     {
-                        char typeChar = char.ToUpperInvariant(vehicleSeries[0]);
-                        if (char.IsLetter(typeChar) && typeChar > 'E')
+                        if (ActivityCommon.IsBmwCodingSeries(vehicleSeries))
                         {
                             allowBmwCoding = true;
                         }
