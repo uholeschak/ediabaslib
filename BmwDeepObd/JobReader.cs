@@ -298,6 +298,7 @@ namespace BmwDeepObd
         private bool _logTagsPresent;
         private bool _compatIdsUsed;
         private string _interfaceName = string.Empty;
+        private string _vehicleSeries = string.Empty;
         private string _manufacturerName = string.Empty;
         private string _xmlFileNamePages = string.Empty;
         private ActivityCommon.ManufacturerType _manufacturerType = ActivityCommon.ManufacturerType.Bmw;
@@ -318,6 +319,8 @@ namespace BmwDeepObd
         public string ManufacturerName => _manufacturerName;
 
         public string InterfaceName => _interfaceName;
+
+        public string VehicleSeries => _vehicleSeries;
 
         public string XmlFileNamePages => _xmlFileNamePages;
 
@@ -343,6 +346,7 @@ namespace BmwDeepObd
             _compatIdsUsed = false;
             _manufacturerName = string.Empty;
             _interfaceName = string.Empty;
+            _vehicleSeries = string.Empty;
             _xmlFileNamePages = string.Empty;
         }
 
@@ -416,6 +420,12 @@ namespace BmwDeepObd
                     if (attrib != null)
                     {
                         _interfaceName = attrib.Value;
+                    }
+
+                    attrib = xnodeGlobal.Attributes["vehicle_series"];
+                    if (attrib != null)
+                    {
+                        _vehicleSeries = attrib.Value;
                     }
                 }
 
