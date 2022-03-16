@@ -153,13 +153,16 @@ namespace BmwDeepObd
 
         public class ErrorsInfo
         {
-            public ErrorsInfo(string sgbdFunctional, List<EcuInfo> ecuList)
+            public ErrorsInfo(string sgbdFunctional, string vehicleSeries, List<EcuInfo> ecuList)
             {
                 SgbdFunctional = sgbdFunctional;
+                VehicleSeries = vehicleSeries;
                 EcuList = ecuList;
             }
 
             public string SgbdFunctional { get; }
+
+            public string VehicleSeries { get; }
 
             public List<EcuInfo> EcuList { get; }
         }
@@ -712,8 +715,12 @@ namespace BmwDeepObd
                             if (string.Compare(xnodePageChild.Name, "read_errors", StringComparison.OrdinalIgnoreCase) == 0)
                             {
                                 string sgbdFunctional = string.Empty;
+                                string vehicleSeries = string.Empty;
                                 attrib = xnodePageChild.Attributes["sgbd_functional"];
                                 if (attrib != null) sgbdFunctional = attrib.Value;
+
+                                attrib = xnodePageChild.Attributes["vehicle_series"];
+                                if (attrib != null) vehicleSeries = attrib.Value;
 
                                 List<EcuInfo> ecuList = new List<EcuInfo>();
                                 foreach (XmlNode xnodeErrorsChild in xnodePageChild.ChildNodes)
@@ -741,7 +748,7 @@ namespace BmwDeepObd
                                         ecuList.Add(new EcuInfo(ecuName, sgbd, vagDataFileName, vagUdsFileName, results));
                                     }
                                 }
-                                errorsInfo = new ErrorsInfo(sgbdFunctional, ecuList);
+                                errorsInfo = new ErrorsInfo(sgbdFunctional, vehicleSeries, ecuList);
                             }
                             if (string.Compare(xnodePageChild.Name, "code", StringComparison.OrdinalIgnoreCase) == 0)
                             {

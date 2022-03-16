@@ -43,7 +43,7 @@
       <string name="ULF">ULF Universale Ladefreisprechelektronik</string>
       <string name="FZD">FZD Funtionszentrum Dach</string>
     </strings>
-    <read_errors>
+    <read_errors vehicle_series="E90" >
       <ecu name="CAS" sgbd="d_cas" />
       <ecu name="DDE" sgbd="d_motor" />
       <ecu name="EKPS" sgbd="d_ekp" />

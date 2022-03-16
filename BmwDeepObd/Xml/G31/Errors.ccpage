@@ -28,7 +28,7 @@
       <string name="!ECU#ZBE">ZBE</string>
       <string name="!ECU#ZGW">ZGW</string>
     </strings>
-    <read_errors sgbd_functional="f01">
+    <read_errors sgbd_functional="f01" vehicle_series="G31" >
       <ecu name="!ECU#DME/DDE" sgbd="D83BX7C0" />
       <ecu name="!ECU#GWS" sgbd="GWS_G11B" />
       <ecu name="!ECU#AIRBAG" sgbd="ACSM5" />
