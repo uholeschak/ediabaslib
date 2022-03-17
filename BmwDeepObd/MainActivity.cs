@@ -1460,23 +1460,7 @@ namespace BmwDeepObd
                 case Resource.Id.menu_bmw_coding:
                 {
                     bool allowBmwCoding = false;
-                    bool errorPage = false;
-                    string sgbdFunctional = null;
                     string vehicleSeries = ActivityCommon.JobReader.VehicleSeries;
-
-                    if (string.IsNullOrEmpty(vehicleSeries))
-                    {
-                        foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
-                        {
-                            if (pageInfo.ErrorsInfo != null)
-                            {
-                                errorPage = true;
-                                sgbdFunctional = pageInfo.ErrorsInfo.SgbdFunctional;
-                                vehicleSeries = pageInfo.ErrorsInfo.VehicleSeries;
-                                break;
-                            }
-                        }
-                    }
 
                     if (!string.IsNullOrEmpty(vehicleSeries) && vehicleSeries.Length > 0)
                     {
@@ -1487,7 +1471,10 @@ namespace BmwDeepObd
                     }
                     else
                     {
-                        if (!errorPage || !string.IsNullOrEmpty(sgbdFunctional))
+                        string sgbdFunctional = ActivityCommon.JobReader.SgbdFunctional;
+                        JobReader.PageInfo errorPage = ActivityCommon.JobReader.ErrorPage;
+
+                        if (errorPage == null || !string.IsNullOrEmpty(sgbdFunctional))
                         {
                             allowBmwCoding = true;
                         }
