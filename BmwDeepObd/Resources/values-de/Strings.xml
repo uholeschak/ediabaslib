@@ -27,7 +27,7 @@
   <string name="overlay_permission_denied">Für die Hintergrundkommunikation ist die Anzeige über anderen Apps notwendig.\nWollen Sie die App Einstellungen öffnen?</string>
   <string name="store_settings_failed">Das Speichern der Einstellungen ist fehlgeschlagen. Bitte reinstallieren Sie die App.</string>
   <string name="store_settings_filename">Die Einstellungen wurden gespeichert unter:</string>
-  <string name="release_show_title">Loslassen um Titel anzuzeigen</string>
+  <string name="long_click_show_title">Lang-Klick um Titel anzuzeigen</string>
   <string name="low_memory_detected">Der Systemspeicher ist knapp!</string>
   <string name="bt_enable">Bluetooth ist nicht aktiviert.\nWollen Sie es jetzt aktivieren?</string>
   <string name="wifi_enable">Wi-Fi ist nicht aktiviert.\nWollen Sie es jetzt aktivieren oder den Access Point auswählen?</string>
