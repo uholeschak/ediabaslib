@@ -407,7 +407,6 @@
       <Link>HexFiles\Type3\ELM327V15.X.production.hex</Link>
     </EmbeddedResource>
     <None Include=".editorconfig" />
-    <None Include="app.config" />
     <None Include="Assets\Ecu.bin" />
     <None Include="packages.config" />
     <ProguardConfiguration Include="proguard.cfg" />
