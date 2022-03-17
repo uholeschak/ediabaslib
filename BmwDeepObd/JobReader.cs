@@ -292,11 +292,13 @@ namespace BmwDeepObd
         public const int GaugesPortraitDefault = 2;
         public const int GaugesLandscapeDefault = 4;
         private readonly List<PageInfo> _pageList = new List<PageInfo>();
+        private PageInfo _errorPage = null;
         private string _ecuPath = string.Empty;
         private string _logPath = string.Empty;
         private bool _appendLog;
         private bool _logTagsPresent;
         private bool _compatIdsUsed;
+        private string _sgbdFunctional = string.Empty;
         private string _interfaceName = string.Empty;
         private string _vehicleSeries = string.Empty;
         private string _manufacturerName = string.Empty;
@@ -305,6 +307,8 @@ namespace BmwDeepObd
         private ActivityCommon.InterfaceType _interfaceType = ActivityCommon.InterfaceType.None;
 
         public List<PageInfo> PageList => _pageList;
+
+        public PageInfo ErrorPage => _errorPage;
 
         public string EcuPath => _ecuPath;
 
@@ -315,6 +319,8 @@ namespace BmwDeepObd
         public bool LogTagsPresent => _logTagsPresent;
 
         public bool CompatIdsUsed => _compatIdsUsed;
+
+        public string SgbdFunctional => _sgbdFunctional;
 
         public string ManufacturerName => _manufacturerName;
 
@@ -340,10 +346,12 @@ namespace BmwDeepObd
         public void Clear()
         {
             _pageList.Clear();
+            _errorPage = null;
             _ecuPath = string.Empty;
             _logPath = string.Empty;
             _logTagsPresent = false;
             _compatIdsUsed = false;
+            _sgbdFunctional = string.Empty;
             _manufacturerName = string.Empty;
             _interfaceName = string.Empty;
             _vehicleSeries = string.Empty;
@@ -808,14 +816,25 @@ namespace BmwDeepObd
                     }
                 }
 
-                if (_manufacturerType == ActivityCommon.ManufacturerType.Bmw)
+                foreach (PageInfo pageInfo in _pageList)
                 {
-                    foreach (PageInfo pageInfo in _pageList)
+                    if (pageInfo.CompatIdsUsed)
                     {
-                        if (pageInfo.CompatIdsUsed)
+                        _compatIdsUsed = true;
+                    }
+
+                    if (pageInfo.ErrorsInfo != null)
+                    {
+                        _errorPage = pageInfo;
+
+                        if (string.IsNullOrEmpty(_vehicleSeries))
                         {
-                            _compatIdsUsed = true;
-                            break;
+                            _vehicleSeries = pageInfo.ErrorsInfo.VehicleSeries;
+                        }
+
+                        if (string.IsNullOrEmpty(_sgbdFunctional))
+                        {
+                            _sgbdFunctional = pageInfo.ErrorsInfo.SgbdFunctional;
                         }
                     }
                 }
