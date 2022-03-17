@@ -37,6 +37,8 @@ namespace BmwDeepObd
 
             public bool LowMemoryShown { get; set; }
 
+            public bool LongClickShown { get; set; }
+
             private bool _actionBarVisibilitySet;
             private bool _actionBarVisible;
         }
@@ -327,6 +329,11 @@ namespace BmwDeepObd
                             {
                                 SupportActionBar.Show();
                                 _instanceDataBase.ActionBarVisible = true;
+                                if (!_instanceDataBase.LongClickShown)
+                                {
+                                    _instanceDataBase.LongClickShown = true;
+                                    Toast.MakeText(this, GetString(Resource.String.long_click_show_title), ToastLength.Short)?.Show();
+                                }
                             }
                         }, LongPressTimeout);
                     }
