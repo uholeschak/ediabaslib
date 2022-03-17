@@ -1485,7 +1485,7 @@ namespace BmwDeepObd
                         string message = string.Empty;
                         if (!string.IsNullOrEmpty(vehicleSeries))
                         {
-                            message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.bmw_coding_series), vehicleSeries) + "\n";
+                            message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.bmw_coding_series), vehicleSeries.ToUpperInvariant()) + "\n";
                         }
 
                         message += GetString(Resource.String.bmw_coding_requirement);
