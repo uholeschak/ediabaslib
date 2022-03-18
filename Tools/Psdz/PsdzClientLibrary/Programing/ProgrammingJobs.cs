@@ -830,6 +830,7 @@ namespace PsdzClient.Programing
                         log.InfoFormat(CultureInfo.InvariantCulture, "Executing backup TAL");
                         TalExecutionSettings talExecutionSettings = ProgrammingUtils.GetTalExecutionSettings(ProgrammingService);
                         talExecutionSettings.Parallel = false;
+                        talExecutionSettings.TaMaxRepeat = 3;
 
                         IPsdzTal backupTalResult = ProgrammingService.Psdz.IndividualDataRestoreService.ExecuteAsyncBackupTal(
                             PsdzContext.Connection, PsdzContext.IndividualDataBackupTal, null, PsdzContext.FaTarget, psdzVin, talExecutionSettings, PsdzContext.PathToBackupData);
