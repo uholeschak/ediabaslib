@@ -1334,6 +1334,16 @@ namespace WebPsdzClient.App_Data
             return false;
         }
 
+        public static bool IsFunctionalAddress(byte[] bmwFastTel)
+        {
+            if (bmwFastTel == null || bmwFastTel.Length < 3)
+            {
+                return false;
+            }
+
+            return (bmwFastTel[0] & 0xC0) == 0xC0;
+        }
+
 #if EDIABAS_CONNECTION
         private bool AbortEdiabasJob()
         {
@@ -1476,7 +1486,7 @@ namespace WebPsdzClient.App_Data
                                         }
                                         else
                                         {
-                                            bool funcAddress = (bmwFastTel[0] & 0xC0) == 0xC0; // functional address
+                                            bool funcAddress = IsFunctionalAddress(bmwFastTel);
                                             List<string> cachedResponseList = null;
                                             string sendDataString = BitConverter.ToString(bmwFastTel).Replace("-", "");
                                             if (funcAddress)
@@ -1891,7 +1901,7 @@ namespace WebPsdzClient.App_Data
                             if (bmwFastTel != null)
                             {
                                 byte[] sendData = bmwFastTel;
-                                bool funcAddress = (sendData[0] & 0xC0) == 0xC0; // functional address
+                                bool funcAddress = IsFunctionalAddress(bmwFastTel);
 
                                 string sendString = BitConverter.ToString(sendData).Replace("-", " ");
                                 log.InfoFormat("VehicleThread Transmit Data={0}", sendString);
