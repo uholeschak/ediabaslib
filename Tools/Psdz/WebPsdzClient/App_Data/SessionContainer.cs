@@ -1861,7 +1861,8 @@ namespace WebPsdzClient.App_Data
                 byte serviceRequest = requestData[dataOffsetRequest];
                 if (serviceRequest == 0x10 && vehicleResponse.ResponseList.Count == 1)
                 {
-                    log.InfoFormat("PatchVehicleResponse Service={0}", serviceRequest);
+                    log.InfoFormat("PatchVehicleResponse Service={0:X02}", serviceRequest);
+
                     string response = vehicleResponse.ResponseList[0];
                     byte[] responseData = EdiabasNet.HexToByteArray(response);
                     int dataOffsetResponse = CalculateDataOffset(responseData);
