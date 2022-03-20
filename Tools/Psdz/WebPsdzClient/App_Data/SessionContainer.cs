@@ -563,7 +563,7 @@ namespace WebPsdzClient.App_Data
         private const int TcpTesterAddr = 0xF4;
         private const int VehicleReceiveTimeout = 25000;
         private const long Nr78Delay = 1000;
-        private const long Nr78FirstDelay = 5000;
+        private const long Nr78FirstDelay = 4000;
         private const long Nr78RetryMax = VehicleReceiveTimeout / Nr78Delay;
         private const int ThreadFinishTimeout = VehicleReceiveTimeout + 5000;
         private const string SqlDataBase = ";Database=bmw_coding";
