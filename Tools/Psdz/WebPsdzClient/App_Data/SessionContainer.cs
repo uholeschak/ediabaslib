@@ -561,6 +561,7 @@ namespace WebPsdzClient.App_Data
         private const int TcpSendBufferSize = 1400;
         private const int TcpSendTimeout = 5000;
         private const int TcpTesterAddr = 0xF4;
+        private const int AdditionalConnectTimeout = 3000;
         private const int VehicleReceiveTimeout = 25000;
         private const long Nr78Delay = 1000;
         private const long Nr78FirstDelay = 4000;
@@ -1869,7 +1870,7 @@ namespace WebPsdzClient.App_Data
                     if (dataOffsetResponse >= 0)
                     {
                         byte serviceResponse = responseData[dataOffsetResponse];
-                        if (serviceResponse == (0x10 | 0x40) && responseData.Length >= dataOffsetResponse + 6)
+                        if (serviceResponse == (0x10 | 0x40) && responseData.Length == dataOffsetResponse + 6)
                         {
                             string responseOrgString = BitConverter.ToString(responseData).Replace("-", " ");
 
@@ -2665,7 +2666,7 @@ namespace WebPsdzClient.App_Data
 
             string remoteHost = string.Format(CultureInfo.InvariantCulture, "127.0.0.1:{0}:{1}", diagPort, controlPort);
             Cts = new CancellationTokenSource();
-            ConnectVehicleTask(istaFolder, remoteHost, false).ContinueWith(task =>
+            ConnectVehicleTask(istaFolder, remoteHost, false, AdditionalConnectTimeout).ContinueWith(task =>
             {
                 if (!task.Result)
                 {
@@ -2690,10 +2691,10 @@ namespace WebPsdzClient.App_Data
             UpdateDisplay();
         }
 
-        public async Task<bool> ConnectVehicleTask(string istaFolder, string remoteHost, bool useIcom)
+        public async Task<bool> ConnectVehicleTask(string istaFolder, string remoteHost, bool useIcom, int addTimeout)
         {
             // ReSharper disable once ConvertClosureToMethodGroup
-            return await Task.Run(() => ProgrammingJobs.ConnectVehicle(Cts, istaFolder, remoteHost, useIcom)).ConfigureAwait(false);
+            return await Task.Run(() => ProgrammingJobs.ConnectVehicle(Cts, istaFolder, remoteHost, useIcom, addTimeout)).ConfigureAwait(false);
         }
 
         public void DisconnectVehicle()
