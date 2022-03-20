@@ -24,7 +24,7 @@ namespace WebPsdzClient.App_Data
     {
         private class Nr78Data
         {
-            public Nr78Data(byte addr, byte[] nr78Tel, long firstDelay = Nr78Delay)
+            public Nr78Data(byte addr, byte[] nr78Tel, long firstDelay)
             {
                 Addr = addr;
                 Nr78Tel = nr78Tel;
@@ -563,6 +563,7 @@ namespace WebPsdzClient.App_Data
         private const int TcpTesterAddr = 0xF4;
         private const int VehicleReceiveTimeout = 25000;
         private const long Nr78Delay = 1000;
+        private const long Nr78FirstDelay = 5000;
         private const long Nr78RetryMax = VehicleReceiveTimeout / Nr78Delay;
         private const int ThreadFinishTimeout = VehicleReceiveTimeout + 5000;
         private const string SqlDataBase = ";Database=bmw_coding";
@@ -1549,13 +1550,18 @@ namespace WebPsdzClient.App_Data
                                                 {
                                                     byte sourceAddr = bmwFastTel[1];
                                                     int nr78DictSize;
+                                                    bool keyExists;
                                                     lock (enetTcpClientData.Nr78Dict)
                                                     {
-                                                        enetTcpClientData.Nr78Dict[sourceAddr] = new Nr78Data(sourceAddr, nr78Tel, funcAddress ? Nr78Delay : 5000);
+                                                        keyExists = enetTcpClientData.Nr78Dict.ContainsKey(sourceAddr);
+                                                        enetTcpClientData.Nr78Dict[sourceAddr] = new Nr78Data(sourceAddr, nr78Tel, funcAddress ? Nr78Delay : Nr78FirstDelay);
                                                         nr78DictSize = enetTcpClientData.Nr78Dict.Count;
                                                     }
 
-                                                    log.InfoFormat("TcpThread Enqueued QueueSize={0}, Nr78Size={1}, Data={2}", queueSize, nr78DictSize, recString);
+                                                    string nr78String = BitConverter.ToString(nr78Tel).Replace("-", " ");
+                                                    log.InfoFormat("TcpThread Added NR78 Overwrite={0}, Nr78Size={1}, Data={2}", keyExists, nr78DictSize, nr78String);
+
+                                                    log.InfoFormat("TcpThread Enqueued QueueSize={0}, Data={1}", queueSize, recString);
                                                     enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
                                                     _vehicleThreadWakeEvent.Set();
                                                 }
