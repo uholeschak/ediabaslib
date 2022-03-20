@@ -123,7 +123,7 @@ namespace PsdzClient.Programing
         };
         public OptionType[] OptionTypes => _optionTypes;
 
-        public const int MaxCacheRetries = 3;
+        public const int CodingConnectionTimeout = 10000;
 
         private bool _disposed;
         public ClientContext ClientContext { get; private set; }
@@ -683,6 +683,7 @@ namespace PsdzClient.Programing
 
                     log.InfoFormat(CultureInfo.InvariantCulture, "Checking NCD availability");
                     PsdzSecureCodingConfigCto secureCodingConfig = SecureCodingConfigWrapper.GetSecureCodingConfig(ProgrammingService);
+                    secureCodingConfig.ConnectionTimeout = CodingConnectionTimeout;
                     IPsdzCheckNcdResultEto psdzCheckNcdResultEto = ProgrammingService.Psdz.SecureCodingService.CheckNcdAvailabilityForGivenTal(PsdzContext.Tal, secureCodingConfig.NcdRootDirectory, psdzVin);
                     log.InfoFormat(CultureInfo.InvariantCulture, "Ncd EachSigned: {0}", psdzCheckNcdResultEto.isEachNcdSigned);
                     foreach (IPsdzDetailedNcdInfoEto detailedNcdInfo in psdzCheckNcdResultEto.DetailedNcdStatus)
@@ -831,7 +832,7 @@ namespace PsdzClient.Programing
                         TalExecutionSettings talExecutionSettings = ProgrammingUtils.GetTalExecutionSettings(ProgrammingService);
                         talExecutionSettings.Parallel = false;
                         talExecutionSettings.TaMaxRepeat = 3;
-                        ((PsdzSecureCodingConfigCto)talExecutionSettings.SecureCodingConfig).ConnectionTimeout = 10000;
+                        ((PsdzSecureCodingConfigCto)talExecutionSettings.SecureCodingConfig).ConnectionTimeout = CodingConnectionTimeout;
 
                         IPsdzTal backupTalResult = ProgrammingService.Psdz.IndividualDataRestoreService.ExecuteAsyncBackupTal(
                             PsdzContext.Connection, PsdzContext.IndividualDataBackupTal, null, PsdzContext.FaTarget, psdzVin, talExecutionSettings, PsdzContext.PathToBackupData);
