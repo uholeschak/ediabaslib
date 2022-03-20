@@ -1121,6 +1121,40 @@ namespace WebPsdzClient.App_Data
             return bmwFastTel.ToArray();
         }
 
+        private int CalculateDataOffset(byte[] bmwFastTel)
+        {
+            if (bmwFastTel == null || bmwFastTel.Length < 3)
+            {
+                return -1;
+            }
+
+            int dataOffset = 3;
+            int dataLength = bmwFastTel[0] & 0x3F;
+            if (dataLength == 0)
+            {   // with length byte
+                if (bmwFastTel[3] == 0)
+                {
+                    if (bmwFastTel.Length < 6)
+                    {
+                        return -1;
+                    }
+
+                    dataOffset = 6;
+                }
+                else
+                {
+                    if (bmwFastTel.Length < 4)
+                    {
+                        return -1;
+                    }
+
+                    dataOffset = 4;
+                }
+            }
+
+            return dataOffset;
+        }
+
         private byte[] CreateNr78Tel(byte[] bmwFastTel)
         {
             if (bmwFastTel == null || bmwFastTel.Length < 3)
@@ -1130,28 +1164,10 @@ namespace WebPsdzClient.App_Data
 
             byte sourceAddr = bmwFastTel[2];
             byte targetAddr = bmwFastTel[1];
-            int dataOffset = 3;
-            int dataLength = bmwFastTel[0] & 0x3F;
-            if (dataLength == 0)
-            {   // with length byte
-                if (bmwFastTel[3] == 0)
-                {
-                    if (bmwFastTel.Length < 6)
-                    {
-                        return null;
-                    }
-
-                    dataOffset = 6;
-                }
-                else
-                {
-                    if (bmwFastTel.Length < 4)
-                    {
-                        return null;
-                    }
-
-                    dataOffset = 4;
-                }
+            int dataOffset = CalculateDataOffset(bmwFastTel);
+            if (dataOffset < 0)
+            {
+                return null;
             }
 
             List<byte> nr78Tel = new List<byte>();
@@ -1771,7 +1787,7 @@ namespace WebPsdzClient.App_Data
             {
                 return;
             }
-            if (string.IsNullOrEmpty(vehicleResponse.Request) || vehicleResponse.ResponseList.Count == 0)
+            if (string.IsNullOrEmpty(vehicleResponse.Request) || vehicleResponse.ResponseList == null || vehicleResponse.ResponseList.Count == 0)
             {
                 log.ErrorFormat("LogVehicleResponse No Data");
                 return;
@@ -1821,6 +1837,53 @@ namespace WebPsdzClient.App_Data
                 catch (Exception ex)
                 {
                     log.ErrorFormat("LogVehicleResponse Exception: {0}", ex.Message);
+                }
+            }
+        }
+
+        private void PatchVehicleResponse(PsdzVehicleHub.VehicleResponse vehicleResponse)
+        {
+            if (vehicleResponse == null)
+            {
+                return;
+            }
+
+            if (string.IsNullOrEmpty(vehicleResponse.Request) || vehicleResponse.ResponseList == null || vehicleResponse.ResponseList.Count == 0)
+            {
+                log.ErrorFormat("PatchVehicleResponse No Data");
+                return;
+            }
+
+            byte[] requestData = EdiabasNet.HexToByteArray(vehicleResponse.Request);
+            int dataOffsetRequest = CalculateDataOffset(requestData);
+            if (dataOffsetRequest >= 0)
+            {
+                byte serviceRequest = requestData[dataOffsetRequest];
+                if (serviceRequest == 0x10 && vehicleResponse.ResponseList.Count == 1)
+                {
+                    log.InfoFormat("PatchVehicleResponse Service={0}", serviceRequest);
+                    string response = vehicleResponse.ResponseList[0];
+                    byte[] responseData = EdiabasNet.HexToByteArray(response);
+                    int dataOffsetResponse = CalculateDataOffset(responseData);
+                    if (dataOffsetResponse >= 0)
+                    {
+                        byte serviceResponse = responseData[dataOffsetResponse];
+                        if (serviceResponse == (0x10 | 0x40) && responseData.Length >= dataOffsetResponse + 6)
+                        {
+                            string responseOrgString = BitConverter.ToString(responseData).Replace("-", " ");
+
+                            uint p2Max = 5000;
+                            uint p2Start = 10000;
+                            responseData[dataOffsetResponse + 2] = (byte)((p2Max >> 8) & 0xFF);
+                            responseData[dataOffsetResponse + 3] = (byte)(p2Max & 0xFF);
+                            responseData[dataOffsetResponse + 4] = (byte)((p2Start >> 8) & 0xFF);
+                            responseData[dataOffsetResponse + 5] = (byte)(p2Start & 0xFF);
+
+                            string responsePatchString = BitConverter.ToString(responseData).Replace("-", " ");
+                            log.InfoFormat("PatchVehicleResponse Patching From={0} To={1}", responseOrgString, responsePatchString);
+                            vehicleResponse.ResponseList[0] = responsePatchString.Replace(" ", "");
+                        }
+                    }
                 }
             }
         }
@@ -1987,6 +2050,7 @@ namespace WebPsdzClient.App_Data
                                             else
                                             {
                                                 LogVehicleResponse(vehicleResponse);
+                                                PatchVehicleResponse(vehicleResponse);
                                                 if (vehicleResponse.ConnectTimeouts.HasValue)
                                                 {
                                                     ConnectTimeouts = vehicleResponse.ConnectTimeouts;
