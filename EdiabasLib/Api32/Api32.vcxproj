@@ -5,9 +5,17 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -26,7 +34,21 @@
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CLRSupport>true</CLRSupport>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CLRSupport>true</CLRSupport>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CLRSupport>true</CLRSupport>
@@ -39,7 +61,13 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -47,9 +75,19 @@
     <OutDir>$(Configuration)\</OutDir>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <TargetName>Api64</TargetName>
+    <OutDir>$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <TargetName>Api64</TargetName>
+    <OutDir>$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -68,10 +106,43 @@
     <PreBuildEvent />
     <PreBuildEvent />
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN64;_DEBUG;_CRT_SECURE_NO_WARNINGS;WINVER=0x0601;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>/FU"$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\ApiInternal.netmodule" /FU"$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\EdiabasLib.netmodule" %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\ApiInternal.netmodule;$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\EdiabasLib.netmodule;$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\InTheHand.Net.Personal.netmodule</AdditionalDependencies>
+      <AdditionalOptions>/LTCG %(AdditionalOptions)</AdditionalOptions>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+    <PreBuildEvent />
+    <PreBuildEvent />
+    <PreBuildEvent />
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CRT_SECURE_NO_WARNINGS;WINVER=0x0601;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>/FU"$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\ApiInternal.netmodule" /FU"$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\EdiabasLib.netmodule" %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\ApiInternal.netmodule;$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\EdiabasLib.netmodule;$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\InTheHand.Net.Personal.netmodule</AdditionalDependencies>
+      <AdditionalOptions>/LTCG %(AdditionalOptions)</AdditionalOptions>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+    <PreBuildEvent />
+    <PreBuildEvent />
+    <PreBuildEvent />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN64;NDEBUG;_CRT_SECURE_NO_WARNINGS;WINVER=0x0601;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>/FU"$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\ApiInternal.netmodule" /FU"$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\EdiabasLib.netmodule" %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -102,13 +173,21 @@
     <CustomBuild Include="CompileNetmodule.bat">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">call "$(ProjectDir)CompileNetmodule.bat" "$(TargetDir)ApiInternal.netmodule" $(Configuration)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">call "$(ProjectDir)CompileNetmodule.bat" "$(TargetDir)ApiInternal.netmodule" $(Configuration)</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">call "$(ProjectDir)CompileNetmodule.bat" "$(TargetDir)ApiInternal.netmodule" $(Configuration)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">call "$(ProjectDir)CompileNetmodule.bat" "$(TargetDir)ApiInternal.netmodule" $(Configuration)</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create netmodule</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create netmodule</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create netmodule</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create netmodule</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\ApiInternal.netmodule;$(ProjectDir)..\EdiabasLib\bin\$(Configuration)Module\EdiabasLib.netmodule;$(ProjectDir)..\InTheHand.Net.Personal\bin\$(Configuration)Module\InTheHand.Net.Personal.netmodule</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\ApiInternal.netmodule;$(ProjectDir)..\EdiabasLib\bin\$(Configuration)Module\EdiabasLib.netmodule;$(ProjectDir)..\InTheHand.Net.Personal\bin\$(Configuration)Module\InTheHand.Net.Personal.netmodule</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\ApiInternal.netmodule;$(ProjectDir)..\EdiabasLib\bin\$(Configuration)Module\EdiabasLib.netmodule;$(ProjectDir)..\InTheHand.Net.Personal\bin\$(Configuration)Module\InTheHand.Net.Personal.netmodule</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\ApiInternal.netmodule;$(ProjectDir)..\EdiabasLib\bin\$(Configuration)Module\EdiabasLib.netmodule;$(ProjectDir)..\InTheHand.Net.Personal\bin\$(Configuration)Module\InTheHand.Net.Personal.netmodule</Outputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)..\ApiInternal\ApiInternal.cs;$(ProjectDir)..\EdiabasLib\EdiabasNet.cs;$(ProjectDir)..\EdiabasLib\EdOperations.cs;$(ProjectDir)..\EdiabasLib\MemoryStreamReader.cs;$(ProjectDir)..\EdiabasLib\EdInterfaceBase.cs;$(ProjectDir)..\EdiabasLib\EdInterfaceObd.cs;$(ProjectDir)..\EdiabasLib\EdInterfaceAds.cs;$(ProjectDir)..\EdiabasLib\EdInterfaceEdic.cs;$(ProjectDir)..\EdiabasLib\EdInterfaceEnet.cs;$(ProjectDir)..\EdiabasLib\EdFtdiInterface.cs;$(ProjectDir)..\EdiabasLib\Ftd2xx.cs;$(ProjectDir)..\EdiabasLib\EdBluetoothInterface.cs;$(ProjectDir)..\EdiabasLib\EdCustomAdapterCommon.cs;$(ProjectDir)..\EdiabasLib\EdCustomWiFiInterface.cs;$(ProjectDir)..\EdiabasLib\EdElmInterface.cs;$(ProjectDir)..\EdiabasLib\EdElmWifiInterface.cs;$(ProjectDir)..\EdiabasLib\IniFile.cs;$(ProjectDir)..\EdiabasLib\TcpClientWithTimeout.cs</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)..\ApiInternal\ApiInternal.cs;$(ProjectDir)..\EdiabasLib\EdiabasNet.cs;$(ProjectDir)..\EdiabasLib\EdOperations.cs;$(ProjectDir)..\EdiabasLib\MemoryStreamReader.cs;$(ProjectDir)..\EdiabasLib\EdInterfaceBase.cs;$(ProjectDir)..\EdiabasLib\EdInterfaceObd.cs;$(ProjectDir)..\EdiabasLib\EdInterfaceAds.cs;$(ProjectDir)..\EdiabasLib\EdInterfaceEdic.cs;$(ProjectDir)..\EdiabasLib\EdInterfaceEnet.cs;$(ProjectDir)..\EdiabasLib\EdFtdiInterface.cs;$(ProjectDir)..\EdiabasLib\Ftd2xx.cs;$(ProjectDir)..\EdiabasLib\EdBluetoothInterface.cs;$(ProjectDir)..\EdiabasLib\EdCustomAdapterCommon.cs;$(ProjectDir)..\EdiabasLib\EdCustomWiFiInterface.cs;$(ProjectDir)..\EdiabasLib\EdElmInterface.cs;$(ProjectDir)..\EdiabasLib\EdElmWifiInterface.cs;$(ProjectDir)..\EdiabasLib\IniFile.cs;$(ProjectDir)..\EdiabasLib\TcpClientWithTimeout.cs</AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)..\ApiInternal\ApiInternal.cs;$(ProjectDir)..\EdiabasLib\EdiabasNet.cs;$(ProjectDir)..\EdiabasLib\EdOperations.cs;$(ProjectDir)..\EdiabasLib\MemoryStreamReader.cs;$(ProjectDir)..\EdiabasLib\EdInterfaceBase.cs;$(ProjectDir)..\EdiabasLib\EdInterfaceObd.cs;$(ProjectDir)..\EdiabasLib\EdInterfaceAds.cs;$(ProjectDir)..\EdiabasLib\EdInterfaceEdic.cs;$(ProjectDir)..\EdiabasLib\EdInterfaceEnet.cs;$(ProjectDir)..\EdiabasLib\EdFtdiInterface.cs;$(ProjectDir)..\EdiabasLib\Ftd2xx.cs;$(ProjectDir)..\EdiabasLib\EdBluetoothInterface.cs;$(ProjectDir)..\EdiabasLib\EdCustomAdapterCommon.cs;$(ProjectDir)..\EdiabasLib\EdCustomWiFiInterface.cs;$(ProjectDir)..\EdiabasLib\EdElmInterface.cs;$(ProjectDir)..\EdiabasLib\EdElmWifiInterface.cs;$(ProjectDir)..\EdiabasLib\IniFile.cs;$(ProjectDir)..\EdiabasLib\TcpClientWithTimeout.cs</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)..\ApiInternal\ApiInternal.cs;$(ProjectDir)..\EdiabasLib\EdiabasNet.cs;$(ProjectDir)..\EdiabasLib\EdOperations.cs;$(ProjectDir)..\EdiabasLib\MemoryStreamReader.cs;$(ProjectDir)..\EdiabasLib\EdInterfaceBase.cs;$(ProjectDir)..\EdiabasLib\EdInterfaceObd.cs;$(ProjectDir)..\EdiabasLib\EdInterfaceAds.cs;$(ProjectDir)..\EdiabasLib\EdInterfaceEdic.cs;$(ProjectDir)..\EdiabasLib\EdInterfaceEnet.cs;$(ProjectDir)..\EdiabasLib\EdFtdiInterface.cs;$(ProjectDir)..\EdiabasLib\Ftd2xx.cs;$(ProjectDir)..\EdiabasLib\EdBluetoothInterface.cs;$(ProjectDir)..\EdiabasLib\EdCustomAdapterCommon.cs;$(ProjectDir)..\EdiabasLib\EdCustomWiFiInterface.cs;$(ProjectDir)..\EdiabasLib\EdElmInterface.cs;$(ProjectDir)..\EdiabasLib\EdElmWifiInterface.cs;$(ProjectDir)..\EdiabasLib\IniFile.cs;$(ProjectDir)..\EdiabasLib\TcpClientWithTimeout.cs</AdditionalInputs>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
