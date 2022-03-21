@@ -114,7 +114,7 @@ static String ^ ConvertCString(const char far *string)
     {
         return nullptr;
     }
-    int length = strlen(string);
+    long length = (long) strlen(string);
     if (length <= 0)
     {
         return String::Empty;
@@ -261,7 +261,7 @@ DLLEXPORT void FAR PASCAL __apiJob(unsigned int handle,
     String^ jobString = ConvertCString(job);
     String^ resultString = ConvertCString(result);
     // convert to binary to prevent encoding problems
-    int paralen = (para == NULL) ? 0 : strlen(para);
+    long paralen = (para == NULL) ? 0 : (long) strlen(para);
     array<byte>^ paraBuffer = gcnew array<byte>(paralen);
     for (int i = 0; i < paralen; i++)
     {
