@@ -1566,17 +1566,24 @@ namespace WebPsdzClient.App_Data
                                                 if (enqueued)
                                                 {
                                                     byte sourceAddr = bmwFastTel[1];
-                                                    int nr78DictSize;
-                                                    bool keyExists;
-                                                    lock (enetTcpClientData.Nr78Dict)
+                                                    if (!funcAddress)
                                                     {
-                                                        keyExists = enetTcpClientData.Nr78Dict.ContainsKey(sourceAddr);
-                                                        enetTcpClientData.Nr78Dict[sourceAddr] = new Nr78Data(sourceAddr, nr78Tel, funcAddress ? Nr78Delay : Nr78FirstDelay);
-                                                        nr78DictSize = enetTcpClientData.Nr78Dict.Count;
-                                                    }
+                                                        int nr78DictSize;
+                                                        bool keyExists;
+                                                        lock (enetTcpClientData.Nr78Dict)
+                                                        {
+                                                            keyExists = enetTcpClientData.Nr78Dict.ContainsKey(sourceAddr);
+                                                            enetTcpClientData.Nr78Dict[sourceAddr] = new Nr78Data(sourceAddr, nr78Tel, Nr78FirstDelay);
+                                                            nr78DictSize = enetTcpClientData.Nr78Dict.Count;
+                                                        }
 
-                                                    string nr78String = BitConverter.ToString(nr78Tel).Replace("-", " ");
-                                                    log.InfoFormat("TcpThread Added NR78 Overwrite={0}, Nr78Size={1}, Data={2}", keyExists, nr78DictSize, nr78String);
+                                                        string nr78String = BitConverter.ToString(nr78Tel).Replace("-", " ");
+                                                        log.InfoFormat("TcpThread Added NR78 Overwrite={0}, Nr78Size={1}, Data={2}", keyExists, nr78DictSize, nr78String);
+                                                    }
+                                                    else
+                                                    {
+                                                        log.InfoFormat("TcpThread Not added NR78 functional Addr={0:X02}", sourceAddr);
+                                                    }
 
                                                     log.InfoFormat("TcpThread Enqueued QueueSize={0}, Data={1}", queueSize, recString);
                                                     enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
