@@ -196,4 +196,8 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <Target Name="AfterBuild">
+    <Message Text="Building x64" Importance="High" />
+    <MSBuild Condition="'$(Platform)'=='Win32'" Projects="$(MSBuildProjectFile)" Properties="Platform=x64;PlatFormTarget=x64" RunEachTargetSeparately="true" />
+  </Target>
 </Project>
