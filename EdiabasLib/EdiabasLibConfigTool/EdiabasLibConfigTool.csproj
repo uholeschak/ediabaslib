@@ -152,6 +152,7 @@
 set "ApiDir=$(TargetDir)Api32"
 IF NOT EXIST "!ApiDir!" mkdir "!ApiDir!"
 copy /y "$(ProjectDir)..\Api32\$(ConfigurationName)\Api32.dll" "!ApiDir!"
+copy /y "$(ProjectDir)..\Api32\x64\$(ConfigurationName)\Api64.dll" "!ApiDir!"
 copy /y "$(ProjectDir)..\EdiabasLib\EdiabasLib.config" "!ApiDir!"
 
 if /I "$(ConfigurationName)" == "Release" (
