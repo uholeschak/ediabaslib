@@ -23,8 +23,10 @@ namespace EdiabasLibConfigTool
         public const string AdapterSsidModBmw = @"modBMW ENET";
         public const string PassordWifiModBmw = @"12345678";
         public const string ApiDirName = @"Api32";
-        public const string ApiDllName = @"api32.dll";
-        private const string ApiDllBackupName = @"api32.backup.dll";
+        public const string Api32DllName = @"api32.dll";
+        public const string Api64DllName = @"api64.dll";
+        private const string Api32DllBackupName = @"api32.backup.dll";
+        private const string Api64DllBackupName = @"api64.backup.dll";
         private const string ConfigFileName = @"EdiabasLib.config";
         private static readonly string[] RuntimeFiles = { "api-ms-win*.dll", "ucrtbase.dll", "msvcp140.dll", "vcruntime140.dll" };
 
@@ -269,19 +271,21 @@ namespace EdiabasLibConfigTool
             try
             {
                 string sourceDir = Path.Combine(AssemblyDirectory, ApiDirName);
-                string sourceDll = Path.Combine(sourceDir, ApiDllName);
-                if (!File.Exists(sourceDll))
+
+                // 32 bit
+                string sourceDll32 = Path.Combine(sourceDir, Api32DllName);
+                if (!File.Exists(sourceDll32))
                 {
                     sr.Append("\r\n");
                     sr.Append(Resources.Strings.PatchApi32Missing);
                     return false;
                 }
-                string version = EdiabasLibVersion(sourceDll, false);
-                if (string.IsNullOrEmpty(version))
+                string version32 = EdiabasLibVersion(sourceDll32, false);
+                if (string.IsNullOrEmpty(version32))
                 {
                     CopyRuntimeRequired = true;
-                    version = EdiabasLibVersion(sourceDll, true);
-                    if (string.IsNullOrEmpty(version))
+                    version32 = EdiabasLibVersion(sourceDll32, true);
+                    if (string.IsNullOrEmpty(version32))
                     {
                         sr.Append("\r\n");
                         sr.Append(Resources.Strings.PatchLoadApi32Failed);
@@ -289,15 +293,39 @@ namespace EdiabasLibConfigTool
                     }
                 }
                 sr.Append("\r\n");
-                sr.Append(string.Format(Resources.Strings.PatchApiVersion, version));
+                sr.Append(string.Format(Resources.Strings.PatchApiVersion, version32));
 
-                string dllFile = Path.Combine(dirName, ApiDllName);
-                string dllFileBackup = Path.Combine(dirName, ApiDllBackupName);
-                if (!File.Exists(dllFileBackup) && IsOriginalDll(dllFile))
+                // 64 bit
+                string sourceDll64 = Path.Combine(sourceDir, Api64DllName);
+                if (!File.Exists(sourceDll64))
+                {
+                    sr.Append("\r\n");
+                    sr.Append(Resources.Strings.PatchApi32Missing);
+                    return false;
+                }
+                string version64 = EdiabasLibVersion(sourceDll64, false);
+                if (string.IsNullOrEmpty(version64))
+                {
+                    CopyRuntimeRequired = true;
+                    version64 = EdiabasLibVersion(sourceDll64, true);
+                    if (string.IsNullOrEmpty(version64))
+                    {
+                        sr.Append("\r\n");
+                        sr.Append(Resources.Strings.PatchLoadApi32Failed);
+                        return false;
+                    }
+                }
+                sr.Append("\r\n");
+                sr.Append(string.Format(Resources.Strings.PatchApiVersion, version64));
+
+                // 32 bit
+                string dllFile32 = Path.Combine(dirName, Api32DllName);
+                string dllFile32Backup = Path.Combine(dirName, Api32DllBackupName);
+                if (!File.Exists(dllFile32Backup) && IsOriginalDll(dllFile32))
                 {
                     sr.Append("\r\n");
                     sr.Append(Resources.Strings.PatchCreateBackupFile);
-                    File.Copy(dllFile, dllFileBackup, false);
+                    File.Copy(dllFile32, dllFile32Backup, false);
                 }
                 else
                 {
@@ -305,13 +333,37 @@ namespace EdiabasLibConfigTool
                     sr.Append(Resources.Strings.PatchBackupFileExisting);
                 }
 
-                if (!IsOriginalDll(dllFileBackup))
+                if (!IsOriginalDll(dllFile32Backup))
                 {
                     sr.Append("\r\n");
                     sr.Append(Resources.Strings.PatchNoValidBackupFile);
                     return false;
                 }
-                File.Copy(sourceDll, dllFile, true);
+                File.Copy(sourceDll32, dllFile32, true);
+
+                // 64 bit
+                string dllFile64 = Path.Combine(dirName, Api64DllName);
+                string dllFile64Backup = Path.Combine(dirName, Api64DllBackupName);
+                if (!File.Exists(dllFile64Backup) && IsOriginalDll(dllFile64))
+                {
+                    sr.Append("\r\n");
+                    sr.Append(Resources.Strings.PatchCreateBackupFile);
+                    File.Copy(dllFile64, dllFile64Backup, false);
+                }
+                else
+                {
+                    sr.Append("\r\n");
+                    sr.Append(Resources.Strings.PatchBackupFileExisting);
+                }
+
+                if (!IsOriginalDll(dllFile64Backup))
+                {
+                    sr.Append("\r\n");
+                    sr.Append(Resources.Strings.PatchNoValidBackupFile);
+                    return false;
+                }
+                File.Copy(sourceDll64, dllFile64, true);
+
                 string sourceConfig = Path.Combine(sourceDir, ConfigFileName);
                 if (!File.Exists(sourceConfig))
                 {
@@ -360,20 +412,36 @@ namespace EdiabasLibConfigTool
         {
             try
             {
-                string dllFile = Path.Combine(dirName, ApiDllName);
-                string dllFileBackup = Path.Combine(dirName, ApiDllBackupName);
-                if (!File.Exists(dllFileBackup))
+                string dllFile32 = Path.Combine(dirName, Api32DllName);
+                string dllFile32Backup = Path.Combine(dirName, Api32DllBackupName);
+                if (!File.Exists(dllFile32Backup))
                 {
                     sr.Append("\r\n");
                     sr.Append(Resources.Strings.RestoreNoBackupFile);
                 }
                 else
                 {
-                    File.Copy(dllFileBackup, dllFile, true);
-                    File.Delete(dllFileBackup);
+                    File.Copy(dllFile32Backup, dllFile32, true);
+                    File.Delete(dllFile32Backup);
                     sr.Append("\r\n");
                     sr.Append(Resources.Strings.RestoredApi32);
                 }
+
+                string dllFile64 = Path.Combine(dirName, Api64DllName);
+                string dllFile64Backup = Path.Combine(dirName, Api64DllBackupName);
+                if (!File.Exists(dllFile64Backup))
+                {
+                    sr.Append("\r\n");
+                    sr.Append(Resources.Strings.RestoreNoBackupFile);
+                }
+                else
+                {
+                    File.Copy(dllFile64Backup, dllFile64, true);
+                    File.Delete(dllFile64Backup);
+                    sr.Append("\r\n");
+                    sr.Append(Resources.Strings.RestoredApi32);
+                }
+
                 List<string> runtimeFiles = GetRuntimeFiles(dirName);
                 foreach (string file in runtimeFiles)
                 {
@@ -397,7 +465,7 @@ namespace EdiabasLibConfigTool
                 {
                     return false;
                 }
-                string dllFile = Path.Combine(dirName, ApiDllName);
+                string dllFile = Path.Combine(dirName, Api32DllName);
                 if (!File.Exists(dllFile))
                 {
                     return false;
@@ -418,7 +486,7 @@ namespace EdiabasLibConfigTool
                 {
                     return false;
                 }
-                string dllFileBackup = Path.Combine(dirName, ApiDllBackupName);
+                string dllFileBackup = Path.Combine(dirName, Api32DllBackupName);
                 if (!File.Exists(dllFileBackup))
                 {
                     return false;
