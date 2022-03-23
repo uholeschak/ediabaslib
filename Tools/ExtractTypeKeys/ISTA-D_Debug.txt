@@ -53,7 +53,7 @@ memoryCapacityInMBytes = num;
 if (memoryCapacityInMBytes < num)
 -------------------------------------------------------------------------------------
 File -> Save module
-If file is blocked, terminate IstaSericesHost.exe first!
+If file is blocked, terminate IstaServicesHost.exe first!
 
 Fix ICOM apiInitExt:
 ====================
