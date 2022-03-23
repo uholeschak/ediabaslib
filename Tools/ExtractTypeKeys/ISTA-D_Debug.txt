@@ -60,6 +60,7 @@ Fix ICOM apiInitExt:
 Modify RheingoldVehicleCommunication.dll (Edit -> Edit class, remove all references to other ISTA-D version first):
 Function: public bool ECUKom.InitVCI(IVciDevice device, bool logging)
 case VCIDeviceType.ICOM:
+if (TesterGUI.PreferEthernet)
 Change init function to:
 -------------------------------------------------------------------------------------
 flag = this.api.apiInitExt("ENET", "_", "Rheingold", "RemoteHost=" + device.IPAddress + ";DiagnosticPort=50160;ControlPort=50161", logging);
