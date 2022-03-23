@@ -253,8 +253,8 @@
   <data name="PatchApiVersion" xml:space="preserve">
     <value>API версия: {0}</value>
   </data>
-  <data name="PatchLoadApi32Failed" xml:space="preserve">
-    <value>Не удалось загрузить Api32.dll. Архив был распакован корректно?</value>
+  <data name="PatchLoadApiDllFailed" xml:space="preserve">
+    <value>Не удалось загрузить {0}. Архив был распакован корректно?</value>
   </data>
   <data name="PatchNoValidBackupFile" xml:space="preserve">
     <value>Api32.dll файл резервной копии повреждён или не является таковым.</value>

@@ -288,7 +288,7 @@ namespace EdiabasLibConfigTool
                     if (string.IsNullOrEmpty(version32))
                     {
                         sr.Append("\r\n");
-                        sr.Append(Resources.Strings.PatchLoadApi32Failed);
+                        sr.Append(string.Format(Resources.Strings.PatchLoadApiDllFailed, Api32DllName));
                         return false;
                     }
                 }
@@ -311,7 +311,7 @@ namespace EdiabasLibConfigTool
                     if (string.IsNullOrEmpty(version64))
                     {
                         sr.Append("\r\n");
-                        sr.Append(Resources.Strings.PatchLoadApi32Failed);
+                        sr.Append(string.Format(Resources.Strings.PatchLoadApiDllFailed, Api64DllName));
                         return false;
                     }
                 }
