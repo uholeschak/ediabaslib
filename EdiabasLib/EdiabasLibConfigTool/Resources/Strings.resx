@@ -253,8 +253,8 @@ The default root password is {0}.</value>
   <data name="PatchApiVersion" xml:space="preserve">
     <value>API version: {0}</value>
   </data>
-  <data name="PatchLoadApi32Failed" xml:space="preserve">
-    <value>Unable to load Api32.dll. Has the archive been extracted correctly?</value>
+  <data name="PatchLoadApiDllFailed" xml:space="preserve">
+    <value>Unable to load {0}. Has the archive been extracted correctly?</value>
   </data>
   <data name="PatchNoValidBackupFile" xml:space="preserve">
     <value>The Api32.dll backup file is not valid.</value>
