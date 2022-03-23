@@ -177,7 +177,7 @@ namespace EdiabasLibConfigTool
 
             if (!Patch.IsValid(dirBmw))
             {
-                string path = LocateFileInPath(Patch.ApiDllName);
+                string path = LocateFileInPath(Patch.Api32DllName);
                 if (!string.IsNullOrEmpty(path))
                 {
                     dirBmw = path;
