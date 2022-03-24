@@ -52,6 +52,18 @@ internal IntegrityManager()
 }
 -------------------------------------------------------------------------------------
 
+public class IstaIcsServiceClient:
+ValidateHost()
+-------------------------------------------------------------------------------------
+...
+if (process == null)
+{
+	throw new InvalidOperationException("Host not found.");
+}
+return;
+(remove code below)
+-------------------------------------------------------------------------------------
+
 File -> Save module
 If file is blocked, terminate IstaSericesHost.exe first!
 
