@@ -80,7 +80,7 @@ Change init function to:
 -------------------------------------------------------------------------------------
 flag = this.api.apiInitExt("ENET", "_", "Rheingold", "RemoteHost=" + device.IPAddress + ";DiagnosticPort=50160;ControlPort=50161", logging);
 -------------------------------------------------------------------------------------
-If file is blocked, terminate IstaSericesHost.exe first!
+If file is blocked, terminate IstaServicesHost.exe first!
 
 Debug ISTA-D with dnSpy-x86:
 ============================
@@ -121,7 +121,7 @@ DiagnosticPort   = 6801
 TimeoutConnect   = 2000
 
 Remove Environment variable: COMPLUS_MDA
-If the dealer numer is 0 execute RCleanerV4.4.exe once. Export [HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\BMWGroup] before if required.
+If the dealer number is 0 execute RCleanerV4.4.exe once. Export [HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\BMWGroup] before if required.
 
 Debugging:
 Disable debugger detection in dnSpy (uncheck System.Diagnostics.Debugger option)!
