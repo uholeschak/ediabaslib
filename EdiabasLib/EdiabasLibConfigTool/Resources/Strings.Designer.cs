@@ -313,11 +313,11 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die EdiabasLib Api32.dll file is missing. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die EdiabasLib {0} file is missing. ähnelt.
         /// </summary>
-        internal static string PatchApi32Missing {
+        internal static string PatchApiDllMissing {
             get {
-                return ResourceManager.GetString("PatchApi32Missing", resourceCulture);
+                return ResourceManager.GetString("PatchApiDllMissing", resourceCulture);
             }
         }
         
@@ -477,11 +477,11 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Restored original Api32.dll file. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Restored original {0} file. ähnelt.
         /// </summary>
-        internal static string RestoredApi32 {
+        internal static string RestoredApiDll {
             get {
-                return ResourceManager.GetString("RestoredApi32", resourceCulture);
+                return ResourceManager.GetString("RestoredApiDll", resourceCulture);
             }
         }
         

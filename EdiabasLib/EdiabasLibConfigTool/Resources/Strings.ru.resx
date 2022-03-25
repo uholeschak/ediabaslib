@@ -186,8 +186,8 @@
   <data name="HttpResponseOk" xml:space="preserve">
     <value>HTTP ответ OK</value>
   </data>
-  <data name="PatchApi32Missing" xml:space="preserve">
-    <value>EdiabasLib Api32.dll файл отсутствует.</value>
+  <data name="PatchApiDllMissing" xml:space="preserve">
+    <value>EdiabasLib {0} файл отсутствует.</value>
   </data>
   <data name="PatchBackupFileExisting" xml:space="preserve">
     <value>Файл резервной копии уже существует.</value>
@@ -222,8 +222,8 @@
   <data name="RestoreApi32Failed" xml:space="preserve">
     <value>Не удалось восстановить исходный Api32.dll файл.</value>
   </data>
-  <data name="RestoredApi32" xml:space="preserve">
-    <value>Оригинальный Api32.dll файл восстановлен.</value>
+  <data name="RestoredApiDll" xml:space="preserve">
+    <value>Оригинальный {0} файл восстановлен.</value>
   </data>
   <data name="RestoreDirectory" xml:space="preserve">
     <value>Восстановление EDIABAS: '{0}'</value>
