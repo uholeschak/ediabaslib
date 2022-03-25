@@ -424,9 +424,18 @@ namespace EdiabasLibConfigTool
                     File.Copy(dllFile32Backup, dllFile32, true);
                     File.Delete(dllFile32Backup);
                     sr.Append("\r\n");
-                    sr.Append(Resources.Strings.RestoredApi32);
+                    sr.Append(string.Format(Resources.Strings.RestoredApiDll, Api32DllName));
                 }
+            }
+            catch (Exception)
+            {
+                sr.Append("\r\n");
+                sr.Append(Resources.Strings.RestoreApi32Failed);
+                return false;
+            }
 
+            try
+            {
                 string dllFile64 = Path.Combine(dirName, Api64DllName);
                 string dllFile64Backup = Path.Combine(dirName, Api64DllBackupName);
                 if (!File.Exists(dllFile64Backup))
@@ -439,7 +448,7 @@ namespace EdiabasLibConfigTool
                     File.Copy(dllFile64Backup, dllFile64, true);
                     File.Delete(dllFile64Backup);
                     sr.Append("\r\n");
-                    sr.Append(Resources.Strings.RestoredApi32);
+                    sr.Append(string.Format(Resources.Strings.RestoredApiDll, Api64DllName));
                 }
 
                 List<string> runtimeFiles = GetRuntimeFiles(dirName);

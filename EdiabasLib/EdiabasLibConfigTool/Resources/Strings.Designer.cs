@@ -477,11 +477,11 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Restored original Api32.dll file. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Restored original {0} file. ähnelt.
         /// </summary>
-        internal static string RestoredApi32 {
+        internal static string RestoredApiDll {
             get {
-                return ResourceManager.GetString("RestoredApi32", resourceCulture);
+                return ResourceManager.GetString("RestoredApiDll", resourceCulture);
             }
         }
         

@@ -222,8 +222,8 @@
   <data name="RestoreApi32Failed" xml:space="preserve">
     <value>Wiederherstellen der originalen Api32.dll Datei fehlgeschlagen.</value>
   </data>
-  <data name="RestoredApi32" xml:space="preserve">
-    <value>Originale Api32.dll Datei wiederhergestellt.</value>
+  <data name="RestoredApiDll" xml:space="preserve">
+    <value>Originale {0} Datei wiederhergestellt.</value>
   </data>
   <data name="RestoreDirectory" xml:space="preserve">
     <value>Wiederherstellen von EDIABAS bei: '{0}'</value>
