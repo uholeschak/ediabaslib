@@ -45,12 +45,6 @@ At the end of the function add: flag = true;
 			}
 			return flag;
 -------------------------------------------------------------------------------------
-or remove contents of constructor:
--------------------------------------------------------------------------------------
-internal IntegrityManager()
-{
-}
--------------------------------------------------------------------------------------
 
 public class IstaIcsServiceClient:
 ValidateHost()
