@@ -186,8 +186,8 @@
   <data name="HttpResponseOk" xml:space="preserve">
     <value>HTTP Antwort OK</value>
   </data>
-  <data name="PatchApi32Missing" xml:space="preserve">
-    <value>EdiabasLib Api32.dll Datei fehlt.</value>
+  <data name="PatchApiDllMissing" xml:space="preserve">
+    <value>EdiabasLib {0} Datei fehlt.</value>
   </data>
   <data name="PatchBackupFileExisting" xml:space="preserve">
     <value>Die Backup-Datei ist bereits vorhanden.</value>

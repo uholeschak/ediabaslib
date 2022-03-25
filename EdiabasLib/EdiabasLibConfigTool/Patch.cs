@@ -277,7 +277,7 @@ namespace EdiabasLibConfigTool
                 if (!File.Exists(sourceDll32))
                 {
                     sr.Append("\r\n");
-                    sr.Append(Resources.Strings.PatchApi32Missing);
+                    sr.Append(string.Format(Resources.Strings.PatchApiDllMissing, Api32DllName));
                     return false;
                 }
                 string version32 = EdiabasLibVersion(sourceDll32, false);
@@ -300,7 +300,7 @@ namespace EdiabasLibConfigTool
                 if (!File.Exists(sourceDll64))
                 {
                     sr.Append("\r\n");
-                    sr.Append(Resources.Strings.PatchApi32Missing);
+                    sr.Append(string.Format(Resources.Strings.PatchApiDllMissing, Api64DllName));
                     return false;
                 }
                 string version64 = EdiabasLibVersion(sourceDll64, false);
