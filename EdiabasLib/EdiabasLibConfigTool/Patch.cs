@@ -430,7 +430,7 @@ namespace EdiabasLibConfigTool
             catch (Exception)
             {
                 sr.Append("\r\n");
-                sr.Append(Resources.Strings.RestoreApi32Failed);
+                sr.Append(string.Format(Resources.Strings.RestoreApiDllFailed, Api32DllName));
                 return false;
             }
 
@@ -460,7 +460,7 @@ namespace EdiabasLibConfigTool
             catch (Exception)
             {
                 sr.Append("\r\n");
-                sr.Append(Resources.Strings.RestoreApi32Failed);
+                sr.Append(string.Format(Resources.Strings.RestoreApiDllFailed, Api64DllName));
                 return false;
             }
             return true;

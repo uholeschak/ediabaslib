@@ -219,8 +219,8 @@
   <data name="ReadModeFailed" xml:space="preserve">
     <value>Adapter-Modus lesen fehgeschlagen</value>
   </data>
-  <data name="RestoreApi32Failed" xml:space="preserve">
-    <value>Wiederherstellen der originalen Api32.dll Datei fehlgeschlagen.</value>
+  <data name="RestoreApiDllFailed" xml:space="preserve">
+    <value>Wiederherstellen der originalen {0} Datei fehlgeschlagen.</value>
   </data>
   <data name="RestoredApiDll" xml:space="preserve">
     <value>Originale {0} Datei wiederhergestellt.</value>

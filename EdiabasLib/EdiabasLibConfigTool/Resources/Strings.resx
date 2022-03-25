@@ -219,8 +219,8 @@
   <data name="ReadModeFailed" xml:space="preserve">
     <value>Read adapter mode failed</value>
   </data>
-  <data name="RestoreApi32Failed" xml:space="preserve">
-    <value>Restoring original Api32.dll file failed.</value>
+  <data name="RestoreApiDllFailed" xml:space="preserve">
+    <value>Restoring original {0} file failed.</value>
   </data>
   <data name="RestoredApiDll" xml:space="preserve">
     <value>Restored original {0} file.</value>

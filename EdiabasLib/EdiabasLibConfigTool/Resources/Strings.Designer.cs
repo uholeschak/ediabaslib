@@ -468,11 +468,11 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Restoring original Api32.dll file failed. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Restoring original {0} file failed. ähnelt.
         /// </summary>
-        internal static string RestoreApi32Failed {
+        internal static string RestoreApiDllFailed {
             get {
-                return ResourceManager.GetString("RestoreApi32Failed", resourceCulture);
+                return ResourceManager.GetString("RestoreApiDllFailed", resourceCulture);
             }
         }
         

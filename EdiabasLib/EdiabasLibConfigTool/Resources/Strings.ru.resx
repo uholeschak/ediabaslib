@@ -219,8 +219,8 @@
   <data name="ReadModeFailed" xml:space="preserve">
     <value>Не удалось установить режим устройства</value>
   </data>
-  <data name="RestoreApi32Failed" xml:space="preserve">
-    <value>Не удалось восстановить исходный Api32.dll файл.</value>
+  <data name="RestoreApiDllFailed" xml:space="preserve">
+    <value>Не удалось восстановить исходный {0} файл.</value>
   </data>
   <data name="RestoredApiDll" xml:space="preserve">
     <value>Оригинальный {0} файл восстановлен.</value>
