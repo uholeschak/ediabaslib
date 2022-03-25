@@ -229,7 +229,7 @@
     <value>Восстановление EDIABAS: '{0}'</value>
   </data>
   <data name="RestoreNoBackupFile" xml:space="preserve">
-    <value>Файл резервной копии отсутствует.</value>
+    <value>Файл резервной {0} копии отсутствует.</value>
   </data>
   <data name="Searching" xml:space="preserve">
     <value>Поиск ...</value>

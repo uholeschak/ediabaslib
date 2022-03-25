@@ -418,7 +418,7 @@ namespace EdiabasLibConfigTool
                 if (!File.Exists(dllFile32Backup))
                 {
                     sr.Append("\r\n");
-                    sr.Append(Resources.Strings.RestoreNoBackupFile);
+                    sr.Append(string.Format(Resources.Strings.RestoreNoBackupFile, Api32DllBackupName));
                 }
                 else
                 {
@@ -442,7 +442,7 @@ namespace EdiabasLibConfigTool
                 if (!File.Exists(dllFile64Backup))
                 {
                     sr.Append("\r\n");
-                    sr.Append(Resources.Strings.RestoreNoBackupFile);
+                    sr.Append(string.Format(Resources.Strings.RestoreNoBackupFile, Api64DllBackupName));
                 }
                 else
                 {

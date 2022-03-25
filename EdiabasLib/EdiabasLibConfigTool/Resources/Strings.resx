@@ -229,7 +229,7 @@
     <value>Restoring EDIABAS at: '{0}'</value>
   </data>
   <data name="RestoreNoBackupFile" xml:space="preserve">
-    <value>No backup file existing.</value>
+    <value>No backup file {0} existing.</value>
   </data>
   <data name="Searching" xml:space="preserve">
     <value>Searching ...</value>
