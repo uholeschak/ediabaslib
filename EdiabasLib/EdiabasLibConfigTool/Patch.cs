@@ -303,6 +303,7 @@ namespace EdiabasLibConfigTool
                     sr.Append(string.Format(Resources.Strings.PatchApiDllMissing, Api64DllName));
                     return false;
                 }
+#if false
                 string version64 = EdiabasLibVersion(sourceDll64, false);
                 if (string.IsNullOrEmpty(version64))
                 {
@@ -317,7 +318,7 @@ namespace EdiabasLibConfigTool
                 }
                 sr.Append("\r\n");
                 sr.Append(string.Format(Resources.Strings.PatchApiVersion, version64));
-
+#endif
                 // 32 bit
                 string dllFile32 = Path.Combine(dirName, Api32DllName);
                 string dllFile32Backup = Path.Combine(dirName, Api32DllBackupName);
