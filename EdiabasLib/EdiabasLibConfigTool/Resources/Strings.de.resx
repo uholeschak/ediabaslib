@@ -190,7 +190,7 @@
     <value>EdiabasLib {0} Datei fehlt.</value>
   </data>
   <data name="PatchBackupFileExisting" xml:space="preserve">
-    <value>Die Backup-Datei ist bereits vorhanden.</value>
+    <value>Die Backup-Datei {0} ist bereits vorhanden.</value>
   </data>
   <data name="PatchConfigExisting" xml:space="preserve">
     <value>Die EdiabasLib.config Datei existiert bereits.</value>
@@ -208,7 +208,7 @@
     <value>Kopieren der Dateien fehlgeschlagen.</value>
   </data>
   <data name="PatchCreateBackupFile" xml:space="preserve">
-    <value>Backup-Datei wird erzeugt.</value>
+    <value>Backup-Datei {0} wird erzeugt.</value>
   </data>
   <data name="PatchDirectory" xml:space="preserve">
     <value>Patchen von EDIABAS bei: '{0}'</value>

@@ -190,7 +190,7 @@
     <value>EdiabasLib {0} файл отсутствует.</value>
   </data>
   <data name="PatchBackupFileExisting" xml:space="preserve">
-    <value>Файл резервной копии уже существует.</value>
+    <value>Файл резервной {0} копии уже существует.</value>
   </data>
   <data name="PatchConfigExisting" xml:space="preserve">
     <value>Die EdiabasLib.config файл уже существует.</value>
@@ -208,7 +208,7 @@
     <value>Не удалось скопировать файлы.</value>
   </data>
   <data name="PatchCreateBackupFile" xml:space="preserve">
-    <value>Создание файла резервной копии.</value>
+    <value>Создание файла резервной копии {0}.</value>
   </data>
   <data name="PatchDirectory" xml:space="preserve">
     <value>Заплатка EDIABAS: '{0}'</value>

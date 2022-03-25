@@ -331,7 +331,7 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Backup file is already existing. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Backup file {0} is already existing. ähnelt.
         /// </summary>
         internal static string PatchBackupFileExisting {
             get {
@@ -394,7 +394,7 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Creating backup file. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Creating backup file {0}. ähnelt.
         /// </summary>
         internal static string PatchCreateBackupFile {
             get {
