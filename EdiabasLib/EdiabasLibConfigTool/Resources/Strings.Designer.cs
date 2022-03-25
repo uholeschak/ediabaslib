@@ -495,7 +495,7 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die No backup file existing. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die No backup file {0} existing. ähnelt.
         /// </summary>
         internal static string RestoreNoBackupFile {
             get {
