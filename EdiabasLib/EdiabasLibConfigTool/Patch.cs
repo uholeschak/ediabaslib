@@ -336,7 +336,7 @@ namespace EdiabasLibConfigTool
                 if (!IsOriginalDll(dllFile32Backup))
                 {
                     sr.Append("\r\n");
-                    sr.Append(Resources.Strings.PatchNoValidBackupFile);
+                    sr.Append(string.Format(Resources.Strings.PatchNoValidBackupFile, Api32DllName));
                     return false;
                 }
                 File.Copy(sourceDll32, dllFile32, true);
@@ -359,7 +359,7 @@ namespace EdiabasLibConfigTool
                 if (!IsOriginalDll(dllFile64Backup))
                 {
                     sr.Append("\r\n");
-                    sr.Append(Resources.Strings.PatchNoValidBackupFile);
+                    sr.Append(string.Format(Resources.Strings.PatchNoValidBackupFile, Api64DllName));
                     return false;
                 }
                 File.Copy(sourceDll64, dllFile64, true);
@@ -430,7 +430,7 @@ namespace EdiabasLibConfigTool
             catch (Exception)
             {
                 sr.Append("\r\n");
-                sr.Append(Resources.Strings.RestoreApi32Failed);
+                sr.Append(string.Format(Resources.Strings.RestoreApiDllFailed, Api32DllName));
                 return false;
             }
 
@@ -460,7 +460,7 @@ namespace EdiabasLibConfigTool
             catch (Exception)
             {
                 sr.Append("\r\n");
-                sr.Append(Resources.Strings.RestoreApi32Failed);
+                sr.Append(string.Format(Resources.Strings.RestoreApiDllFailed, Api64DllName));
                 return false;
             }
             return true;

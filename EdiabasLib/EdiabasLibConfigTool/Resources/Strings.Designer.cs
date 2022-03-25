@@ -431,7 +431,7 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die The Api32.dll backup file is not valid. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die The {0} backup file is not valid. ähnelt.
         /// </summary>
         internal static string PatchNoValidBackupFile {
             get {
@@ -468,11 +468,11 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Restoring original Api32.dll file failed. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Restoring original {0} file failed. ähnelt.
         /// </summary>
-        internal static string RestoreApi32Failed {
+        internal static string RestoreApiDllFailed {
             get {
-                return ResourceManager.GetString("RestoreApi32Failed", resourceCulture);
+                return ResourceManager.GetString("RestoreApiDllFailed", resourceCulture);
             }
         }
         
