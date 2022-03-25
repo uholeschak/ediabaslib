@@ -257,7 +257,7 @@ Das Standard root Password ist {0}.</value>
     <value>Kann {0} nicht laden. Wurde das Archiv korrekt extrahiert?</value>
   </data>
   <data name="PatchNoValidBackupFile" xml:space="preserve">
-    <value>Die Api32.dll Backup-Datei ist ungültig.</value>
+    <value>Die {0} Backup-Datei ist ungültig.</value>
   </data>
   <data name="PatchInstadInfo" xml:space="preserve">
     <value>Hinweis: In ISTA-D Administration -&gt; VCI Konfiguration als Interface Typ auswählen:

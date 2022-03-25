@@ -431,7 +431,7 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die The Api32.dll backup file is not valid. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die The {0} backup file is not valid. ähnelt.
         /// </summary>
         internal static string PatchNoValidBackupFile {
             get {

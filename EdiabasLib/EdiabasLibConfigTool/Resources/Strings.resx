@@ -257,7 +257,7 @@ The default root password is {0}.</value>
     <value>Unable to load {0}. Has the archive been extracted correctly?</value>
   </data>
   <data name="PatchNoValidBackupFile" xml:space="preserve">
-    <value>The Api32.dll backup file is not valid.</value>
+    <value>The {0} backup file is not valid.</value>
   </data>
   <data name="LanguageDe" xml:space="preserve">
     <value>Deutsch</value>

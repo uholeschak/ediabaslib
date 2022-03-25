@@ -257,7 +257,7 @@
     <value>Не удалось загрузить {0}. Архив был распакован корректно?</value>
   </data>
   <data name="PatchNoValidBackupFile" xml:space="preserve">
-    <value>Api32.dll файл резервной копии повреждён или не является таковым.</value>
+    <value>{0} файл резервной копии повреждён или не является таковым.</value>
   </data>
   <data name="PatchInstadInfo" xml:space="preserve">
     <value>Указание: В ISTA-D администрировании -&gt; VCI конфигурация выберите тип интерфейса:
