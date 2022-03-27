@@ -5479,19 +5479,32 @@ namespace BmwDeepObd
                                 messageText = _context.GetString(Resource.String.send_trace_file_failed_retry);
                             }
 
-                            new AlertDialog.Builder(_context)
+                            bool ignoreDismiss = false;
+                            AlertDialog alterDialog = new AlertDialog.Builder(_context)
                                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                 {
                                     SendTraceFileInfoDlg(appDataDir, traceFile, message, classType, handler, deleteFile);
+                                    ignoreDismiss = true;
                                 })
                                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                                 {
-                                    StoreTraceFile(appDataDir, traceFile);
                                 })
                                 .SetCancelable(true)
                                 .SetMessage(messageText)
                                 .SetTitle(Resource.String.alert_title_error)
                                 .Show();
+                            alterDialog.DismissEvent += (sender, args) =>
+                            {
+                                if (_disposed)
+                                {
+                                    return;
+                                }
+
+                                if (!ignoreDismiss)
+                                {
+                                    StoreTraceFile(appDataDir, traceFile);
+                                }
+                            };
                         }
                     });
                 }
