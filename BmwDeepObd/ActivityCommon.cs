@@ -401,6 +401,7 @@ namespace BmwDeepObd
         public const string MtcBtAppName = @"com.microntek.bluetooth";
         public const string DefaultLang = "en";
         public const string TraceFileName = "ifh.trc.zip";
+        public const string TraceBackupDir = "TraceBackup";
         public const string AdapterSsidDeepObd = "Deep OBD BMW";
         public const string AdapterSsidEnetLink = "ENET-LINK_";
         public const string AdapterSsidModBmw = "modBMW ENET";
@@ -4794,6 +4795,35 @@ namespace BmwDeepObd
             return true;
         }
 
+        public bool StoreTraceFile(string appDataDir, string traceFile)
+        {
+            try
+            {
+                if (!File.Exists(traceFile))
+                {
+                    return false;
+                }
+
+                string traceBackupDir = Path.Combine(appDataDir, TraceBackupDir);
+                try
+                {
+                    Directory.CreateDirectory(traceBackupDir);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+
+                string traceBackupFile = Path.Combine(traceBackupDir, TraceFileName);
+                File.Copy(traceFile, traceBackupFile, true);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
         public bool SendTraceFileInfoDlg(string appDataDir, string traceFile, string message, Type classType, EventHandler<EventArgs> handler, bool deleteFile = false)
         {
             try
@@ -5456,6 +5486,7 @@ namespace BmwDeepObd
                                 })
                                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                                 {
+                                    StoreTraceFile(appDataDir, traceFile);
                                 })
                                 .SetCancelable(true)
                                 .SetMessage(messageText)
