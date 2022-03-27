@@ -1825,12 +1825,13 @@ namespace BmwFileReader
                 // F95, F96, G05, G06, G07: BNT_G05_G06_G07
                 // F97, F98, G01, G02, G08: BNT_G01_G02_G08_F97_F98_SP2015
                 // G11, G12: BNT_G11_G12_G3X_SP2015, BNT_G1X_G3X_SP2018_MGU, BNT_G1X_G3X_SP2018_noMGU, BNT_G1X_G3X_SP2018
-                // G20, G21, G22, G23, G28: BNT_G20_G28
+                // G20, G21, G22, G23, G26, G28: BNT_G20_G28
                 // G29: BNT_G29
                 // I01, F01BN2K: I01EcuCharacteristics
                 // I12, I15: BNT_I12_I15
+                // I20: BNT_I20, (MRR_30: BNT-XML-I20_FRS), (FRR_30V: BNT-XML-I20_FRSF)
                 // J29: BNT_J29
-                // U11: BNT_U06
+                // U10, U11, U12: BNT_U06...
                 // U06: BNT-XML-U06...
                 bnType = BnType.BN2020;
                 return "f01";
