@@ -50,6 +50,7 @@ namespace BMW.Rheingold.Psdz.Client
 
         private readonly KdsServiceClient kdsService;
 
+		// ToDo: Check on update
         public PsdzServiceClient(string clientLogDir)
 		{
 			NetNamedPipeBinding netNamedPipeBinding = new NetNamedPipeBinding

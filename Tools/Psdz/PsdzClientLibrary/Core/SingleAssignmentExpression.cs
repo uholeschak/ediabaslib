@@ -18,6 +18,7 @@ namespace PsdzClient.Core
 			}
 		}
 
+        // ToDo: Check on update
 		public static RuleExpression Deserialize(Stream ms, EExpressionType type, Vehicle vec)
 		{
 			byte[] buffer = new byte[8];

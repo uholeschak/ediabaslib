@@ -64,6 +64,7 @@ namespace PsdzClient.Core
             VariableExpression
         }
 
+        // ToDo: Check on update
 		public static RuleExpression Deserialize(Stream ms, Vehicle vec)
 		{
 			EExpressionType type = (EExpressionType)((byte)ms.ReadByte());
