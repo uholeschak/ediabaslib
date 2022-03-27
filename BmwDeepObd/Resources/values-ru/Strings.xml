@@ -302,6 +302,8 @@
   <string name="menu_extract_ecu">Извлечь файлы ECU</string>
   <string name="menu_submenu_log">Протокол данных</string>
   <string name="menu_send_trace">Отправить журнал данных</string>
+  <!--Translate-->
+  <string name="menu_send_last_trace">Отправить последний файл трассировки повторно</string>
   <string name="menu_global_settings">Глобальные настройки</string>
   <string name="menu_submenu_help">Онлайн помощь</string>
   <string name="menu_info">Информация о приложении</string>

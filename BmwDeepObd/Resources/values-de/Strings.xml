@@ -301,6 +301,7 @@
   <string name="menu_extract_ecu">ECU Dateien entpacken</string>
   <string name="menu_submenu_log">Datenaufzeichnung</string>
   <string name="menu_send_trace">Trace Datei senden</string>
+  <string name="menu_send_last_trace">Letzte Trace Datei erneut senden</string>
   <string name="menu_global_settings">Globale Einstellungen</string>
   <string name="menu_submenu_help">Onlinehilfe</string>
   <string name="menu_info">App Info</string>

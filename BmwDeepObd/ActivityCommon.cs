@@ -4795,7 +4795,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool StoreTraceFile(string appDataDir, string traceFile)
+        public bool StoreBackupTraceFile(string appDataDir, string traceFile)
         {
             try
             {
@@ -4805,6 +4805,17 @@ namespace BmwDeepObd
                 }
 
                 string traceBackupDir = Path.Combine(appDataDir, TraceBackupDir);
+                string traceFileDir = Path.GetDirectoryName(traceFile);
+                if (string.IsNullOrEmpty(traceFileDir))
+                {
+                    return false;
+                }
+
+                if (string.Compare(traceFileDir, traceBackupDir, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return false;
+                }
+
                 try
                 {
                     Directory.CreateDirectory(traceBackupDir);
@@ -5502,7 +5513,7 @@ namespace BmwDeepObd
 
                                 if (!ignoreDismiss)
                                 {
-                                    StoreTraceFile(appDataDir, traceFile);
+                                    StoreBackupTraceFile(appDataDir, traceFile);
                                 }
                             };
                         }
