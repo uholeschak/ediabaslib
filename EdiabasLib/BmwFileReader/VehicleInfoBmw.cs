@@ -1829,6 +1829,7 @@ namespace BmwFileReader
                 // G29: BNT_G29
                 // I01, F01BN2K: I01EcuCharacteristics
                 // I12, I15: BNT_I12_I15
+                // I20: BNT_I20, (MRR_30: BNT-XML-I20_FRS), (FRR_30V: BNT-XML-I20_FRSF)
                 // J29: BNT_J29
                 // U11: BNT_U06
                 // U06: BNT-XML-U06...
