@@ -62,7 +62,7 @@
 \nSie können gerne mitwirken oder Probleme melden.
 \nEine detailierte Dokumentation kann auch auf dieser Webseite gefunden werden.
 \n\nÄnderungen in dieser Version:\n</string>
-  <string name="version_last_changes">- BMW Test Kodieren ergänzt.\n- Kleinere Probleme behoben</string>
+  <string name="version_last_changes">- Die letzte Trace Datei kann vom Hauptmenu erneut gesendet werden.\n- Kleinere Probleme behoben</string>
   <string name="app_info_message">Deep OBD für BMW und VAG\nVersion: {0}\nId: {1}</string>
   <string formatted="false" name="vag_mode_info">Der VAG Modus ist noch experimentell und nur für Fahrzeuge bis {0}.\nEs wird ein &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;Deep OBD Adapter&lt;/a&gt; mit mindestens Firmwareversion 0.11 benötigt.\nIm Moment werden nur die Protokolle KWP2000, KWP1281, TP2.0 und UDS unterstützt.\nFür den neuen VAG Modus müssen die Konfiguration neu generiert werden.\nEs ist möglich den alten VAG Modus wieder in den globalen Einstellungen wählen.</string>
 
@@ -301,7 +301,7 @@
   <string name="menu_extract_ecu">ECU Dateien entpacken</string>
   <string name="menu_submenu_log">Datenaufzeichnung</string>
   <string name="menu_send_trace">Trace Datei senden</string>
-  <string name="menu_send_last_trace">Letzte Trace Datei erneut senden</string>
+  <string name="menu_send_last_trace">Trace Datei erneut senden</string>
   <string name="menu_global_settings">Globale Einstellungen</string>
   <string name="menu_submenu_help">Onlinehilfe</string>
   <string name="menu_info">App Info</string>

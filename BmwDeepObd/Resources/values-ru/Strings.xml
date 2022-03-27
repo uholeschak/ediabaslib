@@ -62,7 +62,7 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную информацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:\n</string>
-  <string name="version_last_changes">- Добавлено тестовое кодирование BMW.\n- Исправлены незначительные проблемы</string>
+  <string name="version_last_changes">- Разрешить повторную отправку последнего файла трассировки из главного меню.\n- Исправлены незначительные проблемы</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string formatted="false" name="vag_mode_info">VAG режим пока что экспериментальный и предназначен только для автомобилей до {0}.\nНеобходимо &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;Deep OBD устройство&lt;/a&gt; с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.\nКонфигурации для нового режима VAG необходимо генерировать заново.\nВ диалоговом окне настроек можно снова выбрать старый режим VAG.</string>
 
@@ -303,7 +303,7 @@
   <string name="menu_submenu_log">Протокол данных</string>
   <string name="menu_send_trace">Отправить журнал данных</string>
   <!--Translate-->
-  <string name="menu_send_last_trace">Отправить последний файл трассировки повторно</string>
+  <string name="menu_send_last_trace">Повторно отправить файл трассировки</string>
   <string name="menu_global_settings">Глобальные настройки</string>
   <string name="menu_submenu_help">Онлайн помощь</string>
   <string name="menu_info">Информация о приложении</string>
