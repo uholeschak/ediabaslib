@@ -397,13 +397,7 @@ namespace PsdzClient.Core
 		{
 			get
 			{
-				if (!string.IsNullOrEmpty(this.productLine))
-				{
-					return this.productLine;
-				}
-                // TODO: VehicleESeriesPropertiesGetter
-				//return VehicleESeriesPropertiesGetter.GetProductLineBasedOnESeries(base.Ereihe);
-				return string.Empty;
+                return this.productLine;
             }
 			set
 			{
@@ -419,13 +413,7 @@ namespace PsdzClient.Core
 		{
 			get
 			{
-				if (!string.IsNullOrEmpty(this.securityRelevant))
-				{
-					return this.securityRelevant;
-				}
-                // TODO: VehicleESeriesPropertiesGetter
-				//return VehicleESeriesPropertiesGetter.GetSecurityRelevanceBasedOnESeries(base.Ereihe, this.hasSA("106"), this.hasSA("109"), this.hasSA("8SU"));
-				return string.Empty;
+                return this.securityRelevant;
             }
 			set
 			{
@@ -441,13 +429,7 @@ namespace PsdzClient.Core
 		{
 			get
 			{
-				if (!string.IsNullOrEmpty(this.doorNumber))
-				{
-					return this.doorNumber;
-				}
-				// TODO: VehicleESeriesPropertiesGetter
-				//return VehicleESeriesPropertiesGetter.GetDoorNumberBasedOnESeries(base.Ereihe, base.Prodart);
-				return string.Empty;
+                return this.doorNumber;
             }
 			set
 			{
