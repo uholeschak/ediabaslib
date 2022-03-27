@@ -2386,13 +2386,14 @@ namespace BmwDeepObd
                                                     EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
                                                     if (ecuVariant == null)
                                                     {
-                                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No ECU variant found for: {0}", ecuSgbdName);
+                                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "IDENT_FUNKTIONAL No ECU variant found for: Sgbd={0}, Addr={1}, Group={2}", ecuSgbdName, ecuInfo.Address, ecuInfo.Grp);
                                                     }
                                                     else
                                                     {
                                                         string title = ecuVariant.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
                                                         if (!string.IsNullOrEmpty(title))
                                                         {
+                                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "IDENT_FUNKTIONAL ECU variant found for: Sgbd={0}, Title={1}", ecuSgbdName, title);
                                                             ecuInfo.PageName = title;
                                                             ecuInfo.Description = title;
                                                             ecuInfo.DescriptionTransRequired = false;
