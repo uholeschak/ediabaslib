@@ -161,6 +161,7 @@ namespace BmwDeepObd
             public bool VagInfoShown { get; set; }
             public string DataLogDir { get; set; }
             public string TraceDir { get; set; }
+            public string TraceBackupDir { get; set; }
             public bool UpdateAvailable { get; set; }
             public int UpdateVersionCode { get; set; }
             public string UpdateMessage { get; set; }
@@ -1273,6 +1274,14 @@ namespace BmwDeepObd
             IMenuItem sendTraceMenu = menu.FindItem(Resource.Id.menu_send_trace);
             sendTraceMenu?.SetEnabled(interfaceAvailable && !commActive && _instanceData.TraceActive && ActivityCommon.IsTraceFilePresent(_instanceData.TraceDir));
 
+            IMenuItem sendLastTraceMenu = menu.FindItem(Resource.Id.menu_send_last_trace);
+            if (sendLastTraceMenu != null)
+            {
+                bool backupTrace = ActivityCommon.IsTraceFilePresent(_instanceData.TraceBackupDir);
+                sendLastTraceMenu.SetEnabled(interfaceAvailable && !commActive && backupTrace);
+                sendLastTraceMenu.SetVisible(backupTrace);
+            }
+
             IMenuItem translationSubmenu = menu.FindItem(Resource.Id.menu_translation_submenu);
             if (translationSubmenu != null)
             {
@@ -1507,6 +1516,17 @@ namespace BmwDeepObd
 
                 case Resource.Id.menu_send_trace:
                     SendTraceFileAlways((sender, args) =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+                        UpdateOptionsMenu();
+                    });
+                    return true;
+
+                case Resource.Id.menu_send_last_trace:
+                    SendBackupTraceFileAlways((sender, args) =>
                     {
                         if (_activityCommon == null)
                         {
@@ -2086,6 +2106,8 @@ namespace BmwDeepObd
                 {
                     _instanceData.TraceDir = Path.Combine(_instanceData.AppDataPath, "Log");
                 }
+
+                _instanceData.TraceBackupDir = Path.Combine(_instanceData.AppDataPath, ActivityCommon.TraceBackupDir);
                 _translationList = null;
                 _translatedList = null;
 
@@ -3193,6 +3215,21 @@ namespace BmwDeepObd
                 (_instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir)))
             {
                 return _activityCommon.SendTraceFile(_instanceData.AppDataPath, _instanceData.TraceDir, GetType(), handler);
+            }
+            return false;
+        }
+
+        // ReSharper disable once UnusedMethodReturnValue.Local
+        private bool SendBackupTraceFileAlways(EventHandler<EventArgs> handler)
+        {
+            if (ActivityCommon.CommActive)
+            {
+                return false;
+            }
+
+            if (!string.IsNullOrEmpty(_instanceData.TraceBackupDir))
+            {
+                return _activityCommon.SendTraceFile(_instanceData.AppDataPath, _instanceData.TraceBackupDir, GetType(), handler);
             }
             return false;
         }
