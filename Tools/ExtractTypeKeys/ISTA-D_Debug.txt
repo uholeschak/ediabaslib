@@ -46,7 +46,7 @@ At the end of the function add: flag = true;
 			return flag;
 -------------------------------------------------------------------------------------
 
-public class IstaIcsServiceClient:
+public class IstaIcsServiceClient (not required):
 ValidateHost()
 -------------------------------------------------------------------------------------
 ...
@@ -59,7 +59,7 @@ return;
 -------------------------------------------------------------------------------------
 
 File -> Save module
-If file is blocked, terminate IstaSericesHost.exe first!
+If file is blocked, terminate IstaServicesHost.exe first!
 
 Disable ISTAGUI.exe memory check:
 ================================
