@@ -29,17 +29,38 @@ namespace AssemblyPatcher
                     return 1;
                 }
 
-                string patchNamespace = ConfigurationManager.AppSettings["PatchNamespace"];
-                if (string.IsNullOrEmpty(patchNamespace))
+                string patchCtorNamespace = ConfigurationManager.AppSettings["PatchCtorNamespace"];
+                if (string.IsNullOrEmpty(patchCtorNamespace))
                 {
-                    Console.WriteLine("PatchNamespace not configured");
+                    Console.WriteLine("PatchCtorNamespace not configured");
                     return 1;
                 }
 
-                string patchClass = ConfigurationManager.AppSettings["PatchClass"];
-                if (string.IsNullOrEmpty(patchClass))
+                string patchCtorClass = ConfigurationManager.AppSettings["PatchCtorClass"];
+                if (string.IsNullOrEmpty(patchCtorClass))
                 {
-                    Console.WriteLine("PatchClass not configured");
+                    Console.WriteLine("PatchCtorClass not configured");
+                    return 1;
+                }
+
+                string patchMethodNamespace = ConfigurationManager.AppSettings["PatchMethodNamespace"];
+                if (string.IsNullOrEmpty(patchCtorNamespace))
+                {
+                    Console.WriteLine("PatchMethodNamespace not configured");
+                    return 1;
+                }
+
+                string patchMethodClass = ConfigurationManager.AppSettings["PatchMethodClass"];
+                if (string.IsNullOrEmpty(patchMethodClass))
+                {
+                    Console.WriteLine("PatchMethodName not configured");
+                    return 1;
+                }
+
+                string patchMethodName = ConfigurationManager.AppSettings["PatchMethodName"];
+                if (string.IsNullOrEmpty(patchMethodName))
+                {
+                    Console.WriteLine("PatchMethodName not configured");
                     return 1;
                 }
 
@@ -85,23 +106,71 @@ namespace AssemblyPatcher
 
                     try
                     {
+                        bool patched = false;
                         Patcher patcher = new Patcher(file, true);
-                        Instruction returnInstruction = Instruction.Create(OpCodes.Ret);
-                        Target target = new Target
-                        {
-                            Namespace = patchNamespace,
-                            Class = patchClass,
-                            Method = ".ctor",
-                            Instruction = returnInstruction,
-                            Index = 0,
-                        };
 
-                        Instruction[] instructions = patcher.GetInstructions(target);
-                        if (instructions != null)
+                        try
                         {
-                            patcher.ReplaceInstruction(target);
-                            patcher.Save(true);
-                            Console.WriteLine("Patched: {0}", file);
+                            Instruction returnInstruction = Instruction.Create(OpCodes.Ret);
+                            Target target = new Target
+                            {
+                                Namespace = patchCtorNamespace,
+                                Class = patchCtorClass,
+                                Method = ".ctor",
+                                Instruction = returnInstruction,
+                                Index = 0,
+                            };
+                            Instruction[] instructions = patcher.GetInstructions(target);
+                            if (instructions != null)
+                            {
+                                patcher.ReplaceInstruction(target);
+                                patched = true;
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+
+                        try
+                        {
+                            Instruction[] return0Instructions =
+                            {
+                                Instruction.Create(OpCodes.Ldc_I4_0),
+                                Instruction.Create(OpCodes.Ret)
+                            };
+
+                            Target target = new Target
+                            {
+                                Namespace = patchMethodNamespace,
+                                Class = patchMethodClass,
+                                Method = patchMethodName,
+                                Instructions = return0Instructions,
+                                Indices = new [] { 1, 2 }
+                            };
+                            Instruction[] instructions = patcher.GetInstructions(target);
+                            if (instructions != null)
+                            {
+                                patcher.Patch(target);
+                                patched = true;
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+
+                        if (patched)
+                        {
+                            try
+                            {
+                                patcher.Save(true);
+                                Console.WriteLine("Patched: {0}", file);
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine("Patch exception: File={0}, Msg={1}", file, ex.Message);
+                            }
                         }
                     }
                     catch (NullReferenceException)
