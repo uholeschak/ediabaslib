@@ -1400,6 +1400,28 @@ namespace PsdzClient
             return data;
         }
 
+        public bool IsExecutable()
+        {
+            log.InfoFormat("IsExecutable Start");
+
+            try
+            {
+                Assembly entryAssembly = Assembly.GetEntryAssembly();
+                if (entryAssembly != null)
+                {
+                    log.InfoFormat("IsExecutable Executable");
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("IsExecutable Exception: '{0}'", e.Message);
+            }
+
+            log.InfoFormat("IsExecutable No executable");
+            return false;
+        }
+
         public bool GenerateTestModuleData(ProgressDelegate progressHandler)
         {
             try
@@ -1451,6 +1473,12 @@ namespace PsdzClient
                 if (testModules == null)
                 {
                     log.InfoFormat("GenerateTestModuleData Converting test modules");
+                    if (!IsExecutable())
+                    {
+                        log.ErrorFormat("GenerateTestModuleData Started from DLL");
+                        return false;
+                    }
+
                     testModules = ConvertAllTestModules(progressHandler);
                     if (testModules == null)
                     {
