@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31624.102
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32319.34
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsdzClient", "PsdzClient\PsdzClient.csproj", "{EE741859-CB0F-4130-9F07-5CEC56A982C6}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsdzClientLibrary", "PsdzClientLibrary\PsdzClientLibrary.csproj", "{EEF1264D-D00F-44D4-B21C-D65CF54E149E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleTestServer", "VehicleTestServer\VehicleTestServer.csproj", "{66FDF0E2-F789-4362-A5DF-B114ED7C8D4B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssemblyPatcher", "AssemblyPatcher\AssemblyPatcher.csproj", "{1FC28DE0-43C8-444F-AF00-CF9B0DFF4AE4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{66FDF0E2-F789-4362-A5DF-B114ED7C8D4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{66FDF0E2-F789-4362-A5DF-B114ED7C8D4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{66FDF0E2-F789-4362-A5DF-B114ED7C8D4B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FC28DE0-43C8-444F-AF00-CF9B0DFF4AE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FC28DE0-43C8-444F-AF00-CF9B0DFF4AE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FC28DE0-43C8-444F-AF00-CF9B0DFF4AE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FC28DE0-43C8-444F-AF00-CF9B0DFF4AE4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
