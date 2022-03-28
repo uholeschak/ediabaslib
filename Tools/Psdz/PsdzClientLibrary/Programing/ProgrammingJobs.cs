@@ -255,8 +255,16 @@ namespace PsdzClient.Programing
 
                     if (!result)
                     {
-                        log.ErrorFormat("Generating test module data failed");
-                        sbResult.AppendLine(Strings.HostStartFailed);
+                        if (!ProgrammingService.PdszDatabase.IsExecutable())
+                        {
+                            log.ErrorFormat("No test module data present");
+                            sbResult.AppendLine(Strings.TestModuleDataMissing);
+                        }
+                        else
+                        {
+                            log.ErrorFormat("Generating test module data failed");
+                            sbResult.AppendLine(Strings.HostStartFailed);
+                        }
                         UpdateStatus(sbResult.ToString());
                         return false;
                     }

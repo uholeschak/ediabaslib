@@ -292,6 +292,9 @@ Wollen Sie Fortfahren?</value>
   <data name="TalRestoreGenrating" xml:space="preserve">
     <value>Generiere Restore TAL ...</value>
   </data>
+  <data name="TestModuleDataMissing" xml:space="preserve">
+    <value>Testmoduldaten nicht vorhanden.</value>
+  </data>
   <data name="TslUpdated" xml:space="preserve">
     <value>TSL aktualisiert.</value>
   </data>

@@ -292,6 +292,9 @@ Do you want to continue?</value>
   <data name="TalRestoreGenrating" xml:space="preserve">
     <value>Generating restore TAL ...</value>
   </data>
+  <data name="TestModuleDataMissing" xml:space="preserve">
+    <value>Test module data not present.</value>
+  </data>
   <data name="TslUpdated" xml:space="preserve">
     <value>TSL updated.</value>
   </data>

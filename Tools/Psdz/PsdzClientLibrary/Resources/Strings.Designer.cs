@@ -572,6 +572,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Test module data not present. ähnelt.
+        /// </summary>
+        internal static string TestModuleDataMissing {
+            get {
+                return ResourceManager.GetString("TestModuleDataMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die TSL updated. ähnelt.
         /// </summary>
         internal static string TslUpdated {
