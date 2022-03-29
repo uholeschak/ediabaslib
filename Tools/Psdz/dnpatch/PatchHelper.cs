@@ -987,7 +987,7 @@ namespace dnpatch
                 for (int i = 0; i < target.Indices.Length; i++)
                 {
                     var index = target.Indices[i];
-                    instructions.Insert(index, target.Instruction);
+                    instructions.Insert(index, target.Instructions[i]);
                 }
             }
             else
