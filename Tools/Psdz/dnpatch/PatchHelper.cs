@@ -960,7 +960,43 @@ namespace dnpatch
             }
         }
 
-        public  Instruction[] GetInstructions(Target target)
+        public void InsertInstruction(Target target)
+        {
+            string[] nestedClasses = { };
+            if (target.NestedClasses != null)
+            {
+                nestedClasses = target.NestedClasses;
+            }
+            else if (target.NestedClass != null)
+            {
+                nestedClasses = new[] { target.NestedClass };
+            }
+            var type = FindType(target.Namespace + "." + target.Class, nestedClasses);
+            var method = FindMethod(type, target.Method, target.Parameters, target.ReturnType);
+            if (method == null)
+            {
+                throw new Exception("Method not found");
+            }
+            var instructions = method.Body.Instructions;
+            if (target.Index != -1 && target.Instruction != null)
+            {
+                instructions.Insert(target.Index, target.Instruction);
+            }
+            else if (target.Indices != null && target.Instructions != null)
+            {
+                for (int i = 0; i < target.Indices.Length; i++)
+                {
+                    var index = target.Indices[i];
+                    instructions.Insert(index + i, target.Instruction);
+                }
+            }
+            else
+            {
+                throw new Exception("Target object built wrong");
+            }
+        }
+
+        public Instruction[] GetInstructions(Target target)
         {
             var type = FindType(target.Namespace + "." + target.Class, target.NestedClasses);
             MethodDef method = FindMethod(type, target.Method, target.Parameters, target.ReturnType);

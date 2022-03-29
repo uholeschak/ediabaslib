@@ -123,7 +123,7 @@ namespace AssemblyPatcher
                             Instruction[] instructions = patcher.GetInstructions(target);
                             if (instructions != null)
                             {
-                                patcher.ReplaceInstruction(target);
+                                patcher.InsertInstruction(target);
                                 patched = true;
                             }
                         }
@@ -146,12 +146,12 @@ namespace AssemblyPatcher
                                 Class = patchMethodClass,
                                 Method = patchMethodName,
                                 Instructions = return0Instructions,
-                                Indices = new [] { 1, 2 }
+                                Indices = new [] { 0, 1 }
                             };
                             Instruction[] instructions = patcher.GetInstructions(target);
                             if (instructions != null)
                             {
-                                patcher.Patch(target);
+                                patcher.InsertInstruction(target);
                                 patched = true;
                             }
                         }

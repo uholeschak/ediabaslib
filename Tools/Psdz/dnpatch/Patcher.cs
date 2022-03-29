@@ -113,6 +113,11 @@ namespace dnpatch
             _patcher.RemoveInstruction(target);
         }
 
+        public void InsertInstruction(Target target)
+        {
+            _patcher.InsertInstruction(target);
+        }
+
         public Instruction[] GetInstructions(Target target)
         {
             return _patcher.GetInstructions(target);
