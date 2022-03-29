@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleTestServer", "Vehicl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssemblyPatcher", "AssemblyPatcher\AssemblyPatcher.csproj", "{1FC28DE0-43C8-444F-AF00-CF9B0DFF4AE4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnpatch", "dnpatch\dnpatch.csproj", "{14CA7A28-7FA8-40A0-ABC6-81E9F36318DE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{1FC28DE0-43C8-444F-AF00-CF9B0DFF4AE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1FC28DE0-43C8-444F-AF00-CF9B0DFF4AE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1FC28DE0-43C8-444F-AF00-CF9B0DFF4AE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14CA7A28-7FA8-40A0-ABC6-81E9F36318DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14CA7A28-7FA8-40A0-ABC6-81E9F36318DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14CA7A28-7FA8-40A0-ABC6-81E9F36318DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14CA7A28-7FA8-40A0-ABC6-81E9F36318DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
