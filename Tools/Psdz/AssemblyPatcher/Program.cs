@@ -64,6 +64,44 @@ namespace AssemblyPatcher
                     return 1;
                 }
 
+                string licFileName = ConfigurationManager.AppSettings["LicFileName"];
+                if (string.IsNullOrEmpty(licFileName))
+                {
+                    Console.WriteLine("LicFileName not configured");
+                    return 1;
+                }
+
+                string codeBase = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
+                if (string.IsNullOrEmpty(codeBase))
+                {
+                    Console.WriteLine("Assembly location not found");
+                    return 1;
+                }
+
+                UriBuilder uri = new UriBuilder(codeBase);
+                string path = Uri.UnescapeDataString(uri.Path);
+                string appDir = Path.GetDirectoryName(path);
+                if (string.IsNullOrEmpty(appDir))
+                {
+                    Console.WriteLine("Assembly location not found");
+                    return 1;
+                }
+
+                string licFileSrc = Path.Combine(appDir, "Data", licFileName);
+                string licFileDst = Path.Combine(assemblyDir, licFileName);
+                if (File.Exists(licFileSrc) && !File.Exists(licFileDst))
+                {
+                    try
+                    {
+                        File.Copy(licFileSrc, licFileDst, true);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Copy license failed: {0}", e.Message);
+                        return 1;
+                    }
+                }
+
                 string[] files = Directory.GetFiles(assemblyDir, "*.*", SearchOption.TopDirectoryOnly);
                 foreach (string file in files)
                 {
