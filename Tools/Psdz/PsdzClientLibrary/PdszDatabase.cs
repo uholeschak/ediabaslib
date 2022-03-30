@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
@@ -1173,6 +1172,12 @@ namespace PsdzClient
             return false;
         }
 
+        private static bool CallGetDatabaseProviderSQLitePrefix()
+        {
+            log.InfoFormat("CallGetDatabaseProviderSQLitePrefix");
+            return false;
+        }
+
         public PdszDatabase(string istaFolder)
         {
             _databasePath = Path.Combine(istaFolder, "SQLiteDBs");
@@ -1628,21 +1633,6 @@ namespace PsdzClient
                     return null;
                 }
 
-                string sqLiteConnectorFile = Path.Combine(_frameworkPath, "RheingoldDatabaseSQLiteConnector.dll");
-                if (!File.Exists(sqLiteConnectorFile))
-                {
-                    log.ErrorFormat("ReadTestModule SQLite connector not found: {0}", sqLiteConnectorFile);
-                    return null;
-                }
-                Assembly sqLiteConnectorAssembly = Assembly.LoadFrom(sqLiteConnectorFile);
-
-                Type sqLiteDatabaseType = sqLiteConnectorAssembly.GetType("BMW.Rheingold.DatabaseProvider.SQLiteConnector.DatabaseProviderSQLite");
-                if (sqLiteDatabaseType == null)
-                {
-                    log.ErrorFormat("ReadTestModule DatabaseProviderSQLite not found");
-                    return null;
-                }
-
                 string coreFrameworkFile = Path.Combine(_frameworkPath, "RheingoldCoreFramework.dll");
                 if (!File.Exists(coreFrameworkFile))
                 {
@@ -1651,13 +1641,27 @@ namespace PsdzClient
                 }
                 Assembly coreFrameworkAssembly = Assembly.LoadFrom(coreFrameworkFile);
 
+                Type databaseProviderType = coreFrameworkAssembly.GetType("BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseProviderFactory");
+                if (databaseProviderType == null)
+                {
+                    log.ErrorFormat("ReadTestModule GetDatabaseProviderSQLite not found");
+                    return null;
+                }
+
+                MethodInfo methodGetDatabaseProviderSQLite = databaseProviderType.GetMethod("GetDatabaseProviderSQLite", BindingFlags.Public | BindingFlags.Static);
+                if (methodGetDatabaseProviderSQLite == null)
+                {
+                    log.ErrorFormat("ReadTestModule GetDatabaseProviderSQLite not found");
+                    return null;
+                }
+
                 string sessionControllerFile = Path.Combine(_frameworkPath, "RheingoldSessionController.dll");
                 if (!File.Exists(sessionControllerFile))
                 {
                     log.ErrorFormat("ReadTestModule Session controller not found: {0}", sessionControllerFile);
                     return null;
                 }
-                Assembly sessionConrollerAssembly = Assembly.LoadFrom(sessionControllerFile);
+                Assembly sessionControllerAssembly = Assembly.LoadFrom(sessionControllerFile);
 
                 string istaCoreFrameworkFile = Path.Combine(_frameworkPath, "RheingoldISTACoreFramework.dll");
                 if (!File.Exists(istaCoreFrameworkFile))
@@ -1686,6 +1690,35 @@ namespace PsdzClient
                 {
                     log.ErrorFormat("ReadTestModule CallModuleRefPrefix not found");
                     return null;
+                }
+
+                MethodInfo methodGetDatabasePrefix = typeof(PdszDatabase).GetMethod("CallGetDatabaseProviderSQLitePrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                if (methodGetDatabasePrefix == null)
+                {
+                    log.ErrorFormat("ReadTestModule CallGetDatabaseProviderSQLitePrefix not found");
+                    return null;
+                }
+
+                bool patchedModuleRef = false;
+                bool patchedGetDatabase = false;
+                foreach (MethodBase methodBase in _harmony.GetPatchedMethods())
+                {
+                    log.InfoFormat("ReadTestModule Patched: {0}", methodBase.Name);
+                    if (methodBase == methodIstaModuleModuleRef)
+                    {
+                        patchedModuleRef = true;
+                    }
+
+                    if (methodBase == methodGetDatabaseProviderSQLite)
+                    {
+                        patchedGetDatabase = true;
+                    }
+                }
+
+                if (!patchedGetDatabase)
+                {
+                    log.InfoFormat("ReadTestModule Patching: {0}", methodGetDatabaseProviderSQLite.Name);
+                    _harmony.Patch(methodGetDatabaseProviderSQLite, new HarmonyMethod(methodGetDatabasePrefix));
                 }
 
                 Assembly moduleAssembly = Assembly.LoadFrom(moduleFile);
@@ -1736,7 +1769,7 @@ namespace PsdzClient
                 object parameterNameVehicle = Enum.Parse(paramNameType, "Vehicle", true);
 
                 object moduleParamInst = Activator.CreateInstance(moduleParamType);
-                Type logicType = sessionConrollerAssembly.GetType("BMW.Rheingold.RheingoldSessionController.Logic");
+                Type logicType = sessionControllerAssembly.GetType("BMW.Rheingold.RheingoldSessionController.Logic");
                 if (logicType == null)
                 {
                     log.ErrorFormat("ReadTestModule Logic not found");
@@ -1766,18 +1799,7 @@ namespace PsdzClient
                     return null;
                 }
 
-                bool patched = false;
-                foreach (MethodBase methodBase in _harmony.GetPatchedMethods())
-                {
-                    log.InfoFormat("ReadTestModule Patched: {0}", methodBase.Name);
-                    if (methodBase == methodIstaModuleModuleRef)
-                    {
-                        patched = true;
-                        break;
-                    }
-                }
-
-                if (!patched)
+                if (!patchedModuleRef)
                 {
                     log.InfoFormat("ReadTestModule Patching: {0}", methodIstaModuleModuleRef.Name);
                     _harmony.Patch(methodIstaModuleModuleRef, new HarmonyMethod(methodModuleRefPrefix));
