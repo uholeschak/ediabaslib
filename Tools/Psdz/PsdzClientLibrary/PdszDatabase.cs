@@ -1628,6 +1628,21 @@ namespace PsdzClient
                     return null;
                 }
 
+                string sqLiteConnectorFile = Path.Combine(_frameworkPath, "RheingoldDatabaseSQLiteConnector.dll");
+                if (!File.Exists(sqLiteConnectorFile))
+                {
+                    log.ErrorFormat("ReadTestModule SQLite connector not found: {0}", sqLiteConnectorFile);
+                    return null;
+                }
+                Assembly sqLiteConnectorAssembly = Assembly.LoadFrom(sqLiteConnectorFile);
+
+                Type sqLiteDatabaseType = sqLiteConnectorAssembly.GetType("BMW.Rheingold.DatabaseProvider.SQLiteConnector.DatabaseProviderSQLite");
+                if (sqLiteDatabaseType == null)
+                {
+                    log.ErrorFormat("ReadTestModule DatabaseProviderSQLite not found");
+                    return null;
+                }
+
                 string coreFrameworkFile = Path.Combine(_frameworkPath, "RheingoldCoreFramework.dll");
                 if (!File.Exists(coreFrameworkFile))
                 {
