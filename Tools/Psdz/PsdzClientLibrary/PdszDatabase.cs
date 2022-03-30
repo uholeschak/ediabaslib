@@ -1172,6 +1172,12 @@ namespace PsdzClient
             return false;
         }
 
+        private static bool CallWriteFaPrefix()
+        {
+            log.InfoFormat("CallWriteFaPrefix");
+            return false;
+        }
+
         private static bool CallGetDatabaseProviderSQLitePrefix()
         {
             log.InfoFormat("CallGetDatabaseProviderSQLitePrefix");
@@ -1692,6 +1698,13 @@ namespace PsdzClient
                     return null;
                 }
 
+                MethodInfo methodWriteFaPrefix = typeof(PdszDatabase).GetMethod("CallWriteFaPrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                if (methodWriteFaPrefix == null)
+                {
+                    log.ErrorFormat("ReadTestModule CallWriteFaPrefix not found");
+                    return null;
+                }
+
                 MethodInfo methodGetDatabasePrefix = typeof(PdszDatabase).GetMethod("CallGetDatabaseProviderSQLitePrefix", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodGetDatabasePrefix == null)
                 {
@@ -1822,6 +1835,14 @@ namespace PsdzClient
                     log.ErrorFormat("ReadTestModule Test module Change_FA methode not found");
                     return null;
                 }
+
+                MethodInfo methodTestModuleWriteFa = moduleType.GetMethod("FA_schreiben", BindingFlags.Instance | BindingFlags.NonPublic);
+                if (methodTestModuleWriteFa != null)
+                {
+                    log.InfoFormat("ReadTestModule Patching: {0}", methodTestModuleWriteFa.Name);
+                    _harmony.Patch(methodTestModuleWriteFa, new HarmonyMethod(methodWriteFaPrefix));
+                }
+
                 object testModule = Activator.CreateInstance(moduleType, moduleParamContainerInst);
                 log.InfoFormat("ReadTestModule Module loaded: {0}, Type: {1}", fileName, moduleType.FullName);
 
