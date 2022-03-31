@@ -14,6 +14,8 @@ using SimpleWifi.Win32;
 using SimpleWifi.Win32.Interop;
 using System.ComponentModel;
 using System.Security.AccessControl;
+using System.Threading.Tasks;
+using EdiabasLib;
 
 namespace EdiabasLibConfigTool
 {
@@ -30,6 +32,8 @@ namespace EdiabasLibConfigTool
         private string _ediabasDirIstad;
         private string _initMessage;
         private volatile bool _searching;
+        private volatile bool _vehicleTaskActive;
+        private List<EdInterfaceEnet.EnetConnection> _detectedVehicles;
         private ListViewItem _selectedItem;
         private bool _ignoreSelection;
 
@@ -361,8 +365,60 @@ namespace EdiabasLibConfigTool
             }
         }
 
+        private void AddDetectedVehicles(ListView listView)
+        {
+            if (_detectedVehicles == null)
+            {
+                return;
+            }
+
+            foreach (EdInterfaceEnet.EnetConnection enetConnection in _detectedVehicles)
+            {
+                string ipAddress = enetConnection.ToString();
+                string interfaceType = string.Empty;
+                switch (enetConnection.ConnectionType)
+                {
+                    case EdInterfaceEnet.EnetConnection.InterfaceType.Direct:
+                        interfaceType = "IP";
+                        break;
+
+                    case EdInterfaceEnet.EnetConnection.InterfaceType.Enet:
+                        interfaceType = "ENET";
+                        break;
+
+                    case EdInterfaceEnet.EnetConnection.InterfaceType.Icom:
+                        interfaceType = "ICOM";
+                        break;
+                }
+                ListViewItem listViewItem =
+                    new ListViewItem(new[] { ipAddress, interfaceType })
+                    {
+                        Tag = enetConnection
+                    };
+                listView.Items.Add(listViewItem);
+            }
+        }
+
         private bool StartDeviceSearch()
         {
+            _vehicleTaskActive = true;
+            _detectedVehicles = null;
+            SearchVehiclesTask().ContinueWith(task =>
+            {
+                _vehicleTaskActive = false;
+                BeginInvoke((Action)(() =>
+                {
+                    List<EdInterfaceEnet.EnetConnection> detectedVehicles = task.Result;
+                    if (detectedVehicles != null)
+                    {
+                        _detectedVehicles = detectedVehicles;
+                    }
+
+                    UpdateDeviceList(null, true);
+                    UpdateButtonStatus();
+                }));
+            });
+
             UpdateDeviceList(null, true);
             if (_cli == null)
             {
@@ -440,6 +496,7 @@ namespace EdiabasLibConfigTool
             _ignoreSelection = true;
             listViewDevices.BeginUpdate();
             listViewDevices.Items.Clear();
+            AddDetectedVehicles(listViewDevices);
             AddWifiAdapters(listViewDevices);
             if (devices != null)
             {
@@ -495,6 +552,23 @@ namespace EdiabasLibConfigTool
             UpdateButtonStatus();
         }
 
+        private async Task<List<EdInterfaceEnet.EnetConnection>> SearchVehiclesTask()
+        {
+            // ReSharper disable once ConvertClosureToMethodGroup
+            return await Task.Run(() => SearchVehicles()).ConfigureAwait(false);
+        }
+
+        private List<EdInterfaceEnet.EnetConnection> SearchVehicles()
+        {
+            List<EdInterfaceEnet.EnetConnection> detectedVehicles;
+            using (EdInterfaceEnet edInterface = new EdInterfaceEnet(false))
+            {
+                detectedVehicles = edInterface.DetectedVehicles("auto:all");
+            }
+
+            return detectedVehicles;
+        }
+
         public BluetoothDeviceInfo GetSelectedBtDevice()
         {
             BluetoothDeviceInfo devInfo = null;
@@ -536,9 +610,11 @@ namespace EdiabasLibConfigTool
             {
                 return;
             }
-            comboBoxLanguage.Enabled = !_searching && !_test.ThreadActive;
-            buttonSearch.Enabled = !_searching && !_test.ThreadActive && ((_cli != null) || !_wlanClient.NoWifiAvailable);
-            buttonClose.Enabled = !_searching && !_test.ThreadActive;
+
+            bool searching = _searching || _vehicleTaskActive;
+            comboBoxLanguage.Enabled = !searching && !_test.ThreadActive;
+            buttonSearch.Enabled = !searching && !_test.ThreadActive && ((_cli != null) || !_wlanClient.NoWifiAvailable);
+            buttonClose.Enabled = !searching && !_test.ThreadActive;
 
             BluetoothDeviceInfo devInfo = GetSelectedBtDevice();
             WlanInterface wlanIface = GetSelectedWifiDevice();
@@ -546,7 +622,7 @@ namespace EdiabasLibConfigTool
             buttonTest.Enabled = buttonSearch.Enabled && ((devInfo != null) || (wlanIface != null) || (ap != null)) && !_test.ThreadActive;
 
             bool allowPatch = buttonTest.Enabled && _test.TestOk && ((wlanIface != null) || (devInfo != null));
-            bool allowRestore = !_searching && !_test.ThreadActive;
+            bool allowRestore = !searching && !_test.ThreadActive;
 
             bool bmwValid = Patch.IsValid(_ediabasDirBmw);
             groupBoxEdiabas.Enabled = bmwValid;
