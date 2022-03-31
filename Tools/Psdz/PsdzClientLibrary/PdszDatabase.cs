@@ -1178,9 +1178,10 @@ namespace PsdzClient
             return false;
         }
 
-        private static bool CallGetDatabaseProviderSQLitePrefix()
+        private static bool CallGetDatabaseProviderSQLitePrefix(ref object __result)
         {
             log.InfoFormat("CallGetDatabaseProviderSQLitePrefix");
+            __result = null;
             return false;
         }
 
