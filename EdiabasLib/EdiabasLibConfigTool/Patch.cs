@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Xml.Linq;
+using EdiabasLib;
 using InTheHand.Net.Sockets;
 using SimpleWifi.Win32;
 using SimpleWifi.Win32.Interop;
@@ -198,7 +199,7 @@ namespace EdiabasLibConfigTool
             }
         }
 
-        public static bool UpdateConfigFile(string fileName, int adapterType, BluetoothDeviceInfo devInfo, WlanInterface wlanIface, string pin)
+        public static bool UpdateConfigFile(string fileName, int adapterType, BluetoothDeviceInfo devInfo, WlanInterface wlanIface, EdInterfaceEnet.EnetConnection enetConnection, string pin)
         {
             try
             {
@@ -252,6 +253,11 @@ namespace EdiabasLibConfigTool
                             break;
                     }
                     UpdateConfigNode(settingsNode, @"ObdKeepConnectionOpen", keepConnectionValue);
+                }
+                else if (enetConnection != null)
+                {
+                    UpdateConfigNode(settingsNode, @"EnetRemoteHost", @"auto:all");
+                    UpdateConfigNode(settingsNode, @"Interface", @"ENET");
                 }
                 else
                 {
@@ -509,7 +515,7 @@ namespace EdiabasLibConfigTool
             return true;
         }
 
-        public static bool PatchEdiabas(StringBuilder sr, PatchType patchType, int adapterType, string dirName, BluetoothDeviceInfo devInfo, WlanInterface wlanIface, string pin)
+        public static bool PatchEdiabas(StringBuilder sr, PatchType patchType, int adapterType, string dirName, BluetoothDeviceInfo devInfo, WlanInterface wlanIface, EdInterfaceEnet.EnetConnection enetConnection, string pin)
         {
             try
             {
@@ -519,7 +525,7 @@ namespace EdiabasLibConfigTool
                     return false;
                 }
                 string configFile = Path.Combine(dirName, ConfigFileName);
-                if (!UpdateConfigFile(configFile, adapterType, devInfo, wlanIface, pin))
+                if (!UpdateConfigFile(configFile, adapterType, devInfo, wlanIface, enetConnection, pin))
                 {
                     sr.Append("\r\n");
                     sr.Append(Resources.Strings.PatchConfigUpdateFailed);

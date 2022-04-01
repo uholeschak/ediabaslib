@@ -47,12 +47,16 @@ namespace EdiabasLib
                 IpAddress = ipAddress;
                 DiagPort = diagPort;
                 ControlPort = controlPort;
+                Mac = string.Empty;
+                Vin = string.Empty;
             }
 
             public InterfaceType ConnectionType { get; }
             public IPAddress IpAddress { get;}
             public int DiagPort { get; }
             public int ControlPort { get; }
+            public string Mac { get; set; }
+            public string Vin { get; set; }
             private int? hashCode;
 
             public override string ToString()
@@ -1375,6 +1379,14 @@ namespace EdiabasLib
                         (UdpBuffer[14] == '0'))
                     {
                         addListConn = new EnetConnection(EnetConnection.InterfaceType.Direct, recIp);
+                        string mac = Encoding.ASCII.GetString(UdpBuffer, 15 + 6, 12);
+                        addListConn.Mac = mac;
+
+                        if (recLen >= 15 + 6 + 12 + 6 + 17)
+                        {
+                            string vin = Encoding.ASCII.GetString(UdpBuffer, 15 + 6 + 12 + 6, 17);
+                            addListConn.Vin = vin;
+                        }
                     }
                 }
                 else if (recPort == UdpSrvLocPort)

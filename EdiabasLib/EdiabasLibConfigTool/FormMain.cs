@@ -375,23 +375,9 @@ namespace EdiabasLibConfigTool
             foreach (EdInterfaceEnet.EnetConnection enetConnection in _detectedVehicles)
             {
                 string ipAddress = enetConnection.ToString();
-                string interfaceType = string.Empty;
-                switch (enetConnection.ConnectionType)
-                {
-                    case EdInterfaceEnet.EnetConnection.InterfaceType.Direct:
-                        interfaceType = "IP";
-                        break;
-
-                    case EdInterfaceEnet.EnetConnection.InterfaceType.Enet:
-                        interfaceType = "ENET";
-                        break;
-
-                    case EdInterfaceEnet.EnetConnection.InterfaceType.Icom:
-                        interfaceType = "ICOM";
-                        break;
-                }
+                string vin = enetConnection.Vin ?? string.Empty;
                 ListViewItem listViewItem =
-                    new ListViewItem(new[] { ipAddress, interfaceType })
+                    new ListViewItem(new[] { ipAddress, vin })
                     {
                         Tag = enetConnection
                     };
@@ -414,7 +400,11 @@ namespace EdiabasLibConfigTool
                         _detectedVehicles = detectedVehicles;
                     }
 
-                    UpdateDeviceList(null, true);
+                    if (!_searching)
+                    {
+                        UpdateDeviceList(null, true);
+                    }
+
                     UpdateButtonStatus();
                 }));
             });
@@ -589,6 +579,16 @@ namespace EdiabasLibConfigTool
             return wlanIface;
         }
 
+        public EdInterfaceEnet.EnetConnection GetSelectedEnetDevice()
+        {
+            EdInterfaceEnet.EnetConnection enetConnection = null;
+            if (listViewDevices.SelectedItems.Count > 0)
+            {
+                enetConnection = listViewDevices.SelectedItems[0].Tag as EdInterfaceEnet.EnetConnection;
+            }
+            return enetConnection;
+        }
+
         public AccessPoint GetSelectedAp()
         {
             AccessPoint ap = null;
@@ -618,10 +618,16 @@ namespace EdiabasLibConfigTool
 
             BluetoothDeviceInfo devInfo = GetSelectedBtDevice();
             WlanInterface wlanIface = GetSelectedWifiDevice();
+            EdInterfaceEnet.EnetConnection enetConnection = GetSelectedEnetDevice();
             AccessPoint ap = GetSelectedAp();
             buttonTest.Enabled = buttonSearch.Enabled && ((devInfo != null) || (wlanIface != null) || (ap != null)) && !_test.ThreadActive;
 
             bool allowPatch = buttonTest.Enabled && _test.TestOk && ((wlanIface != null) || (devInfo != null));
+            if (enetConnection != null)
+            {
+                allowPatch = true;
+            }
+
             bool allowRestore = !searching && !_test.ThreadActive;
 
             bool bmwValid = Patch.IsValid(_ediabasDirBmw);
@@ -796,7 +802,8 @@ namespace EdiabasLibConfigTool
             ClearInitMessage();
             BluetoothDeviceInfo devInfo = GetSelectedBtDevice();
             WlanInterface wlanIface = GetSelectedWifiDevice();
-            if (devInfo == null && wlanIface == null)
+            EdInterfaceEnet.EnetConnection enetConnection = GetSelectedEnetDevice();
+            if (devInfo == null && wlanIface == null && enetConnection == null)
             {
                 return;
             }
@@ -820,7 +827,7 @@ namespace EdiabasLibConfigTool
             if (!string.IsNullOrEmpty(dirName))
             {
                 StringBuilder sr = new StringBuilder();
-                Patch.PatchEdiabas(sr, patchType, _test.AdapterType, dirName, devInfo, wlanIface, textBoxBluetoothPin.Text);
+                Patch.PatchEdiabas(sr, patchType, _test.AdapterType, dirName, devInfo, wlanIface, enetConnection, textBoxBluetoothPin.Text);
                 UpdateStatusText(sr.ToString());
             }
             UpdateButtonStatus();
