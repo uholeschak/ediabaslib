@@ -1379,13 +1379,27 @@ namespace EdiabasLib
                         (UdpBuffer[14] == '0'))
                     {
                         addListConn = new EnetConnection(EnetConnection.InterfaceType.Direct, recIp);
-                        string mac = Encoding.ASCII.GetString(UdpBuffer, 15 + 6, 12);
-                        addListConn.Mac = mac;
+                        try
+                        {
+                            string mac = Encoding.ASCII.GetString(UdpBuffer, 15 + 6, 12);
+                            addListConn.Mac = mac;
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
 
                         if (recLen >= 15 + 6 + 12 + 6 + 17)
                         {
-                            string vin = Encoding.ASCII.GetString(UdpBuffer, 15 + 6 + 12 + 6, 17);
-                            addListConn.Vin = vin;
+                            try
+                            {
+                                string vin = Encoding.ASCII.GetString(UdpBuffer, 15 + 6 + 12 + 6, 17);
+                                addListConn.Vin = vin;
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
                         }
                     }
                 }
