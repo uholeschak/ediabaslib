@@ -375,9 +375,26 @@ namespace EdiabasLibConfigTool
             foreach (EdInterfaceEnet.EnetConnection enetConnection in _detectedVehicles)
             {
                 string ipAddress = enetConnection.ToString();
-                string vin = enetConnection.Vin ?? string.Empty;
+                StringBuilder sbInfo = new StringBuilder();
+                if (!string.IsNullOrEmpty(enetConnection.Vin))
+                {
+                    sbInfo.Append(enetConnection.Vin);
+                }
+
+                if (!string.IsNullOrEmpty(enetConnection.Mac))
+                {
+                    if (sbInfo.Length > 0)
+                    {
+                        sbInfo.Append(" / ");
+                    }
+
+                    sbInfo.Append("MAC=");
+                    sbInfo.Append(enetConnection.Mac.ToUpperInvariant());
+                }
+
+
                 ListViewItem listViewItem =
-                    new ListViewItem(new[] { ipAddress, vin })
+                    new ListViewItem(new[] { ipAddress, sbInfo.ToString() })
                     {
                         Tag = enetConnection
                     };
@@ -400,11 +417,7 @@ namespace EdiabasLibConfigTool
                         _detectedVehicles = detectedVehicles;
                     }
 
-                    if (!_searching)
-                    {
-                        UpdateDeviceList(null, true);
-                    }
-
+                    UpdateDeviceList(Array.Empty<BluetoothDeviceInfo>(), false);
                     UpdateButtonStatus();
                 }));
             });
