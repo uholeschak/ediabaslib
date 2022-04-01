@@ -375,23 +375,9 @@ namespace EdiabasLibConfigTool
             foreach (EdInterfaceEnet.EnetConnection enetConnection in _detectedVehicles)
             {
                 string ipAddress = enetConnection.ToString();
-                string interfaceType = string.Empty;
-                switch (enetConnection.ConnectionType)
-                {
-                    case EdInterfaceEnet.EnetConnection.InterfaceType.Direct:
-                        interfaceType = "IP";
-                        break;
-
-                    case EdInterfaceEnet.EnetConnection.InterfaceType.Enet:
-                        interfaceType = "ENET";
-                        break;
-
-                    case EdInterfaceEnet.EnetConnection.InterfaceType.Icom:
-                        interfaceType = "ICOM";
-                        break;
-                }
+                string vin = enetConnection.Vin ?? string.Empty;
                 ListViewItem listViewItem =
-                    new ListViewItem(new[] { ipAddress, interfaceType })
+                    new ListViewItem(new[] { ipAddress, vin })
                     {
                         Tag = enetConnection
                     };
