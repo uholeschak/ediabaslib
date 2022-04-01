@@ -1364,6 +1364,8 @@ namespace EdiabasLib
                 IPAddress recIp = ((IPEndPoint)tempRemoteEp).Address;
                 bool continueRec = true;
                 EnetConnection addListConn = null;
+                string vehicleVin = string.Empty;
+                string vehicleMac = string.Empty;
 
                 if (recPort == UdpIdentPort)
                 {
@@ -1381,8 +1383,7 @@ namespace EdiabasLib
                         addListConn = new EnetConnection(EnetConnection.InterfaceType.Direct, recIp);
                         try
                         {
-                            string mac = Encoding.ASCII.GetString(UdpBuffer, 15 + 6, 12);
-                            addListConn.Mac = mac;
+                            vehicleMac = Encoding.ASCII.GetString(UdpBuffer, 15 + 6, 12);
                         }
                         catch (Exception)
                         {
@@ -1393,8 +1394,7 @@ namespace EdiabasLib
                         {
                             try
                             {
-                                string vin = Encoding.ASCII.GetString(UdpBuffer, 15 + 6 + 12 + 6, 17);
-                                addListConn.Vin = vin;
+                                vehicleVin = Encoding.ASCII.GetString(UdpBuffer, 15 + 6 + 12 + 6, 17);
                             }
                             catch (Exception)
                             {
@@ -1411,6 +1411,7 @@ namespace EdiabasLib
                         bool isEnet = false;
                         bool isIcom = false;
                         IPAddress ipAddressHost = recIp;
+
                         if (attrDict.TryGetValue("DEVTYPE", out string devType))
                         {
                             if (string.Compare(devType, "ENET", StringComparison.OrdinalIgnoreCase) == 0)
@@ -1429,6 +1430,16 @@ namespace EdiabasLib
                             {
                                 ipAddressHost = vehicleIp;
                             }
+                        }
+
+                        if (attrDict.TryGetValue("MACADDRESS", out string macString))
+                        {
+                            vehicleMac = macString;
+                        }
+
+                        if (attrDict.TryGetValue("VIN", out string vinString))
+                        {
+                            vehicleVin = vinString;
                         }
 
                         if (isEnet)
@@ -1482,6 +1493,9 @@ namespace EdiabasLib
 
                 if (addListConn != null)
                 {
+                    addListConn.Mac = vehicleMac;
+                    addListConn.Vin = vehicleVin;
+
                     int listCount = 0;
                     lock (UdpRecListLock)
                     {
