@@ -400,8 +400,11 @@ namespace EdiabasLibConfigTool
                         _detectedVehicles = detectedVehicles;
                     }
 
-                    UpdateDeviceList(null, true);
-                    UpdateButtonStatus();
+                    if (!_searching)
+                    {
+                        UpdateDeviceList(null, true);
+                        UpdateButtonStatus();
+                    }
                 }));
             });
 
