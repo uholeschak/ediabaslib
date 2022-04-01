@@ -403,8 +403,9 @@ namespace EdiabasLibConfigTool
                     if (!_searching)
                     {
                         UpdateDeviceList(null, true);
-                        UpdateButtonStatus();
                     }
+
+                    UpdateButtonStatus();
                 }));
             });
 
@@ -578,6 +579,16 @@ namespace EdiabasLibConfigTool
             return wlanIface;
         }
 
+        public EdInterfaceEnet.EnetConnection GetSelectedEnetDevice()
+        {
+            EdInterfaceEnet.EnetConnection enetConnection = null;
+            if (listViewDevices.SelectedItems.Count > 0)
+            {
+                enetConnection = listViewDevices.SelectedItems[0].Tag as EdInterfaceEnet.EnetConnection;
+            }
+            return enetConnection;
+        }
+
         public AccessPoint GetSelectedAp()
         {
             AccessPoint ap = null;
@@ -607,10 +618,16 @@ namespace EdiabasLibConfigTool
 
             BluetoothDeviceInfo devInfo = GetSelectedBtDevice();
             WlanInterface wlanIface = GetSelectedWifiDevice();
+            EdInterfaceEnet.EnetConnection enetConnection = GetSelectedEnetDevice();
             AccessPoint ap = GetSelectedAp();
             buttonTest.Enabled = buttonSearch.Enabled && ((devInfo != null) || (wlanIface != null) || (ap != null)) && !_test.ThreadActive;
 
             bool allowPatch = buttonTest.Enabled && _test.TestOk && ((wlanIface != null) || (devInfo != null));
+            if (enetConnection != null)
+            {
+                allowPatch = true;
+            }
+
             bool allowRestore = !searching && !_test.ThreadActive;
 
             bool bmwValid = Patch.IsValid(_ediabasDirBmw);
@@ -785,7 +802,8 @@ namespace EdiabasLibConfigTool
             ClearInitMessage();
             BluetoothDeviceInfo devInfo = GetSelectedBtDevice();
             WlanInterface wlanIface = GetSelectedWifiDevice();
-            if (devInfo == null && wlanIface == null)
+            EdInterfaceEnet.EnetConnection enetConnection = GetSelectedEnetDevice();
+            if (devInfo == null && wlanIface == null && enetConnection == null)
             {
                 return;
             }
@@ -809,7 +827,7 @@ namespace EdiabasLibConfigTool
             if (!string.IsNullOrEmpty(dirName))
             {
                 StringBuilder sr = new StringBuilder();
-                Patch.PatchEdiabas(sr, patchType, _test.AdapterType, dirName, devInfo, wlanIface, textBoxBluetoothPin.Text);
+                Patch.PatchEdiabas(sr, patchType, _test.AdapterType, dirName, devInfo, wlanIface, enetConnection, textBoxBluetoothPin.Text);
                 UpdateStatusText(sr.ToString());
             }
             UpdateButtonStatus();
