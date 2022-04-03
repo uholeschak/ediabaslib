@@ -117,6 +117,7 @@ More Debug info:
 <add key="BMW.Rheingold.Programming.Prodias.LogLevel" value="TRACE" />
 <add key="DebugLevel" value="5" />
 <add key="TesterGUI.PreferEthernet" value="true" />
+<add key="BMW.Rheingold.xVM.ICOM.Dirtyflag.Detection" value="false" />
 
 Make sure the EDIABAS.INI settings has default values in this case:
 [XEthernet]
