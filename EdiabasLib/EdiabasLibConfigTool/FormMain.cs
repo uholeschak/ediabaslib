@@ -635,10 +635,17 @@ namespace EdiabasLibConfigTool
             AccessPoint ap = GetSelectedAp();
             buttonTest.Enabled = buttonSearch.Enabled && ((devInfo != null) || (wlanIface != null) || (ap != null)) && !_test.ThreadActive;
 
-            bool allowPatch = buttonTest.Enabled && _test.TestOk && ((wlanIface != null) || (devInfo != null));
-            if (enetConnection != null)
+            bool allowPatch = false;
+            if (!searching)
             {
-                allowPatch = true;
+                if (enetConnection != null)
+                {
+                    allowPatch = true;
+                }
+                else
+                {
+                    allowPatch = buttonTest.Enabled && _test.TestOk && ((wlanIface != null) || (devInfo != null));
+                }
             }
 
             bool allowRestore = !searching && !_test.ThreadActive;
