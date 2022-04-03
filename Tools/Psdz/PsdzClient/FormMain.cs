@@ -384,7 +384,7 @@ namespace PsdzClient
                 {
                     if (_optionsDict.TryGetValue(swiRegisterEnum.Value, out List<ProgrammingJobs.OptionsItem> optionsItems))
                     {
-                        foreach (ProgrammingJobs.OptionsItem optionsItem in optionsItems)
+                        foreach (ProgrammingJobs.OptionsItem optionsItem in optionsItems.OrderBy(x => x.ToString()))
                         {
                             CheckState checkState = CheckState.Unchecked;
                             bool addItem = true;
