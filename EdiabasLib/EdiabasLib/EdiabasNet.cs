@@ -5491,6 +5491,25 @@ namespace EdiabasLib
                             else
 #endif
                             {
+                                string traceFile = Path.Combine(tracePath, traceFileName);
+                                try
+                                {
+                                    if (appendTrace != 0 && File.Exists(traceFile))
+                                    {
+                                        DateTime lastWriteTime = File.GetLastWriteTime(traceFile);
+                                        TimeSpan diffTime = DateTime.Now - lastWriteTime;
+                                        if (diffTime.Hours > 1)
+                                        {
+                                            appendTrace = 0;
+                                        }
+                                    }
+                                }
+                                catch (Exception e)
+                                {
+                                    Console.WriteLine(e);
+                                    throw;
+                                }
+
                                 FileMode fileMode = FileMode.Append;
                                 if (_firstLog && appendTrace == 0)
                                 {
@@ -5499,7 +5518,7 @@ namespace EdiabasLib
 
                                 newFile = true;
                                 _swLog = new StreamWriter(
-                                    new FileStream(Path.Combine(tracePath, traceFileName), fileMode, FileAccess.Write, FileShare.ReadWrite), Encoding)
+                                    new FileStream(traceFile, fileMode, FileAccess.Write, FileShare.ReadWrite), Encoding)
                                     {
                                         AutoFlush = buffering == 0
                                     };
