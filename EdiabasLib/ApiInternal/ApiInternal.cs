@@ -1654,7 +1654,7 @@ namespace Ediabas
                                 {
                                     DateTime lastWriteTime = File.GetLastWriteTime(traceFile);
                                     TimeSpan diffTime = DateTime.Now - lastWriteTime;
-                                    if (diffTime.Hours > 1)
+                                    if (diffTime.Hours > EdiabasNet.TraceAppendDiffHours)
                                     {
                                         appendTrace = 0;
                                     }

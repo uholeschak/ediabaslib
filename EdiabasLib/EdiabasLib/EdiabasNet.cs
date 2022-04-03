@@ -588,6 +588,7 @@ namespace EdiabasLib
         }
 
         public const int EdiabasVersion = 0x730;
+        public const int TraceAppendDiffHours = 1;
 
         public enum ErrorCodes : uint
         {
@@ -5498,7 +5499,7 @@ namespace EdiabasLib
                                     {
                                         DateTime lastWriteTime = File.GetLastWriteTime(traceFile);
                                         TimeSpan diffTime = DateTime.Now - lastWriteTime;
-                                        if (diffTime.Hours > 1)
+                                        if (diffTime.Hours > TraceAppendDiffHours)
                                         {
                                             appendTrace = 0;
                                         }
