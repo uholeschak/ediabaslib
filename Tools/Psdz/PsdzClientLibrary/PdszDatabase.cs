@@ -1048,22 +1048,22 @@ namespace PsdzClient
 
         public class DbInfo
         {
-            public DbInfo(string version, string date)
+            public DbInfo(string version, DateTime dateTime)
             {
                 Version = version;
-                Date = date;
+                DateTime = dateTime;
             }
 
             public string Version { get; set; }
 
-            public string Date { get; set; }
+            public DateTime DateTime { get; set; }
 
             public string ToString(string prefix = "")
             {
                 StringBuilder sb = new StringBuilder();
                 sb.Append(prefix);
                 sb.Append(string.Format(CultureInfo.InvariantCulture,
-                    "DbInfo: Version={0}, Date={1}", Version, Date));
+                    "DbInfo: Version={0}, Date={1}", Version, DateTime));
                 return sb.ToString();
             }
         }
@@ -3844,8 +3844,8 @@ namespace PsdzClient
                         while (reader.Read())
                         {
                             string version = reader["VERSION"].ToString().Trim();
-                            string date = reader["CREATIONDATE"].ToString().Trim();
-                            dbInfo = new DbInfo(version, date);
+                            DateTime dateTime = reader.GetDateTime(1);
+                            dbInfo = new DbInfo(version, dateTime);
                             break;
                         }
                     }

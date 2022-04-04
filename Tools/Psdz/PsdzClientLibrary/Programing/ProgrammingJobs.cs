@@ -357,7 +357,7 @@ namespace PsdzClient.Programing
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "DbInfo: {0}", dbInfo.ToString());
 
-                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.DbInfo, dbInfo.Version, dbInfo.Date));
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.DbInfo, dbInfo.Version, dbInfo.DateTime.ToShortDateString()));
                     UpdateStatus(sbResult.ToString());
                 }
 
