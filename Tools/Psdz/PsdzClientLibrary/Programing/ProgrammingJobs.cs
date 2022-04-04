@@ -352,6 +352,15 @@ namespace PsdzClient.Programing
                 sbResult.AppendLine(Strings.VehicleConnecting);
                 UpdateStatus(sbResult.ToString());
 
+                PdszDatabase.DbInfo dbInfo = ProgrammingService.PdszDatabase.GetDbInfo();
+                if (dbInfo != null)
+                {
+                    log.InfoFormat(CultureInfo.InvariantCulture, "DbInfo: {0}", dbInfo.ToString());
+
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.DbInfo, dbInfo.Version, dbInfo.Date));
+                    UpdateStatus(sbResult.ToString());
+                }
+
                 log.InfoFormat(CultureInfo.InvariantCulture, "Connecting to: Host={0}, ICOM={1}", remoteHost, useIcom);
                 string[] hostParts = remoteHost.Split(':');
                 if (hostParts.Length < 1)

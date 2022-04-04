@@ -79,6 +79,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Database version: {0}, date: {1} ähnelt.
+        /// </summary>
+        internal static string DbInfo {
+            get {
+                return ResourceManager.GetString("DbInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Detecting installed ECUs ... ähnelt.
         /// </summary>
         internal static string DetectingInstalledEcus {

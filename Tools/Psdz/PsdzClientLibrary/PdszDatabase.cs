@@ -1046,6 +1046,28 @@ namespace PsdzClient
             }
         }
 
+        public class DbInfo
+        {
+            public DbInfo(string version, string date)
+            {
+                Version = version;
+                Date = date;
+            }
+
+            public string Version { get; set; }
+
+            public string Date { get; set; }
+
+            public string ToString(string prefix = "")
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(prefix);
+                sb.Append(string.Format(CultureInfo.InvariantCulture,
+                    "DbInfo: Version={0}, Date={1}", Version, Date));
+                return sb.ToString();
+            }
+        }
+
         [XmlInclude(typeof(TestModuleData))]
         [XmlType("TestModules")]
         public class TestModules
@@ -3805,6 +3827,37 @@ namespace PsdzClient
 
             log.InfoFormat("GetCountryById Country: {0}", country);
             return country;
+        }
+
+        public DbInfo GetDbInfo()
+        {
+            log.InfoFormat("GetDbVersion");
+
+            DbInfo dbInfo = null;
+            try
+            {
+                string sql = @"SELECT VERSION, CREATIONDATE FROM RG_VERSION";
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string version = reader["VERSION"].ToString().Trim();
+                            string date = reader["CREATIONDATE"].ToString().Trim();
+                            dbInfo = new DbInfo(version, date);
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetDbVersion Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            return dbInfo;
         }
 
         public bool EvaluateXepRulesById(string id, Vehicle vehicle, IFFMDynamicResolver ffmResolver, string objectId = null)

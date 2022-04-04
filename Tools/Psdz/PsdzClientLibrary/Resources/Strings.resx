@@ -123,6 +123,9 @@
   <data name="CreateBackupPathFailed" xml:space="preserve">
     <value>Creating backup path failed.</value>
   </data>
+  <data name="DbInfo" xml:space="preserve">
+    <value>Database version: {0}, date: {1}</value>
+  </data>
   <data name="DetectingInstalledEcus" xml:space="preserve">
     <value>Detecting installed ECUs ...</value>
   </data>

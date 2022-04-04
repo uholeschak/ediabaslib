@@ -123,6 +123,9 @@
   <data name="CreateBackupPathFailed" xml:space="preserve">
     <value>Erzeugen des Backupverzeichnisses fehlgeschlagen.</value>
   </data>
+  <data name="DbInfo" xml:space="preserve">
+    <value>Datenbank Version: {0}, Datum: {1}</value>
+  </data>
   <data name="DetectingInstalledEcus" xml:space="preserve">
     <value>Installierte Steuergeräte erkennen ...</value>
   </data>
