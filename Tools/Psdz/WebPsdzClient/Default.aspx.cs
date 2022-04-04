@@ -653,7 +653,7 @@ namespace WebPsdzClient
                 {
                     if (optionsDict.TryGetValue(swiRegisterEnum.Value, out List<ProgrammingJobs.OptionsItem> optionsItems))
                     {
-                        foreach (ProgrammingJobs.OptionsItem optionsItem in optionsItems)
+                        foreach (ProgrammingJobs.OptionsItem optionsItem in optionsItems.OrderBy(x => x.ToString()))
                         {
                             bool itemSelected = false;
                             bool itemEnabled = true;
