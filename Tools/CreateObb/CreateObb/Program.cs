@@ -65,6 +65,30 @@ namespace CreateObb
             return 0;
         }
 
+        private static bool IsValidFile(string filePath)
+        {
+            try
+            {
+                string fileName = Path.GetFileName(filePath);
+
+                if (string.Compare(fileName, "enc_cne_1.prg", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return false;
+                }
+
+                if (string.Compare(fileName, "sig_gis_1.prg", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return true;
+        }
+
         private static bool CreateContentFile(string inDir, string outFile)
         {
             try
@@ -78,6 +102,12 @@ namespace CreateObb
                 string[] files = Directory.GetFiles(inDir, "*.*", SearchOption.AllDirectories);
                 foreach (string file in files)
                 {
+                    if (!IsValidFile(file))
+                    {
+                        File.Delete(file);
+                        continue;
+                    }
+
                     XElement xmlFileNode = new XElement("file");
 
                     Uri uriFile = new Uri(file);
