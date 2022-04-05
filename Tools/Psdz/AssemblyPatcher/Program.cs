@@ -236,9 +236,15 @@ namespace AssemblyPatcher
                                     // ldarg.1
                                     // callvirt	instance string [RheingoldCoreContracts]BMW.Rheingold.CoreFramework.Contracts.Vehicle.IVciDevice::get_IPAddress()
                                     instructions.Insert(patchIndex + 6, Instruction.Create(OpCodes.Ldstr, ";DiagnosticPort=50160;ControlPort=50161"));
+                                    instructions.Insert(patchIndex + 7,
+                                        Instruction.Create(OpCodes.Call,
+                                            patcher.BuildCall(typeof(System.String), "Concat", typeof(string),
+                                                new[] { typeof(string), typeof(string), typeof(string) })));
+                                    instructions.RemoveAt(patchIndex + 8);  // call	string [mscorlib]System.String::Concat(string, string)
                                     instructions.RemoveAt(patchIndex + 8);  // ldstr	"_"
                                     instructions.RemoveAt(patchIndex + 8);  // ldstr	"Rheingold"
                                     instructions.RemoveAt(patchIndex + 8);  // ldsfld	string [mscorlib]System.String::Empty
+                                    //patcher.Save(file.Replace(".dll", "Test.dll"));
                                 }
                             }
                         }
@@ -246,7 +252,6 @@ namespace AssemblyPatcher
                         {
                             // ignored
                         }
-
 #if true
                         if (patched)
                         {
