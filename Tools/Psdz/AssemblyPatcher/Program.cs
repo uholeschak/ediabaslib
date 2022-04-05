@@ -218,7 +218,7 @@ namespace AssemblyPatcher
                                     if (instruction.OpCode == OpCodes.Ldstr &&
                                         string.Compare(instruction.Operand.ToString(), "ENET::remotehost=", StringComparison.OrdinalIgnoreCase) == 0)
                                     {
-                                        Console.WriteLine("'ENET::remotehost=' found at {0}", index);
+                                        Console.WriteLine("'ENET::remotehost=' found at index: {0}", index);
                                         patchIndex = index;
                                         break;
                                     }
