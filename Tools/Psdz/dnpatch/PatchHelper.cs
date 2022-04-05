@@ -1007,7 +1007,18 @@ namespace dnpatch
             return method.Body.Instructions.ToArray();
         }
 
-        public  void PatchOperand(Target target, string operand)
+        public IList<Instruction> GetInstructionList(Target target)
+        {
+            var type = FindType(target.Namespace + "." + target.Class, target.NestedClasses);
+            MethodDef method = FindMethod(type, target.Method, target.Parameters, target.ReturnType);
+            if (method == null)
+            {
+                return null;
+            }
+            return method.Body.Instructions;
+        }
+
+        public void PatchOperand(Target target, string operand)
         {
             TypeDef type = FindType(target.Namespace + "." + target.Class, target.NestedClasses);
             MethodDef method = FindMethod(type, target.Method, target.Parameters, target.ReturnType);

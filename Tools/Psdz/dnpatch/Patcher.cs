@@ -123,6 +123,11 @@ namespace dnpatch
             return _patcher.GetInstructions(target);
         }
 
+        public IList<Instruction> GetInstructionList(Target target)
+        {
+            return _patcher.GetInstructionList(target);
+        }
+
         public void PatchOperand(Target target, string operand)
         {
             _patcher.PatchOperand(target, operand);
