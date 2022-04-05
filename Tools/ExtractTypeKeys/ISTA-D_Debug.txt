@@ -82,7 +82,11 @@ Modify RheingoldVehicleCommunication.dll (Edit -> Edit class, remove all referen
 Function: public bool ECUKom.InitVCI(IVciDevice device, bool logging)
 case VCIDeviceType.ICOM:
 if (TesterGUI.PreferEthernet)
-Change init function to:
+Change:
+-------------------------------------------------------------------------------------
+flag = this.api.apiInitExt("ENET::remotehost=" + device.IPAddress, "_", "Rheingold", string.Empty, logging);
+-------------------------------------------------------------------------------------
+to:
 -------------------------------------------------------------------------------------
 flag = this.api.apiInitExt("ENET", "_", "Rheingold", "RemoteHost=" + device.IPAddress + ";DiagnosticPort=50160;ControlPort=50161", logging);
 -------------------------------------------------------------------------------------
