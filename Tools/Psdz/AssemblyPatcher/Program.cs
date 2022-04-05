@@ -198,6 +198,26 @@ namespace AssemblyPatcher
                             // ignored
                         }
 
+                        try
+                        {
+                            Target target = new Target
+                            {
+                                Namespace = "BMW.Rheingold.VehicleCommunication",
+                                Class = "ECUKom",
+                                Method = "InitVCI",
+                                Parameters = new []{ "ECUKom", "IVciDevice", "Boolean" },
+                            };
+                            Instruction[] instructions = patcher.GetInstructions(target);
+                            if (instructions != null)
+                            {
+                                Console.WriteLine("InitVCI found");
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+
                         if (patched)
                         {
                             try
