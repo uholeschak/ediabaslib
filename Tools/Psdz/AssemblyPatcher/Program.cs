@@ -207,10 +207,39 @@ namespace AssemblyPatcher
                                 Method = "InitVCI",
                                 Parameters = new []{ "ECUKom", "IVciDevice", "Boolean" },
                             };
-                            Instruction[] instructions = patcher.GetInstructions(target);
+                            IList<Instruction> instructions = patcher.GetInstructionList(target);
                             if (instructions != null)
                             {
                                 Console.WriteLine("InitVCI found");
+                                int patchIndex = -1;
+                                int index = 0;
+                                foreach (Instruction instruction in instructions)
+                                {
+                                    if (instruction.OpCode == OpCodes.Ldstr &&
+                                        string.Compare(instruction.Operand.ToString(), "ENET::remotehost=", StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        Console.WriteLine("'ENET::remotehost=' found at {0}", index);
+                                        patchIndex = index;
+                                        break;
+                                    }
+
+                                    index++;
+                                }
+
+                                if (patchIndex >= 0)
+                                {
+                                    instructions.RemoveAt(patchIndex);
+                                    instructions.Insert(patchIndex, Instruction.Create(OpCodes.Ldstr, "ENET"));
+                                    instructions.Insert(patchIndex + 1, Instruction.Create(OpCodes.Ldstr, "_"));
+                                    instructions.Insert(patchIndex + 2, Instruction.Create(OpCodes.Ldstr, "Rheingold"));
+                                    instructions.Insert(patchIndex + 3, Instruction.Create(OpCodes.Ldstr, "RemoteHost="));
+                                    // ldarg.1
+                                    // callvirt	instance string [RheingoldCoreContracts]BMW.Rheingold.CoreFramework.Contracts.Vehicle.IVciDevice::get_IPAddress()
+                                    instructions.Insert(patchIndex + 6, Instruction.Create(OpCodes.Ldstr, ";DiagnosticPort=50160;ControlPort=50161"));
+                                    instructions.RemoveAt(patchIndex + 8);  // ldstr	"_"
+                                    instructions.RemoveAt(patchIndex + 8);  // ldstr	"Rheingold"
+                                    instructions.RemoveAt(patchIndex + 8);  // ldsfld	string [mscorlib]System.String::Empty
+                                }
                             }
                         }
                         catch (Exception)
@@ -218,6 +247,7 @@ namespace AssemblyPatcher
                             // ignored
                         }
 
+#if true
                         if (patched)
                         {
                             try
@@ -230,6 +260,7 @@ namespace AssemblyPatcher
                                 Console.WriteLine("Patch exception: File={0}, Msg={1}", file, ex.Message);
                             }
                         }
+#endif
                     }
                     catch (NullReferenceException)
                     {
