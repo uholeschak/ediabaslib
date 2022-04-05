@@ -85,10 +85,36 @@ if (TesterGUI.PreferEthernet)
 Change:
 -------------------------------------------------------------------------------------
 flag = this.api.apiInitExt("ENET::remotehost=" + device.IPAddress, "_", "Rheingold", string.Empty, logging);
+
+133	021A	ldarg.0
+134	021B	ldfld	class BMW.Rheingold.VehicleCommunication.Ediabas.API BMW.Rheingold.VehicleCommunication.ECUKom::api
+135	0220	ldstr	"ENET::remotehost="
+136	0225	ldarg.1
+137	0226	callvirt	instance string [RheingoldCoreContracts]BMW.Rheingold.CoreFramework.Contracts.Vehicle.IVciDevice::get_IPAddress()
+138	022B	call	string [mscorlib]System.String::Concat(string, string)
+139	0230	ldstr	"_"
+140	0235	ldstr	"Rheingold"
+141	023A	ldsfld	string [mscorlib]System.String::Empty
+142	023F	ldarg.2
+143	0240	callvirt	instance bool BMW.Rheingold.VehicleCommunication.Ediabas.API::apiInitExt(string, string, string, string, bool)
+144	0245	stloc.1
 -------------------------------------------------------------------------------------
 to:
 -------------------------------------------------------------------------------------
 flag = this.api.apiInitExt("ENET", "_", "Rheingold", "RemoteHost=" + device.IPAddress + ";DiagnosticPort=50160;ControlPort=50161", logging);
+
+55	00F3	ldarg.0
+56	00F4	ldfld	class BMW.Rheingold.VehicleCommunication.Ediabas.API BMW.Rheingold.VehicleCommunication.ECUKom::api
+57	00F9	ldstr	"ENET"
+58	00FE	ldsfld	string [mscorlib]System.String::Empty
+59	0103	ldsfld	string [mscorlib]System.String::Empty
+60	0108	ldstr	"remotehost="
+61	010D	ldarg.1
+62	010E	callvirt	instance string [RheingoldCoreContracts]BMW.Rheingold.CoreFramework.Contracts.Vehicle.IVciDevice::get_IPAddress()
+63	0113	call	string [mscorlib]System.String::Concat(string, string)
+64	0118	ldarg.2
+65	0119	callvirt	instance bool BMW.Rheingold.VehicleCommunication.Ediabas.API::apiInitExt(string, string, string, string, bool)
+66	011E	stloc.3
 -------------------------------------------------------------------------------------
 If file is blocked, terminate IstaServicesHost.exe first!
 
