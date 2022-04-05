@@ -103,18 +103,19 @@ to:
 -------------------------------------------------------------------------------------
 flag = this.api.apiInitExt("ENET", "_", "Rheingold", "RemoteHost=" + device.IPAddress + ";DiagnosticPort=50160;ControlPort=50161", logging);
 
-55	00F3	ldarg.0
-56	00F4	ldfld	class BMW.Rheingold.VehicleCommunication.Ediabas.API BMW.Rheingold.VehicleCommunication.ECUKom::api
-57	00F9	ldstr	"ENET"
-58	00FE	ldsfld	string [mscorlib]System.String::Empty
-59	0103	ldsfld	string [mscorlib]System.String::Empty
-60	0108	ldstr	"remotehost="
-61	010D	ldarg.1
-62	010E	callvirt	instance string [RheingoldCoreContracts]BMW.Rheingold.CoreFramework.Contracts.Vehicle.IVciDevice::get_IPAddress()
-63	0113	call	string [mscorlib]System.String::Concat(string, string)
-64	0118	ldarg.2
-65	0119	callvirt	instance bool BMW.Rheingold.VehicleCommunication.Ediabas.API::apiInitExt(string, string, string, string, bool)
-66	011E	stloc.3
+123	01FE	ldarg.0
+124	01FF	ldfld	class BMW.Rheingold.VehicleCommunication.Ediabas.API BMW.Rheingold.VehicleCommunication.ECUKom::api
+125	0204	ldstr	"ENET"
+126	0209	ldstr	"_"
+127	020E	ldstr	"Rheingold"
+128	0213	ldstr	"RemoteHost="
+129	0218	ldarg.1
+130	0219	callvirt	instance string [RheingoldCoreContracts]BMW.Rheingold.CoreFramework.Contracts.Vehicle.IVciDevice::get_IPAddress()
+131	021E	ldstr	";DiagnosticPort=50160;ControlPort=50161"
+132	0223	call	string [mscorlib]System.String::Concat(string, string, string)
+133	0228	ldarg.2
+134	0229	callvirt	instance bool BMW.Rheingold.VehicleCommunication.Ediabas.API::apiInitExt(string, string, string, string, bool)
+135	022E	stloc.3
 -------------------------------------------------------------------------------------
 If file is blocked, terminate IstaServicesHost.exe first!
 
