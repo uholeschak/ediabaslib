@@ -200,7 +200,7 @@ namespace AssemblyPatcher
                             IList<Instruction> instructions = patcher.GetInstructionList(target);
                             if (instructions != null)
                             {
-                                Console.WriteLine("InitVCI found");
+                                Console.WriteLine("ECUKom.InitVCI found");
                                 int patchIndex = -1;
                                 int index = 0;
                                 foreach (Instruction instruction in instructions)
@@ -227,7 +227,7 @@ namespace AssemblyPatcher
                                         (instructions[patchIndex + 7].OpCode != OpCodes.Ldarg_2) ||     // ldarg.2
                                         (instructions[patchIndex + 8].OpCode != OpCodes.Callvirt))      // callvirt	instance bool BMW.Rheingold.VehicleCommunication.Ediabas.API::apiInitExt(string, string, string, string, bool)
                                     {
-                                        Console.WriteLine("Patch location invalid");
+                                        Console.WriteLine("InitVCI patch location invalid");
                                     }
                                     else
                                     {
@@ -257,6 +257,66 @@ namespace AssemblyPatcher
                         {
                             // ignored
                         }
+
+                        try
+                        {
+                            Target target = new Target
+                            {
+                                Namespace = "BMW.ISPI.IstaOperation.Controller",
+                                Class = "IstaOperationStarter",
+                                Method = "Start",
+                            };
+                            IList<Instruction> instructions = patcher.GetInstructionList(target);
+                            if (instructions != null)
+                            {
+                                Console.WriteLine("IstaOperationStarter.Start found");
+                                int patchIndex = -1;
+                                if (instructions.Count > 50)
+                                {
+                                    patchIndex = instructions.Count - 2;
+                                }
+
+                                if (patchIndex >= 0)
+                                {
+                                    if ((instructions[patchIndex].OpCode != OpCodes.Ldloc_S) ||     // ldloc.s	V_4 (4)
+                                        (instructions[patchIndex + 1].OpCode != OpCodes.Ret))       // ret
+                                    {
+                                        Console.WriteLine("Start patch location invalid");
+                                    }
+                                    else
+                                    {
+                                        instructions.Insert(patchIndex,
+                                            Instruction.Create(OpCodes.Call,
+                                                patcher.BuildCall(typeof(System.Diagnostics.Debugger), "get_IsAttached", typeof(bool), null)));
+                                        instructions.Insert(patchIndex + 1, Instruction.Create(OpCodes.Brfalse_S, patchIndex + 11));
+                                        instructions.Insert(patchIndex + 2,
+                                            Instruction.Create(OpCodes.Newobj,
+                                                patcher.BuildCall(typeof(System.Windows.Forms.Form), ".ctor", typeof(System.Windows.Forms.Form), null)));
+                                        instructions.Insert(patchIndex + 3, Instruction.Create(OpCodes.Dup));
+                                        instructions.Insert(patchIndex + 4, Instruction.Create(OpCodes.Ldc_I4_1));
+                                        instructions.Insert(patchIndex + 5,
+                                            Instruction.Create(OpCodes.Callvirt,
+                                                patcher.BuildCall(typeof(System.Windows.Forms.Form), "set_TopMost", typeof(void), null)));
+                                        instructions.Insert(patchIndex + 6, Instruction.Create(OpCodes.Ldstr, "IstaOperation started. Attach to IstaOperation.exe now."));
+                                        instructions.Insert(patchIndex + 7, Instruction.Create(OpCodes.Ldstr, "ISTAGUI"));
+                                        instructions.Insert(patchIndex + 8, Instruction.Create(OpCodes.Ldc_I4_0));
+                                        instructions.Insert(patchIndex + 9, Instruction.Create(OpCodes.Ldc_I4_S, 0x40));
+                                        instructions.Insert(patchIndex + 10,
+                                            Instruction.Create(OpCodes.Call,
+                                                patcher.BuildCall(typeof(System.Windows.Forms.MessageBox), "Show", typeof(System.Windows.Forms.DialogResult), 
+                                                    new []{ typeof(System.Windows.Forms.IWin32Window), typeof(string), typeof(string), typeof(System.Windows.Forms.MessageBoxButtons), typeof(System.Windows.Forms.MessageBoxIcon) })));
+                                        instructions.Insert(patchIndex + 11, Instruction.Create(OpCodes.Pop));
+                                        //patcher.Save(file.Replace(".dll", "Test.dll"));
+                                        patched = true;
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+
 #if true
                         if (patched)
                         {
