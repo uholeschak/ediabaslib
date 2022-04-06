@@ -149,19 +149,16 @@ namespace AssemblyPatcher
 
                         try
                         {
-                            Instruction returnInstruction = Instruction.Create(OpCodes.Ret);
                             Target target = new Target
                             {
                                 Namespace = patchCtorNamespace,
                                 Class = patchCtorClass,
                                 Method = ".ctor",
-                                Instruction = returnInstruction,
-                                Index = 0,
                             };
-                            Instruction[] instructions = patcher.GetInstructions(target);
+                            IList<Instruction> instructions = patcher.GetInstructionList(target);
                             if (instructions != null)
                             {
-                                patcher.InsertInstruction(target);
+                                instructions.Insert(0, Instruction.Create(OpCodes.Ret));
                                 patched = true;
                             }
                         }
@@ -172,24 +169,17 @@ namespace AssemblyPatcher
 
                         try
                         {
-                            Instruction[] return0Instructions =
-                            {
-                                Instruction.Create(OpCodes.Ldc_I4_0),
-                                Instruction.Create(OpCodes.Ret)
-                            };
-
                             Target target = new Target
                             {
                                 Namespace = patchMethodNamespace,
                                 Class = patchMethodClass,
                                 Method = patchMethodName,
-                                Instructions = return0Instructions,
-                                Indices = new [] { 0, 1 }
                             };
-                            Instruction[] instructions = patcher.GetInstructions(target);
+                            IList<Instruction> instructions = patcher.GetInstructionList(target);
                             if (instructions != null)
                             {
-                                patcher.InsertInstruction(target);
+                                instructions.Insert(0, Instruction.Create(OpCodes.Ldc_I4_0));
+                                instructions.Insert(1, Instruction.Create(OpCodes.Ret));
                                 patched = true;
                             }
                         }
