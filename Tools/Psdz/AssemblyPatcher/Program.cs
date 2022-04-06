@@ -218,23 +218,38 @@ namespace AssemblyPatcher
 
                                 if (patchIndex >= 0)
                                 {
-                                    instructions.RemoveAt(patchIndex);  // ldstr	"ENET::remotehost="
-                                    instructions.Insert(patchIndex, Instruction.Create(OpCodes.Ldstr, "ENET"));
-                                    instructions.Insert(patchIndex + 1, Instruction.Create(OpCodes.Ldstr, "_"));
-                                    instructions.Insert(patchIndex + 2, Instruction.Create(OpCodes.Ldstr, "Rheingold"));
-                                    instructions.Insert(patchIndex + 3, Instruction.Create(OpCodes.Ldstr, "RemoteHost="));
-                                    // Index 4: ldarg.1
-                                    // Index 5: callvirt	instance string [RheingoldCoreContracts]BMW.Rheingold.CoreFramework.Contracts.Vehicle.IVciDevice::get_IPAddress()
-                                    instructions.RemoveAt(patchIndex + 6);  // call	string [mscorlib]System.String::Concat(string, string)
-                                    instructions.RemoveAt(patchIndex + 6);  // ldstr	"_"
-                                    instructions.RemoveAt(patchIndex + 6);  // ldstr	"Rheingold"
-                                    instructions.RemoveAt(patchIndex + 6);  // ldsfld	string [mscorlib]System.String::Empty
-                                    instructions.Insert(patchIndex + 6, Instruction.Create(OpCodes.Ldstr, ";DiagnosticPort=50160;ControlPort=50161"));
-                                    instructions.Insert(patchIndex + 7,
-                                        Instruction.Create(OpCodes.Call,
-                                            patcher.BuildCall(typeof(System.String), "Concat", typeof(string),
-                                                new[] { typeof(string), typeof(string), typeof(string) })));
-                                    //patcher.Save(file.Replace(".dll", "Test.dll"));
+                                    if ((instructions[patchIndex + 1].OpCode != OpCodes.Ldarg_1) ||     // ldarg.1
+                                        (instructions[patchIndex + 2].OpCode != OpCodes.Callvirt) ||    // callvirt    instance string[RheingoldCoreContracts] BMW.Rheingold.CoreFramework.Contracts.Vehicle.IVciDevice::get_IPAddress()
+                                        (instructions[patchIndex + 3].OpCode != OpCodes.Call) ||        // call	string [mscorlib]System.String::Concat(string, string)
+                                        (instructions[patchIndex + 4].OpCode != OpCodes.Ldstr) ||       // ldstr	"_"
+                                        (instructions[patchIndex + 5].OpCode != OpCodes.Ldstr) ||       // ldstr	"Rheingold"
+                                        (instructions[patchIndex + 6].OpCode != OpCodes.Ldsfld) ||      // ldsfld	string [mscorlib]System.String::Empty
+                                        (instructions[patchIndex + 7].OpCode != OpCodes.Ldarg_2) ||     // ldarg.2
+                                        (instructions[patchIndex + 8].OpCode != OpCodes.Callvirt))      // callvirt	instance bool BMW.Rheingold.VehicleCommunication.Ediabas.API::apiInitExt(string, string, string, string, bool)
+                                    {
+                                        Console.WriteLine("Patch location invalid");
+                                    }
+                                    else
+                                    {
+                                        instructions.RemoveAt(patchIndex);  // ldstr	"ENET::remotehost="
+                                        instructions.Insert(patchIndex, Instruction.Create(OpCodes.Ldstr, "ENET"));
+                                        instructions.Insert(patchIndex + 1, Instruction.Create(OpCodes.Ldstr, "_"));
+                                        instructions.Insert(patchIndex + 2, Instruction.Create(OpCodes.Ldstr, "Rheingold"));
+                                        instructions.Insert(patchIndex + 3, Instruction.Create(OpCodes.Ldstr, "RemoteHost="));
+                                        // Index 4: ldarg.1
+                                        // Index 5: callvirt	instance string [RheingoldCoreContracts]BMW.Rheingold.CoreFramework.Contracts.Vehicle.IVciDevice::get_IPAddress()
+                                        instructions.RemoveAt(patchIndex + 6);  // call	string [mscorlib]System.String::Concat(string, string)
+                                        instructions.RemoveAt(patchIndex + 6);  // ldstr	"_"
+                                        instructions.RemoveAt(patchIndex + 6);  // ldstr	"Rheingold"
+                                        instructions.RemoveAt(patchIndex + 6);  // ldsfld	string [mscorlib]System.String::Empty
+                                        instructions.Insert(patchIndex + 6, Instruction.Create(OpCodes.Ldstr, ";DiagnosticPort=50160;ControlPort=50161"));
+                                        instructions.Insert(patchIndex + 7,
+                                            Instruction.Create(OpCodes.Call,
+                                                patcher.BuildCall(typeof(System.String), "Concat", typeof(string),
+                                                    new[] { typeof(string), typeof(string), typeof(string) })));
+                                        patched = true;
+                                        //patcher.Save(file.Replace(".dll", "Test.dll"));
+                                    }
                                 }
                             }
                         }
