@@ -129,7 +129,25 @@ in IstaOperationStarter.Start() add at the end of the function:
 		System.Windows.Forms.MessageBox.Show(new System.Windows.Forms.Form { TopMost = true},
 			"IstaOperation started. Attach to IstaOperation.exe now.", "ISTAGUI", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Asterisk);
 	}
+
+74	00E5	call	bool [mscorlib]System.Diagnostics.Debugger::get_IsAttached()
+75	00EA	brfalse.s	86 (010B) ldloc.s V_4 (4)
+76	00EC	newobj	instance void [System.Windows.Forms]System.Windows.Forms.Form::.ctor()
+77	00F1	dup
+78	00F2	ldc.i4.1
+79	00F3	callvirt	instance void [System.Windows.Forms]System.Windows.Forms.Form::set_TopMost(bool)
+80	00F8	ldstr	"IstaOperation started. Attach to IstaOperation.exe now."
+81	00FD	ldstr	"ISTAGUI"
+82	0102	ldc.i4.0
+83	0103	ldc.i4.s	0x40
+84	0105	call	valuetype [System.Windows.Forms]System.Windows.Forms.DialogResult [System.Windows.Forms]System.Windows.Forms.MessageBox::Show(class [System.Windows.Forms]System.Windows.Forms.IWin32Window, string, string, valuetype [System.Windows.Forms]System.Windows.Forms.MessageBoxButtons, valuetype [System.Windows.Forms]System.Windows.Forms.MessageBoxIcon)
+85	010A	pop
+
 	return istaOperation;
+
+86	010B	ldloc.s	V_4 (4)
+87	010D	ret
+
 -------------------------------------------------------------------------------------
 File -> Save module
 
