@@ -218,22 +218,22 @@ namespace AssemblyPatcher
 
                                 if (patchIndex >= 0)
                                 {
-                                    instructions.RemoveAt(patchIndex);
+                                    instructions.RemoveAt(patchIndex);  // ldstr	"ENET::remotehost="
                                     instructions.Insert(patchIndex, Instruction.Create(OpCodes.Ldstr, "ENET"));
                                     instructions.Insert(patchIndex + 1, Instruction.Create(OpCodes.Ldstr, "_"));
                                     instructions.Insert(patchIndex + 2, Instruction.Create(OpCodes.Ldstr, "Rheingold"));
                                     instructions.Insert(patchIndex + 3, Instruction.Create(OpCodes.Ldstr, "RemoteHost="));
-                                    // ldarg.1
-                                    // callvirt	instance string [RheingoldCoreContracts]BMW.Rheingold.CoreFramework.Contracts.Vehicle.IVciDevice::get_IPAddress()
+                                    // Index 4: ldarg.1
+                                    // Index 5: callvirt	instance string [RheingoldCoreContracts]BMW.Rheingold.CoreFramework.Contracts.Vehicle.IVciDevice::get_IPAddress()
+                                    instructions.RemoveAt(patchIndex + 6);  // call	string [mscorlib]System.String::Concat(string, string)
+                                    instructions.RemoveAt(patchIndex + 6);  // ldstr	"_"
+                                    instructions.RemoveAt(patchIndex + 6);  // ldstr	"Rheingold"
+                                    instructions.RemoveAt(patchIndex + 6);  // ldsfld	string [mscorlib]System.String::Empty
                                     instructions.Insert(patchIndex + 6, Instruction.Create(OpCodes.Ldstr, ";DiagnosticPort=50160;ControlPort=50161"));
                                     instructions.Insert(patchIndex + 7,
                                         Instruction.Create(OpCodes.Call,
                                             patcher.BuildCall(typeof(System.String), "Concat", typeof(string),
                                                 new[] { typeof(string), typeof(string), typeof(string) })));
-                                    instructions.RemoveAt(patchIndex + 8);  // call	string [mscorlib]System.String::Concat(string, string)
-                                    instructions.RemoveAt(patchIndex + 8);  // ldstr	"_"
-                                    instructions.RemoveAt(patchIndex + 8);  // ldstr	"Rheingold"
-                                    instructions.RemoveAt(patchIndex + 8);  // ldsfld	string [mscorlib]System.String::Empty
                                     //patcher.Save(file.Replace(".dll", "Test.dll"));
                                 }
                             }
