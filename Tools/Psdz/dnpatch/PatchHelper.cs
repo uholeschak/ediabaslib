@@ -890,7 +890,26 @@ namespace dnpatch
             return null;
         }
 
-        public  void ReplaceInstruction(Target target)
+        public IMethod BuildInstance(Type type, Type[] parameters)
+        {
+            Importer importer = new Importer(Module);
+            foreach (var c in type.GetConstructors())
+            {
+                if (c.GetParameters().Length == 0 && parameters == null)
+                {
+                    IMethod meth = importer.Import(c);
+                    return meth;
+                }
+                if (c.GetParameters().Length == parameters.Length && CheckParametersByType(c.GetParameters(), parameters))
+                {
+                    IMethod meth = importer.Import(c);
+                    return meth;
+                }
+            }
+            return null;
+        }
+
+        public void ReplaceInstruction(Target target)
         {
             string[] nestedClasses = { };
             if (target.NestedClasses != null)

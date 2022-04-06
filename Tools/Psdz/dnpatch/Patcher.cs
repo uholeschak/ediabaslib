@@ -234,6 +234,11 @@ namespace dnpatch
             return _patcher.BuildCall(type, method, returnType, parameters);
         }
 
+        public IMethod BuildInstance(Type type, Type[] parameters)
+        {
+            return _patcher.BuildInstance(type, parameters);
+        }
+
         public void RewriteProperty(Target target)
         {
             _patcher.RewriteProperty(target);

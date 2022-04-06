@@ -291,7 +291,7 @@ namespace AssemblyPatcher
                                         instructions.Insert(patchIndex + 1, Instruction.Create(OpCodes.Brfalse_S, instructions[patchIndex + 1]));
                                         instructions.Insert(patchIndex + 2,
                                             Instruction.Create(OpCodes.Newobj,
-                                                patcher.BuildCall(typeof(System.Windows.Forms.Form), ".ctor", typeof(System.Windows.Forms.Form), null)));
+                                                patcher.BuildInstance(typeof(System.Windows.Forms.Form), null)));
                                         instructions.Insert(patchIndex + 3, Instruction.Create(OpCodes.Dup));
                                         instructions.Insert(patchIndex + 4, Instruction.Create(OpCodes.Ldc_I4_1));
                                         instructions.Insert(patchIndex + 5,
