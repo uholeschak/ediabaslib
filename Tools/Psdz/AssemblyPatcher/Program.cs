@@ -145,7 +145,7 @@ namespace AssemblyPatcher
                     try
                     {
                         bool patched = false;
-                        Patcher patcher = new Patcher(file, true);
+                        Patcher patcher = new Patcher(file, false);
 
                         try
                         {
