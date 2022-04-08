@@ -390,29 +390,42 @@ namespace AssemblyPatcher
                     return true;
                 }
 
+                var patchList = new List<(string Match, string Replace)>()
+                {
+                    ("\"BMW.Rheingold.ISTAGUI.enableENETprogramming\"", "    <add key=\"BMW.Rheingold.ISTAGUI.enableENETprogramming\" value=\"true\" />"),
+                    ("\"DebugLevel\"", "    <add key=\"DebugLevel\" value=\"5\" />"),
+                    ("\"TesterGUI.PreferEthernet\"", "    <add key=\"TesterGUI.PreferEthernet\" value=\"true\" />"),
+                    ("\"BMW.Rheingold.Programming.Prodias.LogLevel\"", "    <add key=\"BMW.Rheingold.Programming.Prodias.LogLevel\" value=\"true\" />"),
+                    ("\"BMW.Rheingold.xVM.ICOM.Dirtyflag.Detection\"", "    <add key=\"BMW.Rheingold.xVM.ICOM.Dirtyflag.Detection\" value=\"true\" />"),
+                };
+
                 string[] fileLines = File.ReadAllLines(fileName);
                 List<string> outputLines = new List<string>();
                 foreach (string line in fileLines)
                 {
-                    if (line.Contains("key=\"BMW.Rheingold.ISTAGUI.enableENETprogramming\""))
+                    int matchIdx = -1;
+                    for (int i = 0; i < patchList.Count; i++)
                     {
-                        outputLines.Add("    <add key=\"BMW.Rheingold.ISTAGUI.enableENETprogramming\" value=\"true\" />");
-                        continue;
+                        if (line.Contains(patchList[matchIdx].Match))
+                        {
+                            matchIdx = i;
+                            break;
+                        }
                     }
 
-                    if (line.Contains("key=\"DebugLevel\""))
+                    if (matchIdx >= 0)
                     {
-                        outputLines.Add("    <add key=\"DebugLevel\" value=\"5\" />");
-                        continue;
-                    }
-
-                    if (line.Contains("key=\"TesterGUI.PreferEthernet\""))
-                    {
-                        outputLines.Add("    <add key=\"TesterGUI.PreferEthernet\" value=\"true\" />");
+                        outputLines.Add(patchList[matchIdx].Replace);
+                        patchList.RemoveAt(matchIdx);
                         continue;
                     }
 
                     outputLines.Add(line);
+                }
+
+                foreach (var patch in patchList)
+                {
+                    outputLines.Add(patch.Replace);
                 }
 
                 File.Copy(fileName, backupFile, true);
