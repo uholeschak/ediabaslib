@@ -394,6 +394,18 @@ namespace AssemblyPatcher
                 List<string> outputLines = new List<string>();
                 foreach (string line in fileLines)
                 {
+                    if (line.Contains("key=\"BMW.Rheingold.ISTAGUI.enableENETprogramming\""))
+                    {
+                        outputLines.Add("    <add key=\"BMW.Rheingold.ISTAGUI.enableENETprogramming\" value=\"true\" />");
+                        continue;
+                    }
+
+                    if (line.Contains("key=\"DebugLevel\""))
+                    {
+                        outputLines.Add("    <add key=\"DebugLevel\" value=\"5\" />");
+                        continue;
+                    }
+
                     if (line.Contains("key=\"TesterGUI.PreferEthernet\""))
                     {
                         outputLines.Add("    <add key=\"TesterGUI.PreferEthernet\" value=\"true\" />");
