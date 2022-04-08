@@ -231,6 +231,13 @@ namespace AssemblyPatcher
                                     }
                                     else
                                     {
+                                        /*
+                                        Change:
+                                            flag = this.api.apiInitExt("ENET::remotehost=" + device.IPAddress, "_", "Rheingold", string.Empty, logging);
+                                        to:
+                                            flag = this.api.apiInitExt("ENET", "_", "Rheingold", "RemoteHost=" + device.IPAddress + ";DiagnosticPort=50160;ControlPort=50161", logging);
+                                        */
+
                                         instructions.RemoveAt(patchIndex);  // ldstr	"ENET::remotehost="
                                         instructions.Insert(patchIndex, Instruction.Create(OpCodes.Ldstr, "ENET"));
                                         instructions.Insert(patchIndex + 1, Instruction.Create(OpCodes.Ldstr, "_"));
@@ -285,6 +292,15 @@ namespace AssemblyPatcher
                                     }
                                     else
                                     {
+                                        /*
+                                        Add debug code:
+                                        if (Debugger.IsAttached)
+                                        {
+                                            System.Windows.Forms.MessageBox.Show(new System.Windows.Forms.Form { TopMost = true },
+                                                "IstaOperation started. Attach to IstaOperation.exe now.", "ISTAGUI", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Asterisk);
+                                        }
+                                        */
+
                                         instructions.Insert(patchIndex,
                                             Instruction.Create(OpCodes.Call,
                                                 patcher.BuildCall(typeof(System.Diagnostics.Debugger), "get_IsAttached", typeof(bool), null)));
