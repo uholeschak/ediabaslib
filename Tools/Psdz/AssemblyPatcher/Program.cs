@@ -421,13 +421,16 @@ namespace AssemblyPatcher
                         continue;
                     }
 
-                    outputLines.Add(line);
-                }
+                    if (line.Contains("</appSettings>"))
+                    {
+                        foreach (var patch in patchList)
+                        {
+                            Console.WriteLine("UpdateExeConfig Add: '{0}''", patch.Replace);
+                            outputLines.Add(patch.Replace);
+                        }
+                    }
 
-                foreach (var patch in patchList)
-                {
-                    Console.WriteLine("UpdateExeConfig Add: '{0}''", patch.Replace);
-                    outputLines.Add(patch.Replace);
+                    outputLines.Add(line);
                 }
 
                 File.Copy(fileName, backupFile, true);
