@@ -102,6 +102,13 @@ namespace AssemblyPatcher
                     }
                 }
 
+                string exeConfigFile = Path.Combine(assemblyDir, "ISTAGUI.exe.config");
+                if (!UpdateExeConfig(exeConfigFile))
+                {
+                    Console.WriteLine("Update config file failed: {0}", exeConfigFile);
+                    return 1;
+                }
+
                 string[] files = Directory.GetFiles(assemblyDir, "*.*", SearchOption.TopDirectoryOnly);
                 foreach (string file in files)
                 {
@@ -364,6 +371,47 @@ namespace AssemblyPatcher
             }
 
             return 0;
+        }
+
+        static bool UpdateExeConfig(string fileName)
+        {
+            try
+            {
+                if (!File.Exists(fileName))
+                {
+                    Console.WriteLine("UpdateExeConfig Config file not existing: {0}", fileName);
+                    return false;
+                }
+
+                string backupFile = fileName + ".bak";
+                if (File.Exists(backupFile))
+                {
+                    Console.WriteLine("UpdateExeConfig Config file already modified: {0}", fileName);
+                    return true;
+                }
+
+                string[] fileLines = File.ReadAllLines(fileName);
+                List<string> outputLines = new List<string>();
+                foreach (string line in fileLines)
+                {
+                    if (line.Contains("key=\"TesterGUI.PreferEthernet\""))
+                    {
+                        outputLines.Add("    <add key=\"TesterGUI.PreferEthernet\" value=\"true\" />");
+                        continue;
+                    }
+
+                    outputLines.Add(line);
+                }
+
+                File.Copy(fileName, backupFile, true);
+                File.WriteAllLines(fileName, outputLines);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("UpdateExeConfig Exception: {0}", e.Message);
+                return false;
+            }
+            return true;
         }
     }
 }
