@@ -395,8 +395,8 @@ namespace AssemblyPatcher
                     ("\"BMW.Rheingold.ISTAGUI.enableENETprogramming\"", "    <add key=\"BMW.Rheingold.ISTAGUI.enableENETprogramming\" value=\"true\" />"),
                     ("\"DebugLevel\"", "    <add key=\"DebugLevel\" value=\"5\" />"),
                     ("\"TesterGUI.PreferEthernet\"", "    <add key=\"TesterGUI.PreferEthernet\" value=\"true\" />"),
-                    ("\"BMW.Rheingold.Programming.Prodias.LogLevel\"", "    <add key=\"BMW.Rheingold.Programming.Prodias.LogLevel\" value=\"true\" />"),
-                    ("\"BMW.Rheingold.xVM.ICOM.Dirtyflag.Detection\"", "    <add key=\"BMW.Rheingold.xVM.ICOM.Dirtyflag.Detection\" value=\"true\" />"),
+                    ("\"BMW.Rheingold.Programming.Prodias.LogLevel\"", "    <add key=\"BMW.Rheingold.Programming.Prodias.LogLevel\" value=\"TRACE\" />"),
+                    ("\"BMW.Rheingold.xVM.ICOM.Dirtyflag.Detection\"", "    <add key=\"BMW.Rheingold.xVM.ICOM.Dirtyflag.Detection\" value=\"false\" />"),
                 };
 
                 string[] fileLines = File.ReadAllLines(fileName);
@@ -406,7 +406,7 @@ namespace AssemblyPatcher
                     int matchIdx = -1;
                     for (int i = 0; i < patchList.Count; i++)
                     {
-                        if (line.Contains(patchList[matchIdx].Match))
+                        if (line.Contains(patchList[i].Match))
                         {
                             matchIdx = i;
                             break;
@@ -415,6 +415,7 @@ namespace AssemblyPatcher
 
                     if (matchIdx >= 0)
                     {
+                        Console.WriteLine("UpdateExeConfig Modify: '{0}' to '{1}'", line, patchList[matchIdx].Replace);
                         outputLines.Add(patchList[matchIdx].Replace);
                         patchList.RemoveAt(matchIdx);
                         continue;
@@ -425,6 +426,7 @@ namespace AssemblyPatcher
 
                 foreach (var patch in patchList)
                 {
+                    Console.WriteLine("UpdateExeConfig Add: '{0}''", patch.Replace);
                     outputLines.Add(patch.Replace);
                 }
 
