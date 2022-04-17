@@ -425,6 +425,8 @@ namespace MergeEcuFunctions
                                                 if (!ecuFixedFuncStruct.IdPresent(compatId))
                                                 {
                                                     compatIdListList.Add(compatId);
+                                                    outTextWriter?.WriteLine("Merge Fixed old ID: File='{0}', Job='{1}({2})', OldId='{3}'",
+                                                        fileName, ecuJob.Name, ecuJob.FuncNameJob, compatId);
                                                 }
                                             }
 
@@ -446,6 +448,8 @@ namespace MergeEcuFunctions
                                                 if (!ecuJob.IdPresent(compatId))
                                                 {
                                                     compatIdListList.Add(compatId);
+                                                    outTextWriter?.WriteLine("Merge Job old ID: File='{0}', Job='{1}({2})', OldId='{3}'",
+                                                        fileName, ecuJob.Name, ecuJob.FuncNameJob, compatId);
                                                 }
                                             }
 
@@ -505,6 +509,8 @@ namespace MergeEcuFunctions
                                         if (!ecuJobResult.IdPresent(compatId))
                                         {
                                             compatIdListList.Add(compatId);
+                                            outTextWriter?.WriteLine("Merge Result old ID: File='{0}', Job='{1}', OldId='{2}'",
+                                                fileName, ecuJobIn.Name, compatId);
                                         }
                                     }
                                     ecuJobResultMatch.CompatIdListList = compatIdListList;
