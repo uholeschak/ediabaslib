@@ -104,6 +104,7 @@ namespace CreateObb
                 {
                     if (!IsValidFile(file))
                     {
+                        Console.WriteLine("Deleting invalid file: {0}", file);
                         File.Delete(file);
                         continue;
                     }
