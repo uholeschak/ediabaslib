@@ -1195,7 +1195,7 @@ namespace BmwDeepObd
 
                     _bcReceiver = new Receiver(this);
                     LocalBroadcastManager.GetInstance(context).RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.NotificationBroadcastAction));
-                    LocalBroadcastManager.GetInstance(context).RegisterReceiver(_bcReceiver, new IntentFilter(ActionPackageName));
+                    context.RegisterReceiver(_bcReceiver, new IntentFilter(ActionPackageName));
                     context.RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.ActionBroadcastCommand));
                     context.RegisterReceiver(_bcReceiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));
                     context.RegisterReceiver(_bcReceiver, new IntentFilter(GlobalBroadcastReceiver.NotificationBroadcastAction));
