@@ -6756,9 +6756,10 @@ namespace BmwDeepObd
                         if (!string.IsNullOrEmpty(packageName) && !string.IsNullOrEmpty(className))
                         {
                             Intent broadcastIntent = new Intent(ActivityCommon.ActionPackageName);
+                            broadcastIntent.SetPackage(Android.App.Application.Context.PackageName);    // Replacement for LocalBroadcastManager
                             broadcastIntent.PutExtra(ActivityCommon.BroadcastXmlEditorPackageName, packageName);
                             broadcastIntent.PutExtra(ActivityCommon.BroadcastXmlEditorClassName, className);
-                            LocalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
+                            Android.App.Application.Context.SendBroadcast(broadcastIntent);
                         }
                     }
                 }
