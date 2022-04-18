@@ -44,7 +44,6 @@ using UdsFileReader;
 using AndroidX.AppCompat.App;
 using AndroidX.Core.Content.PM;
 using AndroidX.DocumentFile.Provider;
-using AndroidX.LocalBroadcastManager.Content;
 
 // ReSharper disable StringLiteralTypo
 // ReSharper disable IdentifierTypo
@@ -1194,7 +1193,7 @@ namespace BmwDeepObd
                     context.RegisterReceiver(_gbcReceiver, new IntentFilter(GlobalBroadcastReceiver.MicBtReport));
 
                     _bcReceiver = new Receiver(this);
-                    LocalBroadcastManager.GetInstance(context).RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.NotificationBroadcastAction));
+                    context.RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.NotificationBroadcastAction));
                     context.RegisterReceiver(_bcReceiver, new IntentFilter(ActionPackageName));
                     context.RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.ActionBroadcastCommand));
                     context.RegisterReceiver(_bcReceiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));
@@ -1351,13 +1350,11 @@ namespace BmwDeepObd
                     {
                         if (_gbcReceiver != null)
                         {
-                            LocalBroadcastManager.GetInstance(_context).UnregisterReceiver(_gbcReceiver);
                             _context.UnregisterReceiver(_gbcReceiver);
                             _gbcReceiver = null;
                         }
                         if (_bcReceiver != null)
                         {
-                            LocalBroadcastManager.GetInstance(_context).UnregisterReceiver(_bcReceiver);
                             _context.UnregisterReceiver(_bcReceiver);
                             _bcReceiver = null;
                         }
