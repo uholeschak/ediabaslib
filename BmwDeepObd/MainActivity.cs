@@ -28,7 +28,6 @@ using AndroidX.Core.Content.PM;
 using AndroidX.Core.View;
 using AndroidX.Fragment.App;
 using AndroidX.Lifecycle;
-using AndroidX.LocalBroadcastManager.Content;
 using AndroidX.RecyclerView.Widget;
 using AndroidX.ViewPager2.Adapter;
 using AndroidX.ViewPager2.Widget;

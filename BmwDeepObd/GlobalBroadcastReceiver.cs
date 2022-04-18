@@ -1,6 +1,5 @@
 ﻿using System;
 using Android.Content;
-using AndroidX.LocalBroadcastManager.Content;
 
 namespace BmwDeepObd
 {
@@ -49,8 +48,9 @@ namespace BmwDeepObd
                         Android.Util.Log.Info(Tag, string.Format("BT small on: {0}", smallOn));
 #endif
                         Intent broadcastIntent = new Intent(NotificationBroadcastAction);
+                        broadcastIntent.SetPackage(Android.App.Application.Context.PackageName);    // Replacement for LocalBroadcastManager
                         broadcastIntent.PutExtra(StateBtSmallOn, smallOn);
-                        LocalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
+                        Android.App.Application.Context.SendBroadcast(broadcastIntent);
                     }
                     catch (Exception)
                     {
@@ -101,8 +101,9 @@ namespace BmwDeepObd
                                     Android.Util.Log.Info(Tag, "Sending notification: " + BtUpdateList);
 #endif
                                     Intent broadcastIntent = new Intent(NotificationBroadcastAction);
+                                    broadcastIntent.SetPackage(Android.App.Application.Context.PackageName);    // Replacement for LocalBroadcastManager
                                     broadcastIntent.PutExtra(BtUpdateList, btState);
-                                    LocalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
+                                    Android.App.Application.Context.SendBroadcast(broadcastIntent);
                                     break;
                                 }
 
@@ -112,8 +113,9 @@ namespace BmwDeepObd
                                     Android.Util.Log.Info(Tag, "Sending notification: " + BtScanFinished);
 #endif
                                     Intent broadcastIntent = new Intent(NotificationBroadcastAction);
+                                    broadcastIntent.SetPackage(Android.App.Application.Context.PackageName);    // Replacement for LocalBroadcastManager
                                     broadcastIntent.PutExtra(BtScanFinished, btState);
-                                    LocalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
+                                    Android.App.Application.Context.SendBroadcast(broadcastIntent);
                                     break;
                                 }
                             }
@@ -132,8 +134,9 @@ namespace BmwDeepObd
                             Android.Util.Log.Info(Tag, string.Format("BT connected_mac: {0}", mac));
 #endif
                             Intent broadcastIntent = new Intent(NotificationBroadcastAction);
+                            broadcastIntent.SetPackage(Android.App.Application.Context.PackageName);    // Replacement for LocalBroadcastManager
                             broadcastIntent.PutExtra(BtNewMac, mac);
-                            LocalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
+                            Android.App.Application.Context.SendBroadcast(broadcastIntent);
                         }
                         catch (Exception)
                         {
@@ -151,8 +154,9 @@ namespace BmwDeepObd
                             ActivityCommon.MtcBtConnectState = connectState != 0;
 
                             Intent broadcastIntent = new Intent(NotificationBroadcastAction);
+                            broadcastIntent.SetPackage(Android.App.Application.Context.PackageName);    // Replacement for LocalBroadcastManager
                             broadcastIntent.PutExtra(StateBtConnected, ActivityCommon.MtcBtConnectState);
-                            LocalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
+                            Android.App.Application.Context.SendBroadcast(broadcastIntent);
                         }
                         catch (Exception)
                         {

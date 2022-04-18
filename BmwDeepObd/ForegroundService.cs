@@ -3,7 +3,6 @@ using System.Reflection;
 using Android.Content;
 using Android.OS;
 using AndroidX.Core.App;
-using AndroidX.LocalBroadcastManager.Content;
 
 namespace BmwDeepObd
 {
@@ -189,8 +188,9 @@ namespace BmwDeepObd
         private void SendStopCommBroadcast()
         {
             Intent broadcastIntent = new Intent(NotificationBroadcastAction);
+            broadcastIntent.SetPackage(Android.App.Application.Context.PackageName);    // Replacement for LocalBroadcastManager
             broadcastIntent.PutExtra(BroadcastMessageKey, BroadcastStopComm);
-            LocalBroadcastManager.GetInstance(this).SendBroadcast(broadcastIntent);
+            Android.App.Application.Context.SendBroadcast(broadcastIntent);
         }
 
         private void ShowMainActivity()
