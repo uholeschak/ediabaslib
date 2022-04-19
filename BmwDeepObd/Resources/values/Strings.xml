@@ -680,6 +680,7 @@
   <string name="bmw_coding_connection_active">The connection to the vehicle is active.\nWhen leaving the page the communication will be interrupted.\nPlease close the connection first.\nDo you still want to leave the page?</string>
   <string name="bmw_coding_mtc_reject">The Bluetooth connection of the Android radios is not stable enough for coding.\nPlease use a smartphone instead.</string>
   <string name="bmw_coding_elm_reject">The ELM327 adapters are not stable enough for coding.\nPlease use a Deep OBD, ENET or FTDI adapter.</string>
+  <string name="bmw_coding_ssl_fail">Establishing of the encrypted connection failed, data will be transmitted unencrypted.</string>
 
   <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">Adapter configuration</string>

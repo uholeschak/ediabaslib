@@ -704,6 +704,7 @@
   <string name="bmw_coding_connection_active">Die Verbindung zum Fahrzeug is aktiv.\nWenn Sie die Seite verlassen wird die Verbindung unterbrochen.\nBitte trennen Sie die Verbindung zuerst.\nWollen Sie trotzdem die Seite verlassen?</string>
   <string name="bmw_coding_mtc_reject">Die Bluetooth Verbindung der Android Radios ist nicht stabil genug für das Kodieren.\nBitte verwenden Sie stattdessen ein Smartphone.</string>
   <string name="bmw_coding_elm_reject">Die ELM327 Adapters sind nicht stabil genug für das Kodieren.\nBitte verwenden Sie ein Deep OBD, ENET oder FTDI Adapter.</string>
+  <string name="bmw_coding_ssl_fail">Der Aufbau der verschlüsselten Verbindung ist fehlgeschlagen, die Daten werden unverschlüsselt übertragen.</string>
 
   <!-- CAN Adapter Activity -->
   <string name="can_adapter_title">Adapter Konfiguration</string>
