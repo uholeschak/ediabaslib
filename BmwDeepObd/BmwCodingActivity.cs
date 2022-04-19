@@ -65,9 +65,16 @@ namespace BmwDeepObd
                 CodingUrl = string.Empty;
                 CodingUrlTest = string.Empty;
                 DayString = string.Empty;
+                ValidSerial = string.Empty;
                 InitialUrl = string.Empty;
                 Url = string.Empty;
+                ServerConnected = false;
+                ConnectTimeouts = 0;
+                TraceDir = string.Empty;
                 TraceActive = true;
+                TraceAppend = false;
+                CommErrorsOccurred = false;
+                SslErrorShown = false;
             }
 
             public string CodingUrl { get; set; }
@@ -82,6 +89,7 @@ namespace BmwDeepObd
             public bool TraceActive { get; set; }
             public bool TraceAppend { get; set; }
             public bool CommErrorsOccurred { get; set; }
+            public bool SslErrorShown { get; set; }
         }
 
         public delegate void AcceptDelegate(bool accepted);
@@ -1625,6 +1633,22 @@ namespace BmwDeepObd
 #if DEBUG
                 Android.Util.Log.Debug(Tag, string.Format("OnReceivedSslError: Url={0}", error?.Url ?? string.Empty));
 #endif
+                _activity.RunOnUiThread(() =>
+                {
+                    if (_activity._activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    if (_activity._instanceData.SslErrorShown)
+                    {
+                        return;
+                    }
+
+                    _activity._instanceData.SslErrorShown = true;
+                    _activity._activityCommon.ShowAlert(_activity.GetString(Resource.String.bmw_coding_ssl_fail), Resource.String.alert_title_info);
+                });
+
                 handler.Proceed();
             }
 
