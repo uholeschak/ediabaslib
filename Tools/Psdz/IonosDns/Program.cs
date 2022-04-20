@@ -55,7 +55,11 @@ namespace IonosDns
                     return 1;
                 }
 
-                GetRecord(zonesId, "_acme-challenge.holeschak.de");
+                string recordId = GetRecordId(zonesId, "_acme-challenge.holeschak.de");
+                if (!string.IsNullOrEmpty(recordId))
+                {
+
+                }
             }
             catch (Exception e)
             {
@@ -102,7 +106,7 @@ namespace IonosDns
             return null;
         }
 
-        private static string GetRecord(string zoneId, string recordName)
+        private static string GetRecordId(string zoneId, string recordName)
         {
             try
             {
@@ -121,6 +125,18 @@ namespace IonosDns
                 {
                     string responseZonesResult = response.Content.ReadAsStringAsync().Result;
                     JToken resultJson = JToken.Parse(responseZonesResult);
+                    JToken recordsToken = resultJson["records"];
+                    if (recordsToken != null)
+                    {
+                        foreach (JToken token in recordsToken)
+                        {
+                            string idName = token["id"]?.ToString() ?? string.Empty;
+                            if (!string.IsNullOrEmpty(idName))
+                            {
+                                return idName;
+                            }
+                        }
+                    }
                 }
             }
             catch (Exception)
