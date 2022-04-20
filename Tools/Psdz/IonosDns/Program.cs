@@ -7,6 +7,7 @@ using System.Net.Http.Headers;
 using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 namespace IonosDns
 {
@@ -46,7 +47,7 @@ namespace IonosDns
                 _httpClient.DefaultRequestHeaders.UserAgent.Clear();
                 _httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("curl", "7.79.1"));
 
-                string zones = GetZones();
+                string zonesId = GetZonesId();
             }
             catch (Exception e)
             {
@@ -57,7 +58,7 @@ namespace IonosDns
             return 0;
         }
 
-        private static string GetZones()
+        private static string GetZonesId()
         {
             try
             {
@@ -66,7 +67,19 @@ namespace IonosDns
                 if (success)
                 {
                     string responseZonesResult = response.Content.ReadAsStringAsync().Result;
-                    return responseZonesResult;
+                    JArray resultJson = JArray.Parse(responseZonesResult);
+                    foreach (JToken token in resultJson)
+                    {
+                        string typeName = token["type"]?.ToString() ?? string.Empty;
+                        if (string.Compare(typeName, "NATIVE", StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            string idName = token["id"]?.ToString() ?? string.Empty;
+                            if (!string.IsNullOrEmpty(idName))
+                            {
+                                return idName;
+                            }
+                        }
+                    }
                 }
             }
             catch (Exception)
