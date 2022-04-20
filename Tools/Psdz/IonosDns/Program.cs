@@ -13,6 +13,7 @@ namespace IonosDns
 {
     internal class Program
     {
+        private const string BaseUrl = @"https://api.hosting.ionos.com/dns/v1/";
         private static HttpClient _httpClient;
 
         static int Main(string[] args)
@@ -48,6 +49,13 @@ namespace IonosDns
                 _httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("curl", "7.79.1"));
 
                 string zonesId = GetZonesId();
+                if (string.IsNullOrEmpty(zonesId))
+                {
+                    Console.WriteLine("No zones ID");
+                    return 1;
+                }
+
+                GetRecord(zonesId, "_acme-challenge.holeschak.de");
             }
             catch (Exception e)
             {
@@ -62,7 +70,11 @@ namespace IonosDns
         {
             try
             {
-                HttpResponseMessage response = _httpClient.GetAsync(new Uri("https://api.hosting.ionos.com/dns/v1/zones")).Result;
+                StringBuilder sbUrl = new StringBuilder();
+                sbUrl.Append(BaseUrl);
+                sbUrl.Append(@"zones");
+
+                HttpResponseMessage response = _httpClient.GetAsync(new Uri(sbUrl.ToString())).Result;
                 bool success = response.IsSuccessStatusCode;
                 if (success)
                 {
@@ -89,5 +101,35 @@ namespace IonosDns
 
             return null;
         }
+
+        private static string GetRecord(string zoneId, string recordName)
+        {
+            try
+            {
+                StringBuilder sbUrl = new StringBuilder();
+                sbUrl.Append(BaseUrl);
+                sbUrl.Append(@"zones/");
+                sbUrl.Append(Uri.EscapeDataString(zoneId));
+                sbUrl.Append("?");
+                sbUrl.Append("recordName=");
+                sbUrl.Append(Uri.EscapeDataString(recordName));
+                sbUrl.Append("&recordType=TXT");
+
+                HttpResponseMessage response = _httpClient.GetAsync(new Uri(sbUrl.ToString())).Result;
+                bool success = response.IsSuccessStatusCode;
+                if (success)
+                {
+                    string responseZonesResult = response.Content.ReadAsStringAsync().Result;
+                    JObject resultJson = JObject.Parse(responseZonesResult);
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return null;
+        }
+
     }
 }
