@@ -79,7 +79,7 @@ namespace IonosDns
                 if (success)
                 {
                     string responseZonesResult = response.Content.ReadAsStringAsync().Result;
-                    JArray resultJson = JArray.Parse(responseZonesResult);
+                    JToken resultJson = JToken.Parse(responseZonesResult);
                     foreach (JToken token in resultJson)
                     {
                         string typeName = token["type"]?.ToString() ?? string.Empty;
@@ -120,7 +120,7 @@ namespace IonosDns
                 if (success)
                 {
                     string responseZonesResult = response.Content.ReadAsStringAsync().Result;
-                    JObject resultJson = JObject.Parse(responseZonesResult);
+                    JToken resultJson = JToken.Parse(responseZonesResult);
                 }
             }
             catch (Exception)
