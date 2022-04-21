@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -21,97 +22,127 @@ namespace IonosDns
         {
             try
             {
-                string prefix = ConfigurationManager.AppSettings["Prefix"];
-                if (string.IsNullOrEmpty(prefix))
+                string docPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                using (StreamWriter logFile = new StreamWriter(Path.Combine(docPath, "IonosDns.txt"), true))
                 {
-                    Console.WriteLine("Prefix not configured");
-                    return 1;
-                }
-
-                string key = ConfigurationManager.AppSettings["Key"];
-                if (string.IsNullOrEmpty(key))
-                {
-                    Console.WriteLine("Key not configured");
-                    return 1;
-                }
-
-                string apiKey = prefix + "." + key;
-                if (args.Length < 1)
-                {
-                    Console.WriteLine("No operation specified");
-                    return 1;
-                }
-
-                string operation = args[0];
-                bool create = string.Compare(operation, "create", StringComparison.OrdinalIgnoreCase) == 0;
-                bool delete = string.Compare(operation, "delete", StringComparison.OrdinalIgnoreCase) == 0;
-
-                if (!create && !delete)
-                {
-                    Console.WriteLine("Operation must be create or delete");
-                    return 1;
-                }
-
-                if (create)
-                {
-                    if (args.Length < 4)
+                    try
                     {
-                        Console.WriteLine("Create argument: create {Identifier} {RecordName} {Token}");
-                        return 1;
+                        logFile.WriteLine();
+                        logFile.WriteLine("Date: {0}", DateTime.Now.ToString());
+
+                        string prefix = ConfigurationManager.AppSettings["Prefix"];
+                        if (string.IsNullOrEmpty(prefix))
+                        {
+                            logFile.WriteLine("Prefix not configured");
+                            return 1;
+                        }
+
+                        string key = ConfigurationManager.AppSettings["Key"];
+                        if (string.IsNullOrEmpty(key))
+                        {
+                            logFile.WriteLine("Key not configured");
+                            return 1;
+                        }
+
+                        logFile.Write("Arguments:");
+                        foreach (string arg in args)
+                        {
+                            logFile.Write(" '{0}'", arg);
+                        }
+                        logFile.WriteLine();
+
+                        string apiKey = prefix + "." + key;
+                        if (args.Length < 1)
+                        {
+                            logFile.WriteLine("No operation specified");
+                            return 1;
+                        }
+
+                        string operation = args[0];
+                        bool create = string.Compare(operation, "create", StringComparison.OrdinalIgnoreCase) == 0;
+                        bool delete = string.Compare(operation, "delete", StringComparison.OrdinalIgnoreCase) == 0;
+
+                        if (!create && !delete)
+                        {
+                            logFile.WriteLine("Operation must be create or delete");
+                            return 1;
+                        }
+
+                        if (create)
+                        {
+                            if (args.Length < 4)
+                            {
+                                logFile.WriteLine("Create argument: create {Identifier} {RecordName} {Token}");
+                                return 1;
+                            }
+                        }
+
+                        if (delete)
+                        {
+                            if (args.Length < 3)
+                            {
+                                logFile.WriteLine("Create argument: create {Identifier} {RecordName}");
+                                return 1;
+                            }
+                        }
+
+                        string identifier = args[1];
+                        string recordName = args[2];
+                        string recordToken = string.Empty;
+                        if (create)
+                        {
+                            recordToken = args[3];
+                        }
+
+                        string domain = GetDomainNameOfIdentifier(identifier);
+                        _httpClient = new HttpClient(new HttpClientHandler()
+                        {
+                            SslProtocols = SslProtocols.None,
+                            ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true
+                        });
+
+                        _httpClient.DefaultRequestHeaders.Add("accept", "application/json");
+                        _httpClient.DefaultRequestHeaders.Add("X-API-Key", apiKey);
+                        _httpClient.DefaultRequestHeaders.UserAgent.Clear();
+                        _httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("curl", "7.79.1"));
+
+                        logFile.WriteLine("Get zones ID for domain: {0}", domain);
+                        string zonesId = GetZonesId(domain);
+                        if (string.IsNullOrEmpty(zonesId))
+                        {
+                            logFile.WriteLine("No zones ID");
+                            return 1;
+                        }
+
+                        logFile.WriteLine("Zones ID: {0}", zonesId);
+                        string recordId = GetRecordId(zonesId, recordName);
+                        if (!string.IsNullOrEmpty(recordId))
+                        {
+                            logFile.WriteLine("Delete Record ID: {0}", recordId);
+                            if (!DeleteRecord(zonesId, recordId))
+                            {
+                                logFile.WriteLine("Delete record failed");
+                                return 1;
+                            }
+
+                            logFile.WriteLine("Deleted Record ID: {0}", recordId);
+                        }
+
+                        if (create)
+                        {
+                            logFile.WriteLine("Create Record: '{0}' '{1}'", recordName, recordToken);
+                            if (!CreateRecord(zonesId, recordName, recordToken))
+                            {
+                                logFile.WriteLine("Create record failed");
+                                return 1;
+                            }
+
+                            logFile.WriteLine("Created Record: '{0}' '{1}'", recordName, recordToken);
+                        }
                     }
-                }
-
-                if (delete)
-                {
-                    if (args.Length < 3)
+                    catch (Exception e)
                     {
-                        Console.WriteLine("Create argument: create {Identifier} {RecordName}");
-                        return 1;
-                    }
-                }
-
-                string identifier = args[1];
-                string recordName = args[2];
-                string recordToken = string.Empty;
-                if (create)
-                {
-                    recordToken = args[3];
-                }
-
-                string domain = GetDomainNameOfIdentifier(identifier);
-                _httpClient = new HttpClient(new HttpClientHandler()
-                {
-                    SslProtocols = SslProtocols.None,
-                    ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true
-                });
-
-                _httpClient.DefaultRequestHeaders.Add("accept", "application/json");
-                _httpClient.DefaultRequestHeaders.Add("X-API-Key", apiKey);
-                _httpClient.DefaultRequestHeaders.UserAgent.Clear();
-                _httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("curl", "7.79.1"));
-
-                string zonesId = GetZonesId(domain);
-                if (string.IsNullOrEmpty(zonesId))
-                {
-                    Console.WriteLine("No zones ID");
-                    return 1;
-                }
-
-                string recordId = GetRecordId(zonesId, recordName);
-                if (!string.IsNullOrEmpty(recordId))
-                {
-                    if (!DeleteRecord(zonesId, recordId))
-                    {
-                        Console.WriteLine("Delete record failed");
-                        return 1;
-                    }
-                }
-
-                if (create)
-                {
-                    if (!CreateRecord(zonesId, recordName, recordToken))
-                    {
-                        Console.WriteLine("Create record failed");
+                        logFile.WriteLine("Exception: {0}", e.Message);
                         return 1;
                     }
                 }
@@ -119,7 +150,6 @@ namespace IonosDns
             catch (Exception e)
             {
                 Console.WriteLine("Exception: {0}", e.Message);
-                return 1;
             }
 
             return 0;
