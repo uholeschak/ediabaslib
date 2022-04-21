@@ -21,13 +21,21 @@ namespace IonosDns
         {
             try
             {
-                string apiKey = ConfigurationManager.AppSettings["ApiKey"];
-                if (string.IsNullOrEmpty(apiKey))
+                string prefix = ConfigurationManager.AppSettings["Prefix"];
+                if (string.IsNullOrEmpty(prefix))
                 {
-                    Console.WriteLine("ApiKey not configured");
+                    Console.WriteLine("Prefix not configured");
                     return 1;
                 }
 
+                string key = ConfigurationManager.AppSettings["Key"];
+                if (string.IsNullOrEmpty(key))
+                {
+                    Console.WriteLine("Key not configured");
+                    return 1;
+                }
+
+                string apiKey = prefix + "." + key;
                 if (args.Length < 1)
                 {
                     Console.WriteLine("No operation specified");
