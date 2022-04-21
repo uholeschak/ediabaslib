@@ -76,10 +76,10 @@ catch (Exception ex)
 Output.WriteLine(
 $@"<?xml version=""1.0"" encoding=""utf-8""?>
 <appSettings>
-    <add key=""PatchCtorNamespace"" value=""BMW.Rheingold.SecurityAndLicense""/>
-    <add key=""PatchCtorClass"" value=""IntegrityManager""/>
-    <add key=""PatchMethodNamespace"" value=""BMW.Rheingold.CoreFramework.LicenseManagement""/>
-    <add key=""PatchMethodClass"" value=""LicenseStatusChecker""/>
-    <add key=""PatchMethodName"" value=""IsLicenseValid""/>
-    <add key=""LicFileName"" value=""License.xml""/>
+    <add key=""PatchCtorNamespace"" value=""{patchCtorNamespace}""/>
+    <add key=""PatchCtorClass"" value=""{patchCtorClass}""/>
+    <add key=""PatchMethodNamespace"" value=""{patchMethodNamespace}""/>
+    <add key=""PatchMethodClass"" value=""{patchMethodClass}""/>
+    <add key=""PatchMethodName"" value=""{patchMethodName}""/>
+    <add key=""LicFileName"" value=""{licFileName}""/>
 </appSettings>");
