@@ -20,7 +20,7 @@ namespace IonosDns
         {
             try
             {
-                if (args.Length < 2)
+                if (args.Length < 3)
                 {
                     Console.WriteLine("No operation specified");
                     return 1;
@@ -36,7 +36,9 @@ namespace IonosDns
                     return 1;
                 }
 
-                string apiKey = args[1];
+                string recordName = args[1];
+                string apiKey = args[2];
+
                 _httpClient = new HttpClient(new HttpClientHandler()
                 {
                     SslProtocols = SslProtocols.None,
@@ -55,7 +57,7 @@ namespace IonosDns
                     return 1;
                 }
 
-                string recordId = GetRecordId(zonesId, "_acme-challenge.holeschak.de");
+                string recordId = GetRecordId(zonesId, recordName);
                 if (!string.IsNullOrEmpty(recordId))
                 {
 
