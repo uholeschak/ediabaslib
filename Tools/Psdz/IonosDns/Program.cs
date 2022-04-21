@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http;
@@ -20,7 +21,14 @@ namespace IonosDns
         {
             try
             {
-                if (args.Length < 4)
+                string apiKey = ConfigurationManager.AppSettings["ApiKey"];
+                if (string.IsNullOrEmpty(apiKey))
+                {
+                    Console.WriteLine("ApiKey not configured");
+                    return 1;
+                }
+
+                if (args.Length < 1)
                 {
                     Console.WriteLine("No operation specified");
                     return 1;
@@ -36,11 +44,33 @@ namespace IonosDns
                     return 1;
                 }
 
+                if (create)
+                {
+                    if (args.Length < 4)
+                    {
+                        Console.WriteLine("Create argument: create {Identifier} {RecordName} {Token}");
+                        return 1;
+                    }
+                }
+
+                if (delete)
+                {
+                    if (args.Length < 3)
+                    {
+                        Console.WriteLine("Create argument: create {Identifier} {RecordName}");
+                        return 1;
+                    }
+                }
+
                 string identifier = args[1];
                 string recordName = args[2];
-                string apiKey = args[3];
-                string domain = GetDomainNameOfIdentifier(identifier);
+                string recordToken = string.Empty;
+                if (create)
+                {
+                    recordToken = args[3];
+                }
 
+                string domain = GetDomainNameOfIdentifier(identifier);
                 _httpClient = new HttpClient(new HttpClientHandler()
                 {
                     SslProtocols = SslProtocols.None,
@@ -65,6 +95,15 @@ namespace IonosDns
                     if (!DeleteRecord(zonesId, recordId))
                     {
                         Console.WriteLine("Delete record failed");
+                        return 1;
+                    }
+                }
+
+                if (create)
+                {
+                    if (!CreateRecord(zonesId, recordName, recordToken))
+                    {
+                        Console.WriteLine("Create record failed");
                         return 1;
                     }
                 }
@@ -197,5 +236,35 @@ namespace IonosDns
 
             return false;
         }
+
+        private static bool CreateRecord(string zoneId, string recordName, string recordToken)
+        {
+            try
+            {
+                StringBuilder sbUrl = new StringBuilder();
+                sbUrl.Append(BaseUrl);
+                sbUrl.Append(@"zones/");
+                sbUrl.Append(Uri.EscapeDataString(zoneId));
+                sbUrl.Append(@"/records");
+
+                string jsonText = "[{\"name\":\"" + recordName + "\", \"type\":\"TXT\", \"content\":\"" + recordToken + "\", \"ttl\":60, \"prio\":100, \"disabled\":false}]";
+                StringContent content = new StringContent(jsonText, Encoding.UTF8, "application/json");
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                HttpResponseMessage response = _httpClient.PostAsync(new Uri(sbUrl.ToString()), content).Result;
+                bool success = response.IsSuccessStatusCode;
+                if (success)
+                {
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return false;
+        }
+
     }
 }
