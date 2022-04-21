@@ -20,7 +20,7 @@ namespace IonosDns
         {
             try
             {
-                if (args.Length < 3)
+                if (args.Length < 4)
                 {
                     Console.WriteLine("No operation specified");
                     return 1;
@@ -36,8 +36,10 @@ namespace IonosDns
                     return 1;
                 }
 
-                string recordName = args[1];
-                string apiKey = args[2];
+                string identifier = args[1];
+                string recordName = args[2];
+                string apiKey = args[3];
+                string domain = GetDomainNameOfIdentifier(identifier);
 
                 _httpClient = new HttpClient(new HttpClientHandler()
                 {
@@ -50,7 +52,7 @@ namespace IonosDns
                 _httpClient.DefaultRequestHeaders.UserAgent.Clear();
                 _httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("curl", "7.79.1"));
 
-                string zonesId = GetZonesId();
+                string zonesId = GetZonesId(domain);
                 if (string.IsNullOrEmpty(zonesId))
                 {
                     Console.WriteLine("No zones ID");
@@ -72,7 +74,12 @@ namespace IonosDns
             return 0;
         }
 
-        private static string GetZonesId()
+        private static string GetDomainNameOfIdentifier(string urlString)
+        {
+            return urlString.Substring(urlString.LastIndexOf('.', urlString.LastIndexOf('.') - 1) + 1);
+        }
+
+        private static string GetZonesId(string domain)
         {
             try
             {
@@ -91,10 +98,14 @@ namespace IonosDns
                         string typeName = token["type"]?.ToString() ?? string.Empty;
                         if (string.Compare(typeName, "NATIVE", StringComparison.OrdinalIgnoreCase) == 0)
                         {
-                            string idName = token["id"]?.ToString() ?? string.Empty;
-                            if (!string.IsNullOrEmpty(idName))
+                            string name = token["name"]?.ToString() ?? string.Empty;
+                            if (string.Compare(name, domain, StringComparison.OrdinalIgnoreCase) == 0)
                             {
-                                return idName;
+                                string idName = token["id"]?.ToString() ?? string.Empty;
+                                if (!string.IsNullOrEmpty(idName))
+                                {
+                                    return idName;
+                                }
                             }
                         }
                     }
