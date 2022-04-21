@@ -62,7 +62,11 @@ namespace IonosDns
                 string recordId = GetRecordId(zonesId, recordName);
                 if (!string.IsNullOrEmpty(recordId))
                 {
-
+                    if (!DeleteRecord(zonesId, recordId))
+                    {
+                        Console.WriteLine("Delete record failed");
+                        return 1;
+                    }
                 }
             }
             catch (Exception e)
@@ -168,5 +172,30 @@ namespace IonosDns
             return null;
         }
 
+        private static bool DeleteRecord(string zoneId, string recordId)
+        {
+            try
+            {
+                StringBuilder sbUrl = new StringBuilder();
+                sbUrl.Append(BaseUrl);
+                sbUrl.Append(@"zones/");
+                sbUrl.Append(Uri.EscapeDataString(zoneId));
+                sbUrl.Append(@"/records/");
+                sbUrl.Append(Uri.EscapeDataString(recordId));
+
+                HttpResponseMessage response = _httpClient.DeleteAsync(new Uri(sbUrl.ToString())).Result;
+                bool success = response.IsSuccessStatusCode;
+                if (success)
+                {
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return false;
+        }
     }
 }
