@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Reflection;
 using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,8 +23,7 @@ namespace IonosDns
         {
             try
             {
-                string docPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                using (StreamWriter logFile = new StreamWriter(Path.Combine(docPath, "IonosDns.txt"), true))
+                using (StreamWriter logFile = new StreamWriter(Path.Combine(AssemblyDirectory, "IonosDns.txt"), true))
                 {
                     try
                     {
@@ -153,6 +153,17 @@ namespace IonosDns
             }
 
             return 0;
+        }
+
+        private static string AssemblyDirectory
+        {
+            get
+            {
+                string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+                UriBuilder uri = new UriBuilder(codeBase);
+                string path = Uri.UnescapeDataString(uri.Path);
+                return Path.GetDirectoryName(path);
+            }
         }
 
         private static string GetDomainNameOfIdentifier(string urlString)
