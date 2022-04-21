@@ -130,10 +130,18 @@ namespace IonosDns
                     {
                         foreach (JToken token in recordsToken)
                         {
-                            string idName = token["id"]?.ToString() ?? string.Empty;
-                            if (!string.IsNullOrEmpty(idName))
+                            string typeName = token["type"]?.ToString() ?? string.Empty;
+                            if (string.Compare(typeName, "TXT", StringComparison.OrdinalIgnoreCase) == 0)
                             {
-                                return idName;
+                                string name = token["name"]?.ToString() ?? string.Empty;
+                                if (string.Compare(name, recordName, StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    string idName = token["id"]?.ToString() ?? string.Empty;
+                                    if (!string.IsNullOrEmpty(idName))
+                                    {
+                                        return idName;
+                                    }
+                                }
                             }
                         }
                     }
