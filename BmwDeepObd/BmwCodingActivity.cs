@@ -975,14 +975,13 @@ namespace BmwDeepObd
                             }
                             else
                             {
-                                url = @"http://ulrich3.local.holeschak.de:3000";
-                                //url = @"http://ulrich3.local.holeschak.de:8008";
+                                //url = @"http://ulrich3.local.holeschak.de:3000";
+                                url = @"https://ulrich3.local.holeschak.de:8443";
                                 //url = @"http://coding-server.local.holeschak.de:8008";
                             }
                         }
                         else
                         {
-                            //url = @"http://holeschak.dedyn.io:8008";
                             url = _instanceData.CodingUrl;
                         }
 
