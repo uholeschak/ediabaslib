@@ -23,11 +23,19 @@ namespace IonosDns
         {
             try
             {
-                using (StreamWriter logFile = new StreamWriter(Path.Combine(AssemblyDirectory, "IonosDns.txt"), true))
+                string logFileName = Path.Combine(AssemblyDirectory, "IonosDns.txt");
+                bool append = false;
+                FileInfo fi = new FileInfo(logFileName);
+                if (fi.Exists && fi.Length < 10000)
+                {
+                    append = true;
+                }
+
+                using (StreamWriter logFile = new StreamWriter(logFileName, append))
                 {
                     try
                     {
-                        logFile.WriteLine();
+                        logFile.WriteLine("------------------------------------");
                         logFile.WriteLine("Date: {0}", DateTime.Now.ToString());
 
                         string prefix = ConfigurationManager.AppSettings["Prefix"];
@@ -115,6 +123,7 @@ namespace IonosDns
                         }
 
                         logFile.WriteLine("Zones ID: {0}", zonesId);
+                        logFile.WriteLine("Get record: '{0}'", recordName);
                         string recordId = GetRecordId(zonesId, recordName);
                         if (!string.IsNullOrEmpty(recordId))
                         {
@@ -126,6 +135,10 @@ namespace IonosDns
                             }
 
                             logFile.WriteLine("Deleted Record ID: {0}", recordId);
+                        }
+                        else
+                        {
+                            logFile.WriteLine("Record not found: '{0}'", recordName);
                         }
 
                         if (create)
