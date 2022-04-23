@@ -275,7 +275,10 @@ namespace EdiabasLib
 
             if (_elm327TransportType == TransportType.Standard && elmManufact.ToUpperInvariant().Contains(Elm327WgSoftIdentifier))
             {
-                _elm327TransportType = TransportType.WgSoft;
+                if (elmDevDesc.ToUpperInvariant().StartsWith("2.0"))
+                {
+                    _elm327TransportType = TransportType.WgSoft;
+                }
             }
             Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM transport type: {0}", _elm327TransportType);
 
