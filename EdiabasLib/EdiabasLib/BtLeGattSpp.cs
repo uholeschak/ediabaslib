@@ -88,7 +88,7 @@ namespace EdiabasLib
                 _gattServicesDiscovered = false;
                 _btGattSppInStream = new MemoryQueueBufferStream(true);
                 _btGattSppOutStream = new BGattOutputStream(this);
-                _bluetoothGatt = device.ConnectGatt(context, false, new BGattCallback(this));
+                _bluetoothGatt = device.ConnectGatt(context, false, new BGattCallback(this), BluetoothTransports.Le);
                 if (_bluetoothGatt == null)
                 {
                     LogString("*** ConnectGatt failed");

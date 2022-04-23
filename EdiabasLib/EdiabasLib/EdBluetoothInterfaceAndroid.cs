@@ -173,22 +173,26 @@ namespace EdiabasLib
                     }
 
                     _connectDeviceAddress = device.Address;
+                    CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device bond state: {0}", device.BondState);
                     CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device type: {0}", device.Type);
 
-                    if (!mtcBtService && device.Type == BluetoothDeviceType.Le && context != null)
+                    if (!mtcBtService && context != null)
                     {
-                        _btLeGattSpp ??= new BtLeGattSpp();
+                        if (device.Type == BluetoothDeviceType.Le || (device.Type == BluetoothDeviceType.Dual && device.BondState == Bond.None))
+                        {
+                            _btLeGattSpp ??= new BtLeGattSpp();
 
-                        // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                        if (!_btLeGattSpp.ConnectLeGattDevice(context, device))
-                        {
-                            CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Connect to LE GATT device failed");
-                        }
-                        else
-                        {
-                            CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Connect to LE GATT device success");
-                            _bluetoothInStream = _btLeGattSpp.BtGattSppInStream;
-                            _bluetoothOutStream = _btLeGattSpp.BtGattSppOutStream;
+                            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                            if (!_btLeGattSpp.ConnectLeGattDevice(context, device))
+                            {
+                                CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Connect to LE GATT device failed");
+                            }
+                            else
+                            {
+                                CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Connect to LE GATT device success");
+                                _bluetoothInStream = _btLeGattSpp.BtGattSppInStream;
+                                _bluetoothOutStream = _btLeGattSpp.BtGattSppOutStream;
+                            }
                         }
                     }
 

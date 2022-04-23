@@ -986,27 +986,30 @@ namespace BmwDeepObd
                         int connectTimeout = _activityCommon.MtcBtService ? 1000 : 2000;
                         _connectDeviceAddress = device.Address;
                         BluetoothSocket bluetoothSocket = null;
-                        LogString("Bond state: " + device.BondState);
+                        LogString("Device bond state: " + device.BondState);
                         LogString("Device type: " + device.Type);
 
                         adapterType = AdapterType.ConnectionFailed;
-                        if (!_activityCommon.MtcBtService && device.Type == BluetoothDeviceType.Le && _btLeGattSpp != null)
+                        if (!_activityCommon.MtcBtService && _btLeGattSpp != null)
                         {
-                            try
+                            if (device.Type == BluetoothDeviceType.Le || (device.Type == BluetoothDeviceType.Dual && device.BondState == Bond.None))
                             {
-                                if (!_btLeGattSpp.ConnectLeGattDevice(this, device))
+                                try
                                 {
-                                    LogString("Connect to LE GATT device failed");
+                                    if (!_btLeGattSpp.ConnectLeGattDevice(this, device))
+                                    {
+                                        LogString("Connect to LE GATT device failed");
+                                    }
+                                    else
+                                    {
+                                        LogString("Connect to LE GATT device success");
+                                        adapterType = AdapterTypeDetection(_btLeGattSpp.BtGattSppInStream, _btLeGattSpp.BtGattSppOutStream);
+                                    }
                                 }
-                                else
+                                finally
                                 {
-                                    LogString("Connect to LE GATT device success");
-                                    adapterType = AdapterTypeDetection(_btLeGattSpp.BtGattSppInStream, _btLeGattSpp.BtGattSppOutStream);
+                                    _btLeGattSpp.BtGattDisconnect();
                                 }
-                            }
-                            finally
-                            {
-                                _btLeGattSpp.BtGattDisconnect();
                             }
                         }
 
