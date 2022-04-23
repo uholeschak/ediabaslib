@@ -173,6 +173,7 @@ namespace EdiabasLib
                     }
 
                     _connectDeviceAddress = device.Address;
+                    CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device type: {0}", device.Type);
 
                     if (!mtcBtService && device.Type == BluetoothDeviceType.Le && context != null)
                     {
