@@ -48,6 +48,7 @@ namespace EdiabasLib
 
         public const string Elm327CarlyIdentifier = "CARLY-UNIVERSAL";
         public const string Elm327WgSoftIdentifier = "WGSOFT";
+        public const double Elm327WgSoftMinVer = 2.4;
 
         public static ElmInitEntry[] Elm327InitCommands =
         {
@@ -275,9 +276,13 @@ namespace EdiabasLib
 
             if (_elm327TransportType == TransportType.Standard && elmManufact.ToUpperInvariant().Contains(Elm327WgSoftIdentifier))
             {
-                if (elmDevDesc.ToUpperInvariant().StartsWith("2.0"))
+                string verString = elmDevDesc.Trim('\r', '\n', '>', ' ');
+                if (double.TryParse(verString, NumberStyles.Float, CultureInfo.InvariantCulture, out double version))
                 {
-                    _elm327TransportType = TransportType.WgSoft;
+                    if (version < Elm327WgSoftMinVer)
+                    {
+                        _elm327TransportType = TransportType.WgSoft;
+                    }
                 }
             }
             Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM transport type: {0}", _elm327TransportType);

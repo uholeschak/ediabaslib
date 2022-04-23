@@ -2065,9 +2065,16 @@ namespace BmwDeepObd
                 LogString(string.Format("ELM Manufacturer: {0}", elmManufact));
                 if (elmManufact.ToUpperInvariant().Contains(EdElmInterface.Elm327WgSoftIdentifier))
                 {
-                    if (elmDevDesc != null && elmDevDesc.ToUpperInvariant().StartsWith("2.0"))
+                    if (elmDevDesc != null)
                     {
-                        restricted = true;
+                        string verString = elmDevDesc.Trim('\r', '\n', '>', ' ');
+                        if (double.TryParse(verString, NumberStyles.Float, CultureInfo.InvariantCulture, out double version))
+                        {
+                            if (version < EdElmInterface.Elm327WgSoftMinVer)
+                            {
+                                restricted = true;
+                            }
+                        }
                     }
                 }
             }
