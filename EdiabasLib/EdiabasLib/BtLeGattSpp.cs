@@ -95,7 +95,7 @@ namespace EdiabasLib
                     return false;
                 }
 
-                _btGattConnectEvent.WaitOne(2000, false);
+                _btGattConnectEvent.WaitOne(3000, false);
                 if (_gattConnectionState != State.Connected)
                 {
                     LogString("*** GATT connection timeout");
