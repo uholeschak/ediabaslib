@@ -992,7 +992,7 @@ namespace BmwDeepObd
                         adapterType = AdapterType.ConnectionFailed;
                         if (!_activityCommon.MtcBtService && _btLeGattSpp != null)
                         {
-                            if (device.Type == BluetoothDeviceType.Le || (device.Type == BluetoothDeviceType.Dual && device.BondState == Bond.None))
+                            if (device.Type == BluetoothDeviceType.Le || (device.Type == BluetoothDeviceType.Dual && device.BondState == Bond.None && !forceSecure))
                             {
                                 try
                                 {
