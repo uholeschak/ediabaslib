@@ -11,14 +11,17 @@ Copy files from "TesterGUI\bin\Release" to "TesterGUI\bin\ReleaseMod"
 de4dot-x64 -r "TesterGUI\bin\Release" -ru -ro "TesterGUI\bin\ReleaseMod" --dont-rename
 The files in "TesterGUI\bin\Release" are not modified, "TesterGUI\bin\ReleaseMod" now contains the deobfuscated files.
 
+Optional:
 Copy files from "PSdZ\hostx64" to "PSdZ\hostx64Org"
 de4dot-x64 -r "PSdZ\hostx64Org" -ru -ro "PSdZ\hostx64" --dont-rename
 The files in "PSdZ\hostx64Org" are not modified, "PSdZ\hostx64" now contains the deobfuscated files.
 
+Optional:
 Copy files from "PSdZ\host" to "PSdZ\hostOrg"
 de4dot-x64 -r "PSdZ\hostOrg" -ru -ro "PSdZ\host" --dont-rename
 The files in "PSdZ\hostOrg" are not modified, "PSdZ\host" now contains the deobfuscated files.
 
+Optional:
 Copy files from "Testmodule" to "TestmoduleOrg"
 de4dot-x64 -r "TestmoduleOrg" -ru -ro "Testmodule" --dont-rename
 The files in "TestmoduleOrg" are not modified, "Testmodule" now contains the deobfuscated files.
@@ -168,7 +171,7 @@ More Debug info:
 <add key="TesterGUI.PreferEthernet" value="true" />
 <add key="BMW.Rheingold.xVM.ICOM.Dirtyflag.Detection" value="false" />
 
-Make sure the EDIABAS.INI settings has default values in this case:
+Make sure the EDIABAS.INI settings has default values in case ModifyEdiabasIni is true:
 [XEthernet]
 RemoteHost       = Autodetect
 TesterAddress    = F4,F5
