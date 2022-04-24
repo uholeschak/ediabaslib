@@ -301,6 +301,9 @@ Do you want to continue?</value>
   <data name="TestModuleFailures" xml:space="preserve">
     <value>Test module data generation failures: {0}</value>
   </data>
+  <data name="TestModuleProgress" xml:space="preserve">
+    <value>{0}%, Failures: {1}</value>
+  </data>
   <data name="TslUpdated" xml:space="preserve">
     <value>TSL updated.</value>
   </data>

@@ -599,6 +599,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die {0}%, Failures: {1} ähnelt.
+        /// </summary>
+        internal static string TestModuleProgress {
+            get {
+                return ResourceManager.GetString("TestModuleProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die TSL updated. ähnelt.
         /// </summary>
         internal static string TslUpdated {

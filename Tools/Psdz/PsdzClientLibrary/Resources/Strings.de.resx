@@ -301,6 +301,9 @@ Wollen Sie Fortfahren?</value>
   <data name="TestModuleFailures" xml:space="preserve">
     <value>Fehler bei Testmodul Generierung: {0}</value>
   </data>
+  <data name="TestModuleProgress" xml:space="preserve">
+    <value>{0}%, Fehler: {1}</value>
+  </data>
   <data name="TslUpdated" xml:space="preserve">
     <value>TSL aktualisiert.</value>
   </data>

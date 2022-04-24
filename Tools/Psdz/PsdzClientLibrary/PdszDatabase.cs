@@ -1598,11 +1598,15 @@ namespace PsdzClient
                             string key = moduleName.ToUpperInvariant();
                             if (!moduleDataDict.ContainsKey(key))
                             {
-                                TestModuleData moduleData = ReadTestModule(moduleName);
+                                TestModuleData moduleData = ReadTestModule(moduleName, out bool failure);
                                 if (moduleData == null)
                                 {
                                     log.ErrorFormat("ConvertAllTestModules ReadTestModule failed for: {0}", moduleName);
-                                    failCount++;
+                                    if (failure)
+                                    {
+                                        log.ErrorFormat("ConvertAllTestModules ReadTestModule generation failure for: {0}", moduleName);
+                                        failCount++;
+                                    }
                                 }
                                 else
                                 {
@@ -1654,9 +1658,10 @@ namespace PsdzClient
             return testModuleData;
         }
 
-        public TestModuleData ReadTestModule(string moduleName)
+        public TestModuleData ReadTestModule(string moduleName, out bool failure)
         {
             log.InfoFormat("ReadTestModule Name: {0}", moduleName);
+            failure = false;
             try
             {
                 if (string.IsNullOrEmpty(moduleName))
@@ -1923,6 +1928,7 @@ namespace PsdzClient
             }
             catch (Exception e)
             {
+                failure = true;
                 log.ErrorFormat("ReadTestModule Exception: '{0}'", e.Message);
                 return null;
             }

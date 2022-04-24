@@ -243,7 +243,7 @@ namespace PsdzClient.Programing
                     bool result = ProgrammingService.PdszDatabase.GenerateTestModuleData((progress, failures) =>
                     {
                         failCount = failures;
-                        string message = string.Format(CultureInfo.InvariantCulture, "{0}%", progress);
+                        string message = string.Format(CultureInfo.InvariantCulture, Strings.TestModuleProgress, progress, failures);
                         ProgressEvent?.Invoke(progress, false, message);
 
                         if (cts != null)
@@ -255,11 +255,8 @@ namespace PsdzClient.Programing
 
                     ProgressEvent?.Invoke(0, true);
 
-                    if (failCount > 0)
-                    {
-                        log.ErrorFormat("Test module generation failures: {0}", failCount);
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleFailures, failCount));
-                    }
+                    log.InfoFormat("Test module generation failures: {0}", failCount);
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleFailures, failCount));
 
                     if (!result)
                     {
