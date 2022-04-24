@@ -298,6 +298,9 @@ Do you want to continue?</value>
   <data name="TestModuleDataMissing" xml:space="preserve">
     <value>Test module data not present.</value>
   </data>
+  <data name="TestModuleFailures" xml:space="preserve">
+    <value>Test module data generation failures: {0}</value>
+  </data>
   <data name="TslUpdated" xml:space="preserve">
     <value>TSL updated.</value>
   </data>
