@@ -257,6 +257,7 @@ namespace PsdzClient.Programing
 
                     log.InfoFormat("Test module generation failures: {0}", failCount);
                     sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleFailures, failCount));
+                    UpdateStatus(sbResult.ToString());
 
                     if (!result)
                     {
