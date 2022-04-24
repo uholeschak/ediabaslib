@@ -298,6 +298,9 @@ Wollen Sie Fortfahren?</value>
   <data name="TestModuleDataMissing" xml:space="preserve">
     <value>Testmoduldaten nicht vorhanden.</value>
   </data>
+  <data name="TestModuleFailures" xml:space="preserve">
+    <value>Fehler bei Testmodul Generierung: {0}</value>
+  </data>
   <data name="TslUpdated" xml:space="preserve">
     <value>TSL aktualisiert.</value>
   </data>

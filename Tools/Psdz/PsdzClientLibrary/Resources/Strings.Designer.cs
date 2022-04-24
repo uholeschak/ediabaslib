@@ -590,6 +590,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Test module data generation failures: {0} ähnelt.
+        /// </summary>
+        internal static string TestModuleFailures {
+            get {
+                return ResourceManager.GetString("TestModuleFailures", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die TSL updated. ähnelt.
         /// </summary>
         internal static string TslUpdated {

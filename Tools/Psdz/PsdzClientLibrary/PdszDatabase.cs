@@ -1134,7 +1134,7 @@ namespace PsdzClient
             "99999999708"
         };
 
-        public delegate bool ProgressDelegate(int progress);
+        public delegate bool ProgressDelegate(int progress, int failures);
 
         private bool _disposed;
         private string _databasePath;
@@ -1151,6 +1151,7 @@ namespace PsdzClient
 
         private static string _moduleRefPath;
         private static SerializableDictionary<string, List<string>> _moduleRefDict;
+        // ReSharper disable once UnusedMember.Local
         private static bool CallModuleRefPrefix(string refPath, object inParameters, ref object outParameters, ref object inAndOutParameters)
         {
             log.InfoFormat("CallModuleRefPrefix refPath: {0}", refPath);
@@ -1194,12 +1195,14 @@ namespace PsdzClient
             return false;
         }
 
+        // ReSharper disable once UnusedMember.Local
         private static bool CallWriteFaPrefix()
         {
             log.InfoFormat("CallWriteFaPrefix");
             return false;
         }
 
+        // ReSharper disable once UnusedMember.Local
         private static bool CallGetDatabaseProviderSQLitePrefix(ref object __result)
         {
             log.InfoFormat("CallGetDatabaseProviderSQLitePrefix");
@@ -1573,13 +1576,14 @@ namespace PsdzClient
                 }
 
                 SerializableDictionary<string, TestModuleData> moduleDataDict = new SerializableDictionary<string, TestModuleData>();
+                int failCount = 0;
                 int index = 0;
                 foreach (SwiAction swiAction in swiActions)
                 {
                     if (progressHandler != null)
                     {
                         int percent = index * 100 / swiActions.Count;
-                        if (progressHandler.Invoke(percent))
+                        if (progressHandler.Invoke(percent, failCount))
                         {
                             log.ErrorFormat("ConvertAllTestModules Aborted at {0}%", percent);
                             return null;
@@ -1598,6 +1602,7 @@ namespace PsdzClient
                                 if (moduleData == null)
                                 {
                                     log.ErrorFormat("ConvertAllTestModules ReadTestModule failed for: {0}", moduleName);
+                                    failCount++;
                                 }
                                 else
                                 {
@@ -1610,7 +1615,12 @@ namespace PsdzClient
                     index++;
                 }
 
-                log.InfoFormat("ConvertAllTestModules Count: {0}", moduleDataDict.Count);
+                if (progressHandler != null)
+                {
+                    progressHandler.Invoke(100, failCount);
+                }
+
+                log.InfoFormat("ConvertAllTestModules Count: {0}, Failures: {1}", moduleDataDict.Count, failCount);
                 if (moduleDataDict.Count == 0)
                 {
                     log.ErrorFormat("ConvertAllTestModules No test modules generated");
