@@ -626,7 +626,7 @@ namespace EdiabasLibConfigTool
 
             bool searching = _searching || _vehicleTaskActive;
             comboBoxLanguage.Enabled = !searching && !_test.ThreadActive;
-            buttonSearch.Enabled = !searching && !_test.ThreadActive && ((_cli != null) || !_wlanClient.NoWifiAvailable);
+            buttonSearch.Enabled = !searching && !_test.ThreadActive;
             buttonClose.Enabled = !searching && !_test.ThreadActive;
 
             BluetoothDeviceInfo devInfo = GetSelectedBtDevice();
