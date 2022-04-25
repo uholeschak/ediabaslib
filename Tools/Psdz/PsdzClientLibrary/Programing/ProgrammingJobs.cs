@@ -1399,7 +1399,7 @@ namespace PsdzClient.Programing
                             List<PdszDatabase.SwiAction> swiActions = ProgrammingService.PdszDatabase.GetSwiActionsForRegister(optionType.SwiRegisterEnum, true);
                             if (swiActions != null)
                             {
-                                log.InfoFormat(CultureInfo.InvariantCulture, "Swi actions: {0}", optionType.Name);
+                                log.InfoFormat(CultureInfo.InvariantCulture, "Swi actions: {0}", optionType.Name ?? string.Empty);
                                 List<OptionsItem> optionsItems = new List<OptionsItem>();
                                 foreach (PdszDatabase.SwiAction swiAction in swiActions)
                                 {
@@ -1429,8 +1429,11 @@ namespace PsdzClient.Programing
                         log.InfoFormat(CultureInfo.InvariantCulture, "EcuUids: {0}", psdzReadEcuUid.EcuUids.Count);
                         foreach (KeyValuePair<IPsdzEcuIdentifier, IPsdzEcuUidCto> ecuUid in psdzReadEcuUid.EcuUids)
                         {
-                            log.InfoFormat(CultureInfo.InvariantCulture, " EcuId: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, Uid={3}",
-                                ecuUid.Key.BaseVariant, ecuUid.Key.DiagAddrAsInt, ecuUid.Key.DiagnosisAddress.Offset, ecuUid.Value.EcuUid);
+                            if (ecuUid.Value != null)
+                            {
+                                log.InfoFormat(CultureInfo.InvariantCulture, " EcuId: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, Uid={3}",
+                                    ecuUid.Key?.BaseVariant ?? string.Empty, ecuUid.Key?.DiagAddrAsInt, ecuUid.Key?.DiagnosisAddress?.Offset, ecuUid.Value?.EcuUid ?? string.Empty);
+                            }
                         }
                     }
 
@@ -1439,9 +1442,12 @@ namespace PsdzClient.Programing
                         log.InfoFormat(CultureInfo.InvariantCulture, "EcuUid failures: {0}", psdzReadEcuUid.FailureResponse.Count());
                         foreach (IPsdzEcuFailureResponseCto failureResponse in psdzReadEcuUid.FailureResponse)
                         {
-                            log.InfoFormat(CultureInfo.InvariantCulture, " Fail: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, Cause={3}",
-                                failureResponse.EcuIdentifierCto.BaseVariant, failureResponse.EcuIdentifierCto.DiagAddrAsInt, failureResponse.EcuIdentifierCto.DiagnosisAddress.Offset,
-                                failureResponse.Cause.Description);
+                            if (failureResponse != null)
+                            {
+                                log.InfoFormat(CultureInfo.InvariantCulture, " Fail: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, Cause={3}",
+                                    failureResponse.EcuIdentifierCto?.BaseVariant ?? string.Empty, failureResponse.EcuIdentifierCto?.DiagAddrAsInt,
+                                    failureResponse.EcuIdentifierCto?.DiagnosisAddress?.Offset, failureResponse.Cause?.Description ?? string.Empty);
+                            }
                         }
                     }
                 }
@@ -1457,9 +1463,12 @@ namespace PsdzClient.Programing
                         log.InfoFormat(CultureInfo.InvariantCulture, "Status failures: {0}", psdzReadStatusResult.Failures.Count());
                         foreach (IPsdzEcuFailureResponseCto failureResponse in psdzReadStatusResult.Failures)
                         {
-                            log.InfoFormat(CultureInfo.InvariantCulture, " Fail: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, Cause={3}",
-                                failureResponse.EcuIdentifierCto.BaseVariant, failureResponse.EcuIdentifierCto.DiagAddrAsInt, failureResponse.EcuIdentifierCto.DiagnosisAddress.Offset,
-                                failureResponse.Cause.Description);
+                            if (failureResponse != null)
+                            {
+                                log.InfoFormat(CultureInfo.InvariantCulture, " Fail: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, Cause={3}",
+                                    failureResponse.EcuIdentifierCto.BaseVariant ?? string.Empty, failureResponse.EcuIdentifierCto?.DiagAddrAsInt, failureResponse.EcuIdentifierCto?.DiagnosisAddress?.Offset,
+                                    failureResponse.Cause?.Description ?? string.Empty);
+                            }
                         }
                     }
 
@@ -1471,8 +1480,8 @@ namespace PsdzClient.Programing
                             if (featureLongStatus != null)
                             {
                                 log.InfoFormat(CultureInfo.InvariantCulture, " Feature: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, Status={3}, Token={4}",
-                                    featureLongStatus.EcuIdentifierCto?.BaseVariant, featureLongStatus.EcuIdentifierCto?.DiagAddrAsInt, featureLongStatus.EcuIdentifierCto?.DiagnosisAddress?.Offset,
-                                    featureLongStatus.FeatureStatusEto, featureLongStatus.TokenId);
+                                    featureLongStatus.EcuIdentifierCto?.BaseVariant ?? string.Empty, featureLongStatus.EcuIdentifierCto?.DiagAddrAsInt, featureLongStatus.EcuIdentifierCto?.DiagnosisAddress?.Offset,
+                                    featureLongStatus.FeatureStatusEto, featureLongStatus.TokenId ?? string.Empty);
                             }
                         }
                     }
