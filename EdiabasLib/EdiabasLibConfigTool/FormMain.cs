@@ -420,7 +420,7 @@ namespace EdiabasLibConfigTool
 
                     UpdateDeviceList(Array.Empty<BluetoothDeviceInfo>(), false);
                     UpdateButtonStatus();
-                    UpdateStatusText(listViewDevices.Items.Count > 0 ? Resources.Strings.DevicesFound : Resources.Strings.DevicesNotFound);
+                    ShowSearchEndMessage();
                 }));
             });
 
@@ -466,7 +466,7 @@ namespace EdiabasLibConfigTool
                         if (args.Error == null && !args.Cancelled)
                         {
                             UpdateDeviceList(args.Devices, true);
-                            UpdateStatusText(listViewDevices.Items.Count > 0 ? Resources.Strings.DevicesFound : Resources.Strings.DevicesNotFound);
+                            ShowSearchEndMessage();
                         }
                         else
                         {
@@ -692,6 +692,14 @@ namespace EdiabasLibConfigTool
         private void ClearInitMessage()
         {
             _initMessage = string.Empty;
+        }
+
+        public void ShowSearchEndMessage()
+        {
+            if (!_searching && !_vehicleTaskActive)
+            {
+                UpdateStatusText(listViewDevices.Items.Count > 0 ? Resources.Strings.DevicesFound : Resources.Strings.DevicesNotFound);
+            }
         }
 
         public void UpdateStatusText(string text)
