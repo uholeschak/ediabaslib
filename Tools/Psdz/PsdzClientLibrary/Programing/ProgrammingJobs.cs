@@ -1490,8 +1490,11 @@ namespace PsdzClient.Programing
                         psdzSollverbauung.PsdzOrderList.BntnVariantInstances.Length, psdzSollverbauung.PsdzOrderList.NumberOfUnits);
                     foreach (IPsdzEcuVariantInstance bntnVariant in psdzSollverbauung.PsdzOrderList.BntnVariantInstances)
                     {
-                        log.InfoFormat(CultureInfo.InvariantCulture, " Variant: BaseVar={0}, Var={1}, Name={2}",
-                            bntnVariant.Ecu.BaseVariant, bntnVariant.Ecu.EcuVariant, bntnVariant.Ecu.BnTnName);
+                        if (bntnVariant != null && bntnVariant.Ecu != null)
+                        {
+                            log.InfoFormat(CultureInfo.InvariantCulture, " Variant: BaseVar={0}, Var={1}, Name={2}",
+                                bntnVariant.Ecu.BaseVariant, bntnVariant.Ecu.EcuVariant, bntnVariant.Ecu.BnTnName);
+                        }
                     }
                 }
                 cts?.Token.ThrowIfCancellationRequested();
@@ -1538,19 +1541,25 @@ namespace PsdzClient.Programing
                     log.InfoFormat(CultureInfo.InvariantCulture, "Swt Ecus: {0}", psdzSwtAction.SwtEcus.Count());
                     foreach (IPsdzSwtEcu psdzSwtEcu in psdzSwtAction.SwtEcus)
                     {
-                        log.InfoFormat(CultureInfo.InvariantCulture, " Ecu: Id={0}, Vin={1}, CertState={2}, SwSig={3}",
-                            psdzSwtEcu.EcuIdentifier, psdzSwtEcu.Vin, psdzSwtEcu.RootCertState, psdzSwtEcu.SoftwareSigState);
-                        if (psdzSwtEcu.SwtApplications != null)
+                        if (psdzSwtEcu != null)
                         {
-                            foreach (IPsdzSwtApplication swtApplication in psdzSwtEcu.SwtApplications)
+                            log.InfoFormat(CultureInfo.InvariantCulture, " Ecu: Id={0}, Vin={1}, CertState={2}, SwSig={3}",
+                                psdzSwtEcu.EcuIdentifier, psdzSwtEcu.Vin, psdzSwtEcu.RootCertState, psdzSwtEcu.SoftwareSigState);
+                            if (psdzSwtEcu.SwtApplications != null)
                             {
-                                int fscLength = 0;
-                                if (swtApplication.Fsc != null)
+                                foreach (IPsdzSwtApplication swtApplication in psdzSwtEcu.SwtApplications)
                                 {
-                                    fscLength = swtApplication.Fsc.Length;
+                                    if (swtApplication != null)
+                                    {
+                                        int fscLength = 0;
+                                        if (swtApplication.Fsc != null)
+                                        {
+                                            fscLength = swtApplication.Fsc.Length;
+                                        }
+                                        log.InfoFormat(CultureInfo.InvariantCulture, " Fsc: Type={0}, State={1}, Length={2}",
+                                            swtApplication.SwtType, swtApplication.FscState, fscLength);
+                                    }
                                 }
-                                log.InfoFormat(CultureInfo.InvariantCulture, " Fsc: Type={0}, State={1}, Length={2}",
-                                    swtApplication.SwtType, swtApplication.FscState, fscLength);
                             }
                         }
                     }
