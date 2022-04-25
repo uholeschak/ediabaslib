@@ -1573,30 +1573,39 @@ namespace PsdzClient.Programing
                 log.Info(psdzTal.AsXml);
                 log.InfoFormat(CultureInfo.InvariantCulture, " Size: {0}", psdzTal.AsXml.Length);
                 log.InfoFormat(CultureInfo.InvariantCulture, " State: {0}", psdzTal.TalExecutionState);
-                log.InfoFormat(CultureInfo.InvariantCulture, " Ecus: {0}", psdzTal.AffectedEcus.Count());
-                foreach (IPsdzEcuIdentifier ecuIdentifier in psdzTal.AffectedEcus)
+                if (psdzTal.AffectedEcus != null)
                 {
-                    log.InfoFormat(CultureInfo.InvariantCulture, "  Affected Ecu: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
-                        ecuIdentifier.BaseVariant, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset);
+                    log.InfoFormat(CultureInfo.InvariantCulture, " Ecus: {0}", psdzTal.AffectedEcus.Count());
+                    foreach (IPsdzEcuIdentifier ecuIdentifier in psdzTal.AffectedEcus)
+                    {
+                        if (ecuIdentifier != null)
+                        {
+                            log.InfoFormat(CultureInfo.InvariantCulture, "  Affected Ecu: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
+                                ecuIdentifier.BaseVariant, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset);
+                        }
+                    }
                 }
 
                 log.InfoFormat(CultureInfo.InvariantCulture, " Lines: {0}", psdzTal.TalLines.Count());
                 foreach (IPsdzTalLine talLine in psdzTal.TalLines)
                 {
-                    log.InfoFormat(CultureInfo.InvariantCulture, "  Tal line: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
-                        talLine.EcuIdentifier.BaseVariant, talLine.EcuIdentifier.DiagAddrAsInt, talLine.EcuIdentifier.DiagnosisAddress.Offset);
-                    log.InfoFormat(CultureInfo.InvariantCulture, " FscDeploy={0}, BlFlash={1}, IbaDeploy={2}, SwDeploy={3}, IdRestore={4}, SfaDeploy={5}, Cat={6}",
-                        talLine.FscDeploy.Tas.Count(), talLine.BlFlash.Tas.Count(), talLine.IbaDeploy.Tas.Count(),
-                        talLine.SwDeploy.Tas.Count(), talLine.IdRestore.Tas.Count(), talLine.SFADeploy.Tas.Count(),
-                        talLine.TaCategories);
-                    if (talLine.TaCategory != null && talLine.TaCategory.Tas != null)
+                    if (talLine != null)
                     {
-                        foreach (IPsdzTa psdzTa in talLine.TaCategory.Tas)
+                        log.InfoFormat(CultureInfo.InvariantCulture, "  Tal line: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
+                            talLine.EcuIdentifier.BaseVariant, talLine.EcuIdentifier.DiagAddrAsInt, talLine.EcuIdentifier.DiagnosisAddress.Offset);
+                        log.InfoFormat(CultureInfo.InvariantCulture, " FscDeploy={0}, BlFlash={1}, IbaDeploy={2}, SwDeploy={3}, IdRestore={4}, SfaDeploy={5}, Cat={6}",
+                            talLine.FscDeploy?.Tas?.Count(), talLine.BlFlash?.Tas?.Count(), talLine.IbaDeploy?.Tas?.Count(),
+                            talLine.SwDeploy?.Tas?.Count(), talLine.IdRestore?.Tas?.Count(), talLine.SFADeploy?.Tas?.Count(),
+                            talLine.TaCategories);
+                        if (talLine.TaCategory != null && talLine.TaCategory.Tas != null)
                         {
-                            if (psdzTa != null && psdzTa.SgbmId != null)
+                            foreach (IPsdzTa psdzTa in talLine.TaCategory.Tas)
                             {
-                                log.InfoFormat(CultureInfo.InvariantCulture, "   SgbmId={0}, State={1}",
-                                    psdzTa.SgbmId.HexString, psdzTa.ExecutionState);
+                                if (psdzTa != null && psdzTa.SgbmId != null)
+                                {
+                                    log.InfoFormat(CultureInfo.InvariantCulture, "   SgbmId={0}, State={1}",
+                                        psdzTa.SgbmId.HexString, psdzTa.ExecutionState);
+                                }
                             }
                         }
                     }
