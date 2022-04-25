@@ -1585,10 +1585,16 @@ namespace PsdzClient.Programing
                         talLine.FscDeploy.Tas.Count(), talLine.BlFlash.Tas.Count(), talLine.IbaDeploy.Tas.Count(),
                         talLine.SwDeploy.Tas.Count(), talLine.IdRestore.Tas.Count(), talLine.SFADeploy.Tas.Count(),
                         talLine.TaCategories);
-                    foreach (IPsdzTa psdzTa in talLine.TaCategory.Tas)
+                    if (talLine.TaCategory != null && talLine.TaCategory.Tas != null)
                     {
-                        log.InfoFormat(CultureInfo.InvariantCulture, "   SgbmId={0}, State={1}",
-                            psdzTa.SgbmId.HexString, psdzTa.ExecutionState);
+                        foreach (IPsdzTa psdzTa in talLine.TaCategory.Tas)
+                        {
+                            if (psdzTa != null && psdzTa.SgbmId != null)
+                            {
+                                log.InfoFormat(CultureInfo.InvariantCulture, "   SgbmId={0}, State={1}",
+                                    psdzTa.SgbmId.HexString, psdzTa.ExecutionState);
+                            }
+                        }
                     }
                 }
 
