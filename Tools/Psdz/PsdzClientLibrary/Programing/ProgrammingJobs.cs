@@ -1450,25 +1450,31 @@ namespace PsdzClient.Programing
 
                 log.InfoFormat(CultureInfo.InvariantCulture, "Reading status");
                 IPsdzReadStatusResultCto psdzReadStatusResult = ProgrammingService.Psdz.SecureFeatureActivationService.ReadStatus(PsdzStatusRequestFeatureTypeEtoEnum.ALL_FEATURES, PsdzContext.Connection, PsdzContext.SvtActual, psdzEcuIdentifiers, true, 3, 100);
-                if (psdzReadStatusResult.Failures != null)
+                if (psdzReadStatusResult != null)
                 {
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Status failures: {0}", psdzReadStatusResult.Failures.Count());
-                    foreach (IPsdzEcuFailureResponseCto failureResponse in psdzReadStatusResult.Failures)
+                    if (psdzReadStatusResult.Failures != null)
                     {
-                        log.InfoFormat(CultureInfo.InvariantCulture, " Fail: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, Cause={3}",
-                            failureResponse.EcuIdentifierCto.BaseVariant, failureResponse.EcuIdentifierCto.DiagAddrAsInt, failureResponse.EcuIdentifierCto.DiagnosisAddress.Offset,
-                            failureResponse.Cause.Description);
+                        log.InfoFormat(CultureInfo.InvariantCulture, "Status failures: {0}", psdzReadStatusResult.Failures.Count());
+                        foreach (IPsdzEcuFailureResponseCto failureResponse in psdzReadStatusResult.Failures)
+                        {
+                            log.InfoFormat(CultureInfo.InvariantCulture, " Fail: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, Cause={3}",
+                                failureResponse.EcuIdentifierCto.BaseVariant, failureResponse.EcuIdentifierCto.DiagAddrAsInt, failureResponse.EcuIdentifierCto.DiagnosisAddress.Offset,
+                                failureResponse.Cause.Description);
+                        }
                     }
-                }
 
-                if (psdzReadStatusResult.FeatureStatusSet != null)
-                {
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Status features: {0}", psdzReadStatusResult.FeatureStatusSet.Count());
-                    foreach (IPsdzFeatureLongStatusCto featureLongStatus in psdzReadStatusResult.FeatureStatusSet)
+                    if (psdzReadStatusResult.FeatureStatusSet != null)
                     {
-                        log.InfoFormat(CultureInfo.InvariantCulture, " Feature: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, Status={3}, Token={4}",
-                            featureLongStatus.EcuIdentifierCto.BaseVariant, featureLongStatus.EcuIdentifierCto.DiagAddrAsInt, featureLongStatus.EcuIdentifierCto.DiagnosisAddress.Offset,
-                            featureLongStatus.FeatureStatusEto, featureLongStatus.TokenId);
+                        log.InfoFormat(CultureInfo.InvariantCulture, "Status features: {0}", psdzReadStatusResult.FeatureStatusSet.Count());
+                        foreach (IPsdzFeatureLongStatusCto featureLongStatus in psdzReadStatusResult.FeatureStatusSet)
+                        {
+                            if (featureLongStatus != null)
+                            {
+                                log.InfoFormat(CultureInfo.InvariantCulture, " Feature: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, Status={3}, Token={4}",
+                                    featureLongStatus.EcuIdentifierCto?.BaseVariant, featureLongStatus.EcuIdentifierCto?.DiagAddrAsInt, featureLongStatus.EcuIdentifierCto?.DiagnosisAddress?.Offset,
+                                    featureLongStatus.FeatureStatusEto, featureLongStatus.TokenId);
+                            }
+                        }
                     }
                 }
                 cts?.Token.ThrowIfCancellationRequested();
@@ -1487,7 +1493,7 @@ namespace PsdzClient.Programing
                 if (psdzSollverbauung.PsdzOrderList != null)
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "Target construction: Count={0}, Units={1}",
-                        psdzSollverbauung.PsdzOrderList.BntnVariantInstances.Length, psdzSollverbauung.PsdzOrderList.NumberOfUnits);
+                        psdzSollverbauung.PsdzOrderList.BntnVariantInstances?.Length, psdzSollverbauung.PsdzOrderList.NumberOfUnits);
                     foreach (IPsdzEcuVariantInstance bntnVariant in psdzSollverbauung.PsdzOrderList.BntnVariantInstances)
                     {
                         if (bntnVariant != null && bntnVariant.Ecu != null)
@@ -1502,7 +1508,7 @@ namespace PsdzClient.Programing
                 sbResult.AppendLine(Strings.RequestingEcuContext);
                 UpdateStatus(sbResult.ToString());
                 log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Ecu context");
-                IEnumerable<IPsdzEcuContextInfo> psdzEcuContextInfos = psdzEcuContextInfos = ProgrammingService.Psdz.EcuService.RequestEcuContextInfos(PsdzContext.Connection, psdzEcuIdentifiers);
+                IEnumerable<IPsdzEcuContextInfo> psdzEcuContextInfos = ProgrammingService.Psdz.EcuService.RequestEcuContextInfos(PsdzContext.Connection, psdzEcuIdentifiers);
                 if (psdzEcuContextInfos == null)
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed");
