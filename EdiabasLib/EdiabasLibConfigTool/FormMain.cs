@@ -404,6 +404,7 @@ namespace EdiabasLibConfigTool
 
         private bool StartDeviceSearch()
         {
+            UpdateStatusText(Resources.Strings.Searching);
             _vehicleTaskActive = true;
             _detectedVehicles = null;
             SearchVehiclesTask().ContinueWith(task =>
@@ -419,13 +420,13 @@ namespace EdiabasLibConfigTool
 
                     UpdateDeviceList(Array.Empty<BluetoothDeviceInfo>(), false);
                     UpdateButtonStatus();
+                    UpdateStatusText(listViewDevices.Items.Count > 0 ? Resources.Strings.DevicesFound : Resources.Strings.DevicesNotFound);
                 }));
             });
 
             UpdateDeviceList(null, true);
             if (_cli == null)
             {
-                UpdateStatusText(listViewDevices.Items.Count > 0 ? Resources.Strings.DevicesFound : Resources.Strings.DevicesNotFound);
                 return false;
             }
             try
@@ -483,7 +484,6 @@ namespace EdiabasLibConfigTool
                 };
                 bco.DiscoverDevicesAsync(1000, true, false, true, IsWinVistaOrHigher(), bco);
                 _searching = true;
-                UpdateStatusText(Resources.Strings.Searching);
                 UpdateButtonStatus();
             }
             catch (Exception)
@@ -626,7 +626,7 @@ namespace EdiabasLibConfigTool
 
             bool searching = _searching || _vehicleTaskActive;
             comboBoxLanguage.Enabled = !searching && !_test.ThreadActive;
-            buttonSearch.Enabled = !searching && !_test.ThreadActive && ((_cli != null) || !_wlanClient.NoWifiAvailable);
+            buttonSearch.Enabled = !searching && !_test.ThreadActive;
             buttonClose.Enabled = !searching && !_test.ThreadActive;
 
             BluetoothDeviceInfo devInfo = GetSelectedBtDevice();
