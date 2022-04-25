@@ -1314,8 +1314,11 @@ namespace PsdzClient.Programing
                 log.InfoFormat(CultureInfo.InvariantCulture, "EcuIds: {0}", psdzEcuIdentifiers.Count());
                 foreach (IPsdzEcuIdentifier ecuIdentifier in psdzEcuIdentifiers)
                 {
-                    log.InfoFormat(CultureInfo.InvariantCulture, " EcuId: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
-                        ecuIdentifier.BaseVariant, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset);
+                    if (ecuIdentifier == null)
+                    {
+                        log.InfoFormat(CultureInfo.InvariantCulture, " EcuId: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
+                            ecuIdentifier.BaseVariant ?? string.Empty, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress?.Offset);
+                    }
                 }
                 cts?.Token.ThrowIfCancellationRequested();
 
@@ -1329,7 +1332,7 @@ namespace PsdzClient.Programing
                     return false;
                 }
 
-                log.InfoFormat(CultureInfo.InvariantCulture, "Svt Ecus: {0}", psdzStandardSvt.Ecus.Count());
+                log.InfoFormat(CultureInfo.InvariantCulture, "Svt Ecus: {0}", psdzStandardSvt.Ecus?.Count());
 
                 log.InfoFormat(CultureInfo.InvariantCulture, "Requesting names");
                 IPsdzStandardSvt psdzStandardSvtNames = ProgrammingService.Psdz.LogicService.FillBntnNamesForMainSeries(PsdzContext.Connection.TargetSelector.Baureihenverbund, psdzStandardSvt);
@@ -1344,8 +1347,11 @@ namespace PsdzClient.Programing
                 log.InfoFormat(CultureInfo.InvariantCulture, "Svt Ecus names: {0}", psdzStandardSvtNames.Ecus.Count());
                 foreach (IPsdzEcu ecu in psdzStandardSvtNames.Ecus)
                 {
-                    log.InfoFormat(CultureInfo.InvariantCulture, " Variant: BaseVar={0}, Var={1}, Name={2}",
-                        ecu.BaseVariant, ecu.EcuVariant, ecu.BnTnName);
+                    if (ecu != null)
+                    {
+                        log.InfoFormat(CultureInfo.InvariantCulture, " Variant: BaseVar={0}, Var={1}, Name={2}",
+                            ecu.BaseVariant ?? string.Empty, ecu.EcuVariant ?? string.Empty, ecu.BnTnName ?? string.Empty);
+                    }
                 }
 
                 log.InfoFormat(CultureInfo.InvariantCulture, "Building SVT");
@@ -1376,7 +1382,10 @@ namespace PsdzClient.Programing
                 log.InfoFormat(CultureInfo.InvariantCulture, "Ecu variants: {0}", PsdzContext.DetectVehicle.EcuList.Count());
                 foreach (PdszDatabase.EcuInfo ecuInfo in PsdzContext.DetectVehicle.EcuList)
                 {
-                    log.Info(ecuInfo.ToString(clientContext.Language));
+                    if (ecuInfo != null)
+                    {
+                        log.Info(ecuInfo.ToString(clientContext.Language));
+                    }
                 }
                 cts?.Token.ThrowIfCancellationRequested();
 
@@ -1466,7 +1475,7 @@ namespace PsdzClient.Programing
                             if (failureResponse != null)
                             {
                                 log.InfoFormat(CultureInfo.InvariantCulture, " Fail: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, Cause={3}",
-                                    failureResponse.EcuIdentifierCto.BaseVariant ?? string.Empty, failureResponse.EcuIdentifierCto?.DiagAddrAsInt, failureResponse.EcuIdentifierCto?.DiagnosisAddress?.Offset,
+                                    failureResponse.EcuIdentifierCto?.BaseVariant ?? string.Empty, failureResponse.EcuIdentifierCto?.DiagAddrAsInt, failureResponse.EcuIdentifierCto?.DiagnosisAddress?.Offset,
                                     failureResponse.Cause?.Description ?? string.Empty);
                             }
                         }
@@ -1508,7 +1517,7 @@ namespace PsdzClient.Programing
                         if (bntnVariant != null && bntnVariant.Ecu != null)
                         {
                             log.InfoFormat(CultureInfo.InvariantCulture, " Variant: BaseVar={0}, Var={1}, Name={2}",
-                                bntnVariant.Ecu.BaseVariant, bntnVariant.Ecu.EcuVariant, bntnVariant.Ecu.BnTnName);
+                                bntnVariant.Ecu.BaseVariant ?? string.Empty, bntnVariant.Ecu.EcuVariant ?? string.Empty, bntnVariant.Ecu.BnTnName ?? string.Empty);
                         }
                     }
                 }
@@ -1529,9 +1538,12 @@ namespace PsdzClient.Programing
                 log.InfoFormat(CultureInfo.InvariantCulture, "Ecu contexts: {0}", psdzEcuContextInfos.Count());
                 foreach (IPsdzEcuContextInfo ecuContextInfo in psdzEcuContextInfos)
                 {
-                    log.InfoFormat(CultureInfo.InvariantCulture, " Ecu context: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, ManuDate={3}, PrgDate={4}, PrgCnt={5}, FlashCnt={6}, FlashRemain={7}",
-                        ecuContextInfo.EcuId.BaseVariant, ecuContextInfo.EcuId.DiagAddrAsInt, ecuContextInfo.EcuId.DiagnosisAddress.Offset,
-                        ecuContextInfo.ManufacturingDate, ecuContextInfo.LastProgrammingDate, ecuContextInfo.ProgramCounter, ecuContextInfo.PerformedFlashCycles, ecuContextInfo.RemainingFlashCycles);
+                    if (ecuContextInfo != null)
+                    {
+                        log.InfoFormat(CultureInfo.InvariantCulture, " Ecu context: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, ManuDate={3}, PrgDate={4}, PrgCnt={5}, FlashCnt={6}, FlashRemain={7}",
+                            ecuContextInfo.EcuId?.BaseVariant ?? string.Empty, ecuContextInfo.EcuId?.DiagAddrAsInt, ecuContextInfo.EcuId?.DiagnosisAddress?.Offset,
+                            ecuContextInfo?.ManufacturingDate ?? DateTime.MinValue, ecuContextInfo?.LastProgrammingDate ?? DateTime.MinValue, ecuContextInfo.ProgramCounter, ecuContextInfo.PerformedFlashCycles, ecuContextInfo.RemainingFlashCycles);
+                    }
                 }
                 cts?.Token.ThrowIfCancellationRequested();
 
@@ -1559,7 +1571,7 @@ namespace PsdzClient.Programing
                         if (psdzSwtEcu != null)
                         {
                             log.InfoFormat(CultureInfo.InvariantCulture, " Ecu: Id={0}, Vin={1}, CertState={2}, SwSig={3}",
-                                psdzSwtEcu.EcuIdentifier, psdzSwtEcu.Vin, psdzSwtEcu.RootCertState, psdzSwtEcu.SoftwareSigState);
+                                psdzSwtEcu.EcuIdentifier?.ToString(), psdzSwtEcu.Vin ?? string.Empty, psdzSwtEcu.RootCertState, psdzSwtEcu.SoftwareSigState);
                             if (psdzSwtEcu.SwtApplications != null)
                             {
                                 foreach (IPsdzSwtApplication swtApplication in psdzSwtEcu.SwtApplications)
