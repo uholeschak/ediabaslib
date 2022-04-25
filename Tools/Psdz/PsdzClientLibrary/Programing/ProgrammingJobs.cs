@@ -298,6 +298,7 @@ namespace PsdzClient.Programing
             }
             catch (Exception ex)
             {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "StartProgrammingService Exception: {0}", ex.Message);
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.ExceptionMsg, ex.Message));
                 UpdateStatus(sbResult.ToString());
                 return false;
@@ -332,6 +333,7 @@ namespace PsdzClient.Programing
             }
             catch (Exception ex)
             {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "StopProgrammingService Exception: {0}", ex.Message);
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.ExceptionMsg, ex.Message));
                 UpdateStatus(sbResult.ToString());
                 return false;
@@ -554,6 +556,7 @@ namespace PsdzClient.Programing
             }
             catch (Exception ex)
             {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "ConnectVehicle Exception: {0}", ex.Message);
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.ExceptionMsg, ex.Message));
                 UpdateStatus(sbResult.ToString());
                 return false;
@@ -609,6 +612,7 @@ namespace PsdzClient.Programing
             }
             catch (Exception ex)
             {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "DisconnectVehicle Exception: {0}", ex.Message);
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.ExceptionMsg, ex.Message));
                 UpdateStatus(sbResult.ToString());
                 return false;
