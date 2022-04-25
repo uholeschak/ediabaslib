@@ -239,7 +239,7 @@ namespace PsdzClient.Programing
                         }
                     };
 
-                    int failCount = 0;
+                    int failCount = -1;
                     bool result = ProgrammingService.PdszDatabase.GenerateTestModuleData((progress, failures) =>
                     {
                         failCount = failures;
@@ -255,9 +255,12 @@ namespace PsdzClient.Programing
 
                     ProgressEvent?.Invoke(0, true);
 
-                    log.InfoFormat("Test module generation failures: {0}", failCount);
-                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleFailures, failCount));
-                    UpdateStatus(sbResult.ToString());
+                    if (failCount >= 0)
+                    {
+                        log.InfoFormat("Test module generation failures: {0}", failCount);
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleFailures, failCount));
+                        UpdateStatus(sbResult.ToString());
+                    }
 
                     if (!result)
                     {
