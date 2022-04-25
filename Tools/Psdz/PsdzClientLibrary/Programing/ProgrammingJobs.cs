@@ -1571,7 +1571,7 @@ namespace PsdzClient.Programing
                         if (psdzSwtEcu != null)
                         {
                             log.InfoFormat(CultureInfo.InvariantCulture, " Ecu: Id={0}, Vin={1}, CertState={2}, SwSig={3}",
-                                psdzSwtEcu.EcuIdentifier?.ToString(), psdzSwtEcu.Vin ?? string.Empty, psdzSwtEcu.RootCertState, psdzSwtEcu.SoftwareSigState);
+                                psdzSwtEcu.EcuIdentifier?.BaseVariant ?? string.Empty, psdzSwtEcu.Vin ?? string.Empty, psdzSwtEcu.RootCertState, psdzSwtEcu.SoftwareSigState);
                             if (psdzSwtEcu.SwtApplications != null)
                             {
                                 foreach (IPsdzSwtApplication swtApplication in psdzSwtEcu.SwtApplications)
