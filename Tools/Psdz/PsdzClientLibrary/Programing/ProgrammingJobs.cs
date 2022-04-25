@@ -1542,7 +1542,8 @@ namespace PsdzClient.Programing
                     {
                         log.InfoFormat(CultureInfo.InvariantCulture, " Ecu context: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, ManuDate={3}, PrgDate={4}, PrgCnt={5}, FlashCnt={6}, FlashRemain={7}",
                             ecuContextInfo.EcuId?.BaseVariant ?? string.Empty, ecuContextInfo.EcuId?.DiagAddrAsInt, ecuContextInfo.EcuId?.DiagnosisAddress?.Offset,
-                            ecuContextInfo?.ManufacturingDate ?? DateTime.MinValue, ecuContextInfo?.LastProgrammingDate ?? DateTime.MinValue, ecuContextInfo.ProgramCounter, ecuContextInfo.PerformedFlashCycles, ecuContextInfo.RemainingFlashCycles);
+                            ecuContextInfo?.ManufacturingDate ?? DateTime.MinValue, ecuContextInfo?.LastProgrammingDate ?? DateTime.MinValue,
+                            ecuContextInfo.ProgramCounter, ecuContextInfo.PerformedFlashCycles, ecuContextInfo.RemainingFlashCycles);
                     }
                 }
                 cts?.Token.ThrowIfCancellationRequested();
@@ -1617,7 +1618,7 @@ namespace PsdzClient.Programing
                         if (ecuIdentifier != null)
                         {
                             log.InfoFormat(CultureInfo.InvariantCulture, "  Affected Ecu: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
-                                ecuIdentifier.BaseVariant, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset);
+                                ecuIdentifier.BaseVariant ?? string.Empty, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset);
                         }
                     }
                 }
@@ -1637,10 +1638,10 @@ namespace PsdzClient.Programing
                         {
                             foreach (IPsdzTa psdzTa in talLine.TaCategory.Tas)
                             {
-                                if (psdzTa != null && psdzTa.SgbmId != null)
+                                if (psdzTa != null)
                                 {
                                     log.InfoFormat(CultureInfo.InvariantCulture, "   SgbmId={0}, State={1}",
-                                        psdzTa.SgbmId.HexString, psdzTa.ExecutionState);
+                                        psdzTa.SgbmId?.HexString ?? string.Empty, psdzTa.ExecutionState);
                                 }
                             }
                         }
@@ -1652,7 +1653,10 @@ namespace PsdzClient.Programing
                     log.InfoFormat(CultureInfo.InvariantCulture, " Failures: {0}", psdzTal.FailureCauses.Count());
                     foreach (IPsdzFailureCause failureCause in psdzTal.FailureCauses)
                     {
-                        log.InfoFormat(CultureInfo.InvariantCulture, "  Failure cause: {0}", failureCause.Message);
+                        if (failureCause != null)
+                        {
+                            log.InfoFormat(CultureInfo.InvariantCulture, "  Failure cause: {0}", failureCause.Message ?? string.Empty);
+                        }
                     }
                 }
                 cts?.Token.ThrowIfCancellationRequested();
