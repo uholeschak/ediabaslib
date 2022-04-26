@@ -61,6 +61,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Battery voltage: {0:0.0}V ähnelt.
+        /// </summary>
+        internal static string BatteryVoltage {
+            get {
+                return ResourceManager.GetString("BatteryVoltage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Context not found. ähnelt.
         /// </summary>
         internal static string ContextMissing {

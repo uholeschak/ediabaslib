@@ -39,10 +39,10 @@ namespace PsdzClient
             new Tuple<string, string>("G_FRM", "STATUS_VCM_I_STUFE_LESEN"),
         };
 
-        private static readonly Tuple<string, string, string>[] ReadVoltageJobsBmwFast =
+        private static readonly Tuple<string, string, string, string>[] ReadVoltageJobsBmwFast =
         {
-            new Tuple<string, string, string>("G_MOTOR", "STATUS_LESEN", "STAT_SPANNUNG_IBS2015_WERT"),
-            new Tuple<string, string, string>("G_MOTOR", "STATUS_MESSWERTE_IBS", "STAT_U_BATT_WERT"),
+            new Tuple<string, string, string, string>("G_MOTOR", "STATUS_LESEN", "ARG;MESSWERTE_IBS2015", "STAT_SPANNUNG_IBS2015_WERT"),
+            new Tuple<string, string, string, string>("G_MOTOR", "STATUS_MESSWERTE_IBS", string.Empty, "STAT_U_BATT_WERT"),
         };
 
         private bool _disposed;
@@ -492,20 +492,20 @@ namespace PsdzClient
 
             try
             {
-                foreach (Tuple<string, string, string> job in ReadVoltageJobsBmwFast)
+                foreach (Tuple<string, string, string, string> job in ReadVoltageJobsBmwFast)
                 {
                     if (_abortRequest)
                     {
                         return -1;
                     }
 
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Read voltage job: {0},{1}", job.Item1, job.Item2);
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Read voltage job: {0}, {1}, {2}", job.Item1, job.Item2, job.Item3);
 
                     try
                     {
                         _ediabas.ResolveSgbdFile(job.Item1);
 
-                        _ediabas.ArgString = string.Empty;
+                        _ediabas.ArgString = job.Item3;
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
                         _ediabas.ExecuteJob(job.Item2);
@@ -514,7 +514,7 @@ namespace PsdzClient
                         if (resultSets != null && resultSets.Count >= 2)
                         {
                             Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
-                            if (resultDict.TryGetValue(job.Item3, out EdiabasNet.ResultData resultData))
+                            if (resultDict.TryGetValue(job.Item4, out EdiabasNet.ResultData resultData))
                             {
                                 if (resultData.OpData is Double)
                                 {

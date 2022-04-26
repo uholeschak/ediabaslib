@@ -447,6 +447,14 @@ namespace PsdzClient.Programing
                 };
 
                 bool detectResult = PsdzContext.DetectVehicle.DetectVehicleBmwFast();
+                cts?.Token.ThrowIfCancellationRequested();
+
+                double voltage = -1;
+                if (detectResult)
+                {
+                    voltage = PsdzContext.DetectVehicle.ReadBatteryVoltage();
+                }
+
                 PsdzContext.DetectVehicle.Disconnect();
                 cts?.Token.ThrowIfCancellationRequested();
 
@@ -490,6 +498,12 @@ namespace PsdzClient.Programing
                     PsdzContext.DetectVehicle.Series ?? string.Empty,
                     PsdzContext.DetectVehicle.ILevelShip ?? string.Empty,
                     PsdzContext.DetectVehicle.ILevelCurrent ?? string.Empty));
+
+                log.InfoFormat(CultureInfo.InvariantCulture, "Detected vehicle: Battery voltage={0}", voltage);
+                if (voltage >= 0)
+                {
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.BatteryVoltage, voltage));
+                }
 
                 log.InfoFormat(CultureInfo.InvariantCulture, "Ecus: {0}", PsdzContext.DetectVehicle.EcuList.Count());
                 foreach (PdszDatabase.EcuInfo ecuInfo in PsdzContext.DetectVehicle.EcuList)
