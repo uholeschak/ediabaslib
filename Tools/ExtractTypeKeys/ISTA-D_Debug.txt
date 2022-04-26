@@ -344,6 +344,14 @@ BMW.Rheingold.Diagnostics.Common.VoltageUtils.CheckVoltageForEthernetConnection(
 "G_MOTOR", "STATUS_LESEN", "ARG;MESSWERTE_IBS2015" -> STAT_SPANNUNG_IBS2015_WERT
 "G_MOTOR", "STATUS_MESSWERTE_IBS" -> Result: STAT_U_BATT_WERT
 
+Patch for fixed voltage
+--------------------------------
+if (num == null)
+{
+	num = new double?(14.0);
+}
+--------------------------------
+
 BMW.Rheingold.xVM:
 VCIEnetHsfzService.ZGWBroadcastSendCyclic(), ReceiveCallback(),
 VciDeviceService.CyclicBroadcastDeviceRequest(), VciDeviceService.ReceiveData(), VciDeviceService.CreateVciDevices()
