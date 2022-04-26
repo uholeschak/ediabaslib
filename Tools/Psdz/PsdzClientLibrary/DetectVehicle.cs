@@ -39,6 +39,12 @@ namespace PsdzClient
             new Tuple<string, string>("G_FRM", "STATUS_VCM_I_STUFE_LESEN"),
         };
 
+        private static readonly Tuple<string, string, string>[] ReadVoltageJobsBmwFast =
+        {
+            new Tuple<string, string, string>("G_MOTOR", "STATUS_LESEN", "STAT_SPANNUNG_IBS2015_WERT"),
+            new Tuple<string, string, string>("G_MOTOR", "STATUS_MESSWERTE_IBS", "STAT_U_BATT_WERT"),
+        };
+
         private bool _disposed;
         private EdiabasNet _ediabas;
         private bool _abortRequest;
@@ -473,10 +479,65 @@ namespace PsdzClient
                 log.InfoFormat(CultureInfo.InvariantCulture, "DetectVehicleBmwFast Finish");
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "DetectVehicleBmwFast Exception: {0}", ex.Message);
                 return false;
             }
+        }
+
+        public double ReadBatteryVoltage()
+        {
+            double voltage = -1;
+
+            try
+            {
+                foreach (Tuple<string, string, string> job in ReadVoltageJobsBmwFast)
+                {
+                    if (_abortRequest)
+                    {
+                        return -1;
+                    }
+
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Read voltage job: {0},{1}", job.Item1, job.Item2);
+
+                    try
+                    {
+                        _ediabas.ResolveSgbdFile(job.Item1);
+
+                        _ediabas.ArgString = string.Empty;
+                        _ediabas.ArgBinaryStd = null;
+                        _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.ExecuteJob(job.Item2);
+
+                        List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+                        if (resultSets != null && resultSets.Count >= 2)
+                        {
+                            Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
+                            if (resultDict.TryGetValue(job.Item3, out EdiabasNet.ResultData resultData))
+                            {
+                                if (resultData.OpData is Double)
+                                {
+                                    voltage = (double)resultData.OpData;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        log.ErrorFormat(CultureInfo.InvariantCulture, "No voltage response");
+                        // ignored
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "ReadBatteryVoltage Exception: {0}", ex.Message);
+                return -1;
+            }
+
+            return voltage;
         }
 
         public bool Disconnect()
