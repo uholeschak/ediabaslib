@@ -341,8 +341,8 @@ SWI action 'FZA_CU_RETROFITREDUCTIONFOOTWELLTEMPERATURACTIVATE_S15A',  keep link
 
 ENET VoltageCheck:
 BMW.Rheingold.Diagnostics.Common.VoltageUtils.CheckVoltageForEthernetConnection()
-"G_MOTOR", "STATUS_LESEN", "ARG;MESSWERTE_IBS2015"
-"G_MOTOR", "STATUS_MESSWERTE_IBS"
+"G_MOTOR", "STATUS_LESEN", "ARG;MESSWERTE_IBS2015" -> STAT_SPANNUNG_IBS2015_WERT
+"G_MOTOR", "STATUS_MESSWERTE_IBS" -> Result: STAT_U_BATT_WERT
 
 BMW.Rheingold.xVM:
 VCIEnetHsfzService.ZGWBroadcastSendCyclic(), ReceiveCallback(),
