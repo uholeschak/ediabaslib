@@ -124,6 +124,8 @@ namespace PsdzClient.Programing
         public OptionType[] OptionTypes => _optionTypes;
 
         public const int CodingConnectionTimeout = 10000;
+        public const double MinBatteryVoltage = 12.55;
+        public const double MaxBatteryVoltage = 14.85;
 
         private bool _disposed;
         public ClientContext ClientContext { get; private set; }
@@ -449,15 +451,6 @@ namespace PsdzClient.Programing
                 bool detectResult = PsdzContext.DetectVehicle.DetectVehicleBmwFast();
                 cts?.Token.ThrowIfCancellationRequested();
 
-                double voltage = -1;
-                if (detectResult)
-                {
-                    voltage = PsdzContext.DetectVehicle.ReadBatteryVoltage();
-                }
-
-                PsdzContext.DetectVehicle.Disconnect();
-                cts?.Token.ThrowIfCancellationRequested();
-
                 string series = PsdzContext.DetectVehicle.Series;
                 if (string.IsNullOrEmpty(series))
                 {
@@ -499,12 +492,6 @@ namespace PsdzClient.Programing
                     PsdzContext.DetectVehicle.ILevelShip ?? string.Empty,
                     PsdzContext.DetectVehicle.ILevelCurrent ?? string.Empty));
 
-                log.InfoFormat(CultureInfo.InvariantCulture, "Detected vehicle: Battery voltage={0}", voltage);
-                if (voltage >= 0)
-                {
-                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.BatteryVoltage, voltage));
-                }
-
                 log.InfoFormat(CultureInfo.InvariantCulture, "Ecus: {0}", PsdzContext.DetectVehicle.EcuList.Count());
                 foreach (PdszDatabase.EcuInfo ecuInfo in PsdzContext.DetectVehicle.EcuList)
                 {
@@ -513,6 +500,46 @@ namespace PsdzClient.Programing
                 }
 
                 UpdateStatus(sbResult.ToString());
+                cts?.Token.ThrowIfCancellationRequested();
+
+                for (; ; )
+                {
+                    double voltage = PsdzContext.DetectVehicle.ReadBatteryVoltage();
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Detected vehicle: Battery voltage={0}", voltage);
+                    if (voltage >= 0)
+                    {
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.BatteryVoltage, voltage));
+                        UpdateStatus(sbResult.ToString());
+
+                        if (voltage >= MinBatteryVoltage && voltage <= MaxBatteryVoltage)
+                        {
+                            if (ShowMessageEvent != null)
+                            {
+                                string message = string.Format(CultureInfo.InvariantCulture, Strings.BatteryVoltageValid,
+                                    voltage, MinBatteryVoltage, MaxBatteryVoltage);
+                                if (!ShowMessageEvent.Invoke(cts, message, true, true))
+                                {
+                                    log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent BatteryVoltageValid aborted");
+                                    return false;
+                                }
+                            }
+                            break;
+                        }
+
+                        if (ShowMessageEvent != null)
+                        {
+                            string message = string.Format(CultureInfo.InvariantCulture, Strings.BatteryVoltageOutOfRange,
+                                voltage, MinBatteryVoltage, MaxBatteryVoltage);
+                            if (!ShowMessageEvent.Invoke(cts, message, false, true))
+                            {
+                                log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent BatteryVoltageOutOfRange aborted");
+                                return false;
+                            }
+                        }
+                    }
+                }
+
+                PsdzContext.DetectVehicle.Disconnect();
                 cts?.Token.ThrowIfCancellationRequested();
 
                 string mainSeries = ProgrammingService.Psdz.ConfigurationService.RequestBaureihenverbund(series);

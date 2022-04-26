@@ -336,9 +336,11 @@ namespace PsdzClient
                 bool invokeResult = (bool) Invoke(new Func<bool>(() =>
                 {
                     DialogResult dialogResult = MessageBox.Show(this, message, Text, buttons);
-                    if (dialogResult == DialogResult.Yes)
+                    switch (dialogResult)
                     {
-                        return true;
+                        case DialogResult.OK:
+                        case DialogResult.Yes:
+                            return true;
                     }
 
                     return false;

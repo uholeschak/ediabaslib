@@ -61,11 +61,34 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Battery voltage: {0:0.0}V ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Battery voltage: {0:0.00}V ähnelt.
         /// </summary>
         internal static string BatteryVoltage {
             get {
                 return ResourceManager.GetString("BatteryVoltage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The battery voltage {0:0.00}V is out of valid range:
+        ///{1:0.00}V - {2:0.00}V.
+        ///Please connect a certified charger for the whole coding session.
+        ///Do you want to retry the operation? ähnelt.
+        /// </summary>
+        internal static string BatteryVoltageOutOfRange {
+            get {
+                return ResourceManager.GetString("BatteryVoltageOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The battery voltage {0:0.00}V is inside the valid range:
+        ///{1:0.00}V - {2:0.00}V.
+        ///Please connect a certified charger for the whole coding session. ähnelt.
+        /// </summary>
+        internal static string BatteryVoltageValid {
+            get {
+                return ResourceManager.GetString("BatteryVoltageValid", resourceCulture);
             }
         }
         
@@ -534,7 +557,7 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Make sure that the ignition is switched on, the motor is stopped and a charger with at least 60A is connected to the vehicle.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Make sure that the ignition is switched on, the motor is stopped and a certified charger is connected to the vehicle.
         ///Don&apos;t close or minimize this page, because this will interrupt vehicle communcation!
         ///Do you want to continue? ähnelt.
         /// </summary>
