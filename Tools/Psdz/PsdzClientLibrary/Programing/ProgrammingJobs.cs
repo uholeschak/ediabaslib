@@ -653,6 +653,11 @@ namespace PsdzClient.Programing
                 sbResult.AppendLine(Strings.ExecutingVehicleFunc);
                 UpdateStatus(sbResult.ToString());
 
+                if (!CheckVoltage(cts, sbResult))
+                {
+                    return false;
+                }
+
                 CacheResponseType = CacheType.FuncAddress;
                 if (ProgrammingService == null)
                 {
@@ -818,6 +823,11 @@ namespace PsdzClient.Programing
                             return false;
                         }
 
+                        if (!CheckVoltage(cts, sbResult))
+                        {
+                            return false;
+                        }
+
                         if (ShowMessageEvent != null)
                         {
                             if (!ShowMessageEvent.Invoke(cts, Strings.TalExecutionHint, false, true))
@@ -825,6 +835,11 @@ namespace PsdzClient.Programing
                                 log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecutionHint aborted");
                                 return false;
                             }
+                        }
+
+                        if (!CheckVoltage(cts, sbResult))
+                        {
+                            return false;
                         }
 
 #if false
@@ -940,6 +955,11 @@ namespace PsdzClient.Programing
                         }
                         else
                         {
+                            if (!CheckVoltage(cts, sbResult))
+                            {
+                                return false;
+                            }
+
                             if (ShowMessageEvent != null)
                             {
                                 if (!ShowMessageEvent.Invoke(cts, Strings.TalExecuteOkContinue, false, true))
@@ -954,6 +974,11 @@ namespace PsdzClient.Programing
                         UpdateStatus(sbResult.ToString());
                         return false;
 #endif
+                        if (!CheckVoltage(cts, sbResult))
+                        {
+                            return false;
+                        }
+
                         sbResult.AppendLine(Strings.ExecutingTal);
                         UpdateStatus(sbResult.ToString());
                         log.InfoFormat(CultureInfo.InvariantCulture, "Executing TAL");
