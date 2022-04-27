@@ -502,44 +502,11 @@ namespace PsdzClient.Programing
                 UpdateStatus(sbResult.ToString());
                 cts?.Token.ThrowIfCancellationRequested();
 
-                for (; ; )
+                if (!CheckVoltage(cts, sbResult, true))
                 {
-                    double voltage = PsdzContext.DetectVehicle.ReadBatteryVoltage();
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Detected vehicle: Battery voltage={0}", voltage);
-                    if (voltage >= 0)
-                    {
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.BatteryVoltage, voltage));
-                        UpdateStatus(sbResult.ToString());
-
-                        if (voltage >= MinBatteryVoltage && voltage <= MaxBatteryVoltage)
-                        {
-                            if (ShowMessageEvent != null)
-                            {
-                                string message = string.Format(CultureInfo.InvariantCulture, Strings.BatteryVoltageValid,
-                                    voltage, MinBatteryVoltage, MaxBatteryVoltage);
-                                if (!ShowMessageEvent.Invoke(cts, message, true, true))
-                                {
-                                    log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent BatteryVoltageValid aborted");
-                                    return false;
-                                }
-                            }
-                            break;
-                        }
-
-                        if (ShowMessageEvent != null)
-                        {
-                            string message = string.Format(CultureInfo.InvariantCulture, Strings.BatteryVoltageOutOfRange,
-                                voltage, MinBatteryVoltage, MaxBatteryVoltage);
-                            if (!ShowMessageEvent.Invoke(cts, message, false, true))
-                            {
-                                log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent BatteryVoltageOutOfRange aborted");
-                                return false;
-                            }
-                        }
-                    }
+                    return false;
                 }
 
-                PsdzContext.DetectVehicle.Disconnect();
                 cts?.Token.ThrowIfCancellationRequested();
 
                 string mainSeries = ProgrammingService.Psdz.ConfigurationService.RequestBaureihenverbund(series);
@@ -1843,6 +1810,63 @@ namespace PsdzClient.Programing
                     log.InfoFormat(CultureInfo.InvariantCulture, "UpdateTargetFa Compare FA: {0}", compareFa);
                 }
             }
+        }
+
+        private bool CheckVoltage(CancellationTokenSource cts, StringBuilder sbResult, bool showInfo = false)
+        {
+            log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage vehicle: Show info={0}", showInfo);
+
+            try
+            {
+                for (; ; )
+                {
+                    double voltage = PsdzContext.DetectVehicle.ReadBatteryVoltage();
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Detected vehicle: Battery voltage={0}", voltage);
+                    if (voltage >= 0)
+                    {
+                        if (showInfo)
+                        {
+                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.BatteryVoltage, voltage));
+                            UpdateStatus(sbResult.ToString());
+                        }
+
+                        if (voltage >= MinBatteryVoltage && voltage <= MaxBatteryVoltage)
+                        {
+                            if (ShowMessageEvent != null && showInfo)
+                            {
+                                string message = string.Format(CultureInfo.InvariantCulture, Strings.BatteryVoltageValid,
+                                    voltage, MinBatteryVoltage, MaxBatteryVoltage);
+                                if (!ShowMessageEvent.Invoke(cts, message, true, true))
+                                {
+                                    log.ErrorFormat(CultureInfo.InvariantCulture, "CheckVoltage BatteryVoltageValid aborted");
+                                    return false;
+                                }
+                            }
+                            break;
+                        }
+
+                        if (ShowMessageEvent != null)
+                        {
+                            string message = string.Format(CultureInfo.InvariantCulture, Strings.BatteryVoltageOutOfRange,
+                                voltage, MinBatteryVoltage, MaxBatteryVoltage);
+                            if (!ShowMessageEvent.Invoke(cts, message, false, true))
+                            {
+                                log.ErrorFormat(CultureInfo.InvariantCulture, "CheckVoltage BatteryVoltageOutOfRange aborted");
+                                return false;
+                            }
+                        }
+                    }
+
+                    cts?.Token.ThrowIfCancellationRequested();
+                }
+            }
+            finally
+            {
+                PsdzContext.DetectVehicle.Disconnect();
+            }
+
+            log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage OK");
+            return true;
         }
 
         public bool InitProgrammingObjects(string istaFolder)
