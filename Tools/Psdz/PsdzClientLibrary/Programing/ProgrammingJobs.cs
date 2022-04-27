@@ -1024,6 +1024,11 @@ namespace PsdzClient.Programing
                             sbResult.AppendLine(Strings.ExecutingRestoreTal);
                             UpdateStatus(sbResult.ToString());
 
+                            if (!CheckVoltage(cts, sbResult))
+                            {
+                                return false;
+                            }
+
                             log.InfoFormat(CultureInfo.InvariantCulture, "Generating restore TAL");
                             IPsdzTal psdzRestoreTal = ProgrammingService.Psdz.IndividualDataRestoreService.GenerateRestoreTal(PsdzContext.Connection, PsdzContext.PathToBackupData, PsdzContext.Tal, PsdzContext.TalFilter);
                             if (psdzRestoreTal == null)
@@ -1076,6 +1081,11 @@ namespace PsdzClient.Programing
                                     }
 
                                     UpdateStatus(sbResult.ToString());
+                                }
+
+                                if (!CheckVoltage(cts, sbResult))
+                                {
+                                    return false;
                                 }
 
                                 CacheClearRequired = true;
@@ -1221,6 +1231,11 @@ namespace PsdzClient.Programing
                     sbResult.AppendLine(Strings.ExecutingVehicleFuncFinished);
                     UpdateStatus(sbResult.ToString());
                     return true;
+                }
+
+                if (!CheckVoltage(cts, sbResult))
+                {
+                    return false;
                 }
 
                 bool bModifyFa = operationType == OperationType.BuildTalModFa;
@@ -1847,38 +1862,40 @@ namespace PsdzClient.Programing
                 {
                     double voltage = PsdzContext.DetectVehicle.ReadBatteryVoltage();
                     log.InfoFormat(CultureInfo.InvariantCulture, "Detected vehicle: Battery voltage={0}", voltage);
-                    if (voltage >= 0)
+                    if (voltage < 0)
                     {
-                        if (showInfo)
-                        {
-                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.BatteryVoltage, voltage));
-                            UpdateStatus(sbResult.ToString());
-                        }
+                        break;
+                    }
 
-                        if (voltage >= MinBatteryVoltage && voltage <= MaxBatteryVoltage)
-                        {
-                            if (ShowMessageEvent != null && showInfo)
-                            {
-                                string message = string.Format(CultureInfo.InvariantCulture, Strings.BatteryVoltageValid,
-                                    voltage, MinBatteryVoltage, MaxBatteryVoltage);
-                                if (!ShowMessageEvent.Invoke(cts, message, true, true))
-                                {
-                                    log.ErrorFormat(CultureInfo.InvariantCulture, "CheckVoltage BatteryVoltageValid aborted");
-                                    return false;
-                                }
-                            }
-                            break;
-                        }
+                    if (showInfo)
+                    {
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.BatteryVoltage, voltage));
+                        UpdateStatus(sbResult.ToString());
+                    }
 
-                        if (ShowMessageEvent != null)
+                    if (voltage >= MinBatteryVoltage && voltage <= MaxBatteryVoltage)
+                    {
+                        if (ShowMessageEvent != null && showInfo)
                         {
-                            string message = string.Format(CultureInfo.InvariantCulture, Strings.BatteryVoltageOutOfRange,
+                            string message = string.Format(CultureInfo.InvariantCulture, Strings.BatteryVoltageValid,
                                 voltage, MinBatteryVoltage, MaxBatteryVoltage);
-                            if (!ShowMessageEvent.Invoke(cts, message, false, true))
+                            if (!ShowMessageEvent.Invoke(cts, message, true, true))
                             {
-                                log.ErrorFormat(CultureInfo.InvariantCulture, "CheckVoltage BatteryVoltageOutOfRange aborted");
+                                log.ErrorFormat(CultureInfo.InvariantCulture, "CheckVoltage BatteryVoltageValid aborted");
                                 return false;
                             }
+                        }
+                        break;
+                    }
+
+                    if (ShowMessageEvent != null)
+                    {
+                        string message = string.Format(CultureInfo.InvariantCulture, Strings.BatteryVoltageOutOfRange,
+                            voltage, MinBatteryVoltage, MaxBatteryVoltage);
+                        if (!ShowMessageEvent.Invoke(cts, message, false, true))
+                        {
+                            log.ErrorFormat(CultureInfo.InvariantCulture, "CheckVoltage BatteryVoltageOutOfRange aborted");
+                            return false;
                         }
                     }
 
