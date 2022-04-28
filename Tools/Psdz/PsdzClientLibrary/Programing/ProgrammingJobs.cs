@@ -1870,15 +1870,12 @@ namespace PsdzClient.Programing
                     });
 
                     log.InfoFormat(CultureInfo.InvariantCulture, "Detected vehicle: Battery voltage={0}", voltage);
+                    // temporary message only
+                    string statusMessage = sbResult + string.Format(CultureInfo.InvariantCulture, Strings.BatteryVoltage, voltage);
+                    UpdateStatus(statusMessage);
                     if (voltage < 0)
                     {
                         break;
-                    }
-
-                    if (showInfo)
-                    {
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.BatteryVoltage, voltage));
-                        UpdateStatus(sbResult.ToString());
                     }
 
                     if (voltage >= MinBatteryVoltage && voltage <= MaxBatteryVoltage)
