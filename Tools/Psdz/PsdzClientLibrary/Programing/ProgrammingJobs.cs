@@ -1854,8 +1854,10 @@ namespace PsdzClient.Programing
         {
             log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage vehicle: Show info={0}", showInfo);
 
+            CacheType cacheTypeOld = CacheResponseType;
             try
             {
+                CacheResponseType = CacheType.NoResponse;
                 for (; ; )
                 {
                     double voltage = PsdzContext.DetectVehicle.ReadBatteryVoltage(() =>
@@ -1911,6 +1913,7 @@ namespace PsdzClient.Programing
             finally
             {
                 PsdzContext.DetectVehicle.Disconnect();
+                CacheResponseType = cacheTypeOld;
             }
 
             log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage OK");
