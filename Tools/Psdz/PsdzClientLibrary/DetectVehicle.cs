@@ -98,8 +98,13 @@ namespace PsdzClient
             try
             {
                 _abortFunc = abortFunc;
-                List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
+                if (!Connect())
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "DetectVehicleBmwFast Connect failed");
+                    return false;
+                }
 
+                List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
                 string detectedVin = null;
                 foreach (Tuple<string, string, string> job in ReadVinJobsBmwFast)
                 {
@@ -519,6 +524,12 @@ namespace PsdzClient
             try
             {
                 _abortFunc = abortFunc;
+                if (!Connect())
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "ReadBatteryVoltage Connect failed");
+                    return -1;
+                }
+
                 foreach (Tuple<string, string, string, string> job in ReadVoltageJobsBmwFast)
                 {
                     if (_abortRequest)
@@ -570,6 +581,18 @@ namespace PsdzClient
             }
 
             return voltage;
+        }
+
+        public bool Connect()
+        {
+            try
+            {
+                return _ediabas.EdInterfaceClass.InterfaceConnect();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public bool Disconnect()
