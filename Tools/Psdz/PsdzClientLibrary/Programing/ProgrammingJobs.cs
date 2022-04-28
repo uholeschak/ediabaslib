@@ -439,16 +439,14 @@ namespace PsdzClient.Programing
                 }
 
                 PsdzContext.DetectVehicle = new DetectVehicle(ecuPath, enetConnection, useIcom, addTimeout);
-                PsdzContext.DetectVehicle.AbortRequest += () =>
+                bool detectResult = PsdzContext.DetectVehicle.DetectVehicleBmwFast(() =>
                 {
                     if (cts != null)
                     {
                         return cts.Token.IsCancellationRequested;
                     }
                     return false;
-                };
-
-                bool detectResult = PsdzContext.DetectVehicle.DetectVehicleBmwFast();
+                });
                 cts?.Token.ThrowIfCancellationRequested();
 
                 string series = PsdzContext.DetectVehicle.Series;
@@ -1860,7 +1858,15 @@ namespace PsdzClient.Programing
             {
                 for (; ; )
                 {
-                    double voltage = PsdzContext.DetectVehicle.ReadBatteryVoltage();
+                    double voltage = PsdzContext.DetectVehicle.ReadBatteryVoltage(() =>
+                    {
+                        if (cts != null)
+                        {
+                            return cts.Token.IsCancellationRequested;
+                        }
+                        return false;
+                    });
+
                     log.InfoFormat(CultureInfo.InvariantCulture, "Detected vehicle: Battery voltage={0}", voltage);
                     if (voltage < 0)
                     {
