@@ -651,11 +651,6 @@ namespace PsdzClient.Programing
                 sbResult.AppendLine(Strings.ExecutingVehicleFunc);
                 UpdateStatus(sbResult.ToString());
 
-                if (!CheckVoltage(cts, sbResult))
-                {
-                    return false;
-                }
-
                 CacheResponseType = CacheType.FuncAddress;
                 if (ProgrammingService == null)
                 {
@@ -676,6 +671,11 @@ namespace PsdzClient.Programing
                 {
                     sbResult.AppendLine(Strings.ContextMissing);
                     UpdateStatus(sbResult.ToString());
+                    return false;
+                }
+
+                if (!CheckVoltage(cts, sbResult))
+                {
                     return false;
                 }
 
@@ -839,7 +839,6 @@ namespace PsdzClient.Programing
                         {
                             return false;
                         }
-
 #if false
                         for (int i = 0; i < 0xFF; i++)
                         {
@@ -1472,6 +1471,11 @@ namespace PsdzClient.Programing
                         UpdateOptions(optionsDict);
                     }
 
+                    if (!CheckVoltage(cts, sbResult))
+                    {
+                        return false;
+                    }
+
                     sbResult.AppendLine(Strings.ExecutingVehicleFuncFinished);
                     UpdateStatus(sbResult.ToString());
                     return true;
@@ -1741,6 +1745,11 @@ namespace PsdzClient.Programing
                 log.Info("Restore prognosis Tal:");
                 log.InfoFormat(CultureInfo.InvariantCulture, " Size: {0}", psdzRestorePrognosisTal.AsXml.Length);
                 cts?.Token.ThrowIfCancellationRequested();
+
+                if (!CheckVoltage(cts, sbResult))
+                {
+                    return false;
+                }
 
                 sbResult.AppendLine(Strings.ExecutingVehicleFuncFinished);
                 UpdateStatus(sbResult.ToString());
