@@ -1439,6 +1439,8 @@ namespace PsdzClient.Programing
 
                 if (operationType == OperationType.CreateOptions)
                 {
+                    CheckVoltage(cts, sbResult, false, true);
+
                     ProgrammingService.PdszDatabase.ReadSwiRegister(PsdzContext.Vehicle);
                     if (ProgrammingService.PdszDatabase.SwiRegisterTree != null)
                     {
@@ -1471,7 +1473,6 @@ namespace PsdzClient.Programing
                         UpdateOptions(optionsDict);
                     }
 
-                    CheckVoltage(cts, sbResult, false, true);
                     sbResult.AppendLine(Strings.ExecutingVehicleFuncFinished);
                     UpdateStatus(sbResult.ToString());
                     return true;
