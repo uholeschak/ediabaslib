@@ -4684,7 +4684,7 @@ namespace CarSimulator
             }
             else
             {
-                _batteryVoltage = 1250;
+                _batteryVoltage = 1445;
             }
 
             if (Moving && _speed < 250)
@@ -8255,6 +8255,31 @@ namespace CarSimulator
                     }
                 }
 
+                ObdSend(_sendData, bmwTcpClientData);
+            }
+            else if (
+                _receiveData[0] == 0x83 &&
+                _receiveData[1] == 0x12 &&
+                _receiveData[2] == 0xF1 &&
+                _receiveData[3] == 0x22 &&
+                _receiveData[4] == 0x40 &&
+                _receiveData[5] == 0xC6)
+            {   // read voltage
+                int i = 0;
+                _sendData[i++] = 0x89;
+                _sendData[i++] = 0xF1;
+                _sendData[i++] = _receiveData[1];
+                _sendData[i++] = 0x62;
+                _sendData[i++] = _receiveData[4];
+                _sendData[i++] = _receiveData[5];
+
+                int value = _batteryVoltage * 10;
+                _sendData[i++] = (byte)(value >> 8);
+                _sendData[i++] = (byte)value;
+                _sendData[i++] = 0xFF;
+                _sendData[i++] = 0xD8;
+                _sendData[i++] = 0x14;
+                _sendData[i++] = 0x01;
                 ObdSend(_sendData, bmwTcpClientData);
             }
             else
