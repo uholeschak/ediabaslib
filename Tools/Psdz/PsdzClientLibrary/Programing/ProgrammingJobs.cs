@@ -1870,7 +1870,7 @@ namespace PsdzClient.Programing
                         return false;
                     });
 
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Detected vehicle: Battery voltage={0}", voltage);
+                    log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage: Battery voltage={0}", voltage);
                     // temporary message only
                     string statusMessage = sbResult + string.Format(CultureInfo.InvariantCulture, Strings.BatteryVoltage, voltage);
                     UpdateStatus(statusMessage);
