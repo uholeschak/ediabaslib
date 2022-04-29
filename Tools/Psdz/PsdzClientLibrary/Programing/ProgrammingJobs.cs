@@ -1471,13 +1471,9 @@ namespace PsdzClient.Programing
                         UpdateOptions(optionsDict);
                     }
 
-                    if (!CheckVoltage(cts, sbResult))
-                    {
-                        return false;
-                    }
-
                     sbResult.AppendLine(Strings.ExecutingVehicleFuncFinished);
                     UpdateStatus(sbResult.ToString());
+                    CheckVoltage(cts, sbResult);
                     return true;
                 }
 
@@ -1746,13 +1742,9 @@ namespace PsdzClient.Programing
                 log.InfoFormat(CultureInfo.InvariantCulture, " Size: {0}", psdzRestorePrognosisTal.AsXml.Length);
                 cts?.Token.ThrowIfCancellationRequested();
 
-                if (!CheckVoltage(cts, sbResult))
-                {
-                    return false;
-                }
-
                 sbResult.AppendLine(Strings.ExecutingVehicleFuncFinished);
                 UpdateStatus(sbResult.ToString());
+                CheckVoltage(cts, sbResult);
                 return true;
             }
             catch (Exception ex)
