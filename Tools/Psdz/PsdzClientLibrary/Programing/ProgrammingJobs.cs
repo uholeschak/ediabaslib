@@ -1471,9 +1471,9 @@ namespace PsdzClient.Programing
                         UpdateOptions(optionsDict);
                     }
 
+                    CheckVoltage(cts, sbResult, false, true);
                     sbResult.AppendLine(Strings.ExecutingVehicleFuncFinished);
                     UpdateStatus(sbResult.ToString());
-                    CheckVoltage(cts, sbResult);
                     return true;
                 }
 
@@ -1742,9 +1742,9 @@ namespace PsdzClient.Programing
                 log.InfoFormat(CultureInfo.InvariantCulture, " Size: {0}", psdzRestorePrognosisTal.AsXml.Length);
                 cts?.Token.ThrowIfCancellationRequested();
 
+                CheckVoltage(cts, sbResult, false, true);
                 sbResult.AppendLine(Strings.ExecutingVehicleFuncFinished);
                 UpdateStatus(sbResult.ToString());
-                CheckVoltage(cts, sbResult);
                 return true;
             }
             catch (Exception ex)
@@ -1851,7 +1851,7 @@ namespace PsdzClient.Programing
             }
         }
 
-        private bool CheckVoltage(CancellationTokenSource cts, StringBuilder sbResult, bool showInfo = false)
+        private bool CheckVoltage(CancellationTokenSource cts, StringBuilder sbResult, bool showInfo = false, bool addMessage = false)
         {
             log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage vehicle: Show info={0}", showInfo);
 
@@ -1871,14 +1871,6 @@ namespace PsdzClient.Programing
                     });
 
                     log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage: Battery voltage={0}", voltage);
-                    // temporary message only
-                    string statusMessage = sbResult + string.Format(CultureInfo.InvariantCulture, Strings.BatteryVoltage, voltage);
-                    UpdateStatus(statusMessage);
-                    if (voltage < 0)
-                    {
-                        break;
-                    }
-
                     if (voltage >= MinBatteryVoltage && voltage <= MaxBatteryVoltage)
                     {
                         if (ShowMessageEvent != null && showInfo)
@@ -1891,6 +1883,24 @@ namespace PsdzClient.Programing
                                 return false;
                             }
                         }
+                        else
+                        {
+                            string statusMessage = string.Format(CultureInfo.InvariantCulture, Strings.BatteryVoltage, voltage);
+                            if (addMessage)
+                            {
+                                sbResult.AppendLine(statusMessage);
+                            }
+                            else
+                            {
+                                // temporary message only
+                                UpdateStatus(sbResult + statusMessage);
+                            }
+                        }
+                        break;
+                    }
+
+                    if (voltage < 0)
+                    {
                         break;
                     }
 
