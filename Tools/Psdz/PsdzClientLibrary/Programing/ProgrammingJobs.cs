@@ -510,13 +510,6 @@ namespace PsdzClient.Programing
                 UpdateStatus(sbResult.ToString());
                 cts?.Token.ThrowIfCancellationRequested();
 
-                if (!CheckVoltage(cts, sbResult, true))
-                {
-                    return false;
-                }
-
-                cts?.Token.ThrowIfCancellationRequested();
-
                 string mainSeries = ProgrammingService.Psdz.ConfigurationService.RequestBaureihenverbund(series);
                 IEnumerable<IPsdzTargetSelector> targetSelectors =
                     ProgrammingService.Psdz.ConnectionFactoryService.GetTargetSelectors();
@@ -568,6 +561,11 @@ namespace PsdzClient.Programing
                 {
                     sbResult.AppendLine(Strings.UpdateVehicleDataFailed);
                     UpdateStatus(sbResult.ToString());
+                    return false;
+                }
+
+                if (!CheckVoltage(cts, sbResult, true))
+                {
                     return false;
                 }
 
@@ -1872,6 +1870,11 @@ namespace PsdzClient.Programing
         private bool CheckVoltage(CancellationTokenSource cts, StringBuilder sbResult, bool showInfo = false, bool addMessage = false)
         {
             log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage vehicle: Show info={0}", showInfo);
+            if (PsdzContext.Vehicle == null)
+            {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "CheckVoltage No vehicle");
+                return false;
+            }
 
             CacheType cacheTypeOld = CacheResponseType;
             try
