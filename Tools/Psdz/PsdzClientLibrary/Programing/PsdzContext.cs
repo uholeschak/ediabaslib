@@ -415,6 +415,7 @@ namespace PsdzClient.Programming
                 }
             }
 
+            Vehicle.WithLfpBattery = programmingService.PdszDatabase.WithLfpBattery(Vehicle);
             return true;
         }
 

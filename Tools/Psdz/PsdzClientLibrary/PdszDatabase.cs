@@ -1134,6 +1134,22 @@ namespace PsdzClient
             "99999999708"
         };
 
+        private static List<string> ereiheOfVehicleWithLfpBattery = new List<string>
+        {
+            "F80",
+            "F82",
+            "F83",
+            "F90",
+            "F91",
+            "F92",
+            "F93",
+            "G80",
+            "G82",
+            "G83",
+            "G81",
+            "G90"
+        };
+
         public delegate bool ProgressDelegate(int progress, int failures);
 
         private bool _disposed;
@@ -2722,6 +2738,11 @@ namespace PsdzClient
             }
 
             return characteristicsList;
+        }
+
+        public bool WithLfpBattery(Vehicle vehicle)
+        {
+            return ereiheOfVehicleWithLfpBattery.Contains(vehicle.Ereihe);
         }
 
         public bool IsVehicleAnAlpina(Vehicle vehicle)
