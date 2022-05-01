@@ -124,10 +124,18 @@ namespace PsdzClient.Programing
         public OptionType[] OptionTypes => _optionTypes;
 
         public const int CodingConnectionTimeout = 10000;
-        public const double MinBatteryVoltageError = 9.95;
-        public const double MinBatteryVoltageWarn = 12.55;
-        public const double MaxBatteryVoltageWarn = 14.85;
-        public const double MaxBatteryVoltageError = 15.55;
+
+        public const double MinBatteryVoltageErrorPb = 9.95;
+        public const double MinBatteryVoltageErrorLfp = 10.25;
+
+        public const double MinBatteryVoltageWarnPb = 12.55;
+        public const double MinBatteryVoltageWarnLfp = 12.35;
+
+        public const double MaxBatteryVoltageWarnPb = 14.85;
+        public const double MaxBatteryVoltageWarnLfp = 14.05;
+
+        public const double MaxBatteryVoltageErrorPb = 15.55;
+        public const double MaxBatteryVoltageErrorLfp = 14.45;
 
         private bool _disposed;
         public ClientContext ClientContext { get; private set; }
@@ -1881,11 +1889,15 @@ namespace PsdzClient.Programing
                     });
 
                     log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage: Battery voltage={0}", voltage);
-                    double minVoltageError = MinBatteryVoltageError;
-                    double minVoltageWarn = MinBatteryVoltageWarn;
-                    double maxVoltageWarn = MaxBatteryVoltageWarn;
-                    double maxVoltageError = MaxBatteryVoltageError;
-                    
+
+                    bool lfpBattery = PsdzContext.Vehicle.WithLfpBattery;
+                    double minVoltageError = lfpBattery ? MinBatteryVoltageErrorLfp : MinBatteryVoltageErrorPb;
+                    double minVoltageWarn = lfpBattery ? MinBatteryVoltageWarnLfp : MinBatteryVoltageWarnPb;
+                    double maxVoltageWarn = lfpBattery ? MaxBatteryVoltageWarnLfp : MaxBatteryVoltageWarnPb;
+                    double maxVoltageError = lfpBattery ? MaxBatteryVoltageErrorLfp : MaxBatteryVoltageErrorPb;
+                    log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage: LFP={0}, MinErr={1}, MinWarn={2}, MaxWarn={3}, MaxErr={4}",
+                        lfpBattery, minVoltageError, minVoltageWarn, maxVoltageWarn, maxVoltageError);
+
                     bool warn = voltage < minVoltageError || voltage > maxVoltageError;
                     bool error = voltage < minVoltageWarn || voltage > maxVoltageWarn;
                     if (!warn && !error)
