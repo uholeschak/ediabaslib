@@ -2744,7 +2744,18 @@ namespace PsdzClient
 
         public bool WithLfpBattery(Vehicle vehicle)
         {
-            return ereiheOfVehicleWithLfpBattery.Contains(vehicle.Ereihe);
+            string series = vehicle?.Ereihe ?? string.Empty;
+            log.InfoFormat("WithLfpBattery : Series={0}", series);
+
+            if (string.IsNullOrEmpty(series))
+            {
+                return false;
+            }
+
+            bool result = ereiheOfVehicleWithLfpBattery.Contains(series.ToUpperInvariant());
+            log.InfoFormat("WithLfpBattery : LPF={0}", result);
+
+            return result;
         }
 
         public bool IsVehicleAnAlpina(Vehicle vehicle)
