@@ -70,25 +70,39 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die The battery voltage {0:0.00}V is out of valid range:
+        ///   Sucht eine lokalisierte Zeichenfolge, die Error:
+        ///The battery voltage {0:0.00}V is out of valid range:
         ///{1:0.00}V - {2:0.00}V.
         ///Please connect a certified charger for the whole coding session.
         ///Do you want to retry the operation? ähnelt.
         /// </summary>
-        internal static string BatteryVoltageOutOfRange {
+        internal static string BatteryVoltageError {
             get {
-                return ResourceManager.GetString("BatteryVoltageOutOfRange", resourceCulture);
+                return ResourceManager.GetString("BatteryVoltageError", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die The battery voltage {0:0.00}V is inside the valid range:
+        ///   Sucht eine lokalisierte Zeichenfolge, die Information:
+        ///The battery voltage {0:0.00}V is inside the valid range:
         ///{1:0.00}V - {2:0.00}V.
         ///Please connect a certified charger for the whole coding session. ähnelt.
         /// </summary>
-        internal static string BatteryVoltageValid {
+        internal static string BatteryVoltageInfo {
             get {
-                return ResourceManager.GetString("BatteryVoltageValid", resourceCulture);
+                return ResourceManager.GetString("BatteryVoltageInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Warning:
+        ///The battery voltage {0:0.00}V is out of valid range:
+        ///{1:0.00}V - {2:0.00}V.
+        ///Please connect a certified charger for the whole coding session. ähnelt.
+        /// </summary>
+        internal static string BatteryVoltageWarn {
+            get {
+                return ResourceManager.GetString("BatteryVoltageWarn", resourceCulture);
             }
         }
         

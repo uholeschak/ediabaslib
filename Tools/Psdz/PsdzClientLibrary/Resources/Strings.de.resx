@@ -120,14 +120,22 @@
   <data name="BatteryVoltage" xml:space="preserve">
     <value>Batteriespannung: {0:0.00}V</value>
   </data>
-  <data name="BatteryVoltageOutOfRange" xml:space="preserve">
-    <value>Die Batteriespannung {0:0.00}V ist außerhalb des gültigen Bereichs:
+  <data name="BatteryVoltageError" xml:space="preserve">
+    <value>Fehler:
+Die Batteriespannung {0:0.00}V ist außerhalb des gültigen Bereichs:
 {1:0.00}V - {2:0.00}V.
 Bitte schließen Sie ein zertifiziertes Ladegerät während des gesamten Kodiervorgangs an.
 Wollen Sie den Vorgang wiederholen?</value>
   </data>
-  <data name="BatteryVoltageValid" xml:space="preserve">
-    <value>Die Batteriespannung {0:0.00}V ist innerhalb des gültigen Bereichs:
+  <data name="BatteryVoltageInfo" xml:space="preserve">
+    <value>Information:
+Die Batteriespannung {0:0.00}V ist innerhalb des gültigen Bereichs:
+{1:0.00}V - {2:0.00}V.
+Bitte schließen Sie ein zertifiziertes Ladegerät während des gesamten Kodiervorgangs an.</value>
+  </data>
+  <data name="BatteryVoltageWarn" xml:space="preserve">
+    <value>Warnung:
+Die Batteriespannung {0:0.00}V ist außerhalb des gültigen Bereichs:
 {1:0.00}V - {2:0.00}V.
 Bitte schließen Sie ein zertifiziertes Ladegerät während des gesamten Kodiervorgangs an.</value>
   </data>

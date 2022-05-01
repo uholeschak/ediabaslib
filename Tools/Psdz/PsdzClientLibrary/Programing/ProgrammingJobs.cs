@@ -124,8 +124,10 @@ namespace PsdzClient.Programing
         public OptionType[] OptionTypes => _optionTypes;
 
         public const int CodingConnectionTimeout = 10000;
-        public const double MinBatteryVoltage = 12.55;
-        public const double MaxBatteryVoltage = 14.85;
+        public const double MinBatteryVoltageError = 9.95;
+        public const double MinBatteryVoltageWarn = 12.55;
+        public const double MaxBatteryVoltageWarn = 14.85;
+        public const double MaxBatteryVoltageError = 15.55;
 
         private bool _disposed;
         public ClientContext ClientContext { get; private set; }
@@ -1872,12 +1874,19 @@ namespace PsdzClient.Programing
                     });
 
                     log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage: Battery voltage={0}", voltage);
-                    if (voltage >= MinBatteryVoltage && voltage <= MaxBatteryVoltage)
+                    double minVoltageError = MinBatteryVoltageError;
+                    double minVoltageWarn = MinBatteryVoltageWarn;
+                    double maxVoltageWarn = MaxBatteryVoltageWarn;
+                    double maxVoltageError = MaxBatteryVoltageError;
+                    
+                    bool warn = voltage < minVoltageError || voltage > maxVoltageError;
+                    bool error = voltage < minVoltageWarn || voltage > maxVoltageWarn;
+                    if (!warn && !error)
                     {
                         if (ShowMessageEvent != null && showInfo)
                         {
-                            string message = string.Format(CultureInfo.InvariantCulture, Strings.BatteryVoltageValid,
-                                voltage, MinBatteryVoltage, MaxBatteryVoltage);
+                            string message = string.Format(CultureInfo.InvariantCulture, Strings.BatteryVoltageInfo,
+                                voltage, minVoltageWarn, maxVoltageWarn);
                             if (!ShowMessageEvent.Invoke(cts, message, true, true))
                             {
                                 log.ErrorFormat(CultureInfo.InvariantCulture, "CheckVoltage BatteryVoltageValid aborted");
@@ -1900,20 +1909,31 @@ namespace PsdzClient.Programing
                         break;
                     }
 
-                    if (voltage < 0)
+                    if (voltage < 0 || ShowMessageEvent == null)
                     {
                         break;
                     }
 
-                    if (ShowMessageEvent != null)
+                    if (error)
                     {
-                        string message = string.Format(CultureInfo.InvariantCulture, Strings.BatteryVoltageOutOfRange,
-                            voltage, MinBatteryVoltage, MaxBatteryVoltage);
+                        string message = string.Format(CultureInfo.InvariantCulture, Strings.BatteryVoltageError,
+                            voltage, minVoltageError, maxVoltageError);
                         if (!ShowMessageEvent.Invoke(cts, message, false, true))
                         {
                             log.ErrorFormat(CultureInfo.InvariantCulture, "CheckVoltage BatteryVoltageOutOfRange aborted");
                             return false;
                         }
+                    }
+                    else
+                    {
+                        string message = string.Format(CultureInfo.InvariantCulture, Strings.BatteryVoltageWarn,
+                            voltage, minVoltageWarn, maxVoltageWarn);
+                        if (!ShowMessageEvent.Invoke(cts, message, true, true))
+                        {
+                            log.ErrorFormat(CultureInfo.InvariantCulture, "CheckVoltage BatteryVoltageOutOfRange aborted");
+                            return false;
+                        }
+                        break;
                     }
 
                     cts?.Token.ThrowIfCancellationRequested();
