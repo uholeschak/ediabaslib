@@ -556,6 +556,13 @@ namespace PsdzClient.Programing
                 PsdzContext.Vehicle = vehicle;
 
                 ProgrammingService.CreateEcuProgrammingInfos(PsdzContext.Vehicle);
+                if (!PsdzContext.UpdateVehicle(ProgrammingService))
+                {
+                    sbResult.AppendLine(Strings.UpdateVehicleDataFailed);
+                    UpdateStatus(sbResult.ToString());
+                    return false;
+                }
+
                 PsdzContext.Connection = psdzConnection;
 
                 sbResult.AppendLine(Strings.VehicleConnected);
@@ -1419,7 +1426,7 @@ namespace PsdzClient.Programing
 
                 ProgrammingService.PdszDatabase.LinkSvtEcus(PsdzContext.DetectVehicle.EcuList, psdzSvt);
                 ProgrammingService.PdszDatabase.GetEcuVariants(PsdzContext.DetectVehicle.EcuList);
-                if (!PsdzContext.UpdateVehicle(ProgrammingService, psdzStandardSvtNames))
+                if (!PsdzContext.UpdateVehicle(ProgrammingService))
                 {
                     sbResult.AppendLine(Strings.UpdateVehicleDataFailed);
                     UpdateStatus(sbResult.ToString());

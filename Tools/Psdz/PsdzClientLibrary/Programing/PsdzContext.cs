@@ -335,7 +335,7 @@ namespace PsdzClient.Programming
 			this.TalFilterForIndividualDataTal = talFilterForIndividualDataTal;
 		}
 
-        public bool UpdateVehicle(ProgrammingService programmingService, IPsdzStandardSvt psdzStandardSvt)
+        public bool UpdateVehicle(ProgrammingService programmingService)
         {
             if (Vehicle == null)
             {
@@ -346,8 +346,8 @@ namespace PsdzClient.Programming
 
             Vehicle.VehicleIdentLevel = IdentificationLevel.VINVehicleReadout;
             Vehicle.VehicleIdentAlreadyDone = true;
-            Vehicle.ILevelWerk = IstufeShipment;
-            Vehicle.ILevel = IstufeCurrent;
+            Vehicle.ILevelWerk = DetectVehicle.ILevelShip;
+            Vehicle.ILevel = DetectVehicle.ILevelCurrent;
             Vehicle.BNType = GetBnType();
             Vehicle.VIN17 = DetectVehicle.Vin;
             Vehicle.Modelljahr = DetectVehicle.ConstructYear;
