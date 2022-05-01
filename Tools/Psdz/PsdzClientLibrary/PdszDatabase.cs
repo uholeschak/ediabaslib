@@ -1106,6 +1106,7 @@ namespace PsdzClient
         private const string TestModulesZipFile = "TestModules.zip";
         private static readonly ILog log = LogManager.GetLogger(typeof(PdszDatabase));
 
+        // ToDo: Check on update
         private static List<string> engineRootNodeClasses = new List<string>
         {
             "40141570",
@@ -1134,6 +1135,7 @@ namespace PsdzClient
             "99999999708"
         };
 
+        // ToDo: Check on update
         private static List<string> ereiheOfVehicleWithLfpBattery = new List<string>
         {
             "F80",
