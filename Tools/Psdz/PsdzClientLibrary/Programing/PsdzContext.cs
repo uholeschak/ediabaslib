@@ -342,12 +342,16 @@ namespace PsdzClient.Programming
                 return false;
             }
 
-            ProgrammingObjectBuilder programmingObjectBuilder = programmingService.ProgrammingInfos.ProgrammingObjectBuilder;
+            ProgrammingObjectBuilder programmingObjectBuilder = programmingService?.ProgrammingInfos?.ProgrammingObjectBuilder;
+            if (programmingObjectBuilder == null)
+            {
+                return false;
+            }
 
             Vehicle.VehicleIdentLevel = IdentificationLevel.VINVehicleReadout;
             Vehicle.VehicleIdentAlreadyDone = true;
-            Vehicle.ILevelWerk = DetectVehicle.ILevelShip;
-            Vehicle.ILevel = DetectVehicle.ILevelCurrent;
+            Vehicle.ILevelWerk = !string.IsNullOrEmpty(IstufeShipment) ? IstufeShipment : DetectVehicle.ILevelShip;
+            Vehicle.ILevel = !string.IsNullOrEmpty(IstufeCurrent) ? IstufeCurrent: DetectVehicle.ILevelCurrent;
             Vehicle.BNType = GetBnType();
             Vehicle.VIN17 = DetectVehicle.Vin;
             Vehicle.Modelljahr = DetectVehicle.ConstructYear;
