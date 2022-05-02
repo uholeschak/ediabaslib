@@ -800,7 +800,7 @@ namespace BmwDeepObd
                         {
                             if (errorResetList != null && errorResetList.Any(ecu => string.CompareOrdinal(ecu, ecuInfo.Name) == 0))
                             {   // error reset requested
-                                bool sessionControlOk = true;
+                                bool resetPrepareOk = true;
                                 if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                                 {
                                     if (XmlToolActivity.IsUdsEcuName(ecuInfo.Sgbd))
@@ -810,7 +810,7 @@ namespace BmwDeepObd
                                         Ediabas.EdInterfaceClass.TransmitData(sessionControlRequest, out byte[] sessionControlResponse);
                                         if (sessionControlResponse == null || sessionControlResponse.Length < dataOffset + 2 || sessionControlResponse[dataOffset + 0] != 0x50)
                                         {
-                                            sessionControlOk = false;
+                                            resetPrepareOk = false;
                                         }
                                     }
                                 }
@@ -844,7 +844,7 @@ namespace BmwDeepObd
                                             string jobStatus = (string)resultData.OpData;
                                             if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
                                             {
-                                                if (sessionControlOk)
+                                                if (resetPrepareOk)
                                                 {
                                                     errorResetOk = true;
                                                 }
