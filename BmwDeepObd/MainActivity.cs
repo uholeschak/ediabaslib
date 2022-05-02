@@ -3678,11 +3678,11 @@ namespace BmwDeepObd
                                             string objectName = resultData.OpData as string;
                                             if (objectName != null)
                                             {
-                                                if (objectName.Contains("1281"))
+                                                if (XmlToolActivity.Is1281EcuName(objectName))
                                                 {
                                                     kwp1281 = true;
                                                 }
-                                                else if (objectName.Contains("7000"))
+                                                else if (XmlToolActivity.IsUdsEcuName(objectName))
                                                 {
                                                     uds = true;
                                                 }

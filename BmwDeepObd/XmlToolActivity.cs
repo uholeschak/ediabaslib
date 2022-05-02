@@ -4905,14 +4905,34 @@ namespace BmwDeepObd
             }
         }
 
+        public static bool IsUdsEcuName(string sgdbName)
+        {
+            if (string.IsNullOrEmpty(sgdbName))
+            {
+                return false;
+            }
+
+            return sgdbName.Contains("7000", StringComparison.OrdinalIgnoreCase);
+        }
+
         public static bool IsUdsEcu(EcuInfo ecuInfo)
         {
-            return ecuInfo.Sgbd.Contains("7000", StringComparison.OrdinalIgnoreCase);
+            return IsUdsEcuName(ecuInfo.Sgbd);
+        }
+
+        public static bool Is1281EcuName(string sgdbName)
+        {
+            if (string.IsNullOrEmpty(sgdbName))
+            {
+                return false;
+            }
+
+            return sgdbName.Contains("1281", StringComparison.OrdinalIgnoreCase);
         }
 
         public static bool Is1281Ecu(EcuInfo ecuInfo)
         {
-            return ecuInfo.Sgbd.Contains("1281", StringComparison.OrdinalIgnoreCase);
+            return Is1281EcuName(ecuInfo.Sgbd);
         }
 
         public static string GetReadCommand(EcuInfo ecuInfo)
