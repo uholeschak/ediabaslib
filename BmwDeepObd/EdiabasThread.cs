@@ -844,11 +844,14 @@ namespace BmwDeepObd
                                             string jobStatus = (string)resultData.OpData;
                                             if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
                                             {
-                                                errorResetOk = true;
+                                                if (sessionControlOk)
+                                                {
+                                                    errorResetOk = true;
+                                                }
                                             }
                                         }
                                     }
-                                    if (errorResetOk && sessionControlOk)
+                                    if (errorResetOk)
                                     {
                                         errorReportList.Add(new EdiabasErrorReportReset(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, resultDictCheck, errorResetOk));
                                     }
