@@ -4399,6 +4399,8 @@ namespace BmwDeepObd
                         SetEdiabasUdsCanId(ediabas, ecuAddressEntry);
                         mapped = true;
                     }
+
+                    ediabas.SgbdFileName = string.Empty;    // force relaod
                 }
             }
 
