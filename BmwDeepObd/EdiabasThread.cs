@@ -74,7 +74,12 @@ namespace BmwDeepObd
                 ErrorResetOk = errorResetOk;
             }
 
-            public bool ErrorResetOk { get; }
+            public void Reset()
+            {
+                ErrorResetOk = false;
+            }
+
+            public bool ErrorResetOk { get; private set; }
         }
 
         public class EcuFunctionResult : EdiabasNet.ResultData
