@@ -244,6 +244,8 @@ BMW.Rheingold.Programming.TherapyPlan.UpdateMsmTslUpdate.UpdateTsl()
 BMW.Rheingold.Module.ISTA.ModuleBootstrapLoader.CompileOnTheFly()
 BMW.Rheingold.Programming.TherapyPlan.TherapyPlanModel.CompareFa()
 BMW.Rheingold.Programming.TherapyPlan.VehicleConversionManager.ReadVehicleModifactionRegisters()
+Tab Change:
+IstaNavigationTabController.NavigateTo()
 
 InParameter:
 "faElementsToAdd": +MFSG
