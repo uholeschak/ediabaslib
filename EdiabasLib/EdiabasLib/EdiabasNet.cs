@@ -3120,6 +3120,11 @@ namespace EdiabasLib
             }
         }
 
+        public void CloseSgbd()
+        {
+            _closeSgbdFs = true;
+        }
+
         public bool IsJobExisting(string jobName)
         {
             return (_sgbdFs != null) && (GetJobInfo(jobName) != null);

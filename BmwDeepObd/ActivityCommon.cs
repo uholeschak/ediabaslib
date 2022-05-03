@@ -4344,6 +4344,9 @@ namespace BmwDeepObd
         {
             if (ediabas.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
             {
+                int oldEcuId = edInterfaceObd.UdsEcuCanIdOverride;
+                int oldTesterId = edInterfaceObd.UdsTesterCanIdOverride;
+
                 if (ecuAddressEntry != null)
                 {
                     edInterfaceObd.UdsEcuCanIdOverride = (int)ecuAddressEntry.IsoTpEcuCanId;
@@ -4353,6 +4356,13 @@ namespace BmwDeepObd
                 {
                     edInterfaceObd.UdsEcuCanIdOverride = -1;
                     edInterfaceObd.UdsTesterCanIdOverride = -1;
+                }
+
+                if (oldEcuId != edInterfaceObd.UdsEcuCanIdOverride ||
+                    oldTesterId != edInterfaceObd.UdsTesterCanIdOverride)
+                {
+                    // force reload
+                    ediabas.CloseSgbd();
                 }
 
                 return true;
