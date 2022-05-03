@@ -292,10 +292,10 @@
       <HintPath>packages\Xamarin.Jetbrains.Annotations.23.0.0.3\lib\monoandroid12.0\Xamarin.Jetbrains.Annotations.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Kotlin.StdLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Xamarin.Kotlin.StdLib.1.6.20.1\lib\monoandroid12.0\Xamarin.Kotlin.StdLib.dll</HintPath>
+      <HintPath>packages\Xamarin.Kotlin.StdLib.1.6.21\lib\monoandroid12.0\Xamarin.Kotlin.StdLib.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Kotlin.StdLib.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Xamarin.Kotlin.StdLib.Common.1.6.20.1\lib\monoandroid12.0\Xamarin.Kotlin.StdLib.Common.dll</HintPath>
+      <HintPath>packages\Xamarin.Kotlin.StdLib.Common.1.6.21\lib\monoandroid12.0\Xamarin.Kotlin.StdLib.Common.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -863,8 +863,6 @@
     <Error Condition="!Exists('packages\Xamarin.AndroidX.ViewPager.1.0.0.13\build\monoandroid12.0\Xamarin.AndroidX.ViewPager.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.ViewPager.1.0.0.13\build\monoandroid12.0\Xamarin.AndroidX.ViewPager.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.WebKit.1.4.0.7\build\monoandroid12.0\Xamarin.AndroidX.WebKit.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.WebKit.1.4.0.7\build\monoandroid12.0\Xamarin.AndroidX.WebKit.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.Jetbrains.Annotations.23.0.0.3\build\monoandroid12.0\Xamarin.Jetbrains.Annotations.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Jetbrains.Annotations.23.0.0.3\build\monoandroid12.0\Xamarin.Jetbrains.Annotations.targets'))" />
-    <Error Condition="!Exists('packages\Xamarin.Kotlin.StdLib.Common.1.6.20.1\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Kotlin.StdLib.Common.1.6.20.1\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Common.targets'))" />
-    <Error Condition="!Exists('packages\Xamarin.Kotlin.StdLib.1.6.20.1\build\monoandroid12.0\Xamarin.Kotlin.StdLib.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Kotlin.StdLib.1.6.20.1\build\monoandroid12.0\Xamarin.Kotlin.StdLib.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.Core.Core.Ktx.1.7.0.2\build\monoandroid12.0\Xamarin.AndroidX.Core.Core.Ktx.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.Core.Core.Ktx.1.7.0.2\build\monoandroid12.0\Xamarin.AndroidX.Core.Core.Ktx.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.Lifecycle.ViewModel.2.4.1.1\build\monoandroid12.0\Xamarin.AndroidX.Lifecycle.ViewModel.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.Lifecycle.ViewModel.2.4.1.1\build\monoandroid12.0\Xamarin.AndroidX.Lifecycle.ViewModel.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.Lifecycle.ViewModelSavedState.2.4.1.1\build\monoandroid12.0\Xamarin.AndroidX.Lifecycle.ViewModelSavedState.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.Lifecycle.ViewModelSavedState.2.4.1.1\build\monoandroid12.0\Xamarin.AndroidX.Lifecycle.ViewModelSavedState.targets'))" />
@@ -882,6 +880,8 @@
     <Error Condition="!Exists('packages\Xamarin.Build.Download.0.11.1\build\Xamarin.Build.Download.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Build.Download.0.11.1\build\Xamarin.Build.Download.props'))" />
     <Error Condition="!Exists('packages\Xamarin.Build.Download.0.11.1\build\Xamarin.Build.Download.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Build.Download.0.11.1\build\Xamarin.Build.Download.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.7\build\monoandroid90\Xamarin.Google.Guava.ListenableFuture.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.7\build\monoandroid90\Xamarin.Google.Guava.ListenableFuture.targets'))" />
+    <Error Condition="!Exists('packages\Xamarin.Kotlin.StdLib.Common.1.6.21\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Kotlin.StdLib.Common.1.6.21\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Common.targets'))" />
+    <Error Condition="!Exists('packages\Xamarin.Kotlin.StdLib.1.6.21\build\monoandroid12.0\Xamarin.Kotlin.StdLib.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Kotlin.StdLib.1.6.21\build\monoandroid12.0\Xamarin.Kotlin.StdLib.targets'))" />
   </Target>
   <PropertyGroup>
     <PostBuildEvent>copy /y "$(ProjectDir)Xml\BmwDeepObd.xsd" "$(ProjectDir)Xml\E61R\"</PostBuildEvent>
@@ -925,8 +925,6 @@
   <Import Project="packages\Xamarin.AndroidX.ViewPager.1.0.0.13\build\monoandroid12.0\Xamarin.AndroidX.ViewPager.targets" Condition="Exists('packages\Xamarin.AndroidX.ViewPager.1.0.0.13\build\monoandroid12.0\Xamarin.AndroidX.ViewPager.targets')" />
   <Import Project="packages\Xamarin.AndroidX.WebKit.1.4.0.7\build\monoandroid12.0\Xamarin.AndroidX.WebKit.targets" Condition="Exists('packages\Xamarin.AndroidX.WebKit.1.4.0.7\build\monoandroid12.0\Xamarin.AndroidX.WebKit.targets')" />
   <Import Project="packages\Xamarin.Jetbrains.Annotations.23.0.0.3\build\monoandroid12.0\Xamarin.Jetbrains.Annotations.targets" Condition="Exists('packages\Xamarin.Jetbrains.Annotations.23.0.0.3\build\monoandroid12.0\Xamarin.Jetbrains.Annotations.targets')" />
-  <Import Project="packages\Xamarin.Kotlin.StdLib.Common.1.6.20.1\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Common.targets" Condition="Exists('packages\Xamarin.Kotlin.StdLib.Common.1.6.20.1\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Common.targets')" />
-  <Import Project="packages\Xamarin.Kotlin.StdLib.1.6.20.1\build\monoandroid12.0\Xamarin.Kotlin.StdLib.targets" Condition="Exists('packages\Xamarin.Kotlin.StdLib.1.6.20.1\build\monoandroid12.0\Xamarin.Kotlin.StdLib.targets')" />
   <Import Project="packages\Xamarin.AndroidX.Core.Core.Ktx.1.7.0.2\build\monoandroid12.0\Xamarin.AndroidX.Core.Core.Ktx.targets" Condition="Exists('packages\Xamarin.AndroidX.Core.Core.Ktx.1.7.0.2\build\monoandroid12.0\Xamarin.AndroidX.Core.Core.Ktx.targets')" />
   <Import Project="packages\Xamarin.AndroidX.Lifecycle.ViewModel.2.4.1.1\build\monoandroid12.0\Xamarin.AndroidX.Lifecycle.ViewModel.targets" Condition="Exists('packages\Xamarin.AndroidX.Lifecycle.ViewModel.2.4.1.1\build\monoandroid12.0\Xamarin.AndroidX.Lifecycle.ViewModel.targets')" />
   <Import Project="packages\Xamarin.AndroidX.Lifecycle.ViewModelSavedState.2.4.1.1\build\monoandroid12.0\Xamarin.AndroidX.Lifecycle.ViewModelSavedState.targets" Condition="Exists('packages\Xamarin.AndroidX.Lifecycle.ViewModelSavedState.2.4.1.1\build\monoandroid12.0\Xamarin.AndroidX.Lifecycle.ViewModelSavedState.targets')" />
@@ -943,4 +941,6 @@
   <Import Project="packages\System.Text.Json.6.0.3\build\System.Text.Json.targets" Condition="Exists('packages\System.Text.Json.6.0.3\build\System.Text.Json.targets')" />
   <Import Project="packages\Xamarin.Build.Download.0.11.1\build\Xamarin.Build.Download.targets" Condition="Exists('packages\Xamarin.Build.Download.0.11.1\build\Xamarin.Build.Download.targets')" />
   <Import Project="packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.7\build\monoandroid90\Xamarin.Google.Guava.ListenableFuture.targets" Condition="Exists('packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.7\build\monoandroid90\Xamarin.Google.Guava.ListenableFuture.targets')" />
+  <Import Project="packages\Xamarin.Kotlin.StdLib.Common.1.6.21\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Common.targets" Condition="Exists('packages\Xamarin.Kotlin.StdLib.Common.1.6.21\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Common.targets')" />
+  <Import Project="packages\Xamarin.Kotlin.StdLib.1.6.21\build\monoandroid12.0\Xamarin.Kotlin.StdLib.targets" Condition="Exists('packages\Xamarin.Kotlin.StdLib.1.6.21\build\monoandroid12.0\Xamarin.Kotlin.StdLib.targets')" />
 </Project>
