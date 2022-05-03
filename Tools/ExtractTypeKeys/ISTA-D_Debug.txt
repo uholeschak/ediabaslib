@@ -246,6 +246,7 @@ BMW.Rheingold.Programming.TherapyPlan.TherapyPlanModel.CompareFa()
 BMW.Rheingold.Programming.TherapyPlan.VehicleConversionManager.ReadVehicleModifactionRegisters()
 Tab Change:
 IstaNavigationTabController.NavigateTo()
+EcuExchangePreExchangeViewModel.HandleSelectEcuPreExchange()
 
 InParameter:
 "faElementsToAdd": +MFSG
