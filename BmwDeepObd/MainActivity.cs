@@ -3576,6 +3576,7 @@ namespace BmwDeepObd
                                             {
                                                 if (resultItem.Selected)
                                                 {
+                                                    errorReportReset.Reset();
                                                     resultItem.Selected = false;
                                                     changed = true;
                                                 }
