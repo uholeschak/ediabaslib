@@ -800,21 +800,6 @@ namespace BmwDeepObd
                         {
                             if (errorResetList != null && errorResetList.Any(ecu => string.CompareOrdinal(ecu, ecuInfo.Name) == 0))
                             {   // error reset requested
-                                bool resetPrepareOk = true;
-                                if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
-                                {
-                                    if (XmlToolActivity.IsUdsEcuName(ecuInfo.Sgbd))
-                                    {
-                                        int dataOffset = XmlToolActivity.VagUdsRawDataOffset;
-                                        byte[] sessionControlRequest = { 0x10, 0x03 };
-                                        Ediabas.EdInterfaceClass.TransmitData(sessionControlRequest, out byte[] sessionControlResponse);
-                                        if (sessionControlResponse == null || sessionControlResponse.Length < dataOffset + 2 || sessionControlResponse[dataOffset + 0] != 0x50)
-                                        {
-                                            resetPrepareOk = false;
-                                        }
-                                    }
-                                }
-
                                 Ediabas.ArgString = string.Empty;
                                 Ediabas.ArgBinaryStd = null;
                                 Ediabas.ResultsRequests = string.Empty;
@@ -844,10 +829,7 @@ namespace BmwDeepObd
                                             string jobStatus = (string)resultData.OpData;
                                             if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
                                             {
-                                                if (resetPrepareOk)
-                                                {
-                                                    errorResetOk = true;
-                                                }
+                                                errorResetOk = true;
                                             }
                                         }
                                     }
