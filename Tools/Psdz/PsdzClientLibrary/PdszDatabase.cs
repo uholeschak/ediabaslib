@@ -209,6 +209,18 @@ namespace PsdzClient
 
             public List<SwiAction> SwiActions { get; set; }
 
+            public bool HasIndividualData
+            {
+                get
+                {
+                    if (PsdzEcu != null && PsdzEcu.EcuStatusInfo != null)
+                    {
+                        return PsdzEcu.EcuStatusInfo.HasIndividualData;
+                    }
+                    return false;
+                }
+            }
+
             public string ToString(string language, string prefix = "")
             {
                 StringBuilder sb = new StringBuilder();
