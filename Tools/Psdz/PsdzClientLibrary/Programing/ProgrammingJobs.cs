@@ -71,16 +71,34 @@ namespace PsdzClient.Programing
 
         public class OptionType
         {
+            public enum SpecialOptionEnum
+            {
+                None,
+                BeforeReplace,
+                AfterReplace
+            }
+
             public OptionType(string name, PdszDatabase.SwiRegisterEnum swiRegisterEnum)
             {
                 Name = name;
                 SwiRegisterEnum = swiRegisterEnum;
+                SpecialOption = null;
+                SwiRegister = null;
+            }
+
+            public OptionType(string name, SpecialOptionEnum specialOption)
+            {
+                Name = name;
+                SwiRegisterEnum = null;
+                SpecialOption = specialOption;
                 SwiRegister = null;
             }
 
             public string Name { get; private set; }
 
-            public PdszDatabase.SwiRegisterEnum SwiRegisterEnum { get; private set; }
+            public PdszDatabase.SwiRegisterEnum? SwiRegisterEnum { get; private set; }
+
+            public SpecialOptionEnum? SpecialOption { get; private set; }
 
             public PdszDatabase.SwiRegister SwiRegister { get; set; }
 
@@ -120,6 +138,7 @@ namespace PsdzClient.Programing
             new OptionType("Modification", PdszDatabase.SwiRegisterEnum.VehicleModificationConversion),
             new OptionType("Modification back", PdszDatabase.SwiRegisterEnum.VehicleModificationBackConversion),
             new OptionType("Retrofit", PdszDatabase.SwiRegisterEnum.VehicleModificationRetrofitting),
+            new OptionType("Before replace", OptionType.SpecialOptionEnum.BeforeReplace),
         };
         public OptionType[] OptionTypes => _optionTypes;
 
@@ -1487,19 +1506,23 @@ namespace PsdzClient.Programing
                         foreach (OptionType optionType in _optionTypes)
                         {
                             optionType.ClientContext = clientContext;
-                            optionType.SwiRegister = ProgrammingService.PdszDatabase.FindNodeForRegister(optionType.SwiRegisterEnum);
-                            List<PdszDatabase.SwiAction> swiActions = ProgrammingService.PdszDatabase.GetSwiActionsForRegister(optionType.SwiRegisterEnum, true);
-                            if (swiActions != null)
+                            if (optionType.SwiRegisterEnum != null)
                             {
-                                log.InfoFormat(CultureInfo.InvariantCulture, "Swi actions: {0}", optionType.Name ?? string.Empty);
-                                List<OptionsItem> optionsItems = new List<OptionsItem>();
-                                foreach (PdszDatabase.SwiAction swiAction in swiActions)
+                                PdszDatabase.SwiRegisterEnum swiRegisterEnum = optionType.SwiRegisterEnum.Value;
+                                optionType.SwiRegister = ProgrammingService.PdszDatabase.FindNodeForRegister(swiRegisterEnum);
+                                List<PdszDatabase.SwiAction> swiActions = ProgrammingService.PdszDatabase.GetSwiActionsForRegister(swiRegisterEnum, true);
+                                if (swiActions != null)
                                 {
-                                    log.Info(swiAction.ToString(clientContext.Language));
-                                    optionsItems.Add(new OptionsItem(swiAction, clientContext));
-                                }
+                                    log.InfoFormat(CultureInfo.InvariantCulture, "Swi actions: {0}", optionType.Name ?? string.Empty);
+                                    List<OptionsItem> optionsItems = new List<OptionsItem>();
+                                    foreach (PdszDatabase.SwiAction swiAction in swiActions)
+                                    {
+                                        log.Info(swiAction.ToString(clientContext.Language));
+                                        optionsItems.Add(new OptionsItem(swiAction, clientContext));
+                                    }
 
-                                optionsDict.Add(optionType.SwiRegisterEnum, optionsItems);
+                                    optionsDict.Add(swiRegisterEnum, optionsItems);
+                                }
                             }
                         }
 
