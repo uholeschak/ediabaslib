@@ -57,7 +57,16 @@ namespace PsdzClient.Programing
                 Invalid = false;
             }
 
+            public OptionsItem(PdszDatabase.EcuInfo ecuInfo, ClientContext clientContext)
+            {
+                EcuInfo = ecuInfo;
+                ClientContext = clientContext;
+                Invalid = false;
+            }
+
             public PdszDatabase.SwiAction SwiAction { get; private set; }
+
+            public PdszDatabase.EcuInfo EcuInfo { get; private set; }
 
             public ClientContext ClientContext { get; private set; }
 
@@ -71,34 +80,16 @@ namespace PsdzClient.Programing
 
         public class OptionType
         {
-            public enum SpecialOptionEnum
-            {
-                None,
-                BeforeReplace,
-                AfterReplace
-            }
-
             public OptionType(string name, PdszDatabase.SwiRegisterEnum swiRegisterEnum)
             {
                 Name = name;
                 SwiRegisterEnum = swiRegisterEnum;
-                SpecialOption = null;
-                SwiRegister = null;
-            }
-
-            public OptionType(string name, SpecialOptionEnum specialOption)
-            {
-                Name = name;
-                SwiRegisterEnum = null;
-                SpecialOption = specialOption;
                 SwiRegister = null;
             }
 
             public string Name { get; private set; }
 
-            public PdszDatabase.SwiRegisterEnum? SwiRegisterEnum { get; private set; }
-
-            public SpecialOptionEnum? SpecialOption { get; private set; }
+            public PdszDatabase.SwiRegisterEnum SwiRegisterEnum { get; private set; }
 
             public PdszDatabase.SwiRegister SwiRegister { get; set; }
 
@@ -138,7 +129,7 @@ namespace PsdzClient.Programing
             new OptionType("Modification", PdszDatabase.SwiRegisterEnum.VehicleModificationConversion),
             new OptionType("Modification back", PdszDatabase.SwiRegisterEnum.VehicleModificationBackConversion),
             new OptionType("Retrofit", PdszDatabase.SwiRegisterEnum.VehicleModificationRetrofitting),
-            new OptionType("Before replace", OptionType.SpecialOptionEnum.BeforeReplace),
+            new OptionType("Before replace", PdszDatabase.SwiRegisterEnum.EcuReplacementBeforeReplacement),
         };
         public OptionType[] OptionTypes => _optionTypes;
 
@@ -1506,9 +1497,22 @@ namespace PsdzClient.Programing
                         foreach (OptionType optionType in _optionTypes)
                         {
                             optionType.ClientContext = clientContext;
-                            if (optionType.SwiRegisterEnum != null)
+                            PdszDatabase.SwiRegisterEnum swiRegisterEnum = optionType.SwiRegisterEnum;
+                            if (swiRegisterEnum == PdszDatabase.SwiRegisterEnum.EcuReplacementBeforeReplacement)
                             {
-                                PdszDatabase.SwiRegisterEnum swiRegisterEnum = optionType.SwiRegisterEnum.Value;
+                                List<PdszDatabase.EcuInfo> ecuList = PsdzContext.GetIndividualDataEcus();
+                                if (ecuList != null)
+                                {
+                                    List<OptionsItem> optionsItems = new List<OptionsItem>();
+                                    foreach (PdszDatabase.EcuInfo ecuInfo in ecuList)
+                                    {
+                                        optionsItems.Add(new OptionsItem(ecuInfo, clientContext));
+                                    }
+                                    optionsDict.Add(swiRegisterEnum, optionsItems);
+                                }
+                            }
+                            else
+                            {
                                 optionType.SwiRegister = ProgrammingService.PdszDatabase.FindNodeForRegister(swiRegisterEnum);
                                 List<PdszDatabase.SwiAction> swiActions = ProgrammingService.PdszDatabase.GetSwiActionsForRegister(swiRegisterEnum, true);
                                 if (swiActions != null)
