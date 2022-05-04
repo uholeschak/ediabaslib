@@ -2393,11 +2393,13 @@ namespace PsdzClient.Core
 			}
 		}
 #endif
+        // ToDo: Check on update
 		public bool IsPreE65Vehicle()
 		{
 			return !string.IsNullOrEmpty(base.Ereihe) && (Regex.Match(base.Ereihe, "^E[0-5][0-9]$").Success || Regex.Match(base.Ereihe, "^E6[0-4]$").Success);
 		}
 
+        // ToDo: Check on update
 		public bool IsPreDS2Vehicle()
 		{
 			if (!string.IsNullOrEmpty(base.Ereihe))
@@ -2414,16 +2416,19 @@ namespace PsdzClient.Core
 			return false;
 		}
 
+        // ToDo: Check on update
 		public bool IsMotorcycle()
 		{
 			return base.BNType == BNType.BN2000_MOTORBIKE || base.BNType == BNType.BN2020_MOTORBIKE || base.BNType == BNType.BNK01X_MOTORBIKE || base.BNType == BNType.BN2000_GIBBS || base.BNType == BNType.BN2020_CAMPAGNA;
 		}
 
+        // ToDo: Check on update
 		public bool IsRRSeries2()
 		{
 			return ("RR1".Equals(base.Ereihe) || "RR2".Equals(base.Ereihe) || "RR3".Equals(base.Ereihe)) && ("RR1_2020".Equals(base.Gsgbd) || (this.C_DATETIME != null && this.C_DATETIME > Vehicle.lciRRS2));
 		}
 
+        // ToDo: Check on update
 		public bool IsPowertrainSystemCustomerVehicle()
 		{
 			return base.BNType == BNType.BN2000_GIBBS || base.BNType == BNType.BN2000_RODING || base.BNType == BNType.BN2000_WIESMANN || base.BNType == BNType.BN2000_PGO;
@@ -2449,6 +2454,7 @@ namespace PsdzClient.Core
 			return false;
 		}
 
+        // ToDo: Check on update
 		public bool? IsABSVehicle()
 		{
 			if (base.ECU != null && base.ECU.Count > 0)
