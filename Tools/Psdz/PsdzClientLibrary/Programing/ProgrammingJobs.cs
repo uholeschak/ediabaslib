@@ -1436,6 +1436,19 @@ namespace PsdzClient.Programing
                 cts?.Token.ThrowIfCancellationRequested();
 
                 ProgrammingService.PdszDatabase.LinkSvtEcus(PsdzContext.DetectVehicle.EcuList, psdzSvt);
+                List<PdszDatabase.EcuInfo> individualEcus = PsdzContext.GetIndividualDataEcus();
+                if (individualEcus != null)
+                {
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Individual Ecus: {0}", individualEcus.Count());
+                    foreach (PdszDatabase.EcuInfo ecuInfo in individualEcus)
+                    {
+                        if (ecuInfo != null)
+                        {
+                            log.Info(ecuInfo.ToString(clientContext.Language));
+                        }
+                    }
+                }
+
                 ProgrammingService.PdszDatabase.GetEcuVariants(PsdzContext.DetectVehicle.EcuList);
                 if (!PsdzContext.UpdateVehicle(ProgrammingService))
                 {

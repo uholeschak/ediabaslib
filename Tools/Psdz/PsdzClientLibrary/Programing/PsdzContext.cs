@@ -466,7 +466,28 @@ namespace PsdzClient.Programming
             return BNType.UNKNOWN;
         }
 
-		private bool _disposed;
+        public List<PdszDatabase.EcuInfo> GetIndividualDataEcus()
+        {
+            List<PdszDatabase.EcuInfo> individualEcus = new List<PdszDatabase.EcuInfo>();
+            try
+            {
+                foreach (PdszDatabase.EcuInfo ecuInfo in DetectVehicle.EcuList)
+                {
+                    if (Vehicle.IsMotorcycle() || ecuInfo.HasIndividualData)
+                    {
+                        individualEcus.Add(ecuInfo);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return individualEcus;
+        }
+
+        private bool _disposed;
 		private bool hasVinBackupDataFolder;
 
 		private IEnumerable<IPsdzIstufe> possibleIstufenTarget;
