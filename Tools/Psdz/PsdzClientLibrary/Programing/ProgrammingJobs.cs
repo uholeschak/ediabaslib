@@ -74,7 +74,17 @@ namespace PsdzClient.Programing
 
             public override string ToString()
             {
-                return SwiAction.EcuTranslation.GetTitle(ClientContext?.Language);
+                if (SwiAction != null)
+                {
+                    return SwiAction.EcuTranslation.GetTitle(ClientContext?.Language);
+                }
+
+                if (EcuInfo != null)
+                {
+                    return EcuInfo.Name ?? string.Empty;
+                }
+
+                return string.Empty;
             }
         }
 
@@ -1843,7 +1853,7 @@ namespace PsdzClient.Programing
 
             foreach (ProgrammingJobs.OptionsItem optionsItem in SelectedOptions)
             {
-                if (optionsItem.SwiAction.SwiInfoObjs != null)
+                if (optionsItem.SwiAction?.SwiInfoObjs != null)
                 {
                     foreach (PdszDatabase.SwiInfoObj infoInfoObj in optionsItem.SwiAction.SwiInfoObjs)
                     {

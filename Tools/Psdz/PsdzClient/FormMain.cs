@@ -404,17 +404,24 @@ namespace PsdzClient
                             }
                             else
                             {
-                                if (linkedSwiActions != null &&
-                                    linkedSwiActions.Any(x => string.Compare(x.Id, optionsItem.SwiAction.Id, StringComparison.OrdinalIgnoreCase) == 0))
+                                if (optionsItem.SwiAction != null)
                                 {
-                                    addItem = false;
-                                }
-                                else
-                                {
-                                    if (!_programmingJobs.ProgrammingService.PdszDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, _programmingJobs.PsdzContext.Vehicle, null))
+                                    if (linkedSwiActions != null &&
+                                        linkedSwiActions.Any(x => string.Compare(x.Id, optionsItem.SwiAction.Id, StringComparison.OrdinalIgnoreCase) == 0))
                                     {
                                         addItem = false;
                                     }
+                                    else
+                                    {
+                                        if (!_programmingJobs.ProgrammingService.PdszDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, _programmingJobs.PsdzContext.Vehicle, null))
+                                        {
+                                            addItem = false;
+                                        }
+                                    }
+                                }
+                                else if (optionsItem.EcuInfo != null)
+                                {
+                                    addItem = true;
                                 }
                             }
 
