@@ -81,7 +81,7 @@ namespace PsdzClient.Programing
 
                 if (EcuInfo != null)
                 {
-                    return EcuInfo.Name ?? string.Empty;
+                    return EcuInfo.EcuVar.EcuTranslation.GetTitle(ClientContext?.Language);
                 }
 
                 return string.Empty;
@@ -1851,7 +1851,7 @@ namespace PsdzClient.Programing
             PsdzContext.SetFaTarget(PsdzContext.FaActual);
             ProgrammingService.PdszDatabase.ResetXepRules();
 
-            foreach (ProgrammingJobs.OptionsItem optionsItem in SelectedOptions)
+            foreach (OptionsItem optionsItem in SelectedOptions)
             {
                 if (optionsItem.SwiAction?.SwiInfoObjs != null)
                 {
