@@ -1412,8 +1412,13 @@ namespace PsdzClient.Programing
                 {
                     if (ecu != null)
                     {
-                        log.InfoFormat(CultureInfo.InvariantCulture, " Variant: BaseVar={0}, Var={1}, Name={2}",
-                            ecu.BaseVariant ?? string.Empty, ecu.EcuVariant ?? string.Empty, ecu.BnTnName ?? string.Empty);
+                        log.InfoFormat(CultureInfo.InvariantCulture, " Variant: BaseVar={0}, Var={1}, Name={2}, Serial={3}",
+                            ecu.BaseVariant ?? string.Empty, ecu.EcuVariant ?? string.Empty, ecu.BnTnName ?? string.Empty, ecu.SerialNumber ?? string.Empty);
+                        if (ecu.EcuStatusInfo != null)
+                        {
+                            log.InfoFormat(CultureInfo.InvariantCulture, "  Status: Individual={0}",
+                                ecu.EcuStatusInfo.HasIndividualData);
+                        }
                     }
                 }
 
