@@ -309,6 +309,10 @@ namespace PsdzClient
                     SelectOptions(null);
                 }
             }
+            else
+            {
+                SelectOptions(null);
+            }
         }
 
         private void UpdateOptions(Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict)
@@ -370,6 +374,12 @@ namespace PsdzClient
 
             try
             {
+                if (_programmingJobs.ProgrammingService == null || _programmingJobs.PsdzContext == null)
+                {
+                    checkedListBoxOptions.Items.Clear();
+                    return;
+                }
+
                 bool replacement = false;
                 if (swiRegisterEnum.HasValue)
                 {
