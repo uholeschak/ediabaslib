@@ -217,6 +217,9 @@ BMW.Rheingold.Psdz.PsdzObjectBuilder.BuildFa()
 BMW.Rheingold.Programming.Common.ProgrammingUtils.CreateTalFilter()
 BMW.Rheingold.Programming.TherapyPlan.ResetTargetFa() PsdzContext.FaActual -> PsdzContext.FaTarget
 BMW.Rheingold.Programming.ProgrammingEngine.SetFaTarget()
+ECU Filter:
+BMW.Rheingold.Programming.ProgrammingEngine.States.Handle()
+BMW.Rheingold.Programming.ProgrammingEngine.States.RetrieveSollverbauungState.GetSollverbauTalFilter()
 BMW.Rheingold.Module.ISTA.ABL_LIF_REMOVE_ELEMENTS_FROM_VO.Start() -> SetFaTarget()
 BMW.Rheingold.Module.ISTA.ABL_LIF_REMOVE_ELEMENTS_FROM_VO.run()
 BMW.Rheingold.Module.ISTA.ABL_LIF_ADD_ELEMENTS_TO_VO.run()
@@ -244,6 +247,7 @@ BMW.Rheingold.Programming.TherapyPlan.UpdateMsmTslUpdate.UpdateTsl()
 BMW.Rheingold.Module.ISTA.ModuleBootstrapLoader.CompileOnTheFly()
 BMW.Rheingold.Programming.TherapyPlan.TherapyPlanModel.CompareFa()
 BMW.Rheingold.Programming.TherapyPlan.VehicleConversionManager.ReadVehicleModifactionRegisters()
+
 Tab Change:
 IstaNavigationTabController.NavigateTo()
 EcuExchangePreExchangeViewModel.HandleSelectEcuPreExchange()
