@@ -81,7 +81,15 @@ namespace PsdzClient.Programing
 
                 if (EcuInfo != null)
                 {
-                    return EcuInfo.EcuVar.EcuTranslation.GetTitle(ClientContext?.Language);
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append(EcuInfo.Name);
+                    if (EcuInfo.EcuVar != null)
+                    {
+                        sb.Append(" ");
+                        sb.Append(EcuInfo.EcuVar.EcuTranslation.GetTitle(ClientContext?.Language));
+                    }
+
+                    return sb.ToString();
                 }
 
                 return string.Empty;

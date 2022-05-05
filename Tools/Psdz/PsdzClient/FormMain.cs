@@ -390,38 +390,60 @@ namespace PsdzClient
                         {
                             CheckState checkState = CheckState.Unchecked;
                             bool addItem = true;
+                            bool replacement = false;
+                            switch (swiRegisterEnum.Value)
+                            {
+                                case PdszDatabase.SwiRegisterEnum.EcuReplacementBeforeReplacement:
+                                case PdszDatabase.SwiRegisterEnum.EcuReplacementAfterReplacement:
+                                    replacement = true;
+                                    break;
+                            }
+
                             int selectIndex = _programmingJobs.SelectedOptions.IndexOf(optionsItem);
                             if (selectIndex >= 0)
                             {
-                                if (selectIndex == _programmingJobs.SelectedOptions.Count - 1)
+                                if (replacement)
                                 {
                                     checkState = CheckState.Checked;
                                 }
                                 else
                                 {
-                                    checkState = CheckState.Indeterminate;
+                                    if (selectIndex == _programmingJobs.SelectedOptions.Count - 1)
+                                    {
+                                        checkState = CheckState.Checked;
+                                    }
+                                    else
+                                    {
+                                        checkState = CheckState.Indeterminate;
+                                    }
                                 }
                             }
                             else
                             {
-                                if (optionsItem.SwiAction != null)
+                                if (replacement)
                                 {
-                                    if (linkedSwiActions != null &&
-                                        linkedSwiActions.Any(x => string.Compare(x.Id, optionsItem.SwiAction.Id, StringComparison.OrdinalIgnoreCase) == 0))
+                                    if (optionsItem.EcuInfo == null)
                                     {
                                         addItem = false;
                                     }
-                                    else
+                                }
+                                else
+                                {
+                                    if (optionsItem.SwiAction != null)
                                     {
-                                        if (!_programmingJobs.ProgrammingService.PdszDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, _programmingJobs.PsdzContext.Vehicle, null))
+                                        if (linkedSwiActions != null &&
+                                            linkedSwiActions.Any(x => string.Compare(x.Id, optionsItem.SwiAction.Id, StringComparison.OrdinalIgnoreCase) == 0))
                                         {
                                             addItem = false;
                                         }
+                                        else
+                                        {
+                                            if (!_programmingJobs.ProgrammingService.PdszDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, _programmingJobs.PsdzContext.Vehicle, null))
+                                            {
+                                                addItem = false;
+                                            }
+                                        }
                                     }
-                                }
-                                else if (optionsItem.EcuInfo != null)
-                                {
-                                    addItem = true;
                                 }
                             }
 
