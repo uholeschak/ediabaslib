@@ -392,26 +392,6 @@ namespace PsdzClient
                     }
                 }
 
-                if (_programmingJobs.SelectedOptions != null && _programmingJobs.SelectedOptions.Count > 0)
-                {
-                    if (replacement)
-                    {
-                        if (_programmingJobs.SelectedOptions[0].EcuInfo == null)
-                        {
-                            // type change
-                            _programmingJobs.SelectedOptions.Clear();
-                        }
-                    }
-                    else
-                    {
-                        if (_programmingJobs.SelectedOptions[0].SwiAction == null)
-                        {
-                            // type change
-                            _programmingJobs.SelectedOptions.Clear();
-                        }
-                    }
-                }
-
                 List<PdszDatabase.SwiAction> selectedSwiActions = GetSelectedSwiActions();
                 List<PdszDatabase.SwiAction> linkedSwiActions = _programmingJobs.ProgrammingService.PdszDatabase.ReadLinkedSwiActions(selectedSwiActions, _programmingJobs.PsdzContext.Vehicle, null);
                 ProgrammingJobs.OptionsItem topItemCurrent = null;
@@ -859,11 +839,26 @@ namespace PsdzClient
                 return;
             }
 
+            if (_programmingJobs?.SelectedOptions == null)
+            {
+                return;
+            }
+
             bool modified = false;
             if (e.Index >= 0 && e.Index < checkedListBoxOptions.Items.Count)
             {
                 if (checkedListBoxOptions.Items[e.Index] is ProgrammingJobs.OptionsItem optionsItem)
                 {
+                    PdszDatabase.SwiRegisterEnum swiRegisterEnum = optionsItem.SwiRegisterEnum;
+                    if (_programmingJobs.SelectedOptions.Count > 0)
+                    {
+                        PdszDatabase.SwiRegisterEnum swiRegisterEnumCurrent = _programmingJobs.SelectedOptions[0].SwiRegisterEnum;
+                        if (PdszDatabase.GetSwiRegisterGroup(swiRegisterEnum) != PdszDatabase.GetSwiRegisterGroup(swiRegisterEnumCurrent))
+                        {
+                            _programmingJobs.SelectedOptions.Clear();
+                        }
+                    }
+
                     if (e.CurrentValue == CheckState.Indeterminate)
                     {
                         e.NewValue = e.CurrentValue;

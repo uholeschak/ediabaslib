@@ -50,19 +50,23 @@ namespace PsdzClient.Programing
 
         public class OptionsItem
         {
-            public OptionsItem(PdszDatabase.SwiAction swiAction, ClientContext clientContext)
+            public OptionsItem(PdszDatabase.SwiRegisterEnum swiRegisterEnum,PdszDatabase.SwiAction swiAction, ClientContext clientContext)
             {
+                SwiRegisterEnum = swiRegisterEnum;
                 SwiAction = swiAction;
                 ClientContext = clientContext;
                 Invalid = false;
             }
 
-            public OptionsItem(PdszDatabase.EcuInfo ecuInfo, ClientContext clientContext)
+            public OptionsItem(PdszDatabase.SwiRegisterEnum swiRegisterEnum, PdszDatabase.EcuInfo ecuInfo, ClientContext clientContext)
             {
+                SwiRegisterEnum = swiRegisterEnum;
                 EcuInfo = ecuInfo;
                 ClientContext = clientContext;
                 Invalid = false;
             }
+
+            public PdszDatabase.SwiRegisterEnum SwiRegisterEnum { get; private set; }
 
             public PdszDatabase.SwiAction SwiAction { get; private set; }
 
@@ -1524,7 +1528,7 @@ namespace PsdzClient.Programing
                                     List<OptionsItem> optionsItems = new List<OptionsItem>();
                                     foreach (PdszDatabase.EcuInfo ecuInfo in ecuList)
                                     {
-                                        optionsItems.Add(new OptionsItem(ecuInfo, clientContext));
+                                        optionsItems.Add(new OptionsItem(swiRegisterEnum, ecuInfo, clientContext));
                                     }
                                     optionsDict.Add(swiRegisterEnum, optionsItems);
                                 }
@@ -1540,7 +1544,7 @@ namespace PsdzClient.Programing
                                     foreach (PdszDatabase.SwiAction swiAction in swiActions)
                                     {
                                         log.Info(swiAction.ToString(clientContext.Language));
-                                        optionsItems.Add(new OptionsItem(swiAction, clientContext));
+                                        optionsItems.Add(new OptionsItem(swiRegisterEnum, swiAction, clientContext));
                                     }
 
                                     optionsDict.Add(swiRegisterEnum, optionsItems);

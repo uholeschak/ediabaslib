@@ -47,6 +47,16 @@ namespace PsdzClient
             Immediatactions
         }
 
+        public enum SwiRegisterGroup
+        {
+            None,
+            Software,
+            HwInstall,
+            HwDeinstall,
+            Modification,
+            Other,
+        }
+
         public enum SwiActionSource
         {
             VarId,
@@ -1340,6 +1350,37 @@ namespace PsdzClient
                     throw new ArgumentException("Unknown SWI Register!");
             }
             return string.Format(CultureInfo.InvariantCulture, "REG|{0}", arg);
+        }
+
+        public static SwiRegisterGroup GetSwiRegisterGroup(SwiRegisterEnum swiRegisterEnum)
+        {
+            switch (swiRegisterEnum)
+            {
+                case SwiRegisterEnum.SoftwareUpdateExtended:
+                case SwiRegisterEnum.SoftwareUpdateAdditionalSoftware:
+                case SwiRegisterEnum.SoftwareUpdateComfort:
+                    return SwiRegisterGroup.Software;
+
+                case SwiRegisterEnum.EcuReplacementBeforeReplacement:
+                    return SwiRegisterGroup.HwDeinstall;
+
+                case SwiRegisterEnum.EcuReplacementAfterReplacement:
+                    return SwiRegisterGroup.HwInstall;
+
+                case SwiRegisterEnum.VehicleModification:
+                case SwiRegisterEnum.VehicleModificationRetrofitting:
+                case SwiRegisterEnum.VehicleModificationConversion:
+                case SwiRegisterEnum.VehicleModificationCodingConversion:
+                case SwiRegisterEnum.VehicleModificationBackConversion:
+                case SwiRegisterEnum.VehicleModificationCodingBackConversion:
+                    return SwiRegisterGroup.Modification;
+
+                case SwiRegisterEnum.Common:
+                case SwiRegisterEnum.Immediatactions:
+                    return SwiRegisterGroup.Other;
+            }
+
+            return SwiRegisterGroup.None;
         }
 
         public void ResetXepRules()
