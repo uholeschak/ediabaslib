@@ -220,6 +220,9 @@ BMW.Rheingold.Programming.ProgrammingEngine.SetFaTarget()
 ECU Filter:
 BMW.Rheingold.Programming.ProgrammingEngine.States.Handle()
 BMW.Rheingold.Programming.ProgrammingEngine.States.RetrieveSollverbauungState.GetSollverbauTalFilter()
+BMW.Rheingold.Programming.ProgrammingEngine.ProgrammingSession.Execute()
+BMW.Rheingold.Programming.ProgrammingEngine.ProgrammingSession.UpdateTalFilterForSelectedEcus()
+
 BMW.Rheingold.Module.ISTA.ABL_LIF_REMOVE_ELEMENTS_FROM_VO.Start() -> SetFaTarget()
 BMW.Rheingold.Module.ISTA.ABL_LIF_REMOVE_ELEMENTS_FROM_VO.run()
 BMW.Rheingold.Module.ISTA.ABL_LIF_ADD_ELEMENTS_TO_VO.run()
