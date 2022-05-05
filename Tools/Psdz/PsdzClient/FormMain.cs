@@ -370,6 +370,38 @@ namespace PsdzClient
 
             try
             {
+                bool replacement = false;
+                if (swiRegisterEnum.HasValue)
+                {
+                    switch (swiRegisterEnum.Value)
+                    {
+                        case PdszDatabase.SwiRegisterEnum.EcuReplacementBeforeReplacement:
+                        case PdszDatabase.SwiRegisterEnum.EcuReplacementAfterReplacement:
+                            replacement = true;
+                            break;
+                    }
+                }
+
+                if (_programmingJobs.SelectedOptions != null && _programmingJobs.SelectedOptions.Count > 0)
+                {
+                    if (replacement)
+                    {
+                        if (_programmingJobs.SelectedOptions[0].EcuInfo == null)
+                        {
+                            // type change
+                            _programmingJobs.SelectedOptions.Clear();
+                        }
+                    }
+                    else
+                    {
+                        if (_programmingJobs.SelectedOptions[0].SwiAction == null)
+                        {
+                            // type change
+                            _programmingJobs.SelectedOptions.Clear();
+                        }
+                    }
+                }
+
                 List<PdszDatabase.SwiAction> selectedSwiActions = GetSelectedSwiActions();
                 List<PdszDatabase.SwiAction> linkedSwiActions = _programmingJobs.ProgrammingService.PdszDatabase.ReadLinkedSwiActions(selectedSwiActions, _programmingJobs.PsdzContext.Vehicle, null);
                 ProgrammingJobs.OptionsItem topItemCurrent = null;
@@ -390,15 +422,6 @@ namespace PsdzClient
                         {
                             CheckState checkState = CheckState.Unchecked;
                             bool addItem = true;
-                            bool replacement = false;
-                            switch (swiRegisterEnum.Value)
-                            {
-                                case PdszDatabase.SwiRegisterEnum.EcuReplacementBeforeReplacement:
-                                case PdszDatabase.SwiRegisterEnum.EcuReplacementAfterReplacement:
-                                    replacement = true;
-                                    break;
-                            }
-
                             int selectIndex = _programmingJobs.SelectedOptions.IndexOf(optionsItem);
                             if (selectIndex >= 0)
                             {
