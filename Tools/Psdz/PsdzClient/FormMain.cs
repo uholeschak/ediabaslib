@@ -383,10 +383,10 @@ namespace PsdzClient
                 bool replacement = false;
                 if (swiRegisterEnum.HasValue)
                 {
-                    switch (swiRegisterEnum.Value)
+                    switch (PdszDatabase.GetSwiRegisterGroup(swiRegisterEnum.Value))
                     {
-                        case PdszDatabase.SwiRegisterEnum.EcuReplacementBeforeReplacement:
-                        case PdszDatabase.SwiRegisterEnum.EcuReplacementAfterReplacement:
+                        case PdszDatabase.SwiRegisterGroup.HwDeinstall:
+                        case PdszDatabase.SwiRegisterGroup.HwInstall:
                             replacement = true;
                             break;
                     }

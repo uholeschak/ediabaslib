@@ -466,16 +466,23 @@ namespace PsdzClient.Programming
             return BNType.UNKNOWN;
         }
 
-        public List<PdszDatabase.EcuInfo> GetIndividualDataEcus()
+        public List<PdszDatabase.EcuInfo> GetEcuList(bool individualOnly = false)
         {
-            List<PdszDatabase.EcuInfo> individualEcus = new List<PdszDatabase.EcuInfo>();
+            List<PdszDatabase.EcuInfo> ecuList = new List<PdszDatabase.EcuInfo>();
             try
             {
                 foreach (PdszDatabase.EcuInfo ecuInfo in DetectVehicle.EcuList)
                 {
-                    if (Vehicle.IsMotorcycle() || ecuInfo.HasIndividualData)
+                    if (individualOnly)
                     {
-                        individualEcus.Add(ecuInfo);
+                        if (Vehicle.IsMotorcycle() || ecuInfo.HasIndividualData)
+                        {
+                            ecuList.Add(ecuInfo);
+                        }
+                    }
+                    else
+                    {
+                        ecuList.Add(ecuInfo);
                     }
                 }
             }
@@ -484,7 +491,7 @@ namespace PsdzClient.Programming
                 return null;
             }
 
-            return individualEcus;
+            return ecuList;
         }
 
         private bool _disposed;

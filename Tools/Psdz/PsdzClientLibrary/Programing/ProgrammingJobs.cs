@@ -151,7 +151,8 @@ namespace PsdzClient.Programing
             new OptionType("Modification", PdszDatabase.SwiRegisterEnum.VehicleModificationConversion),
             new OptionType("Modification back", PdszDatabase.SwiRegisterEnum.VehicleModificationBackConversion),
             new OptionType("Retrofit", PdszDatabase.SwiRegisterEnum.VehicleModificationRetrofitting),
-            new OptionType("Before replace", PdszDatabase.SwiRegisterEnum.EcuReplacementBeforeReplacement),
+            new OptionType("Before replacement", PdszDatabase.SwiRegisterEnum.EcuReplacementBeforeReplacement),
+            new OptionType("After replacement", PdszDatabase.SwiRegisterEnum.EcuReplacementAfterReplacement),
         };
         public OptionType[] OptionTypes => _optionTypes;
 
@@ -1468,7 +1469,7 @@ namespace PsdzClient.Programing
                 cts?.Token.ThrowIfCancellationRequested();
 
                 ProgrammingService.PdszDatabase.LinkSvtEcus(PsdzContext.DetectVehicle.EcuList, psdzSvt);
-                List<PdszDatabase.EcuInfo> individualEcus = PsdzContext.GetIndividualDataEcus();
+                List<PdszDatabase.EcuInfo> individualEcus = PsdzContext.GetEcuList(true);
                 if (individualEcus != null)
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "Individual Ecus: {0}", individualEcus.Count());
@@ -1520,34 +1521,42 @@ namespace PsdzClient.Programing
                         {
                             optionType.ClientContext = clientContext;
                             PdszDatabase.SwiRegisterEnum swiRegisterEnum = optionType.SwiRegisterEnum;
-                            if (swiRegisterEnum == PdszDatabase.SwiRegisterEnum.EcuReplacementBeforeReplacement)
+                            switch (swiRegisterEnum)
                             {
-                                List<PdszDatabase.EcuInfo> ecuList = PsdzContext.GetIndividualDataEcus();
-                                if (ecuList != null)
+                                case PdszDatabase.SwiRegisterEnum.EcuReplacementBeforeReplacement:
+                                case PdszDatabase.SwiRegisterEnum.EcuReplacementAfterReplacement:
                                 {
-                                    List<OptionsItem> optionsItems = new List<OptionsItem>();
-                                    foreach (PdszDatabase.EcuInfo ecuInfo in ecuList)
+                                    bool individualOnly = swiRegisterEnum == PdszDatabase.SwiRegisterEnum.EcuReplacementBeforeReplacement;
+                                    List<PdszDatabase.EcuInfo> ecuList = PsdzContext.GetEcuList(individualOnly);
+                                    if (ecuList != null)
                                     {
-                                        optionsItems.Add(new OptionsItem(swiRegisterEnum, ecuInfo, clientContext));
+                                        List<OptionsItem> optionsItems = new List<OptionsItem>();
+                                        foreach (PdszDatabase.EcuInfo ecuInfo in ecuList)
+                                        {
+                                            optionsItems.Add(new OptionsItem(swiRegisterEnum, ecuInfo, clientContext));
+                                        }
+                                        optionsDict.Add(swiRegisterEnum, optionsItems);
                                     }
-                                    optionsDict.Add(swiRegisterEnum, optionsItems);
+                                    break;
                                 }
-                            }
-                            else
-                            {
-                                optionType.SwiRegister = ProgrammingService.PdszDatabase.FindNodeForRegister(swiRegisterEnum);
-                                List<PdszDatabase.SwiAction> swiActions = ProgrammingService.PdszDatabase.GetSwiActionsForRegister(swiRegisterEnum, true);
-                                if (swiActions != null)
-                                {
-                                    log.InfoFormat(CultureInfo.InvariantCulture, "Swi actions: {0}", optionType.Name ?? string.Empty);
-                                    List<OptionsItem> optionsItems = new List<OptionsItem>();
-                                    foreach (PdszDatabase.SwiAction swiAction in swiActions)
-                                    {
-                                        log.Info(swiAction.ToString(clientContext.Language));
-                                        optionsItems.Add(new OptionsItem(swiRegisterEnum, swiAction, clientContext));
-                                    }
 
-                                    optionsDict.Add(swiRegisterEnum, optionsItems);
+                                default:
+                                {
+                                    optionType.SwiRegister = ProgrammingService.PdszDatabase.FindNodeForRegister(swiRegisterEnum);
+                                    List<PdszDatabase.SwiAction> swiActions = ProgrammingService.PdszDatabase.GetSwiActionsForRegister(swiRegisterEnum, true);
+                                    if (swiActions != null)
+                                    {
+                                        log.InfoFormat(CultureInfo.InvariantCulture, "Swi actions: {0}", optionType.Name ?? string.Empty);
+                                        List<OptionsItem> optionsItems = new List<OptionsItem>();
+                                        foreach (PdszDatabase.SwiAction swiAction in swiActions)
+                                        {
+                                            log.Info(swiAction.ToString(clientContext.Language));
+                                            optionsItems.Add(new OptionsItem(swiRegisterEnum, swiAction, clientContext));
+                                        }
+
+                                        optionsDict.Add(swiRegisterEnum, optionsItems);
+                                    }
+                                    break;
                                 }
                             }
                         }
