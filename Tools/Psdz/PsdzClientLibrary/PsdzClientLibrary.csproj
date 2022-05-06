@@ -166,6 +166,7 @@
     <Compile Include="Core\VehicleCharacteristicVCIDeviceHelper.cs" />
     <Compile Include="Core\VehicleCharacteristicVehicleHelper.cs" />
     <Compile Include="DetectVehicle.cs" />
+    <Compile Include="DiagnosticsBusinessData.cs" />
     <Compile Include="PdszDatabase.cs" />
     <Compile Include="Programing\AsamJobInputDictionary.cs" />
     <Compile Include="Programing\BindingDetailsStatus.cs" />
@@ -564,6 +565,7 @@
     <Compile Include="SerializableDictionary.cs" />
     <Compile Include="Utility\FormatConverter.cs" />
     <Compile Include="Utility\SgbmIdParser.cs" />
+    <Compile Include="VehicleCharacteristicsUtility.cs" />
     <Compile Include="Vehicle\DealerSessionProperty.cs" />
     <Compile Include="Vehicle\IAif.cs" />
     <Compile Include="Vehicle\IBasicFeatures.cs" />
@@ -589,6 +591,7 @@
     <Compile Include="Vehicle\IVehicle.cs" />
     <Compile Include="Vehicle\IZfsResult.cs" />
     <Compile Include="Vehicle\LocalizedSAItem.cs" />
+    <Compile Include="Core\VehicleLogistics.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
