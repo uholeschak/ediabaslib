@@ -1519,8 +1519,10 @@ namespace PsdzClient.Programing
                         Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>> optionsDict = new Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>>();
                         foreach (OptionType optionType in _optionTypes)
                         {
-                            optionType.ClientContext = clientContext;
                             PdszDatabase.SwiRegisterEnum swiRegisterEnum = optionType.SwiRegisterEnum;
+                            optionType.ClientContext = clientContext;
+                            optionType.SwiRegister = ProgrammingService.PdszDatabase.FindNodeForRegister(swiRegisterEnum);
+
                             switch (swiRegisterEnum)
                             {
                                 case PdszDatabase.SwiRegisterEnum.EcuReplacementBeforeReplacement:
@@ -1542,7 +1544,6 @@ namespace PsdzClient.Programing
 
                                 default:
                                 {
-                                    optionType.SwiRegister = ProgrammingService.PdszDatabase.FindNodeForRegister(swiRegisterEnum);
                                     List<PdszDatabase.SwiAction> swiActions = ProgrammingService.PdszDatabase.GetSwiActionsForRegister(swiRegisterEnum, true);
                                     if (swiActions != null)
                                     {
