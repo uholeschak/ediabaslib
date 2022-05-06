@@ -52,17 +52,23 @@ namespace PsdzClient.Programing
         {
             public OptionsItem(PdszDatabase.SwiRegisterEnum swiRegisterEnum,PdszDatabase.SwiAction swiAction, ClientContext clientContext)
             {
+                Init();
                 SwiRegisterEnum = swiRegisterEnum;
                 SwiAction = swiAction;
                 ClientContext = clientContext;
-                Invalid = false;
             }
 
             public OptionsItem(PdszDatabase.SwiRegisterEnum swiRegisterEnum, PdszDatabase.EcuInfo ecuInfo, ClientContext clientContext)
             {
+                Init();
                 SwiRegisterEnum = swiRegisterEnum;
                 EcuInfo = ecuInfo;
                 ClientContext = clientContext;
+            }
+
+            private void Init()
+            {
+                Id = Guid.NewGuid().ToString();
                 Invalid = false;
             }
 
@@ -73,6 +79,8 @@ namespace PsdzClient.Programing
             public PdszDatabase.EcuInfo EcuInfo { get; private set; }
 
             public ClientContext ClientContext { get; private set; }
+
+            public string Id { get; private set; }
 
             public bool Invalid { get; set; }
 

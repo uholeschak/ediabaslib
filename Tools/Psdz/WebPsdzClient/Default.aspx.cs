@@ -333,10 +333,10 @@ namespace WebPsdzClient
                     return;
                 }
 
-                string swiActionId = listItem.Value;
-                if (string.IsNullOrEmpty(swiActionId))
+                string optionId = listItem.Value;
+                if (string.IsNullOrEmpty(optionId))
                 {
-                    log.ErrorFormat("CheckBoxListOptions_OnSelectedIndexChanged No action ID for: {0}", listItem.Text);
+                    log.ErrorFormat("CheckBoxListOptions_OnSelectedIndexChanged No ID for: {0}", listItem.Text);
                     return;
                 }
 
@@ -350,7 +350,7 @@ namespace WebPsdzClient
                     {
                         foreach (ProgrammingJobs.OptionsItem optionsItem in optionsItems)
                         {
-                            if (string.Compare(optionsItem.SwiAction.Id, swiActionId, StringComparison.OrdinalIgnoreCase) == 0)
+                            if (string.Compare(optionsItem.Id, optionId, StringComparison.OrdinalIgnoreCase) == 0)
                             {
                                 PdszDatabase.SwiRegisterEnum swiRegisterEnum = optionsItem.SwiRegisterEnum;
                                 if (programmingJobs.SelectedOptions.Count > 0)
@@ -728,7 +728,7 @@ namespace WebPsdzClient
 
                             if (addItem)
                             {
-                                ListItem listItem = new ListItem(optionsItem.ToString(), optionsItem.SwiAction.Id);
+                                ListItem listItem = new ListItem(optionsItem.ToString(), optionsItem.Id);
                                 listItem.Selected = itemSelected;
                                 listItem.Enabled = itemEnabled;
                                 CheckBoxListOptions.Items.Add(listItem);
