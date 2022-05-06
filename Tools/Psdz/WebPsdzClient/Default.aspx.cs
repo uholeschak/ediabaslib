@@ -352,6 +352,16 @@ namespace WebPsdzClient
                         {
                             if (string.Compare(optionsItem.SwiAction.Id, swiActionId, StringComparison.OrdinalIgnoreCase) == 0)
                             {
+                                PdszDatabase.SwiRegisterEnum swiRegisterEnum = optionsItem.SwiRegisterEnum;
+                                if (programmingJobs.SelectedOptions.Count > 0)
+                                {
+                                    PdszDatabase.SwiRegisterEnum swiRegisterEnumCurrent = programmingJobs.SelectedOptions[0].SwiRegisterEnum;
+                                    if (PdszDatabase.GetSwiRegisterGroup(swiRegisterEnum) != PdszDatabase.GetSwiRegisterGroup(swiRegisterEnumCurrent))
+                                    {
+                                        programmingJobs.SelectedOptions.Clear();
+                                    }
+                                }
+
                                 if (programmingJobs.SelectedOptions != null)
                                 {
                                     if (listItem.Selected)
