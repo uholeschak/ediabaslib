@@ -645,6 +645,18 @@ namespace WebPsdzClient
                     return;
                 }
 
+                bool replacement = false;
+                if (swiRegisterEnum.HasValue)
+                {
+                    switch (PdszDatabase.GetSwiRegisterGroup(swiRegisterEnum.Value))
+                    {
+                        case PdszDatabase.SwiRegisterGroup.HwDeinstall:
+                        case PdszDatabase.SwiRegisterGroup.HwInstall:
+                            replacement = true;
+                            break;
+                    }
+                }
+
                 Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = sessionContainer.OptionsDict;
                 List<PdszDatabase.SwiAction> selectedSwiActions = GetSelectedSwiActions(programmingJobs);
                 List<PdszDatabase.SwiAction> linkedSwiActions = programmingJobs.ProgrammingService.PdszDatabase.ReadLinkedSwiActions(selectedSwiActions, programmingJobs.PsdzContext.Vehicle, null);
@@ -661,28 +673,45 @@ namespace WebPsdzClient
                             int selectIndex = programmingJobs.SelectedOptions.IndexOf(optionsItem);
                             if (selectIndex >= 0)
                             {
-                                if (selectIndex == programmingJobs.SelectedOptions.Count - 1)
+                                if (replacement)
                                 {
                                     itemSelected = true;
                                 }
                                 else
                                 {
-                                    itemSelected = true;
-                                    itemEnabled = false;
+                                    if (selectIndex == programmingJobs.SelectedOptions.Count - 1)
+                                    {
+                                        itemSelected = true;
+                                    }
+                                    else
+                                    {
+                                        itemSelected = true;
+                                        itemEnabled = false;
+                                    }
                                 }
                             }
                             else
                             {
-                                if (linkedSwiActions != null &&
-                                    linkedSwiActions.Any(x => string.Compare(x.Id, optionsItem.SwiAction.Id, StringComparison.OrdinalIgnoreCase) == 0))
+                                if (replacement)
                                 {
-                                    addItem = false;
+                                    if (optionsItem.EcuInfo == null)
+                                    {
+                                        addItem = false;
+                                    }
                                 }
                                 else
                                 {
-                                    if (!programmingJobs.ProgrammingService.PdszDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, programmingJobs.PsdzContext.Vehicle, null))
+                                    if (linkedSwiActions != null &&
+                                        linkedSwiActions.Any(x => string.Compare(x.Id, optionsItem.SwiAction.Id, StringComparison.OrdinalIgnoreCase) == 0))
                                     {
                                         addItem = false;
+                                    }
+                                    else
+                                    {
+                                        if (!programmingJobs.ProgrammingService.PdszDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, programmingJobs.PsdzContext.Vehicle, null))
+                                        {
+                                            addItem = false;
+                                        }
                                     }
                                 }
                             }
