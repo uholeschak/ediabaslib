@@ -34,54 +34,54 @@ namespace PsdzClient.Core
 			this.ffmResolver = ffmResolver;
 		}
 #if false
-		public ISPELocator[] Children
-		{
-			get
-			{
-				if (this.children != null && this.children.Length != 0)
-				{
-					return this.children;
-				}
-				List<ISPELocator> list = new List<ISPELocator>();
-				ECU ecubyECU_GRUPPE = this.vecInfo.getECUbyECU_GRUPPE(this.ecuGroup.Name);
-				if (ecubyECU_GRUPPE != null && !string.IsNullOrEmpty(ecubyECU_GRUPPE.VARIANTE))
-				{
-					PdszDatabase.EcuVar ecuVariantByName = ClientContext.Database?.GetEcuVariantByName(ecubyECU_GRUPPE.VARIANTE);
-					if (ecuVariantByName != null)
-					{
-						list.Add(new EcuVariantLocator(ecuVariantByName));
-						return list.ToArray();
-					}
-				}
-				List<PdszDatabase.EcuVar> ecuVariantsByEcuGroupId = ClientContext.Database?.GetEcuVariantsByEcuGroupId(this.ecuGroup.Id, this.vecInfo, this.ffmResolver);
-				if (ecuVariantsByEcuGroupId != null)
-				{
-					using (IEnumerator<XEP_ECUVARIANTS> enumerator = ecuVariantsByEcuGroupId.GetEnumerator())
-					{
-						while (enumerator.MoveNext())
-						{
-							XEP_ECUVARIANTS xep_ECUVARIANTS = enumerator.Current;
-							if (this.vecInfo != null && this.vecInfo.ECU != null && this.vecInfo.ECU.Count > 0)
-							{
-								if (this.vecInfo.getECUbyECU_SGBD(xep_ECUVARIANTS.Name) != null)
-								{
-									list.Add(new EcuVariantLocator(xep_ECUVARIANTS));
-									return list.ToArray();
-								}
-							}
-							else if (DatabaseProviderFactory.Instance.EvaluateXepRulesById(xep_ECUVARIANTS.Id, this.vecInfo, this.ffmResolver, null))
-							{
-								list.Add(new EcuVariantLocator(xep_ECUVARIANTS));
-							}
-						}
-						goto IL_14B;
-					}
-				}
-				IL_14B:
-				this.children = list.ToArray();
-				return this.children;
-			}
-		}
+        public ISPELocator[] Children
+        {
+	        get
+	        {
+                PdszDatabase database = ClientContext.GetDatabase(this.vecInfo);
+                if (database == null)
+                {
+                    return null;
+                }
+
+                if (children != null && children.Length != 0)
+		        {
+			        return children;
+		        }
+		        List<ISPELocator> list = new List<ISPELocator>();
+		        ECU eCUbyECU_GRUPPE = vecInfo.getECUbyECU_GRUPPE(ecuGroup.Name);
+		        if (eCUbyECU_GRUPPE != null && !string.IsNullOrEmpty(eCUbyECU_GRUPPE.VARIANTE))
+		        {
+                    PdszDatabase.EcuVar ecuVariantByName = database.GetEcuVariantByName(eCUbyECU_GRUPPE.VARIANTE);
+                    if (ecuVariantByName != null)
+                    {
+                        list.Add(new EcuVariantLocator(ecuVariantByName));
+                        return list.ToArray();
+                    }
+		        }
+				ICollection<XEP_ECUVARIANTS> ecuVariantsByEcuGroupId = database.GetEcuVariantsByEcuGroupId(ecuGroup.Id, vecInfo, ffmResolver);
+		        if (ecuVariantsByEcuGroupId != null)
+		        {
+			        foreach (XEP_ECUVARIANTS item in ecuVariantsByEcuGroupId)
+			        {
+				        if (vecInfo != null && vecInfo.ECU != null && vecInfo.ECU.Count > 0)
+				        {
+					        if (vecInfo.getECUbyECU_SGBD(item.Name) != null)
+					        {
+						        list.Add(new EcuVariantLocator(item));
+						        return list.ToArray();
+					        }
+				        }
+				        else if (database.EvaluateXepRulesById(item.Id, vecInfo, ffmResolver))
+				        {
+					        list.Add(new EcuVariantLocator(item));
+				        }
+			        }
+		        }
+		        children = list.ToArray();
+		        return children;
+	        }
+        }
 #endif
 		public string Id
 		{
