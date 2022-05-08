@@ -439,6 +439,13 @@ namespace PsdzClient.Core
 			return true;
 		}
 
+        protected override bool ComputeKraftstoffartEinbaulage(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            vecInfo.KraftstoffartEinbaulage = this.characteristic.Name;
+            return true;
+        }
+
 		protected override bool ComputeEngine2(params object[] parameters)
 		{
 			this.GetIdentParameters(parameters);

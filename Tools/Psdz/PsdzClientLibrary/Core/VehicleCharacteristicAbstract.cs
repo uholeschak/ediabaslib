@@ -39,7 +39,7 @@ namespace PsdzClient.Core
             MOTEinbaulage = 99999999910L,
             MOTBezeichnung = 99999999918L,
             AELeistungsklasse = 99999999907L,
-            AEUeberarbeitung,
+            AEUeberarbeitung = 99999999908L,
             AEKurzbezeichnung = 99999999906L,
             BaustandsJahr = -100L,
             BaustandsMonat = -101L,
@@ -56,283 +56,202 @@ namespace PsdzClient.Core
             ElektrischeReichweite = 99999999854L,
             AEBezeichnung = 99999999848L,
             EngineLabel2 = 99999999701L,
-            Engine2,
-            HeatMOTPlatzhalter1,
-            HeatMOTPlatzhalter2,
-            HeatMOTFortlaufendeNum,
-            HeatMOTLeistungsklasse,
-            HeatMOTLebenszyklus,
-            HeatMOTKraftstoffart
+            Engine2 = 99999999702L,
+            HeatMOTPlatzhalter1 = 99999999703L,
+            HeatMOTPlatzhalter2 = 99999999704L,
+            HeatMOTFortlaufendeNum = 99999999705L,
+            HeatMOTLeistungsklasse = 99999999706L,
+            HeatMOTLebenszyklus = 99999999707L,
+            HeatMOTKraftstoffart = 99999999708L,
+            KraftstoffartEinbaulage = 53330059L
         }
 
-        protected bool ComputeCharacteristic(string vehicleCode, params object[] param)
+		protected bool ComputeCharacteristic(string vehicleCode, params object[] param)
 		{
-			VehicleCharacteristic vehicleCharacteristic;
-			if (Enum.TryParse<VehicleCharacteristic>(vehicleCode, out vehicleCharacteristic))
+			if (Enum.TryParse<VehicleCharacteristic>(vehicleCode, out var result))
 			{
-				if (vehicleCharacteristic <= VehicleCharacteristic.Tueren)
+				if (result <= VehicleCharacteristic.BrandName)
 				{
-					if (vehicleCharacteristic <= VehicleCharacteristic.Getriebe)
+					switch (result)
 					{
-						if (vehicleCharacteristic <= VehicleCharacteristic.Typ)
-						{
-							if (vehicleCharacteristic == VehicleCharacteristic.BaustandsMonat)
-							{
-								return this.ComputeBaustandsMonat(param);
-							}
-							if (vehicleCharacteristic == VehicleCharacteristic.BaustandsJahr)
-							{
-								return this.ComputeBaustandsJahr(param);
-							}
-							if (vehicleCharacteristic == VehicleCharacteristic.Typ)
-							{
-								return this.ComputeTyp(param);
-							}
-						}
-						else if (vehicleCharacteristic <= VehicleCharacteristic.Baureihe)
-						{
-							if (vehicleCharacteristic == VehicleCharacteristic.Prodart)
-							{
-								return this.ComputeProdart(param);
-							}
-							if (vehicleCharacteristic == VehicleCharacteristic.Baureihe)
-							{
-								return this.ComputeBaureihe(param);
-							}
-						}
-						else
-						{
-							if (vehicleCharacteristic == VehicleCharacteristic.Ereihe)
-							{
-								return this.ComputeEreihe(param);
-							}
-							if (vehicleCharacteristic == VehicleCharacteristic.Getriebe)
-							{
-								return this.ComputeGetriebe(param);
-							}
-						}
+						case VehicleCharacteristic.BaustandsJahr:
+							return ComputeBaustandsJahr(param);
+						case VehicleCharacteristic.BaustandsMonat:
+							return ComputeBaustandsMonat(param);
+						case VehicleCharacteristic.Prodart:
+							return ComputeProdart(param);
+						case VehicleCharacteristic.Typ:
+							return ComputeTyp(param);
+						case VehicleCharacteristic.Ereihe:
+							return ComputeEreihe(param);
+						case VehicleCharacteristic.Baureihe:
+							return ComputeBaureihe(param);
+						case VehicleCharacteristic.Leistungsklasse:
+							return ComputeLeistungsklasse(param);
+						case VehicleCharacteristic.Getriebe:
+							return ComputeGetriebe(param);
+						case VehicleCharacteristic.Motor:
+							return ComputeMotor(param);
+						case VehicleCharacteristic.Lenkung:
+							return ComputeLenkung(param);
+						case VehicleCharacteristic.Kraftstoffart:
+							return ComputeKraftstoffart(param);
+						case VehicleCharacteristic.Hubraum:
+							return ComputeHubraum(param);
+						case VehicleCharacteristic.Antrieb:
+							return ComputeAntrieb(param);
+						case VehicleCharacteristic.VerkaufsBezeichnung:
+							return ComputeVerkaufsBezeichnung(param);
+						case VehicleCharacteristic.BrandName:
+							return ComputeBrandName(param);
+						case VehicleCharacteristic.Tueren:
+							return ComputeTueren(param);
 					}
-					else if (vehicleCharacteristic <= VehicleCharacteristic.Hubraum)
+				}
+				else if (result <= VehicleCharacteristic.Hybridkennzeichen)
+				{
+					switch (result)
 					{
-						if (vehicleCharacteristic <= VehicleCharacteristic.Lenkung)
-						{
-							if (vehicleCharacteristic == VehicleCharacteristic.Leistungsklasse)
-							{
-								return this.ComputeLeistungsklasse(param);
-							}
-							if (vehicleCharacteristic == VehicleCharacteristic.Lenkung)
-							{
-								return this.ComputeLenkung(param);
-							}
-						}
-						else
-						{
-							if (vehicleCharacteristic == VehicleCharacteristic.Motor)
-							{
-								return this.ComputeMotor(param);
-							}
-							if (vehicleCharacteristic == VehicleCharacteristic.Hubraum)
-							{
-								return this.ComputeHubraum(param);
-							}
-						}
+						case VehicleCharacteristic.Ueberarbeitung:
+							return ComputeUeberarbeitung(param);
+						case VehicleCharacteristic.Sicherheitsrelevant:
+							return ComputeSicherheitsrelevant(param);
+						case VehicleCharacteristic.Land:
+							return ComputeLand(param);
+						case VehicleCharacteristic.Karosserie:
+							return ComputeKarosserie(param);
+						case VehicleCharacteristic.Produktlinie:
+							return ComputeProduktlinie(param);
+						case VehicleCharacteristic.KraftstoffartEinbaulage:
+							return ComputeKraftstoffartEinbaulage(param);
+						case VehicleCharacteristic.Hybridkennzeichen:
+							return ComputeHybridkennzeichen(param);
+						case VehicleCharacteristic.Abgas:
+							return ComputeAbgas(param);
 					}
-					else if (vehicleCharacteristic <= VehicleCharacteristic.VerkaufsBezeichnung)
+				}
+				else if (result <= VehicleCharacteristic.ElektrischeReichweite)
+				{
+					if (result <= VehicleCharacteristic.Drehmoment)
 					{
-						if (vehicleCharacteristic == VehicleCharacteristic.Kraftstoffart)
+						switch (result)
 						{
-							return this.ComputeKraftstoffart(param);
-						}
-						if (vehicleCharacteristic == VehicleCharacteristic.VerkaufsBezeichnung)
-						{
-							return this.ComputeVerkaufsBezeichnung(param);
+							case VehicleCharacteristic.Drehmoment:
+								return ComputeDrehmoment(param);
+							case VehicleCharacteristic.Motorarbeitsverfahren:
+								return ComputeMotorarbeitsverfahren(param);
 						}
 					}
 					else
 					{
-						if (vehicleCharacteristic == VehicleCharacteristic.Antrieb)
+						VehicleCharacteristic num = result - 99999999701L;
+						if ((ulong)num <= 7uL)
 						{
-							return this.ComputeAntrieb(param);
-						}
-						if (vehicleCharacteristic == VehicleCharacteristic.Tueren)
-						{
-							return this.ComputeTueren(param);
-						}
-					}
-				}
-				else if (vehicleCharacteristic <= VehicleCharacteristic.Hybridkennzeichen)
-				{
-					if (vehicleCharacteristic <= VehicleCharacteristic.Karosserie)
-					{
-						if (vehicleCharacteristic <= VehicleCharacteristic.Sicherheitsrelevant)
-						{
-							if (vehicleCharacteristic == VehicleCharacteristic.BrandName)
+							switch (num)
 							{
-								return this.ComputeBrandName(param);
-							}
-							if (vehicleCharacteristic == VehicleCharacteristic.Sicherheitsrelevant)
-							{
-								return this.ComputeSicherheitsrelevant(param);
+								case (VehicleCharacteristic)0L:
+									return ComputeEngineLabel2(param);
+								case (VehicleCharacteristic)1L:
+									return ComputeEngine2(param);
+								case (VehicleCharacteristic)2L:
+									return ComputeHeatMOTPlatzhalter1(param);
+								case (VehicleCharacteristic)3L:
+									return ComputeHeatMOTPlatzhalter2(param);
+								case (VehicleCharacteristic)4L:
+									return ComputeHeatMOTFortlaufendeNum(param);
+								case (VehicleCharacteristic)5L:
+									return ComputeHeatMOTLeistungsklasse(param);
+								case (VehicleCharacteristic)6L:
+									return ComputeHeatMOTLebenszyklus(param);
+								case (VehicleCharacteristic)7L:
+									return ComputeHeatMOTKraftstoffart(param);
 							}
 						}
-						else
+						VehicleCharacteristic num2 = result - 99999999848L;
+						if ((ulong)num2 <= 6uL)
 						{
-							if (vehicleCharacteristic == VehicleCharacteristic.Ueberarbeitung)
+							switch (num2)
 							{
-								return this.ComputeUeberarbeitung(param);
-							}
-							if (vehicleCharacteristic == VehicleCharacteristic.Karosserie)
-							{
-								return this.ComputeKarosserie(param);
-							}
-						}
-					}
-					else if (vehicleCharacteristic <= VehicleCharacteristic.Produktlinie)
-					{
-						if (vehicleCharacteristic == VehicleCharacteristic.Land)
-						{
-							return this.ComputeLand(param);
-						}
-						if (vehicleCharacteristic == VehicleCharacteristic.Produktlinie)
-						{
-							return this.ComputeProduktlinie(param);
-						}
-					}
-					else
-					{
-						if (vehicleCharacteristic == VehicleCharacteristic.Abgas)
-						{
-							return this.ComputeAbgas(param);
-						}
-						if (vehicleCharacteristic == VehicleCharacteristic.Hybridkennzeichen)
-						{
-							return this.ComputeHybridkennzeichen(param);
-						}
-					}
-				}
-				else if (vehicleCharacteristic <= VehicleCharacteristic.ElektrischeReichweite)
-				{
-					if (vehicleCharacteristic <= VehicleCharacteristic.Drehmoment)
-					{
-						if (vehicleCharacteristic == VehicleCharacteristic.Motorarbeitsverfahren)
-						{
-							return this.ComputeMotorarbeitsverfahren(param);
-						}
-						if (vehicleCharacteristic == VehicleCharacteristic.Drehmoment)
-						{
-							return this.ComputeDrehmoment(param);
-						}
-					}
-					else
-					{
-						long num = vehicleCharacteristic - VehicleCharacteristic.EngineLabel2;
-						if (num <= 7L)
-						{
-							switch ((uint)num)
-							{
-								case 0U:
-									return this.ComputeEngineLabel2(param);
-								case 1U:
-									return this.ComputeEngine2(param);
-								case 2U:
-									return this.ComputeHeatMOTPlatzhalter1(param);
-								case 3U:
-									return this.ComputeHeatMOTPlatzhalter2(param);
-								case 4U:
-									return this.ComputeHeatMOTFortlaufendeNum(param);
-								case 5U:
-									return this.ComputeHeatMOTLeistungsklasse(param);
-								case 6U:
-									return this.ComputeHeatMOTLebenszyklus(param);
-								case 7U:
-									return this.ComputeHeatMOTKraftstoffart(param);
-							}
-						}
-						long num2 = vehicleCharacteristic - VehicleCharacteristic.AEBezeichnung;
-						if (num2 <= 6L)
-						{
-							switch ((uint)num2)
-							{
-								case 0U:
-									return this.ComputeAEBezeichnung(param);
-								case 2U:
-									return this.ComputeBaseVersion(param);
-								case 3U:
-									return this.ComputeCountryOfAssembly(param);
-								case 6U:
-									return this.ComputeElektrischeReichweite(param);
+								case (VehicleCharacteristic)0L:
+									return ComputeAEBezeichnung(param);
+								case (VehicleCharacteristic)2L:
+									return ComputeBaseVersion(param);
+								case (VehicleCharacteristic)3L:
+									return ComputeCountryOfAssembly(param);
+								case (VehicleCharacteristic)6L:
+									return ComputeElektrischeReichweite(param);
 							}
 						}
 					}
 				}
-				else if (vehicleCharacteristic <= VehicleCharacteristic.MOTEinbaulage)
+				else if (result <= VehicleCharacteristic.MOTEinbaulage)
 				{
-					long num3 = vehicleCharacteristic - VehicleCharacteristic.EMOTEinbaulage;
-					if (num3 <= 14L)
+					VehicleCharacteristic num3 = result - 99999999866L;
+					if ((ulong)num3 <= 14uL)
 					{
-						switch ((uint)num3)
+						switch (num3)
 						{
-							case 0U:
-								return this.ComputeEMOTEinbaulage(param);
-							case 1U:
-							case 3U:
-							case 5U:
-							case 7U:
-							case 9U:
-							case 11U:
-							case 13U:
-								goto IL_4FC;
-							case 2U:
-								return this.ComputeEMOTKraftstoffart(param);
-							case 4U:
-								return this.ComputeEMOTBezeichnung(param);
-							case 6U:
-								return this.ComputeEMOTUeberarbeitung(param);
-							case 8U:
-								return this.ComputeEMOTLeistungsklasse(param);
-							case 10U:
-								return this.ComputeEMOTDrehmoment(param);
-							case 12U:
-								return this.ComputeEMOTArbeitsverfahren(param);
-							case 14U:
-								return this.ComputeEMOTBaureihe(param);
+							case (VehicleCharacteristic)0L:
+								return ComputeEMOTEinbaulage(param);
+							case (VehicleCharacteristic)2L:
+								return ComputeEMOTKraftstoffart(param);
+							case (VehicleCharacteristic)4L:
+								return ComputeEMOTBezeichnung(param);
+							case (VehicleCharacteristic)6L:
+								return ComputeEMOTUeberarbeitung(param);
+							case (VehicleCharacteristic)8L:
+								return ComputeEMOTLeistungsklasse(param);
+							case (VehicleCharacteristic)10L:
+								return ComputeEMOTDrehmoment(param);
+							case (VehicleCharacteristic)12L:
+								return ComputeEMOTArbeitsverfahren(param);
+							case (VehicleCharacteristic)14L:
+								return ComputeEMOTBaureihe(param);
+							case (VehicleCharacteristic)1L:
+							case (VehicleCharacteristic)3L:
+							case (VehicleCharacteristic)5L:
+							case (VehicleCharacteristic)7L:
+							case (VehicleCharacteristic)9L:
+							case (VehicleCharacteristic)11L:
+							case (VehicleCharacteristic)13L:
+								goto IL_0521;
 						}
 					}
-					long num4 = vehicleCharacteristic - VehicleCharacteristic.BasicType;
-					if (num4 <= 5L)
+					VehicleCharacteristic num4 = result - 99999999905L;
+					if ((ulong)num4 <= 5uL)
 					{
-						switch ((uint)num4)
+						switch (num4)
 						{
-							case 0U:
-								return this.ComputeBasicType(param);
-							case 1U:
-								return this.ComputeAEKurzbezeichnung(param);
-							case 2U:
-								return this.ComputeAELeistungsklasse(param);
-							case 3U:
-								return this.ComputeAEUeberarbeitung(param);
-							case 4U:
-								return this.ComputeMOTKraftstoffart(param);
-							case 5U:
-								return this.ComputeMOTEinbaulage(param);
+							case (VehicleCharacteristic)0L:
+								return ComputeBasicType(param);
+							case (VehicleCharacteristic)1L:
+								return ComputeAEKurzbezeichnung(param);
+							case (VehicleCharacteristic)2L:
+								return ComputeAELeistungsklasse(param);
+							case (VehicleCharacteristic)3L:
+								return ComputeAEUeberarbeitung(param);
+							case (VehicleCharacteristic)4L:
+								return ComputeMOTKraftstoffart(param);
+							case (VehicleCharacteristic)5L:
+								return ComputeMOTEinbaulage(param);
 						}
 					}
 				}
 				else
 				{
-					if (vehicleCharacteristic == VehicleCharacteristic.MOTBezeichnung)
+					switch (result)
 					{
-						return this.ComputeMOTBezeichnung(param);
-					}
-					if (vehicleCharacteristic == VehicleCharacteristic.Baureihenverbund)
-					{
-						return this.ComputeBaureihenverbund(param);
+						case VehicleCharacteristic.Baureihenverbund:
+							return ComputeBaureihenverbund(param);
+						case VehicleCharacteristic.MOTBezeichnung:
+							return ComputeMOTBezeichnung(param);
 					}
 				}
-				IL_4FC:
-				return this.ComputeDefault(param);
+				goto IL_0521;
 			}
 			return false;
+			IL_0521:
+			return ComputeDefault(param);
 		}
 
 		protected abstract bool ComputeMotor(params object[] parameters);
@@ -440,6 +359,8 @@ namespace PsdzClient.Core
 		protected abstract bool ComputeHeatMOTLebenszyklus(params object[] parameters);
 
 		protected abstract bool ComputeHeatMOTKraftstoffart(params object[] parameters);
+
+		protected abstract bool ComputeKraftstoffartEinbaulage(params object[] parameters);
 
 		protected abstract bool ComputeDefault(params object[] parameters);
 	}

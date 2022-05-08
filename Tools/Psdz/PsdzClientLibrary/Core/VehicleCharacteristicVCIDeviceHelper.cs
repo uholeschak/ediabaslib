@@ -56,6 +56,11 @@ namespace PsdzClient.Core
 			return true;
 		}
 
+		protected override bool ComputeKraftstoffartEinbaulage(params object[] parameters)
+		{
+			return true;
+		}
+
 		protected override bool ComputeAntrieb(params object[] parameters)
 		{
 			return true;

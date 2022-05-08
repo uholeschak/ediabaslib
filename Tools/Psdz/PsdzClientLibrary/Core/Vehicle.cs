@@ -128,6 +128,22 @@ namespace PsdzClient.Core
 			}
 		}
 
+        public string KraftstoffartEinbaulage
+        {
+            get
+            {
+                return kraftstoffartEinbaulage;
+            }
+            set
+            {
+                if (kraftstoffartEinbaulage != value)
+                {
+                    kraftstoffartEinbaulage = value;
+                    OnPropertyChanged("KraftstoffartEinbaulage");
+                }
+            }
+        }
+
 		public ObservableCollection<string> DiagCodesProgramming
 		{
 			get
@@ -2849,6 +2865,8 @@ namespace PsdzClient.Core
 		private string hmiVersion;
 
 		private bool sp2021Enabled;
+
+        private string kraftstoffartEinbaulage;
 
 		private static readonly DateTime lciRRS2 = DateTime.Parse("2012-05-31", CultureInfo.InvariantCulture);
     }

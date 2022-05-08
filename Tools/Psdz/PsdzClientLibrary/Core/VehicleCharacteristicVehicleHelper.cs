@@ -210,6 +210,12 @@ namespace PsdzClient.Core
 			return this.database.LookupVehicleCharIdByName(this.vehicle.EMotor.EMOTUeberarbeitung, new decimal?(99999999871L)) == this.datavalueId;
 		}
 
+        protected override bool ComputeKraftstoffartEinbaulage(params object[] parameters)
+        {
+            characteristicValue = vehicle.KraftstoffartEinbaulage;
+            return this.database.LookupVehicleCharIdByName(vehicle.KraftstoffartEinbaulage, 53330059) == (decimal)datavalueId;
+        }
+
 		protected override bool ComputeEngine2(params object[] parameters)
 		{
 			return this.HandleHeatMotorCharacteristic((HeatMotor hm) => hm.HeatMOTBaureihe, this.datavalueId, this.internalResult, out this.characteristicValue, this.characteristicRoots?.NodeClass, 99999999712m);
