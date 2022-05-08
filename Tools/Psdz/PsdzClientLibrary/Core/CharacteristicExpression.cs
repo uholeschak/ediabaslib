@@ -135,113 +135,83 @@ namespace PsdzClient.Core
 
 		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, ValidationRuleInternalResults internalResult)
 		{
-			string text = null;
+			string value = null;
 			bool flag;
-
-            this.vecInfo = vec;
-			if (vec != null && vec.VCI != null)
+			if (vec != null && vec.VCI != null && vec.VCI.VCIType != VCIDeviceType.UNKNOWN)
 			{
-				if (vec.VCI.VCIType != VCIDeviceType.UNKNOWN)
-				{
-					flag = vec.getISTACharacteristics(this.dataclassId, out text, this.datavalueId, internalResult);
-					return flag;
-				}
+				flag = vec.getISTACharacteristics(dataclassId, out value, datavalueId, internalResult);
 			}
-
-			if (this.CharacteristicRoot.Equals("Marke"))
+			else if (CharacteristicRoot.Equals("Marke"))
 			{
-				string text2;
+				string text;
 				switch (ClientContext.GetBrand(vec))
 				{
 					case EnumBrand.BMWBMWiMINI:
-						text2 = "BMW/BMW I/MINI";
-						goto IL_133;
+						text = "BMW/BMW I/MINI";
+						break;
 					case EnumBrand.BMWBMWi:
-						text2 = "BMW/BMW I";
-						goto IL_133;
+						text = "BMW/BMW I";
+						break;
 					case EnumBrand.BMWiMINI:
-						text2 = "BMW I/MINI";
-						goto IL_133;
+						text = "BMW I/MINI";
+						break;
 					case EnumBrand.BMWMINI:
-						text2 = "BMW/MINI";
-						goto IL_133;
+						text = "BMW/MINI";
+						break;
 					case EnumBrand.BMWPKW:
-						text2 = "BMW PKW";
-						goto IL_133;
+						text = "BMW PKW";
+						break;
 					case EnumBrand.Mini:
-						text2 = "MINI PKW";
-						goto IL_133;
+						text = "MINI PKW";
+						break;
 					case EnumBrand.RollsRoyce:
-						text2 = "ROLLS-ROYCE PKW";
-						goto IL_133;
+						text = "ROLLS-ROYCE PKW";
+						break;
 					case EnumBrand.BMWMotorrad:
-						text2 = "BMW MOTORRAD";
-						goto IL_133;
+						text = "BMW MOTORRAD";
+						break;
 					case EnumBrand.WIESMANN:
-						text2 = "WIESMANN";
-						goto IL_133;
+						text = "WIESMANN";
+						break;
 					case EnumBrand.MORGAN:
-						text2 = "MORGAN";
-						goto IL_133;
+						text = "MORGAN";
+						break;
 					case EnumBrand.RODING:
-						text2 = "RODING";
-						goto IL_133;
+						text = "RODING";
+						break;
 					case EnumBrand.PGO:
-						text2 = "PGO";
-						goto IL_133;
+						text = "PGO";
+						break;
 					case EnumBrand.GIBBS:
-						text2 = "GIBBS";
-						goto IL_133;
+						text = "GIBBS";
+						break;
 					case EnumBrand.BMWi:
-						text2 = "BMW I";
-						goto IL_133;
+						text = "BMW I";
+						break;
 					case EnumBrand.TOYOTA:
-						text2 = "TOYOTA";
-						goto IL_133;
+						text = "TOYOTA";
+						break;
+					default:
+						text = "-";
+						break;
 					case EnumBrand.ZINORO:
-						text2 = "ZINORO";
-						goto IL_133;
+						text = "ZINORO";
+						break;
 				}
-				text2 = "-";
-				IL_133:
-				text = text2;
-				if (string.Compare(text2, this.CharacteristicValue, StringComparison.OrdinalIgnoreCase) == 0)
-				{
-					flag = true;
-				}
-				else if ((this.CharacteristicValue == "MINI PKW" || this.CharacteristicValue == "BMW PKW") && string.Compare(text2, "BMW/MINI", StringComparison.OrdinalIgnoreCase) == 0)
-				{
-					flag = true;
-				}
-				else if (this.CharacteristicValue.Equals("BMW I", StringComparison.OrdinalIgnoreCase) && string.Compare(text2, "BMW/MINI", StringComparison.OrdinalIgnoreCase) == 0 /*&& Dealer.Instance != null && Dealer.Instance.HasLicenseForBrand(new BrandName?(BrandName.BMWi))*/)
-				{
-					flag = true;
-				}
-				else
-				{
-					if ((this.CharacteristicValue == "MINI PKW" || this.CharacteristicValue == "BMW PKW" || this.CharacteristicValue == "BMW I") && string.Compare(text2, "BMW/BMW I/MINI", StringComparison.OrdinalIgnoreCase) == 0)
-					{
-						return true;
-					}
-					if ((this.CharacteristicValue == "BMW PKW" || this.CharacteristicValue == "BMW I") && string.Compare(text2, "BMW/BMW I", StringComparison.OrdinalIgnoreCase) == 0)
-					{
-						return true;
-					}
-					if ((this.CharacteristicValue == "BMW I" || this.CharacteristicValue == "MINI PKW") && string.Compare(text2, "BMW I/MINI", StringComparison.OrdinalIgnoreCase) == 0)
-					{
-						return true;
-					}
-					flag = false;
-				}
+				value = text;
+				flag = string.Compare(text, CharacteristicValue, StringComparison.OrdinalIgnoreCase) == 0 || ((CharacteristicValue == "MINI PKW" || CharacteristicValue == "BMW PKW") && string.Compare(text, "BMW/MINI", StringComparison.OrdinalIgnoreCase) == 0) || (CharacteristicValue.Equals("BMW I", StringComparison.OrdinalIgnoreCase) && string.Compare(text, "BMW/MINI", StringComparison.OrdinalIgnoreCase) == 0) || ((CharacteristicValue == "MINI PKW" || CharacteristicValue == "BMW PKW" || CharacteristicValue.Equals("BMW I", StringComparison.OrdinalIgnoreCase)) && string.Compare(text, "BMW/BMW I/MINI", StringComparison.OrdinalIgnoreCase) == 0) || ((CharacteristicValue == "BMW PKW" || CharacteristicValue.Equals("BMW I", StringComparison.OrdinalIgnoreCase)) && string.Compare(text, "BMW/BMW I", StringComparison.OrdinalIgnoreCase) == 0) || (((CharacteristicValue.Equals("BMW I", StringComparison.OrdinalIgnoreCase) || CharacteristicValue == "MINI PKW") && string.Compare(text, "BMW I/MINI", StringComparison.OrdinalIgnoreCase) == 0) ? true : false);
 			}
-			else if (!"Sicherheitsrelevant".Equals(this.CharacteristicRoot, StringComparison.OrdinalIgnoreCase) && !"Sicherheitsfahrzeug".Equals(this.CharacteristicRoot, StringComparison.OrdinalIgnoreCase))
+			else if (!"Sicherheitsrelevant".Equals(CharacteristicRoot, StringComparison.OrdinalIgnoreCase) && !"Sicherheitsfahrzeug".Equals(CharacteristicRoot, StringComparison.OrdinalIgnoreCase))
 			{
+				//Log.Warning("CharacteristicExpression.Evaluate()", "Failed to evaluate {0} without vehcile context; will answer true", CharacteristicRoot);
 				flag = true;
 			}
 			else
 			{
+				//Log.Info("CharacteristicExpression.Evaluate()", "Failed to evaluate {0} without vehcile context; will answer false for 'Sicherheitsrelevant'", CharacteristicRoot);
 				flag = false;
 			}
+			//Log.Debug("CharacteristicExpression.Evaluate()", "rule: {0}={1} result: {2} (session context: {3}) [original rule: {4}={5}]", CharacteristicRoot, CharacteristicValue, flag, value, dataclassId, datavalueId);
 			return flag;
 		}
 
