@@ -237,35 +237,27 @@ namespace PsdzClient.Core
 #if false
         public DTC GetDTCById(decimal id)
 		{
-			if (this.FEHLER != null)
-			{
-				foreach (DTC dtc in this.FEHLER)
-				{
-					if (id.Equals(dtc.Id))
-					{
-						return dtc;
-					}
-				}
-			}
-			if (this.INFO != null)
-			{
-				using (IEnumerator<DTC> enumerator = this.INFO.GetEnumerator())
-				{
-					while (enumerator.MoveNext())
-					{
-						DTC dtc2 = enumerator.Current;
-						if (id.Equals(dtc2.Id))
-						{
-							return dtc2;
-						}
-					}
-					goto IL_96;
-				}
-				DTC result;
-				return result;
-			}
-			IL_96:
-			return null;
+            if (FEHLER != null)
+            {
+                foreach (DTC item in FEHLER)
+                {
+                    if (id.Equals(item.Id))
+                    {
+                        return item;
+                    }
+                }
+            }
+            if (INFO != null)
+            {
+                foreach (DTC item2 in INFO)
+                {
+                    if (id.Equals(item2.Id))
+                    {
+                        return item2;
+                    }
+                }
+            }
+            return null;
 		}
 #endif
 		IDtc IEcu.GetDTCById(decimal id)
