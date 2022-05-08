@@ -55,154 +55,101 @@ namespace PsdzClient.Utility
 
 		public static string Ascii2UTF8(object textObj)
 		{
-			string result;
-			try
-			{
-				if (textObj == null)
-				{
-					result = null;
-				}
-				else
-				{
-					string text;
-					if (textObj is string)
-					{
-						text = (string)textObj;
-					}
-					else
-					{
-						text = textObj.ToString();
-					}
-					if (string.IsNullOrEmpty(text))
-					{
-						result = string.Empty;
-					}
-					else
-					{
-						text = text.ToString(CultureInfo.InvariantCulture);
-						char[] array = text.ToCharArray();
-						for (int i = 0; i < array.Length; i++)
-						{
-							if (array[i] > '\u001f' && array[i] != '\u007f')
-							{
-								char c = array[i];
-								if (c <= 'ￜ')
-								{
-									if (c <= 'ﾺ')
-									{
-										if (c == 'ﾧ')
-										{
-											array[i] = '§';
-											goto IL_1F2;
-										}
-										if (c == 'ﾰ')
-										{
-											array[i] = '°';
-											goto IL_1F2;
-										}
-										if (c == 'ﾺ')
-										{
-											array[i] = '°';
-											goto IL_1F2;
-										}
-									}
-									else
-									{
-										if (c == 'ￔ')
-										{
-											array[i] = 'Ä';
-											goto IL_1F2;
-										}
-										if (c == 'ￖ')
-										{
-											array[i] = 'Ö';
-											goto IL_1F2;
-										}
-										if (c == 'ￜ')
-										{
-											array[i] = 'Ü';
-											goto IL_1F2;
-										}
-									}
-								}
-								else if (c <= '￭')
-								{
-									if (c == '￟')
-									{
-										array[i] = 'ß';
-										goto IL_1F2;
-									}
-									if (c == '￤')
-									{
-										array[i] = 'ä';
-										goto IL_1F2;
-									}
-									if (c == '￭')
-									{
-										array[i] = 'í';
-										goto IL_1F2;
-									}
-								}
-								else
-								{
-									if (c == '￶')
-									{
-										array[i] = 'ö';
-										goto IL_1F2;
-									}
-									if (c == '￼')
-									{
-										array[i] = 'ü';
-										goto IL_1F2;
-									}
-									if (c == '￿')
-									{
-										array[i] = ' ';
-										goto IL_1F2;
-									}
-								}
-								if (array[i] >= '＀')
-								{
-									byte[] bytes = new UnicodeEncoding().GetBytes(array, i, 1);
-									byte b = (byte)array[i];
-									array[i] = (char)b;
-								}
-							}
-							else
-							{
-								array[i] = '*';
-							}
-							IL_1F2:;
-						}
-						result = new string(array);
-					}
-				}
-			}
-			catch (Exception)
-			{
-				result = null;
-			}
-			return result;
+            try
+            {
+                if (textObj == null)
+                {
+                    return null;
+                }
+                string text = ((!(textObj is string)) ? textObj.ToString() : ((string)textObj));
+                if (string.IsNullOrEmpty(text))
+                {
+                    return string.Empty;
+                }
+                text = text.ToString(CultureInfo.InvariantCulture);
+                char[] array = text.ToCharArray();
+                for (int i = 0; i < array.Length; i++)
+                {
+                    if (array[i] > '\u001f' && array[i] != '\u007f')
+                    {
+                        switch (array[i])
+                        {
+                            case 'ﾺ':
+                                array[i] = '°';
+                                continue;
+                            case 'ﾰ':
+                                array[i] = '°';
+                                continue;
+                            case 'ﾧ':
+                                array[i] = '§';
+                                continue;
+                            case 'ￜ':
+                                array[i] = 'Ü';
+                                continue;
+                            case 'ￖ':
+                                array[i] = 'Ö';
+                                continue;
+                            case 'ￔ':
+                                array[i] = 'Ä';
+                                continue;
+                            case '￭':
+                                array[i] = 'í';
+                                continue;
+                            case '￤':
+                                array[i] = 'ä';
+                                continue;
+                            case '\uffdf':
+                                array[i] = 'ß';
+                                continue;
+                            case '\uffff':
+                                array[i] = ' ';
+                                continue;
+                            case '￼':
+                                array[i] = 'ü';
+                                continue;
+                            case '\ufff6':
+                                array[i] = 'ö';
+                                continue;
+                        }
+                        if (array[i] >= '\uff00')
+                        {
+                            byte[] bytes = new UnicodeEncoding().GetBytes(array, i, 1);
+                            byte b = (byte)array[i];
+                            array[i] = (char)b;
+                        }
+                    }
+                    else
+                    {
+                        array[i] = '*';
+                    }
+                }
+                return new string(array);
+            }
+            catch (Exception)
+            {
+                //Log.Warning("FormatConverter.Ascii2UTF8()", "failed with exception: {0}", ex.ToString());
+                return null;
+            }
 		}
 
-		public static string ByteArray2String(byte[] param, uint paramlen)
-		{
-			try
-			{
-				StringBuilder stringBuilder = new StringBuilder();
-				int num = 0;
-				while ((long)num < (long)((ulong)paramlen))
-				{
-					stringBuilder.Append(string.Format(CultureInfo.InvariantCulture, "{0:X2}", param[num]));
-					num++;
-				}
-				return stringBuilder.ToString();
-			}
-			catch (Exception)
-			{
-			}
-			return string.Empty;
-		}
+        public static string ByteArray2String(byte[] param, uint paramlen)
+        {
+            try
+            {
+                StringBuilder stringBuilder = new StringBuilder();
+                int num = 0;
+                while ((long)num < (long)((ulong)paramlen))
+                {
+                    stringBuilder.Append(string.Format(CultureInfo.InvariantCulture, "{0:X2}", param[num]));
+                    num++;
+                }
+                return stringBuilder.ToString();
+            }
+            catch (Exception)
+            {
+            }
+            return string.Empty;
+        }
 
 		public static string ByteArray2StringFASTA(byte[] param, uint paramlen)
 		{
