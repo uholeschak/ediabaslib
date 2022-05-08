@@ -85,53 +85,54 @@ namespace PsdzClient.Core
 		{
 			get
 			{
-				if (!string.IsNullOrEmpty(this.VIN) && !this.VIN.Contains("XXXX") && this.VIN.Length == 17)
-				{
-					string text = this.VIN.Substring(3, 3);
-					switch (this.VIN[6])
-					{
-						case 'A':
-							text += "1";
-							goto IL_141;
-						case 'B':
-							text += "2";
-							goto IL_141;
-						case 'C':
-							text += "3";
-							goto IL_141;
-						case 'D':
-							text += "4";
-							goto IL_141;
-						case 'E':
-							text += "5";
-							goto IL_141;
-						case 'F':
-							text += "6";
-							goto IL_141;
-						case 'G':
-							text += "7";
-							goto IL_141;
-						case 'H':
-							text += "8";
-							goto IL_141;
-						case 'J':
-							text += "9";
-							goto IL_141;
-					}
-					text += this.VIN[6].ToString();
-					IL_141:
+                if (!string.IsNullOrEmpty(VIN) && !VIN.Contains("XXXX") && VIN.Length == 17)
+                {
+                    string text = VIN.Substring(3, 3);
+                    switch (VIN[6])
+                    {
+                        case 'A':
+                            text += "1";
+                            break;
+                        case 'B':
+                            text += "2";
+                            break;
+                        case 'C':
+                            text += "3";
+                            break;
+                        case 'D':
+                            text += "4";
+                            break;
+                        case 'E':
+                            text += "5";
+                            break;
+                        case 'F':
+                            text += "6";
+                            break;
+                        case 'G':
+                            text += "7";
+                            break;
+                        case 'H':
+                            text += "8";
+                            break;
+                        default:
+                            text += VIN[6];
+                            break;
+                        case 'J':
+                            text += "9";
+                            break;
+                    }
                     List<PdszDatabase.Characteristics> vehicleIdentByTypeKey = _clientContext?.Database?.GetVehicleIdentByTypeKey(text, false);
-					if (vehicleIdentByTypeKey != null)
-					{
-						BasicFeaturesVci basicFeaturesVci = new BasicFeaturesVci();
-						VehicleCharacteristicVCIDeviceHelper vehicleCharacteristicVCIDeviceHelper = new VehicleCharacteristicVCIDeviceHelper(_clientContext);
-						foreach (PdszDatabase.Characteristics xep_CHARACTERISTICS in vehicleIdentByTypeKey)
-						{
-							vehicleCharacteristicVCIDeviceHelper.AssignBasicFeaturesVciCharacteristic(xep_CHARACTERISTICS.RootNodeClass, basicFeaturesVci, xep_CHARACTERISTICS);
-						}
-						return basicFeaturesVci;
-					}
-				}
+                    if (vehicleIdentByTypeKey != null)
+                    {
+                        BasicFeaturesVci basicFeaturesVci = new BasicFeaturesVci();
+                        VehicleCharacteristicVCIDeviceHelper vehicleCharacteristicVCIDeviceHelper = new VehicleCharacteristicVCIDeviceHelper(_clientContext);
+                        foreach (PdszDatabase.Characteristics xep_CHARACTERISTICS in vehicleIdentByTypeKey)
+                        {
+                            vehicleCharacteristicVCIDeviceHelper.AssignBasicFeaturesVciCharacteristic(xep_CHARACTERISTICS.RootNodeClass, basicFeaturesVci, xep_CHARACTERISTICS);
+                        }
+                        return basicFeaturesVci;
+                    }
+                }
 				return null;
 			}
 		}
