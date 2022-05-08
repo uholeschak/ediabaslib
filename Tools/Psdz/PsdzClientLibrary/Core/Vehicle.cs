@@ -634,40 +634,6 @@ namespace PsdzClient.Core
 		}
 
 		[XmlIgnore]
-		public string WarrantyType
-		{
-			get
-			{
-				if (!string.IsNullOrEmpty(base.Typ) && base.Typ.Length == 4)
-				{
-					string str = base.Typ.Substring(0, 2);
-					switch (base.Typ[2])
-					{
-						case '0':
-							str += "9";
-							goto IL_D2;
-						case '2':
-							str += "1";
-							goto IL_D2;
-						case '4':
-							str += "3";
-							goto IL_D2;
-						case '6':
-							str += "5";
-							goto IL_D2;
-						case '8':
-							str += "7";
-							goto IL_D2;
-					}
-					str += base.Typ[2].ToString();
-					IL_D2:
-					return str + base.Typ[3].ToString();
-				}
-				return string.Empty;
-			}
-		}
-
-		[XmlIgnore]
 		public DateTime? C_DATETIME
 		{
 			get
