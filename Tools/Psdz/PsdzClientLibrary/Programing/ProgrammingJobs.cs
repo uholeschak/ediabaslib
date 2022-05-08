@@ -1559,8 +1559,30 @@ namespace PsdzClient.Programing
                                         List<OptionsItem> optionsItems = new List<OptionsItem>();
                                         foreach (PdszDatabase.SwiAction swiAction in swiActions)
                                         {
-                                            log.Info(swiAction.ToString(clientContext.Language));
-                                            optionsItems.Add(new OptionsItem(swiRegisterEnum, swiAction, clientContext));
+                                            bool testModuleValid = true;
+                                            if (swiAction.SwiInfoObjs != null)
+                                            {
+                                                foreach (PdszDatabase.SwiInfoObj infoInfoObj in swiAction.SwiInfoObjs)
+                                                {
+                                                    if (infoInfoObj.LinkType == PdszDatabase.SwiInfoObj.SwiActionDatabaseLinkType.SwiActionActionSelectionLink)
+                                                    {
+                                                        string moduleName = infoInfoObj.ModuleName;
+                                                        PdszDatabase.TestModuleData testModuleData = ProgrammingService.PdszDatabase.GetTestModuleData(moduleName);
+                                                        if (testModuleData == null)
+                                                        {
+                                                            log.ErrorFormat(CultureInfo.InvariantCulture, "Ignoring invalid test module: {0}", moduleName ?? string.Empty);
+                                                            testModuleValid = false;
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            if (testModuleValid)
+                                            {
+                                                log.Info(swiAction.ToString(clientContext.Language));
+                                                optionsItems.Add(new OptionsItem(swiRegisterEnum, swiAction, clientContext));
+                                            }
                                         }
 
                                         optionsDict.Add(swiRegisterEnum, optionsItems);
