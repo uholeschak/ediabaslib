@@ -23,209 +23,174 @@ namespace PsdzClient.Core
 				Symbol symbol;
 				if (char.IsDigit(c))
 				{
-					int num = i - 1;
-					while (i < rule.Length && char.IsDigit(rule[i]))
+					int num2 = i - 1;
+					for (; i < rule.Length && char.IsDigit(rule[i]); i++)
 					{
-						i++;
 					}
 					symbol = new Symbol();
 					symbol.Type = RuleExpression.ESymbolType.Value;
-					symbol.Value = Convert.ToInt64(rule.Substring(num, i - num), CultureInfo.InvariantCulture);
+					symbol.Value = Convert.ToInt64(rule.Substring(num2, i - num2), CultureInfo.InvariantCulture);
 				}
-				else
+				else if (!char.IsLetter(c) && c != '_')
 				{
-					if (!char.IsLetter(c))
+					switch (c)
 					{
-						if (c != '_')
-						{
-							if (c == '(')
+						case '(':
+							symbol = new Symbol();
+							symbol.Type = RuleExpression.ESymbolType.TerminalLPar;
+							break;
+						case ')':
+							symbol = new Symbol();
+							symbol.Type = RuleExpression.ESymbolType.TerminalRPar;
+							break;
+						case '=':
+							symbol = new Symbol();
+							symbol.Type = RuleExpression.ESymbolType.Operator;
+							symbol.Value = CompareExpression.ECompareOperator.EQUAL;
+							break;
+						case '<':
+							symbol = new Symbol();
+							symbol.Type = RuleExpression.ESymbolType.Operator;
+							if (i < rule.Length && rule[i] == '=')
 							{
-								symbol = new Symbol();
-								symbol.Type = RuleExpression.ESymbolType.TerminalLPar;
-								goto IL_257;
-							}
-							if (c == ')')
-							{
-								symbol = new Symbol();
-								symbol.Type = RuleExpression.ESymbolType.TerminalRPar;
-								goto IL_257;
-							}
-							if (c == '=')
-							{
-								symbol = new Symbol();
-								symbol.Type = RuleExpression.ESymbolType.Operator;
-								symbol.Value = CompareExpression.ECompareOperator.EQUAL;
-								goto IL_257;
-							}
-							if (c == '<')
-							{
-								symbol = new Symbol();
-								symbol.Type = RuleExpression.ESymbolType.Operator;
-								if (i < rule.Length && rule[i] == '=')
-								{
-									i++;
-									symbol.Value = CompareExpression.ECompareOperator.LESS_EQUAL;
-									goto IL_257;
-								}
-								symbol.Value = CompareExpression.ECompareOperator.LESS;
-								goto IL_257;
-							}
-							else if (c == '>')
-							{
-								symbol = new Symbol();
-								symbol.Type = RuleExpression.ESymbolType.Operator;
-								if (i < rule.Length && rule[i] == '=')
-								{
-									i++;
-									symbol.Value = CompareExpression.ECompareOperator.GREATER_EQUAL;
-									goto IL_257;
-								}
-								symbol.Value = CompareExpression.ECompareOperator.GREATER;
-								goto IL_257;
+								i++;
+								symbol.Value = CompareExpression.ECompareOperator.LESS_EQUAL;
 							}
 							else
 							{
-								if (char.IsWhiteSpace(c))
-								{
-									symbol = null;
-									goto IL_257;
-								}
-								throw new Exception("Unknown character at position " + i);
+								symbol.Value = CompareExpression.ECompareOperator.LESS;
 							}
-						}
-					}
-					string text = c.ToString(CultureInfo.InvariantCulture);
-					while (i < rule.Length)
-					{
-						if (!char.IsLetter(rule[i]) && rule[i] != '_')
-						{
 							break;
-						}
-						text += rule[i++].ToString();
-					}
-					if (text != null)
-					{
-						if (text == "AND")
-						{
-							symbol = new Symbol(RuleExpression.ESymbolType.TerminalAnd);
-							goto IL_257;
-						}
-						if (text == "OR")
-						{
-							symbol = new Symbol(RuleExpression.ESymbolType.TerminalOr);
-							goto IL_257;
-						}
-						if (text == "NOT")
-						{
-							symbol = new Symbol(RuleExpression.ESymbolType.TerminalNot);
-							goto IL_257;
-						}
-					}
-					symbol = new Symbol(RuleExpression.ESymbolType.Value);
-					symbol.Value = text;
-				}
-				IL_257:
-				if (symbol != null)
-				{
-					stack.Push(symbol);
-					bool flag = true;
-					while (flag)
-					{
-						Symbol symbol2 = stack.Pop();
-						Symbol symbol3;
-						if (stack.Count > 0)
-						{
-							symbol3 = stack.Pop();
-						}
-						else
-						{
-							symbol3 = new Symbol(RuleExpression.ESymbolType.Unknown);
-						}
-						Symbol symbol4;
-						if (stack.Count > 0)
-						{
-							symbol4 = stack.Pop();
-						}
-						else
-						{
-							symbol4 = new Symbol(RuleExpression.ESymbolType.Unknown);
-						}
-						bool flag2 = false;
-						if (symbol4.Type == RuleExpression.ESymbolType.Value && symbol3.Type == RuleExpression.ESymbolType.Operator && symbol2.Type == RuleExpression.ESymbolType.Value)
-						{
-							stack.Push(new Symbol(RuleExpression.ESymbolType.VariableExpression)
+						case '>':
+							symbol = new Symbol();
+							symbol.Type = RuleExpression.ESymbolType.Operator;
+							if (i < rule.Length && rule[i] == '=')
 							{
-								Value = new VariableExpression((string)symbol4.Value, (CompareExpression.ECompareOperator)symbol3.Value, (double)((long)symbol2.Value))
-							});
-							flag2 = true;
-						}
-						else if (FaultClassRuleParser.IsExpression(symbol4) && symbol3.Type == RuleExpression.ESymbolType.TerminalAnd && FaultClassRuleParser.IsExpression(symbol2))
-						{
-							stack.Push(new Symbol(RuleExpression.ESymbolType.AndExpression)
-							{
-								Value = new AndExpression((RuleExpression)symbol4.Value, (RuleExpression)symbol2.Value)
-							});
-							flag2 = true;
-						}
-						else if (FaultClassRuleParser.IsExpression(symbol4) && symbol3.Type == RuleExpression.ESymbolType.TerminalOr && FaultClassRuleParser.IsExpression(symbol2))
-						{
-							stack.Push(new Symbol(RuleExpression.ESymbolType.OrExpression)
-							{
-								Value = new OrExpression((RuleExpression)symbol4.Value, (RuleExpression)symbol2.Value)
-							});
-							flag2 = true;
-						}
-						else if (symbol3.Type == RuleExpression.ESymbolType.TerminalNot && FaultClassRuleParser.IsExpression(symbol2))
-						{
-							Symbol symbol5 = new Symbol(RuleExpression.ESymbolType.NotExpression);
-							symbol5.Value = new NotExpression((RuleExpression)symbol2.Value);
-							if (symbol4.Type != RuleExpression.ESymbolType.Unknown)
-							{
-								stack.Push(symbol4);
+								i++;
+								symbol.Value = CompareExpression.ECompareOperator.GREATER_EQUAL;
 							}
-							stack.Push(symbol5);
-							flag2 = true;
+							else
+							{
+								symbol.Value = CompareExpression.ECompareOperator.GREATER;
+							}
+							break;
+						default:
+							if (char.IsWhiteSpace(c))
+							{
+								symbol = null;
+								break;
+							}
+							throw new Exception("Unknown character at position " + i);
+					}
+				}
+				else
+				{
+					string text = c.ToString(CultureInfo.InvariantCulture);
+					while (i < rule.Length && (char.IsLetter(rule[i]) || rule[i] == '_'))
+					{
+						text += rule[i++];
+					}
+					switch (text)
+					{
+						case "NOT":
+							symbol = new Symbol(RuleExpression.ESymbolType.TerminalNot);
+							break;
+						case "OR":
+							symbol = new Symbol(RuleExpression.ESymbolType.TerminalOr);
+							break;
+						case "AND":
+							symbol = new Symbol(RuleExpression.ESymbolType.TerminalAnd);
+							break;
+						default:
+							symbol = new Symbol(RuleExpression.ESymbolType.Value);
+							symbol.Value = text;
+							break;
+					}
+				}
+				if (symbol == null)
+				{
+					continue;
+				}
+				stack.Push(symbol);
+				bool flag = true;
+				while (flag)
+				{
+					Symbol symbol2 = stack.Pop();
+					Symbol symbol3 = ((stack.Count <= 0) ? new Symbol(RuleExpression.ESymbolType.Unknown) : stack.Pop());
+					Symbol symbol4 = ((stack.Count <= 0) ? new Symbol(RuleExpression.ESymbolType.Unknown) : stack.Pop());
+					bool flag2 = false;
+					if (symbol4.Type == RuleExpression.ESymbolType.Value && symbol3.Type == RuleExpression.ESymbolType.Operator && symbol2.Type == RuleExpression.ESymbolType.Value)
+					{
+						Symbol symbol5 = new Symbol(RuleExpression.ESymbolType.VariableExpression);
+						symbol5.Value = new VariableExpression((string)symbol4.Value, (CompareExpression.ECompareOperator)symbol3.Value, (long)symbol2.Value);
+						stack.Push(symbol5);
+						flag2 = true;
+					}
+					else if (IsExpression(symbol4) && symbol3.Type == RuleExpression.ESymbolType.TerminalAnd && IsExpression(symbol2))
+					{
+						Symbol symbol6 = new Symbol(RuleExpression.ESymbolType.AndExpression);
+						symbol6.Value = new AndExpression((RuleExpression)symbol4.Value, (RuleExpression)symbol2.Value);
+						stack.Push(symbol6);
+						flag2 = true;
+					}
+					else if (IsExpression(symbol4) && symbol3.Type == RuleExpression.ESymbolType.TerminalOr && IsExpression(symbol2))
+					{
+						Symbol symbol7 = new Symbol(RuleExpression.ESymbolType.OrExpression);
+						symbol7.Value = new OrExpression((RuleExpression)symbol4.Value, (RuleExpression)symbol2.Value);
+						stack.Push(symbol7);
+						flag2 = true;
+					}
+					else if (symbol3.Type == RuleExpression.ESymbolType.TerminalNot && IsExpression(symbol2))
+					{
+						Symbol symbol8 = new Symbol(RuleExpression.ESymbolType.NotExpression);
+						symbol8.Value = new NotExpression((RuleExpression)symbol2.Value);
+						if (symbol4.Type != 0)
+						{
+							stack.Push(symbol4);
 						}
-						else if (symbol4.Type == RuleExpression.ESymbolType.TerminalLPar && FaultClassRuleParser.IsExpression(symbol3) && symbol2.Type == RuleExpression.ESymbolType.TerminalRPar)
+						stack.Push(symbol8);
+						flag2 = true;
+					}
+					else if (symbol4.Type == RuleExpression.ESymbolType.TerminalLPar && IsExpression(symbol3) && symbol2.Type == RuleExpression.ESymbolType.TerminalRPar)
+					{
+						stack.Push(symbol3);
+						flag2 = true;
+					}
+					if (!flag2)
+					{
+						if (symbol4.Type != 0)
+						{
+							stack.Push(symbol4);
+						}
+						if (symbol3.Type != 0)
 						{
 							stack.Push(symbol3);
-							flag2 = true;
 						}
-						if (!flag2)
-						{
-							if (symbol4.Type != RuleExpression.ESymbolType.Unknown)
-							{
-								stack.Push(symbol4);
-							}
-							if (symbol3.Type != RuleExpression.ESymbolType.Unknown)
-							{
-								stack.Push(symbol3);
-							}
-							stack.Push(symbol2);
-							flag = false;
-						}
-						else
-						{
-							flag = true;
-						}
+						stack.Push(symbol2);
+						flag = false;
+					}
+					else
+					{
+						flag = true;
 					}
 				}
 			}
-			int count = stack.Count;
-			if (count == 0)
+			switch (stack.Count)
 			{
-				return null;
+				default:
+					throw new Exception("Could not completely reduce tokens");
+				case 1:
+					{
+						Symbol symbol9 = stack.Pop();
+						if (IsExpression(symbol9))
+						{
+							return (RuleExpression)symbol9.Value;
+						}
+						throw new Exception("Illegal last token");
+					}
+				case 0:
+					return null;
 			}
-			if (count != 1)
-			{
-				throw new Exception("Could not completely reduce tokens");
-			}
-			Symbol symbol6 = stack.Pop();
-			if (FaultClassRuleParser.IsExpression(symbol6))
-			{
-				return (RuleExpression)symbol6.Value;
-			}
-			throw new Exception("Illegal last token");
 		}
 
 		private static bool IsExpression(Symbol op)
