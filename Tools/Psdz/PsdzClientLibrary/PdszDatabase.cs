@@ -1971,7 +1971,16 @@ namespace PsdzClient
 
                 if (_moduleRefDict == null)
                 {
-                    log.ErrorFormat("ReadTestModule No data from test module");
+                    bool ignore = moduleName.StartsWith("ABL_AUS_RETROFITLANGUAGE", StringComparison.OrdinalIgnoreCase);
+                    if (ignore)
+                    {
+                        log.InfoFormat("ReadTestModule Ignored No data from test module: {0}", moduleName);
+                    }
+                    else
+                    {
+                        log.ErrorFormat("ReadTestModule No data from test module: {0}", moduleName);
+                        failure = true;
+                    }
                     return null;
                 }
 
