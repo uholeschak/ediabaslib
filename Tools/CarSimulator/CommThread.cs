@@ -9141,6 +9141,14 @@ namespace CarSimulator
                                     byte[] dummyResponse = { 0x81, _receiveData[1], _receiveData[2], 0x44 };
                                     ObdSend(dummyResponse);
                                 }
+                                else if (_receiveData.Length >= 7 && _receiveData[0] == 0x84 && _receiveData[3] == 0x14 &&
+                                         _receiveData[4] == 0xFF && _receiveData[5] == 0xFF && _receiveData[6] == 0xFF)
+                                {   // Clear DTC
+                                    found = true;
+                                    Debug.WriteLine("Dummy service 14: Clear DTC");
+                                    byte[] dummyResponse = { 0x81, _receiveData[1], _receiveData[2], 0x54 };
+                                    ObdSend(dummyResponse);
+                                }
                                 else if (_receiveData.Length >= 6 && _receiveData[0] == 0x83 && _receiveData[3] == 0x22)
                                 {   // service 22
                                     found = true;
