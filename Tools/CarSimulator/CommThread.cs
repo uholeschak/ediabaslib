@@ -9134,10 +9134,17 @@ namespace CarSimulator
                         {
                             if (_isoTpMode)
                             {
-                                if (_receiveData.Length >= 6 && _receiveData[0] == 0x83 && _receiveData[3] == 0x22)
+                                if (_receiveData.Length >= 4 && _receiveData[0] == 0x81 && _receiveData[3] == 0x04)
+                                {   // Clear DTC ISO 15031-5
+                                    found = true;
+                                    Debug.WriteLine("Dummy service 04: Clear DTC");
+                                    byte[] dummyResponse = { 0x81, _receiveData[1], _receiveData[2], 0x44 };
+                                    ObdSend(dummyResponse);
+                                }
+                                else if (_receiveData.Length >= 6 && _receiveData[0] == 0x83 && _receiveData[3] == 0x22)
                                 {   // service 22
                                     found = true;
-                                    Debug.WriteLine("Dummy service22: {0:X02}{1:X02}", _receiveData[4], _receiveData[5]);
+                                    Debug.WriteLine("Dummy service 22: {0:X02}{1:X02}", _receiveData[4], _receiveData[5]);
 
                                     //bool simulateData = false;
                                     bool simulateData = true;
@@ -9170,7 +9177,7 @@ namespace CarSimulator
                                 else if (_receiveData.Length >= 6 && (_receiveData[0] & 0x80) == 0x80 && _receiveData[3] == 0x2E)
                                 {   // service 2E
                                     found = true;
-                                    Debug.WriteLine("Dummy service2E: {0:X02}{1:X02}", _receiveData[4], _receiveData[5]);
+                                    Debug.WriteLine("Dummy service 2E: {0:X02}{1:X02}", _receiveData[4], _receiveData[5]);
                                     byte[] dummyResponse = { 0x83, _receiveData[1], _receiveData[2], 0x6E, _receiveData[4], _receiveData[5], 0x00 };   // positive write ACK
 
                                     if (recLength > 3)
@@ -9245,7 +9252,7 @@ namespace CarSimulator
                                 else if (_receiveData.Length >= 6 && (_receiveData[0] & 0x80) == 0x80 && _receiveData[3] == 0x3B)
                                 {   // service 3B
                                     found = true;
-                                    Debug.WriteLine("Dummy service3B: {0:X02}", _receiveData[4]);
+                                    Debug.WriteLine("Dummy service 3B: {0:X02}", _receiveData[4]);
 #if true
                                     byte[] dummyResponse = { 0x82, _receiveData[1], _receiveData[2], 0x7B, _receiveData[4], 0x00 };   // positive write ACK
 #else
@@ -9256,7 +9263,7 @@ namespace CarSimulator
                                 else if (_receiveData.Length >= 6 && _receiveData[0] == 0x83 && _receiveData[3] == 0x09)
                                 {   // service 09
                                     found = true;
-                                    Debug.WriteLine("Dummy service09: {0:X02}{1:X02}", _receiveData[4], _receiveData[5]);
+                                    Debug.WriteLine("Dummy service 09: {0:X02}{1:X02}", _receiveData[4], _receiveData[5]);
                                     byte[] dummyResponse = { 0x83, _receiveData[1], _receiveData[2], 0x7F, _receiveData[3], 0x12, 0x00 };   // sub function not supported
                                     ObdSend(dummyResponse);
                                 }
@@ -9285,7 +9292,7 @@ namespace CarSimulator
                                         }
                                         else
                                         {
-                                            Debug.WriteLine("Dummy service27: {0:X02}", _receiveData[4]);
+                                            Debug.WriteLine("Dummy service 27: {0:X02}", _receiveData[4]);
                                         }
                                         byte[] dummyResponse = { 0x82, _receiveData[1], _receiveData[2], 0x67, _receiveData[4], 0x00 };   // positive ACK
                                         ObdSend(dummyResponse);
@@ -9293,7 +9300,7 @@ namespace CarSimulator
                                 }
                             }
                             else
-                            {
+                            {   // No ISO TP mode
                                 if (_receiveData.Length >= 5 && _receiveData[0] == 0x82 && _receiveData[3] == 0x21)
                                 {   // read mwblock
                                     found = true;
@@ -9305,14 +9312,14 @@ namespace CarSimulator
                                 else if (_receiveData.Length >= 6 && _receiveData[0] == 0x83 && _receiveData[3] == 0x22)
                                 {   // service 22
                                     found = true;
-                                    Debug.WriteLine("Dummy service22: {0:X02}{1:X02}", _receiveData[4], _receiveData[5]);
+                                    Debug.WriteLine("Dummy service 22: {0:X02}{1:X02}", _receiveData[4], _receiveData[5]);
                                     byte[] dummyResponse = { 0x83, _receiveData[2], _receiveData[1], 0x7F, _receiveData[3], 0x31, 0x00 };   // request out of range
                                     ObdSend(dummyResponse);
                                 }
                                 else if (_receiveData.Length >= 6 && (_receiveData[0] & 0x80) == 0x80 && _receiveData[3] == 0x2E)
                                 {   // service 2E
                                     found = true;
-                                    Debug.WriteLine("Dummy service2E: {0:X02}{1:X02}", _receiveData[4], _receiveData[5]);
+                                    Debug.WriteLine("Dummy service 2E: {0:X02}{1:X02}", _receiveData[4], _receiveData[5]);
 #if true
                                     byte[] dummyResponse = { 0x83, _receiveData[2], _receiveData[1], 0x6E, _receiveData[4], _receiveData[5], 0x00 };   // positive write ACK
 #else
@@ -9399,7 +9406,7 @@ namespace CarSimulator
                                         }
                                         else
                                         {
-                                            Debug.WriteLine("Dummy service3B: {0:X02}", _receiveData[4]);
+                                            Debug.WriteLine("Dummy service 3B: {0:X02}", _receiveData[4]);
                                         }
                                     }
 #if true
@@ -9412,7 +9419,7 @@ namespace CarSimulator
                                 else if (_receiveData.Length >= 6 && (_receiveData[0] & 0x80) == 0x80 && _receiveData[3] == 0x1A)
                                 {   // service 1A
                                     found = true;
-                                    Debug.WriteLine("Dummy service1A: {0:X02}", _receiveData[4]);
+                                    Debug.WriteLine("Dummy service 1A: {0:X02}", _receiveData[4]);
                                     byte[] dummyResponse = { 0x83, _receiveData[2], _receiveData[1], 0x7F, _receiveData[3], 0x11, 0x00 };   // not supported
                                     ObdSend(dummyResponse);
                                 }
@@ -9434,7 +9441,7 @@ namespace CarSimulator
                                         }
                                         else
                                         {
-                                            Debug.WriteLine("Dummy service27: {0:X02}", _receiveData[4]);
+                                            Debug.WriteLine("Dummy service 27: {0:X02}", _receiveData[4]);
                                         }
                                         byte[] dummyResponse = { 0x82, _receiveData[2], _receiveData[1], 0x67, _receiveData[4], 0x00 };   // positive ACK
                                         ObdSend(dummyResponse);
