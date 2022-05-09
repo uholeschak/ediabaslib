@@ -8,6 +8,7 @@ namespace PsdzClient.Core
 {
 	public abstract class VehicleCharacteristicAbstract
 	{
+        // ToDo: Check on update
         public enum VehicleCharacteristic : long
         {
             Motor = 40142338L,
@@ -66,6 +67,7 @@ namespace PsdzClient.Core
             KraftstoffartEinbaulage = 53330059L
         }
 
+        // ToDo: Check on update
 		protected bool ComputeCharacteristic(string vehicleCode, params object[] param)
 		{
 			if (Enum.TryParse<VehicleCharacteristic>(vehicleCode, out var result))
