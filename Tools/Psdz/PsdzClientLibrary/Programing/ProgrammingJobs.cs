@@ -1559,7 +1559,7 @@ namespace PsdzClient.Programing
                                         List<OptionsItem> optionsItems = new List<OptionsItem>();
                                         foreach (PdszDatabase.SwiAction swiAction in swiActions)
                                         {
-                                            bool testModuleValid = true;
+                                            bool testModuleValid = false;
                                             if (swiAction.SwiInfoObjs != null)
                                             {
                                                 foreach (PdszDatabase.SwiInfoObj infoInfoObj in swiAction.SwiInfoObjs)
@@ -1568,12 +1568,13 @@ namespace PsdzClient.Programing
                                                     {
                                                         string moduleName = infoInfoObj.ModuleName;
                                                         PdszDatabase.TestModuleData testModuleData = ProgrammingService.PdszDatabase.GetTestModuleData(moduleName);
-                                                        if (testModuleData == null)
+                                                        if (testModuleData != null)
                                                         {
-                                                            log.ErrorFormat(CultureInfo.InvariantCulture, "Ignoring invalid test module: {0}", moduleName ?? string.Empty);
-                                                            testModuleValid = false;
+                                                            testModuleValid = true;
                                                             break;
                                                         }
+
+                                                        log.ErrorFormat(CultureInfo.InvariantCulture, "Ignoring invalid test module: {0}", moduleName ?? string.Empty);
                                                     }
                                                 }
                                             }
