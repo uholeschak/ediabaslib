@@ -801,10 +801,11 @@ namespace BmwDeepObd
                             sgbdResolved = Path.GetFileNameWithoutExtension(sgbdResolved);
                         }
 
-                        try
-                        {
-                            if (errorResetList != null && errorResetList.Any(ecu => string.CompareOrdinal(ecu, ecuInfo.Name) == 0))
-                            {   // error reset requested
+                        if (errorResetList != null && errorResetList.Any(ecu => string.CompareOrdinal(ecu, ecuInfo.Name) == 0))
+                        {   // error reset requested
+                            bool errorResetOk = false;
+                            try
+                            {
                                 Ediabas.ArgString = string.Empty;
                                 Ediabas.ArgBinaryStd = null;
                                 Ediabas.ResultsRequests = string.Empty;
@@ -813,7 +814,6 @@ namespace BmwDeepObd
                                 List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
                                 if (resultSets.Count > 1)
                                 {
-                                    bool errorResetOk = false;
                                     string resultName;
                                     Dictionary<string, EdiabasNet.ResultData> resultDictCheck;
                                     if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
@@ -838,16 +838,38 @@ namespace BmwDeepObd
                                             }
                                         }
                                     }
-                                    if (errorResetOk)
-                                    {
-                                        errorReportList.Add(new EdiabasErrorReportReset(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, resultDictCheck, errorResetOk));
-                                    }
                                 }
                             }
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+
+                            if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+                            {
+                                try
+                                {
+                                    if (!errorResetOk && XmlToolActivity.IsUdsEcuName(ecuInfo.Sgbd))
+                                    {
+                                        int dataOffset = XmlToolActivity.VagUdsRawDataOffset;
+                                        byte[] clearDtcRequest = { 0x04 };  // ISO 15031-5
+                                        Ediabas.EdInterfaceClass.TransmitData(clearDtcRequest, out byte[] clearDtcResponse);
+                                        if (clearDtcResponse != null && clearDtcResponse.Length >= dataOffset + 1 && clearDtcResponse[dataOffset + 0] == 0x44)
+                                        {
+                                            errorResetOk = true;
+                                        }
+                                    }
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
+                            }
+
+                            if (errorResetOk)
+                            {
+                                errorReportList.Add(new EdiabasErrorReportReset(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, null, errorResetOk));
+                            }
                         }
 
                         Ediabas.ArgString = "ALL";
