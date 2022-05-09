@@ -2014,6 +2014,63 @@ namespace PsdzClient
             }
         }
 
+        public Dictionary<string, string> ReadEcuCharacteristicsXml()
+        {
+            try
+            {
+                Dictionary<string, string> resourceDict = new Dictionary<string, string>();
+                string diagnosticsFile = Path.Combine(_frameworkPath, "RheingoldDiagnostics.dll");
+                if (!File.Exists(diagnosticsFile))
+                {
+                    log.ErrorFormat("ReadEcuCharacteristicsXml Diagnostics file not found: {0}", diagnosticsFile);
+                    return null;
+                }
+
+                Assembly diagnosticsAssembly = Assembly.LoadFrom(diagnosticsFile);
+                string[] resourceNames = diagnosticsAssembly.GetManifestResourceNames();
+                foreach (string resourceName in resourceNames)
+                {
+                    log.InfoFormat("ReadEcuCharacteristicsXml Resource: {0}", resourceName);
+
+                    string fileName = Path.GetFileName(resourceName);
+                    if (string.IsNullOrEmpty(fileName))
+                    {
+                        log.ErrorFormat("ReadEcuCharacteristicsXml Invalid file name: {0}", resourceName);
+                        continue;
+                    }
+
+                    string fileExt = Path.GetExtension(fileName);
+                    if (string.Compare(fileExt, ".xml", StringComparison.OrdinalIgnoreCase) != 0)
+                    {
+                        continue;
+                    }
+
+                    using (Stream resourceStream = diagnosticsAssembly.GetManifestResourceStream(resourceName))
+                    {
+                        if (resourceStream == null)
+                        {
+                            log.ErrorFormat("ReadEcuCharacteristicsXml Reading stream failed for: {0}", resourceName);
+                            continue;
+                        }
+
+                        using (StreamReader reader = new StreamReader(resourceStream))
+                        {
+                            string xmlContent = reader.ReadToEnd();
+                            resourceDict.Add(fileName.ToUpperInvariant(), xmlContent);
+                        }
+                    }
+                }
+
+                log.InfoFormat("ReadEcuCharacteristicsXml Resources: {0}", resourceDict.Count);
+                return resourceDict;
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("ReadEcuCharacteristicsXml Exception: '{0}'", e.Message);
+                return null;
+            }
+        }
+
         public bool GetEcuVariants(List<EcuInfo> ecuList, Vehicle vehicle = null, IFFMDynamicResolver ffmDynamicResolver = null)
         {
             log.InfoFormat("GetEcuVariants Vehicle: {0}", vehicle != null);
