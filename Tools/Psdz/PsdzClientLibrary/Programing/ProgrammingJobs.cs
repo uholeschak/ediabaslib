@@ -306,8 +306,14 @@ namespace PsdzClient.Programing
                         return false;
                     });
 
+                    if (!result)
+                    {
+                        log.ErrorFormat("GenerateTestModuleData failed");
+                    }
+
                     if (!ProgrammingService.PdszDatabase.GenerateEcuCharacteristicsData())
                     {
+                        log.ErrorFormat("GenerateEcuCharacteristicsData failed");
                         result = false;
                     }
 
