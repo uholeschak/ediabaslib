@@ -1124,8 +1124,25 @@ namespace PsdzClient
             [XmlElement("ModuleRef"), DefaultValue(null)] public string ModuleRef { get; set;  }
         }
 
+        [XmlType("EcuCharacteristicsXml")]
+        public class EcuCharacteristicsData
+        {
+            public EcuCharacteristicsData() : this(null)
+            {
+            }
+
+            public EcuCharacteristicsData(SerializableDictionary<string, string> ecuXmlDict)
+            {
+                EcuXmlDict = ecuXmlDict;
+            }
+
+            [XmlElement("EcuXmlDict"), DefaultValue(null)] public SerializableDictionary<string, string> EcuXmlDict { get; set; }
+        }
+
         private const string TestModulesXmlFile = "TestModules.xml";
         private const string TestModulesZipFile = "TestModules.zip";
+        private const string EcuCharacteristicsXmFile = "EcuCharacteristics.xml";
+        private const string EcuCharacteristicsZipFile = "EcuCharacteristics.zip";
         private static readonly ILog log = LogManager.GetLogger(typeof(PdszDatabase));
 
         // ToDo: Check on update
@@ -1188,6 +1205,7 @@ namespace PsdzClient
         public Dictionary<string, XepRule> XepRuleDict => _xepRuleDict;
         public SwiRegister SwiRegisterTree { get; private set; }
         public TestModules TestModuleStorage { get; private set; }
+        public EcuCharacteristicsData EcuCharacteristicsStorage { get; private set; }
 
         private static string _moduleRefPath;
         private static SerializableDictionary<string, List<string>> _moduleRefDict;
@@ -2014,11 +2032,115 @@ namespace PsdzClient
             }
         }
 
-        public Dictionary<string, string> ReadEcuCharacteristicsXml()
+        public bool GenerateEcuCharacteristicsData()
         {
             try
             {
-                Dictionary<string, string> resourceDict = new Dictionary<string, string>();
+                EcuCharacteristicsData ecuCharacteristicsData = null;
+                XmlSerializer serializer = new XmlSerializer(typeof(EcuCharacteristicsData));
+                string ecuCharacteristicsZipFile = Path.Combine(_databasePath, EcuCharacteristicsZipFile);
+                if (File.Exists(ecuCharacteristicsZipFile))
+                {
+                    try
+                    {
+                        ZipFile zf = null;
+                        try
+                        {
+                            FileStream fs = File.OpenRead(ecuCharacteristicsZipFile);
+                            zf = new ZipFile(fs);
+                            foreach (ZipEntry zipEntry in zf)
+                            {
+                                if (!zipEntry.IsFile)
+                                {
+                                    continue; // Ignore directories
+                                }
+
+                                if (string.Compare(zipEntry.Name, EcuCharacteristicsXmFile, StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    Stream zipStream = zf.GetInputStream(zipEntry);
+                                    using (TextReader reader = new StreamReader(zipStream))
+                                    {
+                                        ecuCharacteristicsData = serializer.Deserialize(reader) as EcuCharacteristicsData;
+                                    }
+                                }
+                            }
+                        }
+                        finally
+                        {
+                            if (zf != null)
+                            {
+                                zf.IsStreamOwner = true; // Makes close also shut the underlying stream
+                                zf.Close(); // Ensure we release resources
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        log.ErrorFormat("GenerateEcuCharacteristicsData Deserialize Exception: '{0}'", e.Message);
+                    }
+                }
+
+                if (ecuCharacteristicsData == null)
+                {
+                    log.InfoFormat("GenerateEcuCharacteristicsData Converting Xml");
+                    if (!IsExecutable())
+                    {
+                        log.ErrorFormat("GenerateEcuCharacteristicsData Started from DLL");
+                        return false;
+                    }
+
+                    ecuCharacteristicsData = ReadEcuCharacteristicsXml();
+                    if (ecuCharacteristicsData == null)
+                    {
+                        log.ErrorFormat("GenerateEcuCharacteristicsData ReadEcuCharacteristicsXml failed");
+                        return false;
+                    }
+
+                    using (MemoryStream memStream = new MemoryStream())
+                    {
+                        serializer.Serialize(memStream, ecuCharacteristicsData);
+                        memStream.Seek(0, SeekOrigin.Begin);
+
+                        FileStream fsOut = File.Create(ecuCharacteristicsZipFile);
+                        ZipOutputStream zipStream = new ZipOutputStream(fsOut);
+                        zipStream.SetLevel(3);
+
+                        try
+                        {
+                            ZipEntry newEntry = new ZipEntry(EcuCharacteristicsXmFile)
+                            {
+                                DateTime = DateTime.Now,
+                                Size = memStream.Length
+                            };
+                            zipStream.PutNextEntry(newEntry);
+
+                            byte[] buffer = new byte[4096];
+                            StreamUtils.Copy(memStream, zipStream, buffer);
+                            zipStream.CloseEntry();
+                        }
+                        finally
+                        {
+                            zipStream.IsStreamOwner = true;
+                            zipStream.Close();
+                        }
+                    }
+                }
+
+                EcuCharacteristicsStorage = ecuCharacteristicsData;
+                return true;
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GenerateEcuCharacteristicsData Exception: '{0}'", e.Message);
+                return false;
+            }
+        }
+
+        public EcuCharacteristicsData ReadEcuCharacteristicsXml()
+        {
+            try
+            {
+                SerializableDictionary<string, string> ecuXmlDict = new SerializableDictionary<string, string>();
                 string diagnosticsFile = Path.Combine(_frameworkPath, "RheingoldDiagnostics.dll");
                 if (!File.Exists(diagnosticsFile))
                 {
@@ -2063,13 +2185,14 @@ namespace PsdzClient
                         using (StreamReader reader = new StreamReader(resourceStream))
                         {
                             string xmlContent = reader.ReadToEnd();
-                            resourceDict.Add(fileName.ToUpperInvariant(), xmlContent);
+                            ecuXmlDict.Add(fileName.ToUpperInvariant(), xmlContent);
                         }
                     }
                 }
 
-                log.InfoFormat("ReadEcuCharacteristicsXml Resources: {0}", resourceDict.Count);
-                return resourceDict;
+                log.InfoFormat("ReadEcuCharacteristicsXml Resources: {0}", ecuXmlDict.Count);
+                EcuCharacteristicsData ecuCharacteristicsData = new EcuCharacteristicsData(ecuXmlDict);
+                return ecuCharacteristicsData;
             }
             catch (Exception e)
             {

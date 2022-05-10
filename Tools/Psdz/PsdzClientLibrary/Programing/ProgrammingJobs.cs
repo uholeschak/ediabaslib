@@ -306,6 +306,11 @@ namespace PsdzClient.Programing
                         return false;
                     });
 
+                    if (!ProgrammingService.PdszDatabase.GenerateEcuCharacteristicsData())
+                    {
+                        result = false;
+                    }
+
                     ProgressEvent?.Invoke(0, true);
 
                     if (failCount >= 0)
