@@ -11,6 +11,7 @@ namespace PsdzClient.Core
 {
     public class VehicleLogistics
     {
+        private class BaseEcuCharacteristics { }
         private class E46EcuCharacteristics { }
 		private class E36EcuCharacteristics { }
 		private class E39EcuCharacteristics { }
@@ -43,16 +44,37 @@ namespace PsdzClient.Core
 
 		private static string GetEcuCharacteristics(string storedXmlFileName, Vehicle vecInfo)
         {
-            return storedXmlFileName;
+            return GetEcuCharacteristics<BaseEcuCharacteristics>(storedXmlFileName, vecInfo);
         }
 
         private static string GetEcuCharacteristics<T>(string storedXmlFileName, Vehicle vecInfo)
         {
-            return storedXmlFileName;
+            PdszDatabase database = ClientContext.GetDatabase(vecInfo);
+            if (database == null)
+            {
+                return null;
+            }
+
+            string xml = database.GetBordnetXmlFromDatabase(vecInfo);
+            if (!string.IsNullOrWhiteSpace(xml))
+            {
+                return xml;
+            }
+
+            if (!string.IsNullOrEmpty(storedXmlFileName))
+            {
+                xml = database.GetEcuCharacteristicsXml(storedXmlFileName);
+                if (!string.IsNullOrWhiteSpace(xml))
+                {
+                    return xml;
+                }
+            }
+
+			return null;
         }
 
         // ToDo: Check on update
-        public static string GetCharacteristicsName(Vehicle vecInfo)
+        public static string GetCharacteristicsXml(Vehicle vecInfo)
 		{
 			if (!string.IsNullOrEmpty(vecInfo.Baureihenverbund))
 			{
@@ -509,7 +531,7 @@ namespace PsdzClient.Core
 				case BNType.BNK01X_MOTORBIKE:
 					return GetEcuCharacteristics("BNT-XML-BIKE-K01X.xml", vecInfo);
 				default:
-					return null;
+                    return GetEcuCharacteristics(string.Empty, vecInfo);
 				case BNType.BN2000_WIESMANN:
 					return GetEcuCharacteristics("WiesmannEcuCharacteristics.xml", vecInfo);
 				case BNType.BN2000_RODING:

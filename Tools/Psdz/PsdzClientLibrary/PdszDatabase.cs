@@ -3916,6 +3916,71 @@ namespace PsdzClient
             return null;
         }
 
+        public string GetEcuCharacteristicsXml(string storedXmlFileName)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(storedXmlFileName))
+                {
+                    log.ErrorFormat("GetEcuCharacteristicsXml No file name");
+                    return null;
+                }
+
+                if (EcuCharacteristicsStorage?.EcuXmlDict == null)
+                {
+                    log.ErrorFormat("GetEcuCharacteristicsXml No storage");
+                    return null;
+                }
+
+                string key = Path.GetFileNameWithoutExtension(storedXmlFileName);
+                if (!EcuCharacteristicsStorage.EcuXmlDict.TryGetValue(key.ToUpperInvariant(), out string xml))
+                {
+                    log.ErrorFormat("GetEcuCharacteristicsXml Key not found {0}", key);
+                    return null;
+                }
+
+                if (string.IsNullOrWhiteSpace(xml))
+                {
+                    log.ErrorFormat("GetEcuCharacteristicsXml Empty");
+                    return null;
+                }
+
+                log.InfoFormat("GetEcuCharacteristicsXml Valid");
+                return xml;
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetEcuCharacteristicsXml Exception: {0}", e.Message);
+                return null;
+            }
+        }
+
+        public string GetBordnetXmlFromDatabase(Vehicle vecInfo)
+        {
+            List<BordnetsData> boardnetsList = LoadBordnetsData(vecInfo);
+            if (boardnetsList == null)
+            {
+                log.ErrorFormat("GetBordnetXmlFromDatabase No data");
+                return null;
+            }
+
+            if (boardnetsList.Count != 1)
+            {
+                log.ErrorFormat("GetBordnetXmlFromDatabase List items: {0}", boardnetsList.Count);
+                return null;
+            }
+
+            string xml = boardnetsList[0].DocData;
+            if (string.IsNullOrWhiteSpace(xml))
+            {
+                log.ErrorFormat("GetBordnetXmlFromDatabase Empty");
+                return null;
+            }
+
+            log.InfoFormat("GetBordnetXmlFromDatabase Valid");
+            return xml;
+        }
+
         public List<BordnetsData> LoadBordnetsData(Vehicle vecInfo)
         {
             log.InfoFormat("LoadBordnetsData");
