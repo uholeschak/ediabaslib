@@ -3987,8 +3987,8 @@ namespace PsdzClient
             List<BordnetsData> boardnetsList = new List<BordnetsData>();
             try
             {
-                string sql = "SELECT I.ID AS INFOOBJECTID, I.IDENTIFIER AS INFOOBJECTIDENTIFIER, C.CONTENT_DEDE AS CONTENT_DEDE FROM XEP_INFOOBJECTS I" +
-                             "INNER JOIN XEP_REFCONTENTS R ON R.ID = I.CONTROLID" +
+                string sql = "SELECT I.ID AS INFOOBJECTID, I.IDENTIFIER AS INFOOBJECTIDENTIFIER, C.CONTENT_DEDE AS CONTENT_DEDE FROM XEP_INFOOBJECTS I " +
+                             "INNER JOIN XEP_REFCONTENTS R ON R.ID = I.CONTROLID " +
                              "INNER JOIN XEP_IOCONTENTS C ON C.CONTROLID = R.CONTENTCONTROLID WHERE I.IDENTIFIER LIKE 'BNT-XML-%'";
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
