@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,43 +12,50 @@ namespace PsdzClient.Core
 {
     public class VehicleLogistics
     {
-        private class E46EcuCharacteristics { }
-		private class E36EcuCharacteristics { }
-		private class E39EcuCharacteristics { }
-        private class E38EcuCharacteristics { }
-        private class E52EcuCharacteristics { }
-		private class E53EcuCharacteristics { }
-        private class F01EcuCharacteristics { }
-        private class F25_1404EcuCharacteristics { }
-        private class F25EcuCharacteristics { }
-        private class R50EcuCharacteristics { }
-        private class RR6EcuCharacteristics { }
-        private class R55EcuCharacteristics { }
-        private class RR2EcuCharacteristics { }
-        private class RREcuCharacteristics { }
-        private class BNT_G11_G12_G3X_SP2015 { }
-        private class MRXEcuCharacteristics { }
-        private class MREcuCharacteristics { }
-        private class E70EcuCharacteristicsAMPT { }
-        private class E70EcuCharacteristicsAMPH { }
-        private class E70EcuCharacteristics { }
-        private class E60EcuCharacteristics { }
-        private class E83EcuCharacteristics { }
-        private class E85EcuCharacteristics { }
-        private class F15EcuCharacteristics { }
-        private class F01_1307EcuCharacteristics { }
-        private class BNT_G01_G02_G08_F97_F98_SP2015 { }
-        private class E89EcuCharacteristics { }
-        private class F56EcuCharacteristics { }
-        private class F20EcuCharacteristics { }
+        public class E46EcuCharacteristics : BaseEcuCharacteristics { }
+        public class E36EcuCharacteristics : BaseEcuCharacteristics { }
+        public class E39EcuCharacteristics : BaseEcuCharacteristics { }
+        public class E38EcuCharacteristics : BaseEcuCharacteristics { }
+        public class E52EcuCharacteristics : BaseEcuCharacteristics { }
+        public class E53EcuCharacteristics : BaseEcuCharacteristics { }
+        public class F01EcuCharacteristics : BaseEcuCharacteristics { }
+        public class F25_1404EcuCharacteristics : BaseEcuCharacteristics { }
+        public class F25EcuCharacteristics : BaseEcuCharacteristics { }
+        public class R50EcuCharacteristics : BaseEcuCharacteristics { }
+        public class RR6EcuCharacteristics : BaseEcuCharacteristics { }
+        public class R55EcuCharacteristics : BaseEcuCharacteristics { }
+        public class RR2EcuCharacteristics : BaseEcuCharacteristics { }
+        public class RREcuCharacteristics : BaseEcuCharacteristics { }
+        public class BNT_G11_G12_G3X_SP2015 : BaseEcuCharacteristics { }
+        public class MRXEcuCharacteristics : BaseEcuCharacteristics { }
+        public class MREcuCharacteristics : BaseEcuCharacteristics { }
+        public class E70EcuCharacteristicsAMPT : BaseEcuCharacteristics { }
+        public class E70EcuCharacteristicsAMPH : BaseEcuCharacteristics { }
+        public class E70EcuCharacteristics : BaseEcuCharacteristics { }
+        public class E60EcuCharacteristics : BaseEcuCharacteristics { }
+        public class E83EcuCharacteristics : BaseEcuCharacteristics { }
+        public class E85EcuCharacteristics : BaseEcuCharacteristics { }
+        public class F15EcuCharacteristics : BaseEcuCharacteristics { }
+        public class F01_1307EcuCharacteristics : BaseEcuCharacteristics { }
+        public class BNT_G01_G02_G08_F97_F98_SP2015 : BaseEcuCharacteristics { }
+        public class E89EcuCharacteristics : BaseEcuCharacteristics { }
+        public class F56EcuCharacteristics : BaseEcuCharacteristics { }
+        public class F20EcuCharacteristics : BaseEcuCharacteristics { }
 
-		private static string GetEcuCharacteristics(string storedXmlFileName, Vehicle vecInfo)
+        private static ConcurrentDictionary<object, BaseEcuCharacteristics> ecuCharacteristics;
+
+        static VehicleLogistics()
         {
-            return GetEcuCharacteristics<BaseEcuCharacteristics>(storedXmlFileName, vecInfo);
+            ecuCharacteristics = new ConcurrentDictionary<object, BaseEcuCharacteristics>();
         }
 
-        private static string GetEcuCharacteristics<T>(string storedXmlFileName, Vehicle vecInfo)
+		private static BaseEcuCharacteristics GetEcuCharacteristics(string storedXmlFileName, Vehicle vecInfo)
         {
+            return GetEcuCharacteristics<GenericEcuCharacteristics>(storedXmlFileName, vecInfo);
+        }
+
+        private static BaseEcuCharacteristics GetEcuCharacteristics<T>(string storedXmlFileName, Vehicle vecInfo) where T : BaseEcuCharacteristics
+		{
             PdszDatabase database = ClientContext.GetDatabase(vecInfo);
             if (database == null)
             {
@@ -57,7 +65,11 @@ namespace PsdzClient.Core
             string xml = database.GetBordnetXmlFromDatabase(vecInfo);
             if (!string.IsNullOrWhiteSpace(xml))
             {
-                return xml;
+                BaseEcuCharacteristics baseEcuCharacteristics = CreateCharacteristicsInstance<GenericEcuCharacteristics>(vecInfo, xml, storedXmlFileName);
+                if (baseEcuCharacteristics != null)
+                {
+                    return baseEcuCharacteristics;
+                }
             }
 
             if (!string.IsNullOrEmpty(storedXmlFileName))
@@ -65,16 +77,48 @@ namespace PsdzClient.Core
                 xml = database.GetEcuCharacteristicsXml(storedXmlFileName);
                 if (!string.IsNullOrWhiteSpace(xml))
                 {
-                    return xml;
+                    BaseEcuCharacteristics baseEcuCharacteristics = CreateCharacteristicsInstance<GenericEcuCharacteristics>(vecInfo, xml, storedXmlFileName);
+                    if (baseEcuCharacteristics != null)
+                    {
+                        return baseEcuCharacteristics;
+                    }
                 }
-            }
+			}
 
 			return null;
         }
 
-        // ToDo: Check on update
-        public static string GetCharacteristicsXml(Vehicle vecInfo)
+        private static BaseEcuCharacteristics CreateCharacteristicsInstance<T>(Vehicle vehicle, string xml, string name) where T : BaseEcuCharacteristics
+        {
+            try
+            {
+                Type typeFromHandle = typeof(T);
+                object[] args = new string[1] { xml };
+                T val = (T)Activator.CreateInstance(typeFromHandle, args);
+                if (val != null)
+                {
+                    ecuCharacteristics.TryAdd(vehicle.GetCustomHashCode(), val);
+                    val.BordnetName = name;
+                    //Log.Info(Log.CurrentMethod(), "Found characteristics with group sgdb: " + val.brSgbd);
+                }
+                return val;
+            }
+            catch (Exception)
+            {
+                //Log.ErrorException(Log.CurrentMethod(), exception);
+                return null;
+            }
+        }
+
+		// ToDo: Check on update
+		public static BaseEcuCharacteristics GetCharacteristics(Vehicle vecInfo)
 		{
+			int customHashCode = vecInfo.GetCustomHashCode();
+            if (ecuCharacteristics.ContainsKey(customHashCode))
+            {
+                return ecuCharacteristics[customHashCode];
+            }
+
 			if (!string.IsNullOrEmpty(vecInfo.Baureihenverbund))
 			{
 				switch (vecInfo.Baureihenverbund.ToUpper())

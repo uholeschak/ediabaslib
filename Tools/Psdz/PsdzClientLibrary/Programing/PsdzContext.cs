@@ -199,7 +199,7 @@ namespace PsdzClient.Programming
 
         public string IstaFolder { get; private set; }
 
-        public string CharacteristicsXml { get; private set; }
+        public BaseEcuCharacteristics EcuCharacteristics { get; private set; }
 
         public string GetBaseVariant(int diagnosticAddress)
 		{
@@ -339,7 +339,7 @@ namespace PsdzClient.Programming
 
         public bool UpdateVehicle(ProgrammingService programmingService)
         {
-            CharacteristicsXml = null;
+            EcuCharacteristics = null;
             if (Vehicle == null)
             {
                 return false;
@@ -419,7 +419,7 @@ namespace PsdzClient.Programming
             }
 
             Vehicle.WithLfpBattery = programmingService.PdszDatabase.WithLfpBattery(Vehicle);
-            CharacteristicsXml = VehicleLogistics.GetCharacteristicsXml(Vehicle);
+            EcuCharacteristics = VehicleLogistics.GetCharacteristics(Vehicle);
             return true;
         }
 

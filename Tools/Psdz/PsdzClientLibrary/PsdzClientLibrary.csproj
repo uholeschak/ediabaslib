@@ -134,6 +134,7 @@
     <Compile Include="Core\FaultClassRuleParser.cs" />
     <Compile Include="Core\FFMResult.cs" />
     <Compile Include="Core\GearboxUtility.cs" />
+    <Compile Include="Core\GenericEcuCharacteristics.cs" />
     <Compile Include="Core\GenericMotor.cs" />
     <Compile Include="Core\HeatMotor.cs" />
     <Compile Include="Core\IBusInterConnectionEntry.cs" />

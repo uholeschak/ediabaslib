@@ -51,7 +51,7 @@ namespace PsdzClient.Core
 
 		public string BordnetName { get; set; }
 
-		internal BaseEcuCharacteristics()
+        public BaseEcuCharacteristics()
 		{
 			minimalConfiguration = new HashSet<int>();
 			excludedConfiguration = new HashSet<int>();
@@ -60,7 +60,7 @@ namespace PsdzClient.Core
 			xorConfiguration = new HashSet<int[]>();
 		}
 
-		internal BaseEcuCharacteristics(string xmlCharacteristic)
+        public BaseEcuCharacteristics(string xmlCharacteristic)
 		{
 			minimalConfiguration = new HashSet<int>();
 			excludedConfiguration = new HashSet<int>();
@@ -78,10 +78,6 @@ namespace PsdzClient.Core
 				xmlDocument.LoadXml(xmlCharacteristic);
 				EcuTreeConfiguration.Deserialize(xmlDocument.InnerXml, out var obj, out var _);
 				ecuTreeConfiguration = obj;
-			}
-			else
-			{
-				ecuTreeConfiguration = LoadCharacteristicsFromAssembly(xmlCharacteristic, veh);
 			}
 			if (ecuTreeConfiguration == null)
 			{
