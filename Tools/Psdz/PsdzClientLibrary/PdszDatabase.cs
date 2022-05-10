@@ -1068,6 +1068,34 @@ namespace PsdzClient
             }
         }
 
+        public class BordnetsData
+        {
+            public BordnetsData(string infoObjId, string infoObjIdent, string docId)
+            {
+                InfoObjId = infoObjId;
+                InfoObjIdent = infoObjIdent;
+                DocId = docId;
+                DocData = null;
+            }
+
+            public string InfoObjId { get; set; }
+
+            public string InfoObjIdent { get; set; }
+
+            public string DocId { get; set; }
+
+            public string DocData { get; set; }
+
+            public string ToString(string prefix = "")
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(prefix);
+                sb.Append(string.Format(CultureInfo.InvariantCulture,
+                    "BordnetsData: InfoId={0}, InfoIdent={1}, DocId={2}", InfoObjId, InfoObjIdent, DocId));
+                return sb.ToString();
+            }
+        }
+
         public class DbInfo
         {
             public DbInfo(string version, DateTime dateTime)
@@ -3886,6 +3914,67 @@ namespace PsdzClient
             }
 
             return null;
+        }
+
+        public List<BordnetsData> LoadBordnetsData(Vehicle vecInfo)
+        {
+            log.InfoFormat("LoadBordnetsData");
+            List<BordnetsData> boardnetsList = new List<BordnetsData>();
+            try
+            {
+                string sql = "SELECT I.ID AS INFOOBJECTID, I.IDENTIFIER AS INFOOBJECTIDENTIFIER, C.CONTENT_DEDE AS CONTENT_DEDE FROM XEP_INFOOBJECTS I" +
+                             "INNER JOIN XEP_REFCONTENTS R ON R.ID = I.CONTROLID" +
+                             "INNER JOIN XEP_IOCONTENTS C ON C.CONTROLID = R.CONTENTCONTROLID WHERE I.IDENTIFIER LIKE 'BNT-XML-%'";
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string infoObjId = reader["INFOOBJECTID"].ToString().Trim();
+                            string infoObjIdent = reader["INFOOBJECTIDENTIFIER"].ToString().Trim();
+                            string docId = reader["CONTENT_DEDE"].ToString().Trim();
+                            BordnetsData bordnetsData = new BordnetsData(infoObjId, infoObjIdent, docId);
+                            boardnetsList.Add(bordnetsData);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("LoadBordnetsData Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            log.InfoFormat("LoadBordnetsData Count: {0}", boardnetsList.Count);
+            if (boardnetsList.Count == 0)
+            {
+                log.ErrorFormat("LoadBordnetsData No data");
+                return null;
+            }
+
+            List<BordnetsData> boardnetsList2 = new List<BordnetsData>();
+            foreach (BordnetsData bordnetsData in boardnetsList)
+            {
+                if (EvaluateXepRulesById(bordnetsData.InfoObjId, vecInfo, null))
+                {
+                    bordnetsData.DocData = GetXmlValuePrimitivesById(bordnetsData.DocId, "DEDE");
+                    if (!string.IsNullOrWhiteSpace(bordnetsData.DocData))
+                    {
+                        log.InfoFormat("LoadBordnetsData Added: '{0}'", bordnetsData.InfoObjIdent);
+                        boardnetsList2.Add(bordnetsData);
+                    }
+                }
+            }
+
+            log.InfoFormat("LoadBordnetsData Count filter: {0}", boardnetsList2.Count);
+            if (boardnetsList2.Count == 0)
+            {
+                log.ErrorFormat("LoadBordnetsData No filter data");
+                return null;
+            }
+
+            return boardnetsList2;
         }
 
         public string LookupVehicleCharDeDeById(string characteristicId)
