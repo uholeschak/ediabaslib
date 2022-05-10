@@ -3920,7 +3920,7 @@ namespace PsdzClient
         {
             try
             {
-                if (!string.IsNullOrEmpty(storedXmlFileName))
+                if (string.IsNullOrEmpty(storedXmlFileName))
                 {
                     log.ErrorFormat("GetEcuCharacteristicsXml No file name");
                     return null;
