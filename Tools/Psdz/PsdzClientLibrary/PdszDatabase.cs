@@ -2032,15 +2032,22 @@ namespace PsdzClient
                 {
                     log.InfoFormat("ReadEcuCharacteristicsXml Resource: {0}", resourceName);
 
-                    string fileName = Path.GetFileName(resourceName);
+                    string[] resourceParts = resourceName.Split('.');
+                    if (resourceParts.Length < 2)
+                    {
+                        log.ErrorFormat("ReadEcuCharacteristicsXml Invalid resource parts: {0}", resourceParts.Length);
+                        return null;
+                    }
+
+                    string fileName = resourceParts[resourceParts.Length - 2];
                     if (string.IsNullOrEmpty(fileName))
                     {
                         log.ErrorFormat("ReadEcuCharacteristicsXml Invalid file name: {0}", resourceName);
                         continue;
                     }
 
-                    string fileExt = Path.GetExtension(fileName);
-                    if (string.Compare(fileExt, ".xml", StringComparison.OrdinalIgnoreCase) != 0)
+                    string fileExt = resourceParts[resourceParts.Length - 1];
+                    if (string.Compare(fileExt, "xml", StringComparison.OrdinalIgnoreCase) != 0)
                     {
                         continue;
                     }
