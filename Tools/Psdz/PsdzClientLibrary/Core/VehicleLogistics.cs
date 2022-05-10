@@ -11,7 +11,6 @@ namespace PsdzClient.Core
 {
     public class VehicleLogistics
     {
-        private class BaseEcuCharacteristics { }
         private class E46EcuCharacteristics { }
 		private class E36EcuCharacteristics { }
 		private class E39EcuCharacteristics { }
