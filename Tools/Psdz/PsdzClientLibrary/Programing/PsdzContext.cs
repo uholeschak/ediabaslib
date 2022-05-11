@@ -210,7 +210,32 @@ namespace PsdzClient.Programming
 			return string.Empty;
 		}
 
-		public bool SetPathToBackupData(string vin17)
+        public bool CheckIfEcuIsCombined(int diagnosticAddress)
+        {
+            if (EcuCharacteristics == null || EcuCharacteristics.combinedEcuHousingTable == null)
+            {
+                return false;
+            }
+
+            foreach (ICombinedEcuHousingEntry combinedEcuHousingEntry in EcuCharacteristics.combinedEcuHousingTable)
+            {
+                int[] requiredEcuAddresses = combinedEcuHousingEntry.RequiredEcuAddresses;
+                if (requiredEcuAddresses != null)
+                {
+                    foreach (int ecuAddress in requiredEcuAddresses)
+                    {
+                        if (ecuAddress == diagnosticAddress)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public bool SetPathToBackupData(string vin17)
 		{
 			this.hasVinBackupDataFolder = false;
 			string pathString = Path.Combine(IstaFolder, "Temp");
