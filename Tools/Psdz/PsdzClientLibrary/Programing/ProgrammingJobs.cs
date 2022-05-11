@@ -184,7 +184,7 @@ namespace PsdzClient.Programing
         private object _cacheLock = new object();
         public PsdzContext PsdzContext { get; private set; }
         public ProgrammingService ProgrammingService { get; private set; }
-        public List<ProgrammingJobs.OptionsItem> SelectedOptions { get; set; }
+        public List<OptionsItem> SelectedOptions { get; set; }
 
         private CacheType _cacheResponseType;
         public CacheType CacheResponseType
@@ -1898,6 +1898,54 @@ namespace PsdzClient.Programing
                 log.InfoFormat(CultureInfo.InvariantCulture, "VehicleFunctions Finish - Type: {0}", operationType);
                 log.Info(Environment.NewLine + sbResult);
             }
+        }
+
+        public List<OptionsItem> GetCombinedOptionsItems(OptionsItem optionsItemSelect, List<OptionsItem> optionItemsList)
+        {
+            if (optionsItemSelect == null || optionsItemSelect.EcuInfo == null || optionItemsList == null)
+            {
+                return null;
+            }
+
+            log.InfoFormat(CultureInfo.InvariantCulture, "GetCombinedOptionsItems Ecu: {0}", optionsItemSelect.EcuInfo.Name);
+            ICombinedEcuHousingEntry combinedEcuHousingEntry = PsdzContext.GetEcuHousingEntry((int) optionsItemSelect.EcuInfo.Address);
+            if (combinedEcuHousingEntry == null || combinedEcuHousingEntry.RequiredEcuAddresses == null)
+            {
+                log.InfoFormat(CultureInfo.InvariantCulture, "GetCombinedOptionsItems No housing entry for address: {0}", optionsItemSelect.EcuInfo.Address);
+                return null;
+            }
+
+            List<OptionsItem> combinedItems = new List<OptionsItem>();
+            foreach (int ecuAddress in combinedEcuHousingEntry.RequiredEcuAddresses)
+            {
+                if (ecuAddress == optionsItemSelect.EcuInfo.Address)
+                {
+                    continue;
+                }
+
+                foreach (OptionsItem optionsItem in optionItemsList)
+                {
+                    if (optionsItem == optionsItemSelect)
+                    {
+                        continue;
+                    }
+
+                    if (optionsItem.EcuInfo != null)
+                    {
+                        if (optionsItem.EcuInfo.Address == ecuAddress)
+                        {
+                            if (!combinedItems.Contains(optionsItem))
+                            {
+                                log.InfoFormat(CultureInfo.InvariantCulture, "GetCombinedOptionsItems Adding combined Ecu: {0}", optionsItem.EcuInfo.Name);
+                                combinedItems.Add(optionsItem);
+                            }
+                        }
+                    }
+                }
+            }
+
+            log.InfoFormat(CultureInfo.InvariantCulture, "GetCombinedOptionsItems Found items: {0}", combinedItems.Count);
+            return combinedItems;
         }
 
         public void UpdateTargetFa(bool reset = false)
