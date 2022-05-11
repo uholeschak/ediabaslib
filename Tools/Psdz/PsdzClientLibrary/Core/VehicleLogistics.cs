@@ -62,10 +62,10 @@ namespace PsdzClient.Core
                 return null;
             }
 
-            string xml = database.GetBordnetXmlFromDatabase(vecInfo);
-            if (!string.IsNullOrWhiteSpace(xml))
+            PdszDatabase.BordnetsData bordnetsData = database.GetBordnetFromDatabase(vecInfo);
+            if (bordnetsData != null && !string.IsNullOrWhiteSpace(bordnetsData.DocData))
             {
-                BaseEcuCharacteristics baseEcuCharacteristics = CreateCharacteristicsInstance<GenericEcuCharacteristics>(vecInfo, xml, storedXmlFileName);
+                BaseEcuCharacteristics baseEcuCharacteristics = CreateCharacteristicsInstance<GenericEcuCharacteristics>(vecInfo, bordnetsData.DocData, bordnetsData.InfoObjIdent);
                 if (baseEcuCharacteristics != null)
                 {
                     return baseEcuCharacteristics;
@@ -74,7 +74,7 @@ namespace PsdzClient.Core
 
             if (!string.IsNullOrEmpty(storedXmlFileName))
             {
-                xml = database.GetEcuCharacteristicsXml(storedXmlFileName);
+                string xml = database.GetEcuCharacteristicsXml(storedXmlFileName);
                 if (!string.IsNullOrWhiteSpace(xml))
                 {
                     BaseEcuCharacteristics baseEcuCharacteristics = CreateCharacteristicsInstance<GenericEcuCharacteristics>(vecInfo, xml, storedXmlFileName);

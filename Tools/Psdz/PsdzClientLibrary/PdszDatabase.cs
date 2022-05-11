@@ -3955,7 +3955,7 @@ namespace PsdzClient
             }
         }
 
-        public string GetBordnetXmlFromDatabase(Vehicle vecInfo)
+        public BordnetsData GetBordnetFromDatabase(Vehicle vecInfo)
         {
             List<BordnetsData> boardnetsList = LoadBordnetsData(vecInfo);
             if (boardnetsList == null)
@@ -3970,15 +3970,8 @@ namespace PsdzClient
                 return null;
             }
 
-            string xml = boardnetsList[0].DocData;
-            if (string.IsNullOrWhiteSpace(xml))
-            {
-                log.ErrorFormat("GetBordnetXmlFromDatabase Empty");
-                return null;
-            }
-
             log.InfoFormat("GetBordnetXmlFromDatabase Valid");
-            return xml;
+            return boardnetsList[0];
         }
 
         public List<BordnetsData> LoadBordnetsData(Vehicle vecInfo)
