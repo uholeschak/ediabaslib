@@ -844,6 +844,15 @@ namespace PsdzClient
                 return;
             }
 
+            List<ProgrammingJobs.OptionsItem> listBoxOptionItems = new List<ProgrammingJobs.OptionsItem>();
+            foreach (object listBoxItemObject in checkedListBoxOptions.Items)
+            {
+                if (listBoxItemObject is ProgrammingJobs.OptionsItem listBoxItem)
+                {
+                    listBoxOptionItems.Add(listBoxItem);
+                }
+            }
+
             bool modified = false;
             if (e.Index >= 0 && e.Index < checkedListBoxOptions.Items.Count)
             {
@@ -872,11 +881,32 @@ namespace PsdzClient
                                 if (!_programmingJobs.SelectedOptions.Contains(optionsItem))
                                 {
                                     _programmingJobs.SelectedOptions.Add(optionsItem);
+
+                                    List<ProgrammingJobs.OptionsItem> combinedOptionsItems = _programmingJobs.GetCombinedOptionsItems(optionsItem, listBoxOptionItems);
+                                    if (combinedOptionsItems != null)
+                                    {
+                                        foreach (ProgrammingJobs.OptionsItem combinedItem in combinedOptionsItems)
+                                        {
+                                            if (!_programmingJobs.SelectedOptions.Contains(combinedItem))
+                                            {
+                                                _programmingJobs.SelectedOptions.Add(combinedItem);
+                                            }
+                                        }
+                                    }
                                 }
                             }
                             else
                             {
                                 _programmingJobs.SelectedOptions.Remove(optionsItem);
+
+                                List<ProgrammingJobs.OptionsItem> combinedOptionsItems = _programmingJobs.GetCombinedOptionsItems(optionsItem, listBoxOptionItems);
+                                if (combinedOptionsItems != null)
+                                {
+                                    foreach (ProgrammingJobs.OptionsItem combinedItem in combinedOptionsItems)
+                                    {
+                                        _programmingJobs.SelectedOptions.Remove(combinedItem);
+                                    }
+                                }
                             }
                         }
 

@@ -1902,7 +1902,7 @@ namespace PsdzClient.Programing
 
         public List<OptionsItem> GetCombinedOptionsItems(OptionsItem optionsItemSelect, List<OptionsItem> optionItemsList)
         {
-            if (optionsItemSelect == null || optionsItemSelect.EcuInfo == null || optionItemsList == null)
+            if (PsdzContext == null || optionsItemSelect == null || optionsItemSelect.EcuInfo == null || optionItemsList == null)
             {
                 return null;
             }
