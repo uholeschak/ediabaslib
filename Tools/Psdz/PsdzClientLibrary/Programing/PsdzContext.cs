@@ -210,11 +210,11 @@ namespace PsdzClient.Programming
 			return string.Empty;
 		}
 
-        public bool CheckIfEcuIsCombined(int diagnosticAddress)
+        public ICombinedEcuHousingEntry GetEcuHousingEntry(int diagnosticAddress)
         {
             if (EcuCharacteristics == null || EcuCharacteristics.combinedEcuHousingTable == null)
             {
-                return false;
+                return null;
             }
 
             foreach (ICombinedEcuHousingEntry combinedEcuHousingEntry in EcuCharacteristics.combinedEcuHousingTable)
@@ -226,13 +226,13 @@ namespace PsdzClient.Programming
                     {
                         if (ecuAddress == diagnosticAddress)
                         {
-                            return true;
+                            return combinedEcuHousingEntry;
                         }
                     }
                 }
             }
 
-            return false;
+            return null;
         }
 
         public bool SetPathToBackupData(string vin17)
