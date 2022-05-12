@@ -364,16 +364,36 @@ namespace WebPsdzClient
 
                                 if (programmingJobs.SelectedOptions != null)
                                 {
+                                    List<ProgrammingJobs.OptionsItem> combinedOptionsItems = programmingJobs.GetCombinedOptionsItems(optionsItem, optionsItems);
                                     if (listItem.Selected)
                                     {
                                         if (!programmingJobs.SelectedOptions.Contains(optionsItem))
                                         {
                                             programmingJobs.SelectedOptions.Add(optionsItem);
                                         }
+
+                                        if (combinedOptionsItems != null)
+                                        {
+                                            foreach (ProgrammingJobs.OptionsItem combinedItem in combinedOptionsItems)
+                                            {
+                                                if (!programmingJobs.SelectedOptions.Contains(combinedItem))
+                                                {
+                                                    programmingJobs.SelectedOptions.Add(combinedItem);
+                                                }
+                                            }
+                                        }
                                     }
                                     else
                                     {
                                         programmingJobs.SelectedOptions.Remove(optionsItem);
+
+                                        if (combinedOptionsItems != null)
+                                        {
+                                            foreach (ProgrammingJobs.OptionsItem combinedItem in combinedOptionsItems)
+                                            {
+                                                programmingJobs.SelectedOptions.Remove(combinedItem);
+                                            }
+                                        }
                                     }
                                 }
 
