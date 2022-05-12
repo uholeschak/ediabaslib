@@ -844,15 +844,6 @@ namespace PsdzClient
                 return;
             }
 
-            List<ProgrammingJobs.OptionsItem> listBoxOptionItems = new List<ProgrammingJobs.OptionsItem>();
-            foreach (object listBoxItemObject in checkedListBoxOptions.Items)
-            {
-                if (listBoxItemObject is ProgrammingJobs.OptionsItem listBoxItem)
-                {
-                    listBoxOptionItems.Add(listBoxItem);
-                }
-            }
-
             bool modified = false;
             if (e.Index >= 0 && e.Index < checkedListBoxOptions.Items.Count)
             {
@@ -868,6 +859,11 @@ namespace PsdzClient
                         }
                     }
 
+                    if (!_optionsDict.TryGetValue(swiRegisterEnum, out List<ProgrammingJobs.OptionsItem> optionsItems))
+                    {
+                        log.ErrorFormat("checkedListBoxOptions_ItemCheck No option items for: {0}", swiRegisterEnum);
+                    }
+
                     if (e.CurrentValue == CheckState.Indeterminate)
                     {
                         e.NewValue = e.CurrentValue;
@@ -876,7 +872,7 @@ namespace PsdzClient
                     {
                         if (_programmingJobs.SelectedOptions != null)
                         {
-                            List<ProgrammingJobs.OptionsItem> combinedOptionsItems = _programmingJobs.GetCombinedOptionsItems(optionsItem, listBoxOptionItems);
+                            List<ProgrammingJobs.OptionsItem> combinedOptionsItems = _programmingJobs.GetCombinedOptionsItems(optionsItem, optionsItems);
                             if (e.NewValue == CheckState.Checked)
                             {
                                 if (!_programmingJobs.SelectedOptions.Contains(optionsItem))
