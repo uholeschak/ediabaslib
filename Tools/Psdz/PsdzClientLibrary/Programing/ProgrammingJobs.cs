@@ -1918,11 +1918,6 @@ namespace PsdzClient.Programing
             List<OptionsItem> combinedItems = new List<OptionsItem>();
             foreach (int ecuAddress in combinedEcuHousingEntry.RequiredEcuAddresses)
             {
-                if (ecuAddress == optionsItemSelect.EcuInfo.Address)
-                {
-                    continue;
-                }
-
                 foreach (OptionsItem optionsItem in optionItemsList)
                 {
                     if (optionsItem == optionsItemSelect)

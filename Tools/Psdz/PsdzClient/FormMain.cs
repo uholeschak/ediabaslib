@@ -876,21 +876,21 @@ namespace PsdzClient
                     {
                         if (_programmingJobs.SelectedOptions != null)
                         {
+                            List<ProgrammingJobs.OptionsItem> combinedOptionsItems = _programmingJobs.GetCombinedOptionsItems(optionsItem, listBoxOptionItems);
                             if (e.NewValue == CheckState.Checked)
                             {
                                 if (!_programmingJobs.SelectedOptions.Contains(optionsItem))
                                 {
                                     _programmingJobs.SelectedOptions.Add(optionsItem);
+                                }
 
-                                    List<ProgrammingJobs.OptionsItem> combinedOptionsItems = _programmingJobs.GetCombinedOptionsItems(optionsItem, listBoxOptionItems);
-                                    if (combinedOptionsItems != null)
+                                if (combinedOptionsItems != null)
+                                {
+                                    foreach (ProgrammingJobs.OptionsItem combinedItem in combinedOptionsItems)
                                     {
-                                        foreach (ProgrammingJobs.OptionsItem combinedItem in combinedOptionsItems)
+                                        if (!_programmingJobs.SelectedOptions.Contains(combinedItem))
                                         {
-                                            if (!_programmingJobs.SelectedOptions.Contains(combinedItem))
-                                            {
-                                                _programmingJobs.SelectedOptions.Add(combinedItem);
-                                            }
+                                            _programmingJobs.SelectedOptions.Add(combinedItem);
                                         }
                                     }
                                 }
@@ -899,7 +899,6 @@ namespace PsdzClient
                             {
                                 _programmingJobs.SelectedOptions.Remove(optionsItem);
 
-                                List<ProgrammingJobs.OptionsItem> combinedOptionsItems = _programmingJobs.GetCombinedOptionsItems(optionsItem, listBoxOptionItems);
                                 if (combinedOptionsItems != null)
                                 {
                                     foreach (ProgrammingJobs.OptionsItem combinedItem in combinedOptionsItems)
