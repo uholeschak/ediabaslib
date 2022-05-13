@@ -85,4 +85,5 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
     <add key=""SqlServer"" value=""Server={sqlUrl};User ID={sqlUser};Password={sqlPassword}""/>
     <add key=""AccessPwd"" value=""{accessPassword}""/>
     <add key=""TestLicenses"" value=""{testLic}""/>
+    <add key=""DisplayOptions"" value=""Hardware""/>
 </appSettings>");

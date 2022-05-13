@@ -2178,6 +2178,30 @@ namespace WebPsdzClient.App_Data
             log.InfoFormat("VehicleThread stopped");
         }
 
+        public bool HasDisplayOption(string option)
+        {
+            log.InfoFormat("HasDisplayOption Option={0}", option);
+            string displayOptions = Global.DisplayOptions;
+            if (string.IsNullOrEmpty(displayOptions))
+            {
+                log.InfoFormat("HasDisplayOption No options");
+                return false;
+            }
+
+            string[] optionList = displayOptions.Split(';');
+            foreach (string optionItem in optionList)
+            {
+                if (string.Compare(optionItem, option, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    log.InfoFormat("HasDisplayOption Option found: {0}", option);
+                    return true;
+                }
+            }
+
+            log.InfoFormat("HasDisplayOption Option not found: {0}", option);
+            return false;
+        }
+
         public void ProcessLicense()
         {
             bool registerAll = !string.IsNullOrEmpty(Global.TestLicenses);

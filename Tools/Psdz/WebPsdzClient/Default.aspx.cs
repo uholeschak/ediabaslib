@@ -630,6 +630,15 @@ namespace WebPsdzClient
                     }
                     foreach (ProgrammingJobs.OptionType optionTypeUpdate in programmingJobs.OptionTypes)
                     {
+                        PdszDatabase.SwiRegisterGroup swiRegisterGroup = PdszDatabase.GetSwiRegisterGroup(optionTypeUpdate.SwiRegisterEnum);
+                        if (swiRegisterGroup != PdszDatabase.SwiRegisterGroup.Modification)
+                        {
+                            if (!sessionContainer.HasDisplayOption("Hardware"))
+                            {
+                                continue;
+                            }
+                        }
+
                         ListItem listItem = new ListItem(optionTypeUpdate.ToString(), optionTypeUpdate.SwiRegisterEnum.ToString());
                         if (sessionContainer.SelectedSwiRegister == optionTypeUpdate.SwiRegisterEnum)
                         {
