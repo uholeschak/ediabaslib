@@ -4389,7 +4389,7 @@ namespace BmwDeepObd
                     if (nameArray.Length == 2)
                     {
                         sgbdName = nameArray[0];
-                        object addressObj = new System.ComponentModel.UInt32Converter().ConvertFromInvariantString(nameArray[1]);
+                        object addressObj = new UInt32Converter().ConvertFromInvariantString(nameArray[1]);
                         if (!(addressObj is UInt32 address))
                         {
                             ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ResolveSgbdFile invalid number for: {0} ", baseFileName);
