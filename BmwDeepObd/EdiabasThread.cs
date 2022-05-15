@@ -858,24 +858,55 @@ namespace BmwDeepObd
                             {
                                 try
                                 {
-                                    if (resetState != EdiabasErrorReportReset.ErrorRestState.Ok && XmlToolActivity.IsUdsEcuName(ecuInfo.Sgbd))
+                                    if (resetState != EdiabasErrorReportReset.ErrorRestState.Ok && XmlToolActivity.IsUdsEcuName(ecuInfo.Sgbd) &&
+                                        Ediabas.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
                                     {
                                         int dataOffset = XmlToolActivity.VagUdsRawDataOffset;
                                         byte[] clearDtcRequest = { 0x04 };  // ISO 15031-5
-                                        Ediabas.EdInterfaceClass.TransmitData(clearDtcRequest, out byte[] clearDtcResponse);
-                                        if (clearDtcResponse != null && clearDtcResponse.Length >= dataOffset + 1)
+                                        bool funcAddress = edInterfaceObd.UdsEcuCanIdOverride == 0x7DF;
+                                        for (; ; )
                                         {
-                                            if (clearDtcResponse[dataOffset + 0] == 0x44)
+                                            bool dataReceived = false;
+                                            try
                                             {
-                                                resetState = EdiabasErrorReportReset.ErrorRestState.Ok;
-                                            }
-                                            else if (clearDtcResponse[dataOffset + 0] == 0x7F)
-                                            {
-                                                if (clearDtcResponse.Length >= dataOffset + 3 && clearDtcResponse[dataOffset + 1] == 0x04 && clearDtcResponse[dataOffset + 2] == 0x22)
+                                                if (Ediabas.EdInterfaceClass.TransmitData(clearDtcRequest, out byte[] clearDtcResponse) && clearDtcResponse?.Length >= dataOffset)
                                                 {
-                                                    resetState = EdiabasErrorReportReset.ErrorRestState.Condition;
+                                                    dataReceived = true;
+                                                    if (clearDtcResponse.Length >= dataOffset + 1)
+                                                    {
+                                                        if (clearDtcResponse[dataOffset + 0] == 0x44)
+                                                        {
+                                                            if (resetState == EdiabasErrorReportReset.ErrorRestState.Undefined)
+                                                            {
+                                                                resetState = EdiabasErrorReportReset.ErrorRestState.Ok;
+                                                            }
+                                                        }
+                                                        else if (clearDtcResponse[dataOffset + 0] == 0x7F)
+                                                        {
+                                                            if (clearDtcResponse.Length >= dataOffset + 3 && clearDtcResponse[dataOffset + 1] == 0x04 && clearDtcResponse[dataOffset + 2] == 0x22)
+                                                            {
+                                                                resetState = EdiabasErrorReportReset.ErrorRestState.Condition;
+                                                            }
+                                                        }
+                                                    }
                                                 }
                                             }
+                                            catch (Exception)
+                                            {
+                                                // ignored
+                                            }
+
+                                            if (!funcAddress || !dataReceived)
+                                            {
+                                                break;
+                                            }
+
+                                            if (AbortEdiabasJob())
+                                            {
+                                                break;
+                                            }
+
+                                            clearDtcRequest = Array.Empty<byte>();
                                         }
                                     }
                                 }
@@ -1366,7 +1397,7 @@ namespace BmwDeepObd
                                                         bool dataReceived = false;
                                                         try
                                                         {
-                                                            if (Ediabas.EdInterfaceClass.TransmitData(sendData, out byte[] receiveData))
+                                                            if (Ediabas.EdInterfaceClass.TransmitData(sendData, out byte[] receiveData) && receiveData?.Length > 0)
                                                             {
                                                                 dataReceived = true;
                                                                 responseList.AddRange(receiveData);
