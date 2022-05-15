@@ -863,6 +863,9 @@ namespace BmwDeepObd
                                     {
                                         int dataOffset = XmlToolActivity.VagUdsRawDataOffset;
                                         byte[] clearDtcRequest = { 0x04 };  // ISO 15031-5
+
+                                        int udsCanIdOld = edInterfaceObd.UdsEcuCanIdOverride;
+                                        edInterfaceObd.UdsEcuCanIdOverride = 0x7DF;
                                         bool funcAddress = edInterfaceObd.UdsEcuCanIdOverride == 0x7DF;
                                         for (; ; )
                                         {
@@ -908,6 +911,8 @@ namespace BmwDeepObd
 
                                             clearDtcRequest = Array.Empty<byte>();
                                         }
+
+                                        edInterfaceObd.UdsEcuCanIdOverride = udsCanIdOld;
                                     }
                                 }
                                 catch (Exception)
