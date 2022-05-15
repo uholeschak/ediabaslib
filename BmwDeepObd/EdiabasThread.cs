@@ -68,18 +68,26 @@ namespace BmwDeepObd
 
         public class EdiabasErrorReportReset : EdiabasErrorReport
         {
-            public EdiabasErrorReportReset(string ecuName, string sgbd, string sgbdResolved, string vagDataFileName, string vagUdsFileName, Dictionary<string, EdiabasNet.ResultData> errorDict, bool errorResetOk) :
+            public enum ErrorRestState
+            {
+                Undefined,
+                Ok,
+                Failed,
+                Condition
+            }
+
+            public EdiabasErrorReportReset(string ecuName, string sgbd, string sgbdResolved, string vagDataFileName, string vagUdsFileName, Dictionary<string, EdiabasNet.ResultData> errorDict, ErrorRestState resetState) :
                 base(ecuName, sgbd, sgbdResolved, vagDataFileName, vagUdsFileName, errorDict, null, string.Empty)
             {
-                ErrorResetOk = errorResetOk;
+                ResetState = resetState;
             }
 
             public void Reset()
             {
-                ErrorResetOk = false;
+                ResetState = ErrorRestState.Undefined;
             }
 
-            public bool ErrorResetOk { get; private set; }
+            public ErrorRestState ResetState { get; private set; }
         }
 
         public class EcuFunctionResult : EdiabasNet.ResultData
@@ -756,7 +764,8 @@ namespace BmwDeepObd
 
                             if (resultDictOk != null)
                             {
-                                errorReportList.Add(new EdiabasErrorReportReset(string.Empty, string.Empty, string.Empty, null, null, resultDictOk, true));
+                                errorReportList.Add(new EdiabasErrorReportReset(string.Empty, string.Empty, string.Empty, null, null, resultDictOk,
+                                    EdiabasErrorReportReset.ErrorRestState.Ok));
                             }
                         }
                     }
@@ -803,7 +812,7 @@ namespace BmwDeepObd
 
                         if (errorResetList != null && errorResetList.Any(ecu => string.CompareOrdinal(ecu, ecuInfo.Name) == 0))
                         {   // error reset requested
-                            bool errorResetOk = false;
+                            EdiabasErrorReportReset.ErrorRestState resetState = EdiabasErrorReportReset.ErrorRestState.Undefined;
                             try
                             {
                                 Ediabas.ArgString = string.Empty;
@@ -834,7 +843,7 @@ namespace BmwDeepObd
                                             string jobStatus = (string)resultData.OpData;
                                             if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
                                             {
-                                                errorResetOk = true;
+                                                resetState = EdiabasErrorReportReset.ErrorRestState.Ok;
                                             }
                                         }
                                     }
@@ -849,14 +858,24 @@ namespace BmwDeepObd
                             {
                                 try
                                 {
-                                    if (!errorResetOk && XmlToolActivity.IsUdsEcuName(ecuInfo.Sgbd))
+                                    if (resetState != EdiabasErrorReportReset.ErrorRestState.Ok && XmlToolActivity.IsUdsEcuName(ecuInfo.Sgbd))
                                     {
                                         int dataOffset = XmlToolActivity.VagUdsRawDataOffset;
                                         byte[] clearDtcRequest = { 0x04 };  // ISO 15031-5
                                         Ediabas.EdInterfaceClass.TransmitData(clearDtcRequest, out byte[] clearDtcResponse);
-                                        if (clearDtcResponse != null && clearDtcResponse.Length >= dataOffset + 1 && clearDtcResponse[dataOffset + 0] == 0x44)
+                                        if (clearDtcResponse != null && clearDtcResponse.Length >= dataOffset + 1)
                                         {
-                                            errorResetOk = true;
+                                            if (clearDtcResponse[dataOffset + 0] == 0x44)
+                                            {
+                                                resetState = EdiabasErrorReportReset.ErrorRestState.Ok;
+                                            }
+                                            else if (clearDtcResponse[dataOffset + 0] == 0x7F)
+                                            {
+                                                if (clearDtcResponse.Length >= dataOffset + 3 && clearDtcResponse[dataOffset + 1] == 0x04 && clearDtcResponse[dataOffset + 2] == 0x22)
+                                                {
+                                                    resetState = EdiabasErrorReportReset.ErrorRestState.Condition;
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -866,9 +885,9 @@ namespace BmwDeepObd
                                 }
                             }
 
-                            if (errorResetOk)
+                            if (resetState != EdiabasErrorReportReset.ErrorRestState.Undefined)
                             {
-                                errorReportList.Add(new EdiabasErrorReportReset(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, null, errorResetOk));
+                                errorReportList.Add(new EdiabasErrorReportReset(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, null, resetState));
                             }
                         }
 

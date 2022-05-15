@@ -3566,7 +3566,7 @@ namespace BmwDeepObd
                             {
                                 if (errorReport is EdiabasThread.EdiabasErrorReportReset errorReportReset)
                                 {
-                                    if (errorReportReset.ErrorResetOk)
+                                    if (errorReportReset.ResetState == EdiabasThread.EdiabasErrorReportReset.ErrorRestState.Ok)
                                     {
                                         bool changed = false;
                                         foreach (TableResultItem resultItem in resultListAdapter.Items)
