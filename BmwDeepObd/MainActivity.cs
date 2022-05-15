@@ -417,6 +417,7 @@ namespace BmwDeepObd
         private AlertDialog _startAlertDialog;
         private AlertDialog _configSelectAlertDialog;
         private AlertDialog _downloadEcuAlertDialog;
+        private AlertDialog _errorRestAlertDialog;
         private bool _translateActive;
         private List<string> _translationList;
         private List<string> _translatedList;
@@ -3566,30 +3567,63 @@ namespace BmwDeepObd
                             {
                                 if (errorReport is EdiabasThread.EdiabasErrorReportReset errorReportReset)
                                 {
-                                    if (errorReportReset.ResetState == EdiabasThread.EdiabasErrorReportReset.ErrorRestState.Ok)
+                                    switch (errorReportReset.ResetState)
                                     {
-                                        bool changed = false;
-                                        foreach (TableResultItem resultItem in resultListAdapter.Items)
+                                        case EdiabasThread.EdiabasErrorReportReset.ErrorRestState.Ok:
                                         {
-                                            if (string.IsNullOrEmpty(errorReport.EcuName) ||
-                                                (resultItem.Tag is string ecuName && string.CompareOrdinal(ecuName, errorReport.EcuName) == 0))
+                                            bool changed = false;
+                                            foreach (TableResultItem resultItem in resultListAdapter.Items)
                                             {
-                                                if (resultItem.Selected)
+                                                if (string.IsNullOrEmpty(errorReport.EcuName) ||
+                                                    (resultItem.Tag is string ecuName && string.CompareOrdinal(ecuName, errorReport.EcuName) == 0))
                                                 {
-                                                    errorReportReset.Reset();
-                                                    resultItem.Selected = false;
-                                                    changed = true;
+                                                    if (resultItem.Selected)
+                                                    {
+                                                        errorReportReset.Reset();
+                                                        resultItem.Selected = false;
+                                                        changed = true;
+                                                    }
                                                 }
                                             }
+
+                                            if (changed || forceUpdate)
+                                            {
+                                                resultListAdapter.NotifyDataSetChanged();
+                                            }
+
+                                            break;
                                         }
 
-                                        if (changed || forceUpdate)
+                                        case EdiabasThread.EdiabasErrorReportReset.ErrorRestState.Condition:
                                         {
-                                            resultListAdapter.NotifyDataSetChanged();
+                                            if (_errorRestAlertDialog != null)
+                                            {
+                                                break;
+                                            }
+
+                                            errorReportReset.Reset();
+                                            _errorRestAlertDialog = new AlertDialog.Builder(this)
+                                                .SetNeutralButton(Resource.String.button_ok, (sender, args) =>
+                                                {
+                                                })
+                                                .SetMessage(Resource.String.error_reset_condition)
+                                                .SetTitle(Resource.String.alert_title_warning)
+                                                .Show();
+                                            _errorRestAlertDialog.DismissEvent += (sender, args) =>
+                                            {
+                                                if (_activityCommon == null)
+                                                {
+                                                    return;
+                                                }
+                                                _errorRestAlertDialog = null;
+                                            };
+                                            break;
                                         }
                                     }
+
                                     continue;
                                 }
+
                                 if (ActivityCommon.IsCommunicationError(errorReport.ExecptionText))
                                 {
                                     _instanceData.CommErrorsOccurred = true;
