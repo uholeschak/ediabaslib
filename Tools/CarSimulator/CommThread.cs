@@ -4425,10 +4425,17 @@ namespace CarSimulator
 
         private byte[] GetIsoTpConfigData(uint canId)
         {
+            uint checkId = canId;
+            if (canId == 0x7DF)
+            {
+                checkId = 0x7E0;    // map to motor ECU
+                Debug.WriteLine("Mapped functional ISOTP CAN ID: {0:X03} {1:X03}", canId, checkId);
+            }
+
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (byte[] configData in _configData.ConfigList)
             {
-                if (configData.Length == 5 && ((configData[1] << 8) | configData[2]) == canId)
+                if (configData.Length == 5 && ((configData[1] << 8) | configData[2]) == checkId)
                 {
                     return configData;
                 }
