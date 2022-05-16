@@ -4017,6 +4017,12 @@ namespace EdiabasLib
             {
                 if (!ReceiveData(receiveData, 0, 3, timeout, ParTimeoutTelEnd))
                 {
+                    if (!sendDataPresent)
+                    {
+                        if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No data received");
+                        return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+                    }
+
                     if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No header received");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                 }
