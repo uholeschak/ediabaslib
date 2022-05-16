@@ -100,6 +100,7 @@ namespace EdiabasLib
 
         private bool _disposed;
         private static Mutex _interfaceMutex;
+        public const byte UdsNoSendData = 0x00;
         protected const string MutexName = "EdiabasLib_InterfaceObd";
         protected const int TransBufferSize = 0x800; // transmit buffer size
         protected static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
@@ -3952,6 +3953,7 @@ namespace EdiabasLib
         {
             byte[] sendDataBuffer = sendData;
             int sendLen = sendDataLength;
+            bool sendDataPresent = true;
             receiveLength = 0;
             CanFlags canFlags = CanFlags.Empty;
             if ((sendDataBuffer == null) || (sendLen == 0))
@@ -3965,6 +3967,12 @@ namespace EdiabasLib
                 sendDataBuffer = ParEdicTesterPresentTel;
                 sendLen = ParEdicTesterPresentTelLen;
             }
+            else if (sendLen == 1 && sendData[0] == UdsNoSendData)
+            {
+                sendDataPresent = false;
+                if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No send data present");
+            }
+
             if (UdsDtcStatusOverride >= 0 && 
                 sendLen == 3 && sendDataBuffer[0] == 0x19 && sendDataBuffer[1] == 0x02 && sendDataBuffer[2] == 0x0C)
             {
@@ -3994,11 +4002,16 @@ namespace EdiabasLib
             }
             if (enableLogging) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendDataBuffer, 0, sendLen, "Send");
             LastCommTick = Stopwatch.GetTimestamp();
-            if (!SendData(sendDataBuffer, sendLen, false, 0))
+
+            if (sendDataPresent)
             {
-                if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending failed");
-                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                if (!SendData(sendDataBuffer, sendLen, false, 0))
+                {
+                    if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending failed");
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                }
             }
+
             int timeout = ParTimeoutStd;
             for (int retry = 0; retry < ParRetryNr78; retry++)
             {

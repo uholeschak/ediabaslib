@@ -265,6 +265,7 @@ namespace BmwDeepObd
         public EdiabasNet Ediabas { get; private set; }
 
         public static readonly Object DataLock = new Object();
+        public const int UdsFuncAddr = 0x7DF;
         private const char DataLogSeparator = '\t';
         public const string NotificationBroadcastInfo = ActivityCommon.AppNameSpace + ".Notification.Info";
         public static readonly Tuple<string, bool>[] ErrorFaultModeResultList =
@@ -865,8 +866,8 @@ namespace BmwDeepObd
                                         byte[] clearDtcRequest = { 0x04 };  // ISO 15031-5
 
                                         int udsCanIdOld = edInterfaceObd.UdsEcuCanIdOverride;
-                                        edInterfaceObd.UdsEcuCanIdOverride = 0x7DF;
-                                        bool funcAddress = edInterfaceObd.UdsEcuCanIdOverride == 0x7DF;
+                                        edInterfaceObd.UdsEcuCanIdOverride = UdsFuncAddr;
+                                        bool funcAddress = edInterfaceObd.UdsEcuCanIdOverride == UdsFuncAddr;
                                         for (; ; )
                                         {
                                             bool dataReceived = false;
@@ -909,7 +910,7 @@ namespace BmwDeepObd
                                                 break;
                                             }
 
-                                            clearDtcRequest = Array.Empty<byte>();
+                                            clearDtcRequest = new []{ EdInterfaceObd.UdsNoSendData };   // no send data
                                         }
 
                                         edInterfaceObd.UdsEcuCanIdOverride = udsCanIdOld;
