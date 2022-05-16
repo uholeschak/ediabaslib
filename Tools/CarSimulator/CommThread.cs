@@ -5393,6 +5393,10 @@ namespace CarSimulator
                 if (!found)
                 {
                     int offset = _receiveData[0] == 0x80 ? 1 : 0;
+                    if (offset > 0 && _receiveData[3] == 0x00)
+                    {
+                        offset += 2;
+                    }
                     if (
                         (_receiveData[0] & 0xC0) == 0x80 &&
                         _receiveData[2] == 0xF1 &&
