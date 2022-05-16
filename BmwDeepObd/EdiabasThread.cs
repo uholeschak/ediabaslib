@@ -865,7 +865,6 @@ namespace BmwDeepObd
                                         int dataOffset = XmlToolActivity.VagUdsRawDataOffset;
                                         byte[] clearDtcRequest = { 0x04 };  // ISO 15031-5
 
-                                        int udsCanIdOld = edInterfaceObd.UdsEcuCanIdOverride;
                                         edInterfaceObd.UdsEcuCanIdOverride = UdsFuncAddr;
                                         bool funcAddress = edInterfaceObd.UdsEcuCanIdOverride == UdsFuncAddr;
                                         for (; ; )
@@ -913,7 +912,9 @@ namespace BmwDeepObd
                                             clearDtcRequest = new []{ EdInterfaceObd.UdsNoSendData };   // no send data
                                         }
 
-                                        edInterfaceObd.UdsEcuCanIdOverride = udsCanIdOld;
+                                        // force reload
+                                        Ediabas.CloseSgbd();
+                                        ActivityCommon.ResolveSgbdFile(Ediabas, ecuInfo.Sgbd);
                                     }
                                 }
                                 catch (Exception)
