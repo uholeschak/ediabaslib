@@ -281,6 +281,8 @@ namespace CarSimulator
         private const int Kwp2000Nr2123Retries = 3;
         private const int ResetAdaptionChannel = 0;
         private const int DefaultAdaptionChannelValue = 0x1234;
+        private const int FunctOrgAddr = 0x7DF;
+        private const int FunctSubstAddr = 0x7E0;   // motor
         private readonly MainForm _form;
         private volatile bool _stopThread;
         private bool _threadRunning;
@@ -3477,6 +3479,12 @@ namespace CarSimulator
                 targetAddr = 0x7E0; // mot
             }
 #endif
+            if (targetAddr == FunctOrgAddr)
+            {
+                targetAddr = FunctSubstAddr;
+                Debug.WriteLine("Mapped functional CAN ID: {0:X03} {1:X03}", FunctOrgAddr, FunctSubstAddr);
+            }
+
             if (dataBuffer.Length > 0x3F)
             {
                 if (dataBuffer.Length > 0xFF)
@@ -4426,9 +4434,9 @@ namespace CarSimulator
         private byte[] GetIsoTpConfigData(uint canId)
         {
             uint checkId = canId;
-            if (canId == 0x7DF)
+            if (canId == FunctOrgAddr)
             {
-                checkId = 0x7E0;    // map to motor ECU
+                checkId = FunctSubstAddr;
                 Debug.WriteLine("Mapped functional ISOTP CAN ID: {0:X03} {1:X03}", canId, checkId);
             }
 
