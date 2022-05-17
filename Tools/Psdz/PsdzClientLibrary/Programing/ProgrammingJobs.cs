@@ -185,6 +185,7 @@ namespace PsdzClient.Programing
         public PsdzContext PsdzContext { get; private set; }
         public ProgrammingService ProgrammingService { get; private set; }
         public List<OptionsItem> SelectedOptions { get; set; }
+        public bool DisableTalFlash { get; set; }
 
         private CacheType _cacheResponseType;
         public CacheType CacheResponseType
@@ -1309,6 +1310,11 @@ namespace PsdzClient.Programing
                 if (bModifyFa)
                 {   // enable deploy
                     psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.CdDeploy }, TalFilterOptions.Must, psdzTalFilter);
+                    log.InfoFormat(CultureInfo.InvariantCulture, "TAL flashing disabled: {0}", DisableTalFlash);
+                    if (DisableTalFlash)
+                    {
+                        psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.BlFlash, TaCategories.GatewayTableDeploy, TaCategories.SwDeploy }, TalFilterOptions.MustNot, psdzTalFilter);
+                    }
                 }
                 PsdzContext.SetTalFilter(psdzTalFilter);
 
@@ -1850,8 +1856,20 @@ namespace PsdzClient.Programing
 
                 if (bModifyFa && programmingActionsSum.Contains(ProgrammingActionType.Programming))
                 {
-                    log.ErrorFormat(CultureInfo.InvariantCulture, "Modify FA TAL contains programming actions");
-                    sbResult.AppendLine(Strings.TalFlashOperation);
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "Modify FA TAL contains programming actions, TAL flash disabled: {0}", DisableTalFlash);
+                    if (ShowMessageEvent != null)
+                    {
+                        if (!ShowMessageEvent.Invoke(cts, Strings.TalFlashOperation, false, true))
+                        {
+                            log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalFlashOperation aborted");
+                            return false;
+                        }
+
+                        log.InfoFormat(CultureInfo.InvariantCulture, "TAL flash disabled");
+                        DisableTalFlash = true;
+                    }
+
+                    sbResult.AppendLine(Strings.TalGenerationFailed);
                     UpdateStatus(sbResult.ToString());
                     return false;
                 }
@@ -2149,6 +2167,7 @@ namespace PsdzClient.Programing
             try
             {
                 PsdzContext = new PsdzContext(istaFolder);
+                DisableTalFlash = false;
             }
             catch (Exception)
             {

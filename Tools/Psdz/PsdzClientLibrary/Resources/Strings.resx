@@ -304,7 +304,7 @@ Do you want to continue?</value>
   </data>
   <data name="TalFlashOperation" xml:space="preserve">
     <value>The TAL contains flash operations but flashing is not available.
-Please make sure, that all ECU software is up to date.</value>
+Do you want to disable all flash operations for this session?</value>
   </data>
   <data name="TalGenerationFailed" xml:space="preserve">
     <value>TAL generation failed.</value>
