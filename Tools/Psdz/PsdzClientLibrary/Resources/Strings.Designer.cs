@@ -582,7 +582,8 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die The TAL contains flash operations but flashing is disabled. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die The TAL contains flash operations but flashing is not available.
+        ///Please make sure, that all ECU software is up to date. ähnelt.
         /// </summary>
         internal static string TalFlashOperation {
             get {
