@@ -302,6 +302,9 @@ You could try to execute the TAL again to fix the errors.</value>
 Don't close or minimize this page, because this will interrupt vehicle communcation!
 Do you want to continue?</value>
   </data>
+  <data name="TalFlashOperation" xml:space="preserve">
+    <value>The TAL contains flash operations but flashing is disabled.</value>
+  </data>
   <data name="TalGenerationFailed" xml:space="preserve">
     <value>TAL generation failed.</value>
   </data>

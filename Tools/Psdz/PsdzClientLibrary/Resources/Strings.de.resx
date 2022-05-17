@@ -302,6 +302,9 @@ Sie können versuchen die TAL nochmals auszuführen, um die Fehler zu beheben.</
 Schließen oder minimieren Sie diese Seite nicht, weil dies die Verbindung zum Fahrzeug unterbricht!
 Wollen Sie Fortfahren?</value>
   </data>
+  <data name="TalFlashOperation" xml:space="preserve">
+    <value>Die TAL enhält Flashoperationen, aber flashen ist deaktiviert.</value>
+  </data>
   <data name="TalGenerationFailed" xml:space="preserve">
     <value>TAL Generierung fehlgeschlagen.</value>
   </data>

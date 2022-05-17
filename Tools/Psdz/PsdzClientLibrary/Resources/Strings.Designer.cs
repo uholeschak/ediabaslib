@@ -582,6 +582,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The TAL contains flash operations but flashing is disabled. ähnelt.
+        /// </summary>
+        internal static string TalFlashOperation {
+            get {
+                return ResourceManager.GetString("TalFlashOperation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die TAL generation failed. ähnelt.
         /// </summary>
         internal static string TalGenerationFailed {

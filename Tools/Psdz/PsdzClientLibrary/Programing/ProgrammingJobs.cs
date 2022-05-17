@@ -1807,13 +1807,16 @@ namespace PsdzClient.Programing
                     }
                 }
 
+                ISet<ProgrammingActionType> programmingActionsSum = new HashSet<ProgrammingActionType>();
                 log.InfoFormat(CultureInfo.InvariantCulture, " Lines: {0}", psdzTal.TalLines.Count());
                 foreach (IPsdzTalLine talLine in psdzTal.TalLines)
                 {
                     if (talLine != null)
                     {
-                        log.InfoFormat(CultureInfo.InvariantCulture, "  Tal line: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
-                            talLine.EcuIdentifier.BaseVariant, talLine.EcuIdentifier.DiagAddrAsInt, talLine.EcuIdentifier.DiagnosisAddress.Offset);
+                        ISet<ProgrammingActionType> programmingActions = EcuProgrammingInfo.MapProgrammingActionType(talLine);
+                        programmingActionsSum.AddRange(programmingActions);
+                        log.InfoFormat(CultureInfo.InvariantCulture, "  Tal line: BaseVar={0}, DiagAddr={1}, DiagOffset={2}, PrgActions={3}",
+                            talLine.EcuIdentifier.BaseVariant, talLine.EcuIdentifier.DiagAddrAsInt, talLine.EcuIdentifier.DiagnosisAddress.Offset, programmingActions.ToStringItems());
                         log.InfoFormat(CultureInfo.InvariantCulture, " FscDeploy={0}, BlFlash={1}, IbaDeploy={2}, SwDeploy={3}, IdRestore={4}, SfaDeploy={5}, Cat={6}",
                             talLine.FscDeploy?.Tas?.Count(), talLine.BlFlash?.Tas?.Count(), talLine.IbaDeploy?.Tas?.Count(),
                             talLine.SwDeploy?.Tas?.Count(), talLine.IdRestore?.Tas?.Count(), talLine.SFADeploy?.Tas?.Count(),
@@ -1844,6 +1847,14 @@ namespace PsdzClient.Programing
                     }
                 }
                 cts?.Token.ThrowIfCancellationRequested();
+
+                if (bModifyFa && programmingActionsSum.Contains(ProgrammingActionType.Programming))
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "Modify FA TAL contains programming actions");
+                    sbResult.AppendLine(Strings.TalFlashOperation);
+                    UpdateStatus(sbResult.ToString());
+                    return false;
+                }
 
                 sbResult.AppendLine(Strings.TalBackupGenerating);
                 UpdateStatus(sbResult.ToString());
