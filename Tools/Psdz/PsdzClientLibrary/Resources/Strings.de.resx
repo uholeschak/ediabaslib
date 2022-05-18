@@ -303,7 +303,8 @@ Schließen oder minimieren Sie diese Seite nicht, weil dies die Verbindung zum F
 Wollen Sie Fortfahren?</value>
   </data>
   <data name="TalFlashOperation" xml:space="preserve">
-    <value>Die TAL enhält Flashoperationen, aber flashen ist nicht verfügbar.
+    <value>Die TAL enthält Flashoperationen, aber flashen ist aus Sicherheitsgründen deaktiviert.
+Möglicherweise ist die Sofware in den Steuergeräten nicht konsitent.
 Wollen Sie alle Flashoperationen in dieser Sitzung deaktivieren?</value>
   </data>
   <data name="TalGenerationFailed" xml:space="preserve">

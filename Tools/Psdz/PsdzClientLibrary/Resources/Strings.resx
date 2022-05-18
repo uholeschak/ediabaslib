@@ -303,7 +303,8 @@ Don't close or minimize this page, because this will interrupt vehicle communcat
 Do you want to continue?</value>
   </data>
   <data name="TalFlashOperation" xml:space="preserve">
-    <value>The TAL contains flash operations but flashing is not available.
+    <value>The TAL contains flash operations but flashing is disabled for safety reasons.
+Possibly the software is not consistent in all ECUs.
 Do you want to disable all flash operations for this session?</value>
   </data>
   <data name="TalGenerationFailed" xml:space="preserve">
