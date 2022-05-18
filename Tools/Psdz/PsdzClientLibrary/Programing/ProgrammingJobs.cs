@@ -1869,6 +1869,7 @@ namespace PsdzClient.Programing
                         DisableTalFlash = true;
                     }
 
+                    PsdzContext.Tal = null;
                     sbResult.AppendLine(Strings.TalGenerationFailed);
                     UpdateStatus(sbResult.ToString());
                     return false;
@@ -1880,6 +1881,7 @@ namespace PsdzClient.Programing
                 IPsdzTal psdzBackupTal = ProgrammingService.Psdz.IndividualDataRestoreService.GenerateBackupTal(PsdzContext.Connection, PsdzContext.PathToBackupData, PsdzContext.Tal, PsdzContext.TalFilter);
                 if (psdzBackupTal == null)
                 {
+                    PsdzContext.Tal = null;
                     sbResult.AppendLine(Strings.TalGenerationFailed);
                     UpdateStatus(sbResult.ToString());
                     return false;
@@ -1896,6 +1898,7 @@ namespace PsdzClient.Programing
                 IPsdzTal psdzRestorePrognosisTal = ProgrammingService.Psdz.IndividualDataRestoreService.GenerateRestorePrognosisTal(PsdzContext.Connection, PsdzContext.PathToBackupData, PsdzContext.Tal, PsdzContext.IndividualDataBackupTal, PsdzContext.TalFilterForIndividualDataTal);
                 if (psdzRestorePrognosisTal == null)
                 {
+                    PsdzContext.Tal = null;
                     sbResult.AppendLine(Strings.TalRestoreGenerationFailed);
                     UpdateStatus(sbResult.ToString());
                     return false;
