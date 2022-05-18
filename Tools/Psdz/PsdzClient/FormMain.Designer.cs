@@ -199,7 +199,7 @@ namespace PsdzClient
             this.buttonModFa.Name = "buttonModFa";
             this.buttonModFa.Size = new System.Drawing.Size(75, 23);
             this.buttonModFa.TabIndex = 17;
-            this.buttonModFa.Text = "Mod. Fa";
+            this.buttonModFa.Text = "Gen.Tal";
             this.buttonModFa.UseVisualStyleBackColor = true;
             this.buttonModFa.Click += new System.EventHandler(this.buttonFunc_Click);
             // 
