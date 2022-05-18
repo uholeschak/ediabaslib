@@ -1856,6 +1856,7 @@ namespace PsdzClient.Programing
 
                 if (bModifyFa && programmingActionsSum.Contains(ProgrammingActionType.Programming))
                 {
+                    PsdzContext.Tal = null;
                     log.ErrorFormat(CultureInfo.InvariantCulture, "Modify FA TAL contains programming actions, TAL flash disabled: {0}", DisableTalFlash);
                     if (ShowMessageEvent != null)
                     {
@@ -1869,7 +1870,6 @@ namespace PsdzClient.Programing
                         DisableTalFlash = true;
                     }
 
-                    PsdzContext.Tal = null;
                     sbResult.AppendLine(Strings.TalGenerationFailed);
                     UpdateStatus(sbResult.ToString());
                     return false;
