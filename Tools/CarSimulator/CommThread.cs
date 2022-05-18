@@ -5219,6 +5219,14 @@ namespace CarSimulator
                             _sendData[8] = _receiveData[5];
                             Array.Copy(_zgwCert, 0, _sendData, 9, _zgwCert.Length);
                         }
+                        else if (_receiveData[4] == 0x37 && _receiveData[5] == 0xFE)
+                        {
+                            Debug.WriteLine("RDBI_CPS Codierpruefstempel");
+
+                            byte[] resposeData = { 0x8A, 0xF1, 0x00, 0x62, 0x37, 0xFE, 0x42, 0x30, 0x35, 0x35, 0x39, 0x34, 0x30 };
+                            Array.Copy(resposeData, _sendData, resposeData.Length);
+                            _sendData[2] = _receiveData[1];
+                        }
                         else
                         {
                             _sendData[0] = 0x83;
