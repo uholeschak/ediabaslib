@@ -308,6 +308,7 @@ namespace CarSimulator
 #endif
         private readonly List<Tp20Channel> _tp20Channels;
         private readonly List<DynamicUdsEntry> _dynamicUdsEntries;
+        private readonly Dictionary<byte, byte[]> _codingStampDict;
         private readonly List<BmwTcpChannel> _bmwTcpChannels;
         private UdpClient _udpClient;
         private bool _udpError;
@@ -750,6 +751,7 @@ namespace CarSimulator
             _lastCanStatusTick = 0;
             _tp20Channels = new List<Tp20Channel>();
             _dynamicUdsEntries = new List<DynamicUdsEntry>();
+            _codingStampDict = new Dictionary<byte, byte[]>();
             _bmwTcpChannels = new List<BmwTcpChannel>();
             _udpClient = null;
             _udpError = false;
@@ -822,6 +824,7 @@ namespace CarSimulator
                 _isoTpMode = false;
                 _tp20Channels.Clear();
                 _dynamicUdsEntries.Clear();
+                _codingStampDict.Clear();
                 _workerThread = new Thread(ThreadFunc);
                 _threadRunning = true;
                 _workerThread.Priority = ThreadPriority.Highest;
@@ -5364,6 +5367,15 @@ namespace CarSimulator
                     {
                         // dummy ok response for service 2E WriteDataByLocalIdentification
                         Debug.WriteLine("Dummy service 2E long: {0:X02}{1:X02}", _receiveData[5], _receiveData[6]);
+
+                        if (_receiveData[4] == 0x17 && _receiveData[5] == 0x1F)
+                        {
+                            Debug.WriteLine("Store RDBI_CPS Codierpruefstempel");
+                            byte[] codeStamp = new byte[recLength];
+                            Array.Copy(_receiveData, codeStamp, codeStamp.Length);
+                            _codingStampDict[_receiveData[1]] = codeStamp;
+                        }
+
                         _sendData[0] = 0x83;
                         _sendData[1] = 0xF1;
                         _sendData[2] = _receiveData[1];
