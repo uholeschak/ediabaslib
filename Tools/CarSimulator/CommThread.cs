@@ -5206,6 +5206,7 @@ namespace CarSimulator
                     {
                         // dummy error response for service 22
                         Debug.WriteLine("Dummy service 22: {0:X02}{1:X02}", _receiveData[4], _receiveData[5]);
+                        bool responseFound = false;
                         if (_receiveData[4] == 0x17 && _receiveData[5] == 0x1F)
                         {
                             Debug.WriteLine("RDBI_CERT ZGW Zertifikat");
@@ -5221,16 +5222,26 @@ namespace CarSimulator
                             _sendData[7] = _receiveData[4];
                             _sendData[8] = _receiveData[5];
                             Array.Copy(_zgwCert, 0, _sendData, 9, _zgwCert.Length);
+                            responseFound = true;
                         }
                         else if (_receiveData[4] == 0x37 && _receiveData[5] == 0xFE)
                         {
                             Debug.WriteLine("RDBI_CPS Codierpruefstempel");
 
-                            byte[] resposeData = { 0x8A, 0xF1, 0x00, 0x62, 0x37, 0xFE, 0x42, 0x30, 0x35, 0x35, 0x39, 0x34, 0x30 };
-                            Array.Copy(resposeData, _sendData, resposeData.Length);
-                            _sendData[2] = _receiveData[1];
+                            if (_codingStampDict.TryGetValue(_receiveData[1], out byte[] resposeData))
+                            {
+                                Array.Copy(resposeData, _sendData, resposeData.Length);
+                                _sendData[1] = 0xF1;
+                                _sendData[2] = _receiveData[1];
+                                responseFound = true;
+                            }
+                            else
+                            {
+                                Debug.WriteLine("No response found");
+                            }
                         }
-                        else
+
+                        if (!responseFound)
                         {
                             _sendData[0] = 0x83;
                             _sendData[1] = 0xF1;
@@ -5344,6 +5355,15 @@ namespace CarSimulator
                     {
                         // dummy ok response for service 2E WriteDataByLocalIdentification
                         Debug.WriteLine("Dummy service 2E: {0:X02}{1:X02}", _receiveData[4], _receiveData[5]);
+
+                        if (_receiveData[4] == 0x37 && _receiveData[5] == 0xFE)
+                        {
+                            Debug.WriteLine("Store RDBI_CPS Codierpruefstempel");
+                            byte[] codeStamp = new byte[recLength];
+                            Array.Copy(_receiveData, codeStamp, codeStamp.Length);
+                            _codingStampDict[_receiveData[1]] = codeStamp;
+                        }
+
                         _sendData[0] = 0x83;
                         _sendData[1] = 0xF1;
                         _sendData[2] = _receiveData[1];
@@ -5367,14 +5387,6 @@ namespace CarSimulator
                     {
                         // dummy ok response for service 2E WriteDataByLocalIdentification
                         Debug.WriteLine("Dummy service 2E long: {0:X02}{1:X02}", _receiveData[5], _receiveData[6]);
-
-                        if (_receiveData[4] == 0x17 && _receiveData[5] == 0x1F)
-                        {
-                            Debug.WriteLine("Store RDBI_CPS Codierpruefstempel");
-                            byte[] codeStamp = new byte[recLength];
-                            Array.Copy(_receiveData, codeStamp, codeStamp.Length);
-                            _codingStampDict[_receiveData[1]] = codeStamp;
-                        }
 
                         _sendData[0] = 0x83;
                         _sendData[1] = 0xF1;
