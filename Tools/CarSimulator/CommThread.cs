@@ -5233,6 +5233,7 @@ namespace CarSimulator
                                 Array.Copy(resposeData, _sendData, resposeData.Length);
                                 _sendData[1] = 0xF1;
                                 _sendData[2] = _receiveData[1];
+                                _sendData[3] = 0x62;
                                 responseFound = true;
                             }
                             else
