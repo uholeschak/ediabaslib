@@ -512,6 +512,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Do you want to disable all flash operations for this session? ähnelt.
+        /// </summary>
+        internal static string TalDisableFlash {
+            get {
+                return ResourceManager.GetString("TalDisableFlash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die TAL execution finished with errors. ähnelt.
         /// </summary>
         internal static string TalExecuteError {
@@ -583,8 +592,7 @@ namespace PsdzClientLibrary.Resources {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die The TAL contains flash operations but flashing is disabled for safety reasons.
-        ///Possibly the software is not consistent in all ECUs.
-        ///Do you want to disable all flash operations for this session? ähnelt.
+        ///Possibly the software is not consistent in all ECUs. ähnelt.
         /// </summary>
         internal static string TalFlashOperation {
             get {

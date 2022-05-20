@@ -274,6 +274,9 @@ Bitte schließen Sie ein zertifiziertes Ladegerät während des gesamten Kodierv
   <data name="TalBackupGenerationFailed" xml:space="preserve">
     <value>Backup TAL Generierung fehlgeschlagen.</value>
   </data>
+  <data name="TalDisableFlash" xml:space="preserve">
+    <value>Wollen Sie alle Flashoperationen in dieser Sitzung deaktivieren?</value>
+  </data>
   <data name="TalExecuteError" xml:space="preserve">
     <value>TAL Ausführung mit Fehlern beendet.</value>
   </data>
@@ -304,8 +307,7 @@ Wollen Sie Fortfahren?</value>
   </data>
   <data name="TalFlashOperation" xml:space="preserve">
     <value>Die TAL enthält Flashoperationen, aber flashen ist aus Sicherheitsgründen deaktiviert.
-Möglicherweise ist die Sofware in den Steuergeräten nicht konsitent.
-Wollen Sie alle Flashoperationen in dieser Sitzung deaktivieren?</value>
+Möglicherweise ist die Sofware in den Steuergeräten nicht konsitent.</value>
   </data>
   <data name="TalGenerationFailed" xml:space="preserve">
     <value>TAL Generierung fehlgeschlagen.</value>

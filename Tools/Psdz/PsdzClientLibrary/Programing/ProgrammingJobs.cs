@@ -1298,6 +1298,7 @@ namespace PsdzClient.Programing
                     return true;
                 }
 
+                restartBuildTal:
                 if (!CheckVoltage(cts, sbResult))
                 {
                     return false;
@@ -1858,9 +1859,10 @@ namespace PsdzClient.Programing
                 {
                     PsdzContext.Tal = null;
                     log.ErrorFormat(CultureInfo.InvariantCulture, "Modify FA TAL contains programming actions, TAL flash disabled: {0}", DisableTalFlash);
-                    if (ShowMessageEvent != null)
+                    if (ShowMessageEvent != null && !DisableTalFlash)
                     {
-                        if (!ShowMessageEvent.Invoke(cts, Strings.TalFlashOperation, false, true))
+                        string message = Strings.TalFlashOperation + Environment.NewLine + Strings.TalDisableFlash;
+                        if (!ShowMessageEvent.Invoke(cts, message, false, true))
                         {
                             log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalFlashOperation aborted");
                             return false;
@@ -1868,9 +1870,10 @@ namespace PsdzClient.Programing
 
                         log.InfoFormat(CultureInfo.InvariantCulture, "TAL flash disabled");
                         DisableTalFlash = true;
+                        goto restartBuildTal;
                     }
 
-                    sbResult.AppendLine(Strings.TalGenerationFailed);
+                    sbResult.AppendLine(Strings.TalFlashOperation);
                     UpdateStatus(sbResult.ToString());
                     return false;
                 }
