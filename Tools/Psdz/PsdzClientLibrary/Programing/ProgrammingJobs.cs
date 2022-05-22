@@ -1064,6 +1064,17 @@ namespace PsdzClient.Programing
                             talExecutionFailed = true;
                             log.Error(executeTalResult.AsXml);
                             sbResult.AppendLine(Strings.TalExecuteError);
+                            if (executeTalResult.FailureCauses != null)
+                            {
+                                foreach (IPsdzFailureCause failureCause in executeTalResult.FailureCauses)
+                                {
+                                    if (!string.IsNullOrEmpty(failureCause.Message))
+                                    {
+                                        sbResult.AppendLine(failureCause.Message);
+                                    }
+                                }
+                            }
+
                             UpdateStatus(sbResult.ToString());
                         }
                         else
