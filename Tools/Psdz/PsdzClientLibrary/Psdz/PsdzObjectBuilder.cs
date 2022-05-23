@@ -464,38 +464,36 @@ namespace BMW.Rheingold.Psdz
 			};
 		}
 
-		public IPsdzTalFilter DefineFilterForAllEcus(TaCategories[] taCategories, TalFilterOptions talFilterOptions, IPsdzTalFilter filter)
-		{
-			taCategories = this.RemoveIdDeleteAndLogOccurence(taCategories);
-			PsdzTalFilterAction talFilterAction = PsdzObjectBuilder.ConvertTalFilterOptionToTalFilterAction(talFilterOptions);
-			PsdzTaCategories[] psdzTaCategories = (taCategories != null) ? taCategories.Select(new Func<TaCategories, PsdzTaCategories>(this.taCategoriesEnumMapper.GetValue)).ToArray<PsdzTaCategories>() : null;
-			return this.objectBuilderService.DefineFilterForAllEcus(psdzTaCategories, talFilterAction, filter);
-		}
+        public IPsdzTalFilter DefineFilterForAllEcus(TaCategories[] taCategories, TalFilterOptions talFilterOptions, IPsdzTalFilter filter)
+        {
+            taCategories = RemoveIdDeleteAndLogOccurence(taCategories);
+            PsdzTalFilterAction talFilterAction = ConvertTalFilterOptionToTalFilterAction(talFilterOptions);
+            PsdzTaCategories[] psdzTaCategories = taCategories?.Select(taCategoriesEnumMapper.GetValue).ToArray();
+            return objectBuilderService.DefineFilterForAllEcus(psdzTaCategories, talFilterAction, filter);
+        }
 
-		public IPsdzTalFilter DefineFilterForSelectedEcus(TaCategories[] taCategories, int[] diagAddress, TalFilterOptions talFilterOptions, IPsdzTalFilter filter)
-		{
-			taCategories = this.RemoveIdDeleteAndLogOccurence(taCategories);
-			PsdzTalFilterAction talFilterAction = PsdzObjectBuilder.ConvertTalFilterOptionToTalFilterAction(talFilterOptions);
-			PsdzTaCategories[] psdzTaCategories = (taCategories != null) ? taCategories.Select(new Func<TaCategories, PsdzTaCategories>(this.taCategoriesEnumMapper.GetValue)).ToArray<PsdzTaCategories>() : null;
-			return this.objectBuilderService.DefineFilterForSelectedEcus(psdzTaCategories, diagAddress, talFilterAction, filter);
-		}
+        public IPsdzTalFilter DefineFilterForSelectedEcus(TaCategories[] taCategories, int[] diagAddress, TalFilterOptions talFilterOptions, IPsdzTalFilter filter)
+        {
+            taCategories = RemoveIdDeleteAndLogOccurence(taCategories);
+            PsdzTalFilterAction talFilterAction = ConvertTalFilterOptionToTalFilterAction(talFilterOptions);
+            PsdzTaCategories[] psdzTaCategories = taCategories?.Select(taCategoriesEnumMapper.GetValue).ToArray();
+            return objectBuilderService.DefineFilterForSelectedEcus(psdzTaCategories, diagAddress, talFilterAction, filter);
+        }
 
-		private static PsdzTalFilterAction ConvertTalFilterOptionToTalFilterAction(TalFilterOptions talFilterOptions)
-		{
-			if (talFilterOptions == TalFilterOptions.Allowed)
-			{
-				return PsdzTalFilterAction.AllowedToBeTreated;
-			}
-			if (talFilterOptions == TalFilterOptions.Must)
-			{
-				return PsdzTalFilterAction.MustBeTreated;
-			}
-			if (talFilterOptions != TalFilterOptions.MustNot)
-			{
-				return PsdzTalFilterAction.OnlyToBeTreatedAndBlockCategoryInAllEcu;
-			}
-			return PsdzTalFilterAction.MustNotBeTreated;
-		}
+        private static PsdzTalFilterAction ConvertTalFilterOptionToTalFilterAction(TalFilterOptions talFilterOptions)
+        {
+            switch (talFilterOptions)
+            {
+                default:
+                    return PsdzTalFilterAction.OnlyToBeTreatedAndBlockCategoryInAllEcu;
+                case TalFilterOptions.MustNot:
+                    return PsdzTalFilterAction.MustNotBeTreated;
+                case TalFilterOptions.Must:
+                    return PsdzTalFilterAction.MustBeTreated;
+                case TalFilterOptions.Allowed:
+                    return PsdzTalFilterAction.AllowedToBeTreated;
+            }
+        }
 
 		private TaCategories[] RemoveIdDeleteAndLogOccurence(TaCategories[] taCategories)
 		{
