@@ -497,17 +497,14 @@ namespace BMW.Rheingold.Psdz
 
 		private TaCategories[] RemoveIdDeleteAndLogOccurence(TaCategories[] taCategories)
 		{
-			if (taCategories != null)
-			{
-				if (taCategories.ToList<TaCategories>().Any((TaCategories a) => a == TaCategories.IdDelete))
-				{
-					List<TaCategories> list = new List<TaCategories>(taCategories);
-					list.Remove(TaCategories.IdDelete);
-					return list.ToArray();
-				}
-			}
-			return taCategories;
-		}
+            if (taCategories != null && taCategories.ToList().Any((TaCategories a) => a == TaCategories.IdDelete))
+            {
+                List<TaCategories> list = new List<TaCategories>(taCategories);
+                list.Remove(TaCategories.IdDelete);
+                return list.ToArray();
+            }
+            return taCategories;
+        }
 
 		public IPsdzAsamJobInputDictionary BuildAsamJobInputDictionary(IAsamJobInputDictionary inputDictionary)
 		{
