@@ -1318,19 +1318,34 @@ namespace PsdzClient.Programing
                 bool bModifyFa = operationType == OperationType.BuildTalModFa;
                 List<int> diagAddrList = new List<int>();
                 PdszDatabase.SwiRegisterGroup swiRegisterGroupSelect = PdszDatabase.SwiRegisterGroup.Modification;
-                foreach (OptionsItem optionsItem in SelectedOptions)
+                if (bModifyFa)
                 {
-                    PdszDatabase.SwiRegisterGroup swiRegisterGroup = PdszDatabase.GetSwiRegisterGroup(optionsItem.SwiRegisterEnum);
-                    switch (swiRegisterGroup)
+                    foreach (OptionsItem optionsItem in SelectedOptions)
                     {
-                        case PdszDatabase.SwiRegisterGroup.HwDeinstall:
-                        case PdszDatabase.SwiRegisterGroup.HwInstall:
-                            if (swiRegisterGroupSelect == PdszDatabase.SwiRegisterGroup.Modification)
+                        PdszDatabase.SwiRegisterGroup swiRegisterGroup = PdszDatabase.GetSwiRegisterGroup(optionsItem.SwiRegisterEnum);
+                        switch (swiRegisterGroup)
+                        {
+                            case PdszDatabase.SwiRegisterGroup.HwDeinstall:
+                            case PdszDatabase.SwiRegisterGroup.HwInstall:
                             {
-                                swiRegisterGroupSelect = swiRegisterGroup;
+                                if (optionsItem.EcuInfo == null)
+                                {
+                                    break;
+                                }
+
+                                if (swiRegisterGroupSelect == PdszDatabase.SwiRegisterGroup.Modification)
+                                {
+                                    swiRegisterGroupSelect = swiRegisterGroup;
+                                }
+
+                                int diagAddress = (int)optionsItem.EcuInfo.Address;
+                                if (!diagAddrList.Contains(diagAddress))
+                                {
+                                    diagAddrList.Add(diagAddress);
+                                }
+                                break;
                             }
-                            diagAddrList.Add((int) optionsItem.EcuInfo.Address);
-                            break;
+                        }
                     }
                 }
 
@@ -1351,17 +1366,14 @@ namespace PsdzClient.Programing
                 }
                 else
                 {
-                    bModifyFa = true;
                     switch (swiRegisterGroupSelect)
                     {
                         case PdszDatabase.SwiRegisterGroup.HwDeinstall:
                             psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForSelectedEcus(new[] { TaCategories.HwDeinstall }, diagAddrList.ToArray(), TalFilterOptions.Must, psdzTalFilter);
-                            bModifyFa = true;
                             break;
 
                         case PdszDatabase.SwiRegisterGroup.HwInstall:
                             psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForSelectedEcus(new[] { TaCategories.HwInstall }, diagAddrList.ToArray(), TalFilterOptions.Must, psdzTalFilter);
-                            bModifyFa = true;
                             break;
                     }
                 }
