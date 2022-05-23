@@ -1349,6 +1349,7 @@ namespace PsdzClient.Programing
                     }
                 }
 
+                bool replacement = false;
                 IPsdzTalFilter psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.BuildTalFilter();
                 if (swiRegisterGroupSelect == PdszDatabase.SwiRegisterGroup.Modification)
                 {
@@ -1369,18 +1370,24 @@ namespace PsdzClient.Programing
                     switch (swiRegisterGroupSelect)
                     {
                         case PdszDatabase.SwiRegisterGroup.HwDeinstall:
+                            replacement = true;
                             psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForSelectedEcus(new[] { TaCategories.HwDeinstall }, diagAddrList.ToArray(), TalFilterOptions.Must, psdzTalFilter);
                             break;
 
                         case PdszDatabase.SwiRegisterGroup.HwInstall:
+                            replacement = true;
                             psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForSelectedEcus(new[] { TaCategories.HwInstall }, diagAddrList.ToArray(), TalFilterOptions.Must, psdzTalFilter);
                             break;
                     }
                 }
                 PsdzContext.SetTalFilter(psdzTalFilter);
 
-                IPsdzTalFilter psdzTalFilterEmpty = ProgrammingService.Psdz.ObjectBuilder.BuildTalFilter();
-                PsdzContext.SetTalFilterForIndividualDataTal(psdzTalFilterEmpty);
+                IPsdzTalFilter psdzTalFilterIndividual = ProgrammingService.Psdz.ObjectBuilder.BuildTalFilter();
+                if (replacement)
+                {
+                    psdzTalFilterIndividual = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForSelectedEcus(new[] { TaCategories.HwInstall, TaCategories.HwDeinstall }, diagAddrList.ToArray(), TalFilterOptions.Must, psdzTalFilterIndividual);
+                }
+                PsdzContext.SetTalFilterForIndividualDataTal(psdzTalFilterIndividual);
 
                 if (PsdzContext.TalFilter != null)
                 {
