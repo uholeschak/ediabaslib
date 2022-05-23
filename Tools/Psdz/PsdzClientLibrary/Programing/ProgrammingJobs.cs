@@ -1351,44 +1351,47 @@ namespace PsdzClient.Programing
 
                 bool replacement = false;
                 IPsdzTalFilter psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.BuildTalFilter();
-                if (swiRegisterGroupSelect == PdszDatabase.SwiRegisterGroup.Modification)
-                {
-                    // disable backup
-                    psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.FscBackup }, TalFilterOptions.MustNot, psdzTalFilter);
-                    if (bModifyFa)
-                    {   // enable deploy
-                        psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.CdDeploy }, TalFilterOptions.Must, psdzTalFilter);
-                        log.InfoFormat(CultureInfo.InvariantCulture, "TAL flashing disabled: {0}", DisableTalFlash);
-                        if (DisableTalFlash)
-                        {
-                            psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.BlFlash, TaCategories.GatewayTableDeploy, TaCategories.SwDeploy }, TalFilterOptions.MustNot, psdzTalFilter);
-                        }
-                    }
-                }
-                else
-                {
-                    switch (swiRegisterGroupSelect)
+                // disable backup
+                psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.FscBackup }, TalFilterOptions.MustNot, psdzTalFilter);
+                if (bModifyFa)
+                {   // enable deploy
+                    psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.CdDeploy }, TalFilterOptions.Must, psdzTalFilter);
+                    log.InfoFormat(CultureInfo.InvariantCulture, "TAL flashing disabled: {0}", DisableTalFlash);
+                    if (DisableTalFlash)
                     {
-                        case PdszDatabase.SwiRegisterGroup.HwDeinstall:
-                            replacement = true;
-                            psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForSelectedEcus(new[] { TaCategories.HwDeinstall }, diagAddrList.ToArray(), TalFilterOptions.Must, psdzTalFilter);
-                            break;
-
-                        case PdszDatabase.SwiRegisterGroup.HwInstall:
-                            replacement = true;
-                            psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForSelectedEcus(new[] { TaCategories.HwInstall }, diagAddrList.ToArray(), TalFilterOptions.Must, psdzTalFilter);
-                            break;
+                        psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.BlFlash, TaCategories.GatewayTableDeploy, TaCategories.SwDeploy }, TalFilterOptions.MustNot, psdzTalFilter);
                     }
                 }
+
                 PsdzContext.SetTalFilter(psdzTalFilter);
 
                 IPsdzTalFilter psdzTalFilterIndividual = ProgrammingService.Psdz.ObjectBuilder.BuildTalFilter();
                 PsdzContext.SetTalFilterForIndividualDataTal(psdzTalFilterIndividual);
 
+                switch (swiRegisterGroupSelect)
+                {
+                    case PdszDatabase.SwiRegisterGroup.HwDeinstall:
+                        replacement = true;
+                        UpdateIdrTalFilterForSelectedEcus(new[] { TaCategories.HwDeinstall }, diagAddrList.ToArray(), TalFilterOptions.Must);
+                        break;
+
+                    case PdszDatabase.SwiRegisterGroup.HwInstall:
+                        replacement = true;
+                        UpdateIdrTalFilterForSelectedEcus(new[] { TaCategories.CdDeploy }, diagAddrList.ToArray(), TalFilterOptions.Must);
+                        UpdateIdrTalFilterForSelectedEcus(new[] { TaCategories.IdBackup, TaCategories.IdRestore }, diagAddrList.ToArray(), TalFilterOptions.MustNot);
+                        break;
+                }
+
                 if (PsdzContext.TalFilter != null)
                 {
                     log.Info("TalFilter:");
                     log.Info(PsdzContext.TalFilter.AsXml);
+                }
+
+                if (PsdzContext.TalFilterForIndividualDataTal != null)
+                {
+                    log.Info("TalFilterIndividaul:");
+                    log.Info(PsdzContext.TalFilterForIndividualDataTal.AsXml);
                 }
 
                 IPsdzIstufenTriple iStufenTriple = ProgrammingService.Psdz.VcmService.GetIStufenTripleActual(PsdzContext.Connection);
@@ -2130,6 +2133,12 @@ namespace PsdzClient.Programing
                     log.InfoFormat(CultureInfo.InvariantCulture, "UpdateTargetFa Compare FA: {0}", compareFa);
                 }
             }
+        }
+
+        private void UpdateIdrTalFilterForSelectedEcus(TaCategories[] taCategories, int[] diagAddress, TalFilterOptions talFilterOptions)
+        {
+            PsdzContext.SetTalFilter(ProgrammingService.Psdz.ObjectBuilder.DefineFilterForSelectedEcus(taCategories, diagAddress, talFilterOptions, PsdzContext.TalFilter));
+            PsdzContext.SetTalFilterForIndividualDataTal(ProgrammingService.Psdz.ObjectBuilder.DefineFilterForSelectedEcus(taCategories, diagAddress, talFilterOptions, PsdzContext.TalFilterForIndividualDataTal));
         }
 
         private bool CheckVoltage(CancellationTokenSource cts, StringBuilder sbResult, bool showInfo = false, bool addMessage = false)
