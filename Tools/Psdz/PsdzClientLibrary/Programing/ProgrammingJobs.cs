@@ -1383,10 +1383,6 @@ namespace PsdzClient.Programing
                 PsdzContext.SetTalFilter(psdzTalFilter);
 
                 IPsdzTalFilter psdzTalFilterIndividual = ProgrammingService.Psdz.ObjectBuilder.BuildTalFilter();
-                if (replacement)
-                {
-                    psdzTalFilterIndividual = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForSelectedEcus(new[] { TaCategories.HwInstall, TaCategories.HwDeinstall }, diagAddrList.ToArray(), TalFilterOptions.Must, psdzTalFilterIndividual);
-                }
                 PsdzContext.SetTalFilterForIndividualDataTal(psdzTalFilterIndividual);
 
                 if (PsdzContext.TalFilter != null)
@@ -1756,6 +1752,11 @@ namespace PsdzClient.Programing
                 cts?.Token.ThrowIfCancellationRequested();
 
                 IPsdzTalFilter talFilterFlash = new PsdzTalFilter();
+                if (replacement)
+                {
+                    talFilterFlash = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForSelectedEcus(new[] { TaCategories.HwInstall, TaCategories.HwDeinstall }, diagAddrList.ToArray(), TalFilterOptions.Must, talFilterFlash);
+                }
+
                 log.InfoFormat(CultureInfo.InvariantCulture, "Requesting planned construction");
                 IPsdzSollverbauung psdzSollverbauung = ProgrammingService.Psdz.LogicService.GenerateSollverbauungGesamtFlash(PsdzContext.Connection, psdzIstufeTarget, psdzIstufeShip, PsdzContext.SvtActual, PsdzContext.FaTarget, talFilterFlash);
                 if (psdzSollverbauung == null)
