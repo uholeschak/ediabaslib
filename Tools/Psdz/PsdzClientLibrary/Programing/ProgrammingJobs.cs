@@ -873,24 +873,21 @@ namespace PsdzClient.Programing
                         }
                         cts?.Token.ThrowIfCancellationRequested();
 
-                        if (RegisterGroup != PdszDatabase.SwiRegisterGroup.HwDeinstall)
+                        IEnumerable<IPsdzSgbmId> sgbmIds = ProgrammingUtils.RemoveCafdsCalculatedOnSCB(cafdCalculatedInSCB, sweList);
+                        IEnumerable<IPsdzSgbmId> softwareEntries = ProgrammingService.Psdz.MacrosService.CheckSoftwareEntries(sgbmIds);
+                        int softwareEntryCount = softwareEntries.Count();
+                        log.InfoFormat(CultureInfo.InvariantCulture, "Sw entries: {0}", softwareEntryCount);
+                        foreach (IPsdzSgbmId psdzSgbmId in softwareEntries)
                         {
-                            IEnumerable<IPsdzSgbmId> sgbmIds = ProgrammingUtils.RemoveCafdsCalculatedOnSCB(cafdCalculatedInSCB, sweList);
-                            IEnumerable<IPsdzSgbmId> softwareEntries = ProgrammingService.Psdz.MacrosService.CheckSoftwareEntries(sgbmIds);
-                            int softwareEntryCount = softwareEntries.Count();
-                            log.InfoFormat(CultureInfo.InvariantCulture, "Sw entries: {0}", softwareEntryCount);
-                            foreach (IPsdzSgbmId psdzSgbmId in softwareEntries)
-                            {
-                                log.InfoFormat(CultureInfo.InvariantCulture, " Sgbm: {0}", psdzSgbmId.HexString);
-                            }
-                            cts?.Token.ThrowIfCancellationRequested();
+                            log.InfoFormat(CultureInfo.InvariantCulture, " Sgbm: {0}", psdzSgbmId.HexString);
+                        }
+                        cts?.Token.ThrowIfCancellationRequested();
 
-                            if (softwareEntryCount > 0)
-                            {
-                                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.SoftwareFailures, softwareEntryCount));
-                                UpdateStatus(sbResult.ToString());
-                                return false;
-                            }
+                        if (softwareEntryCount > 0)
+                        {
+                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.SoftwareFailures, softwareEntryCount));
+                            UpdateStatus(sbResult.ToString());
+                            return false;
                         }
 
                         if (!CheckVoltage(cts, sbResult))
@@ -1774,9 +1771,15 @@ namespace PsdzClient.Programing
                 cts?.Token.ThrowIfCancellationRequested();
 
                 IPsdzTalFilter talFilterFlash = new PsdzTalFilter();
-                if (RegisterGroup != PdszDatabase.SwiRegisterGroup.Modification)
+                switch (RegisterGroup)
                 {
-                    talFilterFlash = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForSelectedEcus(new[] { TaCategories.HwInstall, TaCategories.HwDeinstall }, diagAddrList.ToArray(), TalFilterOptions.Must, talFilterFlash);
+                    case PdszDatabase.SwiRegisterGroup.HwDeinstall:
+                        talFilterFlash = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForSelectedEcus(new[] { TaCategories.HwInstall, TaCategories.HwDeinstall }, diagAddrList.ToArray(), TalFilterOptions.MustNot, talFilterFlash);
+                        break;
+
+                    case PdszDatabase.SwiRegisterGroup.HwInstall:
+                        talFilterFlash = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForSelectedEcus(new[] { TaCategories.HwInstall, TaCategories.HwDeinstall }, diagAddrList.ToArray(), TalFilterOptions.Must, talFilterFlash);
+                        break;
                 }
 
                 log.InfoFormat(CultureInfo.InvariantCulture, "Requesting planned construction");
