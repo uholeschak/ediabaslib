@@ -186,6 +186,7 @@ namespace PsdzClient.Programing
         public ProgrammingService ProgrammingService { get; private set; }
         public List<OptionsItem> SelectedOptions { get; set; }
         public bool DisableTalFlash { get; set; }
+        public PdszDatabase.SwiRegisterGroup RegisterGroup { get; set; }
 
         private CacheType _cacheResponseType;
         public CacheType CacheResponseType
@@ -952,52 +953,62 @@ namespace PsdzClient.Programing
                         talExecutionSettings.TaMaxRepeat = 3;
                         ((PsdzSecureCodingConfigCto)talExecutionSettings.SecureCodingConfig).ConnectionTimeout = CodingConnectionTimeout;
 
-                        IPsdzTal backupTalResult = ProgrammingService.Psdz.IndividualDataRestoreService.ExecuteAsyncBackupTal(
-                            PsdzContext.Connection, PsdzContext.IndividualDataBackupTal, null, PsdzContext.FaTarget, psdzVin, talExecutionSettings, PsdzContext.PathToBackupData);
-                        if (backupTalResult == null)
-                        {
-                            log.ErrorFormat("Execute backup TAL failed");
-                            sbResult.AppendLine(Strings.TalExecuteError);
-                            UpdateStatus(sbResult.ToString());
-                            return false;
-                        }
-
                         bool backupFailed = false;
-                        log.Info("Backup Tal result:");
-                        log.InfoFormat(CultureInfo.InvariantCulture, " Size: {0}", backupTalResult.AsXml.Length);
-                        log.InfoFormat(CultureInfo.InvariantCulture, " State: {0}", backupTalResult.TalExecutionState);
-                        log.InfoFormat(CultureInfo.InvariantCulture, " Ecus: {0}", backupTalResult.AffectedEcus.Count());
-                        foreach (IPsdzEcuIdentifier ecuIdentifier in backupTalResult.AffectedEcus)
+                        if (RegisterGroup != PdszDatabase.SwiRegisterGroup.HwInstall)
                         {
-                            log.InfoFormat(CultureInfo.InvariantCulture, "  Affected Ecu: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
-                                ecuIdentifier.BaseVariant, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset);
-                        }
-                        if (backupTalResult.TalExecutionState != PsdzTalExecutionState.Finished &&
-                            backupTalResult.TalExecutionState != PsdzTalExecutionState.FinishedWithWarnings)
-                        {
-                            talExecutionFailed = true;
-                            backupFailed = true;
-                            log.Error(backupTalResult.AsXml);
-                            sbResult.AppendLine(Strings.TalExecuteError);
-                            UpdateStatus(sbResult.ToString());
-                        }
-                        else
-                        {
-                            if (backupTalResult.TalExecutionState != PsdzTalExecutionState.Finished)
+                            IPsdzTal backupTalResult = ProgrammingService.Psdz.IndividualDataRestoreService.ExecuteAsyncBackupTal(
+                                PsdzContext.Connection, PsdzContext.IndividualDataBackupTal, null, PsdzContext.FaTarget, psdzVin, talExecutionSettings, PsdzContext.PathToBackupData);
+                            if (backupTalResult == null)
                             {
-                                log.Info(backupTalResult.AsXml);
-                                sbResult.AppendLine(Strings.TalExecuteWarning);
+                                log.ErrorFormat("Execute backup TAL failed");
+                                sbResult.AppendLine(Strings.TalExecuteError);
+                                UpdateStatus(sbResult.ToString());
+                                return false;
+                            }
+
+                            log.Info("Backup Tal result:");
+                            log.InfoFormat(CultureInfo.InvariantCulture, " Size: {0}", backupTalResult.AsXml.Length);
+                            log.InfoFormat(CultureInfo.InvariantCulture, " State: {0}", backupTalResult.TalExecutionState);
+                            log.InfoFormat(CultureInfo.InvariantCulture, " Ecus: {0}", backupTalResult.AffectedEcus.Count());
+                            foreach (IPsdzEcuIdentifier ecuIdentifier in backupTalResult.AffectedEcus)
+                            {
+                                log.InfoFormat(CultureInfo.InvariantCulture, "  Affected Ecu: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
+                                    ecuIdentifier.BaseVariant, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset);
+                            }
+                            if (backupTalResult.TalExecutionState != PsdzTalExecutionState.Finished &&
+                                backupTalResult.TalExecutionState != PsdzTalExecutionState.FinishedWithWarnings)
+                            {
+                                talExecutionFailed = true;
+                                backupFailed = true;
+                                log.Error(backupTalResult.AsXml);
+                                sbResult.AppendLine(Strings.TalExecuteError);
+                                UpdateStatus(sbResult.ToString());
                             }
                             else
                             {
-                                sbResult.AppendLine(Strings.TalExecuteOk);
+                                if (backupTalResult.TalExecutionState != PsdzTalExecutionState.Finished)
+                                {
+                                    log.Info(backupTalResult.AsXml);
+                                    sbResult.AppendLine(Strings.TalExecuteWarning);
+                                }
+                                else
+                                {
+                                    sbResult.AppendLine(Strings.TalExecuteOk);
+                                }
+
+                                UpdateStatus(sbResult.ToString());
                             }
 
-                            UpdateStatus(sbResult.ToString());
+                            CacheClearRequired = true;
+                            cts?.Token.ThrowIfCancellationRequested();
                         }
 
-                        CacheClearRequired = true;
-                        cts?.Token.ThrowIfCancellationRequested();
+                        if (RegisterGroup == PdszDatabase.SwiRegisterGroup.HwDeinstall)
+                        {
+                            sbResult.AppendLine(Strings.ExecutingVehicleFuncFinished);
+                            UpdateStatus(sbResult.ToString());
+                            return true;
+                        }
 
                         if (!LicenseValid)
                         {
@@ -1081,7 +1092,7 @@ namespace PsdzClient.Programing
                         {
                             if (executeTalResult.TalExecutionState != PsdzTalExecutionState.Finished)
                             {
-                                log.Info(backupTalResult.AsXml);
+                                log.Info(executeTalResult.AsXml);
                                 sbResult.AppendLine(Strings.TalExecuteWarning);
                             }
                             else
@@ -1272,6 +1283,7 @@ namespace PsdzClient.Programing
                         {
                             // finally reset TAL
                             PsdzContext.Tal = null;
+                            RegisterGroup = PdszDatabase.SwiRegisterGroup.Modification;
                             UpdateOptions(null);
                         }
                         else
@@ -1317,7 +1329,7 @@ namespace PsdzClient.Programing
 
                 bool bModifyFa = operationType == OperationType.BuildTalModFa;
                 List<int> diagAddrList = new List<int>();
-                PdszDatabase.SwiRegisterGroup swiRegisterGroupSelect = PdszDatabase.SwiRegisterGroup.Modification;
+                RegisterGroup = PdszDatabase.SwiRegisterGroup.Modification;
                 if (bModifyFa)
                 {
                     foreach (OptionsItem optionsItem in SelectedOptions)
@@ -1333,9 +1345,9 @@ namespace PsdzClient.Programing
                                     break;
                                 }
 
-                                if (swiRegisterGroupSelect == PdszDatabase.SwiRegisterGroup.Modification)
+                                if (RegisterGroup == PdszDatabase.SwiRegisterGroup.Modification)
                                 {
-                                    swiRegisterGroupSelect = swiRegisterGroup;
+                                    RegisterGroup = swiRegisterGroup;
                                 }
 
                                 int diagAddress = (int)optionsItem.EcuInfo.Address;
@@ -1349,8 +1361,7 @@ namespace PsdzClient.Programing
                     }
                 }
 
-                bool hwDeinstall = false;
-                bool hwInstall = false;
+                RegisterGroup = PdszDatabase.SwiRegisterGroup.Software;
                 IPsdzTalFilter psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.BuildTalFilter();
                 // disable backup
                 psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.FscBackup }, TalFilterOptions.MustNot, psdzTalFilter);
@@ -1369,15 +1380,13 @@ namespace PsdzClient.Programing
                 IPsdzTalFilter psdzTalFilterIndividual = ProgrammingService.Psdz.ObjectBuilder.BuildTalFilter();
                 PsdzContext.SetTalFilterForIndividualDataTal(psdzTalFilterIndividual);
 
-                switch (swiRegisterGroupSelect)
+                switch (RegisterGroup)
                 {
                     case PdszDatabase.SwiRegisterGroup.HwDeinstall:
-                        hwDeinstall = true;
                         UpdateTalFilterForSelectedEcus(new[] { TaCategories.HwDeinstall }, diagAddrList.ToArray(), TalFilterOptions.Must);
                         break;
 
                     case PdszDatabase.SwiRegisterGroup.HwInstall:
-                        hwInstall = true;
                         UpdateTalFilterForSelectedEcus(new[] { TaCategories.CdDeploy }, diagAddrList.ToArray(), TalFilterOptions.Must);
                         if (bModifyFa)
                         {
@@ -1417,7 +1426,7 @@ namespace PsdzClient.Programing
                     return false;
                 }
 
-                if (!hwInstall)
+                if (RegisterGroup != PdszDatabase.SwiRegisterGroup.HwInstall)
                 {
                     PsdzContext.RemoveBackupData();
                 }
@@ -1694,6 +1703,7 @@ namespace PsdzClient.Programing
                 }
 
                 PsdzContext.Tal = null;
+                RegisterGroup = PdszDatabase.SwiRegisterGroup.Modification;
                 log.InfoFormat(CultureInfo.InvariantCulture, "Reading ECU Ids");
                 IPsdzReadEcuUidResultCto psdzReadEcuUid = ProgrammingService.Psdz.SecurityManagementService.readEcuUid(PsdzContext.Connection, psdzEcuIdentifiers, PsdzContext.SvtActual);
                 if (psdzReadEcuUid != null)
@@ -1763,7 +1773,7 @@ namespace PsdzClient.Programing
                 cts?.Token.ThrowIfCancellationRequested();
 
                 IPsdzTalFilter talFilterFlash = new PsdzTalFilter();
-                if (hwDeinstall || hwInstall)
+                if (RegisterGroup != PdszDatabase.SwiRegisterGroup.Modification)
                 {
                     talFilterFlash = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForSelectedEcus(new[] { TaCategories.HwInstall, TaCategories.HwDeinstall }, diagAddrList.ToArray(), TalFilterOptions.Must, talFilterFlash);
                 }
@@ -1937,6 +1947,7 @@ namespace PsdzClient.Programing
                 if (bModifyFa && programmingActionsSum.Contains(ProgrammingActionType.Programming))
                 {
                     PsdzContext.Tal = null;
+                    RegisterGroup = PdszDatabase.SwiRegisterGroup.Modification;
                     log.ErrorFormat(CultureInfo.InvariantCulture, "Modify FA TAL contains programming actions, TAL flash disabled: {0}", DisableTalFlash);
                     if (ShowMessageEvent != null && !DisableTalFlash)
                     {
@@ -1964,6 +1975,7 @@ namespace PsdzClient.Programing
                 if (psdzBackupTal == null)
                 {
                     PsdzContext.Tal = null;
+                    RegisterGroup = PdszDatabase.SwiRegisterGroup.Modification;
                     sbResult.AppendLine(Strings.TalGenerationFailed);
                     UpdateStatus(sbResult.ToString());
                     return false;
@@ -1981,6 +1993,7 @@ namespace PsdzClient.Programing
                 if (psdzRestorePrognosisTal == null)
                 {
                     PsdzContext.Tal = null;
+                    RegisterGroup = PdszDatabase.SwiRegisterGroup.Modification;
                     sbResult.AppendLine(Strings.TalRestoreGenerationFailed);
                     UpdateStatus(sbResult.ToString());
                     return false;
@@ -2004,6 +2017,7 @@ namespace PsdzClient.Programing
                 if (operationType != OperationType.ExecuteTal)
                 {
                     PsdzContext.Tal = null;
+                    RegisterGroup = PdszDatabase.SwiRegisterGroup.Modification;
                 }
                 return false;
             }
@@ -2259,6 +2273,7 @@ namespace PsdzClient.Programing
             {
                 PsdzContext = new PsdzContext(istaFolder);
                 DisableTalFlash = false;
+                RegisterGroup = PdszDatabase.SwiRegisterGroup.Modification;
             }
             catch (Exception)
             {
