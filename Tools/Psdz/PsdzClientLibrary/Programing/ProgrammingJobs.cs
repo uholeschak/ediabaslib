@@ -1349,7 +1349,8 @@ namespace PsdzClient.Programing
                     }
                 }
 
-                bool replacement = false;
+                bool hwDeinstall = false;
+                bool hwInstall = false;
                 IPsdzTalFilter psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.BuildTalFilter();
                 // disable backup
                 psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.FscBackup }, TalFilterOptions.MustNot, psdzTalFilter);
@@ -1371,14 +1372,17 @@ namespace PsdzClient.Programing
                 switch (swiRegisterGroupSelect)
                 {
                     case PdszDatabase.SwiRegisterGroup.HwDeinstall:
-                        replacement = true;
-                        UpdateIdrTalFilterForSelectedEcus(new[] { TaCategories.HwDeinstall }, diagAddrList.ToArray(), TalFilterOptions.Must);
+                        hwDeinstall = true;
+                        UpdateTalFilterForSelectedEcus(new[] { TaCategories.HwDeinstall }, diagAddrList.ToArray(), TalFilterOptions.Must);
                         break;
 
                     case PdszDatabase.SwiRegisterGroup.HwInstall:
-                        replacement = true;
-                        UpdateIdrTalFilterForSelectedEcus(new[] { TaCategories.CdDeploy }, diagAddrList.ToArray(), TalFilterOptions.Must);
-                        UpdateIdrTalFilterForSelectedEcus(new[] { TaCategories.IdBackup, TaCategories.IdRestore }, diagAddrList.ToArray(), TalFilterOptions.MustNot);
+                        hwInstall = true;
+                        UpdateTalFilterForSelectedEcus(new[] { TaCategories.CdDeploy }, diagAddrList.ToArray(), TalFilterOptions.Must);
+                        if (bModifyFa)
+                        {
+                            UpdateTalFilterForSelectedEcus(new[] { TaCategories.IdBackup, TaCategories.IdRestore }, diagAddrList.ToArray(), TalFilterOptions.MustNot);
+                        }
                         break;
                 }
 
@@ -1413,7 +1417,11 @@ namespace PsdzClient.Programing
                     return false;
                 }
 
-                PsdzContext.RemoveBackupData();
+                if (!hwInstall)
+                {
+                    PsdzContext.RemoveBackupData();
+                }
+
                 IPsdzStandardFa standardFa = ProgrammingService.Psdz.VcmService.GetStandardFaActual(PsdzContext.Connection);
                 if (standardFa == null)
                 {
@@ -1755,7 +1763,7 @@ namespace PsdzClient.Programing
                 cts?.Token.ThrowIfCancellationRequested();
 
                 IPsdzTalFilter talFilterFlash = new PsdzTalFilter();
-                if (replacement)
+                if (hwDeinstall || hwInstall)
                 {
                     talFilterFlash = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForSelectedEcus(new[] { TaCategories.HwInstall, TaCategories.HwDeinstall }, diagAddrList.ToArray(), TalFilterOptions.Must, talFilterFlash);
                 }
@@ -2135,7 +2143,7 @@ namespace PsdzClient.Programing
             }
         }
 
-        private void UpdateIdrTalFilterForSelectedEcus(TaCategories[] taCategories, int[] diagAddress, TalFilterOptions talFilterOptions)
+        private void UpdateTalFilterForSelectedEcus(TaCategories[] taCategories, int[] diagAddress, TalFilterOptions talFilterOptions)
         {
             PsdzContext.SetTalFilter(ProgrammingService.Psdz.ObjectBuilder.DefineFilterForSelectedEcus(taCategories, diagAddress, talFilterOptions, PsdzContext.TalFilter));
             PsdzContext.SetTalFilterForIndividualDataTal(ProgrammingService.Psdz.ObjectBuilder.DefineFilterForSelectedEcus(taCategories, diagAddress, talFilterOptions, PsdzContext.TalFilterForIndividualDataTal));
