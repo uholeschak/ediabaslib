@@ -1943,7 +1943,7 @@ namespace PsdzClient.Programing
                 }
                 cts?.Token.ThrowIfCancellationRequested();
 
-                if (bModifyFa && programmingActionsSum.Contains(ProgrammingActionType.Programming))
+                if (bModifyFa && RegisterGroup != PdszDatabase.SwiRegisterGroup.HwDeinstall && programmingActionsSum.Contains(ProgrammingActionType.Programming))
                 {
                     PsdzContext.Tal = null;
                     RegisterGroup = PdszDatabase.SwiRegisterGroup.Modification;
