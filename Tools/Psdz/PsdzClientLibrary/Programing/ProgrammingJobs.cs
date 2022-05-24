@@ -1361,7 +1361,6 @@ namespace PsdzClient.Programing
                     }
                 }
 
-                RegisterGroup = PdszDatabase.SwiRegisterGroup.Software;
                 IPsdzTalFilter psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.BuildTalFilter();
                 // disable backup
                 psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.FscBackup }, TalFilterOptions.MustNot, psdzTalFilter);
