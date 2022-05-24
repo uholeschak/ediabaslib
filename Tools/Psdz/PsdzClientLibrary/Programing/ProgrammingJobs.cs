@@ -873,21 +873,24 @@ namespace PsdzClient.Programing
                         }
                         cts?.Token.ThrowIfCancellationRequested();
 
-                        IEnumerable<IPsdzSgbmId> sgbmIds = ProgrammingUtils.RemoveCafdsCalculatedOnSCB(cafdCalculatedInSCB, sweList);
-                        IEnumerable<IPsdzSgbmId> softwareEntries = ProgrammingService.Psdz.MacrosService.CheckSoftwareEntries(sgbmIds);
-                        int softwareEntryCount = softwareEntries.Count();
-                        log.InfoFormat(CultureInfo.InvariantCulture, "Sw entries: {0}", softwareEntryCount);
-                        foreach (IPsdzSgbmId psdzSgbmId in softwareEntries)
+                        if (RegisterGroup != PdszDatabase.SwiRegisterGroup.HwDeinstall)
                         {
-                            log.InfoFormat(CultureInfo.InvariantCulture, " Sgbm: {0}", psdzSgbmId.HexString);
-                        }
-                        cts?.Token.ThrowIfCancellationRequested();
+                            IEnumerable<IPsdzSgbmId> sgbmIds = ProgrammingUtils.RemoveCafdsCalculatedOnSCB(cafdCalculatedInSCB, sweList);
+                            IEnumerable<IPsdzSgbmId> softwareEntries = ProgrammingService.Psdz.MacrosService.CheckSoftwareEntries(sgbmIds);
+                            int softwareEntryCount = softwareEntries.Count();
+                            log.InfoFormat(CultureInfo.InvariantCulture, "Sw entries: {0}", softwareEntryCount);
+                            foreach (IPsdzSgbmId psdzSgbmId in softwareEntries)
+                            {
+                                log.InfoFormat(CultureInfo.InvariantCulture, " Sgbm: {0}", psdzSgbmId.HexString);
+                            }
+                            cts?.Token.ThrowIfCancellationRequested();
 
-                        if (softwareEntryCount > 0)
-                        {
-                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.SoftwareFailures, softwareEntryCount));
-                            UpdateStatus(sbResult.ToString());
-                            return false;
+                            if (softwareEntryCount > 0)
+                            {
+                                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.SoftwareFailures, softwareEntryCount));
+                                UpdateStatus(sbResult.ToString());
+                                return false;
+                            }
                         }
 
                         if (!CheckVoltage(cts, sbResult))
@@ -942,12 +945,6 @@ namespace PsdzClient.Programing
                             }
                         }
 #endif
-
-                        sbResult.AppendLine(Strings.ExecutingBackupTal);
-                        UpdateStatus(sbResult.ToString());
-
-                        CacheResponseType = CacheType.NoResponse;
-                        log.InfoFormat(CultureInfo.InvariantCulture, "Executing backup TAL");
                         TalExecutionSettings talExecutionSettings = ProgrammingUtils.GetTalExecutionSettings(ProgrammingService);
                         talExecutionSettings.Parallel = false;
                         talExecutionSettings.TaMaxRepeat = 3;
@@ -956,6 +953,12 @@ namespace PsdzClient.Programing
                         bool backupFailed = false;
                         if (RegisterGroup != PdszDatabase.SwiRegisterGroup.HwInstall)
                         {
+                            sbResult.AppendLine(Strings.ExecutingBackupTal);
+                            UpdateStatus(sbResult.ToString());
+
+                            CacheResponseType = CacheType.NoResponse;
+                            log.InfoFormat(CultureInfo.InvariantCulture, "Executing backup TAL");
+
                             IPsdzTal backupTalResult = ProgrammingService.Psdz.IndividualDataRestoreService.ExecuteAsyncBackupTal(
                                 PsdzContext.Connection, PsdzContext.IndividualDataBackupTal, null, PsdzContext.FaTarget, psdzVin, talExecutionSettings, PsdzContext.PathToBackupData);
                             if (backupTalResult == null)
@@ -1702,7 +1705,6 @@ namespace PsdzClient.Programing
                 }
 
                 PsdzContext.Tal = null;
-                RegisterGroup = PdszDatabase.SwiRegisterGroup.Modification;
                 log.InfoFormat(CultureInfo.InvariantCulture, "Reading ECU Ids");
                 IPsdzReadEcuUidResultCto psdzReadEcuUid = ProgrammingService.Psdz.SecurityManagementService.readEcuUid(PsdzContext.Connection, psdzEcuIdentifiers, PsdzContext.SvtActual);
                 if (psdzReadEcuUid != null)
