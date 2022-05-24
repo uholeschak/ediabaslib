@@ -222,6 +222,7 @@ BMW.Rheingold.Programming.ProgrammingEngine.States.Handle()
 BMW.Rheingold.Programming.ProgrammingEngine.States.RetrieveSollverbauungState.GetSollverbauTalFilter()
 BMW.Rheingold.Programming.ProgrammingEngine.ProgrammingSession.Execute()
 BMW.Rheingold.Programming.ProgrammingEngine.ProgrammingSession.UpdateTalFilterForSelectedEcus()
+BMW.Rheingold.Programming.TherapyPlan.SwiActionTalFilterInfoObjectProgramming.Execute()
 
 BMW.Rheingold.Module.ISTA.ABL_LIF_REMOVE_ELEMENTS_FROM_VO.Start() -> SetFaTarget()
 BMW.Rheingold.Module.ISTA.ABL_LIF_REMOVE_ELEMENTS_FROM_VO.run()
