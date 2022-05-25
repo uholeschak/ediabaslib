@@ -25,80 +25,84 @@ namespace BMW.Rheingold.Programming.Common
 {
 	public class ProgrammingUtils
 	{
+        private static TaCategories[] DisabledTaCategories = new TaCategories[1] { TaCategories.Unknown };
+
+        public static readonly TaCategories[] EnabledTaCategories = (from TaCategories x in Enum.GetValues(typeof(TaCategories))
+            where !DisabledTaCategories.Contains(x)
+            select x).ToArray();
+
         public static bool IsFlashableOverMost(IEcu ecu)
+        {
+            if (ecu.BUS != BusType.MOST && (ecu.BUS != BusType.VIRTUAL || ecu.ID_SG_ADR != 160L))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public static bool IsUsedSpecificRoutingTable(IEcu ecu)
+        {
+            IList<long> list = new List<long>();
+            list.Add(41L);
+            if (ecu != null && !list.Contains(ecu.ID_SG_ADR))
+            {
+                return !ecu.IsVirtualOrVirtualBusCheck();
+            }
+            return false;
+        }
+
+        // ProgrammingTaskFlags.Mount | ProgrammingTaskFlags.Unmount | ProgrammingTaskFlags.Replace | ProgrammingTaskFlags.Flash | Programming.ProgrammingTaskFlags.Code | ProgrammingTaskFlags.DataRecovery | ProgrammingTaskFlags.Fsc
+        public static IPsdzTalFilter CreateTalFilter(ProgrammingTaskFlags programmingTaskFlags, IPsdzObjectBuilder objectBuilder)
 		{
-			if (ecu.BUS != BusType.MOST)
-			{
-				if (ecu.BUS != BusType.VIRTUAL || ecu.ID_SG_ADR != 160L)
-				{
-					return false;
-				}
-			}
-			return true;
+            ISet<TaCategories> set = new HashSet<TaCategories>();
+            if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.EnforceCoding))
+            {
+                set.Add(TaCategories.CdDeploy);
+            }
+            IPsdzTalFilter inputTalFilter = objectBuilder.DefineFilterForAllEcus(set.ToArray(), TalFilterOptions.Must, null);
+            ISet<TaCategories> set2 = new HashSet<TaCategories>();
+            if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.Mount))
+            {
+                set2.Add(TaCategories.HwInstall);
+            }
+            if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.Unmount))
+            {
+                set2.Add(TaCategories.HwDeinstall);
+            }
+            if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.Replace))
+            {
+                set2.Add(TaCategories.HwInstall);
+                set2.Add(TaCategories.HwDeinstall);
+            }
+            if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.Flash))
+            {
+                set2.Add(TaCategories.BlFlash);
+                set2.Add(TaCategories.SwDeploy);
+                set2.Add(TaCategories.IbaDeploy);
+            }
+            if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.Code))
+            {
+                set2.Add(TaCategories.CdDeploy);
+            }
+            if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.DataRecovery))
+            {
+                set2.Add(TaCategories.IdBackup);
+                set2.Add(TaCategories.IdRestore);
+                set2.Add(TaCategories.FscBackup);
+            }
+            if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.Fsc))
+            {
+                set2.Add(TaCategories.FscDeploy);
+                set2.Add(TaCategories.FscDeployPrehwd);
+            }
+            ISet<TaCategories> set3 = new HashSet<TaCategories>(EnabledTaCategories);
+            set3.ExceptWith(set);
+            set3.ExceptWith(set2);
+            inputTalFilter = objectBuilder.DefineFilterForAllEcus(set3.ToArray(), TalFilterOptions.MustNot, inputTalFilter);
+            return inputTalFilter;
 		}
 
-		public static bool IsUsedSpecificRoutingTable(IEcu ecu)
-		{
-			IList<long> list = new List<long>();
-			list.Add(41L);
-			return ecu != null && !list.Contains(ecu.ID_SG_ADR) && !ecu.IsVirtualOrVirtualBusCheck();
-		}
-
-		// ProgrammingTaskFlags.Mount | ProgrammingTaskFlags.Unmount | ProgrammingTaskFlags.Replace | ProgrammingTaskFlags.Flash | Programming.ProgrammingTaskFlags.Code | ProgrammingTaskFlags.DataRecovery | ProgrammingTaskFlags.Fsc
-		public static IPsdzTalFilter CreateTalFilter(ProgrammingTaskFlags programmingTaskFlags, IPsdzObjectBuilder objectBuilder)
-		{
-			ISet<TaCategories> set = new HashSet<TaCategories>();
-			if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.EnforceCoding))
-			{
-				set.Add(TaCategories.CdDeploy);
-			}
-			IPsdzTalFilter psdzTalFilter = objectBuilder.DefineFilterForAllEcus(set.ToArray<TaCategories>(), TalFilterOptions.Must, null);
-			ISet<TaCategories> set2 = new HashSet<TaCategories>();
-			if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.Mount))
-			{
-				set2.Add(TaCategories.HwInstall);
-			}
-			if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.Unmount))
-			{
-				set2.Add(TaCategories.HwDeinstall);
-			}
-			if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.Replace))
-			{
-				set2.Add(TaCategories.HwInstall);
-				set2.Add(TaCategories.HwDeinstall);
-			}
-			if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.Flash))
-			{
-				set2.Add(TaCategories.BlFlash);
-				set2.Add(TaCategories.SwDeploy);
-				set2.Add(TaCategories.IbaDeploy);
-			}
-			if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.Code))
-			{
-				set2.Add(TaCategories.CdDeploy);
-			}
-			if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.DataRecovery))
-			{
-				set2.Add(TaCategories.IdBackup);
-				set2.Add(TaCategories.IdRestore);
-				set2.Add(TaCategories.FscBackup);
-			}
-			if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.Fsc))
-			{
-				set2.Add(TaCategories.FscDeploy);
-				set2.Add(TaCategories.FscDeployPrehwd);
-			}
-			ISet<TaCategories> set3 = new HashSet<TaCategories>(ProgrammingUtils.AllowedTaCategories);
-			set3.ExceptWith(set);
-			set3.ExceptWith(set2);
-			set3.Add(TaCategories.EcuActivate);
-			set3.Add(TaCategories.EcuPoll);
-			set3.Add(TaCategories.EcuMirrorDeploy);
-			psdzTalFilter = objectBuilder.DefineFilterForAllEcus(set3.ToArray<TaCategories>(), TalFilterOptions.MustNot, psdzTalFilter);
-			return psdzTalFilter;
-		}
-
-		public static ProgrammingTaskFlags RetrieveProgrammingTaskFlagsFromTasks(IEnumerable<IProgrammingTask> programmingTasks)
+        public static ProgrammingTaskFlags RetrieveProgrammingTaskFlagsFromTasks(IEnumerable<IProgrammingTask> programmingTasks)
 		{
 			ProgrammingTaskFlags programmingTaskFlags = (ProgrammingTaskFlags)0;
 			if (programmingTasks != null)
@@ -322,28 +326,5 @@ namespace BMW.Rheingold.Programming.Common
             };
             return talExecutionSettings;
         }
-
-        static ProgrammingUtils()
-        {
-            ProgrammingUtils.AllowedTaCategories = new TaCategories[]
-            {
-                TaCategories.BlFlash,
-                TaCategories.CdDeploy,
-                TaCategories.FscBackup,
-                TaCategories.FscDeploy,
-                TaCategories.FscDeployPrehwd,
-                TaCategories.GatewayTableDeploy,
-                TaCategories.HddUpdate,
-                TaCategories.HwDeinstall,
-                TaCategories.HwInstall,
-                TaCategories.IbaDeploy,
-                TaCategories.IdBackup,
-                TaCategories.IdRestore,
-                TaCategories.SwDeploy,
-                TaCategories.SFADeploy,
-            };
-		}
-
-		public static readonly TaCategories[] AllowedTaCategories;
-	}
+    }
 }
