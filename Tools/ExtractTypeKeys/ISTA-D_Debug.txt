@@ -223,6 +223,9 @@ BMW.Rheingold.Programming.ProgrammingEngine.States.RetrieveSollverbauungState.Ge
 BMW.Rheingold.Programming.ProgrammingEngine.ProgrammingSession.Execute()
 BMW.Rheingold.Programming.ProgrammingEngine.ProgrammingSession.UpdateTalFilterForSelectedEcus()
 BMW.Rheingold.Programming.TherapyPlan.SwiActionTalFilterInfoObjectProgramming.Execute()
+BMW.Rheingold.Programming.ProgrammingEngine.States.ExecuteMPBState.Handle():
+session.UpdateTalFilterForAllEcus(ProgrammingUtils.EnabledTaCategories, TalFilterOptions.MustNot);
+session.UpdateTalFilterForAllEcus(new TaCategories[] { TaCategories.IdBackup}, TalFilterOptions.Allowed);
 
 BMW.Rheingold.Module.ISTA.ABL_LIF_REMOVE_ELEMENTS_FROM_VO.Start() -> SetFaTarget()
 BMW.Rheingold.Module.ISTA.ABL_LIF_REMOVE_ELEMENTS_FROM_VO.run()

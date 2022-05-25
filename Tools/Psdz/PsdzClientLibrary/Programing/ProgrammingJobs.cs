@@ -1381,7 +1381,7 @@ namespace PsdzClient.Programing
                 switch (RegisterGroup)
                 {
                     case PdszDatabase.SwiRegisterGroup.HwDeinstall:
-                        psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.FscBackup }, TalFilterOptions.Allowed, psdzTalFilter);
+                        psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.IdBackup }, TalFilterOptions.Allowed, psdzTalFilter);
                         break;
 
                     default:
