@@ -94,7 +94,23 @@ namespace PsdzClient.Programing
                 if (EcuInfo != null)
                 {
                     StringBuilder sb = new StringBuilder();
-                    sb.Append(EcuInfo.Name);
+                    string name = EcuInfo.Name;
+                    if (EcuInfo.EcuPrgVars != null)
+                    {
+                        foreach (PdszDatabase.EcuPrgVar ecuPrgVar in EcuInfo.EcuPrgVars)
+                        {
+                            if (!string.IsNullOrWhiteSpace(ecuPrgVar.Name))
+                            {
+                                string[] parts = ecuPrgVar.Name.Split('-');
+                                if (parts.Length > 0)
+                                {
+                                    name = parts[0];
+                                }
+                            }
+                        }
+                    }
+
+                    sb.Append(name.ToUpperInvariant());
                     if (EcuInfo.EcuVar != null)
                     {
                         sb.Append(" ");
@@ -1003,13 +1019,6 @@ namespace PsdzClient.Programing
                             cts?.Token.ThrowIfCancellationRequested();
                         }
 
-                        if (RegisterGroup == PdszDatabase.SwiRegisterGroup.HwDeinstall)
-                        {
-                            sbResult.AppendLine(Strings.ExecutingVehicleFuncFinished);
-                            UpdateStatus(sbResult.ToString());
-                            return true;
-                        }
-
                         if (!LicenseValid)
                         {
                             log.ErrorFormat(CultureInfo.InvariantCulture, "No valid license for TAL execution");
@@ -1105,6 +1114,13 @@ namespace PsdzClient.Programing
 
                         CacheClearRequired = true;
                         cts?.Token.ThrowIfCancellationRequested();
+
+                        if (RegisterGroup == PdszDatabase.SwiRegisterGroup.HwDeinstall)
+                        {
+                            sbResult.AppendLine(Strings.ExecutingVehicleFuncFinished);
+                            UpdateStatus(sbResult.ToString());
+                            return true;
+                        }
 
                         if (!backupFailed)
                         {
