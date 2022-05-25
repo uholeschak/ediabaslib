@@ -1362,17 +1362,27 @@ namespace PsdzClient.Programing
                 }
 
                 IPsdzTalFilter psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.BuildTalFilter();
-                // disable backup
-                psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.FscBackup }, TalFilterOptions.MustNot, psdzTalFilter);
-                if (bModifyFa)
-                {   // enable deploy
-                    psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.CdDeploy }, TalFilterOptions.Must, psdzTalFilter);
-                    log.InfoFormat(CultureInfo.InvariantCulture, "TAL flashing disabled: {0}", DisableTalFlash);
-                    if (DisableTalFlash)
-                    {
-                        psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.BlFlash, TaCategories.GatewayTableDeploy, TaCategories.SwDeploy }, TalFilterOptions.MustNot, psdzTalFilter);
-                    }
+                switch (RegisterGroup)
+                {
+                    case PdszDatabase.SwiRegisterGroup.HwDeinstall:
+                        psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.FscBackup }, TalFilterOptions.Allowed, psdzTalFilter);
+                        break;
+
+                    default:
+                        // disable backup
+                        psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.FscBackup }, TalFilterOptions.MustNot, psdzTalFilter);
+                        if (bModifyFa)
+                        {   // enable deploy
+                            psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.CdDeploy }, TalFilterOptions.Must, psdzTalFilter);
+                            log.InfoFormat(CultureInfo.InvariantCulture, "TAL flashing disabled: {0}", DisableTalFlash);
+                            if (DisableTalFlash)
+                            {
+                                psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.BlFlash, TaCategories.GatewayTableDeploy, TaCategories.SwDeploy }, TalFilterOptions.MustNot, psdzTalFilter);
+                            }
+                        }
+                        break;
                 }
+
 
                 PsdzContext.SetTalFilter(psdzTalFilter);
 
@@ -1774,9 +1784,6 @@ namespace PsdzClient.Programing
                 switch (RegisterGroup)
                 {
                     case PdszDatabase.SwiRegisterGroup.HwDeinstall:
-                        talFilterFlash = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForSelectedEcus(new[] { TaCategories.HwInstall, TaCategories.HwDeinstall }, diagAddrList.ToArray(), TalFilterOptions.MustNot, talFilterFlash);
-                        break;
-
                     case PdszDatabase.SwiRegisterGroup.HwInstall:
                         talFilterFlash = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForSelectedEcus(new[] { TaCategories.HwInstall, TaCategories.HwDeinstall }, diagAddrList.ToArray(), TalFilterOptions.Must, talFilterFlash);
                         break;
