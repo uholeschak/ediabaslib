@@ -235,6 +235,24 @@ namespace PsdzClient.Programming
             return null;
         }
 
+        public IEcuLogisticsEntry GetEcuLogisticsEntry(int diagnosticAddress)
+        {
+            if (EcuCharacteristics == null)
+            {
+                return null;
+            }
+
+            foreach (IEcuLogisticsEntry ecuLogisticsEntry in EcuCharacteristics.ecuTable)
+            {
+                if (diagnosticAddress == ecuLogisticsEntry.DiagAddress)
+                {
+                    return ecuLogisticsEntry;
+                }
+            }
+
+            return null;
+        }
+
         public bool SetPathToBackupData(string vin17)
 		{
 			this.hasVinBackupDataFolder = false;

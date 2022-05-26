@@ -58,11 +58,12 @@ namespace PsdzClient.Programing
                 ClientContext = clientContext;
             }
 
-            public OptionsItem(PdszDatabase.SwiRegisterEnum swiRegisterEnum, PdszDatabase.EcuInfo ecuInfo, ClientContext clientContext)
+            public OptionsItem(PdszDatabase.SwiRegisterEnum swiRegisterEnum, PdszDatabase.EcuInfo ecuInfo, IEcuLogisticsEntry ecuLogisticsEntry, ClientContext clientContext)
             {
                 Init();
                 SwiRegisterEnum = swiRegisterEnum;
                 EcuInfo = ecuInfo;
+                EcuLogisticsEntry = ecuLogisticsEntry;
                 ClientContext = clientContext;
             }
 
@@ -77,6 +78,8 @@ namespace PsdzClient.Programing
             public PdszDatabase.SwiAction SwiAction { get; private set; }
 
             public PdszDatabase.EcuInfo EcuInfo { get; private set; }
+
+            public IEcuLogisticsEntry EcuLogisticsEntry { get; private set; }
 
             public ClientContext ClientContext { get; private set; }
 
@@ -95,18 +98,11 @@ namespace PsdzClient.Programing
                 {
                     StringBuilder sb = new StringBuilder();
                     string name = EcuInfo.Name;
-                    if (EcuInfo.EcuPrgVars != null)
+                    if (EcuLogisticsEntry != null)
                     {
-                        foreach (PdszDatabase.EcuPrgVar ecuPrgVar in EcuInfo.EcuPrgVars)
+                        if (!string.IsNullOrWhiteSpace(EcuLogisticsEntry.Name))
                         {
-                            if (!string.IsNullOrWhiteSpace(ecuPrgVar.Name))
-                            {
-                                string[] parts = ecuPrgVar.Name.Split('-');
-                                if (parts.Length > 0)
-                                {
-                                    name = parts[0];
-                                }
-                            }
+                            name = EcuLogisticsEntry.Name;
                         }
                     }
 
@@ -1386,8 +1382,6 @@ namespace PsdzClient.Programing
                         break;
 
                     default:
-                        // disable backup
-                        psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.FscBackup }, TalFilterOptions.MustNot, psdzTalFilter);
                         if (bModifyFa)
                         {   // enable deploy
                             psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.CdDeploy }, TalFilterOptions.Must, psdzTalFilter);
@@ -1400,7 +1394,8 @@ namespace PsdzClient.Programing
                         break;
                 }
 
-
+                // disable backup
+                psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.FscBackup }, TalFilterOptions.MustNot, psdzTalFilter);
                 PsdzContext.SetTalFilter(psdzTalFilter);
 
                 IPsdzTalFilter psdzTalFilterIndividual = ProgrammingService.Psdz.ObjectBuilder.BuildTalFilter();
@@ -1670,7 +1665,8 @@ namespace PsdzClient.Programing
                                         List<OptionsItem> optionsItems = new List<OptionsItem>();
                                         foreach (PdszDatabase.EcuInfo ecuInfo in ecuList)
                                         {
-                                            optionsItems.Add(new OptionsItem(swiRegisterEnum, ecuInfo, clientContext));
+                                            IEcuLogisticsEntry ecuLogisticsEntry = PsdzContext.GetEcuLogisticsEntry((int) ecuInfo.Address);
+                                            optionsItems.Add(new OptionsItem(swiRegisterEnum, ecuInfo, ecuLogisticsEntry, clientContext));
                                         }
                                         optionsDict.Add(swiRegisterEnum, optionsItems);
                                     }
