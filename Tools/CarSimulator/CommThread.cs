@@ -5511,6 +5511,27 @@ namespace CarSimulator
                             found = true;
                         }
 
+                        if (!found && _receiveData[4 + offset] == 0x01 && _receiveData[5 + offset] == 0x0F && _receiveData[6 + offset] == 0x0B)
+                        {
+                            Debug.WriteLine("executeDiagnosticService {0}", state);
+                            _sendData[0] = 0x8B;
+                            _sendData[1] = 0xF1;
+                            _sendData[2] = _receiveData[1];
+                            _sendData[3] = 0x71;
+                            _sendData[4] = _receiveData[4 + offset];
+                            _sendData[5] = _receiveData[5 + offset];
+                            _sendData[6] = _receiveData[6 + offset];
+                            _sendData[7] = _receiveData[7 + offset];
+                            _sendData[8] = 0x00;
+                            _sendData[9] = 0x04;
+                            _sendData[10] = 0xC6;
+                            _sendData[11] = _receiveData[11 + offset];
+                            _sendData[12] = 0x00;
+                            _sendData[13] = 0x02;
+
+                            found = true;
+                        }
+
                         if (!found && _receiveData[4 + offset] == 0x01 && _receiveData[5 + offset] == 0x70 && _receiveData[6 + offset] == 0x00)
                         {
                             Debug.WriteLine("RC_PAD processingApplicationData {0}", state);
