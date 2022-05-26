@@ -68,7 +68,8 @@
         private Button buttonEcuReset;
         private int updateStep = 0;
         private int opMode = OpModeStatus;
-        private Int64 currentSpeed = 0;
+        private int channelState = 0;
+        private int channelsOffCount = 0;
         private bool errorReset = false;
         private bool ecuReset = false;
         private bool ignoreError = false;
@@ -182,15 +183,10 @@
 
             if (pageValid)
             {
-                bool stopped = currentSpeed < 5;
-                buttonDown.Enabled = stopped;
+                buttonDown.Enabled = true;
                 buttonUp.Enabled = true;
                 buttonErrorReset.Enabled = true;
                 buttonEcuReset.Enabled = true;
-                if (!stopped)
-                {
-                    opMode = OpModeStatus;
-                }
                 if (opMode == OpModeDown)
                 {
                     buttonDown.Checked = true;
@@ -224,7 +220,8 @@
             {
                 updateStep = 0;
                 opMode = OpModeStatus;
-                currentSpeed = 0;
+                channelState = 0;
+                channelsOffCount = 0;
                 errorReset = false;
                 ecuReset = false;
                 tempDict = null;
@@ -333,6 +330,7 @@
 
                         ecuReset = false;
                         ignoreError = true;
+                        channelsOffCount = 0;
                     }
 
                     if ((opMode == OpModeUp) && (axisMode != AxisModeNormal))
@@ -360,6 +358,8 @@
                     if ((opMode == OpModeDown) && (axisMode == AxisModeProduction))
                     {   // manual down
                         // read channel states
+                        int statusCount = 0;
+                        channelState = 0;
                         for (int channel = 0; channel < 3; channel++)
                         {
                             int id;
@@ -382,8 +382,38 @@
                             resultSets = ediabas.ResultSets;
                             if (resultSets != null && resultSets.Count >= 2)
                             {
+                                EdiabasNet.ResultData resultData;
+                                if (resultSets[1].TryGetValue("STAT_ANSTEUERUNG_AKTIV", out resultData))
+                                {
+                                    if (resultData.OpData is Int64)
+                                    {
+                                        statusCount++;
+                                        int state = (int)((Int64)resultData.OpData);
+                                        if (state != 0)
+                                        {
+                                            channelState |= 1 << channel;
+                                        }
+                                    }
+                                }
                                 EdiabasThread.MergeResultDictionarys(ref resultDict, resultSets[1], string.Format("STATUS_SIGNALE_NUMERISCH{0}_", channel));
                             }
+                        }
+
+                        if (statusCount >= 3)
+                        {
+                            if (channelState == 0x00)
+                            {
+                                channelsOffCount++;
+                            }
+                            else
+                            {
+                                channelsOffCount = 0;
+                            }
+                        }
+
+                        if (channelsOffCount > 20)
+                        {
+                            ecuReset = true;
                         }
 
                         // set channel state
@@ -392,6 +422,10 @@
                         ediabas.ResultsRequests = string.Empty;
 
                         ediabas.ExecuteJob("STEUERN");
+                    }
+                    else
+                    {
+                        channelsOffCount = 0;
                     }
                 }
             }
@@ -459,6 +493,10 @@
                     for (int channel = 0; channel < 3; channel++)
                     {
                         result = ActivityMain.FormatResultInt64(resultDict, string.Format(ActivityMain.Culture, "STATUS_SIGNALE_NUMERISCH{0}_STAT_ANSTEUERUNG_AKTIV", channel), "{0}", 0) + result;
+                    }
+                    if (!string.IsNullOrEmpty(result))
+                    {
+                        result += string.Format(ActivityMain.Culture, " ({0})", channelsOffCount);
                     }
                     break;
             }
