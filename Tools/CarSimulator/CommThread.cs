@@ -339,6 +339,7 @@ namespace CarSimulator
         private readonly Stopwatch[] _timeValveWrite = new Stopwatch[10];
         private byte _mode; // 2: conveyor, 4: transport
         private int _outputs; // 0:left, 1:right, 2:down, 3:comp
+        private readonly Stopwatch _outputsActiveTime = new Stopwatch();
         private int _axisPosPrescaler;
         private int _axisPosRaw;
         private double _axisPosFilt;
@@ -783,6 +784,7 @@ namespace CarSimulator
             }
             _mode = 0x00;
             _outputs = 0x00;
+            _outputsActiveTime.Stop();
             _axisPosPrescaler = 0;
             _axisPosRaw = 0;
             _axisPosFilt = _axisPosRaw;
@@ -863,6 +865,7 @@ namespace CarSimulator
                     watch.Stop();
                 }
                 _outputs = 0x00;
+                _outputsActiveTime.Stop();
                 _noResponseCount = 0;
                 _nr2123SendCount = 0;
                 _kwp1281InvRespIndex = 0;
@@ -4653,6 +4656,20 @@ namespace CarSimulator
                     }
                 }
             }
+
+            if (_outputs == 0x00)
+            {
+                _outputsActiveTime.Stop();
+            }
+            else
+            {
+                if (!_outputsActiveTime.IsRunning)
+                {
+                    _outputsActiveTime.Reset();
+                    _outputsActiveTime.Start();
+                }
+            }
+
             if (_timeIdleSpeedControlWrite.IsRunning)
             {
                 if (_timeIdleSpeedControlWrite.ElapsedMilliseconds > 500)
@@ -4835,6 +4852,16 @@ namespace CarSimulator
                 ObdSend(_sendData, bmwTcpClientData);
 
                 Debug.WriteLine("ECU reset");
+                if (_responseType == ResponseType.G31)
+                {
+                    if (_receiveData[1] == 0x76)
+                    {
+                        Debug.WriteLine("Clearing outputs");
+                        _outputs = 0;
+                        _outputsActiveTime.Stop();
+                    }
+                }
+
                 _noResponseCount = 1;
                 standardResponse = true;
             }
@@ -8211,7 +8238,14 @@ namespace CarSimulator
                 _sendData[i++] = 0x67;
                 _sendData[i++] = 0x03;
                 _sendData[i++] = 0x00;
-                _sendData[i++] = (byte)(((_outputs & (1 << channel)) != 0x00) ? 0x01 : 0x00);
+                if (_outputsActiveTime.IsRunning && _outputsActiveTime.ElapsedMilliseconds > 5000)
+                {
+                    _sendData[i++] = 0x00;
+                }
+                else
+                {
+                    _sendData[i++] = (byte)(((_outputs & (1 << channel)) != 0x00) ? 0x01 : 0x00);
+                }
 
                 ObdSend(_sendData, bmwTcpClientData);
             }
