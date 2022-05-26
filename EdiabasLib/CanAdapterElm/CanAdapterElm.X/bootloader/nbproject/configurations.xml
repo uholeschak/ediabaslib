@@ -144,6 +144,7 @@
         <property key="linker-format-hex-file-for-download" value="false"/>
         <property key="linker-libraries" value=""/>
         <property key="linker-library-search-paths" value=""/>
+        <property key="linker-map-file-generation" value="true"/>
         <property key="linker-maxi-chip" value="false"/>
         <property key="linker-produce-intel-hex-extended-address-zero-output"
                   value="false"/>
@@ -269,6 +270,7 @@
         <property key="linker-format-hex-file-for-download" value="false"/>
         <property key="linker-libraries" value=""/>
         <property key="linker-library-search-paths" value=""/>
+        <property key="linker-map-file-generation" value="true"/>
         <property key="linker-maxi-chip" value="false"/>
         <property key="linker-produce-intel-hex-extended-address-zero-output"
                   value="false"/>
@@ -284,7 +286,7 @@
         <targetDevice>PIC18F25K80</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool></platformTool>
+        <platformTool>noID</platformTool>
         <languageToolchain>pic-as</languageToolchain>
         <languageToolchainVersion>2.31</languageToolchainVersion>
         <platform>3</platform>
@@ -394,6 +396,7 @@
         <property key="linker-format-hex-file-for-download" value="false"/>
         <property key="linker-libraries" value=""/>
         <property key="linker-library-search-paths" value=""/>
+        <property key="linker-map-file-generation" value="true"/>
         <property key="linker-maxi-chip" value="false"/>
         <property key="linker-produce-intel-hex-extended-address-zero-output"
                   value="false"/>
@@ -519,6 +522,7 @@
         <property key="linker-format-hex-file-for-download" value="false"/>
         <property key="linker-libraries" value=""/>
         <property key="linker-library-search-paths" value=""/>
+        <property key="linker-map-file-generation" value="true"/>
         <property key="linker-maxi-chip" value="false"/>
         <property key="linker-produce-intel-hex-extended-address-zero-output"
                   value="false"/>
@@ -576,6 +580,8 @@
         <property key="ToolFirmwareFilePath"
                   value="Press to browse for a specific firmware version"/>
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
+        <property key="debugoptions.debug-startup" value="Use system settings"/>
+        <property key="debugoptions.reset-behaviour" value="Use system settings"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
@@ -618,6 +624,8 @@
         <property key="ToolFirmwareFilePath"
                   value="Press to browse for a specific firmware version"/>
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
+        <property key="debugoptions.debug-startup" value="Use system settings"/>
+        <property key="debugoptions.reset-behaviour" value="Use system settings"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
@@ -686,6 +694,7 @@
         <property key="linker-format-hex-file-for-download" value="false"/>
         <property key="linker-libraries" value=""/>
         <property key="linker-library-search-paths" value=""/>
+        <property key="linker-map-file-generation" value="true"/>
         <property key="linker-maxi-chip" value="false"/>
         <property key="linker-produce-intel-hex-extended-address-zero-output"
                   value="false"/>
@@ -811,6 +820,7 @@
         <property key="linker-format-hex-file-for-download" value="false"/>
         <property key="linker-libraries" value=""/>
         <property key="linker-library-search-paths" value=""/>
+        <property key="linker-map-file-generation" value="true"/>
         <property key="linker-maxi-chip" value="false"/>
         <property key="linker-produce-intel-hex-extended-address-zero-output"
                   value="false"/>
@@ -936,6 +946,7 @@
         <property key="linker-format-hex-file-for-download" value="false"/>
         <property key="linker-libraries" value=""/>
         <property key="linker-library-search-paths" value=""/>
+        <property key="linker-map-file-generation" value="true"/>
         <property key="linker-maxi-chip" value="false"/>
         <property key="linker-produce-intel-hex-extended-address-zero-output"
                   value="false"/>
