@@ -287,6 +287,16 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Backup data is present.
+        ///Do you want to continue the last hardware replace operation? ähnelt.
+        /// </summary>
+        internal static string HwReplaceContinue {
+            get {
+                return ResourceManager.GetString("HwReplaceContinue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die ILevel backup failed. ähnelt.
         /// </summary>
         internal static string ILevelBackupFailed {

@@ -1467,7 +1467,25 @@ namespace PsdzClient.Programing
                     return false;
                 }
 
-                if (!hwReplace)
+                if (hwReplace)
+                {
+                    if (RegisterGroup == PdszDatabase.SwiRegisterGroup.HwInstall)
+                    {
+                        if (PsdzContext.HasBackupData())
+                        {
+                            log.InfoFormat(CultureInfo.InvariantCulture, "Backup data found");
+                            if (ShowMessageEvent != null)
+                            {
+                                if (!ShowMessageEvent.Invoke(cts, Strings.HwReplaceContinue, false, true))
+                                {
+                                    log.InfoFormat(CultureInfo.InvariantCulture, "ShowMessageEvent HwReplaceContinue aborted");
+                                    PsdzContext.RemoveBackupData();
+                                }
+                            }
+                        }
+                    }
+                }
+                else
                 {
                     PsdzContext.RemoveBackupData();
                 }

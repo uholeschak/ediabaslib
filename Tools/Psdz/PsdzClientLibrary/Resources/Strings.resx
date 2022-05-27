@@ -199,6 +199,10 @@ Please connect a certified charger for the whole coding session.</value>
   <data name="HostStopping" xml:space="preserve">
     <value>Stopping service host ...</value>
   </data>
+  <data name="HwReplaceContinue" xml:space="preserve">
+    <value>Backup data is present.
+Do you want to continue the last hardware replace operation?</value>
+  </data>
   <data name="ILevelBackupFailed" xml:space="preserve">
     <value>ILevel backup failed.</value>
   </data>

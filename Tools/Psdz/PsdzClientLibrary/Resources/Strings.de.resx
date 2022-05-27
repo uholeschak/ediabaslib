@@ -199,6 +199,10 @@ Bitte schließen Sie ein zertifiziertes Ladegerät während des gesamten Kodierv
   <data name="HostStopping" xml:space="preserve">
     <value>Service Host stoppen ...</value>
   </data>
+  <data name="HwReplaceContinue" xml:space="preserve">
+    <value>Es sind Backupdaten vorhanden.
+Wollen Sie den letzten Hardwaretausch fortsetzen?</value>
+  </data>
   <data name="ILevelBackupFailed" xml:space="preserve">
     <value>IStufe Backup fehlgeschlagen.</value>
   </data>
