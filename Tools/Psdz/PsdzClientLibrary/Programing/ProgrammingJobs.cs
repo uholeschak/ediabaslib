@@ -987,8 +987,8 @@ namespace PsdzClient.Programing
                                 log.InfoFormat(CultureInfo.InvariantCulture, "  Affected Ecu: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
                                     ecuIdentifier.BaseVariant, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset);
                             }
-                            if (backupTalResult.TalExecutionState != PsdzTalExecutionState.Finished &&
-                                backupTalResult.TalExecutionState != PsdzTalExecutionState.FinishedWithWarnings)
+
+                            if (!IsTalExecutionStateOk(backupTalResult.TalExecutionState, true))
                             {
                                 talExecutionFailed = true;
                                 backupFailed = true;
@@ -998,7 +998,7 @@ namespace PsdzClient.Programing
                             }
                             else
                             {
-                                if (backupTalResult.TalExecutionState != PsdzTalExecutionState.Finished)
+                                if (!IsTalExecutionStateOk(backupTalResult.TalExecutionState))
                                 {
                                     log.Info(backupTalResult.AsXml);
                                     sbResult.AppendLine(Strings.TalExecuteWarning);
@@ -1074,8 +1074,7 @@ namespace PsdzClient.Programing
                             log.InfoFormat(CultureInfo.InvariantCulture, "  Affected Ecu: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
                                 ecuIdentifier.BaseVariant, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset);
                         }
-                        if (executeTalResult.TalExecutionState != PsdzTalExecutionState.Finished &&
-                            executeTalResult.TalExecutionState != PsdzTalExecutionState.FinishedWithWarnings)
+                        if (!IsTalExecutionStateOk(executeTalResult.TalExecutionState, true))
                         {
                             talExecutionFailed = true;
                             log.Error(executeTalResult.AsXml);
@@ -1095,7 +1094,7 @@ namespace PsdzClient.Programing
                         }
                         else
                         {
-                            if (executeTalResult.TalExecutionState != PsdzTalExecutionState.Finished)
+                            if (!IsTalExecutionStateOk(executeTalResult.TalExecutionState))
                             {
                                 log.Info(executeTalResult.AsXml);
                                 sbResult.AppendLine(Strings.TalExecuteWarning);
@@ -1159,8 +1158,7 @@ namespace PsdzClient.Programing
                                         ecuIdentifier.BaseVariant, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset);
                                 }
 
-                                if (restoreTalResult.TalExecutionState != PsdzTalExecutionState.Finished &&
-                                    restoreTalResult.TalExecutionState != PsdzTalExecutionState.FinishedWithWarnings)
+                                if (!IsTalExecutionStateOk(restoreTalResult.TalExecutionState, true))
                                 {
                                     talExecutionFailed = true;
                                     log.Error(restoreTalResult.AsXml);
@@ -1169,7 +1167,7 @@ namespace PsdzClient.Programing
                                 }
                                 else
                                 {
-                                    if (restoreTalResult.TalExecutionState != PsdzTalExecutionState.Finished)
+                                    if (!IsTalExecutionStateOk(restoreTalResult.TalExecutionState))
                                     {
                                         log.Info(restoreTalResult.AsXml);
                                         sbResult.AppendLine(Strings.TalExecuteWarning);
@@ -2185,6 +2183,26 @@ namespace PsdzClient.Programing
         {
             PsdzContext.SetTalFilter(ProgrammingService.Psdz.ObjectBuilder.DefineFilterForSelectedEcus(taCategories, diagAddress, talFilterOptions, PsdzContext.TalFilter));
             PsdzContext.SetTalFilterForIndividualDataTal(ProgrammingService.Psdz.ObjectBuilder.DefineFilterForSelectedEcus(taCategories, diagAddress, talFilterOptions, PsdzContext.TalFilterForIndividualDataTal));
+        }
+
+        private bool IsTalExecutionStateOk(PsdzTalExecutionState talExecutionState, bool acceptWarning = false)
+        {
+            switch (talExecutionState)
+            {
+                case PsdzTalExecutionState.Finished:
+                case PsdzTalExecutionState.FinishedForHardwareTransactions:
+                    return true;
+
+                case PsdzTalExecutionState.FinishedWithWarnings:
+                case PsdzTalExecutionState.FinishedForHardwareTransactionsWithWarnings:
+                    if (!acceptWarning)
+                    {
+                        break;
+                    }
+                    return true;
+            }
+
+            return false;
         }
 
         private bool CheckVoltage(CancellationTokenSource cts, StringBuilder sbResult, bool showInfo = false, bool addMessage = false)
