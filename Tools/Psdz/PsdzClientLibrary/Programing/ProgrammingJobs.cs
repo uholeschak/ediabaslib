@@ -1384,8 +1384,12 @@ namespace PsdzClient.Programing
                 }
 
                 IPsdzTalFilter psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.BuildTalFilter();
+                // disable backup
+                psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.FscBackup }, TalFilterOptions.MustNot, psdzTalFilter);
+
                 switch (RegisterGroup)
                 {
+                    case PdszDatabase.SwiRegisterGroup.HwInstall:
                     case PdszDatabase.SwiRegisterGroup.HwDeinstall:
                         psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(ProgrammingUtils.EnabledTaCategories, TalFilterOptions.MustNot, psdzTalFilter);
                         psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.IdBackup }, TalFilterOptions.Allowed, psdzTalFilter);
@@ -1404,8 +1408,6 @@ namespace PsdzClient.Programing
                         break;
                 }
 
-                // disable backup
-                psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.FscBackup }, TalFilterOptions.MustNot, psdzTalFilter);
                 PsdzContext.SetTalFilter(psdzTalFilter);
 
                 IPsdzTalFilter psdzTalFilterIndividual = ProgrammingService.Psdz.ObjectBuilder.BuildTalFilter();
