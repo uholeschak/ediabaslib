@@ -253,7 +253,7 @@ namespace PsdzClient.Programming
             return null;
         }
 
-        public bool SetPathToBackupData(string vin17)
+        public bool SetPathToBackupData(string vin17, bool hwReplace = false)
 		{
 			this.hasVinBackupDataFolder = false;
 			string pathString = Path.Combine(IstaFolder, "Temp");
@@ -269,9 +269,10 @@ namespace PsdzClient.Programming
 			else
 			{
 				this.hasVinBackupDataFolder = true;
-				this.PathToBackupData = Path.GetFullPath(Path.Combine(pathString, vin17));
-			}
-			if (!Directory.Exists(this.PathToBackupData))
+                string dirName = hwReplace ? vin17 + "_replace" : vin17;
+                this.PathToBackupData = Path.GetFullPath(Path.Combine(pathString, dirName));
+            }
+            if (!Directory.Exists(this.PathToBackupData))
 			{
 				Directory.CreateDirectory(this.PathToBackupData);
 			}

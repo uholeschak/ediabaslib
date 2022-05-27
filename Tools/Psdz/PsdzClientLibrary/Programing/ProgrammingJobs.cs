@@ -1401,10 +1401,6 @@ namespace PsdzClient.Programing
 
                 switch (RegisterGroup)
                 {
-                    case PdszDatabase.SwiRegisterGroup.HwDeinstall:
-                        UpdateTalFilterForSelectedEcus(new[] { TaCategories.HwDeinstall }, diagAddrList.ToArray(), TalFilterOptions.Must);
-                        break;
-
                     case PdszDatabase.SwiRegisterGroup.HwInstall:
                         UpdateTalFilterForSelectedEcus(new[] { TaCategories.CdDeploy }, diagAddrList.ToArray(), TalFilterOptions.Must);
                         if (bModifyFa)
@@ -1412,6 +1408,11 @@ namespace PsdzClient.Programing
                             UpdateTalFilterForSelectedEcus(new[] { TaCategories.IdBackup, TaCategories.IdRestore }, diagAddrList.ToArray(), TalFilterOptions.MustNot);
                         }
                         break;
+
+                    case PdszDatabase.SwiRegisterGroup.HwDeinstall:
+                        UpdateTalFilterForSelectedEcus(new[] { TaCategories.HwDeinstall }, diagAddrList.ToArray(), TalFilterOptions.Must);
+                        break;
+
                 }
 
                 if (PsdzContext.TalFilter != null)
@@ -1438,14 +1439,23 @@ namespace PsdzClient.Programing
                 log.InfoFormat(CultureInfo.InvariantCulture, "ILevel: Current={0}, Last={1}, Shipment={2}",
                     iStufenTriple.Current, iStufenTriple.Last, iStufenTriple.Shipment);
 
-                if (!PsdzContext.SetPathToBackupData(psdzVin.Value))
+                bool hwReplace = false;
+                switch (RegisterGroup)
+                {
+                    case PdszDatabase.SwiRegisterGroup.HwInstall:
+                    case PdszDatabase.SwiRegisterGroup.HwDeinstall:
+                        hwReplace = true;
+                        break;
+                }
+
+                if (!PsdzContext.SetPathToBackupData(psdzVin.Value, hwReplace))
                 {
                     sbResult.AppendLine(Strings.CreateBackupPathFailed);
                     UpdateStatus(sbResult.ToString());
                     return false;
                 }
 
-                if (RegisterGroup != PdszDatabase.SwiRegisterGroup.HwInstall)
+                if (!hwReplace)
                 {
                     PsdzContext.RemoveBackupData();
                 }
