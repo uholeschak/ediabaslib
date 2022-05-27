@@ -290,6 +290,17 @@ namespace PsdzClient.Programming
             }
         }
 
+        public bool HasBackupData()
+        {
+            if (!string.IsNullOrEmpty(this.PathToBackupData) && this.hasVinBackupDataFolder &&
+                Directory.Exists(this.PathToBackupData) && !Directory.EnumerateFileSystemEntries(this.PathToBackupData).Any<string>())
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public bool RemoveBackupData()
         {
             if (!string.IsNullOrEmpty(this.PathToBackupData) && this.hasVinBackupDataFolder)

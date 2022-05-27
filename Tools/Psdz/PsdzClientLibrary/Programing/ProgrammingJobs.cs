@@ -1019,6 +1019,13 @@ namespace PsdzClient.Programing
                             CacheClearRequired = true;
                             cts?.Token.ThrowIfCancellationRequested();
                         }
+                        else
+                        {
+                            if (!PsdzContext.HasBackupData())
+                            {
+                                backupFailed = true;
+                            }
+                        }
 
                         if (!LicenseValid)
                         {
