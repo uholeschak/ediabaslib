@@ -411,7 +411,7 @@
                             }
                         }
 
-                        if (channelsOffCount >= 30)
+                        if (channelsOffCount >= 10)
                         {
                             ecuReset = true;
                         }
