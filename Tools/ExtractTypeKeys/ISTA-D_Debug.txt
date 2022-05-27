@@ -227,6 +227,10 @@ BMW.Rheingold.Programming.ProgrammingEngine.States.ExecuteMPBState.Handle():
 session.UpdateTalFilterForAllEcus(ProgrammingUtils.EnabledTaCategories, TalFilterOptions.MustNot);
 session.UpdateTalFilterForAllEcus(new TaCategories[] { TaCategories.IdBackup}, TalFilterOptions.Allowed);
 
+BMW.Rheingold.Programming.ProgrammingEngine.States.StartEscalationState.Handle()
+session.UpdateTalFilterForSelectedEcus(new TaCategories[]{ TaCategories.CdDeploy}, list.ToArray(), TalFilterOptions.Must);
+session.UpdateTalFilterForSelectedEcus(new TaCategories[] {TaCategories.FscDeploy, TaCategories.FscDeployPrehwd}, list.ToArray(), TalFilterOptions.MustNot);
+
 BMW.Rheingold.Module.ISTA.ABL_LIF_REMOVE_ELEMENTS_FROM_VO.Start() -> SetFaTarget()
 BMW.Rheingold.Module.ISTA.ABL_LIF_REMOVE_ELEMENTS_FROM_VO.run()
 BMW.Rheingold.Module.ISTA.ABL_LIF_ADD_ELEMENTS_TO_VO.run()
