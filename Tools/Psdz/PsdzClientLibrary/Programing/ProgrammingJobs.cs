@@ -965,6 +965,11 @@ namespace PsdzClient.Programing
                             sbResult.AppendLine(Strings.ExecutingBackupTal);
                             UpdateStatus(sbResult.ToString());
 
+                            if (RegisterGroup == PdszDatabase.SwiRegisterGroup.HwDeinstall)
+                            {
+                                PsdzContext.RemoveBackupData();
+                            }
+
                             CacheResponseType = CacheType.NoResponse;
                             log.InfoFormat(CultureInfo.InvariantCulture, "Executing backup TAL");
 
