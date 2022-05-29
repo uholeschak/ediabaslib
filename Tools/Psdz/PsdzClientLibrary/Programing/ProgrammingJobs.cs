@@ -960,7 +960,14 @@ namespace PsdzClient.Programing
                         ((PsdzSecureCodingConfigCto)talExecutionSettings.SecureCodingConfig).ConnectionTimeout = CodingConnectionTimeout;
 
                         bool backupFailed = false;
-                        if (RegisterGroup != PdszDatabase.SwiRegisterGroup.HwInstall)
+                        // ReSharper disable once ReplaceWithSingleAssignment.True
+                        bool executeBackupTal = true;
+                        if (RegisterGroup == PdszDatabase.SwiRegisterGroup.HwInstall && PsdzContext.HasBackupData())
+                        {
+                            executeBackupTal = false;
+                        }
+
+                        if (executeBackupTal)
                         {
                             sbResult.AppendLine(Strings.ExecutingBackupTal);
                             UpdateStatus(sbResult.ToString());
@@ -1018,13 +1025,6 @@ namespace PsdzClient.Programing
 
                             CacheClearRequired = true;
                             cts?.Token.ThrowIfCancellationRequested();
-                        }
-                        else
-                        {
-                            if (!PsdzContext.HasBackupData())
-                            {
-                                backupFailed = true;
-                            }
                         }
 
                         if (!LicenseValid)
