@@ -230,6 +230,18 @@ session.UpdateTalFilterForAllEcus(new TaCategories[] { TaCategories.IdBackup}, T
 BMW.Rheingold.Programming.ProgrammingEngine.States.StartEscalationState.Handle()
 session.UpdateTalFilterForSelectedEcus(new TaCategories[]{ TaCategories.CdDeploy}, list.ToArray(), TalFilterOptions.Must);
 session.UpdateTalFilterForSelectedEcus(new TaCategories[] {TaCategories.FscDeploy, TaCategories.FscDeployPrehwd}, list.ToArray(), TalFilterOptions.MustNot);
+ABL_LIF_DISABLE_FSC_AKTION_ALL_SG:
+TaCategories[] taCategories = new TaCategories[] { TaCategories.FscBackup };
+TalFilterOptions talFilterOptions = TalFilterOptions.MustNot;
+programmingSession.UpdateTalFilterForAllEcus(taCategories, talFilterOptions);
+
+TaCategories[] taCategories2 = new TaCategories[] { TaCategories.FscDeploy };
+TalFilterOptions talFilterOptions2 = TalFilterOptions.MustNot;
+programmingSession2.UpdateTalFilterForAllEcus(taCategories2, talFilterOptions2);
+
+TaCategories[] taCategories3 = new TaCategories[] { TaCategories.FscDeployPrehwd };
+TalFilterOptions talFilterOptions3 = TalFilterOptions.MustNot;
+programmingSession3.UpdateTalFilterForAllEcus(taCategories3, talFilterOptions3);
 
 BMW.Rheingold.Module.ISTA.ABL_LIF_REMOVE_ELEMENTS_FROM_VO.Start() -> SetFaTarget()
 BMW.Rheingold.Module.ISTA.ABL_LIF_REMOVE_ELEMENTS_FROM_VO.run()
