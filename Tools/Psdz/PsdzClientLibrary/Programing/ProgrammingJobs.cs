@@ -2032,6 +2032,27 @@ namespace PsdzClient.Programing
                     return false;
                 }
 
+                if (PsdzContext.TalFilterForECUWithIDRClassicState != null)
+                {
+                    sbResult.AppendLine(Strings.TalIdrGenerating);
+                    UpdateStatus(sbResult.ToString());
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Generating IDR classic TAL");
+                    IPsdzTal psdzTalIdrClassic = ProgrammingService.Psdz.LogicService.GenerateTal(PsdzContext.Connection, PsdzContext.SvtActual, psdzSollverbauung, PsdzContext.SwtAction, PsdzContext.TalFilterForECUWithIDRClassicState, PsdzContext.FaActual.Vin);
+                    if (psdzTalIdrClassic == null)
+                    {
+                        PsdzContext.Tal = null;
+                        sbResult.AppendLine(Strings.TalGenerationFailed);
+                        UpdateStatus(sbResult.ToString());
+                        return false;
+                    }
+
+                    PsdzContext.TalForECUWithIDRClassicState = psdzTalIdrClassic;
+                }
+                else
+                {
+                    PsdzContext.TalForECUWithIDRClassicState = null;
+                }
+
                 sbResult.AppendLine(Strings.TalBackupGenerating);
                 UpdateStatus(sbResult.ToString());
                 log.InfoFormat(CultureInfo.InvariantCulture, "Generating backup TAL");

@@ -629,6 +629,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Generating individual data TAL ... ähnelt.
+        /// </summary>
+        internal static string TalIdrGenerating {
+            get {
+                return ResourceManager.GetString("TalIdrGenerating", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die TAL not present. ähnelt.
         /// </summary>
         internal static string TalMissing {

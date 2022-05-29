@@ -319,6 +319,9 @@ Möglicherweise ist die Sofware in den Steuergeräten nicht konsitent.</value>
   <data name="TalGenrating" xml:space="preserve">
     <value>Generiere TAL ...</value>
   </data>
+  <data name="TalIdrGenerating" xml:space="preserve">
+    <value>Generiere Individualdaten TAL ...</value>
+  </data>
   <data name="TalMissing" xml:space="preserve">
     <value>TAL nicht vorhanden.</value>
   </data>
