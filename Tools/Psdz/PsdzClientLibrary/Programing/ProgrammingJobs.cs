@@ -1389,7 +1389,6 @@ namespace PsdzClient.Programing
 
                 switch (RegisterGroup)
                 {
-                    case PdszDatabase.SwiRegisterGroup.HwInstall:
                     case PdszDatabase.SwiRegisterGroup.HwDeinstall:
                         psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(ProgrammingUtils.EnabledTaCategories, TalFilterOptions.MustNot, psdzTalFilter);
                         psdzTalFilter = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForAllEcus(new[] { TaCategories.IdBackup }, TalFilterOptions.Allowed, psdzTalFilter);
@@ -1416,6 +1415,8 @@ namespace PsdzClient.Programing
                 switch (RegisterGroup)
                 {
                     case PdszDatabase.SwiRegisterGroup.HwInstall:
+                        PsdzContext.SetTalFilter(ProgrammingService.Psdz.ObjectBuilder.DefineFilterForSelectedEcus(
+                            new[] { TaCategories.HwInstall, TaCategories.HwDeinstall }, diagAddrList.ToArray(), TalFilterOptions.Must, PsdzContext.TalFilter));
                         UpdateTalFilterForSelectedEcus(new[] { TaCategories.CdDeploy }, diagAddrList.ToArray(), TalFilterOptions.Must);
                         if (bModifyFa)
                         {
@@ -1837,7 +1838,6 @@ namespace PsdzClient.Programing
                 switch (RegisterGroup)
                 {
                     case PdszDatabase.SwiRegisterGroup.HwDeinstall:
-                    case PdszDatabase.SwiRegisterGroup.HwInstall:
                         talFilterFlash = ProgrammingService.Psdz.ObjectBuilder.DefineFilterForSelectedEcus(new[] { TaCategories.HwInstall, TaCategories.HwDeinstall }, diagAddrList.ToArray(), TalFilterOptions.Must, talFilterFlash);
                         break;
                 }
