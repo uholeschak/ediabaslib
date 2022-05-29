@@ -1124,6 +1124,7 @@ namespace PsdzClient.Programing
 
                         if (RegisterGroup == PdszDatabase.SwiRegisterGroup.HwDeinstall)
                         {
+                            PsdzContext.Tal = null;
                             sbResult.AppendLine(Strings.ExecutingVehicleFuncFinished);
                             UpdateStatus(sbResult.ToString());
                             return true;
