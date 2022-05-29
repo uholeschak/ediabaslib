@@ -1415,13 +1415,13 @@ namespace PsdzClient.Programing
                 switch (RegisterGroup)
                 {
                     case PdszDatabase.SwiRegisterGroup.HwInstall:
-                        PsdzContext.SetTalFilter(ProgrammingService.Psdz.ObjectBuilder.DefineFilterForSelectedEcus(
-                            new[] { TaCategories.HwInstall, TaCategories.HwDeinstall }, diagAddrList.ToArray(), TalFilterOptions.Must, PsdzContext.TalFilter));
                         UpdateTalFilterForSelectedEcus(new[] { TaCategories.CdDeploy }, diagAddrList.ToArray(), TalFilterOptions.Must);
                         if (bModifyFa)
                         {
                             UpdateTalFilterForSelectedEcus(new[] { TaCategories.IdBackup, TaCategories.IdRestore }, diagAddrList.ToArray(), TalFilterOptions.MustNot);
                         }
+
+                        UpdateTalFilterTalForECUsWithIDRClassicState(diagAddrList.ToArray());
                         break;
 
                     case PdszDatabase.SwiRegisterGroup.HwDeinstall:
@@ -2225,6 +2225,18 @@ namespace PsdzClient.Programing
         {
             PsdzContext.SetTalFilter(ProgrammingService.Psdz.ObjectBuilder.DefineFilterForSelectedEcus(taCategories, diagAddress, talFilterOptions, PsdzContext.TalFilter));
             PsdzContext.SetTalFilterForIndividualDataTal(ProgrammingService.Psdz.ObjectBuilder.DefineFilterForSelectedEcus(taCategories, diagAddress, talFilterOptions, PsdzContext.TalFilterForIndividualDataTal));
+        }
+
+        private void UpdateTalFilterTalForECUsWithIDRClassicState(int[] diagAddress)
+        {
+            if (diagAddress.Length == 0)
+            {
+                PsdzContext.SetTalFilterForECUWithIDRClassicState(null);
+            }
+            else
+            {
+                PsdzContext.SetTalFilterForECUWithIDRClassicState(ProgrammingService.Psdz.ObjectBuilder.DefineFilterForSelectedEcus(new[] { TaCategories.HwInstall, TaCategories.HwDeinstall }, diagAddress, TalFilterOptions.Must, PsdzContext.TalFilter));
+            }
         }
 
         private bool IsTalExecutionStateOk(PsdzTalExecutionState talExecutionState, bool acceptWarning = false)
