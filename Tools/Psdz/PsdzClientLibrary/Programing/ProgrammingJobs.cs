@@ -967,6 +967,7 @@ namespace PsdzClient.Programing
                             executeBackupTal = false;
                         }
 
+                        log.InfoFormat(CultureInfo.InvariantCulture, "Execute backup TAL required: {0}", executeBackupTal);
                         if (executeBackupTal)
                         {
                             sbResult.AppendLine(Strings.ExecutingBackupTal);
