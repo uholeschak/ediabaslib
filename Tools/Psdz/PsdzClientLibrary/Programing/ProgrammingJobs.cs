@@ -2032,6 +2032,24 @@ namespace PsdzClient.Programing
                     return false;
                 }
 
+                sbResult.AppendLine(Strings.TalBackupGenerating);
+                UpdateStatus(sbResult.ToString());
+                log.InfoFormat(CultureInfo.InvariantCulture, "Generating backup TAL");
+                IPsdzTal psdzBackupTal = ProgrammingService.Psdz.IndividualDataRestoreService.GenerateBackupTal(PsdzContext.Connection, PsdzContext.PathToBackupData, PsdzContext.Tal, PsdzContext.TalFilter);
+                if (psdzBackupTal == null)
+                {
+                    PsdzContext.Tal = null;
+                    RegisterGroup = PdszDatabase.SwiRegisterGroup.Modification;
+                    sbResult.AppendLine(Strings.TalGenerationFailed);
+                    UpdateStatus(sbResult.ToString());
+                    return false;
+                }
+
+                PsdzContext.IndividualDataBackupTal = psdzBackupTal;
+                log.Info("Backup TAL:");
+                log.InfoFormat(CultureInfo.InvariantCulture, " Size: {0}", psdzBackupTal.AsXml.Length);
+                cts?.Token.ThrowIfCancellationRequested();
+
                 if (PsdzContext.TalFilterForECUWithIDRClassicState != null)
                 {
                     sbResult.AppendLine(Strings.TalIdrGenerating);
@@ -2047,34 +2065,26 @@ namespace PsdzClient.Programing
                     }
 
                     PsdzContext.TalForECUWithIDRClassicState = psdzTalIdrClassic;
+
+                    log.Info("IDR classic TAL:");
+                    log.InfoFormat(CultureInfo.InvariantCulture, " Size: {0}", psdzTalIdrClassic.AsXml.Length);
+                    cts?.Token.ThrowIfCancellationRequested();
                 }
                 else
                 {
                     PsdzContext.TalForECUWithIDRClassicState = null;
                 }
 
-                sbResult.AppendLine(Strings.TalBackupGenerating);
-                UpdateStatus(sbResult.ToString());
-                log.InfoFormat(CultureInfo.InvariantCulture, "Generating backup TAL");
-                IPsdzTal psdzBackupTal = ProgrammingService.Psdz.IndividualDataRestoreService.GenerateBackupTal(PsdzContext.Connection, PsdzContext.PathToBackupData, PsdzContext.Tal, PsdzContext.TalFilter);
-                if (psdzBackupTal == null)
-                {
-                    PsdzContext.Tal = null;
-                    RegisterGroup = PdszDatabase.SwiRegisterGroup.Modification;
-                    sbResult.AppendLine(Strings.TalGenerationFailed);
-                    UpdateStatus(sbResult.ToString());
-                    return false;
-                }
-
-                PsdzContext.IndividualDataBackupTal = psdzBackupTal;
-                log.Info("Backup Tal:");
-                log.InfoFormat(CultureInfo.InvariantCulture, " Size: {0}", psdzBackupTal.AsXml.Length);
-                cts?.Token.ThrowIfCancellationRequested();
-
                 sbResult.AppendLine(Strings.TalRestoreGenrating);
                 UpdateStatus(sbResult.ToString());
                 log.InfoFormat(CultureInfo.InvariantCulture, "Generating restore TAL");
-                IPsdzTal psdzRestorePrognosisTal = ProgrammingService.Psdz.IndividualDataRestoreService.GenerateRestorePrognosisTal(PsdzContext.Connection, PsdzContext.PathToBackupData, PsdzContext.Tal, PsdzContext.IndividualDataBackupTal, PsdzContext.TalFilterForIndividualDataTal);
+                IPsdzTal psdzTalRestore = PsdzContext.Tal;
+                if (PsdzContext.TalForECUWithIDRClassicState != null)
+                {
+                    psdzTalRestore = PsdzContext.TalForECUWithIDRClassicState;
+                }
+
+                IPsdzTal psdzRestorePrognosisTal = ProgrammingService.Psdz.IndividualDataRestoreService.GenerateRestorePrognosisTal(PsdzContext.Connection, PsdzContext.PathToBackupData, psdzTalRestore, PsdzContext.IndividualDataBackupTal, PsdzContext.TalFilterForIndividualDataTal);
                 if (psdzRestorePrognosisTal == null)
                 {
                     PsdzContext.Tal = null;
