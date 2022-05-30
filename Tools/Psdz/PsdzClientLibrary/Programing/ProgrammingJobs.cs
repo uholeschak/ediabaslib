@@ -1865,20 +1865,27 @@ namespace PsdzClient.Programing
                 IPsdzSollverbauung psdzSollverbauung = null;
                 try
                 {
-                    psdzSollverbauung = ProgrammingService.Psdz.LogicService.GenerateSollverbauungGesamtFlash(PsdzContext.Connection, psdzIstufeTarget, psdzIstufeShip, PsdzContext.SvtActual, PsdzContext.FaTarget, talFilterFlash);
-                }
-                catch (PsdzRuntimeException ex)
-                {
-                    log.ErrorFormat(CultureInfo.InvariantCulture, "VehicleFunctions Planned construction Exception: {0}", ex.Message);
-                    if (ex.Message.Contains("KIS"))
+                    try
                     {
-                        IPsdzIstufe psdzIstufeLatest = ProgrammingService.Psdz.ObjectBuilder.BuildIstufe(latestIstufeTarget);
-                        if (psdzIstufeLatest != psdzIstufeTarget)
+                        psdzSollverbauung = ProgrammingService.Psdz.LogicService.GenerateSollverbauungGesamtFlash(PsdzContext.Connection, psdzIstufeTarget, psdzIstufeShip, PsdzContext.SvtActual, PsdzContext.FaTarget, talFilterFlash);
+                    }
+                    catch (PsdzRuntimeException ex)
+                    {
+                        log.ErrorFormat(CultureInfo.InvariantCulture, "VehicleFunctions Planned construction runtime Exception: {0}", ex.Message);
+                        if (ex.Message.Contains("KIS"))
                         {
-                            log.InfoFormat(CultureInfo.InvariantCulture, "VehicleFunctions Retrying planned construction with: {0}", latestIstufeTarget);
-                            psdzSollverbauung = ProgrammingService.Psdz.LogicService.GenerateSollverbauungGesamtFlash(PsdzContext.Connection, psdzIstufeLatest, psdzIstufeShip, PsdzContext.SvtActual, PsdzContext.FaTarget, talFilterFlash);
+                            IPsdzIstufe psdzIstufeLatest = ProgrammingService.Psdz.ObjectBuilder.BuildIstufe(latestIstufeTarget);
+                            if (psdzIstufeLatest != psdzIstufeTarget)
+                            {
+                                log.InfoFormat(CultureInfo.InvariantCulture, "VehicleFunctions Retrying planned construction with: {0}", latestIstufeTarget);
+                                psdzSollverbauung = ProgrammingService.Psdz.LogicService.GenerateSollverbauungGesamtFlash(PsdzContext.Connection, psdzIstufeLatest, psdzIstufeShip, PsdzContext.SvtActual, PsdzContext.FaTarget, talFilterFlash);
+                            }
                         }
                     }
+                }
+                catch (Exception ex)
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "VehicleFunctions Planned construction general Exception: {0}", ex.Message);
                 }
 
                 if (psdzSollverbauung == null)
