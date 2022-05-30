@@ -1584,6 +1584,9 @@ namespace PsdzClient.Programing
                 IPsdzIstufe psdzIstufeTarget = ProgrammingService.Psdz.ObjectBuilder.BuildIstufe(bModifyFa ? PsdzContext.IstufeCurrent : latestIstufeTarget);
                 PsdzContext.Vehicle.TargetILevel = psdzIstufeTarget.Value;
                 log.InfoFormat(CultureInfo.InvariantCulture, "ILevel Target: {0}", psdzIstufeTarget.Value);
+
+                IPsdzIstufe psdzIstufeLatest = ProgrammingService.Psdz.ObjectBuilder.BuildIstufe(latestIstufeTarget);
+                log.InfoFormat(CultureInfo.InvariantCulture, "ILevel Latest: {0}", psdzIstufeLatest.Value);
                 cts?.Token.ThrowIfCancellationRequested();
 
                 sbResult.AppendLine(Strings.DetectingInstalledEcus);
@@ -1874,7 +1877,6 @@ namespace PsdzClient.Programing
                         log.ErrorFormat(CultureInfo.InvariantCulture, "VehicleFunctions Planned construction runtime Exception: {0}", ex.Message);
                         if (ex.Message.Contains("KIS"))
                         {
-                            IPsdzIstufe psdzIstufeLatest = ProgrammingService.Psdz.ObjectBuilder.BuildIstufe(latestIstufeTarget);
                             if (psdzIstufeLatest != psdzIstufeTarget)
                             {
                                 log.InfoFormat(CultureInfo.InvariantCulture, "VehicleFunctions Retrying planned construction with: {0}", latestIstufeTarget);
