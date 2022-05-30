@@ -1308,6 +1308,10 @@ namespace PsdzClient.Programing
 
                         if (!talExecutionFailed)
                         {
+                            if (RegisterGroup == PdszDatabase.SwiRegisterGroup.HwInstall)
+                            {
+                                PsdzContext.RemoveBackupData();
+                            }
                             // finally reset TAL
                             PsdzContext.Tal = null;
                             RegisterGroup = PdszDatabase.SwiRegisterGroup.Modification;
@@ -1445,6 +1449,12 @@ namespace PsdzClient.Programing
                 {
                     log.Info("TalFilterIndividaul:");
                     log.Info(PsdzContext.TalFilterForIndividualDataTal.AsXml);
+                }
+
+                if (PsdzContext.TalFilterForECUWithIDRClassicState != null)
+                {
+                    log.Info("TalFilterIDRClassic:");
+                    log.Info(PsdzContext.TalFilterForECUWithIDRClassicState.AsXml);
                 }
 
                 IPsdzIstufenTriple iStufenTriple = ProgrammingService.Psdz.VcmService.GetIStufenTripleActual(PsdzContext.Connection);
@@ -2062,6 +2072,7 @@ namespace PsdzClient.Programing
                 {
                     sbResult.AppendLine(Strings.TalIdrGenerating);
                     UpdateStatus(sbResult.ToString());
+
                     log.InfoFormat(CultureInfo.InvariantCulture, "Generating IDR classic TAL");
                     IPsdzTal psdzTalIdrClassic = ProgrammingService.Psdz.LogicService.GenerateTal(PsdzContext.Connection, PsdzContext.SvtActual, psdzSollverbauung, PsdzContext.SwtAction, PsdzContext.TalFilterForECUWithIDRClassicState, PsdzContext.FaActual.Vin);
                     if (psdzTalIdrClassic == null)
