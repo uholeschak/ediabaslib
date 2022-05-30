@@ -14,6 +14,7 @@ using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Client;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
+using BMW.Rheingold.Psdz.Model.Exceptions;
 using BMW.Rheingold.Psdz.Model.SecureCoding;
 using BMW.Rheingold.Psdz.Model.SecurityManagement;
 using BMW.Rheingold.Psdz.Model.Sfa;
@@ -1861,7 +1862,25 @@ namespace PsdzClient.Programing
                 }
 
                 log.InfoFormat(CultureInfo.InvariantCulture, "Requesting planned construction");
-                IPsdzSollverbauung psdzSollverbauung = ProgrammingService.Psdz.LogicService.GenerateSollverbauungGesamtFlash(PsdzContext.Connection, psdzIstufeTarget, psdzIstufeShip, PsdzContext.SvtActual, PsdzContext.FaTarget, talFilterFlash);
+                IPsdzSollverbauung psdzSollverbauung = null;
+                try
+                {
+                    psdzSollverbauung = ProgrammingService.Psdz.LogicService.GenerateSollverbauungGesamtFlash(PsdzContext.Connection, psdzIstufeTarget, psdzIstufeShip, PsdzContext.SvtActual, PsdzContext.FaTarget, talFilterFlash);
+                }
+                catch (PsdzRuntimeException ex)
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "VehicleFunctions Planned construction Exception: {0}", ex.Message);
+                    if (ex.Message.Contains("KIS"))
+                    {
+                        IPsdzIstufe psdzIstufeLatest = ProgrammingService.Psdz.ObjectBuilder.BuildIstufe(latestIstufeTarget);
+                        if (psdzIstufeLatest != psdzIstufeTarget)
+                        {
+                            log.InfoFormat(CultureInfo.InvariantCulture, "VehicleFunctions Retrying planned construction with: {0}", latestIstufeTarget);
+                            psdzSollverbauung = ProgrammingService.Psdz.LogicService.GenerateSollverbauungGesamtFlash(PsdzContext.Connection, psdzIstufeLatest, psdzIstufeShip, PsdzContext.SvtActual, PsdzContext.FaTarget, talFilterFlash);
+                        }
+                    }
+                }
+
                 if (psdzSollverbauung == null)
                 {
                     sbResult.AppendLine(Strings.RequestedPlannedConstructionFailed);
