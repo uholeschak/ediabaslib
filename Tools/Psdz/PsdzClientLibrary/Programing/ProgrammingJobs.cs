@@ -1054,12 +1054,15 @@ namespace PsdzClient.Programing
                                 return false;
                             }
 
-                            if (ShowMessageEvent != null)
+                            if (executeBackupTal)
                             {
-                                if (!ShowMessageEvent.Invoke(cts, Strings.TalExecuteOkContinue, false, true))
+                                if (ShowMessageEvent != null)
                                 {
-                                    log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecuteContinue aborted");
-                                    return false;
+                                    if (!ShowMessageEvent.Invoke(cts, Strings.TalExecuteOkContinue, false, true))
+                                    {
+                                        log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecuteContinue aborted");
+                                        return false;
+                                    }
                                 }
                             }
                         }
