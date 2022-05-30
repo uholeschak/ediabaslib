@@ -1457,12 +1457,15 @@ namespace PsdzClient.Programing
                     iStufenTriple.Current, iStufenTriple.Last, iStufenTriple.Shipment);
 
                 bool hwReplace = false;
-                switch (RegisterGroup)
+                if (operationType != OperationType.CreateOptions)
                 {
-                    case PdszDatabase.SwiRegisterGroup.HwInstall:
-                    case PdszDatabase.SwiRegisterGroup.HwDeinstall:
-                        hwReplace = true;
-                        break;
+                    switch (RegisterGroup)
+                    {
+                        case PdszDatabase.SwiRegisterGroup.HwInstall:
+                        case PdszDatabase.SwiRegisterGroup.HwDeinstall:
+                            hwReplace = true;
+                            break;
+                    }
                 }
 
                 if (!PsdzContext.SetPathToBackupData(psdzVin.Value, hwReplace))
