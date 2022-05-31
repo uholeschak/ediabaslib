@@ -1009,6 +1009,10 @@ namespace PsdzClient.Programing
                                 log.Error(backupTalResult.AsXml);
                                 sbResult.AppendLine(Strings.TalExecuteError);
                                 UpdateStatus(sbResult.ToString());
+                                if (RegisterGroup == PdszDatabase.SwiRegisterGroup.HwDeinstall)
+                                {
+                                    return false;
+                                }
                             }
                             else
                             {
