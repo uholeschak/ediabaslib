@@ -19,7 +19,16 @@ namespace PsdzClient.Programming
 {
 	public class PsdzContext : IPsdzContext, IDisposable
 	{
-		public PsdzContext(string istaFolder)
+        public enum BackupTalResult
+        {
+            Success,
+            Failed,
+            Error,
+            Undefined,
+            SuccessEmpty
+        }
+		
+        public PsdzContext(string istaFolder)
         {
             this.IstaFolder = istaFolder;
 			this.ExecutionOrderTop = new Dictionary<string, IList<string>>();
@@ -58,7 +67,20 @@ namespace PsdzClient.Programming
 			}
 		}
 
-		public string IstufeCurrent { get; private set; }
+        public BackupTalResult CheckBackupTal()
+        {
+            if (!IsValidBackupTal)
+            {
+                return BackupTalResult.Error;
+            }
+            if (IsEmptyBackupTal)
+            {
+                return BackupTalResult.Success;
+            }
+            return BackupTalResult.Undefined;
+        }
+
+        public string IstufeCurrent { get; private set; }
 
 		public string IstufeLast { get; private set; }
 

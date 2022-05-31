@@ -968,7 +968,13 @@ namespace PsdzClient.Programing
                             executeBackupTal = false;
                         }
 
-                        log.InfoFormat(CultureInfo.InvariantCulture, "Execute backup TAL required: {0}", executeBackupTal);
+                        PsdzContext.BackupTalResult backupTalState = PsdzContext.CheckBackupTal();
+                        if (backupTalState == PsdzContext.BackupTalResult.Success)
+                        {
+                            executeBackupTal = false;
+                        }
+
+                        log.InfoFormat(CultureInfo.InvariantCulture, "Backup TAL: Execute={0}, State={1}", executeBackupTal, backupTalState);
                         if (executeBackupTal)
                         {
                             sbResult.AppendLine(Strings.ExecutingBackupTal);
