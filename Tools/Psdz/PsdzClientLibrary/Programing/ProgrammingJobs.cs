@@ -961,13 +961,7 @@ namespace PsdzClient.Programing
                         ((PsdzSecureCodingConfigCto)talExecutionSettings.SecureCodingConfig).ConnectionTimeout = CodingConnectionTimeout;
 
                         bool backupFailed = false;
-                        // ReSharper disable once ReplaceWithSingleAssignment.True
                         bool executeBackupTal = true;
-                        if (RegisterGroup == PdszDatabase.SwiRegisterGroup.HwInstall && PsdzContext.HasBackupData(true))
-                        {
-                            executeBackupTal = false;
-                        }
-
                         PsdzContext.BackupTalResult backupTalState = PsdzContext.CheckBackupTal();
                         log.InfoFormat(CultureInfo.InvariantCulture, "Backup TAL: State={0}", backupTalState);
                         switch (backupTalState)
@@ -989,16 +983,12 @@ namespace PsdzClient.Programing
                                 break;
                         }
 
+                        PsdzContext.RemoveBackupData();
                         log.InfoFormat(CultureInfo.InvariantCulture, "Backup TAL: Execute={0}", executeBackupTal);
                         if (executeBackupTal)
                         {
                             sbResult.AppendLine(Strings.ExecutingBackupTal);
                             UpdateStatus(sbResult.ToString());
-
-                            if (RegisterGroup == PdszDatabase.SwiRegisterGroup.HwDeinstall)
-                            {
-                                PsdzContext.RemoveBackupData();
-                            }
 
                             CacheResponseType = CacheType.NoResponse;
                             log.InfoFormat(CultureInfo.InvariantCulture, "Executing backup TAL");
@@ -1336,7 +1326,7 @@ namespace PsdzClient.Programing
                         {
                             if (RegisterGroup == PdszDatabase.SwiRegisterGroup.HwInstall)
                             {
-                                PsdzContext.RemoveBackupData();
+                                PsdzContext.RemoveBackupData(true);
                             }
                             // finally reset TAL
                             PsdzContext.Tal = null;
