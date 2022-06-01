@@ -319,11 +319,24 @@ namespace PsdzClient.Programming
                 Directory.Exists(path) && !Directory.EnumerateFileSystemEntries(path).Any<string>())
             {
                 Directory.Delete(path);
-                if (!replace)
-                {
-                    this.hasVinBackupDataFolder = false;
-                }
             }
+
+            if (!HasBackupDataDir() && !HasBackupDataDir(true))
+            {
+                this.hasVinBackupDataFolder = false;
+            }
+        }
+
+        public bool HasBackupDataDir(bool replace = false)
+        {
+            string path = replace ? PathToBackupDataReplace : PathToBackupData;
+
+            if (!string.IsNullOrEmpty(path) && this.hasVinBackupDataFolder && Directory.Exists(path))
+            {
+                return true;
+            }
+
+            return false;
         }
 
         public bool HasBackupData(bool replace = false)
