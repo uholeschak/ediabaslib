@@ -974,6 +974,8 @@ namespace PsdzClient.Programing
                         {
                             case PsdzContext.BackupTalResult.Success:
                                 executeBackupTal = false;
+                                sbResult.AppendLine(Strings.TalExecuteOk);
+                                UpdateStatus(sbResult.ToString());
                                 break;
 
                             case PsdzContext.BackupTalResult.Error:
