@@ -961,6 +961,15 @@ namespace PsdzClient.Programing
                         talExecutionSettings.TaMaxRepeat = 3;
                         ((PsdzSecureCodingConfigCto)talExecutionSettings.SecureCodingConfig).ConnectionTimeout = CodingConnectionTimeout;
 
+                        string backupDataPath = PsdzContext.PathToBackupData;
+                        switch (RegisterGroup)
+                        {
+                            case PdszDatabase.SwiRegisterGroup.HwInstall:
+                            case PdszDatabase.SwiRegisterGroup.HwDeinstall:
+                                backupDataPath = PsdzContext.PathToBackupDataReplace;
+                                break;
+                        }
+
                         bool backupFailed = false;
                         bool executeBackupTal = true;
                         PsdzContext.BackupTalResult backupTalState = PsdzContext.CheckBackupTal();
@@ -995,7 +1004,7 @@ namespace PsdzClient.Programing
                             log.InfoFormat(CultureInfo.InvariantCulture, "Executing backup TAL");
 
                             IPsdzTal backupTalResult = ProgrammingService.Psdz.IndividualDataRestoreService.ExecuteAsyncBackupTal(
-                                PsdzContext.Connection, PsdzContext.IndividualDataBackupTal, null, PsdzContext.FaTarget, psdzVin, talExecutionSettings, PsdzContext.PathToBackupData);
+                                PsdzContext.Connection, PsdzContext.IndividualDataBackupTal, null, PsdzContext.FaTarget, psdzVin, talExecutionSettings, backupDataPath);
                             if (backupTalResult == null)
                             {
                                 log.ErrorFormat("Execute backup TAL failed");
@@ -1162,7 +1171,7 @@ namespace PsdzClient.Programing
                             }
 
                             log.InfoFormat(CultureInfo.InvariantCulture, "Generating restore TAL");
-                            IPsdzTal psdzRestoreTal = ProgrammingService.Psdz.IndividualDataRestoreService.GenerateRestoreTal(PsdzContext.Connection, PsdzContext.PathToBackupData, PsdzContext.Tal, PsdzContext.TalFilter);
+                            IPsdzTal psdzRestoreTal = ProgrammingService.Psdz.IndividualDataRestoreService.GenerateRestoreTal(PsdzContext.Connection, backupDataPath, PsdzContext.Tal, PsdzContext.TalFilter);
                             if (psdzRestoreTal == null)
                             {
                                 sbResult.AppendLine(Strings.TalGenerationFailed);
