@@ -963,7 +963,7 @@ namespace PsdzClient.Programing
                         bool backupFailed = false;
                         // ReSharper disable once ReplaceWithSingleAssignment.True
                         bool executeBackupTal = true;
-                        if (RegisterGroup == PdszDatabase.SwiRegisterGroup.HwInstall && PsdzContext.HasBackupData())
+                        if (RegisterGroup == PdszDatabase.SwiRegisterGroup.HwInstall && PsdzContext.HasBackupData(true))
                         {
                             executeBackupTal = false;
                         }
