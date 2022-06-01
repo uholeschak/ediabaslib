@@ -969,12 +969,25 @@ namespace PsdzClient.Programing
                         }
 
                         PsdzContext.BackupTalResult backupTalState = PsdzContext.CheckBackupTal();
-                        if (backupTalState == PsdzContext.BackupTalResult.Success)
+                        log.InfoFormat(CultureInfo.InvariantCulture, "Backup TAL: State={0}", backupTalState);
+                        switch (backupTalState)
                         {
-                            executeBackupTal = false;
+                            case PsdzContext.BackupTalResult.Success:
+                                executeBackupTal = false;
+                                break;
+
+                            case PsdzContext.BackupTalResult.Error:
+                                backupFailed = true;
+                                sbResult.AppendLine(Strings.TalExecuteError);
+                                UpdateStatus(sbResult.ToString());
+                                if (RegisterGroup == PdszDatabase.SwiRegisterGroup.HwDeinstall)
+                                {
+                                    return false;
+                                }
+                                break;
                         }
 
-                        log.InfoFormat(CultureInfo.InvariantCulture, "Backup TAL: Execute={0}, State={1}", executeBackupTal, backupTalState);
+                        log.InfoFormat(CultureInfo.InvariantCulture, "Backup TAL: Execute={0}", executeBackupTal);
                         if (executeBackupTal)
                         {
                             sbResult.AppendLine(Strings.ExecutingBackupTal);
