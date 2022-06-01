@@ -1514,6 +1514,8 @@ namespace PsdzClient.Programing
                     return false;
                 }
 
+                PsdzContext.RemoveBackupData();
+
                 if (hwReplace)
                 {
                     if (RegisterGroup == PdszDatabase.SwiRegisterGroup.HwInstall)
@@ -1526,15 +1528,11 @@ namespace PsdzClient.Programing
                                 if (!ShowMessageEvent.Invoke(cts, Strings.HwReplaceContinue, false, true))
                                 {
                                     log.InfoFormat(CultureInfo.InvariantCulture, "ShowMessageEvent HwReplaceContinue aborted");
-                                    PsdzContext.RemoveBackupData();
+                                    PsdzContext.RemoveBackupData(true);
                                 }
                             }
                         }
                     }
-                }
-                else
-                {
-                    PsdzContext.RemoveBackupData();
                 }
 
                 IPsdzStandardFa standardFa = ProgrammingService.Psdz.VcmService.GetStandardFaActual(PsdzContext.Connection);
