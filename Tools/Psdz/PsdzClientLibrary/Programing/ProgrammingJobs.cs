@@ -695,6 +695,7 @@ namespace PsdzClient.Programing
                 ProgrammingService.RemoveListener();
                 ProgrammingService.Psdz.ConnectionManagerService.CloseConnection(PsdzContext.Connection);
                 PsdzContext?.CleanupBackupData();
+                PsdzContext?.CleanupBackupData(true);
 
                 ClearProgrammingObjects();
                 sbResult.AppendLine(Strings.VehicleDisconnected);
