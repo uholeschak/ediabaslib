@@ -1507,7 +1507,7 @@ namespace PsdzClient.Programing
                     }
                 }
 
-                if (!PsdzContext.SetPathToBackupData(psdzVin.Value, hwReplace))
+                if (!PsdzContext.SetPathToBackupData(psdzVin.Value))
                 {
                     sbResult.AppendLine(Strings.CreateBackupPathFailed);
                     UpdateStatus(sbResult.ToString());
@@ -1518,7 +1518,7 @@ namespace PsdzClient.Programing
                 {
                     if (RegisterGroup == PdszDatabase.SwiRegisterGroup.HwInstall)
                     {
-                        if (PsdzContext.HasBackupData())
+                        if (PsdzContext.HasBackupData(true))
                         {
                             log.InfoFormat(CultureInfo.InvariantCulture, "Backup data found");
                             if (ShowMessageEvent != null)

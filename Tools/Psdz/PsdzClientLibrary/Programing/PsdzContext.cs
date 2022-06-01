@@ -179,7 +179,9 @@ namespace PsdzClient.Programming
 
 		public string PathToBackupData { get; set; }
 
-		public bool PsdZBackUpModeSet { get; set; }
+        public string PathToBackupDataReplace { get; set; }
+		
+        public bool PsdZBackUpModeSet { get; set; }
 
 		public IPsdzTalFilter TalFilterForIndividualDataTal { get; private set; }
 
@@ -275,47 +277,61 @@ namespace PsdzClient.Programming
             return null;
         }
 
-        public bool SetPathToBackupData(string vin17, bool hwReplace = false)
+        public bool SetPathToBackupData(string vin17)
 		{
 			this.hasVinBackupDataFolder = false;
 			string pathString = Path.Combine(IstaFolder, "Temp");
 			if (string.IsNullOrEmpty(pathString))
 			{
 				this.PathToBackupData = null;
+                this.PathToBackupDataReplace = null;
 				return false;
 			}
 			if (string.IsNullOrEmpty(vin17))
 			{
 				this.PathToBackupData = Path.GetFullPath(pathString);
+                this.PathToBackupDataReplace = null;
 			}
-			else
+            else
 			{
 				this.hasVinBackupDataFolder = true;
-                string dirName = hwReplace ? vin17 + "_replace" : vin17;
-                this.PathToBackupData = Path.GetFullPath(Path.Combine(pathString, dirName));
+                this.PathToBackupData = Path.GetFullPath(Path.Combine(pathString, vin17));
+                this.PathToBackupDataReplace = Path.GetFullPath(Path.Combine(pathString, vin17 + "_replace"));
             }
-            if (!Directory.Exists(this.PathToBackupData))
+
+            if (!string.IsNullOrEmpty(PathToBackupDataReplace) && !Directory.Exists(this.PathToBackupData))
 			{
 				Directory.CreateDirectory(this.PathToBackupData);
 			}
+            if (!string.IsNullOrEmpty(PathToBackupDataReplace) && !Directory.Exists(this.PathToBackupDataReplace))
+            {
+                Directory.CreateDirectory(this.PathToBackupDataReplace);
+            }
 
             return true;
         }
 
-        public void CleanupBackupData()
+        public void CleanupBackupData(bool replace = false)
         {
-            if (!string.IsNullOrEmpty(this.PathToBackupData) && this.hasVinBackupDataFolder &&
-                Directory.Exists(this.PathToBackupData) && !Directory.EnumerateFileSystemEntries(this.PathToBackupData).Any<string>())
+            string path = replace ? PathToBackupDataReplace : PathToBackupData;
+
+            if (!string.IsNullOrEmpty(path) && this.hasVinBackupDataFolder &&
+                Directory.Exists(path) && !Directory.EnumerateFileSystemEntries(path).Any<string>())
             {
-                Directory.Delete(this.PathToBackupData);
-                this.hasVinBackupDataFolder = false;
+                Directory.Delete(path);
+                if (!replace)
+                {
+                    this.hasVinBackupDataFolder = false;
+                }
             }
         }
 
-        public bool HasBackupData()
+        public bool HasBackupData(bool replace = false)
         {
-            if (!string.IsNullOrEmpty(this.PathToBackupData) && this.hasVinBackupDataFolder &&
-                Directory.Exists(this.PathToBackupData) && Directory.EnumerateFileSystemEntries(this.PathToBackupData).Any<string>())
+            string path = replace ? PathToBackupDataReplace : PathToBackupData;
+
+            if (!string.IsNullOrEmpty(path) && this.hasVinBackupDataFolder &&
+                    Directory.Exists(path) && Directory.EnumerateFileSystemEntries(path).Any<string>())
             {
                 return true;
             }
@@ -323,13 +339,15 @@ namespace PsdzClient.Programming
             return false;
         }
 
-        public bool RemoveBackupData()
+        public bool RemoveBackupData(bool replace = false)
         {
-            if (!string.IsNullOrEmpty(this.PathToBackupData) && this.hasVinBackupDataFolder)
+            string path = replace ? PathToBackupDataReplace : PathToBackupData;
+
+            if (!string.IsNullOrEmpty(path) && this.hasVinBackupDataFolder)
             {
                 try
                 {
-                    DirectoryInfo directoryInfo = new DirectoryInfo(this.PathToBackupData);
+                    DirectoryInfo directoryInfo = new DirectoryInfo(path);
                     if (directoryInfo.Exists)
                     {
                         foreach (FileInfo file in directoryInfo.GetFiles())
