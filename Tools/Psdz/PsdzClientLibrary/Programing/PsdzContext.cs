@@ -422,7 +422,7 @@ namespace PsdzClient.Programming
         {
             try
             {
-                if (!HasBackupData())
+                if (!HasIDRFilesInPuk())
                 {
                     return false;
                 }
@@ -435,6 +435,32 @@ namespace PsdzClient.Programming
                 }
 
                 System.IO.Compression.ZipFile.ExtractToDirectory(backupFile, backupPath);
+
+                return true;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return false;
+        }
+
+        public bool HasIDRFilesInPuk()
+        {
+            try
+            {
+                if (!HasBackupDataDir())
+                {
+                    return false;
+                }
+
+                string backupPath = PathToBackupData;
+                string backupFile = backupPath.TrimEnd('\\') + IdrBackupFileName;
+                if (!File.Exists(backupFile))
+                {
+                    return false;
+                }
 
                 return true;
             }
