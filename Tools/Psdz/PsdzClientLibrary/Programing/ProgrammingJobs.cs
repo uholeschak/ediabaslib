@@ -964,7 +964,6 @@ namespace PsdzClient.Programing
                         string backupDataPath = PsdzContext.PathToBackupData;
                         switch (RegisterGroup)
                         {
-                            case PdszDatabase.SwiRegisterGroup.HwInstall:
                             case PdszDatabase.SwiRegisterGroup.HwDeinstall:
                                 backupDataPath = PsdzContext.PathToBackupDataReplace;
                                 break;
