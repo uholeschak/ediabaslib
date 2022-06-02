@@ -382,7 +382,35 @@ namespace PsdzClient.Programming
 
             return true;
         }
-        
+
+        public bool AddIDRFilesToPuk()
+        {
+            try
+            {
+                if (!HasBackupData())
+                {
+                    return false;
+                }
+
+                string backupPath = PathToBackupData.TrimEnd('\\');
+                string backupFile = backupPath.TrimEnd('\\') + "_IDR_Files.backup";
+                if (File.Exists(backupFile))
+                {
+                    File.Delete(backupFile);
+                }
+
+                System.IO.Compression.ZipFile.CreateFromDirectory(backupPath, backupFile);
+
+                return true;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return false;
+        }
+
         public void SetFaActual(IPsdzFa fa)
 		{
 			this.FaActual = fa;
