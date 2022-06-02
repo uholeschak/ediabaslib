@@ -19,6 +19,8 @@ namespace PsdzClient.Programming
 {
 	public class PsdzContext : IPsdzContext, IDisposable
 	{
+        private const string IdrBackupFileName = "_IDR_Files.backup";
+
         public enum BackupTalResult
         {
             Success,
@@ -392,8 +394,8 @@ namespace PsdzClient.Programming
                     return false;
                 }
 
-                string backupPath = PathToBackupData.TrimEnd('\\');
-                string backupFile = backupPath.TrimEnd('\\') + "_IDR_Files.backup";
+                string backupPath = PathToBackupData;
+                string backupFile = backupPath.TrimEnd('\\') + IdrBackupFileName;
                 if (File.Exists(backupFile))
                 {
                     File.Delete(backupFile);
