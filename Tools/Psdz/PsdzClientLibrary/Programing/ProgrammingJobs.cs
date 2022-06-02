@@ -1020,10 +1020,6 @@ namespace PsdzClient.Programing
                                 log.Error(backupTalResult.AsXml);
                                 sbResult.AppendLine(Strings.TalExecuteError);
                                 UpdateStatus(sbResult.ToString());
-                                if (RegisterGroup == PdszDatabase.SwiRegisterGroup.HwDeinstall)
-                                {
-                                    return false;
-                                }
                             }
                             else
                             {
@@ -1153,74 +1149,99 @@ namespace PsdzClient.Programing
 
                         if (!backupFailed)
                         {
-                            sbResult.AppendLine(Strings.ExecutingRestoreTal);
-                            UpdateStatus(sbResult.ToString());
-
-                            if (!CheckVoltage(cts, sbResult))
+                            for (int talIdx = 0; talIdx < 2; talIdx++)
                             {
-                                return false;
-                            }
-
-                            log.InfoFormat(CultureInfo.InvariantCulture, "Generating restore TAL");
-                            IPsdzTal psdzRestoreTal = ProgrammingService.Psdz.IndividualDataRestoreService.GenerateRestoreTal(PsdzContext.Connection, PsdzContext.PathToBackupData, PsdzContext.Tal, PsdzContext.TalFilter);
-                            if (psdzRestoreTal == null)
-                            {
-                                sbResult.AppendLine(Strings.TalGenerationFailed);
+                                sbResult.AppendLine(Strings.ExecutingRestoreTal);
                                 UpdateStatus(sbResult.ToString());
-                            }
-                            else
-                            {
-                                PsdzContext.IndividualDataRestoreTal = psdzRestoreTal;
-                                log.InfoFormat(CultureInfo.InvariantCulture, "Executing restore TAL");
-                                IPsdzTal restoreTalResult = ProgrammingService.Psdz.IndividualDataRestoreService.ExecuteAsyncRestoreTal(
-                                    PsdzContext.Connection, PsdzContext.IndividualDataRestoreTal, null, PsdzContext.FaTarget, psdzVin, talExecutionSettings);
-                                if (restoreTalResult == null)
-                                {
-                                    log.ErrorFormat("Execute restore TAL failed");
-                                    sbResult.AppendLine(Strings.TalExecuteError);
-                                    UpdateStatus(sbResult.ToString());
-                                    return false;
-                                }
-
-                                log.Info("Restore Tal result:");
-                                log.InfoFormat(CultureInfo.InvariantCulture, " Size: {0}", restoreTalResult.AsXml.Length);
-                                log.InfoFormat(CultureInfo.InvariantCulture, " State: {0}", restoreTalResult.TalExecutionState);
-                                log.InfoFormat(CultureInfo.InvariantCulture, " Ecus: {0}", restoreTalResult.AffectedEcus.Count());
-                                foreach (IPsdzEcuIdentifier ecuIdentifier in restoreTalResult.AffectedEcus)
-                                {
-                                    log.InfoFormat(CultureInfo.InvariantCulture, "  Affected Ecu: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
-                                        ecuIdentifier.BaseVariant, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset);
-                                }
-
-                                if (!IsTalExecutionStateOk(restoreTalResult.TalExecutionState, true))
-                                {
-                                    talExecutionFailed = true;
-                                    log.Error(restoreTalResult.AsXml);
-                                    sbResult.AppendLine(Strings.TalExecuteError);
-                                    UpdateStatus(sbResult.ToString());
-                                }
-                                else
-                                {
-                                    if (!IsTalExecutionStateOk(restoreTalResult.TalExecutionState))
-                                    {
-                                        log.Info(restoreTalResult.AsXml);
-                                        sbResult.AppendLine(Strings.TalExecuteWarning);
-                                    }
-                                    else
-                                    {
-                                        sbResult.AppendLine(Strings.TalExecuteOk);
-                                    }
-
-                                    UpdateStatus(sbResult.ToString());
-                                }
 
                                 if (!CheckVoltage(cts, sbResult))
                                 {
                                     return false;
                                 }
 
-                                CacheClearRequired = true;
-                                cts?.Token.ThrowIfCancellationRequested();
+                                log.InfoFormat(CultureInfo.InvariantCulture, "Generating restore TAL");
+                                IPsdzTal psdzRestoreTal = ProgrammingService.Psdz.IndividualDataRestoreService.GenerateRestoreTal(PsdzContext.Connection, PsdzContext.PathToBackupData, PsdzContext.Tal, PsdzContext.TalFilter);
+                                if (psdzRestoreTal == null)
+                                {
+                                    sbResult.AppendLine(Strings.TalGenerationFailed);
+                                    UpdateStatus(sbResult.ToString());
+                                }
+                                else
+                                {
+                                    PsdzContext.IndividualDataRestoreTal = psdzRestoreTal;
+                                    log.InfoFormat(CultureInfo.InvariantCulture, "Executing restore TAL");
+                                    IPsdzTal restoreTalResult = ProgrammingService.Psdz.IndividualDataRestoreService.ExecuteAsyncRestoreTal(
+                                        PsdzContext.Connection, PsdzContext.IndividualDataRestoreTal, null, PsdzContext.FaTarget, psdzVin, talExecutionSettings);
+                                    if (restoreTalResult == null)
+                                    {
+                                        log.ErrorFormat("Execute restore TAL failed");
+                                        sbResult.AppendLine(Strings.TalExecuteError);
+                                        UpdateStatus(sbResult.ToString());
+                                        return false;
+                                    }
+
+                                    log.Info("Restore Tal result:");
+                                    log.InfoFormat(CultureInfo.InvariantCulture, " Size: {0}", restoreTalResult.AsXml.Length);
+                                    log.InfoFormat(CultureInfo.InvariantCulture, " State: {0}", restoreTalResult.TalExecutionState);
+                                    log.InfoFormat(CultureInfo.InvariantCulture, " Ecus: {0}", restoreTalResult.AffectedEcus.Count());
+                                    foreach (IPsdzEcuIdentifier ecuIdentifier in restoreTalResult.AffectedEcus)
+                                    {
+                                        log.InfoFormat(CultureInfo.InvariantCulture, "  Affected Ecu: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
+                                            ecuIdentifier.BaseVariant, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset);
+                                    }
+
+                                    if (!IsTalExecutionStateOk(restoreTalResult.TalExecutionState, true))
+                                    {
+                                        talExecutionFailed = true;
+                                        log.Error(restoreTalResult.AsXml);
+                                        sbResult.AppendLine(Strings.TalExecuteError);
+                                        UpdateStatus(sbResult.ToString());
+                                    }
+                                    else
+                                    {
+                                        if (!IsTalExecutionStateOk(restoreTalResult.TalExecutionState))
+                                        {
+                                            log.Info(restoreTalResult.AsXml);
+                                            sbResult.AppendLine(Strings.TalExecuteWarning);
+                                        }
+                                        else
+                                        {
+                                            sbResult.AppendLine(Strings.TalExecuteOk);
+                                        }
+
+                                        UpdateStatus(sbResult.ToString());
+                                    }
+
+                                    if (!CheckVoltage(cts, sbResult))
+                                    {
+                                        return false;
+                                    }
+
+                                    CacheClearRequired = true;
+                                    cts?.Token.ThrowIfCancellationRequested();
+                                }
+
+                                bool continueExecution = false;
+                                if (RegisterGroup == PdszDatabase.SwiRegisterGroup.HwInstall)
+                                {
+                                    if (talIdx == 0 && PsdzContext.HasIDRFilesInPuk())
+                                    {
+                                        if (PsdzContext.GetIDRFilesFromPuk())
+                                        {
+                                            log.InfoFormat(CultureInfo.InvariantCulture, "IDR in PUK found");
+                                            continueExecution = true;
+                                        }
+                                        else
+                                        {
+                                            log.ErrorFormat(CultureInfo.InvariantCulture, "Getting IDR from PUK failed");
+                                        }
+                                    }
+                                }
+
+                                if (!continueExecution)
+                                {
+                                    break;
+                                }
                             }
                         }
 
