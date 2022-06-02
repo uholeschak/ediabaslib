@@ -1532,6 +1532,10 @@ namespace PsdzClient.Programing
                             }
                         }
                     }
+                    else
+                    {
+                        PsdzContext.RemoveBackupData(true);
+                    }
                 }
 
                 IPsdzStandardFa standardFa = ProgrammingService.Psdz.VcmService.GetStandardFaActual(PsdzContext.Connection);
