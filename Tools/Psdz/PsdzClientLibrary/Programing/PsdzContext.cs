@@ -372,12 +372,7 @@ namespace PsdzClient.Programming
         {
             try
             {
-                if (!HasBackupDataDir())
-                {
-                    return false;
-                }
-
-                if (HasBackupData())
+                if (!HasBackupData())
                 {
                     return false;
                 }
