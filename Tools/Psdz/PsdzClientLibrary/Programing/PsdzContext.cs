@@ -385,11 +385,16 @@ namespace PsdzClient.Programming
             return true;
         }
 
-        public bool AddIDRFilesToPuk()
+        public bool SaveIDRFilesToPuk()
         {
             try
             {
-                if (!HasBackupData())
+                if (!HasBackupDataDir())
+                {
+                    return false;
+                }
+
+                if (HasBackupData())
                 {
                     return false;
                 }
@@ -402,6 +407,60 @@ namespace PsdzClient.Programming
                 }
 
                 System.IO.Compression.ZipFile.CreateFromDirectory(backupPath, backupFile);
+
+                return true;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return false;
+        }
+
+        public bool GetIDRFilesFromPuk()
+        {
+            try
+            {
+                if (!HasBackupData())
+                {
+                    return false;
+                }
+
+                string backupPath = PathToBackupData;
+                string backupFile = backupPath.TrimEnd('\\') + IdrBackupFileName;
+                if (!File.Exists(backupFile))
+                {
+                    return false;
+                }
+
+                System.IO.Compression.ZipFile.ExtractToDirectory(backupFile, backupPath);
+
+                return true;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return false;
+        }
+
+        public bool DeleteIDRFilesFromPuk()
+        {
+            try
+            {
+                if (!HasBackupDataDir())
+                {
+                    return false;
+                }
+
+                string backupPath = PathToBackupData;
+                string backupFile = backupPath.TrimEnd('\\') + IdrBackupFileName;
+                if (File.Exists(backupFile))
+                {
+                    File.Delete(backupFile);
+                }
 
                 return true;
             }
