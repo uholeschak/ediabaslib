@@ -695,7 +695,6 @@ namespace PsdzClient.Programing
                 ProgrammingService.RemoveListener();
                 ProgrammingService.Psdz.ConnectionManagerService.CloseConnection(PsdzContext.Connection);
                 PsdzContext?.CleanupBackupData();
-                PsdzContext?.CleanupBackupData(true);
 
                 ClearProgrammingObjects();
                 sbResult.AppendLine(Strings.VehicleDisconnected);
@@ -961,14 +960,6 @@ namespace PsdzClient.Programing
                         talExecutionSettings.TaMaxRepeat = 3;
                         ((PsdzSecureCodingConfigCto)talExecutionSettings.SecureCodingConfig).ConnectionTimeout = CodingConnectionTimeout;
 
-                        string backupDataPath = PsdzContext.PathToBackupData;
-                        switch (RegisterGroup)
-                        {
-                            case PdszDatabase.SwiRegisterGroup.HwDeinstall:
-                                backupDataPath = PsdzContext.PathToBackupDataReplace;
-                                break;
-                        }
-
                         bool backupFailed = false;
                         bool executeBackupTal = true;
                         PsdzContext.BackupTalResult backupTalState = PsdzContext.CheckBackupTal();
@@ -1003,7 +994,7 @@ namespace PsdzClient.Programing
                             log.InfoFormat(CultureInfo.InvariantCulture, "Executing backup TAL");
 
                             IPsdzTal backupTalResult = ProgrammingService.Psdz.IndividualDataRestoreService.ExecuteAsyncBackupTal(
-                                PsdzContext.Connection, PsdzContext.IndividualDataBackupTal, null, PsdzContext.FaTarget, psdzVin, talExecutionSettings, backupDataPath);
+                                PsdzContext.Connection, PsdzContext.IndividualDataBackupTal, null, PsdzContext.FaTarget, psdzVin, talExecutionSettings, PsdzContext.PathToBackupData);
                             if (backupTalResult == null)
                             {
                                 log.ErrorFormat("Execute backup TAL failed");
@@ -1153,6 +1144,7 @@ namespace PsdzClient.Programing
 
                         if (RegisterGroup == PdszDatabase.SwiRegisterGroup.HwDeinstall)
                         {
+                            PsdzContext.SaveIDRFilesToPuk();
                             PsdzContext.Tal = null;
                             sbResult.AppendLine(Strings.ExecutingVehicleFuncFinished);
                             UpdateStatus(sbResult.ToString());
@@ -1170,7 +1162,7 @@ namespace PsdzClient.Programing
                             }
 
                             log.InfoFormat(CultureInfo.InvariantCulture, "Generating restore TAL");
-                            IPsdzTal psdzRestoreTal = ProgrammingService.Psdz.IndividualDataRestoreService.GenerateRestoreTal(PsdzContext.Connection, backupDataPath, PsdzContext.Tal, PsdzContext.TalFilter);
+                            IPsdzTal psdzRestoreTal = ProgrammingService.Psdz.IndividualDataRestoreService.GenerateRestoreTal(PsdzContext.Connection, PsdzContext.PathToBackupData, PsdzContext.Tal, PsdzContext.TalFilter);
                             if (psdzRestoreTal == null)
                             {
                                 sbResult.AppendLine(Strings.TalGenerationFailed);
@@ -1335,7 +1327,7 @@ namespace PsdzClient.Programing
                         {
                             if (RegisterGroup == PdszDatabase.SwiRegisterGroup.HwInstall)
                             {
-                                PsdzContext.RemoveBackupData(true);
+                                PsdzContext.DeleteIDRFilesFromPuk();
                             }
                             // finally reset TAL
                             PsdzContext.Tal = null;
@@ -1519,7 +1511,7 @@ namespace PsdzClient.Programing
                 {
                     if (RegisterGroup == PdszDatabase.SwiRegisterGroup.HwInstall)
                     {
-                        if (PsdzContext.HasBackupData(true))
+                        if (PsdzContext.HasIDRFilesInPuk())
                         {
                             log.InfoFormat(CultureInfo.InvariantCulture, "Backup data found");
                             if (ShowMessageEvent != null)
@@ -1527,14 +1519,14 @@ namespace PsdzClient.Programing
                                 if (!ShowMessageEvent.Invoke(cts, Strings.HwReplaceContinue, false, true))
                                 {
                                     log.InfoFormat(CultureInfo.InvariantCulture, "ShowMessageEvent HwReplaceContinue aborted");
-                                    PsdzContext.RemoveBackupData(true);
+                                    PsdzContext.DeleteIDRFilesFromPuk();
                                 }
                             }
                         }
                     }
                     else
                     {
-                        PsdzContext.RemoveBackupData(true);
+                        PsdzContext.DeleteIDRFilesFromPuk();
                     }
                 }
 
