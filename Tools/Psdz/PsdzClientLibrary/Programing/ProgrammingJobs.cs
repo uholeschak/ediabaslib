@@ -1168,7 +1168,7 @@ namespace PsdzClient.Programing
                                     break;
                                 }
 
-                                PsdzContext.CleanupBackupData();
+                                PsdzContext.RemoveBackupData();
                                 if (!PsdzContext.GetIDRFilesFromPuk())
                                 {
                                     log.ErrorFormat(CultureInfo.InvariantCulture, "Getting IDR from PUK failed");
