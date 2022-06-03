@@ -223,9 +223,10 @@
         <display name="label_tel_9" result="RAW_TELEGRAM_9" format="" />
         <display name="label_tel_10" result="RAW_TELEGRAM_10" format="" />
       </job>
-      <job id="17" name="IDENT" raw_telegrams="83 56 F1 22 D1 95;83 63 F1 22 17 11">
+      <job id="17" name="IDENT" raw_telegrams="83 56 F1 22 D1 95;83 63 F1 22 17 11;83 63 F1 22 17 34">
         <display name="label_tel_1" result="RAW_TELEGRAM_1" format="" />
         <display name="label_tel_2" result="RAW_TELEGRAM_2" format="" />
+        <display name="label_tel_3" result="RAW_TELEGRAM_3" format="" />
       </job>
       <job id="18" name="IDENT" raw_telegrams="88 60 F1 23 24 00 00 00 B9 00 01">
         <display name="label_tel_1" result="RAW_TELEGRAM_1" format="" />
