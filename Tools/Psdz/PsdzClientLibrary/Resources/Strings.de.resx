@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="BackupDataRestored" xml:space="preserve">
+    <value>Backupdaten wiederhergestellt.</value>
+  </data>
   <data name="BatteryVoltage" xml:space="preserve">
     <value>Batteriespannung: {0:0.00}V</value>
   </data>

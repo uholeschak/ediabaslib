@@ -61,6 +61,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Backup data restored. ähnelt.
+        /// </summary>
+        internal static string BackupDataRestored {
+            get {
+                return ResourceManager.GetString("BackupDataRestored", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Battery voltage: {0:0.00}V ähnelt.
         /// </summary>
         internal static string BatteryVoltage {

@@ -1188,6 +1188,8 @@ namespace PsdzClient.Programing
                                 }
 
                                 log.InfoFormat(CultureInfo.InvariantCulture, "IDR in PUK found");
+                                sbResult.AppendLine(Strings.BackupDataRestored);
+                                UpdateStatus(sbResult.ToString());
                             }
 
                             sbResult.AppendLine(Strings.ExecutingRestoreTal);
