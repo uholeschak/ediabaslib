@@ -1137,8 +1137,20 @@ namespace PsdzClient.Programing
 
                         if (RegisterGroup == PdszDatabase.SwiRegisterGroup.HwDeinstall)
                         {
-                            PsdzContext.SaveIDRFilesToPuk();
                             PsdzContext.Tal = null;
+                            if (!backupFailed)
+                            {
+                                PsdzContext.SaveIDRFilesToPuk();
+                                if (ShowMessageEvent != null)
+                                {
+                                    if (!ShowMessageEvent.Invoke(cts, Strings.TalHwDeinstallFinished, true, true))
+                                    {
+                                        log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecuteContinue aborted");
+                                        return false;
+                                    }
+                                }
+                            }
+
                             sbResult.AppendLine(Strings.ExecutingVehicleFuncFinished);
                             UpdateStatus(sbResult.ToString());
                             return true;

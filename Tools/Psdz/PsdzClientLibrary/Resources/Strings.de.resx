@@ -319,6 +319,9 @@ Möglicherweise ist die Sofware in den Steuergeräten nicht konsitent.</value>
   <data name="TalGenrating" xml:space="preserve">
     <value>Generiere TAL ...</value>
   </data>
+  <data name="TalHwDeinstallFinished" xml:space="preserve">
+    <value>Wählen Sie nach dem Tausch die ersetzten Steuergeräte in der Kategorie 'nach dem Tausch'.</value>
+  </data>
   <data name="TalIdrGenerating" xml:space="preserve">
     <value>Generiere Individualdaten TAL ...</value>
   </data>

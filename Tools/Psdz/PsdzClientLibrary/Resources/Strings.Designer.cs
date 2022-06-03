@@ -629,6 +629,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die After replacement select the replaced ECUs at the category &apos;after replacement&apos;. ähnelt.
+        /// </summary>
+        internal static string TalHwDeinstallFinished {
+            get {
+                return ResourceManager.GetString("TalHwDeinstallFinished", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Generating individual data TAL ... ähnelt.
         /// </summary>
         internal static string TalIdrGenerating {
