@@ -973,13 +973,10 @@ namespace PsdzClient.Programing
                                 break;
 
                             case PsdzContext.BackupTalResult.Error:
+                                executeBackupTal = false;
                                 backupFailed = true;
                                 sbResult.AppendLine(Strings.TalExecuteError);
                                 UpdateStatus(sbResult.ToString());
-                                if (RegisterGroup == PdszDatabase.SwiRegisterGroup.HwDeinstall)
-                                {
-                                    return false;
-                                }
                                 break;
                         }
 
