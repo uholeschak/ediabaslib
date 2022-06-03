@@ -1153,6 +1153,7 @@ namespace PsdzClient.Programing
                             {
                                 if (backupFailed)
                                 {
+                                    log.ErrorFormat(CultureInfo.InvariantCulture, "Backup failed, not restoring");
                                     continue;
                                 }
                             }
@@ -1163,6 +1164,7 @@ namespace PsdzClient.Programing
                                     break;
                                 }
 
+                                log.InfoFormat(CultureInfo.InvariantCulture, "Checking IDR in PUK");
                                 if (!PsdzContext.HasIDRFilesInPuk())
                                 {
                                     log.ErrorFormat(CultureInfo.InvariantCulture, "No IDR in PUK present");
