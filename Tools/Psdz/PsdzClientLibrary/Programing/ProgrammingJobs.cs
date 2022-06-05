@@ -74,6 +74,19 @@ namespace PsdzClient.Programing
                 Invalid = false;
             }
 
+            public bool ChangeSwiRegisterEnum(PdszDatabase.SwiRegisterEnum swiRegisterEnum)
+            {
+                if (swiRegisterEnum == PdszDatabase.SwiRegisterEnum.EcuReplacementBeforeReplacement &&
+                    SwiRegisterEnum == PdszDatabase.SwiRegisterEnum.EcuReplacementBeforeReplacement)
+                {
+                    SwiRegisterEnum = swiRegisterEnum;
+
+                    return true;
+                }
+
+                return false;
+            }
+
             public PdszDatabase.SwiRegisterEnum SwiRegisterEnum { get; private set; }
 
             public PdszDatabase.SwiAction SwiAction { get; private set; }
@@ -1145,7 +1158,14 @@ namespace PsdzClient.Programing
                             {
                                 PsdzContext.SaveIDRFilesToPuk();
 
-                                SelectedOptions.Clear();
+                                foreach (OptionsItem optionsItem in SelectedOptions)
+                                {
+                                    if (!optionsItem.ChangeSwiRegisterEnum(PdszDatabase.SwiRegisterEnum.EcuReplacementAfterReplacement))
+                                    {
+                                        log.ErrorFormat(CultureInfo.InvariantCulture, "ChangeSwiRegisterEnum failed for: {0}", optionsItem.ToString());
+                                    }
+                                }
+
                                 UpdateOptionSelections();
 
                                 if (ShowMessageEvent != null)
@@ -1444,10 +1464,13 @@ namespace PsdzClient.Programing
                                     RegisterGroup = swiRegisterGroup;
                                 }
 
-                                int diagAddress = (int)optionsItem.EcuInfo.Address;
-                                if (!diagAddrList.Contains(diagAddress))
+                                if (RegisterGroup == swiRegisterGroup)
                                 {
-                                    diagAddrList.Add(diagAddress);
+                                    int diagAddress = (int)optionsItem.EcuInfo.Address;
+                                    if (!diagAddrList.Contains(diagAddress))
+                                    {
+                                        diagAddrList.Add(diagAddress);
+                                    }
                                 }
                                 break;
                             }
