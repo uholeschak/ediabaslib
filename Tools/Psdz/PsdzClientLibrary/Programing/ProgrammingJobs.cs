@@ -1155,7 +1155,7 @@ namespace PsdzClient.Programing
                                     }
                                 }
 
-                                List<OptionsItem> selectedOptionsOld = SelectedOptions;
+                                List<OptionsItem> selectedOptionsOld = new List<OptionsItem>(SelectedOptions);
                                 SelectedOptions.Clear();
                                 if (optionsAfterReplacement != null)
                                 {
