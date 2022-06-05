@@ -2472,7 +2472,7 @@ namespace WebPsdzClient.App_Data
 
         public void UpdateOptionSelections(PdszDatabase.SwiRegisterEnum? swiRegisterEnum)
         {
-            UpdateCurrentOptions();
+            UpdateCurrentOptions(swiRegisterEnum);
         }
 
         private bool ShowMessageEvent(CancellationTokenSource cts, string message, bool okBtn, bool wait)
@@ -2515,7 +2515,7 @@ namespace WebPsdzClient.App_Data
             return ShowMessageModalResult;
         }
 
-        private void UpdateCurrentOptions()
+        private void UpdateCurrentOptions(PdszDatabase.SwiRegisterEnum? swiRegisterEnum = null)
         {
             try
             {
@@ -2524,6 +2524,13 @@ namespace WebPsdzClient.App_Data
                 {
                     OptionsDict = null;
                     SelectedSwiRegister = null;
+                }
+                else
+                {
+                    if (swiRegisterEnum != null)
+                    {
+                        SelectedSwiRegister = swiRegisterEnum.Value;
+                    }
                 }
             }
             catch (Exception ex)
