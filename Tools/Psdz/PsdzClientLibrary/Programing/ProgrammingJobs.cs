@@ -74,19 +74,6 @@ namespace PsdzClient.Programing
                 Invalid = false;
             }
 
-            public bool ChangeSwiRegisterEnum(PdszDatabase.SwiRegisterEnum swiRegisterEnum)
-            {
-                if (swiRegisterEnum == PdszDatabase.SwiRegisterEnum.EcuReplacementAfterReplacement &&
-                    SwiRegisterEnum == PdszDatabase.SwiRegisterEnum.EcuReplacementBeforeReplacement)
-                {
-                    SwiRegisterEnum = swiRegisterEnum;
-
-                    return true;
-                }
-
-                return false;
-            }
-
             public PdszDatabase.SwiRegisterEnum SwiRegisterEnum { get; private set; }
 
             public PdszDatabase.SwiAction SwiAction { get; private set; }
@@ -216,6 +203,7 @@ namespace PsdzClient.Programing
         public List<OptionsItem> SelectedOptions { get; set; }
         public bool DisableTalFlash { get; set; }
         public PdszDatabase.SwiRegisterGroup RegisterGroup { get; set; }
+        public Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>> OptionsDict { get; set; }
 
         private CacheType _cacheResponseType;
         public CacheType CacheResponseType
@@ -1158,11 +1146,39 @@ namespace PsdzClient.Programing
                             {
                                 PsdzContext.SaveIDRFilesToPuk();
 
-                                foreach (OptionsItem optionsItem in SelectedOptions)
+                                List<OptionsItem> optionsAfterReplacement = null;
+                                if (OptionsDict != null)
                                 {
-                                    if (!optionsItem.ChangeSwiRegisterEnum(PdszDatabase.SwiRegisterEnum.EcuReplacementAfterReplacement))
+                                    if (!OptionsDict.TryGetValue(PdszDatabase.SwiRegisterEnum.EcuReplacementAfterReplacement, out optionsAfterReplacement))
                                     {
-                                        log.ErrorFormat(CultureInfo.InvariantCulture, "ChangeSwiRegisterEnum failed for: {0}", optionsItem.ToString());
+                                        log.ErrorFormat(CultureInfo.InvariantCulture, "Options for EcuReplacementAfterReplacement not found");
+                                    }
+                                }
+
+                                List<OptionsItem> selectedOptionsOld = SelectedOptions;
+                                SelectedOptions.Clear();
+                                if (optionsAfterReplacement != null)
+                                {
+                                    foreach (OptionsItem optionsItem in selectedOptionsOld)
+                                    {
+                                        if (optionsItem.SwiRegisterEnum == PdszDatabase.SwiRegisterEnum.EcuReplacementBeforeReplacement)
+                                        {
+                                            bool itemFound = false;
+                                            foreach (OptionsItem optionsItemAfter in optionsAfterReplacement)
+                                            {
+                                                if (optionsItemAfter.EcuInfo == optionsItem.EcuInfo)
+                                                {
+                                                    itemFound = true;
+                                                    SelectedOptions.Add(optionsItemAfter);
+                                                    break;
+                                                }
+                                            }
+
+                                            if (!itemFound)
+                                            {
+                                                log.ErrorFormat(CultureInfo.InvariantCulture, "Item for EcuReplacementAfterReplacement not found: {0}", optionsItem.ToString());
+                                            }
+                                        }
                                     }
                                 }
 
@@ -2535,6 +2551,7 @@ namespace PsdzClient.Programing
                 PsdzContext = new PsdzContext(istaFolder);
                 DisableTalFlash = false;
                 RegisterGroup = PdszDatabase.SwiRegisterGroup.Modification;
+                OptionsDict = null;
             }
             catch (Exception)
             {
@@ -2560,6 +2577,7 @@ namespace PsdzClient.Programing
 
         private void UpdateOptions(Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>> optionsDict)
         {
+            OptionsDict = optionsDict;
             UpdateOptionsEvent?.Invoke(optionsDict);
         }
 
