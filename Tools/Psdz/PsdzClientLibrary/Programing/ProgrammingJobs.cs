@@ -76,7 +76,7 @@ namespace PsdzClient.Programing
 
             public bool ChangeSwiRegisterEnum(PdszDatabase.SwiRegisterEnum swiRegisterEnum)
             {
-                if (swiRegisterEnum == PdszDatabase.SwiRegisterEnum.EcuReplacementBeforeReplacement &&
+                if (swiRegisterEnum == PdszDatabase.SwiRegisterEnum.EcuReplacementAfterReplacement &&
                     SwiRegisterEnum == PdszDatabase.SwiRegisterEnum.EcuReplacementBeforeReplacement)
                 {
                     SwiRegisterEnum = swiRegisterEnum;
