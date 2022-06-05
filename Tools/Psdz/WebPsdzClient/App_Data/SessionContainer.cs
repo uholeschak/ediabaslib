@@ -576,6 +576,7 @@ namespace WebPsdzClient.App_Data
             ProgrammingJobs.UpdateStatusEvent += UpdateStatus;
             ProgrammingJobs.ProgressEvent += UpdateProgress;
             ProgrammingJobs.UpdateOptionsEvent += UpdateOptions;
+            ProgrammingJobs.UpdateOptionSelectionsEvent += UpdateOptionSelections;
             ProgrammingJobs.ShowMessageEvent += ShowMessageEvent;
             StatusText = string.Empty;
             ProgressText = string.Empty;
@@ -2466,6 +2467,11 @@ namespace WebPsdzClient.App_Data
         {
             OptionsDict = optionsDict;
             ProgrammingJobs.SelectedOptions = new List<ProgrammingJobs.OptionsItem>();
+            UpdateCurrentOptions();
+        }
+
+        public void UpdateOptionSelections()
+        {
             UpdateCurrentOptions();
         }
 

@@ -158,6 +158,9 @@ namespace PsdzClient.Programing
         public delegate void UpdateOptionsDelegate(Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>> optionsDict);
         public event UpdateOptionsDelegate UpdateOptionsEvent;
 
+        public delegate void UpdateOptionSelectionsDelegate();
+        public event UpdateOptionSelectionsDelegate UpdateOptionSelectionsEvent;
+
         public delegate bool ShowMessageDelegate(CancellationTokenSource cts, string message, bool okBtn, bool wait);
         public event ShowMessageDelegate ShowMessageEvent;
 
@@ -1141,6 +1144,10 @@ namespace PsdzClient.Programing
                             if (!backupFailed)
                             {
                                 PsdzContext.SaveIDRFilesToPuk();
+
+                                SelectedOptions.Clear();
+                                UpdateOptionSelections();
+
                                 if (ShowMessageEvent != null)
                                 {
                                     if (!ShowMessageEvent.Invoke(cts, Strings.TalHwDeinstallFinished, true, true))
@@ -2531,6 +2538,11 @@ namespace PsdzClient.Programing
         private void UpdateOptions(Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>> optionsDict)
         {
             UpdateOptionsEvent?.Invoke(optionsDict);
+        }
+
+        private void UpdateOptionSelections()
+        {
+            UpdateOptionSelectionsEvent?.Invoke();
         }
 
         public static void SetupLog4Net(string logFile)

@@ -95,6 +95,7 @@ namespace PsdzClient
             _programmingJobs.UpdateStatusEvent += UpdateStatus;
             _programmingJobs.ProgressEvent += UpdateProgress;
             _programmingJobs.UpdateOptionsEvent += UpdateOptions;
+            _programmingJobs.UpdateOptionSelectionsEvent += UpdateOptionSelections;
             _programmingJobs.ShowMessageEvent += ShowMessageEvent;
             _programmingJobs.ServiceInitializedEvent += ServiceInitialized;
         }
@@ -328,6 +329,20 @@ namespace PsdzClient
 
             _optionsDict = optionsDict;
             _programmingJobs.SelectedOptions = new List<ProgrammingJobs.OptionsItem>();
+            UpdateCurrentOptions();
+        }
+
+        private void UpdateOptionSelections()
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke((Action)(() =>
+                {
+                    UpdateCurrentOptions();
+                }));
+                return;
+            }
+
             UpdateCurrentOptions();
         }
 
