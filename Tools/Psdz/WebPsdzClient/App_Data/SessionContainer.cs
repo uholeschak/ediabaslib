@@ -2470,7 +2470,7 @@ namespace WebPsdzClient.App_Data
             UpdateCurrentOptions();
         }
 
-        public void UpdateOptionSelections()
+        public void UpdateOptionSelections(PdszDatabase.SwiRegisterEnum? swiRegisterEnum)
         {
             UpdateCurrentOptions();
         }

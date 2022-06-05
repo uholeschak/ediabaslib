@@ -171,7 +171,7 @@ namespace PsdzClient.Programing
         public delegate void UpdateOptionsDelegate(Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>> optionsDict);
         public event UpdateOptionsDelegate UpdateOptionsEvent;
 
-        public delegate void UpdateOptionSelectionsDelegate();
+        public delegate void UpdateOptionSelectionsDelegate(PdszDatabase.SwiRegisterEnum? swiRegisterEnum);
         public event UpdateOptionSelectionsDelegate UpdateOptionSelectionsEvent;
 
         public delegate bool ShowMessageDelegate(CancellationTokenSource cts, string message, bool okBtn, bool wait);
@@ -1166,7 +1166,7 @@ namespace PsdzClient.Programing
                                     }
                                 }
 
-                                UpdateOptionSelections();
+                                UpdateOptionSelections(PdszDatabase.SwiRegisterEnum.EcuReplacementAfterReplacement);
 
                                 if (ShowMessageEvent != null)
                                 {
@@ -2563,9 +2563,9 @@ namespace PsdzClient.Programing
             UpdateOptionsEvent?.Invoke(optionsDict);
         }
 
-        private void UpdateOptionSelections()
+        private void UpdateOptionSelections(PdszDatabase.SwiRegisterEnum? swiRegisterEnum = null)
         {
-            UpdateOptionSelectionsEvent?.Invoke();
+            UpdateOptionSelectionsEvent?.Invoke(swiRegisterEnum);
         }
 
         public static void SetupLog4Net(string logFile)

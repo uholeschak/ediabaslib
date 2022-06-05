@@ -258,13 +258,13 @@ namespace PsdzClient
             ProgrammingJobs.SetupLog4Net(logFile);
         }
 
-        private void UpdateCurrentOptions()
+        private void UpdateCurrentOptions(PdszDatabase.SwiRegisterEnum? swiRegisterEnum = null)
         {
             if (InvokeRequired)
             {
                 BeginInvoke((Action)(() =>
                 {
-                    UpdateCurrentOptions();
+                    UpdateCurrentOptions(swiRegisterEnum);
                 }));
                 return;
             }
@@ -279,7 +279,15 @@ namespace PsdzClient
                 {
                     foreach (ProgrammingJobs.OptionType optionTypeUpdate in _programmingJobs.OptionTypes)
                     {
-                        comboBoxOptionType.Items.Add(optionTypeUpdate);
+                        int index = comboBoxOptionType.Items.Add(optionTypeUpdate);
+
+                        if (swiRegisterEnum != null)
+                        {
+                            if (optionTypeUpdate.SwiRegisterEnum == swiRegisterEnum.Value)
+                            {
+                                selectedIndex = index;
+                            }
+                        }
                     }
 
                     if (selectedIndex < 0 && comboBoxOptionType.Items.Count >= 1)
@@ -332,18 +340,18 @@ namespace PsdzClient
             UpdateCurrentOptions();
         }
 
-        private void UpdateOptionSelections()
+        private void UpdateOptionSelections(PdszDatabase.SwiRegisterEnum? swiRegisterEnum)
         {
             if (InvokeRequired)
             {
                 BeginInvoke((Action)(() =>
                 {
-                    UpdateCurrentOptions();
+                    UpdateCurrentOptions(swiRegisterEnum);
                 }));
                 return;
             }
 
-            UpdateCurrentOptions();
+            UpdateCurrentOptions(swiRegisterEnum);
         }
 
         private bool ShowMessageEvent(CancellationTokenSource cts, string message, bool okBtn, bool wait)
