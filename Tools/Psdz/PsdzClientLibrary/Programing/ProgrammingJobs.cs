@@ -2653,11 +2653,11 @@ namespace PsdzClient.Programing
             switch (OperationState.Operation)
             {
                 case OperationStateData.OperationEnum.HwInstall:
-                    swiRegisterEnum = PdszDatabase.SwiRegisterEnum.EcuReplacementBeforeReplacement;
+                    swiRegisterEnum = PdszDatabase.SwiRegisterEnum.EcuReplacementAfterReplacement;
                     break;
 
                 case OperationStateData.OperationEnum.HwDeinstall:
-                    swiRegisterEnum = PdszDatabase.SwiRegisterEnum.EcuReplacementAfterReplacement;
+                    swiRegisterEnum = PdszDatabase.SwiRegisterEnum.EcuReplacementBeforeReplacement;
                     break;
             }
 
