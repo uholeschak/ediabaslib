@@ -203,7 +203,7 @@ Please connect a certified charger for the whole coding session.</value>
     <value>Stopping service host ...</value>
   </data>
   <data name="HwReplaceContinue" xml:space="preserve">
-    <value>Backup data is present.
+    <value>A hardware replacement operation is active.
 Do you want to continue the last hardware replace operation?</value>
   </data>
   <data name="ILevelBackupFailed" xml:space="preserve">

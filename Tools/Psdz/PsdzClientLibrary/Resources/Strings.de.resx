@@ -203,7 +203,7 @@ Bitte schließen Sie ein zertifiziertes Ladegerät während des gesamten Kodierv
     <value>Service Host stoppen ...</value>
   </data>
   <data name="HwReplaceContinue" xml:space="preserve">
-    <value>Es sind Backupdaten vorhanden.
+    <value>Ein Hardwaretausch Vorgang ist aktiv.
 Wollen Sie den letzten Hardwaretausch fortsetzen?</value>
   </data>
   <data name="ILevelBackupFailed" xml:space="preserve">

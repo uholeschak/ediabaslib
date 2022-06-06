@@ -296,7 +296,7 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Backup data is present.
+        ///   Sucht eine lokalisierte Zeichenfolge, die A hardware replacement operation is active.
         ///Do you want to continue the last hardware replace operation? ähnelt.
         /// </summary>
         internal static string HwReplaceContinue {
