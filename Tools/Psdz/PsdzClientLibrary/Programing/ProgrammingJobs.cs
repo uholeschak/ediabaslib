@@ -1620,6 +1620,7 @@ namespace PsdzClient.Programing
                 }
 
                 PsdzContext.RemoveBackupData();
+                LoadOperationState();
 
                 if (hwReplace)
                 {
