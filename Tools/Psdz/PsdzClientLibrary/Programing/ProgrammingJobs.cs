@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.Programming.Common;
 using BMW.Rheingold.Programming.Controller.SecureCoding.Model;
@@ -149,6 +151,24 @@ namespace PsdzClient.Programing
             }
         }
 
+        [XmlType("OperationStateDataXml")]
+        public class OperationStateData
+        {
+            public enum OperationEnum
+            {
+                Idle,
+                HwDeinstall,
+                HwInstall
+            }
+
+            public OperationStateData()
+            {
+            }
+
+            [XmlElement("Operation"), DefaultValue(null)] public OperationEnum Operation { get; set; }
+            [XmlElement("DiagAddrList"), DefaultValue(null)] public List<int> DiagAddrList { get; set; }
+        }
+
         public delegate void UpdateStatusDelegate(string message = null);
         public event UpdateStatusDelegate UpdateStatusEvent;
 
@@ -204,6 +224,7 @@ namespace PsdzClient.Programing
         public bool DisableTalFlash { get; set; }
         public PdszDatabase.SwiRegisterGroup RegisterGroup { get; set; }
         public Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>> OptionsDict { get; set; }
+        public OperationStateData OperationState { get; set; }
 
         private CacheType _cacheResponseType;
         public CacheType CacheResponseType
@@ -2544,6 +2565,82 @@ namespace PsdzClient.Programing
             return true;
         }
 
+        public bool SaveOperationState()
+        {
+            try
+            {
+                string backupPath = PsdzContext.PathToBackupData;
+                if (string.IsNullOrEmpty(backupPath))
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "SaveOperationState No backup path");
+                    return false;
+                }
+
+                string fileName = backupPath.TrimEnd('\\') + ".xml";
+                if (OperationState == null || OperationState.Operation == OperationStateData.OperationEnum.Idle)
+                {
+                    log.InfoFormat(CultureInfo.InvariantCulture, "SaveOperationState Deleting: {0}", fileName);
+                    if (File.Exists(fileName))
+                    {
+                        File.Delete(fileName);
+                    }
+                }
+                else
+                {
+                    log.InfoFormat(CultureInfo.InvariantCulture, "SaveOperationState Saving: {0}", fileName);
+                    XmlSerializer serializer = new XmlSerializer(typeof(OperationStateData));
+                    using (FileStream fileStream = File.Create(fileName))
+                    {
+                        serializer.Serialize(fileStream, OperationState);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "SaveOperationState Exception: {0}", ex.Message);
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool LoadOperationState()
+        {
+            try
+            {
+                string backupPath = PsdzContext.PathToBackupData;
+                if (string.IsNullOrEmpty(backupPath))
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "LoadOperationState No backup path");
+                    return false;
+                }
+
+                string fileName = backupPath.TrimEnd('\\') + ".xml";
+                if (!File.Exists(fileName))
+                {
+                    log.InfoFormat(CultureInfo.InvariantCulture, "LoadOperationState File not found: {0}", fileName);
+                    OperationState = new OperationStateData();
+                }
+                else
+                {
+                    log.InfoFormat(CultureInfo.InvariantCulture, "LoadOperationState Loading: {0}", fileName);
+                    XmlSerializer serializer = new XmlSerializer(typeof(OperationStateData));
+                    using (StreamReader streamReader = new StreamReader(fileName))
+                    {
+                        OperationState = serializer.Deserialize(streamReader) as OperationStateData;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "LoadOperationState Exception: {0}", ex.Message);
+                OperationState = new OperationStateData();
+                return false;
+            }
+
+            return true;
+        }
+
         public bool InitProgrammingObjects(string istaFolder)
         {
             try
@@ -2552,6 +2649,7 @@ namespace PsdzClient.Programing
                 DisableTalFlash = false;
                 RegisterGroup = PdszDatabase.SwiRegisterGroup.Modification;
                 OptionsDict = null;
+                OperationState = new OperationStateData();
             }
             catch (Exception)
             {
