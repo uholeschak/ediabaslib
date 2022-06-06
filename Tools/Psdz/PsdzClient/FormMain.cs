@@ -483,12 +483,22 @@ namespace PsdzClient
                                 }
                             }
 
+                            if (!_programmingJobs.IsOptionsItemEnabled(optionsItem))
+                            {
+                                switch (checkState)
+                                {
+                                    case CheckState.Checked:
+                                        checkState = CheckState.Indeterminate;
+                                        break;
+
+                                    case CheckState.Unchecked:
+                                        addItem = false;
+                                        break;
+                                }
+                            }
+
                             if (addItem)
                             {
-                                if (!_programmingJobs.IsOptionsItemEnabled(optionsItem))
-                                {
-                                    checkState = CheckState.Indeterminate;
-                                }
                                 checkedListBoxOptions.Items.Add(optionsItem, checkState);
                             }
                         }
