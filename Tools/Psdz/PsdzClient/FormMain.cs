@@ -485,6 +485,10 @@ namespace PsdzClient
 
                             if (addItem)
                             {
+                                if (!_programmingJobs.IsOptionsItemEnabled(optionsItem))
+                                {
+                                    checkState = CheckState.Indeterminate;
+                                }
                                 checkedListBoxOptions.Items.Add(optionsItem, checkState);
                             }
                         }

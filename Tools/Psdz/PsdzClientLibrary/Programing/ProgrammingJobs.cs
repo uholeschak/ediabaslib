@@ -2530,6 +2530,35 @@ namespace PsdzClient.Programing
             return true;
         }
 
+        public bool IsOptionsItemEnabled(OptionsItem optionsItem)
+        {
+            if (optionsItem == null)
+            {
+                return true;
+            }
+
+            if (OperationState == null || OperationState.Operation != OperationStateData.OperationEnum.HwInstall ||
+                OperationState.DiagAddrList == null || OperationState.DiagAddrList.Count == 0)
+            {
+                return true;
+            }
+
+            if (optionsItem.SwiRegisterEnum == PdszDatabase.SwiRegisterEnum.EcuReplacementAfterReplacement)
+            {
+                if (optionsItem.EcuInfo == null)
+                {
+                    return true;
+                }
+
+                if (!OperationState.DiagAddrList.Contains((int)optionsItem.EcuInfo.Address))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public bool SaveOperationState()
         {
             try
