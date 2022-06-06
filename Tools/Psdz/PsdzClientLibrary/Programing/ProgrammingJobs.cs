@@ -1573,33 +1573,6 @@ namespace PsdzClient.Programing
                 }
 
                 PsdzContext.RemoveBackupData();
-                LoadOperationState();
-
-                bool restoreOperation = false;
-                if (OperationState.Operation == OperationStateData.OperationEnum.HwInstall)
-                {
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Hw replace operation active");
-                    if (ShowMessageEvent != null)
-                    {
-                        if (!ShowMessageEvent.Invoke(cts, Strings.HwReplaceContinue, false, true))
-                        {
-                            log.InfoFormat(CultureInfo.InvariantCulture, "ShowMessageEvent HwReplaceContinue aborted");
-                        }
-                        else
-                        {
-                            restoreOperation = true;
-                        }
-                    }
-                }
-
-                if (restoreOperation)
-                {
-                    RestoreOperationState();
-                }
-                else
-                {
-                    ResetOperationState();
-                }
 
                 IPsdzStandardFa standardFa = ProgrammingService.Psdz.VcmService.GetStandardFaActual(PsdzContext.Connection);
                 if (standardFa == null)
@@ -1869,6 +1842,33 @@ namespace PsdzClient.Programing
                         }
 
                         UpdateOptions(optionsDict);
+                        LoadOperationState();
+
+                        bool restoreOperation = false;
+                        if (OperationState.Operation == OperationStateData.OperationEnum.HwInstall)
+                        {
+                            log.InfoFormat(CultureInfo.InvariantCulture, "Hw replace operation active");
+                            if (ShowMessageEvent != null)
+                            {
+                                if (!ShowMessageEvent.Invoke(cts, Strings.HwReplaceContinue, false, true))
+                                {
+                                    log.InfoFormat(CultureInfo.InvariantCulture, "ShowMessageEvent HwReplaceContinue aborted");
+                                }
+                                else
+                                {
+                                    restoreOperation = true;
+                                }
+                            }
+                        }
+
+                        if (restoreOperation)
+                        {
+                            RestoreOperationState();
+                        }
+                        else
+                        {
+                            ResetOperationState();
+                        }
                     }
 
                     sbResult.AppendLine(Strings.ExecutingVehicleFuncFinished);
