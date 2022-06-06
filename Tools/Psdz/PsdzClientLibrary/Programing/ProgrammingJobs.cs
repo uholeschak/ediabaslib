@@ -1438,7 +1438,7 @@ namespace PsdzClient.Programing
                         {
                             if (RegisterGroup == PdszDatabase.SwiRegisterGroup.HwInstall)
                             {
-                                PsdzContext.DeleteIDRFilesFromPuk();
+                                ResetOperationState();
                             }
                             // finally reset TAL
                             PsdzContext.Tal = null;
@@ -1600,18 +1600,6 @@ namespace PsdzClient.Programing
                 log.InfoFormat(CultureInfo.InvariantCulture, "ILevel: Current={0}, Last={1}, Shipment={2}",
                     iStufenTriple.Current, iStufenTriple.Last, iStufenTriple.Shipment);
 
-                bool hwReplace = false;
-                if (operationType != OperationType.CreateOptions)
-                {
-                    switch (RegisterGroup)
-                    {
-                        case PdszDatabase.SwiRegisterGroup.HwInstall:
-                        case PdszDatabase.SwiRegisterGroup.HwDeinstall:
-                            hwReplace = true;
-                            break;
-                    }
-                }
-
                 if (!PsdzContext.SetPathToBackupData(psdzVin.Value))
                 {
                     sbResult.AppendLine(Strings.CreateBackupPathFailed);
@@ -1622,27 +1610,30 @@ namespace PsdzClient.Programing
                 PsdzContext.RemoveBackupData();
                 LoadOperationState();
 
-                if (hwReplace)
+                bool restoreOperation = false;
+                if (OperationState.Operation == OperationStateData.OperationEnum.HwInstall)
                 {
-                    if (RegisterGroup == PdszDatabase.SwiRegisterGroup.HwInstall)
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Hw replace operation active");
+                    if (ShowMessageEvent != null)
                     {
-                        if (PsdzContext.HasIDRFilesInPuk())
+                        if (!ShowMessageEvent.Invoke(cts, Strings.HwReplaceContinue, false, true))
                         {
-                            log.InfoFormat(CultureInfo.InvariantCulture, "Backup data found");
-                            if (ShowMessageEvent != null)
-                            {
-                                if (!ShowMessageEvent.Invoke(cts, Strings.HwReplaceContinue, false, true))
-                                {
-                                    log.InfoFormat(CultureInfo.InvariantCulture, "ShowMessageEvent HwReplaceContinue aborted");
-                                    PsdzContext.DeleteIDRFilesFromPuk();
-                                }
-                            }
+                            log.InfoFormat(CultureInfo.InvariantCulture, "ShowMessageEvent HwReplaceContinue aborted");
+                        }
+                        else
+                        {
+                            restoreOperation = true;
                         }
                     }
-                    else
-                    {
-                        PsdzContext.DeleteIDRFilesFromPuk();
-                    }
+                }
+
+                if (restoreOperation)
+                {
+                    RestoreOperationState();
+                }
+                else
+                {
+                    ResetOperationState();
                 }
 
                 IPsdzStandardFa standardFa = ProgrammingService.Psdz.VcmService.GetStandardFaActual(PsdzContext.Connection);
@@ -2683,6 +2674,76 @@ namespace PsdzClient.Programing
             }
 
             OperationState = new OperationStateData(operation, diagAddrList);
+        }
+
+        public bool RestoreOperationState()
+        {
+            if (OperationState == null)
+            {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "RestoreOperationState No data");
+                return false;
+            }
+
+            PdszDatabase.SwiRegisterEnum? swiRegisterEnum = null;
+            switch (OperationState.Operation)
+            {
+                case OperationStateData.OperationEnum.HwInstall:
+                    swiRegisterEnum = PdszDatabase.SwiRegisterEnum.EcuReplacementBeforeReplacement;
+                    break;
+
+                case OperationStateData.OperationEnum.HwDeinstall:
+                    swiRegisterEnum = PdszDatabase.SwiRegisterEnum.EcuReplacementAfterReplacement;
+                    break;
+            }
+
+            if (swiRegisterEnum == null)
+            {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "RestoreOperationState Nothing to restore");
+                return false;
+            }
+
+            log.InfoFormat(CultureInfo.InvariantCulture, "RestoreOperationState Restoring: {0}", swiRegisterEnum.Value);
+            List<OptionsItem> optionsReplacement = null;
+            if (OptionsDict != null)
+            {
+                if (!OptionsDict.TryGetValue(swiRegisterEnum.Value, out optionsReplacement))
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "RestoreOperationState Options for {0} not found", swiRegisterEnum);
+                }
+            }
+
+            SelectedOptions.Clear();
+            if (optionsReplacement != null && OperationState.DiagAddrList != null)
+            {
+                foreach (int address in OperationState.DiagAddrList)
+                {
+                    bool itemFound = false;
+                    foreach (OptionsItem optionsItem in optionsReplacement)
+                    {
+                        if (optionsItem.EcuInfo != null && optionsItem.EcuInfo.Address == address)
+                        {
+                            itemFound = true;
+                            SelectedOptions.Add(optionsItem);
+                            break;
+                        }
+                    }
+
+                    if (!itemFound)
+                    {
+                        log.ErrorFormat(CultureInfo.InvariantCulture, "RestoreOperationState Item for address not found: {0}", address);
+                    }
+                }
+            }
+
+            UpdateOptionSelections(swiRegisterEnum);
+            return true;
+        }
+
+        public void ResetOperationState()
+        {
+            OperationState = new OperationStateData();
+            SaveOperationState();
+            PsdzContext.DeleteIDRFilesFromPuk();
         }
 
         public bool InitProgrammingObjects(string istaFolder)
