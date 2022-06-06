@@ -1174,44 +1174,9 @@ namespace PsdzClient.Programing
                                 PsdzContext.SaveIDRFilesToPuk();
                             }
 
-                            List<OptionsItem> optionsAfterReplacement = null;
-                            if (OptionsDict != null)
-                            {
-                                if (!OptionsDict.TryGetValue(PdszDatabase.SwiRegisterEnum.EcuReplacementAfterReplacement, out optionsAfterReplacement))
-                                {
-                                    log.ErrorFormat(CultureInfo.InvariantCulture, "Options for EcuReplacementAfterReplacement not found");
-                                }
-                            }
-
-                            List<OptionsItem> selectedOptionsOld = new List<OptionsItem>(SelectedOptions);
-                            SelectedOptions.Clear();
-                            if (optionsAfterReplacement != null)
-                            {
-                                foreach (OptionsItem optionsItem in selectedOptionsOld)
-                                {
-                                    if (optionsItem.SwiRegisterEnum == PdszDatabase.SwiRegisterEnum.EcuReplacementBeforeReplacement)
-                                    {
-                                        bool itemFound = false;
-                                        foreach (OptionsItem optionsItemAfter in optionsAfterReplacement)
-                                        {
-                                            if (optionsItemAfter.EcuInfo == optionsItem.EcuInfo)
-                                            {
-                                                itemFound = true;
-                                                SelectedOptions.Add(optionsItemAfter);
-                                                break;
-                                            }
-                                        }
-
-                                        if (!itemFound)
-                                        {
-                                            log.ErrorFormat(CultureInfo.InvariantCulture, "Item for EcuReplacementAfterReplacement not found: {0}", optionsItem.ToString());
-                                        }
-                                    }
-                                }
-                            }
-
-                            UpdateOptionSelections(PdszDatabase.SwiRegisterEnum.EcuReplacementAfterReplacement);
+                            RegisterGroup = PdszDatabase.SwiRegisterGroup.HwInstall;
                             UpdateOperationState();
+                            RestoreOperationState();
                             SaveOperationState();
 
                             if (ShowMessageEvent != null)
