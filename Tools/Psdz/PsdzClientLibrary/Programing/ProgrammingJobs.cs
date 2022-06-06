@@ -165,6 +165,12 @@ namespace PsdzClient.Programing
             {
             }
 
+            public OperationStateData(OperationEnum operation, List<int> diagAddrList = null)
+            {
+                Operation = operation;
+                DiagAddrList = diagAddrList;
+            }
+
             [XmlElement("Operation"), DefaultValue(null)] public OperationEnum Operation { get; set; }
             [XmlElement("DiagAddrList"), DefaultValue(null)] public List<int> DiagAddrList { get; set; }
         }
@@ -1166,52 +1172,54 @@ namespace PsdzClient.Programing
                             if (!backupFailed)
                             {
                                 PsdzContext.SaveIDRFilesToPuk();
+                            }
 
-                                List<OptionsItem> optionsAfterReplacement = null;
-                                if (OptionsDict != null)
+                            List<OptionsItem> optionsAfterReplacement = null;
+                            if (OptionsDict != null)
+                            {
+                                if (!OptionsDict.TryGetValue(PdszDatabase.SwiRegisterEnum.EcuReplacementAfterReplacement, out optionsAfterReplacement))
                                 {
-                                    if (!OptionsDict.TryGetValue(PdszDatabase.SwiRegisterEnum.EcuReplacementAfterReplacement, out optionsAfterReplacement))
-                                    {
-                                        log.ErrorFormat(CultureInfo.InvariantCulture, "Options for EcuReplacementAfterReplacement not found");
-                                    }
+                                    log.ErrorFormat(CultureInfo.InvariantCulture, "Options for EcuReplacementAfterReplacement not found");
                                 }
+                            }
 
-                                List<OptionsItem> selectedOptionsOld = new List<OptionsItem>(SelectedOptions);
-                                SelectedOptions.Clear();
-                                if (optionsAfterReplacement != null)
+                            List<OptionsItem> selectedOptionsOld = new List<OptionsItem>(SelectedOptions);
+                            SelectedOptions.Clear();
+                            if (optionsAfterReplacement != null)
+                            {
+                                foreach (OptionsItem optionsItem in selectedOptionsOld)
                                 {
-                                    foreach (OptionsItem optionsItem in selectedOptionsOld)
+                                    if (optionsItem.SwiRegisterEnum == PdszDatabase.SwiRegisterEnum.EcuReplacementBeforeReplacement)
                                     {
-                                        if (optionsItem.SwiRegisterEnum == PdszDatabase.SwiRegisterEnum.EcuReplacementBeforeReplacement)
+                                        bool itemFound = false;
+                                        foreach (OptionsItem optionsItemAfter in optionsAfterReplacement)
                                         {
-                                            bool itemFound = false;
-                                            foreach (OptionsItem optionsItemAfter in optionsAfterReplacement)
+                                            if (optionsItemAfter.EcuInfo == optionsItem.EcuInfo)
                                             {
-                                                if (optionsItemAfter.EcuInfo == optionsItem.EcuInfo)
-                                                {
-                                                    itemFound = true;
-                                                    SelectedOptions.Add(optionsItemAfter);
-                                                    break;
-                                                }
+                                                itemFound = true;
+                                                SelectedOptions.Add(optionsItemAfter);
+                                                break;
                                             }
+                                        }
 
-                                            if (!itemFound)
-                                            {
-                                                log.ErrorFormat(CultureInfo.InvariantCulture, "Item for EcuReplacementAfterReplacement not found: {0}", optionsItem.ToString());
-                                            }
+                                        if (!itemFound)
+                                        {
+                                            log.ErrorFormat(CultureInfo.InvariantCulture, "Item for EcuReplacementAfterReplacement not found: {0}", optionsItem.ToString());
                                         }
                                     }
                                 }
+                            }
 
-                                UpdateOptionSelections(PdszDatabase.SwiRegisterEnum.EcuReplacementAfterReplacement);
+                            UpdateOptionSelections(PdszDatabase.SwiRegisterEnum.EcuReplacementAfterReplacement);
+                            UpdateOperationState();
+                            SaveOperationState();
 
-                                if (ShowMessageEvent != null)
+                            if (ShowMessageEvent != null)
+                            {
+                                if (!ShowMessageEvent.Invoke(cts, Strings.TalHwDeinstallFinished, true, true))
                                 {
-                                    if (!ShowMessageEvent.Invoke(cts, Strings.TalHwDeinstallFinished, true, true))
-                                    {
-                                        log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecuteContinue aborted");
-                                        return false;
-                                    }
+                                    log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecuteContinue aborted");
+                                    return false;
                                 }
                             }
 
@@ -2641,6 +2649,41 @@ namespace PsdzClient.Programing
             return true;
         }
 
+        public void UpdateOperationState()
+        {
+            OperationStateData.OperationEnum operation = OperationStateData.OperationEnum.Idle;
+            List<int> diagAddrList = null;
+            switch (RegisterGroup)
+            {
+                case PdszDatabase.SwiRegisterGroup.HwInstall:
+                    operation = OperationStateData.OperationEnum.HwInstall;
+                    break;
+
+                case PdszDatabase.SwiRegisterGroup.HwDeinstall:
+                    operation = OperationStateData.OperationEnum.HwDeinstall;
+                    break;
+            }
+
+            if (operation != OperationStateData.OperationEnum.Idle)
+            {
+                diagAddrList = new List<int>();
+                foreach (OptionsItem optionItem in SelectedOptions)
+                {
+                    if (optionItem.EcuInfo != null)
+                    {
+                        int address = (int)optionItem.EcuInfo.Address;
+                        if (!diagAddrList.Contains(address))
+                        {
+                            diagAddrList.Add(address);
+                        }
+                    }
+                }
+                OperationState.DiagAddrList = diagAddrList;
+            }
+
+            OperationState = new OperationStateData(operation, diagAddrList);
+        }
+
         public bool InitProgrammingObjects(string istaFolder)
         {
             try
@@ -2681,6 +2724,11 @@ namespace PsdzClient.Programing
 
         private void UpdateOptionSelections(PdszDatabase.SwiRegisterEnum? swiRegisterEnum = null)
         {
+            if (swiRegisterEnum != null)
+            {
+                RegisterGroup = PdszDatabase.GetSwiRegisterGroup(swiRegisterEnum.Value);
+            }
+
             UpdateOptionSelectionsEvent?.Invoke(swiRegisterEnum);
         }
 
