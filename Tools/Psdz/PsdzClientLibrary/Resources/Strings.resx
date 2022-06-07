@@ -323,7 +323,7 @@ Possibly the software is not consistent in all ECUs.</value>
     <value>Generating TAL ...</value>
   </data>
   <data name="TalHwDeinstallFinished" xml:space="preserve">
-    <value>After replacement select the replaced ECUs at the category 'after replacement'.</value>
+    <value>After replacement select the replaced ECUs at the category 'after the exchange'.</value>
   </data>
   <data name="TalIdrGenerating" xml:space="preserve">
     <value>Generating individual data TAL ...</value>

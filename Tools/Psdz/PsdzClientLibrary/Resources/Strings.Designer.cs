@@ -638,7 +638,7 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die After replacement select the replaced ECUs at the category &apos;after replacement&apos;. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die After replacement select the replaced ECUs at the category &apos;after the exchange&apos;. ähnelt.
         /// </summary>
         internal static string TalHwDeinstallFinished {
             get {
