@@ -757,6 +757,11 @@ namespace WebPsdzClient
 
                             if (addItem)
                             {
+                                if (!programmingJobs.IsOptionsItemEnabled(optionsItem))
+                                {
+                                    itemEnabled = false;
+                                }
+
                                 ListItem listItem = new ListItem(optionsItem.ToString(), optionsItem.Id);
                                 listItem.Selected = itemSelected;
                                 listItem.Enabled = itemEnabled;
