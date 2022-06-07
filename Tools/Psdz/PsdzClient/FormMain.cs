@@ -85,7 +85,6 @@ namespace PsdzClient
         private bool _ignoreCheck = false;
         private bool _ignoreChange = false;
         private CancellationTokenSource _cts;
-        private Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> _optionsDict;
 
         public FormMain()
         {
@@ -118,8 +117,9 @@ namespace PsdzClient
                 talPresent = _programmingJobs.PsdzContext?.Tal != null;
             }
 
+            Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
             bool ipEnabled = !active && !vehicleConnected;
-            bool modifyTal = !active && hostRunning && vehicleConnected && _optionsDict != null;
+            bool modifyTal = !active && hostRunning && vehicleConnected && optionsDict != null;
 
             textBoxIstaFolder.Enabled = !active && !hostRunning;
             comboBoxLanguage.Enabled = !active;
@@ -129,7 +129,7 @@ namespace PsdzClient
             buttonStopHost.Enabled = !active && hostRunning;
             buttonConnect.Enabled = !active && !vehicleConnected;
             buttonDisconnect.Enabled = !active && hostRunning && vehicleConnected;
-            buttonCreateOptions.Enabled = !active && hostRunning && vehicleConnected && _optionsDict == null;
+            buttonCreateOptions.Enabled = !active && hostRunning && vehicleConnected && optionsDict == null;
             buttonModILevel.Enabled = modifyTal;
             buttonModFa.Enabled = modifyTal;
             buttonExecuteTal.Enabled = modifyTal && talPresent;
@@ -141,7 +141,7 @@ namespace PsdzClient
             {
                 UpdateOptions(null);
             }
-            comboBoxOptionType.Enabled = _optionsDict != null && _optionsDict.Count > 0;
+            comboBoxOptionType.Enabled = optionsDict != null && optionsDict.Count > 0;
         }
 
         private bool LoadSettings()
@@ -272,10 +272,11 @@ namespace PsdzClient
             try
             {
                 _ignoreChange = true;
+                Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
                 int selectedIndex = comboBoxOptionType.SelectedIndex;
                 comboBoxOptionType.BeginUpdate();
                 comboBoxOptionType.Items.Clear();
-                if (_optionsDict != null)
+                if (optionsDict != null)
                 {
                     foreach (ProgrammingJobs.OptionType optionTypeUpdate in _programmingJobs.OptionTypes)
                     {
@@ -335,7 +336,6 @@ namespace PsdzClient
                 return;
             }
 
-            _optionsDict = optionsDict;
             _programmingJobs.SelectedOptions = new List<ProgrammingJobs.OptionsItem>();
             UpdateCurrentOptions();
         }
@@ -425,11 +425,12 @@ namespace PsdzClient
                 }
 
                 _ignoreCheck = true;
+                Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
                 checkedListBoxOptions.BeginUpdate();
                 checkedListBoxOptions.Items.Clear();
-                if (_optionsDict != null && _programmingJobs.SelectedOptions != null && swiRegisterEnum.HasValue)
+                if (optionsDict != null && _programmingJobs.SelectedOptions != null && swiRegisterEnum.HasValue)
                 {
-                    if (_optionsDict.TryGetValue(swiRegisterEnum.Value, out List<ProgrammingJobs.OptionsItem> optionsItems))
+                    if (optionsDict.TryGetValue(swiRegisterEnum.Value, out List<ProgrammingJobs.OptionsItem> optionsItems))
                     {
                         foreach (ProgrammingJobs.OptionsItem optionsItem in optionsItems.OrderBy(x => x.ToString()))
                         {
@@ -881,6 +882,7 @@ namespace PsdzClient
                 return;
             }
 
+            Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
             bool modified = false;
             if (e.Index >= 0 && e.Index < checkedListBoxOptions.Items.Count)
             {
@@ -896,7 +898,7 @@ namespace PsdzClient
                         }
                     }
 
-                    if (!_optionsDict.TryGetValue(swiRegisterEnum, out List<ProgrammingJobs.OptionsItem> optionsItems))
+                    if (!optionsDict.TryGetValue(swiRegisterEnum, out List<ProgrammingJobs.OptionsItem> optionsItems))
                     {
                         log.ErrorFormat("checkedListBoxOptions_ItemCheck No option items for: {0}", swiRegisterEnum);
                     }

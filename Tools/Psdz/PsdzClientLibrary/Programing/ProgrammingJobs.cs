@@ -224,13 +224,53 @@ namespace PsdzClient.Programing
         public ClientContext ClientContext { get; private set; }
         private string _dealerId;
         private object _cacheLock = new object();
+        private object _operationLock = new object();
+        private object _optionsLock = new object();
         public PsdzContext PsdzContext { get; private set; }
         public ProgrammingService ProgrammingService { get; private set; }
         public List<OptionsItem> SelectedOptions { get; set; }
         public bool DisableTalFlash { get; set; }
         public PdszDatabase.SwiRegisterGroup RegisterGroup { get; set; }
-        public Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>> OptionsDict { get; set; }
-        public OperationStateData OperationState { get; set; }
+
+        private OperationStateData _operationState;
+        public OperationStateData OperationState
+        {
+            get
+            {
+                lock (_operationLock)
+                {
+                    return _operationState;
+                }
+            }
+
+            set
+            {
+                lock (_operationLock)
+                {
+                    _operationState = value;
+                }
+            }
+        }
+
+        private Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>> _optionsDict;
+        public Dictionary<PdszDatabase.SwiRegisterEnum, List<OptionsItem>> OptionsDict
+        {
+            get
+            {
+                lock (_optionsLock)
+                {
+                    return _optionsDict;
+                }
+            }
+
+            set
+            {
+                lock (_optionsLock)
+                {
+                    _optionsDict = value;
+                }
+            }
+        }
 
         private CacheType _cacheResponseType;
         public CacheType CacheResponseType
