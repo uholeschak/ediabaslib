@@ -343,7 +343,7 @@ namespace WebPsdzClient
                 log.InfoFormat("CheckBoxListOptions_OnSelectedIndexChanged Selected: {0}", listItem.Text);
                 ProgrammingJobs programmingJobs = sessionContainer.ProgrammingJobs;
                 bool modified = false;
-                Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = sessionContainer.OptionsDict;
+                Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = programmingJobs.OptionsDict;
                 if (optionsDict != null && sessionContainer.SelectedSwiRegister.HasValue)
                 {
                     if (optionsDict.TryGetValue(sessionContainer.SelectedSwiRegister.Value, out List<ProgrammingJobs.OptionsItem> optionsItems))
@@ -469,18 +469,20 @@ namespace WebPsdzClient
                     hostRunning = PsdzServiceStarter.IsServerInstanceRunning();
                 }
 
-                if (sessionContainer.ProgrammingJobs.PsdzContext?.Connection != null)
+                ProgrammingJobs programmingJobs = sessionContainer.ProgrammingJobs;
+                if (programmingJobs.PsdzContext?.Connection != null)
                 {
                     vehicleConnected = true;
-                    talPresent = sessionContainer.ProgrammingJobs.PsdzContext?.Tal != null;
+                    talPresent = programmingJobs.PsdzContext?.Tal != null;
                 }
 
-                bool modifyTal = !active && hostRunning && vehicleConnected && sessionContainer.OptionsDict != null;
+                Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = programmingJobs.OptionsDict;
+                bool modifyTal = !active && hostRunning && vehicleConnected && optionsDict != null;
                 ButtonStopHost.Enabled = !active && hostRunning;
                 ButtonStopHost.Visible = sessionContainer.DeepObdVersion <= 0;
                 ButtonConnect.Enabled = !active && !vehicleConnected;
                 ButtonDisconnect.Enabled = !active && hostRunning && vehicleConnected;
-                ButtonCreateOptions.Enabled = !active && hostRunning && vehicleConnected && sessionContainer.OptionsDict == null;
+                ButtonCreateOptions.Enabled = !active && hostRunning && vehicleConnected && optionsDict == null;
                 ButtonModifyFa.Enabled = modifyTal;
                 ButtonExecuteTal.Enabled = modifyTal && talPresent;
                 ButtonAbort.Enabled = active && abortPossible;
@@ -621,7 +623,8 @@ namespace WebPsdzClient
 
                 DropDownListOptionType.Items.Clear();
 
-                if (sessionContainer.OptionsDict != null)
+                Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = sessionContainer.ProgrammingJobs.OptionsDict;
+                if (optionsDict != null)
                 {
                     ProgrammingJobs programmingJobs = sessionContainer.ProgrammingJobs;
                     if (sessionContainer.SelectedSwiRegister == null)
@@ -653,7 +656,7 @@ namespace WebPsdzClient
                 }
 
                 SelectOptions(sessionContainer.SelectedSwiRegister);
-                PanelOptions.Visible = sessionContainer.OptionsDict != null;
+                PanelOptions.Visible = optionsDict != null;
 
                 if (updatePanel)
                 {
@@ -696,7 +699,7 @@ namespace WebPsdzClient
                     }
                 }
 
-                Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = sessionContainer.OptionsDict;
+                Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = programmingJobs.OptionsDict;
                 List<PdszDatabase.SwiAction> selectedSwiActions = GetSelectedSwiActions(programmingJobs);
                 List<PdszDatabase.SwiAction> linkedSwiActions = programmingJobs.ProgrammingService.PdszDatabase.ReadLinkedSwiActions(selectedSwiActions, programmingJobs.PsdzContext.Vehicle, null);
 

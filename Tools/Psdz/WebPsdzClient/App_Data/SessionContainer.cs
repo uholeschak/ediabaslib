@@ -206,25 +206,6 @@ namespace WebPsdzClient.App_Data
 
         }
 
-        private Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> _optionsDict;
-        public Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> OptionsDict
-        {
-            get
-            {
-                lock (_lockObject)
-                {
-                    return _optionsDict;
-                }
-            }
-            set
-            {
-                lock (_lockObject)
-                {
-                    _optionsDict = value;
-                }
-            }
-        }
-
         private PdszDatabase.SwiRegisterEnum? _selectedSwiRegister;
         public PdszDatabase.SwiRegisterEnum? SelectedSwiRegister
         {
@@ -2465,7 +2446,6 @@ namespace WebPsdzClient.App_Data
 
         public void UpdateOptions(Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict)
         {
-            OptionsDict = optionsDict;
             ProgrammingJobs.SelectedOptions = new List<ProgrammingJobs.OptionsItem>();
             UpdateCurrentOptions();
         }
@@ -2522,7 +2502,11 @@ namespace WebPsdzClient.App_Data
                 bool vehicleConnected = ProgrammingJobs?.PsdzContext?.Connection != null;
                 if (!vehicleConnected)
                 {
-                    OptionsDict = null;
+                    if (ProgrammingJobs != null)
+                    {
+                        ProgrammingJobs.OptionsDict = null;
+                    }
+
                     SelectedSwiRegister = null;
                 }
                 else
