@@ -943,6 +943,8 @@ namespace CarSimulator
                                 break;
                             }
                         }
+
+                        Debug.WriteLine("Rec Timeout 1: {0}", (object)BitConverter.ToString(receiveData, 0, i).Replace("-", " "));
                         return 0;
                     }
                     receiveData[i] = (byte)data;
@@ -997,6 +999,8 @@ namespace CarSimulator
                                 break;
                             }
                         }
+
+                        Debug.WriteLine("Rec Timeout 2: {0}", (object) BitConverter.ToString(receiveData, 0, i + 4).Replace("-", " "));
                         return 0;
                     }
                     receiveData[i + 4] = (byte)data;
@@ -1004,6 +1008,7 @@ namespace CarSimulator
 
                 if (CommThread.CalcChecksumBmwFast(receiveData, recLength) != receiveData[recLength])
                 {
+                    Debug.WriteLine("ReceiveBmwFast CRC invalid");
                     while (_dataStream.DataAvailable)
                     {
                         try
