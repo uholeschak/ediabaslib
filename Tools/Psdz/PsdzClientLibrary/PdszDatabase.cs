@@ -1076,6 +1076,7 @@ namespace PsdzClient
                 InfoObjIdent = infoObjIdent;
                 DocId = docId;
                 DocData = null;
+                XepRule = null;
             }
 
             public string InfoObjId { get; set; }
@@ -1085,6 +1086,8 @@ namespace PsdzClient
             public string DocId { get; set; }
 
             public string DocData { get; set; }
+
+            public XepRule XepRule { get; set; }
 
             public string ToString(string prefix = "")
             {
@@ -3974,9 +3977,9 @@ namespace PsdzClient
             return boardnetsList[0];
         }
 
-        public List<BordnetsData> LoadBordnetsData(Vehicle vecInfo)
+        public List<BordnetsData> LoadBordnetsData(Vehicle vecInfo = null)
         {
-            log.InfoFormat("LoadBordnetsData");
+            log.InfoFormat("LoadBordnetsData: VecInfo={0}", vecInfo != null);
             List<BordnetsData> boardnetsList = new List<BordnetsData>();
             try
             {
@@ -4011,16 +4014,10 @@ namespace PsdzClient
                 return null;
             }
 
-            if (vecInfo == null)
-            {
-                log.InfoFormat("LoadBordnetsData Count no filter: {0}", boardnetsList.Count);
-                return boardnetsList;
-            }
-
             List<BordnetsData> boardnetsList2 = new List<BordnetsData>();
             foreach (BordnetsData bordnetsData in boardnetsList)
             {
-                if (EvaluateXepRulesById(bordnetsData.InfoObjId, vecInfo, null))
+                if (vecInfo == null || EvaluateXepRulesById(bordnetsData.InfoObjId, vecInfo, null))
                 {
                     bordnetsData.DocData = GetXmlValuePrimitivesById(bordnetsData.DocId, "DEDE");
                     if (!string.IsNullOrWhiteSpace(bordnetsData.DocData))
@@ -4040,6 +4037,33 @@ namespace PsdzClient
 
             return boardnetsList2;
         }
+
+        public List<BordnetsData> GetAllBordnetRules()
+        {
+            List<BordnetsData> boardnetsList = LoadBordnetsData();
+            if (boardnetsList == null)
+            {
+                log.ErrorFormat("GetAllBordnetRules No data");
+                return null;
+            }
+
+            foreach (BordnetsData bordnetsData in boardnetsList)
+            {
+                XepRule xepRule = GetRuleById(bordnetsData.InfoObjId);
+                if (xepRule == null)
+                {
+                    log.ErrorFormat("GetAllBordnetFromDatabase No rule for: {0}", bordnetsData.ToString());
+                }
+                else
+                {
+                    bordnetsData.XepRule = xepRule;
+                }
+            }
+
+            log.InfoFormat("GetAllBordnetRules Count: {0}", boardnetsList.Count);
+            return boardnetsList;
+        }
+
 
         public string LookupVehicleCharDeDeById(string characteristicId)
         {
