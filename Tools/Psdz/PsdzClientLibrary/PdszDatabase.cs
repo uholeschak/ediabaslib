@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
@@ -2257,6 +2258,7 @@ namespace PsdzClient
         {
             try
             {
+                Regex seriesRegex = new Regex(@"\bE-Bezeichnung=([a-z0-9]+)\b", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 Vehicle vehicle = new Vehicle(clientContext);
                 List<BordnetsData> boardnetsList = GetAllBordnetRules();
                 foreach (BordnetsData bordnetsData in boardnetsList)
@@ -2266,7 +2268,18 @@ namespace PsdzClient
                         string ruleString = bordnetsData.XepRule.GetRuleString(vehicle);
                         if (!string.IsNullOrEmpty(ruleString))
                         {
+                            HashSet<string> seriesHash = new HashSet<string>();
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Rule: {0}", ruleString);
+                            MatchCollection matches = seriesRegex.Matches(ruleString);
+                            foreach (Match match in matches)
+                            {
+                                if (match.Groups.Count == 2 && match.Groups[0].Success && match.Groups[1].Success)
+                                {
+                                    seriesHash.Add(match.Groups[1].Value);
+                                }
+                            }
+
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Series: {0}", seriesHash.ToStringItems());
                         }
                     }
                 }
