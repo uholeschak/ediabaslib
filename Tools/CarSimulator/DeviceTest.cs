@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -900,8 +901,9 @@ namespace CarSimulator
             {
                 _dataStream.Write(telBuffer, 0, sendLength);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Debug.WriteLine("SendBmwfast Exception: {0}", ex.Message);
                 return false;
             }
             return true;
@@ -1017,8 +1019,9 @@ namespace CarSimulator
                 }
                 return recLength;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Debug.WriteLine("ReceiveBmwFast Exception: {0}", ex.Message);
                 return 0;
             }
         }
