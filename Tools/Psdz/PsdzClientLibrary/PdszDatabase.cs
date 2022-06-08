@@ -4011,6 +4011,12 @@ namespace PsdzClient
                 return null;
             }
 
+            if (vecInfo == null)
+            {
+                log.InfoFormat("LoadBordnetsData Count no filter: {0}", boardnetsList.Count);
+                return boardnetsList;
+            }
+
             List<BordnetsData> boardnetsList2 = new List<BordnetsData>();
             foreach (BordnetsData bordnetsData in boardnetsList)
             {
