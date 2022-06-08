@@ -1001,7 +1001,6 @@ namespace PsdzClient
             {
                 Id = id;
                 Rule = rule;
-                RuleExpression = null;
                 Reset();
             }
 
@@ -1015,6 +1014,7 @@ namespace PsdzClient
 
             public void Reset()
             {
+                RuleExpression = null;
                 RuleResult = null;
             }
 
@@ -1055,6 +1055,27 @@ namespace PsdzClient
                 }
                 log.InfoFormat("EvaluateRule Result: {0}", RuleResult.Value);
                 return RuleResult.Value;
+            }
+
+            public string GetRuleString(Vehicle vehicle)
+            {
+                if (vehicle == null)
+                {
+                    log.ErrorFormat("GetRuleString No vehicle");
+                    return null;
+                }
+
+                try
+                {
+                    RuleExpression ruleExpression = RuleExpression.Deserialize(new MemoryStream(Rule), vehicle);
+                    return ruleExpression.ToString();
+                }
+                catch (Exception e)
+                {
+                    log.ErrorFormat("GetRuleString Exception: '{0}'", e.Message);
+                }
+
+                return null;
             }
 
             public string ToString(string prefix = "")
@@ -2229,6 +2250,33 @@ namespace PsdzClient
             {
                 log.ErrorFormat("ReadEcuCharacteristicsXml Exception: '{0}'", e.Message);
                 return null;
+            }
+        }
+
+        public bool ExtractEcuCharacteristicsVehicles(ClientContext clientContext)
+        {
+            try
+            {
+                Vehicle vehicle = new Vehicle(clientContext);
+                List<BordnetsData> boardnetsList = GetAllBordnetRules();
+                foreach (BordnetsData bordnetsData in boardnetsList)
+                {
+                    if (bordnetsData.XepRule != null)
+                    {
+                        string ruleString = bordnetsData.XepRule.GetRuleString(vehicle);
+                        if (!string.IsNullOrEmpty(ruleString))
+                        {
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Rule: {0}", ruleString);
+                        }
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("ExtractEcuCharacteristicsVehicles Exception: '{0}'", e.Message);
+                return false;
             }
         }
 
