@@ -49,12 +49,12 @@ namespace PsdzClient.Core
             ecuCharacteristics = new ConcurrentDictionary<object, BaseEcuCharacteristics>();
         }
 
-		private static BaseEcuCharacteristics GetEcuCharacteristics(string storedXmlFileName, Vehicle vecInfo)
+        public static BaseEcuCharacteristics GetEcuCharacteristics(string storedXmlFileName, Vehicle vecInfo)
         {
             return GetEcuCharacteristics<GenericEcuCharacteristics>(storedXmlFileName, vecInfo);
         }
 
-        private static BaseEcuCharacteristics GetEcuCharacteristics<T>(string storedXmlFileName, Vehicle vecInfo) where T : BaseEcuCharacteristics
+        public static BaseEcuCharacteristics GetEcuCharacteristics<T>(string storedXmlFileName, Vehicle vecInfo) where T : BaseEcuCharacteristics
 		{
             PdszDatabase database = ClientContext.GetDatabase(vecInfo);
             if (database == null)
@@ -88,7 +88,7 @@ namespace PsdzClient.Core
 			return null;
         }
 
-        private static BaseEcuCharacteristics CreateCharacteristicsInstance<T>(Vehicle vehicle, string xml, string name) where T : BaseEcuCharacteristics
+        public static BaseEcuCharacteristics CreateCharacteristicsInstance<T>(Vehicle vehicle, string xml, string name) where T : BaseEcuCharacteristics
         {
             try
             {

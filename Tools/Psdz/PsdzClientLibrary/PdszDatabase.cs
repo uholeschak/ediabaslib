@@ -2263,7 +2263,13 @@ namespace PsdzClient
                 List<BordnetsData> boardnetsList = GetAllBordnetRules();
                 foreach (BordnetsData bordnetsData in boardnetsList)
                 {
-                    if (bordnetsData.XepRule != null)
+                    BaseEcuCharacteristics baseEcuCharacteristics = null;
+                    if (bordnetsData.DocData != null)
+                    {
+                        baseEcuCharacteristics = VehicleLogistics.CreateCharacteristicsInstance<GenericEcuCharacteristics>(vehicle, bordnetsData.DocData, bordnetsData.InfoObjIdent);
+                    }
+
+                    if (baseEcuCharacteristics != null && bordnetsData.XepRule != null)
                     {
                         string ruleString = bordnetsData.XepRule.GetRuleString(vehicle);
                         if (!string.IsNullOrEmpty(ruleString))
@@ -2279,7 +2285,7 @@ namespace PsdzClient
                                 }
                             }
 
-                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Series: {0}", seriesHash.ToStringItems());
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Sgbd: {0}, Series: {1}", baseEcuCharacteristics.brSgbd, seriesHash.ToStringItems());
                         }
                     }
                 }
