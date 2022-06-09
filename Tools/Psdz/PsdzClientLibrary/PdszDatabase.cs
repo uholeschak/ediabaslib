@@ -2340,7 +2340,7 @@ namespace PsdzClient
                 Dictionary<string, VehicleSeriesInfo> sgbdDict = new Dictionary<string, VehicleSeriesInfo>();
                 foreach (EcuCharacteristicsInfo ecuCharacteristicsInfo in vehicleSeriesList)
                 {
-                    string brSgbd = ecuCharacteristicsInfo.EcuCharacteristics.brSgbd.Trim();
+                    string brSgbd = ecuCharacteristicsInfo.EcuCharacteristics.brSgbd.Trim().ToUpperInvariant();
                     foreach (string series in ecuCharacteristicsInfo.SeriesList)
                     {
                         string key = series.ToUpperInvariant();
@@ -2353,7 +2353,7 @@ namespace PsdzClient
                         }
                         else
                         {
-                            sgbdDict.Add(key, new VehicleSeriesInfo(series, brSgbd, ecuCharacteristicsInfo.Brand));
+                            sgbdDict.Add(key, new VehicleSeriesInfo(key, brSgbd, ecuCharacteristicsInfo.Brand));
                         }
                     }
                 }
