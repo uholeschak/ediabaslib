@@ -2258,8 +2258,8 @@ namespace PsdzClient
         {
             try
             {
-                Regex seriesRegex = new Regex(@"\bE-Bezeichnung=([a-z0-9]+)\b", RegexOptions.Singleline | RegexOptions.IgnoreCase);
-                Regex brandRegex = new Regex(@"\bMarke=([a-z0-9\- ]+)\b", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                Regex seriesRegex = new Regex(@"\b(Baureihenverbund|E-Bezeichnung)=([a-z0-9]+)\b", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                Regex brandRegex = new Regex(@"\b(Marke)=([a-z0-9\- ]+)\b", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 Vehicle vehicle = new Vehicle(clientContext);
                 List<Tuple<BaseEcuCharacteristics, HashSet<string>>> characteristicsList = new List<Tuple<BaseEcuCharacteristics, HashSet<string>>>();
                 List<BordnetsData> boardnetsList = GetAllBordnetRules();
@@ -2281,9 +2281,9 @@ namespace PsdzClient
                             MatchCollection seriesMatches = seriesRegex.Matches(ruleString);
                             foreach (Match match in seriesMatches)
                             {
-                                if (match.Groups.Count == 2 && match.Groups[0].Success && match.Groups[1].Success)
+                                if (match.Groups.Count == 3 && match.Groups[2].Success)
                                 {
-                                    seriesHash.Add(match.Groups[1].Value);
+                                    seriesHash.Add(match.Groups[2].Value);
                                 }
                             }
 
@@ -2291,9 +2291,9 @@ namespace PsdzClient
                             MatchCollection brandMatches = brandRegex.Matches(ruleString);
                             foreach (Match match in brandMatches)
                             {
-                                if (match.Groups.Count == 2 && match.Groups[0].Success && match.Groups[1].Success)
+                                if (match.Groups.Count == 3 && match.Groups[2].Success)
                                 {
-                                    brand = match.Groups[1].Value;
+                                    brand = match.Groups[2].Value;
                                     break;
                                 }
                             }
