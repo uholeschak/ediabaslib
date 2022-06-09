@@ -1194,16 +1194,20 @@ namespace PsdzClient
 
         public class EcuCharacteristicsInfo
         {
-            public EcuCharacteristicsInfo(BaseEcuCharacteristics ecuCharacteristics, List<string> seriesList, string brand)
+            public EcuCharacteristicsInfo(BaseEcuCharacteristics ecuCharacteristics, List<string> seriesList, string brand, string date, string dateCompare)
             {
                 EcuCharacteristics = ecuCharacteristics;
                 SeriesList = seriesList;
                 Brand = brand;
+                Date = date;
+                DateCompare = dateCompare;
             }
 
             public BaseEcuCharacteristics EcuCharacteristics { get; set; }
             public List<string> SeriesList { get; set; }
             public string Brand { get; set; }
+            public string Date { get; set; }
+            public string DateCompare { get; set; }
         }
 
         [XmlType("VehicleSeriesInfo")]
@@ -1213,16 +1217,20 @@ namespace PsdzClient
             {
             }
 
-            public VehicleSeriesInfo(string series, string brSgbd, string brand)
+            public VehicleSeriesInfo(string series, string brSgbd, string brand, string date, string dateCompare)
             {
                 Series = series;
                 BrSgbd = brSgbd;
                 Brand = brand;
+                Date = date;
+                DateCompare = dateCompare;
             }
 
             [XmlElement("Series"), DefaultValue(null)] public string Series { get; set; }
             [XmlElement("BrSgbd"), DefaultValue(null)] public string BrSgbd { get; set; }
             [XmlElement("Brand"), DefaultValue(null)] public string Brand { get; set; }
+            [XmlElement("Date"), DefaultValue(null)] public string Date { get; set; }
+            [XmlElement("DateCompare"), DefaultValue(null)] public string DateCompare { get; set; }
         }
 
         private const string TestModulesXmlFile = "TestModules.xml";
@@ -2346,37 +2354,53 @@ namespace PsdzClient
                             }
 
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Sgbd: {0}, Brand: {1}, Series: {2}, Date: {3} {4}", baseEcuCharacteristics.brSgbd, brand, seriesHash.ToStringItems(), dateCompare, date);
-                            vehicleSeriesList.Add(new EcuCharacteristicsInfo(baseEcuCharacteristics, seriesHash.ToList(), brand));
+                            vehicleSeriesList.Add(new EcuCharacteristicsInfo(baseEcuCharacteristics, seriesHash.ToList(), brand, date, dateCompare));
                         }
                     }
                 }
 
-                Dictionary<string, VehicleSeriesInfo> sgbdDict = new Dictionary<string, VehicleSeriesInfo>();
+                Dictionary<string, List<VehicleSeriesInfo>> sgbdDict = new Dictionary<string, List<VehicleSeriesInfo>>();
                 foreach (EcuCharacteristicsInfo ecuCharacteristicsInfo in vehicleSeriesList)
                 {
                     string brSgbd = ecuCharacteristicsInfo.EcuCharacteristics.brSgbd.Trim().ToUpperInvariant();
                     foreach (string series in ecuCharacteristicsInfo.SeriesList)
                     {
                         string key = series.ToUpperInvariant();
-                        if (sgbdDict.TryGetValue(key, out VehicleSeriesInfo vehicleSeriesValue))
+                        VehicleSeriesInfo vehicleSeriesInfoAdd = new VehicleSeriesInfo(key, brSgbd, ecuCharacteristicsInfo.Brand, ecuCharacteristicsInfo.Date, ecuCharacteristicsInfo.DateCompare);
+
+                        if (sgbdDict.TryGetValue(key, out List<VehicleSeriesInfo> vehicleSeriesInfoList))
                         {
-                            if (string.Compare(vehicleSeriesValue.BrSgbd, brSgbd, StringComparison.OrdinalIgnoreCase) != 0)
+                            bool sgbdFound = false;
+                            foreach (VehicleSeriesInfo vehicleSeriesInfo in vehicleSeriesInfoList)
                             {
-                                log.ErrorFormat("ExtractEcuCharacteristicsVehicles Conflict for Series: {0}, Sgbd: {1} <> {2}", series, brSgbd, vehicleSeriesValue.BrSgbd);
+                                if (string.Compare(vehicleSeriesInfo.BrSgbd, brSgbd, StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    sgbdFound = true;
+                                }
+                            }
+
+                            if (!sgbdFound)
+                            {
+                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Multiple entries for Series: {0}", series);
+                                vehicleSeriesInfoList.Add(vehicleSeriesInfoAdd);
                             }
                         }
                         else
                         {
-                            sgbdDict.Add(key, new VehicleSeriesInfo(key, brSgbd, ecuCharacteristicsInfo.Brand));
+                            sgbdDict.Add(key, new List<VehicleSeriesInfo> { vehicleSeriesInfoAdd });
                         }
                     }
                 }
 
                 StringBuilder sb = new StringBuilder();
-                foreach (KeyValuePair<string, VehicleSeriesInfo> keyValue in sgbdDict.OrderBy(x => x.Key))
+                foreach (KeyValuePair<string, List<VehicleSeriesInfo>> keyValue in sgbdDict.OrderBy(x => x.Key))
                 {
-                    VehicleSeriesInfo vehicleSeriesInfo = keyValue.Value;
-                    sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "[{0}, {1}, '{2}']", vehicleSeriesInfo.BrSgbd, vehicleSeriesInfo.Series, vehicleSeriesInfo.Brand));
+                    List<VehicleSeriesInfo> vehicleSeriesInfoList = keyValue.Value;
+                    foreach (VehicleSeriesInfo vehicleSeriesInfo in vehicleSeriesInfoList)
+                    {
+                        sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "[{0}, {1}, '{2}' {3} {4}]",
+                            vehicleSeriesInfo.BrSgbd, vehicleSeriesInfo.Series, vehicleSeriesInfo.Brand, vehicleSeriesInfo.DateCompare, vehicleSeriesInfo.Date));
+                    }
                 }
 
                 log.InfoFormat("ExtractEcuCharacteristicsVehicles Count: {0}", sgbdDict.Count);
