@@ -2260,6 +2260,7 @@ namespace PsdzClient
             {
                 Regex seriesRegex = new Regex(@"\bE-Bezeichnung=([a-z0-9]+)\b", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 Vehicle vehicle = new Vehicle(clientContext);
+                List<Tuple<BaseEcuCharacteristics, HashSet<string>>> characteristicsList = new List<Tuple<BaseEcuCharacteristics, HashSet<string>>>();
                 List<BordnetsData> boardnetsList = GetAllBordnetRules();
                 foreach (BordnetsData bordnetsData in boardnetsList)
                 {
@@ -2286,6 +2287,7 @@ namespace PsdzClient
                             }
 
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Sgbd: {0}, Series: {1}", baseEcuCharacteristics.brSgbd, seriesHash.ToStringItems());
+                            characteristicsList.Add(new Tuple<BaseEcuCharacteristics, HashSet<string>>(baseEcuCharacteristics, seriesHash));
                         }
                     }
                 }
