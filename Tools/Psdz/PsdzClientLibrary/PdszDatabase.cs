@@ -1192,6 +1192,25 @@ namespace PsdzClient
             [XmlElement("EcuXmlDict"), DefaultValue(null)] public SerializableDictionary<string, string> EcuXmlDict { get; set; }
         }
 
+        [XmlType("VehicleSeriesInfo")]
+        public class VehicleSeriesInfo
+        {
+            public VehicleSeriesInfo()
+            {
+            }
+
+            public VehicleSeriesInfo(List<string> seriesList, string brSgbd, string brand)
+            {
+                SeriesList = seriesList;
+                BrSgbd = brSgbd;
+                Brand = brand;
+            }
+
+            [XmlElement("SeriesList"), DefaultValue(null)] public List<string> SeriesList { get; set; }
+            [XmlElement("BrSgbd"), DefaultValue(null)] public string BrSgbd { get; set; }
+            [XmlElement("Brand"), DefaultValue(null)] public string Brand { get; set; }
+        }
+
         private const string TestModulesXmlFile = "TestModules.xml";
         private const string TestModulesZipFile = "TestModules.zip";
         private const string EcuCharacteristicsXmFile = "EcuCharacteristics.xml";
@@ -2261,7 +2280,7 @@ namespace PsdzClient
                 Regex seriesRegex = new Regex(@"\b(Baureihenverbund|E-Bezeichnung)=([a-z0-9]+)\b", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 Regex brandRegex = new Regex(@"\b(Marke)=([a-z0-9\- ]+)\b", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 Vehicle vehicle = new Vehicle(clientContext);
-                List<Tuple<BaseEcuCharacteristics, HashSet<string>>> characteristicsList = new List<Tuple<BaseEcuCharacteristics, HashSet<string>>>();
+                List<VehicleSeriesInfo> vehicleSeriesList = new List<VehicleSeriesInfo>();
                 List<BordnetsData> boardnetsList = GetAllBordnetRules();
                 foreach (BordnetsData bordnetsData in boardnetsList)
                 {
@@ -2283,7 +2302,7 @@ namespace PsdzClient
                             {
                                 if (match.Groups.Count == 3 && match.Groups[2].Success)
                                 {
-                                    seriesHash.Add(match.Groups[2].Value);
+                                    seriesHash.Add(match.Groups[2].Value.Trim());
                                 }
                             }
 
@@ -2293,42 +2312,44 @@ namespace PsdzClient
                             {
                                 if (match.Groups.Count == 3 && match.Groups[2].Success)
                                 {
-                                    brand = match.Groups[2].Value;
+                                    brand = match.Groups[2].Value.Trim();
                                     break;
                                 }
                             }
 
-                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Sgbd: {0}, Brand: {1}, Series: {2}", baseEcuCharacteristics.brSgbd, brand, seriesHash.ToStringItems());
-                            characteristicsList.Add(new Tuple<BaseEcuCharacteristics, HashSet<string>>(baseEcuCharacteristics, seriesHash));
+                            string brSgbd = baseEcuCharacteristics.brSgbd;
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Sgbd: {0}, Brand: {1}, Series: {2}", brSgbd, brand, seriesHash.ToStringItems());
+                            vehicleSeriesList.Add(new VehicleSeriesInfo(seriesHash.ToList(), brSgbd, brand));
                         }
                     }
                 }
 
-                Dictionary<string, string> sgbdDict = new Dictionary<string, string>();
-                foreach (Tuple<BaseEcuCharacteristics, HashSet<string>> characteristicsTuple in characteristicsList)
+                Dictionary<string, VehicleSeriesInfo> sgbdDict = new Dictionary<string, VehicleSeriesInfo>();
+                foreach (VehicleSeriesInfo vehicleSeriesInfo in vehicleSeriesList)
                 {
-                    string sgbd = characteristicsTuple.Item1.brSgbd.ToUpperInvariant().Trim();
-                    foreach (string series in characteristicsTuple.Item2)
+                    string brSgbd = vehicleSeriesInfo.BrSgbd.ToUpperInvariant();
+                    foreach (string series in vehicleSeriesInfo.SeriesList)
                     {
-                        string key = series.ToUpperInvariant().Trim();
-                        if (sgbdDict.TryGetValue(key, out string sgbdValue))
+                        string key = series.ToUpperInvariant();
+                        if (sgbdDict.TryGetValue(key, out VehicleSeriesInfo vehicleSeriesValue))
                         {
-                            if (string.Compare(sgbdValue, sgbd, StringComparison.OrdinalIgnoreCase) != 0)
+                            if (string.Compare(vehicleSeriesValue.BrSgbd, brSgbd, StringComparison.OrdinalIgnoreCase) != 0)
                             {
-                                log.ErrorFormat("ExtractEcuCharacteristicsVehicles Conflict for Series: {0}, Sgbd: {1} <> {2}", series, sgbd, sgbdValue);
+                                log.ErrorFormat("ExtractEcuCharacteristicsVehicles Conflict for Series: {0}, Sgbd: {1} <> {2}", series, brSgbd, vehicleSeriesValue.BrSgbd);
                             }
                         }
                         else
                         {
-                            sgbdDict.Add(key, sgbd);
+                            sgbdDict.Add(key, new VehicleSeriesInfo(new List<string> {series}, brSgbd, vehicleSeriesInfo.Brand));
                         }
                     }
                 }
 
                 StringBuilder sb = new StringBuilder();
-                foreach (KeyValuePair<string, string> keyValue in sgbdDict.OrderBy(x => x.Key))
+                foreach (KeyValuePair<string, VehicleSeriesInfo> keyValue in sgbdDict.OrderBy(x => x.Key))
                 {
-                    sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "[{0}, {1}]", keyValue.Key, keyValue.Value));
+                    VehicleSeriesInfo vehicleSeriesInfo = keyValue.Value;
+                    sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "[{0}, {1} ({2})]", vehicleSeriesInfo.BrSgbd, vehicleSeriesInfo.SeriesList.ToStringItems(), vehicleSeriesInfo.Brand));
                 }
 
                 log.InfoFormat("ExtractEcuCharacteristicsVehicles Count: {0}", sgbdDict.Count);
