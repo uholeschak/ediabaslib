@@ -2259,6 +2259,7 @@ namespace PsdzClient
             try
             {
                 Regex seriesRegex = new Regex(@"\bE-Bezeichnung=([a-z0-9]+)\b", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                Regex brandRegex = new Regex(@"\bMarke=([a-z0-9\- ]+)\b", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 Vehicle vehicle = new Vehicle(clientContext);
                 List<Tuple<BaseEcuCharacteristics, HashSet<string>>> characteristicsList = new List<Tuple<BaseEcuCharacteristics, HashSet<string>>>();
                 List<BordnetsData> boardnetsList = GetAllBordnetRules();
@@ -2277,8 +2278,8 @@ namespace PsdzClient
                         {
                             HashSet<string> seriesHash = new HashSet<string>();
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Rule: {0}", ruleString);
-                            MatchCollection matches = seriesRegex.Matches(ruleString);
-                            foreach (Match match in matches)
+                            MatchCollection seriesMatches = seriesRegex.Matches(ruleString);
+                            foreach (Match match in seriesMatches)
                             {
                                 if (match.Groups.Count == 2 && match.Groups[0].Success && match.Groups[1].Success)
                                 {
@@ -2286,7 +2287,18 @@ namespace PsdzClient
                                 }
                             }
 
-                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Sgbd: {0}, Series: {1}", baseEcuCharacteristics.brSgbd, seriesHash.ToStringItems());
+                            string brand = string.Empty;
+                            MatchCollection brandMatches = brandRegex.Matches(ruleString);
+                            foreach (Match match in brandMatches)
+                            {
+                                if (match.Groups.Count == 2 && match.Groups[0].Success && match.Groups[1].Success)
+                                {
+                                    brand = match.Groups[1].Value;
+                                    break;
+                                }
+                            }
+
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Sgbd: {0}, Brand: {1}, Series: {2}", baseEcuCharacteristics.brSgbd, brand, seriesHash.ToStringItems());
                             characteristicsList.Add(new Tuple<BaseEcuCharacteristics, HashSet<string>>(baseEcuCharacteristics, seriesHash));
                         }
                     }
