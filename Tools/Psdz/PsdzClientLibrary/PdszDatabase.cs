@@ -2313,11 +2313,14 @@ namespace PsdzClient
                     }
                 }
 
-                foreach (KeyValuePair<string, string> keyValue in sgbdDict)
+                StringBuilder sb = new StringBuilder();
+                foreach (KeyValuePair<string, string> keyValue in sgbdDict.OrderBy(x => x.Key))
                 {
-                    log.InfoFormat("ExtractEcuCharacteristicsVehicles Series: {0}, Sgbd: {1}", keyValue.Key, keyValue.Value);
+                    sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "[{0}, {1}]", keyValue.Key, keyValue.Value));
                 }
 
+                log.InfoFormat("ExtractEcuCharacteristicsVehicles Count: {0}", sgbdDict.Count);
+                log.Info(Environment.NewLine + sb);
                 return true;
             }
             catch (Exception e)
