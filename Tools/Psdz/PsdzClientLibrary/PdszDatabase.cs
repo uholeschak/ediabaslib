@@ -2291,8 +2291,9 @@ namespace PsdzClient
         {
             try
             {
-                Regex seriesRegex = new Regex(@"\b(Baureihenverbund|E-Bezeichnung)=([a-z0-9]+)\b", RegexOptions.Singleline | RegexOptions.IgnoreCase);
-                Regex brandRegex = new Regex(@"\b(Marke)=([a-z0-9\- ]+)\b", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                Regex seriesRegex = new Regex(@"\b(Baureihenverbund|E-Bezeichnung)\s*=\s*([a-z0-9]+)\b", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                Regex brandRegex = new Regex(@"\b(Marke)\s*=\s*([a-z0-9\- ]+)\b", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                Regex dateRegex = new Regex(@"\b(Baustand)\s*([<>=]+)\s*([0-9]+)\b", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 Vehicle vehicle = new Vehicle(clientContext);
                 List<EcuCharacteristicsInfo> vehicleSeriesList = new List<EcuCharacteristicsInfo>();
                 List<BordnetsData> boardnetsList = GetAllBordnetRules();
@@ -2331,7 +2332,20 @@ namespace PsdzClient
                                 }
                             }
 
-                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Sgbd: {0}, Brand: {1}, Series: {2}", baseEcuCharacteristics.brSgbd, brand, seriesHash.ToStringItems());
+                            string date = string.Empty;
+                            string dateCompare = string.Empty;
+                            MatchCollection dateMatches = dateRegex.Matches(ruleString);
+                            foreach (Match match in dateMatches)
+                            {
+                                if (match.Groups.Count == 4 && match.Groups[2].Success && match.Groups[3].Success)
+                                {
+                                    date = match.Groups[3].Value.Trim();
+                                    dateCompare = match.Groups[2].Value.Trim();
+                                    break;
+                                }
+                            }
+
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Sgbd: {0}, Brand: {1}, Series: {2}, Date: {3} {4}", baseEcuCharacteristics.brSgbd, brand, seriesHash.ToStringItems(), dateCompare, date);
                             vehicleSeriesList.Add(new EcuCharacteristicsInfo(baseEcuCharacteristics, seriesHash.ToList(), brand));
                         }
                     }
