@@ -1192,6 +1192,20 @@ namespace PsdzClient
             [XmlElement("EcuXmlDict"), DefaultValue(null)] public SerializableDictionary<string, string> EcuXmlDict { get; set; }
         }
 
+        public class EcuCharacteristicsInfo
+        {
+            public EcuCharacteristicsInfo(BaseEcuCharacteristics ecuCharacteristics, List<string> seriesList, string brand)
+            {
+                EcuCharacteristics = ecuCharacteristics;
+                SeriesList = seriesList;
+                Brand = brand;
+            }
+
+            public BaseEcuCharacteristics EcuCharacteristics { get; set; }
+            public List<string> SeriesList { get; set; }
+            public string Brand { get; set; }
+        }
+
         [XmlType("VehicleSeriesInfo")]
         public class VehicleSeriesInfo
         {
@@ -1199,14 +1213,14 @@ namespace PsdzClient
             {
             }
 
-            public VehicleSeriesInfo(List<string> seriesList, string brSgbd, string brand)
+            public VehicleSeriesInfo(string series, string brSgbd, string brand)
             {
-                SeriesList = seriesList;
+                Series = series;
                 BrSgbd = brSgbd;
                 Brand = brand;
             }
 
-            [XmlElement("SeriesList"), DefaultValue(null)] public List<string> SeriesList { get; set; }
+            [XmlElement("Series"), DefaultValue(null)] public string Series { get; set; }
             [XmlElement("BrSgbd"), DefaultValue(null)] public string BrSgbd { get; set; }
             [XmlElement("Brand"), DefaultValue(null)] public string Brand { get; set; }
         }
@@ -2280,7 +2294,7 @@ namespace PsdzClient
                 Regex seriesRegex = new Regex(@"\b(Baureihenverbund|E-Bezeichnung)=([a-z0-9]+)\b", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 Regex brandRegex = new Regex(@"\b(Marke)=([a-z0-9\- ]+)\b", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 Vehicle vehicle = new Vehicle(clientContext);
-                List<VehicleSeriesInfo> vehicleSeriesList = new List<VehicleSeriesInfo>();
+                List<EcuCharacteristicsInfo> vehicleSeriesList = new List<EcuCharacteristicsInfo>();
                 List<BordnetsData> boardnetsList = GetAllBordnetRules();
                 foreach (BordnetsData bordnetsData in boardnetsList)
                 {
@@ -2317,18 +2331,17 @@ namespace PsdzClient
                                 }
                             }
 
-                            string brSgbd = baseEcuCharacteristics.brSgbd;
-                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Sgbd: {0}, Brand: {1}, Series: {2}", brSgbd, brand, seriesHash.ToStringItems());
-                            vehicleSeriesList.Add(new VehicleSeriesInfo(seriesHash.ToList(), brSgbd, brand));
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Sgbd: {0}, Brand: {1}, Series: {2}", baseEcuCharacteristics.brSgbd, brand, seriesHash.ToStringItems());
+                            vehicleSeriesList.Add(new EcuCharacteristicsInfo(baseEcuCharacteristics, seriesHash.ToList(), brand));
                         }
                     }
                 }
 
                 Dictionary<string, VehicleSeriesInfo> sgbdDict = new Dictionary<string, VehicleSeriesInfo>();
-                foreach (VehicleSeriesInfo vehicleSeriesInfo in vehicleSeriesList)
+                foreach (EcuCharacteristicsInfo ecuCharacteristicsInfo in vehicleSeriesList)
                 {
-                    string brSgbd = vehicleSeriesInfo.BrSgbd.ToUpperInvariant();
-                    foreach (string series in vehicleSeriesInfo.SeriesList)
+                    string brSgbd = ecuCharacteristicsInfo.EcuCharacteristics.brSgbd.Trim();
+                    foreach (string series in ecuCharacteristicsInfo.SeriesList)
                     {
                         string key = series.ToUpperInvariant();
                         if (sgbdDict.TryGetValue(key, out VehicleSeriesInfo vehicleSeriesValue))
@@ -2340,7 +2353,7 @@ namespace PsdzClient
                         }
                         else
                         {
-                            sgbdDict.Add(key, new VehicleSeriesInfo(new List<string> {series}, brSgbd, vehicleSeriesInfo.Brand));
+                            sgbdDict.Add(key, new VehicleSeriesInfo(series, brSgbd, ecuCharacteristicsInfo.Brand));
                         }
                     }
                 }
@@ -2349,7 +2362,7 @@ namespace PsdzClient
                 foreach (KeyValuePair<string, VehicleSeriesInfo> keyValue in sgbdDict.OrderBy(x => x.Key))
                 {
                     VehicleSeriesInfo vehicleSeriesInfo = keyValue.Value;
-                    sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "[{0}, {1} ({2})]", vehicleSeriesInfo.BrSgbd, vehicleSeriesInfo.SeriesList.ToStringItems(), vehicleSeriesInfo.Brand));
+                    sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "[{0}, {1}, '{2}']", vehicleSeriesInfo.BrSgbd, vehicleSeriesInfo.Series, vehicleSeriesInfo.Brand));
                 }
 
                 log.InfoFormat("ExtractEcuCharacteristicsVehicles Count: {0}", sgbdDict.Count);
