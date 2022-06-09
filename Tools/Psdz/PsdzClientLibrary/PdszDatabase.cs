@@ -2292,6 +2292,32 @@ namespace PsdzClient
                     }
                 }
 
+                Dictionary<string, string> sgbdDict = new Dictionary<string, string>();
+                foreach (Tuple<BaseEcuCharacteristics, HashSet<string>> characteristicsTuple in characteristicsList)
+                {
+                    string sgbd = characteristicsTuple.Item1.brSgbd.ToUpperInvariant().Trim();
+                    foreach (string series in characteristicsTuple.Item2)
+                    {
+                        string key = series.ToUpperInvariant().Trim();
+                        if (sgbdDict.TryGetValue(key, out string sgbdValue))
+                        {
+                            if (string.Compare(sgbdValue, sgbd, StringComparison.OrdinalIgnoreCase) != 0)
+                            {
+                                log.ErrorFormat("ExtractEcuCharacteristicsVehicles Conflict for Series: {0}, Sgbd: {1} <> {2}", series, sgbd, sgbdValue);
+                            }
+                        }
+                        else
+                        {
+                            sgbdDict.Add(key, sgbd);
+                        }
+                    }
+                }
+
+                foreach (KeyValuePair<string, string> keyValue in sgbdDict)
+                {
+                    log.InfoFormat("ExtractEcuCharacteristicsVehicles Series: {0}, Sgbd: {1}", keyValue.Key, keyValue.Value);
+                }
+
                 return true;
             }
             catch (Exception e)
