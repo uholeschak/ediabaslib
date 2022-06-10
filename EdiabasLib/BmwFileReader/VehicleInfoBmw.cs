@@ -1043,6 +1043,8 @@ namespace BmwFileReader
 #endif
         private static bool EcuLogisticsCreated;
 
+        private static VehicleStructsBmw.VehicleSeriesInfoData _vehicleSeriesInfoData;
+
         public static void CreateEcuLogistics(string resourcePath)
         {
             if (EcuLogisticsCreated)
@@ -1190,6 +1192,11 @@ namespace BmwFileReader
         {
             try
             {
+                if (_vehicleSeriesInfoData != null)
+                {
+                    return _vehicleSeriesInfoData;
+                }
+
                 string resource = null;
                 string[] resourceNames = assembly.GetManifestResourceNames();
                 foreach (string resourceName in resourceNames)
@@ -1218,17 +1225,16 @@ namespace BmwFileReader
                     if (stream != null)
                     {
                         XmlSerializer serializer = new XmlSerializer(typeof(VehicleStructsBmw.VehicleSeriesInfoData));
-                        VehicleStructsBmw.VehicleSeriesInfoData vehicleSeriesInfoData = serializer.Deserialize(stream) as VehicleStructsBmw.VehicleSeriesInfoData;
-                        return vehicleSeriesInfoData;
+                        _vehicleSeriesInfoData = serializer.Deserialize(stream) as VehicleStructsBmw.VehicleSeriesInfoData;
                     }
                 }
+
+                return _vehicleSeriesInfoData;
             }
             catch (Exception)
             {
                 return null;
             }
-
-            return null;
         }
 
 #if Android
@@ -1574,6 +1580,43 @@ namespace BmwFileReader
                 }
             }
             return brName.Substring(0, 1) + brName.Substring(2, 2);
+        }
+
+        public static VehicleStructsBmw.VehicleSeriesInfo GetVehicleSeriesInfo(Assembly assembly, string series, DateTime? cDate, EdiabasNet ediabas)
+        {
+            string cDateStr = "No date";
+            if (cDate.HasValue)
+            {
+                cDateStr = cDate.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            }
+
+            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle series info from vehicle series: {0}, CDate: {1}", series ?? "No series", cDateStr);
+            if (series == null)
+            {
+                return null;
+            }
+
+            VehicleStructsBmw.VehicleSeriesInfoData vehicleSeriesInfoData = ReadVehicleSeriesInfo(assembly);
+            if (vehicleSeriesInfoData == null)
+            {
+                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "No vehicle series info");
+                return null;
+            }
+
+            string key = series.Trim().ToUpperInvariant();
+            if (!vehicleSeriesInfoData.VehicleSeriesDict.TryGetValue(key, out List<VehicleStructsBmw.VehicleSeriesInfo> vehicleSeriesInfoList))
+            {
+                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Vehicle series not found");
+                return null;
+            }
+
+            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle series info count: {0}", vehicleSeriesInfoList.Count);
+            if (vehicleSeriesInfoList.Count == 0)
+            {
+                return null;
+            }
+
+            return vehicleSeriesInfoList[0];
         }
 
         public static string GetGroupSgbdFromVehicleType(string vehicleType, string vin, DateTime? cDate, EdiabasNet ediabas, out BnType bnType)
