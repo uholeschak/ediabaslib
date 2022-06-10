@@ -1226,11 +1226,33 @@ namespace PsdzClient
                 DateCompare = dateCompare;
             }
 
+            public void ResetDate()
+            {
+                Date = string.Empty;
+                DateCompare = string.Empty;
+            }
+
             [XmlElement("Series"), DefaultValue(null)] public string Series { get; set; }
             [XmlElement("BrSgbd"), DefaultValue(null)] public string BrSgbd { get; set; }
             [XmlElement("Brand"), DefaultValue(null)] public string Brand { get; set; }
             [XmlElement("Date"), DefaultValue(null)] public string Date { get; set; }
             [XmlElement("DateCompare"), DefaultValue(null)] public string DateCompare { get; set; }
+        }
+
+        [XmlInclude(typeof(VehicleSeriesInfo))]
+        [XmlType("VehicleSeriesInfoDataXml")]
+        public class VehicleSeriesInfoData
+        {
+            public VehicleSeriesInfoData() : this(null)
+            {
+            }
+
+            public VehicleSeriesInfoData(SerializableDictionary<string, List<VehicleSeriesInfo>> vehicleSeriesDict)
+            {
+                VehicleSeriesDict = vehicleSeriesDict;
+            }
+
+            [XmlElement("VehicleSeriesDict"), DefaultValue(null)] public SerializableDictionary<string, List<VehicleSeriesInfo>> VehicleSeriesDict { get; set; }
         }
 
         private const string TestModulesXmlFile = "TestModules.xml";
@@ -2295,7 +2317,7 @@ namespace PsdzClient
             }
         }
 
-        public bool ExtractEcuCharacteristicsVehicles(ClientContext clientContext)
+        public VehicleSeriesInfoData ExtractEcuCharacteristicsVehicles(ClientContext clientContext)
         {
             try
             {
@@ -2359,7 +2381,7 @@ namespace PsdzClient
                     }
                 }
 
-                Dictionary<string, List<VehicleSeriesInfo>> sgbdDict = new Dictionary<string, List<VehicleSeriesInfo>>();
+                SerializableDictionary<string, List<VehicleSeriesInfo>> sgbdDict = new SerializableDictionary<string, List<VehicleSeriesInfo>>();
                 foreach (EcuCharacteristicsInfo ecuCharacteristicsInfo in vehicleSeriesList)
                 {
                     string brSgbd = ecuCharacteristicsInfo.EcuCharacteristics.brSgbd.Trim().ToUpperInvariant();
@@ -2392,8 +2414,18 @@ namespace PsdzClient
                     }
                 }
 
+                foreach (KeyValuePair<string, List<VehicleSeriesInfo>> keyValue in sgbdDict)
+                {
+                    List<VehicleSeriesInfo> vehicleSeriesInfoList = keyValue.Value;
+                    if (vehicleSeriesInfoList.Count == 1)
+                    {
+                        vehicleSeriesInfoList[0].ResetDate();
+                    }
+                }
+
+                VehicleSeriesInfoData vehicleSeriesInfoData = new VehicleSeriesInfoData(sgbdDict);
                 StringBuilder sb = new StringBuilder();
-                foreach (KeyValuePair<string, List<VehicleSeriesInfo>> keyValue in sgbdDict.OrderBy(x => x.Key))
+                foreach (KeyValuePair<string, List<VehicleSeriesInfo>> keyValue in vehicleSeriesInfoData.VehicleSeriesDict.OrderBy(x => x.Key))
                 {
                     List<VehicleSeriesInfo> vehicleSeriesInfoList = keyValue.Value;
                     foreach (VehicleSeriesInfo vehicleSeriesInfo in vehicleSeriesInfoList)
@@ -2403,14 +2435,14 @@ namespace PsdzClient
                     }
                 }
 
-                log.InfoFormat("ExtractEcuCharacteristicsVehicles Count: {0}", sgbdDict.Count);
+                log.InfoFormat("ExtractEcuCharacteristicsVehicles Count: {0}", vehicleSeriesInfoData.VehicleSeriesDict.Count);
                 log.Info(Environment.NewLine + sb);
-                return true;
+                return vehicleSeriesInfoData;
             }
             catch (Exception e)
             {
                 log.ErrorFormat("ExtractEcuCharacteristicsVehicles Exception: '{0}'", e.Message);
-                return false;
+                return null;
             }
         }
 
