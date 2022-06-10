@@ -287,6 +287,7 @@ namespace BmwDeepObd
         protected override void OnResume()
         {
             base.OnResume();
+            RequestBtPermissions();
             if (_activityCommon.MtcBtService)
             {
                 if (_deviceUpdateTimer == null)
@@ -306,7 +307,6 @@ namespace BmwDeepObd
             }
             else
             {
-                RequestBtPermissions();
                 UpdatePairedDevices();
             }
         }
