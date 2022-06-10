@@ -30,8 +30,8 @@ namespace BmwFileReader
 
             public void ResetDate()
             {
-                Date = string.Empty;
-                DateCompare = string.Empty;
+                Date = null;
+                DateCompare = null;
             }
 
             [XmlElement("Series"), DefaultValue(null)] public string Series { get; set; }
