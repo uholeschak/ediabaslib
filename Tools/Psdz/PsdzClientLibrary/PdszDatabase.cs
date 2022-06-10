@@ -1215,7 +1215,6 @@ namespace PsdzClient
         private const string TestModulesZipFile = "TestModules.zip";
         private const string EcuCharacteristicsXmFile = "EcuCharacteristics.xml";
         private const string EcuCharacteristicsZipFile = "EcuCharacteristics.zip";
-        private const string VehicleSeriesXmlFile = "VehicleSeries.xml";
         private static readonly ILog log = LogManager.GetLogger(typeof(PdszDatabase));
 
         // ToDo: Check on update
@@ -2231,7 +2230,7 @@ namespace PsdzClient
                     if (resourceParts.Length < 2)
                     {
                         log.ErrorFormat("ReadEcuCharacteristicsXml Invalid resource parts: {0}", resourceParts.Length);
-                        return null;
+                        continue;
                     }
 
                     string fileName = resourceParts[resourceParts.Length - 2];
@@ -2278,7 +2277,7 @@ namespace PsdzClient
         {
             try
             {
-                string vehicleSeriesFile = Path.Combine(_databasePath, VehicleSeriesXmlFile);
+                string vehicleSeriesFile = Path.Combine(_databasePath, VehicleStructsBmw.VehicleSeriesXmlFile);
                 if (File.Exists(vehicleSeriesFile))
                 {
                     return true;
