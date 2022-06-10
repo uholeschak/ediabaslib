@@ -6,6 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using System.Xml.Serialization;
 using EdiabasLib;
 #if Android
 using ICSharpCode.SharpZipLib.Zip;
@@ -1183,6 +1184,51 @@ namespace BmwFileReader
             {
                 return null;
             }
+        }
+
+        public static VehicleStructsBmw.VehicleSeriesInfoData ReadVehicleSeriesInfo(Assembly assembly)
+        {
+            try
+            {
+                string resource = null;
+                string[] resourceNames = assembly.GetManifestResourceNames();
+                foreach (string resourceName in resourceNames)
+                {
+                    string[] resourceParts = resourceName.Split('.');
+                    if (resourceParts.Length < 2)
+                    {
+                        continue;
+                    }
+
+                    string fileName = resourceParts[resourceParts.Length - 2] + "." + resourceParts[resourceParts.Length - 1];
+                    if (string.Compare(fileName, VehicleStructsBmw.VehicleSeriesXmlFile, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        resource = resourceName;
+                        break;
+                    }
+                }
+
+                if (string.IsNullOrEmpty(resource))
+                {
+                    return null;
+                }
+
+                using (Stream stream = assembly.GetManifestResourceStream(resource))
+                {
+                    if (stream != null)
+                    {
+                        XmlSerializer serializer = new XmlSerializer(typeof(VehicleStructsBmw.VehicleSeriesInfoData));
+                        VehicleStructsBmw.VehicleSeriesInfoData vehicleSeriesInfoData = serializer.Deserialize(stream) as VehicleStructsBmw.VehicleSeriesInfoData;
+                        return vehicleSeriesInfoData;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return null;
         }
 
 #if Android
