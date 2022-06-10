@@ -1215,6 +1215,7 @@ namespace PsdzClient
         private const string TestModulesZipFile = "TestModules.zip";
         private const string EcuCharacteristicsXmFile = "EcuCharacteristics.xml";
         private const string EcuCharacteristicsZipFile = "EcuCharacteristics.zip";
+        private const string VehicleSeriesXmlFile = "VehicleSeries.xml";
         private static readonly ILog log = LogManager.GetLogger(typeof(PdszDatabase));
 
         // ToDo: Check on update
@@ -2273,7 +2274,40 @@ namespace PsdzClient
             }
         }
 
-        public VehicleStructsBmw.VehicleSeriesInfoData ExtractEcuCharacteristicsVehicles(ClientContext clientContext)
+        public bool SaveVehicleSeriesInfo(ClientContext clientContext)
+        {
+            try
+            {
+                string vehicleSeriesFile = Path.Combine(_databasePath, VehicleSeriesXmlFile);
+                if (File.Exists(vehicleSeriesFile))
+                {
+                    return true;
+                }
+
+                VehicleStructsBmw.VehicleSeriesInfoData vehicleSeriesInfoData = ExtractVehicleSeriesInfo(clientContext);
+                if (vehicleSeriesInfoData == null)
+                {
+                    log.InfoFormat(CultureInfo.InvariantCulture, "SaveVehicleSeriesInfo ExtractVehicleSeriesInfo failed");
+                    return false;
+                }
+
+                log.InfoFormat(CultureInfo.InvariantCulture, "SaveVehicleSeriesInfo Saving: {0}", vehicleSeriesFile);
+                XmlSerializer serializer = new XmlSerializer(typeof(VehicleStructsBmw.VehicleSeriesInfoData));
+                using (FileStream fileStream = File.Create(vehicleSeriesFile))
+                {
+                    serializer.Serialize(fileStream, vehicleSeriesInfoData);
+                }
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "SaveVehicleSeriesInfo Exception: {0}", ex.Message);
+                return false;
+            }
+
+            return true;
+        }
+
+        public VehicleStructsBmw.VehicleSeriesInfoData ExtractVehicleSeriesInfo(ClientContext clientContext)
         {
             try
             {

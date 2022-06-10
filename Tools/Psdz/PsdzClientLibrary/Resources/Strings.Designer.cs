@@ -251,6 +251,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Generating vehicle info files failed. ähnelt.
+        /// </summary>
+        internal static string GenerateInfoFilesFailed {
+            get {
+                return ResourceManager.GetString("GenerateInfoFilesFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Service host started. ähnelt.
         /// </summary>
         internal static string HostStarted {

@@ -378,6 +378,17 @@ namespace PsdzClient.Programing
                         }
                     };
 
+                    if (ProgrammingService.PdszDatabase.IsExecutable())
+                    {
+                        if (!ProgrammingService.PdszDatabase.SaveVehicleSeriesInfo(ClientContext))
+                        {
+                            log.ErrorFormat("SaveVehicleSeriesInfo failed");
+                            sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
+                            UpdateStatus(sbResult.ToString());
+                            return false;
+                        }
+                    }
+
                     int failCount = -1;
                     bool result = ProgrammingService.PdszDatabase.GenerateTestModuleData((progress, failures) =>
                     {
