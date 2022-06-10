@@ -12,6 +12,8 @@ namespace BmwFileReader
 {
     public static class VehicleStructsBmw
     {
+        public const string VehicleSeriesXmlFile = "VehicleSeries.xml";
+
         [XmlType("VehicleSeriesInfo")]
         public class VehicleSeriesInfo
         {
