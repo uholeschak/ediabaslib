@@ -2352,8 +2352,8 @@ namespace PsdzClient
                                 }
                             }
 
-                            string date = string.Empty;
-                            string dateCompare = string.Empty;
+                            string date = null;
+                            string dateCompare = null;
                             MatchCollection dateMatches = dateRegex.Matches(ruleString);
                             foreach (Match match in dateMatches)
                             {
@@ -2365,7 +2365,8 @@ namespace PsdzClient
                                 }
                             }
 
-                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Sgbd: {0}, Brand: {1}, Series: {2}, Date: {3} {4}", baseEcuCharacteristics.brSgbd, brand, seriesHash.ToStringItems(), dateCompare, date);
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Sgbd: {0}, Brand: {1}, Series: {2}, Date: {3} {4}",
+                                baseEcuCharacteristics.brSgbd, brand, seriesHash.ToStringItems(), dateCompare ?? string.Empty, date ?? string.Empty);
                             vehicleSeriesList.Add(new EcuCharacteristicsInfo(baseEcuCharacteristics, seriesHash.ToList(), brand, date, dateCompare));
                         }
                     }
@@ -2421,7 +2422,7 @@ namespace PsdzClient
                     foreach (VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo in vehicleSeriesInfoList)
                     {
                         sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "[{0}, {1}, '{2}' {3} {4}]",
-                            vehicleSeriesInfo.BrSgbd, vehicleSeriesInfo.Series, vehicleSeriesInfo.Brand, vehicleSeriesInfo.DateCompare, vehicleSeriesInfo.Date));
+                            vehicleSeriesInfo.BrSgbd, vehicleSeriesInfo.Series, vehicleSeriesInfo.Brand, vehicleSeriesInfo.DateCompare ?? string.Empty, vehicleSeriesInfo.Date ?? string.Empty));
                     }
                 }
 
