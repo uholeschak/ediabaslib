@@ -286,13 +286,25 @@ namespace PsdzClient
                     ConstructMonth = cDate.Value.ToString("MM", CultureInfo.InvariantCulture);
                 }
 
-                //VehicleInfoBmw.ReadVehicleSeriesInfo(GetType().Assembly);
-                string groupSgbd = VehicleInfoBmw.GetGroupSgbdFromVehicleType(vehicleType, detectedVin, cDate, _ediabas,
-                    out VehicleInfoBmw.BnType bnType);
+                VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(GetType().Assembly, vehicleType, cDate, _ediabas);
+                string groupSgbd = VehicleInfoBmw.GetGroupSgbdFromVehicleType(vehicleType, detectedVin, cDate, _ediabas, out VehicleInfoBmw.BnType bnType);
                 if (string.IsNullOrEmpty(groupSgbd))
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "No group SGBD found");
                     return false;
+                }
+
+                if (vehicleSeriesInfo == null)
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "Vehicle series info not found");
+                    return false;
+                }
+                else
+                {
+                    if (string.Compare(vehicleSeriesInfo.BrSgbd, groupSgbd, StringComparison.OrdinalIgnoreCase) != 0)
+                    {
+                        log.ErrorFormat(CultureInfo.InvariantCulture, "Group SGBD different: {0} {1}", vehicleSeriesInfo.BrSgbd, groupSgbd);
+                    }
                 }
 
                 log.InfoFormat(CultureInfo.InvariantCulture, "Group SGBD: {0}", groupSgbd);
