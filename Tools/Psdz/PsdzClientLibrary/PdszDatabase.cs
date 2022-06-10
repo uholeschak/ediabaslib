@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
+using BmwFileReader;
 using HarmonyLib;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
@@ -1210,51 +1211,6 @@ namespace PsdzClient
             public string DateCompare { get; set; }
         }
 
-        [XmlType("VehicleSeriesInfo")]
-        public class VehicleSeriesInfo
-        {
-            public VehicleSeriesInfo()
-            {
-            }
-
-            public VehicleSeriesInfo(string series, string brSgbd, string brand, string date, string dateCompare)
-            {
-                Series = series;
-                BrSgbd = brSgbd;
-                Brand = brand;
-                Date = date;
-                DateCompare = dateCompare;
-            }
-
-            public void ResetDate()
-            {
-                Date = string.Empty;
-                DateCompare = string.Empty;
-            }
-
-            [XmlElement("Series"), DefaultValue(null)] public string Series { get; set; }
-            [XmlElement("BrSgbd"), DefaultValue(null)] public string BrSgbd { get; set; }
-            [XmlElement("Brand"), DefaultValue(null)] public string Brand { get; set; }
-            [XmlElement("Date"), DefaultValue(null)] public string Date { get; set; }
-            [XmlElement("DateCompare"), DefaultValue(null)] public string DateCompare { get; set; }
-        }
-
-        [XmlInclude(typeof(VehicleSeriesInfo))]
-        [XmlType("VehicleSeriesInfoDataXml")]
-        public class VehicleSeriesInfoData
-        {
-            public VehicleSeriesInfoData() : this(null)
-            {
-            }
-
-            public VehicleSeriesInfoData(SerializableDictionary<string, List<VehicleSeriesInfo>> vehicleSeriesDict)
-            {
-                VehicleSeriesDict = vehicleSeriesDict;
-            }
-
-            [XmlElement("VehicleSeriesDict"), DefaultValue(null)] public SerializableDictionary<string, List<VehicleSeriesInfo>> VehicleSeriesDict { get; set; }
-        }
-
         private const string TestModulesXmlFile = "TestModules.xml";
         private const string TestModulesZipFile = "TestModules.zip";
         private const string EcuCharacteristicsXmFile = "EcuCharacteristics.xml";
@@ -2317,7 +2273,7 @@ namespace PsdzClient
             }
         }
 
-        public VehicleSeriesInfoData ExtractEcuCharacteristicsVehicles(ClientContext clientContext)
+        public VehicleStructsBmw.VehicleSeriesInfoData ExtractEcuCharacteristicsVehicles(ClientContext clientContext)
         {
             try
             {
@@ -2381,19 +2337,19 @@ namespace PsdzClient
                     }
                 }
 
-                SerializableDictionary<string, List<VehicleSeriesInfo>> sgbdDict = new SerializableDictionary<string, List<VehicleSeriesInfo>>();
+                SerializableDictionary<string, List<VehicleStructsBmw.VehicleSeriesInfo>> sgbdDict = new SerializableDictionary<string, List<VehicleStructsBmw.VehicleSeriesInfo>>();
                 foreach (EcuCharacteristicsInfo ecuCharacteristicsInfo in vehicleSeriesList)
                 {
                     string brSgbd = ecuCharacteristicsInfo.EcuCharacteristics.brSgbd.Trim().ToUpperInvariant();
                     foreach (string series in ecuCharacteristicsInfo.SeriesList)
                     {
                         string key = series.ToUpperInvariant();
-                        VehicleSeriesInfo vehicleSeriesInfoAdd = new VehicleSeriesInfo(key, brSgbd, ecuCharacteristicsInfo.Brand, ecuCharacteristicsInfo.Date, ecuCharacteristicsInfo.DateCompare);
+                        VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoAdd = new VehicleStructsBmw.VehicleSeriesInfo(key, brSgbd, ecuCharacteristicsInfo.Brand, ecuCharacteristicsInfo.Date, ecuCharacteristicsInfo.DateCompare);
 
-                        if (sgbdDict.TryGetValue(key, out List<VehicleSeriesInfo> vehicleSeriesInfoList))
+                        if (sgbdDict.TryGetValue(key, out List<VehicleStructsBmw.VehicleSeriesInfo> vehicleSeriesInfoList))
                         {
                             bool sgbdFound = false;
-                            foreach (VehicleSeriesInfo vehicleSeriesInfo in vehicleSeriesInfoList)
+                            foreach (VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo in vehicleSeriesInfoList)
                             {
                                 if (string.Compare(vehicleSeriesInfo.BrSgbd, brSgbd, StringComparison.OrdinalIgnoreCase) == 0)
                                 {
@@ -2409,26 +2365,26 @@ namespace PsdzClient
                         }
                         else
                         {
-                            sgbdDict.Add(key, new List<VehicleSeriesInfo> { vehicleSeriesInfoAdd });
+                            sgbdDict.Add(key, new List<VehicleStructsBmw.VehicleSeriesInfo> { vehicleSeriesInfoAdd });
                         }
                     }
                 }
 
-                foreach (KeyValuePair<string, List<VehicleSeriesInfo>> keyValue in sgbdDict)
+                foreach (KeyValuePair<string, List<VehicleStructsBmw.VehicleSeriesInfo>> keyValue in sgbdDict)
                 {
-                    List<VehicleSeriesInfo> vehicleSeriesInfoList = keyValue.Value;
+                    List<VehicleStructsBmw.VehicleSeriesInfo> vehicleSeriesInfoList = keyValue.Value;
                     if (vehicleSeriesInfoList.Count == 1)
                     {
                         vehicleSeriesInfoList[0].ResetDate();
                     }
                 }
 
-                VehicleSeriesInfoData vehicleSeriesInfoData = new VehicleSeriesInfoData(sgbdDict);
+                VehicleStructsBmw.VehicleSeriesInfoData vehicleSeriesInfoData = new VehicleStructsBmw.VehicleSeriesInfoData(sgbdDict);
                 StringBuilder sb = new StringBuilder();
-                foreach (KeyValuePair<string, List<VehicleSeriesInfo>> keyValue in vehicleSeriesInfoData.VehicleSeriesDict.OrderBy(x => x.Key))
+                foreach (KeyValuePair<string, List<VehicleStructsBmw.VehicleSeriesInfo>> keyValue in vehicleSeriesInfoData.VehicleSeriesDict.OrderBy(x => x.Key))
                 {
-                    List<VehicleSeriesInfo> vehicleSeriesInfoList = keyValue.Value;
-                    foreach (VehicleSeriesInfo vehicleSeriesInfo in vehicleSeriesInfoList)
+                    List<VehicleStructsBmw.VehicleSeriesInfo> vehicleSeriesInfoList = keyValue.Value;
+                    foreach (VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo in vehicleSeriesInfoList)
                     {
                         sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "[{0}, {1}, '{2}' {3} {4}]",
                             vehicleSeriesInfo.BrSgbd, vehicleSeriesInfo.Series, vehicleSeriesInfo.Brand, vehicleSeriesInfo.DateCompare, vehicleSeriesInfo.Date));
