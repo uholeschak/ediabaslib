@@ -218,8 +218,7 @@ namespace PsdzClient
                                                 {
                                                     log.InfoFormat(CultureInfo.InvariantCulture, "Detected BR: {0}",
                                                         br);
-                                                    string vtype =
-                                                        VehicleInfoBmw.GetVehicleTypeFromBrName(br, _ediabas);
+                                                    string vtype = VehicleInfoBmw.GetVehicleTypeFromBrName(br, _ediabas);
                                                     if (!string.IsNullOrEmpty(vtype))
                                                     {
                                                         log.InfoFormat(CultureInfo.InvariantCulture,
@@ -239,10 +238,8 @@ namespace PsdzClient
                                                     if (DateTime.TryParseExact(cDateStr, "MMyy", null,
                                                             DateTimeStyles.None, out DateTime dateTime))
                                                     {
-                                                        log.InfoFormat(CultureInfo.InvariantCulture,
-                                                            "Detected construction date: {0}",
-                                                            dateTime.ToString("yyyy-MM-dd",
-                                                                CultureInfo.InvariantCulture));
+                                                        log.InfoFormat(CultureInfo.InvariantCulture, "Detected construction date: {0}",
+                                                            dateTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
                                                         cDate = dateTime;
                                                     }
                                                 }
@@ -264,8 +261,7 @@ namespace PsdzClient
                                         string vtype = VehicleInfoBmw.GetVehicleTypeFromBrName(br, _ediabas);
                                         if (!string.IsNullOrEmpty(vtype))
                                         {
-                                            log.InfoFormat(CultureInfo.InvariantCulture, "Detected vehicle type: {0}",
-                                                vtype);
+                                            log.InfoFormat(CultureInfo.InvariantCulture, "Detected vehicle type: {0}", vtype);
                                             modelSeries = br;
                                             vehicleType = vtype;
                                             break;
@@ -290,6 +286,7 @@ namespace PsdzClient
                     ConstructMonth = cDate.Value.ToString("MM", CultureInfo.InvariantCulture);
                 }
 
+                //VehicleInfoBmw.ReadVehicleSeriesInfo(GetType().Assembly);
                 string groupSgbd = VehicleInfoBmw.GetGroupSgbdFromVehicleType(vehicleType, detectedVin, cDate, _ediabas,
                     out VehicleInfoBmw.BnType bnType);
                 if (string.IsNullOrEmpty(groupSgbd))
