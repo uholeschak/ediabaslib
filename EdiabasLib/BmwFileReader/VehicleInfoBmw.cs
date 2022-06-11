@@ -1188,7 +1188,7 @@ namespace BmwFileReader
             }
         }
 
-        public static VehicleStructsBmw.VehicleSeriesInfoData ReadVehicleSeriesInfo(Assembly assembly)
+        public static VehicleStructsBmw.VehicleSeriesInfoData ReadVehicleSeriesInfo()
         {
             try
             {
@@ -1197,8 +1197,10 @@ namespace BmwFileReader
                     return _vehicleSeriesInfoData;
                 }
 
-                string resource = null;
+                Assembly assembly = Assembly.GetExecutingAssembly();
                 string[] resourceNames = assembly.GetManifestResourceNames();
+
+                string resource = null;
                 foreach (string resourceName in resourceNames)
                 {
                     string[] resourceParts = resourceName.Split('.');
@@ -1582,7 +1584,7 @@ namespace BmwFileReader
             return brName.Substring(0, 1) + brName.Substring(2, 2);
         }
 
-        public static VehicleStructsBmw.VehicleSeriesInfo GetVehicleSeriesInfo(Assembly assembly, string series, DateTime? cDate, EdiabasNet ediabas)
+        public static VehicleStructsBmw.VehicleSeriesInfo GetVehicleSeriesInfo(string series, DateTime? cDate, EdiabasNet ediabas)
         {
             string cDateStr = "No date";
             if (cDate.HasValue)
@@ -1596,7 +1598,7 @@ namespace BmwFileReader
                 return null;
             }
 
-            VehicleStructsBmw.VehicleSeriesInfoData vehicleSeriesInfoData = ReadVehicleSeriesInfo(assembly);
+            VehicleStructsBmw.VehicleSeriesInfoData vehicleSeriesInfoData = ReadVehicleSeriesInfo();
             if (vehicleSeriesInfoData == null)
             {
                 ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "No vehicle series info");
