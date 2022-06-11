@@ -286,7 +286,7 @@ namespace PsdzClient
                     ConstructMonth = cDate.Value.ToString("MM", CultureInfo.InvariantCulture);
                 }
 
-                VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(GetType().Assembly, vehicleType, cDate, _ediabas);
+                VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(vehicleType, cDate, _ediabas);
                 string groupSgbd = VehicleInfoBmw.GetGroupSgbdFromVehicleType(vehicleType, detectedVin, cDate, _ediabas, out VehicleInfoBmw.BnType bnType);
                 if (string.IsNullOrEmpty(groupSgbd))
                 {
