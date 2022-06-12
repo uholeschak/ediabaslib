@@ -475,7 +475,7 @@ namespace PsdzClient
                                         }
                                         else
                                         {
-                                            if (!_programmingJobs.ProgrammingService.PdszDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, _programmingJobs.PsdzContext.Vehicle, null))
+                                            if (!_programmingJobs.ProgrammingService.PdszDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, _programmingJobs.PsdzContext?.Vehicle, null))
                                             {
                                                 addItem = false;
                                             }
@@ -524,7 +524,7 @@ namespace PsdzClient
 
         private List<PdszDatabase.SwiAction> GetSelectedSwiActions()
         {
-            if (_programmingJobs.PsdzContext == null || _programmingJobs.SelectedOptions == null)
+            if (_programmingJobs.PsdzContext?.Connection == null || _programmingJobs.SelectedOptions == null)
             {
                 return null;
             }
@@ -951,9 +951,10 @@ namespace PsdzClient
 
             if (modified)
             {
-                if (_programmingJobs.PsdzContext != null)
+                PsdzContext psdzContext = _programmingJobs.PsdzContext;
+                if (psdzContext?.Connection != null)
                 {
-                    _programmingJobs.PsdzContext.Tal = null;
+                    psdzContext.Tal = null;
                 }
 
                 BeginInvoke((Action)(() =>

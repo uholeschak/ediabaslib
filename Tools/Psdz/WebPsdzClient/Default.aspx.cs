@@ -407,9 +407,10 @@ namespace WebPsdzClient
                 if (modified)
                 {
                     log.InfoFormat("CheckBoxListOptions_OnSelectedIndexChanged Modified, Updating FA");
-                    if (sessionContainer.ProgrammingJobs.PsdzContext != null)
+                    PsdzClient.Programming.PsdzContext psdzContext = sessionContainer.ProgrammingJobs.PsdzContext;
+                    if (psdzContext?.Connection != null)
                     {
-                        sessionContainer.ProgrammingJobs.PsdzContext.Tal = null;
+                        psdzContext.Tal = null;
                     }
 
                     sessionContainer.ProgrammingJobs.UpdateTargetFa();
@@ -470,10 +471,11 @@ namespace WebPsdzClient
                 }
 
                 ProgrammingJobs programmingJobs = sessionContainer.ProgrammingJobs;
-                if (programmingJobs.PsdzContext?.Connection != null)
+                PsdzClient.Programming.PsdzContext psdzContext = programmingJobs.PsdzContext;
+                if (psdzContext?.Connection != null)
                 {
                     vehicleConnected = true;
-                    talPresent = programmingJobs.PsdzContext?.Tal != null;
+                    talPresent = psdzContext.Tal != null;
                 }
 
                 Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = programmingJobs.OptionsDict;
@@ -750,7 +752,7 @@ namespace WebPsdzClient
                                     }
                                     else
                                     {
-                                        if (!programmingJobs.ProgrammingService.PdszDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, programmingJobs.PsdzContext.Vehicle, null))
+                                        if (!programmingJobs.ProgrammingService.PdszDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, programmingJobs.PsdzContext?.Vehicle, null))
                                         {
                                             addItem = false;
                                         }
@@ -786,7 +788,7 @@ namespace WebPsdzClient
 
         private List<PdszDatabase.SwiAction> GetSelectedSwiActions(ProgrammingJobs programmingJobs)
         {
-            if (programmingJobs.PsdzContext == null || programmingJobs.SelectedOptions == null)
+            if (programmingJobs.PsdzContext?.Connection == null || programmingJobs.SelectedOptions == null)
             {
                 return null;
             }

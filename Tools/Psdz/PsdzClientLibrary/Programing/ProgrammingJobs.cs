@@ -223,14 +223,34 @@ namespace PsdzClient.Programing
         private bool _disposed;
         public ClientContext ClientContext { get; private set; }
         private string _dealerId;
+        private object _contextLock = new object();
         private object _cacheLock = new object();
         private object _operationLock = new object();
         private object _optionsLock = new object();
-        public PsdzContext PsdzContext { get; private set; }
         public ProgrammingService ProgrammingService { get; private set; }
         public List<OptionsItem> SelectedOptions { get; set; }
         public bool DisableTalFlash { get; set; }
         public PdszDatabase.SwiRegisterGroup RegisterGroup { get; set; }
+
+        private PsdzContext _psdzContext;
+        public PsdzContext PsdzContext
+        {
+            get
+            {
+                lock (_contextLock)
+                {
+                    return _psdzContext;
+                }
+            }
+
+            private set
+            {
+                lock (_contextLock)
+                {
+                    _psdzContext = value;
+                }
+            }
+        }
 
         private OperationStateData _operationState;
         public OperationStateData OperationState
@@ -2811,9 +2831,10 @@ namespace PsdzClient.Programing
 
         public void ClearProgrammingObjects()
         {
-            if (PsdzContext != null)
+            PsdzContext psdzContext = PsdzContext;
+            if (psdzContext != null)
             {
-                PsdzContext.Dispose();
+                psdzContext.Dispose();
                 PsdzContext = null;
             }
         }

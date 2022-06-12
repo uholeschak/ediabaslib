@@ -17,6 +17,7 @@ using Microsoft.AspNet.SignalR;
 using MySqlConnector;
 using PsdzClient;
 using PsdzClient.Programing;
+using PsdzClient.Programming;
 
 namespace WebPsdzClient.App_Data
 {
@@ -487,7 +488,11 @@ namespace WebPsdzClient.App_Data
             {
                 if (_taskActive)
                 {
-                    vin = ProgrammingJobs?.PsdzContext?.DetectVehicle?.Vin;
+                    PsdzContext psdzContext = ProgrammingJobs?.PsdzContext;
+                    if (psdzContext?.Connection != null)
+                    {
+                        vin = psdzContext.DetectVehicle?.Vin;
+                    }
                 }
             }
 
@@ -2703,7 +2708,11 @@ namespace WebPsdzClient.App_Data
                 }
                 else
                 {
-                    DetectedVin = ProgrammingJobs.PsdzContext?.DetectVehicle?.Vin;
+                    PsdzContext psdzContext = ProgrammingJobs?.PsdzContext;
+                    if (psdzContext?.Connection != null)
+                    {
+                        DetectedVin = psdzContext?.DetectVehicle?.Vin;
+                    }
                     ProcessLicense();
                     AppendStatusTextLine(GetLicenseText());
                 }
@@ -2772,7 +2781,13 @@ namespace WebPsdzClient.App_Data
                 return;
             }
 
-            string vin = ProgrammingJobs?.PsdzContext?.DetectVehicle?.Vin;
+            string vin = null;
+            PsdzContext psdzContext = ProgrammingJobs?.PsdzContext;
+            if (psdzContext?.Connection != null)
+            {
+                vin = psdzContext?.DetectVehicle?.Vin;
+            }
+
             if (!string.IsNullOrEmpty(vin))
             {
                 if (IsVinActive(vin, this))
@@ -2783,7 +2798,11 @@ namespace WebPsdzClient.App_Data
                 }
             }
 
-            ProgrammingJobs.LicenseValid = LicenseValid;
+            if (ProgrammingJobs != null)
+            {
+                ProgrammingJobs.LicenseValid = LicenseValid;
+            }
+
             Cts = new CancellationTokenSource();
             VehicleFunctionsTask(operationType).ContinueWith(task =>
             {
