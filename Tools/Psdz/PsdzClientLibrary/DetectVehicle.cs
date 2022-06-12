@@ -229,14 +229,12 @@ namespace PsdzClient
                                             if (resultDictFa.TryGetValue("C_DATE", out EdiabasNet.ResultData resultDataCDate))
                                             {
                                                 string cDateStr = resultDataCDate.OpData as string;
-                                                if (!string.IsNullOrEmpty(cDateStr))
+                                                DateTime? dateTime = VehicleInfoBmw.ConvertConstructionDate(cDateStr);
+                                                if (dateTime != null)
                                                 {
-                                                    if (DateTime.TryParseExact(cDateStr, "MMyy", null, DateTimeStyles.None, out DateTime dateTime))
-                                                    {
-                                                        log.InfoFormat(CultureInfo.InvariantCulture, "Detected construction date: {0}",
-                                                            dateTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
-                                                        cDate = dateTime;
-                                                    }
+                                                    log.InfoFormat(CultureInfo.InvariantCulture, "Detected construction date: {0}",
+                                                        dateTime.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+                                                    cDate = dateTime;
                                                 }
                                             }
 
@@ -264,14 +262,12 @@ namespace PsdzClient
                                         if (resultDict.TryGetValue("STAT_ZEIT_KRITERIUM", out EdiabasNet.ResultData resultDataCDate))
                                         {
                                             string cDateStr = resultDataCDate.OpData as string;
-                                            if (!string.IsNullOrEmpty(cDateStr))
+                                            DateTime? dateTime = VehicleInfoBmw.ConvertConstructionDate(cDateStr);
+                                            if (dateTime != null)
                                             {
-                                                if (DateTime.TryParseExact(cDateStr, "MMyy", null, DateTimeStyles.None, out DateTime dateTime))
-                                                {
-                                                    log.InfoFormat(CultureInfo.InvariantCulture, "Detected construction date: {0}",
-                                                        dateTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
-                                                    cDate = dateTime;
-                                                }
+                                                log.InfoFormat(CultureInfo.InvariantCulture, "Detected construction date: {0}",
+                                                    dateTime.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+                                                cDate = dateTime;
                                             }
                                         }
 
