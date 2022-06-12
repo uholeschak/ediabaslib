@@ -16,7 +16,6 @@ using log4net;
 using Microsoft.AspNet.SignalR;
 using MySqlConnector;
 using PsdzClient;
-using PsdzClient.Programing;
 using PsdzClient.Programming;
 
 namespace WebPsdzClient.App_Data

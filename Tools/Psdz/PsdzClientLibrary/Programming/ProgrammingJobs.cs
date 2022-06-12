@@ -29,10 +29,10 @@ using EdiabasLib;
 using log4net;
 using log4net.Config;
 using PsdzClient.Core;
-using PsdzClient.Programming;
 using PsdzClientLibrary.Resources;
+using VCIDeviceType = BMW.Rheingold.CoreFramework.Contracts.Vehicle.VCIDeviceType;
 
-namespace PsdzClient.Programing
+namespace PsdzClient.Programming
 {
     public class ProgrammingJobs : IDisposable
     {
@@ -717,8 +717,7 @@ namespace PsdzClient.Programing
                 }
 
                 Vehicle vehicle = new Vehicle(ClientContext);
-                vehicle.VCI.VCIType = icomConnection ?
-                    BMW.Rheingold.CoreFramework.Contracts.Vehicle.VCIDeviceType.ICOM : BMW.Rheingold.CoreFramework.Contracts.Vehicle.VCIDeviceType.ENET;
+                vehicle.VCI.VCIType = icomConnection ? VCIDeviceType.ICOM : VCIDeviceType.ENET;
                 vehicle.VCI.IPAddress = ipAddress;
                 vehicle.VCI.Port = diagPort;
                 vehicle.VCI.NetworkType = "LAN";

@@ -10,7 +10,7 @@ using System.Web.UI.WebControls;
 using BMW.Rheingold.Psdz.Client;
 using log4net;
 using PsdzClient;
-using PsdzClient.Programing;
+using PsdzClient.Programming;
 using WebPsdzClient.App_Data;
 
 namespace WebPsdzClient

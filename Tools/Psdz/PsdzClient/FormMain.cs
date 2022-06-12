@@ -32,7 +32,6 @@ using EdiabasLib;
 using log4net;
 using log4net.Config;
 using PsdzClient.Core;
-using PsdzClient.Programing;
 using PsdzClient.Programming;
 
 namespace PsdzClient

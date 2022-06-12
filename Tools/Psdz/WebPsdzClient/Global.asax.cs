@@ -12,7 +12,7 @@ using System.Web.Security;
 using System.Web.SessionState;
 using log4net;
 using PsdzClient;
-using PsdzClient.Programing;
+using PsdzClient.Programming;
 using WebPsdzClient.App_Data;
 
 namespace WebPsdzClient
