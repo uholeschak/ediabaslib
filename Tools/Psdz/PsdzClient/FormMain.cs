@@ -397,7 +397,7 @@ namespace PsdzClient
 
             try
             {
-                if (_programmingJobs.ProgrammingService == null || _programmingJobs.PsdzContext == null)
+                if (_programmingJobs.ProgrammingService == null || _programmingJobs.PsdzContext?.Connection == null)
                 {
                     checkedListBoxOptions.Items.Clear();
                     return;
@@ -416,7 +416,7 @@ namespace PsdzClient
                 }
 
                 List<PdszDatabase.SwiAction> selectedSwiActions = GetSelectedSwiActions();
-                List<PdszDatabase.SwiAction> linkedSwiActions = _programmingJobs.ProgrammingService.PdszDatabase.ReadLinkedSwiActions(selectedSwiActions, _programmingJobs.PsdzContext.Vehicle, null);
+                List<PdszDatabase.SwiAction> linkedSwiActions = _programmingJobs.ProgrammingService.PdszDatabase.ReadLinkedSwiActions(selectedSwiActions, _programmingJobs.PsdzContext?.Vehicle, null);
                 ProgrammingJobs.OptionsItem topItemCurrent = null;
                 int topIndexCurrent = checkedListBoxOptions.TopIndex;
                 if (topIndexCurrent >= 0 && topIndexCurrent < checkedListBoxOptions.Items.Count)

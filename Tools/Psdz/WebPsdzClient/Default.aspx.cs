@@ -682,7 +682,7 @@ namespace WebPsdzClient
                 CheckBoxListOptions.Items.Clear();
 
                 ProgrammingJobs programmingJobs = sessionContainer.ProgrammingJobs;
-                if (programmingJobs.ProgrammingService == null || programmingJobs.PsdzContext == null)
+                if (programmingJobs.ProgrammingService == null || programmingJobs.PsdzContext?.Connection == null)
                 {
                     return;
                 }
@@ -701,7 +701,7 @@ namespace WebPsdzClient
 
                 Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = programmingJobs.OptionsDict;
                 List<PdszDatabase.SwiAction> selectedSwiActions = GetSelectedSwiActions(programmingJobs);
-                List<PdszDatabase.SwiAction> linkedSwiActions = programmingJobs.ProgrammingService.PdszDatabase.ReadLinkedSwiActions(selectedSwiActions, programmingJobs.PsdzContext.Vehicle, null);
+                List<PdszDatabase.SwiAction> linkedSwiActions = programmingJobs.ProgrammingService.PdszDatabase.ReadLinkedSwiActions(selectedSwiActions, programmingJobs.PsdzContext?.Vehicle, null);
 
                 if (optionsDict != null && programmingJobs.SelectedOptions != null && swiRegisterEnum.HasValue)
                 {
