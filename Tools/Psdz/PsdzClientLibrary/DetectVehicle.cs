@@ -55,7 +55,6 @@ namespace PsdzClient
         public List<PdszDatabase.EcuInfo> EcuList { get; private set; }
         public string Vin { get; private set; }
         public string GroupSgdb { get; private set; }
-        public VehicleInfoBmw.BnType BnType { get; private set; }
         public string ModelSeries { get; private set; }
         public string Series { get; private set; }
         public string ConstructYear { get; private set; }
@@ -216,27 +215,23 @@ namespace PsdzClient
                                                 string br = resultDataBa.OpData as string;
                                                 if (!string.IsNullOrEmpty(br))
                                                 {
-                                                    log.InfoFormat(CultureInfo.InvariantCulture, "Detected BR: {0}",
-                                                        br);
+                                                    log.InfoFormat(CultureInfo.InvariantCulture, "Detected BR: {0}", br);
                                                     string vtype = VehicleInfoBmw.GetVehicleTypeFromBrName(br, _ediabas);
                                                     if (!string.IsNullOrEmpty(vtype))
                                                     {
-                                                        log.InfoFormat(CultureInfo.InvariantCulture,
-                                                            "Detected vehicle type: {0}", vtype);
+                                                        log.InfoFormat(CultureInfo.InvariantCulture, "Detected vehicle type: {0}", vtype);
                                                         modelSeries = br;
                                                         vehicleType = vtype;
                                                     }
                                                 }
                                             }
 
-                                            if (resultDictFa.TryGetValue("C_DATE",
-                                                    out EdiabasNet.ResultData resultDataCDate))
+                                            if (resultDictFa.TryGetValue("C_DATE", out EdiabasNet.ResultData resultDataCDate))
                                             {
                                                 string cDateStr = resultDataCDate.OpData as string;
                                                 if (!string.IsNullOrEmpty(cDateStr))
                                                 {
-                                                    if (DateTime.TryParseExact(cDateStr, "MMyy", null,
-                                                            DateTimeStyles.None, out DateTime dateTime))
+                                                    if (DateTime.TryParseExact(cDateStr, "MMyy", null, DateTimeStyles.None, out DateTime dateTime))
                                                     {
                                                         log.InfoFormat(CultureInfo.InvariantCulture, "Detected construction date: {0}",
                                                             dateTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
@@ -287,29 +282,14 @@ namespace PsdzClient
                 }
 
                 VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(vehicleType, cDate, _ediabas);
-                string groupSgbd = VehicleInfoBmw.GetGroupSgbdFromVehicleType(vehicleType, detectedVin, cDate, _ediabas, out VehicleInfoBmw.BnType bnType);
-                if (string.IsNullOrEmpty(groupSgbd))
-                {
-                    log.ErrorFormat(CultureInfo.InvariantCulture, "No group SGBD found");
-                    return false;
-                }
-
                 if (vehicleSeriesInfo == null)
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "Vehicle series info not found");
                     return false;
                 }
-                else
-                {
-                    if (string.Compare(vehicleSeriesInfo.BrSgbd, groupSgbd, StringComparison.OrdinalIgnoreCase) != 0)
-                    {
-                        log.ErrorFormat(CultureInfo.InvariantCulture, "Group SGBD different: {0} {1}", vehicleSeriesInfo.BrSgbd, groupSgbd);
-                    }
-                }
 
-                log.InfoFormat(CultureInfo.InvariantCulture, "Group SGBD: {0}", groupSgbd);
-                GroupSgdb = groupSgbd;
-                BnType = bnType;
+                log.InfoFormat(CultureInfo.InvariantCulture, "Group SGBD: {0}", vehicleSeriesInfo.BrSgbd);
+                GroupSgdb = vehicleSeriesInfo.BrSgbd;
 
                 if (_abortRequest)
                 {
@@ -318,7 +298,7 @@ namespace PsdzClient
 
                 try
                 {
-                    _ediabas.ResolveSgbdFile(groupSgbd);
+                    _ediabas.ResolveSgbdFile(GroupSgdb);
 
                     _ediabas.ArgString = string.Empty;
                     _ediabas.ArgBinaryStd = null;
@@ -636,7 +616,6 @@ namespace PsdzClient
             EcuList.Clear();
             Vin = null;
             GroupSgdb = null;
-            BnType = VehicleInfoBmw.BnType.UNKNOWN;
             ModelSeries = null;
             Series = null;
             ConstructYear = null;
