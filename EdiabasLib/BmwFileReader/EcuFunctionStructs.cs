@@ -350,6 +350,23 @@ namespace BmwFileReader
                 Unit = unit;
             }
 
+            public bool IsRelevant()
+            {
+                string relevance = Relevance.Trim();
+                if (!string.IsNullOrEmpty(relevance))
+                {
+                    if (int.TryParse(relevance, NumberStyles.Integer, CultureInfo.InvariantCulture, out int relevanceValue))
+                    {
+                        if (relevanceValue > 0)
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+                return false;
+            }
+
             public string ToString(string prefix)
             {
                 StringBuilder sb = new StringBuilder();
