@@ -643,7 +643,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\..\..\EdiabasLib\BmwFileReader\VehicleSeries.xml">
-      <Link>VehicleSeries.xml</Link>
+      <Link>Resources\VehicleSeries.xml</Link>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
