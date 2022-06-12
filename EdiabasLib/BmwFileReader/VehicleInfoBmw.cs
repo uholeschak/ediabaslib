@@ -56,24 +56,6 @@ namespace BmwFileReader
             IKCAN,
             UNKNOWN
         }
-
-        public enum BnType
-        {
-            BN2000,
-            BN2020,
-            IBUS,
-            BN2000_MOTORBIKE,
-            BN2020_MOTORBIKE,
-            BNK01X_MOTORBIKE,
-            BEV2010,
-            BN2000_MORGAN,
-            BN2000_WIESMANN,
-            BN2000_RODING,
-            BN2000_PGO,
-            BN2000_GIBBS,
-            BN2020_CAMPAGNA,
-            UNKNOWN
-        }
         // ReSharper restore InconsistentNaming
 
         public interface IEcuLogisticsEntry
@@ -1700,9 +1682,8 @@ namespace BmwFileReader
             return null;
         }
 
-        public static string GetGroupSgbdFromVehicleType(string vehicleType, string vin, DateTime? cDate, EdiabasNet ediabas, out BnType bnType)
+        public static string GetGroupSgbdFromVehicleType(string vehicleType, string vin, DateTime? cDate, EdiabasNet ediabas)
         {
-            bnType = BnType.UNKNOWN;
             string cDateStr = "No date";
             if (cDate.HasValue)
             {
@@ -1730,24 +1711,24 @@ namespace BmwFileReader
                 case "E62": // BNType: UNKNOWN
                 case "E63": // E60EcuCharacteristics
                 case "E64": // E60EcuCharacteristics
-                    bnType = BnType.UNKNOWN;
+                    //bnType = BnType.UNKNOWN;
                     return "e60";
 
                 case "E65": // E65EcuCharacteristics
                 case "E66": // E65EcuCharacteristics
                 case "E67": // E65EcuCharacteristics
                 case "E68": // E65EcuCharacteristics
-                    bnType = BnType.UNKNOWN;
+                    //bnType = BnType.UNKNOWN;
                     return "e65";
 
                 case "E70": // E70EcuCharacteristics
                 case "E71": // E70EcuCharacteristics, E70EcuCharacteristicsAMPT, E70EcuCharacteristicsAMPH: MainSeriesSgbd="e70"
                 case "E72": // E72EcuCharacteristics
-                    bnType = BnType.UNKNOWN;
+                    //bnType = BnType.UNKNOWN;
                     return "e70";
 
                 case "M12": // E89XEcuCharacteristics BEV2010
-                    bnType = BnType.BEV2010;
+                    //bnType = BnType.BEV2010;
                     return "e89x";
 
                 case "E89X": // E89XEcuCharacteristics
@@ -1761,45 +1742,45 @@ namespace BmwFileReader
                 case "E91": // E89XEcuCharacteristics
                 case "E92": // E89XEcuCharacteristics
                 case "E93": // E89XEcuCharacteristics
-                    bnType = BnType.IBUS;
+                    //bnType = BnType.IBUS;
                     // E89XEcuCharacteristics -> E89EcuCharacteristics
                     return "e89x";
 
                 case "M13": // F56EcuCharacteristics
-                    bnType = BnType.BN2020;
+                    //bnType = BnType.BN2020;
                     return "f01";
 
                 case "E38": // E38EcuCharacteristics
                 case "E46": // E46EcuCharacteristics
                 case "E83": // E83EcuCharacteristics
                 case "E85": // E85EcuCharacteristics
-                    bnType = BnType.IBUS;
+                    //bnType = BnType.IBUS;
                     // return "zcs_all";
                     break;
 
                 case "E36": // E36EcuCharacteristics
-                    bnType = BnType.IBUS;
+                    //bnType = BnType.IBUS;
                     // return "zcs_e36";
                     break;
 
                 case "E39": // E39EcuCharacteristics
-                    bnType = BnType.IBUS;
+                    //bnType = BnType.IBUS;
                     // return "zcs_e39";
                     break;
 
                 case "E52": // E52EcuCharacteristics
-                    bnType = BnType.IBUS;
+                    //bnType = BnType.IBUS;
                     // return "zcs_e52";
                     break;
 
                 case "E53": // E53EcuCharacteristics
-                    bnType = BnType.IBUS;
+                    //bnType = BnType.IBUS;
                     // return "zcs_e53";
                     break;
 
                 case "H61": // H61EcuCharacteristics
                 case "H91": // H61EcuCharacteristics
-                    bnType = BnType.BN2020_MOTORBIKE;
+                    //bnType = BnType.BN2020_MOTORBIKE;
                     return "MRKH24";
 
                 case "247": // MRK01XEcuCharacteristics
@@ -1826,11 +1807,11 @@ namespace BmwFileReader
                 case "R21": // MRK01XEcuCharacteristics
                 case "R22": // MRK01XEcuCharacteristics
                 case "R28": // MRK01XEcuCharacteristics
-                    bnType = BnType.BNK01X_MOTORBIKE;
+                    //bnType = BnType.BNK01X_MOTORBIKE;
                     return "MRK24";
 
                 case "GT1": // GibbsEcuCharacteristics, BNType: BN2000_GIBBS
-                    bnType = BnType.BN2000_GIBBS;
+                    //bnType = BnType.BN2000_GIBBS;
                     return "MRK24";
 
                 case "A67": // MREcuCharacteristics
@@ -1850,18 +1831,18 @@ namespace BmwFileReader
                 case "K75": // MREcuCharacteristics
                 case "MRK24": // MREcuCharacteristics
                 case "V98": // MREcuCharacteristics
-                    bnType = BnType.BN2000_MOTORBIKE;
+                    //bnType = BnType.BN2000_MOTORBIKE;
                     return "MRK24";
 
                 case "K18":
                     if (!string.IsNullOrEmpty(vin) &&
                         (vinTypeUpper.Equals("0C04", StringComparison.OrdinalIgnoreCase) || vinTypeUpper.Equals("0C14", StringComparison.OrdinalIgnoreCase)))
                     {
-                        bnType = BnType.BN2020;
+                        //bnType = BnType.BN2020;
                         // BN2020: MRXEcuCharacteristics
                         return "x_k001";
                     }
-                    bnType = BnType.BN2000;
+                    //bnType = BnType.BN2000;
                     // BN2000: MREcuCharacteristics
                     return "MRK24";
 
@@ -1869,11 +1850,11 @@ namespace BmwFileReader
                     if (!string.IsNullOrEmpty(vin) &&
                         (vinTypeUpper.Equals("0C05", StringComparison.OrdinalIgnoreCase) || vinTypeUpper.Equals("0C15", StringComparison.OrdinalIgnoreCase)))
                     {
-                        bnType = BnType.BN2020;
+                        //bnType = BnType.BN2020;
                         // BN2020: MRXEcuCharacteristics
                         return "x_k001";
                     }
-                    bnType = BnType.BN2000;
+                    //bnType = BnType.BN2000;
                     // BN2000: MREcuCharacteristics
                     return "MRK24";
 
@@ -1881,11 +1862,11 @@ namespace BmwFileReader
                     if (!string.IsNullOrEmpty(vin) &&
                         (vinTypeUpper.Equals("0A06", StringComparison.OrdinalIgnoreCase) || vinTypeUpper.Equals("0A16", StringComparison.OrdinalIgnoreCase)))
                     {
-                        bnType = BnType.BN2000;
+                        //bnType = BnType.BN2000;
                         // BN2000: MREcuCharacteristics
                         return "MRK24";
                     }
-                    bnType = BnType.BN2020;
+                    //bnType = BnType.BN2020;
                     // BN2020: MRXEcuCharacteristics
                     return "x_k001";
 
@@ -1898,11 +1879,11 @@ namespace BmwFileReader
                          vinTypeUpper.Equals("0D90", StringComparison.OrdinalIgnoreCase)
                          ))
                     {
-                        bnType = BnType.BN2020_MOTORBIKE;
+                        //bnType = BnType.BN2020_MOTORBIKE;
                         // BN2020_MOTORBIKE: MRXEcuCharacteristics
                         return "x_k001";
                     }
-                    bnType = BnType.BN2000_MOTORBIKE;
+                    //bnType = BnType.BN2000_MOTORBIKE;
                     // BN2000_MOTORBIKE: MREcuCharacteristics
                     return "MRK24";
 
@@ -1928,7 +1909,7 @@ namespace BmwFileReader
                 case "K84": // MRXEcuCharacteristics
                 case "V99": // MRXEcuCharacteristics
                 case "X_K001": // MRXEcuCharacteristics
-                    bnType = BnType.BN2020_MOTORBIKE;
+                    //bnType = BnType.BN2020_MOTORBIKE;
                     return "x_k001";
 
                 case "K02": // MRXEcuCharacteristics
@@ -1937,13 +1918,13 @@ namespace BmwFileReader
                 case "K09": // MRXEcuCharacteristics
                 case "K60": // MRXEcuCharacteristics
                     // special case in MRXEcuCharacteristics
-                    bnType = BnType.BN2020_MOTORBIKE;
+                    //bnType = BnType.BN2020_MOTORBIKE;
                     return "x_ks01";
 
                 case "RR1": // RREcuCharacteristics, RR2EcuCharacteristics
                 case "RR2": // RREcuCharacteristics, RR2EcuCharacteristics
                 case "RR3": // RREcuCharacteristics, RR2EcuCharacteristics
-                    bnType = BnType.UNKNOWN;
+                    //bnType = BnType.UNKNOWN;
                     if (cDate.HasValue && !(cDate.Value < new DateTime(2012, 06, 01)))
                     {
                         // RR2EcuCharacteristics
@@ -1959,13 +1940,13 @@ namespace BmwFileReader
                 case "R59": // R55EcuCharacteristics
                 case "R60": // R55EcuCharacteristics
                 case "R61": // R55EcuCharacteristics
-                    bnType = BnType.BN2000;
+                    //bnType = BnType.BN2000;
                     return "r56";
 
                 case "R50": // R50EcuCharacteristics
                 case "R52": // R50EcuCharacteristics
                 case "R53": // R50EcuCharacteristics
-                    bnType = BnType.IBUS;
+                    //bnType = BnType.IBUS;
                     // return "zcs_all";
                     return null;
 
@@ -1977,7 +1958,7 @@ namespace BmwFileReader
                 case "RR4": // RR6EcuCharacteristics
                 case "RR5": // RR6EcuCharacteristics
                 case "RR6": // RR6EcuCharacteristics
-                    bnType = BnType.BN2020;
+                    //bnType = BnType.BN2020;
                     return "f01";
             }
 
@@ -2003,7 +1984,7 @@ namespace BmwFileReader
                 // J29: BNT_J29
                 // U10, U11, U12: BNT_U06...
                 // U06: BNT-XML-U06...
-                bnType = BnType.BN2020;
+                //bnType = BnType.BN2020;
                 return "f01";
             }
             ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Vehicle type unknown");

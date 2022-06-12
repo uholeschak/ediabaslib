@@ -2964,7 +2964,7 @@ namespace BmwDeepObd
                 {
                     detectCDate = cDate.Value.ToString("yyyy-MM", CultureInfo.InvariantCulture);
                 }
-                string groupSgbd = VehicleInfoBmw.GetGroupSgbdFromVehicleType(vehicleType, detectedVin, cDate, _ediabas, out _);
+                string groupSgbd = VehicleInfoBmw.GetGroupSgbdFromVehicleType(vehicleType, detectedVin, cDate, _ediabas);
                 if (string.IsNullOrEmpty(groupSgbd))
                 {
                     _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "No group SGBD found");
