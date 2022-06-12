@@ -556,11 +556,12 @@ namespace PsdzClient.Programming
             Vehicle.VehicleIdentAlreadyDone = true;
             Vehicle.ILevelWerk = !string.IsNullOrEmpty(IstufeShipment) ? IstufeShipment : DetectVehicle.ILevelShip;
             Vehicle.ILevel = !string.IsNullOrEmpty(IstufeCurrent) ? IstufeCurrent: DetectVehicle.ILevelCurrent;
-            Vehicle.BNType = GetBnType();
             Vehicle.VIN17 = DetectVehicle.Vin;
             Vehicle.Modelljahr = DetectVehicle.ConstructYear;
             Vehicle.Modellmonat = DetectVehicle.ConstructMonth;
+            Vehicle.Ereihe = DetectVehicle.Series;
             Vehicle.SetVINRangeTypeFromVINRanges();
+            Vehicle.BNType = VehicleLogistics.getBNType(Vehicle);
 
             CharacteristicExpression.EnumBrand brand = CharacteristicExpression.EnumBrand.BMWBMWiMINI;
             if (Vehicle.IsMotorcycle())
@@ -622,53 +623,6 @@ namespace PsdzClient.Programming
             Vehicle.WithLfpBattery = programmingService.PdszDatabase.WithLfpBattery(Vehicle);
             EcuCharacteristics = VehicleLogistics.GetCharacteristics(Vehicle);
             return true;
-        }
-
-        public BNType GetBnType()
-        {
-            switch (DetectVehicle.BnType)
-            {
-                case VehicleInfoBmw.BnType.BN2000:
-                    return BNType.BN2000;
-
-                case VehicleInfoBmw.BnType.BN2020:
-                    return BNType.BN2020;
-
-                case VehicleInfoBmw.BnType.IBUS:
-                    return BNType.IBUS;
-
-                case VehicleInfoBmw.BnType.BN2000_MOTORBIKE:
-                    return BNType.BN2000_MOTORBIKE;
-
-                case VehicleInfoBmw.BnType.BN2020_MOTORBIKE:
-                    return BNType.BN2020_MOTORBIKE;
-
-                case VehicleInfoBmw.BnType.BNK01X_MOTORBIKE:
-                    return BNType.BNK01X_MOTORBIKE;
-
-                case VehicleInfoBmw.BnType.BEV2010:
-                    return BNType.BEV2010;
-
-                case VehicleInfoBmw.BnType.BN2000_MORGAN:
-                    return BNType.BN2000_MORGAN;
-
-                case VehicleInfoBmw.BnType.BN2000_WIESMANN: 
-                    return BNType.BN2000_WIESMANN;
-
-                case VehicleInfoBmw.BnType.BN2000_RODING:
-                    return BNType.BN2000_RODING;
-
-                case VehicleInfoBmw.BnType.BN2000_PGO:
-                    return BNType.BN2000_PGO;
-
-                case VehicleInfoBmw.BnType.BN2000_GIBBS:
-                    return BNType.BN2000_GIBBS;
-
-                case VehicleInfoBmw.BnType.BN2020_CAMPAGNA:
-                    return BNType.BN2020_CAMPAGNA;
-            }
-
-            return BNType.UNKNOWN;
         }
 
         public List<PdszDatabase.EcuInfo> GetEcuList(bool individualOnly = false)

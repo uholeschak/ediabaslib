@@ -1611,11 +1611,13 @@ namespace BmwFileReader
             if (!vehicleSeriesInfoData.VehicleSeriesDict.TryGetValue(key, out List<VehicleStructsBmw.VehicleSeriesInfo> vehicleSeriesInfoList))
             {
                 ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Vehicle series not found");
-                return null;
+            }
+            else
+            {
+                ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle series info count: {0}", vehicleSeriesInfoList.Count);
             }
 
-            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle series info count: {0}", vehicleSeriesInfoList.Count);
-            if (vehicleSeriesInfoList.Count == 0)
+            if (vehicleSeriesInfoList == null || vehicleSeriesInfoList.Count == 0)
             {
                 switch (key[0])
                 {
@@ -1629,6 +1631,11 @@ namespace BmwFileReader
                 }
 
                 return null;
+            }
+
+            if (vehicleSeriesInfoList.Count == 1)
+            {
+                return vehicleSeriesInfoList[0];
             }
 
             if (dateValue < 0)
