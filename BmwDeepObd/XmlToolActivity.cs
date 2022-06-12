@@ -2926,7 +2926,6 @@ namespace BmwDeepObd
                                         {
                                             _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected vehicle type: {0}", vtype);
                                             vehicleType = vtype;
-                                            break;
                                         }
 
                                         if (resultDict.TryGetValue("STAT_ZEIT_KRITERIUM", out EdiabasNet.ResultData resultDataCDate))
