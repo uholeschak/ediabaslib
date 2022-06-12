@@ -1594,400 +1594,86 @@ namespace BmwFileReader
             {
                 ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Vehicle series not found");
             }
-            else
+
+            if (vehicleSeriesInfoList != null)
             {
                 ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle series info count: {0}", vehicleSeriesInfoList.Count);
-            }
-
-            if (vehicleSeriesInfoList == null || vehicleSeriesInfoList.Count == 0)
-            {
-                switch (key[0])
+                if (vehicleSeriesInfoList.Count == 1)
                 {
-                    case 'F':
-                    case 'G':
-                    case 'I':
-                    case 'J':
-                    case 'U':
-                        ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Using fallback from first letter");
-                        return new VehicleStructsBmw.VehicleSeriesInfo(series, "F01", string.Empty);
+                    return vehicleSeriesInfoList[0];
                 }
 
-                return null;
-            }
-
-            if (vehicleSeriesInfoList.Count == 1)
-            {
-                return vehicleSeriesInfoList[0];
-            }
-
-            if (dateValue < 0)
-            {
-                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "No date present");
-                return null;
-            }
-
-            foreach (VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo in vehicleSeriesInfoList)
-            {
-                if (!string.IsNullOrEmpty(vehicleSeriesInfo.Date) && !string.IsNullOrEmpty(vehicleSeriesInfo.DateCompare))
+                if (dateValue >= 0)
                 {
-                    VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoMatch = null;
-                    if (long.TryParse(vehicleSeriesInfo.Date, NumberStyles.Integer, CultureInfo.InvariantCulture, out long dateCompare))
+                    ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Checking date");
+
+                    foreach (VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo in vehicleSeriesInfoList)
                     {
-                        string dateCompre = vehicleSeriesInfo.DateCompare.ToUpperInvariant();
-                        if (dateCompre.Contains("<"))
+                        if (!string.IsNullOrEmpty(vehicleSeriesInfo.Date) && !string.IsNullOrEmpty(vehicleSeriesInfo.DateCompare))
                         {
-                            if (dateCompre.Contains("="))
+                            VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoMatch = null;
+                            if (long.TryParse(vehicleSeriesInfo.Date, NumberStyles.Integer, CultureInfo.InvariantCulture, out long dateCompare))
                             {
-                                if (dateCompare <= dateValue)
+                                string dateCompre = vehicleSeriesInfo.DateCompare.ToUpperInvariant();
+                                if (dateCompre.Contains("<"))
                                 {
-                                    vehicleSeriesInfoMatch = vehicleSeriesInfo;
+                                    if (dateCompre.Contains("="))
+                                    {
+                                        if (dateCompare <= dateValue)
+                                        {
+                                            vehicleSeriesInfoMatch = vehicleSeriesInfo;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (dateCompare < dateValue)
+                                        {
+                                            vehicleSeriesInfoMatch = vehicleSeriesInfo;
+                                        }
+                                    }
+                                }
+                                else if (dateCompre.Contains(">"))
+                                {
+                                    if (dateCompre.Contains("="))
+                                    {
+                                        if (dateCompare >= dateValue)
+                                        {
+                                            vehicleSeriesInfoMatch = vehicleSeriesInfo;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (dateCompare > dateValue)
+                                        {
+                                            vehicleSeriesInfoMatch = vehicleSeriesInfo;
+                                        }
+                                    }
                                 }
                             }
-                            else
+
+                            if (vehicleSeriesInfoMatch != null)
                             {
-                                if (dateCompare < dateValue)
-                                {
-                                    vehicleSeriesInfoMatch = vehicleSeriesInfo;
-                                }
-                            }
-                        }
-                        else if (dateCompre.Contains(">"))
-                        {
-                            if (dateCompre.Contains("="))
-                            {
-                                if (dateCompare >= dateValue)
-                                {
-                                    vehicleSeriesInfoMatch = vehicleSeriesInfo;
-                                }
-                            }
-                            else
-                            {
-                                if (dateCompare > dateValue)
-                                {
-                                    vehicleSeriesInfoMatch = vehicleSeriesInfo;
-                                }
+                                ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Matched date expression: {0} {1}", vehicleSeriesInfoMatch.DateCompare, vehicleSeriesInfoMatch.Date);
+                                return vehicleSeriesInfoMatch;
                             }
                         }
                     }
-
-                    if (vehicleSeriesInfoMatch != null)
-                    {
-                        ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Matched date expression: {0} {1}", vehicleSeriesInfoMatch.DateCompare, vehicleSeriesInfoMatch.Date);
-                        return vehicleSeriesInfoMatch;
-                    }
                 }
+                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "No date matched");
             }
 
-            ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "No date matched");
-            return null;
-        }
-
-        public static string GetGroupSgbdFromVehicleType(string vehicleType, string vin, DateTime? cDate, EdiabasNet ediabas)
-        {
-            string cDateStr = "No date";
-            if (cDate.HasValue)
+            switch (key[0])
             {
-                cDateStr = cDate.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-            }
-            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Group SGBD from vehicle type: {0}, VIN: {1}, CDate: {2}", vehicleType ?? "No type", vin ?? "No VIN", cDateStr);
-            if (vehicleType == null)
-            {
-                return null;
-            }
-
-            string vinTypeUpper = string.Empty;
-            if (!string.IsNullOrEmpty(vin) && vin.Length >= 17)
-            {
-                vinTypeUpper = vin.Substring(3, 4).ToUpperInvariant();
+                case 'F':
+                case 'G':
+                case 'I':
+                case 'J':
+                case 'U':
+                    ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Using fallback from first letter");
+                    return new VehicleStructsBmw.VehicleSeriesInfo(series, "F01", string.Empty);
             }
 
-            // Mapping could be found in:
-            // from: RheingoldDiagnostics.dll: BMW.Rheingold.Diagnostics.VehicleLogistics.GetCharacteristics(Vehicle vecInfo)
-            string typeUpper = vehicleType.ToUpperInvariant();
-            switch (typeUpper)
-            {
-                case "E60": // E60EcuCharacteristics
-                case "E61": // E60EcuCharacteristics
-                case "E62": // BNType: UNKNOWN
-                case "E63": // E60EcuCharacteristics
-                case "E64": // E60EcuCharacteristics
-                    //bnType = BnType.UNKNOWN;
-                    return "e60";
-
-                case "E65": // E65EcuCharacteristics
-                case "E66": // E65EcuCharacteristics
-                case "E67": // E65EcuCharacteristics
-                case "E68": // E65EcuCharacteristics
-                    //bnType = BnType.UNKNOWN;
-                    return "e65";
-
-                case "E70": // E70EcuCharacteristics
-                case "E71": // E70EcuCharacteristics, E70EcuCharacteristicsAMPT, E70EcuCharacteristicsAMPH: MainSeriesSgbd="e70"
-                case "E72": // E72EcuCharacteristics
-                    //bnType = BnType.UNKNOWN;
-                    return "e70";
-
-                case "M12": // E89XEcuCharacteristics BEV2010
-                    //bnType = BnType.BEV2010;
-                    return "e89x";
-
-                case "E89X": // E89XEcuCharacteristics
-                case "E81": // E89XEcuCharacteristics
-                case "E82": // E89XEcuCharacteristics
-                case "E84": // E89XEcuCharacteristics
-                case "E87": // E89XEcuCharacteristics
-                case "E88": // E89XEcuCharacteristics
-                case "E89": // E89XEcuCharacteristics
-                case "E90": // E89XEcuCharacteristics
-                case "E91": // E89XEcuCharacteristics
-                case "E92": // E89XEcuCharacteristics
-                case "E93": // E89XEcuCharacteristics
-                    //bnType = BnType.IBUS;
-                    // E89XEcuCharacteristics -> E89EcuCharacteristics
-                    return "e89x";
-
-                case "M13": // F56EcuCharacteristics
-                    //bnType = BnType.BN2020;
-                    return "f01";
-
-                case "E38": // E38EcuCharacteristics
-                case "E46": // E46EcuCharacteristics
-                case "E83": // E83EcuCharacteristics
-                case "E85": // E85EcuCharacteristics
-                    //bnType = BnType.IBUS;
-                    // return "zcs_all";
-                    break;
-
-                case "E36": // E36EcuCharacteristics
-                    //bnType = BnType.IBUS;
-                    // return "zcs_e36";
-                    break;
-
-                case "E39": // E39EcuCharacteristics
-                    //bnType = BnType.IBUS;
-                    // return "zcs_e39";
-                    break;
-
-                case "E52": // E52EcuCharacteristics
-                    //bnType = BnType.IBUS;
-                    // return "zcs_e52";
-                    break;
-
-                case "E53": // E53EcuCharacteristics
-                    //bnType = BnType.IBUS;
-                    // return "zcs_e53";
-                    break;
-
-                case "H61": // H61EcuCharacteristics
-                case "H91": // H61EcuCharacteristics
-                    //bnType = BnType.BN2020_MOTORBIKE;
-                    return "MRKH24";
-
-                case "247": // MRK01XEcuCharacteristics
-                case "247E": // MRK01XEcuCharacteristics
-                case "248": // MRK01XEcuCharacteristics
-                case "259": // MRK01XEcuCharacteristics
-                case "259C": // MRK01XEcuCharacteristics
-                case "259E": // MRK01XEcuCharacteristics
-                case "259R": // MRK01XEcuCharacteristics
-                case "259S": // MRK01XEcuCharacteristics
-                case "C01": // MRK01XEcuCharacteristics
-                case "E169": // MRK01XEcuCharacteristics
-                case "E189": // MRK01XEcuCharacteristics
-                case "K14": // MRK01XEcuCharacteristics
-                case "K15": // MRK01XEcuCharacteristics
-                case "K16": // MRK01XEcuCharacteristics
-                case "K17": // MRK01XEcuCharacteristics
-                case "K30": // MRK01XEcuCharacteristics
-                case "K41": // MRK01XEcuCharacteristics
-                case "K569": // MRK01XEcuCharacteristics
-                case "K589": // MRK01XEcuCharacteristics
-                case "K599": // MRK01XEcuCharacteristics
-                case "R13": // MRK01XEcuCharacteristics
-                case "R21": // MRK01XEcuCharacteristics
-                case "R22": // MRK01XEcuCharacteristics
-                case "R28": // MRK01XEcuCharacteristics
-                    //bnType = BnType.BNK01X_MOTORBIKE;
-                    return "MRK24";
-
-                case "GT1": // GibbsEcuCharacteristics, BNType: BN2000_GIBBS
-                    //bnType = BnType.BN2000_GIBBS;
-                    return "MRK24";
-
-                case "A67": // MREcuCharacteristics
-                case "K25": // MREcuCharacteristics
-                case "K26": // MREcuCharacteristics
-                case "K27": // MREcuCharacteristics
-                case "K28": // MREcuCharacteristics
-                case "K29": // MREcuCharacteristics
-                case "K40": // MREcuCharacteristics
-                case "K42": // MREcuCharacteristics
-                case "K43": // MREcuCharacteristics
-                case "K44": // MREcuCharacteristics
-                case "K70": // MREcuCharacteristics
-                case "K71": // MREcuCharacteristics
-                case "K72": // MREcuCharacteristics
-                case "K73": // MREcuCharacteristics
-                case "K75": // MREcuCharacteristics
-                case "MRK24": // MREcuCharacteristics
-                case "V98": // MREcuCharacteristics
-                    //bnType = BnType.BN2000_MOTORBIKE;
-                    return "MRK24";
-
-                case "K18":
-                    if (!string.IsNullOrEmpty(vin) &&
-                        (vinTypeUpper.Equals("0C04", StringComparison.OrdinalIgnoreCase) || vinTypeUpper.Equals("0C14", StringComparison.OrdinalIgnoreCase)))
-                    {
-                        //bnType = BnType.BN2020;
-                        // BN2020: MRXEcuCharacteristics
-                        return "x_k001";
-                    }
-                    //bnType = BnType.BN2000;
-                    // BN2000: MREcuCharacteristics
-                    return "MRK24";
-
-                case "K19":
-                    if (!string.IsNullOrEmpty(vin) &&
-                        (vinTypeUpper.Equals("0C05", StringComparison.OrdinalIgnoreCase) || vinTypeUpper.Equals("0C15", StringComparison.OrdinalIgnoreCase)))
-                    {
-                        //bnType = BnType.BN2020;
-                        // BN2020: MRXEcuCharacteristics
-                        return "x_k001";
-                    }
-                    //bnType = BnType.BN2000;
-                    // BN2000: MREcuCharacteristics
-                    return "MRK24";
-
-                case "K21":
-                    if (!string.IsNullOrEmpty(vin) &&
-                        (vinTypeUpper.Equals("0A06", StringComparison.OrdinalIgnoreCase) || vinTypeUpper.Equals("0A16", StringComparison.OrdinalIgnoreCase)))
-                    {
-                        //bnType = BnType.BN2000;
-                        // BN2000: MREcuCharacteristics
-                        return "MRK24";
-                    }
-                    //bnType = BnType.BN2020;
-                    // BN2020: MRXEcuCharacteristics
-                    return "x_k001";
-
-                case "K46":
-                    if (!string.IsNullOrEmpty(vin) && !vinTypeUpper.Equals("XXXX", StringComparison.OrdinalIgnoreCase) &&
-                        (vinTypeUpper.Equals("0D10", StringComparison.OrdinalIgnoreCase) || vinTypeUpper.Equals("0D21", StringComparison.OrdinalIgnoreCase) ||
-                         vinTypeUpper.Equals("0D30", StringComparison.OrdinalIgnoreCase) || vinTypeUpper.Equals("0D40", StringComparison.OrdinalIgnoreCase) ||
-                         vinTypeUpper.Equals("0D50", StringComparison.OrdinalIgnoreCase) || vinTypeUpper.Equals("0D60", StringComparison.OrdinalIgnoreCase) ||
-                         vinTypeUpper.Equals("0D70", StringComparison.OrdinalIgnoreCase) || vinTypeUpper.Equals("0D80", StringComparison.OrdinalIgnoreCase) ||
-                         vinTypeUpper.Equals("0D90", StringComparison.OrdinalIgnoreCase)
-                         ))
-                    {
-                        //bnType = BnType.BN2020_MOTORBIKE;
-                        // BN2020_MOTORBIKE: MRXEcuCharacteristics
-                        return "x_k001";
-                    }
-                    //bnType = BnType.BN2000_MOTORBIKE;
-                    // BN2000_MOTORBIKE: MREcuCharacteristics
-                    return "MRK24";
-
-                case "K22": // MRXEcuCharacteristics
-                case "K23": // MRXEcuCharacteristics
-                case "K32": // MRXEcuCharacteristics
-                case "K33": // MRXEcuCharacteristics
-                case "K47": // MRXEcuCharacteristics
-                case "K48": // MRXEcuCharacteristics
-                case "K49": // MRXEcuCharacteristics
-                case "K50": // MRXEcuCharacteristics
-                case "K51": // MRXEcuCharacteristics
-                case "K52": // MRXEcuCharacteristics
-                case "K53": // MRXEcuCharacteristics
-                case "K54": // MRXEcuCharacteristics
-                case "K61": // MRXEcuCharacteristics
-                case "K67": // MRXEcuCharacteristics
-                case "K69": // MRXEcuCharacteristics
-                case "K80": // MRXEcuCharacteristics
-                case "K81": // MRXEcuCharacteristics
-                case "K82": // MRXEcuCharacteristics
-                case "K83": // MRXEcuCharacteristics
-                case "K84": // MRXEcuCharacteristics
-                case "V99": // MRXEcuCharacteristics
-                case "X_K001": // MRXEcuCharacteristics
-                    //bnType = BnType.BN2020_MOTORBIKE;
-                    return "x_k001";
-
-                case "K02": // MRXEcuCharacteristics
-                case "K03": // MRXEcuCharacteristics
-                case "K08": // MRXEcuCharacteristics
-                case "K09": // MRXEcuCharacteristics
-                case "K60": // MRXEcuCharacteristics
-                    // special case in MRXEcuCharacteristics
-                    //bnType = BnType.BN2020_MOTORBIKE;
-                    return "x_ks01";
-
-                case "RR1": // RREcuCharacteristics, RR2EcuCharacteristics
-                case "RR2": // RREcuCharacteristics, RR2EcuCharacteristics
-                case "RR3": // RREcuCharacteristics, RR2EcuCharacteristics
-                    //bnType = BnType.UNKNOWN;
-                    if (cDate.HasValue && !(cDate.Value < new DateTime(2012, 06, 01)))
-                    {
-                        // RR2EcuCharacteristics
-                        return "rr1_2020";
-                    }
-                    // RREcuCharacteristics
-                    return "rr1";
-
-                case "R55": // R55EcuCharacteristics
-                case "R56": // R55EcuCharacteristics
-                case "R57": // R55EcuCharacteristics
-                case "R58": // R55EcuCharacteristics
-                case "R59": // R55EcuCharacteristics
-                case "R60": // R55EcuCharacteristics
-                case "R61": // R55EcuCharacteristics
-                    //bnType = BnType.BN2000;
-                    return "r56";
-
-                case "R50": // R50EcuCharacteristics
-                case "R52": // R50EcuCharacteristics
-                case "R53": // R50EcuCharacteristics
-                    //bnType = BnType.IBUS;
-                    // return "zcs_all";
-                    return null;
-
-                case "RR11": // BNT_RR1X_RR3X_RRNM
-                case "RR12": // BNT_RR1X_RR3X_RRNM
-                case "RR21": // BNT_RR1X_RR3X_RRNM
-                case "RR22": // BNT_RR1X_RR3X_RRNM
-                case "RR31": // BNT_RR1X_RR3X_RRNM
-                case "RR4": // RR6EcuCharacteristics
-                case "RR5": // RR6EcuCharacteristics
-                case "RR6": // RR6EcuCharacteristics
-                    //bnType = BnType.BN2020;
-                    return "f01";
-            }
-
-            if (typeUpper.StartsWith("F") || typeUpper.StartsWith("G") || typeUpper.StartsWith("I") || typeUpper.StartsWith("J") || typeUpper.StartsWith("U"))
-            {
-                // F01, F02, F03, F04, F06, F07, F10, F11, F12, F13, F18: F01EcuCharacteristics, F01_1307EcuCharacteristics
-                // F39, F54, F55, F56, F60: F56EcuCharacteristics
-                // F20, F21, F22, F23, F30, F31, F32, F33, F34, F35, F36, F80, F81, F82, F83, F87: F20EcuCharacteristics
-                // F25, F26: F25EcuCharacteristics, F25_1404EcuCharacteristics
-                // F14, F15, F16, F85, F86: F15EcuCharacteristics
-                // F40, F44: BNT_F40_F44
-                // F45, F46, F47, F48, F49, F52, F57: F56EcuCharacteristics
-                // F90, G30, G31, G32, G38: BNT_G11_G12_G3X_SP2015
-                // F91, F92, F93, G14, G15, G16: BNT_G1X_G3X_SP2018, BNT_G1X_G3X_SP2018_MGU, BNT_G1X_G3X_SP2018_noMGU
-                // F95, F96, G05, G06, G07: BNT_G05_G06_G07
-                // F97, F98, G01, G02, G08: BNT_G01_G02_G08_F97_F98_SP2015
-                // G11, G12: BNT_G11_G12_G3X_SP2015, BNT_G1X_G3X_SP2018_MGU, BNT_G1X_G3X_SP2018_noMGU, BNT_G1X_G3X_SP2018
-                // G20, G21, G22, G23, G26, G28: BNT_G20_G28
-                // G29: BNT_G29
-                // I01, F01BN2K: I01EcuCharacteristics
-                // I12, I15: BNT_I12_I15
-                // I20: BNT_I20, (MRR_30: BNT-XML-I20_FRS), (FRR_30V: BNT-XML-I20_FRSF)
-                // J29: BNT_J29
-                // U10, U11, U12: BNT_U06...
-                // U06: BNT-XML-U06...
-                //bnType = BnType.BN2020;
-                return "f01";
-            }
-            ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Vehicle type unknown");
+            ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "No vehicle series info found");
             return null;
         }
     }
