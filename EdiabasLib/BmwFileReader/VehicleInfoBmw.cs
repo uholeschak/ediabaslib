@@ -1587,9 +1587,11 @@ namespace BmwFileReader
         public static VehicleStructsBmw.VehicleSeriesInfo GetVehicleSeriesInfo(string series, DateTime? cDate, EdiabasNet ediabas)
         {
             string cDateStr = "No date";
+            long dateValue = -1;
             if (cDate.HasValue)
             {
                 cDateStr = cDate.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                dateValue = cDate.Value.Year * 100 + cDate.Value.Month;
             }
 
             ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle series info from vehicle series: {0}, CDate: {1}", series ?? "No series", cDateStr);
@@ -1609,16 +1611,93 @@ namespace BmwFileReader
             if (!vehicleSeriesInfoData.VehicleSeriesDict.TryGetValue(key, out List<VehicleStructsBmw.VehicleSeriesInfo> vehicleSeriesInfoList))
             {
                 ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Vehicle series not found");
-                return null;
             }
-
-            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle series info count: {0}", vehicleSeriesInfoList.Count);
-            if (vehicleSeriesInfoList.Count == 0)
+            else
             {
+                ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle series info count: {0}", vehicleSeriesInfoList.Count);
+            }
+
+            if (vehicleSeriesInfoList == null || vehicleSeriesInfoList.Count == 0)
+            {
+                switch (key[0])
+                {
+                    case 'F':
+                    case 'G':
+                    case 'I':
+                    case 'J':
+                    case 'U':
+                        ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Using fallback from first letter");
+                        return new VehicleStructsBmw.VehicleSeriesInfo(series, "F01", string.Empty);
+                }
+
                 return null;
             }
 
-            return vehicleSeriesInfoList[0];
+            if (vehicleSeriesInfoList.Count == 1)
+            {
+                return vehicleSeriesInfoList[0];
+            }
+
+            if (dateValue < 0)
+            {
+                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "No date present");
+                return null;
+            }
+
+            foreach (VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo in vehicleSeriesInfoList)
+            {
+                if (!string.IsNullOrEmpty(vehicleSeriesInfo.Date) && !string.IsNullOrEmpty(vehicleSeriesInfo.DateCompare))
+                {
+                    VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoMatch = null;
+                    if (long.TryParse(vehicleSeriesInfo.Date, NumberStyles.Integer, CultureInfo.InvariantCulture, out long dateCompare))
+                    {
+                        string dateCompre = vehicleSeriesInfo.DateCompare.ToUpperInvariant();
+                        if (dateCompre.Contains("<"))
+                        {
+                            if (dateCompre.Contains("="))
+                            {
+                                if (dateCompare <= dateValue)
+                                {
+                                    vehicleSeriesInfoMatch = vehicleSeriesInfo;
+                                }
+                            }
+                            else
+                            {
+                                if (dateCompare < dateValue)
+                                {
+                                    vehicleSeriesInfoMatch = vehicleSeriesInfo;
+                                }
+                            }
+                        }
+                        else if (dateCompre.Contains(">"))
+                        {
+                            if (dateCompre.Contains("="))
+                            {
+                                if (dateCompare >= dateValue)
+                                {
+                                    vehicleSeriesInfoMatch = vehicleSeriesInfo;
+                                }
+                            }
+                            else
+                            {
+                                if (dateCompare > dateValue)
+                                {
+                                    vehicleSeriesInfoMatch = vehicleSeriesInfo;
+                                }
+                            }
+                        }
+                    }
+
+                    if (vehicleSeriesInfoMatch != null)
+                    {
+                        ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Matched date expression: {0} {1}", vehicleSeriesInfoMatch.DateCompare, vehicleSeriesInfoMatch.Date);
+                        return vehicleSeriesInfoMatch;
+                    }
+                }
+            }
+
+            ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "No date matched");
+            return null;
         }
 
         public static string GetGroupSgbdFromVehicleType(string vehicleType, string vin, DateTime? cDate, EdiabasNet ediabas, out BnType bnType)
