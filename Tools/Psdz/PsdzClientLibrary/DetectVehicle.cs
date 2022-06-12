@@ -259,6 +259,24 @@ namespace PsdzClient
                                             log.InfoFormat(CultureInfo.InvariantCulture, "Detected vehicle type: {0}", vtype);
                                             modelSeries = br;
                                             vehicleType = vtype;
+                                        }
+
+                                        if (resultDict.TryGetValue("STAT_ZEIT_KRITERIUM", out EdiabasNet.ResultData resultDataCDate))
+                                        {
+                                            string cDateStr = resultDataCDate.OpData as string;
+                                            if (!string.IsNullOrEmpty(cDateStr))
+                                            {
+                                                if (DateTime.TryParseExact(cDateStr, "MMyy", null, DateTimeStyles.None, out DateTime dateTime))
+                                                {
+                                                    log.InfoFormat(CultureInfo.InvariantCulture, "Detected construction date: {0}",
+                                                        dateTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+                                                    cDate = dateTime;
+                                                }
+                                            }
+                                        }
+
+                                        if (vehicleType != null)
+                                        {
                                             break;
                                         }
                                     }
@@ -367,8 +385,7 @@ namespace PsdzClient
 
                             if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0 && !string.IsNullOrEmpty(ecuSgbd))
                             {
-                                PdszDatabase.EcuInfo ecuInfo =
-                                    new PdszDatabase.EcuInfo(ecuName, ecuAdr, ecuDesc, ecuSgbd, ecuGroup);
+                                PdszDatabase.EcuInfo ecuInfo = new PdszDatabase.EcuInfo(ecuName, ecuAdr, ecuDesc, ecuSgbd, ecuGroup);
                                 EcuList.Add(ecuInfo);
                             }
 
