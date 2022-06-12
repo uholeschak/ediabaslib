@@ -1566,6 +1566,21 @@ namespace BmwFileReader
             return brName.Substring(0, 1) + brName.Substring(2, 2);
         }
 
+        public static DateTime? ConvertConstructionDate(string cDateStr)
+        {
+            if (string.IsNullOrWhiteSpace(cDateStr))
+            {
+                return null;
+            }
+
+            if (DateTime.TryParseExact(cDateStr.Trim(), "MMyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateTime))
+            {
+                return dateTime;
+            }
+
+            return null;
+        }
+
         public static VehicleStructsBmw.VehicleSeriesInfo GetVehicleSeriesInfo(string series, DateTime? cDate, EdiabasNet ediabas)
         {
             string cDateStr = "No date";
