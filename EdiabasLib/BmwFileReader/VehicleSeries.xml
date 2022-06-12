@@ -17,20 +17,6 @@
     </item>
     <item>
       <key>
-        <string>G07</string>
-      </key>
-      <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
-            <Series>G07</Series>
-            <BrSgbd>F01</BrSgbd>
-            <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
-      </value>
-    </item>
-    <item>
-      <key>
         <string>F96</string>
       </key>
       <value>
@@ -65,6 +51,20 @@
         <ArrayOfVehicleSeriesInfo>
           <VehicleSeriesInfo>
             <Series>G06</Series>
+            <BrSgbd>F01</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>G07</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>G07</Series>
             <BrSgbd>F01</BrSgbd>
             <Brand>BMW PKW</Brand>
           </VehicleSeriesInfo>
@@ -451,12 +451,12 @@
     </item>
     <item>
       <key>
-        <string>F39</string>
+        <string>F52</string>
       </key>
       <value>
         <ArrayOfVehicleSeriesInfo>
           <VehicleSeriesInfo>
-            <Series>F39</Series>
+            <Series>F52</Series>
             <BrSgbd>F01</BrSgbd>
             <Brand>BMW PKW</Brand>
           </VehicleSeriesInfo>
@@ -465,12 +465,12 @@
     </item>
     <item>
       <key>
-        <string>F45</string>
+        <string>F60</string>
       </key>
       <value>
         <ArrayOfVehicleSeriesInfo>
           <VehicleSeriesInfo>
-            <Series>F45</Series>
+            <Series>F60</Series>
             <BrSgbd>F01</BrSgbd>
             <Brand>BMW PKW</Brand>
           </VehicleSeriesInfo>
@@ -493,54 +493,12 @@
     </item>
     <item>
       <key>
-        <string>F48</string>
+        <string>F45</string>
       </key>
       <value>
         <ArrayOfVehicleSeriesInfo>
           <VehicleSeriesInfo>
-            <Series>F48</Series>
-            <BrSgbd>F01</BrSgbd>
-            <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
-      </value>
-    </item>
-    <item>
-      <key>
-        <string>F49</string>
-      </key>
-      <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
-            <Series>F49</Series>
-            <BrSgbd>F01</BrSgbd>
-            <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
-      </value>
-    </item>
-    <item>
-      <key>
-        <string>F52</string>
-      </key>
-      <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
-            <Series>F52</Series>
-            <BrSgbd>F01</BrSgbd>
-            <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
-      </value>
-    </item>
-    <item>
-      <key>
-        <string>F54</string>
-      </key>
-      <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
-            <Series>F54</Series>
+            <Series>F45</Series>
             <BrSgbd>F01</BrSgbd>
             <Brand>BMW PKW</Brand>
           </VehicleSeriesInfo>
@@ -563,6 +521,34 @@
     </item>
     <item>
       <key>
+        <string>F48</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>F48</Series>
+            <BrSgbd>F01</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>F54</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>F54</Series>
+            <BrSgbd>F01</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
         <string>F57</string>
       </key>
       <value>
@@ -577,12 +563,26 @@
     </item>
     <item>
       <key>
-        <string>F60</string>
+        <string>F49</string>
       </key>
       <value>
         <ArrayOfVehicleSeriesInfo>
           <VehicleSeriesInfo>
-            <Series>F60</Series>
+            <Series>F49</Series>
+            <BrSgbd>F01</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>F39</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>F39</Series>
             <BrSgbd>F01</BrSgbd>
             <Brand>BMW PKW</Brand>
           </VehicleSeriesInfo>
@@ -611,6 +611,104 @@
         <ArrayOfVehicleSeriesInfo>
           <VehicleSeriesInfo>
             <Series>F56</Series>
+            <BrSgbd>F01</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>G32</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>G32</Series>
+            <BrSgbd>F01</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>G30</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>G30</Series>
+            <BrSgbd>F01</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>G11</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>G11</Series>
+            <BrSgbd>F01</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>G12</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>G12</Series>
+            <BrSgbd>F01</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>G31</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>G31</Series>
+            <BrSgbd>F01</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>G38</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>G38</Series>
+            <BrSgbd>F01</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>F90</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>F90</Series>
             <BrSgbd>F01</BrSgbd>
             <Brand>BMW PKW</Brand>
           </VehicleSeriesInfo>
@@ -703,118 +801,6 @@
     </item>
     <item>
       <key>
-        <string>G32</string>
-      </key>
-      <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
-            <Series>G32</Series>
-            <BrSgbd>F01</BrSgbd>
-            <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
-      </value>
-    </item>
-    <item>
-      <key>
-        <string>G30</string>
-      </key>
-      <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
-            <Series>G30</Series>
-            <BrSgbd>F01</BrSgbd>
-            <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
-      </value>
-    </item>
-    <item>
-      <key>
-        <string>G31</string>
-      </key>
-      <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
-            <Series>G31</Series>
-            <BrSgbd>F01</BrSgbd>
-            <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
-      </value>
-    </item>
-    <item>
-      <key>
-        <string>G38</string>
-      </key>
-      <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
-            <Series>G38</Series>
-            <BrSgbd>F01</BrSgbd>
-            <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
-      </value>
-    </item>
-    <item>
-      <key>
-        <string>F90</string>
-      </key>
-      <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
-            <Series>F90</Series>
-            <BrSgbd>F01</BrSgbd>
-            <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
-      </value>
-    </item>
-    <item>
-      <key>
-        <string>G11</string>
-      </key>
-      <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
-            <Series>G11</Series>
-            <BrSgbd>F01</BrSgbd>
-            <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
-      </value>
-    </item>
-    <item>
-      <key>
-        <string>G12</string>
-      </key>
-      <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
-            <Series>G12</Series>
-            <BrSgbd>F01</BrSgbd>
-            <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
-      </value>
-    </item>
-    <item>
-      <key>
-        <string>G08</string>
-      </key>
-      <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
-            <Series>G08</Series>
-            <BrSgbd>F01</BrSgbd>
-            <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
-      </value>
-    </item>
-    <item>
-      <key>
         <string>G01</string>
       </key>
       <value>
@@ -849,6 +835,20 @@
         <ArrayOfVehicleSeriesInfo>
           <VehicleSeriesInfo>
             <Series>F97</Series>
+            <BrSgbd>F01</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>G08</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>G08</Series>
             <BrSgbd>F01</BrSgbd>
             <Brand>BMW PKW</Brand>
           </VehicleSeriesInfo>
@@ -1571,34 +1571,6 @@
     </item>
     <item>
       <key>
-        <string>E70</string>
-      </key>
-      <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
-            <Series>E70</Series>
-            <BrSgbd>E70</BrSgbd>
-            <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
-      </value>
-    </item>
-    <item>
-      <key>
-        <string>E71</string>
-      </key>
-      <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
-            <Series>E71</Series>
-            <BrSgbd>E70</BrSgbd>
-            <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
-      </value>
-    </item>
-    <item>
-      <key>
         <string>RR1</string>
       </key>
       <value>
@@ -2004,6 +1976,188 @@
     </item>
     <item>
       <key>
+        <string>U06</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>U06</Series>
+            <BrSgbd>F01</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>U11</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>U11</Series>
+            <BrSgbd>F01</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>U12</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>U12</Series>
+            <BrSgbd>F01</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>U10</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>U10</Series>
+            <BrSgbd>F01</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>F70</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>F70</Series>
+            <BrSgbd>F01</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>F74</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>F74</Series>
+            <BrSgbd>F01</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>F78</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>F78</Series>
+            <BrSgbd>F01</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>U25</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>U25</Series>
+            <BrSgbd>F01</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>F66</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>F66</Series>
+            <BrSgbd>F01</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>F65</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>F65</Series>
+            <BrSgbd>F01</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>F67</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>F67</Series>
+            <BrSgbd>F01</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>E70</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>E70</Series>
+            <BrSgbd>E70</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>E71</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>E71</Series>
+            <BrSgbd>E70</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
         <string>K001</string>
       </key>
       <value>
@@ -2046,6 +2200,104 @@
     </item>
     <item>
       <key>
+        <string>G60</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>G60</Series>
+            <BrSgbd>F01</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>G68</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>G68</Series>
+            <BrSgbd>F01</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>G90</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>G90</Series>
+            <BrSgbd>F01</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>G99</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>G99</Series>
+            <BrSgbd>F01</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>G61</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>G61</Series>
+            <BrSgbd>F01</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>G70</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>G70</Series>
+            <BrSgbd>F01</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>G73</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>G73</Series>
+            <BrSgbd>F01</BrSgbd>
+            <Brand>BMW PKW</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
         <string>K024</string>
       </key>
       <value>
@@ -2068,6 +2320,34 @@
             <Series>KH24</Series>
             <BrSgbd>MRK24</BrSgbd>
             <Brand>BMW MOTORRAD</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>K01X</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>K01X</Series>
+            <BrSgbd>MRK24</BrSgbd>
+            <Brand>BMW MOTORRAD</Brand>
+          </VehicleSeriesInfo>
+        </ArrayOfVehicleSeriesInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>G09</string>
+      </key>
+      <value>
+        <ArrayOfVehicleSeriesInfo>
+          <VehicleSeriesInfo>
+            <Series>G09</Series>
+            <BrSgbd>F01</BrSgbd>
+            <Brand>BMW PKW</Brand>
           </VehicleSeriesInfo>
         </ArrayOfVehicleSeriesInfo>
       </value>
