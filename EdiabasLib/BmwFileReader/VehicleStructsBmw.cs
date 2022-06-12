@@ -16,7 +16,7 @@ namespace BmwFileReader
             {
             }
 
-            public VehicleSeriesInfo(string series, string brSgbd, string brand, string date, string dateCompare)
+            public VehicleSeriesInfo(string series, string brSgbd, string brand, string date = null, string dateCompare = null)
             {
                 Series = series;
                 BrSgbd = brSgbd;

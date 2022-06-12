@@ -1615,6 +1615,17 @@ namespace BmwFileReader
             ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle series info count: {0}", vehicleSeriesInfoList.Count);
             if (vehicleSeriesInfoList.Count == 0)
             {
+                switch (key[0])
+                {
+                    case 'F':
+                    case 'G':
+                    case 'I':
+                    case 'J':
+                    case 'U':
+                        ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Using fallback from first letter");
+                        return new VehicleStructsBmw.VehicleSeriesInfo(series, "F01", string.Empty);
+                }
+
                 return null;
             }
 
