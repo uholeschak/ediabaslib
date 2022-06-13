@@ -2124,7 +2124,7 @@ namespace BmwDeepObd
             }
 
             List<EcuFunctionStructs.EcuFaultModeLabel> ecuFaultModeLabelList =
-                ActivityCommon.EcuFunctionReader.GetFaultModeLabelList(errorCode, ecuVariant, ActivityCommon.ShowOnlyRelevantErrors);
+                ActivityCommon.EcuFunctionReader.GetFaultModeLabelList(errorCode, ecuVariant, relevantOnly);
             if (ecuFaultModeLabelList != null)
             {
                 List<Tuple<string, bool>> faultModeResultList = ErrorFaultModeResultList.ToList();
