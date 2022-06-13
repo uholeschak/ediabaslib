@@ -235,6 +235,7 @@ namespace BmwDeepObd
                 CheckEcuFiles = ActivityCommon.CheckEcuFiles;
                 OldVagMode = ActivityCommon.OldVagMode;
                 UseBmwDatabase = ActivityCommon.UseBmwDatabase;
+                ShowOnlyRelevantErrors = ActivityCommon.ShowOnlyRelevantErrors;
                 ScanAllEcus = ActivityCommon.ScanAllEcus;
                 CollectDebugInfo = ActivityCommon.CollectDebugInfo;
 
@@ -359,6 +360,7 @@ namespace BmwDeepObd
             [XmlElement("CheckEcuFiles")] public bool CheckEcuFiles { get; set; }
             [XmlElement("OldVagMode")] public bool OldVagMode { get; set; }
             [XmlElement("UseBmwDatabase")] public bool UseBmwDatabase { get; set; }
+            [XmlElement("ShowOnlyRelevantErrors")] public bool ShowOnlyRelevantErrors { get; set; }
             [XmlElement("ScanAllEcus")] public bool ScanAllEcus { get; set; }
             [XmlElement("CollectDebugInfo")] public bool CollectDebugInfo { get; set; }
         }
@@ -2810,6 +2812,7 @@ namespace BmwDeepObd
                     ActivityCommon.CheckEcuFiles = storageData.CheckEcuFiles;
                     ActivityCommon.OldVagMode = storageData.OldVagMode;
                     ActivityCommon.UseBmwDatabase = storageData.UseBmwDatabase;
+                    ActivityCommon.ShowOnlyRelevantErrors = storageData.ShowOnlyRelevantErrors;
                     ActivityCommon.ScanAllEcus = storageData.ScanAllEcus;
                     ActivityCommon.CollectDebugInfo = storageData.CollectDebugInfo;
 
