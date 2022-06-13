@@ -240,6 +240,11 @@ namespace BmwDeepObd
             _checkBoxShowBatteryVoltageWarning = FindViewById<CheckBox>(Resource.Id.checkBoxShowBatteryVoltageWarning);
             _checkBoxOldVagMode = FindViewById<CheckBox>(Resource.Id.checkBoxOldVagMode);
             _checkBoxUseBmwDatabase = FindViewById<CheckBox>(Resource.Id.checkBoxUseBmwDatabase);
+            _checkBoxUseBmwDatabase.Click += (sender, args) =>
+            {
+                UpdateDisplay();
+            };
+
             _checkBoxShowOnlyRelevantErrors = FindViewById<CheckBox>(Resource.Id.checkBoxShowOnlyRelevantErrors);
 
             _checkBoxScanAllEcus = FindViewById<CheckBox>(Resource.Id.checkBoxScanAllEcus);
@@ -860,6 +865,8 @@ namespace BmwDeepObd
             }
             _checkBoxHciSnoopLog.Checked = snoopLogEnabled;
             _checkBoxHciSnoopLog.Text = string.Format(GetString(Resource.String.settings_hci_snoop_log), logFileName ?? "-");
+
+            _checkBoxShowOnlyRelevantErrors.Visibility = _checkBoxUseBmwDatabase.Checked ? ViewStates.Visible : ViewStates.Gone;
         }
 
         private void SelectMedia()
