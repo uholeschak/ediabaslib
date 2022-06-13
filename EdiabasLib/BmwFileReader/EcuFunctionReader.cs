@@ -114,7 +114,7 @@ namespace BmwFileReader
             return ecuFaultModeLabelMatchList;
         }
 
-        public List<EcuFunctionStructs.EcuFaultModeLabel> GetFaultModeLabelList(Int64 errorCode, EcuFunctionStructs.EcuVariant ecuVariant)
+        public List<EcuFunctionStructs.EcuFaultModeLabel> GetFaultModeLabelList(Int64 errorCode, EcuFunctionStructs.EcuVariant ecuVariant, bool relevantOnly = false)
         {
             if (!ecuVariant.EcuFaultCodeDict.TryGetValue(errorCode, out EcuFunctionStructs.EcuFaultCode ecuFaultCode))
             {
@@ -131,7 +131,11 @@ namespace BmwFileReader
             {
                 if (_ecuFaultModeLabelDict.TryGetValue(ecuFaultModeId.ToLowerInvariant(), out EcuFunctionStructs.EcuFaultModeLabel ecuFaultModeLabel))
                 {
-                    ecuFaultModeLabelList.Add(ecuFaultModeLabel);
+                    bool addLabel = !relevantOnly || ecuFaultModeLabel.Relevance.ConvertToInt() > 0;
+                    if (addLabel)
+                    {
+                        ecuFaultModeLabelList.Add(ecuFaultModeLabel);
+                    }
                 }
             }
 
