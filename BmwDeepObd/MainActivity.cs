@@ -3885,6 +3885,8 @@ namespace BmwDeepObd
                                             errorCode = 0x0000;
                                         }
 
+                                        bool showRelevantOnly = ActivityCommon.ShowOnlyRelevantErrors;
+                                        bool showUnknown = !showRelevantOnly || !ActivityCommon.EcuFunctionsActive;
                                         List<EcuFunctionStructs.EcuEnvCondLabel> envCondLabelList = null;
                                         if (ecuVariant != null)
                                         {
@@ -3902,9 +3904,8 @@ namespace BmwDeepObd
 #endif
                                             if (errorCode != 0x0000)
                                             {
-                                                bool relevantOnly = ActivityCommon.ShowOnlyRelevantErrors;
-                                                envCondLabelList = ActivityCommon.EcuFunctionReader.GetEnvCondLabelList(errorCode, ecuVariant, relevantOnly);
-                                                List<string> faultResultList = EdiabasThread.ConvertFaultCodeError(errorCode, errorReport, ecuVariant, relevantOnly);
+                                                envCondLabelList = ActivityCommon.EcuFunctionReader.GetEnvCondLabelList(errorCode, ecuVariant, showRelevantOnly);
+                                                List<string> faultResultList = EdiabasThread.ConvertFaultCodeError(errorCode, errorReport, ecuVariant, showRelevantOnly);
                                                 if (faultResultList != null && faultResultList.Count == 2)
                                                 {
                                                     text1 = faultResultList[0];
@@ -3913,7 +3914,7 @@ namespace BmwDeepObd
                                             }
                                         }
 
-                                        if (string.IsNullOrEmpty(text1))
+                                        if (showUnknown && string.IsNullOrEmpty(text1))
                                         {
                                             text1 = FormatResultString(errorReport.ErrorDict, "F_ORT_TEXT", "{0}");
                                             text2 = FormatResultString(errorReport.ErrorDict, "F_VORHANDEN_TEXT", "{0}");
