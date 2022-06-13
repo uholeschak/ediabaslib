@@ -168,7 +168,7 @@ namespace BmwFileReader
             return ecuEnvCondLabelMatchList;
         }
 
-        public List<EcuFunctionStructs.EcuEnvCondLabel> GetEnvCondLabelList(Int64 errorCode, EcuFunctionStructs.EcuVariant ecuVariant)
+        public List<EcuFunctionStructs.EcuEnvCondLabel> GetEnvCondLabelList(Int64 errorCode, EcuFunctionStructs.EcuVariant ecuVariant, bool relevantOnly = false)
         {
             if (!ecuVariant.EcuFaultCodeDict.TryGetValue(errorCode, out EcuFunctionStructs.EcuFaultCode ecuFaultCode))
             {
@@ -185,7 +185,11 @@ namespace BmwFileReader
             {
                 if (_ecuEnvCondLabelDict.TryGetValue(ecuEnvCondId.ToLowerInvariant(), out EcuFunctionStructs.EcuEnvCondLabel ecuEnvCondLabel))
                 {
-                    ecuEnvCondLabelList.Add(ecuEnvCondLabel);
+                    bool addLabel = !relevantOnly || ecuEnvCondLabel.Relevance.ConvertToInt() > 0;
+                    if (addLabel)
+                    {
+                        ecuEnvCondLabelList.Add(ecuEnvCondLabel);
+                    }
                 }
             }
 
