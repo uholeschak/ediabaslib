@@ -2105,17 +2105,21 @@ namespace BmwDeepObd
             }
         }
 
-        public static List<string> ConvertFaultCodeError(Int64 errorCode, EdiabasErrorReport errorReport, EcuFunctionStructs.EcuVariant ecuVariant)
+        public static List<string> ConvertFaultCodeError(Int64 errorCode, EdiabasErrorReport errorReport, EcuFunctionStructs.EcuVariant ecuVariant, bool relevantOnly = false)
         {
             List<string> resultList = new List<string>();
             string language = ActivityCommon.GetCurrentLanguage();
             EcuFunctionStructs.EcuFaultCodeLabel ecuFaultCodeLabel = ActivityCommon.EcuFunctionReader.GetFaultCodeLabel(errorCode, ecuVariant);
             if (ecuFaultCodeLabel != null)
             {
-                string label = ecuFaultCodeLabel.Title.GetTitle(language);
-                if (!string.IsNullOrEmpty(label))
+                bool addLabel = !relevantOnly || ecuFaultCodeLabel.Relevance.ConvertToInt() > 0;
+                if (addLabel)
                 {
-                    resultList.Add(label);
+                    string label = ecuFaultCodeLabel.Title.GetTitle(language);
+                    if (!string.IsNullOrEmpty(label))
+                    {
+                        resultList.Add(label);
+                    }
                 }
             }
 
