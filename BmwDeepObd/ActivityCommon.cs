@@ -6064,6 +6064,7 @@ namespace BmwDeepObd
             CheckEcuFiles = true;
             OldVagMode = false;
             UseBmwDatabase = true;
+            ShowOnlyRelevantErrors = true;
             ScanAllEcus = false;
             CollectDebugInfo = false;
             Translator = TranslatorType.IbmWatson;
