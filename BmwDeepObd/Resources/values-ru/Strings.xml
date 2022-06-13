@@ -443,6 +443,8 @@
   <string name="settings_old_vag_mode">Использовать старый режим VAG</string>
   <string name="settings_caption_bmw_database">База данных BMW</string>
   <string name="settings_use_bmw_database">Использовать базу данных BMW</string>
+  <!--Translate-->
+  <string name="settings_show_only_relevant_errors">Показывать только релевантные ошибки</string>
   <string name="settings_caption_scan_all_ecus">Распознавание ECU</string>
   <string name="settings_scan_all_ecus">Для автомобилей BMW с протоколом DS2 всегда сканировать все ECU (медленно)</string>
   <string name="settings_check_ecu_files">Проверка ECU файлов при запуске</string>

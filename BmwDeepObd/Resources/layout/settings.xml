@@ -392,6 +392,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/settings_use_bmw_database" />
+        <CheckBox
+            android:id="@+id/checkBoxShowOnlyRelevantErrors"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_show_only_relevant_errors" />
         <TextView
             android:text="@string/settings_caption_scan_all_ecus"
             android:id="@+id/textViewCaptionScallAllEcus"
