@@ -947,6 +947,8 @@ namespace BmwDeepObd
 
         public static bool UseBmwDatabase { get; set; }
 
+        public static bool ShowOnlyRelevantErrors { get; set; }
+
         public static bool ScanAllEcus { get; set; }
 
         public static bool CollectDebugInfo { get; set; }

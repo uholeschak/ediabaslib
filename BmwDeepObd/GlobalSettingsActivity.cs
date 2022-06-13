@@ -98,6 +98,7 @@ namespace BmwDeepObd
         private CheckBox _checkBoxShowBatteryVoltageWarning;
         private CheckBox _checkBoxOldVagMode;
         private CheckBox _checkBoxUseBmwDatabase;
+        private CheckBox _checkBoxShowOnlyRelevantErrors;
         private CheckBox _checkBoxScanAllEcus;
         private LinearLayout _layoutFileManage;
         private Button _buttonStorageCopyTreeToApp;
@@ -239,6 +240,13 @@ namespace BmwDeepObd
             _checkBoxShowBatteryVoltageWarning = FindViewById<CheckBox>(Resource.Id.checkBoxShowBatteryVoltageWarning);
             _checkBoxOldVagMode = FindViewById<CheckBox>(Resource.Id.checkBoxOldVagMode);
             _checkBoxUseBmwDatabase = FindViewById<CheckBox>(Resource.Id.checkBoxUseBmwDatabase);
+            _checkBoxUseBmwDatabase.Click += (sender, args) =>
+            {
+                UpdateDisplay();
+            };
+
+            _checkBoxShowOnlyRelevantErrors = FindViewById<CheckBox>(Resource.Id.checkBoxShowOnlyRelevantErrors);
+
             _checkBoxScanAllEcus = FindViewById<CheckBox>(Resource.Id.checkBoxScanAllEcus);
 
             _layoutFileManage = FindViewById<LinearLayout>(Resource.Id.layoutFileManage);
@@ -638,6 +646,7 @@ namespace BmwDeepObd
             _checkBoxShowBatteryVoltageWarning.Checked = ActivityCommon.ShowBatteryVoltageWarning;
             _checkBoxOldVagMode.Checked = ActivityCommon.OldVagMode;
             _checkBoxUseBmwDatabase.Checked = ActivityCommon.UseBmwDatabase;
+            _checkBoxShowOnlyRelevantErrors.Checked = ActivityCommon.ShowOnlyRelevantErrors;
             _checkBoxScanAllEcus.Checked = ActivityCommon.ScanAllEcus;
             _checkBoxCollectDebugInfo.Checked = ActivityCommon.CollectDebugInfo;
             UpdateDisplay();
@@ -819,6 +828,7 @@ namespace BmwDeepObd
             ActivityCommon.ShowBatteryVoltageWarning = _checkBoxShowBatteryVoltageWarning.Checked;
             ActivityCommon.OldVagMode = _checkBoxOldVagMode.Checked;
             ActivityCommon.UseBmwDatabase = _checkBoxUseBmwDatabase.Checked;
+            ActivityCommon.ShowOnlyRelevantErrors = _checkBoxShowOnlyRelevantErrors.Checked;
             ActivityCommon.ScanAllEcus = _checkBoxScanAllEcus.Checked;
             ActivityCommon.CollectDebugInfo = _checkBoxCollectDebugInfo.Checked;
         }
@@ -855,6 +865,8 @@ namespace BmwDeepObd
             }
             _checkBoxHciSnoopLog.Checked = snoopLogEnabled;
             _checkBoxHciSnoopLog.Text = string.Format(GetString(Resource.String.settings_hci_snoop_log), logFileName ?? "-");
+
+            _checkBoxShowOnlyRelevantErrors.Visibility = _checkBoxUseBmwDatabase.Checked ? ViewStates.Visible : ViewStates.Gone;
         }
 
         private void SelectMedia()
