@@ -1087,7 +1087,7 @@ namespace BmwDeepObd
                             }
                         }
 
-                        if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
+                        if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw && !ActivityCommon.ShowOnlyRelevantErrors)
                         {
                             try
                             {
