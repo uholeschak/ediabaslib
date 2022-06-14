@@ -149,6 +149,7 @@ namespace BmwDeepObd
         {
             SetTheme(ActivityCommon.SelectedThemeId);
             base.OnCreate (savedInstanceState);
+            _allowFullScreenMode = false;
             if (savedInstanceState != null)
             {
                 _instanceData = GetInstanceState(savedInstanceState, _instanceData) as InstanceData;
