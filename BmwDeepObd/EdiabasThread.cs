@@ -1194,7 +1194,11 @@ namespace BmwDeepObd
                         }
                         return false;
                     }
-                    currentSgbd = pageInfo.JobsInfo.Sgbd;
+
+                    if (pageInfo.JobsInfo != null)
+                    {
+                        currentSgbd = pageInfo.JobsInfo.Sgbd;
+                    }
                 }
 
                 _ediabasInitReq = false;
