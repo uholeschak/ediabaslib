@@ -185,7 +185,7 @@ namespace BmwFileReader
                 {
                     if (ecuLogisticsData.Data == null)
                     {
-                        string resourceName = resourcePath + ecuLogisticsData.XmlName;
+                        string resourceName = FindResourceName(ecuLogisticsData.XmlName);
                         ecuLogisticsData.Data = ReadEcuLogisticsXml(resourceName);
                     }
 
@@ -208,6 +208,11 @@ namespace BmwFileReader
         {
             try
             {
+                if (string.IsNullOrEmpty(resourceName))
+                {
+                    return null;
+                }
+
                 List<IEcuLogisticsEntry> ecuLogisticsList = new List<IEcuLogisticsEntry>();
                 using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
                 {
@@ -300,19 +305,13 @@ namespace BmwFileReader
             }
         }
 
-        public static VehicleStructsBmw.VehicleSeriesInfoData ReadVehicleSeriesInfo()
+        public static string FindResourceName(string resourceFileName)
         {
             try
             {
-                if (_vehicleSeriesInfoData != null)
-                {
-                    return _vehicleSeriesInfoData;
-                }
-
                 Assembly assembly = Assembly.GetExecutingAssembly();
                 string[] resourceNames = assembly.GetManifestResourceNames();
 
-                string resource = null;
                 foreach (string resourceName in resourceNames)
                 {
                     string[] resourceParts = resourceName.Split('.');
@@ -322,19 +321,37 @@ namespace BmwFileReader
                     }
 
                     string fileName = resourceParts[resourceParts.Length - 2] + "." + resourceParts[resourceParts.Length - 1];
-                    if (string.Compare(fileName, VehicleStructsBmw.VehicleSeriesXmlFile, StringComparison.OrdinalIgnoreCase) == 0)
+                    if (string.Compare(fileName, resourceFileName, StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        resource = resourceName;
-                        break;
+                        return resourceName;
                     }
                 }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
 
-                if (string.IsNullOrEmpty(resource))
+            return null;
+        }
+
+        public static VehicleStructsBmw.VehicleSeriesInfoData ReadVehicleSeriesInfo()
+        {
+            try
+            {
+                if (_vehicleSeriesInfoData != null)
+                {
+                    return _vehicleSeriesInfoData;
+                }
+
+                string resourceName = FindResourceName(VehicleStructsBmw.VehicleSeriesXmlFile);
+                if (string.IsNullOrEmpty(resourceName))
                 {
                     return null;
                 }
 
-                using (Stream stream = assembly.GetManifestResourceStream(resource))
+                Assembly assembly = Assembly.GetExecutingAssembly();
+                using (Stream stream = assembly.GetManifestResourceStream(resourceName))
                 {
                     if (stream != null)
                     {
@@ -604,7 +621,7 @@ namespace BmwFileReader
             return vehicleType;
         }
 
-        public static ReadOnlyCollection<IEcuLogisticsEntry> GetEcuLogisticsFromVehicleType(string resourcePath, string vehicleType, EdiabasNet ediabas)
+        public static ReadOnlyCollection<IEcuLogisticsEntry> GetEcuLogisticsFromVehicleType(string vehicleType, EdiabasNet ediabas)
         {
             ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ECU logistics from vehicle type: {0}", vehicleType ?? "No type");
             if (vehicleType == null)
