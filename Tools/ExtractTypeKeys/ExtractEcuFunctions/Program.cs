@@ -403,7 +403,7 @@ namespace ExtractEcuFunctions
         {
             List<EcuFunctionStructs.EcuFaultCode> ecuFaultCodeList = new List<EcuFunctionStructs.EcuFaultCode>();
             // from: DatabaseProvider.SQLiteConnector.dll BMW.Rheingold.DatabaseProvider.SQLiteConnector.DatabaseProviderSQLite.GetXepFaultCodeByEcuVariantId
-            string sql = string.Format(@"SELECT ID, CODE FROM XEP_FAULTCODES WHERE ECUVARIANTID = {0}", variantId);
+            string sql = string.Format(@"SELECT ID, CODE, RELEVANCE FROM XEP_FAULTCODES WHERE ECUVARIANTID = {0}", variantId);
             using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
             {
                 using (SQLiteDataReader reader = command.ExecuteReader())
@@ -412,7 +412,8 @@ namespace ExtractEcuFunctions
                     {
                         EcuFunctionStructs.EcuFaultCode ecuFaultCode = new EcuFunctionStructs.EcuFaultCode(
                             reader["ID"].ToString().Trim(),
-                            reader["CODE"].ToString());
+                            reader["CODE"].ToString(),
+                            reader["RELEVANCE"].ToString());
                         ecuFaultCodeList.Add(ecuFaultCode);
                         EcuFunctionStructs.EcuFaultCodeLabel ecuFaultCodeLabel = GetFaultCodeLabel(mDbConnection, ecuFaultCode);
                         List<EcuFunctionStructs.EcuFaultModeLabel> ecuFaultModeLabelList = GetFaultModeLabelList(mDbConnection, ecuFaultCode);
