@@ -133,875 +133,27 @@ namespace BmwFileReader
 
         public class EcuLogisticsData
         {
-            public EcuLogisticsData(string xmlName, ReadOnlyCollection<IEcuLogisticsEntry> staticEntry)
+            public EcuLogisticsData(string xmlName)
             {
                 XmlName = xmlName;
-                StaticEntry = staticEntry;
-                UsageEntry = null;
+                Data = null;
             }
 
             public string XmlName { get; }
-            public ReadOnlyCollection<IEcuLogisticsEntry> StaticEntry { get; }
-            public ReadOnlyCollection<IEcuLogisticsEntry> UsageEntry { get; set; }
+            public ReadOnlyCollection<IEcuLogisticsEntry> Data { get; set; }
         }
 
         private const string DatabaseFileName = @"Database.zip";
 
-        // ReSharper disable RedundantExplicitArrayCreation
-        // ReSharper disable CoVariantArrayConversion
-
-        // from: RheingoldDiagnostics.dll: BMW.Rheingold.Diagnostics.E36EcuCharacteristics.E36EcuCharacteristics
-        public static ReadOnlyCollection<IEcuLogisticsEntry> EcuLogisticsE36 =
-            new ReadOnlyCollection<IEcuLogisticsEntry>(new EcuLogisticsEntry[]
-            {
-                new EcuLogisticsEntry(0, "ZKE", BusType.KBUS, "D_0000|D_ZKE_GM", 1, 1),
-                new EcuLogisticsEntry(8, "SHD", BusType.KBUS, "D_0008", 2, 6),
-                new EcuLogisticsEntry(13, "KOMBI", BusType.ROOT, "D_000D", 5, 0),
-                new EcuLogisticsEntry(16, "DME", BusType.FACAN, "D_0010", 7, 1),
-                new EcuLogisticsEntry(17, "ZKE", BusType.KBUS, "D_0011", 1, 2),
-                new EcuLogisticsEntry(18, "DME", BusType.FACAN, "D_MOTOR|D_0012", 7, 1),
-                new EcuLogisticsEntry(19, "DME", BusType.FACAN, "D_0013", 7, 1),
-                new EcuLogisticsEntry(20, "DME2", BusType.FACAN, "D_0014", 7, 2),
-                new EcuLogisticsEntry(21, "DDSHD", BusType.KBUS, "D_0015", 1, 7),
-                new EcuLogisticsEntry(22, "TOENS", BusType.UNKNOWN, "D_0016", -1, -1),
-                new EcuLogisticsEntry(24, "EGS", BusType.FACAN, "D_EGS", 7, 9),
-                new EcuLogisticsEntry(25, "ATCU", BusType.UNKNOWN, "D_0019", -1, -1),
-                new EcuLogisticsEntry(32, "EML", BusType.UNKNOWN, "D_0020", -1, -1),
-                new EcuLogisticsEntry(33, "ZV", BusType.UNKNOWN, "D_0021", -1, -1),
-                new EcuLogisticsEntry(34, "EML", BusType.FACAN, "D_0022", 7, 3),
-                new EcuLogisticsEntry(36, "HKM", BusType.UNKNOWN, "D_0024", -1, -1),
-                new EcuLogisticsEntry(40, "RCC", BusType.UNKNOWN, "D_0028", -1, -1),
-                new EcuLogisticsEntry(70, "CID", BusType.FACAN, "D_CID", 7, 7),
-                new EcuLogisticsEntry(44, "VNC", BusType.UNKNOWN, "D_002C", -1, -1),
-                new EcuLogisticsEntry(46, "EDC", BusType.UNKNOWN, "D_002E", -1, -1),
-                new EcuLogisticsEntry(48, "CCM", BusType.KBUS, "D_0030", 0, 5),
-                new EcuLogisticsEntry(49, "EHPS", BusType.FACAN, "D_0031", 7, 4),
-                new EcuLogisticsEntry(50, "EGS", BusType.FACAN, "D_0032", 7, 4),
-                new EcuLogisticsEntry(52, "VGSG", BusType.FACAN, "D_VGSG", 7, 10),
-                new EcuLogisticsEntry(53, "LSM/EPS", BusType.FACAN, "D_0035|D_EPS", 6, 1),
-                new EcuLogisticsEntry(54, "ABS", BusType.FACAN, "D_0036", 7, 5),
-                new EcuLogisticsEntry(59, "VIDEO", BusType.KBUS, "D_003b", 5, 4),
-                new EcuLogisticsEntry(64, "FBZV", BusType.KBUS, "D_0040", 0, 6),
-                new EcuLogisticsEntry(68, "EWS", BusType.KBUS, "D_0044", 2, 1),
-                new EcuLogisticsEntry(69, "DWA", BusType.UNKNOWN, "D_0045", -1, -1),
-                new EcuLogisticsEntry(41, "DSC/DXC", BusType.KBUS, "D_ABSKWP", 1, 5),
-                new EcuLogisticsEntry(71, "CID", BusType.KBUS, "D_0047", -1, -1),
-                new EcuLogisticsEntry(72, "JBIT", BusType.KBUS, "D_0048", -1, -1),
-                new EcuLogisticsEntry(80, "MFL", BusType.KBUS, "D_0050", 4, 3),
-                new EcuLogisticsEntry(86, "DSC", BusType.FACAN, "D_0056", 7, 5),
-                new EcuLogisticsEntry(87, "LWS", BusType.FACAN, "D_0057", 7, 6),
-                new EcuLogisticsEntry(89, "HKA", BusType.KBUS, "D_0059", -1, -1),
-                new EcuLogisticsEntry(90, "ELV", BusType.UNKNOWN, "D_005A", -1, -1),
-                new EcuLogisticsEntry(91, "IHKA", BusType.KBUS, "D_005B", 0, 1),
-                new EcuLogisticsEntry(96, "PDC", BusType.KBUS, "D_0060", 2, 3),
-                new EcuLogisticsEntry(101, "EKP", BusType.FACAN, "D_0065", 7, 11),
-                new EcuLogisticsEntry(102, "ALC", BusType.FACAN, "D_0066", 7, 13),
-                new EcuLogisticsEntry(104, "RADIO", BusType.KBUS, "D_0068", 4, 1),
-                new EcuLogisticsEntry(105, "EKM", BusType.UNKNOWN, "D_0069", -1, -1),
-                new EcuLogisticsEntry(106, "DSP", BusType.KBUS, "D_006A", 1, 4),
-                new EcuLogisticsEntry(107, "STH", BusType.KBUS, "D_ZUHEIZ", 1, 5),
-                new EcuLogisticsEntry(108, "EGS", BusType.UNKNOWN, "D_006C", -1, -1),
-                new EcuLogisticsEntry(112, "RDC", BusType.KBUS, "D_0070", 0, 3),
-                new EcuLogisticsEntry(113, "SM/SPM", BusType.UNKNOWN, "D_0071", -1, -1),
-                new EcuLogisticsEntry(114, "SM", BusType.KBUS, "D_0072|D_0072b", 0, 2),
-                new EcuLogisticsEntry(116, "OC", BusType.KBUS, "D_0074", 2, 8),
-                new EcuLogisticsEntry(118, "CDC", BusType.KBUS, "D_0076", 5, 1),
-                new EcuLogisticsEntry(127, "NAVI", BusType.KBUS, "D_007f", 5, 2),
-                new EcuLogisticsEntry(128, "KOMBI", BusType.ROOT, "D_0080|D_KOMBI", 5, 0),
-                new EcuLogisticsEntry(129, "RIP", BusType.KBUS, "D_0081", 4, 4),
-                new EcuLogisticsEntry(134, "AHK", BusType.UNKNOWN, "D_0086", -1, -1),
-                new EcuLogisticsEntry(153, "NO_DME", BusType.VIRTUAL, "D_0099", -1, -1),
-                new EcuLogisticsEntry(154, "LWR", BusType.KBUS, "D_009a", 2, 2),
-                new EcuLogisticsEntry(155, "CVM", BusType.KBUS, "D_009b", 2, 4),
-                new EcuLogisticsEntry(157, "ETS", BusType.UNKNOWN, "D_009d", -1, -1),
-                new EcuLogisticsEntry(156, "CVM", BusType.KBUS, "D_009c", 2, 4),
-                new EcuLogisticsEntry(158, "UEB", BusType.KBUS, "D_009e", 2, 7),
-                new EcuLogisticsEntry(160, "FOND_ZIS", BusType.KBUS, "D_00a0", -1, -1),
-                new EcuLogisticsEntry(161, "SBSL", BusType.SIBUS, "D_SBSL2", -1, -1),
-                new EcuLogisticsEntry(162, "SBSR", BusType.SIBUS, "D_SBSR2", -1, -1),
-                new EcuLogisticsEntry(164, "ZAE", BusType.KBUS, "D_00a4|D_SIM", 2, 5),
-                new EcuLogisticsEntry(166, "GR", BusType.FACAN, "D_00a6", 6, 5),
-                new EcuLogisticsEntry(167, "FHK", BusType.KBUS, "D_00a7", -1, -1),
-                new EcuLogisticsEntry(172, "EHC2", BusType.FACAN, "D_00AC", 7, 12),
-                new EcuLogisticsEntry(173, "STVL", BusType.SIBUS, "D_STVL", -1, -1),
-                new EcuLogisticsEntry(174, "STVR", BusType.SIBUS, "D_STVR", -1, -1),
-                new EcuLogisticsEntry(176, "RADIO", BusType.KBUS, "D_00b0", -1, -1),
-                new EcuLogisticsEntry(185, "IRS", BusType.KBUS, "D_00b9", 0, 8),
-                new EcuLogisticsEntry(187, "JNAV", BusType.KBUS, "D_00bb", -1, -1),
-                new EcuLogisticsEntry(192, "ZIS", BusType.KBUS, "D_00c0", 0, 7),
-                new EcuLogisticsEntry(194, "SVT", BusType.KBUS, "D_00c2", 1, 6),
-                new EcuLogisticsEntry(200, "TELEFON", BusType.KBUS, "D_00c8", 4, 5),
-                new EcuLogisticsEntry(205, "BC", BusType.KBUS, "D_00cd", 2, 9),
-                new EcuLogisticsEntry(206, "RDC/SBE", BusType.SIBUS, "D_00ce", -1, -1),
-                new EcuLogisticsEntry(208, "LM", BusType.FACAN, "D_00d0", 7, 8),
-                new EcuLogisticsEntry(218, "SM", BusType.KBUS, "D_00da", 0, 4),
-                new EcuLogisticsEntry(224, "IRIS", BusType.UNKNOWN, "D_00e0", -1, -1),
-                new EcuLogisticsEntry(232, "RLS", BusType.KBUS, "D_00e8", 1, 3),
-                new EcuLogisticsEntry(234, "DSP_BT", BusType.KBUS, "D_00ea", -1, -1),
-                new EcuLogisticsEntry(237, "VIDEO", BusType.KBUS, "D_00ed", 4, 7),
-                new EcuLogisticsEntry(240, "CIDB", BusType.KBUS, "D_00f0", 4, 6),
-                new EcuLogisticsEntry(245, "LKM", BusType.KBUS, "D_00f5|d_szm", 4, 2)
-            });
-        public static EcuLogisticsData EcuLogisticsDataE36 =
-            new EcuLogisticsData("E36EcuCharacteristics.xml", EcuLogisticsE36);
-
-        // from: RheingoldDiagnostics.dll: BMW.Rheingold.Diagnostics.E38EcuCharacteristics.E38EcuCharacteristics
-        public static ReadOnlyCollection<IEcuLogisticsEntry> EcuLogisticsE38 =
-            new ReadOnlyCollection<IEcuLogisticsEntry>(new EcuLogisticsEntry[]
-            {
-                new EcuLogisticsEntry(0, "ZKE", BusType.KBUS, "D_ZKE_GM", 1, 1),
-                new EcuLogisticsEntry(8, "SHD", BusType.KBUS, "D_0008", 2, 6),
-                new EcuLogisticsEntry(13, "KOMBI", BusType.FACAN, "D_000D", -1, -1),
-                new EcuLogisticsEntry(16, "DME", BusType.FACAN, "D_0010", 7, 1),
-                new EcuLogisticsEntry(18, "DME", BusType.FACAN, "D_MOTOR|D_0012", 7, 1),
-                new EcuLogisticsEntry(19, "DME", BusType.FACAN, "D_0013", 7, 1),
-                new EcuLogisticsEntry(20, "DME2", BusType.FACAN, "D_0014", 7, 2),
-                new EcuLogisticsEntry(21, "DDSHD", BusType.KBUS, "D_0015", 1, 7),
-                new EcuLogisticsEntry(22, "TOENS", BusType.UNKNOWN, "D_0016", -1, -1),
-                new EcuLogisticsEntry(24, "EGS", BusType.FACAN, "D_EGS", 7, 9),
-                new EcuLogisticsEntry(25, "ATCU", BusType.UNKNOWN, "D_0019", -1, -1),
-                new EcuLogisticsEntry(32, "EML", BusType.UNKNOWN, "D_0020", -1, -1),
-                new EcuLogisticsEntry(33, "ZV", BusType.UNKNOWN, "D_0021", -1, -1),
-                new EcuLogisticsEntry(34, "EML", BusType.FACAN, "D_0022", 7, 3),
-                new EcuLogisticsEntry(36, "HKM", BusType.UNKNOWN, "D_0024", -1, -1),
-                new EcuLogisticsEntry(40, "RCC", BusType.IBUS, "D_0028", 4, 8),
-                new EcuLogisticsEntry(70, "CID", BusType.FACAN, "D_CID", 7, 7),
-                new EcuLogisticsEntry(44, "VNC", BusType.UNKNOWN, "D_002C", -1, -1),
-                new EcuLogisticsEntry(46, "EDC", BusType.UNKNOWN, "D_002E", -1, -1),
-                new EcuLogisticsEntry(48, "CCM", BusType.IBUS, "D_0030", 5, 5),
-                new EcuLogisticsEntry(49, "EHPS", BusType.FACAN, "D_0031", 7, 4),
-                new EcuLogisticsEntry(50, "EGS", BusType.FACAN, "D_0032", 7, 4),
-                new EcuLogisticsEntry(52, "VGSG", BusType.FACAN, "D_VGSG", 7, 10),
-                new EcuLogisticsEntry(53, "LSM/EPS", BusType.FACAN, "D_0035|D_EPS", 6, 1),
-                new EcuLogisticsEntry(54, "ABS", BusType.FACAN, "D_0036", -1, -1),
-                new EcuLogisticsEntry(59, "VIDEO", BusType.IBUS, "D_003b", 5, 4),
-                new EcuLogisticsEntry(64, "FBZV", BusType.KBUS, "D_0040", 0, 6),
-                new EcuLogisticsEntry(68, "EWS", BusType.KBUS, "D_0044", 2, 1),
-                new EcuLogisticsEntry(69, "DWA", BusType.UNKNOWN, "D_0045", -1, -1),
-                new EcuLogisticsEntry(41, "DSC/DXC", BusType.KBUS, "D_ABSKWP", 1, 5),
-                new EcuLogisticsEntry(71, "CID", BusType.KBUS, "D_0047", -1, -1),
-                new EcuLogisticsEntry(72, "JBIT", BusType.KBUS, "D_0048", -1, -1),
-                new EcuLogisticsEntry(80, "MFL", BusType.IBUS, "D_0050", 4, 3),
-                new EcuLogisticsEntry(86, "DSC", BusType.FACAN, "D_0056", 7, 5),
-                new EcuLogisticsEntry(87, "LWS", BusType.FACAN, "D_0057", 7, 6),
-                new EcuLogisticsEntry(89, "HKA", BusType.KBUS, "D_0059", -1, -1),
-                new EcuLogisticsEntry(90, "ELV", BusType.UNKNOWN, "D_005A", -1, -1),
-                new EcuLogisticsEntry(91, "IHKA", BusType.KBUS, "D_005B", 0, 1),
-                new EcuLogisticsEntry(96, "PDC", BusType.IBUS, "D_0060", 5, 3),
-                new EcuLogisticsEntry(101, "EKP", BusType.FACAN, "D_0065", 7, 11),
-                new EcuLogisticsEntry(102, "ALC", BusType.FACAN, "D_0066", 7, 13),
-                new EcuLogisticsEntry(104, "RADIO", BusType.IBUS, "D_0068", 4, 1),
-                new EcuLogisticsEntry(105, "EKM", BusType.UNKNOWN, "D_0069", -1, -1),
-                new EcuLogisticsEntry(106, "DSP", BusType.IBUS, "D_006A", 1, 4),
-                new EcuLogisticsEntry(107, "STH", BusType.KBUS, "D_ZUHEIZ", 1, 5),
-                new EcuLogisticsEntry(108, "EGS", BusType.UNKNOWN, "D_006C", -1, -1),
-                new EcuLogisticsEntry(112, "RDC", BusType.KBUS, "D_0070", 0, 3),
-                new EcuLogisticsEntry(113, "SM/SPM", BusType.UNKNOWN, "D_0071", -1, -1),
-                new EcuLogisticsEntry(114, "SM", BusType.KBUS, "D_0072|D_0072b", 0, 2),
-                new EcuLogisticsEntry(116, "OC", BusType.KBUS, "D_0074", 2, 8),
-                new EcuLogisticsEntry(118, "CDC", BusType.IBUS, "D_0076", 5, 1),
-                new EcuLogisticsEntry(127, "NAVI", BusType.IBUS, "D_007f", 5, 2),
-                new EcuLogisticsEntry(128, "KOMBI", BusType.ROOT, "D_0080|D_KOMBI", 5, 0),
-                new EcuLogisticsEntry(129, "RIP", BusType.IBUS, "D_0081", 4, 4),
-                new EcuLogisticsEntry(134, "AHK", BusType.UNKNOWN, "D_0086", -1, -1),
-                new EcuLogisticsEntry(153, "NO_DME", BusType.VIRTUAL, "D_0099", -1, -1),
-                new EcuLogisticsEntry(154, "LWR", BusType.KBUS, "D_009a", 2, 2),
-                new EcuLogisticsEntry(155, "CVM", BusType.KBUS, "D_009b", -1, -1),
-                new EcuLogisticsEntry(157, "ETS", BusType.UNKNOWN, "D_009d", -1, -1),
-                new EcuLogisticsEntry(156, "CVM", BusType.KBUS, "D_009c", 2, 4),
-                new EcuLogisticsEntry(158, "UEB", BusType.KBUS, "D_009e", 2, 7),
-                new EcuLogisticsEntry(160, "FOND_ZIS", BusType.KBUS, "D_00a0", -1, -1),
-                new EcuLogisticsEntry(161, "SBSL", BusType.SIBUS, "D_SBSL2", -1, -1),
-                new EcuLogisticsEntry(162, "SBSR", BusType.SIBUS, "D_SBSR2", -1, -1),
-                new EcuLogisticsEntry(164, "ZAE", BusType.KBUS, "D_00a4|D_SIM", 2, 5),
-                new EcuLogisticsEntry(166, "GR", BusType.FACAN, "D_00a6", 6, 5),
-                new EcuLogisticsEntry(167, "FHK", BusType.KBUS, "D_00a7", -1, -1),
-                new EcuLogisticsEntry(172, "EHC2", BusType.FACAN, "D_00AC", 7, 12),
-                new EcuLogisticsEntry(173, "STVL", BusType.SIBUS, "D_STVL", -1, -1),
-                new EcuLogisticsEntry(174, "STVR", BusType.SIBUS, "D_STVR", -1, -1),
-                new EcuLogisticsEntry(176, "RADIO", BusType.KBUS, "D_00b0", -1, -1),
-                new EcuLogisticsEntry(184, "ACC", BusType.FACAN, "D_b8_d0", 6, 6),
-                new EcuLogisticsEntry(185, "IRS", BusType.KBUS, "D_00b9", -1, -1),
-                new EcuLogisticsEntry(187, "JNAV", BusType.KBUS, "D_00bb", -1, -1),
-                new EcuLogisticsEntry(192, "ZIS", BusType.KBUS, "D_00c0", 0, 7),
-                new EcuLogisticsEntry(194, "SVT", BusType.KBUS, "D_00c2", 1, 6),
-                new EcuLogisticsEntry(200, "TELEFON", BusType.IBUS, "D_00c8", 4, 5),
-                new EcuLogisticsEntry(205, "BC", BusType.KBUS, "D_00cd", 2, 9),
-                new EcuLogisticsEntry(206, "RDC/SBE", BusType.SIBUS, "D_00ce", -1, -1),
-                new EcuLogisticsEntry(208, "LM", BusType.IBUS, "D_00d0", 5, 6),
-                new EcuLogisticsEntry(218, "SM", BusType.KBUS, "D_00da", 0, 4),
-                new EcuLogisticsEntry(224, "IRIS", BusType.UNKNOWN, "D_00e0", -1, -1),
-                new EcuLogisticsEntry(232, "RLS", BusType.KBUS, "D_00e8", 1, 3),
-                new EcuLogisticsEntry(234, "DSP_BT", BusType.KBUS, "D_00ea", -1, -1),
-                new EcuLogisticsEntry(237, "VIDEO", BusType.IBUS, "D_00ed", 4, 7),
-                new EcuLogisticsEntry(240, "CIDB", BusType.IBUS, "D_00f0", 4, 6),
-                new EcuLogisticsEntry(245, "LKM", BusType.IBUS, "D_00f5|d_szm", 4, 2)
-            });
-        public static EcuLogisticsData EcuLogisticsDataE38 =
-            new EcuLogisticsData("E38EcuCharacteristics.xml", EcuLogisticsE38);
-
-        // from: RheingoldDiagnostics.dll: BMW.Rheingold.Diagnostics.E39EcuCharacteristics.E39EcuCharacteristics
-        public static ReadOnlyCollection<IEcuLogisticsEntry> EcuLogisticsE39 =
-            new ReadOnlyCollection<IEcuLogisticsEntry>(new EcuLogisticsEntry[]
-            {
-                new EcuLogisticsEntry(0, "ZKE", BusType.KBUS, "D_0000|D_ZKE_GM", 1, 1),
-                new EcuLogisticsEntry(8, "SHD", BusType.KBUS, "D_0008", 2, 6),
-                new EcuLogisticsEntry(13, "KOMBI", BusType.FACAN, "D_000D", -1, -1),
-                new EcuLogisticsEntry(16, "DME", BusType.FACAN, "D_0010", 7, 1),
-                new EcuLogisticsEntry(17, "ZKE", BusType.KBUS, "D_0011", 1, 2),
-                new EcuLogisticsEntry(18, "DME", BusType.FACAN, "D_MOTOR|D_0012", 7, 1),
-                new EcuLogisticsEntry(19, "DME", BusType.FACAN, "D_0013", 7, 1),
-                new EcuLogisticsEntry(20, "DME2", BusType.FACAN, "D_0014", 7, 2),
-                new EcuLogisticsEntry(21, "DDSHD", BusType.KBUS, "D_0015", 1, 7),
-                new EcuLogisticsEntry(22, "TOENS", BusType.UNKNOWN, "D_0016", -1, -1),
-                new EcuLogisticsEntry(24, "EGS", BusType.FACAN, "D_EGS", 7, 9),
-                new EcuLogisticsEntry(25, "ATCU", BusType.UNKNOWN, "D_0019", -1, -1),
-                new EcuLogisticsEntry(32, "EML", BusType.UNKNOWN, "D_0020", -1, -1),
-                new EcuLogisticsEntry(33, "ZV", BusType.UNKNOWN, "D_0021", -1, -1),
-                new EcuLogisticsEntry(34, "EML", BusType.FACAN, "D_0022", 7, 3),
-                new EcuLogisticsEntry(36, "HKM", BusType.UNKNOWN, "D_0024", -1, -1),
-                new EcuLogisticsEntry(40, "RCC", BusType.UNKNOWN, "D_0028", -1, -1),
-                new EcuLogisticsEntry(70, "CID", BusType.FACAN, "D_CID", 7, 7),
-                new EcuLogisticsEntry(44, "VNC", BusType.UNKNOWN, "D_002C", -1, -1),
-                new EcuLogisticsEntry(46, "EDC", BusType.UNKNOWN, "D_002E", -1, -1),
-                new EcuLogisticsEntry(48, "CCM", BusType.KBUS, "D_0030", 0, 5),
-                new EcuLogisticsEntry(49, "EHPS", BusType.FACAN, "D_0031", 7, 4),
-                new EcuLogisticsEntry(50, "EGS", BusType.FACAN, "D_0032", 7, 4),
-                new EcuLogisticsEntry(52, "VGSG", BusType.FACAN, "D_VGSG", 7, 10),
-                new EcuLogisticsEntry(53, "LSM/EPS", BusType.FACAN, "D_0035|D_EPS", 6, 1),
-                new EcuLogisticsEntry(54, "ABS", BusType.FACAN, "D_0036", -1, -1),
-                new EcuLogisticsEntry(59, "VIDEO", BusType.KBUS, "D_003b", 5, 4),
-                new EcuLogisticsEntry(64, "FBZV", BusType.KBUS, "D_0040", 0, 6),
-                new EcuLogisticsEntry(68, "EWS", BusType.KBUS, "D_0044", 2, 1),
-                new EcuLogisticsEntry(69, "DWA", BusType.UNKNOWN, "D_0045", -1, -1),
-                new EcuLogisticsEntry(41, "DSC/DXC", BusType.KBUS, "D_ABSKWP", 1, 5),
-                new EcuLogisticsEntry(71, "CID", BusType.KBUS, "D_0047", -1, -1),
-                new EcuLogisticsEntry(72, "JBIT", BusType.KBUS, "D_0048", -1, -1),
-                new EcuLogisticsEntry(80, "MFL", BusType.KBUS, "D_0050", 4, 3),
-                new EcuLogisticsEntry(86, "DSC", BusType.FACAN, "D_0056", 7, 5),
-                new EcuLogisticsEntry(87, "LWS", BusType.FACAN, "D_0057", 7, 6),
-                new EcuLogisticsEntry(89, "HKA", BusType.KBUS, "D_0059", -1, -1),
-                new EcuLogisticsEntry(90, "ELV", BusType.UNKNOWN, "D_005A", -1, -1),
-                new EcuLogisticsEntry(91, "IHKA", BusType.KBUS, "D_005B", 0, 1),
-                new EcuLogisticsEntry(96, "PDC", BusType.KBUS, "D_0060", 2, 3),
-                new EcuLogisticsEntry(101, "EKP", BusType.FACAN, "D_0065", 7, 11),
-                new EcuLogisticsEntry(102, "ALC", BusType.FACAN, "D_0066", 7, 13),
-                new EcuLogisticsEntry(104, "RADIO", BusType.KBUS, "D_0068", 4, 1),
-                new EcuLogisticsEntry(105, "EKM", BusType.UNKNOWN, "D_0069", -1, -1),
-                new EcuLogisticsEntry(106, "DSP", BusType.KBUS, "D_006A", 1, 4),
-                new EcuLogisticsEntry(107, "STH", BusType.KBUS, "D_ZUHEIZ", 1, 5),
-                new EcuLogisticsEntry(108, "EGS", BusType.UNKNOWN, "D_006C", -1, -1),
-                new EcuLogisticsEntry(112, "RDC", BusType.KBUS, "D_0070", 0, 3),
-                new EcuLogisticsEntry(113, "SM/SPM", BusType.UNKNOWN, "D_0071", -1, -1),
-                new EcuLogisticsEntry(114, "SM", BusType.KBUS, "D_0072|D_0072b", 0, 2),
-                new EcuLogisticsEntry(116, "OC", BusType.KBUS, "D_0074", 2, 8),
-                new EcuLogisticsEntry(118, "CDC", BusType.KBUS, "D_0076", 5, 1),
-                new EcuLogisticsEntry(127, "NAVI", BusType.KBUS, "D_007f", 5, 2),
-                new EcuLogisticsEntry(128, "KOMBI", BusType.ROOT, "D_0080|D_KOMBI", 5, 0),
-                new EcuLogisticsEntry(129, "RIP", BusType.KBUS, "D_0081", 4, 4),
-                new EcuLogisticsEntry(134, "AHK", BusType.UNKNOWN, "D_0086", -1, -1),
-                new EcuLogisticsEntry(153, "NO_DME", BusType.VIRTUAL, "D_0099", -1, -1),
-                new EcuLogisticsEntry(154, "LWR", BusType.KBUS, "D_009a", 2, 2),
-                new EcuLogisticsEntry(155, "CVM", BusType.KBUS, "D_009b", -1, -1),
-                new EcuLogisticsEntry(157, "ETS", BusType.UNKNOWN, "D_009d", -1, -1),
-                new EcuLogisticsEntry(156, "CVM", BusType.KBUS, "D_009c", 2, 4),
-                new EcuLogisticsEntry(158, "UEB", BusType.KBUS, "D_009e", 2, 7),
-                new EcuLogisticsEntry(160, "FOND_ZIS", BusType.KBUS, "D_00a0", -1, -1),
-                new EcuLogisticsEntry(161, "SBSL", BusType.SIBUS, "D_SBSL2", -1, -1),
-                new EcuLogisticsEntry(162, "SBSR", BusType.SIBUS, "D_SBSR2", -1, -1),
-                new EcuLogisticsEntry(164, "ZAE", BusType.KBUS, "D_00a4|D_SIM", 2, 5),
-                new EcuLogisticsEntry(166, "GR", BusType.FACAN, "D_00a6", 6, 5),
-                new EcuLogisticsEntry(167, "FHK", BusType.KBUS, "D_00a7", -1, -1),
-                new EcuLogisticsEntry(172, "EHC2", BusType.FACAN, "D_00AC", 7, 12),
-                new EcuLogisticsEntry(173, "STVL", BusType.SIBUS, "D_STVL", -1, -1),
-                new EcuLogisticsEntry(174, "STVR", BusType.SIBUS, "D_STVR", -1, -1),
-                new EcuLogisticsEntry(176, "RADIO", BusType.KBUS, "D_00b0", -1, -1),
-                new EcuLogisticsEntry(185, "IRS", BusType.KBUS, "D_00b9", -1, -1),
-                new EcuLogisticsEntry(187, "JNAV", BusType.KBUS, "D_00bb", -1, -1),
-                new EcuLogisticsEntry(192, "ZIS", BusType.KBUS, "D_00c0", 0, 7),
-                new EcuLogisticsEntry(194, "SVT", BusType.KBUS, "D_00c2", 1, 6),
-                new EcuLogisticsEntry(200, "TELEFON", BusType.KBUS, "D_00c8", 4, 5),
-                new EcuLogisticsEntry(205, "BC", BusType.KBUS, "D_00cd", 2, 9),
-                new EcuLogisticsEntry(206, "RDC/SBE", BusType.SIBUS, "D_00ce", -1, -1),
-                new EcuLogisticsEntry(208, "LM", BusType.FACAN, "D_00d0", 7, 8),
-                new EcuLogisticsEntry(218, "SM", BusType.KBUS, "D_00da", 0, 4),
-                new EcuLogisticsEntry(224, "IRIS", BusType.UNKNOWN, "D_00e0", -1, -1),
-                new EcuLogisticsEntry(232, "RLS", BusType.KBUS, "D_00e8", 1, 3),
-                new EcuLogisticsEntry(234, "DSP_BT", BusType.KBUS, "D_00ea", -1, -1),
-                new EcuLogisticsEntry(237, "VIDEO", BusType.KBUS, "D_00ed", 4, 7),
-                new EcuLogisticsEntry(240, "CIDB", BusType.KBUS, "D_00f0", 4, 6),
-                new EcuLogisticsEntry(245, "LKM", BusType.KBUS, "D_00f5|d_szm", 4, 2)
-            });
-        public static EcuLogisticsData EcuLogisticsDataE39 =
-            new EcuLogisticsData("E39EcuCharacteristics.xml", EcuLogisticsE39);
-
-        // from: RheingoldDiagnostics.dll: BMW.Rheingold.Diagnostics.E46EcuCharacteristics.E46EcuCharacteristics
-        public static ReadOnlyCollection<IEcuLogisticsEntry> EcuLogisticsE46 =
-            new ReadOnlyCollection<IEcuLogisticsEntry>(new EcuLogisticsEntry[]
-            {
-                new EcuLogisticsEntry(0, "ZKE", BusType.KBUS, "D_0000|D_ZKE_GM", 1, 1),
-                new EcuLogisticsEntry(8, "SHD", BusType.KBUS, "D_0008", 2, 6),
-                new EcuLogisticsEntry(13, "KOMBI", BusType.FACAN, "D_000D", -1, -1),
-                new EcuLogisticsEntry(16, "DME", BusType.FACAN, "D_0010", 7, 1),
-                new EcuLogisticsEntry(17, "ZKE", BusType.KBUS, "D_0011", 1, 2),
-                new EcuLogisticsEntry(18, "DME", BusType.FACAN, "D_MOTOR|D_0012", 7, 1),
-                new EcuLogisticsEntry(19, "DME", BusType.FACAN, "D_0013", 7, 1),
-                new EcuLogisticsEntry(20, "DME2", BusType.FACAN, "D_0014", 7, 2),
-                new EcuLogisticsEntry(21, "DDSHD", BusType.KBUS, "D_0015", 1, 7),
-                new EcuLogisticsEntry(22, "TOENS", BusType.UNKNOWN, "D_0016", -1, -1),
-                new EcuLogisticsEntry(24, "EGS", BusType.FACAN, "D_EGS", 7, 9),
-                new EcuLogisticsEntry(25, "ATCU", BusType.UNKNOWN, "D_0019", -1, -1),
-                new EcuLogisticsEntry(32, "EML", BusType.UNKNOWN, "D_0020", -1, -1),
-                new EcuLogisticsEntry(33, "ZV", BusType.UNKNOWN, "D_0021", -1, -1),
-                new EcuLogisticsEntry(34, "EML", BusType.FACAN, "D_0022", 7, 3),
-                new EcuLogisticsEntry(36, "HKM", BusType.UNKNOWN, "D_0024", -1, -1),
-                new EcuLogisticsEntry(40, "RCC", BusType.UNKNOWN, "D_0028", -1, -1),
-                new EcuLogisticsEntry(70, "CID", BusType.FACAN, "D_CID", 7, 7),
-                new EcuLogisticsEntry(44, "VNC", BusType.UNKNOWN, "D_002C", -1, -1),
-                new EcuLogisticsEntry(46, "EDC", BusType.UNKNOWN, "D_002E", -1, -1),
-                new EcuLogisticsEntry(48, "CCM", BusType.KBUS, "D_0030", 0, 5),
-                new EcuLogisticsEntry(49, "EHPS", BusType.FACAN, "D_0031", 7, 4),
-                new EcuLogisticsEntry(50, "EGS", BusType.FACAN, "D_0032", 7, 4),
-                new EcuLogisticsEntry(52, "VGSG", BusType.FACAN, "D_VGSG", 7, 10),
-                new EcuLogisticsEntry(53, "LSM/EPS", BusType.FACAN, "D_0035|D_EPS", 6, 1),
-                new EcuLogisticsEntry(54, "ABS", BusType.FACAN, "D_0036", 7, 5),
-                new EcuLogisticsEntry(59, "VIDEO", BusType.KBUS, "D_003b", 5, 4),
-                new EcuLogisticsEntry(64, "FBZV", BusType.KBUS, "D_0040", 0, 6),
-                new EcuLogisticsEntry(68, "EWS", BusType.KBUS, "D_0044", 2, 1),
-                new EcuLogisticsEntry(69, "DWA", BusType.UNKNOWN, "D_0045", -1, -1),
-                new EcuLogisticsEntry(41, "DSC/DXC", BusType.FACAN, "D_ABSKWP", 7, 5),
-                new EcuLogisticsEntry(71, "CID", BusType.KBUS, "D_0047", -1, -1),
-                new EcuLogisticsEntry(72, "JBIT", BusType.KBUS, "D_0048", -1, -1),
-                new EcuLogisticsEntry(80, "MFL", BusType.KBUS, "D_0050", 4, 3),
-                new EcuLogisticsEntry(86, "DSC", BusType.FACAN, "D_0056", 7, 5),
-                new EcuLogisticsEntry(87, "LWS", BusType.FACAN, "D_0057", 7, 6),
-                new EcuLogisticsEntry(89, "HKA", BusType.KBUS, "D_0059", -1, -1),
-                new EcuLogisticsEntry(90, "ELV", BusType.UNKNOWN, "D_005A", -1, -1),
-                new EcuLogisticsEntry(91, "IHKA", BusType.KBUS, "D_005B", 0, 1),
-                new EcuLogisticsEntry(96, "PDC", BusType.KBUS, "D_0060", 2, 3),
-                new EcuLogisticsEntry(101, "EKP", BusType.FACAN, "D_0065", 7, 11),
-                new EcuLogisticsEntry(102, "ALC", BusType.FACAN, "D_0066", 7, 13),
-                new EcuLogisticsEntry(104, "RADIO", BusType.KBUS, "D_0068", 4, 1),
-                new EcuLogisticsEntry(105, "EKM", BusType.UNKNOWN, "D_0069", -1, -1),
-                new EcuLogisticsEntry(106, "DSP", BusType.KBUS, "D_006A", 1, 4),
-                new EcuLogisticsEntry(107, "STH", BusType.KBUS, "D_ZUHEIZ", 1, 5),
-                new EcuLogisticsEntry(108, "EGS", BusType.UNKNOWN, "D_006C", -1, -1),
-                new EcuLogisticsEntry(112, "RDC", BusType.KBUS, "D_0070", 0, 3),
-                new EcuLogisticsEntry(113, "SM/SPM", BusType.UNKNOWN, "D_0071", -1, -1),
-                new EcuLogisticsEntry(114, "SM", BusType.KBUS, "D_0072|D_0072b", 0, 2),
-                new EcuLogisticsEntry(116, "OC", BusType.KBUS, "D_0074", 2, 8),
-                new EcuLogisticsEntry(118, "CDC", BusType.KBUS, "D_0076", 5, 1),
-                new EcuLogisticsEntry(127, "NAVI", BusType.KBUS, "D_007f", 5, 2),
-                new EcuLogisticsEntry(128, "KOMBI", BusType.ROOT, "D_0080|D_KOMBI", 5, 0),
-                new EcuLogisticsEntry(129, "RIP", BusType.KBUS, "D_0081", 4, 4),
-                new EcuLogisticsEntry(134, "AHK", BusType.UNKNOWN, "D_0086", -1, -1),
-                new EcuLogisticsEntry(153, "NO_DME", BusType.VIRTUAL, "D_0099", -1, -1),
-                new EcuLogisticsEntry(154, "LWR", BusType.KBUS, "D_009a", 2, 2),
-                new EcuLogisticsEntry(155, "CVM", BusType.KBUS, "D_009b", -1, -1),
-                new EcuLogisticsEntry(157, "ETS", BusType.UNKNOWN, "D_009d", -1, -1),
-                new EcuLogisticsEntry(156, "CVM", BusType.KBUS, "D_009c", 2, 4),
-                new EcuLogisticsEntry(158, "UEB", BusType.KBUS, "D_009e", 2, 7),
-                new EcuLogisticsEntry(160, "FOND_ZIS", BusType.UNKNOWN, "D_00a0", -1, -1),
-                new EcuLogisticsEntry(161, "SBSL", BusType.SIBUS, "D_SBSL2", -1, -1),
-                new EcuLogisticsEntry(162, "SBSR", BusType.SIBUS, "D_SBSR2", -1, -1),
-                new EcuLogisticsEntry(164, "ZAE", BusType.KBUS, "D_00a4|D_SIM", 2, 5),
-                new EcuLogisticsEntry(166, "GR", BusType.FACAN, "D_00a6", 6, 5),
-                new EcuLogisticsEntry(167, "FHK", BusType.UNKNOWN, "D_00a7", -1, -1),
-                new EcuLogisticsEntry(172, "EHC2", BusType.FACAN, "D_00AC", 7, 12),
-                new EcuLogisticsEntry(173, "STVL", BusType.SIBUS, "D_STVL", -1, -1),
-                new EcuLogisticsEntry(174, "STVR", BusType.SIBUS, "D_STVR", -1, -1),
-                new EcuLogisticsEntry(176, "RADIO", BusType.KBUS, "D_00b0", -1, -1),
-                new EcuLogisticsEntry(185, "IRS", BusType.UNKNOWN, "D_00b9", -1, -1),
-                new EcuLogisticsEntry(187, "JNAV", BusType.KBUS, "D_00bb", -1, -1),
-                new EcuLogisticsEntry(192, "ZIS", BusType.KBUS, "D_00c0", 0, 7),
-                new EcuLogisticsEntry(194, "SVT", BusType.KBUS, "D_00c2", 1, 6),
-                new EcuLogisticsEntry(200, "TELEFON", BusType.KBUS, "D_00c8", 4, 5),
-                new EcuLogisticsEntry(205, "BC", BusType.KBUS, "D_00cd", 2, 9),
-                new EcuLogisticsEntry(206, "RDC/SBE", BusType.SIBUS, "D_00ce", -1, -1),
-                new EcuLogisticsEntry(208, "LM", BusType.FACAN, "D_00d0", 7, 8),
-                new EcuLogisticsEntry(218, "SM", BusType.KBUS, "D_00da", 0, 4),
-                new EcuLogisticsEntry(224, "IRIS", BusType.UNKNOWN, "D_00e0", -1, -1),
-                new EcuLogisticsEntry(232, "RLS", BusType.KBUS, "D_00e8", 1, 3),
-                new EcuLogisticsEntry(234, "DSP_BT", BusType.UNKNOWN, "D_00ea", -1, -1),
-                new EcuLogisticsEntry(237, "VIDEO", BusType.KBUS, "D_00ed", 4, 7),
-                new EcuLogisticsEntry(240, "CIDB", BusType.KBUS, "D_00f0", 4, 6),
-                new EcuLogisticsEntry(245, "LKM", BusType.KBUS, "D_00f5|d_szm", 4, 2)
-            });
-        public static EcuLogisticsData EcuLogisticsDataE46 =
-            new EcuLogisticsData("E46EcuCharacteristics.xml", EcuLogisticsE46);
-
-        // from: RheingoldDiagnostics.dll: BMW.Rheingold.Diagnostics.E52EcuCharacteristics.E52EcuCharacteristics
-        public static ReadOnlyCollection<IEcuLogisticsEntry> EcuLogisticsE52 =
-            new ReadOnlyCollection<IEcuLogisticsEntry>(new EcuLogisticsEntry[]
-            {
-                new EcuLogisticsEntry(0, "ZKE", BusType.KBUS, "D_0000|D_ZKE_GM", 1, 1),
-                new EcuLogisticsEntry(8, "SHD", BusType.KBUS, "D_0008", 2, 6),
-                new EcuLogisticsEntry(13, "KOMBI", BusType.FACAN, "D_000D", -1, -1),
-                new EcuLogisticsEntry(16, "DME", BusType.FACAN, "D_0010", 7, 1),
-                new EcuLogisticsEntry(17, "ZKE", BusType.KBUS, "D_0011", 1, 2),
-                new EcuLogisticsEntry(18, "DME", BusType.FACAN, "D_MOTOR|D_0012", 7, 1),
-                new EcuLogisticsEntry(19, "DME", BusType.FACAN, "D_0013", 7, 1),
-                new EcuLogisticsEntry(20, "DME2", BusType.FACAN, "D_0014", 7, 2),
-                new EcuLogisticsEntry(21, "DDSHD", BusType.KBUS, "D_0015", 1, 7),
-                new EcuLogisticsEntry(22, "TOENS", BusType.UNKNOWN, "D_0016", -1, -1),
-                new EcuLogisticsEntry(24, "EGS", BusType.FACAN, "D_EGS", 7, 9),
-                new EcuLogisticsEntry(25, "ATCU", BusType.UNKNOWN, "D_0019", -1, -1),
-                new EcuLogisticsEntry(32, "EML", BusType.UNKNOWN, "D_0020", -1, -1),
-                new EcuLogisticsEntry(33, "ZV", BusType.UNKNOWN, "D_0021", -1, -1),
-                new EcuLogisticsEntry(34, "EML", BusType.FACAN, "D_0022", 7, 3),
-                new EcuLogisticsEntry(36, "HKM", BusType.UNKNOWN, "D_0024", -1, -1),
-                new EcuLogisticsEntry(40, "RCC", BusType.UNKNOWN, "D_0028", -1, -1),
-                new EcuLogisticsEntry(70, "CID", BusType.FACAN, "D_CID", 7, 7),
-                new EcuLogisticsEntry(44, "VNC", BusType.UNKNOWN, "D_002C", -1, -1),
-                new EcuLogisticsEntry(46, "EDC", BusType.UNKNOWN, "D_002E", -1, -1),
-                new EcuLogisticsEntry(48, "CCM", BusType.KBUS, "D_0030", 0, 5),
-                new EcuLogisticsEntry(49, "EHPS", BusType.FACAN, "D_0031", 7, 4),
-                new EcuLogisticsEntry(50, "EGS", BusType.FACAN, "D_0032", 7, 4),
-                new EcuLogisticsEntry(52, "VGSG", BusType.FACAN, "D_VGSG", 7, 10),
-                new EcuLogisticsEntry(53, "LSM/EPS", BusType.FACAN, "D_0035|D_EPS", 6, 1),
-                new EcuLogisticsEntry(54, "ABS", BusType.FACAN, "D_0036", -1, -1),
-                new EcuLogisticsEntry(59, "VIDEO", BusType.KBUS, "D_003b", 5, 4),
-                new EcuLogisticsEntry(64, "FBZV", BusType.KBUS, "D_0040", 0, 6),
-                new EcuLogisticsEntry(68, "EWS", BusType.KBUS, "D_0044", 2, 1),
-                new EcuLogisticsEntry(69, "DWA", BusType.UNKNOWN, "D_0045", -1, -1),
-                new EcuLogisticsEntry(41, "DSC/DXC", BusType.KBUS, "D_ABSKWP", 1, 5),
-                new EcuLogisticsEntry(71, "CID", BusType.KBUS, "D_0047", -1, -1),
-                new EcuLogisticsEntry(72, "JBIT", BusType.KBUS, "D_0048", -1, -1),
-                new EcuLogisticsEntry(80, "MFL", BusType.KBUS, "D_0050", 4, 3),
-                new EcuLogisticsEntry(86, "DSC", BusType.FACAN, "D_0056", 7, 5),
-                new EcuLogisticsEntry(87, "LWS", BusType.FACAN, "D_0057", 7, 6),
-                new EcuLogisticsEntry(89, "HKA", BusType.KBUS, "D_0059", -1, -1),
-                new EcuLogisticsEntry(90, "ELV", BusType.UNKNOWN, "D_005A", -1, -1),
-                new EcuLogisticsEntry(91, "IHKA", BusType.KBUS, "D_005B", 0, 1),
-                new EcuLogisticsEntry(96, "PDC", BusType.KBUS, "D_0060", 2, 3),
-                new EcuLogisticsEntry(101, "EKP", BusType.FACAN, "D_0065", 7, 11),
-                new EcuLogisticsEntry(102, "ALC", BusType.FACAN, "D_0066", 7, 13),
-                new EcuLogisticsEntry(104, "RADIO", BusType.KBUS, "D_0068", 4, 1),
-                new EcuLogisticsEntry(105, "EKM", BusType.UNKNOWN, "D_0069", -1, -1),
-                new EcuLogisticsEntry(106, "DSP", BusType.KBUS, "D_006A", 1, 4),
-                new EcuLogisticsEntry(107, "STH", BusType.KBUS, "D_ZUHEIZ", 1, 5),
-                new EcuLogisticsEntry(108, "EGS", BusType.UNKNOWN, "D_006C", -1, -1),
-                new EcuLogisticsEntry(112, "RDC", BusType.KBUS, "D_0070", 0, 3),
-                new EcuLogisticsEntry(113, "SM/SPM", BusType.UNKNOWN, "D_0071", -1, -1),
-                new EcuLogisticsEntry(114, "SM", BusType.KBUS, "D_0072|D_0072b", 0, 2),
-                new EcuLogisticsEntry(116, "OC", BusType.KBUS, "D_0074", 2, 8),
-                new EcuLogisticsEntry(118, "CDC", BusType.KBUS, "D_0076", 5, 1),
-                new EcuLogisticsEntry(127, "NAVI", BusType.KBUS, "D_007f", 5, 2),
-                new EcuLogisticsEntry(128, "KOMBI", BusType.ROOT, "D_0080|D_KOMBI", 5, 0),
-                new EcuLogisticsEntry(129, "RIP", BusType.KBUS, "D_0081", 4, 4),
-                new EcuLogisticsEntry(134, "AHK", BusType.UNKNOWN, "D_0086", -1, -1),
-                new EcuLogisticsEntry(153, "NO_DME", BusType.VIRTUAL, "D_0099", -1, -1),
-                new EcuLogisticsEntry(154, "LWR", BusType.KBUS, "D_009a", 2, 2),
-                new EcuLogisticsEntry(155, "CVM", BusType.KBUS, "D_009b", -1, -1),
-                new EcuLogisticsEntry(157, "ETS", BusType.UNKNOWN, "D_009d", -1, -1),
-                new EcuLogisticsEntry(156, "CVM", BusType.KBUS, "D_009c", 2, 4),
-                new EcuLogisticsEntry(158, "UEB", BusType.KBUS, "D_009e", 2, 7),
-                new EcuLogisticsEntry(160, "FOND_ZIS", BusType.UNKNOWN, "D_00a0", -1, -1),
-                new EcuLogisticsEntry(161, "SBSL", BusType.SIBUS, "D_SBSL2", -1, -1),
-                new EcuLogisticsEntry(162, "SBSR", BusType.SIBUS, "D_SBSR2", -1, -1),
-                new EcuLogisticsEntry(164, "ZAE", BusType.KBUS, "D_00a4|D_SIM", 2, 5),
-                new EcuLogisticsEntry(166, "GR", BusType.FACAN, "D_00a6", 6, 5),
-                new EcuLogisticsEntry(167, "FHK", BusType.UNKNOWN, "D_00a7", -1, -1),
-                new EcuLogisticsEntry(172, "EHC2", BusType.FACAN, "D_00AC", 7, 12),
-                new EcuLogisticsEntry(173, "STVL", BusType.SIBUS, "D_STVL", -1, -1),
-                new EcuLogisticsEntry(174, "STVR", BusType.SIBUS, "D_STVR", -1, -1),
-                new EcuLogisticsEntry(176, "RADIO", BusType.KBUS, "D_00b0", -1, -1),
-                new EcuLogisticsEntry(185, "IRS", BusType.UNKNOWN, "D_00b9", -1, -1),
-                new EcuLogisticsEntry(187, "JNAV", BusType.KBUS, "D_00bb", -1, -1),
-                new EcuLogisticsEntry(192, "ZIS", BusType.KBUS, "D_00c0", 0, 7),
-                new EcuLogisticsEntry(194, "SVT", BusType.KBUS, "D_00c2", 1, 6),
-                new EcuLogisticsEntry(200, "TELEFON", BusType.KBUS, "D_00c8", 4, 5),
-                new EcuLogisticsEntry(205, "BC", BusType.KBUS, "D_00cd", 2, 9),
-                new EcuLogisticsEntry(206, "RDC/SBE", BusType.SIBUS, "D_00ce", -1, -1),
-                new EcuLogisticsEntry(208, "LM", BusType.FACAN, "D_00d0", 7, 8),
-                new EcuLogisticsEntry(218, "SM", BusType.KBUS, "D_00da", 0, 4),
-                new EcuLogisticsEntry(224, "IRIS", BusType.UNKNOWN, "D_00e0", -1, -1),
-                new EcuLogisticsEntry(232, "RLS", BusType.KBUS, "D_00e8", 1, 3),
-                new EcuLogisticsEntry(234, "DSP_BT", BusType.UNKNOWN, "D_00ea", -1, -1),
-                new EcuLogisticsEntry(237, "VIDEO", BusType.KBUS, "D_00ed", 4, 7),
-                new EcuLogisticsEntry(240, "CIDB", BusType.KBUS, "D_00f0", 4, 6),
-                new EcuLogisticsEntry(245, "LKM", BusType.KBUS, "D_00f5|d_szm", 4, 2)
-            });
-        public static EcuLogisticsData EcuLogisticsDataE52 =
-            new EcuLogisticsData("E52EcuCharacteristics.xml", EcuLogisticsE52);
-
-        // from: RheingoldDiagnostics.dll: BMW.Rheingold.Diagnostics.E53EcuCharacteristics.E53EcuCharacteristics
-        public static ReadOnlyCollection<IEcuLogisticsEntry> EcuLogisticsE53 =
-            new ReadOnlyCollection<IEcuLogisticsEntry>(new EcuLogisticsEntry[]
-            {
-                new EcuLogisticsEntry(0, "ZKE", BusType.KBUS, "D_ZKE_GM|D_0000", 1, 1),
-                new EcuLogisticsEntry(8, "SHD", BusType.KBUS, "D_0008", 2, 6),
-                new EcuLogisticsEntry(13, "KOMBI", BusType.FACAN, "D_000D", -1, -1),
-                new EcuLogisticsEntry(16, "DME", BusType.FACAN, "D_0010", 7, 1),
-                new EcuLogisticsEntry(17, "ZKE", BusType.KBUS, "D_0011", 1, 2),
-                new EcuLogisticsEntry(18, "DME", BusType.FACAN, "D_MOTOR|D_0012", 7, 1),
-                new EcuLogisticsEntry(19, "DME", BusType.FACAN, "D_0013", 7, 1),
-                new EcuLogisticsEntry(20, "DME2", BusType.FACAN, "D_0014", 7, 2),
-                new EcuLogisticsEntry(21, "DDSHD", BusType.KBUS, "D_0015", 1, 7),
-                new EcuLogisticsEntry(22, "TOENS", BusType.UNKNOWN, "D_0016", -1, -1),
-                new EcuLogisticsEntry(24, "EGS", BusType.FACAN, "D_EGS", 7, 9),
-                new EcuLogisticsEntry(25, "ATCU", BusType.UNKNOWN, "D_0019", -1, -1),
-                new EcuLogisticsEntry(32, "EML", BusType.UNKNOWN, "D_0020", -1, -1),
-                new EcuLogisticsEntry(33, "ZV", BusType.UNKNOWN, "D_0021", -1, -1),
-                new EcuLogisticsEntry(34, "EML", BusType.FACAN, "D_0022", 7, 3),
-                new EcuLogisticsEntry(36, "HKM", BusType.UNKNOWN, "D_0024", -1, -1),
-                new EcuLogisticsEntry(40, "RCC", BusType.UNKNOWN, "D_0028", -1, -1),
-                new EcuLogisticsEntry(41, "DXC", BusType.FACAN, "D_ABSKWP", 6, 5),
-                new EcuLogisticsEntry(70, "CID", BusType.FACAN, "D_CID", 7, 7),
-                new EcuLogisticsEntry(44, "VNC", BusType.UNKNOWN, "D_002C", -1, -1),
-                new EcuLogisticsEntry(46, "EDC", BusType.UNKNOWN, "D_002E", -1, -1),
-                new EcuLogisticsEntry(48, "CCM", BusType.KBUS, "D_0030", 0, 5),
-                new EcuLogisticsEntry(49, "EHPS", BusType.FACAN, "D_0031", 7, 4),
-                new EcuLogisticsEntry(50, "EGS", BusType.FACAN, "D_0032", 7, 4),
-                new EcuLogisticsEntry(52, "VGSG", BusType.FACAN, "D_VGSG", 7, 10),
-                new EcuLogisticsEntry(53, "LSM/EPS", BusType.FACAN, "D_0035|D_EPS", 6, 1),
-                new EcuLogisticsEntry(54, "ABS", BusType.FACAN, "D_0036", -1, -1),
-                new EcuLogisticsEntry(59, "VIDEO", BusType.KBUS, "D_003b", 5, 4),
-                new EcuLogisticsEntry(64, "FBZV", BusType.KBUS, "D_0040", 0, 6),
-                new EcuLogisticsEntry(68, "EWS", BusType.KBUS, "D_0044", 2, 1),
-                new EcuLogisticsEntry(69, "DWA", BusType.UNKNOWN, "D_0045", -1, -1),
-                new EcuLogisticsEntry(71, "CID", BusType.KBUS, "D_0047", -1, -1),
-                new EcuLogisticsEntry(72, "JBIT", BusType.KBUS, "D_0048", -1, -1),
-                new EcuLogisticsEntry(80, "MFL", BusType.KBUS, "D_0050", 4, 3),
-                new EcuLogisticsEntry(86, "DSC", BusType.FACAN, "D_0056", 7, 5),
-                new EcuLogisticsEntry(87, "LWS", BusType.FACAN, "D_0057", 7, 6),
-                new EcuLogisticsEntry(89, "HKA", BusType.KBUS, "D_0059", -1, -1),
-                new EcuLogisticsEntry(90, "ELV", BusType.UNKNOWN, "D_005A", -1, -1),
-                new EcuLogisticsEntry(91, "IHKA", BusType.KBUS, "D_005B", 0, 1),
-                new EcuLogisticsEntry(96, "PDC", BusType.KBUS, "D_0060", 2, 3),
-                new EcuLogisticsEntry(101, "EKP", BusType.FACAN, "D_0065", 7, 11),
-                new EcuLogisticsEntry(102, "ALC", BusType.FACAN, "D_0066", 7, 13),
-                new EcuLogisticsEntry(104, "RADIO", BusType.KBUS, "D_0068", 4, 1),
-                new EcuLogisticsEntry(105, "EKM", BusType.UNKNOWN, "D_0069", -1, -1),
-                new EcuLogisticsEntry(106, "DSP", BusType.KBUS, "D_006A", 1, 4),
-                new EcuLogisticsEntry(107, "STH", BusType.KBUS, "D_ZUHEIZ", 1, 5),
-                new EcuLogisticsEntry(108, "EGS", BusType.UNKNOWN, "D_006C", -1, -1),
-                new EcuLogisticsEntry(112, "RDC", BusType.KBUS, "D_0070", 0, 3),
-                new EcuLogisticsEntry(113, "SM/SPM", BusType.UNKNOWN, "D_0071", -1, -1),
-                new EcuLogisticsEntry(114, "SM", BusType.KBUS, "D_0072|D_0072b", 0, 2),
-                new EcuLogisticsEntry(116, "OC", BusType.KBUS, "D_0074", 2, 8),
-                new EcuLogisticsEntry(118, "CDC", BusType.KBUS, "D_0076", 5, 1),
-                new EcuLogisticsEntry(127, "NAVI", BusType.KBUS, "D_007f", 5, 2),
-                new EcuLogisticsEntry(128, "KOMBI", BusType.ROOT, "D_0080|D_KOMBI", 5, 0),
-                new EcuLogisticsEntry(129, "RIP", BusType.KBUS, "D_0081", 4, 4),
-                new EcuLogisticsEntry(134, "AHK", BusType.UNKNOWN, "D_0086", -1, -1),
-                new EcuLogisticsEntry(153, "NO_DME", BusType.VIRTUAL, "D_0099", -1, -1),
-                new EcuLogisticsEntry(154, "LWR", BusType.KBUS, "D_009a", 2, 2),
-                new EcuLogisticsEntry(155, "CVM", BusType.KBUS, "D_009b", -1, -1),
-                new EcuLogisticsEntry(157, "ETS", BusType.UNKNOWN, "D_009d", -1, -1),
-                new EcuLogisticsEntry(156, "CVM", BusType.KBUS, "D_009c", 2, 4),
-                new EcuLogisticsEntry(158, "UEB", BusType.KBUS, "D_009e", 2, 7),
-                new EcuLogisticsEntry(160, "FOND_ZIS", BusType.UNKNOWN, "D_00a0", -1, -1),
-                new EcuLogisticsEntry(161, "SBSL", BusType.SIBUS, "D_SBSL2", -1, -1),
-                new EcuLogisticsEntry(162, "SBSR", BusType.SIBUS, "D_SBSR2", -1, -1),
-                new EcuLogisticsEntry(164, "ZAE", BusType.KBUS, "D_00a4|D_SIM", 2, 5),
-                new EcuLogisticsEntry(166, "GR", BusType.FACAN, "D_00a6", 6, 5),
-                new EcuLogisticsEntry(167, "FHK", BusType.UNKNOWN, "D_00a7", -1, -1),
-                new EcuLogisticsEntry(172, "EHC2", BusType.FACAN, "D_00AC", 7, 12),
-                new EcuLogisticsEntry(173, "STVL", BusType.SIBUS, "D_STVL", -1, -1),
-                new EcuLogisticsEntry(174, "STVR", BusType.SIBUS, "D_STVR", -1, -1),
-                new EcuLogisticsEntry(176, "RADIO", BusType.KBUS, "D_00b0", -1, -1),
-                new EcuLogisticsEntry(185, "IRS", BusType.UNKNOWN, "D_00b9", -1, -1),
-                new EcuLogisticsEntry(187, "JNAV", BusType.KBUS, "D_00bb", -1, -1),
-                new EcuLogisticsEntry(192, "ZIS", BusType.KBUS, "D_00c0", 0, 7),
-                new EcuLogisticsEntry(194, "SVT", BusType.KBUS, "D_00c2", 1, 6),
-                new EcuLogisticsEntry(200, "TELEFON", BusType.KBUS, "D_00c8", 4, 5),
-                new EcuLogisticsEntry(205, "BC", BusType.KBUS, "D_00cd", 2, 9),
-                new EcuLogisticsEntry(206, "RDC/SBE", BusType.SIBUS, "D_00ce", -1, -1),
-                new EcuLogisticsEntry(208, "LM", BusType.KBUS, "D_00d0", 0, 8),
-                new EcuLogisticsEntry(218, "SM", BusType.KBUS, "D_00da", 0, 4),
-                new EcuLogisticsEntry(224, "IRIS", BusType.UNKNOWN, "D_00e0", -1, -1),
-                new EcuLogisticsEntry(232, "RLS", BusType.KBUS, "D_00e8", 1, 3),
-                new EcuLogisticsEntry(234, "DSP_BT", BusType.UNKNOWN, "D_00ea", -1, -1),
-                new EcuLogisticsEntry(237, "VIDEO", BusType.KBUS, "D_00ed", 4, 7),
-                new EcuLogisticsEntry(240, "CIDB", BusType.KBUS, "D_00f0", 4, 6),
-                new EcuLogisticsEntry(245, "LKM", BusType.KBUS, "D_00f5|d_szm", 4, 2)
-            });
-        public static EcuLogisticsData EcuLogisticsDataE53 =
-            new EcuLogisticsData("E53EcuCharacteristics.xml", EcuLogisticsE53);
-
-        // from: RheingoldDiagnostics.dll: BMW.Rheingold.Diagnostics.E83EcuCharacteristics.E83EcuCharacteristics
-        public static ReadOnlyCollection<IEcuLogisticsEntry> EcuLogisticsE83 =
-            new ReadOnlyCollection<IEcuLogisticsEntry>(new EcuLogisticsEntry[]
-            {
-                new EcuLogisticsEntry(128, "KOMBI", BusType.ROOT, "D_0080|D_KOMBI", 5, 0),
-                new EcuLogisticsEntry(129, "RIP", BusType.INTERNAL, "D_0081", 5, 1),
-                new EcuLogisticsEntry(70, "CID", BusType.KBUS, "D_CID", 1, 1),
-                new EcuLogisticsEntry(106, "DSP", BusType.KBUS, "D_006A", 1, 2),
-                new EcuLogisticsEntry(112, "RDC", BusType.KBUS, "D_0070", 1, 3),
-                new EcuLogisticsEntry(59, "VIDEO", BusType.KBUS, "D_003b", 2, 1),
-                new EcuLogisticsEntry(200, "TELEFON", BusType.KBUS, "D_00c8", 2, 2),
-                new EcuLogisticsEntry(245, "LKM", BusType.KBUS, "D_00f5|d_SZM", 2, 3),
-                new EcuLogisticsEntry(127, "NAVI", BusType.KBUS, "D_007f", 2, 4),
-                new EcuLogisticsEntry(118, "CDC", BusType.KBUS, "D_0076", 2, 5),
-                new EcuLogisticsEntry(68, "EWS", BusType.KBUS, "D_0044", 3, 1),
-                new EcuLogisticsEntry(0, "ZKE", BusType.KBUS, "D_0000|D_ZKE_GM", 3, 2),
-                new EcuLogisticsEntry(91, "IHKA", BusType.KBUS, "D_005B", 3, 3),
-                new EcuLogisticsEntry(208, "LM", BusType.KBUS, "D_00d0", 3, 4),
-                new EcuLogisticsEntry(80, "MFL", BusType.KBUS, "D_0050", 3, 5),
-                new EcuLogisticsEntry(176, "SES", BusType.KBUS, "D_00b0", 3, 6),
-                new EcuLogisticsEntry(96, "PDC", BusType.KBUS, "D_0060", 3, 7),
-                new EcuLogisticsEntry(104, "RADIO", BusType.KBUS, "D_0068", 3, 8),
-                new EcuLogisticsEntry(116, "OC", BusType.KBUS, "D_0074", 4, 1),
-                new EcuLogisticsEntry(114, "SM", BusType.KBUS, "D_0072|D_0072b", 4, 3),
-                new EcuLogisticsEntry(102, "ALC", BusType.KBUS, "D_0066", 4, 4),
-                new EcuLogisticsEntry(8, "SHD", BusType.KBUS, "D_0008", 4, 5),
-                new EcuLogisticsEntry(164, "ZAE", BusType.KBUS, "D_00a4|D_SIM", 4, 6),
-                new EcuLogisticsEntry(232, "RLS", BusType.KBUS, "D_00e8", 4, 8),
-                new EcuLogisticsEntry(41, "ABS/DSC", BusType.FACAN, "D_ABSKWP", 7, 1),
-                new EcuLogisticsEntry(194, "SVT", BusType.FACAN, "D_00c2", 7, 2),
-                new EcuLogisticsEntry(87, "LWS", BusType.FACAN, "D_0057", 7, 3),
-                new EcuLogisticsEntry(101, "EKP", BusType.FACAN, "D_0065", 7, 7),
-                new EcuLogisticsEntry(16, "DME", BusType.FACAN, "D_0010", 8, 1),
-                new EcuLogisticsEntry(18, "DME", BusType.FACAN, "D_MOTOR|D_0012", 8, 1),
-                new EcuLogisticsEntry(19, "DME", BusType.FACAN, "D_0013", 8, 1),
-                new EcuLogisticsEntry(24, "EGS", BusType.FACAN, "D_EGS", 8, 3),
-                new EcuLogisticsEntry(52, "VGSG", BusType.FACAN, "D_VGSG", 8, 5),
-                new EcuLogisticsEntry(49, "EHPS", BusType.FACAN, "D_0031", 7, 2),
-                new EcuLogisticsEntry(13, "KOMBI", BusType.FACAN, "D_000D", -1, -1),
-                new EcuLogisticsEntry(17, "ZKE", BusType.KBUS, "D_0011", 2, 2),
-                new EcuLogisticsEntry(237, "VIDEO", BusType.KBUS, "D_00ed", 2, 1),
-                new EcuLogisticsEntry(21, "DDSHD", BusType.KBUS, "D_0015", 2, 7),
-                new EcuLogisticsEntry(22, "TOENS", BusType.UNKNOWN, "D_0016", -1, -1),
-                new EcuLogisticsEntry(25, "ATCU", BusType.UNKNOWN, "D_0019", -1, -1),
-                new EcuLogisticsEntry(32, "EML", BusType.UNKNOWN, "D_0020", -1, -1),
-                new EcuLogisticsEntry(33, "ZV", BusType.UNKNOWN, "D_0021", -1, -1),
-                new EcuLogisticsEntry(34, "EML", BusType.FACAN, "D_0022", 7, 3),
-                new EcuLogisticsEntry(36, "HKM", BusType.UNKNOWN, "D_0024", -1, -1),
-                new EcuLogisticsEntry(40, "RCC", BusType.UNKNOWN, "D_0028", -1, -1),
-                new EcuLogisticsEntry(187, "JNAV", BusType.KBUS, "D_00bb", 2, 10),
-                new EcuLogisticsEntry(44, "VNC", BusType.UNKNOWN, "D_002C", -1, -1),
-                new EcuLogisticsEntry(46, "EDC", BusType.UNKNOWN, "D_002E", -1, -1),
-                new EcuLogisticsEntry(48, "CCM", BusType.KBUS, "D_0030", 1, 5),
-                new EcuLogisticsEntry(50, "EGS", BusType.FACAN, "D_0032", 7, 4),
-                new EcuLogisticsEntry(154, "LWR", BusType.KBUS, "D_009a", 2, 1),
-                new EcuLogisticsEntry(53, "LSM/EPS", BusType.FACAN, "D_0035|D_EPS", 6, 1),
-                new EcuLogisticsEntry(54, "ABS", BusType.FACAN, "D_0036", -1, -1),
-                new EcuLogisticsEntry(64, "FBZV", BusType.KBUS, "D_0040", 1, 6),
-                new EcuLogisticsEntry(69, "DWA", BusType.UNKNOWN, "D_0045", -1, -1),
-                new EcuLogisticsEntry(71, "CID", BusType.KBUS, "D_0047", -1, -1),
-                new EcuLogisticsEntry(72, "JBIT", BusType.KBUS, "D_0048", -1, -1),
-                new EcuLogisticsEntry(86, "DSC", BusType.FACAN, "D_0056", 7, 5),
-                new EcuLogisticsEntry(89, "HKA", BusType.KBUS, "D_0059", -1, -1),
-                new EcuLogisticsEntry(90, "ELV", BusType.UNKNOWN, "D_005A", -1, -1),
-                new EcuLogisticsEntry(240, "CIDB", BusType.KBUS, "D_00f0", 2, 7),
-                new EcuLogisticsEntry(105, "EKM", BusType.UNKNOWN, "D_0069", -1, -1),
-                new EcuLogisticsEntry(107, "STH", BusType.KBUS, "D_ZUHEIZ", 2, 5),
-                new EcuLogisticsEntry(108, "EGS", BusType.UNKNOWN, "D_006C", -1, -1),
-                new EcuLogisticsEntry(113, "SM/SPM", BusType.UNKNOWN, "D_0071", -1, -1),
-                new EcuLogisticsEntry(134, "AHK", BusType.UNKNOWN, "D_0086", -1, -1),
-                new EcuLogisticsEntry(153, "NO_DME", BusType.VIRTUAL, "D_0099", -1, -1),
-                new EcuLogisticsEntry(155, "CVM", BusType.KBUS, "D_009b", -1, -1),
-                new EcuLogisticsEntry(157, "ETS", BusType.UNKNOWN, "D_009d", -1, -1),
-                new EcuLogisticsEntry(158, "UEB", BusType.KBUS, "D_009e", 3, 7),
-                new EcuLogisticsEntry(160, "FOND_ZIS", BusType.UNKNOWN, "D_00a0", -1, -1),
-                new EcuLogisticsEntry(161, "SBSL", BusType.SIBUS, "D_SBSL", -1, -1),
-                new EcuLogisticsEntry(162, "SBSR", BusType.SIBUS, "D_SBSR", -1, -1),
-                new EcuLogisticsEntry(166, "GR", BusType.UNKNOWN, "D_00a6", -1, -1),
-                new EcuLogisticsEntry(167, "FHK", BusType.UNKNOWN, "D_00a7", -1, -1),
-                new EcuLogisticsEntry(172, "EHC2", BusType.FACAN, "D_00AC", 7, 12),
-                new EcuLogisticsEntry(173, "STVL", BusType.SIBUS, "D_STVL", -1, -1),
-                new EcuLogisticsEntry(174, "STVR", BusType.SIBUS, "D_STVR", -1, -1),
-                new EcuLogisticsEntry(185, "IRS", BusType.UNKNOWN, "D_00b9", -1, -1),
-                new EcuLogisticsEntry(192, "ZIS", BusType.KBUS, "D_00c0", 1, 7),
-                new EcuLogisticsEntry(205, "BC", BusType.KBUS, "D_00cd", 3, 9),
-                new EcuLogisticsEntry(206, "RDC/SBE", BusType.SIBUS, "D_00ce", -1, -1),
-                new EcuLogisticsEntry(218, "SM", BusType.KBUS, "D_00da", 1, 4),
-                new EcuLogisticsEntry(224, "IRIS", BusType.UNKNOWN, "D_00e0", -1, -1),
-                new EcuLogisticsEntry(156, "CVM", BusType.KBUS, "D_009c", 2, 3),
-                new EcuLogisticsEntry(234, "DSP_BT", BusType.UNKNOWN, "D_00ea", -1, -1)
-            });
-        public static EcuLogisticsData EcuLogisticsDataE83 =
-            new EcuLogisticsData("E83EcuCharacteristics.xml", EcuLogisticsE83);
-
-        // from: RheingoldDiagnostics.dll: BMW.Rheingold.Diagnostics.E85EcuCharacteristics.E85EcuCharacteristics
-        public static ReadOnlyCollection<IEcuLogisticsEntry> EcuLogisticsE85 =
-            new ReadOnlyCollection<IEcuLogisticsEntry>(new EcuLogisticsEntry[]
-            {
-                new EcuLogisticsEntry(0, "ZKE", BusType.KBUS, "D_0000|D_ZKE_GM", 1, 1),
-                new EcuLogisticsEntry(8, "SHD", BusType.KBUS, "D_0008", 2, 6),
-                new EcuLogisticsEntry(13, "KOMBI", BusType.FACAN, "D_000D", -1, -1),
-                new EcuLogisticsEntry(16, "DME", BusType.FACAN, "D_0010", 9, 1),
-                new EcuLogisticsEntry(17, "ZKE", BusType.KBUS, "D_0011", 1, 2),
-                new EcuLogisticsEntry(18, "DME", BusType.FACAN, "D_MOTOR|D_0012", 9, 1),
-                new EcuLogisticsEntry(19, "DME", BusType.FACAN, "D_0013", 9, 1),
-                new EcuLogisticsEntry(20, "DME2", BusType.FACAN, "D_0014", 9, 2),
-                new EcuLogisticsEntry(21, "DDSHD", BusType.KBUS, "D_0015", 1, 7),
-                new EcuLogisticsEntry(22, "TOENS", BusType.UNKNOWN, "D_0016", -1, -1),
-                new EcuLogisticsEntry(24, "EGS", BusType.FACAN, "D_EGS", 9, 9),
-                new EcuLogisticsEntry(25, "ATCU", BusType.UNKNOWN, "D_0019", -1, -1),
-                new EcuLogisticsEntry(32, "EML", BusType.UNKNOWN, "D_0020", -1, -1),
-                new EcuLogisticsEntry(33, "ZV", BusType.UNKNOWN, "D_0021", -1, -1),
-                new EcuLogisticsEntry(34, "EML", BusType.FACAN, "D_0022", 9, 3),
-                new EcuLogisticsEntry(36, "HKM", BusType.UNKNOWN, "D_0024", -1, -1),
-                new EcuLogisticsEntry(40, "RCC", BusType.UNKNOWN, "D_0028", -1, -1),
-                new EcuLogisticsEntry(70, "CID", BusType.FACAN, "D_CID", 9, 7),
-                new EcuLogisticsEntry(44, "VNC", BusType.UNKNOWN, "D_002C", -1, -1),
-                new EcuLogisticsEntry(46, "EDC", BusType.UNKNOWN, "D_002E", -1, -1),
-                new EcuLogisticsEntry(48, "CCM", BusType.KBUS, "D_0030", 0, 5),
-                new EcuLogisticsEntry(49, "EHPS", BusType.FACAN, "D_0031", 9, 4),
-                new EcuLogisticsEntry(50, "EGS", BusType.FACAN, "D_0032", 9, 4),
-                new EcuLogisticsEntry(52, "VGSG", BusType.FACAN, "D_VGSG", 9, 10),
-                new EcuLogisticsEntry(53, "LSM/EPS", BusType.FACAN, "D_0035|D_EPS", 8, 1),
-                new EcuLogisticsEntry(54, "ABS", BusType.FACAN, "D_0036", -1, -1),
-                new EcuLogisticsEntry(55, "EPS", BusType.FACAN, "D_EPS", -1, -1),
-                new EcuLogisticsEntry(59, "VIDEO", BusType.KBUS, "D_003b", 5, 4),
-                new EcuLogisticsEntry(64, "FBZV", BusType.KBUS, "D_0040", 0, 6),
-                new EcuLogisticsEntry(68, "EWS", BusType.KBUS, "D_0044", 2, 1),
-                new EcuLogisticsEntry(69, "DWA", BusType.UNKNOWN, "D_0045", -1, -1),
-                new EcuLogisticsEntry(41, "DSC/DXC", BusType.FACAN, "D_ABSKWP", 8, 2),
-                new EcuLogisticsEntry(71, "CID", BusType.KBUS, "D_0047", -1, -1),
-                new EcuLogisticsEntry(72, "JBIT", BusType.KBUS, "D_0048", -1, -1),
-                new EcuLogisticsEntry(80, "MFL", BusType.KBUS, "D_0050", 4, 3),
-                new EcuLogisticsEntry(86, "DSC", BusType.FACAN, "D_0056", 9, 5),
-                new EcuLogisticsEntry(87, "LWS", BusType.FACAN, "D_0057", 9, 6),
-                new EcuLogisticsEntry(89, "HKA", BusType.KBUS, "D_0059", -1, -1),
-                new EcuLogisticsEntry(90, "ELV", BusType.UNKNOWN, "D_005A", -1, -1),
-                new EcuLogisticsEntry(91, "IHKA", BusType.KBUS, "D_005B", 0, 1),
-                new EcuLogisticsEntry(96, "PDC", BusType.KBUS, "D_0060", 2, 3),
-                new EcuLogisticsEntry(101, "EKP", BusType.FACAN, "D_0065", 9, 11),
-                new EcuLogisticsEntry(102, "ALC", BusType.FACAN, "D_0066", 9, 13),
-                new EcuLogisticsEntry(104, "RADIO", BusType.KBUS, "D_0068", 4, 1),
-                new EcuLogisticsEntry(105, "EKM", BusType.UNKNOWN, "D_0069", -1, -1),
-                new EcuLogisticsEntry(106, "DSP", BusType.KBUS, "D_006A", 1, 4),
-                new EcuLogisticsEntry(107, "STH", BusType.KBUS, "D_ZUHEIZ", 1, 5),
-                new EcuLogisticsEntry(108, "EGS", BusType.UNKNOWN, "D_006C", -1, -1),
-                new EcuLogisticsEntry(112, "RDC", BusType.KBUS, "D_0070", 0, 3),
-                new EcuLogisticsEntry(113, "SM/SPM", BusType.UNKNOWN, "D_0071", -1, -1),
-                new EcuLogisticsEntry(114, "SM", BusType.KBUS, "D_0072|D_0072b", 0, 2),
-                new EcuLogisticsEntry(116, "OC", BusType.KBUS, "D_0074", 2, 8),
-                new EcuLogisticsEntry(118, "CDC", BusType.KBUS, "D_0076", 5, 1),
-                new EcuLogisticsEntry(127, "NAVI", BusType.KBUS, "D_007f", 5, 2),
-                new EcuLogisticsEntry(128, "KOMBI", BusType.ROOT, "D_0080|D_KOMBI", 5, 0),
-                new EcuLogisticsEntry(129, "RIP", BusType.KBUS, "D_0081", 4, 4),
-                new EcuLogisticsEntry(134, "AHK", BusType.UNKNOWN, "D_0086", -1, -1),
-                new EcuLogisticsEntry(153, "NO_DME", BusType.VIRTUAL, "D_0099", -1, -1),
-                new EcuLogisticsEntry(154, "LWR", BusType.KBUS, "D_009a", 2, 2),
-                new EcuLogisticsEntry(155, "CVM", BusType.KBUS, "D_009b", -1, -1),
-                new EcuLogisticsEntry(157, "ETS", BusType.UNKNOWN, "D_009d", -1, -1),
-                new EcuLogisticsEntry(156, "CVM", BusType.KBUS, "D_009c", 2, 4),
-                new EcuLogisticsEntry(158, "UEB", BusType.KBUS, "D_009e", 2, 7),
-                new EcuLogisticsEntry(160, "FOND_ZIS", BusType.UNKNOWN, "D_00a0", -1, -1),
-                new EcuLogisticsEntry(161, "SBSL", BusType.BYTEFLIGHT, "D_SBSL2", 3, 5),
-                new EcuLogisticsEntry(162, "SBSR", BusType.BYTEFLIGHT, "D_SBSR2", 3, 6),
-                new EcuLogisticsEntry(164, "ZAE", BusType.KBUS, new BusType[] {BusType.BYTEFLIGHT}, "D_00a4|D_SIM", 2, 5),
-                new EcuLogisticsEntry(166, "GR", BusType.FACAN, "D_00a6", 8, 5),
-                new EcuLogisticsEntry(167, "FHK", BusType.UNKNOWN, "D_00a7", -1, -1),
-                new EcuLogisticsEntry(172, "EHC2", BusType.FACAN, "D_00AC", 9, 12),
-                new EcuLogisticsEntry(173, "STVL", BusType.KBUS, "D_STVL2", 0, 8),
-                new EcuLogisticsEntry(174, "STVR", BusType.KBUS, "D_STVR2", 1, 8),
-                new EcuLogisticsEntry(176, "RADIO", BusType.KBUS, "D_00b0", -1, -1),
-                new EcuLogisticsEntry(185, "IRS", BusType.UNKNOWN, "D_00b9", -1, -1),
-                new EcuLogisticsEntry(187, "JNAV", BusType.KBUS, "D_00bb", -1, -1),
-                new EcuLogisticsEntry(192, "ZIS", BusType.KBUS, "D_00c0", 0, 7),
-                new EcuLogisticsEntry(194, "SVT", BusType.KBUS, "D_00c2", 1, 6),
-                new EcuLogisticsEntry(200, "TELEFON", BusType.KBUS, "D_00c8", 4, 5),
-                new EcuLogisticsEntry(205, "BC", BusType.KBUS, "D_00cd", 2, 9),
-                new EcuLogisticsEntry(206, "RDC/SBE", BusType.BYTEFLIGHT, "D_00ce", -1, -1),
-                new EcuLogisticsEntry(208, "LM", BusType.FACAN, "D_00d0", 9, 8),
-                new EcuLogisticsEntry(218, "SM", BusType.KBUS, "D_00da", 0, 4),
-                new EcuLogisticsEntry(224, "IRIS", BusType.UNKNOWN, "D_00e0", -1, -1),
-                new EcuLogisticsEntry(232, "RLS", BusType.KBUS, "D_00e8", 1, 3),
-                new EcuLogisticsEntry(234, "DSP_BT", BusType.UNKNOWN, "D_00ea", -1, -1),
-                new EcuLogisticsEntry(237, "VIDEO", BusType.KBUS, "D_00ed", 4, 7),
-                new EcuLogisticsEntry(240, "CIDB", BusType.KBUS, "D_00f0", 4, 6),
-                new EcuLogisticsEntry(245, "LKM", BusType.KBUS, "D_00f5|d_szm", 4, 2)
-            });
-        public static EcuLogisticsData EcuLogisticsDataE85 =
-            new EcuLogisticsData("E85EcuCharacteristics.xml", EcuLogisticsE85);
-
-        // from: RheingoldDiagnostics.dll: BMW.Rheingold.Diagnostics.R50EcuCharacteristics.R50EcuCharacteristics
-        public static ReadOnlyCollection<IEcuLogisticsEntry> EcuLogisticsR50 =
-            new ReadOnlyCollection<IEcuLogisticsEntry>(new EcuLogisticsEntry[]
-            {
-                new EcuLogisticsEntry(128, "KOMBI", BusType.ROOT, "D_0080|D_KOMBI", 5, 0),
-                new EcuLogisticsEntry(129, "RIP", BusType.KBUS, "D_0081", 5, 1),
-                new EcuLogisticsEntry(0, "ZKE", BusType.KBUS, "D_0000|D_ZKE_GM", 3, 0),
-                new EcuLogisticsEntry(41, "ABS/DSC", BusType.FACAN, "D_ABSKWP", 6, 1),
-                new EcuLogisticsEntry(16, "DME", BusType.FACAN, "D_0010", 7, 1),
-                new EcuLogisticsEntry(18, "DME", BusType.FACAN, "D_MOTOR|D_0012", 7, 1),
-                new EcuLogisticsEntry(19, "DME", BusType.FACAN, "D_0013", 7, 1),
-                new EcuLogisticsEntry(87, "LWS", BusType.FACAN, "D_0057", 6, 2),
-                new EcuLogisticsEntry(49, "EHPS", BusType.FACAN, "D_0031", 7, 2),
-                new EcuLogisticsEntry(24, "EGS", BusType.FACAN, "D_EGS", 7, 3),
-                new EcuLogisticsEntry(154, "LWR", BusType.KBUS, "D_009a", 1, 1),
-                new EcuLogisticsEntry(68, "EWS", BusType.KBUS, "D_0044", 2, 1),
-                new EcuLogisticsEntry(96, "PDC", BusType.KBUS, "D_0060", 1, 2),
-                new EcuLogisticsEntry(91, "IHKA", BusType.KBUS, "D_005B", 2, 2),
-                new EcuLogisticsEntry(156, "CVM", BusType.KBUS, "D_009c", 1, 3),
-                new EcuLogisticsEntry(155, "CVM", BusType.KBUS, "D_009b", 1, 3),
-                new EcuLogisticsEntry(112, "RDC", BusType.KBUS, "D_0070", 1, 4),
-                new EcuLogisticsEntry(164, "ZAE", BusType.KBUS, "D_00a4|D_SIM", 2, 4),
-                new EcuLogisticsEntry(8, "SHD", BusType.KBUS, "D_0008", 1, 5),
-                new EcuLogisticsEntry(232, "RLS", BusType.KBUS, "D_00e8", 1, 6),
-                new EcuLogisticsEntry(116, "OC", BusType.KBUS, "D_0074", 2, 6),
-                new EcuLogisticsEntry(240, "CIDB", BusType.KBUS, "D_00f0", 1, 7),
-                new EcuLogisticsEntry(59, "VIDEO", BusType.KBUS, "D_003b", 2, 7),
-                new EcuLogisticsEntry(237, "VIDEO", BusType.KBUS, "D_00ed", 2, 7),
-                new EcuLogisticsEntry(118, "CDC", BusType.KBUS, "D_0076", 1, 8),
-                new EcuLogisticsEntry(106, "DSP", BusType.KBUS, "D_006A", 2, 8),
-                new EcuLogisticsEntry(104, "RADIO", BusType.KBUS, "D_0068", 1, 9),
-                new EcuLogisticsEntry(80, "MFL", BusType.KBUS, "D_0050", 2, 9),
-                new EcuLogisticsEntry(127, "NAVI", BusType.KBUS, "D_007f", 1, 10),
-                new EcuLogisticsEntry(187, "JNAV", BusType.KBUS, "D_00bb", 1, 10),
-                new EcuLogisticsEntry(200, "TELEFON", BusType.KBUS, "D_00c8", 2, 10),
-                new EcuLogisticsEntry(13, "KOMBI", BusType.FACAN, "D_000D", -1, -1),
-                new EcuLogisticsEntry(17, "ZKE", BusType.KBUS, "D_0011", 1, 2),
-                new EcuLogisticsEntry(21, "DDSHD", BusType.KBUS, "D_0015", 1, 7),
-                new EcuLogisticsEntry(22, "TOENS", BusType.KBUS, "D_0016", -1, -1),
-                new EcuLogisticsEntry(25, "ATCU", BusType.KBUS, "D_0019", -1, -1),
-                new EcuLogisticsEntry(32, "EML", BusType.KBUS, "D_0020", -1, -1),
-                new EcuLogisticsEntry(33, "ZV", BusType.KBUS, "D_0021", -1, -1),
-                new EcuLogisticsEntry(34, "EML", BusType.FACAN, "D_0022", 7, 3),
-                new EcuLogisticsEntry(36, "HKM", BusType.KBUS, "D_0024", -1, -1),
-                new EcuLogisticsEntry(40, "RCC", BusType.KBUS, "D_0028", -1, -1),
-                new EcuLogisticsEntry(44, "VNC", BusType.KBUS, "D_002C", -1, -1),
-                new EcuLogisticsEntry(46, "EDC", BusType.UNKNOWN, "D_002E", -1, -1),
-                new EcuLogisticsEntry(48, "CCM", BusType.KBUS, "D_0030", 0, 5),
-                new EcuLogisticsEntry(50, "EGS", BusType.FACAN, "D_0032", 7, 4),
-                new EcuLogisticsEntry(52, "VGSG", BusType.FACAN, "D_VGSG", 7, 10),
-                new EcuLogisticsEntry(53, "LSM/EPS", BusType.FACAN, "D_0035|D_EPS", 6, 1),
-                new EcuLogisticsEntry(54, "ABS", BusType.FACAN, "D_0036", -1, -1),
-                new EcuLogisticsEntry(64, "FBZV", BusType.KBUS, "D_0040", 0, 6),
-                new EcuLogisticsEntry(69, "DWA", BusType.KBUS, "D_0045", -1, -1),
-                new EcuLogisticsEntry(71, "CID", BusType.KBUS, "D_0047", -1, -1),
-                new EcuLogisticsEntry(72, "JBIT", BusType.KBUS, "D_0048", -1, -1),
-                new EcuLogisticsEntry(86, "DSC", BusType.FACAN, "D_0056", 7, 5),
-                new EcuLogisticsEntry(89, "HKA", BusType.KBUS, "D_0059", -1, -1),
-                new EcuLogisticsEntry(90, "ELV", BusType.KBUS, "D_005A", -1, -1),
-                new EcuLogisticsEntry(101, "EKP", BusType.FACAN, "D_0065", 7, 11),
-                new EcuLogisticsEntry(102, "ALC", BusType.FACAN, "D_0066", 7, 13),
-                new EcuLogisticsEntry(105, "EKM", BusType.KBUS, "D_0069", -1, -1),
-                new EcuLogisticsEntry(107, "STH", BusType.KBUS, "D_ZUHEIZ", 1, 5),
-                new EcuLogisticsEntry(108, "EGS", BusType.KBUS, "D_006C", -1, -1),
-                new EcuLogisticsEntry(113, "SM/SPM", BusType.KBUS, "D_0071", -1, -1),
-                new EcuLogisticsEntry(114, "SM", BusType.KBUS, "D_0072|D_0072b", 0, 2),
-                new EcuLogisticsEntry(134, "AHK", BusType.KBUS, "D_0086", -1, -1),
-                new EcuLogisticsEntry(153, "NO_DME", BusType.VIRTUAL, "D_0099", -1, -1),
-                new EcuLogisticsEntry(157, "ETS", BusType.KBUS, "D_009d", -1, -1),
-                new EcuLogisticsEntry(158, "UEB", BusType.KBUS, "D_009e", 2, 7),
-                new EcuLogisticsEntry(160, "FOND_ZIS", BusType.KBUS, "D_00a0", -1, -1),
-                new EcuLogisticsEntry(161, "SBSL", BusType.SIBUS, "D_SBSL", -1, -1),
-                new EcuLogisticsEntry(162, "SBSR", BusType.SIBUS, "D_SBSR", -1, -1),
-                new EcuLogisticsEntry(166, "GR", BusType.KBUS, "D_00a6", -1, -1),
-                new EcuLogisticsEntry(167, "FHK", BusType.KBUS, "D_00a7", -1, -1),
-                new EcuLogisticsEntry(172, "EHC2", BusType.FACAN, "D_00AC", 7, 12),
-                new EcuLogisticsEntry(173, "STVL", BusType.KBUS, "D_STVL", -1, -1),
-                new EcuLogisticsEntry(174, "STVR", BusType.KBUS, "D_STVR", -1, -1),
-                new EcuLogisticsEntry(176, "RADIO", BusType.KBUS, "D_00b0", -1, -1),
-                new EcuLogisticsEntry(185, "IRS", BusType.KBUS, "D_00b9", -1, -1),
-                new EcuLogisticsEntry(192, "ZIS", BusType.KBUS, "D_00c0", 0, 7),
-                new EcuLogisticsEntry(194, "SVT", BusType.KBUS, "D_00c2", 1, 6),
-                new EcuLogisticsEntry(205, "BC", BusType.KBUS, "D_00cd", 2, 9),
-                new EcuLogisticsEntry(206, "RDC/SBE", BusType.KBUS, "D_00ce", -1, -1),
-                new EcuLogisticsEntry(208, "LM", BusType.FACAN, "D_00d0", 7, 8),
-                new EcuLogisticsEntry(218, "SM", BusType.KBUS, "D_00da", 0, 4),
-                new EcuLogisticsEntry(224, "IRIS", BusType.KBUS, "D_00e0", -1, -1),
-                new EcuLogisticsEntry(234, "DSP_BT", BusType.UNKNOWN, "D_00ea", -1, -1),
-                new EcuLogisticsEntry(245, "LKM", BusType.KBUS, "D_00f5|d_szm", 4, 2)
-            });
-        public static EcuLogisticsData EcuLogisticsDataR50 =
-            new EcuLogisticsData("R50EcuCharacteristics.xml", EcuLogisticsR50);
+        public static EcuLogisticsData EcuLogisticsDataE36 = new EcuLogisticsData("E36EcuCharacteristics.xml");
+        public static EcuLogisticsData EcuLogisticsDataE38 = new EcuLogisticsData("E38EcuCharacteristics.xml");
+        public static EcuLogisticsData EcuLogisticsDataE39 = new EcuLogisticsData("E39EcuCharacteristics.xml");
+        public static EcuLogisticsData EcuLogisticsDataE46 = new EcuLogisticsData("E46EcuCharacteristics.xml");
+        public static EcuLogisticsData EcuLogisticsDataE52 = new EcuLogisticsData("E52EcuCharacteristics.xml");
+        public static EcuLogisticsData EcuLogisticsDataE53 = new EcuLogisticsData("E53EcuCharacteristics.xml");
+        public static EcuLogisticsData EcuLogisticsDataE83 = new EcuLogisticsData("E83EcuCharacteristics.xml");
+        public static EcuLogisticsData EcuLogisticsDataE85 = new EcuLogisticsData("E85EcuCharacteristics.xml");
+        public static EcuLogisticsData EcuLogisticsDataR50 = new EcuLogisticsData("R50EcuCharacteristics.xml");
 
         public static ReadOnlyCollection<EcuLogisticsData> EcuLogisticsList = new ReadOnlyCollection<EcuLogisticsData>(new EcuLogisticsData[]
         {
@@ -1017,9 +169,6 @@ namespace BmwFileReader
 
         public const string ResultUnknown = "UNBEK";
 
-        // ReSharper restore CoVariantArrayConversion
-        // ReSharper restore RedundantExplicitArrayCreation
-
 #if Android
         private static Dictionary<string, string> _typeKeyDict;
 #endif
@@ -1027,51 +176,32 @@ namespace BmwFileReader
 
         private static VehicleStructsBmw.VehicleSeriesInfoData _vehicleSeriesInfoData;
 
-        public static void CreateEcuLogistics(string resourcePath)
+        public static bool CreateEcuLogistics(string resourcePath)
         {
-            if (EcuLogisticsCreated)
+            if (!EcuLogisticsCreated)
             {
-                return;
-            }
-
-            foreach (EcuLogisticsData ecuLogisticsData in EcuLogisticsList)
-            {
-                if (ecuLogisticsData.UsageEntry == null)
-                {
-                    string resourceName = resourcePath + ecuLogisticsData.XmlName;
-                    ecuLogisticsData.UsageEntry = ReadEcuLogisticsXml(resourceName) ?? ecuLogisticsData.StaticEntry;
-                }
-            }
-
-            EcuLogisticsCreated = true;
-#if Android && DEBUG
-            {
+                bool failed = false;
                 foreach (EcuLogisticsData ecuLogisticsData in EcuLogisticsList)
                 {
-                    if (ecuLogisticsData.UsageEntry == ecuLogisticsData.StaticEntry)
+                    if (ecuLogisticsData.Data == null)
                     {
-                        Android.Util.Log.Debug("CreateEcuLogistics", "Reading XML failed: " + ecuLogisticsData.XmlName);
+                        string resourceName = resourcePath + ecuLogisticsData.XmlName;
+                        ecuLogisticsData.Data = ReadEcuLogisticsXml(resourceName);
                     }
-                    else if (ecuLogisticsData.UsageEntry.Count != ecuLogisticsData.StaticEntry.Count)
+
+                    if (ecuLogisticsData.Data == null)
                     {
-                        Android.Util.Log.Debug("CreateEcuLogistics", "Different Length: " + ecuLogisticsData.XmlName);
-                    }
-                    else
-                    {
-                        for (int i = 0; i < ecuLogisticsData.UsageEntry.Count; i++)
-                        {
-                            if (ecuLogisticsData.UsageEntry[i].Name != ecuLogisticsData.StaticEntry[i].Name ||
-                                ecuLogisticsData.UsageEntry[i].GroupSgbd != ecuLogisticsData.StaticEntry[i].GroupSgbd)
-                            {
-                                Android.Util.Log.Debug("CreateEcuLogistics", "Different Data for: " + ecuLogisticsData.XmlName +
-                                    " Name:" + ecuLogisticsData.UsageEntry[i].Name + ", " + ecuLogisticsData.StaticEntry[i].Name +
-                                    " Group:" + ecuLogisticsData.UsageEntry[i].GroupSgbd + ", " + ecuLogisticsData.StaticEntry[i].GroupSgbd);
-                            }
-                        }
+                        failed = true;
                     }
                 }
+
+                if (!failed)
+                {
+                    EcuLogisticsCreated = true;
+                }
             }
-#endif
+
+            return EcuLogisticsCreated;
         }
 
         public static ReadOnlyCollection<IEcuLogisticsEntry> ReadEcuLogisticsXml(string resourceName)
@@ -1482,44 +612,62 @@ namespace BmwFileReader
                 return null;
             }
 
-            CreateEcuLogistics(typeof(BmwDeepObd.XmlToolActivity).Namespace + ".VehicleInfo.");
+            if (!CreateEcuLogistics(typeof(BmwDeepObd.XmlToolActivity).Namespace + ".VehicleInfo."))
+            {
+                ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Create ECU logistics failed");
+            }
 
             // Mapping could be found in:
             // from: RheingoldDiagnostics.dll: BMW.Rheingold.Diagnostics.VehicleLogistics.GetCharacteristics(Vehicle vecInfo)
+            ReadOnlyCollection<IEcuLogisticsEntry> ecuLogisticsEntries = null;
             switch (vehicleType.ToUpperInvariant())
             {
                 case "E36":
-                    return EcuLogisticsDataE36.UsageEntry;
+                    ecuLogisticsEntries = EcuLogisticsDataE36.Data;
+                    break;
 
                 case "E38":
-                    return EcuLogisticsDataE38.UsageEntry;
+                    ecuLogisticsEntries = EcuLogisticsDataE38.Data;
+                    break;
 
                 case "E39":
-                    return EcuLogisticsDataE39.UsageEntry;
+                    ecuLogisticsEntries = EcuLogisticsDataE39.Data;
+                    break;
 
                 case "E46":
-                    return EcuLogisticsDataE46.UsageEntry;
+                    ecuLogisticsEntries = EcuLogisticsDataE46.Data;
+                    break;
 
                 case "E52":
-                    return EcuLogisticsDataE52.UsageEntry;
+                    ecuLogisticsEntries = EcuLogisticsDataE52.Data;
+                    break;
 
                 case "E53":
-                    return EcuLogisticsDataE53.UsageEntry;
+                    ecuLogisticsEntries = EcuLogisticsDataE53.Data;
+                    break;
 
                 case "E83":
-                    return EcuLogisticsDataE83.UsageEntry;
+                    ecuLogisticsEntries = EcuLogisticsDataE83.Data;
+                    break;
 
                 case "E85":
                 case "E86":
-                    return EcuLogisticsDataE85.UsageEntry;
+                    ecuLogisticsEntries = EcuLogisticsDataE85.Data;
+                    break;
 
                 case "R50":
                 case "R52":
                 case "R53":
-                    return EcuLogisticsDataR50.UsageEntry;
+                    ecuLogisticsEntries = EcuLogisticsDataR50.Data;
+                    break;
             }
-            ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Vehicle type unknown");
-            return null;
+
+            if (ecuLogisticsEntries == null)
+            {
+                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Vehicle type unknown");
+            }
+
+            return ecuLogisticsEntries;
         }
 #endif
 
