@@ -1522,6 +1522,8 @@ namespace CarSimulator
 
                 case ConceptType.ConceptKwp2000S:
                     {
+                        DebugLogData("Response KWP2000*: ", sendData, TelLengthBmwFast(sendData));
+
                         byte[] tempArray = new byte[260];
                         // convert to KWP2000*
                         int dataLength = sendData[0] & 0x3F;
@@ -1543,6 +1545,8 @@ namespace CarSimulator
 
                 case ConceptType.ConceptDs2:
                     {
+                        DebugLogData("Response DS2: ", sendData, TelLengthBmwFast(sendData));
+
                         byte[] tempArray = new byte[260];
                         // convert to DS2
                         int dataLength = sendData[0] & 0x3F;
@@ -1649,6 +1653,7 @@ namespace CarSimulator
                         int dataLength;
                         if (kwp2000S)
                         {   // KWP2000*
+                            Debug.WriteLine("Detected KWP2000* request");
                             _responseConcept = ConceptType.ConceptKwp2000S;
                             dataLength = receiveData[3];
                             if (dataLength > 0x3F)
