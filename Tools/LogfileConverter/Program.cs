@@ -12,6 +12,7 @@ namespace LogfileConverter
     {
         private static bool _responseFile;
         private static bool _cFormat;
+        private static bool _ignoreCrcErrors = false;
         private static bool _ds2Mode;
         private static bool _kwp2000sMode;
         private static bool _edicCanMode;
@@ -42,6 +43,8 @@ namespace LogfileConverter
                   v => _responseFile = v != null },
                 { "s|sort", "sort reponse file", 
                   v => sortFile = v != null },
+                { "e|errors", "ignore CRC errors",
+                  v => _ignoreCrcErrors = v != null },
                 { "h|help",  "show this message and exit", 
                   v => showHelp = v != null },
             };
@@ -1520,6 +1523,11 @@ namespace LogfileConverter
 
         private static bool ChecksumValid(List<byte> telegram)
         {
+            if (_ignoreCrcErrors)
+            {
+                return true;
+            }
+
             int offset = 0;
             for (; ; )
             {
