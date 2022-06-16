@@ -3904,12 +3904,16 @@ namespace BmwDeepObd
 #endif
                                             if (errorCode != 0x0000)
                                             {
-                                                envCondLabelList = ActivityCommon.EcuFunctionReader.GetEnvCondLabelList(errorCode, ecuVariant, showRelevantOnly);
-                                                List<string> faultResultList = EdiabasThread.ConvertFaultCodeError(errorCode, errorReport, ecuVariant, showRelevantOnly);
-                                                if (faultResultList != null && faultResultList.Count == 2)
+                                                bool validFaultCode = ActivityCommon.EcuFunctionReader.IsValidFaultCode(errorCode, ecuVariant, showRelevantOnly);
+                                                if (validFaultCode)
                                                 {
-                                                    text1 = faultResultList[0];
-                                                    text2 = faultResultList[1];
+                                                    envCondLabelList = ActivityCommon.EcuFunctionReader.GetEnvCondLabelList(errorCode, ecuVariant);
+                                                    List<string> faultResultList = EdiabasThread.ConvertFaultCodeError(errorCode, errorReport, ecuVariant);
+                                                    if (faultResultList != null && faultResultList.Count == 2)
+                                                    {
+                                                        text1 = faultResultList[0];
+                                                        text2 = faultResultList[1];
+                                                    }
                                                 }
                                             }
                                         }
