@@ -84,14 +84,24 @@ namespace BmwFileReader
             return fixedFuncStructList;
         }
 
-        public EcuFunctionStructs.EcuFaultCodeLabel GetFaultCodeLabel(Int64 errorCode, EcuFunctionStructs.EcuVariant ecuVariant, bool relevantOnly = false)
+        public bool IsValidFaultCode(Int64 errorCode, EcuFunctionStructs.EcuVariant ecuVariant, bool relevantOnly = false)
         {
             if (!ecuVariant.EcuFaultCodeDict.TryGetValue(errorCode, out EcuFunctionStructs.EcuFaultCode ecuFaultCode))
             {
-                return null;
+                return false;
             }
 
             if (!relevantOnly || ecuFaultCode.Relevance.ConvertToInt() > 0)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public EcuFunctionStructs.EcuFaultCodeLabel GetFaultCodeLabel(Int64 errorCode, EcuFunctionStructs.EcuVariant ecuVariant)
+        {
+            if (!ecuVariant.EcuFaultCodeDict.TryGetValue(errorCode, out EcuFunctionStructs.EcuFaultCode ecuFaultCode))
             {
                 return null;
             }
@@ -119,7 +129,7 @@ namespace BmwFileReader
             return ecuFaultModeLabelMatchList;
         }
 
-        public List<EcuFunctionStructs.EcuFaultModeLabel> GetFaultModeLabelList(Int64 errorCode, EcuFunctionStructs.EcuVariant ecuVariant, bool relevantOnly = false)
+        public List<EcuFunctionStructs.EcuFaultModeLabel> GetFaultModeLabelList(Int64 errorCode, EcuFunctionStructs.EcuVariant ecuVariant)
         {
             if (!ecuVariant.EcuFaultCodeDict.TryGetValue(errorCode, out EcuFunctionStructs.EcuFaultCode ecuFaultCode))
             {
@@ -127,11 +137,6 @@ namespace BmwFileReader
             }
 
             if (ecuFaultCode.EcuFaultModeLabelIdList == null)
-            {
-                return null;
-            }
-
-            if (!relevantOnly || ecuFaultCode.Relevance.ConvertToInt() > 0)
             {
                 return null;
             }
@@ -178,14 +183,9 @@ namespace BmwFileReader
             return ecuEnvCondLabelMatchList;
         }
 
-        public List<EcuFunctionStructs.EcuEnvCondLabel> GetEnvCondLabelList(Int64 errorCode, EcuFunctionStructs.EcuVariant ecuVariant, bool relevantOnly = false)
+        public List<EcuFunctionStructs.EcuEnvCondLabel> GetEnvCondLabelList(Int64 errorCode, EcuFunctionStructs.EcuVariant ecuVariant)
         {
             if (!ecuVariant.EcuFaultCodeDict.TryGetValue(errorCode, out EcuFunctionStructs.EcuFaultCode ecuFaultCode))
-            {
-                return null;
-            }
-
-            if (!relevantOnly || ecuFaultCode.Relevance.ConvertToInt() > 0)
             {
                 return null;
             }

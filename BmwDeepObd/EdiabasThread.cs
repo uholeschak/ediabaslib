@@ -2109,11 +2109,11 @@ namespace BmwDeepObd
             }
         }
 
-        public static List<string> ConvertFaultCodeError(Int64 errorCode, EdiabasErrorReport errorReport, EcuFunctionStructs.EcuVariant ecuVariant, bool relevantOnly = false)
+        public static List<string> ConvertFaultCodeError(Int64 errorCode, EdiabasErrorReport errorReport, EcuFunctionStructs.EcuVariant ecuVariant)
         {
             List<string> resultList = new List<string>();
             string language = ActivityCommon.GetCurrentLanguage();
-            EcuFunctionStructs.EcuFaultCodeLabel ecuFaultCodeLabel = ActivityCommon.EcuFunctionReader.GetFaultCodeLabel(errorCode, ecuVariant, relevantOnly);
+            EcuFunctionStructs.EcuFaultCodeLabel ecuFaultCodeLabel = ActivityCommon.EcuFunctionReader.GetFaultCodeLabel(errorCode, ecuVariant);
             if (ecuFaultCodeLabel != null)
             {
                 string label = ecuFaultCodeLabel.Title.GetTitle(language);
@@ -2128,8 +2128,7 @@ namespace BmwDeepObd
                 return resultList;
             }
 
-            List<EcuFunctionStructs.EcuFaultModeLabel> ecuFaultModeLabelList =
-                ActivityCommon.EcuFunctionReader.GetFaultModeLabelList(errorCode, ecuVariant, relevantOnly);
+            List<EcuFunctionStructs.EcuFaultModeLabel> ecuFaultModeLabelList = ActivityCommon.EcuFunctionReader.GetFaultModeLabelList(errorCode, ecuVariant);
             if (ecuFaultModeLabelList != null)
             {
                 List<Tuple<string, bool>> faultModeResultList = ErrorFaultModeResultList.ToList();
