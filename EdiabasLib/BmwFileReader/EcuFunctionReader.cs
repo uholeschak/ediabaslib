@@ -84,9 +84,14 @@ namespace BmwFileReader
             return fixedFuncStructList;
         }
 
-        public EcuFunctionStructs.EcuFaultCodeLabel GetFaultCodeLabel(Int64 errorCode, EcuFunctionStructs.EcuVariant ecuVariant)
+        public EcuFunctionStructs.EcuFaultCodeLabel GetFaultCodeLabel(Int64 errorCode, EcuFunctionStructs.EcuVariant ecuVariant, bool relevantOnly = false)
         {
             if (!ecuVariant.EcuFaultCodeDict.TryGetValue(errorCode, out EcuFunctionStructs.EcuFaultCode ecuFaultCode))
+            {
+                return null;
+            }
+
+            if (!relevantOnly || ecuFaultCode.Relevance.ConvertToInt() > 0)
             {
                 return null;
             }
@@ -126,16 +131,17 @@ namespace BmwFileReader
                 return null;
             }
 
-            List <EcuFunctionStructs.EcuFaultModeLabel> ecuFaultModeLabelList = new List<EcuFunctionStructs.EcuFaultModeLabel>();
+            if (!relevantOnly || ecuFaultCode.Relevance.ConvertToInt() > 0)
+            {
+                return null;
+            }
+
+            List<EcuFunctionStructs.EcuFaultModeLabel> ecuFaultModeLabelList = new List<EcuFunctionStructs.EcuFaultModeLabel>();
             foreach (string ecuFaultModeId in ecuFaultCode.EcuFaultModeLabelIdList)
             {
                 if (_ecuFaultModeLabelDict.TryGetValue(ecuFaultModeId.ToLowerInvariant(), out EcuFunctionStructs.EcuFaultModeLabel ecuFaultModeLabel))
                 {
-                    bool addLabel = !relevantOnly || ecuFaultModeLabel.Relevance.ConvertToInt() > 0;
-                    if (addLabel)
-                    {
-                        ecuFaultModeLabelList.Add(ecuFaultModeLabel);
-                    }
+                    ecuFaultModeLabelList.Add(ecuFaultModeLabel);
                 }
             }
 
@@ -179,6 +185,11 @@ namespace BmwFileReader
                 return null;
             }
 
+            if (!relevantOnly || ecuFaultCode.Relevance.ConvertToInt() > 0)
+            {
+                return null;
+            }
+
             if (ecuFaultCode.EcuEnvCondLabelIdList == null)
             {
                 return null;
@@ -189,11 +200,7 @@ namespace BmwFileReader
             {
                 if (_ecuEnvCondLabelDict.TryGetValue(ecuEnvCondId.ToLowerInvariant(), out EcuFunctionStructs.EcuEnvCondLabel ecuEnvCondLabel))
                 {
-                    bool addLabel = !relevantOnly || ecuEnvCondLabel.Relevance.ConvertToInt() > 0;
-                    if (addLabel)
-                    {
-                        ecuEnvCondLabelList.Add(ecuEnvCondLabel);
-                    }
+                    ecuEnvCondLabelList.Add(ecuEnvCondLabel);
                 }
             }
 

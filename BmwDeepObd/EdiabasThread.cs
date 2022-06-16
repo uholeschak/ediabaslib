@@ -2113,17 +2113,13 @@ namespace BmwDeepObd
         {
             List<string> resultList = new List<string>();
             string language = ActivityCommon.GetCurrentLanguage();
-            EcuFunctionStructs.EcuFaultCodeLabel ecuFaultCodeLabel = ActivityCommon.EcuFunctionReader.GetFaultCodeLabel(errorCode, ecuVariant);
+            EcuFunctionStructs.EcuFaultCodeLabel ecuFaultCodeLabel = ActivityCommon.EcuFunctionReader.GetFaultCodeLabel(errorCode, ecuVariant, relevantOnly);
             if (ecuFaultCodeLabel != null)
             {
-                bool addLabel = !relevantOnly || ecuFaultCodeLabel.Relevance.ConvertToInt() > 0;
-                if (addLabel)
+                string label = ecuFaultCodeLabel.Title.GetTitle(language);
+                if (!string.IsNullOrEmpty(label))
                 {
-                    string label = ecuFaultCodeLabel.Title.GetTitle(language);
-                    if (!string.IsNullOrEmpty(label))
-                    {
-                        resultList.Add(label);
-                    }
+                    resultList.Add(label);
                 }
             }
 
@@ -2133,7 +2129,7 @@ namespace BmwDeepObd
             }
 
             List<EcuFunctionStructs.EcuFaultModeLabel> ecuFaultModeLabelList =
-                ActivityCommon.EcuFunctionReader.GetFaultModeLabelList(errorCode, ecuVariant);
+                ActivityCommon.EcuFunctionReader.GetFaultModeLabelList(errorCode, ecuVariant, relevantOnly);
             if (ecuFaultModeLabelList != null)
             {
                 List<Tuple<string, bool>> faultModeResultList = ErrorFaultModeResultList.ToList();
