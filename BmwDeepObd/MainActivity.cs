@@ -3902,23 +3902,24 @@ namespace BmwDeepObd
                                                 }
                                             }
 #endif
+                                            if (!ActivityCommon.EcuFunctionReader.IsValidFaultCode(errorCode, ecuVariant, showRelevantOnly))
+                                            {
+                                                errorCode = 0x0000;
+                                            }
+
                                             if (errorCode != 0x0000)
                                             {
-                                                bool validFaultCode = ActivityCommon.EcuFunctionReader.IsValidFaultCode(errorCode, ecuVariant, showRelevantOnly);
-                                                if (validFaultCode)
+                                                envCondLabelList = ActivityCommon.EcuFunctionReader.GetEnvCondLabelList(errorCode, ecuVariant);
+                                                List<string> faultResultList = EdiabasThread.ConvertFaultCodeError(errorCode, errorReport, ecuVariant);
+                                                if (faultResultList != null && faultResultList.Count == 2)
                                                 {
-                                                    envCondLabelList = ActivityCommon.EcuFunctionReader.GetEnvCondLabelList(errorCode, ecuVariant);
-                                                    List<string> faultResultList = EdiabasThread.ConvertFaultCodeError(errorCode, errorReport, ecuVariant);
-                                                    if (faultResultList != null && faultResultList.Count == 2)
-                                                    {
-                                                        text1 = faultResultList[0];
-                                                        text2 = faultResultList[1];
-                                                    }
+                                                    text1 = faultResultList[0];
+                                                    text2 = faultResultList[1];
                                                 }
                                             }
                                         }
 
-                                        if (showUnknown && string.IsNullOrEmpty(text1))
+                                        if (showUnknown && errorCode != 0x0000 && string.IsNullOrEmpty(text1))
                                         {
                                             text1 = FormatResultString(errorReport.ErrorDict, "F_ORT_TEXT", "{0}");
                                             text2 = FormatResultString(errorReport.ErrorDict, "F_VORHANDEN_TEXT", "{0}");
