@@ -86,6 +86,11 @@ namespace BmwFileReader
 
         public bool IsValidFaultCode(Int64 errorCode, EcuFunctionStructs.EcuVariant ecuVariant, bool relevantOnly = false)
         {
+            if (errorCode == 0x0000)
+            {
+                return false;
+            }
+
             if (!ecuVariant.EcuFaultCodeDict.TryGetValue(errorCode, out EcuFunctionStructs.EcuFaultCode ecuFaultCode))
             {
                 return false;
