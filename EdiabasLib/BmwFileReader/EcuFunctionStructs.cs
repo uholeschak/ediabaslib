@@ -173,14 +173,16 @@ namespace BmwFileReader
             {
                 Id = string.Empty;
                 Code = string.Empty;
+                DataType = string.Empty;
                 Relevance = string.Empty;
                 EcuFaultCodeLabelId = string.Empty;
             }
 
-            public EcuFaultCode(string id, string code, string relevance)
+            public EcuFaultCode(string id, string code, string dataType, string relevance)
             {
                 Id = id;
                 Code = code;
+                DataType = dataType;
                 Relevance = relevance;
                 EcuFaultCodeLabelId = string.Empty;
             }
@@ -221,8 +223,9 @@ namespace BmwFileReader
             }
 
             [XmlElement, DefaultValue("")] public string Id { get; set; }
-            [XmlElement, DefaultValue("")] public string Code { get; set; }
-            [XmlElement, DefaultValue("")] public string Relevance { get; set; }
+            [XmlElement("Cod"), DefaultValue("")] public string Code { get; set; }
+            [XmlElement("DTyp"), DefaultValue("")] public string DataType { get; set; }
+            [XmlElement("Rel"), DefaultValue("")] public string Relevance { get; set; }
             [XmlIgnore, XmlElement, DefaultValue(null)] public EcuFaultCodeLabel EcuFaultCodeLabel { get; set; }
             [XmlElement("FCLIdL"), DefaultValue("")] public string EcuFaultCodeLabelId { get; set; }
             [XmlIgnore, XmlArray, DefaultValue(null)] public List<EcuFaultModeLabel> EcuFaultModeLabelList { get; set; }
