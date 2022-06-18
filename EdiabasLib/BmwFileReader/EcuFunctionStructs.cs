@@ -136,6 +136,11 @@ namespace BmwFileReader
                 return ToString("");
             }
 
+            public Dictionary<Int64, EcuFaultCode> GetEcuFaultCodeDict(bool info)
+            {
+                return info ? EcuFaultCodeDictInfo : EcuFaultCodeDictFault;
+            }
+
             public void ClearCompatIds()
             {
                 if (RefEcuVariantList != null)
@@ -162,7 +167,8 @@ namespace BmwFileReader
             [XmlArray("RVL"), DefaultValue(null)] public List<RefEcuVariant> RefEcuVariantList { get; set; }
             [XmlArray("FSL"), DefaultValue(null)] public List<EcuFuncStruct> EcuFuncStructList { get; set; }
             [XmlArray("FCL"), DefaultValue(null)] public List<EcuFaultCode> EcuFaultCodeList { get; set; }
-            [XmlIgnore] public Dictionary<Int64, EcuFaultCode> EcuFaultCodeDict { get; set; }
+            [XmlIgnore] public Dictionary<Int64, EcuFaultCode> EcuFaultCodeDictFault { get; set; }
+            [XmlIgnore] public Dictionary<Int64, EcuFaultCode> EcuFaultCodeDictInfo { get; set; }
         }
 
         [XmlInclude(typeof(EcuFaultCodeLabel)), XmlInclude(typeof(EcuFaultModeLabel)), XmlInclude(typeof(EcuEnvCondLabel))]

@@ -13,6 +13,8 @@ namespace BmwFileReader
     {
         public const string EcuFuncFileName = "EcuFunctions.zip";
         public const string FaultDataBaseName = "faultdata_";
+        public const string FaultDataTypeFault = "F";
+        public const string FaultDataTypeInfo = "I";
         private readonly string _rootDir;
         private readonly Dictionary<string, EcuFunctionStructs.EcuVariant> _ecuVariantDict;
         private readonly Dictionary<string, EcuFunctionStructs.EcuFaultCodeLabel> _ecuFaultCodeLabelDict;
@@ -84,14 +86,14 @@ namespace BmwFileReader
             return fixedFuncStructList;
         }
 
-        public bool IsValidFaultCode(Int64 errorCode, EcuFunctionStructs.EcuVariant ecuVariant, bool relevantOnly = false)
+        public bool IsValidFaultCode(Int64 errorCode, bool info, EcuFunctionStructs.EcuVariant ecuVariant, bool relevantOnly = false)
         {
             if (errorCode == 0x0000)
             {
                 return false;
             }
 
-            if (!ecuVariant.EcuFaultCodeDict.TryGetValue(errorCode, out EcuFunctionStructs.EcuFaultCode ecuFaultCode))
+            if (!ecuVariant.GetEcuFaultCodeDict(info).TryGetValue(errorCode, out EcuFunctionStructs.EcuFaultCode ecuFaultCode))
             {
                 return false;
             }
@@ -104,9 +106,9 @@ namespace BmwFileReader
             return false;
         }
 
-        public EcuFunctionStructs.EcuFaultCodeLabel GetFaultCodeLabel(Int64 errorCode, EcuFunctionStructs.EcuVariant ecuVariant)
+        public EcuFunctionStructs.EcuFaultCodeLabel GetFaultCodeLabel(Int64 errorCode, bool info, EcuFunctionStructs.EcuVariant ecuVariant)
         {
-            if (!ecuVariant.EcuFaultCodeDict.TryGetValue(errorCode, out EcuFunctionStructs.EcuFaultCode ecuFaultCode))
+            if (!ecuVariant.GetEcuFaultCodeDict(info).TryGetValue(errorCode, out EcuFunctionStructs.EcuFaultCode ecuFaultCode))
             {
                 return null;
             }
@@ -134,9 +136,9 @@ namespace BmwFileReader
             return ecuFaultModeLabelMatchList;
         }
 
-        public List<EcuFunctionStructs.EcuFaultModeLabel> GetFaultModeLabelList(Int64 errorCode, EcuFunctionStructs.EcuVariant ecuVariant)
+        public List<EcuFunctionStructs.EcuFaultModeLabel> GetFaultModeLabelList(Int64 errorCode, bool info, EcuFunctionStructs.EcuVariant ecuVariant)
         {
-            if (!ecuVariant.EcuFaultCodeDict.TryGetValue(errorCode, out EcuFunctionStructs.EcuFaultCode ecuFaultCode))
+            if (!ecuVariant.GetEcuFaultCodeDict(info).TryGetValue(errorCode, out EcuFunctionStructs.EcuFaultCode ecuFaultCode))
             {
                 return null;
             }
@@ -188,9 +190,9 @@ namespace BmwFileReader
             return ecuEnvCondLabelMatchList;
         }
 
-        public List<EcuFunctionStructs.EcuEnvCondLabel> GetEnvCondLabelList(Int64 errorCode, EcuFunctionStructs.EcuVariant ecuVariant)
+        public List<EcuFunctionStructs.EcuEnvCondLabel> GetEnvCondLabelList(Int64 errorCode, bool info, EcuFunctionStructs.EcuVariant ecuVariant)
         {
-            if (!ecuVariant.EcuFaultCodeDict.TryGetValue(errorCode, out EcuFunctionStructs.EcuFaultCode ecuFaultCode))
+            if (!ecuVariant.GetEcuFaultCodeDict(info).TryGetValue(errorCode, out EcuFunctionStructs.EcuFaultCode ecuFaultCode))
             {
                 return null;
             }
@@ -213,10 +215,10 @@ namespace BmwFileReader
         }
 
         // for tesing result states only!
-        public List<EcuFunctionStructs.EcuEnvCondLabel> GetEnvCondLabelListWithResultStates(EcuFunctionStructs.EcuVariant ecuVariant)
+        public List<EcuFunctionStructs.EcuEnvCondLabel> GetEnvCondLabelListWithResultStates(EcuFunctionStructs.EcuVariant ecuVariant, bool info)
         {
             List<EcuFunctionStructs.EcuEnvCondLabel> ecuEnvCondLabelList = new List<EcuFunctionStructs.EcuEnvCondLabel>();
-            foreach (KeyValuePair<Int64, EcuFunctionStructs.EcuFaultCode> ecuFaultCodePair in ecuVariant.EcuFaultCodeDict)
+            foreach (KeyValuePair<Int64, EcuFunctionStructs.EcuFaultCode> ecuFaultCodePair in ecuVariant.GetEcuFaultCodeDict(info))
             {
                 if (ecuFaultCodePair.Value.EcuEnvCondLabelIdList != null)
                 {
@@ -308,17 +310,26 @@ namespace BmwFileReader
             EcuFunctionStructs.EcuVariant ecuVariant = GetEcuDataObject(ecuName, typeof(EcuFunctionStructs.EcuVariant)) as EcuFunctionStructs.EcuVariant;
             if (ecuVariant?.EcuFaultCodeList != null)
             {
-                Dictionary<Int64, EcuFunctionStructs.EcuFaultCode> ecuFaultCodeDict = new Dictionary<Int64, EcuFunctionStructs.EcuFaultCode>();
+                Dictionary<Int64, EcuFunctionStructs.EcuFaultCode> ecuFaultCodeDictFault = new Dictionary<Int64, EcuFunctionStructs.EcuFaultCode>();
+                Dictionary<Int64, EcuFunctionStructs.EcuFaultCode> ecuFaultCodeDictInfo = new Dictionary<Int64, EcuFunctionStructs.EcuFaultCode>();
                 foreach (EcuFunctionStructs.EcuFaultCode ecuFaultCode in ecuVariant.EcuFaultCodeList)
                 {
                     Int64 errorCode = ecuFaultCode.Code.ConvertToInt();
-                    if (errorCode != 0)
+                    if (errorCode != 0 && !string.IsNullOrEmpty(ecuFaultCode.DataType))
                     {
-                        ecuFaultCodeDict.TryAdd(errorCode, ecuFaultCode);
+                        if (string.Compare(ecuFaultCode.DataType, FaultDataTypeFault, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            ecuFaultCodeDictFault.TryAdd(errorCode, ecuFaultCode);
+                        }
+                        else if (string.Compare(ecuFaultCode.DataType, FaultDataTypeInfo, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            ecuFaultCodeDictInfo.TryAdd(errorCode, ecuFaultCode);
+                        }
                     }
                 }
 
-                ecuVariant.EcuFaultCodeDict = ecuFaultCodeDict;
+                ecuVariant.EcuFaultCodeDictFault = ecuFaultCodeDictFault;
+                ecuVariant.EcuFaultCodeDictInfo = ecuFaultCodeDictInfo;
             }
             return ecuVariant;
         }
