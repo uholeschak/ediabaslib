@@ -380,7 +380,13 @@ namespace ExtractEcuFunctions
         private static EcuFunctionStructs.EcuVariant GetEcuVariant(SQLiteConnection mDbConnection, string ecuName)
         {
             EcuFunctionStructs.EcuVariant ecuVariant = null;
-            string sql = string.Format(@"SELECT ID, " + DatabaseFunctions.SqlTitleItems + ", ECUGROUPID FROM XEP_ECUVARIANTS WHERE (lower(NAME) = '{0}')", ecuName.ToLowerInvariant());
+            string name = ecuName.ToLowerInvariant();
+            if (string.Compare(ecuName, "ews3p", StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                name = "ews3";
+            }
+
+            string sql = string.Format(@"SELECT ID, " + DatabaseFunctions.SqlTitleItems + ", ECUGROUPID FROM XEP_ECUVARIANTS WHERE (lower(NAME) = '{0}')", name);
             using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
             {
                 using (SQLiteDataReader reader = command.ExecuteReader())
