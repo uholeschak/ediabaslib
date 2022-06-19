@@ -2401,7 +2401,7 @@ namespace PsdzClient
                     string brSgbd = ecuCharacteristics.brSgbd.Trim().ToUpperInvariant();
                     BNType? bnType = ecuCharacteristicsInfo.BnType;
 
-                    string bnTypeName = string.Empty;
+                    string bnTypeName = null;
                     List<VehicleStructsBmw.VehicleEcuInfo> ecuList = null;
                     if (bnType.HasValue)
                     {
