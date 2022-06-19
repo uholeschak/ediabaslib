@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
+using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using BmwFileReader;
@@ -1196,10 +1197,11 @@ namespace PsdzClient
 
         public class EcuCharacteristicsInfo
         {
-            public EcuCharacteristicsInfo(BaseEcuCharacteristics ecuCharacteristics, List<string> seriesList, string brand, string date, string dateCompare)
+            public EcuCharacteristicsInfo(BaseEcuCharacteristics ecuCharacteristics, List<string> seriesList, string bnType, string brand, string date, string dateCompare)
             {
                 EcuCharacteristics = ecuCharacteristics;
                 SeriesList = seriesList;
+                BnType = bnType;
                 Brand = brand;
                 Date = date;
                 DateCompare = dateCompare;
@@ -1207,6 +1209,7 @@ namespace PsdzClient
 
             public BaseEcuCharacteristics EcuCharacteristics { get; set; }
             public List<string> SeriesList { get; set; }
+            public string BnType { get; set; }
             public string Brand { get; set; }
             public string Date { get; set; }
             public string DateCompare { get; set; }
@@ -2365,9 +2368,28 @@ namespace PsdzClient
                                 }
                             }
 
-                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Sgbd: {0}, Brand: {1}, Series: {2}, Date: {3} {4}",
-                                baseEcuCharacteristics.brSgbd, brand, seriesHash.ToStringItems(), dateCompare ?? string.Empty, date ?? string.Empty);
-                            vehicleSeriesList.Add(new EcuCharacteristicsInfo(baseEcuCharacteristics, seriesHash.ToList(), brand, date, dateCompare));
+                            // detect bn type
+                            HashSet<BNType> bnTypes = new HashSet<BNType>();
+                            Vehicle vehicleSeries = new Vehicle(clientContext);
+                            foreach (string series in seriesHash)
+                            {
+                                vehicleSeries.Ereihe = series;
+                                BNType bnType = VehicleLogistics.getBNType(vehicleSeries);
+                                if (bnType != BNType.UNKNOWN)
+                                {
+                                    bnTypes.Add(bnType);
+                                }
+                            }
+
+                            string bnTypeName = string.Empty;
+                            if (bnTypes.Count == 1)
+                            {
+                                bnTypeName = bnTypes.First().ToString();
+                            }
+
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Sgbd: {0}, Brand: {1}, Series: {2}, BnType: {3}, Date: {4} {5}",
+                                baseEcuCharacteristics.brSgbd, brand, seriesHash.ToStringItems(), bnTypeName, dateCompare ?? string.Empty, date ?? string.Empty);
+                            vehicleSeriesList.Add(new EcuCharacteristicsInfo(baseEcuCharacteristics, seriesHash.ToList(), bnTypeName, brand, date, dateCompare));
                         }
                     }
                 }
@@ -2379,7 +2401,7 @@ namespace PsdzClient
                     foreach (string series in ecuCharacteristicsInfo.SeriesList)
                     {
                         string key = series.ToUpperInvariant();
-                        VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoAdd = new VehicleStructsBmw.VehicleSeriesInfo(key, brSgbd, ecuCharacteristicsInfo.Brand, ecuCharacteristicsInfo.Date, ecuCharacteristicsInfo.DateCompare);
+                        VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoAdd = new VehicleStructsBmw.VehicleSeriesInfo(key, brSgbd, ecuCharacteristicsInfo.BnType, ecuCharacteristicsInfo.Brand, ecuCharacteristicsInfo.Date, ecuCharacteristicsInfo.DateCompare);
 
                         if (sgbdDict.TryGetValue(key, out List<VehicleStructsBmw.VehicleSeriesInfo> vehicleSeriesInfoList))
                         {
