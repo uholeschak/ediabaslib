@@ -9,7 +9,7 @@ namespace BmwFileReader
     {
         public const string VehicleSeriesXmlFile = "VehicleSeries.xml";
 
-        [XmlType("VehicleEcuInfo")]
+        [XmlType("VEI")]
         public class VehicleEcuInfo
         {
             public VehicleEcuInfo()
@@ -29,7 +29,7 @@ namespace BmwFileReader
         }
 
         [XmlInclude(typeof(VehicleEcuInfo))]
-        [XmlType("VehicleSeriesInfo")]
+        [XmlType("VSI")]
         public class VehicleSeriesInfo
         {
             public VehicleSeriesInfo()
