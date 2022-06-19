@@ -9,6 +9,26 @@ namespace BmwFileReader
     {
         public const string VehicleSeriesXmlFile = "VehicleSeries.xml";
 
+        [XmlType("VehicleEcuInfo")]
+        public class VehicleEcuInfo
+        {
+            public VehicleEcuInfo()
+            {
+            }
+
+            public VehicleEcuInfo(int diagAddr, string name, string groupSgbd)
+            {
+                DiagAddr = diagAddr;
+                Name = name;
+                GroupSgbd = groupSgbd;
+            }
+
+            [XmlElement("DiagAddr")] public int DiagAddr { get; set; }
+            [XmlElement("Name"), DefaultValue(null)] public string Name { get; set; }
+            [XmlElement("GroupSgbd"), DefaultValue(null)] public string GroupSgbd { get; set; }
+        }
+
+        [XmlInclude(typeof(VehicleEcuInfo))]
         [XmlType("VehicleSeriesInfo")]
         public class VehicleSeriesInfo
         {
@@ -16,12 +36,13 @@ namespace BmwFileReader
             {
             }
 
-            public VehicleSeriesInfo(string series, string brSgbd, string bnType, string brand, string date = null, string dateCompare = null)
+            public VehicleSeriesInfo(string series, string brSgbd, string bnType, string brand, List<VehicleEcuInfo> ecuList = null, string date = null, string dateCompare = null)
             {
                 Series = series;
                 BrSgbd = brSgbd;
                 BnType = bnType;
                 Brand = brand;
+                EcuList = ecuList;
                 Date = date;
                 DateCompare = dateCompare;
             }
@@ -36,6 +57,7 @@ namespace BmwFileReader
             [XmlElement("BrSgbd"), DefaultValue(null)] public string BrSgbd { get; set; }
             [XmlElement("BnType"), DefaultValue(null)] public string BnType { get; set; }
             [XmlElement("Brand"), DefaultValue(null)] public string Brand { get; set; }
+            [XmlElement("EcuList"), DefaultValue(null)] public List<VehicleEcuInfo> EcuList { get; set; }
             [XmlElement("Date"), DefaultValue(null)] public string Date { get; set; }
             [XmlElement("DateCompare"), DefaultValue(null)] public string DateCompare { get; set; }
         }
