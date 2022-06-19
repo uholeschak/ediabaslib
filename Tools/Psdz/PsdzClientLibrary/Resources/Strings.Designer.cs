@@ -360,7 +360,8 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die NCD online calculation required. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die NCD online calculation required.
+        ///Probably you have selected a chargable option. ähnelt.
         /// </summary>
         internal static string NcdOnlineCalculation {
             get {

@@ -225,7 +225,8 @@ Do you want to continue the last hardware replace operation?</value>
     <value>Detected Ncd failures.</value>
   </data>
   <data name="NcdOnlineCalculation" xml:space="preserve">
-    <value>NCD online calculation required.</value>
+    <value>NCD online calculation required.
+Probably you have selected a chargable option.</value>
   </data>
   <data name="NoNcdRequestFile" xml:space="preserve">
     <value>NCD request file missing.</value>

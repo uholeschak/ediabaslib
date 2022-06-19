@@ -225,7 +225,8 @@ Wollen Sie den letzten Hardwaretausch fortsetzen?</value>
     <value>NCD Fehler erkannt.</value>
   </data>
   <data name="NcdOnlineCalculation" xml:space="preserve">
-    <value>NCD Online Berechnung notwendig.</value>
+    <value>NCD Online Berechnung notwendig.
+Vermutlich haben Sie eine kostenpflichtig Option ausgewählt.</value>
   </data>
   <data name="NoNcdRequestFile" xml:space="preserve">
     <value>NCD Anfrage-Datei fehlt.</value>
