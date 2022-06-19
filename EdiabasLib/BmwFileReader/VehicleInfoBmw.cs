@@ -176,7 +176,7 @@ namespace BmwFileReader
 
         private static VehicleStructsBmw.VehicleSeriesInfoData _vehicleSeriesInfoData;
 
-        public static bool CreateEcuLogistics(string resourcePath)
+        public static bool CreateEcuLogistics()
         {
             if (!EcuLogisticsCreated)
             {
@@ -582,6 +582,19 @@ namespace BmwFileReader
             }
         }
 
+        public static VehicleStructsBmw.VehicleEcuInfo GetEcuInfoByGroupName(VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo, string name)
+        {
+            string nameLower = name.ToLowerInvariant();
+            foreach (VehicleStructsBmw.VehicleEcuInfo ecuInfo in vehicleSeriesInfo.EcuList)
+            {
+                if (ecuInfo.GroupSgbd.ToLowerInvariant().Contains(nameLower))
+                {
+                    return ecuInfo;
+                }
+            }
+            return null;
+        }
+
         public static IEcuLogisticsEntry GetEcuLogisticsByGroupName(ReadOnlyCollection<IEcuLogisticsEntry> ecuLogisticsList, string name)
         {
             string nameLower = name.ToLowerInvariant();
@@ -629,7 +642,7 @@ namespace BmwFileReader
                 return null;
             }
 
-            if (!CreateEcuLogistics(typeof(BmwDeepObd.XmlToolActivity).Namespace + ".VehicleInfo."))
+            if (!CreateEcuLogistics())
             {
                 ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Create ECU logistics failed");
             }

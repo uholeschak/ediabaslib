@@ -3353,9 +3353,29 @@ namespace BmwDeepObd
                         vehicleType = VehicleInfoBmw.GetVehicleTypeFromVin(detectedVin, _ediabas, _bmwDir);
                     }
                     detectedVehicleType = vehicleType;
-                    ReadOnlyCollection<VehicleInfoBmw.IEcuLogisticsEntry> ecuLogistics = VehicleInfoBmw.GetEcuLogisticsFromVehicleType(vehicleType, _ediabas);
+
                     string[] groupArray = groupFiles.Split(',');
                     List<string> groupList;
+#if true
+                    VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(vehicleType, null, _ediabas);
+                    if (vehicleSeriesInfo != null)
+                    {
+                        groupList = new List<string>();
+                        foreach (string group in groupArray)
+                        {
+                            VehicleStructsBmw.VehicleEcuInfo ecuInfo = VehicleInfoBmw.GetEcuInfoByGroupName(vehicleSeriesInfo, group);
+                            if (ecuInfo != null)
+                            {
+                                groupList.Add(group);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        groupList = groupArray.ToList();
+                    }
+#else
+                    ReadOnlyCollection<VehicleInfoBmw.IEcuLogisticsEntry> ecuLogistics = VehicleInfoBmw.GetEcuLogisticsFromVehicleType(vehicleType, _ediabas);
                     if (ecuLogistics != null)
                     {
                         groupList = new List<string>();
@@ -3372,6 +3392,7 @@ namespace BmwDeepObd
                     {
                         groupList = groupArray.ToList();
                     }
+#endif
                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Final group list: {0}", string.Join(",", groupList.ToArray()));
 
                     int index = 0;
