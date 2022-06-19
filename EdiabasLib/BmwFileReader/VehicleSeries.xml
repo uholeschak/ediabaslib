@@ -6,14 +6,14 @@
         <string>G05</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G05</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -21,14 +21,14 @@
         <string>F96</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F96</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -36,14 +36,14 @@
         <string>F95</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F95</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -51,14 +51,14 @@
         <string>G06</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G06</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -66,14 +66,14 @@
         <string>G07</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G07</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -81,14 +81,14 @@
         <string>G18</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G18</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -96,14 +96,14 @@
         <string>I12</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>I12</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW i</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -111,14 +111,14 @@
         <string>I15</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>I15</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW i</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -126,14 +126,14 @@
         <string>I01</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>I01</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW i</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -141,14 +141,14 @@
         <string>J29</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>J29</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>TOYOTA</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -156,14 +156,14 @@
         <string>F40</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F40</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -171,14 +171,14 @@
         <string>F44</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F44</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -186,14 +186,14 @@
         <string>RR11</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>RR11</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>ROLLS-ROYCE PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -201,14 +201,14 @@
         <string>RR12</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>RR12</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>ROLLS-ROYCE PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -216,14 +216,14 @@
         <string>RR21</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>RR21</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>ROLLS-ROYCE PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -231,14 +231,14 @@
         <string>RR22</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>RR22</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>ROLLS-ROYCE PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -246,14 +246,14 @@
         <string>RR31</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>RR31</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>ROLLS-ROYCE PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -261,14 +261,14 @@
         <string>F20</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F20</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -276,14 +276,14 @@
         <string>F21</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F21</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -291,14 +291,14 @@
         <string>F22</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F22</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -306,14 +306,14 @@
         <string>F23</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F23</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -321,14 +321,14 @@
         <string>F30</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F30</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -336,14 +336,14 @@
         <string>F31</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F31</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -351,14 +351,14 @@
         <string>F32</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F32</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -366,14 +366,14 @@
         <string>F33</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F33</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -381,14 +381,14 @@
         <string>F34</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F34</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -396,14 +396,14 @@
         <string>F35</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F35</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -411,14 +411,14 @@
         <string>F36</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F36</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -426,14 +426,14 @@
         <string>F80</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F80</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -441,14 +441,14 @@
         <string>F82</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F82</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -456,14 +456,14 @@
         <string>F83</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F83</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -471,14 +471,14 @@
         <string>F87</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F87</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -486,14 +486,14 @@
         <string>F52</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F52</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -501,14 +501,14 @@
         <string>F60</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F60</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -516,14 +516,14 @@
         <string>F46</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F46</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -531,14 +531,14 @@
         <string>F45</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F45</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -546,14 +546,14 @@
         <string>F55</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F55</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -561,14 +561,14 @@
         <string>F48</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F48</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -576,14 +576,14 @@
         <string>F54</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F54</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -591,14 +591,14 @@
         <string>F57</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F57</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -606,14 +606,14 @@
         <string>F49</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F49</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -621,14 +621,14 @@
         <string>F39</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F39</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -636,14 +636,14 @@
         <string>M13</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>M13</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -651,14 +651,14 @@
         <string>F56</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F56</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -666,14 +666,14 @@
         <string>G32</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G32</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -681,14 +681,14 @@
         <string>G30</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G30</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -696,14 +696,14 @@
         <string>G11</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G11</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -711,14 +711,14 @@
         <string>G12</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G12</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -726,14 +726,14 @@
         <string>G31</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G31</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -741,14 +741,14 @@
         <string>G38</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G38</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -756,14 +756,14 @@
         <string>F90</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F90</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -771,14 +771,14 @@
         <string>G14</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G14</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -786,14 +786,14 @@
         <string>G15</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G15</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -801,14 +801,14 @@
         <string>F91</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F91</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -816,14 +816,14 @@
         <string>F92</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F92</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -831,14 +831,14 @@
         <string>F93</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F93</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -846,14 +846,14 @@
         <string>G16</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G16</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -861,14 +861,14 @@
         <string>G01</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G01</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -876,14 +876,14 @@
         <string>G02</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G02</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -891,14 +891,14 @@
         <string>F97</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F97</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -906,14 +906,14 @@
         <string>G08</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G08</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -921,14 +921,14 @@
         <string>F98</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F98</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -936,14 +936,14 @@
         <string>G29</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G29</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -951,14 +951,14 @@
         <string>F15</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F15</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -966,14 +966,14 @@
         <string>F16</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F16</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -981,14 +981,14 @@
         <string>F85</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F85</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -996,14 +996,14 @@
         <string>F86</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F86</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1011,14 +1011,14 @@
         <string>F26</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F26</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1026,14 +1026,14 @@
         <string>F25</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F25</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1041,14 +1041,14 @@
         <string>RR4</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>RR4</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>ROLLS-ROYCE PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1056,14 +1056,14 @@
         <string>RR5</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>RR5</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>ROLLS-ROYCE PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1071,14 +1071,14 @@
         <string>RR6</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>RR6</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>ROLLS-ROYCE PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1086,13 +1086,13 @@
         <string>E90</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>E90</Series>
             <BrSgbd>E89X</BrSgbd>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1100,13 +1100,13 @@
         <string>E93</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>E93</Series>
             <BrSgbd>E89X</BrSgbd>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1114,13 +1114,13 @@
         <string>E84</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>E84</Series>
             <BrSgbd>E89X</BrSgbd>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1128,13 +1128,13 @@
         <string>E87</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>E87</Series>
             <BrSgbd>E89X</BrSgbd>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1142,13 +1142,13 @@
         <string>E81</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>E81</Series>
             <BrSgbd>E89X</BrSgbd>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1156,13 +1156,13 @@
         <string>E92</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>E92</Series>
             <BrSgbd>E89X</BrSgbd>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1170,13 +1170,13 @@
         <string>E82</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>E82</Series>
             <BrSgbd>E89X</BrSgbd>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1184,13 +1184,13 @@
         <string>E91</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>E91</Series>
             <BrSgbd>E89X</BrSgbd>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1198,13 +1198,13 @@
         <string>E88</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>E88</Series>
             <BrSgbd>E89X</BrSgbd>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1212,13 +1212,13 @@
         <string>E89</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>E89</Series>
             <BrSgbd>E89X</BrSgbd>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1226,13 +1226,13 @@
         <string>E89X</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>E89X</Series>
             <BrSgbd>E89X</BrSgbd>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1240,13 +1240,13 @@
         <string>M12</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>M12</Series>
             <BrSgbd>E89X</BrSgbd>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1254,14 +1254,14 @@
         <string>E60</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>E60</Series>
             <BrSgbd>E60</BrSgbd>
             <BnType>BN2000</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1269,14 +1269,14 @@
         <string>E61</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>E61</Series>
             <BrSgbd>E60</BrSgbd>
             <BnType>BN2000</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1284,14 +1284,14 @@
         <string>E63</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>E63</Series>
             <BrSgbd>E60</BrSgbd>
             <BnType>BN2000</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1299,14 +1299,14 @@
         <string>E64</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>E64</Series>
             <BrSgbd>E60</BrSgbd>
             <BnType>BN2000</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1314,14 +1314,14 @@
         <string>R55</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>R55</Series>
             <BrSgbd>R56</BrSgbd>
             <BnType>BN2000</BnType>
             <Brand>MINI PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1329,14 +1329,14 @@
         <string>R56</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>R56</Series>
             <BrSgbd>R56</BrSgbd>
             <BnType>BN2000</BnType>
             <Brand>MINI PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1344,14 +1344,14 @@
         <string>R57</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>R57</Series>
             <BrSgbd>R56</BrSgbd>
             <BnType>BN2000</BnType>
             <Brand>MINI PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1359,14 +1359,14 @@
         <string>R58</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>R58</Series>
             <BrSgbd>R56</BrSgbd>
             <BnType>BN2000</BnType>
             <Brand>MINI PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1374,14 +1374,14 @@
         <string>R59</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>R59</Series>
             <BrSgbd>R56</BrSgbd>
             <BnType>BN2000</BnType>
             <Brand>MINI PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1389,14 +1389,14 @@
         <string>R60</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>R60</Series>
             <BrSgbd>R56</BrSgbd>
             <BnType>BN2000</BnType>
             <Brand>MINI PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1404,14 +1404,14 @@
         <string>R61</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>R61</Series>
             <BrSgbd>R56</BrSgbd>
             <BnType>BN2000</BnType>
             <Brand>MINI PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1419,14 +1419,14 @@
         <string>E72</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>E72</Series>
             <BrSgbd>E70</BrSgbd>
             <BnType>BN2000</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1434,14 +1434,14 @@
         <string>E65</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>E65</Series>
             <BrSgbd>E65</BrSgbd>
             <BnType>BN2000</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1449,14 +1449,14 @@
         <string>E66</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>E66</Series>
             <BrSgbd>E65</BrSgbd>
             <BnType>BN2000</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1464,14 +1464,14 @@
         <string>E67</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>E67</Series>
             <BrSgbd>E65</BrSgbd>
             <BnType>BN2000</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1479,14 +1479,14 @@
         <string>E68</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>E68</Series>
             <BrSgbd>E65</BrSgbd>
             <BnType>BN2000</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1494,8 +1494,8 @@
         <string>E83</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>E83</Series>
             <BrSgbd>ZCS_ALL</BrSgbd>
             <BnType>IBUS</BnType>
@@ -1765,8 +1765,8 @@
               <Name>CVM</Name>
               <GroupSgbd>D_009c</GroupSgbd>
             </EcuList>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -1774,8 +1774,8 @@
         <string>E46</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>E46</Series>
             <BrSgbd>ZCS_ALL</BrSgbd>
             <BnType>IBUS</BnType>
@@ -2055,8 +2055,8 @@
               <Name>LKM</Name>
               <GroupSgbd>D_00f5|d_szm</GroupSgbd>
             </EcuList>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -2064,8 +2064,8 @@
         <string>E85</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>E85</Series>
             <BrSgbd>ZCS_ALL</BrSgbd>
             <BnType>IBUS</BnType>
@@ -2355,8 +2355,8 @@
               <Name>LKM</Name>
               <GroupSgbd>D_00f5|d_szm</GroupSgbd>
             </EcuList>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -2364,8 +2364,8 @@
         <string>E86</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>E86</Series>
             <BrSgbd>ZCS_ALL</BrSgbd>
             <BnType>IBUS</BnType>
@@ -2655,8 +2655,8 @@
               <Name>LKM</Name>
               <GroupSgbd>D_00f5|d_szm</GroupSgbd>
             </EcuList>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -2664,8 +2664,8 @@
         <string>E52</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>E52</Series>
             <BrSgbd>ZCS_E52</BrSgbd>
             <BnType>IBUS</BnType>
@@ -2935,8 +2935,8 @@
               <Name>LKM</Name>
               <GroupSgbd>D_00f5|d_szm</GroupSgbd>
             </EcuList>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -2944,8 +2944,8 @@
         <string>E53</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>E53</Series>
             <BrSgbd>ZCS_E53</BrSgbd>
             <BnType>IBUS</BnType>
@@ -3215,8 +3215,8 @@
               <Name>LKM</Name>
               <GroupSgbd>D_00f5|d_szm</GroupSgbd>
             </EcuList>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -3224,8 +3224,8 @@
         <string>E36</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>E36</Series>
             <BrSgbd>ZCS_E36</BrSgbd>
             <BnType>IBUS</BnType>
@@ -3515,8 +3515,8 @@
               <Name>LKM</Name>
               <GroupSgbd>D_00f5|d_szm</GroupSgbd>
             </EcuList>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -3524,8 +3524,8 @@
         <string>E38</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>E38</Series>
             <BrSgbd>ZCS_ALL</BrSgbd>
             <BnType>IBUS</BnType>
@@ -3805,8 +3805,8 @@
               <Name>LKM</Name>
               <GroupSgbd>D_00f5|d_szm</GroupSgbd>
             </EcuList>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -3814,8 +3814,8 @@
         <string>E39</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>E39</Series>
             <BrSgbd>ZCS_E39</BrSgbd>
             <BnType>IBUS</BnType>
@@ -4085,8 +4085,8 @@
               <Name>LKM</Name>
               <GroupSgbd>D_00f5|d_szm</GroupSgbd>
             </EcuList>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -4094,8 +4094,8 @@
         <string>R50</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>R50</Series>
             <BrSgbd>ZCS_ALL</BrSgbd>
             <BnType>IBUS</BnType>
@@ -4360,8 +4360,8 @@
               <Name>LKM</Name>
               <GroupSgbd>D_00f5|d_szm</GroupSgbd>
             </EcuList>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -4369,8 +4369,8 @@
         <string>R52</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>R52</Series>
             <BrSgbd>ZCS_ALL</BrSgbd>
             <BnType>IBUS</BnType>
@@ -4635,8 +4635,8 @@
               <Name>LKM</Name>
               <GroupSgbd>D_00f5|d_szm</GroupSgbd>
             </EcuList>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -4644,8 +4644,8 @@
         <string>R53</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>R53</Series>
             <BrSgbd>ZCS_ALL</BrSgbd>
             <BnType>IBUS</BnType>
@@ -4910,8 +4910,8 @@
               <Name>LKM</Name>
               <GroupSgbd>D_00f5|d_szm</GroupSgbd>
             </EcuList>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -4919,24 +4919,24 @@
         <string>RR1</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>RR1</Series>
             <BrSgbd>RR1</BrSgbd>
             <BnType>BN2000</BnType>
             <Brand>ROLLS-ROYCE PKW</Brand>
             <Date>201205</Date>
             <DateCompare>&lt;=</DateCompare>
-          </VehicleSeriesInfo>
-          <VehicleSeriesInfo>
+          </VSI>
+          <VSI>
             <Series>RR1</Series>
             <BrSgbd>RR1_2020</BrSgbd>
             <BnType>BN2000</BnType>
             <Brand>ROLLS-ROYCE PKW</Brand>
             <Date>201206</Date>
             <DateCompare>&gt;=</DateCompare>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -4944,24 +4944,24 @@
         <string>RR2</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>RR2</Series>
             <BrSgbd>RR1</BrSgbd>
             <BnType>BN2000</BnType>
             <Brand>ROLLS-ROYCE PKW</Brand>
             <Date>201205</Date>
             <DateCompare>&lt;=</DateCompare>
-          </VehicleSeriesInfo>
-          <VehicleSeriesInfo>
+          </VSI>
+          <VSI>
             <Series>RR2</Series>
             <BrSgbd>RR1_2020</BrSgbd>
             <BnType>BN2000</BnType>
             <Brand>ROLLS-ROYCE PKW</Brand>
             <Date>201206</Date>
             <DateCompare>&gt;=</DateCompare>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -4969,24 +4969,24 @@
         <string>RR3</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>RR3</Series>
             <BrSgbd>RR1</BrSgbd>
             <BnType>BN2000</BnType>
             <Brand>ROLLS-ROYCE PKW</Brand>
             <Date>201205</Date>
             <DateCompare>&lt;=</DateCompare>
-          </VehicleSeriesInfo>
-          <VehicleSeriesInfo>
+          </VSI>
+          <VSI>
             <Series>RR3</Series>
             <BrSgbd>RR1_2020</BrSgbd>
             <BnType>BN2000</BnType>
             <Brand>ROLLS-ROYCE PKW</Brand>
             <Date>201206</Date>
             <DateCompare>&gt;=</DateCompare>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -4994,14 +4994,14 @@
         <string>F01</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F01</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5009,14 +5009,14 @@
         <string>F02</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F02</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5024,14 +5024,14 @@
         <string>F03</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F03</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5039,14 +5039,14 @@
         <string>F04</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F04</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5054,14 +5054,14 @@
         <string>F06</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F06</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5069,14 +5069,14 @@
         <string>F07</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F07</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5084,14 +5084,14 @@
         <string>F10</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F10</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5099,14 +5099,14 @@
         <string>F11</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F11</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5114,14 +5114,14 @@
         <string>F12</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F12</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5129,14 +5129,14 @@
         <string>F13</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F13</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5144,14 +5144,14 @@
         <string>F18</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F18</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5159,14 +5159,14 @@
         <string>G20</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G20</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5174,14 +5174,14 @@
         <string>G21</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G21</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5189,14 +5189,14 @@
         <string>G22</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G22</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5204,14 +5204,14 @@
         <string>G23</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G23</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5219,14 +5219,14 @@
         <string>G42</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G42</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5234,14 +5234,14 @@
         <string>G28</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G28</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5249,14 +5249,14 @@
         <string>G26</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G26</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5264,14 +5264,14 @@
         <string>G80</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G80</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5279,14 +5279,14 @@
         <string>G82</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G82</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5294,14 +5294,14 @@
         <string>G83</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G83</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5309,14 +5309,14 @@
         <string>G87</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G87</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5324,14 +5324,14 @@
         <string>G81</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G81</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5339,14 +5339,14 @@
         <string>I20</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>I20</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW i</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5354,14 +5354,14 @@
         <string>U06</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>U06</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5369,14 +5369,14 @@
         <string>U11</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>U11</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5384,14 +5384,14 @@
         <string>U12</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>U12</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5399,14 +5399,14 @@
         <string>U10</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>U10</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5414,14 +5414,14 @@
         <string>F70</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F70</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5429,14 +5429,14 @@
         <string>F74</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F74</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5444,14 +5444,14 @@
         <string>F78</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F78</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5459,14 +5459,14 @@
         <string>U25</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>U25</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5474,14 +5474,14 @@
         <string>F66</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F66</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5489,14 +5489,14 @@
         <string>F65</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F65</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5504,14 +5504,14 @@
         <string>F67</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>F67</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5519,14 +5519,14 @@
         <string>E70</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>E70</Series>
             <BrSgbd>E70</BrSgbd>
             <BnType>BN2000</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5534,14 +5534,14 @@
         <string>E71</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>E71</Series>
             <BrSgbd>E70</BrSgbd>
             <BnType>BN2000</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5549,13 +5549,13 @@
         <string>K001</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>K001</Series>
             <BrSgbd>X_K001</BrSgbd>
             <Brand>BMW MOTORRAD</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5563,13 +5563,13 @@
         <string>KS01</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>KS01</Series>
             <BrSgbd>X_K001</BrSgbd>
             <Brand>BMW MOTORRAD</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5577,13 +5577,13 @@
         <string>KE01</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>KE01</Series>
             <BrSgbd>X_K001</BrSgbd>
             <Brand>BMW MOTORRAD</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5591,14 +5591,14 @@
         <string>G60</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G60</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5606,14 +5606,14 @@
         <string>G68</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G68</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5621,14 +5621,14 @@
         <string>G90</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G90</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5636,14 +5636,14 @@
         <string>G99</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G99</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5651,14 +5651,14 @@
         <string>G61</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G61</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5666,14 +5666,14 @@
         <string>G70</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G70</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5681,14 +5681,14 @@
         <string>G73</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G73</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5696,13 +5696,13 @@
         <string>K024</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>K024</Series>
             <BrSgbd>MRK24</BrSgbd>
             <Brand>BMW MOTORRAD</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5710,13 +5710,13 @@
         <string>KH24</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>KH24</Series>
             <BrSgbd>MRK24</BrSgbd>
             <Brand>BMW MOTORRAD</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5724,13 +5724,13 @@
         <string>K01X</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>K01X</Series>
             <BrSgbd>MRK24</BrSgbd>
             <Brand>BMW MOTORRAD</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
     <item>
@@ -5738,14 +5738,14 @@
         <string>G09</string>
       </key>
       <value>
-        <ArrayOfVehicleSeriesInfo>
-          <VehicleSeriesInfo>
+        <ArrayOfVSI>
+          <VSI>
             <Series>G09</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <Brand>BMW PKW</Brand>
-          </VehicleSeriesInfo>
-        </ArrayOfVehicleSeriesInfo>
+          </VSI>
+        </ArrayOfVSI>
       </value>
     </item>
   </VehicleSeriesDict>
