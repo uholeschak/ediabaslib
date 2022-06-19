@@ -716,33 +716,6 @@
     <AndroidResource Include="Resources\drawable-nodpi\background.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="VehicleInfo\R50EcuCharacteristics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="VehicleInfo\E36EcuCharacteristics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="VehicleInfo\E38EcuCharacteristics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="VehicleInfo\E39EcuCharacteristics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="VehicleInfo\E46EcuCharacteristics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="VehicleInfo\E52EcuCharacteristics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="VehicleInfo\E53EcuCharacteristics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="VehicleInfo\E83EcuCharacteristics.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="VehicleInfo\E85EcuCharacteristics.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\layout\text_input.xml">
       <SubType>Designer</SubType>
     </AndroidResource>

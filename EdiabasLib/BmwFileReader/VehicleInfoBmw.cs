@@ -145,64 +145,12 @@ namespace BmwFileReader
 
         private const string DatabaseFileName = @"Database.zip";
 
-        public static EcuLogisticsData EcuLogisticsDataE36 = new EcuLogisticsData("E36EcuCharacteristics.xml");
-        public static EcuLogisticsData EcuLogisticsDataE38 = new EcuLogisticsData("E38EcuCharacteristics.xml");
-        public static EcuLogisticsData EcuLogisticsDataE39 = new EcuLogisticsData("E39EcuCharacteristics.xml");
-        public static EcuLogisticsData EcuLogisticsDataE46 = new EcuLogisticsData("E46EcuCharacteristics.xml");
-        public static EcuLogisticsData EcuLogisticsDataE52 = new EcuLogisticsData("E52EcuCharacteristics.xml");
-        public static EcuLogisticsData EcuLogisticsDataE53 = new EcuLogisticsData("E53EcuCharacteristics.xml");
-        public static EcuLogisticsData EcuLogisticsDataE83 = new EcuLogisticsData("E83EcuCharacteristics.xml");
-        public static EcuLogisticsData EcuLogisticsDataE85 = new EcuLogisticsData("E85EcuCharacteristics.xml");
-        public static EcuLogisticsData EcuLogisticsDataR50 = new EcuLogisticsData("R50EcuCharacteristics.xml");
-
-        public static ReadOnlyCollection<EcuLogisticsData> EcuLogisticsList = new ReadOnlyCollection<EcuLogisticsData>(new EcuLogisticsData[]
-        {
-            EcuLogisticsDataE36,
-            EcuLogisticsDataE38,
-            EcuLogisticsDataE39,
-            EcuLogisticsDataE46,
-            EcuLogisticsDataE52,
-            EcuLogisticsDataE83,
-            EcuLogisticsDataE85,
-            EcuLogisticsDataR50,
-        });
-
         public const string ResultUnknown = "UNBEK";
 
 #if Android
         private static Dictionary<string, string> _typeKeyDict;
 #endif
-        private static bool EcuLogisticsCreated;
-
         private static VehicleStructsBmw.VehicleSeriesInfoData _vehicleSeriesInfoData;
-
-        public static bool CreateEcuLogistics()
-        {
-            if (!EcuLogisticsCreated)
-            {
-                bool failed = false;
-                foreach (EcuLogisticsData ecuLogisticsData in EcuLogisticsList)
-                {
-                    if (ecuLogisticsData.Data == null)
-                    {
-                        string resourceName = FindResourceName(ecuLogisticsData.XmlName);
-                        ecuLogisticsData.Data = ReadEcuLogisticsXml(resourceName);
-                    }
-
-                    if (ecuLogisticsData.Data == null)
-                    {
-                        failed = true;
-                    }
-                }
-
-                if (!failed)
-                {
-                    EcuLogisticsCreated = true;
-                }
-            }
-
-            return EcuLogisticsCreated;
-        }
 
         public static ReadOnlyCollection<IEcuLogisticsEntry> ReadEcuLogisticsXml(string resourceName)
         {
@@ -582,32 +530,6 @@ namespace BmwFileReader
             }
         }
 
-        public static VehicleStructsBmw.VehicleEcuInfo GetEcuInfoByGroupName(VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo, string name)
-        {
-            string nameLower = name.ToLowerInvariant();
-            foreach (VehicleStructsBmw.VehicleEcuInfo ecuInfo in vehicleSeriesInfo.EcuList)
-            {
-                if (ecuInfo.GroupSgbd.ToLowerInvariant().Contains(nameLower))
-                {
-                    return ecuInfo;
-                }
-            }
-            return null;
-        }
-
-        public static IEcuLogisticsEntry GetEcuLogisticsByGroupName(ReadOnlyCollection<IEcuLogisticsEntry> ecuLogisticsList, string name)
-        {
-            string nameLower = name.ToLowerInvariant();
-            foreach (IEcuLogisticsEntry entry in ecuLogisticsList)
-            {
-                if (entry.GroupSgbd.ToLowerInvariant().Contains(nameLower))
-                {
-                    return entry;
-                }
-            }
-            return null;
-        }
-
         public static string GetVehicleTypeFromVin(string vin, EdiabasNet ediabas, string databaseDir)
         {
             ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle type from VIN: {0}", vin ?? "No VIN");
@@ -632,72 +554,6 @@ namespace BmwFileReader
             }
             ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle type: {0}", vehicleType);
             return vehicleType;
-        }
-
-        public static ReadOnlyCollection<IEcuLogisticsEntry> GetEcuLogisticsFromVehicleType(string vehicleType, EdiabasNet ediabas)
-        {
-            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ECU logistics from vehicle type: {0}", vehicleType ?? "No type");
-            if (vehicleType == null)
-            {
-                return null;
-            }
-
-            if (!CreateEcuLogistics())
-            {
-                ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Create ECU logistics failed");
-            }
-
-            // Mapping could be found in:
-            // from: RheingoldDiagnostics.dll: BMW.Rheingold.Diagnostics.VehicleLogistics.GetCharacteristics(Vehicle vecInfo)
-            ReadOnlyCollection<IEcuLogisticsEntry> ecuLogisticsEntries = null;
-            switch (vehicleType.ToUpperInvariant())
-            {
-                case "E36":
-                    ecuLogisticsEntries = EcuLogisticsDataE36.Data;
-                    break;
-
-                case "E38":
-                    ecuLogisticsEntries = EcuLogisticsDataE38.Data;
-                    break;
-
-                case "E39":
-                    ecuLogisticsEntries = EcuLogisticsDataE39.Data;
-                    break;
-
-                case "E46":
-                    ecuLogisticsEntries = EcuLogisticsDataE46.Data;
-                    break;
-
-                case "E52":
-                    ecuLogisticsEntries = EcuLogisticsDataE52.Data;
-                    break;
-
-                case "E53":
-                    ecuLogisticsEntries = EcuLogisticsDataE53.Data;
-                    break;
-
-                case "E83":
-                    ecuLogisticsEntries = EcuLogisticsDataE83.Data;
-                    break;
-
-                case "E85":
-                case "E86":
-                    ecuLogisticsEntries = EcuLogisticsDataE85.Data;
-                    break;
-
-                case "R50":
-                case "R52":
-                case "R53":
-                    ecuLogisticsEntries = EcuLogisticsDataR50.Data;
-                    break;
-            }
-
-            if (ecuLogisticsEntries == null)
-            {
-                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Vehicle type unknown");
-            }
-
-            return ecuLogisticsEntries;
         }
 #endif
 
@@ -867,6 +723,19 @@ namespace BmwFileReader
             }
 
             ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "No vehicle series info found");
+            return null;
+        }
+
+        public static VehicleStructsBmw.VehicleEcuInfo GetEcuInfoByGroupName(VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo, string name)
+        {
+            string nameLower = name.ToLowerInvariant();
+            foreach (VehicleStructsBmw.VehicleEcuInfo ecuInfo in vehicleSeriesInfo.EcuList)
+            {
+                if (ecuInfo.GroupSgbd.ToLowerInvariant().Contains(nameLower))
+                {
+                    return ecuInfo;
+                }
+            }
             return null;
         }
     }

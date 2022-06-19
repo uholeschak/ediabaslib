@@ -3356,7 +3356,6 @@ namespace BmwDeepObd
 
                     string[] groupArray = groupFiles.Split(',');
                     List<string> groupList;
-#if true
                     VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(vehicleType, null, _ediabas);
                     if (vehicleSeriesInfo != null)
                     {
@@ -3374,25 +3373,7 @@ namespace BmwDeepObd
                     {
                         groupList = groupArray.ToList();
                     }
-#else
-                    ReadOnlyCollection<VehicleInfoBmw.IEcuLogisticsEntry> ecuLogistics = VehicleInfoBmw.GetEcuLogisticsFromVehicleType(vehicleType, _ediabas);
-                    if (ecuLogistics != null)
-                    {
-                        groupList = new List<string>();
-                        foreach (string group in groupArray)
-                        {
-                            VehicleInfoBmw.IEcuLogisticsEntry entry = VehicleInfoBmw.GetEcuLogisticsByGroupName(ecuLogistics, group);
-                            if (entry != null)
-                            {
-                                groupList.Add(group);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        groupList = groupArray.ToList();
-                    }
-#endif
+
                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Final group list: {0}", string.Join(",", groupList.ToArray()));
 
                     int index = 0;
