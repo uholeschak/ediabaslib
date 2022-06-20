@@ -21,237 +21,13 @@ namespace BmwFileReader
 {
     public class VehicleInfoBmw
     {
-        // ReSharper disable InconsistentNaming
-        public enum BusType
-        {
-            ROOT,
-            ETHERNET,
-            MOST,
-            KCAN,
-            KCAN2,
-            KCAN3,
-            BCAN,
-            BCAN2,
-            BCAN3,
-            FLEXRAY,
-            FACAN,
-            FASCAN,
-            SCAN,
-            NONE,
-            SIBUS,
-            KBUS,
-            FCAN,
-            ACAN,
-            HCAN,
-            LOCAN,
-            ZGW,
-            DWA,
-            BYTEFLIGHT,
-            INTERNAL,
-            VIRTUAL,
-            VIRTUALBUSCHECK,
-            VIRTUALROOT,
-            IBUS,
-            LECAN,
-            IKCAN,
-            UNKNOWN
-        }
-        // ReSharper restore InconsistentNaming
-
-        public interface IEcuLogisticsEntry
-        {
-            int DiagAddress { get; }
-
-            string Name { get; }
-
-            string GroupSgbd { get; }
-
-            BusType Bus { get; }
-
-            int Column { get; }
-
-            int Row { get; }
-
-            string ShortName { get; }
-
-            long? SubDiagAddress { get; }
-
-            BusType[] SubBusList { get; }
-        }
-
-        public class EcuLogisticsEntry : IEcuLogisticsEntry
-        {
-            public int DiagAddress { get; }
-            public string Name { get; }
-            public BusType Bus { get; }
-            public BusType[] SubBusList { get; }
-            public string GroupSgbd { get; }
-            public int Column { get; }
-            public int Row { get; }
-            public string ShortName { get; }
-            public long? SubDiagAddress { get; }
-
-            public EcuLogisticsEntry()
-            {
-            }
-
-            public EcuLogisticsEntry(int diagAddress, string name, BusType bus, string groupSgbd, int column, int row)
-                : this(diagAddress, null, name, bus, null, groupSgbd, column, row, null)
-            {
-            }
-
-            public EcuLogisticsEntry(int diagAddress, string name, BusType bus, BusType[] subBusList, string groupSgbd,
-                int column, int row) : this(diagAddress, null, name, bus, subBusList, groupSgbd, column, row, null)
-            {
-            }
-
-            public EcuLogisticsEntry(int diagAddress, int subDiagAddress, string name, BusType bus, string groupSgbd,
-                int column, int row)
-                : this(diagAddress, subDiagAddress, name, bus, null, groupSgbd, column, row, null)
-            {
-            }
-
-            public EcuLogisticsEntry(int diagAddress, string name, BusType bus, string groupSgbd, int column, int row,
-                string shortName) : this(diagAddress, null, name, bus, null, groupSgbd, column, row, shortName)
-            {
-            }
-
-            public EcuLogisticsEntry(int diagAddress, long? subDiagAddress, string name, BusType bus,
-                BusType[] subBusList, string groupSgbd, int column, int row, string shortName)
-            {
-                DiagAddress = diagAddress;
-                Name = name;
-                Bus = bus;
-                SubBusList = subBusList;
-                GroupSgbd = groupSgbd;
-                Column = column;
-                Row = row;
-                ShortName = shortName;
-                SubDiagAddress = subDiagAddress;
-            }
-        }
-
-        public class EcuLogisticsData
-        {
-            public EcuLogisticsData(string xmlName)
-            {
-                XmlName = xmlName;
-                Data = null;
-            }
-
-            public string XmlName { get; }
-            public ReadOnlyCollection<IEcuLogisticsEntry> Data { get; set; }
-        }
-
         private const string DatabaseFileName = @"Database.zip";
-
         public const string ResultUnknown = "UNBEK";
 
 #if Android
         private static Dictionary<string, string> _typeKeyDict;
 #endif
         private static VehicleStructsBmw.VehicleSeriesInfoData _vehicleSeriesInfoData;
-
-        public static ReadOnlyCollection<IEcuLogisticsEntry> ReadEcuLogisticsXml(string resourceName)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(resourceName))
-                {
-                    return null;
-                }
-
-                List<IEcuLogisticsEntry> ecuLogisticsList = new List<IEcuLogisticsEntry>();
-                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
-                {
-                    if (stream == null)
-                    {
-                        return null;
-                    }
-
-                    XDocument xmlDoc = XDocument.Load(stream);
-                    if (xmlDoc.Root == null)
-                    {
-                        return null;
-                    }
-                    XNamespace ns = xmlDoc.Root.GetDefaultNamespace();
-                    XElement logisticsList = xmlDoc.Root.Element(ns + "EcuLogisticsList");
-                    if (logisticsList == null)
-                    {
-                        return null;
-                    }
-
-                    foreach (XElement ecuLogisticsNode in logisticsList.Elements(ns + "EcuLogisticsEntry"))
-                    {
-                        int diagAddress = 0;
-                        string name = string.Empty;
-                        BusType busType = BusType.ROOT;
-                        string groupSgbd = string.Empty;
-                        int column = 0;
-                        int row = 0;
-
-                        XAttribute diagAddrAttrib = ecuLogisticsNode.Attribute("DiagAddress");
-                        if (diagAddrAttrib != null)
-                        {
-                            if (!Int32.TryParse(diagAddrAttrib.Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out diagAddress))
-                            {
-                                diagAddress = 0;
-                            }
-                        }
-
-                        XAttribute nameAttrib = ecuLogisticsNode.Attribute("Name");
-                        if (nameAttrib != null)
-                        {
-                            name = nameAttrib.Value;
-                        }
-
-                        XElement busNode = ecuLogisticsNode.Element(ns + "Bus");
-                        if (busNode != null)
-                        {
-                            if (!Enum.TryParse(busNode.Value, true, out busType))
-                            {
-                                busType = BusType.ROOT;
-                            }
-                        }
-
-                        XElement groupSgbdNode = ecuLogisticsNode.Element(ns + "GroupSgbd");
-                        if (groupSgbdNode != null)
-                        {
-                            groupSgbd = groupSgbdNode.Value;
-                        }
-
-                        XElement columnNode = ecuLogisticsNode.Element(ns + "Column");
-                        if (columnNode != null)
-                        {
-                            if (!Int32.TryParse(columnNode.Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out column))
-                            {
-                                column = 0;
-                            }
-                        }
-
-                        XElement rowNode = ecuLogisticsNode.Element(ns + "Row");
-                        if (rowNode != null)
-                        {
-                            if (!Int32.TryParse(rowNode.Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out row))
-                            {
-                                row = 0;
-                            }
-                        }
-
-                        if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(groupSgbd))
-                        {
-                            ecuLogisticsList.Add(new EcuLogisticsEntry(diagAddress, name, busType, groupSgbd, column, row));
-                        }
-                    }
-                }
-
-                return new ReadOnlyCollection<IEcuLogisticsEntry>(ecuLogisticsList);
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
 
         public static string FindResourceName(string resourceFileName)
         {
@@ -315,71 +91,6 @@ namespace BmwFileReader
                 return null;
             }
         }
-
-#if Android
-        public static Dictionary<string, string> GetTypeKeyDict(EdiabasNet ediabas, string databaseDir)
-        {
-            ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Extract type key dict");
-
-            try
-            {
-                Dictionary<string, string> typeKeyDict = new Dictionary<string, string>();
-                ZipFile zf = null;
-                try
-                {
-                    using (FileStream fs = File.OpenRead(Path.Combine(databaseDir, DatabaseFileName)))
-                    {
-                        zf = new ZipFile(fs);
-                        foreach (ZipEntry zipEntry in zf)
-                        {
-                            if (!zipEntry.IsFile)
-                            {
-                                continue; // Ignore directories
-                            }
-                            if (string.Compare(zipEntry.Name, "typekeys.txt", StringComparison.OrdinalIgnoreCase) == 0)
-                            {
-                                Stream zipStream = zf.GetInputStream(zipEntry);
-                                using (StreamReader sr = new StreamReader(zipStream))
-                                {
-                                    while (sr.Peek() >= 0)
-                                    {
-                                        string line = sr.ReadLine();
-                                        if (line == null)
-                                        {
-                                            break;
-                                        }
-                                        string[] lineArray = line.Split(',');
-                                        if (lineArray.Length == 2)
-                                        {
-                                            if (!typeKeyDict.ContainsKey(lineArray[0]))
-                                            {
-                                                typeKeyDict.Add(lineArray[0], lineArray[1]);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Extract type key dict done");
-                        return typeKeyDict;
-                    }
-                }
-                finally
-                {
-                    if (zf != null)
-                    {
-                        zf.IsStreamOwner = true; // Makes close also shut the underlying stream
-                        zf.Close(); // Ensure we release resources
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Extract type key dict exception: {0}", EdiabasNet.GetExceptionText(ex));
-                return null;
-            }
-        }
-#endif
 
         public static int GetModelYearFromVin(string vin)
         {
@@ -447,6 +158,69 @@ namespace BmwFileReader
         }
 
 #if Android
+        public static Dictionary<string, string> GetTypeKeyDict(EdiabasNet ediabas, string databaseDir)
+        {
+            ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Extract type key dict");
+
+            try
+            {
+                Dictionary<string, string> typeKeyDict = new Dictionary<string, string>();
+                ZipFile zf = null;
+                try
+                {
+                    using (FileStream fs = File.OpenRead(Path.Combine(databaseDir, DatabaseFileName)))
+                    {
+                        zf = new ZipFile(fs);
+                        foreach (ZipEntry zipEntry in zf)
+                        {
+                            if (!zipEntry.IsFile)
+                            {
+                                continue; // Ignore directories
+                            }
+                            if (string.Compare(zipEntry.Name, "typekeys.txt", StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                Stream zipStream = zf.GetInputStream(zipEntry);
+                                using (StreamReader sr = new StreamReader(zipStream))
+                                {
+                                    while (sr.Peek() >= 0)
+                                    {
+                                        string line = sr.ReadLine();
+                                        if (line == null)
+                                        {
+                                            break;
+                                        }
+                                        string[] lineArray = line.Split(',');
+                                        if (lineArray.Length == 2)
+                                        {
+                                            if (!typeKeyDict.ContainsKey(lineArray[0]))
+                                            {
+                                                typeKeyDict.Add(lineArray[0], lineArray[1]);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Extract type key dict done");
+                        return typeKeyDict;
+                    }
+                }
+                finally
+                {
+                    if (zf != null)
+                    {
+                        zf.IsStreamOwner = true; // Makes close also shut the underlying stream
+                        zf.Close(); // Ensure we release resources
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Extract type key dict exception: {0}", EdiabasNet.GetExceptionText(ex));
+                return null;
+            }
+        }
+
         public static string GetTypeKeyFromVin(string vin, EdiabasNet ediabas, string databaseDir)
         {
             ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Type key from VIN: {0}", vin ?? "No VIN");
