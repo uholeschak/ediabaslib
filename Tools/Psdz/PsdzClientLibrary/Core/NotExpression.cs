@@ -123,6 +123,11 @@ namespace PsdzClient.Core
 			return "NOT " + this.operand;
 		}
 
-		private RuleExpression operand;
+        public string ToFormula()
+        {
+            return "!(" + this.operand + ")";
+        }
+
+        private RuleExpression operand;
 	}
 }
