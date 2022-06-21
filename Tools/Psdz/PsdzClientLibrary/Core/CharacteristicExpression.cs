@@ -271,6 +271,22 @@ namespace PsdzClient.Core
 			});
 		}
 
+        public string ToFormula()
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append("\"");
+            stringBuilder.Append(this.CharacteristicRoot);
+            stringBuilder.Append("\"");
+
+            stringBuilder.Append(" = ");
+
+            stringBuilder.Append("\"");
+            stringBuilder.Append(this.CharacteristicValue);
+            stringBuilder.Append("\"");
+
+            return stringBuilder.ToString();
+        }
+
 		private string GetCharacteristicRootFromDb()
 		{
 			string result = string.Empty;

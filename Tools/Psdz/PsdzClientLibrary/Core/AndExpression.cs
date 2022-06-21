@@ -237,6 +237,22 @@ namespace PsdzClient.Core
 			return stringBuilder.ToString();
 		}
 
+        public string ToFormula()
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append("(");
+            for (int i = 0; i < this.operands.Length; i++)
+            {
+                if (i > 0)
+                {
+                    stringBuilder.Append(" && ");
+                }
+                stringBuilder.Append(this.operands[i]);
+            }
+            stringBuilder.Append(")");
+            return stringBuilder.ToString();
+        }
+
 		private readonly List<long> missingCharacteristics = new List<long>();
 
 		private readonly List<long> missingVariants = new List<long>();
