@@ -256,6 +256,11 @@ namespace PsdzClient.Core
 		{
 		}
 
+        public virtual string ToFormula()
+        {
+            return string.Empty;
+        }
+
 		public abstract void Serialize(MemoryStream ms);
 
 		public static IList<string> RuleEvaluationProtocol;

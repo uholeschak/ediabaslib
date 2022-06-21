@@ -118,15 +118,15 @@ namespace PsdzClient.Core
 			this.operand.Serialize(ms);
 		}
 
+        public override string ToFormula()
+        {
+            return "!(" + this.operand.ToFormula() + ")";
+        }
+
 		public override string ToString()
 		{
 			return "NOT " + this.operand;
 		}
-
-        public string ToFormula()
-        {
-            return "!(" + this.operand + ")";
-        }
 
         private RuleExpression operand;
 	}
