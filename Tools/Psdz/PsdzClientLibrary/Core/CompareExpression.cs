@@ -72,6 +72,16 @@ namespace PsdzClient.Core
             throw new Exception("Class CompExpression is only an intermediate class. Use special classes instead before serializing the rule!");
         }
 
+        public override string ToFormula(FormulaConfig formulaConfig)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(" ");
+            stringBuilder.Append(this.getOperator());
+            stringBuilder.Append(" ");
+
+            return stringBuilder.ToString();
+        }
+
         public override string ToString()
         {
             return string.Concat(new string[]
