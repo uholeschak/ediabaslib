@@ -73,6 +73,17 @@ namespace PsdzClient.Core
 			base.Serialize(ms);
 		}
 
+        public override string ToFormula(FormulaConfig formulaConfig)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(formulaConfig.GetLongFunc);
+            stringBuilder.Append("(\"EcuRepresentative\") ");
+            stringBuilder.Append(" == ");
+            stringBuilder.Append(this.value.ToString(CultureInfo.InvariantCulture));
+
+            return stringBuilder.ToString();
+        }
+
 		public override string ToString()
 		{
 			return "EcuRepresentative=" + this.value.ToString(CultureInfo.InvariantCulture);

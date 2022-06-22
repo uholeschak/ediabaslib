@@ -84,7 +84,7 @@ namespace PsdzClient.Core
                 stringBuilder.Append(formulaConfig.GetLongFunc);
                 stringBuilder.Append("(\"EcuProgrammingVariant\") ");
                 stringBuilder.Append(" == ");
-                stringBuilder.Append(this.value);
+                stringBuilder.Append(this.value.ToString(CultureInfo.InvariantCulture));
             }
 
             return stringBuilder.ToString();
