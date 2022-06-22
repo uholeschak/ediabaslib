@@ -78,6 +78,17 @@ namespace PsdzClient.Core
 			base.Serialize(ms);
 		}
 
+        public override string ToFormula(FormulaConfig formulaConfig)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(formulaConfig.GetLongFunc);
+            stringBuilder.Append("(\"EcuGroup\") ");
+            stringBuilder.Append(" == ");
+            stringBuilder.Append(value);
+
+            return stringBuilder.ToString();
+        }
+
 		public override string ToString()
 		{
 			return "EcuGroup=" + this.value.ToString(CultureInfo.InvariantCulture);
