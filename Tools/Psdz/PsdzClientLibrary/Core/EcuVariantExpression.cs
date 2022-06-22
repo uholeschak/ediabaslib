@@ -127,6 +127,19 @@ namespace PsdzClient.Core
 			base.Serialize(ms);
 		}
 
+        public override string ToFormula(FormulaConfig formulaConfig)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(formulaConfig.GetStringFunc);
+            stringBuilder.Append("(\"EcuVariant\") ");
+            stringBuilder.Append(" == ");
+            stringBuilder.Append("\"");
+            stringBuilder.Append(VariantName);
+            stringBuilder.Append("\"");
+
+			return stringBuilder.ToString();
+        }
+
 		public override string ToString()
 		{
 			return string.Concat(new string[]
