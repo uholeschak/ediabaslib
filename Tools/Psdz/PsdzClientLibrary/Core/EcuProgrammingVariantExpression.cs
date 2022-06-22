@@ -58,6 +58,38 @@ namespace PsdzClient.Core
 			return result;
 		}
 
+        public override string ToFormula(FormulaConfig formulaConfig)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            if (this.programmingVariant != null && this.ecuVariant != null)
+            {
+                stringBuilder.Append(formulaConfig.GetStringFunc);
+                stringBuilder.Append("(\"ProgrammingVariantName\") ");
+                stringBuilder.Append(" == ");
+                stringBuilder.Append("\"");
+                stringBuilder.Append(this.programmingVariant.Name);
+                stringBuilder.Append("\"");
+
+                stringBuilder.Append(" && ");
+
+                stringBuilder.Append(formulaConfig.GetStringFunc);
+                stringBuilder.Append("(\"VARIANTE\") ");
+                stringBuilder.Append(" == ");
+                stringBuilder.Append("\"");
+                stringBuilder.Append(this.ecuVariant.Name);
+                stringBuilder.Append("\"");
+            }
+            else
+            {
+                stringBuilder.Append(formulaConfig.GetLongFunc);
+                stringBuilder.Append("(\"EcuProgrammingVariant\") ");
+                stringBuilder.Append(" == ");
+                stringBuilder.Append(this.value);
+            }
+
+            return stringBuilder.ToString();
+        }
+
 		public override string ToString()
 		{
 			if (this.programmingVariant != null && this.ecuVariant != null)
