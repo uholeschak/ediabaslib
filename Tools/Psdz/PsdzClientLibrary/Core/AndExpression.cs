@@ -237,7 +237,6 @@ namespace PsdzClient.Core
             return stringBuilder.ToString();
         }
 
-
 		public override string ToString()
 		{
 			StringBuilder stringBuilder = new StringBuilder();

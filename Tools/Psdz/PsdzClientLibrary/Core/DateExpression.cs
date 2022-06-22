@@ -174,6 +174,18 @@ namespace PsdzClient.Core
 			ms.Write(BitConverter.GetBytes(this.datevalue), 0, 8);
 		}
 
+        public override string ToFormula(FormulaConfig formulaConfig)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(formulaConfig.GetValueFunc);
+            stringBuilder.Append("(\"Baustand\") ");
+            stringBuilder.Append(this.GetOperator());
+            stringBuilder.Append(" ");
+            stringBuilder.Append(this.datevalue.ToString(CultureInfo.InvariantCulture));
+
+            return stringBuilder.ToString();
+        }
+
 		public override string ToString()
 		{
 			return "Baustand " + this.GetOperator() + " " + this.datevalue.ToString(CultureInfo.InvariantCulture);
