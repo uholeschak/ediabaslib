@@ -10,6 +10,16 @@ namespace PsdzClient.Core
 	[Serializable]
 	public abstract class RuleExpression : IRuleExpression
 	{
+        public class FormulaConfig
+        {
+            public FormulaConfig(string getValueFunc)
+            {
+                GetValueFunc = getValueFunc;
+            }
+
+            public string GetValueFunc { get; private set; }
+        }
+
         public enum EExpressionType
         {
             COMP,
@@ -256,7 +266,7 @@ namespace PsdzClient.Core
 		{
 		}
 
-        public virtual string ToFormula()
+        public virtual string ToFormula(FormulaConfig formulaConfig)
         {
             return string.Empty;
         }

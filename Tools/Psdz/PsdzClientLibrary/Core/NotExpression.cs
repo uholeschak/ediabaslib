@@ -118,9 +118,9 @@ namespace PsdzClient.Core
 			this.operand.Serialize(ms);
 		}
 
-        public override string ToFormula()
+        public override string ToFormula(FormulaConfig formulaConfig)
         {
-            return "!(" + this.operand.ToFormula() + ")";
+            return "!(" + this.operand.ToFormula(formulaConfig) + ")";
         }
 
 		public override string ToString()

@@ -218,7 +218,7 @@ namespace PsdzClient.Core
 			}
 		}
 
-        public override string ToFormula()
+        public override string ToFormula(FormulaConfig formulaConfig)
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append("(");
@@ -228,7 +228,7 @@ namespace PsdzClient.Core
                 {
                     stringBuilder.Append(" || ");
                 }
-                stringBuilder.Append(this.operands[i].ToFormula());
+                stringBuilder.Append(this.operands[i].ToFormula(formulaConfig));
             }
             stringBuilder.Append(")");
             return stringBuilder.ToString();

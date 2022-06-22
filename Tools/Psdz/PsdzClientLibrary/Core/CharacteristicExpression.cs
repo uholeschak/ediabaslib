@@ -256,6 +256,24 @@ namespace PsdzClient.Core
 			ms.Write(BitConverter.GetBytes(this.datavalueId), 0, 8);
 		}
 
+        public override string ToFormula(FormulaConfig formulaConfig)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(formulaConfig.GetValueFunc);
+            stringBuilder.Append("(\"");
+
+            stringBuilder.Append(this.CharacteristicRoot);
+            stringBuilder.Append("\")");
+
+            stringBuilder.Append(" == ");
+
+            stringBuilder.Append("\"");
+            stringBuilder.Append(this.CharacteristicValue);
+            stringBuilder.Append("\"");
+
+            return stringBuilder.ToString();
+        }
+
 		public override string ToString()
 		{
 			return string.Concat(new string[]
@@ -270,22 +288,6 @@ namespace PsdzClient.Core
 				"]"
 			});
 		}
-
-        public string ToFormula()
-        {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append("\"");
-            stringBuilder.Append(this.CharacteristicRoot);
-            stringBuilder.Append("\"");
-
-            stringBuilder.Append(" = ");
-
-            stringBuilder.Append("\"");
-            stringBuilder.Append(this.CharacteristicValue);
-            stringBuilder.Append("\"");
-
-            return stringBuilder.ToString();
-        }
 
 		private string GetCharacteristicRootFromDb()
 		{
