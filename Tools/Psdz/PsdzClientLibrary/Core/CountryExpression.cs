@@ -64,6 +64,19 @@ namespace PsdzClient.Core
             base.Serialize(ms);
         }
 
+        public override string ToFormula(FormulaConfig formulaConfig)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(formulaConfig.GetStringFunc);
+            stringBuilder.Append("(\"Country\") ");
+            stringBuilder.Append(" == ");
+            stringBuilder.Append("\"");
+            stringBuilder.Append(this.CountryCode);
+            stringBuilder.Append("\"");
+
+            return stringBuilder.ToString();
+        }
+
         public override string ToString()
         {
             return string.Concat(new string[]

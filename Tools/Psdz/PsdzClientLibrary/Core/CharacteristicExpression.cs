@@ -259,7 +259,7 @@ namespace PsdzClient.Core
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append(formulaConfig.GetValueFunc);
+            stringBuilder.Append(formulaConfig.GetStringFunc);
             stringBuilder.Append("(\"");
 
             stringBuilder.Append(this.CharacteristicRoot);

@@ -12,15 +12,17 @@ namespace PsdzClient.Core
 	{
         public class FormulaConfig
         {
-            public FormulaConfig(string getValueFunc)
+            public FormulaConfig(string getStringFunc, string getLongFunc)
             {
-                GetValueFunc = getValueFunc;
+                GetStringFunc = getStringFunc;
+                GetLongFunc = getLongFunc;
             }
 
-            public string GetValueFunc { get; private set; }
+			public string GetStringFunc { get; private set; }
+            public string GetLongFunc { get; private set; }
         }
 
-        public enum EExpressionType
+		public enum EExpressionType
         {
             COMP,
             AND,

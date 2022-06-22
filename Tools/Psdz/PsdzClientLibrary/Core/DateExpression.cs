@@ -177,7 +177,7 @@ namespace PsdzClient.Core
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append(formulaConfig.GetValueFunc);
+            stringBuilder.Append(formulaConfig.GetLongFunc);
             stringBuilder.Append("(\"Baustand\") ");
             stringBuilder.Append(this.GetOperator());
             stringBuilder.Append(" ");
