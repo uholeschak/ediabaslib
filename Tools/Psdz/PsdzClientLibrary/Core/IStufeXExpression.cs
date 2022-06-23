@@ -128,6 +128,20 @@ namespace PsdzClient.Core
 			ms.Write(BitConverter.GetBytes(this.iLevelId), 0, 8);
 		}
 
+        public override string ToFormula(FormulaConfig formulaConfig)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(formulaConfig.GetLongFunc);
+            stringBuilder.Append("(\"IStufeX\") ");
+
+            CompareExpression compareExpression = new CompareExpression(-1, compareOperator, -1);
+            stringBuilder.Append(compareExpression.ToFormula(formulaConfig));
+            stringBuilder.Append(" ");
+            stringBuilder.Append(this.iLevelId.ToString(CultureInfo.InvariantCulture));
+
+            return stringBuilder.ToString();
+        }
+
 		public override string ToString()
 		{
 			string istufeById = ClientContext.GetDatabase(this.vecInfo)?.GetIStufeById(this.iLevelId.ToString(CultureInfo.InvariantCulture));
