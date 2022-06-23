@@ -274,7 +274,7 @@ namespace PsdzClient.Core
 
         public virtual string ToFormula(FormulaConfig formulaConfig)
         {
-            return "ToFormula() missing for: \"" + this.GetType().Name + "\"";
+            throw new Exception("ToFormula() missing for class: \"" + this.GetType().Name + "\"");
         }
 
 		public abstract void Serialize(MemoryStream ms);

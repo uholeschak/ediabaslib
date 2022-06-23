@@ -1082,6 +1082,29 @@ namespace PsdzClient
                 return null;
             }
 
+            public string GetRuleFormula(Vehicle vehicle)
+            {
+                if (vehicle == null)
+                {
+                    log.ErrorFormat("GetRuleString No vehicle");
+                    return null;
+                }
+
+                try
+                {
+                    RuleExpression ruleExpression = RuleExpression.Deserialize(new MemoryStream(Rule), vehicle);
+                    RuleExpression.FormulaConfig formulaConfig =
+                        new RuleExpression.FormulaConfig("RuleString", "RuleNum", "IsValidRuleString", "IsValidRuleNum");
+                    return ruleExpression.ToFormula(formulaConfig);
+                }
+                catch (Exception e)
+                {
+                    log.ErrorFormat("GetRuleString Exception: '{0}'", e.Message);
+                }
+
+                return null;
+            }
+
             public string ToString(string prefix = "")
             {
                 StringBuilder sb = new StringBuilder();
@@ -2330,6 +2353,12 @@ namespace PsdzClient
 
                     if (baseEcuCharacteristics != null && bordnetsData.XepRule != null)
                     {
+                        string ruleFormula = bordnetsData.XepRule.GetRuleFormula(vehicle);
+                        if (!string.IsNullOrEmpty(ruleFormula))
+                        {
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Rule formula: {0}", ruleFormula);
+                        }
+
                         string ruleString = bordnetsData.XepRule.GetRuleString(vehicle);
                         if (!string.IsNullOrEmpty(ruleString))
                         {
