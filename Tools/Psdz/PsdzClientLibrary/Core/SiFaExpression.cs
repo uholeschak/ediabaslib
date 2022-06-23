@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -61,6 +62,17 @@ namespace PsdzClient.Core
         {
             ms.WriteByte(15);
             base.Serialize(ms);
+        }
+
+        public override string ToFormula(FormulaConfig formulaConfig)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(formulaConfig.CheckLongFunc);
+            stringBuilder.Append("(\"SiFa\", ");
+            stringBuilder.Append(value.ToString(CultureInfo.InvariantCulture));
+            stringBuilder.Append(")");
+
+            return stringBuilder.ToString();
         }
 
         public override string ToString()

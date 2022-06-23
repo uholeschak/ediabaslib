@@ -176,6 +176,18 @@ namespace PsdzClient.Core
 			ms.Write(BitConverter.GetBytes(this.datevalue), 0, 8);
 		}
 
+        public override string ToFormula(FormulaConfig formulaConfig)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(formulaConfig.CheckLongFunc);
+            stringBuilder.Append("(\"Produktionsdatum\", ");
+            stringBuilder.Append(this.datevalue.ToString(CultureInfo.InvariantCulture));
+            stringBuilder.Append(")");
+
+            return stringBuilder.ToString();
+        }
+
+
 		public override string ToString()
 		{
 			return "Produktionsdatum " + this.GetOperator() + " " + this.datevalue.ToString(CultureInfo.InvariantCulture);
