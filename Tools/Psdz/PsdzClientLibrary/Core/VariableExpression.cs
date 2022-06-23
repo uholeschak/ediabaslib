@@ -91,6 +91,18 @@ namespace PsdzClient.Core
 			throw new Exception("The method or operation is not implemented.");
 		}
 
+        public override string ToFormula(FormulaConfig formulaConfig)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(this.variableName.ToString(CultureInfo.InvariantCulture));
+            stringBuilder.Append(" ");
+            stringBuilder.Append(this.GetOperator());
+            stringBuilder.Append(" ");
+            stringBuilder.Append(this.variableValue.ToString(CultureInfo.InvariantCulture));
+
+            return stringBuilder.ToString();
+        }
+
 		public override string ToString()
 		{
 			return string.Concat(new string[]

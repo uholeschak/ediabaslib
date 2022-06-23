@@ -41,6 +41,18 @@ namespace PsdzClient.Core
             base.Serialize(ms);
         }
 
+        public override string ToFormula(FormulaConfig formulaConfig)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(formulaConfig.CheckLongFunc);
+            stringBuilder.Append("(\"ValidTo\", ");
+            stringBuilder.Append("\"");
+            stringBuilder.Append(this.value);
+            stringBuilder.Append("\")");
+
+            return stringBuilder.ToString();
+        }
+
         public override string ToString()
         {
             return "ValidTo=" + DateTime.FromBinary(this.value).ToString("dd.MM.yyyy", CultureInfo.InvariantCulture);

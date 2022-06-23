@@ -62,6 +62,13 @@ namespace PsdzClient.Core
             ms.Write(BitConverter.GetBytes(this.value), 0, 8);
         }
 
+        public override string ToFormula(FormulaConfig formulaConfig)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(this.value.ToString(CultureInfo.InvariantCulture));
+            return stringBuilder.ToString();
+        }
+
         public override string ToString()
         {
             return this.value.ToString(CultureInfo.InvariantCulture);
