@@ -63,31 +63,29 @@ namespace PsdzClient.Core
             StringBuilder stringBuilder = new StringBuilder();
             if (this.programmingVariant != null && this.ecuVariant != null)
             {
-                stringBuilder.Append(formulaConfig.GetStringFunc);
-                stringBuilder.Append("(\"ProgrammingVariantName\") ");
-                stringBuilder.Append(" == ");
+                stringBuilder.Append(formulaConfig.CheckStringFunc);
+                stringBuilder.Append("(\"ProgrammingVariantName\", ");
                 stringBuilder.Append("\"");
                 stringBuilder.Append(this.programmingVariant.Name);
-                stringBuilder.Append("\"");
+                stringBuilder.Append("\")");
 
                 stringBuilder.Append(" && ");
 
-                stringBuilder.Append(formulaConfig.GetStringFunc);
-                stringBuilder.Append("(\"VARIANTE\") ");
-                stringBuilder.Append(" == ");
+                stringBuilder.Append(formulaConfig.CheckStringFunc);
+                stringBuilder.Append("(\"VARIANTE\", ");
                 stringBuilder.Append("\"");
                 stringBuilder.Append(this.ecuVariant.Name);
-                stringBuilder.Append("\"");
+                stringBuilder.Append("\")");
             }
             else
             {
-                stringBuilder.Append(formulaConfig.GetLongFunc);
-                stringBuilder.Append("(\"EcuProgrammingVariant\") ");
-                stringBuilder.Append(" == ");
+                stringBuilder.Append(formulaConfig.CheckLongFunc);
+                stringBuilder.Append("(\"EcuProgrammingVariant\", ");
                 stringBuilder.Append(this.value.ToString(CultureInfo.InvariantCulture));
+                stringBuilder.Append(")");
             }
 
-            return stringBuilder.ToString();
+			return stringBuilder.ToString();
         }
 
 		public override string ToString()

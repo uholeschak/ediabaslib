@@ -12,14 +12,18 @@ namespace PsdzClient.Core
 	{
         public class FormulaConfig
         {
-            public FormulaConfig(string getStringFunc, string getLongFunc)
+            public FormulaConfig(string getStringFunc, string getLongFunc, string checkStringFunc, string checkLongFunc)
             {
                 GetStringFunc = getStringFunc;
                 GetLongFunc = getLongFunc;
+                CheckStringFunc = checkStringFunc;
+                CheckLongFunc = checkLongFunc;
             }
 
-			public string GetStringFunc { get; private set; }
+            public string GetStringFunc { get; private set; }
             public string GetLongFunc { get; private set; }
+            public string CheckStringFunc { get; private set; }
+            public string CheckLongFunc { get; private set; }
         }
 
 		public enum EExpressionType

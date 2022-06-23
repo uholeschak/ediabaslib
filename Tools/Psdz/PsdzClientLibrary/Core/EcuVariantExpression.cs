@@ -130,12 +130,10 @@ namespace PsdzClient.Core
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append(formulaConfig.GetStringFunc);
-            stringBuilder.Append("(\"EcuVariant\") ");
-            stringBuilder.Append(" == ");
-            stringBuilder.Append("\"");
-            stringBuilder.Append(VariantName);
-            stringBuilder.Append("\"");
+            stringBuilder.Append(formulaConfig.CheckLongFunc);
+            stringBuilder.Append("(\"EcuVariant\", ");
+            stringBuilder.Append(value.ToString(CultureInfo.InvariantCulture));
+            stringBuilder.Append(")");
 
 			return stringBuilder.ToString();
         }

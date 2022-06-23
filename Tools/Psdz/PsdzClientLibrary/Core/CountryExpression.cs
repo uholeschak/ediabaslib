@@ -67,12 +67,11 @@ namespace PsdzClient.Core
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append(formulaConfig.GetStringFunc);
-            stringBuilder.Append("(\"Country\") ");
-            stringBuilder.Append(" == ");
+            stringBuilder.Append(formulaConfig.CheckStringFunc);
+            stringBuilder.Append("(\"Country\", ");
             stringBuilder.Append("\"");
             stringBuilder.Append(this.CountryCode);
-            stringBuilder.Append("\"");
+            stringBuilder.Append("\")");
 
             return stringBuilder.ToString();
         }

@@ -81,10 +81,10 @@ namespace PsdzClient.Core
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append(formulaConfig.GetLongFunc);
-            stringBuilder.Append("(\"EcuGroup\") ");
-            stringBuilder.Append(" == ");
-            stringBuilder.Append(value);
+            stringBuilder.Append(formulaConfig.CheckLongFunc);
+            stringBuilder.Append("(\"EcuGroup\", ");
+            stringBuilder.Append(value.ToString(CultureInfo.InvariantCulture));
+            stringBuilder.Append(")");
 
             return stringBuilder.ToString();
         }

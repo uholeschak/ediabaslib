@@ -122,12 +122,12 @@ namespace PsdzClient.Core
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append(formulaConfig.GetLongFunc);
-            stringBuilder.Append("(\"Equipment\") ");
-            stringBuilder.Append(" == ");
+            stringBuilder.Append(formulaConfig.CheckLongFunc);
+            stringBuilder.Append("(\"Equipment\", ");
             stringBuilder.Append(this.value.ToString(CultureInfo.InvariantCulture));
+            stringBuilder.Append(")");
 
-            return stringBuilder.ToString();
+			return stringBuilder.ToString();
         }
 
 		public override string ToString()
