@@ -135,7 +135,7 @@ namespace PsdzClient.Core
             stringBuilder.Append(value.ToString(CultureInfo.InvariantCulture));
             stringBuilder.Append(")");
 
-			return stringBuilder.ToString();
+            return stringBuilder.ToString();
         }
 
 		public override string ToString()

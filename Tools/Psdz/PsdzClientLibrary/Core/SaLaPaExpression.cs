@@ -26,6 +26,17 @@ namespace PsdzClient.Core
 			base.Serialize(ms);
 		}
 
+        public override string ToFormula(FormulaConfig formulaConfig)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(formulaConfig.CheckLongFunc);
+            stringBuilder.Append("(\"SALAPA\", ");
+            stringBuilder.Append(value.ToString(CultureInfo.InvariantCulture));
+            stringBuilder.Append(")");
+
+            return stringBuilder.ToString();
+        }
+
 		public override string ToString()
 		{
 			return "SALAPA=" + this.value.ToString(CultureInfo.InvariantCulture);

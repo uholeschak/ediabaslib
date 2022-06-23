@@ -107,6 +107,17 @@ namespace PsdzClient.Core
 			base.Serialize(ms);
 		}
 
+        public override string ToFormula(FormulaConfig formulaConfig)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(formulaConfig.CheckLongFunc);
+            stringBuilder.Append("(\"EcuClique\", ");
+            stringBuilder.Append(value.ToString(CultureInfo.InvariantCulture));
+            stringBuilder.Append(")");
+
+            return stringBuilder.ToString();
+        }
+
 		public override string ToString()
 		{
 			return "EcuClique=" + this.value.ToString(CultureInfo.InvariantCulture);
