@@ -76,6 +76,7 @@ namespace PsdzClient.Core
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(FormulaSeparator(formulaConfig));
             stringBuilder.Append(formulaConfig.CheckLongFunc);
             stringBuilder.Append("(\"EcuRepresentative\", ");
             stringBuilder.Append(this.value.ToString(CultureInfo.InvariantCulture));

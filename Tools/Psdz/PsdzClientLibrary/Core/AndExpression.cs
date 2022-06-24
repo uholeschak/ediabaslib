@@ -234,7 +234,6 @@ namespace PsdzClient.Core
                 stringBuilder.Append(this.operands[i].ToFormula(formulaConfig));
             }
             stringBuilder.Append(")");
-            stringBuilder.Append(FormulaSeparator(formulaConfig));
             return stringBuilder.ToString();
         }
 

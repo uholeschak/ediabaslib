@@ -2341,9 +2341,9 @@ namespace PsdzClient
             try
             {
                 Regex seriesRegex = new Regex(@"\b(Baureihenverbund|E-Bezeichnung)\s*=\s*([a-z0-9]+)\b", RegexOptions.Singleline | RegexOptions.IgnoreCase);
-                Regex seriesFormulaRegex = new Regex(@"\bIsValidRuleString\(""(Baureihenverbund|E-Bezeichnung)""\),\s*""([a-z0-9\- ]+)""\)\b", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                Regex seriesFormulaRegex = new Regex(@"\bIsValidRuleString\(""(Baureihenverbund|E-Bezeichnung)"",\s*""([a-z0-9\- ]+)""\)\b", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 Regex brandRegex = new Regex(@"\b(Marke)\s*=\s*([a-z0-9\- ]+)\b", RegexOptions.Singleline | RegexOptions.IgnoreCase);
-                Regex brandFormulaRegex = new Regex(@"\bIsValidRuleString\(""(Marke)""\),\s*""([a-z0-9\- ]+)""\)\b", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                Regex brandFormulaRegex = new Regex(@"\bIsValidRuleString\(""(Marke)"",\s*""([a-z0-9\- ]+)""\)\b", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 Regex dateRegex = new Regex(@"\b(Baustand)\s*([<>=]+)\s*([0-9]+)\b", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 Regex dateFormulaRegex = new Regex(@"\b(RuleNum\(""Baustand""\))\s*([<>=]+)\s*([0-9]+)\b", RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
