@@ -1082,7 +1082,7 @@ namespace PsdzClient
                 return null;
             }
 
-            public string GetRuleFormula(Vehicle vehicle)
+            public string GetRuleFormula(Vehicle vehicle, RuleExpression.FormulaConfig formulaConfig = null)
             {
                 if (vehicle == null)
                 {
@@ -1093,9 +1093,12 @@ namespace PsdzClient
                 try
                 {
                     RuleExpression ruleExpression = RuleExpression.Deserialize(new MemoryStream(Rule), vehicle);
-                    RuleExpression.FormulaConfig formulaConfig =
-                        new RuleExpression.FormulaConfig("RuleString", "RuleNum", "IsValidRuleString", "IsValidRuleNum");
-                    return ruleExpression.ToFormula(formulaConfig);
+                    RuleExpression.FormulaConfig formulaConfigCurrent = formulaConfig;
+                    if (formulaConfigCurrent == null)
+                    {
+                        formulaConfigCurrent = new RuleExpression.FormulaConfig("RuleString", "RuleNum", "IsValidRuleString", "IsValidRuleNum");
+                    }
+                    return ruleExpression.ToFormula(formulaConfigCurrent);
                 }
                 catch (Exception e)
                 {
@@ -2338,8 +2341,14 @@ namespace PsdzClient
             try
             {
                 Regex seriesRegex = new Regex(@"\b(Baureihenverbund|E-Bezeichnung)\s*=\s*([a-z0-9]+)\b", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                Regex seriesFormulaRegex = new Regex(@"\bIsValidRuleString\(""(Baureihenverbund|E-Bezeichnung)""\),\s*""([a-z0-9\- ]+)""\)\b", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 Regex brandRegex = new Regex(@"\b(Marke)\s*=\s*([a-z0-9\- ]+)\b", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                Regex brandFormulaRegex = new Regex(@"\bIsValidRuleString\(""(Marke)""\),\s*""([a-z0-9\- ]+)""\)\b", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 Regex dateRegex = new Regex(@"\b(Baustand)\s*([<>=]+)\s*([0-9]+)\b", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                Regex dateFormulaRegex = new Regex(@"\b(RuleNum\(""Baustand""\))\s*([<>=]+)\s*([0-9]+)\b", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+                RuleExpression.FormulaConfig formulaConfig = new RuleExpression.FormulaConfig("RuleString", "RuleNum", "IsValidRuleString", "IsValidRuleNum", "|");
+
                 Vehicle vehicle = new Vehicle(clientContext);
                 List<EcuCharacteristicsInfo> vehicleSeriesList = new List<EcuCharacteristicsInfo>();
                 List<BordnetsData> boardnetsList = GetAllBordnetRules();
@@ -2353,10 +2362,71 @@ namespace PsdzClient
 
                     if (baseEcuCharacteristics != null && bordnetsData.XepRule != null)
                     {
-                        string ruleFormula = bordnetsData.XepRule.GetRuleFormula(vehicle);
+                        string ruleFormula = bordnetsData.XepRule.GetRuleFormula(vehicle, formulaConfig);
                         if (!string.IsNullOrEmpty(ruleFormula))
                         {
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Rule formula: {0}", ruleFormula);
+
+                            HashSet<string> seriesHash = new HashSet<string>();
+                            string brand = string.Empty;
+                            string date = null;
+                            string dateCompare = null;
+
+                            string[] formulaParts = ruleFormula.Split('|');
+                            foreach (string formulaPart in formulaParts)
+                            {
+                                MatchCollection seriesMatches = seriesFormulaRegex.Matches(formulaPart);
+                                foreach (Match match in seriesMatches)
+                                {
+                                    if (match.Groups.Count == 3 && match.Groups[2].Success)
+                                    {
+                                        seriesHash.Add(match.Groups[2].Value.Trim());
+                                    }
+                                }
+
+                                MatchCollection brandMatches = brandFormulaRegex.Matches(formulaPart);
+                                foreach (Match match in brandMatches)
+                                {
+                                    if (match.Groups.Count == 3 && match.Groups[2].Success)
+                                    {
+                                        brand = match.Groups[2].Value.Trim();
+                                        break;
+                                    }
+                                }
+
+                                MatchCollection dateMatches = dateFormulaRegex.Matches(formulaPart);
+                                foreach (Match match in dateMatches)
+                                {
+                                    if (match.Groups.Count == 4 && match.Groups[2].Success && match.Groups[3].Success)
+                                    {
+                                        date = match.Groups[3].Value.Trim();
+                                        dateCompare = match.Groups[2].Value.Trim();
+                                        break;
+                                    }
+                                }
+                            }
+
+                            // detect bn type
+                            HashSet<BNType> bnTypes = new HashSet<BNType>();
+                            Vehicle vehicleSeries = new Vehicle(clientContext);
+                            foreach (string series in seriesHash)
+                            {
+                                vehicleSeries.Ereihe = series;
+                                BNType bnType = VehicleLogistics.getBNType(vehicleSeries);
+                                if (bnType != BNType.UNKNOWN)
+                                {
+                                    bnTypes.Add(bnType);
+                                }
+                            }
+
+                            BNType? bnTypeSeries = null;
+                            if (bnTypes.Count == 1)
+                            {
+                                bnTypeSeries = bnTypes.First();
+                            }
+
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles formula Sgbd: {0}, Brand: {1}, Series: {2}, BnType: {3}, Date: {4} {5}",
+                                baseEcuCharacteristics.brSgbd, brand, seriesHash.ToStringItems(), bnTypeSeries, dateCompare ?? string.Empty, date ?? string.Empty);
                         }
 
                         string ruleString = bordnetsData.XepRule.GetRuleString(vehicle);
