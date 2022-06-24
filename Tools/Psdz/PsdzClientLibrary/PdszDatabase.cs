@@ -2375,6 +2375,11 @@ namespace PsdzClient
                             string[] formulaParts = ruleFormula.Split('|');
                             foreach (string formulaPart in formulaParts)
                             {
+                                if (string.IsNullOrWhiteSpace(formulaPart))
+                                {
+                                    continue;
+                                }
+
                                 MatchCollection seriesMatches = seriesFormulaRegex.Matches(formulaPart);
                                 foreach (Match match in seriesMatches)
                                 {

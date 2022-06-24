@@ -94,6 +94,7 @@ namespace PsdzClient.Core
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(FormulaSeparator(formulaConfig));
             stringBuilder.Append(this.variableName.ToString(CultureInfo.InvariantCulture));
             stringBuilder.Append(" ");
             stringBuilder.Append(this.GetOperator());

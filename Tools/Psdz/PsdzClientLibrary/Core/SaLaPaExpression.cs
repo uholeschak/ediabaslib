@@ -29,6 +29,7 @@ namespace PsdzClient.Core
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(FormulaSeparator(formulaConfig));
             stringBuilder.Append(formulaConfig.CheckLongFunc);
             stringBuilder.Append("(\"SALAPA\", ");
             stringBuilder.Append(value.ToString(CultureInfo.InvariantCulture));
