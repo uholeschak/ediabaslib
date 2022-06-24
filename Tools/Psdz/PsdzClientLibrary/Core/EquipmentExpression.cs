@@ -126,8 +126,10 @@ namespace PsdzClient.Core
             stringBuilder.Append("(\"Equipment\", ");
             stringBuilder.Append(this.value.ToString(CultureInfo.InvariantCulture));
             stringBuilder.Append(")");
+            stringBuilder.Append(FormulaSeparator(formulaConfig));
+            stringBuilder.Append(FormulaSeparator(formulaConfig));
 
-			return stringBuilder.ToString();
+            return stringBuilder.ToString();
         }
 
 		public override string ToString()

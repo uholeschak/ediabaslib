@@ -268,6 +268,7 @@ namespace PsdzClient.Core
             stringBuilder.Append("\"");
             stringBuilder.Append(this.CharacteristicValue);
             stringBuilder.Append("\")");
+            stringBuilder.Append(FormulaSeparator(formulaConfig));
 
             return stringBuilder.ToString();
         }

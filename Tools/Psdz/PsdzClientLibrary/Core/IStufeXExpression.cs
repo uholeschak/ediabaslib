@@ -138,6 +138,7 @@ namespace PsdzClient.Core
             stringBuilder.Append(compareExpression.ToFormula(formulaConfig));
             stringBuilder.Append(" ");
             stringBuilder.Append(this.iLevelId.ToString(CultureInfo.InvariantCulture));
+            stringBuilder.Append(FormulaSeparator(formulaConfig));
 
             return stringBuilder.ToString();
         }

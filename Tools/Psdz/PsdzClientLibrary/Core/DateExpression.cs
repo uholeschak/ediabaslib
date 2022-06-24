@@ -182,6 +182,7 @@ namespace PsdzClient.Core
             stringBuilder.Append(this.GetOperator());
             stringBuilder.Append(" ");
             stringBuilder.Append(this.datevalue.ToString(CultureInfo.InvariantCulture));
+            stringBuilder.Append(FormulaSeparator(formulaConfig));
 
             return stringBuilder.ToString();
         }

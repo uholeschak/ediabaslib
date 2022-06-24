@@ -71,6 +71,7 @@ namespace PsdzClient.Core
             stringBuilder.Append("(\"SiFa\", ");
             stringBuilder.Append(value.ToString(CultureInfo.InvariantCulture));
             stringBuilder.Append(")");
+            stringBuilder.Append(FormulaSeparator(formulaConfig));
 
             return stringBuilder.ToString();
         }

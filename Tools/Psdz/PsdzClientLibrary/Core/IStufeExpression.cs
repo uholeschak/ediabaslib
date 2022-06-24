@@ -74,6 +74,7 @@ namespace PsdzClient.Core
             stringBuilder.Append("(\"IStufe\", ");
             stringBuilder.Append(value.ToString(CultureInfo.InvariantCulture));
             stringBuilder.Append(")");
+            stringBuilder.Append(FormulaSeparator(formulaConfig));
 
             return stringBuilder.ToString();
         }

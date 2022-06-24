@@ -12,18 +12,20 @@ namespace PsdzClient.Core
 	{
         public class FormulaConfig
         {
-            public FormulaConfig(string getStringFunc, string getLongFunc, string checkStringFunc, string checkLongFunc)
+            public FormulaConfig(string getStringFunc, string getLongFunc, string checkStringFunc, string checkLongFunc, string operatorSeparator = null)
             {
                 GetStringFunc = getStringFunc;
                 GetLongFunc = getLongFunc;
                 CheckStringFunc = checkStringFunc;
                 CheckLongFunc = checkLongFunc;
+                OperatorSeparator = operatorSeparator;
             }
 
             public string GetStringFunc { get; private set; }
             public string GetLongFunc { get; private set; }
             public string CheckStringFunc { get; private set; }
             public string CheckLongFunc { get; private set; }
+            public string OperatorSeparator { get; private set; }
         }
 
 		public enum EExpressionType
@@ -275,6 +277,16 @@ namespace PsdzClient.Core
         public virtual string ToFormula(FormulaConfig formulaConfig)
         {
             throw new Exception("ToFormula() missing for class: \"" + this.GetType().Name + "\"");
+        }
+
+        public virtual string FormulaSeparator(FormulaConfig formulaConfig)
+        {
+            if (!string.IsNullOrEmpty(formulaConfig.OperatorSeparator))
+            {
+                return formulaConfig.OperatorSeparator;
+            }
+
+            return string.Empty;
         }
 
 		public abstract void Serialize(MemoryStream ms);

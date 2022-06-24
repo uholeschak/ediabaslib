@@ -183,6 +183,7 @@ namespace PsdzClient.Core
             stringBuilder.Append("(\"Produktionsdatum\", ");
             stringBuilder.Append(this.datevalue.ToString(CultureInfo.InvariantCulture));
             stringBuilder.Append(")");
+            stringBuilder.Append(FormulaSeparator(formulaConfig));
 
             return stringBuilder.ToString();
         }
