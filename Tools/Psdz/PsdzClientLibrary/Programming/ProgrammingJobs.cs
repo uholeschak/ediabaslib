@@ -407,6 +407,14 @@ namespace PsdzClient.Programming
                             UpdateStatus(sbResult.ToString());
                             return false;
                         }
+
+                        if (!ProgrammingService.PdszDatabase.SaveFaultRulesInfo(ClientContext))
+                        {
+                            log.ErrorFormat("SaveFaultRulesInfo failed");
+                            sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
+                            UpdateStatus(sbResult.ToString());
+                            return false;
+                        }
                     }
 
                     int failCount = -1;

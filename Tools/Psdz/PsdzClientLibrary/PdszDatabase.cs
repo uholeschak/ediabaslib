@@ -2516,12 +2516,44 @@ namespace PsdzClient
             }
         }
 
-        public VehicleStructsBmw.FaultRulesInfoData ExtractFaultRules(ClientContext clientContext)
+        public bool SaveFaultRulesInfo(ClientContext clientContext)
+        {
+            try
+            {
+                string faultRulesFile = Path.Combine(_databasePath, VehicleStructsBmw.FaultRulesXmlFile);
+                if (File.Exists(faultRulesFile))
+                {
+                    return true;
+                }
+
+                VehicleStructsBmw.FaultRulesInfoData faultRulesInfoData = ExtractFaultRulesInfo(clientContext);
+                if (faultRulesInfoData == null)
+                {
+                    log.InfoFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo ExtractFaultRulesInfo failed");
+                    return false;
+                }
+
+                log.InfoFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo Saving: {0}", faultRulesFile);
+                XmlSerializer serializer = new XmlSerializer(typeof(VehicleStructsBmw.FaultRulesInfoData));
+                using (FileStream fileStream = File.Create(faultRulesFile))
+                {
+                    serializer.Serialize(fileStream, faultRulesInfoData);
+                }
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo Exception: {0}", ex.Message);
+                return false;
+            }
+
+            return true;
+        }
+
+        public VehicleStructsBmw.FaultRulesInfoData ExtractFaultRulesInfo(ClientContext clientContext)
         {
             try
             {
                 List<EcuFunctionStructs.EcuFaultCode> ecuFaultCodeList = new List<EcuFunctionStructs.EcuFaultCode>();
-                // from: DatabaseProvider.SQLiteConnector.dll BMW.Rheingold.DatabaseProvider.SQLiteConnector.DatabaseProviderSQLite.GetXepFaultCodeByEcuVariantId
                 string sql = @"SELECT ID, CODE, DATATYPE, RELEVANCE FROM XEP_FAULTCODES";
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
@@ -2562,7 +2594,7 @@ namespace PsdzClient
             }
             catch (Exception e)
             {
-                log.ErrorFormat("ExtractFaultRules Exception: '{0}'", e.Message);
+                log.ErrorFormat("ExtractFaultRulesInfo Exception: '{0}'", e.Message);
                 return null;
             }
         }
