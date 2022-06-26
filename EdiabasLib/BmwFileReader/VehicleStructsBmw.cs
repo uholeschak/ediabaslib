@@ -77,5 +77,38 @@ namespace BmwFileReader
 
             [XmlElement("VehicleSeriesDict"), DefaultValue(null)] public SerializableDictionary<string, List<VehicleSeriesInfo>> VehicleSeriesDict { get; set; }
         }
+
+        [XmlType("FRI")]
+        public class FaultRuleInfo
+        {
+            public FaultRuleInfo()
+            {
+            }
+
+            public FaultRuleInfo(string id, string ruleFormula)
+            {
+                Id = id;
+                RuleFormula = ruleFormula;
+            }
+
+            [XmlElement("Id"), DefaultValue(null)] public string Id { get; set; }
+            [XmlElement("RF"), DefaultValue(null)] public string RuleFormula { get; set; }
+        }
+
+        [XmlInclude(typeof(FaultRuleInfo))]
+        [XmlType("FaultRulesInfoData")]
+        public class FaultRulesInfoData
+        {
+            public FaultRulesInfoData() : this(null)
+            {
+            }
+
+            public FaultRulesInfoData(SerializableDictionary<string, FaultRuleInfo> faultRuleDict)
+            {
+                FaultRuleDict = faultRuleDict;
+            }
+
+            [XmlElement("FaultRuleDict"), DefaultValue(null)] public SerializableDictionary<string, FaultRuleInfo> FaultRuleDict { get; set; }
+        }
     }
 }
