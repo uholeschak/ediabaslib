@@ -1,8 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using System.Text;
-using Android.Views;
 using EdiabasLib;
 using Mono.CSharp;
 
@@ -10,6 +8,11 @@ namespace BmwFileReader
 {
     public class FaultRuleEvalBmw
     {
+        public delegate string RuleStringDelegate(string name);
+        public delegate long RuleNumDelegate(string name);
+        public delegate bool IsValidRuleStringDelegate(string name, string value);
+        public delegate bool IsValidRuleNumDelegate(string name, long value);
+
         public object RuleObject { get; private set; }
 
         public FaultRuleEvalBmw()
@@ -105,25 +108,25 @@ public class RuleEval
                 PropertyInfo propertyRuleString = ruleType.GetProperty("RuleStringFunc");
                 if (propertyRuleString != null)
                 {
-                    propertyRuleString.SetValue(ruleObject, RuleString);
+                    propertyRuleString.SetValue(ruleObject, new RuleStringDelegate(RuleString));
                 }
 
                 PropertyInfo propertyRuleNum = ruleType.GetProperty("RuleNumFunc");
                 if (propertyRuleNum != null)
                 {
-                    propertyRuleNum.SetValue(ruleObject, RuleNum);
+                    propertyRuleNum.SetValue(ruleObject, new RuleNumDelegate(RuleNum));
                 }
 
                 PropertyInfo propertyIsValidRuleString = ruleType.GetProperty("IsValidRuleStringFunc");
                 if (propertyIsValidRuleString != null)
                 {
-                    propertyIsValidRuleString.SetValue(ruleObject, IsValidRuleString);
+                    propertyIsValidRuleString.SetValue(ruleObject, new IsValidRuleStringDelegate(IsValidRuleString));
                 }
 
                 PropertyInfo propertyIsValidRuleNum = ruleType.GetProperty("IsValidRuleNumFunc");
                 if (propertyIsValidRuleNum != null)
                 {
-                    propertyIsValidRuleNum.SetValue(ruleObject, IsValidRuleNum);
+                    propertyIsValidRuleNum.SetValue(ruleObject, new IsValidRuleNumDelegate(IsValidRuleNum));
                 }
 
                 RuleObject = ruleObject;
