@@ -32,23 +32,20 @@ namespace BmwFileReader
             try
             {
                 Evaluator evaluator = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter(reportWriter)));
+                evaluator.ReferenceAssembly(Assembly.GetExecutingAssembly());
                 string evalCode =
-$@"using System;
+$@"using BmwFileReader;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 
 public class RuleEval
 {{
-    public delegate string RuleStringDelegate(string name);
-    public delegate long RuleNumDelegate(string name);
-    public delegate bool IsValidRuleStringDelegate(string name, string value);
-    public delegate bool IsValidRuleNumDelegate(string name, long value);
-
-    public RuleStringDelegate RuleStringFunc {{ get; set; }}
-    public RuleNumDelegate RuleNumFunc {{ get; set; }}
-    public IsValidRuleStringDelegate IsValidRuleStringFunc {{ get; set; }}
-    public IsValidRuleNumDelegate IsValidRuleNumFunc {{ get; set; }}
+    public FaultRuleEvalBmw.RuleStringDelegate RuleStringFunc {{ get; set; }}
+    public FaultRuleEvalBmw.RuleNumDelegate RuleNumFunc {{ get; set; }}
+    public FaultRuleEvalBmw.IsValidRuleStringDelegate IsValidRuleStringFunc {{ get; set; }}
+    public FaultRuleEvalBmw.IsValidRuleNumDelegate IsValidRuleNumFunc {{ get; set; }}
 
     public RuleEval()
     {{
