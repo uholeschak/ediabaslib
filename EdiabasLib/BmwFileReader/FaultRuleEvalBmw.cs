@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using EdiabasLib;
@@ -14,6 +16,7 @@ namespace BmwFileReader
         public delegate bool IsValidRuleNumDelegate(string name, long value);
 
         public object RuleObject { get; private set; }
+        private Dictionary<string, string> _propertiesDict;
 
         public FaultRuleEvalBmw()
         {
@@ -141,7 +144,7 @@ public class RuleEval
             }
         }
 
-        public bool ExecuteRuleEvaluator()
+        public bool ExecuteRuleEvaluator(Dictionary<string, string> propertiesDict)
         {
             if (RuleObject == null)
             {
@@ -157,8 +160,10 @@ public class RuleEval
                     return false;
                 }
 
+                _propertiesDict = propertiesDict;
                 // ReSharper disable once UsePatternMatching
                 bool? valid = methodIsRuleValid.Invoke(RuleObject, null) as bool?;
+                _propertiesDict = null;
                 if (!valid.HasValue)
                 {
                     return false;
@@ -174,22 +179,91 @@ public class RuleEval
 
         private string RuleString(string name)
         {
-            return string.Empty;
+            string propertyString = GetPropertyString(name);
+            if (string.IsNullOrWhiteSpace(propertyString))
+            {
+                return string.Empty;
+            }
+            return propertyString;
         }
 
         private long RuleNum(string name)
         {
-            return -1;
+            long? propertyValue = GetPropertyNum(name);
+            if (!propertyValue.HasValue)
+            {
+                return -1;
+            }
+
+            return propertyValue.Value;
         }
 
         private bool IsValidRuleString(string name, string value)
         {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return false;
+            }
+
+            string propertyString = GetPropertyString(name);
+            if (string.IsNullOrWhiteSpace(propertyString))
+            {
+                return false;
+            }
+
+            if (string.Compare(propertyString, value.Trim(), StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                return true;
+            }
+
             return false;
         }
 
         private bool IsValidRuleNum(string name, long value)
         {
+            long? propertyValue = GetPropertyNum(name);
+            if (!propertyValue.HasValue)
+            {
+                return false;
+            }
+
+            if (propertyValue.Value == value)
+            {
+                return true;
+            }
+
             return false;
+        }
+
+        private string GetPropertyString(string name)
+        {
+            if (_propertiesDict == null)
+            {
+                return string.Empty;
+            }
+
+            string key = name.Trim().ToUpperInvariant();
+            if (_propertiesDict.TryGetValue(key, out string value))
+            {
+                return value;
+            }
+            return string.Empty;
+        }
+
+        private long? GetPropertyNum(string name)
+        {
+            string valueString = GetPropertyString(name);
+            if (string.IsNullOrWhiteSpace(valueString))
+            {
+                return null;
+            }
+
+            if (long.TryParse(valueString, NumberStyles.Integer, CultureInfo.InvariantCulture, out long result))
+            {
+                return result;
+            }
+
+            return null;
         }
     }
 }
