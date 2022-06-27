@@ -10,11 +10,6 @@ namespace BmwFileReader
 {
     public class FaultRuleEvalBmw
     {
-        public delegate string RuleStringDelegate(string name);
-        public delegate long RuleNumDelegate(string name);
-        public delegate bool IsValidRuleStringDelegate(string name, string value);
-        public delegate bool IsValidRuleNumDelegate(string name, long value);
-
         public object RuleObject { get; private set; }
         private Dictionary<string, string> _propertiesDict;
 
@@ -42,10 +37,7 @@ using System.Threading;
 
 public class RuleEval
 {{
-    public FaultRuleEvalBmw.RuleStringDelegate RuleStringFunc {{ get; set; }}
-    public FaultRuleEvalBmw.RuleNumDelegate RuleNumFunc {{ get; set; }}
-    public FaultRuleEvalBmw.IsValidRuleStringDelegate IsValidRuleStringFunc {{ get; set; }}
-    public FaultRuleEvalBmw.IsValidRuleNumDelegate IsValidRuleNumFunc {{ get; set; }}
+    public FaultRuleEvalBmw FaultRuleEvalClass {{ get; set; }}
 
     public RuleEval()
     {{
@@ -58,36 +50,36 @@ public class RuleEval
 
     private string RuleString(string name)
     {{
-        if (RuleStringFunc != null)
+        if (FaultRuleEvalClass != null)
         {{
-            return RuleStringFunc(name);
+            return FaultRuleEvalClass.RuleString(name);
         }}
         return string.Empty;
     }}
 
     private long RuleNum(string name)
     {{
-        if (RuleNumFunc != null)
+        if (FaultRuleEvalClass != null)
         {{
-            return RuleNumFunc(name);
+            return FaultRuleEvalClass.RuleNum(name);
         }}
         return -1;
     }}
 
     private bool IsValidRuleString(string name, string value)
     {{
-        if (IsValidRuleStringFunc != null)
+        if (FaultRuleEvalClass != null)
         {{
-            return IsValidRuleStringFunc(name, value);
+            return FaultRuleEvalClass.IsValidRuleString(name, value);
         }}
         return false;
     }}
 
     private bool IsValidRuleNum(string name, long value)
     {{
-        if (IsValidRuleNumFunc != null)
+        if (FaultRuleEvalClass != null)
         {{
-            return IsValidRuleNumFunc(name, value);
+            return FaultRuleEvalClass.IsValidRuleNum(name, value);
         }}
         return false;
     }}
@@ -101,28 +93,10 @@ public class RuleEval
                 }
 
                 Type ruleType = ruleObject.GetType();
-                PropertyInfo propertyRuleString = ruleType.GetProperty("RuleStringFunc");
-                if (propertyRuleString != null)
+                PropertyInfo propertyFaultRuleEvalClass = ruleType.GetProperty("FaultRuleEvalClass");
+                if (propertyFaultRuleEvalClass != null)
                 {
-                    propertyRuleString.SetValue(ruleObject, new RuleStringDelegate(RuleString));
-                }
-
-                PropertyInfo propertyRuleNum = ruleType.GetProperty("RuleNumFunc");
-                if (propertyRuleNum != null)
-                {
-                    propertyRuleNum.SetValue(ruleObject, new RuleNumDelegate(RuleNum));
-                }
-
-                PropertyInfo propertyIsValidRuleString = ruleType.GetProperty("IsValidRuleStringFunc");
-                if (propertyIsValidRuleString != null)
-                {
-                    propertyIsValidRuleString.SetValue(ruleObject, new IsValidRuleStringDelegate(IsValidRuleString));
-                }
-
-                PropertyInfo propertyIsValidRuleNum = ruleType.GetProperty("IsValidRuleNumFunc");
-                if (propertyIsValidRuleNum != null)
-                {
-                    propertyIsValidRuleNum.SetValue(ruleObject, new IsValidRuleNumDelegate(IsValidRuleNum));
+                    propertyFaultRuleEvalClass.SetValue(ruleObject, this);
                 }
 
                 RuleObject = ruleObject;
@@ -174,7 +148,7 @@ public class RuleEval
             }
         }
 
-        private string RuleString(string name)
+        public string RuleString(string name)
         {
             string propertyString = GetPropertyString(name);
             if (string.IsNullOrWhiteSpace(propertyString))
@@ -184,7 +158,7 @@ public class RuleEval
             return propertyString;
         }
 
-        private long RuleNum(string name)
+        public long RuleNum(string name)
         {
             long? propertyValue = GetPropertyNum(name);
             if (!propertyValue.HasValue)
@@ -195,7 +169,7 @@ public class RuleEval
             return propertyValue.Value;
         }
 
-        private bool IsValidRuleString(string name, string value)
+        public bool IsValidRuleString(string name, string value)
         {
             if (string.IsNullOrWhiteSpace(value))
             {
@@ -216,7 +190,7 @@ public class RuleEval
             return false;
         }
 
-        private bool IsValidRuleNum(string name, long value)
+        public bool IsValidRuleNum(string name, long value)
         {
             long? propertyValue = GetPropertyNum(name);
             if (!propertyValue.HasValue)
