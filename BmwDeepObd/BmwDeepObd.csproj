@@ -305,6 +305,9 @@
     <Compile Include="..\EdiabasLib\BmwFileReader\EcuFunctionStructs.cs">
       <Link>EcuFunctionStructs.cs</Link>
     </Compile>
+    <Compile Include="..\EdiabasLib\BmwFileReader\FaultRuleEvalBmw.cs">
+      <Link>FaultRuleEvalBmw.cs</Link>
+    </Compile>
     <Compile Include="..\EdiabasLib\BmwFileReader\SgFunctions.cs">
       <Link>SgFunctions.cs</Link>
     </Compile>
