@@ -29,12 +29,8 @@ namespace BmwFileReader
             try
             {
                 Evaluator evaluator = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter(reportWriter)));
-                evaluator.ReferenceAssembly(Assembly.GetExecutingAssembly());
-                evaluator.ReferenceAssembly(typeof(EdiabasNet).Assembly);
                 string evalCode =
-$@"using EdiabasLib;
-using BmwDeepObd;
-using System;
+$@"using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
