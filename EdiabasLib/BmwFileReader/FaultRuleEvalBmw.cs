@@ -145,6 +145,37 @@ public class RuleEval
             }
         }
 
+        public bool ExecuteRuleEvaluator()
+        {
+            if (RuleObject == null)
+            {
+                return false;
+            }
+
+            try
+            {
+                Type ruleType = RuleObject.GetType();
+                MethodInfo methodIsRuleValid = ruleType.GetMethod("IsRuleValid");
+                if (methodIsRuleValid == null)
+                {
+                    return false;
+                }
+
+                // ReSharper disable once UsePatternMatching
+                bool? valid = methodIsRuleValid.Invoke(RuleObject, null) as bool?;
+                if (!valid.HasValue)
+                {
+                    return false;
+                }
+
+                return valid.Value;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         private string RuleString(string name)
         {
             return string.Empty;
