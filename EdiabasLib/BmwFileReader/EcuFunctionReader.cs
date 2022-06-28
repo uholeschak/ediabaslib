@@ -127,12 +127,31 @@ namespace BmwFileReader
                 return false;
             }
 
-            if (!relevantOnly || ecuFaultCode.Relevance.ConvertToInt() > 0)
+            if (!relevantOnly)
             {
                 return true;
             }
 
-            return false;
+            if (ecuFaultCode.Relevance.ConvertToInt() < 1)
+            {
+                return false;
+            }
+
+            if (_faultRuleEval != null)
+            {
+                Dictionary<string, string> propertiesDict = new Dictionary<string, string>
+                {
+                    { "MARKE", "BMW PKW" },
+                    { "ISTUFEX", "13609356682" },
+                };
+
+                if (!_faultRuleEval.ExecuteRuleEvaluator(ecuFaultCode.Id, propertiesDict))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public EcuFunctionStructs.EcuFaultCodeLabel GetFaultCodeLabel(Int64 errorCode, bool info, EcuFunctionStructs.EcuVariant ecuVariant)
