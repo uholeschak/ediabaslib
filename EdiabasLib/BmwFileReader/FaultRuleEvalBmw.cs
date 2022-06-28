@@ -13,6 +13,7 @@ namespace BmwFileReader
     {
         public object RuleObject { get; private set; }
         private Dictionary<string, string> _propertiesDict;
+        private HashSet<string> _unknownNamesHash = new HashSet<string>();
 
         public FaultRuleEvalBmw()
         {
@@ -62,7 +63,7 @@ $@"         case ""{faultRuleInfo.Id.Trim()}"":
 @"
         }
 
-        return false;
+        return true;
     }
 
     private string RuleString(string name)
@@ -149,10 +150,17 @@ $@"         case ""{faultRuleInfo.Id.Trim()}"":
                 }
 
                 _propertiesDict = propertiesDict;
+                _unknownNamesHash.Clear();
                 // ReSharper disable once UsePatternMatching
                 object[] args = { faultRuleInfo.Id };
                 bool? valid = methodIsRuleValid.Invoke(RuleObject, args) as bool?;
                 _propertiesDict = null;
+
+                if (_unknownNamesHash.Count > 0)
+                {
+                    return true;
+                }
+
                 if (!valid.HasValue)
                 {
                     return false;
@@ -236,6 +244,8 @@ $@"         case ""{faultRuleInfo.Id.Trim()}"":
             {
                 return value;
             }
+
+            _unknownNamesHash.Add(key);
             return string.Empty;
         }
 
