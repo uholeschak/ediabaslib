@@ -28,6 +28,7 @@ namespace BmwFileReader
         private static Dictionary<string, string> _typeKeyDict;
 #endif
         private static VehicleStructsBmw.VehicleSeriesInfoData _vehicleSeriesInfoData;
+        private static VehicleStructsBmw.FaultRulesInfoData _faultRulesInfoData;
 
         public static string FindResourceName(string resourceFileName)
         {
@@ -85,6 +86,39 @@ namespace BmwFileReader
                 }
 
                 return _vehicleSeriesInfoData;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public static VehicleStructsBmw.FaultRulesInfoData ReadFaultRulesInfo()
+        {
+            try
+            {
+                if (_faultRulesInfoData != null)
+                {
+                    return _faultRulesInfoData;
+                }
+
+                string resourceName = FindResourceName(VehicleStructsBmw.FaultRulesXmlFile);
+                if (string.IsNullOrEmpty(resourceName))
+                {
+                    return null;
+                }
+
+                Assembly assembly = Assembly.GetExecutingAssembly();
+                using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+                {
+                    if (stream != null)
+                    {
+                        XmlSerializer serializer = new XmlSerializer(typeof(VehicleStructsBmw.FaultRulesInfoData));
+                        _faultRulesInfoData = serializer.Deserialize(stream) as VehicleStructsBmw.FaultRulesInfoData;
+                    }
+                }
+
+                return _faultRulesInfoData;
             }
             catch (Exception)
             {
