@@ -99,7 +99,7 @@ namespace PsdzClient.Core
             switch (this.compareOperator)
             {
                 case ECompareOperator.EQUAL:
-                    return "=";
+                    return "==";
                 case ECompareOperator.NOT_EQUAL:
                     return "!=";
                 case ECompareOperator.GREATER:
