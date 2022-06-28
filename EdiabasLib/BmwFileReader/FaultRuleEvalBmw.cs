@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using EdiabasLib;
 using Mono.CSharp;
 
@@ -18,7 +19,7 @@ namespace BmwFileReader
             RuleObject = null;
         }
 
-        public bool CreateRuleEvaluator(VehicleStructsBmw.FaultRuleInfo faultRuleInfo, out string errorMessage)
+        public bool CreateRuleEvaluators(List<VehicleStructsBmw.FaultRuleInfo> faultRuleInfoList, out string errorMessage)
         {
             RuleObject = null;
 
@@ -28,64 +29,80 @@ namespace BmwFileReader
             {
                 Evaluator evaluator = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter(reportWriter)));
                 evaluator.ReferenceAssembly(Assembly.GetExecutingAssembly());
-                string evalCode =
-$@"using BmwFileReader;
+                StringBuilder sb = new StringBuilder();
+                sb.Append(
+@"using BmwFileReader;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 
 public class RuleEval
-{{
-    public FaultRuleEvalBmw FaultRuleEvalClass {{ get; set; }}
+{
+    public FaultRuleEvalBmw FaultRuleEvalClass { get; set; }
 
     public RuleEval()
-    {{
-    }}
+    {
+    }
 
-    public bool IsRuleValid()
-    {{
-        return {faultRuleInfo.RuleFormula};
-    }}
+    public bool IsRuleValid(string id)
+    {
+        switch (id.Trim())
+        {
+");
+                foreach (VehicleStructsBmw.FaultRuleInfo faultRuleInfo in faultRuleInfoList)
+                {
+                    sb.Append(
+$@"         case ""{faultRuleInfo.Id.Trim()}"":
+                return {faultRuleInfo.RuleFormula};
+"
+                    );
+                }
+                sb.Append(
+@"
+        }
+
+        return false;
+    }
 
     private string RuleString(string name)
-    {{
+    {
         if (FaultRuleEvalClass != null)
-        {{
+        {
             return FaultRuleEvalClass.RuleString(name);
-        }}
+        }
         return string.Empty;
-    }}
+    }
 
     private long RuleNum(string name)
-    {{
+    {
         if (FaultRuleEvalClass != null)
-        {{
+        {
             return FaultRuleEvalClass.RuleNum(name);
-        }}
+        }
         return -1;
-    }}
+    }
 
     private bool IsValidRuleString(string name, string value)
-    {{
+    {
         if (FaultRuleEvalClass != null)
-        {{
+        {
             return FaultRuleEvalClass.IsValidRuleString(name, value);
-        }}
+        }
         return false;
-    }}
+    }
 
     private bool IsValidRuleNum(string name, long value)
-    {{
+    {
         if (FaultRuleEvalClass != null)
-        {{
+        {
             return FaultRuleEvalClass.IsValidRuleNum(name, value);
-        }}
+        }
         return false;
-    }}
-}}
-";
-                evaluator.Compile(evalCode);
+    }
+}
+");
+                evaluator.Compile(sb.ToString());
                 object ruleObject = evaluator.Evaluate("new RuleEval()");
                 if (ruleObject == null)
                 {
@@ -115,7 +132,7 @@ public class RuleEval
             }
         }
 
-        public bool ExecuteRuleEvaluator(Dictionary<string, string> propertiesDict)
+        public bool ExecuteRuleEvaluator(VehicleStructsBmw.FaultRuleInfo faultRuleInfo, Dictionary<string, string> propertiesDict)
         {
             if (RuleObject == null)
             {
@@ -133,7 +150,8 @@ public class RuleEval
 
                 _propertiesDict = propertiesDict;
                 // ReSharper disable once UsePatternMatching
-                bool? valid = methodIsRuleValid.Invoke(RuleObject, null) as bool?;
+                object[] args = { faultRuleInfo.Id };
+                bool? valid = methodIsRuleValid.Invoke(RuleObject, args) as bool?;
                 _propertiesDict = null;
                 if (!valid.HasValue)
                 {

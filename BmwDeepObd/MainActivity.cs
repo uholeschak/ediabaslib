@@ -4917,10 +4917,12 @@ namespace BmwDeepObd
                         }
 #if false
                         FaultRuleEvalBmw faultRuleEvalBmw = new FaultRuleEvalBmw();
-                        if (!faultRuleEvalBmw.CreateRuleEvaluator(
-                                new VehicleStructsBmw.FaultRuleInfo("5193251851",
-                                    "((IsValidRuleString(\"Marke\", \"BMW PKW\") || IsValidRuleString(\"Marke\", \"MINI PKW\") || IsValidRuleString(\"Marke\", \"ROLLS - ROYCE PKW\")) && !(RuleNum(\"IStufeX\") >= 13609356683))"),
-                                out string errorMessage))
+                        List <VehicleStructsBmw.FaultRuleInfo> faultRuleInfos = new List<VehicleStructsBmw.FaultRuleInfo>()
+                        {
+                            new VehicleStructsBmw.FaultRuleInfo("5193251851",
+                                "((IsValidRuleString(\"Marke\", \"BMW PKW\") || IsValidRuleString(\"Marke\", \"MINI PKW\") || IsValidRuleString(\"Marke\", \"ROLLS - ROYCE PKW\")) && !(RuleNum(\"IStufeX\") >= 13609356683))")
+                        };
+                        if (!faultRuleEvalBmw.CreateRuleEvaluators(faultRuleInfos, out string errorMessage))
                         {
                             lock (compileResultList)
                             {
@@ -4934,7 +4936,7 @@ namespace BmwDeepObd
                                 { "MARKE", "BMW PKW" },
                                 { "ISTUFEX", "13609356682" },
                             };
-                            bool ruleResult = faultRuleEvalBmw.ExecuteRuleEvaluator(propertiesDict);
+                            bool ruleResult = faultRuleEvalBmw.ExecuteRuleEvaluator(faultRuleInfos[0], propertiesDict);
                         }
 #endif
                         if (!string.IsNullOrEmpty(result))
