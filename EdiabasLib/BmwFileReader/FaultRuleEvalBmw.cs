@@ -133,7 +133,7 @@ $@"         case ""{faultRuleInfo.Id.Trim()}"":
             }
         }
 
-        public bool ExecuteRuleEvaluator(VehicleStructsBmw.FaultRuleInfo faultRuleInfo, Dictionary<string, string> propertiesDict)
+        public bool ExecuteRuleEvaluator(string id, Dictionary<string, string> propertiesDict)
         {
             if (RuleObject == null)
             {
@@ -152,7 +152,7 @@ $@"         case ""{faultRuleInfo.Id.Trim()}"":
                 _propertiesDict = propertiesDict;
                 _unknownNamesHash.Clear();
                 // ReSharper disable once UsePatternMatching
-                object[] args = { faultRuleInfo.Id };
+                object[] args = { id };
                 bool? valid = methodIsRuleValid.Invoke(RuleObject, args) as bool?;
                 _propertiesDict = null;
 

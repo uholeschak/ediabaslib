@@ -4915,30 +4915,7 @@ namespace BmwDeepObd
                         {
                             result = reportWriter.ToString();
                         }
-#if false
-                        FaultRuleEvalBmw faultRuleEvalBmw = new FaultRuleEvalBmw();
-                        List <VehicleStructsBmw.FaultRuleInfo> faultRuleInfos = new List<VehicleStructsBmw.FaultRuleInfo>()
-                        {
-                            new VehicleStructsBmw.FaultRuleInfo("5193251851",
-                                "((IsValidRuleString(\"Marke\", \"BMW PKW\") || IsValidRuleString(\"Marke\", \"MINI PKW\") || IsValidRuleString(\"Marke\", \"ROLLS - ROYCE PKW\")) && !(RuleNum(\"IStufeX\") >= 13609356683))")
-                        };
-                        if (!faultRuleEvalBmw.CreateRuleEvaluators(faultRuleInfos, out string errorMessage))
-                        {
-                            lock (compileResultList)
-                            {
-                                compileResultList.Add(errorMessage);
-                            }
-                        }
-                        else
-                        {
-                            Dictionary<string, string> propertiesDict = new Dictionary<string, string>
-                            {
-                                { "MARKE", "BMW PKW" },
-                                { "ISTUFEX", "13609356682" },
-                            };
-                            bool ruleResult = faultRuleEvalBmw.ExecuteRuleEvaluator(faultRuleInfos[0], propertiesDict);
-                        }
-#endif
+
                         if (!string.IsNullOrEmpty(result))
                         {
                             lock (compileResultList)
