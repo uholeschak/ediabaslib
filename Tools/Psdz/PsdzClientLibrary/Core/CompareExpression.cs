@@ -76,7 +76,7 @@ namespace PsdzClient.Core
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(" ");
-            stringBuilder.Append(this.getOperator());
+            stringBuilder.Append(this.GetFormulaOperator());
             stringBuilder.Append(" ");
 
             return stringBuilder.ToString();
@@ -94,12 +94,33 @@ namespace PsdzClient.Core
             });
         }
 
-        private string getOperator()
+        private string GetFormulaOperator()
         {
             switch (this.compareOperator)
             {
                 case ECompareOperator.EQUAL:
                     return "==";
+                case ECompareOperator.NOT_EQUAL:
+                    return "!=";
+                case ECompareOperator.GREATER:
+                    return ">";
+                case ECompareOperator.GREATER_EQUAL:
+                    return ">=";
+                case ECompareOperator.LESS:
+                    return "<";
+                case ECompareOperator.LESS_EQUAL:
+                    return "<=";
+                default:
+                    throw new Exception("Unknown operator");
+            }
+        }
+
+        private string getOperator()
+        {
+            switch (this.compareOperator)
+            {
+                case ECompareOperator.EQUAL:
+                    return "=";
                 case ECompareOperator.NOT_EQUAL:
                     return "!=";
                 case ECompareOperator.GREATER:
