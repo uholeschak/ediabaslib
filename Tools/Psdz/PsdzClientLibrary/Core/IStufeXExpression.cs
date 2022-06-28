@@ -139,11 +139,10 @@ namespace PsdzClient.Core
 
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(FormulaSeparator(formulaConfig));
+            stringBuilder.Append(formulaConfig.GetLongFunc);
+            stringBuilder.Append("(\"IStufeX\") ");
             if (iLevelValue != null)
             {
-                stringBuilder.Append(formulaConfig.GetLongFunc);
-                stringBuilder.Append("(\"IStufeX\") ");
-
                 CompareExpression compareExpression = new CompareExpression(-1, compareOperator, -1);
                 stringBuilder.Append(compareExpression.ToFormula(formulaConfig));
                 stringBuilder.Append(" ");
@@ -151,7 +150,7 @@ namespace PsdzClient.Core
             }
             else
             {
-                stringBuilder.Append("false");
+                stringBuilder.Append(" == -1");
             }
             stringBuilder.Append(FormulaSeparator(formulaConfig));
 
