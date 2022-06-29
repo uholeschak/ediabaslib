@@ -71,10 +71,11 @@ namespace PsdzClient.Core
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(FormulaSeparator(formulaConfig));
-            stringBuilder.Append(formulaConfig.CheckLongFunc);
+            stringBuilder.Append(formulaConfig.CheckStringFunc);
             stringBuilder.Append("(\"IStufe\", ");
-            stringBuilder.Append(value.ToString(CultureInfo.InvariantCulture));
-            stringBuilder.Append(")");
+            stringBuilder.Append("\"");
+            stringBuilder.Append(this.IStufe);
+            stringBuilder.Append("\")");
             stringBuilder.Append(FormulaSeparator(formulaConfig));
 
             return stringBuilder.ToString();
