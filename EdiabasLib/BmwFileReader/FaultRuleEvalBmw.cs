@@ -12,7 +12,7 @@ namespace BmwFileReader
     public class FaultRuleEvalBmw
     {
         public object RuleObject { get; private set; }
-        private Dictionary<string, string> _propertiesDict;
+        private Dictionary<string, string> _propertiesDict = new Dictionary<string, string>();
         private HashSet<string> _unknownNamesHash = new HashSet<string>();
 
         public FaultRuleEvalBmw()
@@ -133,7 +133,7 @@ $@"         case ""{faultRuleInfo.Id.Trim()}"":
             }
         }
 
-        public bool ExecuteRuleEvaluator(string id, Dictionary<string, string> propertiesDict)
+        public bool ExecuteRuleEvaluator(string id)
         {
             if (RuleObject == null)
             {
@@ -149,12 +149,10 @@ $@"         case ""{faultRuleInfo.Id.Trim()}"":
                     return false;
                 }
 
-                _propertiesDict = propertiesDict;
                 _unknownNamesHash.Clear();
                 // ReSharper disable once UsePatternMatching
                 object[] args = { id };
                 bool? valid = methodIsRuleValid.Invoke(RuleObject, args) as bool?;
-                _propertiesDict = null;
 
                 if (_unknownNamesHash.Count > 0)
                 {
@@ -171,6 +169,23 @@ $@"         case ""{faultRuleInfo.Id.Trim()}"":
             catch (Exception)
             {
                 return false;
+            }
+        }
+
+        public void SetEvalProperties(string brand, string vehicleSeries, string iStep)
+        {
+            _propertiesDict.Clear();
+            if (!string.IsNullOrEmpty(brand))
+            {
+                _propertiesDict.Add("MARKE", brand);
+            }
+            if (!string.IsNullOrEmpty(vehicleSeries))
+            {
+                _propertiesDict.Add("E-BEZEICHNUNG", vehicleSeries);
+            }
+            if (!string.IsNullOrEmpty(iStep))
+            {
+                _propertiesDict.Add("ISTUFE", iStep);
             }
         }
 

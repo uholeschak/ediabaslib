@@ -139,13 +139,8 @@ namespace BmwFileReader
 
             if (_faultRuleEval != null)
             {
-                Dictionary<string, string> propertiesDict = new Dictionary<string, string>
-                {
-                    { "MARKE", "BMW PKW" },
-                    { "ISTUFEX", "13609356682" },
-                };
-
-                if (!_faultRuleEval.ExecuteRuleEvaluator(ecuFaultCode.Id, propertiesDict))
+                _faultRuleEval.SetEvalProperties("BMW PKW", "G31","S15A-17-11-540");
+                if (!_faultRuleEval.ExecuteRuleEvaluator(ecuFaultCode.Id))
                 {
                     return false;
                 }
