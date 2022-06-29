@@ -172,20 +172,34 @@ $@"         case ""{faultRuleInfo.Id.Trim()}"":
             }
         }
 
-        public void SetEvalProperties(string brand, string vehicleSeries, string iStep)
+        public void SetEvalProperties(string brand, string vehicleSeries, string iLevel)
         {
             _propertiesDict.Clear();
-            if (!string.IsNullOrEmpty(brand))
+            if (!string.IsNullOrWhiteSpace(brand))
             {
-                _propertiesDict.Add("MARKE", brand);
+                _propertiesDict.Add("MARKE", brand.Trim());
             }
-            if (!string.IsNullOrEmpty(vehicleSeries))
+            if (!string.IsNullOrWhiteSpace(vehicleSeries))
             {
-                _propertiesDict.Add("E-BEZEICHNUNG", vehicleSeries);
+                _propertiesDict.Add("E-BEZEICHNUNG", vehicleSeries.Trim());
             }
-            if (!string.IsNullOrEmpty(iStep))
+            if (!string.IsNullOrWhiteSpace(iLevel))
             {
-                _propertiesDict.Add("ISTUFE", iStep);
+                string iLevelTrim = iLevel.Trim();
+                _propertiesDict.Add("ISTUFE", iLevelTrim.Trim());
+                if (iLevelTrim.Length == 14)
+                {
+                    string iLevelBare = iLevelTrim.Replace("-", string.Empty);
+                    if (iLevelBare.Length == 11)
+                    {
+                        if (Int32.TryParse(iLevelBare.Substring(4), NumberStyles.Integer, CultureInfo.InvariantCulture, out int iLevelValue))
+                        {
+                            _propertiesDict.Add("ISTUFEX", iLevelValue.ToString(CultureInfo.InvariantCulture));
+                        }
+
+                        _propertiesDict.Add("BAUREIHENVERBUND", iLevelBare.Substring(0, 4));
+                    }
+                }
             }
         }
 
