@@ -73,7 +73,7 @@ namespace BmwFileReader
             _bmwDir = bmwDir;
         }
 
-        public bool DetectVehicleBmwFast(CustomProgressDialog progress)
+        public bool DetectVehicleBmwFast()
         {
             _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Try to detect vehicle BMW fast");
             ResetValues();
