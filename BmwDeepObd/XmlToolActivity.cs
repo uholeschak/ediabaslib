@@ -2248,9 +2248,42 @@ namespace BmwDeepObd
                 string ecuFileNameBest = null;
                 List<string> ecuFileNameList = null;
 
+                DetectVehileBmw detectVehileBmw = new DetectVehileBmw(_ediabas, _bmwDir);
+                detectVehileBmw.AbortFunc = () => _ediabasJobAbort;
+                detectVehileBmw.ProgressFunc = percent =>
+                {
+                    RunOnUiThread(() =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+                        if (progress != null)
+                        {
+                            progress.Progress = percent;
+                        }
+                    });
+                };
+
+#if true
+                string groupSgbd = null;
+                string detectedVin = null;
+                if (detectVehileBmw.DetectVehicleBmwFast())
+                {
+                    groupSgbd = detectVehileBmw.GroupSgdb;
+                    detectedVin = detectVehileBmw.Vin;
+                    _instanceData.VehicleType = detectVehileBmw.Series;
+                    _instanceData.CDate = null;
+                    if (detectVehileBmw.ConstructYear != null && detectVehileBmw.ConstructMonth != null)
+                    {
+                        _instanceData.CDate = detectVehileBmw.ConstructYear + "-" + detectVehileBmw.ConstructMonth;
+                    }
+                }
+#else
                 string groupSgbd = DetectVehicleBmwFast(progress, out string detectedVin, out string vehicleType, out string cDate);
                 _instanceData.VehicleType = vehicleType;
                 _instanceData.CDate = cDate;
+#endif
                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                 if (!string.IsNullOrEmpty(groupSgbd))
                 {
@@ -2616,16 +2649,16 @@ namespace BmwDeepObd
                 bool pin78ConnRequire = false;
                 if (!_ediabasJobAbort && ecuListBest == null && !elmDevice)
                 {
-                    ecuListBest = DetectVehicleDs2(progress, out detectedVin, out vehicleType, out cDate, out pin78ConnRequire);
-                    _instanceData.VehicleType = vehicleType;
-                    _instanceData.CDate = cDate;
+                    ecuListBest = DetectVehicleDs2(progress, out string detectedVinDs2, out string vehicleTypeDs2, out string cDateDs2, out pin78ConnRequire);
+                    _instanceData.VehicleType = vehicleTypeDs2;
+                    _instanceData.CDate = cDateDs2;
                     if (ecuListBest != null)
                     {
                         _ecuList.AddRange(ecuListBest.OrderBy(x => x.Name));
                         // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                        if (!string.IsNullOrEmpty(detectedVin))
+                        if (!string.IsNullOrEmpty(detectedVinDs2))
                         {
-                            _instanceData.Vin = detectedVin;
+                            _instanceData.Vin = detectedVinDs2;
                         }
                         else
                         {
