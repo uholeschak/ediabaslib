@@ -2755,7 +2755,7 @@ namespace BmwDeepObd
                     }
                 });
 
-                int jobCount = ReadVinJobsDs2.Length + ReadIdentJobsBmwFast.Length;
+                int jobCount = ReadVinJobsBmwFast.Length + ReadIdentJobsBmwFast.Length;
                 int index = 0;
                 foreach (Tuple<string, string, string> job in ReadVinJobsBmwFast)
                 {
