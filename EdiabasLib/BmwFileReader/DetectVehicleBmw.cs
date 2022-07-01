@@ -675,6 +675,21 @@ namespace BmwFileReader
             }
         }
 
+        public bool IsDs2GroupSgbd(string name)
+        {
+            string nameTrim = name.Trim();
+            string[] groupArray = AllDs2GroupFiles.Split(',');
+            foreach (string group in groupArray)
+            {
+                if (string.Compare(group, nameTrim, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private void ResetValues()
         {
             Vin = null;
