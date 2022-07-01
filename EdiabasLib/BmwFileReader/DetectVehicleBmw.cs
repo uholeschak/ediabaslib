@@ -12,7 +12,7 @@ using EdiabasLib;
 
 namespace BmwFileReader
 {
-    public class DetectVehileBmw
+    public class DetectVehicleBmw
     {
         public delegate bool AbortDelegate();
         public delegate void ProgressDelegate(int percent);
@@ -79,7 +79,7 @@ namespace BmwFileReader
             "D_0012", "D_MOTOR", "D_0010", "D_0013", "D_0014"
         };
 
-        public DetectVehileBmw(EdiabasNet ediabas, string bmwDir)
+        public DetectVehicleBmw(EdiabasNet ediabas, string bmwDir)
         {
             _ediabas = ediabas;
             _bmwDir = bmwDir;
@@ -425,14 +425,13 @@ namespace BmwFileReader
             }
         }
 
-        private bool DetectVehicleDs2()
+        public bool DetectVehicleDs2()
         {
             _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Try to detect DS2 vehicle");
             ResetValues();
 
             try
             {
-                List<JobReader.EcuInfo> ecuList = new List<JobReader.EcuInfo>();
                 List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
 
                 ProgressFunc?.Invoke(0);
@@ -657,6 +656,11 @@ namespace BmwFileReader
                             // ignored
                         }
                     }
+                }
+
+                if (string.IsNullOrEmpty(vehicleType))
+                {
+                    vehicleType = VehicleInfoBmw.GetVehicleTypeFromVin(detectedVin, _ediabas, _bmwDir);
                 }
 
                 Series = vehicleType;
