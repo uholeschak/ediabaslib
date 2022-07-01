@@ -2643,11 +2643,10 @@ namespace BmwDeepObd
                 bool pin78ConnRequire = false;
                 if (!_ediabasJobAbort && ecuListBest == null && !elmDevice)
                 {
-                    string detectedVinDs2 = null;
 #if false
                     if (detectVehicleBmw.DetectVehicleDs2())
                     {
-                        detectedVinDs2 = detectVehicleBmw.Vin;
+                        _instanceData.Vin = detectVehicleBmw.Vin;
                         _instanceData.VehicleType = detectVehicleBmw.Series;
                         _instanceData.CDate = null;
                         if (detectVehicleBmw.ConstructYear != null)
@@ -2655,10 +2654,11 @@ namespace BmwDeepObd
                             _instanceData.CDate = detectVehicleBmw.ConstructYear;
                         }
 
-                        ecuListBest = DetectDs2Ecus(progress, detectedVinDs2, detectVehicleBmw.Series, detectVehicleBmw.Ds2GroupFiles);
+                        ecuListBest = DetectDs2Ecus(progress, detectVehicleBmw.Series, detectVehicleBmw.Ds2GroupFiles);
                     }
 #else
-                    ecuListBest = DetectVehicleDs2(progress, out detectedVinDs2, out string vehicleTypeDs2, out string cDateDs2, out pin78ConnRequire);
+                    ecuListBest = DetectVehicleDs2(progress, out string detectedVinDs2, out string vehicleTypeDs2, out string cDateDs2, out pin78ConnRequire);
+                    _instanceData.Vin = detectVehicleBmw.Vin;
                     _instanceData.VehicleType = vehicleTypeDs2;
                     _instanceData.CDate = cDateDs2;
 #endif
@@ -2666,11 +2666,7 @@ namespace BmwDeepObd
                     {
                         _ecuList.AddRange(ecuListBest.OrderBy(x => x.Name));
                         // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                        if (!string.IsNullOrEmpty(detectedVinDs2))
-                        {
-                            _instanceData.Vin = detectedVinDs2;
-                        }
-                        else
+                        if (string.IsNullOrEmpty(_instanceData.Vin))
                         {
                             _instanceData.Vin = GetBestVin(_ecuList);
                         }
@@ -3274,7 +3270,7 @@ namespace BmwDeepObd
             }
         }
 
-        private List<EcuInfo> DetectDs2Ecus(CustomProgressDialog progress, string vin, string vehicleType, string groupFiles)
+        private List<EcuInfo> DetectDs2Ecus(CustomProgressDialog progress, string vehicleType, string groupFiles)
         {
             _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Get DS2 ecu list");
 
@@ -3284,9 +3280,8 @@ namespace BmwDeepObd
 
                 if (!string.IsNullOrEmpty(groupFiles))
                 {
-                    if (!string.IsNullOrEmpty(vin))
+                    if (!string.IsNullOrEmpty(_instanceData.Vin))
                     {
-                        _instanceData.Vin = vin;
                         ReadAllXml(true);
                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ECUs found for VIN: {0}", _ecuList.Count);
                         bool readEcus = true;
