@@ -526,8 +526,6 @@ namespace BmwDeepObd
             new byte[] {0x09, 0x02},    // VIN
         };
 
-        private readonly Regex _vinRegex = new Regex(@"^(?!0{7,})([a-zA-Z0-9]{7,})$");
-
         public const int VagUdsRawDataOffset = 18;
         public const string EmptyMwTab = "-";
         public const string VagUdsCommonSgbd = @"mot7000";
@@ -2575,7 +2573,7 @@ namespace BmwDeepObd
                                             ecuVin = (string)resultData.OpData;
                                         }
                                     }
-                                    if (!string.IsNullOrEmpty(ecuVin) && _vinRegex.IsMatch(ecuVin))
+                                    if (!string.IsNullOrEmpty(ecuVin) && DetectVehicleBmw.VinRegex.IsMatch(ecuVin))
                                     {
                                         foreach (EcuInfo ecuInfo in _ecuList)
                                         {
@@ -2957,7 +2955,7 @@ namespace BmwDeepObd
                                                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VIN found: {0}", ecuVin);
                                             }
                                         }
-                                        if (!string.IsNullOrEmpty(ecuVin) && _vinRegex.IsMatch(ecuVin))
+                                        if (!string.IsNullOrEmpty(ecuVin) && DetectVehicleBmw.VinRegex.IsMatch(ecuVin))
                                         {
                                             _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "VIN valid");
                                             ecuInfo.Vin = ecuVin;
@@ -5053,7 +5051,7 @@ namespace BmwDeepObd
                                             if (resultData.OpData is string text)
                                             {
                                                 string vin = text.TrimEnd();
-                                                if (_vinRegex.IsMatch(vin))
+                                                if (DetectVehicleBmw.VinRegex.IsMatch(vin))
                                                 {
                                                     ecuInfo.Vin = vin;
                                                 }
@@ -5239,7 +5237,7 @@ namespace BmwDeepObd
                         switch (udsInfo.Item1)
                         {
                             case VagUdsS22DataType.Vin:
-                                if (_vinRegex.IsMatch(dataString ?? string.Empty))
+                                if (DetectVehicleBmw.VinRegex.IsMatch(dataString ?? string.Empty))
                                 {
                                     ecuInfo.Vin = dataString;
                                 }
