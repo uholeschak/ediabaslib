@@ -17,7 +17,6 @@ using Android.Views;
 using Android.Widget;
 using BmwDeepObd.FilePicker;
 using EdiabasLib;
-using System.Collections.ObjectModel;
 using AndroidX.AppCompat.App;
 using BmwFileReader;
 
