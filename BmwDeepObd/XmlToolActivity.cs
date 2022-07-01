@@ -2247,9 +2247,9 @@ namespace BmwDeepObd
                 string ecuFileNameBest = null;
                 List<string> ecuFileNameList = null;
 
-                DetectVehileBmw detectVehileBmw = new DetectVehileBmw(_ediabas, _bmwDir);
-                detectVehileBmw.AbortFunc = () => _ediabasJobAbort;
-                detectVehileBmw.ProgressFunc = percent =>
+                DetectVehicleBmw detectVehicleBmw = new DetectVehicleBmw(_ediabas, _bmwDir);
+                detectVehicleBmw.AbortFunc = () => _ediabasJobAbort;
+                detectVehicleBmw.ProgressFunc = percent =>
                 {
                     RunOnUiThread(() =>
                     {
@@ -2266,15 +2266,15 @@ namespace BmwDeepObd
 
                 string groupSgbd = null;
                 string detectedVin = null;
-                if (detectVehileBmw.DetectVehicleBmwFast())
+                if (detectVehicleBmw.DetectVehicleBmwFast())
                 {
-                    groupSgbd = detectVehileBmw.GroupSgdb;
-                    detectedVin = detectVehileBmw.Vin;
-                    _instanceData.VehicleType = detectVehileBmw.Series;
+                    groupSgbd = detectVehicleBmw.GroupSgdb;
+                    detectedVin = detectVehicleBmw.Vin;
+                    _instanceData.VehicleType = detectVehicleBmw.Series;
                     _instanceData.CDate = null;
-                    if (detectVehileBmw.ConstructYear != null && detectVehileBmw.ConstructMonth != null)
+                    if (detectVehicleBmw.ConstructYear != null && detectVehicleBmw.ConstructMonth != null)
                     {
-                        _instanceData.CDate = detectVehileBmw.ConstructYear + "-" + detectVehileBmw.ConstructMonth;
+                        _instanceData.CDate = detectVehicleBmw.ConstructYear + "-" + detectVehicleBmw.ConstructMonth;
                     }
                 }
 
@@ -2643,9 +2643,25 @@ namespace BmwDeepObd
                 bool pin78ConnRequire = false;
                 if (!_ediabasJobAbort && ecuListBest == null && !elmDevice)
                 {
-                    ecuListBest = DetectVehicleDs2(progress, out string detectedVinDs2, out string vehicleTypeDs2, out string cDateDs2, out pin78ConnRequire);
+                    string detectedVinDs2 = null;
+#if false
+                    if (detectVehicleBmw.DetectVehicleDs2())
+                    {
+                        detectedVinDs2 = detectVehicleBmw.Vin;
+                        _instanceData.VehicleType = detectVehicleBmw.Series;
+                        _instanceData.CDate = null;
+                        if (detectVehicleBmw.ConstructYear != null)
+                        {
+                            _instanceData.CDate = detectVehicleBmw.ConstructYear;
+                        }
+
+                        ecuListBest = DetectDs2Ecus(progress, detectedVinDs2, detectVehicleBmw.Series, detectVehicleBmw.Ds2GroupFiles);
+                    }
+#else
+                    ecuListBest = DetectVehicleDs2(progress, out detectedVinDs2, out string vehicleTypeDs2, out string cDateDs2, out pin78ConnRequire);
                     _instanceData.VehicleType = vehicleTypeDs2;
                     _instanceData.CDate = cDateDs2;
+#endif
                     if (ecuListBest != null)
                     {
                         _ecuList.AddRange(ecuListBest.OrderBy(x => x.Name));
@@ -3209,6 +3225,249 @@ namespace BmwDeepObd
                                 _ediabas.ExecuteJob("AIF_LESEN");
 
                                 resultSets = _ediabas.ResultSets;
+                                if (resultSets != null && resultSets.Count >= 2)
+                                {
+                                    int dictIndex = 0;
+                                    foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+                                    {
+                                        if (dictIndex == 0)
+                                        {
+                                            dictIndex++;
+                                            continue;
+                                        }
+                                        string ecuVin = string.Empty;
+                                        if (resultDict.TryGetValue("AIF_FG_NR", out EdiabasNet.ResultData resultData))
+                                        {
+                                            if (resultData.OpData is string)
+                                            {
+                                                ecuVin = (string)resultData.OpData;
+                                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VIN found: {0}", ecuVin);
+                                            }
+                                        }
+                                        if (!string.IsNullOrEmpty(ecuVin) && _vinRegex.IsMatch(ecuVin))
+                                        {
+                                            _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "VIN valid");
+                                            ecuInfo.Vin = ecuVin;
+                                            break;
+                                        }
+                                        dictIndex++;
+                                    }
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                        }
+                        index++;
+                    }
+                }
+                if (ecuList.Count == 0)
+                {
+                    return null;
+                }
+                return ecuList;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        private List<EcuInfo> DetectDs2Ecus(CustomProgressDialog progress, string vin, string vehicleType, string groupFiles)
+        {
+            _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Get DS2 ecu list");
+
+            try
+            {
+                List<EcuInfo> ecuList = new List<EcuInfo>();
+
+                if (!string.IsNullOrEmpty(groupFiles))
+                {
+                    if (!string.IsNullOrEmpty(vin))
+                    {
+                        _instanceData.Vin = vin;
+                        ReadAllXml(true);
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ECUs found for VIN: {0}", _ecuList.Count);
+                        bool readEcus = true;
+                        if (_ecuList.Count > 0)
+                        {
+                            readEcus = false;
+                            Semaphore waitSem = new Semaphore(0, 1);
+                            RunOnUiThread(() =>
+                            {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
+                                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                                builder.SetMessage(Resource.String.xml_tool_read_ecu_again);
+                                builder.SetTitle(Resource.String.alert_title_question);
+                                builder.SetPositiveButton(Resource.String.button_yes, (s, e) =>
+                                {
+                                    readEcus = true;
+                                });
+                                builder.SetNegativeButton(Resource.String.button_no, (s, e) =>
+                                {
+                                    readEcus = false;
+                                });
+                                AlertDialog alertDialog = builder.Show();
+                                alertDialog.DismissEvent += (sender, args) =>
+                                {
+                                    if (_activityCommon == null)
+                                    {
+                                        return;
+                                    }
+                                    waitSem.Release();
+                                };
+                            });
+                            waitSem.WaitOne();
+                        }
+                        if (!readEcus)
+                        {
+                            _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Keep existing ECU list");
+                            ecuList = new List<EcuInfo>(_ecuList);
+                            ClearEcuList();
+                            foreach (EcuInfo ecuInfo in ecuList)
+                            {
+                                try
+                                {
+                                    ActivityCommon.ResolveSgbdFile(_ediabas, ecuInfo.Sgbd);
+
+                                    _ediabas.ArgString = string.Empty;
+                                    _ediabas.ArgBinaryStd = null;
+                                    _ediabas.ResultsRequests = string.Empty;
+                                    _ediabas.NoInitForVJobs = true;
+                                    _ediabas.ExecuteJob("_VERSIONINFO");
+
+                                    string title = null;
+                                    if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
+                                    {
+                                        string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
+                                        EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
+                                        if (ecuVariant == null)
+                                        {
+                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No ECU variant found for: {0}", ecuSgbdName);
+                                        }
+                                        else
+                                        {
+                                            title = ecuVariant.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                        }
+                                    }
+
+                                    if (string.IsNullOrEmpty(title))
+                                    {
+                                        ecuInfo.Description = GetEcuComment(_ediabas.ResultSets);
+                                    }
+                                    else
+                                    {
+                                        ecuInfo.PageName = title;
+                                        ecuInfo.Description = title;
+                                        ecuInfo.DescriptionTransRequired = false;
+                                    }
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
+                            }
+                            return ecuList;
+                        }
+                        _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Read ECU list from vehicle");
+                        ClearEcuList();
+                    }
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Group files: {0}", groupFiles);
+
+                    string[] groupArray = groupFiles.Split(',');
+                    List<string> groupList;
+                    VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(vehicleType, null, _ediabas);
+                    if (vehicleSeriesInfo != null)
+                    {
+                        groupList = new List<string>();
+                        foreach (string group in groupArray)
+                        {
+                            VehicleStructsBmw.VehicleEcuInfo ecuInfo = VehicleInfoBmw.GetEcuInfoByGroupName(vehicleSeriesInfo, group);
+                            if (ecuInfo != null)
+                            {
+                                groupList.Add(group);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        groupList = groupArray.ToList();
+                    }
+
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Final group list: {0}", string.Join(",", groupList.ToArray()));
+
+                    int index = 0;
+                    foreach (string ecuGroup in groupList)
+                    {
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detect ECU: {0}", ecuGroup);
+                        string ecuName = string.Empty;
+                        string ecuDesc = string.Empty;
+                        if (_ediabasJobAbort)
+                        {
+                            break;
+                        }
+
+                        try
+                        {
+                            int localIndex = index;
+                            RunOnUiThread(() =>
+                            {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
+                                if (progress != null)
+                                {
+                                    progress.Progress = 100 * localIndex / groupList.Count;
+                                }
+                            });
+
+                            ActivityCommon.ResolveSgbdFile(_ediabas, ecuGroup);
+
+                            _ediabas.ArgString = string.Empty;
+                            _ediabas.ArgBinaryStd = null;
+                            _ediabas.ResultsRequests = string.Empty;
+                            _ediabas.NoInitForVJobs = true;
+                            _ediabas.ExecuteJob("_VERSIONINFO");
+
+                            ecuDesc = GetEcuComment(_ediabas.ResultSets);
+
+                            _ediabas.ExecuteJob("IDENT");
+
+                            ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName) ?? string.Empty;
+                        }
+                        catch (Exception)
+                        {
+                            _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "No ECU response");
+                            // ignored
+                        }
+
+                        EcuInfo ecuInfo = null;
+                        if (!string.IsNullOrEmpty(ecuName))
+                        {
+                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ECU name: {0}", ecuName);
+                            bool ecuPresent = ecuList.Any(ecuInfoTemp => string.Compare(ecuInfoTemp.Sgbd, ecuName, StringComparison.OrdinalIgnoreCase) == 0);
+                            if (!ecuPresent)
+                            {
+                                ecuInfo = new EcuInfo(ecuName.ToUpperInvariant(), 0, ecuDesc, ecuName, ecuGroup);
+                                ecuList.Add(ecuInfo);
+                            }
+                        }
+
+                        if (ecuInfo != null)
+                        {
+                            try
+                            {
+                                _ediabas.ArgString = string.Empty;
+                                _ediabas.ArgBinaryStd = null;
+                                _ediabas.ResultsRequests = string.Empty;
+                                _ediabas.ExecuteJob("AIF_LESEN");
+
+                                List<Dictionary<string, EdiabasNet.ResultData>> resultSets =_ediabas.ResultSets;
                                 if (resultSets != null && resultSets.Count >= 2)
                                 {
                                     int dictIndex = 0;
