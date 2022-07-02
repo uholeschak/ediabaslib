@@ -4930,7 +4930,7 @@ namespace BmwDeepObd
 
                 ecuInfo.InitReadValues();
 
-                int maxIndex = 5;
+                int maxIndex = 6;
                 for (int index = 0; index <= maxIndex; index++)
                 {
                     int indexLocal = index;
