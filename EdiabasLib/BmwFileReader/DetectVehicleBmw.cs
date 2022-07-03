@@ -1,19 +1,67 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
+using System.IO;
 using System.Text.RegularExpressions;
+using System.Xml.Serialization;
 using BmwDeepObd;
 using EdiabasLib;
-
-// ReSharper disable UnusedMemberInSuper.Global
-// ReSharper disable UnusedMember.Global
-// ReSharper disable IdentifierTypo
-// ReSharper disable StringLiteralTypo
 
 namespace BmwFileReader
 {
     public class DetectVehicleBmw
     {
+        [XmlType("VehicleDataBmw")]
+        public class VehicleDataBmw
+        {
+            public VehicleDataBmw()
+            {
+            }
+
+            public VehicleDataBmw(DetectVehicleBmw detectVehicleBmw)
+            {
+                Ds2Vehicle = detectVehicleBmw.Ds2Vehicle;
+                Vin = detectVehicleBmw.Vin;
+                GroupSgdb = detectVehicleBmw.GroupSgdb;
+                ModelSeries = detectVehicleBmw.ModelSeries;
+                Series = detectVehicleBmw.Series;
+                Ds2GroupFiles = detectVehicleBmw.Ds2GroupFiles;
+                ConstructYear = detectVehicleBmw.ConstructYear;
+                ConstructMonth = detectVehicleBmw.ConstructMonth;
+                ILevelShip = detectVehicleBmw.ILevelShip;
+                ILevelCurrent = detectVehicleBmw.ILevelCurrent;
+                ILevelBackup = detectVehicleBmw.ILevelBackup;
+            }
+
+            public void Restore(DetectVehicleBmw detectVehicleBmw)
+            {
+                detectVehicleBmw.Ds2Vehicle = Ds2Vehicle;
+                detectVehicleBmw.Vin = Vin;
+                detectVehicleBmw.GroupSgdb = GroupSgdb;
+                detectVehicleBmw.ModelSeries = ModelSeries;
+                detectVehicleBmw.Series = Series;
+                detectVehicleBmw.Ds2GroupFiles = Ds2GroupFiles;
+                detectVehicleBmw.ConstructYear = ConstructYear;
+                detectVehicleBmw.ConstructMonth = ConstructMonth;
+                detectVehicleBmw.ILevelShip = ILevelShip;
+                detectVehicleBmw.ILevelCurrent = ILevelCurrent;
+                detectVehicleBmw.ILevelBackup = ILevelBackup;
+            }
+
+            [XmlElement("Ds2Vehicle"), DefaultValue(false)] public bool Ds2Vehicle { get; set; }
+            [XmlElement("Vin"), DefaultValue(null)] public string Vin { get; set; }
+            [XmlElement("GroupSgdb"), DefaultValue(null)] public string GroupSgdb { get; set; }
+            [XmlElement("ModelSeries"), DefaultValue(null)] public string ModelSeries { get; set; }
+            [XmlElement("Series"), DefaultValue(null)] public string Series { get; set; }
+            [XmlElement("Ds2GroupFiles"), DefaultValue(null)] public string Ds2GroupFiles { get; set; }
+            [XmlElement("ConstructYear"), DefaultValue(null)] public string ConstructYear { get; set; }
+            [XmlElement("ConstructMonth"), DefaultValue(null)] public string ConstructMonth { get; set; }
+            [XmlElement("ILevelShip"), DefaultValue(null)] public string ILevelShip { get; set; }
+            [XmlElement("ILevelCurrent"), DefaultValue(null)] public string ILevelCurrent { get; set; }
+            [XmlElement("ILevelBackup"), DefaultValue(null)] public string ILevelBackup { get; set; }
+        }
+
         public delegate bool AbortDelegate();
         public delegate void ProgressDelegate(int percent);
 
@@ -675,6 +723,58 @@ namespace BmwFileReader
             {
                 return false;
             }
+        }
+
+        public bool SaveDataToFile(string fileName)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(Series))
+                {
+                    return false;
+                }
+
+                VehicleDataBmw vehicleDataBmw = new VehicleDataBmw(this);
+                XmlSerializer serializer = new XmlSerializer(typeof(VehicleDataBmw));
+                using (FileStream fileStream = File.Create(fileName))
+                {
+                    serializer.Serialize(fileStream, vehicleDataBmw);
+                }
+            }
+            catch (Exception ex)
+            {
+                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "SaveDataToFile Exception: {0}", EdiabasNet.GetExceptionText(ex));
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool LoadDataFromFile(string fileName)
+        {
+            try
+            {
+                ResetValues();
+
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(VehicleDataBmw));
+                using (StreamReader sr = new StreamReader(fileName))
+                {
+                    VehicleDataBmw vehicleDataBmw = xmlSerializer.Deserialize(sr) as VehicleDataBmw;
+                    if (vehicleDataBmw == null)
+                    {
+                        return false;
+                    }
+
+                    vehicleDataBmw.Restore(this);
+                }
+            }
+            catch (Exception ex)
+            {
+                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "LoadDataFromFile Exception: {0}", EdiabasNet.GetExceptionText(ex));
+                return false;
+            }
+
+            return true;
         }
 
         public bool IsDs2GroupSgbd(string name)
