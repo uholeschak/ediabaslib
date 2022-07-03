@@ -20,6 +20,7 @@ namespace BmwFileReader
         public AbortDelegate AbortFunc { get; set; }
         public ProgressDelegate ProgressFunc { get; set; }
 
+        public bool Ds2Vehicle { get; private set; }
         public string Vin { get; private set; }
         public string GroupSgdb { get; private set; }
         public string ModelSeries { get; private set; }
@@ -340,11 +341,6 @@ namespace BmwFileReader
                         resultSets = _ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
                         {
-                            if (detectedVin == null)
-                            {
-                                detectedVin = string.Empty;
-                            }
-
                             Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
                             if (resultDict.TryGetValue("STAT_I_STUFE_WERK", out EdiabasNet.ResultData resultData))
                             {
@@ -417,6 +413,7 @@ namespace BmwFileReader
                     ILevelBackup = iLevelBackup;
                 }
 
+                Ds2Vehicle = false;
                 return true;
             }
             catch (Exception)
@@ -671,6 +668,7 @@ namespace BmwFileReader
                     return false;
                 }
 
+                Ds2Vehicle = true;
                 return true;
             }
             catch (Exception)
@@ -696,6 +694,7 @@ namespace BmwFileReader
 
         private void ResetValues()
         {
+            Ds2Vehicle = false;
             Vin = null;
             GroupSgdb = null;
             ModelSeries = null;
