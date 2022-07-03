@@ -15,17 +15,21 @@ namespace BmwFileReader
         [XmlType("VehicleDataBmw")]
         public class VehicleDataBmw
         {
+            public const int DataVersion = 1;
+
             public VehicleDataBmw()
             {
             }
 
             public VehicleDataBmw(DetectVehicleBmw detectVehicleBmw)
             {
+                Version = DataVersion;
                 Ds2Vehicle = detectVehicleBmw.Ds2Vehicle;
                 Vin = detectVehicleBmw.Vin;
                 GroupSgdb = detectVehicleBmw.GroupSgdb;
                 ModelSeries = detectVehicleBmw.ModelSeries;
                 Series = detectVehicleBmw.Series;
+                Brand = detectVehicleBmw.Brand;
                 Ds2GroupFiles = detectVehicleBmw.Ds2GroupFiles;
                 ConstructYear = detectVehicleBmw.ConstructYear;
                 ConstructMonth = detectVehicleBmw.ConstructMonth;
@@ -34,26 +38,36 @@ namespace BmwFileReader
                 ILevelBackup = detectVehicleBmw.ILevelBackup;
             }
 
-            public void Restore(DetectVehicleBmw detectVehicleBmw)
+            public bool Restore(DetectVehicleBmw detectVehicleBmw)
             {
+                if (Version != DataVersion)
+                {
+                    return false;
+                }
+
                 detectVehicleBmw.Ds2Vehicle = Ds2Vehicle;
                 detectVehicleBmw.Vin = Vin;
                 detectVehicleBmw.GroupSgdb = GroupSgdb;
                 detectVehicleBmw.ModelSeries = ModelSeries;
                 detectVehicleBmw.Series = Series;
+                detectVehicleBmw.Brand = Brand;
                 detectVehicleBmw.Ds2GroupFiles = Ds2GroupFiles;
                 detectVehicleBmw.ConstructYear = ConstructYear;
                 detectVehicleBmw.ConstructMonth = ConstructMonth;
                 detectVehicleBmw.ILevelShip = ILevelShip;
                 detectVehicleBmw.ILevelCurrent = ILevelCurrent;
                 detectVehicleBmw.ILevelBackup = ILevelBackup;
+
+                return true;
             }
 
+            [XmlElement("Version")] public int Version { get; set; }
             [XmlElement("Ds2Vehicle"), DefaultValue(false)] public bool Ds2Vehicle { get; set; }
             [XmlElement("Vin"), DefaultValue(null)] public string Vin { get; set; }
             [XmlElement("GroupSgdb"), DefaultValue(null)] public string GroupSgdb { get; set; }
             [XmlElement("ModelSeries"), DefaultValue(null)] public string ModelSeries { get; set; }
             [XmlElement("Series"), DefaultValue(null)] public string Series { get; set; }
+            [XmlElement("Brand"), DefaultValue(null)] public string Brand { get; set; }
             [XmlElement("Ds2GroupFiles"), DefaultValue(null)] public string Ds2GroupFiles { get; set; }
             [XmlElement("ConstructYear"), DefaultValue(null)] public string ConstructYear { get; set; }
             [XmlElement("ConstructMonth"), DefaultValue(null)] public string ConstructMonth { get; set; }
@@ -74,6 +88,7 @@ namespace BmwFileReader
         public string GroupSgdb { get; private set; }
         public string ModelSeries { get; private set; }
         public string Series { get; private set; }
+        public string Brand { get; private set; }
         public string Ds2GroupFiles { get; private set; }
         public string ConstructYear { get; private set; }
         public string ConstructMonth { get; private set; }
@@ -359,6 +374,7 @@ namespace BmwFileReader
                 }
                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Group SGBD: {0}", vehicleSeriesInfo.BrSgbd);
                 GroupSgdb = vehicleSeriesInfo.BrSgbd;
+                Brand = vehicleSeriesInfo.Brand;
 
                 string iLevelShip = null;
                 string iLevelCurrent = null;
@@ -771,8 +787,10 @@ namespace BmwFileReader
                         return false;
                     }
 
-                    vehicleDataBmw.Restore(this);
-                    Valid = true;
+                    if (vehicleDataBmw.Restore(this))
+                    {
+                        Valid = true;
+                    }
                 }
             }
             catch (Exception ex)
@@ -781,7 +799,7 @@ namespace BmwFileReader
                 return false;
             }
 
-            return true;
+            return Valid;
         }
 
         public bool IsDs2GroupSgbd(string name)
@@ -807,6 +825,7 @@ namespace BmwFileReader
             GroupSgdb = null;
             ModelSeries = null;
             Series = null;
+            Brand = null;
             Ds2GroupFiles = null;
             ConstructYear = null;
             ConstructMonth = null;

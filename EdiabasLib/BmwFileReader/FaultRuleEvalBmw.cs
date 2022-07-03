@@ -172,7 +172,7 @@ $@"         case ""{faultRuleInfo.Id.Trim()}"":
             }
         }
 
-        public void SetEvalProperties(string brand, string vehicleSeries, string iLevel)
+        public void SetEvalProperties(string brand = null, string vehicleSeries = null, string iLevel = null)
         {
             _propertiesDict.Clear();
             if (!string.IsNullOrWhiteSpace(brand))

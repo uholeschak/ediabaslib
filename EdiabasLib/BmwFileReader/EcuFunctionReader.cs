@@ -115,6 +115,24 @@ namespace BmwFileReader
             return fixedFuncStructList;
         }
 
+        public bool UpdateFaultRuleProperties(DetectVehicleBmw detectVehicleBmw)
+        {
+            if (_faultRuleEval == null)
+            {
+                return false;
+            }
+
+            if (detectVehicleBmw == null || !detectVehicleBmw.Valid)
+            {
+                _faultRuleEval.SetEvalProperties();
+                return false;
+            }
+
+            _faultRuleEval.SetEvalProperties(detectVehicleBmw.Brand, detectVehicleBmw.Series, detectVehicleBmw.ILevelCurrent);
+
+            return true;
+        }
+
         public bool IsValidFaultCode(Int64 errorCode, bool info, EcuFunctionStructs.EcuVariant ecuVariant, bool relevantOnly = false)
         {
             if (errorCode == 0x0000)
@@ -139,7 +157,6 @@ namespace BmwFileReader
 
             if (_faultRuleEval != null)
             {
-                _faultRuleEval.SetEvalProperties("BMW PKW", "G31","S15A-17-11-540");
                 if (!_faultRuleEval.ExecuteRuleEvaluator(ecuFaultCode.Id))
                 {
                     return false;
