@@ -303,6 +303,7 @@ namespace BmwDeepObd
         private string _vehicleSeries = string.Empty;
         private string _manufacturerName = string.Empty;
         private string _xmlFileNamePages = string.Empty;
+        private string _xmlFileName = string.Empty;
         private ActivityCommon.ManufacturerType _manufacturerType = ActivityCommon.ManufacturerType.Bmw;
         private ActivityCommon.InterfaceType _interfaceType = ActivityCommon.InterfaceType.None;
 
@@ -330,6 +331,8 @@ namespace BmwDeepObd
 
         public string XmlFileNamePages => _xmlFileNamePages;
 
+        public string XmlFileName => _xmlFileName;
+
         public ActivityCommon.ManufacturerType Manufacturer => _manufacturerType;
 
         public ActivityCommon.InterfaceType Interface => _interfaceType;
@@ -356,6 +359,7 @@ namespace BmwDeepObd
             _interfaceName = string.Empty;
             _vehicleSeries = string.Empty;
             _xmlFileNamePages = string.Empty;
+            _xmlFileName = null;
         }
 
         public bool ReadXml(string xmlName, out string errorMessage)
@@ -839,6 +843,7 @@ namespace BmwDeepObd
                     }
                 }
 
+                _xmlFileName = xmlName;
                 return true;
             }
             catch (Exception ex)

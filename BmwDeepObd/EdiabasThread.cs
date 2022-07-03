@@ -250,6 +250,12 @@ namespace BmwDeepObd
             private set;
         }
 
+        public DetectVehicleBmw DetectVehicleInfo
+        {
+            get;
+            private set;
+        }
+
         public JobReader.PageInfo ResultPageInfo
         {
             get;
@@ -301,6 +307,7 @@ namespace BmwDeepObd
         private JobReader.PageInfo _lastPageInfo;
         private long _lastUpdateTime;
         private string _vagPath;
+        private string _bmwPath;
         private string _logDir;
         private bool _appendLog;
         private StreamWriter _swDataLog;
@@ -353,7 +360,7 @@ namespace BmwDeepObd
             }
         }
 
-        public bool StartThread(string comPort, object connectParameter, JobReader.PageInfo pageInfo, bool commActive, string vagPath, string traceDir, bool traceAppend, string logDir, bool appendLog)
+        public bool StartThread(string comPort, object connectParameter, JobReader.PageInfo pageInfo, bool commActive, string vagPath, string bmwPath, string traceDir, bool traceAppend, string logDir, bool appendLog)
         {
             if (_workerThread != null)
             {
@@ -392,6 +399,7 @@ namespace BmwDeepObd
                 _lastPageInfo = null;
                 _lastUpdateTime = Stopwatch.GetTimestamp();
                 _vagPath = vagPath;
+                _bmwPath = bmwPath;
                 _logDir = logDir;
                 _appendLog = appendLog;
                 InitProperties(null);
@@ -719,6 +727,7 @@ namespace BmwDeepObd
                 }
                 List<string> errorResetList;
                 string errorResetSgbdFunc;
+                DetectVehicleBmw detectVehicleBmw;
                 lock (DataLock)
                 {
                     errorResetList = ErrorResetList;
@@ -726,6 +735,7 @@ namespace BmwDeepObd
                     errorResetSgbdFunc = ErrorResetSgbdFunc;
                     ErrorResetSgbdFunc = null;
                     ErrorResetActive = errorResetList != null || !string.IsNullOrEmpty(errorResetSgbdFunc);
+                    detectVehicleBmw = DetectVehicleInfo;
                 }
 
                 List<EdiabasErrorReport> errorReportList = new List<EdiabasErrorReport>();
@@ -774,6 +784,47 @@ namespace BmwDeepObd
                 catch (Exception)
                 {
                     // ignored
+                }
+
+                if (detectVehicleBmw == null)
+                {
+                    string xmlFileName = ActivityCommon.JobReader.XmlFileName;
+                    string vehicleDataFile = Path.Combine(Path.GetDirectoryName(xmlFileName), Path.GetFileNameWithoutExtension(xmlFileName) + DetectVehicleBmw.DataFileExtension);
+
+                    detectVehicleBmw = new DetectVehicleBmw(Ediabas, _bmwPath);
+                    detectVehicleBmw.AbortFunc = () => _ediabasJobAbort;
+                    detectVehicleBmw.ProgressFunc = percent =>
+                    {
+                        lock (DataLock)
+                        {
+                            UpdateProgress = percent;
+                        }
+
+                        DataUpdatedEvent();
+                    };
+
+                    if (!detectVehicleBmw.LoadDataFromFile(vehicleDataFile))
+                    {
+                        if (!string.IsNullOrEmpty(pageInfo.ErrorsInfo.SgbdFunctional))
+                        {
+                            detectVehicleBmw.DetectVehicleBmwFast();
+                        }
+                        else
+                        {
+                            detectVehicleBmw.DetectVehicleDs2();
+                        }
+
+                        if (detectVehicleBmw.Valid)
+                        {
+                            detectVehicleBmw.SaveDataToFile(vehicleDataFile);
+                        }
+
+                    }
+
+                    lock (DataLock)
+                    {
+                        DetectVehicleInfo = detectVehicleBmw;
+                    }
                 }
 
                 int index = -1;
@@ -2584,6 +2635,7 @@ namespace BmwDeepObd
             AdapterSerial = null;
             ResultPageInfo = null;
             UpdateProgress = 0;
+            DetectVehicleInfo = null;
 
             _ediabasInitReq = true;
             _ediabasJobAbort = deviceChange;
