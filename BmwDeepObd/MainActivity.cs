@@ -3549,6 +3549,7 @@ namespace BmwDeepObd
                         List<string> stringList = new List<string>();
                         List<EdiabasThread.EdiabasErrorReport> errorReportList = null;
                         int updateProgress;
+                        DetectVehicleBmw detectVehicleBmw;
                         lock (EdiabasThread.DataLock)
                         {
                             if (ActivityCommon.EdiabasThread.ResultPageInfo == pageInfo)
@@ -3556,6 +3557,7 @@ namespace BmwDeepObd
                                 errorReportList = ActivityCommon.EdiabasThread.EdiabasErrorReportList;
                             }
                             updateProgress = ActivityCommon.EdiabasThread.UpdateProgress;
+                            detectVehicleBmw = ActivityCommon.EdiabasThread.DetectVehicleInfo;
                         }
                         if (errorReportList == null)
                         {
@@ -3902,6 +3904,7 @@ namespace BmwDeepObd
                                                 }
                                             }
 #endif
+                                            ActivityCommon.EcuFunctionReader.UpdateFaultRuleProperties(detectVehicleBmw);
                                             if (!ActivityCommon.EcuFunctionReader.IsValidFaultCode(errorCode, false, ecuVariant, showRelevantOnly))
                                             {
                                                 errorCode = 0x0000;
