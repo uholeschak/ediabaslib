@@ -725,6 +725,12 @@ namespace BmwFileReader
                     vehicleType = VehicleInfoBmw.GetVehicleTypeFromVin(detectedVin, _ediabas, _bmwDir);
                 }
 
+                VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(vehicleType, null, _ediabas);
+                if (vehicleSeriesInfo != null)
+                {
+                    BrandList = vehicleSeriesInfo.BrandList;
+                }
+
                 Series = vehicleType;
                 Ds2GroupFiles = groupFiles;
 
