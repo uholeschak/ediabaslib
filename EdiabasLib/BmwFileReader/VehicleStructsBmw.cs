@@ -67,15 +67,17 @@ namespace BmwFileReader
         [XmlType("VehicleSeriesInfoDataXml")]
         public class VehicleSeriesInfoData
         {
-            public VehicleSeriesInfoData() : this(null)
+            public VehicleSeriesInfoData() : this(null, null)
             {
             }
 
-            public VehicleSeriesInfoData(SerializableDictionary<string, List<VehicleSeriesInfo>> vehicleSeriesDict)
+            public VehicleSeriesInfoData(string timeStamp, SerializableDictionary<string, List<VehicleSeriesInfo>> vehicleSeriesDict)
             {
+                TimeStamp = timeStamp;
                 VehicleSeriesDict = vehicleSeriesDict;
             }
 
+            [XmlElement("TimeStamp"), DefaultValue(null)] public string TimeStamp { get; set; }
             [XmlElement("VehicleSeriesDict"), DefaultValue(null)] public SerializableDictionary<string, List<VehicleSeriesInfo>> VehicleSeriesDict { get; set; }
         }
 

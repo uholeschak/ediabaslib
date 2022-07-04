@@ -2493,7 +2493,8 @@ namespace PsdzClient
                     }
                 }
 
-                VehicleStructsBmw.VehicleSeriesInfoData vehicleSeriesInfoData = new VehicleStructsBmw.VehicleSeriesInfoData(sgbdDict);
+                string timeStamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+                VehicleStructsBmw.VehicleSeriesInfoData vehicleSeriesInfoData = new VehicleStructsBmw.VehicleSeriesInfoData(timeStamp, sgbdDict);
                 StringBuilder sb = new StringBuilder();
                 foreach (KeyValuePair<string, List<VehicleStructsBmw.VehicleSeriesInfo>> keyValue in vehicleSeriesInfoData.VehicleSeriesDict.OrderBy(x => x.Key))
                 {
