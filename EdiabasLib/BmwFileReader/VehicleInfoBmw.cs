@@ -527,7 +527,7 @@ namespace BmwFileReader
                 case 'J':
                 case 'U':
                     ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Using fallback from first letter");
-                    return new VehicleStructsBmw.VehicleSeriesInfo(series, "F01", "BN2020", string.Empty);
+                    return new VehicleStructsBmw.VehicleSeriesInfo(series, "F01", "BN2020");
             }
 
             ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "No vehicle series info found");

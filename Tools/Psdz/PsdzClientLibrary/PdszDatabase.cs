@@ -1223,12 +1223,12 @@ namespace PsdzClient
 
         public class EcuCharacteristicsInfo
         {
-            public EcuCharacteristicsInfo(BaseEcuCharacteristics ecuCharacteristics, List<string> seriesList, BNType? bnType, string brand, string date, string dateCompare)
+            public EcuCharacteristicsInfo(BaseEcuCharacteristics ecuCharacteristics, List<string> seriesList, BNType? bnType, List<string> brandList, string date, string dateCompare)
             {
                 EcuCharacteristics = ecuCharacteristics;
                 SeriesList = seriesList;
                 BnType = bnType;
-                Brand = brand;
+                BrandList = brandList;
                 Date = date;
                 DateCompare = dateCompare;
             }
@@ -1236,7 +1236,7 @@ namespace PsdzClient
             public BaseEcuCharacteristics EcuCharacteristics { get; set; }
             public List<string> SeriesList { get; set; }
             public BNType? BnType { get; set; }
-            public string Brand { get; set; }
+            public List<string> BrandList { get; set; }
             public string Date { get; set; }
             public string DateCompare { get; set; }
         }
@@ -2364,7 +2364,7 @@ namespace PsdzClient
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Rule formula: {0}", ruleFormula);
 
                             HashSet<string> seriesHash = new HashSet<string>();
-                            string brand = string.Empty;
+                            HashSet<string> brandHash = new HashSet<string>();
                             string date = null;
                             string dateCompare = null;
 
@@ -2390,7 +2390,7 @@ namespace PsdzClient
                                 {
                                     if (match.Groups.Count == 3 && match.Groups[2].Success)
                                     {
-                                        brand = match.Groups[2].Value.Trim();
+                                        brandHash.Add(match.Groups[2].Value.Trim());
                                         break;
                                     }
                                 }
@@ -2427,8 +2427,8 @@ namespace PsdzClient
                             }
 
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Sgbd: {0}, Brand: {1}, Series: {2}, BnType: {3}, Date: {4} {5}",
-                                baseEcuCharacteristics.brSgbd, brand, seriesHash.ToStringItems(), bnTypeSeries, dateCompare ?? string.Empty, date ?? string.Empty);
-                            vehicleSeriesList.Add(new EcuCharacteristicsInfo(baseEcuCharacteristics, seriesHash.ToList(), bnTypeSeries, brand, date, dateCompare));
+                                baseEcuCharacteristics.brSgbd, brandHash.ToStringItems(), seriesHash.ToStringItems(), bnTypeSeries, dateCompare ?? string.Empty, date ?? string.Empty);
+                            vehicleSeriesList.Add(new EcuCharacteristicsInfo(baseEcuCharacteristics, seriesHash.ToList(), bnTypeSeries, brandHash.ToList(), date, dateCompare));
                         }
                     }
                 }
@@ -2458,7 +2458,7 @@ namespace PsdzClient
                     foreach (string series in ecuCharacteristicsInfo.SeriesList)
                     {
                         string key = series.ToUpperInvariant();
-                        VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoAdd = new VehicleStructsBmw.VehicleSeriesInfo(key, brSgbd, bnTypeName, ecuCharacteristicsInfo.Brand, ecuList, ecuCharacteristicsInfo.Date, ecuCharacteristicsInfo.DateCompare);
+                        VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoAdd = new VehicleStructsBmw.VehicleSeriesInfo(key, brSgbd, bnTypeName, ecuCharacteristicsInfo.BrandList, ecuList, ecuCharacteristicsInfo.Date, ecuCharacteristicsInfo.DateCompare);
 
                         if (sgbdDict.TryGetValue(key, out List<VehicleStructsBmw.VehicleSeriesInfo> vehicleSeriesInfoList))
                         {
@@ -2501,7 +2501,7 @@ namespace PsdzClient
                     foreach (VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo in vehicleSeriesInfoList)
                     {
                         sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "[{0}, {1}, '{2}' {3} {4}]",
-                            vehicleSeriesInfo.BrSgbd, vehicleSeriesInfo.Series, vehicleSeriesInfo.Brand, vehicleSeriesInfo.DateCompare ?? string.Empty, vehicleSeriesInfo.Date ?? string.Empty));
+                            vehicleSeriesInfo.BrSgbd, vehicleSeriesInfo.Series, vehicleSeriesInfo.BrandList.ToStringItems(), vehicleSeriesInfo.DateCompare ?? string.Empty, vehicleSeriesInfo.Date ?? string.Empty));
                     }
                 }
 
