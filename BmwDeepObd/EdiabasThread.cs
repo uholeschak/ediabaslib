@@ -818,7 +818,6 @@ namespace BmwDeepObd
                         {
                             detectVehicleBmw.SaveDataToFile(vehicleDataFile);
                         }
-
                     }
 
                     lock (DataLock)
