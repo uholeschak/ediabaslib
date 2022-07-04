@@ -215,7 +215,7 @@ $@"         case ""{faultRuleInfo.Id.Trim()}"":
 
         public long RuleNum(string name)
         {
-            long? propertyValue = GetPropertyNum(name);
+            long? propertyValue = GetPropertyValue(name);
             if (!propertyValue.HasValue)
             {
                 return -1;
@@ -231,15 +231,18 @@ $@"         case ""{faultRuleInfo.Id.Trim()}"":
                 return false;
             }
 
-            string propertyString = GetPropertyString(name);
-            if (string.IsNullOrWhiteSpace(propertyString))
+            List<string> propertyStrings = GetPropertyStrings(name);
+            if (propertyStrings == null)
             {
                 return false;
             }
 
-            if (string.Compare(propertyString, value.Trim(), StringComparison.OrdinalIgnoreCase) == 0)
+            foreach (string propertyString in propertyStrings)
             {
-                return true;
+                if (string.Compare(propertyString.Trim(), value.Trim(), StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return true;
+                }
             }
 
             return false;
@@ -247,15 +250,18 @@ $@"         case ""{faultRuleInfo.Id.Trim()}"":
 
         public bool IsValidRuleNum(string name, long value)
         {
-            long? propertyValue = GetPropertyNum(name);
-            if (!propertyValue.HasValue)
+            List<long> propertyValues = GetPropertyValues(name);
+            if (propertyValues == null)
             {
                 return false;
             }
 
-            if (propertyValue.Value == value)
+            foreach (long propertyValue in propertyValues)
             {
-                return true;
+                if (propertyValue == value)
+                {
+                    return true;
+                }
             }
 
             return false;
@@ -289,20 +295,38 @@ $@"         case ""{faultRuleInfo.Id.Trim()}"":
             return null;
         }
 
-        private long? GetPropertyNum(string name)
+        private long? GetPropertyValue(string name)
         {
-            string valueString = GetPropertyString(name);
-            if (string.IsNullOrWhiteSpace(valueString))
+            List<long> propertyValues = GetPropertyValues(name);
+            if (propertyValues != null && propertyValues.Count > 0)
+            {
+                return propertyValues[0];
+            }
+
+            return null;
+        }
+
+        private List<long> GetPropertyValues(string name)
+        {
+            List<string> propertyStrings = GetPropertyStrings(name);
+            if (propertyStrings == null)
             {
                 return null;
             }
 
-            if (long.TryParse(valueString, NumberStyles.Integer, CultureInfo.InvariantCulture, out long result))
+            List<long> valueList = new List<long>();
+            foreach (string propertyString in propertyStrings)
             {
-                return result;
+                if (long.TryParse(propertyString, NumberStyles.Integer, CultureInfo.InvariantCulture, out long result))
+                {
+                    if (!valueList.Contains(result))
+                    {
+                        valueList.Add(result);
+                    }
+                }
             }
 
-            return null;
+            return valueList;
         }
     }
 }
