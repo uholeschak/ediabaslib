@@ -12,7 +12,7 @@ namespace BmwFileReader
     public class FaultRuleEvalBmw
     {
         public object RuleObject { get; private set; }
-        private Dictionary<string, string> _propertiesDict = new Dictionary<string, string>();
+        private Dictionary<string, List<string>> _propertiesDict = new Dictionary<string, List<string>>();
         private HashSet<string> _unknownNamesHash = new HashSet<string>();
 
         public FaultRuleEvalBmw()
@@ -172,21 +172,21 @@ $@"         case ""{faultRuleInfo.Id.Trim()}"":
             }
         }
 
-        public void SetEvalProperties(string brand = null, string vehicleSeries = null, string iLevel = null)
+        public void SetEvalProperties(List<string> brandList = null, string vehicleSeries = null, string iLevel = null)
         {
             _propertiesDict.Clear();
-            if (!string.IsNullOrWhiteSpace(brand))
+            if (brandList != null && brandList.Count > 0)
             {
-                _propertiesDict.Add("MARKE", brand.Trim());
+                _propertiesDict.Add("MARKE", brandList);
             }
             if (!string.IsNullOrWhiteSpace(vehicleSeries))
             {
-                _propertiesDict.Add("E-BEZEICHNUNG", vehicleSeries.Trim());
+                _propertiesDict.Add("E-BEZEICHNUNG", new List<string> { vehicleSeries.Trim() });
             }
             if (!string.IsNullOrWhiteSpace(iLevel))
             {
                 string iLevelTrim = iLevel.Trim();
-                _propertiesDict.Add("ISTUFE", iLevelTrim.Trim());
+                _propertiesDict.Add("ISTUFE", new List<string> { iLevelTrim.Trim() });
                 if (iLevelTrim.Length == 14)
                 {
                     string iLevelBare = iLevelTrim.Replace("-", string.Empty);
@@ -194,10 +194,10 @@ $@"         case ""{faultRuleInfo.Id.Trim()}"":
                     {
                         if (Int32.TryParse(iLevelBare.Substring(4), NumberStyles.Integer, CultureInfo.InvariantCulture, out int iLevelValue))
                         {
-                            _propertiesDict.Add("ISTUFEX", iLevelValue.ToString(CultureInfo.InvariantCulture));
+                            _propertiesDict.Add("ISTUFEX", new List<string> { iLevelValue.ToString(CultureInfo.InvariantCulture) });
                         }
 
-                        _propertiesDict.Add("BAUREIHENVERBUND", iLevelBare.Substring(0, 4));
+                        _propertiesDict.Add("BAUREIHENVERBUND", new List<string> { iLevelBare.Substring(0, 4) });
                     }
                 }
             }
@@ -263,19 +263,30 @@ $@"         case ""{faultRuleInfo.Id.Trim()}"":
 
         private string GetPropertyString(string name)
         {
+            List<string> stringList = GetPropertyStrings(name);
+            if (stringList != null && stringList.Count > 0)
+            {
+                return stringList[0];
+            }
+
+            return string.Empty;
+        }
+
+        private List<string> GetPropertyStrings(string name)
+        {
             if (_propertiesDict == null)
             {
-                return string.Empty;
+                return null;
             }
 
             string key = name.Trim().ToUpperInvariant();
-            if (_propertiesDict.TryGetValue(key, out string value))
+            if (_propertiesDict.TryGetValue(key, out List<string> valueList))
             {
-                return value;
+                return valueList;
             }
 
             _unknownNamesHash.Add(key);
-            return string.Empty;
+            return null;
         }
 
         private long? GetPropertyNum(string name)
