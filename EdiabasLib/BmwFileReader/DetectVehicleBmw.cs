@@ -15,7 +15,9 @@ namespace BmwFileReader
         [XmlType("VehicleDataBmw")]
         public class VehicleDataBmw
         {
-            public const int DataVersion = 2;
+            public const string DataVersion = "2";
+
+            public string VersionString => DataVersion + "-" + (VehicleInfoBmw.GetVehicleSeriesInfoTimeStamp() ?? string.Empty);
 
             public VehicleDataBmw()
             {
@@ -23,7 +25,7 @@ namespace BmwFileReader
 
             public VehicleDataBmw(DetectVehicleBmw detectVehicleBmw)
             {
-                Version = DataVersion;
+                Version = VersionString;
                 Ds2Vehicle = detectVehicleBmw.Ds2Vehicle;
                 Vin = detectVehicleBmw.Vin;
                 GroupSgdb = detectVehicleBmw.GroupSgdb;
@@ -40,7 +42,7 @@ namespace BmwFileReader
 
             public bool Restore(DetectVehicleBmw detectVehicleBmw)
             {
-                if (Version != DataVersion)
+                if (string.Compare(Version, VersionString, StringComparison.InvariantCulture) != 0)
                 {
                     return false;
                 }
@@ -61,7 +63,7 @@ namespace BmwFileReader
                 return true;
             }
 
-            [XmlElement("Version")] public int Version { get; set; }
+            [XmlElement("Version")] public string Version { get; set; }
             [XmlElement("Ds2Vehicle"), DefaultValue(false)] public bool Ds2Vehicle { get; set; }
             [XmlElement("Vin"), DefaultValue(null)] public string Vin { get; set; }
             [XmlElement("GroupSgdb"), DefaultValue(null)] public string GroupSgdb { get; set; }
