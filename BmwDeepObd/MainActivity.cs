@@ -2917,7 +2917,7 @@ namespace BmwDeepObd
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
             {
-                if (Android.Provider.Settings.CanDrawOverlays(this))
+                if (Android.Provider.Settings.CanDrawOverlays(Android.App.Application.Context))
                 {
                     _overlayPermissionGranted = true;
                 }
