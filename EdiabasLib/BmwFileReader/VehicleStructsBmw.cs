@@ -37,12 +37,12 @@ namespace BmwFileReader
             {
             }
 
-            public VehicleSeriesInfo(string series, string brSgbd, string bnType, string brand, List<VehicleEcuInfo> ecuList = null, string date = null, string dateCompare = null)
+            public VehicleSeriesInfo(string series, string brSgbd, string bnType, List<string> brandList = null, List<VehicleEcuInfo> ecuList = null, string date = null, string dateCompare = null)
             {
                 Series = series;
                 BrSgbd = brSgbd;
                 BnType = bnType;
-                Brand = brand;
+                BrandList = brandList;
                 EcuList = ecuList;
                 Date = date;
                 DateCompare = dateCompare;
@@ -57,7 +57,7 @@ namespace BmwFileReader
             [XmlElement("Series"), DefaultValue(null)] public string Series { get; set; }
             [XmlElement("BrSgbd"), DefaultValue(null)] public string BrSgbd { get; set; }
             [XmlElement("BnType"), DefaultValue(null)] public string BnType { get; set; }
-            [XmlElement("Brand"), DefaultValue(null)] public string Brand { get; set; }
+            [XmlElement("BrandList"), DefaultValue(null)] public List<string> BrandList { get; set; }
             [XmlElement("EcuList"), DefaultValue(null)] public List<VehicleEcuInfo> EcuList { get; set; }
             [XmlElement("Date"), DefaultValue(null)] public string Date { get; set; }
             [XmlElement("DateCompare"), DefaultValue(null)] public string DateCompare { get; set; }

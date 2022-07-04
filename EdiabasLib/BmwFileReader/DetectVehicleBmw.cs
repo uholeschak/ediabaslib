@@ -15,7 +15,7 @@ namespace BmwFileReader
         [XmlType("VehicleDataBmw")]
         public class VehicleDataBmw
         {
-            public const int DataVersion = 1;
+            public const int DataVersion = 2;
 
             public VehicleDataBmw()
             {
@@ -29,7 +29,7 @@ namespace BmwFileReader
                 GroupSgdb = detectVehicleBmw.GroupSgdb;
                 ModelSeries = detectVehicleBmw.ModelSeries;
                 Series = detectVehicleBmw.Series;
-                Brand = detectVehicleBmw.Brand;
+                BrandList = detectVehicleBmw.BrandList;
                 Ds2GroupFiles = detectVehicleBmw.Ds2GroupFiles;
                 ConstructYear = detectVehicleBmw.ConstructYear;
                 ConstructMonth = detectVehicleBmw.ConstructMonth;
@@ -50,7 +50,7 @@ namespace BmwFileReader
                 detectVehicleBmw.GroupSgdb = GroupSgdb;
                 detectVehicleBmw.ModelSeries = ModelSeries;
                 detectVehicleBmw.Series = Series;
-                detectVehicleBmw.Brand = Brand;
+                detectVehicleBmw.BrandList = BrandList;
                 detectVehicleBmw.Ds2GroupFiles = Ds2GroupFiles;
                 detectVehicleBmw.ConstructYear = ConstructYear;
                 detectVehicleBmw.ConstructMonth = ConstructMonth;
@@ -67,7 +67,7 @@ namespace BmwFileReader
             [XmlElement("GroupSgdb"), DefaultValue(null)] public string GroupSgdb { get; set; }
             [XmlElement("ModelSeries"), DefaultValue(null)] public string ModelSeries { get; set; }
             [XmlElement("Series"), DefaultValue(null)] public string Series { get; set; }
-            [XmlElement("Brand"), DefaultValue(null)] public string Brand { get; set; }
+            [XmlElement("BrandList"), DefaultValue(null)] public List<string> BrandList { get; set; }
             [XmlElement("Ds2GroupFiles"), DefaultValue(null)] public string Ds2GroupFiles { get; set; }
             [XmlElement("ConstructYear"), DefaultValue(null)] public string ConstructYear { get; set; }
             [XmlElement("ConstructMonth"), DefaultValue(null)] public string ConstructMonth { get; set; }
@@ -88,7 +88,7 @@ namespace BmwFileReader
         public string GroupSgdb { get; private set; }
         public string ModelSeries { get; private set; }
         public string Series { get; private set; }
-        public string Brand { get; private set; }
+        public List<string> BrandList { get; private set; }
         public string Ds2GroupFiles { get; private set; }
         public string ConstructYear { get; private set; }
         public string ConstructMonth { get; private set; }
@@ -374,7 +374,7 @@ namespace BmwFileReader
                 }
                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Group SGBD: {0}", vehicleSeriesInfo.BrSgbd);
                 GroupSgdb = vehicleSeriesInfo.BrSgbd;
-                Brand = vehicleSeriesInfo.Brand;
+                BrandList = vehicleSeriesInfo.BrandList;
 
                 string iLevelShip = null;
                 string iLevelCurrent = null;
@@ -825,7 +825,7 @@ namespace BmwFileReader
             GroupSgdb = null;
             ModelSeries = null;
             Series = null;
-            Brand = null;
+            BrandList = null;
             Ds2GroupFiles = null;
             ConstructYear = null;
             ConstructMonth = null;
