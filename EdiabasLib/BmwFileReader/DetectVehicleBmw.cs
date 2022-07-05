@@ -28,6 +28,7 @@ namespace BmwFileReader
                 Version = VersionString;
                 Ds2Vehicle = detectVehicleBmw.Ds2Vehicle;
                 Vin = detectVehicleBmw.Vin;
+                TypeKey = detectVehicleBmw.TypeKey;
                 GroupSgdb = detectVehicleBmw.GroupSgdb;
                 ModelSeries = detectVehicleBmw.ModelSeries;
                 Series = detectVehicleBmw.Series;
@@ -49,6 +50,7 @@ namespace BmwFileReader
 
                 detectVehicleBmw.Ds2Vehicle = Ds2Vehicle;
                 detectVehicleBmw.Vin = Vin;
+                detectVehicleBmw.TypeKey = TypeKey;
                 detectVehicleBmw.GroupSgdb = GroupSgdb;
                 detectVehicleBmw.ModelSeries = ModelSeries;
                 detectVehicleBmw.Series = Series;
@@ -66,6 +68,7 @@ namespace BmwFileReader
             [XmlElement("Version")] public string Version { get; set; }
             [XmlElement("Ds2Vehicle"), DefaultValue(false)] public bool Ds2Vehicle { get; set; }
             [XmlElement("Vin"), DefaultValue(null)] public string Vin { get; set; }
+            [XmlElement("TypeKey"), DefaultValue(null)] public string TypeKey { get; set; }
             [XmlElement("GroupSgdb"), DefaultValue(null)] public string GroupSgdb { get; set; }
             [XmlElement("ModelSeries"), DefaultValue(null)] public string ModelSeries { get; set; }
             [XmlElement("Series"), DefaultValue(null)] public string Series { get; set; }
