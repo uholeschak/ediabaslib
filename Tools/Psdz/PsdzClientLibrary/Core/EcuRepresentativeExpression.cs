@@ -79,7 +79,7 @@ namespace PsdzClient.Core
 
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(FormulaSeparator(formulaConfig));
-            stringBuilder.Append(formulaConfig.CheckLongFunc);
+            stringBuilder.Append(formulaConfig.CheckStringFunc);
             stringBuilder.Append("(\"EcuRepresentative\", ");
             stringBuilder.Append("\"");
             if (ecuRepsById != null)

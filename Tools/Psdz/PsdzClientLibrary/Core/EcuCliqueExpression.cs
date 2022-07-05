@@ -109,12 +109,18 @@ namespace PsdzClient.Core
 
         public override string ToFormula(FormulaConfig formulaConfig)
         {
+            PdszDatabase.EcuClique ecuClique = ClientContext.GetDatabase(this.vecInfo)?.GetEcuCliqueById(this.value.ToString(CultureInfo.InvariantCulture));
+
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(FormulaSeparator(formulaConfig));
-            stringBuilder.Append(formulaConfig.CheckLongFunc);
+            stringBuilder.Append(formulaConfig.CheckStringFunc);
             stringBuilder.Append("(\"EcuClique\", ");
-            stringBuilder.Append(value.ToString(CultureInfo.InvariantCulture));
-            stringBuilder.Append(")");
+            stringBuilder.Append("\"");
+            if (ecuClique != null)
+            {
+                stringBuilder.Append(ecuClique.CliqueName);
+            }
+            stringBuilder.Append("\")");
             stringBuilder.Append(FormulaSeparator(formulaConfig));
 
             return stringBuilder.ToString();
