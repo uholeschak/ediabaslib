@@ -28,12 +28,18 @@ namespace PsdzClient.Core
 
         public override string ToFormula(FormulaConfig formulaConfig)
         {
+            PdszDatabase.SaLaPa saLaPaById = ClientContext.GetDatabase(this.vecInfo)?.GetSaLaPaById(this.value.ToString(CultureInfo.InvariantCulture));
+            
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(FormulaSeparator(formulaConfig));
-            stringBuilder.Append(formulaConfig.CheckLongFunc);
+            stringBuilder.Append(formulaConfig.CheckStringFunc);
             stringBuilder.Append("(\"SALAPA\", ");
-            stringBuilder.Append(value.ToString(CultureInfo.InvariantCulture));
-            stringBuilder.Append(")");
+            stringBuilder.Append("\"");
+            if (saLaPaById != null)
+            {
+                stringBuilder.Append(saLaPaById.Name);
+            }
+            stringBuilder.Append("\")");
             stringBuilder.Append(FormulaSeparator(formulaConfig));
 
             return stringBuilder.ToString();

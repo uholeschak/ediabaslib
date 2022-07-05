@@ -180,9 +180,16 @@ namespace PsdzClient.Core
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(FormulaSeparator(formulaConfig));
-            stringBuilder.Append(formulaConfig.CheckLongFunc);
-            stringBuilder.Append("(\"Produktionsdatum\", ");
-            stringBuilder.Append(this.datevalue.ToString(CultureInfo.InvariantCulture));
+            stringBuilder.Append("(");
+            stringBuilder.Append(formulaConfig.GetLongFunc);
+            stringBuilder.Append("(\"Produktionsdatum\")");
+
+            stringBuilder.Append(" ");
+            stringBuilder.Append(this.GetFormulaOperator());
+            stringBuilder.Append(" ");
+
+            DateTime date = new DateTime(datevalue);
+            stringBuilder.Append(date.ToString("yyyyMM", CultureInfo.InvariantCulture));
             stringBuilder.Append(")");
             stringBuilder.Append(FormulaSeparator(formulaConfig));
 
@@ -194,6 +201,27 @@ namespace PsdzClient.Core
 		{
 			return "Produktionsdatum " + this.GetOperator() + " " + this.datevalue.ToString(CultureInfo.InvariantCulture);
 		}
+
+        private string GetFormulaOperator()
+        {
+            switch (this.compareOperator)
+            {
+                case CompareExpression.ECompareOperator.EQUAL:
+                    return "==";
+                case CompareExpression.ECompareOperator.NOT_EQUAL:
+                    return "!=";
+                case CompareExpression.ECompareOperator.GREATER:
+                    return ">";
+                case CompareExpression.ECompareOperator.GREATER_EQUAL:
+                    return ">=";
+                case CompareExpression.ECompareOperator.LESS:
+                    return "<";
+                case CompareExpression.ECompareOperator.LESS_EQUAL:
+                    return "<=";
+                default:
+                    throw new Exception("Unknown operator");
+            }
+        }
 
 		private string GetOperator()
 		{

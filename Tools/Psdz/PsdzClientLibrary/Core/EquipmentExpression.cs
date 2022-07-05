@@ -121,12 +121,17 @@ namespace PsdzClient.Core
 
         public override string ToFormula(FormulaConfig formulaConfig)
         {
+            PdszDatabase.Equipment equipmentById = ClientContext.GetDatabase(this.vecInfo)?.GetEquipmentById(this.value.ToString(CultureInfo.InvariantCulture));
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(FormulaSeparator(formulaConfig));
-            stringBuilder.Append(formulaConfig.CheckLongFunc);
+            stringBuilder.Append(formulaConfig.CheckStringFunc);
             stringBuilder.Append("(\"Equipment\", ");
-            stringBuilder.Append(this.value.ToString(CultureInfo.InvariantCulture));
-            stringBuilder.Append(")");
+            stringBuilder.Append("\"");
+            if (equipmentById != null)
+            {
+                stringBuilder.Append(equipmentById.Name);
+            }
+            stringBuilder.Append("\")");
             stringBuilder.Append(FormulaSeparator(formulaConfig));
 
             return stringBuilder.ToString();

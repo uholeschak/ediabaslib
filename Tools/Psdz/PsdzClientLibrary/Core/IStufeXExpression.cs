@@ -139,6 +139,7 @@ namespace PsdzClient.Core
 
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(FormulaSeparator(formulaConfig));
+            stringBuilder.Append("(");
             stringBuilder.Append(formulaConfig.GetLongFunc);
             stringBuilder.Append("(\"IStufeX\") ");
             if (iLevelValue != null)
@@ -152,6 +153,7 @@ namespace PsdzClient.Core
             {
                 stringBuilder.Append(" == -1");
             }
+            stringBuilder.Append(")");
             stringBuilder.Append(FormulaSeparator(formulaConfig));
 
             return stringBuilder.ToString();
