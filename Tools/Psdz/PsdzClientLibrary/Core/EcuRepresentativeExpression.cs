@@ -75,11 +75,16 @@ namespace PsdzClient.Core
 
         public override string ToFormula(FormulaConfig formulaConfig)
         {
+            PdszDatabase.EcuReps ecuRepsById = ClientContext.GetDatabase(this.vecInfo)?.GetEcuRepsById(this.value.ToString(CultureInfo.InvariantCulture));
+
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(FormulaSeparator(formulaConfig));
             stringBuilder.Append(formulaConfig.CheckLongFunc);
             stringBuilder.Append("(\"EcuRepresentative\", ");
-            stringBuilder.Append(this.value.ToString(CultureInfo.InvariantCulture));
+            if (ecuRepsById != null)
+            {
+                stringBuilder.Append(ecuRepsById.EcuShortcut);
+            }
             stringBuilder.Append(")");
             stringBuilder.Append(FormulaSeparator(formulaConfig));
 
