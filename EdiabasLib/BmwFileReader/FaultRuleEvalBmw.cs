@@ -12,8 +12,9 @@ namespace BmwFileReader
     public class FaultRuleEvalBmw
     {
         public object RuleObject { get; private set; }
-        private Dictionary<string, List<string>> _propertiesDict = new Dictionary<string, List<string>>();
-        private HashSet<string> _unknownNamesHash = new HashSet<string>();
+        private readonly Dictionary<string, List<string>> _propertiesDict = new Dictionary<string, List<string>>();
+        private readonly HashSet<string> _unknownNamesHash = new HashSet<string>();
+        private string _unknownId;
 
         public FaultRuleEvalBmw()
         {
@@ -63,7 +64,16 @@ $@"         case ""{faultRuleInfo.Id.Trim()}"":
 @"
         }
 
+        RuleNotFound(id.Trim());
         return true;
+    }
+
+    private void RuleNotFound(string id)
+    {
+        if (FaultRuleEvalClass != null)
+        {
+            FaultRuleEvalClass.RuleNotFound(id);
+        }
     }
 
     private string RuleString(string name)
@@ -150,9 +160,15 @@ $@"         case ""{faultRuleInfo.Id.Trim()}"":
                 }
 
                 _unknownNamesHash.Clear();
+                _unknownId = null;
                 // ReSharper disable once UsePatternMatching
                 object[] args = { id };
                 bool? valid = methodIsRuleValid.Invoke(RuleObject, args) as bool?;
+
+                if (_unknownId != null)
+                {
+                    return true;
+                }
 
                 if (_unknownNamesHash.Count > 0)
                 {
@@ -230,6 +246,11 @@ $@"         case ""{faultRuleInfo.Id.Trim()}"":
                     }
                 }
             }
+        }
+
+        public void RuleNotFound(string id)
+        {
+            _unknownId = id;
         }
 
         public string RuleString(string name)
