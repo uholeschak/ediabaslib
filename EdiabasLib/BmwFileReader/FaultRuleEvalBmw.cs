@@ -209,6 +209,7 @@ $@"         case ""{faultRuleInfo.Id.Trim()}"":
                 }
 
                 _propertiesDict.Add("Baustand".ToUpperInvariant(), new List<string> { constructDate });
+                _propertiesDict.Add("Produktionsdatum".ToUpperInvariant(), new List<string> { constructDate });
             }
 
             if (!string.IsNullOrWhiteSpace(detectVehicleBmw.ILevelCurrent))
