@@ -182,7 +182,7 @@ $@"         case ""{faultRuleInfo.Id.Trim()}"":
 
             if (!string.IsNullOrWhiteSpace(typeKey))
             {
-                _propertiesDict.Add("Typschlüssel".ToUpperInvariant(), new List<string> { typeKey.Trim() });
+                _propertiesDict.Add("Typschl\u00FCssel".ToUpperInvariant(), new List<string> { typeKey.Trim() });
             }
 
             if (!string.IsNullOrWhiteSpace(vehicleSeries))
