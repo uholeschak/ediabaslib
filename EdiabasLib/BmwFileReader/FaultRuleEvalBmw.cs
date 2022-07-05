@@ -172,26 +172,48 @@ $@"         case ""{faultRuleInfo.Id.Trim()}"":
             }
         }
 
-        public void SetEvalProperties(List<string> brandList = null, string typeKey = null, string vehicleSeries = null, string iLevel = null)
+        public void SetEvalProperties(DetectVehicleBmw detectVehicleBmw)
         {
             _propertiesDict.Clear();
-            if (brandList != null && brandList.Count > 0)
+
+            if (detectVehicleBmw == null || !detectVehicleBmw.Valid)
             {
-                _propertiesDict.Add("Marke".ToUpperInvariant(), brandList);
+                return;
             }
 
-            if (!string.IsNullOrWhiteSpace(typeKey))
+            if (detectVehicleBmw.BrandList != null && detectVehicleBmw.BrandList.Count > 0)
             {
-                _propertiesDict.Add("Typschl\u00FCssel".ToUpperInvariant(), new List<string> { typeKey.Trim() });
+                _propertiesDict.Add("Marke".ToUpperInvariant(), detectVehicleBmw.BrandList);
             }
 
-            if (!string.IsNullOrWhiteSpace(vehicleSeries))
+            if (!string.IsNullOrWhiteSpace(detectVehicleBmw.TypeKey))
             {
-                _propertiesDict.Add("E-Bezeichnung".ToUpperInvariant(), new List<string> { vehicleSeries.Trim() });
+                _propertiesDict.Add("Typschl\u00FCssel".ToUpperInvariant(), new List<string> { detectVehicleBmw.TypeKey.Trim() });
             }
-            if (!string.IsNullOrWhiteSpace(iLevel))
+
+            if (!string.IsNullOrWhiteSpace(detectVehicleBmw.Series))
             {
-                string iLevelTrim = iLevel.Trim();
+                _propertiesDict.Add("E-Bezeichnung".ToUpperInvariant(), new List<string> { detectVehicleBmw.Series.Trim() });
+            }
+
+            if (!string.IsNullOrWhiteSpace(detectVehicleBmw.ConstructYear))
+            {
+                string constructDate = detectVehicleBmw.ConstructYear;
+                if (!string.IsNullOrWhiteSpace(detectVehicleBmw.ConstructMonth))
+                {
+                    constructDate += detectVehicleBmw.ConstructMonth;
+                }
+                else
+                {
+                    constructDate += "01";
+                }
+
+                _propertiesDict.Add("Baustand".ToUpperInvariant(), new List<string> { constructDate });
+            }
+
+            if (!string.IsNullOrWhiteSpace(detectVehicleBmw.ILevelCurrent))
+            {
+                string iLevelTrim = detectVehicleBmw.ILevelCurrent.Trim();
                 _propertiesDict.Add("IStufe".ToUpperInvariant(), new List<string> { iLevelTrim.Trim() });
                 if (iLevelTrim.Length == 14)
                 {
