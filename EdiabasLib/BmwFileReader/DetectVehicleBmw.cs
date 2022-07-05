@@ -15,7 +15,7 @@ namespace BmwFileReader
         [XmlType("VehicleDataBmw")]
         public class VehicleDataBmw
         {
-            public const string DataVersion = "3";
+            public const string DataVersion = "4";
 
             public string VersionString => DataVersion + "-" + (VehicleInfoBmw.GetVehicleSeriesInfoTimeStamp() ?? string.Empty);
 

@@ -128,7 +128,7 @@ namespace BmwFileReader
                 return false;
             }
 
-            _faultRuleEval.SetEvalProperties(detectVehicleBmw.BrandList, detectVehicleBmw.Series, detectVehicleBmw.ILevelCurrent);
+            _faultRuleEval.SetEvalProperties(detectVehicleBmw.BrandList, detectVehicleBmw.TypeKey, detectVehicleBmw.Series, detectVehicleBmw.ILevelCurrent);
 
             return true;
         }

@@ -172,21 +172,27 @@ $@"         case ""{faultRuleInfo.Id.Trim()}"":
             }
         }
 
-        public void SetEvalProperties(List<string> brandList = null, string vehicleSeries = null, string iLevel = null)
+        public void SetEvalProperties(List<string> brandList = null, string typeKey = null, string vehicleSeries = null, string iLevel = null)
         {
             _propertiesDict.Clear();
             if (brandList != null && brandList.Count > 0)
             {
-                _propertiesDict.Add("MARKE", brandList);
+                _propertiesDict.Add("Marke".ToUpperInvariant(), brandList);
             }
+
+            if (!string.IsNullOrWhiteSpace(typeKey))
+            {
+                _propertiesDict.Add("Typschlüssel".ToUpperInvariant(), new List<string> { typeKey.Trim() });
+            }
+
             if (!string.IsNullOrWhiteSpace(vehicleSeries))
             {
-                _propertiesDict.Add("E-BEZEICHNUNG", new List<string> { vehicleSeries.Trim() });
+                _propertiesDict.Add("E-Bezeichnung".ToUpperInvariant(), new List<string> { vehicleSeries.Trim() });
             }
             if (!string.IsNullOrWhiteSpace(iLevel))
             {
                 string iLevelTrim = iLevel.Trim();
-                _propertiesDict.Add("ISTUFE", new List<string> { iLevelTrim.Trim() });
+                _propertiesDict.Add("IStufe".ToUpperInvariant(), new List<string> { iLevelTrim.Trim() });
                 if (iLevelTrim.Length == 14)
                 {
                     string iLevelBare = iLevelTrim.Replace("-", string.Empty);
@@ -194,10 +200,10 @@ $@"         case ""{faultRuleInfo.Id.Trim()}"":
                     {
                         if (Int32.TryParse(iLevelBare.Substring(4), NumberStyles.Integer, CultureInfo.InvariantCulture, out int iLevelValue))
                         {
-                            _propertiesDict.Add("ISTUFEX", new List<string> { iLevelValue.ToString(CultureInfo.InvariantCulture) });
+                            _propertiesDict.Add("IStufeX".ToUpperInvariant(), new List<string> { iLevelValue.ToString(CultureInfo.InvariantCulture) });
                         }
 
-                        _propertiesDict.Add("BAUREIHENVERBUND", new List<string> { iLevelBare.Substring(0, 4) });
+                        _propertiesDict.Add("Baureihenverbund".ToUpperInvariant(), new List<string> { iLevelBare.Substring(0, 4) });
                     }
                 }
             }
