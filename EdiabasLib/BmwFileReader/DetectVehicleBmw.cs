@@ -17,7 +17,10 @@ namespace BmwFileReader
         {
             public const string DataVersion = "4";
 
-            public string VersionString => DataVersion + "-" + (VehicleInfoBmw.GetVehicleSeriesInfoTimeStamp() ?? string.Empty);
+            public string GetVersionString(DetectVehicleBmw detectVehicleBmw)
+            {
+                return DataVersion + "-" + detectVehicleBmw.GetFileTimeStamp() + "-" + (VehicleInfoBmw.GetVehicleSeriesInfoTimeStamp() ?? string.Empty);
+            }
 
             public VehicleDataBmw()
             {
@@ -25,7 +28,7 @@ namespace BmwFileReader
 
             public VehicleDataBmw(DetectVehicleBmw detectVehicleBmw)
             {
-                Version = VersionString;
+                Version = GetVersionString(detectVehicleBmw);
                 Ds2Vehicle = detectVehicleBmw.Ds2Vehicle;
                 Vin = detectVehicleBmw.Vin;
                 TypeKey = detectVehicleBmw.TypeKey;
@@ -43,7 +46,8 @@ namespace BmwFileReader
 
             public bool Restore(DetectVehicleBmw detectVehicleBmw)
             {
-                if (string.Compare(Version, VersionString, StringComparison.InvariantCulture) != 0)
+                string versionString = GetVersionString(detectVehicleBmw);
+                if (string.Compare(Version, versionString, StringComparison.InvariantCulture) != 0)
                 {
                     return false;
                 }
@@ -105,6 +109,7 @@ namespace BmwFileReader
 
         private EdiabasNet _ediabas;
         private string _bmwDir;
+        private DateTime _fileDateTime = DateTime.MinValue;
 
         public const string DataFileExtension = "_VehicleDataBmw.xml";
 
@@ -756,6 +761,11 @@ namespace BmwFileReader
             }
         }
 
+        public string GetFileTimeStamp()
+        {
+            return _fileDateTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+        }
+
         public bool SaveDataToFile(string fileName)
         {
             try
@@ -765,6 +775,7 @@ namespace BmwFileReader
                     return false;
                 }
 
+                _fileDateTime = File.GetLastWriteTimeUtc(fileName);
                 VehicleDataBmw vehicleDataBmw = new VehicleDataBmw(this);
                 XmlSerializer serializer = new XmlSerializer(typeof(VehicleDataBmw));
                 using (FileStream fileStream = File.Create(fileName))
@@ -792,6 +803,7 @@ namespace BmwFileReader
                     return false;
                 }
 
+                _fileDateTime = File.GetLastWriteTimeUtc(fileName);
                 XmlSerializer xmlSerializer = new XmlSerializer(typeof(VehicleDataBmw));
                 using (StreamReader sr = new StreamReader(fileName))
                 {
