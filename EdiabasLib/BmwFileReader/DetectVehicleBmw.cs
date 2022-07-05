@@ -15,7 +15,7 @@ namespace BmwFileReader
         [XmlType("VehicleDataBmw")]
         public class VehicleDataBmw
         {
-            public const string DataVersion = "3";
+            public const string DataVersion = "4";
 
             public string VersionString => DataVersion + "-" + (VehicleInfoBmw.GetVehicleSeriesInfoTimeStamp() ?? string.Empty);
 
@@ -28,6 +28,7 @@ namespace BmwFileReader
                 Version = VersionString;
                 Ds2Vehicle = detectVehicleBmw.Ds2Vehicle;
                 Vin = detectVehicleBmw.Vin;
+                TypeKey = detectVehicleBmw.TypeKey;
                 GroupSgdb = detectVehicleBmw.GroupSgdb;
                 ModelSeries = detectVehicleBmw.ModelSeries;
                 Series = detectVehicleBmw.Series;
@@ -49,6 +50,7 @@ namespace BmwFileReader
 
                 detectVehicleBmw.Ds2Vehicle = Ds2Vehicle;
                 detectVehicleBmw.Vin = Vin;
+                detectVehicleBmw.TypeKey = TypeKey;
                 detectVehicleBmw.GroupSgdb = GroupSgdb;
                 detectVehicleBmw.ModelSeries = ModelSeries;
                 detectVehicleBmw.Series = Series;
@@ -66,6 +68,7 @@ namespace BmwFileReader
             [XmlElement("Version")] public string Version { get; set; }
             [XmlElement("Ds2Vehicle"), DefaultValue(false)] public bool Ds2Vehicle { get; set; }
             [XmlElement("Vin"), DefaultValue(null)] public string Vin { get; set; }
+            [XmlElement("TypeKey"), DefaultValue(null)] public string TypeKey { get; set; }
             [XmlElement("GroupSgdb"), DefaultValue(null)] public string GroupSgdb { get; set; }
             [XmlElement("ModelSeries"), DefaultValue(null)] public string ModelSeries { get; set; }
             [XmlElement("Series"), DefaultValue(null)] public string Series { get; set; }
@@ -87,6 +90,7 @@ namespace BmwFileReader
         public bool Valid { get; private set; }
         public bool Ds2Vehicle { get; private set; }
         public string Vin { get; private set; }
+        public string TypeKey { get; private set; }
         public string GroupSgdb { get; private set; }
         public string ModelSeries { get; private set; }
         public string Series { get; private set; }
@@ -224,6 +228,7 @@ namespace BmwFileReader
                 }
 
                 Vin = detectedVin;
+                TypeKey = VehicleInfoBmw.GetTypeKeyFromVin(detectedVin, _ediabas, _bmwDir);
                 string vehicleType = null;
                 string modelSeries = null;
                 DateTime? cDate = null;
@@ -670,6 +675,7 @@ namespace BmwFileReader
                 }
 
                 Vin = detectedVin;
+                TypeKey = VehicleInfoBmw.GetTypeKeyFromVin(detectedVin, _ediabas, _bmwDir);
                 int modelYear = VehicleInfoBmw.GetModelYearFromVin(detectedVin);
                 if (modelYear >= 0)
                 {
@@ -830,6 +836,7 @@ namespace BmwFileReader
             Valid = false;
             Ds2Vehicle = false;
             Vin = null;
+            TypeKey = null;
             GroupSgdb = null;
             ModelSeries = null;
             Series = null;
