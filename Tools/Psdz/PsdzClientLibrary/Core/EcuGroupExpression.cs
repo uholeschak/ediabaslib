@@ -80,11 +80,20 @@ namespace PsdzClient.Core
 
         public override string ToFormula(FormulaConfig formulaConfig)
         {
+            PdszDatabase.EcuGroup ecuGroupById = ClientContext.GetDatabase(this.vecInfo)?.GetEcuGroupById(this.value.ToString(CultureInfo.InvariantCulture));
+            
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(FormulaSeparator(formulaConfig));
             stringBuilder.Append(formulaConfig.CheckLongFunc);
             stringBuilder.Append("(\"EcuGroup\", ");
-            stringBuilder.Append(value.ToString(CultureInfo.InvariantCulture));
+            if (ecuGroupById != null)
+            {
+                stringBuilder.Append(ecuGroupById.DiagAddr.ToString(CultureInfo.InvariantCulture));
+            }
+            else
+            {
+                stringBuilder.Append("-1");
+            }
             stringBuilder.Append(")");
             stringBuilder.Append(FormulaSeparator(formulaConfig));
 

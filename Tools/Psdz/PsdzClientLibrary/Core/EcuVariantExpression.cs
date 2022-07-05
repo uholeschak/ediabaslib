@@ -129,12 +129,18 @@ namespace PsdzClient.Core
 
         public override string ToFormula(FormulaConfig formulaConfig)
         {
+            PdszDatabase.EcuVar ecuVariantById = ClientContext.GetDatabase(this.vecInfo)?.GetEcuVariantById(this.value.ToString(CultureInfo.InvariantCulture));
+            
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(FormulaSeparator(formulaConfig));
-            stringBuilder.Append(formulaConfig.CheckLongFunc);
+            stringBuilder.Append(formulaConfig.CheckStringFunc);
             stringBuilder.Append("(\"EcuVariant\", ");
-            stringBuilder.Append(value.ToString(CultureInfo.InvariantCulture));
-            stringBuilder.Append(")");
+            stringBuilder.Append("\"");
+            if (ecuVariantById != null)
+            {
+                stringBuilder.Append(ecuVariantById.Name);
+            }
+            stringBuilder.Append("\")");
             stringBuilder.Append(FormulaSeparator(formulaConfig));
 
             return stringBuilder.ToString();
