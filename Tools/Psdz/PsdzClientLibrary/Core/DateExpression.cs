@@ -178,11 +178,13 @@ namespace PsdzClient.Core
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(FormulaSeparator(formulaConfig));
+            stringBuilder.Append("(");
             stringBuilder.Append(formulaConfig.GetLongFunc);
             stringBuilder.Append("(\"Baustand\") ");
-            stringBuilder.Append(this.GetOperator());
+            stringBuilder.Append(this.GetFormulaOperator());
             stringBuilder.Append(" ");
             stringBuilder.Append(this.datevalue.ToString(CultureInfo.InvariantCulture));
+            stringBuilder.Append(")");
             stringBuilder.Append(FormulaSeparator(formulaConfig));
 
             return stringBuilder.ToString();
@@ -192,6 +194,27 @@ namespace PsdzClient.Core
 		{
 			return "Baustand " + this.GetOperator() + " " + this.datevalue.ToString(CultureInfo.InvariantCulture);
 		}
+
+        private string GetFormulaOperator()
+        {
+            switch (this.compareOperator)
+            {
+                case CompareExpression.ECompareOperator.EQUAL:
+                    return "==";
+                case CompareExpression.ECompareOperator.NOT_EQUAL:
+                    return "!=";
+                case CompareExpression.ECompareOperator.GREATER:
+                    return ">";
+                case CompareExpression.ECompareOperator.GREATER_EQUAL:
+                    return ">=";
+                case CompareExpression.ECompareOperator.LESS:
+                    return "<";
+                case CompareExpression.ECompareOperator.LESS_EQUAL:
+                    return "<=";
+                default:
+                    throw new Exception("Unknown operator");
+            }
+        }
 
 		private string GetOperator()
 		{
