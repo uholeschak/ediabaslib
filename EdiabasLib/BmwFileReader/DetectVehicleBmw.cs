@@ -87,6 +87,7 @@ namespace BmwFileReader
         public bool Valid { get; private set; }
         public bool Ds2Vehicle { get; private set; }
         public string Vin { get; private set; }
+        public string TypeKey { get; private set; }
         public string GroupSgdb { get; private set; }
         public string ModelSeries { get; private set; }
         public string Series { get; private set; }
@@ -224,6 +225,7 @@ namespace BmwFileReader
                 }
 
                 Vin = detectedVin;
+                TypeKey = VehicleInfoBmw.GetTypeKeyFromVin(detectedVin, _ediabas, _bmwDir);
                 string vehicleType = null;
                 string modelSeries = null;
                 DateTime? cDate = null;
@@ -670,6 +672,7 @@ namespace BmwFileReader
                 }
 
                 Vin = detectedVin;
+                TypeKey = VehicleInfoBmw.GetTypeKeyFromVin(detectedVin, _ediabas, _bmwDir);
                 int modelYear = VehicleInfoBmw.GetModelYearFromVin(detectedVin);
                 if (modelYear >= 0)
                 {
@@ -830,6 +833,7 @@ namespace BmwFileReader
             Valid = false;
             Ds2Vehicle = false;
             Vin = null;
+            TypeKey = null;
             GroupSgdb = null;
             ModelSeries = null;
             Series = null;
