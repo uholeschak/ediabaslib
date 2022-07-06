@@ -115,14 +115,14 @@ namespace BmwFileReader
             return fixedFuncStructList;
         }
 
-        public bool UpdateFaultRuleProperties(DetectVehicleBmw detectVehicleBmw)
+        public bool UpdateFaultRuleProperties(DetectVehicleBmw detectVehicleBmw, string ecuName, string sgbd, string sgbdResolved)
         {
             if (_faultRuleEval == null)
             {
                 return false;
             }
 
-            _faultRuleEval.SetEvalProperties(detectVehicleBmw);
+            _faultRuleEval.SetEvalProperties(detectVehicleBmw, ecuName, sgbd, sgbdResolved);
 
             return true;
         }

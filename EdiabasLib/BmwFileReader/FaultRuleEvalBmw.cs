@@ -188,7 +188,7 @@ $@"         case ""{faultRuleInfo.Id.Trim()}"":
             }
         }
 
-        public void SetEvalProperties(DetectVehicleBmw detectVehicleBmw)
+        public void SetEvalProperties(DetectVehicleBmw detectVehicleBmw, string ecuName, string sgbd, string sgbdResolved)
         {
             _propertiesDict.Clear();
 
@@ -259,6 +259,11 @@ $@"         case ""{faultRuleInfo.Id.Trim()}"":
 
                     _propertiesDict.Add("Baureihenverbund".ToUpperInvariant(), new List<string> { levelParts[0] });
                 }
+            }
+
+            if (!string.IsNullOrWhiteSpace(ecuName))
+            {
+                _propertiesDict.Add("EcuRepresentative".ToUpperInvariant(), new List<string> { ecuName });
             }
         }
 
