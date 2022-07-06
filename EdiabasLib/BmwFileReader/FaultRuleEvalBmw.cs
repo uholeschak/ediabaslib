@@ -223,9 +223,18 @@ $@"         case ""{faultRuleInfo.Id.Trim()}"":
                 {
                     constructDate += "01";
                 }
-
                 _propertiesDict.Add("Baustand".ToUpperInvariant(), new List<string> { constructDate });
-                _propertiesDict.Add("Produktionsdatum".ToUpperInvariant(), new List<string> { constructDate });
+
+                string productionDate = constructDate;
+                if (!string.IsNullOrWhiteSpace(detectVehicleBmw.ILevelShip))
+                {
+                    string[] shipParts = detectVehicleBmw.ILevelShip.Split("-");
+                    if (shipParts.Length == 4)
+                    {
+                        productionDate = "20" + shipParts[1] + shipParts[2];
+                    }
+                }
+                _propertiesDict.Add("Produktionsdatum".ToUpperInvariant(), new List<string> { productionDate });
             }
 
             if (!string.IsNullOrWhiteSpace(detectVehicleBmw.ILevelCurrent))
