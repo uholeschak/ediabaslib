@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using BmwDeepObd;
@@ -19,7 +20,23 @@ namespace BmwFileReader
 
             public string GetVersionString(DetectVehicleBmw detectVehicleBmw)
             {
-                return DataVersion + "/" + detectVehicleBmw._fileTimeStamp + "/" + (VehicleInfoBmw.GetVehicleSeriesInfoTimeStamp() ?? string.Empty);
+                StringBuilder sb = new StringBuilder();
+                sb.Append(DataVersion);
+                if (!string.IsNullOrEmpty(detectVehicleBmw._fileTimeStamp))
+                {
+                    sb.Append("/");
+                    sb.Append(detectVehicleBmw._fileTimeStamp);
+                }
+
+                string seriesTimeStamp = VehicleInfoBmw.GetVehicleSeriesInfoTimeStamp();
+                if (!string.IsNullOrEmpty(seriesTimeStamp))
+                {
+                    sb.Append("/");
+                    sb.Append(seriesTimeStamp);
+                }
+
+                sb.Append(DataVersion);
+                return sb.ToString();
             }
 
             public VehicleDataBmw()
