@@ -19,7 +19,7 @@ namespace BmwFileReader
 
             public string GetVersionString(DetectVehicleBmw detectVehicleBmw)
             {
-                return DataVersion + "-" + detectVehicleBmw.GetFileTimeStamp() + "-" + (VehicleInfoBmw.GetVehicleSeriesInfoTimeStamp() ?? string.Empty);
+                return DataVersion + "/" + detectVehicleBmw._fileTimeStamp + "/" + (VehicleInfoBmw.GetVehicleSeriesInfoTimeStamp() ?? string.Empty);
             }
 
             public VehicleDataBmw()
@@ -109,7 +109,7 @@ namespace BmwFileReader
 
         private EdiabasNet _ediabas;
         private string _bmwDir;
-        private DateTime _fileDateTime = DateTime.MinValue;
+        private string _fileTimeStamp;
 
         public const string DataFileExtension = "_VehicleDataBmw.xml";
 
@@ -761,12 +761,7 @@ namespace BmwFileReader
             }
         }
 
-        public string GetFileTimeStamp()
-        {
-            return _fileDateTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
-        }
-
-        public bool SaveDataToFile(string fileName)
+        public bool SaveDataToFile(string fileName, string fileTimeStamp)
         {
             try
             {
@@ -775,7 +770,7 @@ namespace BmwFileReader
                     return false;
                 }
 
-                _fileDateTime = File.GetLastWriteTimeUtc(fileName);
+                _fileTimeStamp = fileTimeStamp;
                 VehicleDataBmw vehicleDataBmw = new VehicleDataBmw(this);
                 XmlSerializer serializer = new XmlSerializer(typeof(VehicleDataBmw));
                 using (FileStream fileStream = File.Create(fileName))
@@ -792,7 +787,7 @@ namespace BmwFileReader
             return true;
         }
 
-        public bool LoadDataFromFile(string fileName)
+        public bool LoadDataFromFile(string fileName, string fileTimeStamp)
         {
             try
             {
@@ -803,7 +798,7 @@ namespace BmwFileReader
                     return false;
                 }
 
-                _fileDateTime = File.GetLastWriteTimeUtc(fileName);
+                _fileTimeStamp = fileTimeStamp;
                 XmlSerializer xmlSerializer = new XmlSerializer(typeof(VehicleDataBmw));
                 using (StreamReader sr = new StreamReader(fileName))
                 {

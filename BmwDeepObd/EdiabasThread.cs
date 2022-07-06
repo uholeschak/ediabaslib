@@ -790,6 +790,8 @@ namespace BmwDeepObd
                 {
                     string xmlFileName = ActivityCommon.JobReader.XmlFileName;
                     string vehicleDataFile = Path.Combine(Path.GetDirectoryName(xmlFileName), Path.GetFileNameWithoutExtension(xmlFileName) + DetectVehicleBmw.DataFileExtension);
+                    DateTime xmlFileTime = File.GetLastWriteTimeUtc(xmlFileName);
+                    string xmlTimeStamp = xmlFileTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
 
                     detectVehicleBmw = new DetectVehicleBmw(Ediabas, _bmwPath);
                     detectVehicleBmw.AbortFunc = () => _ediabasJobAbort;
@@ -803,7 +805,7 @@ namespace BmwDeepObd
                         DataUpdatedEvent();
                     };
 
-                    if (!detectVehicleBmw.LoadDataFromFile(vehicleDataFile))
+                    if (!detectVehicleBmw.LoadDataFromFile(vehicleDataFile, xmlTimeStamp))
                     {
                         if (!string.IsNullOrEmpty(pageInfo.ErrorsInfo.SgbdFunctional))
                         {
@@ -816,7 +818,7 @@ namespace BmwDeepObd
 
                         if (detectVehicleBmw.Valid)
                         {
-                            detectVehicleBmw.SaveDataToFile(vehicleDataFile);
+                            detectVehicleBmw.SaveDataToFile(vehicleDataFile, xmlTimeStamp);
                         }
                     }
 
