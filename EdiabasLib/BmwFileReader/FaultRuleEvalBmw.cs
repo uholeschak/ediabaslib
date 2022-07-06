@@ -223,27 +223,41 @@ $@"         case ""{faultRuleInfo.Id.Trim()}"":
                 {
                     constructDate += "01";
                 }
-
                 _propertiesDict.Add("Baustand".ToUpperInvariant(), new List<string> { constructDate });
-                _propertiesDict.Add("Produktionsdatum".ToUpperInvariant(), new List<string> { constructDate });
+
+                string productionDate = constructDate;
+                if (!string.IsNullOrWhiteSpace(detectVehicleBmw.ILevelShip))
+                {
+                    string iLevelTrim = detectVehicleBmw.ILevelShip.Trim();
+                    string[] levelParts = iLevelTrim.Split("-");
+                    if (levelParts.Length == 4)
+                    {
+                        if (Int32.TryParse(levelParts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out int iLevelYear) &&
+                            Int32.TryParse(levelParts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out int iLevelMonth))
+                        {
+                            int dateValue = (iLevelYear + 2000) * 100 + iLevelMonth;
+                            productionDate = dateValue.ToString(CultureInfo.InvariantCulture);
+                        }
+                    }
+                }
+
+                _propertiesDict.Add("Produktionsdatum".ToUpperInvariant(), new List<string> { productionDate });
             }
 
             if (!string.IsNullOrWhiteSpace(detectVehicleBmw.ILevelCurrent))
             {
                 string iLevelTrim = detectVehicleBmw.ILevelCurrent.Trim();
+                string[] levelParts = iLevelTrim.Split("-");
                 _propertiesDict.Add("IStufe".ToUpperInvariant(), new List<string> { iLevelTrim.Trim() });
-                if (iLevelTrim.Length == 14)
+                if (levelParts.Length == 4 && iLevelTrim.Length == 14)
                 {
-                    string iLevelBare = iLevelTrim.Replace("-", string.Empty);
-                    if (iLevelBare.Length == 11)
+                    string iLevelNum = levelParts[1] + levelParts[2] + levelParts[3];
+                    if (Int32.TryParse(iLevelNum, NumberStyles.Integer, CultureInfo.InvariantCulture, out int iLevelValue))
                     {
-                        if (Int32.TryParse(iLevelBare.Substring(4), NumberStyles.Integer, CultureInfo.InvariantCulture, out int iLevelValue))
-                        {
-                            _propertiesDict.Add("IStufeX".ToUpperInvariant(), new List<string> { iLevelValue.ToString(CultureInfo.InvariantCulture) });
-                        }
-
-                        _propertiesDict.Add("Baureihenverbund".ToUpperInvariant(), new List<string> { iLevelBare.Substring(0, 4) });
+                        _propertiesDict.Add("IStufeX".ToUpperInvariant(), new List<string> { iLevelValue.ToString(CultureInfo.InvariantCulture) });
                     }
+
+                    _propertiesDict.Add("Baureihenverbund".ToUpperInvariant(), new List<string> { levelParts[0] });
                 }
             }
         }
