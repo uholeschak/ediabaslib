@@ -396,6 +396,7 @@ namespace ExtractEcuFunctions
                         string groupId = reader["ECUGROUPID"].ToString().Trim();
                         ecuVariant = new EcuFunctionStructs.EcuVariant(reader["ID"].ToString().Trim(),
                             groupId,
+                            GetEcuGroupName(mDbConnection, groupId),
                             GetTranslation(reader),
                             GetEcuGroupFunctionIds(mDbConnection, groupId));
                     }
@@ -696,6 +697,24 @@ namespace ExtractEcuFunctions
             }
 
             return ecuGroupFunctionIds;
+        }
+
+        private static string GetEcuGroupName(SQLiteConnection mDbConnection, string groupId)
+        {
+            string ecuGroupName = null;
+            string sql = string.Format(@"SELECT NAME FROM XEP_ECUGROUPS WHERE ID = {0}", groupId);
+            using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
+            {
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        ecuGroupName = reader["NAME"].ToString().Trim();
+                    }
+                }
+            }
+
+            return ecuGroupName;
         }
 
         // from: DatabaseProvider.SQLiteConnector.dll BMW.Rheingold.DatabaseProvider.SQLiteConnector.DatabaseProviderSQLite.GetXepNodeClassNameById
