@@ -173,6 +173,29 @@ namespace BmwFileReader
             [XmlIgnore] public Dictionary<Int64, EcuFaultCode> EcuFaultCodeDictInfo { get; set; }
         }
 
+        [XmlType("Cliq")]
+        public class EcuClique
+        {
+            public EcuClique(string id, string cliqueName, string ecuRepId)
+            {
+                Id = id;
+                CliqueName = cliqueName;
+                EcuRepId = ecuRepId;
+            }
+
+            [XmlElement, DefaultValue("")] public string Id { get; set; }
+            [XmlElement("CNam"), DefaultValue("")] public string CliqueName { get; set; }
+            [XmlElement("RId"), DefaultValue("")] public string EcuRepId { get; set; }
+
+            public string ToString(string prefix = "")
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine(prefix + "CLIQUE:");
+                sb.Append(this.PropertyList(prefix + " "));
+                return sb.ToString();
+            }
+        }
+
         [XmlInclude(typeof(EcuFaultCodeLabel)), XmlInclude(typeof(EcuFaultModeLabel)), XmlInclude(typeof(EcuEnvCondLabel))]
         [XmlType("FCod")]
         public class EcuFaultCode

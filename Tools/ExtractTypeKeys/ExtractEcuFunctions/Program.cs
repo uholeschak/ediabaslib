@@ -680,6 +680,70 @@ namespace ExtractEcuFunctions
             return ecuEnvCondLabelList;
         }
 
+        private static EcuFunctionStructs.EcuClique FindEcuClique(SQLiteConnection mDbConnection, EcuFunctionStructs.EcuVariant ecuVariant)
+        {
+            if (ecuVariant == null)
+            {
+                return null;
+            }
+
+            string cliqueId = GetRefEcuCliqueId(mDbConnection, ecuVariant.Id);
+            if (string.IsNullOrEmpty(cliqueId))
+            {
+                return null;
+            }
+
+            return GetEcuCliqueById(mDbConnection, cliqueId);
+        }
+
+        private static EcuFunctionStructs.EcuClique GetEcuCliqueById(SQLiteConnection mDbConnection, string ecuCliqueId)
+        {
+            if (string.IsNullOrEmpty(ecuCliqueId))
+            {
+                return null;
+            }
+
+            EcuFunctionStructs.EcuClique ecuClique = null;
+            string sql = string.Format(@"SELECT ID, CLIQUENKURZBEZEICHNUNG, ECUREPID FROM XEP_ECUCLIQUES WHERE (ID = {0})", ecuCliqueId);
+            using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
+            {
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        ecuClique = new EcuFunctionStructs.EcuClique(reader["ID"].ToString().Trim(),
+                            reader["CLIQUENKURZBEZEICHNUNG"].ToString().Trim(),
+                            reader["ECUREPID"].ToString().Trim());
+                    }
+                }
+            }
+
+            return ecuClique;
+        }
+
+        private static string GetRefEcuCliqueId(SQLiteConnection mDbConnection, string ecuRefId)
+        {
+            if (string.IsNullOrEmpty(ecuRefId))
+            {
+                return null;
+            }
+
+            string cliqueId = null;
+            string sql = string.Format(@"SELECT ECUCLIQUEID FROM XEP_REFECUCLIQUES WHERE (ID = {0})", ecuRefId);
+            using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
+            {
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        cliqueId = reader["ID"].ToString().Trim();
+                    }
+                }
+            }
+
+            return cliqueId;
+        }
+
         // from: DatabaseProvider.SQLiteConnector.dll BMW.Rheingold.DatabaseProvider.SQLiteConnector.DatabaseProviderSQLite.GetEcuGroupFunctionsByEcuGroupId
         private static List<string> GetEcuGroupFunctionIds(SQLiteConnection mDbConnection, string groupId)
         {
