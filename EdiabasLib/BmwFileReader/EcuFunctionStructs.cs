@@ -63,7 +63,7 @@ namespace BmwFileReader
             [XmlArray("EECLL"), DefaultValue(null)] public List<EcuEnvCondLabel> EcuEnvCondLabelList { get; set; }
         }
 
-        [XmlInclude(typeof(EcuTranslation)), XmlInclude(typeof(EcuTranslation)), XmlInclude(typeof(EcuFuncStruct)), XmlInclude(typeof(EcuFaultCode))]
+        [XmlInclude(typeof(EcuTranslation)), XmlInclude(typeof(EcuTranslation)), XmlInclude(typeof(EcuFuncStruct)), XmlInclude(typeof(EcuFaultCode)), XmlInclude(typeof(EcuClique))]
         [XmlType("Var")]
         public class EcuVariant
         {
@@ -71,14 +71,16 @@ namespace BmwFileReader
             {
                 Id = string.Empty;
                 GroupId = string.Empty;
+                GroupName = string.Empty;
                 GroupFunctionIds = null;
                 Title = null;
             }
 
-            public EcuVariant(string id, string groupId, EcuTranslation title, List<string> groupFunctionIds)
+            public EcuVariant(string id, string groupId, string groupName, EcuTranslation title, List<string> groupFunctionIds)
             {
                 Id = id;
                 GroupId = groupId;
+                GroupName = groupName;
                 GroupFunctionIds = groupFunctionIds;
                 Title = title;
             }
@@ -128,6 +130,11 @@ namespace BmwFileReader
                     }
                 }
 
+                if (EcuClique != null)
+                {
+                    EcuClique.ToString(prefix + " ");
+                }
+
                 return sb.ToString();
             }
 
@@ -162,13 +169,48 @@ namespace BmwFileReader
 
             [XmlElement, DefaultValue("")] public string Id { get; set; }
             [XmlElement("GId"), DefaultValue("")] public string GroupId { get; set; }
+            [XmlElement("GNam"), DefaultValue("")] public string GroupName { get; set; }
             [XmlElement("Tit"), DefaultValue(null)] public EcuTranslation Title { get; set; }
             [XmlArray("GFId"), XmlArrayItem("Str"), DefaultValue(null)] public List<string> GroupFunctionIds { get; set; }
             [XmlArray("RVL"), DefaultValue(null)] public List<RefEcuVariant> RefEcuVariantList { get; set; }
             [XmlArray("FSL"), DefaultValue(null)] public List<EcuFuncStruct> EcuFuncStructList { get; set; }
             [XmlArray("FCL"), DefaultValue(null)] public List<EcuFaultCode> EcuFaultCodeList { get; set; }
+            [XmlElement("ECli"), DefaultValue(null)] public EcuClique EcuClique { get; set; }
             [XmlIgnore] public Dictionary<Int64, EcuFaultCode> EcuFaultCodeDictFault { get; set; }
             [XmlIgnore] public Dictionary<Int64, EcuFaultCode> EcuFaultCodeDictInfo { get; set; }
+        }
+
+        [XmlType("Cliq")]
+        public class EcuClique
+        {
+            public EcuClique()
+            {
+                Id = string.Empty;
+                CliqueName = string.Empty;
+                EcuRepId = string.Empty;
+                EcuRepsName = string.Empty;
+            }
+
+            public EcuClique(string id, string cliqueName, string ecuRepId)
+            {
+                Id = id;
+                CliqueName = cliqueName;
+                EcuRepId = ecuRepId;
+                EcuRepsName = string.Empty;
+            }
+
+            [XmlElement, DefaultValue("")] public string Id { get; set; }
+            [XmlElement("CNam"), DefaultValue("")] public string CliqueName { get; set; }
+            [XmlElement("RId"), DefaultValue("")] public string EcuRepId { get; set; }
+            [XmlElement("RNam"), DefaultValue("")] public string EcuRepsName { get; set; }
+
+            public string ToString(string prefix = "")
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine(prefix + "CLIQUE:");
+                sb.Append(this.PropertyList(prefix + " "));
+                return sb.ToString();
+            }
         }
 
         [XmlInclude(typeof(EcuFaultCodeLabel)), XmlInclude(typeof(EcuFaultModeLabel)), XmlInclude(typeof(EcuEnvCondLabel))]
