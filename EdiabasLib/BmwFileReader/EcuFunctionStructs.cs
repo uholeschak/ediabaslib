@@ -63,7 +63,7 @@ namespace BmwFileReader
             [XmlArray("EECLL"), DefaultValue(null)] public List<EcuEnvCondLabel> EcuEnvCondLabelList { get; set; }
         }
 
-        [XmlInclude(typeof(EcuTranslation)), XmlInclude(typeof(EcuTranslation)), XmlInclude(typeof(EcuFuncStruct)), XmlInclude(typeof(EcuFaultCode))]
+        [XmlInclude(typeof(EcuTranslation)), XmlInclude(typeof(EcuTranslation)), XmlInclude(typeof(EcuFuncStruct)), XmlInclude(typeof(EcuFaultCode)), XmlInclude(typeof(EcuClique))]
         [XmlType("Var")]
         public class EcuVariant
         {
@@ -130,6 +130,11 @@ namespace BmwFileReader
                     }
                 }
 
+                if (EcuClique != null)
+                {
+                    EcuClique.ToString(prefix + " ");
+                }
+
                 return sb.ToString();
             }
 
@@ -170,6 +175,7 @@ namespace BmwFileReader
             [XmlArray("RVL"), DefaultValue(null)] public List<RefEcuVariant> RefEcuVariantList { get; set; }
             [XmlArray("FSL"), DefaultValue(null)] public List<EcuFuncStruct> EcuFuncStructList { get; set; }
             [XmlArray("FCL"), DefaultValue(null)] public List<EcuFaultCode> EcuFaultCodeList { get; set; }
+            [XmlElement("ECli"), DefaultValue(null)] public EcuClique EcuClique { get; set; }
             [XmlIgnore] public Dictionary<Int64, EcuFaultCode> EcuFaultCodeDictFault { get; set; }
             [XmlIgnore] public Dictionary<Int64, EcuFaultCode> EcuFaultCodeDictInfo { get; set; }
         }
