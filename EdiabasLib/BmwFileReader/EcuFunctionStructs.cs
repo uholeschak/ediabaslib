@@ -71,6 +71,7 @@ namespace BmwFileReader
             {
                 Id = string.Empty;
                 GroupId = string.Empty;
+                GroupName = string.Empty;
                 GroupFunctionIds = null;
                 Title = null;
             }

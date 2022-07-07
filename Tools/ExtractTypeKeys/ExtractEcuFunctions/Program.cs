@@ -403,6 +403,10 @@ namespace ExtractEcuFunctions
                 }
             }
 
+            if (ecuVariant != null)
+            {
+                EcuFunctionStructs.EcuClique ecuClique = FindEcuClique(mDbConnection, ecuVariant);
+            }
             return ecuVariant;
         }
 
