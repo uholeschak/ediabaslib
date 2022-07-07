@@ -726,6 +726,15 @@ namespace ExtractEcuFunctions
                 }
             }
 
+            if (ecuClique != null)
+            {
+                string ecuRepsName = GetEcuRepsNameById(mDbConnection, ecuClique.EcuRepId);
+                if (!string.IsNullOrEmpty(ecuRepsName))
+                {
+                    ecuClique.EcuRepsName = ecuRepsName;
+                }
+            }
+
             return ecuClique;
         }
 
@@ -751,6 +760,30 @@ namespace ExtractEcuFunctions
 
             return cliqueId;
         }
+
+        public static string GetEcuRepsNameById(SQLiteConnection mDbConnection, string ecuId)
+        {
+            if (string.IsNullOrEmpty(ecuId))
+            {
+                return null;
+            }
+
+            string ecuRepsName = null;
+            string sql = string.Format(@"SELECT STEUERGERAETEKUERZEL FROM XEP_ECUREPS WHERE (ID = {0})", ecuId);
+            using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
+            {
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        ecuRepsName = reader["STEUERGERAETEKUERZEL"].ToString().Trim();
+                    }
+                }
+            }
+
+            return ecuRepsName;
+        }
+
 
         // from: DatabaseProvider.SQLiteConnector.dll BMW.Rheingold.DatabaseProvider.SQLiteConnector.DatabaseProviderSQLite.GetEcuGroupFunctionsByEcuGroupId
         private static List<string> GetEcuGroupFunctionIds(SQLiteConnection mDbConnection, string groupId)

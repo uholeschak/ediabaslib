@@ -183,16 +183,26 @@ namespace BmwFileReader
         [XmlType("Cliq")]
         public class EcuClique
         {
+            public EcuClique()
+            {
+                Id = string.Empty;
+                CliqueName = string.Empty;
+                EcuRepId = string.Empty;
+                EcuRepsName = string.Empty;
+            }
+
             public EcuClique(string id, string cliqueName, string ecuRepId)
             {
                 Id = id;
                 CliqueName = cliqueName;
                 EcuRepId = ecuRepId;
+                EcuRepsName = string.Empty;
             }
 
             [XmlElement, DefaultValue("")] public string Id { get; set; }
             [XmlElement("CNam"), DefaultValue("")] public string CliqueName { get; set; }
             [XmlElement("RId"), DefaultValue("")] public string EcuRepId { get; set; }
+            [XmlElement("RNam"), DefaultValue("")] public string EcuRepsName { get; set; }
 
             public string ToString(string prefix = "")
             {
