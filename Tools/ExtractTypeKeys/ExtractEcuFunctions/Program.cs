@@ -128,6 +128,18 @@ namespace ExtractEcuFunctions
                     return 1;
                 }
 
+                if (!WriteTypeKeys(outTextWriter, connection, outDirSub))
+                {
+                    outTextWriter?.WriteLine("Write TypeKeys failed");
+                    return 1;
+                }
+
+                if (!WriteVinRanges(outTextWriter, connection, outDirSub))
+                {
+                    outTextWriter?.WriteLine("Write VinRanges failed");
+                    return 1;
+                }
+
                 List<String> ecuNameList;
                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                 if (string.IsNullOrEmpty(ecuName))
@@ -391,41 +403,84 @@ namespace ExtractEcuFunctions
                 );
         }
 
-
-        private static List<string> GetVinRangesList(SQLiteConnection mDbConnection)
+        private static bool WriteTypeKeys(TextWriter outTextWriter, string connection, string outDirSub)
         {
-            List<string> vinRangesList = new List<string>();
-            string sql = @"SELECT v.VINBANDFROM AS VINBANDFROM, v.VINBANDTO AS VINBANDTO, v.TYPSCHLUESSEL AS TYPEKEY FROM VINRANGES v";
-            using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
+            try
             {
-                using (SQLiteDataReader reader = command.ExecuteReader())
+                using (SQLiteConnection mDbConnection = new SQLiteConnection(connection))
                 {
-                    while (reader.Read())
-                    {
-                        vinRangesList.Add(reader["VINBANDFROM"] + "," + reader["VINBANDTO"] + "," + reader["TYPEKEY"]);
-                    }
-                }
-            }
+                    mDbConnection.SetPassword(DbPassword);
+                    mDbConnection.Open();
 
-            return vinRangesList;
+                    outTextWriter?.WriteLine("*** Write TypeKeys start ***");
+                    string typeKeysFile = Path.Combine(outDirSub, "typekeys.txt");
+                    using (StreamWriter swTypeKeys = new StreamWriter(typeKeysFile))
+                    {
+                        string sql = $"SELECT t.NAME AS TYPEKEY, c.NAME AS EREIHE FROM XEP_CHARACTERISTICS t INNER JOIN XEP_VEHICLES v ON (v.TYPEKEYID = t.ID) INNER JOIN XEP_CHARACTERISTICS c ON (v.CHARACTERISTICID = c.ID) INNER JOIN XEP_CHARACTERISTICROOTS r ON (r.ID = c.PARENTID AND r.NODECLASS = {RootENameClassId}) WHERE t.NODECLASS = {TypeKeyClassId} ORDER BY TYPEKEY";
+                        using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
+                        {
+                            using (SQLiteDataReader reader = command.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    swTypeKeys.WriteLine(reader["TYPEKEY"] + "," + reader["EREIHE"]);
+                                }
+                            }
+                        }
+                    }
+
+                    mDbConnection.Close();
+                }
+
+                outTextWriter?.WriteLine("*** Write TypeKeys done ***");
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                outTextWriter?.WriteLine(e);
+                return false;
+            }
         }
 
-        private static List<string> GetTypeKeyList(SQLiteConnection mDbConnection)
+        private static bool WriteVinRanges(TextWriter outTextWriter, string connection, string outDirSub)
         {
-            List<string> typeKeyList = new List<string>();
-            string sql = $"SELECT t.NAME AS TYPEKEY, c.NAME AS EREIHE FROM XEP_CHARACTERISTICS t INNER JOIN XEP_VEHICLES v ON (v.TYPEKEYID = t.ID) INNER JOIN XEP_CHARACTERISTICS c ON (v.CHARACTERISTICID = c.ID) INNER JOIN XEP_CHARACTERISTICROOTS r ON (r.ID = c.PARENTID AND r.NODECLASS = {RootENameClassId}) WHERE t.NODECLASS = {TypeKeyClassId} ORDER BY TYPEKEY";
-            using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
+            try
             {
-                using (SQLiteDataReader reader = command.ExecuteReader())
+                using (SQLiteConnection mDbConnection = new SQLiteConnection(connection))
                 {
-                    while (reader.Read())
-                    {
-                        typeKeyList.Add(reader["TYPEKEY"] + "," + reader["EREIHE"]);
-                    }
-                }
-            }
+                    mDbConnection.SetPassword(DbPassword);
+                    mDbConnection.Open();
 
-            return typeKeyList;
+                    outTextWriter?.WriteLine("*** Write VinRanges start ***");
+                    string vinRangeFile = Path.Combine(outDirSub, "vinranges.txt");
+                    using (StreamWriter swVinranges = new StreamWriter(vinRangeFile))
+                    {
+                        string sql = @"SELECT v.VINBANDFROM AS VINBANDFROM, v.VINBANDTO AS VINBANDTO, v.TYPSCHLUESSEL AS TYPEKEY FROM VINRANGES v";
+                        using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
+                        {
+                            using (SQLiteDataReader reader = command.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    swVinranges.WriteLine(reader["VINBANDFROM"] + "," + reader["VINBANDTO"] + "," + reader["TYPEKEY"]);
+                                }
+                            }
+                        }
+                    }
+
+                    mDbConnection.Close();
+                }
+
+                outTextWriter?.WriteLine("*** Write VinRanges done ***");
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                outTextWriter?.WriteLine(e);
+                return false;
+            }
         }
 
         private static EcuFunctionStructs.EcuVariant GetEcuVariant(SQLiteConnection mDbConnection, string ecuName)
