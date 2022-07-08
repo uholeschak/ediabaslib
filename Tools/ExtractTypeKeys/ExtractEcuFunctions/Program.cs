@@ -859,7 +859,7 @@ namespace ExtractEcuFunctions
                 {
                     while (reader.Read())
                     {
-                        cliqueId = reader["ID"].ToString().Trim();
+                        cliqueId = reader["ECUCLIQUEID"].ToString().Trim();
                     }
                 }
             }
