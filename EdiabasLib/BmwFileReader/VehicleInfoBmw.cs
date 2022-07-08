@@ -21,7 +21,6 @@ namespace BmwFileReader
 {
     public class VehicleInfoBmw
     {
-        private const string DatabaseFileName = @"Database.zip";
         public const string ResultUnknown = "UNBEK";
 
 #if Android
@@ -202,7 +201,7 @@ namespace BmwFileReader
                 ZipFile zf = null;
                 try
                 {
-                    using (FileStream fs = File.OpenRead(Path.Combine(databaseDir, DatabaseFileName)))
+                    using (FileStream fs = File.OpenRead(Path.Combine(databaseDir, EcuFunctionReader.EcuFuncFileName)))
                     {
                         zf = new ZipFile(fs);
                         foreach (ZipEntry zipEntry in zf)
@@ -282,7 +281,7 @@ namespace BmwFileReader
                 ZipFile zf = null;
                 try
                 {
-                    using (FileStream fs = File.OpenRead(Path.Combine(databaseDir, DatabaseFileName)))
+                    using (FileStream fs = File.OpenRead(Path.Combine(databaseDir, EcuFunctionReader.EcuFuncFileName)))
                     {
                         zf = new ZipFile(fs);
                         foreach (ZipEntry zipEntry in zf)
