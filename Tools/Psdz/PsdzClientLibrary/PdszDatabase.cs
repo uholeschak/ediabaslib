@@ -2521,8 +2521,8 @@ namespace PsdzClient
         {
             try
             {
-                string faultRulesFile = Path.Combine(_databasePath, VehicleStructsBmw.FaultRulesXmlFile);
-                if (File.Exists(faultRulesFile))
+                string faultRulesZipFile = Path.Combine(_databasePath, VehicleStructsBmw.FaultRulesZipFile);
+                if (File.Exists(faultRulesZipFile))
                 {
                     return true;
                 }
@@ -2534,11 +2534,36 @@ namespace PsdzClient
                     return false;
                 }
 
-                log.InfoFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo Saving: {0}", faultRulesFile);
-                XmlSerializer serializer = new XmlSerializer(typeof(VehicleStructsBmw.FaultRulesInfoData));
-                using (FileStream fileStream = File.Create(faultRulesFile))
+                log.InfoFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo Saving: {0}", faultRulesZipFile);
+
+                using (MemoryStream memStream = new MemoryStream())
                 {
-                    serializer.Serialize(fileStream, faultRulesInfoData);
+                    XmlSerializer serializer = new XmlSerializer(typeof(VehicleStructsBmw.FaultRulesInfoData));
+                    serializer.Serialize(memStream, faultRulesInfoData);
+                    memStream.Seek(0, SeekOrigin.Begin);
+
+                    FileStream fsOut = File.Create(faultRulesZipFile);
+                    ZipOutputStream zipStream = new ZipOutputStream(fsOut);
+                    zipStream.SetLevel(3);
+
+                    try
+                    {
+                        ZipEntry newEntry = new ZipEntry(VehicleStructsBmw.FaultRulesXmlFile)
+                        {
+                            DateTime = DateTime.Now,
+                            Size = memStream.Length
+                        };
+                        zipStream.PutNextEntry(newEntry);
+
+                        byte[] buffer = new byte[4096];
+                        StreamUtils.Copy(memStream, zipStream, buffer);
+                        zipStream.CloseEntry();
+                    }
+                    finally
+                    {
+                        zipStream.IsStreamOwner = true;
+                        zipStream.Close();
+                    }
                 }
             }
             catch (Exception ex)
