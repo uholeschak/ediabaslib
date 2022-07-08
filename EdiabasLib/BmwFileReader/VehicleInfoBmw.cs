@@ -92,7 +92,24 @@ namespace BmwFileReader
             }
         }
 
-        public static VehicleStructsBmw.FaultRulesInfoData ReadFaultRulesInfo()
+        public static VehicleStructsBmw.FaultRulesInfoData ReadFaultRulesInfo(string databaseDir)
+        {
+            if (_faultRulesInfoData != null)
+            {
+                return _faultRulesInfoData;
+            }
+
+            _faultRulesInfoData = ReadFaultRulesInfoFromResource();
+            if (_faultRulesInfoData != null)
+            {
+                return _faultRulesInfoData;
+            }
+
+            _faultRulesInfoData = ReadFaultRulesInfoFromFile(databaseDir);
+            return _faultRulesInfoData;
+        }
+
+        public static VehicleStructsBmw.FaultRulesInfoData ReadFaultRulesInfoFromResource()
         {
             try
             {
@@ -118,6 +135,58 @@ namespace BmwFileReader
                 }
 
                 return _faultRulesInfoData;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public static VehicleStructsBmw.FaultRulesInfoData ReadFaultRulesInfoFromFile(string databaseDir)
+        {
+            if (_faultRulesInfoData != null)
+            {
+                return _faultRulesInfoData;
+            }
+
+            try
+            {
+                ZipFile zf = null;
+                try
+                {
+                    using (FileStream fs = File.OpenRead(Path.Combine(databaseDir, VehicleStructsBmw.FaultRulesZipFile)))
+                    {
+                        zf = new ZipFile(fs);
+                        foreach (ZipEntry zipEntry in zf)
+                        {
+                            if (!zipEntry.IsFile)
+                            {
+                                continue; // Ignore directories
+                            }
+                            if (string.Compare(zipEntry.Name, VehicleStructsBmw.FaultRulesXmlFile, StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                Stream zipStream = zf.GetInputStream(zipEntry);
+                                using (StreamReader sr = new StreamReader(zipStream))
+                                {
+                                    XmlSerializer serializer = new XmlSerializer(typeof(VehicleStructsBmw.FaultRulesInfoData));
+                                    _faultRulesInfoData = serializer.Deserialize(sr) as VehicleStructsBmw.FaultRulesInfoData;
+                                }
+
+                                break;
+                            }
+                        }
+                    }
+
+                    return _faultRulesInfoData;
+                }
+                finally
+                {
+                    if (zf != null)
+                    {
+                        zf.IsStreamOwner = true; // Makes close also shut the underlying stream
+                        zf.Close(); // Ensure we release resources
+                    }
+                }
             }
             catch (Exception)
             {

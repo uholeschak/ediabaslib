@@ -55,7 +55,7 @@ namespace BmwFileReader
                 return true;
             }
 
-            VehicleStructsBmw.FaultRulesInfoData faultRulesInfoData = VehicleInfoBmw.ReadFaultRulesInfo();
+            VehicleStructsBmw.FaultRulesInfoData faultRulesInfoData = VehicleInfoBmw.ReadFaultRulesInfo(_rootDir);
             if (faultRulesInfoData == null)
             {
                 return false;
