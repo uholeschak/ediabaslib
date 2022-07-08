@@ -57,6 +57,8 @@ namespace ExtractEcuFunctions
         private static readonly HashSet<string> FaultCodeLabelIdHashSet = new HashSet<string>();
         private static readonly HashSet<string> FaultModeLabelIdHashSet = new HashSet<string>();
         private static readonly HashSet<string> EnvCondLabelIdHashSet = new HashSet<string>();
+        private static string RootENameClassId = string.Empty;
+        private static string TypeKeyClassId = string.Empty;
         private static string EnvDiscreteNodeClassId = string.Empty;
 
         static int Main(string[] args)
@@ -294,9 +296,21 @@ namespace ExtractEcuFunctions
                     mDbConnection.SetPassword(DbPassword);
                     mDbConnection.Open();
 
+                    RootENameClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootEBezeichnung");
+                    TypeKeyClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"Typschluessel");
                     EnvDiscreteNodeClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, "EnvironmentalConditionTextDiscrete");
 
                     mDbConnection.Close();
+
+                    if (string.IsNullOrEmpty(RootENameClassId))
+                    {
+                        return false;
+                    }
+
+                    if (string.IsNullOrEmpty(TypeKeyClassId))
+                    {
+                        return false;
+                    }
 
                     if (string.IsNullOrEmpty(EnvDiscreteNodeClassId))
                     {
@@ -375,6 +389,43 @@ namespace ExtractEcuFunctions
                 language == null || language.ToLowerInvariant() == "cs" ? reader[prefix + "_CSCZ"].ToString() : string.Empty,
                 language == null || language.ToLowerInvariant() == "pl" ? reader[prefix + "_PLPL"].ToString() : string.Empty
                 );
+        }
+
+
+        private static List<string> GetVinRangesList(SQLiteConnection mDbConnection)
+        {
+            List<string> vinRangesList = new List<string>();
+            string sql = @"SELECT v.VINBANDFROM AS VINBANDFROM, v.VINBANDTO AS VINBANDTO, v.TYPSCHLUESSEL AS TYPEKEY FROM VINRANGES v";
+            using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
+            {
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        vinRangesList.Add(reader["VINBANDFROM"] + "," + reader["VINBANDTO"] + "," + reader["TYPEKEY"]);
+                    }
+                }
+            }
+
+            return vinRangesList;
+        }
+
+        private static List<string> GetTypeKeyList(SQLiteConnection mDbConnection)
+        {
+            List<string> typeKeyList = new List<string>();
+            string sql = $"SELECT t.NAME AS TYPEKEY, c.NAME AS EREIHE FROM XEP_CHARACTERISTICS t INNER JOIN XEP_VEHICLES v ON (v.TYPEKEYID = t.ID) INNER JOIN XEP_CHARACTERISTICS c ON (v.CHARACTERISTICID = c.ID) INNER JOIN XEP_CHARACTERISTICROOTS r ON (r.ID = c.PARENTID AND r.NODECLASS = {RootENameClassId}) WHERE t.NODECLASS = {TypeKeyClassId} ORDER BY TYPEKEY";
+            using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
+            {
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        typeKeyList.Add(reader["TYPEKEY"] + "," + reader["EREIHE"]);
+                    }
+                }
+            }
+
+            return typeKeyList;
         }
 
         private static EcuFunctionStructs.EcuVariant GetEcuVariant(SQLiteConnection mDbConnection, string ecuName)
