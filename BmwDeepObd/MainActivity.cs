@@ -3570,6 +3570,11 @@ namespace BmwDeepObd
                             int errorIndex = 0;
                             foreach (EdiabasThread.EdiabasErrorReport errorReport in errorReportList)
                             {
+                                if (errorReport.ReadIs)
+                                {
+                                    continue;
+                                }
+
                                 if (errorReport is EdiabasThread.EdiabasErrorReportReset errorReportReset)
                                 {
                                     switch (errorReportReset.ResetState)
