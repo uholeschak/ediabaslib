@@ -479,6 +479,8 @@
   <string name="tool_job_bin_args">Данные (шеснадцатиричные по желаанию с пробелами)</string>
   <string name="tool_job_arg_assist">Помощник по аргументам</string>
   <string name="tool_job_arguments_error_detail">Без аргументов будут считаны все ошибки</string>
+  <!--Translate-->
+  <string name="tool_job_arguments_info_detail">Без аргументов считывается вся информация</string>
   <string name="tool_job_results">Результаты:</string>
   <string name="tool_job_result">Результат:</string>
   <string name="tool_job_infos">Информация:</string>
