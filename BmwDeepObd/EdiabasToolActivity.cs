@@ -1503,6 +1503,10 @@ namespace BmwDeepObd
                 {
                     _infoListAdapter.Items.Add(new TableResultItem(GetString(Resource.String.tool_job_arguments_error_detail), null));
                 }
+                else if (string.Compare(jobInfo.Name, "IS_LESEN_DETAIL", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    _infoListAdapter.Items.Add(new TableResultItem(GetString(Resource.String.tool_job_arguments_info_detail), null));
+                }
                 foreach (ExtraInfo info in jobInfo.Arguments)
                 {
                     StringBuilder stringBuilderComments = new StringBuilder();
@@ -2228,13 +2232,15 @@ namespace BmwDeepObd
                     List<string> messageList = new List<string>();
                     try
                     {
-                        if (string.Compare(jobName, "FS_LESEN_DETAIL", StringComparison.OrdinalIgnoreCase) == 0 &&
-                            string.IsNullOrEmpty(jobArgs))
+                        bool fsDetail = string.Compare(jobName, "FS_LESEN_DETAIL", StringComparison.OrdinalIgnoreCase) == 0;
+                        bool isDetail = string.Compare(jobName, "IS_LESEN_DETAIL", StringComparison.OrdinalIgnoreCase) == 0;
+                        if ((fsDetail || isDetail) && string.IsNullOrEmpty(jobArgs))
                         {
+                            string readJob = fsDetail ? "FS_LESEN" : "IS_LESEN";
                             _ediabas.ArgString = string.Empty;
                             _ediabas.ArgBinaryStd = null;
                             _ediabas.ResultsRequests = string.Empty;
-                            _ediabas.ExecuteJob("FS_LESEN");
+                            _ediabas.ExecuteJob(readJob);
 
                             List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
 
@@ -2267,7 +2273,7 @@ namespace BmwDeepObd
                                             _ediabas.ArgBinaryStd = null;
                                             _ediabas.ResultsRequests = jobResults;
 
-                                            _ediabas.ExecuteJob("FS_LESEN_DETAIL");
+                                            _ediabas.ExecuteJob(jobName);
 
                                             List<Dictionary<string, EdiabasNet.ResultData>> resultSetsDetail =
                                                 new List<Dictionary<string, EdiabasNet.ResultData>>(_ediabas.ResultSets);
