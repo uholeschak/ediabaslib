@@ -3657,6 +3657,10 @@ namespace BmwDeepObd
                                 if (errorReport.ErrorDict == null)
                                 {
                                     srMessage.Append(GetString(Resource.String.error_no_response));
+                                    if (errorReport.ReadIs)
+                                    {
+                                        srMessage.Clear();
+                                    }
                                 }
                                 else
                                 {
