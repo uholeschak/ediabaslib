@@ -1513,6 +1513,7 @@ namespace BmwDeepObd
             List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
 
             bool jobOk = false;
+            bool jobRejected = false;
             bool saeMode = false;
             if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
             {
@@ -1571,6 +1572,10 @@ namespace BmwDeepObd
                     if (IsJobStatusOk(resultSets[resultSets.Count - 1]))
                     {
                         jobOk = true;
+                    }
+                    else
+                    {
+                        jobRejected = true;
                     }
                 }
             }
@@ -1646,7 +1651,10 @@ namespace BmwDeepObd
             }
             else
             {
-                errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, readIs, null, null));
+                if (!(readIs && jobRejected))
+                {
+                    errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, readIs, null, null));
+                }
             }
 
             return jobOk;
