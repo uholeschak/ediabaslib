@@ -29,14 +29,14 @@ namespace BmwDeepObd
             {
             }
 
-            public EdiabasErrorReport(string ecuName, string sgbd, string sgbdResolved, string vagDataFileName, string vagUdsFileName, bool readIs, Dictionary<string, EdiabasNet.ResultData> errorDict, List<Dictionary<string, EdiabasNet.ResultData>> errorDetailSet, string execptionText)
+            public EdiabasErrorReport(string ecuName, string sgbd, string sgbdResolved, string vagDataFileName, string vagUdsFileName, bool resetIs, Dictionary<string, EdiabasNet.ResultData> errorDict, List<Dictionary<string, EdiabasNet.ResultData>> errorDetailSet, string execptionText)
             {
                 EcuName = ecuName;
                 Sgbd = sgbd;
                 SgbdResolved = sgbdResolved;
                 VagDataFileName = vagDataFileName;
                 VagUdsFileName = vagUdsFileName;
-                ReadIs = readIs;
+                ReadIs = resetIs;
                 ErrorDict = errorDict;
                 ErrorDetailSet = errorDetailSet;
                 ExecptionText = execptionText;
@@ -79,8 +79,8 @@ namespace BmwDeepObd
                 Condition
             }
 
-            public EdiabasErrorReportReset(string ecuName, string sgbd, string sgbdResolved, string vagDataFileName, string vagUdsFileName, bool readIs, Dictionary<string, EdiabasNet.ResultData> errorDict, ErrorRestState resetState) :
-                base(ecuName, sgbd, sgbdResolved, vagDataFileName, vagUdsFileName, readIs, errorDict, null, string.Empty)
+            public EdiabasErrorReportReset(string ecuName, string sgbd, string sgbdResolved, string vagDataFileName, string vagUdsFileName, bool resetIs, Dictionary<string, EdiabasNet.ResultData> errorDict, ErrorRestState resetState) :
+                base(ecuName, sgbd, sgbdResolved, vagDataFileName, vagUdsFileName, resetIs, errorDict, null, string.Empty)
             {
                 ResetState = resetState;
             }
@@ -955,6 +955,7 @@ namespace BmwDeepObd
                                 // ignored
                             }
 
+                            bool resetIs = false;
                             if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                             {
                                 try
@@ -1022,10 +1023,58 @@ namespace BmwDeepObd
                                     // ignored
                                 }
                             }
+                            else
+                            {   // BMW
+                                if (resetState == EdiabasErrorReportReset.ErrorRestState.Ok)
+                                {
+                                    string infoResetJob = "IS_LOESCHEN";
+                                    if (Ediabas.IsJobExisting(infoResetJob))
+                                    {
+                                        try
+                                        {
+                                            Ediabas.ArgString = string.Empty;
+                                            Ediabas.ArgBinaryStd = null;
+                                            Ediabas.ResultsRequests = string.Empty;
+                                            Ediabas.ExecuteJob(infoResetJob);
+
+                                            List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
+                                            if (resultSets.Count > 1)
+                                            {
+                                                int dictIndex = 0;
+                                                foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
+                                                {
+                                                    if (dictIndex == 0)
+                                                    {
+                                                        dictIndex++;
+                                                        continue;
+                                                    }
+
+                                                    if (IsJobStatusOk(resultDictLocal))
+                                                    {
+                                                        resetIs = true;
+                                                        break;
+                                                    }
+
+                                                    dictIndex++;
+                                                }
+                                            }
+                                        }
+                                        catch (Exception)
+                                        {
+                                            // ignored
+                                        }
+
+                                        if (!resetIs)
+                                        {
+                                            resetState = EdiabasErrorReportReset.ErrorRestState.Undefined;
+                                        }
+                                    }
+                                }
+                            }
 
                             if (resetState != EdiabasErrorReportReset.ErrorRestState.Undefined)
                             {
-                                errorReportList.Add(new EdiabasErrorReportReset(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, false, null, resetState));
+                                errorReportList.Add(new EdiabasErrorReportReset(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, resetIs, null, resetState));
                             }
                         }
 
