@@ -777,12 +777,18 @@ namespace BmwDeepObd
                             }
                         }
 
+                        bool resetIs = false;
                         if (resultDictErrorOk != null)
                         {
                             Dictionary<string, EdiabasNet.ResultData> resultDictInfoOk = null;
                             string infoResetJob = "IS_LOESCHEN_FUNKTIONAL";
                             if (Ediabas.IsJobExisting(infoResetJob))
                             {
+                                Ediabas.ArgString = string.Empty;
+                                Ediabas.ArgBinaryStd = null;
+                                Ediabas.ResultsRequests = string.Empty;
+                                Ediabas.ExecuteJob(infoResetJob);
+
                                 resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
                                 if (resultSets.Count > 1)
                                 {
@@ -805,7 +811,11 @@ namespace BmwDeepObd
                                     }
                                 }
 
-                                if (resultDictInfoOk == null)
+                                if (resultDictInfoOk != null)
+                                {
+                                    resetIs = true;
+                                }
+                                else
                                 {
                                     resultDictErrorOk = null;
                                 }
@@ -814,7 +824,7 @@ namespace BmwDeepObd
 
                         if (resultDictErrorOk != null)
                         {
-                            errorReportList.Add(new EdiabasErrorReportReset(string.Empty, string.Empty, string.Empty, null, null, false, resultDictErrorOk,
+                            errorReportList.Add(new EdiabasErrorReportReset(string.Empty, string.Empty, string.Empty, null, null, resetIs, resultDictErrorOk,
                                 EdiabasErrorReportReset.ErrorRestState.Ok));
                         }
                     }
