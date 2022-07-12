@@ -51,7 +51,9 @@
   <!--Translate-->
   <string name="error_reset_condition">Условия сброса ошибки не выполнены.\nПожалуйста, остановите двигатель, включите зажигание и повторите попытку.</string>
   <string name="error_no_response">Нет подтверждения</string>
-  <string name="error_code">Код ошибки</string>
+  <string name="error_error_code">Код ошибки</string>
+  <!--Translate-->
+  <string name="error_info_code">Инфокод</string>
   <string name="error_shadow">(Shadow)</string>
   <string name="error_env_title">Условия окружающей среды:</string>
   <string name="error_env_frequency">Частота</string>
