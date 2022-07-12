@@ -3844,7 +3844,7 @@ namespace BmwDeepObd
                                                 }
                                             }
                                             srMessage.Append("\r\n");
-                                            srMessage.Append(GetString(Resource.String.error_code));
+                                            srMessage.Append(GetString(Resource.String.error_error_code));
                                             srMessage.Append(": ");
                                             srMessage.Append(string.Format("0x{0:X04} 0x{1:X02} {2}", dtcEntry.DtcCode, dtcEntry.DtcDetail, dtcEntry.ErrorType.ToString()));
                                         }
@@ -3852,7 +3852,7 @@ namespace BmwDeepObd
                                         {
                                             textList = _activityCommon.ConvertVagDtcCode(_instanceData.EcuPath, errorCode, errorTypeList, kwp1281, saeMode);
                                             srMessage.Append("\r\n");
-                                            srMessage.Append(GetString(Resource.String.error_code));
+                                            srMessage.Append(GetString(Resource.String.error_error_code));
                                             srMessage.Append(": ");
                                             srMessage.Append(string.Format("0x{0:X}", errorCode));
                                             foreach (long errorType in errorTypeList)
@@ -3969,11 +3969,18 @@ namespace BmwDeepObd
                                             srMessage.Append("\r\n");
                                             if (!string.IsNullOrEmpty(textErrorCode))
                                             {
-                                                srMessage.Append(GetString(Resource.String.error_code));
-                                                if (shadow)
+                                                if (errorReport.ReadIs)
                                                 {
-                                                    srMessage.Append(" ");
-                                                    srMessage.Append(GetString(Resource.String.error_shadow));
+                                                    srMessage.Append(GetString(Resource.String.error_info_code));
+                                                }
+                                                else
+                                                {
+                                                    srMessage.Append(GetString(Resource.String.error_error_code));
+                                                    if (shadow)
+                                                    {
+                                                        srMessage.Append(" ");
+                                                        srMessage.Append(GetString(Resource.String.error_shadow));
+                                                    }
                                                 }
                                                 srMessage.Append(": ");
                                                 srMessage.Append(textErrorCode);
