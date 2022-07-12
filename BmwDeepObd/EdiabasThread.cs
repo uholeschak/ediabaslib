@@ -754,10 +754,10 @@ namespace BmwDeepObd
                         Ediabas.ResultsRequests = string.Empty;
                         Ediabas.ExecuteJob("FS_LOESCHEN_FUNKTIONAL");
 
+                        Dictionary<string, EdiabasNet.ResultData> resultDictErrorOk = null;
                         List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
                         if (resultSets.Count > 1)
                         {
-                            Dictionary<string, EdiabasNet.ResultData> resultDictOk = null;
                             int dictIndex = 0;
                             foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
                             {
@@ -769,18 +769,53 @@ namespace BmwDeepObd
 
                                 if (IsJobStatusOk(resultDictLocal))
                                 {
-                                    resultDictOk = resultDictLocal;
+                                    resultDictErrorOk = resultDictLocal;
                                     break;
                                 }
 
                                 dictIndex++;
                             }
+                        }
 
-                            if (resultDictOk != null)
+                        if (resultDictErrorOk != null)
+                        {
+                            Dictionary<string, EdiabasNet.ResultData> resultDictInfoOk = null;
+                            string infoResetJob = "IS_LOESCHEN_FUNKTIONAL";
+                            if (Ediabas.IsJobExisting(infoResetJob))
                             {
-                                errorReportList.Add(new EdiabasErrorReportReset(string.Empty, string.Empty, string.Empty, null, null, false, resultDictOk,
-                                    EdiabasErrorReportReset.ErrorRestState.Ok));
+                                resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
+                                if (resultSets.Count > 1)
+                                {
+                                    int dictIndex = 0;
+                                    foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
+                                    {
+                                        if (dictIndex == 0)
+                                        {
+                                            dictIndex++;
+                                            continue;
+                                        }
+
+                                        if (IsJobStatusOk(resultDictLocal))
+                                        {
+                                            resultDictInfoOk = resultDictLocal;
+                                            break;
+                                        }
+
+                                        dictIndex++;
+                                    }
+                                }
+
+                                if (resultDictInfoOk == null)
+                                {
+                                    resultDictErrorOk = null;
+                                }
                             }
+                        }
+
+                        if (resultDictErrorOk != null)
+                        {
+                            errorReportList.Add(new EdiabasErrorReportReset(string.Empty, string.Empty, string.Empty, null, null, false, resultDictErrorOk,
+                                EdiabasErrorReportReset.ErrorRestState.Ok));
                         }
                     }
                 }
