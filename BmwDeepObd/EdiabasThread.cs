@@ -745,24 +745,35 @@ namespace BmwDeepObd
 
                 if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw && !string.IsNullOrEmpty(errorResetSgbdFunc))
                 {
-                    ActivityCommon.ResolveSgbdFile(Ediabas, errorResetSgbdFunc);
-
-                    Ediabas.ArgString = "ALL";
-                    Ediabas.ArgBinaryStd = null;
-                    Ediabas.ResultsRequests = string.Empty;
-                    Ediabas.NoInitForVJobs = true;
-                    Ediabas.ExecuteJob("_JOBS");    // force to load file
-
-                    bool resetOk = ResetErrorFunctional(false);
-                    if (resetOk)
+                    try
                     {
-                        resetOk = ResetErrorFunctional(true);
+                        ActivityCommon.ResolveSgbdFile(Ediabas, errorResetSgbdFunc);
+
+                        Ediabas.ArgString = "ALL";
+                        Ediabas.ArgBinaryStd = null;
+                        Ediabas.ResultsRequests = string.Empty;
+                        Ediabas.NoInitForVJobs = true;
+                        Ediabas.ExecuteJob("_JOBS");    // force to load file
+
+                        EdiabasErrorReportReset.ErrorRestState errorRestState = ResetErrorFunctional(false);
+                        bool resetIs = false;
+                        if (errorRestState == EdiabasErrorReportReset.ErrorRestState.Ok)
+                        {
+                            if (ResetErrorFunctional(true) == EdiabasErrorReportReset.ErrorRestState.Ok)
+                            {
+                                resetIs = true;
+                            }
+                        }
+
+                        if (errorRestState == EdiabasErrorReportReset.ErrorRestState.Ok)
+                        {
+                            errorReportList.Add(new EdiabasErrorReportReset(string.Empty, string.Empty, string.Empty, null, null, resetIs, null,
+                                errorRestState));
+                        }
                     }
-
-                    if (resetOk)
+                    catch (Exception)
                     {
-                        errorReportList.Add(new EdiabasErrorReportReset(string.Empty, string.Empty, string.Empty, null, null, false, null,
-                            EdiabasErrorReportReset.ErrorRestState.Ok));
+                        // ignored
                     }
                 }
 
@@ -843,49 +854,15 @@ namespace BmwDeepObd
                             sgbdResolved = Path.GetFileNameWithoutExtension(sgbdResolved);
                         }
 
+                        Ediabas.ArgString = "ALL";
+                        Ediabas.ArgBinaryStd = null;
+                        Ediabas.ResultsRequests = string.Empty;
+                        Ediabas.NoInitForVJobs = true;
+                        Ediabas.ExecuteJob("_JOBS");    // force to load file
+
                         if (errorResetList != null && errorResetList.Any(ecu => string.CompareOrdinal(ecu, ecuInfo.Name) == 0))
                         {   // error reset requested
-                            EdiabasErrorReportReset.ErrorRestState resetState = EdiabasErrorReportReset.ErrorRestState.Undefined;
-                            try
-                            {
-                                Ediabas.ArgString = string.Empty;
-                                Ediabas.ArgBinaryStd = null;
-                                Ediabas.ResultsRequests = string.Empty;
-                                Ediabas.ExecuteJob(ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw ? "FS_LOESCHEN" : "Fehlerspeicher_loeschen");
-
-                                List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
-                                if (resultSets.Count > 1)
-                                {
-                                    string resultName;
-                                    Dictionary<string, EdiabasNet.ResultData> resultDictCheck;
-                                    if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
-                                    {
-                                        resultName = "JOB_STATUS";
-                                        resultDictCheck = resultSets[1];
-                                    }
-                                    else
-                                    {
-                                        resultName = "JOBSTATUS";
-                                        resultDictCheck = resultSets[0];
-                                    }
-                                    if (resultDictCheck.TryGetValue(resultName, out EdiabasNet.ResultData resultData))
-                                    {
-                                        if (resultData.OpData is string)
-                                        {
-                                            // read details
-                                            string jobStatus = (string)resultData.OpData;
-                                            if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
-                                            {
-                                                resetState = EdiabasErrorReportReset.ErrorRestState.Ok;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            catch (Exception)
-                            {
-                                // ignored
-                            }
+                            EdiabasErrorReportReset.ErrorRestState resetState = ResetError(false);
 
                             bool resetIs = false;
                             if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
@@ -959,47 +936,11 @@ namespace BmwDeepObd
                             {   // BMW
                                 if (resetState == EdiabasErrorReportReset.ErrorRestState.Ok)
                                 {
-                                    string infoResetJob = "IS_LOESCHEN";
-                                    if (Ediabas.IsJobExisting(infoResetJob))
+                                    EdiabasErrorReportReset.ErrorRestState resetStateIs = ResetError(true);
+                                    if (resetStateIs != EdiabasErrorReportReset.ErrorRestState.Undefined)
                                     {
-                                        try
-                                        {
-                                            Ediabas.ArgString = string.Empty;
-                                            Ediabas.ArgBinaryStd = null;
-                                            Ediabas.ResultsRequests = string.Empty;
-                                            Ediabas.ExecuteJob(infoResetJob);
-
-                                            List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
-                                            if (resultSets.Count > 1)
-                                            {
-                                                int dictIndex = 0;
-                                                foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
-                                                {
-                                                    if (dictIndex == 0)
-                                                    {
-                                                        dictIndex++;
-                                                        continue;
-                                                    }
-
-                                                    if (IsJobStatusOk(resultDictLocal))
-                                                    {
-                                                        resetIs = true;
-                                                        break;
-                                                    }
-
-                                                    dictIndex++;
-                                                }
-                                            }
-                                        }
-                                        catch (Exception)
-                                        {
-                                            // ignored
-                                        }
-
-                                        if (!resetIs)
-                                        {
-                                            resetState = EdiabasErrorReportReset.ErrorRestState.Undefined;
-                                        }
+                                        resetIs = resetStateIs != EdiabasErrorReportReset.ErrorRestState.Ok;
+                                        resetState = resetStateIs;
                                     }
                                 }
                             }
@@ -1009,12 +950,6 @@ namespace BmwDeepObd
                                 errorReportList.Add(new EdiabasErrorReportReset(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, resetIs, null, resetState));
                             }
                         }
-
-                        Ediabas.ArgString = "ALL";
-                        Ediabas.ArgBinaryStd = null;
-                        Ediabas.ResultsRequests = string.Empty;
-                        Ediabas.NoInitForVJobs = true;
-                        Ediabas.ExecuteJob("_JOBS");    // force to load file
 
                         if (ReadErrors(ecuInfo, sgbdResolved, false, errorReportList))
                         {
@@ -1502,15 +1437,15 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool ResetErrorFunctional(bool resetIs)
+        public EdiabasErrorReportReset.ErrorRestState ResetErrorFunctional(bool resetIs)
         {
             try
             {
-                bool resetOk = false;
+                EdiabasErrorReportReset.ErrorRestState errorRestState = EdiabasErrorReportReset.ErrorRestState.Undefined;
                 string resetJob = resetIs ? "IS_LOESCHEN_FUNKTIONAL" : "FS_LOESCHEN_FUNKTIONAL";
-                if (Ediabas.IsJobExisting(resetJob))
+                if (!Ediabas.IsJobExisting(resetJob))
                 {
-                    return true;
+                    return EdiabasErrorReportReset.ErrorRestState.Undefined;
                 }
 
                 Ediabas.ArgString = string.Empty;
@@ -1532,7 +1467,7 @@ namespace BmwDeepObd
 
                         if (IsJobStatusOk(resultDictLocal))
                         {
-                            resetOk = true;
+                            errorRestState = EdiabasErrorReportReset.ErrorRestState.Ok;
                             break;
                         }
 
@@ -1540,11 +1475,78 @@ namespace BmwDeepObd
                     }
                 }
 
-                return resetOk;
+                return errorRestState;
             }
             catch (Exception)
             {
-                return false;
+                return EdiabasErrorReportReset.ErrorRestState.Failed;
+            }
+        }
+
+        public EdiabasErrorReportReset.ErrorRestState ResetError(bool resetIs)
+        {
+            try
+            {
+                EdiabasErrorReportReset.ErrorRestState resetState = EdiabasErrorReportReset.ErrorRestState.Undefined;
+                string resetJob;
+                if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
+                {
+                    resetJob = resetIs ? "IS_LOESCHEN" : "FS_LOESCHEN";
+                }
+                else
+                {
+                    if (resetIs)
+                    {
+                        return EdiabasErrorReportReset.ErrorRestState.Undefined;
+                    }
+
+                    resetJob = "Fehlerspeicher_loeschen";
+                }
+
+                if (!Ediabas.IsJobExisting(resetJob))
+                {
+                    return EdiabasErrorReportReset.ErrorRestState.Undefined;
+                }
+
+                Ediabas.ArgString = string.Empty;
+                Ediabas.ArgBinaryStd = null;
+                Ediabas.ResultsRequests = string.Empty;
+                Ediabas.ExecuteJob(resetJob);
+
+                List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
+                if (resultSets.Count > 1)
+                {
+                    string resultName;
+                    Dictionary<string, EdiabasNet.ResultData> resultDictCheck;
+                    if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
+                    {
+                        resultName = "JOB_STATUS";
+                        resultDictCheck = resultSets[1];
+                    }
+                    else
+                    {
+                        resultName = "JOBSTATUS";
+                        resultDictCheck = resultSets[0];
+                    }
+                    if (resultDictCheck.TryGetValue(resultName, out EdiabasNet.ResultData resultData))
+                    {
+                        if (resultData.OpData is string)
+                        {
+                            // read details
+                            string jobStatus = (string)resultData.OpData;
+                            if (String.Compare(jobStatus, "OKAY", StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                resetState = EdiabasErrorReportReset.ErrorRestState.Ok;
+                            }
+                        }
+                    }
+                }
+
+                return resetState;
+            }
+            catch (Exception)
+            {
+                return EdiabasErrorReportReset.ErrorRestState.Failed;
             }
         }
 
