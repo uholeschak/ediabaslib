@@ -934,12 +934,12 @@ namespace BmwDeepObd
                             }
                             else
                             {   // BMW
-                                if (resetState == EdiabasErrorReportReset.ErrorRestState.Ok)
+                                EdiabasErrorReportReset.ErrorRestState resetStateIs = ResetError(true);
+                                if (resetStateIs != EdiabasErrorReportReset.ErrorRestState.Undefined)
                                 {
-                                    EdiabasErrorReportReset.ErrorRestState resetStateIs = ResetError(true);
-                                    if (resetStateIs != EdiabasErrorReportReset.ErrorRestState.Undefined)
+                                    resetIs = resetStateIs == EdiabasErrorReportReset.ErrorRestState.Ok;
+                                    if (!resetIs)
                                     {
-                                        resetIs = resetStateIs != EdiabasErrorReportReset.ErrorRestState.Ok;
                                         resetState = resetStateIs;
                                     }
                                 }
