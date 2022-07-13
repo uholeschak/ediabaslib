@@ -745,24 +745,31 @@ namespace BmwDeepObd
 
                 if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw && !string.IsNullOrEmpty(errorResetSgbdFunc))
                 {
-                    ActivityCommon.ResolveSgbdFile(Ediabas, errorResetSgbdFunc);
-
-                    Ediabas.ArgString = "ALL";
-                    Ediabas.ArgBinaryStd = null;
-                    Ediabas.ResultsRequests = string.Empty;
-                    Ediabas.NoInitForVJobs = true;
-                    Ediabas.ExecuteJob("_JOBS");    // force to load file
-
-                    bool resetOk = ResetErrorFunctional(false);
-                    if (resetOk)
+                    try
                     {
-                        resetOk = ResetErrorFunctional(true);
+                        ActivityCommon.ResolveSgbdFile(Ediabas, errorResetSgbdFunc);
+
+                        Ediabas.ArgString = "ALL";
+                        Ediabas.ArgBinaryStd = null;
+                        Ediabas.ResultsRequests = string.Empty;
+                        Ediabas.NoInitForVJobs = true;
+                        Ediabas.ExecuteJob("_JOBS");    // force to load file
+
+                        bool resetOk = ResetErrorFunctional(false);
+                        if (resetOk)
+                        {
+                            resetOk = ResetErrorFunctional(true);
+                        }
+
+                        if (resetOk)
+                        {
+                            errorReportList.Add(new EdiabasErrorReportReset(string.Empty, string.Empty, string.Empty, null, null, false, null,
+                                EdiabasErrorReportReset.ErrorRestState.Ok));
+                        }
                     }
-
-                    if (resetOk)
+                    catch (Exception)
                     {
-                        errorReportList.Add(new EdiabasErrorReportReset(string.Empty, string.Empty, string.Empty, null, null, false, null,
-                            EdiabasErrorReportReset.ErrorRestState.Ok));
+                        // ignored
                     }
                 }
 
@@ -1508,7 +1515,7 @@ namespace BmwDeepObd
             {
                 bool resetOk = false;
                 string resetJob = resetIs ? "IS_LOESCHEN_FUNKTIONAL" : "FS_LOESCHEN_FUNKTIONAL";
-                if (Ediabas.IsJobExisting(resetJob))
+                if (!Ediabas.IsJobExisting(resetJob))
                 {
                     return true;
                 }
