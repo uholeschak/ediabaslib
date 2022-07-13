@@ -29,14 +29,14 @@ namespace BmwDeepObd
             {
             }
 
-            public EdiabasErrorReport(string ecuName, string sgbd, string sgbdResolved, string vagDataFileName, string vagUdsFileName, bool readIs, Dictionary<string, EdiabasNet.ResultData> errorDict, List<Dictionary<string, EdiabasNet.ResultData>> errorDetailSet, string execptionText)
+            public EdiabasErrorReport(string ecuName, string sgbd, string sgbdResolved, string vagDataFileName, string vagUdsFileName, bool resetIs, Dictionary<string, EdiabasNet.ResultData> errorDict, List<Dictionary<string, EdiabasNet.ResultData>> errorDetailSet, string execptionText)
             {
                 EcuName = ecuName;
                 Sgbd = sgbd;
                 SgbdResolved = sgbdResolved;
                 VagDataFileName = vagDataFileName;
                 VagUdsFileName = vagUdsFileName;
-                ReadIs = readIs;
+                ReadIs = resetIs;
                 ErrorDict = errorDict;
                 ErrorDetailSet = errorDetailSet;
                 ExecptionText = execptionText;
@@ -79,8 +79,8 @@ namespace BmwDeepObd
                 Condition
             }
 
-            public EdiabasErrorReportReset(string ecuName, string sgbd, string sgbdResolved, string vagDataFileName, string vagUdsFileName, bool readIs, Dictionary<string, EdiabasNet.ResultData> errorDict, ErrorRestState resetState) :
-                base(ecuName, sgbd, sgbdResolved, vagDataFileName, vagUdsFileName, readIs, errorDict, null, string.Empty)
+            public EdiabasErrorReportReset(string ecuName, string sgbd, string sgbdResolved, string vagDataFileName, string vagUdsFileName, bool resetIs, Dictionary<string, EdiabasNet.ResultData> errorDict, ErrorRestState resetState) :
+                base(ecuName, sgbd, sgbdResolved, vagDataFileName, vagUdsFileName, resetIs, errorDict, null, string.Empty)
             {
                 ResetState = resetState;
             }
@@ -743,50 +743,27 @@ namespace BmwDeepObd
 
                 List<EdiabasErrorReport> errorReportList = new List<EdiabasErrorReport>();
 
-                try
+                if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw && !string.IsNullOrEmpty(errorResetSgbdFunc))
                 {
-                    if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw && !string.IsNullOrEmpty(errorResetSgbdFunc))
+                    ActivityCommon.ResolveSgbdFile(Ediabas, errorResetSgbdFunc);
+
+                    Ediabas.ArgString = "ALL";
+                    Ediabas.ArgBinaryStd = null;
+                    Ediabas.ResultsRequests = string.Empty;
+                    Ediabas.NoInitForVJobs = true;
+                    Ediabas.ExecuteJob("_JOBS");    // force to load file
+
+                    bool resetOk = ResetErrorFunctional(false);
+                    if (resetOk)
                     {
-                        ActivityCommon.ResolveSgbdFile(Ediabas, errorResetSgbdFunc);
-
-                        Ediabas.ArgString = string.Empty;
-                        Ediabas.ArgBinaryStd = null;
-                        Ediabas.ResultsRequests = string.Empty;
-                        Ediabas.ExecuteJob("FS_LOESCHEN_FUNKTIONAL");
-
-                        List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
-                        if (resultSets.Count > 1)
-                        {
-                            Dictionary<string, EdiabasNet.ResultData> resultDictOk = null;
-                            int dictIndex = 0;
-                            foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
-                            {
-                                if (dictIndex == 0)
-                                {
-                                    dictIndex++;
-                                    continue;
-                                }
-
-                                if (IsJobStatusOk(resultDictLocal))
-                                {
-                                    resultDictOk = resultDictLocal;
-                                    break;
-                                }
-
-                                dictIndex++;
-                            }
-
-                            if (resultDictOk != null)
-                            {
-                                errorReportList.Add(new EdiabasErrorReportReset(string.Empty, string.Empty, string.Empty, null, null, false, resultDictOk,
-                                    EdiabasErrorReportReset.ErrorRestState.Ok));
-                            }
-                        }
+                        resetOk = ResetErrorFunctional(true);
                     }
-                }
-                catch (Exception)
-                {
-                    // ignored
+
+                    if (resetOk)
+                    {
+                        errorReportList.Add(new EdiabasErrorReportReset(string.Empty, string.Empty, string.Empty, null, null, false, null,
+                            EdiabasErrorReportReset.ErrorRestState.Ok));
+                    }
                 }
 
                 if (detectVehicleBmw == null)
@@ -910,6 +887,7 @@ namespace BmwDeepObd
                                 // ignored
                             }
 
+                            bool resetIs = false;
                             if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                             {
                                 try
@@ -977,10 +955,58 @@ namespace BmwDeepObd
                                     // ignored
                                 }
                             }
+                            else
+                            {   // BMW
+                                if (resetState == EdiabasErrorReportReset.ErrorRestState.Ok)
+                                {
+                                    string infoResetJob = "IS_LOESCHEN";
+                                    if (Ediabas.IsJobExisting(infoResetJob))
+                                    {
+                                        try
+                                        {
+                                            Ediabas.ArgString = string.Empty;
+                                            Ediabas.ArgBinaryStd = null;
+                                            Ediabas.ResultsRequests = string.Empty;
+                                            Ediabas.ExecuteJob(infoResetJob);
+
+                                            List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
+                                            if (resultSets.Count > 1)
+                                            {
+                                                int dictIndex = 0;
+                                                foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
+                                                {
+                                                    if (dictIndex == 0)
+                                                    {
+                                                        dictIndex++;
+                                                        continue;
+                                                    }
+
+                                                    if (IsJobStatusOk(resultDictLocal))
+                                                    {
+                                                        resetIs = true;
+                                                        break;
+                                                    }
+
+                                                    dictIndex++;
+                                                }
+                                            }
+                                        }
+                                        catch (Exception)
+                                        {
+                                            // ignored
+                                        }
+
+                                        if (!resetIs)
+                                        {
+                                            resetState = EdiabasErrorReportReset.ErrorRestState.Undefined;
+                                        }
+                                    }
+                                }
+                            }
 
                             if (resetState != EdiabasErrorReportReset.ErrorRestState.Undefined)
                             {
-                                errorReportList.Add(new EdiabasErrorReportReset(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, false, null, resetState));
+                                errorReportList.Add(new EdiabasErrorReportReset(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, resetIs, null, resetState));
                             }
                         }
 
@@ -1474,6 +1500,52 @@ namespace BmwDeepObd
                 UpdateProgress = 0;
             }
             return true;
+        }
+
+        public bool ResetErrorFunctional(bool resetIs)
+        {
+            try
+            {
+                bool resetOk = false;
+                string resetJob = resetIs ? "IS_LOESCHEN_FUNKTIONAL" : "FS_LOESCHEN_FUNKTIONAL";
+                if (Ediabas.IsJobExisting(resetJob))
+                {
+                    return true;
+                }
+
+                Ediabas.ArgString = string.Empty;
+                Ediabas.ArgBinaryStd = null;
+                Ediabas.ResultsRequests = string.Empty;
+                Ediabas.ExecuteJob(resetJob);
+
+                List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
+                if (resultSets.Count > 1)
+                {
+                    int dictIndex = 0;
+                    foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
+                    {
+                        if (dictIndex == 0)
+                        {
+                            dictIndex++;
+                            continue;
+                        }
+
+                        if (IsJobStatusOk(resultDictLocal))
+                        {
+                            resetOk = true;
+                            break;
+                        }
+
+                        dictIndex++;
+                    }
+                }
+
+                return resetOk;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public bool ReadErrors(JobReader.EcuInfo ecuInfo, string sgbdResolved, bool readIs, List<EdiabasErrorReport> errorReportList)
