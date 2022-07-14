@@ -755,20 +755,22 @@ namespace BmwDeepObd
                         Ediabas.NoInitForVJobs = true;
                         Ediabas.ExecuteJob("_JOBS");    // force to load file
 
-                        EdiabasErrorReportReset.ErrorRestState errorRestState = ResetErrorFunctional(false);
+                        EdiabasErrorReportReset.ErrorRestState resetState = ResetErrorFunctional(false);
                         bool resetIs = false;
-                        if (errorRestState == EdiabasErrorReportReset.ErrorRestState.Ok)
+                        EdiabasErrorReportReset.ErrorRestState resetStateIs = ResetErrorFunctional(true);
+                        if (resetStateIs != EdiabasErrorReportReset.ErrorRestState.Undefined)
                         {
-                            if (ResetErrorFunctional(true) == EdiabasErrorReportReset.ErrorRestState.Ok)
+                            resetIs = resetStateIs == EdiabasErrorReportReset.ErrorRestState.Ok;
+                            if (!resetIs)
                             {
-                                resetIs = true;
+                                resetState = resetStateIs;
                             }
                         }
 
-                        if (errorRestState == EdiabasErrorReportReset.ErrorRestState.Ok)
+                        if (resetState == EdiabasErrorReportReset.ErrorRestState.Ok)
                         {
                             errorReportList.Add(new EdiabasErrorReportReset(string.Empty, string.Empty, string.Empty, null, null, resetIs, null,
-                                errorRestState));
+                                resetState));
                         }
                     }
                     catch (Exception)
