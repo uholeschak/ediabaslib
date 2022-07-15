@@ -2,14 +2,12 @@
 #load "VehicleStructsBmw.cs"
 using System.IO;
 using System.Xml;
+using System.Xml.Serialization;
 
 Output.BuildAction = BuildAction.Content;
 
 string xmlFile = string.Empty;
-string sqlUser = "user";
-string sqlPassword = "password";
-string accessPassword = string.Empty;
-string testLic = string.Empty;
+VehicleStructsBmw.FaultRulesInfoData faultRulesInfoData = null;
 
 try
 {
@@ -17,6 +15,12 @@ try
     if (File.Exists(fileName))
     {
         xmlFile = fileName;
+        using (StreamReader sr = new StreamReader(fileName))
+        {
+            Type faultRulesType = typeof(VehicleStructsBmw.FaultRulesInfoData);
+            XmlSerializer serializer = new XmlSerializer(faultRulesType);
+        //    faultRulesInfoData = serializer.Deserialize(sr) as VehicleStructsBmw.FaultRulesInfoData;
+        }
     }
 }
 catch (Exception ex)
