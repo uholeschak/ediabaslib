@@ -8,9 +8,7 @@ using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using EdiabasLib;
-#if Android
 using ICSharpCode.SharpZipLib.Zip;
-#endif
 
 // ReSharper disable UnusedMemberInSuper.Global
 // ReSharper disable UnusedMember.Global
