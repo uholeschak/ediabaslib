@@ -3,7 +3,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-namespace EdiabasLib
+namespace BmwFileReader
 {
     /// <summary>
     /// Base on https://weblogs.asp.net/pwelter34/444961
