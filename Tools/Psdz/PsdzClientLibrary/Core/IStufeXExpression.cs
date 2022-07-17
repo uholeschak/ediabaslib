@@ -145,7 +145,7 @@ namespace PsdzClient.Core
             if (iLevelValue != null)
             {
                 CompareExpression compareExpression = new CompareExpression(-1, compareOperator, -1);
-                stringBuilder.Append(compareExpression.ToFormula(formulaConfig));
+                stringBuilder.Append(compareExpression.GetFormulaOperator());
                 stringBuilder.Append(" ");
                 stringBuilder.Append(iLevelValue.Value.ToString(CultureInfo.InvariantCulture));
             }

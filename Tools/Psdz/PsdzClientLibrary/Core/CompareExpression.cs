@@ -94,7 +94,7 @@ namespace PsdzClient.Core
             });
         }
 
-        private string GetFormulaOperator()
+        public string GetFormulaOperator()
         {
             switch (this.compareOperator)
             {

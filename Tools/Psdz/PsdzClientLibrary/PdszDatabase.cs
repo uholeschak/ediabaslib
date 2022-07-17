@@ -2522,7 +2522,8 @@ namespace PsdzClient
             try
             {
                 string faultRulesZipFile = Path.Combine(_databasePath, VehicleStructsBmw.FaultRulesZipFile);
-                if (File.Exists(faultRulesZipFile))
+                string faultRulesCsFile = Path.Combine(_databasePath, VehicleStructsBmw.FaultRulesCsFile);
+                if (File.Exists(faultRulesZipFile) && File.Exists(faultRulesCsFile))
                 {
                     return true;
                 }
@@ -2531,6 +2532,12 @@ namespace PsdzClient
                 if (faultRulesInfoData == null)
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo ExtractFaultRulesInfo failed");
+                    return false;
+                }
+
+                if (!SaveFaultRulesClass(faultRulesInfoData, faultRulesCsFile))
+                {
+                    log.InfoFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo SaveFaultRulesFunction failed");
                     return false;
                 }
 
@@ -2565,6 +2572,112 @@ namespace PsdzClient
                         zipStream.Close();
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo Exception: {0}", ex.Message);
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool SaveFaultRulesClass(VehicleStructsBmw.FaultRulesInfoData faultRulesInfoData, string fileName)
+        {
+            try
+            {
+                log.InfoFormat(CultureInfo.InvariantCulture, "SaveFaultRulesFunction Saving: {0}", fileName);
+
+                if (faultRulesInfoData == null)
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "SaveFaultRulesFunction faultRulesInfoData missing");
+                    return false;
+                }
+
+                StringBuilder sb = new StringBuilder();
+                sb.Append(
+@"using BmwFileReader;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
+
+public class FaultRules
+{
+    public FaultRuleEvalBmw FaultRuleEvalClass { get; private set; }
+
+    public FaultRules(FaultRuleEvalBmw faultRuleEvalBmw)
+    {
+        FaultRuleEvalClass = faultRuleEvalBmw;
+    }
+
+    public bool IsRuleValid(string id)
+    {
+        switch (id.Trim())
+        {
+");
+                foreach (KeyValuePair<string, VehicleStructsBmw.FaultRuleInfo> faultRuleInfo in faultRulesInfoData.FaultRuleDict)
+                {
+                    sb.Append(
+$@"         case ""{faultRuleInfo.Value.Id.Trim()}"":
+                return {faultRuleInfo.Value.RuleFormula};
+"
+                    );
+                }
+                sb.Append(
+@"
+        }
+
+        RuleNotFound(id.Trim());
+        return true;
+    }
+
+    private void RuleNotFound(string id)
+    {
+        if (FaultRuleEvalClass != null)
+        {
+            FaultRuleEvalClass.RuleNotFound(id);
+        }
+    }
+
+    private string RuleString(string name)
+    {
+        if (FaultRuleEvalClass != null)
+        {
+            return FaultRuleEvalClass.RuleString(name);
+        }
+        return string.Empty;
+    }
+
+    private long RuleNum(string name)
+    {
+        if (FaultRuleEvalClass != null)
+        {
+            return FaultRuleEvalClass.RuleNum(name);
+        }
+        return -1;
+    }
+
+    private bool IsValidRuleString(string name, string value)
+    {
+        if (FaultRuleEvalClass != null)
+        {
+            return FaultRuleEvalClass.IsValidRuleString(name, value);
+        }
+        return false;
+    }
+
+    private bool IsValidRuleNum(string name, long value)
+    {
+        if (FaultRuleEvalClass != null)
+        {
+            return FaultRuleEvalClass.IsValidRuleNum(name, value);
+        }
+        return false;
+    }
+}
+");
+                File.WriteAllText(fileName, sb.ToString());
             }
             catch (Exception ex)
             {
