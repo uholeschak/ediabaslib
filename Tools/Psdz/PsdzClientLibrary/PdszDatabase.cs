@@ -2597,10 +2597,6 @@ namespace PsdzClient
                 StringBuilder sb = new StringBuilder();
                 sb.Append(
 @"using BmwFileReader;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading;
 
 public class FaultRules
 {
