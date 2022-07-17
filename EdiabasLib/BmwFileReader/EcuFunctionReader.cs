@@ -21,7 +21,7 @@ namespace BmwFileReader
         private readonly Dictionary<string, EcuFunctionStructs.EcuFaultModeLabel> _ecuFaultModeLabelDict;
         private readonly Dictionary<string, EcuFunctionStructs.EcuEnvCondLabel> _ecuEnvCondLabelDict;
         private EcuFunctionStructs.EcuFaultData _ecuFaultData;
-        private FaultRuleEvalBmw _faultRuleEval;
+        private readonly FaultRuleEvalBmw _faultRuleEval;
         private string _ecuFaultDataLanguage;
 
         public EcuFunctionReader(string rootDir)
