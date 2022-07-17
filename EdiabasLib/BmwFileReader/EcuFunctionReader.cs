@@ -31,6 +31,7 @@ namespace BmwFileReader
             _ecuFaultCodeLabelDict = new Dictionary<string, EcuFunctionStructs.EcuFaultCodeLabel>();
             _ecuFaultModeLabelDict = new Dictionary<string, EcuFunctionStructs.EcuFaultModeLabel>();
             _ecuEnvCondLabelDict = new Dictionary<string, EcuFunctionStructs.EcuEnvCondLabel>();
+            _faultRuleEval = new FaultRuleEvalBmw();
         }
 
         public bool Init(string language)
@@ -40,34 +41,12 @@ namespace BmwFileReader
                 return false;
             }
 
-            if (!InitFaultRules())
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        public bool InitFaultRules()
-        {
-            if (_faultRuleEval != null)
-            {
-                return true;
-            }
-
-            VehicleStructsBmw.FaultRulesInfoData faultRulesInfoData = VehicleInfoBmw.ReadFaultRulesInfo(_rootDir);
-            if (faultRulesInfoData == null)
-            {
-                return false;
-            }
-
-            _faultRuleEval = new FaultRuleEvalBmw();
             return true;
         }
 
         public bool IsInitRequired(string language)
         {
-            return _ecuFaultData == null || _ecuFaultDataLanguage == null || _faultRuleEval == null ||
+            return _ecuFaultData == null || _ecuFaultDataLanguage == null ||
                     string.Compare(_ecuFaultDataLanguage, language, StringComparison.OrdinalIgnoreCase) != 0;
         }
 
