@@ -2615,7 +2615,7 @@ public class FaultRules
                 foreach (KeyValuePair<string, VehicleStructsBmw.FaultRuleInfo> faultRuleInfo in faultRulesInfoData.FaultRuleDict)
                 {
                     sb.Append(
-$@"         case ""{faultRuleInfo.Value.Id.Trim()}"":
+$@"            case ""{faultRuleInfo.Value.Id.Trim()}"":
                 return {faultRuleInfo.Value.RuleFormula};
 "
                     );
