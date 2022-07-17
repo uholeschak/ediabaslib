@@ -61,13 +61,7 @@ namespace BmwFileReader
                 return false;
             }
 
-            FaultRuleEvalBmw faultRuleEval = new FaultRuleEvalBmw();
-            if (!faultRuleEval.CreateRuleEvaluators(faultRulesInfoData.FaultRuleDict.Values.ToList(), out string _))
-            {
-                return false;
-            }
-
-            _faultRuleEval = faultRuleEval;
+            _faultRuleEval = new FaultRuleEvalBmw();
             return true;
         }
 

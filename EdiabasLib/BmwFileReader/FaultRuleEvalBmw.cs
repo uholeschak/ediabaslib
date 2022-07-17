@@ -11,159 +11,28 @@ namespace BmwFileReader
 {
     public class FaultRuleEvalBmw
     {
-        public object RuleObject { get; private set; }
+        private FaultRules _faultRules { get; }
         private readonly Dictionary<string, List<string>> _propertiesDict = new Dictionary<string, List<string>>();
         private readonly HashSet<string> _unknownNamesHash = new HashSet<string>();
         private string _unknownId;
 
         public FaultRuleEvalBmw()
         {
-            RuleObject = null;
-        }
-
-        public bool CreateRuleEvaluators(List<VehicleStructsBmw.FaultRuleInfo> faultRuleInfoList, out string errorMessage)
-        {
-            RuleObject = null;
-
-            errorMessage = string.Empty;
-            StringWriter reportWriter = new StringWriter();
-            try
-            {
-                Evaluator evaluator = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter(reportWriter)));
-                evaluator.ReferenceAssembly(Assembly.GetExecutingAssembly());
-                StringBuilder sb = new StringBuilder();
-                sb.Append(
-@"using BmwFileReader;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading;
-
-public class RuleEval
-{
-    public FaultRuleEvalBmw FaultRuleEvalClass { get; set; }
-
-    public RuleEval()
-    {
-    }
-
-    public bool IsRuleValid(string id)
-    {
-        switch (id.Trim())
-        {
-");
-                foreach (VehicleStructsBmw.FaultRuleInfo faultRuleInfo in faultRuleInfoList)
-                {
-                    sb.Append(
-$@"         case ""{faultRuleInfo.Id.Trim()}"":
-                return {faultRuleInfo.RuleFormula};
-"
-                    );
-                }
-                sb.Append(
-@"
-        }
-
-        RuleNotFound(id.Trim());
-        return true;
-    }
-
-    private void RuleNotFound(string id)
-    {
-        if (FaultRuleEvalClass != null)
-        {
-            FaultRuleEvalClass.RuleNotFound(id);
-        }
-    }
-
-    private string RuleString(string name)
-    {
-        if (FaultRuleEvalClass != null)
-        {
-            return FaultRuleEvalClass.RuleString(name);
-        }
-        return string.Empty;
-    }
-
-    private long RuleNum(string name)
-    {
-        if (FaultRuleEvalClass != null)
-        {
-            return FaultRuleEvalClass.RuleNum(name);
-        }
-        return -1;
-    }
-
-    private bool IsValidRuleString(string name, string value)
-    {
-        if (FaultRuleEvalClass != null)
-        {
-            return FaultRuleEvalClass.IsValidRuleString(name, value);
-        }
-        return false;
-    }
-
-    private bool IsValidRuleNum(string name, long value)
-    {
-        if (FaultRuleEvalClass != null)
-        {
-            return FaultRuleEvalClass.IsValidRuleNum(name, value);
-        }
-        return false;
-    }
-}
-");
-                evaluator.Compile(sb.ToString());
-                object ruleObject = evaluator.Evaluate("new RuleEval()");
-                if (ruleObject == null)
-                {
-                    return false;
-                }
-
-                Type ruleType = ruleObject.GetType();
-                PropertyInfo propertyFaultRuleEvalClass = ruleType.GetProperty("FaultRuleEvalClass");
-                if (propertyFaultRuleEvalClass != null)
-                {
-                    propertyFaultRuleEvalClass.SetValue(ruleObject, this);
-                }
-
-                RuleObject = ruleObject;
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                RuleObject = null;
-                errorMessage = reportWriter.ToString();
-                if (string.IsNullOrEmpty(errorMessage))
-                {
-                    errorMessage = EdiabasNet.GetExceptionText(ex);
-                }
-                return false;
-            }
+            _faultRules = new FaultRules(this);
         }
 
         public bool ExecuteRuleEvaluator(string id)
         {
-            if (RuleObject == null)
+            if (_faultRules == null)
             {
                 return false;
             }
 
             try
             {
-                Type ruleType = RuleObject.GetType();
-                MethodInfo methodIsRuleValid = ruleType.GetMethod("IsRuleValid");
-                if (methodIsRuleValid == null)
-                {
-                    return false;
-                }
-
                 _unknownNamesHash.Clear();
                 _unknownId = null;
-                // ReSharper disable once UsePatternMatching
-                object[] args = { id };
-                bool? valid = methodIsRuleValid.Invoke(RuleObject, args) as bool?;
+                bool valid = _faultRules.IsRuleValid(id);
 
                 if (_unknownId != null)
                 {
@@ -175,12 +44,7 @@ $@"         case ""{faultRuleInfo.Id.Trim()}"":
                     return true;
                 }
 
-                if (!valid.HasValue)
-                {
-                    return false;
-                }
-
-                return valid.Value;
+                return valid;
             }
             catch (Exception)
             {
