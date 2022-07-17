@@ -311,6 +311,9 @@
     <Compile Include="..\EdiabasLib\BmwFileReader\FaultRuleEvalBmw.cs">
       <Link>FaultRuleEvalBmw.cs</Link>
     </Compile>
+    <Compile Include="..\EdiabasLib\BmwFileReader\FaultRules.cs">
+      <Link>FaultRules.cs</Link>
+    </Compile>
     <Compile Include="..\EdiabasLib\BmwFileReader\SerializableDictionary.cs">
       <Link>SerializableDictionary.cs</Link>
     </Compile>
@@ -418,9 +421,6 @@
     <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\ELM327V15.X\dist\bc04\production\ELM327V15.X.production.hex">
       <Link>HexFiles\Type3\ELM327V15.X.production.hex</Link>
     </EmbeddedResource>
-    <None Include="..\EdiabasLib\BmwFileReader\FaultRules.csx">
-      <Link>FaultRules.csx</Link>
-    </None>
     <None Include=".editorconfig" />
     <None Include="Assets\Ecu.bin" />
     <None Include="packages.config" />
@@ -875,7 +875,6 @@
     <Error Condition="!Exists('packages\System.Text.Json.6.0.5\build\System.Text.Json.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\System.Text.Json.6.0.5\build\System.Text.Json.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.Kotlin.StdLib.Common.1.7.0\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Kotlin.StdLib.Common.1.7.0\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Common.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.Kotlin.StdLib.1.7.0\build\monoandroid12.0\Xamarin.Kotlin.StdLib.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Kotlin.StdLib.1.7.0\build\monoandroid12.0\Xamarin.Kotlin.StdLib.targets'))" />
-    <Error Condition="!Exists('packages\Scripty.MsBuild.0.7.4\build\Scripty.MsBuild.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Scripty.MsBuild.0.7.4\build\Scripty.MsBuild.targets'))" />
   </Target>
   <PropertyGroup>
     <PostBuildEvent>copy /y "$(ProjectDir)Xml\BmwDeepObd.xsd" "$(ProjectDir)Xml\E61R\"</PostBuildEvent>
@@ -937,5 +936,4 @@
   <Import Project="packages\System.Text.Json.6.0.5\build\System.Text.Json.targets" Condition="Exists('packages\System.Text.Json.6.0.5\build\System.Text.Json.targets')" />
   <Import Project="packages\Xamarin.Kotlin.StdLib.Common.1.7.0\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Common.targets" Condition="Exists('packages\Xamarin.Kotlin.StdLib.Common.1.7.0\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Common.targets')" />
   <Import Project="packages\Xamarin.Kotlin.StdLib.1.7.0\build\monoandroid12.0\Xamarin.Kotlin.StdLib.targets" Condition="Exists('packages\Xamarin.Kotlin.StdLib.1.7.0\build\monoandroid12.0\Xamarin.Kotlin.StdLib.targets')" />
-  <Import Project="packages\Scripty.MsBuild.0.7.4\build\Scripty.MsBuild.targets" Condition="Exists('packages\Scripty.MsBuild.0.7.4\build\Scripty.MsBuild.targets')" />
 </Project>
