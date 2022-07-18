@@ -98,7 +98,7 @@
     <Compile Include="..\..\..\EdiabasLib\BmwFileReader\VehicleStructsBmw.cs">
       <Link>VehicleStructsBmw.cs</Link>
     </Compile>
-    <Compile Include="..\..\ExtractTypeKeys\Common\DatabaseFunctions.cs">
+    <Compile Include="..\..\ExtractEcuFunctions\Common\DatabaseFunctions.cs">
       <Link>DatabaseFunctions.cs</Link>
     </Compile>
     <Compile Include="ClientContext.cs" />
