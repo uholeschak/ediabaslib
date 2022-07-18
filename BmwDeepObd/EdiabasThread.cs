@@ -299,6 +299,21 @@ namespace BmwDeepObd
             new EnvCondResultInfo("F_UW_ZEIT", "s", Resource.String.error_env_time),
         };
 
+        public static readonly Tuple<string, string>[] SpecialInfoResetJobs =
+        {
+            new Tuple<string, string>("IS_LOESCHEN_TMS", "0x01"),
+            new Tuple<string, string>("IS_LOESCHEN_TMS", "0x02"),
+            new Tuple<string, string>("IS_LOESCHEN_TMS_L_LEAR", string.Empty),
+            new Tuple<string, string>("IS_LOESCHEN_TMS_R_LEAR", string.Empty),
+            new Tuple<string, string>("IS_LOESCHEN_SMC_L_LEAR", string.Empty),
+            new Tuple<string, string>("IS_LOESCHEN_SMC_R_LEAR", string.Empty),
+            new Tuple<string, string>("IS_LOESCHEN_SMC_L", string.Empty),
+            new Tuple<string, string>("IS_LOESCHEN_SMC_R", string.Empty),
+            new Tuple<string, string>("IS_LOESCHEN_SMC_L_LEAR", string.Empty),
+            new Tuple<string, string>("IS_LOESCHEN_SMC_R_LEAR", string.Empty),
+            new Tuple<string, string>("STEUERN_ZFS_LOESCHEN", string.Empty),
+        };
+
         private readonly string _resourceDatalogDate;
         private bool _disposed;
         private Context _context;
@@ -1540,6 +1555,27 @@ namespace BmwDeepObd
                             {
                                 resetState = EdiabasErrorReportReset.ErrorRestState.Ok;
                             }
+                        }
+                    }
+                }
+
+                if (resetIs)
+                {
+                    foreach (Tuple<string, string> infoResetJob in SpecialInfoResetJobs)
+                    {
+                        try
+                        {
+                            if (Ediabas.IsJobExisting(infoResetJob.Item1))
+                            {
+                                Ediabas.ArgString = infoResetJob.Item2;
+                                Ediabas.ArgBinaryStd = null;
+                                Ediabas.ResultsRequests = string.Empty;
+                                Ediabas.ExecuteJob(infoResetJob.Item1);
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
                         }
                     }
                 }
