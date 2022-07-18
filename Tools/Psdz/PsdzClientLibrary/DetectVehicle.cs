@@ -429,8 +429,7 @@ namespace PsdzClient
                             {
                                 string iLevel = resultData.OpData as string;
                                 if (!string.IsNullOrEmpty(iLevel) && iLevel.Length >= 4 &&
-                                    string.Compare(iLevel, VehicleInfoBmw.ResultUnknown,
-                                        StringComparison.OrdinalIgnoreCase) != 0)
+                                    string.Compare(iLevel, VehicleInfoBmw.ResultUnknown, StringComparison.OrdinalIgnoreCase) != 0)
                                 {
                                     iLevelShip = iLevel;
                                     log.InfoFormat(CultureInfo.InvariantCulture, "Detected ILevel ship: {0}",
@@ -444,8 +443,7 @@ namespace PsdzClient
                                 {
                                     string iLevel = resultData.OpData as string;
                                     if (!string.IsNullOrEmpty(iLevel) && iLevel.Length >= 4 &&
-                                        string.Compare(iLevel, VehicleInfoBmw.ResultUnknown,
-                                            StringComparison.OrdinalIgnoreCase) != 0)
+                                        string.Compare(iLevel, VehicleInfoBmw.ResultUnknown, StringComparison.OrdinalIgnoreCase) != 0)
                                     {
                                         iLevelCurrent = iLevel;
                                         log.InfoFormat(CultureInfo.InvariantCulture, "Detected ILevel current: {0}",
@@ -462,8 +460,7 @@ namespace PsdzClient
                                 {
                                     string iLevel = resultData.OpData as string;
                                     if (!string.IsNullOrEmpty(iLevel) && iLevel.Length >= 4 &&
-                                        string.Compare(iLevel, VehicleInfoBmw.ResultUnknown,
-                                            StringComparison.OrdinalIgnoreCase) != 0)
+                                        string.Compare(iLevel, VehicleInfoBmw.ResultUnknown, StringComparison.OrdinalIgnoreCase) != 0)
                                     {
                                         iLevelBackup = iLevel;
                                         log.InfoFormat(CultureInfo.InvariantCulture, "Detected ILevel backup: {0}",
