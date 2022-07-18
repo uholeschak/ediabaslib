@@ -1,3 +1,4 @@
 /.vs/
 /packages/
 *.sln.DotSettings.user
+*.xml
