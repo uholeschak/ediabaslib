@@ -82,14 +82,14 @@ namespace BmwFileReader
             [XmlElement("VehicleSeriesDict"), DefaultValue(null)] public SerializableDictionary<string, List<VehicleSeriesInfo>> VehicleSeriesDict { get; set; }
         }
 
-        [XmlType("FRI")]
-        public class FaultRuleInfo
+        [XmlType("RI")]
+        public class RuleInfo
         {
-            public FaultRuleInfo()
+            public RuleInfo()
             {
             }
 
-            public FaultRuleInfo(string id, string ruleFormula)
+            public RuleInfo(string id, string ruleFormula)
             {
                 Id = id;
                 RuleFormula = ruleFormula;
@@ -99,20 +99,22 @@ namespace BmwFileReader
             [XmlElement("RF"), DefaultValue(null)] public string RuleFormula { get; set; }
         }
 
-        [XmlInclude(typeof(FaultRuleInfo))]
-        [XmlType("FaultRulesInfoData")]
-        public class FaultRulesInfoData
+        [XmlInclude(typeof(RuleInfo))]
+        [XmlType("RulesInfoData")]
+        public class RulesInfoData
         {
-            public FaultRulesInfoData() : this(null)
+            public RulesInfoData() : this(null, null)
             {
             }
 
-            public FaultRulesInfoData(SerializableDictionary<string, FaultRuleInfo> faultRuleDict)
+            public RulesInfoData(SerializableDictionary<string, RuleInfo> faultRuleDict, SerializableDictionary<string, RuleInfo> ecuFuncRuleDict)
             {
                 FaultRuleDict = faultRuleDict;
+                EcuFuncRuleDict = ecuFuncRuleDict;
             }
 
-            [XmlElement("FaultRuleDict"), DefaultValue(null)] public SerializableDictionary<string, FaultRuleInfo> FaultRuleDict { get; set; }
+            [XmlElement("FaultRuleDict"), DefaultValue(null)] public SerializableDictionary<string, RuleInfo> FaultRuleDict { get; set; }
+            [XmlElement("EcuFuncRuleDict"), DefaultValue(null)] public SerializableDictionary<string, RuleInfo> EcuFuncRuleDict { get; set; }
         }
     }
 }

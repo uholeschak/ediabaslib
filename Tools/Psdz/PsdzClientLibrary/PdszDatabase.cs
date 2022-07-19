@@ -2528,14 +2528,22 @@ namespace PsdzClient
                     return true;
                 }
 
-                VehicleStructsBmw.FaultRulesInfoData faultRulesInfoData = ExtractFaultRulesInfo(clientContext);
-                if (faultRulesInfoData == null)
+                SerializableDictionary<string, VehicleStructsBmw.RuleInfo> faultRulesDict = ExtractFaultRulesInfo(clientContext);
+                if (faultRulesDict == null)
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo ExtractFaultRulesInfo failed");
                     return false;
                 }
 
-                if (!SaveFaultRulesClass(faultRulesInfoData, faultRulesCsFile))
+                SerializableDictionary<string, VehicleStructsBmw.RuleInfo> ecuFuncRulesDict = ExtractEcuFuncRulesInfo(clientContext);
+                if (ecuFuncRulesDict == null)
+                {
+                    log.InfoFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo ExtractEcuFuncRulesInfo failed");
+                    return false;
+                }
+
+                VehicleStructsBmw.RulesInfoData rulesInfoData = new VehicleStructsBmw.RulesInfoData(faultRulesDict, ecuFuncRulesDict);
+                if (!SaveFaultRulesClass(rulesInfoData, faultRulesCsFile))
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo SaveFaultRulesFunction failed");
                     return false;
@@ -2545,8 +2553,8 @@ namespace PsdzClient
 
                 using (MemoryStream memStream = new MemoryStream())
                 {
-                    XmlSerializer serializer = new XmlSerializer(typeof(VehicleStructsBmw.FaultRulesInfoData));
-                    serializer.Serialize(memStream, faultRulesInfoData);
+                    XmlSerializer serializer = new XmlSerializer(typeof(VehicleStructsBmw.RulesInfoData));
+                    serializer.Serialize(memStream, rulesInfoData);
                     memStream.Seek(0, SeekOrigin.Begin);
 
                     FileStream fsOut = File.Create(faultRulesZipFile);
@@ -2582,7 +2590,7 @@ namespace PsdzClient
             return true;
         }
 
-        public bool SaveFaultRulesClass(VehicleStructsBmw.FaultRulesInfoData faultRulesInfoData, string fileName)
+        public bool SaveFaultRulesClass(VehicleStructsBmw.RulesInfoData faultRulesInfoData, string fileName)
         {
             try
             {
@@ -2612,7 +2620,7 @@ public class FaultRules
         switch (id.Trim())
         {
 ");
-                foreach (KeyValuePair<string, VehicleStructsBmw.FaultRuleInfo> faultRuleInfo in faultRulesInfoData.FaultRuleDict)
+                foreach (KeyValuePair<string, VehicleStructsBmw.RuleInfo> faultRuleInfo in faultRulesInfoData.FaultRuleDict)
                 {
                     sb.Append(
 $@"            case ""{faultRuleInfo.Value.Id.Trim()}"":
@@ -2684,7 +2692,7 @@ $@"            case ""{faultRuleInfo.Value.Id.Trim()}"":
             return true;
         }
 
-        public VehicleStructsBmw.FaultRulesInfoData ExtractFaultRulesInfo(ClientContext clientContext)
+        public SerializableDictionary<string, VehicleStructsBmw.RuleInfo> ExtractFaultRulesInfo(ClientContext clientContext)
         {
             try
             {
@@ -2707,7 +2715,7 @@ $@"            case ""{faultRuleInfo.Value.Id.Trim()}"":
                 }
 
                 Vehicle vehicle = new Vehicle(clientContext);
-                SerializableDictionary<string, VehicleStructsBmw.FaultRuleInfo> faultRuleDict = new SerializableDictionary<string, VehicleStructsBmw.FaultRuleInfo>();
+                SerializableDictionary<string, VehicleStructsBmw.RuleInfo> ruleDict = new SerializableDictionary<string, VehicleStructsBmw.RuleInfo>();
                 foreach (EcuFunctionStructs.EcuFaultCode ecuFaultCode in ecuFaultCodeList)
                 {
                     if (ecuFaultCode.Relevance.ConvertToInt() > 0)
@@ -2718,14 +2726,13 @@ $@"            case ""{faultRuleInfo.Value.Id.Trim()}"":
                             string ruleFormula = xepRule.GetRuleFormula(vehicle);
                             if (!string.IsNullOrEmpty(ruleFormula))
                             {
-                                faultRuleDict.Add(ecuFaultCode.Id, new VehicleStructsBmw.FaultRuleInfo(ecuFaultCode.Id, ruleFormula));
+                                ruleDict.Add(ecuFaultCode.Id, new VehicleStructsBmw.RuleInfo(ecuFaultCode.Id, ruleFormula));
                             }
                         }
                     }
                 }
 
-                VehicleStructsBmw.FaultRulesInfoData faultRulesInfoData = new VehicleStructsBmw.FaultRulesInfoData(faultRuleDict);
-                return faultRulesInfoData;
+                return ruleDict;
             }
             catch (Exception e)
             {
@@ -2734,7 +2741,7 @@ $@"            case ""{faultRuleInfo.Value.Id.Trim()}"":
             }
         }
 
-        public VehicleStructsBmw.FaultRulesInfoData ExtractEcuFuncRulesInfo(ClientContext clientContext)
+        public SerializableDictionary<string, VehicleStructsBmw.RuleInfo> ExtractEcuFuncRulesInfo(ClientContext clientContext)
         {
             try
             {
@@ -2752,7 +2759,7 @@ $@"            case ""{faultRuleInfo.Value.Id.Trim()}"":
                 }
 
                 Vehicle vehicle = new Vehicle(clientContext);
-                SerializableDictionary<string, VehicleStructsBmw.FaultRuleInfo> faultRuleDict = new SerializableDictionary<string, VehicleStructsBmw.FaultRuleInfo>();
+                SerializableDictionary<string, VehicleStructsBmw.RuleInfo> ruleDict = new SerializableDictionary<string, VehicleStructsBmw.RuleInfo>();
                 foreach (string ecuFixedFuncId in ecuFixedFuncList)
                 {
                     if (ecuFixedFuncId.ConvertToInt() > 0)
@@ -2763,14 +2770,13 @@ $@"            case ""{faultRuleInfo.Value.Id.Trim()}"":
                             string ruleFormula = xepRule.GetRuleFormula(vehicle);
                             if (!string.IsNullOrEmpty(ruleFormula))
                             {
-                                faultRuleDict.Add(ecuFixedFuncId, new VehicleStructsBmw.FaultRuleInfo(ecuFixedFuncId, ruleFormula));
+                                ruleDict.Add(ecuFixedFuncId, new VehicleStructsBmw.RuleInfo(ecuFixedFuncId, ruleFormula));
                             }
                         }
                     }
                 }
 
-                VehicleStructsBmw.FaultRulesInfoData faultRulesInfoData = new VehicleStructsBmw.FaultRulesInfoData(faultRuleDict);
-                return faultRulesInfoData;
+                return ruleDict;
             }
             catch (Exception e)
             {
