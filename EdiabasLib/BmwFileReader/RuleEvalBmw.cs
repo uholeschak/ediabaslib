@@ -9,21 +9,21 @@ using Mono.CSharp;
 
 namespace BmwFileReader
 {
-    public class FaultRuleEvalBmw
+    public class RuleEvalBmw
     {
-        private FaultRules _faultRules { get; }
+        private RulesInfo _rulesInfo { get; }
         private readonly Dictionary<string, List<string>> _propertiesDict = new Dictionary<string, List<string>>();
         private readonly HashSet<string> _unknownNamesHash = new HashSet<string>();
         private string _unknownId;
 
-        public FaultRuleEvalBmw()
+        public RuleEvalBmw()
         {
-            _faultRules = new FaultRules(this);
+            _rulesInfo = new RulesInfo(this);
         }
 
         public bool ExecuteRuleEvaluator(string id)
         {
-            if (_faultRules == null)
+            if (_rulesInfo == null)
             {
                 return false;
             }
@@ -32,7 +32,7 @@ namespace BmwFileReader
             {
                 _unknownNamesHash.Clear();
                 _unknownId = null;
-                bool valid = _faultRules.IsRuleValid(id);
+                bool valid = _rulesInfo.IsFaultRuleValid(id);
 
                 if (_unknownId != null)
                 {

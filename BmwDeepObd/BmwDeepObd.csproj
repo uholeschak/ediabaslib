@@ -308,11 +308,11 @@
     <Compile Include="..\EdiabasLib\BmwFileReader\EcuFunctionStructs.cs">
       <Link>EcuFunctionStructs.cs</Link>
     </Compile>
-    <Compile Include="..\EdiabasLib\BmwFileReader\FaultRuleEvalBmw.cs">
-      <Link>FaultRuleEvalBmw.cs</Link>
+    <Compile Include="..\EdiabasLib\BmwFileReader\RuleEvalBmw.cs">
+      <Link>RuleEvalBmw.cs</Link>
     </Compile>
-    <Compile Include="..\EdiabasLib\BmwFileReader\FaultRules.cs">
-      <Link>FaultRules.cs</Link>
+    <Compile Include="..\EdiabasLib\BmwFileReader\RulesInfo.cs">
+      <Link>RulesInfo.cs</Link>
     </Compile>
     <Compile Include="..\EdiabasLib\BmwFileReader\SerializableDictionary.cs">
       <Link>SerializableDictionary.cs</Link>

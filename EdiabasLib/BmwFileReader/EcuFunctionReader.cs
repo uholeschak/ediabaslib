@@ -21,7 +21,7 @@ namespace BmwFileReader
         private readonly Dictionary<string, EcuFunctionStructs.EcuFaultModeLabel> _ecuFaultModeLabelDict;
         private readonly Dictionary<string, EcuFunctionStructs.EcuEnvCondLabel> _ecuEnvCondLabelDict;
         private EcuFunctionStructs.EcuFaultData _ecuFaultData;
-        private readonly FaultRuleEvalBmw _faultRuleEval;
+        private readonly RuleEvalBmw _ruleEvalBmw;
         private string _ecuFaultDataLanguage;
 
         public EcuFunctionReader(string rootDir)
@@ -31,7 +31,7 @@ namespace BmwFileReader
             _ecuFaultCodeLabelDict = new Dictionary<string, EcuFunctionStructs.EcuFaultCodeLabel>();
             _ecuFaultModeLabelDict = new Dictionary<string, EcuFunctionStructs.EcuFaultModeLabel>();
             _ecuEnvCondLabelDict = new Dictionary<string, EcuFunctionStructs.EcuEnvCondLabel>();
-            _faultRuleEval = new FaultRuleEvalBmw();
+            _ruleEvalBmw = new RuleEvalBmw();
         }
 
         public bool Init(string language)
@@ -90,12 +90,12 @@ namespace BmwFileReader
 
         public bool UpdateFaultRuleProperties(DetectVehicleBmw detectVehicleBmw, EcuFunctionStructs.EcuVariant ecuVariant)
         {
-            if (_faultRuleEval == null)
+            if (_ruleEvalBmw == null)
             {
                 return false;
             }
 
-            _faultRuleEval.SetEvalProperties(detectVehicleBmw, ecuVariant);
+            _ruleEvalBmw.SetEvalProperties(detectVehicleBmw, ecuVariant);
 
             return true;
         }
@@ -122,9 +122,9 @@ namespace BmwFileReader
                 return false;
             }
 
-            if (_faultRuleEval != null)
+            if (_ruleEvalBmw != null)
             {
-                if (!_faultRuleEval.ExecuteRuleEvaluator(ecuFaultCode.Id))
+                if (!_ruleEvalBmw.ExecuteRuleEvaluator(ecuFaultCode.Id))
                 {
                     return false;
                 }
