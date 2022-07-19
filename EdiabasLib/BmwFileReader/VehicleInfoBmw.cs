@@ -25,7 +25,7 @@ namespace BmwFileReader
         private static Dictionary<string, string> _typeKeyDict;
 #endif
         private static VehicleStructsBmw.VehicleSeriesInfoData _vehicleSeriesInfoData;
-        private static VehicleStructsBmw.FaultRulesInfoData _faultRulesInfoData;
+        private static VehicleStructsBmw.RulesInfoData _rulesInfoData;
 
         public static string FindResourceName(string resourceFileName)
         {
@@ -90,30 +90,30 @@ namespace BmwFileReader
             }
         }
 
-        public static VehicleStructsBmw.FaultRulesInfoData ReadFaultRulesInfo(string databaseDir)
+        public static VehicleStructsBmw.RulesInfoData ReadRulesInfo(string databaseDir)
         {
-            if (_faultRulesInfoData != null)
+            if (_rulesInfoData != null)
             {
-                return _faultRulesInfoData;
+                return _rulesInfoData;
             }
 
-            _faultRulesInfoData = ReadFaultRulesInfoFromResource();
-            if (_faultRulesInfoData != null)
+            _rulesInfoData = ReadRulesInfoFromResource();
+            if (_rulesInfoData != null)
             {
-                return _faultRulesInfoData;
+                return _rulesInfoData;
             }
 
-            _faultRulesInfoData = ReadFaultRulesInfoFromFile(databaseDir);
-            return _faultRulesInfoData;
+            _rulesInfoData = ReadRulesInfoFromFile(databaseDir);
+            return _rulesInfoData;
         }
 
-        public static VehicleStructsBmw.FaultRulesInfoData ReadFaultRulesInfoFromResource()
+        public static VehicleStructsBmw.RulesInfoData ReadRulesInfoFromResource()
         {
             try
             {
-                if (_faultRulesInfoData != null)
+                if (_rulesInfoData != null)
                 {
-                    return _faultRulesInfoData;
+                    return _rulesInfoData;
                 }
 
                 string resourceName = FindResourceName(VehicleStructsBmw.FaultRulesXmlFile);
@@ -127,12 +127,12 @@ namespace BmwFileReader
                 {
                     if (stream != null)
                     {
-                        XmlSerializer serializer = new XmlSerializer(typeof(VehicleStructsBmw.FaultRulesInfoData));
-                        _faultRulesInfoData = serializer.Deserialize(stream) as VehicleStructsBmw.FaultRulesInfoData;
+                        XmlSerializer serializer = new XmlSerializer(typeof(VehicleStructsBmw.RulesInfoData));
+                        _rulesInfoData = serializer.Deserialize(stream) as VehicleStructsBmw.RulesInfoData;
                     }
                 }
 
-                return _faultRulesInfoData;
+                return _rulesInfoData;
             }
             catch (Exception)
             {
@@ -140,11 +140,11 @@ namespace BmwFileReader
             }
         }
 
-        public static VehicleStructsBmw.FaultRulesInfoData ReadFaultRulesInfoFromFile(string databaseDir)
+        public static VehicleStructsBmw.RulesInfoData ReadRulesInfoFromFile(string databaseDir)
         {
-            if (_faultRulesInfoData != null)
+            if (_rulesInfoData != null)
             {
-                return _faultRulesInfoData;
+                return _rulesInfoData;
             }
 
             try
@@ -166,8 +166,8 @@ namespace BmwFileReader
                                 Stream zipStream = zf.GetInputStream(zipEntry);
                                 using (StreamReader sr = new StreamReader(zipStream))
                                 {
-                                    XmlSerializer serializer = new XmlSerializer(typeof(VehicleStructsBmw.FaultRulesInfoData));
-                                    _faultRulesInfoData = serializer.Deserialize(sr) as VehicleStructsBmw.FaultRulesInfoData;
+                                    XmlSerializer serializer = new XmlSerializer(typeof(VehicleStructsBmw.RulesInfoData));
+                                    _rulesInfoData = serializer.Deserialize(sr) as VehicleStructsBmw.RulesInfoData;
                                 }
 
                                 break;
@@ -175,7 +175,7 @@ namespace BmwFileReader
                         }
                     }
 
-                    return _faultRulesInfoData;
+                    return _rulesInfoData;
                 }
                 finally
                 {
