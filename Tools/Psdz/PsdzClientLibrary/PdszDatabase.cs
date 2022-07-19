@@ -2606,30 +2606,51 @@ namespace PsdzClient
                 sb.Append(
 @"using BmwFileReader;
 
-public class FaultRules
+public class RulesInfo
 {
     public FaultRuleEvalBmw FaultRuleEvalClass { get; private set; }
 
-    public FaultRules(FaultRuleEvalBmw faultRuleEvalBmw)
+    public RulesInfo(FaultRuleEvalBmw faultRuleEvalBmw)
     {
         FaultRuleEvalClass = faultRuleEvalBmw;
     }
 
-    public bool IsRuleValid(string id)
+    public bool IsFaultRuleValid(string id)
     {
         switch (id.Trim())
         {
 ");
-                foreach (KeyValuePair<string, VehicleStructsBmw.RuleInfo> faultRuleInfo in faultRulesInfoData.FaultRuleDict)
+                foreach (KeyValuePair<string, VehicleStructsBmw.RuleInfo> ruleInfo in faultRulesInfoData.FaultRuleDict)
                 {
                     sb.Append(
-$@"            case ""{faultRuleInfo.Value.Id.Trim()}"":
-                return {faultRuleInfo.Value.RuleFormula};
+$@"            case ""{ruleInfo.Value.Id.Trim()}"":
+                return {ruleInfo.Value.RuleFormula};
 "
                     );
                 }
                 sb.Append(
 @"
+        }
+
+        RuleNotFound(id.Trim());
+        return true;
+    }
+
+    public bool IsEcuFuncRuleValid(string id)
+    {
+        switch (id.Trim())
+        {
+");
+                foreach (KeyValuePair<string, VehicleStructsBmw.RuleInfo> ruleInfo in faultRulesInfoData.EcuFuncRuleDict)
+                {
+                    sb.Append(
+$@"            case ""{ruleInfo.Value.Id.Trim()}"":
+                return {ruleInfo.Value.RuleFormula};
+"
+                    );
+                }
+                sb.Append(
+                    @"
         }
 
         RuleNotFound(id.Trim());
