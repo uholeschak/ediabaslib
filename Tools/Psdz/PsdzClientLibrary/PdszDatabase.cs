@@ -2590,13 +2590,13 @@ namespace PsdzClient
             return true;
         }
 
-        public bool SaveFaultRulesClass(VehicleStructsBmw.RulesInfoData faultRulesInfoData, string fileName)
+        public bool SaveFaultRulesClass(VehicleStructsBmw.RulesInfoData rulesInfoData, string fileName)
         {
             try
             {
                 log.InfoFormat(CultureInfo.InvariantCulture, "SaveFaultRulesFunction Saving: {0}", fileName);
 
-                if (faultRulesInfoData == null)
+                if (rulesInfoData == null)
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "SaveFaultRulesFunction faultRulesInfoData missing");
                     return false;
@@ -2608,11 +2608,11 @@ namespace PsdzClient
 
 public class RulesInfo
 {
-    public FaultRuleEvalBmw FaultRuleEvalClass { get; private set; }
+    public RuleEvalBmw RuleEvalClass { get; private set; }
 
-    public RulesInfo(FaultRuleEvalBmw faultRuleEvalBmw)
+    public RulesInfo(RuleEvalBmw ruleEvalBmw)
     {
-        FaultRuleEvalClass = faultRuleEvalBmw;
+        RuleEvalClass = ruleEvalBmw;
     }
 
     public bool IsFaultRuleValid(string id)
@@ -2620,7 +2620,7 @@ public class RulesInfo
         switch (id.Trim())
         {
 ");
-                foreach (KeyValuePair<string, VehicleStructsBmw.RuleInfo> ruleInfo in faultRulesInfoData.FaultRuleDict)
+                foreach (KeyValuePair<string, VehicleStructsBmw.RuleInfo> ruleInfo in rulesInfoData.FaultRuleDict)
                 {
                     sb.Append(
 $@"            case ""{ruleInfo.Value.Id.Trim()}"":
@@ -2641,7 +2641,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
         switch (id.Trim())
         {
 ");
-                foreach (KeyValuePair<string, VehicleStructsBmw.RuleInfo> ruleInfo in faultRulesInfoData.EcuFuncRuleDict)
+                foreach (KeyValuePair<string, VehicleStructsBmw.RuleInfo> ruleInfo in rulesInfoData.EcuFuncRuleDict)
                 {
                     sb.Append(
 $@"            case ""{ruleInfo.Value.Id.Trim()}"":
@@ -2659,44 +2659,44 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
 
     private void RuleNotFound(string id)
     {
-        if (FaultRuleEvalClass != null)
+        if (RuleEvalClass != null)
         {
-            FaultRuleEvalClass.RuleNotFound(id);
+            RuleEvalClass.RuleNotFound(id);
         }
     }
 
     private string RuleString(string name)
     {
-        if (FaultRuleEvalClass != null)
+        if (RuleEvalClass != null)
         {
-            return FaultRuleEvalClass.RuleString(name);
+            return RuleEvalClass.RuleString(name);
         }
         return string.Empty;
     }
 
     private long RuleNum(string name)
     {
-        if (FaultRuleEvalClass != null)
+        if (RuleEvalClass != null)
         {
-            return FaultRuleEvalClass.RuleNum(name);
+            return RuleEvalClass.RuleNum(name);
         }
         return -1;
     }
 
     private bool IsValidRuleString(string name, string value)
     {
-        if (FaultRuleEvalClass != null)
+        if (RuleEvalClass != null)
         {
-            return FaultRuleEvalClass.IsValidRuleString(name, value);
+            return RuleEvalClass.IsValidRuleString(name, value);
         }
         return false;
     }
 
     private bool IsValidRuleNum(string name, long value)
     {
-        if (FaultRuleEvalClass != null)
+        if (RuleEvalClass != null)
         {
-            return FaultRuleEvalClass.IsValidRuleNum(name, value);
+            return RuleEvalClass.IsValidRuleNum(name, value);
         }
         return false;
     }
