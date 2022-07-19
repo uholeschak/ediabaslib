@@ -116,7 +116,7 @@ namespace BmwFileReader
                     return _rulesInfoData;
                 }
 
-                string resourceName = FindResourceName(VehicleStructsBmw.FaultRulesXmlFile);
+                string resourceName = FindResourceName(VehicleStructsBmw.RulesXmlFile);
                 if (string.IsNullOrEmpty(resourceName))
                 {
                     return null;
@@ -152,7 +152,7 @@ namespace BmwFileReader
                 ZipFile zf = null;
                 try
                 {
-                    using (FileStream fs = File.OpenRead(Path.Combine(databaseDir, VehicleStructsBmw.FaultRulesZipFile)))
+                    using (FileStream fs = File.OpenRead(Path.Combine(databaseDir, VehicleStructsBmw.RulesZipFile)))
                     {
                         zf = new ZipFile(fs);
                         foreach (ZipEntry zipEntry in zf)
@@ -161,7 +161,7 @@ namespace BmwFileReader
                             {
                                 continue; // Ignore directories
                             }
-                            if (string.Compare(zipEntry.Name, VehicleStructsBmw.FaultRulesXmlFile, StringComparison.OrdinalIgnoreCase) == 0)
+                            if (string.Compare(zipEntry.Name, VehicleStructsBmw.RulesXmlFile, StringComparison.OrdinalIgnoreCase) == 0)
                             {
                                 Stream zipStream = zf.GetInputStream(zipEntry);
                                 using (StreamReader sr = new StreamReader(zipStream))
