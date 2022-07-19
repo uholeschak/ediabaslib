@@ -2734,6 +2734,51 @@ $@"            case ""{faultRuleInfo.Value.Id.Trim()}"":
             }
         }
 
+        public VehicleStructsBmw.FaultRulesInfoData ExtractEcuFuncRulesInfo(ClientContext clientContext)
+        {
+            try
+            {
+                List<string> ecuFixedFuncList = new List<string>();
+                string sql = @"SELECT ID FROM XEP_ECUFIXEDFUNCTIONS";
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            ecuFixedFuncList.Add(reader["ID"].ToString().Trim());
+                        }
+                    }
+                }
+
+                Vehicle vehicle = new Vehicle(clientContext);
+                SerializableDictionary<string, VehicleStructsBmw.FaultRuleInfo> faultRuleDict = new SerializableDictionary<string, VehicleStructsBmw.FaultRuleInfo>();
+                foreach (string ecuFixedFuncId in ecuFixedFuncList)
+                {
+                    if (ecuFixedFuncId.ConvertToInt() > 0)
+                    {
+                        XepRule xepRule = GetRuleById(ecuFixedFuncId);
+                        if (xepRule != null)
+                        {
+                            string ruleFormula = xepRule.GetRuleFormula(vehicle);
+                            if (!string.IsNullOrEmpty(ruleFormula))
+                            {
+                                faultRuleDict.Add(ecuFixedFuncId, new VehicleStructsBmw.FaultRuleInfo(ecuFixedFuncId, ruleFormula));
+                            }
+                        }
+                    }
+                }
+
+                VehicleStructsBmw.FaultRulesInfoData faultRulesInfoData = new VehicleStructsBmw.FaultRulesInfoData(faultRuleDict);
+                return faultRulesInfoData;
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("ExtractEcuFuncRulesInfo Exception: '{0}'", e.Message);
+                return null;
+            }
+        }
+
         public bool GetEcuVariants(List<EcuInfo> ecuList, Vehicle vehicle = null, IFFMDynamicResolver ffmDynamicResolver = null)
         {
             log.InfoFormat("GetEcuVariants Vehicle: {0}", vehicle != null);
