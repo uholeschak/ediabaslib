@@ -21,7 +21,7 @@ namespace BmwFileReader
             _rulesInfo = new RulesInfo(this);
         }
 
-        public bool ExecuteRuleEvaluator(string id)
+        public bool EvaluateRule(string id, bool ecuFuncRule = false)
         {
             if (_rulesInfo == null)
             {
@@ -32,8 +32,8 @@ namespace BmwFileReader
             {
                 _unknownNamesHash.Clear();
                 _unknownId = null;
-                bool valid = _rulesInfo.IsFaultRuleValid(id);
 
+                bool valid = ecuFuncRule ? _rulesInfo.IsEcuFuncRuleValid(id) : _rulesInfo.IsFaultRuleValid(id);
                 if (_unknownId != null)
                 {
                     return true;

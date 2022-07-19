@@ -124,7 +124,7 @@ namespace BmwFileReader
 
             if (_ruleEvalBmw != null)
             {
-                if (!_ruleEvalBmw.ExecuteRuleEvaluator(ecuFaultCode.Id))
+                if (!_ruleEvalBmw.EvaluateRule(ecuFaultCode.Id))
                 {
                     return false;
                 }
