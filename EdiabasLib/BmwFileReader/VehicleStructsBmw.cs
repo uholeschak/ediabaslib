@@ -7,9 +7,9 @@ namespace BmwFileReader
     public static class VehicleStructsBmw
     {
         public const string VehicleSeriesXmlFile = "VehicleSeries.xml";
-        public const string FaultRulesZipFile = "FaultRules.zip";
-        public const string FaultRulesXmlFile = "FaultRules.xml";
-        public const string FaultRulesCsFile = "FaultRules.cs";
+        public const string RulesZipFile = "RulesInfo.zip";
+        public const string RulesXmlFile = "RulesInfo.xml";
+        public const string RulesCsFile = "RulesInfo.cs";
 
         [XmlType("VEI")]
         public class VehicleEcuInfo

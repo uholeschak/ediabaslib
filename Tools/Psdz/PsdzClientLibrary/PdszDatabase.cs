@@ -2521,9 +2521,9 @@ namespace PsdzClient
         {
             try
             {
-                string faultRulesZipFile = Path.Combine(_databasePath, VehicleStructsBmw.FaultRulesZipFile);
-                string faultRulesCsFile = Path.Combine(_databasePath, VehicleStructsBmw.FaultRulesCsFile);
-                if (File.Exists(faultRulesZipFile) && File.Exists(faultRulesCsFile))
+                string rulesZipFile = Path.Combine(_databasePath, VehicleStructsBmw.RulesZipFile);
+                string rulesCsFile = Path.Combine(_databasePath, VehicleStructsBmw.RulesCsFile);
+                if (File.Exists(rulesZipFile) && File.Exists(rulesCsFile))
                 {
                     return true;
                 }
@@ -2543,13 +2543,13 @@ namespace PsdzClient
                 }
 
                 VehicleStructsBmw.RulesInfoData rulesInfoData = new VehicleStructsBmw.RulesInfoData(faultRulesDict, ecuFuncRulesDict);
-                if (!SaveFaultRulesClass(rulesInfoData, faultRulesCsFile))
+                if (!SaveFaultRulesClass(rulesInfoData, rulesCsFile))
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo SaveFaultRulesFunction failed");
                     return false;
                 }
 
-                log.InfoFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo Saving: {0}", faultRulesZipFile);
+                log.InfoFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo Saving: {0}", rulesZipFile);
 
                 using (MemoryStream memStream = new MemoryStream())
                 {
@@ -2557,13 +2557,13 @@ namespace PsdzClient
                     serializer.Serialize(memStream, rulesInfoData);
                     memStream.Seek(0, SeekOrigin.Begin);
 
-                    FileStream fsOut = File.Create(faultRulesZipFile);
+                    FileStream fsOut = File.Create(rulesZipFile);
                     ZipOutputStream zipStream = new ZipOutputStream(fsOut);
                     zipStream.SetLevel(3);
 
                     try
                     {
-                        ZipEntry newEntry = new ZipEntry(VehicleStructsBmw.FaultRulesXmlFile)
+                        ZipEntry newEntry = new ZipEntry(VehicleStructsBmw.RulesXmlFile)
                         {
                             DateTime = DateTime.Now,
                             Size = memStream.Length
