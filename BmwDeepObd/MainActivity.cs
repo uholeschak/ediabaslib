@@ -3904,7 +3904,7 @@ namespace BmwDeepObd
                                                 }
                                             }
 #endif
-                                            ActivityCommon.EcuFunctionReader.UpdateFaultRuleProperties(detectVehicleBmw, ecuVariant);
+                                            ActivityCommon.EcuFunctionReader.UpdateRuleProperties(detectVehicleBmw, ecuVariant);
                                             bool validCode = ActivityCommon.EcuFunctionReader.IsValidFaultCode(errorCode, errorReport.ReadIs, ecuVariant, showRelevantOnly);
                                             if (validCode)
                                             {
