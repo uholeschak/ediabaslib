@@ -1338,7 +1338,12 @@ namespace BmwDeepObd
         private void UpdateDisplay()
         {
             int selection = 0;
-            EcuFunctionReader ecuFunctionReader = ActivityCommon.EcuFunctionReader;
+            EcuFunctionReader ecuFunctionReader = null;
+            if (ActivityCommon.EcuFunctionsActive)
+            {
+                ecuFunctionReader = ActivityCommon.EcuFunctionReader;
+            }
+
             _spinnerJobsAdapter.Items.Clear();
             List<JobInfo> jobListSort = new List<JobInfo>(_ecuInfo.JobList);
             jobListSort.Sort(new JobInfoComparer());
