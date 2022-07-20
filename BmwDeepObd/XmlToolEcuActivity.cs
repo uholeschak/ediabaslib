@@ -1096,13 +1096,16 @@ namespace BmwDeepObd
                 EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType nodeClassType = job.EcuFixedFuncStruct.GetNodeClassType();
                 if (nodeClassType != EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator)
                 {
-                    foreach (EcuFunctionStructs.EcuJob ecuJob in job.EcuFixedFuncStruct.EcuJobList)
+                    if (ActivityCommon.EcuFunctionReader.IsValidEcuFuncId(job.EcuFixedFuncStruct.Id))
                     {
-                        foreach (EcuFunctionStructs.EcuJobResult ecuJobResult in ecuJob.EcuJobResultList)
+                        foreach (EcuFunctionStructs.EcuJob ecuJob in job.EcuFixedFuncStruct.EcuJobList)
                         {
-                            if (ecuJobResult.EcuFuncRelevant.ConvertToInt() > 0)
+                            foreach (EcuFunctionStructs.EcuJobResult ecuJobResult in ecuJob.EcuJobResultList)
                             {
-                                return true;
+                                if (ecuJobResult.EcuFuncRelevant.ConvertToInt() > 0)
+                                {
+                                    return true;
+                                }
                             }
                         }
                     }
