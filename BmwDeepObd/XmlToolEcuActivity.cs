@@ -1071,7 +1071,7 @@ namespace BmwDeepObd
             return string.Compare(job.Name, XmlToolActivity.JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) == 0;
         }
 
-        public static bool IsValidJob(JobInfo job, XmlToolActivity.EcuInfo ecuInfo)
+        public static bool IsValidJob(JobInfo job, XmlToolActivity.EcuInfo ecuInfo, EcuFunctionReader ecuFunctionReader = null)
         {
             if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
             {
@@ -1096,7 +1096,8 @@ namespace BmwDeepObd
                 EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType nodeClassType = job.EcuFixedFuncStruct.GetNodeClassType();
                 if (nodeClassType != EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator)
                 {
-                    if (ActivityCommon.EcuFunctionReader.IsValidEcuFuncId(job.EcuFixedFuncStruct.Id))
+                    bool validId = ecuFunctionReader == null || ecuFunctionReader.IsValidEcuFuncId(job.EcuFixedFuncStruct.Id);
+                    if (validId)
                     {
                         foreach (EcuFunctionStructs.EcuJob ecuJob in job.EcuFixedFuncStruct.EcuJobList)
                         {
@@ -1337,12 +1338,13 @@ namespace BmwDeepObd
         private void UpdateDisplay()
         {
             int selection = 0;
+            EcuFunctionReader ecuFunctionReader = ActivityCommon.EcuFunctionReader;
             _spinnerJobsAdapter.Items.Clear();
             List<JobInfo> jobListSort = new List<JobInfo>(_ecuInfo.JobList);
             jobListSort.Sort(new JobInfoComparer());
             foreach (JobInfo job in jobListSort)
             {
-                if (IsValidJob(job, _ecuInfo))
+                if (IsValidJob(job, _ecuInfo, ecuFunctionReader))
                 {
                     bool addJob = true;
                     if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
