@@ -127,12 +127,29 @@ namespace BmwFileReader
                     }
                 }
 
+                SetEvalEcuProperties(ecuVariant);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool SetEvalEcuProperties(EcuFunctionStructs.EcuVariant ecuVariant)
+        {
+            try
+            {
+                string keyEcuRep = "EcuRepresentative".ToUpperInvariant();
+                _propertiesDict.Remove(keyEcuRep);
+
                 if (ecuVariant != null)
                 {
                     string repsName = ecuVariant.EcuClique?.EcuRepsName;
                     if (!string.IsNullOrEmpty(repsName))
                     {
-                        _propertiesDict.Add("EcuRepresentative".ToUpperInvariant(), new List<string> { repsName });
+                        _propertiesDict.Add(keyEcuRep, new List<string> { repsName });
                     }
                 }
             }
