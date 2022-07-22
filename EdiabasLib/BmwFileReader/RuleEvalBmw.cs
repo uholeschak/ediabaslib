@@ -15,6 +15,7 @@ namespace BmwFileReader
         private readonly Dictionary<string, List<string>> _propertiesDict = new Dictionary<string, List<string>>();
         private readonly HashSet<string> _unknownNamesHash = new HashSet<string>();
         private string _unknownId;
+        private object _lockObject = new object();
 
         public RuleEvalBmw()
         {
@@ -23,121 +24,133 @@ namespace BmwFileReader
 
         public bool EvaluateRule(string id, bool ecuFuncRule = false)
         {
-            if (_rulesInfo == null)
+            lock (_lockObject)
             {
-                return false;
-            }
-
-            try
-            {
-                _unknownNamesHash.Clear();
-                _unknownId = null;
-
-                bool valid = ecuFuncRule ? _rulesInfo.IsEcuFuncRuleValid(id) : _rulesInfo.IsFaultRuleValid(id);
-                if (_unknownId != null)
+                if (_rulesInfo == null)
                 {
-                    return true;
+                    return false;
                 }
 
-                if (_unknownNamesHash.Count > 0)
+                try
                 {
-                    return true;
-                }
+                    _unknownNamesHash.Clear();
+                    _unknownId = null;
 
-                return valid;
-            }
-            catch (Exception)
-            {
-                return false;
+                    bool valid = ecuFuncRule ? _rulesInfo.IsEcuFuncRuleValid(id) : _rulesInfo.IsFaultRuleValid(id);
+                    if (_unknownId != null)
+                    {
+                        return true;
+                    }
+
+                    if (_unknownNamesHash.Count > 0)
+                    {
+                        return true;
+                    }
+
+                    return valid;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
             }
         }
 
         public bool SetEvalProperties(DetectVehicleBmw detectVehicleBmw, EcuFunctionStructs.EcuVariant ecuVariant)
         {
-            try
+            lock (_lockObject)
             {
-                _propertiesDict.Clear();
+                try
+                {
+                    _propertiesDict.Clear();
 
-                if (detectVehicleBmw == null || !detectVehicleBmw.Valid)
+                    if (detectVehicleBmw == null || !detectVehicleBmw.Valid)
+                    {
+                        return false;
+                    }
+
+                    if (detectVehicleBmw.BrandList != null && detectVehicleBmw.BrandList.Count > 0)
+                    {
+                        _propertiesDict.Add("Marke".ToUpperInvariant(), detectVehicleBmw.BrandList);
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(detectVehicleBmw.TypeKey))
+                    {
+                        _propertiesDict.Add("Typschl\u00FCssel".ToUpperInvariant(), new List<string> { detectVehicleBmw.TypeKey.Trim() });
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(detectVehicleBmw.Series))
+                    {
+                        _propertiesDict.Add("E-Bezeichnung".ToUpperInvariant(), new List<string> { detectVehicleBmw.Series.Trim() });
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(detectVehicleBmw.ConstructYear))
+                    {
+                        string constructDate = detectVehicleBmw.ConstructYear;
+                        if (!string.IsNullOrWhiteSpace(detectVehicleBmw.ConstructMonth))
+                        {
+                            constructDate += detectVehicleBmw.ConstructMonth;
+                        }
+                        else
+                        {
+                            constructDate += "01";
+                        }
+                        _propertiesDict.Add("Baustand".ToUpperInvariant(), new List<string> { constructDate });
+
+                        string productionDate = constructDate;
+                        if (!string.IsNullOrWhiteSpace(detectVehicleBmw.ILevelShip))
+                        {
+                            string iLevelTrim = detectVehicleBmw.ILevelShip.Trim();
+                            string[] levelParts = iLevelTrim.Split("-");
+                            if (levelParts.Length == 4)
+                            {
+                                if (Int32.TryParse(levelParts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out int iLevelYear) &&
+                                    Int32.TryParse(levelParts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out int iLevelMonth))
+                                {
+                                    int dateValue = (iLevelYear + 2000) * 100 + iLevelMonth;
+                                    productionDate = dateValue.ToString(CultureInfo.InvariantCulture);
+                                }
+                            }
+                        }
+
+                        _propertiesDict.Add("Produktionsdatum".ToUpperInvariant(), new List<string> { productionDate });
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(detectVehicleBmw.ILevelCurrent))
+                    {
+                        string iLevelTrim = detectVehicleBmw.ILevelCurrent.Trim();
+                        string[] levelParts = iLevelTrim.Split("-");
+                        _propertiesDict.Add("IStufe".ToUpperInvariant(), new List<string> { iLevelTrim.Trim() });
+                        if (levelParts.Length == 4 && iLevelTrim.Length == 14)
+                        {
+                            string iLevelNum = levelParts[1] + levelParts[2] + levelParts[3];
+                            if (Int32.TryParse(iLevelNum, NumberStyles.Integer, CultureInfo.InvariantCulture, out int iLevelValue))
+                            {
+                                _propertiesDict.Add("IStufeX".ToUpperInvariant(), new List<string> { iLevelValue.ToString(CultureInfo.InvariantCulture) });
+                            }
+
+                            _propertiesDict.Add("Baureihenverbund".ToUpperInvariant(), new List<string> { levelParts[0] });
+                        }
+                    }
+
+                    return SetEvalEcuProperties(ecuVariant);
+                }
+                catch (Exception)
                 {
                     return false;
                 }
-
-                if (detectVehicleBmw.BrandList != null && detectVehicleBmw.BrandList.Count > 0)
-                {
-                    _propertiesDict.Add("Marke".ToUpperInvariant(), detectVehicleBmw.BrandList);
-                }
-
-                if (!string.IsNullOrWhiteSpace(detectVehicleBmw.TypeKey))
-                {
-                    _propertiesDict.Add("Typschl\u00FCssel".ToUpperInvariant(), new List<string> { detectVehicleBmw.TypeKey.Trim() });
-                }
-
-                if (!string.IsNullOrWhiteSpace(detectVehicleBmw.Series))
-                {
-                    _propertiesDict.Add("E-Bezeichnung".ToUpperInvariant(), new List<string> { detectVehicleBmw.Series.Trim() });
-                }
-
-                if (!string.IsNullOrWhiteSpace(detectVehicleBmw.ConstructYear))
-                {
-                    string constructDate = detectVehicleBmw.ConstructYear;
-                    if (!string.IsNullOrWhiteSpace(detectVehicleBmw.ConstructMonth))
-                    {
-                        constructDate += detectVehicleBmw.ConstructMonth;
-                    }
-                    else
-                    {
-                        constructDate += "01";
-                    }
-                    _propertiesDict.Add("Baustand".ToUpperInvariant(), new List<string> { constructDate });
-
-                    string productionDate = constructDate;
-                    if (!string.IsNullOrWhiteSpace(detectVehicleBmw.ILevelShip))
-                    {
-                        string iLevelTrim = detectVehicleBmw.ILevelShip.Trim();
-                        string[] levelParts = iLevelTrim.Split("-");
-                        if (levelParts.Length == 4)
-                        {
-                            if (Int32.TryParse(levelParts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out int iLevelYear) &&
-                                Int32.TryParse(levelParts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out int iLevelMonth))
-                            {
-                                int dateValue = (iLevelYear + 2000) * 100 + iLevelMonth;
-                                productionDate = dateValue.ToString(CultureInfo.InvariantCulture);
-                            }
-                        }
-                    }
-
-                    _propertiesDict.Add("Produktionsdatum".ToUpperInvariant(), new List<string> { productionDate });
-                }
-
-                if (!string.IsNullOrWhiteSpace(detectVehicleBmw.ILevelCurrent))
-                {
-                    string iLevelTrim = detectVehicleBmw.ILevelCurrent.Trim();
-                    string[] levelParts = iLevelTrim.Split("-");
-                    _propertiesDict.Add("IStufe".ToUpperInvariant(), new List<string> { iLevelTrim.Trim() });
-                    if (levelParts.Length == 4 && iLevelTrim.Length == 14)
-                    {
-                        string iLevelNum = levelParts[1] + levelParts[2] + levelParts[3];
-                        if (Int32.TryParse(iLevelNum, NumberStyles.Integer, CultureInfo.InvariantCulture, out int iLevelValue))
-                        {
-                            _propertiesDict.Add("IStufeX".ToUpperInvariant(), new List<string> { iLevelValue.ToString(CultureInfo.InvariantCulture) });
-                        }
-
-                        _propertiesDict.Add("Baureihenverbund".ToUpperInvariant(), new List<string> { levelParts[0] });
-                    }
-                }
-
-                SetEvalEcuProperties(ecuVariant);
             }
-            catch (Exception)
-            {
-                return false;
-            }
-
-            return true;
         }
 
-        public bool SetEvalEcuProperties(EcuFunctionStructs.EcuVariant ecuVariant)
+        public bool UpdateEvalEcuProperties(EcuFunctionStructs.EcuVariant ecuVariant)
+        {
+            lock (_lockObject)
+            {
+                return SetEvalEcuProperties(ecuVariant);
+            }
+        }
+
+        private bool SetEvalEcuProperties(EcuFunctionStructs.EcuVariant ecuVariant)
         {
             try
             {

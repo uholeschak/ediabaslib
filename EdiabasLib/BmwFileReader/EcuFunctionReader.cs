@@ -105,7 +105,7 @@ namespace BmwFileReader
                 return false;
             }
 
-            return _ruleEvalBmw.SetEvalEcuProperties(ecuVariant);
+            return _ruleEvalBmw.UpdateEvalEcuProperties(ecuVariant);
         }
 
         public bool IsValidEcuFuncId(string id)
