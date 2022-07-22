@@ -2612,6 +2612,12 @@ namespace BmwDeepObd
                     {
                         _instanceData.Vin = GetBestVin(_ecuList);
                     }
+
+                    if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
+                    {
+                        ActivityCommon.EcuFunctionReader.UpdateRuleProperties(detectVehicleBmw, null);
+                    }
+
                     ReadAllXml();
                 }
                 _ediabas.EdInterfaceClass.EnableTransmitCache = false;
