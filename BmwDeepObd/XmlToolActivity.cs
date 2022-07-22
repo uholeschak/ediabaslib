@@ -1692,6 +1692,14 @@ namespace BmwDeepObd
                 {
                     return;
                 }
+
+                if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
+                {
+                    string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
+                    EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
+                    ActivityCommon.EcuFunctionReader.UpdateEcuRuleProperties(ecuVariant);
+                }
+
                 XmlToolEcuActivity.IntentEcuInfo = ecuInfo;
                 Intent serverIntent = new Intent(this, typeof(XmlToolEcuActivity));
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraAppDataDir, _appDataDir);
