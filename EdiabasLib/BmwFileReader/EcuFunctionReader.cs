@@ -95,9 +95,17 @@ namespace BmwFileReader
                 return false;
             }
 
-            _ruleEvalBmw.SetEvalProperties(detectVehicleBmw, ecuVariant);
+            return _ruleEvalBmw.SetEvalProperties(detectVehicleBmw, ecuVariant);
+        }
 
-            return true;
+        public bool UpdateEcuRuleProperties(EcuFunctionStructs.EcuVariant ecuVariant)
+        {
+            if (_ruleEvalBmw == null)
+            {
+                return false;
+            }
+
+            return _ruleEvalBmw.SetEvalEcuProperties(ecuVariant);
         }
 
         public bool IsValidEcuFuncId(string id)
