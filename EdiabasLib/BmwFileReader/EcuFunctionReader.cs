@@ -16,6 +16,7 @@ namespace BmwFileReader
         public const string FaultDataTypeFault = "F";
         public const string FaultDataTypeInfo = "I";
         private readonly string _rootDir;
+        private readonly object _lockObject = new object();
         private readonly Dictionary<string, EcuFunctionStructs.EcuVariant> _ecuVariantDict;
         private readonly Dictionary<string, EcuFunctionStructs.EcuFaultCodeLabel> _ecuFaultCodeLabelDict;
         private readonly Dictionary<string, EcuFunctionStructs.EcuFaultModeLabel> _ecuFaultModeLabelDict;
@@ -121,17 +122,20 @@ namespace BmwFileReader
 
         public EcuFunctionStructs.EcuFaultCodeLabel GetFaultCodeLabel(Int64 errorCode, bool info, EcuFunctionStructs.EcuVariant ecuVariant)
         {
-            if (!ecuVariant.GetEcuFaultCodeDict(info).TryGetValue(errorCode, out EcuFunctionStructs.EcuFaultCode ecuFaultCode))
+            lock (_lockObject)
             {
-                return null;
-            }
+                if (!ecuVariant.GetEcuFaultCodeDict(info).TryGetValue(errorCode, out EcuFunctionStructs.EcuFaultCode ecuFaultCode))
+                {
+                    return null;
+                }
 
-            if (!_ecuFaultCodeLabelDict.TryGetValue(ecuFaultCode.EcuFaultCodeLabelId.ToLowerInvariant(), out EcuFunctionStructs.EcuFaultCodeLabel ecuFaultCodeLabel))
-            {
-                return null;
-            }
+                if (!_ecuFaultCodeLabelDict.TryGetValue(ecuFaultCode.EcuFaultCodeLabelId.ToLowerInvariant(), out EcuFunctionStructs.EcuFaultCodeLabel ecuFaultCodeLabel))
+                {
+                    return null;
+                }
 
-            return ecuFaultCodeLabel;
+                return ecuFaultCodeLabel;
+            }
         }
 
         public List<EcuFunctionStructs.EcuFaultModeLabel> GetFaultModeLabelMatchList(List<EcuFunctionStructs.EcuFaultModeLabel> ecuFaultModeLabelList, Int64 modeNumber)
@@ -151,26 +155,29 @@ namespace BmwFileReader
 
         public List<EcuFunctionStructs.EcuFaultModeLabel> GetFaultModeLabelList(Int64 errorCode, bool info, EcuFunctionStructs.EcuVariant ecuVariant)
         {
-            if (!ecuVariant.GetEcuFaultCodeDict(info).TryGetValue(errorCode, out EcuFunctionStructs.EcuFaultCode ecuFaultCode))
+            lock (_lockObject)
             {
-                return null;
-            }
-
-            if (ecuFaultCode.EcuFaultModeLabelIdList == null)
-            {
-                return null;
-            }
-
-            List<EcuFunctionStructs.EcuFaultModeLabel> ecuFaultModeLabelList = new List<EcuFunctionStructs.EcuFaultModeLabel>();
-            foreach (string ecuFaultModeId in ecuFaultCode.EcuFaultModeLabelIdList)
-            {
-                if (_ecuFaultModeLabelDict.TryGetValue(ecuFaultModeId.ToLowerInvariant(), out EcuFunctionStructs.EcuFaultModeLabel ecuFaultModeLabel))
+                if (!ecuVariant.GetEcuFaultCodeDict(info).TryGetValue(errorCode, out EcuFunctionStructs.EcuFaultCode ecuFaultCode))
                 {
-                    ecuFaultModeLabelList.Add(ecuFaultModeLabel);
+                    return null;
                 }
-            }
 
-            return ecuFaultModeLabelList;
+                if (ecuFaultCode.EcuFaultModeLabelIdList == null)
+                {
+                    return null;
+                }
+
+                List<EcuFunctionStructs.EcuFaultModeLabel> ecuFaultModeLabelList = new List<EcuFunctionStructs.EcuFaultModeLabel>();
+                foreach (string ecuFaultModeId in ecuFaultCode.EcuFaultModeLabelIdList)
+                {
+                    if (_ecuFaultModeLabelDict.TryGetValue(ecuFaultModeId.ToLowerInvariant(), out EcuFunctionStructs.EcuFaultModeLabel ecuFaultModeLabel))
+                    {
+                        ecuFaultModeLabelList.Add(ecuFaultModeLabel);
+                    }
+                }
+
+                return ecuFaultModeLabelList;
+            }
         }
 
         public List<EcuFunctionStructs.EcuEnvCondLabel> GetEnvCondLabelMatchList(List<EcuFunctionStructs.EcuEnvCondLabel> ecuEnvCondLabelList, Int64 envNumber)
@@ -205,117 +212,129 @@ namespace BmwFileReader
 
         public List<EcuFunctionStructs.EcuEnvCondLabel> GetEnvCondLabelList(Int64 errorCode, bool info, EcuFunctionStructs.EcuVariant ecuVariant)
         {
-            if (!ecuVariant.GetEcuFaultCodeDict(info).TryGetValue(errorCode, out EcuFunctionStructs.EcuFaultCode ecuFaultCode))
+            lock (_lockObject)
             {
-                return null;
-            }
-
-            if (ecuFaultCode.EcuEnvCondLabelIdList == null)
-            {
-                return null;
-            }
-
-            List<EcuFunctionStructs.EcuEnvCondLabel> ecuEnvCondLabelList = new List<EcuFunctionStructs.EcuEnvCondLabel>();
-            foreach (string ecuEnvCondId in ecuFaultCode.EcuEnvCondLabelIdList)
-            {
-                if (_ecuEnvCondLabelDict.TryGetValue(ecuEnvCondId.ToLowerInvariant(), out EcuFunctionStructs.EcuEnvCondLabel ecuEnvCondLabel))
+                if (!ecuVariant.GetEcuFaultCodeDict(info).TryGetValue(errorCode, out EcuFunctionStructs.EcuFaultCode ecuFaultCode))
                 {
-                    ecuEnvCondLabelList.Add(ecuEnvCondLabel);
+                    return null;
                 }
-            }
 
-            return ecuEnvCondLabelList;
+                if (ecuFaultCode.EcuEnvCondLabelIdList == null)
+                {
+                    return null;
+                }
+
+                List<EcuFunctionStructs.EcuEnvCondLabel> ecuEnvCondLabelList = new List<EcuFunctionStructs.EcuEnvCondLabel>();
+                foreach (string ecuEnvCondId in ecuFaultCode.EcuEnvCondLabelIdList)
+                {
+                    if (_ecuEnvCondLabelDict.TryGetValue(ecuEnvCondId.ToLowerInvariant(), out EcuFunctionStructs.EcuEnvCondLabel ecuEnvCondLabel))
+                    {
+                        ecuEnvCondLabelList.Add(ecuEnvCondLabel);
+                    }
+                }
+
+                return ecuEnvCondLabelList;
+            }
         }
 
         // for tesing result states only!
         public List<EcuFunctionStructs.EcuEnvCondLabel> GetEnvCondLabelListWithResultStates(EcuFunctionStructs.EcuVariant ecuVariant, bool info)
         {
-            List<EcuFunctionStructs.EcuEnvCondLabel> ecuEnvCondLabelList = new List<EcuFunctionStructs.EcuEnvCondLabel>();
-            foreach (KeyValuePair<Int64, EcuFunctionStructs.EcuFaultCode> ecuFaultCodePair in ecuVariant.GetEcuFaultCodeDict(info))
+            lock (_lockObject)
             {
-                if (ecuFaultCodePair.Value.EcuEnvCondLabelIdList != null)
+                List<EcuFunctionStructs.EcuEnvCondLabel> ecuEnvCondLabelList = new List<EcuFunctionStructs.EcuEnvCondLabel>();
+                foreach (KeyValuePair<Int64, EcuFunctionStructs.EcuFaultCode> ecuFaultCodePair in ecuVariant.GetEcuFaultCodeDict(info))
                 {
-                    foreach (string ecuEnvCondId in ecuFaultCodePair.Value.EcuEnvCondLabelIdList)
+                    if (ecuFaultCodePair.Value.EcuEnvCondLabelIdList != null)
                     {
-                        if (_ecuEnvCondLabelDict.TryGetValue(ecuEnvCondId.ToLowerInvariant(), out EcuFunctionStructs.EcuEnvCondLabel ecuEnvCondLabel))
+                        foreach (string ecuEnvCondId in ecuFaultCodePair.Value.EcuEnvCondLabelIdList)
                         {
-                            if (ecuEnvCondLabel.EcuResultStateValueList != null && ecuEnvCondLabel.EcuResultStateValueList.Count > 0)
+                            if (_ecuEnvCondLabelDict.TryGetValue(ecuEnvCondId.ToLowerInvariant(), out EcuFunctionStructs.EcuEnvCondLabel ecuEnvCondLabel))
                             {
-                                ecuEnvCondLabelList.Add(ecuEnvCondLabel);
+                                if (ecuEnvCondLabel.EcuResultStateValueList != null && ecuEnvCondLabel.EcuResultStateValueList.Count > 0)
+                                {
+                                    ecuEnvCondLabelList.Add(ecuEnvCondLabel);
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            return ecuEnvCondLabelList;
+                return ecuEnvCondLabelList;
+            }
         }
 
         public EcuFunctionStructs.EcuVariant GetEcuVariantCached(string ecuName)
         {
-            try
+            lock (_lockObject)
             {
-                if (string.IsNullOrEmpty(ecuName))
+                try
+                {
+                    if (string.IsNullOrEmpty(ecuName))
+                    {
+                        return null;
+                    }
+
+                    string key = ecuName.ToLowerInvariant();
+                    if (_ecuVariantDict.TryGetValue(key, out EcuFunctionStructs.EcuVariant ecuVariant))
+                    {
+                        return ecuVariant;
+                    }
+
+                    ecuVariant = GetEcuVariant(ecuName);
+                    _ecuVariantDict[key] = ecuVariant;
+
+                    return ecuVariant;
+                }
+                catch (Exception)
                 {
                     return null;
                 }
-
-                string key = ecuName.ToLowerInvariant();
-                if (_ecuVariantDict.TryGetValue(key, out EcuFunctionStructs.EcuVariant ecuVariant))
-                {
-                    return ecuVariant;
-                }
-
-                ecuVariant = GetEcuVariant(ecuName);
-                _ecuVariantDict[key] = ecuVariant;
-
-                return ecuVariant;
-            }
-            catch (Exception)
-            {
-                return null;
             }
         }
 
         public EcuFunctionStructs.EcuFaultData GetEcuFaultDataCached(string language)
         {
-            if (IsInitRequired(language))
+            lock (_lockObject)
             {
-                Reset();
-                _ecuFaultData = GetEcuFaultData(language);
-                if (_ecuFaultData != null)
+                if (IsInitRequired(language))
                 {
-                    _ecuFaultDataLanguage = language;
-                    if (_ecuFaultData.EcuFaultCodeLabelList != null)
+                    Reset();
+                    _ecuFaultData = GetEcuFaultData(language);
+                    if (_ecuFaultData != null)
                     {
-                        foreach (EcuFunctionStructs.EcuFaultCodeLabel ecuFaultCodeLabel in _ecuFaultData.EcuFaultCodeLabelList)
+                        _ecuFaultDataLanguage = language;
+                        if (_ecuFaultData.EcuFaultCodeLabelList != null)
                         {
-                            string key = ecuFaultCodeLabel.Id.ToLowerInvariant();
-                            _ecuFaultCodeLabelDict.TryAdd(key, ecuFaultCodeLabel);
+                            foreach (EcuFunctionStructs.EcuFaultCodeLabel ecuFaultCodeLabel in _ecuFaultData.EcuFaultCodeLabelList)
+                            {
+                                string key = ecuFaultCodeLabel.Id.ToLowerInvariant();
+                                _ecuFaultCodeLabelDict.TryAdd(key, ecuFaultCodeLabel);
+                            }
                         }
-                    }
 
-                    if (_ecuFaultData.EcuFaultModeLabelList != null)
-                    {
-                        foreach (EcuFunctionStructs.EcuFaultModeLabel ecuFaultModeLabel in _ecuFaultData.EcuFaultModeLabelList)
+                        if (_ecuFaultData.EcuFaultModeLabelList != null)
                         {
-                            string key = ecuFaultModeLabel.Id.ToLowerInvariant();
-                            _ecuFaultModeLabelDict.TryAdd(key, ecuFaultModeLabel);
+                            foreach (EcuFunctionStructs.EcuFaultModeLabel ecuFaultModeLabel in _ecuFaultData.EcuFaultModeLabelList)
+                            {
+                                string key = ecuFaultModeLabel.Id.ToLowerInvariant();
+                                _ecuFaultModeLabelDict.TryAdd(key, ecuFaultModeLabel);
+                            }
                         }
-                    }
 
-                    if (_ecuFaultData.EcuEnvCondLabelList != null)
-                    {
-                        foreach (EcuFunctionStructs.EcuEnvCondLabel ecuEnvCondLabel in _ecuFaultData.EcuEnvCondLabelList)
+                        if (_ecuFaultData.EcuEnvCondLabelList != null)
                         {
-                            string key = ecuEnvCondLabel.Id.ToLowerInvariant();
-                            _ecuEnvCondLabelDict.TryAdd(key, ecuEnvCondLabel);
+                            foreach (EcuFunctionStructs.EcuEnvCondLabel ecuEnvCondLabel in _ecuFaultData.EcuEnvCondLabelList)
+                            {
+                                string key = ecuEnvCondLabel.Id.ToLowerInvariant();
+                                _ecuEnvCondLabelDict.TryAdd(key, ecuEnvCondLabel);
+                            }
                         }
                     }
                 }
-            }
 
-            return _ecuFaultData;
+                return _ecuFaultData;
+            }
         }
 
         public EcuFunctionStructs.EcuVariant GetEcuVariant(string ecuName)
