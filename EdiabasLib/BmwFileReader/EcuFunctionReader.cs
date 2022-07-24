@@ -22,6 +22,7 @@ namespace BmwFileReader
         private readonly Dictionary<string, EcuFunctionStructs.EcuEnvCondLabel> _ecuEnvCondLabelDict;
         private EcuFunctionStructs.EcuFaultData _ecuFaultData;
         private readonly RuleEvalBmw _ruleEvalBmw;
+        public RuleEvalBmw RuleEvalBmw => _ruleEvalBmw;
         private string _ecuFaultDataLanguage;
 
         public EcuFunctionReader(string rootDir)
@@ -88,39 +89,6 @@ namespace BmwFileReader
             return fixedFuncStructList;
         }
 
-        public bool UpdateRuleProperties(DetectVehicleBmw detectVehicleBmw, EcuFunctionStructs.EcuVariant ecuVariant)
-        {
-            if (_ruleEvalBmw == null)
-            {
-                return false;
-            }
-
-            return _ruleEvalBmw.SetEvalProperties(detectVehicleBmw, ecuVariant);
-        }
-
-        public bool UpdateEcuRuleProperties(EcuFunctionStructs.EcuVariant ecuVariant)
-        {
-            if (_ruleEvalBmw == null)
-            {
-                return false;
-            }
-
-            return _ruleEvalBmw.UpdateEvalEcuProperties(ecuVariant);
-        }
-
-        public bool IsValidEcuFuncId(string id)
-        {
-            if (_ruleEvalBmw != null)
-            {
-                if (!_ruleEvalBmw.EvaluateRule(id, true))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
         public bool IsValidFaultCode(Int64 errorCode, bool info, EcuFunctionStructs.EcuVariant ecuVariant, RuleEvalBmw ruleEvalBmw = null, bool relevantOnly = false)
         {
             if (errorCode == 0x0000)
@@ -143,10 +111,9 @@ namespace BmwFileReader
                 return false;
             }
 
-            RuleEvalBmw ruleEvalBmwUse = ruleEvalBmw ?? _ruleEvalBmw;
-            if (ruleEvalBmwUse != null)
+            if (ruleEvalBmw != null)
             {
-                if (!ruleEvalBmwUse.EvaluateRule(ecuFaultCode.Id))
+                if (!ruleEvalBmw.EvaluateRule(ecuFaultCode.Id))
                 {
                     return false;
                 }

@@ -1697,7 +1697,7 @@ namespace BmwDeepObd
                 {
                     string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
                     EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
-                    ActivityCommon.EcuFunctionReader.UpdateEcuRuleProperties(ecuVariant);
+                    ActivityCommon.EcuFunctionReader.RuleEvalBmw.UpdateEvalEcuProperties(ecuVariant);
                 }
 
                 XmlToolEcuActivity.IntentEcuInfo = ecuInfo;
@@ -2615,7 +2615,7 @@ namespace BmwDeepObd
 
                     if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
                     {
-                        ActivityCommon.EcuFunctionReader.UpdateRuleProperties(detectVehicleBmw, null);
+                        ActivityCommon.EcuFunctionReader.RuleEvalBmw.SetEvalProperties(detectVehicleBmw, null);
                     }
 
                     ReadAllXml();
@@ -2659,7 +2659,7 @@ namespace BmwDeepObd
 
                         if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
                         {
-                            ActivityCommon.EcuFunctionReader.UpdateRuleProperties(detectVehicleBmw, null);
+                            ActivityCommon.EcuFunctionReader.RuleEvalBmw.SetEvalProperties(detectVehicleBmw, null);
                         }
 
                         ReadAllXml();
