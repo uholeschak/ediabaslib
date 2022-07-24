@@ -1072,7 +1072,7 @@ namespace BmwDeepObd
             return string.Compare(job.Name, XmlToolActivity.JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) == 0;
         }
 
-        public static bool IsValidJob(JobInfo job, XmlToolActivity.EcuInfo ecuInfo, EcuFunctionReader ecuFunctionReader = null)
+        public static bool IsValidJob(JobInfo job, XmlToolActivity.EcuInfo ecuInfo, RuleEvalBmw ruleEvalBmw = null)
         {
             if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
             {
@@ -1097,7 +1097,7 @@ namespace BmwDeepObd
                 EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType nodeClassType = job.EcuFixedFuncStruct.GetNodeClassType();
                 if (nodeClassType != EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator)
                 {
-                    bool validId = IntentRuleEvalBmw == null || IntentRuleEvalBmw.EvaluateRule(job.EcuFixedFuncStruct.Id, true);
+                    bool validId = ruleEvalBmw == null || ruleEvalBmw.EvaluateRule(job.EcuFixedFuncStruct.Id, true);
                     if (validId)
                     {
                         foreach (EcuFunctionStructs.EcuJob ecuJob in job.EcuFixedFuncStruct.EcuJobList)
@@ -1339,18 +1339,14 @@ namespace BmwDeepObd
         private void UpdateDisplay()
         {
             int selection = 0;
-            EcuFunctionReader ecuFunctionReader = null;
-            if (ActivityCommon.EcuFunctionsActive)
-            {
-                ecuFunctionReader = ActivityCommon.EcuFunctionReader;
-            }
+            RuleEvalBmw ruleEvalBmw = ActivityCommon.EcuFunctionsActive ? IntentRuleEvalBmw : null;
 
             _spinnerJobsAdapter.Items.Clear();
             List<JobInfo> jobListSort = new List<JobInfo>(_ecuInfo.JobList);
             jobListSort.Sort(new JobInfoComparer());
             foreach (JobInfo job in jobListSort)
             {
-                if (IsValidJob(job, _ecuInfo, ecuFunctionReader))
+                if (IsValidJob(job, _ecuInfo, ruleEvalBmw))
                 {
                     bool addJob = true;
                     if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
