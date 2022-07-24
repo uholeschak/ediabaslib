@@ -300,7 +300,6 @@ namespace BmwDeepObd
         private JobInfo _selectedJob;
         private ResultInfo _selectedResult;
         private EdiabasNet _ediabas;
-        private RuleEvalBmw _ruleEvalBmw;
         private Thread _jobThread;
         private bool _activityActive;
         private bool _ediabasJobAbort;
@@ -1097,7 +1096,7 @@ namespace BmwDeepObd
                 EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType nodeClassType = job.EcuFixedFuncStruct.GetNodeClassType();
                 if (nodeClassType != EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator)
                 {
-                    bool validId = ecuFunctionReader == null || ecuFunctionReader.IsValidEcuFuncId(job.EcuFixedFuncStruct.Id);
+                    bool validId = ecuFunctionReader == null || ecuFunctionReader.RuleEvalBmw.EvaluateRule(job.EcuFixedFuncStruct.Id, true);
                     if (validId)
                     {
                         foreach (EcuFunctionStructs.EcuJob ecuJob in job.EcuFixedFuncStruct.EcuJobList)
