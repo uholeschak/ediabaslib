@@ -409,6 +409,7 @@ namespace BmwDeepObd
         private TabsFragmentStateAdapter _fragmentStateAdapter;
         private readonly ConnectButtonInfo _connectButtonInfo = new ConnectButtonInfo();
         private ImageView _imageBackground;
+        private RuleEvalBmw _ruleEvalBmw;
         private HttpClient _httpClient;
         private CustomProgressDialog _downloadProgress;
         private CustomProgressDialog _compileProgress;
@@ -517,6 +518,7 @@ namespace BmwDeepObd
             _updateHandler = new Handler(Looper.MainLooper);
 
             _imageBackground = FindViewById<ImageView>(Resource.Id.imageBackground);
+            _ruleEvalBmw = new RuleEvalBmw();
 
             if (_httpClient == null)
             {
@@ -3904,8 +3906,8 @@ namespace BmwDeepObd
                                                 }
                                             }
 #endif
-                                            ActivityCommon.EcuFunctionReader.UpdateRuleProperties(detectVehicleBmw, ecuVariant);
-                                            bool validCode = ActivityCommon.EcuFunctionReader.IsValidFaultCode(errorCode, errorReport.ReadIs, ecuVariant, showRelevantOnly);
+                                            _ruleEvalBmw.SetEvalProperties(detectVehicleBmw, ecuVariant);
+                                            bool validCode = ActivityCommon.EcuFunctionReader.IsValidFaultCode(errorCode, errorReport.ReadIs, ecuVariant, _ruleEvalBmw, showRelevantOnly);
                                             if (validCode)
                                             {
                                                 if (errorCode != 0x0000)

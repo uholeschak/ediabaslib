@@ -300,6 +300,7 @@ namespace BmwDeepObd
         private JobInfo _selectedJob;
         private ResultInfo _selectedResult;
         private EdiabasNet _ediabas;
+        private RuleEvalBmw _ruleEvalBmw;
         private Thread _jobThread;
         private bool _activityActive;
         private bool _ediabasJobAbort;

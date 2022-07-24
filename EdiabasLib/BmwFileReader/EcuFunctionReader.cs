@@ -121,7 +121,7 @@ namespace BmwFileReader
             return true;
         }
 
-        public bool IsValidFaultCode(Int64 errorCode, bool info, EcuFunctionStructs.EcuVariant ecuVariant, bool relevantOnly = false)
+        public bool IsValidFaultCode(Int64 errorCode, bool info, EcuFunctionStructs.EcuVariant ecuVariant, RuleEvalBmw ruleEvalBmw = null, bool relevantOnly = false)
         {
             if (errorCode == 0x0000)
             {
@@ -143,9 +143,10 @@ namespace BmwFileReader
                 return false;
             }
 
-            if (_ruleEvalBmw != null)
+            RuleEvalBmw ruleEvalBmwUse = ruleEvalBmw ?? _ruleEvalBmw;
+            if (ruleEvalBmwUse != null)
             {
-                if (!_ruleEvalBmw.EvaluateRule(ecuFaultCode.Id))
+                if (!ruleEvalBmwUse.EvaluateRule(ecuFaultCode.Id))
                 {
                     return false;
                 }
