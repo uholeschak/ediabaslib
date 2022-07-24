@@ -589,6 +589,7 @@ namespace BmwDeepObd
         private bool _activityActive;
         private volatile bool _ediabasJobAbort;
         private ActivityCommon _activityCommon;
+        private RuleEvalBmw _ruleEvalBmw;
         private EdiabasNet _ediabas;
         private SgFunctions _sgFunctions;
         private Thread _jobThread;
@@ -673,6 +674,7 @@ namespace BmwDeepObd
                 ShowContextMenu(args.View, args.Position);
             };
 
+            _ruleEvalBmw = new RuleEvalBmw();
             _activityCommon = new ActivityCommon(this, () =>
             {
                 if (_activityCommon == null)
@@ -1697,10 +1699,11 @@ namespace BmwDeepObd
                 {
                     string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
                     EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
-                    ActivityCommon.EcuFunctionReader.RuleEvalBmw.UpdateEvalEcuProperties(ecuVariant);
+                    _ruleEvalBmw?.UpdateEvalEcuProperties(ecuVariant);
                 }
 
                 XmlToolEcuActivity.IntentEcuInfo = ecuInfo;
+                XmlToolEcuActivity.IntentRuleEvalBmw = _ruleEvalBmw;
                 Intent serverIntent = new Intent(this, typeof(XmlToolEcuActivity));
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraAppDataDir, _appDataDir);
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuName, ecuInfo.Name);
@@ -2615,7 +2618,7 @@ namespace BmwDeepObd
 
                     if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
                     {
-                        ActivityCommon.EcuFunctionReader.RuleEvalBmw.SetEvalProperties(detectVehicleBmw, null);
+                        _ruleEvalBmw?.SetEvalProperties(detectVehicleBmw, null);
                     }
 
                     ReadAllXml();
@@ -2659,7 +2662,7 @@ namespace BmwDeepObd
 
                         if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
                         {
-                            ActivityCommon.EcuFunctionReader.RuleEvalBmw.SetEvalProperties(detectVehicleBmw, null);
+                            _ruleEvalBmw?.SetEvalProperties(detectVehicleBmw, null);
                         }
 
                         ReadAllXml();
