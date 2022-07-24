@@ -15,7 +15,7 @@ namespace BmwFileReader
         private readonly Dictionary<string, List<string>> _propertiesDict = new Dictionary<string, List<string>>();
         private readonly HashSet<string> _unknownNamesHash = new HashSet<string>();
         private string _unknownId;
-        private object _lockObject = new object();
+        private readonly object _lockObject = new object();
 
         public RuleEvalBmw()
         {

@@ -320,6 +320,7 @@ namespace BmwDeepObd
         private volatile bool _stopThread;
         private bool _threadRunning;
         private Thread _workerThread;
+        private RuleEvalBmw _ruleEvalBmw;
         private bool _ediabasInitReq;
         private bool _ediabasJobAbort;
         private JobReader.PageInfo _lastPageInfo;
@@ -337,6 +338,7 @@ namespace BmwDeepObd
             _stopThread = false;
             _threadRunning = false;
             _workerThread = null;
+            _ruleEvalBmw = new RuleEvalBmw();
             Ediabas = new EdiabasNet
             {
                 EdInterfaceClass = activityCommon.GetEdiabasInterfaceClass(),
@@ -869,6 +871,16 @@ namespace BmwDeepObd
                         if (!string.IsNullOrEmpty(sgbdResolved))
                         {
                             sgbdResolved = Path.GetFileNameWithoutExtension(sgbdResolved);
+                        }
+
+                        if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
+                        {
+                            EcuFunctionStructs.EcuVariant ecuVariant = null;
+                            if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
+                            {
+                                ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(sgbdResolved);
+                            }
+                            _ruleEvalBmw.SetEvalProperties(detectVehicleBmw, ecuVariant);
                         }
 
                         Ediabas.ArgString = "ALL";
