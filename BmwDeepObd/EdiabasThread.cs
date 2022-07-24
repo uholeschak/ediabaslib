@@ -423,6 +423,7 @@ namespace BmwDeepObd
                 _logDir = logDir;
                 _appendLog = appendLog;
                 InitProperties(null);
+                _ruleEvalBmw.SetEvalProperties(null, null);
                 _workerThread = new Thread(ThreadFunc);
                 _threadRunning = true;
                 _workerThread.Start();
@@ -873,11 +874,13 @@ namespace BmwDeepObd
                             sgbdResolved = Path.GetFileNameWithoutExtension(sgbdResolved);
                         }
 
+                        bool checkFaultCode = false;
                         if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
                         {
                             EcuFunctionStructs.EcuVariant ecuVariant = null;
-                            if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
+                            if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null && ActivityCommon.ShowOnlyRelevantErrors)
                             {
+                                checkFaultCode = true;
                                 ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(sgbdResolved);
                             }
                             _ruleEvalBmw.SetEvalProperties(detectVehicleBmw, ecuVariant);
