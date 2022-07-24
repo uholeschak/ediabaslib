@@ -21,8 +21,6 @@ namespace BmwFileReader
         private readonly Dictionary<string, EcuFunctionStructs.EcuFaultModeLabel> _ecuFaultModeLabelDict;
         private readonly Dictionary<string, EcuFunctionStructs.EcuEnvCondLabel> _ecuEnvCondLabelDict;
         private EcuFunctionStructs.EcuFaultData _ecuFaultData;
-        private readonly RuleEvalBmw _ruleEvalBmw;
-        public RuleEvalBmw RuleEvalBmw => _ruleEvalBmw;
         private string _ecuFaultDataLanguage;
 
         public EcuFunctionReader(string rootDir)
@@ -32,7 +30,6 @@ namespace BmwFileReader
             _ecuFaultCodeLabelDict = new Dictionary<string, EcuFunctionStructs.EcuFaultCodeLabel>();
             _ecuFaultModeLabelDict = new Dictionary<string, EcuFunctionStructs.EcuFaultModeLabel>();
             _ecuEnvCondLabelDict = new Dictionary<string, EcuFunctionStructs.EcuEnvCondLabel>();
-            _ruleEvalBmw = new RuleEvalBmw();
         }
 
         public bool Init(string language)

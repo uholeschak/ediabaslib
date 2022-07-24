@@ -233,6 +233,7 @@ namespace BmwDeepObd
         private static readonly int[] LengthValues = {0, 1, 2, 3, 4, 5, 6, 8, 10, 15, 20, 25, 30, 35, 40};
 
         public static XmlToolActivity.EcuInfo IntentEcuInfo { get; set; }
+        public static RuleEvalBmw IntentRuleEvalBmw { get; set; }
 
         private InstanceData _instanceData = new InstanceData();
         private InputMethodManager _imm;
@@ -1096,7 +1097,7 @@ namespace BmwDeepObd
                 EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType nodeClassType = job.EcuFixedFuncStruct.GetNodeClassType();
                 if (nodeClassType != EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator)
                 {
-                    bool validId = ecuFunctionReader == null || ecuFunctionReader.RuleEvalBmw.EvaluateRule(job.EcuFixedFuncStruct.Id, true);
+                    bool validId = IntentRuleEvalBmw == null || IntentRuleEvalBmw.EvaluateRule(job.EcuFixedFuncStruct.Id, true);
                     if (validId)
                     {
                         foreach (EcuFunctionStructs.EcuJob ecuJob in job.EcuFixedFuncStruct.EcuJobList)
