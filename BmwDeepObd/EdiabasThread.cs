@@ -874,15 +874,14 @@ namespace BmwDeepObd
                             sgbdResolved = Path.GetFileNameWithoutExtension(sgbdResolved);
                         }
 
-                        bool checkFaultCode = false;
+                        EcuFunctionStructs.EcuVariant ecuVariant = null;
                         if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
                         {
-                            EcuFunctionStructs.EcuVariant ecuVariant = null;
                             if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null && ActivityCommon.ShowOnlyRelevantErrors)
                             {
-                                checkFaultCode = true;
                                 ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(sgbdResolved);
                             }
+
                             _ruleEvalBmw.SetEvalProperties(detectVehicleBmw, ecuVariant);
                         }
 
@@ -983,11 +982,11 @@ namespace BmwDeepObd
                             }
                         }
 
-                        if (ReadErrors(ecuInfo, sgbdResolved, false, errorReportList))
+                        if (ReadErrors(ecuInfo, sgbdResolved, false, ecuVariant, errorReportList))
                         {
                             if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
                             {
-                                ReadErrors(ecuInfo, sgbdResolved, true, errorReportList);
+                                ReadErrors(ecuInfo, sgbdResolved, true, ecuVariant, errorReportList);
                             }
                         }
 
@@ -1603,7 +1602,7 @@ namespace BmwDeepObd
             }
         }
 
-        public bool ReadErrors(JobReader.EcuInfo ecuInfo, string sgbdResolved, bool readIs, List<EdiabasErrorReport> errorReportList)
+        public bool ReadErrors(JobReader.EcuInfo ecuInfo, string sgbdResolved, bool readIs, EcuFunctionStructs.EcuVariant ecuVariant, List <EdiabasErrorReport> errorReportList)
         {
             string errorJob;
             string errorDetailJob = string.Empty;
@@ -1740,10 +1739,16 @@ namespace BmwDeepObd
                     // BMW only
                     if (resultDictLocal.TryGetValue("F_ORT_NR", out resultData))
                     {
-                        if (resultData.OpData is Int64)
+                        if (resultData.OpData is Int64 errorCode)
                         {
+                            bool readDetail = true;
+                            if (ecuVariant != null)
+                            {
+                                readDetail = ActivityCommon.EcuFunctionReader.IsValidFaultCode(errorCode, readIs, ecuVariant, _ruleEvalBmw, true);
+                            }
+
                             bool details = false;
-                            if (Ediabas.IsJobExisting(errorDetailJob))
+                            if (readDetail && Ediabas.IsJobExisting(errorDetailJob))
                             {
                                 // read details
                                 Ediabas.ArgString = string.Format("0x{0:X02}", (Int64)resultData.OpData);
