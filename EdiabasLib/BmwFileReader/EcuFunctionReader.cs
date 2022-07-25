@@ -89,35 +89,38 @@ namespace BmwFileReader
 
         public bool IsValidFaultCode(Int64 errorCode, bool info, EcuFunctionStructs.EcuVariant ecuVariant, RuleEvalBmw ruleEvalBmw = null, bool relevantOnly = false)
         {
-            if (errorCode == 0x0000)
+            lock (_lockObject)
             {
-                return false;
-            }
-
-            if (!ecuVariant.GetEcuFaultCodeDict(info).TryGetValue(errorCode, out EcuFunctionStructs.EcuFaultCode ecuFaultCode))
-            {
-                return false;
-            }
-
-            if (!relevantOnly)
-            {
-                return true;
-            }
-
-            if (ecuFaultCode.Relevance.ConvertToInt() < 1)
-            {
-                return false;
-            }
-
-            if (ruleEvalBmw != null)
-            {
-                if (!ruleEvalBmw.EvaluateRule(ecuFaultCode.Id))
+                if (errorCode == 0x0000)
                 {
                     return false;
                 }
-            }
 
-            return true;
+                if (!ecuVariant.GetEcuFaultCodeDict(info).TryGetValue(errorCode, out EcuFunctionStructs.EcuFaultCode ecuFaultCode))
+                {
+                    return false;
+                }
+
+                if (!relevantOnly)
+                {
+                    return true;
+                }
+
+                if (ecuFaultCode.Relevance.ConvertToInt() < 1)
+                {
+                    return false;
+                }
+
+                if (ruleEvalBmw != null)
+                {
+                    if (!ruleEvalBmw.EvaluateRule(ecuFaultCode.Id))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
         }
 
         public EcuFunctionStructs.EcuFaultCodeLabel GetFaultCodeLabel(Int64 errorCode, bool info, EcuFunctionStructs.EcuVariant ecuVariant)
@@ -337,7 +340,7 @@ namespace BmwFileReader
             }
         }
 
-        public EcuFunctionStructs.EcuVariant GetEcuVariant(string ecuName)
+        protected EcuFunctionStructs.EcuVariant GetEcuVariant(string ecuName)
         {
             EcuFunctionStructs.EcuVariant ecuVariant = GetEcuDataObject(ecuName, typeof(EcuFunctionStructs.EcuVariant)) as EcuFunctionStructs.EcuVariant;
             if (ecuVariant?.EcuFaultCodeList != null)
@@ -366,7 +369,7 @@ namespace BmwFileReader
             return ecuVariant;
         }
 
-        public EcuFunctionStructs.EcuFaultData GetEcuFaultData(string language)
+        protected EcuFunctionStructs.EcuFaultData GetEcuFaultData(string language)
         {
             string fileName = FaultDataBaseName + language.ToLowerInvariant();
             EcuFunctionStructs.EcuFaultData ecuFaultData = GetEcuDataObject(fileName, typeof(EcuFunctionStructs.EcuFaultData)) as EcuFunctionStructs.EcuFaultData;
@@ -378,7 +381,7 @@ namespace BmwFileReader
             return ecuFaultData;
         }
 
-        public object GetEcuDataObject(string name, Type type)
+        protected object GetEcuDataObject(string name, Type type)
         {
             try
             {
