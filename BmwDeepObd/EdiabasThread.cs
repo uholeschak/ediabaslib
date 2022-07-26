@@ -24,12 +24,7 @@ namespace BmwDeepObd
     {
         public class EdiabasErrorReport
         {
-            public EdiabasErrorReport(string ecuName, string sgbd, string sgbdResolved, string vagDataFileName, string vagUdsFileName, bool readIs, bool isValid, Dictionary<string, EdiabasNet.ResultData> errorDict, List<Dictionary<string, EdiabasNet.ResultData>> errorDetailSet) :
-                this(ecuName, sgbd, sgbdResolved, vagDataFileName, vagUdsFileName, readIs, isValid, errorDict, errorDetailSet, string.Empty)
-            {
-            }
-
-            public EdiabasErrorReport(string ecuName, string sgbd, string sgbdResolved, string vagDataFileName, string vagUdsFileName, bool readIs, bool isValid, Dictionary<string, EdiabasNet.ResultData> errorDict, List<Dictionary<string, EdiabasNet.ResultData>> errorDetailSet, string execptionText)
+            public EdiabasErrorReport(string ecuName, string sgbd, string sgbdResolved, string vagDataFileName, string vagUdsFileName, bool readIs, bool isValid, Dictionary<string, EdiabasNet.ResultData> errorDict = null, List<Dictionary<string, EdiabasNet.ResultData>> errorDetailSet = null, string execptionText = null)
             {
                 EcuName = ecuName;
                 Sgbd = sgbd;
@@ -67,7 +62,7 @@ namespace BmwDeepObd
         public class EdiabasErrorShadowReport : EdiabasErrorReport
         {
             public EdiabasErrorShadowReport(string ecuName, string sgbd, string sgbdResolved, Dictionary<string, EdiabasNet.ResultData> errorDict) :
-                base(ecuName, sgbd, sgbdResolved, null, null, false, true, errorDict, null)
+                base(ecuName, sgbd, sgbdResolved, null, null, false, true, errorDict)
             {
             }
         }
@@ -82,8 +77,8 @@ namespace BmwDeepObd
                 Condition
             }
 
-            public EdiabasErrorReportReset(string ecuName, string sgbd, string sgbdResolved, string vagDataFileName, string vagUdsFileName, bool resetIs, Dictionary<string, EdiabasNet.ResultData> errorDict, ErrorRestState resetState) :
-                base(ecuName, sgbd, sgbdResolved, vagDataFileName, vagUdsFileName, resetIs, true, errorDict, null, string.Empty)
+            public EdiabasErrorReportReset(string ecuName, string sgbd, string sgbdResolved, string vagDataFileName, string vagUdsFileName, bool resetIs, ErrorRestState resetState) :
+                base(ecuName, sgbd, sgbdResolved, vagDataFileName, vagUdsFileName, resetIs, true)
             {
                 ResetState = resetState;
             }
@@ -790,8 +785,7 @@ namespace BmwDeepObd
 
                         if (resetState == EdiabasErrorReportReset.ErrorRestState.Ok)
                         {
-                            errorReportList.Add(new EdiabasErrorReportReset(string.Empty, string.Empty, string.Empty, null, null, resetIs, null,
-                                resetState));
+                            errorReportList.Add(new EdiabasErrorReportReset(string.Empty, string.Empty, string.Empty, null, null, resetIs, resetState));
                         }
                     }
                     catch (Exception)
@@ -981,7 +975,7 @@ namespace BmwDeepObd
 
                             if (resetState != EdiabasErrorReportReset.ErrorRestState.Undefined)
                             {
-                                errorReportList.Add(new EdiabasErrorReportReset(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, resetIs, null, resetState));
+                                errorReportList.Add(new EdiabasErrorReportReset(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, resetIs, resetState));
                             }
                         }
 
