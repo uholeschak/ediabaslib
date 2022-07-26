@@ -3886,8 +3886,7 @@ namespace BmwDeepObd
                                             errorCode = 0x0000;
                                         }
 
-                                        bool showRelevantOnly = ActivityCommon.ShowOnlyRelevantErrors;
-                                        bool showUnknown = !showRelevantOnly || !ActivityCommon.EcuFunctionsActive;
+                                        bool showUnknown = !(ActivityCommon.EcuFunctionsActive && ActivityCommon.ShowOnlyRelevantErrors);
                                         List<EcuFunctionStructs.EcuEnvCondLabel> envCondLabelList = null;
                                         if (ecuVariant != null)
                                         {
