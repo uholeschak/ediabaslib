@@ -254,12 +254,6 @@ namespace BmwDeepObd
             private set;
         }
 
-        public DetectVehicleBmw DetectVehicleInfo
-        {
-            get;
-            private set;
-        }
-
         public JobReader.PageInfo ResultPageInfo
         {
             get;
@@ -321,6 +315,7 @@ namespace BmwDeepObd
         private volatile bool _stopThread;
         private bool _threadRunning;
         private Thread _workerThread;
+        private DetectVehicleBmw _detectVehicleBmw;
         private RuleEvalBmw _ruleEvalBmw;
         private bool _ediabasInitReq;
         private bool _ediabasJobAbort;
@@ -423,6 +418,7 @@ namespace BmwDeepObd
                 _bmwPath = bmwPath;
                 _logDir = logDir;
                 _appendLog = appendLog;
+                _detectVehicleBmw = null;
                 InitProperties(null);
                 _ruleEvalBmw.SetEvalProperties(null, null);
                 _workerThread = new Thread(ThreadFunc);
@@ -749,7 +745,6 @@ namespace BmwDeepObd
                 }
                 List<string> errorResetList;
                 string errorResetSgbdFunc;
-                DetectVehicleBmw detectVehicleBmw;
                 lock (DataLock)
                 {
                     errorResetList = ErrorResetList;
@@ -757,7 +752,6 @@ namespace BmwDeepObd
                     errorResetSgbdFunc = ErrorResetSgbdFunc;
                     ErrorResetSgbdFunc = null;
                     ErrorResetActive = errorResetList != null || !string.IsNullOrEmpty(errorResetSgbdFunc);
-                    detectVehicleBmw = DetectVehicleInfo;
                 }
 
                 List<EdiabasErrorReport> errorReportList = new List<EdiabasErrorReport>();
@@ -797,16 +791,16 @@ namespace BmwDeepObd
                     }
                 }
 
-                if (detectVehicleBmw == null)
+                if (_detectVehicleBmw == null)
                 {
                     string xmlFileName = ActivityCommon.JobReader.XmlFileName;
                     string vehicleDataFile = Path.Combine(Path.GetDirectoryName(xmlFileName), Path.GetFileNameWithoutExtension(xmlFileName) + DetectVehicleBmw.DataFileExtension);
                     DateTime xmlFileTime = File.GetLastWriteTimeUtc(xmlFileName);
                     string xmlTimeStamp = xmlFileTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
 
-                    detectVehicleBmw = new DetectVehicleBmw(Ediabas, _bmwPath);
-                    detectVehicleBmw.AbortFunc = () => _ediabasJobAbort;
-                    detectVehicleBmw.ProgressFunc = percent =>
+                    _detectVehicleBmw = new DetectVehicleBmw(Ediabas, _bmwPath);
+                    _detectVehicleBmw.AbortFunc = () => _ediabasJobAbort;
+                    _detectVehicleBmw.ProgressFunc = percent =>
                     {
                         lock (DataLock)
                         {
@@ -816,26 +810,21 @@ namespace BmwDeepObd
                         DataUpdatedEvent();
                     };
 
-                    if (!detectVehicleBmw.LoadDataFromFile(vehicleDataFile, xmlTimeStamp))
+                    if (!_detectVehicleBmw.LoadDataFromFile(vehicleDataFile, xmlTimeStamp))
                     {
                         if (!string.IsNullOrEmpty(pageInfo.ErrorsInfo.SgbdFunctional))
                         {
-                            detectVehicleBmw.DetectVehicleBmwFast();
+                            _detectVehicleBmw.DetectVehicleBmwFast();
                         }
                         else
                         {
-                            detectVehicleBmw.DetectVehicleDs2();
+                            _detectVehicleBmw.DetectVehicleDs2();
                         }
 
-                        if (detectVehicleBmw.Valid)
+                        if (_detectVehicleBmw.Valid)
                         {
-                            detectVehicleBmw.SaveDataToFile(vehicleDataFile, xmlTimeStamp);
+                            _detectVehicleBmw.SaveDataToFile(vehicleDataFile, xmlTimeStamp);
                         }
-                    }
-
-                    lock (DataLock)
-                    {
-                        DetectVehicleInfo = detectVehicleBmw;
                     }
                 }
 
@@ -882,7 +871,7 @@ namespace BmwDeepObd
                                 ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(sgbdResolved);
                             }
 
-                            _ruleEvalBmw.SetEvalProperties(detectVehicleBmw, ecuVariant);
+                            _ruleEvalBmw.SetEvalProperties(_detectVehicleBmw, ecuVariant);
                         }
 
                         Ediabas.ArgString = "ALL";
@@ -2822,7 +2811,6 @@ namespace BmwDeepObd
             AdapterSerial = null;
             ResultPageInfo = null;
             UpdateProgress = 0;
-            DetectVehicleInfo = null;
 
             _ediabasInitReq = true;
             _ediabasJobAbort = deviceChange;
