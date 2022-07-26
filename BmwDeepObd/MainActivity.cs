@@ -3548,7 +3548,6 @@ namespace BmwDeepObd
                         List<string> stringList = new List<string>();
                         List<EdiabasThread.EdiabasErrorReport> errorReportList = null;
                         int updateProgress;
-                        DetectVehicleBmw detectVehicleBmw;
                         lock (EdiabasThread.DataLock)
                         {
                             if (ActivityCommon.EdiabasThread.ResultPageInfo == pageInfo)
@@ -3556,7 +3555,6 @@ namespace BmwDeepObd
                                 errorReportList = ActivityCommon.EdiabasThread.EdiabasErrorReportList;
                             }
                             updateProgress = ActivityCommon.EdiabasThread.UpdateProgress;
-                            detectVehicleBmw = ActivityCommon.EdiabasThread.DetectVehicleInfo;
                         }
                         if (errorReportList == null)
                         {
@@ -3635,17 +3633,13 @@ namespace BmwDeepObd
 
                                 bool shadow = errorReport is EdiabasThread.EdiabasErrorShadowReport;
                                 string ecuTitle = GetPageString(pageInfo, errorReport.EcuName);
-                                EcuFunctionStructs.EcuVariant ecuVariant = null;
-                                if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
+                                EcuFunctionStructs.EcuVariant ecuVariant = errorReport.EcuVariant;
+                                if (ecuVariant != null)
                                 {
-                                    ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(errorReport.SgbdResolved);
-                                    if (ecuVariant != null)
+                                    string title = ecuVariant.Title?.GetTitle(language);
+                                    if (!string.IsNullOrEmpty(title))
                                     {
-                                        string title = ecuVariant.Title?.GetTitle(language);
-                                        if (!string.IsNullOrEmpty(title))
-                                        {
-                                            ecuTitle += " (" + title + ")";
-                                        }
+                                        ecuTitle += " (" + title + ")";
                                     }
                                 }
 

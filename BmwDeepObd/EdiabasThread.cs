@@ -36,6 +36,7 @@ namespace BmwDeepObd
                 ErrorDict = errorDict;
                 ErrorDetailSet = errorDetailSet;
                 ExecptionText = execptionText;
+                EcuVariant = null;
             }
 
             public string EcuName { get; }
@@ -57,6 +58,8 @@ namespace BmwDeepObd
             public List<Dictionary<string, EdiabasNet.ResultData>> ErrorDetailSet { get; }
 
             public string ExecptionText { get; }
+
+            public EcuFunctionStructs.EcuVariant EcuVariant { get; set; }
         }
 
         public class EdiabasErrorShadowReport : EdiabasErrorReport
@@ -1769,11 +1772,17 @@ namespace BmwDeepObd
                             if (details)
                             {
                                 List<Dictionary<string, EdiabasNet.ResultData>> resultSetsDetail = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
-                                errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, readIs, isValid, resultDictLocal, resultSetsDetail));
+                                errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, readIs, isValid, resultDictLocal, resultSetsDetail)
+                                {
+                                    EcuVariant = ecuVariant
+                                });
                             }
                             else
                             {
-                                errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, readIs, isValid, resultDictLocal, null));
+                                errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, readIs, isValid, resultDictLocal, null)
+                                {
+                                    EcuVariant = ecuVariant
+                                });
                             }
                         }
                     }
@@ -1784,7 +1793,10 @@ namespace BmwDeepObd
             {
                 if (!(readIs && jobRejected))
                 {
-                    errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, readIs, true, null, null));
+                    errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, readIs, true, null, null)
+                    {
+                        EcuVariant = ecuVariant
+                    });
                 }
             }
 
