@@ -808,9 +808,9 @@ namespace BmwDeepObd
                             DateTime xmlFileTime = File.GetLastWriteTimeUtc(xmlFileName);
                             string xmlTimeStamp = xmlFileTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
 
-                            _detectVehicleBmw = new DetectVehicleBmw(Ediabas, _bmwPath);
-                            _detectVehicleBmw.AbortFunc = () => _ediabasJobAbort;
-                            _detectVehicleBmw.ProgressFunc = percent =>
+                            DetectVehicleBmw detectVehicleBmw = new DetectVehicleBmw(Ediabas, _bmwPath);
+                            detectVehicleBmw.AbortFunc = () => _ediabasJobAbort;
+                            detectVehicleBmw.ProgressFunc = percent =>
                             {
                                 lock (DataLock)
                                 {
@@ -820,22 +820,24 @@ namespace BmwDeepObd
                                 DataUpdatedEvent();
                             };
 
-                            if (!_detectVehicleBmw.LoadDataFromFile(vehicleDataFile, xmlTimeStamp))
+                            if (!detectVehicleBmw.LoadDataFromFile(vehicleDataFile, xmlTimeStamp))
                             {
                                 if (!string.IsNullOrEmpty(pageInfo.ErrorsInfo.SgbdFunctional))
                                 {
-                                    _detectVehicleBmw.DetectVehicleBmwFast();
+                                    detectVehicleBmw.DetectVehicleBmwFast();
                                 }
                                 else
                                 {
-                                    _detectVehicleBmw.DetectVehicleDs2();
+                                    detectVehicleBmw.DetectVehicleDs2();
                                 }
 
-                                if (_detectVehicleBmw.Valid)
+                                if (detectVehicleBmw.Valid)
                                 {
-                                    _detectVehicleBmw.SaveDataToFile(vehicleDataFile, xmlTimeStamp);
+                                    detectVehicleBmw.SaveDataToFile(vehicleDataFile, xmlTimeStamp);
                                 }
                             }
+
+                            _detectVehicleBmw = detectVehicleBmw;
                         }
                     }
                     catch (Exception)
