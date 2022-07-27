@@ -793,38 +793,49 @@ namespace BmwDeepObd
 
                 if (_detectVehicleBmw == null)
                 {
-                    string xmlFileName = ActivityCommon.JobReader.XmlFileName;
-                    string vehicleDataFile = Path.Combine(Path.GetDirectoryName(xmlFileName), Path.GetFileNameWithoutExtension(xmlFileName) + DetectVehicleBmw.DataFileExtension);
-                    DateTime xmlFileTime = File.GetLastWriteTimeUtc(xmlFileName);
-                    string xmlTimeStamp = xmlFileTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
-
-                    _detectVehicleBmw = new DetectVehicleBmw(Ediabas, _bmwPath);
-                    _detectVehicleBmw.AbortFunc = () => _ediabasJobAbort;
-                    _detectVehicleBmw.ProgressFunc = percent =>
+                    try
                     {
-                        lock (DataLock)
+                        string xmlFileName = ActivityCommon.JobReader.XmlFileName;
+                        string xmlDir = Path.GetDirectoryName(xmlFileName);
+                        if (!string.IsNullOrEmpty(xmlDir))
                         {
-                            UpdateProgress = percent;
+                            string vehicleDataFile = Path.Combine(xmlDir, Path.GetFileNameWithoutExtension(xmlFileName) + DetectVehicleBmw.DataFileExtension);
+                            DateTime xmlFileTime = File.GetLastWriteTimeUtc(xmlFileName);
+                            string xmlTimeStamp = xmlFileTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+
+                            _detectVehicleBmw = new DetectVehicleBmw(Ediabas, _bmwPath);
+                            _detectVehicleBmw.AbortFunc = () => _ediabasJobAbort;
+                            _detectVehicleBmw.ProgressFunc = percent =>
+                            {
+                                lock (DataLock)
+                                {
+                                    UpdateProgress = percent;
+                                }
+
+                                DataUpdatedEvent();
+                            };
+
+                            if (!_detectVehicleBmw.LoadDataFromFile(vehicleDataFile, xmlTimeStamp))
+                            {
+                                if (!string.IsNullOrEmpty(pageInfo.ErrorsInfo.SgbdFunctional))
+                                {
+                                    _detectVehicleBmw.DetectVehicleBmwFast();
+                                }
+                                else
+                                {
+                                    _detectVehicleBmw.DetectVehicleDs2();
+                                }
+
+                                if (_detectVehicleBmw.Valid)
+                                {
+                                    _detectVehicleBmw.SaveDataToFile(vehicleDataFile, xmlTimeStamp);
+                                }
+                            }
                         }
-
-                        DataUpdatedEvent();
-                    };
-
-                    if (!_detectVehicleBmw.LoadDataFromFile(vehicleDataFile, xmlTimeStamp))
+                    }
+                    catch (Exception)
                     {
-                        if (!string.IsNullOrEmpty(pageInfo.ErrorsInfo.SgbdFunctional))
-                        {
-                            _detectVehicleBmw.DetectVehicleBmwFast();
-                        }
-                        else
-                        {
-                            _detectVehicleBmw.DetectVehicleDs2();
-                        }
-
-                        if (_detectVehicleBmw.Valid)
-                        {
-                            _detectVehicleBmw.SaveDataToFile(vehicleDataFile, xmlTimeStamp);
-                        }
+                        // ignored
                     }
                 }
 
