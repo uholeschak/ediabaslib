@@ -10644,8 +10644,8 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7F090396
 			public const int vertical_only = 2131297174;
 			
-			// aapt resource value: 0x7F09039C
-			public const int viewpager = 2131297180;
+			// aapt resource value: 0x7F09039D
+			public const int viewpager = 2131297181;
 			
 			// aapt resource value: 0x7F090010
 			public const int ViewSeparator = 2131296272;
@@ -10660,49 +10660,52 @@ namespace BmwDeepObd
 			public const int view_tree_lifecycle_owner = 2131297177;
 			
 			// aapt resource value: 0x7F09039A
-			public const int view_tree_saved_state_registry_owner = 2131297178;
+			public const int view_tree_on_back_pressed_dispatcher_owner = 2131297178;
 			
 			// aapt resource value: 0x7F09039B
-			public const int view_tree_view_model_store_owner = 2131297179;
+			public const int view_tree_saved_state_registry_owner = 2131297179;
 			
-			// aapt resource value: 0x7F09039D
-			public const int visible = 2131297181;
+			// aapt resource value: 0x7F09039C
+			public const int view_tree_view_model_store_owner = 2131297180;
 			
 			// aapt resource value: 0x7F09039E
-			public const int visible_removing_fragment_view_tag = 2131297182;
+			public const int visible = 2131297182;
 			
 			// aapt resource value: 0x7F09039F
-			public const int webViewCoding = 2131297183;
+			public const int visible_removing_fragment_view_tag = 2131297183;
 			
 			// aapt resource value: 0x7F0903A0
-			public const int west = 2131297184;
+			public const int webViewCoding = 2131297184;
 			
 			// aapt resource value: 0x7F0903A1
-			public const int wifiSettingsButton = 2131297185;
-			
-			// aapt resource value: 0x7F0903A3
-			public const int withinBounds = 2131297187;
+			public const int west = 2131297185;
 			
 			// aapt resource value: 0x7F0903A2
-			public const int withText = 2131297186;
+			public const int wifiSettingsButton = 2131297186;
 			
 			// aapt resource value: 0x7F0903A4
-			public const int wrap = 2131297188;
+			public const int withinBounds = 2131297188;
+			
+			// aapt resource value: 0x7F0903A3
+			public const int withText = 2131297187;
 			
 			// aapt resource value: 0x7F0903A5
-			public const int wrap_content = 2131297189;
+			public const int wrap = 2131297189;
 			
 			// aapt resource value: 0x7F0903A6
-			public const int wrap_content_constrained = 2131297190;
+			public const int wrap_content = 2131297190;
 			
 			// aapt resource value: 0x7F0903A7
-			public const int x_left = 2131297191;
+			public const int wrap_content_constrained = 2131297191;
 			
 			// aapt resource value: 0x7F0903A8
-			public const int x_right = 2131297192;
+			public const int x_left = 2131297192;
 			
 			// aapt resource value: 0x7F0903A9
-			public const int zero_corner_chip = 2131297193;
+			public const int x_right = 2131297193;
+			
+			// aapt resource value: 0x7F0903AA
+			public const int zero_corner_chip = 2131297194;
 			
 			static Id()
 			{
