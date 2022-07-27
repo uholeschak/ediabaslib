@@ -1738,7 +1738,7 @@ namespace BmwDeepObd
                                 MergeResultDictionarys(ref resultDictTemp, resultDictLocal);
                                 MergeResultDictionarys(ref resultDictTemp, resultDict0);
                                 resultDictTemp.Add("SAE", new EdiabasNet.ResultData(EdiabasNet.ResultType.TypeI, "SAE", (Int64)(saeMode ? 1 : 0)));
-                                errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, false, true, resultDictTemp, null));
+                                errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, false, true, resultDictTemp));
                             }
                         }
                         dictIndex++;
@@ -1786,7 +1786,7 @@ namespace BmwDeepObd
                             }
                             else
                             {
-                                errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, readIs, isValid, resultDictLocal, null)
+                                errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, readIs, isValid, resultDictLocal)
                                 {
                                     EcuVariant = ecuVariant
                                 });
@@ -1800,7 +1800,7 @@ namespace BmwDeepObd
             {
                 if (!(readIs && jobRejected))
                 {
-                    errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, readIs, true, null, null)
+                    errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, readIs, true)
                     {
                         EcuVariant = ecuVariant
                     });
