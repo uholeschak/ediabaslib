@@ -796,7 +796,12 @@ namespace BmwDeepObd
                     try
                     {
                         string xmlFileName = ActivityCommon.JobReader.XmlFileName;
-                        string xmlDir = Path.GetDirectoryName(xmlFileName);
+                        string xmlDir = null;
+                        if (!string.IsNullOrEmpty(xmlFileName))
+                        {
+                            xmlDir = Path.GetDirectoryName(xmlFileName);
+                        }
+
                         if (!string.IsNullOrEmpty(xmlDir))
                         {
                             string vehicleDataFile = Path.Combine(xmlDir, Path.GetFileNameWithoutExtension(xmlFileName) + DetectVehicleBmw.DataFileExtension);
