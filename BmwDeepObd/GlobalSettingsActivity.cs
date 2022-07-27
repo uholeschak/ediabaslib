@@ -432,9 +432,9 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestSelDirToApp:
-                    if (data != null && resultCode == Android.App.Result.Ok)
+                    if (data?.Extras != null && resultCode == Android.App.Result.Ok)
                     {
-                        _instanceData.CopyToAppDstPath = data.Extras?.GetString(FilePickerActivity.ExtraFileName);
+                        _instanceData.CopyToAppDstPath = data.Extras.GetString(FilePickerActivity.ExtraFileName);
                         if (!string.IsNullOrEmpty(_instanceData.CopyToAppSrcUri) && !string.IsNullOrEmpty(_instanceData.CopyToAppDstPath))
                         {
                             try
@@ -456,9 +456,9 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestSelDirFromApp:
-                    if (data != null && resultCode == Android.App.Result.Ok)
+                    if (data?.Extras != null && resultCode == Android.App.Result.Ok)
                     {
-                        _instanceData.CopyFromAppSrcPath = data.Extras?.GetString(FilePickerActivity.ExtraFileName);
+                        _instanceData.CopyFromAppSrcPath = data.Extras.GetString(FilePickerActivity.ExtraFileName);
                         if (!string.IsNullOrEmpty(_instanceData.CopyFromAppSrcPath))
                         {
                             SelectCopyDocumentTree(true);
@@ -467,9 +467,9 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestSelDirDelApp:
-                    if (data != null && resultCode == Android.App.Result.Ok)
+                    if (data?.Extras != null && resultCode == Android.App.Result.Ok)
                     {
-                        string delPath = data.Extras?.GetString(FilePickerActivity.ExtraFileName);
+                        string delPath = data.Extras.GetString(FilePickerActivity.ExtraFileName);
                         if (!string.IsNullOrEmpty(delPath))
                         {
                             try

@@ -899,7 +899,7 @@ namespace BmwDeepObd
 
                 case ActivityRequest.RequestSelectDevice:
                     // When DeviceListActivity returns with a device to connect
-                    if (data != null && resultCode == Android.App.Result.Ok)
+                    if (data?.Extras != null && resultCode == Android.App.Result.Ok)
                     {
                         // Get the device MAC address
                         _instanceData.DeviceName = data.Extras.GetString(DeviceListActivity.ExtraDeviceName);
@@ -920,7 +920,7 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestAdapterConfig:
-                    if (data != null && resultCode == Android.App.Result.Ok)
+                    if (data?.Extras != null && resultCode == Android.App.Result.Ok)
                     {
                         bool invalidateAdapter = data.Extras.GetBoolean(CanAdapterActivity.ExtraInvalidateAdapter, false);
                         if (invalidateAdapter)
@@ -935,7 +935,7 @@ namespace BmwDeepObd
 
                 case ActivityRequest.RequestSelectConfig:
                     // When FilePickerActivity returns with a file
-                    if (data != null && resultCode == Android.App.Result.Ok)
+                    if (data?.Extras != null && resultCode == Android.App.Result.Ok)
                     {
                         _instanceData.ConfigFileName = data.Extras.GetString(FilePickerActivity.ExtraFileName);
                         ActivityCommon.RecentConfigListAdd(_instanceData.ConfigFileName);
@@ -948,7 +948,7 @@ namespace BmwDeepObd
                 case ActivityRequest.RequestXmlTool:
                     // When XML tool returns with a file
                     _activityCommon.SetPreferredNetworkInterface();
-                    if (data != null && resultCode == Android.App.Result.Ok)
+                    if (data?.Extras != null && resultCode == Android.App.Result.Ok)
                     {
                         ActivityCommon.InterfaceType interfaceType = (ActivityCommon.InterfaceType)data.Extras.GetInt(XmlToolActivity.ExtraInterface, (int)ActivityCommon.InterfaceType.None);
                         if (interfaceType != ActivityCommon.InterfaceType.None)
@@ -985,7 +985,7 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestGlobalSettings:
-                    if (data != null && resultCode == Android.App.Result.Ok)
+                    if (data?.Extras != null && resultCode == Android.App.Result.Ok)
                     {
                         string exportFileName = data.Extras.GetString(GlobalSettingsActivity.ExtraExportFile);
                         string importFileName = data.Extras.GetString(GlobalSettingsActivity.ExtraImportFile);
@@ -1032,9 +1032,9 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestEditConfig:
-                    if (data != null && resultCode == Android.App.Result.Ok)
+                    if (data?.Extras != null && resultCode == Android.App.Result.Ok)
                     {
-                        string fileName = data.Extras?.GetString(FilePickerActivity.ExtraFileName);
+                        string fileName = data.Extras.GetString(FilePickerActivity.ExtraFileName);
                         if (!string.IsNullOrEmpty(fileName))
                         {
                             StartEditXml(fileName);

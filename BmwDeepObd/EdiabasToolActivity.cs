@@ -393,7 +393,7 @@ namespace BmwDeepObd
             {
                 case ActivityRequest.RequestSelectSgbd:
                     // When FilePickerActivity returns with a file
-                    if (data != null && resultCode == Android.App.Result.Ok)
+                    if (data?.Extras != null && resultCode == Android.App.Result.Ok)
                     {
                         _instanceData.SgbdFileName = data.Extras.GetString(FilePickerActivity.ExtraFileName);
                         UpdateOptionsMenu();
@@ -403,7 +403,7 @@ namespace BmwDeepObd
 
                 case ActivityRequest.RequestSelectDevice:
                     // When DeviceListActivity returns with a device to connect
-                    if (data != null && resultCode == Android.App.Result.Ok)
+                    if (data?.Extras != null && resultCode == Android.App.Result.Ok)
                     {
                         // Get the device MAC address
                         _instanceData.DeviceName = data.Extras.GetString(DeviceListActivity.ExtraDeviceName);
@@ -424,7 +424,7 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestAdapterConfig:
-                    if (data != null && resultCode == Android.App.Result.Ok)
+                    if (data?.Extras != null && resultCode == Android.App.Result.Ok)
                     {
                         bool invalidateAdapter = data.Extras.GetBoolean(CanAdapterActivity.ExtraInvalidateAdapter, false);
                         if (invalidateAdapter)
@@ -445,7 +445,7 @@ namespace BmwDeepObd
                 case ActivityRequest.RequestArgAssistStat:
                 case ActivityRequest.RequestArgAssistControl:
                     ArgAssistBaseActivity.IntentSgFuncInfo = null;
-                    if (data != null && resultCode == Android.App.Result.Ok)
+                    if (data?.Extras != null && resultCode == Android.App.Result.Ok)
                     {
                         _checkBoxBinArgs.Checked = false;
                         _editTextArgs.Text = data.Extras.GetString(ArgAssistBaseActivity.ExtraArguments, "");
