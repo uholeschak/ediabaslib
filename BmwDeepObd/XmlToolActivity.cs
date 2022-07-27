@@ -887,7 +887,7 @@ namespace BmwDeepObd
             {
                 case ActivityRequest.RequestSelectSgbd:
                     // When FilePickerActivity returns with a file
-                    if (data != null && resultCode == Android.App.Result.Ok)
+                    if (data?.Extras != null && resultCode == Android.App.Result.Ok)
                     {
                         string fileName = data.Extras.GetString(FilePickerActivity.ExtraFileName);
                         if (string.IsNullOrEmpty(fileName))
@@ -917,7 +917,7 @@ namespace BmwDeepObd
 
                 case ActivityRequest.RequestSelectDevice:
                     // When DeviceListActivity returns with a device to connect
-                    if (data != null && resultCode == Android.App.Result.Ok)
+                    if (data?.Extras != null && resultCode == Android.App.Result.Ok)
                     {
                         // Get the device MAC address
                         _instanceData.DeviceName = data.Extras.GetString(DeviceListActivity.ExtraDeviceName);
@@ -938,7 +938,7 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestAdapterConfig:
-                    if (data != null && resultCode == Android.App.Result.Ok)
+                    if (data?.Extras != null && resultCode == Android.App.Result.Ok)
                     {
                         bool invalidateAdapter = data.Extras.GetBoolean(CanAdapterActivity.ExtraInvalidateAdapter, false);
                         if (invalidateAdapter)
@@ -963,7 +963,7 @@ namespace BmwDeepObd
                         _ecuListAdapter.NotifyDataSetChanged();
                         UpdateDisplay();
                     }
-                    if (data != null && resultCode == Android.App.Result.Ok)
+                    if (data?.Extras != null && resultCode == Android.App.Result.Ok)
                     {
                         bool callEdiabasTool = data.Extras.GetBoolean(XmlToolEcuActivity.ExtraCallEdiabasTool, false);
                         if (callEdiabasTool)
