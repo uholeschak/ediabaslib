@@ -53,7 +53,9 @@ namespace BmwDeepObd
             UiOptions = UiOptions.SplitActionBarWhenNarrow,
             ConfigurationChanges = ActivityConfigChanges)]
     [Android.App.MetaData("android.support.UI_OPTIONS", Value = "splitActionBarWhenNarrow")]
+#pragma warning disable CS0618 // TabLayout.IOnTabSelectedListener2 creates compiler errors
     public class ActivityMain : BaseActivity, TabLayout.IOnTabSelectedListener
+#pragma warning restore CS0618
     {
         private enum ActivityRequest
         {
@@ -481,7 +483,9 @@ namespace BmwDeepObd
             TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(_tabLayout, _viewPager, new TabConfigurationStrategy(this));
             tabLayoutMediator.Attach();
 
+#pragma warning disable CS0618 // TabLayout.IOnTabSelectedListener2 creates compiler errors
             _tabLayout.AddOnTabSelectedListener(this);
+#pragma warning restore CS0618
             _tabLayout.TabMode = TabLayout.ModeScrollable;
             _tabLayout.TabGravity = TabLayout.GravityStart;
             _tabLayout.Visibility = ViewStates.Gone;
@@ -800,7 +804,9 @@ namespace BmwDeepObd
             {
                 try
                 {
+#pragma warning disable CS0618 // TabLayout.IOnTabSelectedListener2 creates compiler errors
                     _tabLayout.RemoveOnTabSelectedListener(this);
+#pragma warning restore CS0618
                 }
                 catch (Exception)
                 {
