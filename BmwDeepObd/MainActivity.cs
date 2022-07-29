@@ -367,6 +367,9 @@ namespace BmwDeepObd
             [XmlElement("CollectDebugInfo")] public bool CollectDebugInfo { get; set; }
         }
 
+#if DEBUG
+        private static readonly string Tag = typeof(ActivityMain).FullName;
+#endif
         private const string SharedAppName = ActivityCommon.AppNameSpace;
         private const string AppFolderName = ActivityCommon.AppNameSpace;
         private const string EcuDownloadUrl = @"https://www.holeschak.de/BmwDeepObd/Obb.php";
@@ -400,6 +403,7 @@ namespace BmwDeepObd
         private bool _createTabsPending;
         private bool _ignoreTabsChange;
         private bool _compileCodePending;
+        private long _maxDispUpdateTime;
         private ActivityCommon _activityCommon;
         public bool _autoHideStarted;
         public long _autoHideStartTime;
@@ -2117,6 +2121,7 @@ namespace BmwDeepObd
                 _instanceData.TraceBackupDir = Path.Combine(_instanceData.AppDataPath, ActivityCommon.TraceBackupDir);
                 _translationList = null;
                 _translatedList = null;
+                _maxDispUpdateTime = 0;
 
                 JobReader.PageInfo pageInfo = GetSelectedPage();
                 object connectParameter = null;
@@ -3363,6 +3368,8 @@ namespace BmwDeepObd
             {   // OnDestroy already executed
                 return;
             }
+
+            long startTime = Stopwatch.GetTimestamp();
             bool dynamicValid = false;
             string language = ActivityCommon.GetCurrentLanguage();
 
@@ -4350,6 +4357,15 @@ namespace BmwDeepObd
                         buttonActive.Checked = false;
                     }
                 }
+            }
+
+            long diffTime = Stopwatch.GetTimestamp() - startTime;
+            if (diffTime > _maxDispUpdateTime)
+            {
+                _maxDispUpdateTime = diffTime;
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format("UpdateDisplay: Max time:{0}", _maxDispUpdateTime / ActivityCommon.TickResolMs));
+#endif
             }
         }
 
