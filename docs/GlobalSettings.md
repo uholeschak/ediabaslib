@@ -56,10 +56,10 @@ This page allows to change some global app settings.
 * _VAG mode_ options:
   * _Use old VAG mode_: Use the old VAG mode instead of the new implementation. This is only recommended only of you want to use existing configuration files.
 * _BMW database_ options:
-  * _Use BMW database_: Use BMW database for job and fault interpretation and translation. When this option is disabled commication startup is faster.
+  * _Use BMW database_: Use BMW database for job and fault interpretation and translation. When this option is disabled communication startup is faster.
   * _Show only relevant errors_: Show only errors that are marked as relevant in the BMW database.  
   Most info memory entries are hidden and the shadow memory is never read in this mode.  
-  Some entries depend from the intergation level and may change after vehicle update.  
+  Some entries depend on intergation level and may change after vehicle update.  
 * _ECU detection_ options:
   * _For BMW vehicles with DS2 protocol always scan all ECUs (slow)_: If the vehicle has been retrofitted the car database may be incorrect and not all ECUs may be detected.  
   This option allows to ignore the car database and all ECUs are scanned, which is very time consuming.
