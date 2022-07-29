@@ -404,6 +404,7 @@ namespace BmwDeepObd
         private bool _ignoreTabsChange;
         private bool _compileCodePending;
         private long _maxDispUpdateTime;
+        private long _maxItemUpdateTime;
         private ActivityCommon _activityCommon;
         public bool _autoHideStarted;
         public long _autoHideStartTime;
@@ -3370,6 +3371,7 @@ namespace BmwDeepObd
             }
 
             long startTime = Stopwatch.GetTimestamp();
+            long diffTimeItemUpdate = 0;
             bool dynamicValid = false;
             string language = ActivityCommon.GetCurrentLanguage();
 
@@ -4238,12 +4240,14 @@ namespace BmwDeepObd
                         }
                         if (resultChanged || forceUpdate)
                         {
+                            long startTimeItemUpdate = Stopwatch.GetTimestamp();
                             resultGridAdapter.Items.Clear();
                             foreach (GridResultItem resultItem in tempResultGrid)
                             {
                                 resultGridAdapter.Items.Add(resultItem);
                             }
                             resultGridAdapter.NotifyDataSetChanged();
+                            diffTimeItemUpdate = Stopwatch.GetTimestamp() - startTimeItemUpdate;
                         }
                         gridViewResult.SetColumnWidth(gaugeSize);
                     }
@@ -4303,9 +4307,11 @@ namespace BmwDeepObd
                         }
                         if (resultChanged || forceUpdate)
                         {
+                            long startTimeItemUpdate = Stopwatch.GetTimestamp();
                             resultListAdapter.Items.Clear();
                             resultListAdapter.Items.AddRange(tempResultList);
                             resultListAdapter.NotifyDataSetChanged();
+                            diffTimeItemUpdate = Stopwatch.GetTimestamp() - startTimeItemUpdate;
                         }
                     }
 
@@ -4359,12 +4365,20 @@ namespace BmwDeepObd
                 }
             }
 
+            if (diffTimeItemUpdate > _maxItemUpdateTime)
+            {
+                _maxItemUpdateTime = diffTimeItemUpdate;
+#if DEBUG
+                Log.Info(Tag, string.Format("UpdateDisplay: Update time item: {0}ms", _maxItemUpdateTime / ActivityCommon.TickResolMs));
+#endif
+            }
+
             long diffTime = Stopwatch.GetTimestamp() - startTime;
             if (diffTime > _maxDispUpdateTime)
             {
                 _maxDispUpdateTime = diffTime;
 #if DEBUG
-                Log.Info(Tag, string.Format("UpdateDisplay: Max time: {0}ms", _maxDispUpdateTime / ActivityCommon.TickResolMs));
+                Log.Info(Tag, string.Format("UpdateDisplay: Update time all: {0}ms", _maxDispUpdateTime / ActivityCommon.TickResolMs));
 #endif
             }
         }
