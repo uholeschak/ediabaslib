@@ -4364,7 +4364,7 @@ namespace BmwDeepObd
             {
                 _maxDispUpdateTime = diffTime;
 #if DEBUG
-                Android.Util.Log.Info(Tag, string.Format("UpdateDisplay: Max time:{0}", _maxDispUpdateTime / ActivityCommon.TickResolMs));
+                Log.Info(Tag, string.Format("UpdateDisplay: Max time: {0}ms", _maxDispUpdateTime / ActivityCommon.TickResolMs));
 #endif
             }
         }
