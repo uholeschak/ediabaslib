@@ -404,8 +404,8 @@ namespace BmwDeepObd
         private bool _ignoreTabsChange;
         private bool _compileCodePending;
         private long _maxDispUpdateTime;
-        private long _maxItemUpdateTime;
         private long _maxErrorUpdateTime;
+        private long _maxEnvCodeLabelUpdateTime;
         private ActivityCommon _activityCommon;
         public bool _autoHideStarted;
         public long _autoHideStartTime;
@@ -2124,8 +2124,8 @@ namespace BmwDeepObd
                 _translationList = null;
                 _translatedList = null;
                 _maxDispUpdateTime = 0;
-                _maxItemUpdateTime = 0;
                 _maxErrorUpdateTime = 0;
+                _maxEnvCodeLabelUpdateTime = 0;
 
                 JobReader.PageInfo pageInfo = GetSelectedPage();
                 object connectParameter = null;
@@ -3376,6 +3376,7 @@ namespace BmwDeepObd
             long startTime = Stopwatch.GetTimestamp();
             long diffTimeItemUpdate = 0;
             long diffTimeErrorSum = 0;
+            long diffTimeEnvCodeLabelSum = 0;
             bool dynamicValid = false;
             string language = ActivityCommon.GetCurrentLanguage();
 
@@ -3920,8 +3921,11 @@ namespace BmwDeepObd
                                             {
                                                 if (errorCode != 0x0000)
                                                 {
+                                                    long startTimeCodeLabel = Stopwatch.GetTimestamp();
                                                     envCondLabelList = ActivityCommon.EcuFunctionReader.GetEnvCondLabelList(errorCode, errorReport.ReadIs, ecuVariant);
                                                     List<string> faultResultList = EdiabasThread.ConvertFaultCodeError(errorCode, errorReport.ReadIs, errorReport, ecuVariant);
+                                                    diffTimeEnvCodeLabelSum += Stopwatch.GetTimestamp() - startTimeCodeLabel;
+
                                                     if (faultResultList != null && faultResultList.Count == 2)
                                                     {
                                                         text1 = faultResultList[0];
@@ -4372,17 +4376,6 @@ namespace BmwDeepObd
                 }
             }
 
-            if (diffTimeItemUpdate > _maxItemUpdateTime)
-            {
-                _maxItemUpdateTime = diffTimeItemUpdate;
-#if DEBUG
-                if (_maxItemUpdateTime / ActivityCommon.TickResolMs > 0)
-                {
-                    Log.Info(Tag, string.Format("UpdateDisplay: Update time item: {0}ms", _maxItemUpdateTime / ActivityCommon.TickResolMs));
-                }
-#endif
-            }
-
             if (diffTimeErrorSum > _maxErrorUpdateTime)
             {
                 _maxErrorUpdateTime = diffTimeErrorSum;
@@ -4390,6 +4383,17 @@ namespace BmwDeepObd
                 if (_maxErrorUpdateTime / ActivityCommon.TickResolMs > 0)
                 {
                     Log.Info(Tag, string.Format("UpdateDisplay: Update time error: {0}ms", _maxErrorUpdateTime / ActivityCommon.TickResolMs));
+                }
+#endif
+            }
+
+            if (diffTimeEnvCodeLabelSum > _maxEnvCodeLabelUpdateTime)
+            {
+                _maxEnvCodeLabelUpdateTime = diffTimeEnvCodeLabelSum;
+#if DEBUG
+                if (_maxEnvCodeLabelUpdateTime / ActivityCommon.TickResolMs > 0)
+                {
+                    Log.Info(Tag, string.Format("UpdateDisplay: Update time error code: {0}ms", _maxEnvCodeLabelUpdateTime / ActivityCommon.TickResolMs));
                 }
 #endif
             }
