@@ -405,6 +405,7 @@ namespace BmwDeepObd
         private bool _compileCodePending;
         private long _maxDispUpdateTime;
         private long _maxItemUpdateTime;
+        private long _maxErrorUpdateTime;
         private ActivityCommon _activityCommon;
         public bool _autoHideStarted;
         public long _autoHideStartTime;
@@ -2123,6 +2124,8 @@ namespace BmwDeepObd
                 _translationList = null;
                 _translatedList = null;
                 _maxDispUpdateTime = 0;
+                _maxItemUpdateTime = 0;
+                _maxErrorUpdateTime = 0;
 
                 JobReader.PageInfo pageInfo = GetSelectedPage();
                 object connectParameter = null;
@@ -3662,6 +3665,7 @@ namespace BmwDeepObd
                                 srMessage.Append(ecuTitle);
                                 srMessage.Append(": ");
 
+                                long startTimeErrorUpdate = Stopwatch.GetTimestamp();
                                 if (errorReport.ErrorDict == null)
                                 {
                                     srMessage.Append(GetString(Resource.String.error_no_response));
@@ -4008,6 +4012,19 @@ namespace BmwDeepObd
                                         }
                                     }
                                 }
+
+                                long diffTimeItemError = Stopwatch.GetTimestamp() - startTimeErrorUpdate;
+                                if (diffTimeItemError > _maxErrorUpdateTime)
+                                {
+                                    _maxDispUpdateTime = diffTimeItemError;
+#if DEBUG
+                                    if (_maxErrorUpdateTime / ActivityCommon.TickResolMs > 0)
+                                    {
+                                        Log.Info(Tag, string.Format("UpdateDisplay: Update time error: {0}ms", _maxErrorUpdateTime / ActivityCommon.TickResolMs));
+                                    }
+#endif
+                                }
+
                                 string message = srMessage.ToString();
                                 if (formatErrorResult != null)
                                 {
@@ -4369,7 +4386,10 @@ namespace BmwDeepObd
             {
                 _maxItemUpdateTime = diffTimeItemUpdate;
 #if DEBUG
-                Log.Info(Tag, string.Format("UpdateDisplay: Update time item: {0}ms", _maxItemUpdateTime / ActivityCommon.TickResolMs));
+                if (_maxErrorUpdateTime / ActivityCommon.TickResolMs > 0)
+                {
+                    Log.Info(Tag, string.Format("UpdateDisplay: Update time item: {0}ms", _maxErrorUpdateTime / ActivityCommon.TickResolMs));
+                }
 #endif
             }
 
@@ -4378,7 +4398,10 @@ namespace BmwDeepObd
             {
                 _maxDispUpdateTime = diffTime;
 #if DEBUG
-                Log.Info(Tag, string.Format("UpdateDisplay: Update time all: {0}ms", _maxDispUpdateTime / ActivityCommon.TickResolMs));
+                if (_maxDispUpdateTime / ActivityCommon.TickResolMs > 0)
+                {
+                    Log.Info(Tag, string.Format("UpdateDisplay: Update time all: {0}ms", _maxDispUpdateTime / ActivityCommon.TickResolMs));
+                }
 #endif
             }
         }
