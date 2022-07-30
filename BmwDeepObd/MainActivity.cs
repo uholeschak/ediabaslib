@@ -3375,6 +3375,7 @@ namespace BmwDeepObd
 
             long startTime = Stopwatch.GetTimestamp();
             long diffTimeItemUpdate = 0;
+            long diffTimeErrorSum = 0;
             bool dynamicValid = false;
             string language = ActivityCommon.GetCurrentLanguage();
 
@@ -4013,18 +4014,7 @@ namespace BmwDeepObd
                                     }
                                 }
 
-                                long diffTimeItemError = Stopwatch.GetTimestamp() - startTimeErrorUpdate;
-                                if (diffTimeItemError > _maxErrorUpdateTime)
-                                {
-                                    _maxDispUpdateTime = diffTimeItemError;
-#if DEBUG
-                                    if (_maxErrorUpdateTime / ActivityCommon.TickResolMs > 0)
-                                    {
-                                        Log.Info(Tag, string.Format("UpdateDisplay: Update time error: {0}ms", _maxErrorUpdateTime / ActivityCommon.TickResolMs));
-                                    }
-#endif
-                                }
-
+                                diffTimeErrorSum += Stopwatch.GetTimestamp() - startTimeErrorUpdate;
                                 string message = srMessage.ToString();
                                 if (formatErrorResult != null)
                                 {
@@ -4386,9 +4376,20 @@ namespace BmwDeepObd
             {
                 _maxItemUpdateTime = diffTimeItemUpdate;
 #if DEBUG
+                if (_maxItemUpdateTime / ActivityCommon.TickResolMs > 0)
+                {
+                    Log.Info(Tag, string.Format("UpdateDisplay: Update time item: {0}ms", _maxItemUpdateTime / ActivityCommon.TickResolMs));
+                }
+#endif
+            }
+
+            if (diffTimeErrorSum > _maxErrorUpdateTime)
+            {
+                _maxErrorUpdateTime = diffTimeErrorSum;
+#if DEBUG
                 if (_maxErrorUpdateTime / ActivityCommon.TickResolMs > 0)
                 {
-                    Log.Info(Tag, string.Format("UpdateDisplay: Update time item: {0}ms", _maxErrorUpdateTime / ActivityCommon.TickResolMs));
+                    Log.Info(Tag, string.Format("UpdateDisplay: Update time error: {0}ms", _maxErrorUpdateTime / ActivityCommon.TickResolMs));
                 }
 #endif
             }
