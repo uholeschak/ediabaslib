@@ -564,15 +564,26 @@ namespace BmwDeepObd
                 return;
             }
             _createTabsPending = false;
-            int pageIndex = 0;
+
+            // get last active tab
+            JobReader.PageInfo currentPage;
             if (ActivityCommon.CommActive)
             {
                 _ignoreTabsChange = true;
-                // get last active tab
+                currentPage = ActivityCommon.EdiabasThread?.JobPageInfo;
+            }
+            else
+            {
+                currentPage = GetSelectedPage();
+            }
+
+            int pageIndex = 0;
+            if (currentPage != null)
+            {
                 int i = 0;
                 foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
                 {
-                    if (pageInfo == ActivityCommon.EdiabasThread.JobPageInfo)
+                    if (pageInfo == currentPage)
                     {
                         pageIndex = i;
                         break;
@@ -580,6 +591,7 @@ namespace BmwDeepObd
                     i++;
                 }
             }
+
             _fragmentStateAdapter.ClearPages();
             _fragmentStateAdapter.NotifyDataSetChanged();
             _tabLayout.Visibility = ViewStates.Gone;
