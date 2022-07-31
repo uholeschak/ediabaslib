@@ -127,7 +127,6 @@ namespace BmwDeepObd
                 DeviceName = string.Empty;
                 DeviceAddress = string.Empty;
                 ConfigFileName = string.Empty;
-                ConfigFileLoaded = false;
                 CheckCpuUsage = true;
                 VerifyEcuFiles = true;
                 SelectedEnetIp = string.Empty;
@@ -150,7 +149,6 @@ namespace BmwDeepObd
             public string DeviceName { get; set; }
             public string DeviceAddress { get; set; }
             public string ConfigFileName { get; set; }
-            public bool ConfigFileLoaded { get; set; }
             public long LastVersionCode { get; set; }
             public bool VersionInfoShown { get; set; }
             public bool StorageRequirementsAccepted { get; set; }
@@ -404,6 +402,7 @@ namespace BmwDeepObd
         private bool _overlayPermissionGranted;
         private bool _createTabsPending;
         private bool _ignoreTabsChange;
+        private bool _tabsCreated;
         private bool _compileCodePending;
         private long _maxDispUpdateTime;
         private long _maxErrorUpdateTime;
@@ -576,7 +575,7 @@ namespace BmwDeepObd
             }
             else
             {
-                if (!_instanceData.ConfigFileLoaded)
+                if (_tabsCreated)
                 {
                     currentPage = GetSelectedPage();
                 }
@@ -635,8 +634,8 @@ namespace BmwDeepObd
                 });
             }
 
-            _instanceData.ConfigFileLoaded = false;
             _ignoreTabsChange = false;
+            _tabsCreated = true;
             UpdateDisplay();
             StoreLastAppState(LastAppState.TabsCreated);
 
@@ -4720,6 +4719,7 @@ namespace BmwDeepObd
             }
 
             bool failed = false;
+            string lastFileName = ActivityCommon.JobReader.XmlFileName ?? string.Empty;
             ActivityCommon.JobReader.Clear();
             if (_instanceData.LastAppState != LastAppState.Compile && !string.IsNullOrEmpty(_instanceData.ConfigFileName))
             {
@@ -4737,11 +4737,14 @@ namespace BmwDeepObd
                         message += GetString(Resource.String.job_reader_file_name_invalid);
                     }
                     _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
+                    _tabsCreated = false;
                 }
-                else
-                {
-                    _instanceData.ConfigFileLoaded = true;
-                }
+            }
+
+            string newFileName = ActivityCommon.JobReader.XmlFileName ?? string.Empty;
+            if (string.Compare(lastFileName, newFileName, StringComparison.OrdinalIgnoreCase) != 0)
+            {
+                _tabsCreated = false;
             }
 
             UpdateJobReaderSettings();
