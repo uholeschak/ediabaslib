@@ -127,6 +127,7 @@ namespace BmwDeepObd
                 DeviceName = string.Empty;
                 DeviceAddress = string.Empty;
                 ConfigFileName = string.Empty;
+                ConfigFileLoaded = false;
                 CheckCpuUsage = true;
                 VerifyEcuFiles = true;
                 SelectedEnetIp = string.Empty;
@@ -149,6 +150,7 @@ namespace BmwDeepObd
             public string DeviceName { get; set; }
             public string DeviceAddress { get; set; }
             public string ConfigFileName { get; set; }
+            public bool ConfigFileLoaded { get; set; }
             public long LastVersionCode { get; set; }
             public bool VersionInfoShown { get; set; }
             public bool StorageRequirementsAccepted { get; set; }
@@ -566,7 +568,7 @@ namespace BmwDeepObd
             _createTabsPending = false;
 
             // get last active tab
-            JobReader.PageInfo currentPage;
+            JobReader.PageInfo currentPage = null;
             if (ActivityCommon.CommActive)
             {
                 _ignoreTabsChange = true;
@@ -574,7 +576,10 @@ namespace BmwDeepObd
             }
             else
             {
-                currentPage = GetSelectedPage();
+                if (!_instanceData.ConfigFileLoaded)
+                {
+                    currentPage = GetSelectedPage();
+                }
             }
 
             int pageIndex = 0;
@@ -630,6 +635,7 @@ namespace BmwDeepObd
                 });
             }
 
+            _instanceData.ConfigFileLoaded = false;
             _ignoreTabsChange = false;
             UpdateDisplay();
             StoreLastAppState(LastAppState.TabsCreated);
@@ -4731,6 +4737,10 @@ namespace BmwDeepObd
                         message += GetString(Resource.String.job_reader_file_name_invalid);
                     }
                     _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
+                }
+                else
+                {
+                    _instanceData.ConfigFileLoaded = true;
                 }
             }
 
