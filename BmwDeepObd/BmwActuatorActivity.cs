@@ -586,6 +586,16 @@ namespace BmwDeepObd
                 _textBmwActuatorStatus.Text = string.Empty;
             }
 
+            if (!jobRunning)
+            {
+                XmlToolEcuActivity.JobInfo selectedJob = GetSelectedJob();
+                List<EcuFunctionStructs.EcuJob> ecuJobList = selectedJob?.EcuFixedFuncStruct?.EcuJobList;
+                if (ecuJobList == null || ecuJobList.Count == 0)
+                {
+                    validFunction = false;
+                }
+            }
+
             _spinnerBmwActuatorFunction.Enabled = !jobRunning;
             _buttonBmwActuatorExecuteSingle.Enabled = !jobRunning && validFunction;
             _buttonBmwActuatorExecuteContinuous.Enabled = !jobRunning && validFunction;
