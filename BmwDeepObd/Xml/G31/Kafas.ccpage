@@ -8,6 +8,9 @@
       <string name="label_kafas_temp_left">Temperature left cam [°C]:</string>
       <string name="label_kafas_temp_right">Temperature right cam [°C]:</string>
       <string name="label_kafas_temp_ecu">Temperature ECU [°C]:</string>
+      <string name="label_kafas_sign_cam">Sign cam:</string>
+      <string name="label_kafas_sign_map">Sign map:</string>
+      <string name="label_kafas_sign_comb">Sign combined:</string>
       <string name="label_kafas_calib">Calibration [%]:</string>
     </strings>
     <strings lang="de">
@@ -15,13 +18,19 @@
         <string name="label_kafas_temp_left">Temperatur linke Kamera [°C]:</string>
         <string name="label_kafas_temp_right">Temperatur rechte Kamera [°C]:</string>
         <string name="label_kafas_temp_ecu">Temperatur ECU [°C]:</string>
+        <string name="label_kafas_sign_cam">Zeichen Kamera:</string>
+        <string name="label_kafas_sign_map">Zeichen Karte:</string>
+        <string name="label_kafas_sign_comb">Zeichen kombiniert:</string>
         <string name="label_kafas_calib">Kalibierung [%]:</string>
     </strings>
     <jobs sgbd="kafasg11">
-      <job name="STATUS_LESEN" args="ARG;_READ_ECU_TEMP;KALIBRIERUNG_STEREO">
+      <job name="STATUS_LESEN" args="ARG;_READ_ECU_TEMP;ERGEBNIS_SLI;KALIBRIERUNG_STEREO">
         <display name="label_kafas_temp_left" result="STAT_CAM_LEFT_WERT" format="6.4R" />
         <display name="label_kafas_temp_right" result="STAT_CAM_RIGHT_WERT" format="6.4R" />
         <display name="label_kafas_temp_ecu" result="STAT_DSP_2_WERT" format="6.4R" />
+        <display name="label_kafas_sign_cam" result="STAT_KAMERA_ZEICHEN_NR" format="3L" />
+        <display name="label_kafas_sign_map" result="STAT_KARTE_ZEICHEN_NR" format="3L" />
+        <display name="label_kafas_sign_comb" result="STAT_FUSIONIERT_ZEICHEN_NR" format="3L" />
         <display name="label_kafas_calib" result="STAT_SAC" format="6.0R" />
       </job>
     </jobs>
