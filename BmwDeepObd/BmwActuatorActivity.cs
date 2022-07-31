@@ -522,6 +522,12 @@ namespace BmwDeepObd
             string language = ActivityCommon.GetCurrentLanguage();
             StringBuilder stringBuilderComments = new StringBuilder();
             XmlToolEcuActivity.JobInfo selectedJob = GetSelectedJob();
+            string titleText = selectedJob?.EcuFixedFuncStruct?.Title?.GetTitle(language);
+            if (!string.IsNullOrWhiteSpace(titleText))
+            {
+                AppendSbText(stringBuilderComments, titleText);
+            }
+
             List<EcuFunctionStructs.EcuJob> ecuJobList = selectedJob?.EcuFixedFuncStruct?.EcuJobList;
             if (ecuJobList != null)
             {
