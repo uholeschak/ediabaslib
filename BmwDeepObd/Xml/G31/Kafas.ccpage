@@ -24,7 +24,7 @@
         <string name="label_kafas_calib">Status Kalibierung:</string>
     </strings>
     <jobs sgbd="kafasg11">
-      <job name="STATUS_LESEN" args="ARG;_READ_ECU_TEMP;ERGEBNIS_SLI;KALIBRIERUNG_STEREO" arg_limit="2">
+      <job name="STATUS_LESEN" args="ARG;_READ_ECU_TEMP;ERGEBNIS_SLI;KALIBRIERUNG_STEREO">
         <display name="label_kafas_temp_left" result="STAT_CAM_LEFT_WERT" format="6.4R" />
         <display name="label_kafas_temp_right" result="STAT_CAM_RIGHT_WERT" format="6.4R" />
         <display name="label_kafas_temp_ecu" result="STAT_DSP_2_WERT" format="6.4R" />
