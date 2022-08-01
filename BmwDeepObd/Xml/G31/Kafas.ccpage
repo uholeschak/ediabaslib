@@ -11,7 +11,7 @@
       <string name="label_kafas_sign_cam">Sign cam:</string>
       <string name="label_kafas_sign_map">Sign map:</string>
       <string name="label_kafas_sign_comb">Sign combined:</string>
-      <string name="label_kafas_calib">Calibration:</string>
+      <string name="label_kafas_calib">Status calibration:</string>
     </strings>
     <strings lang="de">
         <string name="tab_kafas">Kamera</string>
@@ -21,7 +21,7 @@
         <string name="label_kafas_sign_cam">Zeichen Kamera:</string>
         <string name="label_kafas_sign_map">Zeichen Karte:</string>
         <string name="label_kafas_sign_comb">Zeichen kombiniert:</string>
-        <string name="label_kafas_calib">Kalibierung:</string>
+        <string name="label_kafas_calib">Status Kalibierung:</string>
     </strings>
     <jobs sgbd="kafasg11">
       <job name="STATUS_LESEN" args="ARG;_READ_ECU_TEMP;ERGEBNIS_SLI;KALIBRIERUNG_STEREO" arg_limit="2">
