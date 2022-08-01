@@ -1387,9 +1387,17 @@ namespace BmwDeepObd
                                                         if (argMatches.Count == 1 && argMatches[0].Groups.Count == 2)
                                                         {
                                                             string maxArgs = argMatches[0].Groups[1].Value;
+                                                            if (int.TryParse(maxArgs, NumberStyles.Integer, CultureInfo.InvariantCulture, out int argLimit))
+                                                            {
+                                                                if (argLimit > 0)
+                                                                {
+                                                                    jobInfo.ArgLimit = argLimit;
+                                                                }
+                                                            }
                                                         }
                                                     }
                                                 }
+
                                                 if (string.IsNullOrEmpty(jobInfo.Id))
                                                 {
                                                     MergeResultDictionarys(ref resultDict, resultDictLocal, jobInfo.Name + "#");

@@ -105,7 +105,7 @@ namespace BmwDeepObd
 
             public string Results { get; }
 
-            public int ArgLimit { get; }
+            public int ArgLimit { get; set; }
 
             public bool UseCompatIds { get; set; }
         }
