@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Android.Content;
 using BmwFileReader;
@@ -1375,6 +1376,19 @@ namespace BmwDeepObd
                                                 {
                                                     dictIndex++;
                                                     continue;
+                                                }
+
+                                                if (resultDictLocal.TryGetValue("JOB_MESSAGE", out EdiabasNet.ResultData resultDataMsg))
+                                                {
+                                                    if (resultDataMsg.OpData is string messageText)
+                                                    {
+                                                        Regex maxArgRegex = new Regex(@"MAX_ARGUMENT_STATUS_LESEN\s*=\s*'([0-9]+)'", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                                                        MatchCollection argMatches = maxArgRegex.Matches(messageText);
+                                                        if (argMatches.Count == 1 && argMatches[0].Groups.Count == 2)
+                                                        {
+                                                            string maxArgs = argMatches[0].Groups[1].Value;
+                                                        }
+                                                    }
                                                 }
                                                 if (string.IsNullOrEmpty(jobInfo.Id))
                                                 {
