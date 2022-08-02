@@ -1191,226 +1191,11 @@ namespace BmwDeepObd
                             {
                                 if (string.IsNullOrWhiteSpace(jobInfo.FixedFuncStructId))
                                 {
-                                    string argString;
-                                    if (firstRequestCall && !string.IsNullOrEmpty(jobInfo.ArgsFirst))
+                                    for (int retry = 0; retry < 2; retry++)
                                     {
-                                        argString = jobInfo.ArgsFirst;
-                                    }
-                                    else
-                                    {
-                                        argString = jobInfo.Args;
-                                    }
-
-                                    bool argLimitChanged = true;
-                                    List<string> edArgList = new List<string>();
-                                    bool statMbBlock = string.Compare(jobInfo.Name, XmlToolActivity.JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) == 0;
-                                    bool statBlock = string.Compare(jobInfo.Name, XmlToolActivity.JobReadStatBlock, StringComparison.OrdinalIgnoreCase) == 0;
-                                    bool statRead = string.Compare(jobInfo.Name, XmlToolActivity.JobReadStat, StringComparison.OrdinalIgnoreCase) == 0;
-                                    if ((statMbBlock || statBlock || statRead) && jobInfo.ArgLimit > 0)
-                                    {
-                                        List<string> argList = argString.Split(";").ToList();
-                                        int? argStartBlock = null;
-                                        StringBuilder sbArgStart = new StringBuilder();
-                                        bool validArg = false;
-                                        if (statMbBlock)
+                                        if (!ExecuteBmwStandardJob(jobInfo, firstRequestCall, ref resultDict))
                                         {
-                                            if (argList.Count >= 1)
-                                            {
-                                                validArg = string.IsNullOrEmpty(jobInfo.ArgsFirst) && string.Compare(argList[0].Trim(), "JA", StringComparison.OrdinalIgnoreCase) == 0;
-                                                sbArgStart.Append(argList[0]);
-                                                argList.RemoveAt(0);
-                                            }
-                                        }
-                                        else if (statBlock)
-                                        {
-                                            if (argList.Count >= 3)
-                                            {
-                                                Int64 blockNumber = EdiabasNet.StringToValue(argList[0], out bool valid);
-                                                if (valid)
-                                                {
-                                                    argStartBlock = (int) blockNumber;
-                                                }
-                                                argList.RemoveAt(0);
-
-                                                validArg = argStartBlock.HasValue;
-                                                sbArgStart.Append(argList[0]);
-                                                argList.RemoveAt(0);
-
-                                                sbArgStart.Append(";");
-                                                sbArgStart.Append(argList[0]);
-                                                argList.RemoveAt(0);
-                                            }
-                                        }
-                                        else if (statRead)
-                                        {
-                                            if (argList.Count >= 1)
-                                            {
-                                                validArg = string.IsNullOrEmpty(jobInfo.ArgsFirst);
-                                                sbArgStart.Append(argList[0]);
-                                                argList.RemoveAt(0);
-                                            }
-                                        }
-
-                                        if (validArg && argList.Count >= 1)
-                                        {
-                                            for (;;)
-                                            {
-                                                StringBuilder sbArg = new StringBuilder();
-                                                if (argStartBlock.HasValue)
-                                                {
-                                                    int blockNumber = argStartBlock.Value + edArgList.Count;
-                                                    sbArg.Append(string.Format(CultureInfo.InvariantCulture, "{0}", blockNumber));
-                                                    sbArg.Append(";");
-                                                }
-                                                sbArg.Append(sbArgStart);
-
-                                                int argCount = 0;
-                                                while (argList.Count > 0)
-                                                {
-                                                    if (argCount >= jobInfo.ArgLimit)
-                                                    {
-                                                        break;
-                                                    }
-
-                                                    sbArg.Append(";");
-                                                    sbArg.Append(argList[0]);
-                                                    argList.RemoveAt(0);
-                                                    argCount++;
-                                                }
-
-                                                if (argCount == 0)
-                                                {
-                                                    break;
-                                                }
-
-                                                edArgList.Add(sbArg.ToString());
-                                            }
-                                        }
-                                    }
-
-                                    if (edArgList.Count == 0)
-                                    {
-                                        edArgList.Add(argString);
-                                    }
-
-                                    foreach (string edArg in edArgList)
-                                    {
-                                        Ediabas.ArgString = edArg;
-                                        Ediabas.ArgBinaryStd = null;
-                                        Ediabas.ResultsRequests = jobInfo.Results;
-                                        Ediabas.ExecuteJob(jobInfo.Name);
-                                        if (!string.IsNullOrWhiteSpace(jobInfo.RawTelegrams))
-                                        {
-                                            string[] rawTelegrams = jobInfo.RawTelegrams.Split(';');
-                                            for (int telIdx = 0; telIdx < rawTelegrams.Length; telIdx++)
-                                            {
-                                                string rawTelegram = rawTelegrams[telIdx].Replace(" ", string.Empty);
-                                                byte[] sendData = EdiabasNet.HexToByteArray(rawTelegram);
-                                                if (sendData.Length > 0)
-                                                {
-                                                    bool funcAddress = false;
-                                                    if (Ediabas.EdInterfaceClass.BmwFastProtocol)
-                                                    {
-                                                        funcAddress = (sendData[0] & 0xC0) == 0xC0;     // functional address
-                                                    }
-
-                                                    List<byte> responseList = new List<byte>();
-                                                    for (;;)
-                                                    {
-                                                        bool dataReceived = false;
-                                                        try
-                                                        {
-                                                            if (Ediabas.EdInterfaceClass.TransmitData(sendData, out byte[] receiveData) && receiveData?.Length > 0)
-                                                            {
-                                                                dataReceived = true;
-                                                                responseList.AddRange(receiveData);
-                                                            }
-                                                        }
-                                                        catch (Exception)
-                                                        {
-                                                            // ignored
-                                                        }
-
-                                                        if (!funcAddress || !dataReceived)
-                                                        {
-                                                            break;
-                                                        }
-
-                                                        if (AbortEdiabasJob())
-                                                        {
-                                                            break;
-                                                        }
-
-                                                        sendData = Array.Empty<byte>();
-                                                    }
-
-                                                    if (responseList.Count > 0)
-                                                    {
-                                                        string telName = string.Format(CultureInfo.InvariantCulture, "RAW_TELEGRAM_{0}", telIdx + 1);
-                                                        Dictionary<string, EdiabasNet.ResultData> resultDictTel = new Dictionary<string, EdiabasNet.ResultData>();
-                                                        resultDictTel.Add(telName, new EdiabasNet.ResultData(EdiabasNet.ResultType.TypeY, telName, responseList.ToArray()));
-                                                        if (string.IsNullOrEmpty(jobInfo.Id))
-                                                        {
-                                                            MergeResultDictionarys(ref resultDict, resultDictTel, jobInfo.Name + "#");
-                                                        }
-                                                        else
-                                                        {
-                                                            MergeResultDictionarys(ref resultDict, resultDictTel, jobInfo.Id + "#");
-                                                        }
-                                                    }
-
-                                                    if (AbortEdiabasJob())
-                                                    {
-                                                        break;
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                        List<Dictionary<string, EdiabasNet.ResultData>> resultSets = Ediabas.ResultSets;
-                                        if (resultSets != null && resultSets.Count >= 2)
-                                        {
-                                            int dictIndex = 0;
-                                            foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
-                                            {
-                                                if (dictIndex == 0)
-                                                {
-                                                    dictIndex++;
-                                                    continue;
-                                                }
-
-                                                if (resultDictLocal.TryGetValue("JOB_MESSAGE", out EdiabasNet.ResultData resultDataMsg))
-                                                {
-                                                    if (resultDataMsg.OpData is string messageText)
-                                                    {
-                                                        Regex maxArgRegex = new Regex(@"MAX_ARGUMENT_STATUS_LESEN\s*=\s*'([0-9]+)'", RegexOptions.Singleline | RegexOptions.IgnoreCase);
-                                                        MatchCollection argMatches = maxArgRegex.Matches(messageText);
-                                                        if (argMatches.Count == 1 && argMatches[0].Groups.Count == 2)
-                                                        {
-                                                            string maxArgs = argMatches[0].Groups[1].Value;
-                                                            if (int.TryParse(maxArgs, NumberStyles.Integer, CultureInfo.InvariantCulture, out int argLimit))
-                                                            {
-                                                                if (argLimit > 0 && jobInfo.ArgLimit != argLimit)
-                                                                {
-                                                                    jobInfo.ArgLimit = argLimit;
-                                                                    argLimitChanged = true;
-                                                                    break;
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-
-                                                if (string.IsNullOrEmpty(jobInfo.Id))
-                                                {
-                                                    MergeResultDictionarys(ref resultDict, resultDictLocal, jobInfo.Name + "#");
-                                                }
-                                                else
-                                                {
-                                                    MergeResultDictionarys(ref resultDict, resultDictLocal, jobInfo.Id + "#" + dictIndex + "#");
-                                                }
-                                                dictIndex++;
-                                            }
+                                            break;
                                         }
                                     }
                                 }
@@ -1833,6 +1618,234 @@ namespace BmwDeepObd
             }
 
             return jobOk;
+        }
+
+        public bool ExecuteBmwStandardJob(JobReader.JobInfo jobInfo, bool firstRequestCall, ref MultiMap<string, EdiabasNet.ResultData> resultDict)
+        {
+            string argString;
+            if (firstRequestCall && !string.IsNullOrEmpty(jobInfo.ArgsFirst))
+            {
+                argString = jobInfo.ArgsFirst;
+            }
+            else
+            {
+                argString = jobInfo.Args;
+            }
+
+            bool parameterChanged = false;
+            List<string> edArgList = new List<string>();
+            bool statMbBlock = string.Compare(jobInfo.Name, XmlToolActivity.JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) == 0;
+            bool statBlock = string.Compare(jobInfo.Name, XmlToolActivity.JobReadStatBlock, StringComparison.OrdinalIgnoreCase) == 0;
+            bool statRead = string.Compare(jobInfo.Name, XmlToolActivity.JobReadStat, StringComparison.OrdinalIgnoreCase) == 0;
+            if ((statMbBlock || statBlock || statRead) && jobInfo.ArgLimit > 0)
+            {
+                List<string> argList = argString.Split(";").ToList();
+                int? argStartBlock = null;
+                StringBuilder sbArgStart = new StringBuilder();
+                bool validArg = false;
+                if (statMbBlock)
+                {
+                    if (argList.Count >= 1)
+                    {
+                        validArg = string.IsNullOrEmpty(jobInfo.ArgsFirst) && string.Compare(argList[0].Trim(), "JA", StringComparison.OrdinalIgnoreCase) == 0;
+                        sbArgStart.Append(argList[0]);
+                        argList.RemoveAt(0);
+                    }
+                }
+                else if (statBlock)
+                {
+                    if (argList.Count >= 3)
+                    {
+                        Int64 blockNumber = EdiabasNet.StringToValue(argList[0], out bool valid);
+                        if (valid)
+                        {
+                            argStartBlock = (int)blockNumber;
+                        }
+                        argList.RemoveAt(0);
+
+                        validArg = argStartBlock.HasValue;
+                        sbArgStart.Append(argList[0]);
+                        argList.RemoveAt(0);
+
+                        sbArgStart.Append(";");
+                        sbArgStart.Append(argList[0]);
+                        argList.RemoveAt(0);
+                    }
+                }
+                else if (statRead)
+                {
+                    if (argList.Count >= 1)
+                    {
+                        validArg = string.IsNullOrEmpty(jobInfo.ArgsFirst);
+                        sbArgStart.Append(argList[0]);
+                        argList.RemoveAt(0);
+                    }
+                }
+
+                if (validArg && argList.Count >= 1)
+                {
+                    for (; ; )
+                    {
+                        StringBuilder sbArg = new StringBuilder();
+                        if (argStartBlock.HasValue)
+                        {
+                            int blockNumber = argStartBlock.Value + edArgList.Count;
+                            sbArg.Append(string.Format(CultureInfo.InvariantCulture, "{0}", blockNumber));
+                            sbArg.Append(";");
+                        }
+                        sbArg.Append(sbArgStart);
+
+                        int argCount = 0;
+                        while (argList.Count > 0)
+                        {
+                            if (argCount >= jobInfo.ArgLimit)
+                            {
+                                break;
+                            }
+
+                            sbArg.Append(";");
+                            sbArg.Append(argList[0]);
+                            argList.RemoveAt(0);
+                            argCount++;
+                        }
+
+                        if (argCount == 0)
+                        {
+                            break;
+                        }
+
+                        edArgList.Add(sbArg.ToString());
+                    }
+                }
+            }
+
+            if (edArgList.Count == 0)
+            {
+                edArgList.Add(argString);
+            }
+
+            foreach (string edArg in edArgList)
+            {
+                Ediabas.ArgString = edArg;
+                Ediabas.ArgBinaryStd = null;
+                Ediabas.ResultsRequests = jobInfo.Results;
+                Ediabas.ExecuteJob(jobInfo.Name);
+                if (!string.IsNullOrWhiteSpace(jobInfo.RawTelegrams))
+                {
+                    string[] rawTelegrams = jobInfo.RawTelegrams.Split(';');
+                    for (int telIdx = 0; telIdx < rawTelegrams.Length; telIdx++)
+                    {
+                        string rawTelegram = rawTelegrams[telIdx].Replace(" ", string.Empty);
+                        byte[] sendData = EdiabasNet.HexToByteArray(rawTelegram);
+                        if (sendData.Length > 0)
+                        {
+                            bool funcAddress = false;
+                            if (Ediabas.EdInterfaceClass.BmwFastProtocol)
+                            {
+                                funcAddress = (sendData[0] & 0xC0) == 0xC0;     // functional address
+                            }
+
+                            List<byte> responseList = new List<byte>();
+                            for (; ; )
+                            {
+                                bool dataReceived = false;
+                                try
+                                {
+                                    if (Ediabas.EdInterfaceClass.TransmitData(sendData, out byte[] receiveData) && receiveData?.Length > 0)
+                                    {
+                                        dataReceived = true;
+                                        responseList.AddRange(receiveData);
+                                    }
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
+
+                                if (!funcAddress || !dataReceived)
+                                {
+                                    break;
+                                }
+
+                                if (AbortEdiabasJob())
+                                {
+                                    break;
+                                }
+
+                                sendData = Array.Empty<byte>();
+                            }
+
+                            if (responseList.Count > 0)
+                            {
+                                string telName = string.Format(CultureInfo.InvariantCulture, "RAW_TELEGRAM_{0}", telIdx + 1);
+                                Dictionary<string, EdiabasNet.ResultData> resultDictTel = new Dictionary<string, EdiabasNet.ResultData>();
+                                resultDictTel.Add(telName, new EdiabasNet.ResultData(EdiabasNet.ResultType.TypeY, telName, responseList.ToArray()));
+                                if (string.IsNullOrEmpty(jobInfo.Id))
+                                {
+                                    MergeResultDictionarys(ref resultDict, resultDictTel, jobInfo.Name + "#");
+                                }
+                                else
+                                {
+                                    MergeResultDictionarys(ref resultDict, resultDictTel, jobInfo.Id + "#");
+                                }
+                            }
+
+                            if (AbortEdiabasJob())
+                            {
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                List<Dictionary<string, EdiabasNet.ResultData>> resultSets = Ediabas.ResultSets;
+                if (resultSets != null && resultSets.Count >= 2)
+                {
+                    int dictIndex = 0;
+                    foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
+                    {
+                        if (dictIndex == 0)
+                        {
+                            dictIndex++;
+                            continue;
+                        }
+
+                        if (resultDictLocal.TryGetValue("JOB_MESSAGE", out EdiabasNet.ResultData resultDataMsg))
+                        {
+                            if (resultDataMsg.OpData is string messageText)
+                            {
+                                Regex maxArgRegex = new Regex(@"MAX_ARGUMENT_STATUS_LESEN\s*=\s*'([0-9]+)'", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                                MatchCollection argMatches = maxArgRegex.Matches(messageText);
+                                if (argMatches.Count == 1 && argMatches[0].Groups.Count == 2)
+                                {
+                                    string maxArgs = argMatches[0].Groups[1].Value;
+                                    if (int.TryParse(maxArgs, NumberStyles.Integer, CultureInfo.InvariantCulture, out int argLimit))
+                                    {
+                                        if (argLimit > 0 && jobInfo.ArgLimit != argLimit)
+                                        {
+                                            jobInfo.ArgLimit = argLimit;
+                                            parameterChanged = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        if (string.IsNullOrEmpty(jobInfo.Id))
+                        {
+                            MergeResultDictionarys(ref resultDict, resultDictLocal, jobInfo.Name + "#");
+                        }
+                        else
+                        {
+                            MergeResultDictionarys(ref resultDict, resultDictLocal, jobInfo.Id + "#" + dictIndex + "#");
+                        }
+                        dictIndex++;
+                    }
+                }
+            }
+
+            return parameterChanged;
         }
 
         public static bool IsJobStatusOk(Dictionary<string, EdiabasNet.ResultData> resultDict)
