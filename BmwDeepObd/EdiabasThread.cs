@@ -1201,6 +1201,7 @@ namespace BmwDeepObd
                                         argString = jobInfo.Args;
                                     }
 
+                                    bool argLimitChanged = true;
                                     List<string> edArgList = new List<string>();
                                     bool statMbBlock = string.Compare(jobInfo.Name, XmlToolActivity.JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) == 0;
                                     bool statBlock = string.Compare(jobInfo.Name, XmlToolActivity.JobReadStatBlock, StringComparison.OrdinalIgnoreCase) == 0;
@@ -1389,9 +1390,11 @@ namespace BmwDeepObd
                                                             string maxArgs = argMatches[0].Groups[1].Value;
                                                             if (int.TryParse(maxArgs, NumberStyles.Integer, CultureInfo.InvariantCulture, out int argLimit))
                                                             {
-                                                                if (argLimit > 0)
+                                                                if (argLimit > 0 && jobInfo.ArgLimit != argLimit)
                                                                 {
                                                                     jobInfo.ArgLimit = argLimit;
+                                                                    argLimitChanged = true;
+                                                                    break;
                                                                 }
                                                             }
                                                         }
