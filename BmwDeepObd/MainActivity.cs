@@ -3391,7 +3391,6 @@ namespace BmwDeepObd
             }
 
             long startTime = Stopwatch.GetTimestamp();
-            long diffTimeItemUpdate = 0;
             long diffTimeErrorSum = 0;
             long diffTimeEnvCodeLabelSum = 0;
             bool dynamicValid = false;
@@ -4275,7 +4274,6 @@ namespace BmwDeepObd
                                 resultGridAdapter.Items.Add(resultItem);
                             }
                             resultGridAdapter.NotifyDataSetChanged();
-                            diffTimeItemUpdate = Stopwatch.GetTimestamp() - startTimeItemUpdate;
                         }
                         gridViewResult.SetColumnWidth(gaugeSize);
                     }
@@ -4339,7 +4337,6 @@ namespace BmwDeepObd
                             resultListAdapter.Items.Clear();
                             resultListAdapter.Items.AddRange(tempResultList);
                             resultListAdapter.NotifyDataSetChanged();
-                            diffTimeItemUpdate = Stopwatch.GetTimestamp() - startTimeItemUpdate;
                         }
                     }
 
