@@ -3668,7 +3668,7 @@ namespace BmwDeepObd
                                 }
 
                                 long startTimeErrorUpdate = Stopwatch.GetTimestamp();
-                                string message = GenerateErrorMessage(pageInfo, errorReport, ref stringList, ref dtcList, ref errorIndex);
+                                string message = GenerateErrorMessage(pageInfo, errorReport, errorIndex, ref stringList, ref dtcList);
                                 diffTimeErrorSum += Stopwatch.GetTimestamp() - startTimeErrorUpdate;
 
                                 if (formatErrorResult != null)
@@ -4069,7 +4069,7 @@ namespace BmwDeepObd
             int errorIndex = 0;
             foreach (EdiabasThread.EdiabasErrorReport errorReport in errorReportList)
             {
-                string message = GenerateErrorMessage(pageInfo, errorReport, ref stringList, ref dtcList, ref errorIndex);
+                string message = GenerateErrorMessage(pageInfo, errorReport, errorIndex, ref stringList, ref dtcList);
 
                 if (formatErrorResult != null)
                 {
@@ -4085,12 +4085,13 @@ namespace BmwDeepObd
                 }
 
                 stringList.Add(message);
+                errorIndex++;
             }
 
             return stringList;
         }
 
-        private string GenerateErrorMessage(JobReader.PageInfo pageInfo, EdiabasThread.EdiabasErrorReport errorReport, ref List<string> stringList,ref List<ActivityCommon.VagDtcEntry> dtcList, ref int errorIndex)
+        private string GenerateErrorMessage(JobReader.PageInfo pageInfo, EdiabasThread.EdiabasErrorReport errorReport, int errorIndex, ref List<string> stringList,ref List<ActivityCommon.VagDtcEntry> dtcList)
         {
             StringBuilder srMessage = new StringBuilder();
             string language = ActivityCommon.GetCurrentLanguage();
