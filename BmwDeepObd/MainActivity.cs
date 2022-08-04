@@ -3668,9 +3668,8 @@ namespace BmwDeepObd
                                 }
 
                                 long startTimeErrorUpdate = Stopwatch.GetTimestamp();
-                                StringBuilder srMessage = GenerateErrorMessage(pageInfo, errorReport, ref stringList, ref dtcList, ref errorIndex);
+                                string message = GenerateErrorMessage(pageInfo, errorReport, ref stringList, ref dtcList, ref errorIndex);
                                 diffTimeErrorSum += Stopwatch.GetTimestamp() - startTimeErrorUpdate;
-                                string message = srMessage.ToString();
 
                                 if (formatErrorResult != null)
                                 {
@@ -4063,7 +4062,35 @@ namespace BmwDeepObd
             }
         }
 
-        private StringBuilder GenerateErrorMessage(JobReader.PageInfo pageInfo, EdiabasThread.EdiabasErrorReport errorReport, ref List<string> stringList,ref List<ActivityCommon.VagDtcEntry> dtcList, ref int errorIndex)
+        private List<string> GenerateErrorMessages(JobReader.PageInfo pageInfo, List<EdiabasThread.EdiabasErrorReport> errorReportList, MethodInfo formatErrorResult)
+        {
+            List<string> stringList = new List<string>();
+            List<ActivityCommon.VagDtcEntry> dtcList = null;
+            int errorIndex = 0;
+            foreach (EdiabasThread.EdiabasErrorReport errorReport in errorReportList)
+            {
+                string message = GenerateErrorMessage(pageInfo, errorReport, ref stringList, ref dtcList, ref errorIndex);
+
+                if (formatErrorResult != null)
+                {
+                    try
+                    {
+                        object[] args = { pageInfo, errorReport, message };
+                        message = formatErrorResult.Invoke(pageInfo.ClassObject, args) as string;
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+
+                stringList.Add(message);
+            }
+
+            return stringList;
+        }
+
+        private string GenerateErrorMessage(JobReader.PageInfo pageInfo, EdiabasThread.EdiabasErrorReport errorReport, ref List<string> stringList,ref List<ActivityCommon.VagDtcEntry> dtcList, ref int errorIndex)
         {
             StringBuilder srMessage = new StringBuilder();
             string language = ActivityCommon.GetCurrentLanguage();
@@ -4430,7 +4457,7 @@ namespace BmwDeepObd
                 }
             }
 
-            return srMessage;
+            return srMessage.ToString();
         }
 
         private void UpdateButtonErrorReset(Button buttonErrorReset, List<TableResultItem> resultItems)
