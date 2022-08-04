@@ -3668,21 +3668,8 @@ namespace BmwDeepObd
                                 }
 
                                 long startTimeErrorUpdate = Stopwatch.GetTimestamp();
-                                string message = GenerateErrorMessage(pageInfo, errorReport, errorIndex, ref stringList, ref dtcList);
+                                string message = GenerateErrorMessage(pageInfo, errorReport, errorIndex, formatErrorResult, ref stringList, ref dtcList);
                                 diffTimeErrorSum += Stopwatch.GetTimestamp() - startTimeErrorUpdate;
-
-                                if (formatErrorResult != null)
-                                {
-                                    try
-                                    {
-                                        object[] args = { pageInfo, errorReport, message };
-                                        message = formatErrorResult.Invoke(pageInfo.ClassObject, args) as string;
-                                    }
-                                    catch (Exception)
-                                    {
-                                        // ignored
-                                    }
-                                }
 
                                 if (!string.IsNullOrEmpty(message))
                                 {
@@ -4069,21 +4056,7 @@ namespace BmwDeepObd
             int errorIndex = 0;
             foreach (EdiabasThread.EdiabasErrorReport errorReport in errorReportList)
             {
-                string message = GenerateErrorMessage(pageInfo, errorReport, errorIndex, ref stringList, ref dtcList);
-
-                if (formatErrorResult != null)
-                {
-                    try
-                    {
-                        object[] args = { pageInfo, errorReport, message };
-                        message = formatErrorResult.Invoke(pageInfo.ClassObject, args) as string;
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
-                }
-
+                string message = GenerateErrorMessage(pageInfo, errorReport, errorIndex, formatErrorResult, ref stringList, ref dtcList);
                 stringList.Add(message);
                 errorIndex++;
             }
@@ -4091,7 +4064,7 @@ namespace BmwDeepObd
             return stringList;
         }
 
-        private string GenerateErrorMessage(JobReader.PageInfo pageInfo, EdiabasThread.EdiabasErrorReport errorReport, int errorIndex, ref List<string> stringList,ref List<ActivityCommon.VagDtcEntry> dtcList)
+        private string GenerateErrorMessage(JobReader.PageInfo pageInfo, EdiabasThread.EdiabasErrorReport errorReport, int errorIndex, MethodInfo formatErrorResult, ref List<string> stringList,ref List<ActivityCommon.VagDtcEntry> dtcList)
         {
             StringBuilder srMessage = new StringBuilder();
             string language = ActivityCommon.GetCurrentLanguage();
@@ -4458,7 +4431,21 @@ namespace BmwDeepObd
                 }
             }
 
-            return srMessage.ToString();
+            string message = srMessage.ToString();
+            if (formatErrorResult != null)
+            {
+                try
+                {
+                    object[] args = { pageInfo, errorReport, message };
+                    message = formatErrorResult.Invoke(pageInfo.ClassObject, args) as string;
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+
+            return message;
         }
 
         private void UpdateButtonErrorReset(Button buttonErrorReset, List<TableResultItem> resultItems)
