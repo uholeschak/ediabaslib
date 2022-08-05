@@ -113,9 +113,21 @@ namespace BmwDeepObd
             public bool Checked { get; set; }
         }
 
-        private class ErrorMessageInfo
+        private class ErrorMessageData
         {
-            public ErrorMessageInfo(EdiabasThread.EdiabasErrorReport errorReport, string message)
+            public ErrorMessageData(List<ErrorMessageEntry> errorList, List<string> translationList)
+            {
+                ErrorList = errorList;
+                TranslationList = translationList;
+            }
+
+            public List<ErrorMessageEntry> ErrorList { get; }
+            public List<string> TranslationList { get; }
+        }
+
+        private class ErrorMessageEntry
+        {
+            public ErrorMessageEntry(EdiabasThread.EdiabasErrorReport errorReport, string message)
             {
                 ErrorReport = errorReport;
                 Message = message;
@@ -4061,19 +4073,20 @@ namespace BmwDeepObd
             }
         }
 
-        private List<ErrorMessageInfo> GenerateErrorMessages(JobReader.PageInfo pageInfo, List<EdiabasThread.EdiabasErrorReport> errorReportList, MethodInfo formatErrorResult, ref List<string> translationList)
+        private ErrorMessageData GenerateErrorMessages(JobReader.PageInfo pageInfo, List<EdiabasThread.EdiabasErrorReport> errorReportList, MethodInfo formatErrorResult)
         {
-            List<ErrorMessageInfo> messageList = new List<ErrorMessageInfo>();
+            List<string> translationList = new List<string>();
+            List<ErrorMessageEntry> errorList = new List<ErrorMessageEntry>();
             List<ActivityCommon.VagDtcEntry> dtcList = null;
             int errorIndex = 0;
             foreach (EdiabasThread.EdiabasErrorReport errorReport in errorReportList)
             {
                 string message = GenerateErrorMessage(pageInfo, errorReport, errorIndex, formatErrorResult, ref translationList, ref dtcList);
-                messageList.Add(new ErrorMessageInfo(errorReport, message));
+                errorList.Add(new ErrorMessageEntry(errorReport, message));
                 errorIndex++;
             }
 
-            return messageList;
+            return new ErrorMessageData(errorList, translationList);
         }
 
         private string GenerateErrorMessage(JobReader.PageInfo pageInfo, EdiabasThread.EdiabasErrorReport errorReport, int errorIndex, MethodInfo formatErrorResult, ref List<string> translationList, ref List<ActivityCommon.VagDtcEntry> dtcList)
