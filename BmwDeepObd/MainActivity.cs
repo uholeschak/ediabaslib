@@ -3601,7 +3601,6 @@ namespace BmwDeepObd
                     if (pageInfo.ErrorsInfo != null)
                     {   // read errors
                         List<EdiabasThread.EdiabasErrorReport> errorReportList = null;
-                        List<string> translationList = null;
                         int updateProgress;
                         lock (EdiabasThread.DataLock)
                         {
@@ -3611,6 +3610,8 @@ namespace BmwDeepObd
                             }
                             updateProgress = ActivityCommon.EdiabasThread.UpdateProgress;
                         }
+
+                        List<string> translationList = null;
                         if (errorReportList == null)
                         {
                             tempResultList.Add(new TableResultItem(string.Format(GetString(Resource.String.error_reading_errors), updateProgress), null));
@@ -3733,13 +3734,13 @@ namespace BmwDeepObd
                         UpdateButtonErrorSelect(buttonErrorSelect, tempResultList);
                         UpdateButtonErrorCopy(buttonErrorCopy, (errorReportList != null) ? tempResultList : null);
 
-                        if (translationList != null && translationList.Count > 0)
+                        if (translationList?.Count > 0)
                         {
                             if (!_translateActive)
                             {
                                 // translation text present
                                 bool translate = false;
-                                if ((_translationList == null) || (_translationList.Count != translationList.Count))
+                                if (_translationList == null || _translationList.Count != translationList.Count)
                                 {
                                     translate = true;
                                 }
@@ -3755,6 +3756,7 @@ namespace BmwDeepObd
                                         }
                                     }
                                 }
+
                                 if (translate)
                                 {
                                     _translationList = translationList;
