@@ -431,8 +431,6 @@ namespace BmwDeepObd
         private bool _tabsCreated;
         private bool _compileCodePending;
         private long _maxDispUpdateTime;
-        private long _maxErrorUpdateTime;
-        private long _maxEnvCodeLabelUpdateTime;
         private ActivityCommon _activityCommon;
         public bool _autoHideStarted;
         public long _autoHideStartTime;
@@ -2167,8 +2165,6 @@ namespace BmwDeepObd
                 _translationList = null;
                 _translatedList = null;
                 _maxDispUpdateTime = 0;
-                _maxErrorUpdateTime = 0;
-                _maxEnvCodeLabelUpdateTime = 0;
 
                 JobReader.PageInfo pageInfo = GetSelectedPage();
                 object connectParameter = null;
@@ -3417,10 +3413,7 @@ namespace BmwDeepObd
             }
 
             long startTime = Stopwatch.GetTimestamp();
-            long diffTimeErrorSum = 0;
-            long diffTimeEnvCodeLabelSum = 0;
             bool dynamicValid = false;
-            string language = ActivityCommon.GetCurrentLanguage();
 
             _connectButtonInfo.Enabled = true;
             if (ActivityCommon.CommActive)
@@ -3607,8 +3600,8 @@ namespace BmwDeepObd
                     List<GridResultItem> tempResultGrid = new List<GridResultItem>();
                     if (pageInfo.ErrorsInfo != null)
                     {   // read errors
-                        List<string> translationList = new List<string>();
                         List<EdiabasThread.EdiabasErrorReport> errorReportList = null;
+                        List<string> translationList = null;
                         int updateProgress;
                         lock (EdiabasThread.DataLock)
                         {
@@ -3624,9 +3617,6 @@ namespace BmwDeepObd
                         }
                         else
                         {
-                            string lastEcuName = null;
-                            List<ActivityCommon.VagDtcEntry> dtcList = null;
-                            int errorIndex = 0;
                             foreach (EdiabasThread.EdiabasErrorReport errorReport in errorReportList)
                             {
                                 if (errorReport is EdiabasThread.EdiabasErrorReportReset errorReportReset)
@@ -3684,57 +3674,66 @@ namespace BmwDeepObd
                                             break;
                                         }
                                     }
-
-                                    continue;
                                 }
+                            }
 
-                                if (ActivityCommon.IsCommunicationError(errorReport.ExecptionText))
+                            ErrorMessageData errorMessageData = GenerateErrorMessages(pageInfo, errorReportList, formatErrorResult);
+                            if (errorMessageData != null)
+                            {
+                                translationList = errorMessageData.TranslationList;
+                                if (errorMessageData.CommError)
                                 {
                                     _instanceData.CommErrorsOccurred = true;
                                 }
 
-                                long startTimeErrorUpdate = Stopwatch.GetTimestamp();
-                                string message = GenerateErrorMessage(pageInfo, errorReport, errorIndex, formatErrorResult, ref translationList, ref dtcList);
-                                diffTimeErrorSum += Stopwatch.GetTimestamp() - startTimeErrorUpdate;
-
-                                if (!string.IsNullOrEmpty(message))
+                                string lastEcuName = null;
+                                foreach (ErrorMessageEntry errorMessageEntry in errorMessageData.ErrorList)
                                 {
-                                    bool selected = (from resultItem in resultListAdapter.Items
-                                                     let ecuName = resultItem.Tag as string
-                                                     where ecuName != null && string.CompareOrdinal(ecuName, errorReport.EcuName) == 0
-                                                     select resultItem.Selected).FirstOrDefault();
-                                    bool newEcu = (lastEcuName == null) || (string.CompareOrdinal(lastEcuName, errorReport.EcuName) != 0);
-                                    bool validResponse = errorReport.ErrorDict != null;
-                                    TableResultItem newResultItem = new TableResultItem(message, null, errorReport.EcuName, newEcu && validResponse, selected);
-                                    newResultItem.CheckChangeEvent += item =>
-                                    {
-                                        if (_activityCommon == null)
-                                        {
-                                            return;
-                                        }
-                                        UpdateButtonErrorReset(buttonErrorReset, resultListAdapter.Items);
-                                        UpdateButtonErrorResetAll(buttonErrorResetAll, resultListAdapter.Items, pageInfo);
-                                        UpdateButtonErrorSelect(buttonErrorSelect, resultListAdapter.Items);
-                                    };
+                                    EdiabasThread.EdiabasErrorReport errorReport = errorMessageEntry.ErrorReport;
+                                    string message = errorMessageEntry.Message;
 
-                                    bool shadow = errorReport is EdiabasThread.EdiabasErrorShadowReport;
-                                    newResultItem.CheckEnable = !ActivityCommon.ErrorResetActive && !shadow;
-                                    tempResultList.Add(newResultItem);
+                                    if (!string.IsNullOrEmpty(message))
+                                    {
+                                        bool selected = (from resultItem in resultListAdapter.Items
+                                                         let ecuName = resultItem.Tag as string
+                                                         where ecuName != null && string.CompareOrdinal(ecuName, errorReport.EcuName) == 0
+                                                         select resultItem.Selected).FirstOrDefault();
+                                        bool newEcu = (lastEcuName == null) || (string.CompareOrdinal(lastEcuName, errorReport.EcuName) != 0);
+                                        bool validResponse = errorReport.ErrorDict != null;
+                                        TableResultItem newResultItem = new TableResultItem(message, null, errorReport.EcuName, newEcu && validResponse, selected);
+                                        newResultItem.CheckChangeEvent += item =>
+                                        {
+                                            if (_activityCommon == null)
+                                            {
+                                                return;
+                                            }
+
+                                            UpdateButtonErrorReset(buttonErrorReset, resultListAdapter.Items);
+                                            UpdateButtonErrorResetAll(buttonErrorResetAll, resultListAdapter.Items, pageInfo);
+                                            UpdateButtonErrorSelect(buttonErrorSelect, resultListAdapter.Items);
+                                        };
+
+                                        bool shadow = errorReport is EdiabasThread.EdiabasErrorShadowReport;
+                                        newResultItem.CheckEnable = !ActivityCommon.ErrorResetActive && !shadow;
+                                        tempResultList.Add(newResultItem);
+                                    }
+
+                                    lastEcuName = errorReport.EcuName;
                                 }
-                                lastEcuName = errorReport.EcuName;
-                                errorIndex++;
                             }
+
                             if (tempResultList.Count == 0)
                             {
                                 tempResultList.Add(new TableResultItem(GetString(Resource.String.error_no_error), null));
                             }
                         }
+
                         UpdateButtonErrorReset(buttonErrorReset, tempResultList);
                         UpdateButtonErrorResetAll(buttonErrorResetAll, tempResultList, pageInfo);
                         UpdateButtonErrorSelect(buttonErrorSelect, tempResultList);
                         UpdateButtonErrorCopy(buttonErrorCopy, (errorReportList != null) ? tempResultList : null);
 
-                        if (translationList.Count > 0)
+                        if (translationList != null && translationList.Count > 0)
                         {
                             if (!_translateActive)
                             {
@@ -3917,7 +3916,6 @@ namespace BmwDeepObd
                         }
                         if (resultChanged || forceUpdate)
                         {
-                            long startTimeItemUpdate = Stopwatch.GetTimestamp();
                             resultGridAdapter.Items.Clear();
                             foreach (GridResultItem resultItem in tempResultGrid)
                             {
@@ -3983,7 +3981,6 @@ namespace BmwDeepObd
                         }
                         if (resultChanged || forceUpdate)
                         {
-                            long startTimeItemUpdate = Stopwatch.GetTimestamp();
                             resultListAdapter.Items.Clear();
                             resultListAdapter.Items.AddRange(tempResultList);
                             resultListAdapter.NotifyDataSetChanged();
@@ -4040,28 +4037,6 @@ namespace BmwDeepObd
                 }
             }
 
-            if (diffTimeErrorSum > _maxErrorUpdateTime)
-            {
-                _maxErrorUpdateTime = diffTimeErrorSum;
-#if DEBUG
-                if (_maxErrorUpdateTime / ActivityCommon.TickResolMs > 0)
-                {
-                    Log.Info(Tag, string.Format("UpdateDisplay: Update time error: {0}ms", _maxErrorUpdateTime / ActivityCommon.TickResolMs));
-                }
-#endif
-            }
-
-            if (diffTimeEnvCodeLabelSum > _maxEnvCodeLabelUpdateTime)
-            {
-                _maxEnvCodeLabelUpdateTime = diffTimeEnvCodeLabelSum;
-#if DEBUG
-                if (_maxEnvCodeLabelUpdateTime / ActivityCommon.TickResolMs > 0)
-                {
-                    Log.Info(Tag, string.Format("UpdateDisplay: Update time error code: {0}ms", _maxEnvCodeLabelUpdateTime / ActivityCommon.TickResolMs));
-                }
-#endif
-            }
-
             long diffTime = Stopwatch.GetTimestamp() - startTime;
             if (diffTime > _maxDispUpdateTime)
             {
@@ -4084,6 +4059,11 @@ namespace BmwDeepObd
             int errorIndex = 0;
             foreach (EdiabasThread.EdiabasErrorReport errorReport in errorReportList)
             {
+                if (errorReport is EdiabasThread.EdiabasErrorReportReset errorReportReset)
+                {
+                    continue;
+                }
+
                 if (ActivityCommon.IsCommunicationError(errorReport.ExecptionText))
                 {
                     commError = true;
