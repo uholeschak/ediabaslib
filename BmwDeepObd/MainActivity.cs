@@ -113,6 +113,18 @@ namespace BmwDeepObd
             public bool Checked { get; set; }
         }
 
+        private class ErrorMessageInfo
+        {
+            public ErrorMessageInfo(EdiabasThread.EdiabasErrorReport errorReport, string message)
+            {
+                ErrorReport = errorReport;
+                Message = message;
+            }
+
+            public EdiabasThread.EdiabasErrorReport ErrorReport { get; }
+            public string Message { get; }
+        }
+
         public class InstanceData
         {
             public InstanceData()
@@ -3581,7 +3593,7 @@ namespace BmwDeepObd
                     List<GridResultItem> tempResultGrid = new List<GridResultItem>();
                     if (pageInfo.ErrorsInfo != null)
                     {   // read errors
-                        List<string> stringList = new List<string>();
+                        List<string> translationList = new List<string>();
                         List<EdiabasThread.EdiabasErrorReport> errorReportList = null;
                         int updateProgress;
                         lock (EdiabasThread.DataLock)
@@ -3668,7 +3680,7 @@ namespace BmwDeepObd
                                 }
 
                                 long startTimeErrorUpdate = Stopwatch.GetTimestamp();
-                                string message = GenerateErrorMessage(pageInfo, errorReport, errorIndex, formatErrorResult, ref stringList, ref dtcList);
+                                string message = GenerateErrorMessage(pageInfo, errorReport, errorIndex, formatErrorResult, ref translationList, ref dtcList);
                                 diffTimeErrorSum += Stopwatch.GetTimestamp() - startTimeErrorUpdate;
 
                                 if (!string.IsNullOrEmpty(message))
@@ -3708,22 +3720,22 @@ namespace BmwDeepObd
                         UpdateButtonErrorSelect(buttonErrorSelect, tempResultList);
                         UpdateButtonErrorCopy(buttonErrorCopy, (errorReportList != null) ? tempResultList : null);
 
-                        if (stringList.Count > 0)
+                        if (translationList.Count > 0)
                         {
                             if (!_translateActive)
                             {
                                 // translation text present
                                 bool translate = false;
-                                if ((_translationList == null) || (_translationList.Count != stringList.Count))
+                                if ((_translationList == null) || (_translationList.Count != translationList.Count))
                                 {
                                     translate = true;
                                 }
                                 else
                                 {
                                     // ReSharper disable once LoopCanBeConvertedToQuery
-                                    for (int i = 0; i < stringList.Count; i++)
+                                    for (int i = 0; i < translationList.Count; i++)
                                     {
-                                        if (string.Compare(stringList[i], _translationList[i], StringComparison.Ordinal) != 0)
+                                        if (string.Compare(translationList[i], _translationList[i], StringComparison.Ordinal) != 0)
                                         {
                                             translate = true;
                                             break;
@@ -3732,9 +3744,9 @@ namespace BmwDeepObd
                                 }
                                 if (translate)
                                 {
-                                    _translationList = stringList;
+                                    _translationList = translationList;
                                     _translateActive = true;
-                                    if (!_activityCommon.TranslateStrings(stringList, transList =>
+                                    if (!_activityCommon.TranslateStrings(translationList, transList =>
                                     {
                                         RunOnUiThread(() =>
                                         {
@@ -4049,22 +4061,22 @@ namespace BmwDeepObd
             }
         }
 
-        private List<string> GenerateErrorMessages(JobReader.PageInfo pageInfo, List<EdiabasThread.EdiabasErrorReport> errorReportList, MethodInfo formatErrorResult)
+        private List<ErrorMessageInfo> GenerateErrorMessages(JobReader.PageInfo pageInfo, List<EdiabasThread.EdiabasErrorReport> errorReportList, MethodInfo formatErrorResult, ref List<string> translationList)
         {
-            List<string> stringList = new List<string>();
+            List<ErrorMessageInfo> messageList = new List<ErrorMessageInfo>();
             List<ActivityCommon.VagDtcEntry> dtcList = null;
             int errorIndex = 0;
             foreach (EdiabasThread.EdiabasErrorReport errorReport in errorReportList)
             {
-                string message = GenerateErrorMessage(pageInfo, errorReport, errorIndex, formatErrorResult, ref stringList, ref dtcList);
-                stringList.Add(message);
+                string message = GenerateErrorMessage(pageInfo, errorReport, errorIndex, formatErrorResult, ref translationList, ref dtcList);
+                messageList.Add(new ErrorMessageInfo(errorReport, message));
                 errorIndex++;
             }
 
-            return stringList;
+            return messageList;
         }
 
-        private string GenerateErrorMessage(JobReader.PageInfo pageInfo, EdiabasThread.EdiabasErrorReport errorReport, int errorIndex, MethodInfo formatErrorResult, ref List<string> stringList,ref List<ActivityCommon.VagDtcEntry> dtcList)
+        private string GenerateErrorMessage(JobReader.PageInfo pageInfo, EdiabasThread.EdiabasErrorReport errorReport, int errorIndex, MethodInfo formatErrorResult, ref List<string> translationList, ref List<ActivityCommon.VagDtcEntry> dtcList)
         {
             StringBuilder srMessage = new StringBuilder();
             string language = ActivityCommon.GetCurrentLanguage();
@@ -4361,9 +4373,9 @@ namespace BmwDeepObd
                         text2 = FormatResultString(errorReport.ErrorDict, "F_VORHANDEN_TEXT", "{0}");
                         if (ActivityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation)
                         {
-                            int index = stringList.Count;
-                            stringList.Add(text1);
-                            stringList.Add(text2);
+                            int index = translationList.Count;
+                            translationList.Add(text1);
+                            translationList.Add(text2);
                             if (_translationList != null && _translatedList != null &&
                                 _translationList.Count == _translatedList.Count)
                             {
