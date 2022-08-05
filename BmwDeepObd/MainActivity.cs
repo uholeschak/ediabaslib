@@ -115,14 +115,16 @@ namespace BmwDeepObd
 
         private class ErrorMessageData
         {
-            public ErrorMessageData(List<ErrorMessageEntry> errorList, List<string> translationList)
+            public ErrorMessageData(List<ErrorMessageEntry> errorList, List<string> translationList, bool commError)
             {
                 ErrorList = errorList;
                 TranslationList = translationList;
+                CommError = commError;
             }
 
             public List<ErrorMessageEntry> ErrorList { get; }
             public List<string> TranslationList { get; }
+            public bool CommError { get; }
         }
 
         private class ErrorMessageEntry
@@ -4078,15 +4080,21 @@ namespace BmwDeepObd
             List<string> translationList = new List<string>();
             List<ErrorMessageEntry> errorList = new List<ErrorMessageEntry>();
             List<ActivityCommon.VagDtcEntry> dtcList = null;
+            bool commError = false;
             int errorIndex = 0;
             foreach (EdiabasThread.EdiabasErrorReport errorReport in errorReportList)
             {
+                if (ActivityCommon.IsCommunicationError(errorReport.ExecptionText))
+                {
+                    commError = true;
+                }
+
                 string message = GenerateErrorMessage(pageInfo, errorReport, errorIndex, formatErrorResult, ref translationList, ref dtcList);
                 errorList.Add(new ErrorMessageEntry(errorReport, message));
                 errorIndex++;
             }
 
-            return new ErrorMessageData(errorList, translationList);
+            return new ErrorMessageData(errorList, translationList, commError);
         }
 
         private string GenerateErrorMessage(JobReader.PageInfo pageInfo, EdiabasThread.EdiabasErrorReport errorReport, int errorIndex, MethodInfo formatErrorResult, ref List<string> translationList, ref List<ActivityCommon.VagDtcEntry> dtcList)
