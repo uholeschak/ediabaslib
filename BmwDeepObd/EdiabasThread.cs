@@ -1016,7 +1016,7 @@ namespace BmwDeepObd
                                     bool jobOk = false;
                                     if (resultSets.Count > 1)
                                     {
-                                        if (IsJobStatusOk(resultSets[resultSets.Count - 1]))
+                                        if (IsJobStatusOk(resultSets[^1]))
                                         {
                                             jobOk = true;
                                         }
@@ -1673,6 +1673,7 @@ namespace BmwDeepObd
                         argList.RemoveAt(0);
                     }
                 }
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 else if (statRead)
                 {
                     if (argList.Count >= 1)
