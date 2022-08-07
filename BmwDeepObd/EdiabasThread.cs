@@ -992,13 +992,14 @@ namespace BmwDeepObd
 
                         if (ReadErrors(ecuInfo, sgbdResolved, false, ecuVariant, errorReportList))
                         {
-                            if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
+                            if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw && ActivityCommon.EcuFunctionsActive)
                             {
                                 ReadErrors(ecuInfo, sgbdResolved, true, ecuVariant, errorReportList);
                             }
                         }
 
-                        if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw && !ActivityCommon.ShowOnlyRelevantErrors)
+                        if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw &&
+                            ActivityCommon.EcuFunctionsActive && !ActivityCommon.ShowOnlyRelevantErrors)
                         {
                             try
                             {
@@ -1525,7 +1526,7 @@ namespace BmwDeepObd
 
             if (jobOk)
             {
-                bool relevantOnly = ActivityCommon.ShowOnlyRelevantErrors;
+                bool relevantOnly = ActivityCommon.EcuFunctionsActive && ActivityCommon.ShowOnlyRelevantErrors;
                 Dictionary<string, EdiabasNet.ResultData> resultDict0 = null;
                 int dictIndex = 0;
                 foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
