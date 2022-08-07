@@ -115,14 +115,16 @@ namespace BmwDeepObd
 
         private class ErrorMessageData
         {
-            public ErrorMessageData(List<ErrorMessageEntry> errorList, List<string> translationList, bool commError)
+            public ErrorMessageData(List<ErrorMessageEntry> errorList, List<EdiabasThread.EdiabasErrorReportReset> errorResetList, List<string> translationList, bool commError)
             {
                 ErrorList = errorList;
+                ErrorResetList = errorResetList;
                 TranslationList = translationList;
                 CommError = commError;
             }
 
             public List<ErrorMessageEntry> ErrorList { get; }
+            public List<EdiabasThread.EdiabasErrorReportReset> ErrorResetList { get; }
             public List<string> TranslationList { get; }
             public bool CommError { get; }
         }
@@ -3618,9 +3620,16 @@ namespace BmwDeepObd
                         }
                         else
                         {
-                            foreach (EdiabasThread.EdiabasErrorReport errorReport in errorReportList)
+                            ErrorMessageData errorMessageData = EvaluateErrorMessages(pageInfo, errorReportList, formatErrorResult);
+                            if (errorMessageData != null)
                             {
-                                if (errorReport is EdiabasThread.EdiabasErrorReportReset errorReportReset)
+                                translationList = errorMessageData.TranslationList;
+                                if (errorMessageData.CommError)
+                                {
+                                    _instanceData.CommErrorsOccurred = true;
+                                }
+
+                                foreach (EdiabasThread.EdiabasErrorReportReset errorReportReset in errorMessageData.ErrorResetList)
                                 {
                                     switch (errorReportReset.ResetState)
                                     {
@@ -3629,8 +3638,8 @@ namespace BmwDeepObd
                                             bool changed = false;
                                             foreach (TableResultItem resultItem in resultListAdapter.Items)
                                             {
-                                                if (string.IsNullOrEmpty(errorReport.EcuName) ||
-                                                    (resultItem.Tag is string ecuName && string.CompareOrdinal(ecuName, errorReport.EcuName) == 0))
+                                                if (string.IsNullOrEmpty(errorReportReset.EcuName) ||
+                                                    (resultItem.Tag is string ecuName && string.CompareOrdinal(ecuName, errorReportReset.EcuName) == 0))
                                                 {
                                                     if (resultItem.Selected)
                                                     {
@@ -3641,7 +3650,7 @@ namespace BmwDeepObd
                                                 }
                                             }
 
-                                            if (changed || forceUpdate)
+                                            if (changed)
                                             {
                                                 resultListAdapter.NotifyDataSetChanged();
                                             }
@@ -3675,16 +3684,6 @@ namespace BmwDeepObd
                                             break;
                                         }
                                     }
-                                }
-                            }
-
-                            ErrorMessageData errorMessageData = GenerateErrorMessages(pageInfo, errorReportList, formatErrorResult);
-                            if (errorMessageData != null)
-                            {
-                                translationList = errorMessageData.TranslationList;
-                                if (errorMessageData.CommError)
-                                {
-                                    _instanceData.CommErrorsOccurred = true;
                                 }
 
                                 string lastEcuName = null;
@@ -4052,10 +4051,11 @@ namespace BmwDeepObd
             }
         }
 
-        private ErrorMessageData GenerateErrorMessages(JobReader.PageInfo pageInfo, List<EdiabasThread.EdiabasErrorReport> errorReportList, MethodInfo formatErrorResult)
+        private ErrorMessageData EvaluateErrorMessages(JobReader.PageInfo pageInfo, List<EdiabasThread.EdiabasErrorReport> errorReportList, MethodInfo formatErrorResult)
         {
             List<string> translationList = new List<string>();
             List<ErrorMessageEntry> errorList = new List<ErrorMessageEntry>();
+            List<EdiabasThread.EdiabasErrorReportReset> errorResetList = new List<EdiabasThread.EdiabasErrorReportReset>();
             List<ActivityCommon.VagDtcEntry> dtcList = null;
             bool commError = false;
             int errorIndex = 0;
@@ -4063,6 +4063,14 @@ namespace BmwDeepObd
             {
                 if (errorReport is EdiabasThread.EdiabasErrorReportReset errorReportReset)
                 {
+                    switch (errorReportReset.ResetState)
+                    {
+                        case EdiabasThread.EdiabasErrorReportReset.ErrorRestState.Ok:
+                        case EdiabasThread.EdiabasErrorReportReset.ErrorRestState.Condition:
+                            errorResetList.Add(errorReportReset);
+                            break;
+                    }
+
                     continue;
                 }
 
@@ -4076,7 +4084,7 @@ namespace BmwDeepObd
                 errorIndex++;
             }
 
-            return new ErrorMessageData(errorList, translationList, commError);
+            return new ErrorMessageData(errorList, errorResetList, translationList, commError);
         }
 
         private string GenerateErrorMessage(JobReader.PageInfo pageInfo, EdiabasThread.EdiabasErrorReport errorReport, int errorIndex, MethodInfo formatErrorResult, ref List<string> translationList, ref List<ActivityCommon.VagDtcEntry> dtcList)
