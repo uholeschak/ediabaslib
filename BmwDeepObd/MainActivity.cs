@@ -57,6 +57,8 @@ namespace BmwDeepObd
     public class ActivityMain : BaseActivity, TabLayout.IOnTabSelectedListener
 #pragma warning restore CS0618
     {
+        private delegate void ErrorMessageResultDelegate(ErrorMessageData errorMessageData);
+
         private enum ActivityRequest
         {
             RequestAppStorePermissions,
@@ -3620,107 +3622,109 @@ namespace BmwDeepObd
                         }
                         else
                         {
-                            ErrorMessageData errorMessageData = EvaluateErrorMessages(pageInfo, errorReportList, formatErrorResult);
-                            if (errorMessageData != null)
-                            {
-                                translationList = errorMessageData.TranslationList;
-                                if (errorMessageData.CommError)
+                            EvaluateErrorMessages(pageInfo, errorReportList, formatErrorResult, errorMessageData =>
                                 {
-                                    _instanceData.CommErrorsOccurred = true;
-                                }
-
-                                foreach (EdiabasThread.EdiabasErrorReportReset errorReportReset in errorMessageData.ErrorResetList)
-                                {
-                                    switch (errorReportReset.ResetState)
+                                    if (errorMessageData != null)
                                     {
-                                        case EdiabasThread.EdiabasErrorReportReset.ErrorRestState.Ok:
+                                        translationList = errorMessageData.TranslationList;
+                                        if (errorMessageData.CommError)
                                         {
-                                            bool changed = false;
-                                            foreach (TableResultItem resultItem in resultListAdapter.Items)
+                                            _instanceData.CommErrorsOccurred = true;
+                                        }
+
+                                        foreach (EdiabasThread.EdiabasErrorReportReset errorReportReset in errorMessageData.ErrorResetList)
+                                        {
+                                            switch (errorReportReset.ResetState)
                                             {
-                                                if (string.IsNullOrEmpty(errorReportReset.EcuName) ||
-                                                    (resultItem.Tag is string ecuName && string.CompareOrdinal(ecuName, errorReportReset.EcuName) == 0))
-                                                {
-                                                    if (resultItem.Selected)
+                                                case EdiabasThread.EdiabasErrorReportReset.ErrorRestState.Ok:
                                                     {
-                                                        errorReportReset.Reset();
-                                                        resultItem.Selected = false;
-                                                        changed = true;
+                                                        bool changed = false;
+                                                        foreach (TableResultItem resultItem in resultListAdapter.Items)
+                                                        {
+                                                            if (string.IsNullOrEmpty(errorReportReset.EcuName) ||
+                                                                (resultItem.Tag is string ecuName && string.CompareOrdinal(ecuName, errorReportReset.EcuName) == 0))
+                                                            {
+                                                                if (resultItem.Selected)
+                                                                {
+                                                                    errorReportReset.Reset();
+                                                                    resultItem.Selected = false;
+                                                                    changed = true;
+                                                                }
+                                                            }
+                                                        }
+
+                                                        if (changed)
+                                                        {
+                                                            resultListAdapter.NotifyDataSetChanged();
+                                                        }
+
+                                                        break;
                                                     }
-                                                }
-                                            }
 
-                                            if (changed)
-                                            {
-                                                resultListAdapter.NotifyDataSetChanged();
-                                            }
+                                                case EdiabasThread.EdiabasErrorReportReset.ErrorRestState.Condition:
+                                                    {
+                                                        if (_errorRestAlertDialog != null)
+                                                        {
+                                                            break;
+                                                        }
 
-                                            break;
+                                                        errorReportReset.Reset();
+                                                        _errorRestAlertDialog = new AlertDialog.Builder(this)
+                                                            .SetNeutralButton(Resource.String.button_ok, (sender, args) =>
+                                                            {
+                                                            })
+                                                            .SetMessage(Resource.String.error_reset_condition)
+                                                            .SetTitle(Resource.String.alert_title_warning)
+                                                            .Show();
+                                                        _errorRestAlertDialog.DismissEvent += (sender, args) =>
+                                                        {
+                                                            if (_activityCommon == null)
+                                                            {
+                                                                return;
+                                                            }
+                                                            _errorRestAlertDialog = null;
+                                                        };
+                                                        break;
+                                                    }
+                                            }
                                         }
 
-                                        case EdiabasThread.EdiabasErrorReportReset.ErrorRestState.Condition:
+                                        string lastEcuName = null;
+                                        foreach (ErrorMessageEntry errorMessageEntry in errorMessageData.ErrorList)
                                         {
-                                            if (_errorRestAlertDialog != null)
+                                            EdiabasThread.EdiabasErrorReport errorReport = errorMessageEntry.ErrorReport;
+                                            string message = errorMessageEntry.Message;
+
+                                            if (!string.IsNullOrEmpty(message))
                                             {
-                                                break;
+                                                bool selected = (from resultItem in resultListAdapter.Items
+                                                                 let ecuName = resultItem.Tag as string
+                                                                 where ecuName != null && string.CompareOrdinal(ecuName, errorReport.EcuName) == 0
+                                                                 select resultItem.Selected).FirstOrDefault();
+                                                bool newEcu = (lastEcuName == null) || (string.CompareOrdinal(lastEcuName, errorReport.EcuName) != 0);
+                                                bool validResponse = errorReport.ErrorDict != null;
+                                                TableResultItem newResultItem = new TableResultItem(message, null, errorReport.EcuName, newEcu && validResponse, selected);
+                                                newResultItem.CheckChangeEvent += item =>
+                                                {
+                                                    if (_activityCommon == null)
+                                                    {
+                                                        return;
+                                                    }
+
+                                                    UpdateButtonErrorReset(buttonErrorReset, resultListAdapter.Items);
+                                                    UpdateButtonErrorResetAll(buttonErrorResetAll, resultListAdapter.Items, pageInfo);
+                                                    UpdateButtonErrorSelect(buttonErrorSelect, resultListAdapter.Items);
+                                                };
+
+                                                bool shadow = errorReport is EdiabasThread.EdiabasErrorShadowReport;
+                                                newResultItem.CheckEnable = !ActivityCommon.ErrorResetActive && !shadow;
+                                                tempResultList.Add(newResultItem);
                                             }
 
-                                            errorReportReset.Reset();
-                                            _errorRestAlertDialog = new AlertDialog.Builder(this)
-                                                .SetNeutralButton(Resource.String.button_ok, (sender, args) =>
-                                                {
-                                                })
-                                                .SetMessage(Resource.String.error_reset_condition)
-                                                .SetTitle(Resource.String.alert_title_warning)
-                                                .Show();
-                                            _errorRestAlertDialog.DismissEvent += (sender, args) =>
-                                            {
-                                                if (_activityCommon == null)
-                                                {
-                                                    return;
-                                                }
-                                                _errorRestAlertDialog = null;
-                                            };
-                                            break;
+                                            lastEcuName = errorReport.EcuName;
                                         }
                                     }
-                                }
-
-                                string lastEcuName = null;
-                                foreach (ErrorMessageEntry errorMessageEntry in errorMessageData.ErrorList)
-                                {
-                                    EdiabasThread.EdiabasErrorReport errorReport = errorMessageEntry.ErrorReport;
-                                    string message = errorMessageEntry.Message;
-
-                                    if (!string.IsNullOrEmpty(message))
-                                    {
-                                        bool selected = (from resultItem in resultListAdapter.Items
-                                                         let ecuName = resultItem.Tag as string
-                                                         where ecuName != null && string.CompareOrdinal(ecuName, errorReport.EcuName) == 0
-                                                         select resultItem.Selected).FirstOrDefault();
-                                        bool newEcu = (lastEcuName == null) || (string.CompareOrdinal(lastEcuName, errorReport.EcuName) != 0);
-                                        bool validResponse = errorReport.ErrorDict != null;
-                                        TableResultItem newResultItem = new TableResultItem(message, null, errorReport.EcuName, newEcu && validResponse, selected);
-                                        newResultItem.CheckChangeEvent += item =>
-                                        {
-                                            if (_activityCommon == null)
-                                            {
-                                                return;
-                                            }
-
-                                            UpdateButtonErrorReset(buttonErrorReset, resultListAdapter.Items);
-                                            UpdateButtonErrorResetAll(buttonErrorResetAll, resultListAdapter.Items, pageInfo);
-                                            UpdateButtonErrorSelect(buttonErrorSelect, resultListAdapter.Items);
-                                        };
-
-                                        bool shadow = errorReport is EdiabasThread.EdiabasErrorShadowReport;
-                                        newResultItem.CheckEnable = !ActivityCommon.ErrorResetActive && !shadow;
-                                        tempResultList.Add(newResultItem);
-                                    }
-
-                                    lastEcuName = errorReport.EcuName;
-                                }
-                            }
+                                });
 
                             if (tempResultList.Count == 0)
                             {
@@ -4051,7 +4055,7 @@ namespace BmwDeepObd
             }
         }
 
-        private ErrorMessageData EvaluateErrorMessages(JobReader.PageInfo pageInfo, List<EdiabasThread.EdiabasErrorReport> errorReportList, MethodInfo formatErrorResult)
+        private void EvaluateErrorMessages(JobReader.PageInfo pageInfo, List<EdiabasThread.EdiabasErrorReport> errorReportList, MethodInfo formatErrorResult, ErrorMessageResultDelegate resultHandler)
         {
             List<string> translationList = new List<string>();
             List<ErrorMessageEntry> errorList = new List<ErrorMessageEntry>();
@@ -4084,7 +4088,11 @@ namespace BmwDeepObd
                 errorIndex++;
             }
 
-            return new ErrorMessageData(errorList, errorResetList, translationList, commError);
+            ErrorMessageData errorMessageData = new ErrorMessageData(errorList, errorResetList, translationList, commError);
+            if (resultHandler != null)
+            {
+                resultHandler.Invoke(errorMessageData);
+            }
         }
 
         private string GenerateErrorMessage(JobReader.PageInfo pageInfo, EdiabasThread.EdiabasErrorReport errorReport, int errorIndex, MethodInfo formatErrorResult, ref List<string> translationList, ref List<ActivityCommon.VagDtcEntry> dtcList)
