@@ -3623,7 +3623,14 @@ namespace BmwDeepObd
                         else
                         {
                             EvaluateErrorMessages(pageInfo, errorReportList, formatErrorResult, errorMessageData =>
+                            {
+                                RunOnUiThread(() =>
                                 {
+                                    if (_activityCommon == null)
+                                    {
+                                        return;
+                                    }
+
                                     if (errorMessageData != null)
                                     {
                                         translationList = errorMessageData.TranslationList;
@@ -3637,55 +3644,55 @@ namespace BmwDeepObd
                                             switch (errorReportReset.ResetState)
                                             {
                                                 case EdiabasThread.EdiabasErrorReportReset.ErrorRestState.Ok:
+                                                {
+                                                    bool changed = false;
+                                                    foreach (TableResultItem resultItem in resultListAdapter.Items)
                                                     {
-                                                        bool changed = false;
-                                                        foreach (TableResultItem resultItem in resultListAdapter.Items)
+                                                        if (string.IsNullOrEmpty(errorReportReset.EcuName) ||
+                                                            (resultItem.Tag is string ecuName && string.CompareOrdinal(ecuName, errorReportReset.EcuName) == 0))
                                                         {
-                                                            if (string.IsNullOrEmpty(errorReportReset.EcuName) ||
-                                                                (resultItem.Tag is string ecuName && string.CompareOrdinal(ecuName, errorReportReset.EcuName) == 0))
+                                                            if (resultItem.Selected)
                                                             {
-                                                                if (resultItem.Selected)
-                                                                {
-                                                                    errorReportReset.Reset();
-                                                                    resultItem.Selected = false;
-                                                                    changed = true;
-                                                                }
+                                                                errorReportReset.Reset();
+                                                                resultItem.Selected = false;
+                                                                changed = true;
                                                             }
                                                         }
-
-                                                        if (changed)
-                                                        {
-                                                            resultListAdapter.NotifyDataSetChanged();
-                                                        }
-
-                                                        break;
                                                     }
+
+                                                    if (changed)
+                                                    {
+                                                        resultListAdapter.NotifyDataSetChanged();
+                                                    }
+
+                                                    break;
+                                                }
 
                                                 case EdiabasThread.EdiabasErrorReportReset.ErrorRestState.Condition:
+                                                {
+                                                    if (_errorRestAlertDialog != null)
                                                     {
-                                                        if (_errorRestAlertDialog != null)
-                                                        {
-                                                            break;
-                                                        }
-
-                                                        errorReportReset.Reset();
-                                                        _errorRestAlertDialog = new AlertDialog.Builder(this)
-                                                            .SetNeutralButton(Resource.String.button_ok, (sender, args) =>
-                                                            {
-                                                            })
-                                                            .SetMessage(Resource.String.error_reset_condition)
-                                                            .SetTitle(Resource.String.alert_title_warning)
-                                                            .Show();
-                                                        _errorRestAlertDialog.DismissEvent += (sender, args) =>
-                                                        {
-                                                            if (_activityCommon == null)
-                                                            {
-                                                                return;
-                                                            }
-                                                            _errorRestAlertDialog = null;
-                                                        };
                                                         break;
                                                     }
+
+                                                    errorReportReset.Reset();
+                                                    _errorRestAlertDialog = new AlertDialog.Builder(this)
+                                                        .SetNeutralButton(Resource.String.button_ok, (sender, args) =>
+                                                        {
+                                                        })
+                                                        .SetMessage(Resource.String.error_reset_condition)
+                                                        .SetTitle(Resource.String.alert_title_warning)
+                                                        .Show();
+                                                    _errorRestAlertDialog.DismissEvent += (sender, args) =>
+                                                    {
+                                                        if (_activityCommon == null)
+                                                        {
+                                                            return;
+                                                        }
+                                                        _errorRestAlertDialog = null;
+                                                    };
+                                                    break;
+                                                }
                                             }
                                         }
 
@@ -3725,6 +3732,7 @@ namespace BmwDeepObd
                                         }
                                     }
                                 });
+                            });
 
                             if (tempResultList.Count == 0)
                             {
