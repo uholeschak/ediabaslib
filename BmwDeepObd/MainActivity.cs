@@ -3639,62 +3639,7 @@ namespace BmwDeepObd
                                             _instanceData.CommErrorsOccurred = true;
                                         }
 
-                                        foreach (EdiabasThread.EdiabasErrorReportReset errorReportReset in errorMessageData.ErrorResetList)
-                                        {
-                                            switch (errorReportReset.ResetState)
-                                            {
-                                                case EdiabasThread.EdiabasErrorReportReset.ErrorRestState.Ok:
-                                                {
-                                                    bool changed = false;
-                                                    foreach (TableResultItem resultItem in resultListAdapter.Items)
-                                                    {
-                                                        if (string.IsNullOrEmpty(errorReportReset.EcuName) ||
-                                                            (resultItem.Tag is string ecuName && string.CompareOrdinal(ecuName, errorReportReset.EcuName) == 0))
-                                                        {
-                                                            if (resultItem.Selected)
-                                                            {
-                                                                errorReportReset.Reset();
-                                                                resultItem.Selected = false;
-                                                                changed = true;
-                                                            }
-                                                        }
-                                                    }
-
-                                                    if (changed)
-                                                    {
-                                                        resultListAdapter.NotifyDataSetChanged();
-                                                    }
-
-                                                    break;
-                                                }
-
-                                                case EdiabasThread.EdiabasErrorReportReset.ErrorRestState.Condition:
-                                                {
-                                                    if (_errorRestAlertDialog != null)
-                                                    {
-                                                        break;
-                                                    }
-
-                                                    errorReportReset.Reset();
-                                                    _errorRestAlertDialog = new AlertDialog.Builder(this)
-                                                        .SetNeutralButton(Resource.String.button_ok, (sender, args) =>
-                                                        {
-                                                        })
-                                                        .SetMessage(Resource.String.error_reset_condition)
-                                                        .SetTitle(Resource.String.alert_title_warning)
-                                                        .Show();
-                                                    _errorRestAlertDialog.DismissEvent += (sender, args) =>
-                                                    {
-                                                        if (_activityCommon == null)
-                                                        {
-                                                            return;
-                                                        }
-                                                        _errorRestAlertDialog = null;
-                                                    };
-                                                    break;
-                                                }
-                                            }
-                                        }
+                                        ProcessErrorReset(errorMessageData, resultListAdapter);
 
                                         string lastEcuName = null;
                                         foreach (ErrorMessageEntry errorMessageEntry in errorMessageData.ErrorList)
@@ -4100,6 +4045,71 @@ namespace BmwDeepObd
             if (resultHandler != null)
             {
                 resultHandler.Invoke(errorMessageData);
+            }
+        }
+
+        private void ProcessErrorReset(ErrorMessageData errorMessageData, ResultListAdapter resultListAdapter)
+        {
+            if (errorMessageData == null)
+            {
+                return;
+            }
+
+            foreach (EdiabasThread.EdiabasErrorReportReset errorReportReset in errorMessageData.ErrorResetList)
+            {
+                switch (errorReportReset.ResetState)
+                {
+                    case EdiabasThread.EdiabasErrorReportReset.ErrorRestState.Ok:
+                    {
+                        bool changed = false;
+                        foreach (TableResultItem resultItem in resultListAdapter.Items)
+                        {
+                            if (string.IsNullOrEmpty(errorReportReset.EcuName) ||
+                                (resultItem.Tag is string ecuName && string.CompareOrdinal(ecuName, errorReportReset.EcuName) == 0))
+                            {
+                                if (resultItem.Selected)
+                                {
+                                    errorReportReset.Reset();
+                                    resultItem.Selected = false;
+                                    changed = true;
+                                }
+                            }
+                        }
+
+                        if (changed)
+                        {
+                            resultListAdapter.NotifyDataSetChanged();
+                        }
+
+                        break;
+                    }
+
+                    case EdiabasThread.EdiabasErrorReportReset.ErrorRestState.Condition:
+                    {
+                        if (_errorRestAlertDialog != null)
+                        {
+                            break;
+                        }
+
+                        errorReportReset.Reset();
+                        _errorRestAlertDialog = new AlertDialog.Builder(this)
+                            .SetNeutralButton(Resource.String.button_ok, (sender, args) =>
+                            {
+                            })
+                            .SetMessage(Resource.String.error_reset_condition)
+                            .SetTitle(Resource.String.alert_title_warning)
+                            .Show();
+                        _errorRestAlertDialog.DismissEvent += (sender, args) =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+                            _errorRestAlertDialog = null;
+                        };
+                        break;
+                    }
+                }
             }
         }
 
