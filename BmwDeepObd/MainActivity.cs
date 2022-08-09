@@ -447,6 +447,7 @@ namespace BmwDeepObd
         private readonly ConnectButtonInfo _connectButtonInfo = new ConnectButtonInfo();
         private ImageView _imageBackground;
         private HttpClient _httpClient;
+        private Thread _errorEvalThread;
         private CustomProgressDialog _downloadProgress;
         private CustomProgressDialog _compileProgress;
         private bool _extractZipCanceled;
@@ -837,6 +838,12 @@ namespace BmwDeepObd
                 StopEdiabasThread(true);
             }
             DisconnectEdiabasEvents();
+
+            if (IsErrorEvalJobRunning())
+            {
+                _errorEvalThread.Join();
+            }
+
             if (_httpClient != null)
             {
                 try
@@ -2111,6 +2118,20 @@ namespace BmwDeepObd
             });
 
             return result;
+        }
+
+        private bool IsErrorEvalJobRunning()
+        {
+            if (_errorEvalThread == null)
+            {
+                return false;
+            }
+            if (_errorEvalThread.IsAlive)
+            {
+                return true;
+            }
+            _errorEvalThread = null;
+            return false;
         }
 
         private bool UseCommService()
@@ -4012,6 +4033,11 @@ namespace BmwDeepObd
 
         private void EvaluateErrorMessages(JobReader.PageInfo pageInfo, List<EdiabasThread.EdiabasErrorReport> errorReportList, MethodInfo formatErrorResult, ErrorMessageResultDelegate resultHandler)
         {
+            if (IsErrorEvalJobRunning())
+            {
+                return;
+            }
+
             List<string> translationList = new List<string>();
             List<ErrorMessageEntry> errorList = new List<ErrorMessageEntry>();
             List<EdiabasThread.EdiabasErrorReportReset> errorResetList = new List<EdiabasThread.EdiabasErrorReportReset>();
