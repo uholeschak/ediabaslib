@@ -3631,50 +3631,52 @@ namespace BmwDeepObd
                                         return;
                                     }
 
-                                    if (errorMessageData != null)
+                                    if (errorMessageData == null)
                                     {
-                                        translationList = errorMessageData.TranslationList;
-                                        if (errorMessageData.CommError)
+                                        return;
+                                    }
+
+                                    translationList = errorMessageData.TranslationList;
+                                    if (errorMessageData.CommError)
+                                    {
+                                        _instanceData.CommErrorsOccurred = true;
+                                    }
+
+                                    ProcessErrorReset(errorMessageData, resultListAdapter);
+
+                                    string lastEcuName = null;
+                                    foreach (ErrorMessageEntry errorMessageEntry in errorMessageData.ErrorList)
+                                    {
+                                        EdiabasThread.EdiabasErrorReport errorReport = errorMessageEntry.ErrorReport;
+                                        string message = errorMessageEntry.Message;
+
+                                        if (!string.IsNullOrEmpty(message))
                                         {
-                                            _instanceData.CommErrorsOccurred = true;
-                                        }
-
-                                        ProcessErrorReset(errorMessageData, resultListAdapter);
-
-                                        string lastEcuName = null;
-                                        foreach (ErrorMessageEntry errorMessageEntry in errorMessageData.ErrorList)
-                                        {
-                                            EdiabasThread.EdiabasErrorReport errorReport = errorMessageEntry.ErrorReport;
-                                            string message = errorMessageEntry.Message;
-
-                                            if (!string.IsNullOrEmpty(message))
+                                            bool selected = (from resultItem in resultListAdapter.Items
+                                                             let ecuName = resultItem.Tag as string
+                                                             where ecuName != null && string.CompareOrdinal(ecuName, errorReport.EcuName) == 0
+                                                             select resultItem.Selected).FirstOrDefault();
+                                            bool newEcu = (lastEcuName == null) || (string.CompareOrdinal(lastEcuName, errorReport.EcuName) != 0);
+                                            bool validResponse = errorReport.ErrorDict != null;
+                                            TableResultItem newResultItem = new TableResultItem(message, null, errorReport.EcuName, newEcu && validResponse, selected);
+                                            newResultItem.CheckChangeEvent += item =>
                                             {
-                                                bool selected = (from resultItem in resultListAdapter.Items
-                                                                 let ecuName = resultItem.Tag as string
-                                                                 where ecuName != null && string.CompareOrdinal(ecuName, errorReport.EcuName) == 0
-                                                                 select resultItem.Selected).FirstOrDefault();
-                                                bool newEcu = (lastEcuName == null) || (string.CompareOrdinal(lastEcuName, errorReport.EcuName) != 0);
-                                                bool validResponse = errorReport.ErrorDict != null;
-                                                TableResultItem newResultItem = new TableResultItem(message, null, errorReport.EcuName, newEcu && validResponse, selected);
-                                                newResultItem.CheckChangeEvent += item =>
+                                                if (_activityCommon == null)
                                                 {
-                                                    if (_activityCommon == null)
-                                                    {
-                                                        return;
-                                                    }
+                                                    return;
+                                                }
 
-                                                    UpdateButtonErrorReset(buttonErrorReset, resultListAdapter.Items);
-                                                    UpdateButtonErrorResetAll(buttonErrorResetAll, resultListAdapter.Items, pageInfo);
-                                                    UpdateButtonErrorSelect(buttonErrorSelect, resultListAdapter.Items);
-                                                };
+                                                UpdateButtonErrorReset(buttonErrorReset, resultListAdapter.Items);
+                                                UpdateButtonErrorResetAll(buttonErrorResetAll, resultListAdapter.Items, pageInfo);
+                                                UpdateButtonErrorSelect(buttonErrorSelect, resultListAdapter.Items);
+                                            };
 
-                                                bool shadow = errorReport is EdiabasThread.EdiabasErrorShadowReport;
-                                                newResultItem.CheckEnable = !ActivityCommon.ErrorResetActive && !shadow;
-                                                tempResultList.Add(newResultItem);
-                                            }
-
-                                            lastEcuName = errorReport.EcuName;
+                                            bool shadow = errorReport is EdiabasThread.EdiabasErrorShadowReport;
+                                            newResultItem.CheckEnable = !ActivityCommon.ErrorResetActive && !shadow;
+                                            tempResultList.Add(newResultItem);
                                         }
+
+                                        lastEcuName = errorReport.EcuName;
                                     }
                                 });
                             });
