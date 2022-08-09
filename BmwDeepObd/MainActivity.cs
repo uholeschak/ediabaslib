@@ -3704,22 +3704,22 @@ namespace BmwDeepObd
 
                                         lastEcuName = errorReport.EcuName;
                                     }
+
+                                    if (tempResultList.Count == 0)
+                                    {
+                                        tempResultList.Add(new TableResultItem(GetString(Resource.String.error_no_error), null));
+                                    }
+
+                                    UpdateButtonErrorReset(buttonErrorReset, tempResultList);
+                                    UpdateButtonErrorResetAll(buttonErrorResetAll, tempResultList, pageInfo);
+                                    UpdateButtonErrorSelect(buttonErrorSelect, tempResultList);
+                                    UpdateButtonErrorCopy(buttonErrorCopy, (errorReportList != null) ? tempResultList : null);
                                 });
                             });
-
-                            if (tempResultList.Count == 0)
-                            {
-                                tempResultList.Add(new TableResultItem(GetString(Resource.String.error_no_error), null));
-                            }
                         }
-
-                        UpdateButtonErrorReset(buttonErrorReset, tempResultList);
-                        UpdateButtonErrorResetAll(buttonErrorResetAll, tempResultList, pageInfo);
-                        UpdateButtonErrorSelect(buttonErrorSelect, tempResultList);
-                        UpdateButtonErrorCopy(buttonErrorCopy, (errorReportList != null) ? tempResultList : null);
                     }
                     else
-                    {
+                    {   // no error page
                         foreach (JobReader.DisplayInfo displayInfo in pageInfo.DisplayList)
                         {
                             string result = ActivityCommon.FormatResult(ActivityCommon.EdiabasThread?.Ediabas, pageInfo, displayInfo, resultDict, out Android.Graphics.Color? textColor, out double? dataValue);
