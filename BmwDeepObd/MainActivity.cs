@@ -3657,6 +3657,12 @@ namespace BmwDeepObd
                                         return;
                                     }
 
+                                    JobReader.PageInfo pageInfoCurrent = GetSelectedPage();
+                                    if (pageInfoCurrent != pageInfo)
+                                    {   // page changed
+                                        return;
+                                    }
+
                                     translationList = errorMessageData.TranslationList;
                                     if (errorMessageData.CommError)
                                     {
