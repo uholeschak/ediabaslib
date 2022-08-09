@@ -3636,7 +3636,6 @@ namespace BmwDeepObd
                             updateProgress = ActivityCommon.EdiabasThread.UpdateProgress;
                         }
 
-                        List<string> translationList = null;
                         if (errorReportList == null)
                         {
                             tempResultList.Add(new TableResultItem(string.Format(GetString(Resource.String.error_reading_errors), updateProgress), null));
@@ -3663,12 +3662,12 @@ namespace BmwDeepObd
                                         return;
                                     }
 
-                                    translationList = errorMessageData.TranslationList;
                                     if (errorMessageData.CommError)
                                     {
                                         _instanceData.CommErrorsOccurred = true;
                                     }
 
+                                    ProcessTranslation(errorMessageData.TranslationList);
                                     ProcessErrorReset(errorMessageData, resultListAdapter);
 
                                     string lastEcuName = null;
@@ -3718,59 +3717,6 @@ namespace BmwDeepObd
                         UpdateButtonErrorResetAll(buttonErrorResetAll, tempResultList, pageInfo);
                         UpdateButtonErrorSelect(buttonErrorSelect, tempResultList);
                         UpdateButtonErrorCopy(buttonErrorCopy, (errorReportList != null) ? tempResultList : null);
-
-                        if (translationList?.Count > 0)
-                        {
-                            if (!_translateActive)
-                            {
-                                // translation text present
-                                bool translate = false;
-                                if (_translationList == null || _translationList.Count != translationList.Count)
-                                {
-                                    translate = true;
-                                }
-                                else
-                                {
-                                    // ReSharper disable once LoopCanBeConvertedToQuery
-                                    for (int i = 0; i < translationList.Count; i++)
-                                    {
-                                        if (string.Compare(translationList[i], _translationList[i], StringComparison.Ordinal) != 0)
-                                        {
-                                            translate = true;
-                                            break;
-                                        }
-                                    }
-                                }
-
-                                if (translate)
-                                {
-                                    _translationList = translationList;
-                                    _translateActive = true;
-                                    if (!_activityCommon.TranslateStrings(translationList, transList =>
-                                    {
-                                        RunOnUiThread(() =>
-                                        {
-                                            if (_activityCommon == null)
-                                            {
-                                                return;
-                                            }
-                                            _translateActive = false;
-                                            _translatedList = transList;
-                                            UpdateOptionsMenu();
-                                            _updateHandler?.Post(() => { UpdateDisplay(); });
-                                        });
-                                    }))
-                                    {
-                                        _translateActive = false;
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            _translationList = null;
-                            _translatedList = null;
-                        }
                     }
                     else
                     {
@@ -4144,6 +4090,62 @@ namespace BmwDeepObd
                         break;
                     }
                 }
+            }
+        }
+
+        private void ProcessTranslation(List<string> translationList)
+        {
+            if (translationList?.Count > 0)
+            {
+                if (!_translateActive)
+                {
+                    // translation text present
+                    bool translate = false;
+                    if (_translationList == null || _translationList.Count != translationList.Count)
+                    {
+                        translate = true;
+                    }
+                    else
+                    {
+                        // ReSharper disable once LoopCanBeConvertedToQuery
+                        for (int i = 0; i < translationList.Count; i++)
+                        {
+                            if (string.Compare(translationList[i], _translationList[i], StringComparison.Ordinal) != 0)
+                            {
+                                translate = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (translate)
+                    {
+                        _translationList = translationList;
+                        _translateActive = true;
+                        if (!_activityCommon.TranslateStrings(translationList, transList =>
+                        {
+                            RunOnUiThread(() =>
+                            {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
+                                _translateActive = false;
+                                _translatedList = transList;
+                                UpdateOptionsMenu();
+                                _updateHandler?.Post(() => { UpdateDisplay(); });
+                            });
+                        }))
+                        {
+                            _translateActive = false;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                _translationList = null;
+                _translatedList = null;
             }
         }
 
