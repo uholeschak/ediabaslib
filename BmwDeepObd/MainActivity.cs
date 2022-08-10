@@ -3808,54 +3808,7 @@ namespace BmwDeepObd
 
                     if (resultGridAdapter != null)
                     {
-                        // check if list has changed
-                        bool resultChanged = false;
-                        if (tempResultGrid.Count != resultGridAdapter.Items.Count)
-                        {
-                            resultChanged = true;
-                        }
-                        else
-                        {
-                            for (int i = 0; i < tempResultGrid.Count; i++)
-                            {
-                                GridResultItem resultNew = tempResultGrid[i];
-                                GridResultItem resultOld = resultGridAdapter.Items[i];
-                                if (string.CompareOrdinal(resultNew.Name ?? string.Empty, resultOld.Name ?? string.Empty) != 0)
-                                {
-                                    resultChanged = true;
-                                    break;
-                                }
-                                if (string.CompareOrdinal(resultNew.ValueText ?? string.Empty, resultOld.ValueText ?? string.Empty) != 0)
-                                {
-                                    resultChanged = true;
-                                    break;
-                                }
-                                if (Math.Abs(resultNew.Value - resultOld.Value) > 0.000001)
-                                {
-                                    resultChanged = true;
-                                    break;
-                                }
-                                if (resultNew.GaugeSize != resultOld.GaugeSize)
-                                {
-                                    resultChanged = true;
-                                    break;
-                                }
-                                if (resultNew.GaugeColor != resultOld.GaugeColor)
-                                {
-                                    resultChanged = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if (resultChanged || forceUpdate)
-                        {
-                            resultGridAdapter.Items.Clear();
-                            foreach (GridResultItem resultItem in tempResultGrid)
-                            {
-                                resultGridAdapter.Items.Add(resultItem);
-                            }
-                            resultGridAdapter.NotifyDataSetChanged();
-                        }
+                        UpdateResultGridAdapter(resultGridAdapter, tempResultGrid, forceUpdate);
                         gridViewResult.SetColumnWidth(gaugeSize);
                     }
                     else
@@ -4107,6 +4060,7 @@ namespace BmwDeepObd
 
         private void UpdateResultListAdapter(ResultListAdapter resultListAdapter, List<TableResultItem> tempResultList, bool forceUpdate)
         {
+            // check if list has changed
             bool resultChanged = false;
             if (tempResultList.Count != resultListAdapter.Items.Count)
             {
@@ -4150,6 +4104,58 @@ namespace BmwDeepObd
                 resultListAdapter.Items.Clear();
                 resultListAdapter.Items.AddRange(tempResultList);
                 resultListAdapter.NotifyDataSetChanged();
+            }
+        }
+
+        private void UpdateResultGridAdapter(ResultGridAdapter resultGridAdapter, List<GridResultItem> tempResultGrid, bool forceUpdate)
+        {
+            // check if list has changed
+            bool resultChanged = false;
+            if (tempResultGrid.Count != resultGridAdapter.Items.Count)
+            {
+                resultChanged = true;
+            }
+            else
+            {
+                for (int i = 0; i < tempResultGrid.Count; i++)
+                {
+                    GridResultItem resultNew = tempResultGrid[i];
+                    GridResultItem resultOld = resultGridAdapter.Items[i];
+                    if (string.CompareOrdinal(resultNew.Name ?? string.Empty, resultOld.Name ?? string.Empty) != 0)
+                    {
+                        resultChanged = true;
+                        break;
+                    }
+                    if (string.CompareOrdinal(resultNew.ValueText ?? string.Empty, resultOld.ValueText ?? string.Empty) != 0)
+                    {
+                        resultChanged = true;
+                        break;
+                    }
+                    if (Math.Abs(resultNew.Value - resultOld.Value) > 0.000001)
+                    {
+                        resultChanged = true;
+                        break;
+                    }
+                    if (resultNew.GaugeSize != resultOld.GaugeSize)
+                    {
+                        resultChanged = true;
+                        break;
+                    }
+                    if (resultNew.GaugeColor != resultOld.GaugeColor)
+                    {
+                        resultChanged = true;
+                        break;
+                    }
+                }
+            }
+            if (resultChanged || forceUpdate)
+            {
+                resultGridAdapter.Items.Clear();
+                foreach (GridResultItem resultItem in tempResultGrid)
+                {
+                    resultGridAdapter.Items.Add(resultItem);
+                }
+                resultGridAdapter.NotifyDataSetChanged();
             }
         }
 
