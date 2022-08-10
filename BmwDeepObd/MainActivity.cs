@@ -3714,8 +3714,12 @@ namespace BmwDeepObd
                                     UpdateButtonErrorResetAll(buttonErrorResetAll, tempResultList, pageInfo);
                                     UpdateButtonErrorSelect(buttonErrorSelect, tempResultList);
                                     UpdateButtonErrorCopy(buttonErrorCopy, (errorReportList != null) ? tempResultList : null);
+
+                                    UpdateResultListAdapter(resultListAdapter, tempResultList, forceUpdate);
                                 });
                             });
+
+                            return;
                         }
                     }
                     else
@@ -3828,8 +3832,6 @@ namespace BmwDeepObd
 
                         UpdateResultListAdapter(resultListAdapter, tempResultList, forceUpdate);
                     }
-
-                    _imageBackground.Visibility = ViewStates.Gone;
                 }
                 else
                 {
@@ -3892,11 +3894,11 @@ namespace BmwDeepObd
             }
         }
 
-        private void EvaluateErrorMessages(JobReader.PageInfo pageInfo, List<EdiabasThread.EdiabasErrorReport> errorReportList, MethodInfo formatErrorResult, ErrorMessageResultDelegate resultHandler)
+        private bool EvaluateErrorMessages(JobReader.PageInfo pageInfo, List<EdiabasThread.EdiabasErrorReport> errorReportList, MethodInfo formatErrorResult, ErrorMessageResultDelegate resultHandler)
         {
             if (IsErrorEvalJobRunning())
             {
-                return;
+                return false;
             }
 
             List<string> translationList = new List<string>();
@@ -3935,6 +3937,8 @@ namespace BmwDeepObd
             {
                 resultHandler.Invoke(errorMessageData);
             }
+
+            return true;
         }
 
         private void ProcessErrorReset(ErrorMessageData errorMessageData, ResultListAdapter resultListAdapter)
@@ -4105,6 +4109,8 @@ namespace BmwDeepObd
                 resultListAdapter.Items.AddRange(tempResultList);
                 resultListAdapter.NotifyDataSetChanged();
             }
+
+            _imageBackground.Visibility = ViewStates.Gone;
         }
 
         private void UpdateResultGridAdapter(ResultGridAdapter resultGridAdapter, List<GridResultItem> tempResultGrid, bool forceUpdate)
@@ -4157,6 +4163,8 @@ namespace BmwDeepObd
                 }
                 resultGridAdapter.NotifyDataSetChanged();
             }
+
+            _imageBackground.Visibility = ViewStates.Gone;
         }
 
         private string GenerateErrorMessage(JobReader.PageInfo pageInfo, EdiabasThread.EdiabasErrorReport errorReport, int errorIndex, MethodInfo formatErrorResult, ref List<string> translationList, ref List<ActivityCommon.VagDtcEntry> dtcList)
