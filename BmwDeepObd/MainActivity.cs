@@ -3873,51 +3873,7 @@ namespace BmwDeepObd
                             //pageInfo.ClassObject.UpdateResultList(pageInfo, resultDict?.ToDictionary(), tempResultList);
                         }
 
-                        // check if list has changed
-                        bool resultChanged = false;
-                        if (tempResultList.Count != resultListAdapter.Items.Count)
-                        {
-                            resultChanged = true;
-                        }
-                        else
-                        {
-                            for (int i = 0; i < tempResultList.Count; i++)
-                            {
-                                TableResultItem resultNew = tempResultList[i];
-                                TableResultItem resultOld = resultListAdapter.Items[i];
-                                if (string.CompareOrdinal(resultNew.Text1 ?? string.Empty, resultOld.Text1 ?? string.Empty) != 0)
-                                {
-                                    resultChanged = true;
-                                    break;
-                                }
-                                if (string.CompareOrdinal(resultNew.Text2 ?? string.Empty, resultOld.Text2 ?? string.Empty) != 0)
-                                {
-                                    resultChanged = true;
-                                    break;
-                                }
-                                if (resultNew.TextColor != resultOld.TextColor)
-                                {
-                                    resultChanged = true;
-                                    break;
-                                }
-                                if (resultNew.CheckVisible != resultOld.CheckVisible)
-                                {
-                                    resultChanged = true;
-                                    break;
-                                }
-                                if (resultNew.CheckEnable != resultOld.CheckEnable)
-                                {
-                                    resultChanged = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if (resultChanged || forceUpdate)
-                        {
-                            resultListAdapter.Items.Clear();
-                            resultListAdapter.Items.AddRange(tempResultList);
-                            resultListAdapter.NotifyDataSetChanged();
-                        }
+                        UpdateResultListAdapter(resultListAdapter, tempResultList, forceUpdate);
                     }
 
                     _imageBackground.Visibility = ViewStates.Gone;
@@ -4146,6 +4102,54 @@ namespace BmwDeepObd
             {
                 _translationList = null;
                 _translatedList = null;
+            }
+        }
+
+        private void UpdateResultListAdapter(ResultListAdapter resultListAdapter, List<TableResultItem> tempResultList, bool forceUpdate)
+        {
+            bool resultChanged = false;
+            if (tempResultList.Count != resultListAdapter.Items.Count)
+            {
+                resultChanged = true;
+            }
+            else
+            {
+                for (int i = 0; i < tempResultList.Count; i++)
+                {
+                    TableResultItem resultNew = tempResultList[i];
+                    TableResultItem resultOld = resultListAdapter.Items[i];
+                    if (string.CompareOrdinal(resultNew.Text1 ?? string.Empty, resultOld.Text1 ?? string.Empty) != 0)
+                    {
+                        resultChanged = true;
+                        break;
+                    }
+                    if (string.CompareOrdinal(resultNew.Text2 ?? string.Empty, resultOld.Text2 ?? string.Empty) != 0)
+                    {
+                        resultChanged = true;
+                        break;
+                    }
+                    if (resultNew.TextColor != resultOld.TextColor)
+                    {
+                        resultChanged = true;
+                        break;
+                    }
+                    if (resultNew.CheckVisible != resultOld.CheckVisible)
+                    {
+                        resultChanged = true;
+                        break;
+                    }
+                    if (resultNew.CheckEnable != resultOld.CheckEnable)
+                    {
+                        resultChanged = true;
+                        break;
+                    }
+                }
+            }
+            if (resultChanged || forceUpdate)
+            {
+                resultListAdapter.Items.Clear();
+                resultListAdapter.Items.AddRange(tempResultList);
+                resultListAdapter.NotifyDataSetChanged();
             }
         }
 
