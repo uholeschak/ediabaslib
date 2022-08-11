@@ -3659,6 +3659,7 @@ namespace BmwDeepObd
                                     bool commActive = ActivityCommon.CommActive && ActivityCommon.EdiabasThread.CommActive;
                                     if (!commActive)
                                     {
+                                        _updateHandler?.Post(() => { UpdateDisplay(); });
                                         return;
                                     }
 
