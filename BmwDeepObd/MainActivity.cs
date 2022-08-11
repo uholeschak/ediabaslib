@@ -3656,6 +3656,12 @@ namespace BmwDeepObd
                                         return;
                                     }
 
+                                    bool commActive = ActivityCommon.CommActive && ActivityCommon.EdiabasThread.CommActive;
+                                    if (!commActive)
+                                    {
+                                        return;
+                                    }
+
                                     JobReader.PageInfo pageInfoCurrent = GetSelectedPage();
                                     if (pageInfoCurrent != pageInfo)
                                     {   // page changed
