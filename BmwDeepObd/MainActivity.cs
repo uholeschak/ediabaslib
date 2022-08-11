@@ -3901,42 +3901,47 @@ namespace BmwDeepObd
                 return false;
             }
 
-            List<string> translationList = new List<string>();
-            List<ErrorMessageEntry> errorList = new List<ErrorMessageEntry>();
-            List<EdiabasThread.EdiabasErrorReportReset> errorResetList = new List<EdiabasThread.EdiabasErrorReportReset>();
-            List<ActivityCommon.VagDtcEntry> dtcList = null;
-            bool commError = false;
-            int errorIndex = 0;
-            foreach (EdiabasThread.EdiabasErrorReport errorReport in errorReportList)
+            _errorEvalThread = new Thread(() =>
             {
-                if (errorReport is EdiabasThread.EdiabasErrorReportReset errorReportReset)
+                List<string> translationList = new List<string>();
+                List<ErrorMessageEntry> errorList = new List<ErrorMessageEntry>();
+                List<EdiabasThread.EdiabasErrorReportReset> errorResetList = new List<EdiabasThread.EdiabasErrorReportReset>();
+                List<ActivityCommon.VagDtcEntry> dtcList = null;
+                bool commError = false;
+                int errorIndex = 0;
+                foreach (EdiabasThread.EdiabasErrorReport errorReport in errorReportList)
                 {
-                    switch (errorReportReset.ResetState)
+                    if (errorReport is EdiabasThread.EdiabasErrorReportReset errorReportReset)
                     {
-                        case EdiabasThread.EdiabasErrorReportReset.ErrorRestState.Ok:
-                        case EdiabasThread.EdiabasErrorReportReset.ErrorRestState.Condition:
-                            errorResetList.Add(errorReportReset);
-                            break;
+                        switch (errorReportReset.ResetState)
+                        {
+                            case EdiabasThread.EdiabasErrorReportReset.ErrorRestState.Ok:
+                            case EdiabasThread.EdiabasErrorReportReset.ErrorRestState.Condition:
+                                errorResetList.Add(errorReportReset);
+                                break;
+                        }
+
+                        continue;
                     }
 
-                    continue;
+                    if (ActivityCommon.IsCommunicationError(errorReport.ExecptionText))
+                    {
+                        commError = true;
+                    }
+
+                    string message = GenerateErrorMessage(pageInfo, errorReport, errorIndex, formatErrorResult, ref translationList, ref dtcList);
+                    errorList.Add(new ErrorMessageEntry(errorReport, message));
+                    errorIndex++;
                 }
 
-                if (ActivityCommon.IsCommunicationError(errorReport.ExecptionText))
+                if (resultHandler != null)
                 {
-                    commError = true;
+                    ErrorMessageData errorMessageData = new ErrorMessageData(errorList, errorResetList, translationList, commError);
+                    resultHandler.Invoke(errorMessageData);
                 }
+            });
 
-                string message = GenerateErrorMessage(pageInfo, errorReport, errorIndex, formatErrorResult, ref translationList, ref dtcList);
-                errorList.Add(new ErrorMessageEntry(errorReport, message));
-                errorIndex++;
-            }
-
-            ErrorMessageData errorMessageData = new ErrorMessageData(errorList, errorResetList, translationList, commError);
-            if (resultHandler != null)
-            {
-                resultHandler.Invoke(errorMessageData);
-            }
+            _errorEvalThread.Start();
 
             return true;
         }
