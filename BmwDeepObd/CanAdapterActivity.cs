@@ -486,7 +486,8 @@ namespace BmwDeepObd
                 case UsbManager.ActionUsbDeviceAttached:
                     if (_activityActive)
                     {
-                        if (intent.GetParcelableExtra(UsbManager.ExtraDevice) is UsbDevice usbDevice)
+                        UsbDevice usbDevice = intent.GetParcelableExtraType<UsbDevice>(UsbManager.ExtraDevice);
+                        if (usbDevice != null)
                         {
                             _activityCommon.RequestUsbPermission(usbDevice);
                             UpdateDisplay();
@@ -497,8 +498,8 @@ namespace BmwDeepObd
                 case UsbManager.ActionUsbDeviceDetached:
                     if (_interfaceType == ActivityCommon.InterfaceType.Ftdi)
                     {
-                        if (intent.GetParcelableExtra(UsbManager.ExtraDevice) is UsbDevice usbDevice &&
-                            EdFtdiInterface.IsValidUsbDevice(usbDevice))
+                        UsbDevice usbDevice = intent.GetParcelableExtraType<UsbDevice>(UsbManager.ExtraDevice);
+                        if (usbDevice != null && EdFtdiInterface.IsValidUsbDevice(usbDevice))
                         {
                             EdiabasClose();
                         }

@@ -3195,7 +3195,8 @@ namespace BmwDeepObd
                 case UsbManager.ActionUsbDeviceAttached:
                     if (_activityActive)
                     {
-                        if (intent.GetParcelableExtra(UsbManager.ExtraDevice) is UsbDevice usbDevice)
+                        UsbDevice usbDevice = intent.GetParcelableExtraType<UsbDevice>(UsbManager.ExtraDevice);
+                        if (usbDevice != null)
                         {
                             _activityCommon.RequestUsbPermission(usbDevice);
                             UpdateOptionsMenu();
@@ -3207,8 +3208,8 @@ namespace BmwDeepObd
                 case UsbManager.ActionUsbDeviceDetached:
                     if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Ftdi)
                     {
-                        if (intent.GetParcelableExtra(UsbManager.ExtraDevice) is UsbDevice usbDevice &&
-                            EdFtdiInterface.IsValidUsbDevice(usbDevice))
+                        UsbDevice usbDevice = intent.GetParcelableExtraType<UsbDevice>(UsbManager.ExtraDevice);
+                        if (usbDevice != null && EdFtdiInterface.IsValidUsbDevice(usbDevice))
                         {
                             StopEdiabasThread(false);
                         }
@@ -7023,7 +7024,8 @@ namespace BmwDeepObd
             {
                 try
                 {
-                    if (intent?.GetParcelableExtra(Intent.ExtraChosenComponent) is ComponentName clickedComponent)
+                    ComponentName clickedComponent = intent?.GetParcelableExtraType<ComponentName>(Intent.ExtraChosenComponent);
+                    if (clickedComponent != null)
                     {
                         string packageName = clickedComponent.PackageName;
                         string className = clickedComponent.ClassName;

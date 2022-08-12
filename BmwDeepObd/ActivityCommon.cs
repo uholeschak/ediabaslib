@@ -9845,8 +9845,8 @@ namespace BmwDeepObd
                     case UsbManager.ActionUsbDeviceAttached:
                     case UsbManager.ActionUsbDeviceDetached:
                         {
-                            UsbDevice usbDevice = intent.GetParcelableExtra(UsbManager.ExtraDevice) as UsbDevice;
-                            if (EdFtdiInterface.IsValidUsbDevice(usbDevice))
+                            UsbDevice usbDevice = intent.GetParcelableExtraType<UsbDevice>(UsbManager.ExtraDevice);
+                            if (usbDevice != null && EdFtdiInterface.IsValidUsbDevice(usbDevice))
                             {
                                 _activityCommon._bcReceiverUpdateDisplayHandler?.Invoke();
                             }
