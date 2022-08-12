@@ -1940,7 +1940,7 @@ namespace BmwDeepObd
             }
 
             Button buttonErrorSelect = v.FindViewById<Button>(Resource.Id.button_error_select);
-            bool select = buttonErrorSelect.Tag is Java.Lang.Boolean selectAll && selectAll.BooleanValue();
+            bool select = buttonErrorSelect?.Tag is Java.Lang.Boolean selectAll && selectAll.BooleanValue();
 
             View parent = v.Parent as View;
             parent = parent?.Parent as View;
@@ -4634,7 +4634,7 @@ namespace BmwDeepObd
             int resId = selectAll ? Resource.String.button_error_select_all : Resource.String.button_error_deselect_all;
             buttonErrorSelect.Enabled = enabled;
             buttonErrorSelect.Text = GetString(resId);
-            buttonErrorSelect.Tag = new Java.Lang.Boolean(selectAll);
+            buttonErrorSelect.Tag = Java.Lang.Boolean.ValueOf(selectAll);
         }
 
         private void UpdateButtonErrorCopy(Button buttonErrorCopy, List<TableResultItem> resultItems)
