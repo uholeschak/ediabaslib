@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using Android.Bluetooth;
+using Android.Content;
+using Android.OS;
 using Java.Util;
 
 namespace EdiabasLib
@@ -776,7 +778,7 @@ namespace EdiabasLib
                         case BluetoothDevice.ActionAclConnected:
                         case BluetoothDevice.ActionAclDisconnected:
                             {
-                                BluetoothDevice device = (BluetoothDevice)intent.GetParcelableExtra(BluetoothDevice.ExtraDevice);
+                                BluetoothDevice device = intent.GetParcelableExtraType<BluetoothDevice>(BluetoothDevice.ExtraDevice);
                                 if (device != null)
                                 {
                                     if (!string.IsNullOrEmpty(_connectDeviceAddress) &&
@@ -795,6 +797,27 @@ namespace EdiabasLib
                     // ignored
                 }
             }
+        }
+    }
+
+    public static class AndroidExtensions
+    {
+        public static T GetParcelableExtraType<T>(this Intent intent, string name)
+        {
+            object parcel;
+
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
+            {
+                parcel = intent.GetParcelableExtra(name, Java.Lang.Class.FromType(typeof(T)));
+            }
+            else
+            {
+#pragma warning disable CS0618
+                parcel = intent.GetParcelableExtra(name);
+#pragma warning restore CS0618
+            }
+
+            return (T)Convert.ChangeType(parcel, typeof(T));
         }
     }
 }
