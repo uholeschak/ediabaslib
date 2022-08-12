@@ -1818,7 +1818,7 @@ namespace BmwDeepObd
                     }
                 }
                 // ReSharper disable once UsePatternMatching
-                Java.Lang.Boolean result = configHciSnoopLog.Invoke(_btAdapter, new Java.Lang.Boolean(enable)) as Java.Lang.Boolean;
+                Java.Lang.Boolean result = configHciSnoopLog.Invoke(_btAdapter, Java.Lang.Boolean.ValueOf(enable)) as Java.Lang.Boolean;
                 if (!enable)
                 {
                     try
