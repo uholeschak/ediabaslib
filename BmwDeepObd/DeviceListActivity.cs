@@ -2518,7 +2518,7 @@ namespace BmwDeepObd
                         {
                             // Get the BluetoothDevice object from the Intent
                             // ReSharper disable once UsePatternMatching
-                            BluetoothDevice device = intent.GetParcelableExtra(BluetoothDevice.ExtraDevice) as BluetoothDevice;
+                            BluetoothDevice device = intent.GetParcelableExtraType<BluetoothDevice>(BluetoothDevice.ExtraDevice);
                             // If it's already paired, skip it, because it's been listed already
                             if (device != null && device.BondState != Bond.Bonded)
                             {
@@ -2567,7 +2567,7 @@ namespace BmwDeepObd
                         case BluetoothDevice.ActionAclDisconnected:
                         {
                             // ReSharper disable once UsePatternMatching
-                            BluetoothDevice device = intent.GetParcelableExtra(BluetoothDevice.ExtraDevice) as BluetoothDevice;
+                            BluetoothDevice device = intent.GetParcelableExtraType<BluetoothDevice>(BluetoothDevice.ExtraDevice);
                             if (device != null)
                             {
                                 if (!string.IsNullOrEmpty(_chat._connectDeviceAddress) &&
@@ -2582,7 +2582,7 @@ namespace BmwDeepObd
 
                         case BluetoothDevice.ActionBondStateChanged:
                         {
-                            BluetoothDevice device = intent.GetParcelableExtra(BluetoothDevice.ExtraDevice) as BluetoothDevice;
+                            BluetoothDevice device = intent.GetParcelableExtraType<BluetoothDevice>(BluetoothDevice.ExtraDevice);
                             if (device != null)
                             {
                                 if (device.BondState == Bond.Bonded)

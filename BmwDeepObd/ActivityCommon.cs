@@ -9845,8 +9845,8 @@ namespace BmwDeepObd
                     case UsbManager.ActionUsbDeviceAttached:
                     case UsbManager.ActionUsbDeviceDetached:
                         {
-                            UsbDevice usbDevice = intent.GetParcelableExtra(UsbManager.ExtraDevice) as UsbDevice;
-                            if (EdFtdiInterface.IsValidUsbDevice(usbDevice))
+                            UsbDevice usbDevice = intent.GetParcelableExtraType<UsbDevice>(UsbManager.ExtraDevice);
+                            if (usbDevice != null && EdFtdiInterface.IsValidUsbDevice(usbDevice))
                             {
                                 _activityCommon._bcReceiverUpdateDisplayHandler?.Invoke();
                             }
@@ -9986,6 +9986,27 @@ namespace BmwDeepObd
                 .GetField(val.ToString())
                 .GetCustomAttributes(typeof(DescriptionAttribute), false);
             return attributes.Length > 0 ? attributes[0].Description : string.Empty;
+        }
+    }
+
+    public static class AndroidExtensions
+    {
+        public static T GetParcelableExtraType<T>(this Intent intent, string name)
+        {
+            object parcel;
+
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
+            {
+                parcel = intent.GetParcelableExtra(name, Java.Lang.Class.FromType(typeof(T)));
+            }
+            else
+            {
+#pragma warning disable CS0618
+                parcel = intent.GetParcelableExtra(name);
+#pragma warning restore CS0618
+            }
+
+            return (T)Convert.ChangeType(parcel, typeof(T));
         }
     }
 }
