@@ -62,7 +62,7 @@ namespace BmwDeepObd
         private enum ActivityRequest
         {
             RequestAppStorePermissions,
-            RequestAppDetailSettings,
+            RequestAppDetailBtSettings,
             RequestOverlayPermissions,
             RequestSelectDevice,
             RequestAdapterConfig,
@@ -183,7 +183,6 @@ namespace BmwDeepObd
             public long LastVersionCode { get; set; }
             public bool VersionInfoShown { get; set; }
             public bool StorageRequirementsAccepted { get; set; }
-            public bool BtPermissionWarningShown { get; set; }
             public bool BatteryWarningShown { get; set; }
             public bool ConfigMatchVehicleShown { get; set; }
             public bool DataLogTemporaryShown { get; set; }
@@ -948,7 +947,7 @@ namespace BmwDeepObd
                     RequestStoragePermissions(true);
                     break;
 
-                case ActivityRequest.RequestAppDetailSettings:
+                case ActivityRequest.RequestAppDetailBtSettings:
                     UpdateOptionsMenu();
                     break;
 
@@ -1735,22 +1734,18 @@ namespace BmwDeepObd
                         break;
                     }
 
-                    if (!_instanceData.BtPermissionWarningShown)
-                    {
-                        _instanceData.BtPermissionWarningShown = true;
-                        new AlertDialog.Builder(this)
-                            .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
-                            {
-                                ActivityCommon.OpenAppSettingDetails(this, (int)ActivityRequest.RequestAppDetailSettings);
-                            })
-                            .SetNegativeButton(Resource.String.button_no, (sender, args) =>
-                            {
-                            })
-                            .SetCancelable(true)
-                            .SetMessage(Resource.String.access_permission_rejected)
-                            .SetTitle(Resource.String.alert_title_warning)
-                            .Show();
-                    }
+                    new AlertDialog.Builder(this)
+                        .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                        {
+                            ActivityCommon.OpenAppSettingDetails(this, (int)ActivityRequest.RequestAppDetailBtSettings);
+                        })
+                        .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                        {
+                        })
+                        .SetCancelable(true)
+                        .SetMessage(Resource.String.access_permission_rejected)
+                        .SetTitle(Resource.String.alert_title_warning)
+                        .Show();
                     break;
             }
         }
