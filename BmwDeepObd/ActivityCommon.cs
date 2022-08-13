@@ -3653,12 +3653,22 @@ namespace BmwDeepObd
                     {
                         try
                         {
+                            bool directEnable = true;
                             if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
                             {
-                                Intent intentBtEnabled = new Intent(BluetoothAdapter.ActionRequestEnable);
-                                _activity?.StartActivity(intentBtEnabled);
+                                try
+                                {
+                                    Intent intentBtEnabled = new Intent(BluetoothAdapter.ActionRequestEnable);
+                                    _activity?.StartActivity(intentBtEnabled);
+                                    directEnable = false;
+                                }
+                                catch (Exception)
+                                {
+                                    directEnable = true;
+                                }
                             }
-                            else
+
+                            if (directEnable)
                             {
 #pragma warning disable 0618
                                 _btAdapter.Enable();
