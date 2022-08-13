@@ -439,6 +439,9 @@ namespace BmwDeepObd
         private const string IbmTransTranslate = @"/v3/translate";
         public static Regex Ipv4RegEx = new Regex(@"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
         public static readonly long TickResolMs = Stopwatch.Frequency / 1000;
+
+        public const int RequestPermissionExternalStorage = 0;
+        public const int RequestPermissionBluetooth = 1;
         public readonly string[] PermissionsBluetoothConnect =
         {
             Android.Manifest.Permission.BluetoothConnect,
@@ -3593,7 +3596,7 @@ namespace BmwDeepObd
             };
         }
 
-        private bool RequestBtPermissions(int requestCode)
+        public bool RequestBtPermissions()
         {
             if (MtcBtService)
             {
@@ -3612,7 +3615,7 @@ namespace BmwDeepObd
                     return true;
                 }
 
-                ActivityCompat.RequestPermissions(_activity, PermissionsBluetoothConnect, requestCode);
+                ActivityCompat.RequestPermissions(_activity, PermissionsBluetoothConnect, RequestPermissionBluetooth);
                 return true;
             }
             catch (Exception)
@@ -3721,6 +3724,11 @@ namespace BmwDeepObd
             switch (_selectedInterface)
             {
                 case InterfaceType.Bluetooth:
+                    if (!RequestBtPermissions())
+                    {
+                        return false;
+                    }
+
                     if (MtcBtService)
                     {
                         EnableInterface();

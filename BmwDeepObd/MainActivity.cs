@@ -62,6 +62,7 @@ namespace BmwDeepObd
         private enum ActivityRequest
         {
             RequestAppStorePermissions,
+            RequestAppDetailSettings,
             RequestOverlayPermissions,
             RequestSelectDevice,
             RequestAdapterConfig,
@@ -182,6 +183,7 @@ namespace BmwDeepObd
             public long LastVersionCode { get; set; }
             public bool VersionInfoShown { get; set; }
             public bool StorageRequirementsAccepted { get; set; }
+            public bool BtPermissionWarningShown { get; set; }
             public bool BatteryWarningShown { get; set; }
             public bool ConfigMatchVehicleShown { get; set; }
             public bool DataLogTemporaryShown { get; set; }
@@ -409,7 +411,6 @@ namespace BmwDeepObd
         private const int MenuGroupRecentId = 1;
         private const int CpuLoadCritical = 70;
         private const int AutoHideTimeout = 3000;
-        private const int RequestPermissionExternalStorage = 0;
         private readonly string[] _permissionsExternalStorage =
         {
             Android.Manifest.Permission.WriteExternalStorage
@@ -945,6 +946,9 @@ namespace BmwDeepObd
             {
                 case ActivityRequest.RequestAppStorePermissions:
                     RequestStoragePermissions(true);
+                    break;
+
+                case ActivityRequest.RequestAppDetailSettings:
                     break;
 
                 case ActivityRequest.RequestOverlayPermissions:
@@ -1687,7 +1691,7 @@ namespace BmwDeepObd
             }
             switch (requestCode)
             {
-                case RequestPermissionExternalStorage:
+                case ActivityCommon.RequestPermissionExternalStorage:
                     if (grantResults.Length > 0 && grantResults.All(permission => permission == Permission.Granted))
                     {
                         StoragePermissionGranted();
@@ -1731,6 +1735,39 @@ namespace BmwDeepObd
                             Finish();
                         }
                     };
+                    break;
+
+                case ActivityCommon.RequestPermissionBluetooth:
+                    if (grantResults.Length > 0 && grantResults.All(permission => permission == Permission.Granted))
+                    {
+                        UpdateOptionsMenu();
+                    }
+
+                    if (!_instanceData.BtPermissionWarningShown)
+                    {
+                        _instanceData.BtPermissionWarningShown = true;
+                        new AlertDialog.Builder(this)
+                            .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                            {
+                                try
+                                {
+                                    Intent intent = new Intent(Android.Provider.Settings.ActionApplicationDetailsSettings,
+                                        Android.Net.Uri.Parse("package:" + Android.App.Application.Context.PackageName));
+                                    StartActivityForResult(intent, (int)ActivityRequest.RequestAppDetailSettings);
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
+                            })
+                            .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                            {
+                            })
+                            .SetCancelable(true)
+                            .SetMessage(Resource.String.access_permission_rejected)
+                            .SetTitle(Resource.String.alert_title_warning)
+                            .Show();
+                    }
                     break;
             }
         }
@@ -3058,7 +3095,7 @@ namespace BmwDeepObd
                 Finish();
             }
 
-            ActivityCompat.RequestPermissions(this, _permissionsExternalStorage, RequestPermissionExternalStorage);
+            ActivityCompat.RequestPermissions(this, _permissionsExternalStorage, ActivityCommon.RequestPermissionExternalStorage);
         }
 
         private void StoragePermissionGranted()

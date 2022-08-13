@@ -94,7 +94,6 @@ namespace BmwDeepObd
         private static readonly Java.Util.UUID ZeroUuid = Java.Util.UUID.FromString("00000000-0000-0000-0000-000000000000");
         private const string DefaultModulePwd = "1234";
         private const int ResponseTimeout = 1000;
-        private const int RequestPermissionBluetooth = 0;
         private readonly string[] _permissionsLocation =
         {
             Android.Manifest.Permission.AccessFineLocation,
@@ -404,7 +403,7 @@ namespace BmwDeepObd
 
             switch (requestCode)
             {
-                case RequestPermissionBluetooth:
+                case ActivityCommon.RequestPermissionBluetooth:
                     if (grantResults.Length > 0 && grantResults.All(permission => permission == Permission.Granted))
                     {
                         BtPermissionGranted();
@@ -465,7 +464,7 @@ namespace BmwDeepObd
             }
 
             _instanceData.BtPermissionRequested = true;
-            ActivityCompat.RequestPermissions(this, requestPermissions, RequestPermissionBluetooth);
+            ActivityCompat.RequestPermissions(this, requestPermissions, ActivityCommon.RequestPermissionBluetooth);
         }
 
         private void BtPermissionGranted()
