@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using Android.Content;
+using Android.Content.PM;
 using Android.Content.Res;
 using Android.Hardware.Usb;
 using Android.OS;
@@ -30,6 +31,7 @@ namespace BmwDeepObd
     {
         private enum ActivityRequest
         {
+            RequestAppDetailBtSettings,
             RequestSelectSgbd,
             RequestSelectDevice,
             RequestAdapterConfig,
@@ -391,6 +393,11 @@ namespace BmwDeepObd
         {
             switch ((ActivityRequest)requestCode)
             {
+                case ActivityRequest.RequestAppDetailBtSettings:
+                    UpdateOptionsMenu();
+                    UpdateDisplay();
+                    break;
+
                 case ActivityRequest.RequestSelectSgbd:
                     // When FilePickerActivity returns with a file
                     if (data?.Extras != null && resultCode == Android.App.Result.Ok)
@@ -460,6 +467,37 @@ namespace BmwDeepObd
 
                     UpdateOptionsMenu();
                     UpdateDisplay();
+                    break;
+            }
+        }
+
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
+        {
+            if (_activityCommon == null)
+            {
+                return;
+            }
+            switch (requestCode)
+            {
+                case ActivityCommon.RequestPermissionBluetooth:
+                    if (grantResults.Length > 0 && grantResults.All(permission => permission == Permission.Granted))
+                    {
+                        UpdateOptionsMenu();
+                        break;
+                    }
+
+                    new AlertDialog.Builder(this)
+                        .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                        {
+                            ActivityCommon.OpenAppSettingDetails(this, (int)ActivityRequest.RequestAppDetailBtSettings);
+                        })
+                        .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                        {
+                        })
+                        .SetCancelable(true)
+                        .SetMessage(Resource.String.access_permission_rejected)
+                        .SetTitle(Resource.String.alert_title_warning)
+                        .Show();
                     break;
             }
         }
