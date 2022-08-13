@@ -360,17 +360,7 @@ namespace BmwDeepObd
                     AlertDialog alertDialog = new AlertDialog.Builder(this)
                         .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                         {
-                            try
-                            {
-                                Intent intent = new Intent(Android.Provider.Settings.ActionApplicationDetailsSettings,
-                                    Android.Net.Uri.Parse("package:" + Android.App.Application.Context.PackageName));
-                                StartActivityForResult(intent, (int)ActivityRequest.RequestAppStorePermissions);
-                                finish = false;
-                            }
-                            catch (Exception)
-                            {
-                                // ignored
-                            }
+                            ActivityCommon.OpenAppSettingDetails(this, (int)ActivityRequest.RequestAppStorePermissions);
                         })
                         .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                         {
