@@ -442,8 +442,9 @@ namespace BmwDeepObd
 
         public const int RequestPermissionExternalStorage = 0;
         public const int RequestPermissionBluetooth = 1;
-        public readonly string[] PermissionsBluetoothConnect =
+        public static readonly string[] PermissionsBluetooth =
         {
+            Android.Manifest.Permission.BluetoothScan,
             Android.Manifest.Permission.BluetoothConnect,
         };
 #if DEBUG
@@ -3610,12 +3611,12 @@ namespace BmwDeepObd
 
             try
             {
-                if (PermissionsBluetoothConnect.All(permission => ContextCompat.CheckSelfPermission(_activity, permission) == Permission.Granted))
+                if (PermissionsBluetooth.All(permission => ContextCompat.CheckSelfPermission(_activity, permission) == Permission.Granted))
                 {
                     return true;
                 }
 
-                ActivityCompat.RequestPermissions(_activity, PermissionsBluetoothConnect, RequestPermissionBluetooth);
+                ActivityCompat.RequestPermissions(_activity, PermissionsBluetooth, RequestPermissionBluetooth);
                 return true;
             }
             catch (Exception)
