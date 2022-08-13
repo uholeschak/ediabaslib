@@ -90,7 +90,17 @@ namespace BmwDeepObd
                         {
                             try
                             {
-                                StopForeground(true);
+                                if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
+                                {
+                                    StopForeground(Android.App.StopForegroundFlags.Remove);
+                                }
+                                else
+                                {
+#pragma warning disable CS0618
+                                    StopForeground(true);
+#pragma warning restore CS0618
+                                }
+
                                 StopSelf();
                             }
                             catch (Exception)
@@ -259,7 +269,17 @@ namespace BmwDeepObd
                 {
                     try
                     {
-                        StopForeground(true);
+                        if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
+                        {
+                            StopForeground(Android.App.StopForegroundFlags.Remove);
+                        }
+                        else
+                        {
+#pragma warning disable CS0618
+                            StopForeground(true);
+#pragma warning restore CS0618
+                        }
+
                         StopSelf();
                     }
                     catch (Exception)

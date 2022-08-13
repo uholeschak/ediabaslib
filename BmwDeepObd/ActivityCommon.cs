@@ -3602,9 +3602,17 @@ namespace BmwDeepObd
                     {
                         try
                         {
+                            if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
+                            {
+                                Intent intentBtEnabled = new Intent(BluetoothAdapter.ActionRequestEnable);
+                                _activity?.StartActivity(intentBtEnabled);
+                            }
+                            else
+                            {
 #pragma warning disable 0618
-                            _btAdapter.Enable();
+                                _btAdapter.Enable();
 #pragma warning restore 0618
+                            }
                             _btEnableCounter = 2;
                             if (_bcReceiverUpdateDisplayHandler != null)
                             {   // some device don't send the update event
@@ -3819,7 +3827,9 @@ namespace BmwDeepObd
             }
             try
             {
+#pragma warning disable CS0618
                 return _btAdapter.Disable();
+#pragma warning restore CS0618
             }
             catch (Exception)
             {
