@@ -42,6 +42,7 @@ using AndroidX.Core.App;
 using BmwFileReader;
 using UdsFileReader;
 using AndroidX.AppCompat.App;
+using AndroidX.Core.Content;
 using AndroidX.Core.Content.PM;
 using AndroidX.DocumentFile.Provider;
 
@@ -438,6 +439,10 @@ namespace BmwDeepObd
         private const string IbmTransTranslate = @"/v3/translate";
         public static Regex Ipv4RegEx = new Regex(@"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
         public static readonly long TickResolMs = Stopwatch.Frequency / 1000;
+        public readonly string[] PermissionsBluetoothConnect =
+        {
+            Android.Manifest.Permission.BluetoothConnect,
+        };
 #if DEBUG
         private static readonly string Tag = typeof(ActivityCommon).FullName;
 #endif
@@ -3586,6 +3591,34 @@ namespace BmwDeepObd
                 }
                 _selectManufacturerAlertDialog = null;
             };
+        }
+
+        private bool RequestBtPermissions(int requestCode)
+        {
+            if (MtcBtService)
+            {
+                return true;
+            }
+
+            if (Build.VERSION.SdkInt < BuildVersionCodes.S)
+            {
+                return true;
+            }
+
+            try
+            {
+                if (PermissionsBluetoothConnect.All(permission => ContextCompat.CheckSelfPermission(_activity, permission) == Permission.Granted))
+                {
+                    return true;
+                }
+
+                ActivityCompat.RequestPermissions(_activity, PermissionsBluetoothConnect, requestCode);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public void EnableInterface()
