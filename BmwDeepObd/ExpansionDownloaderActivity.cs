@@ -48,7 +48,6 @@ namespace BmwDeepObd
         private const int ObbFileSize = 404731472;
         private static readonly byte[] ObbMd5 = { 0x8D, 0xA0, 0x6E, 0x3F, 0xAC, 0x77, 0x12, 0x49, 0xBC, 0x80, 0x51, 0xB8, 0xBE, 0x85, 0x55, 0x1A };
 #endif
-        private const int RequestPermissionExternalStorage = 0;
         private readonly string[] _permissionsExternalStorage =
         {
             Android.Manifest.Permission.WriteExternalStorage
@@ -350,7 +349,7 @@ namespace BmwDeepObd
             }
             switch (requestCode)
             {
-                case RequestPermissionExternalStorage:
+                case ActivityCommon.RequestPermissionExternalStorage:
                     if (grantResults.Length > 0 && grantResults.All(permission => permission == Permission.Granted))
                     {
                         StoragePermissionGranted();
@@ -900,7 +899,7 @@ namespace BmwDeepObd
                 Finish();
             }
 
-            ActivityCompat.RequestPermissions(this, _permissionsExternalStorage, RequestPermissionExternalStorage);
+            ActivityCompat.RequestPermissions(this, _permissionsExternalStorage, ActivityCommon.RequestPermissionExternalStorage);
         }
 
         private void StoragePermissionGranted()
