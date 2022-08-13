@@ -3671,10 +3671,13 @@ namespace BmwDeepObd
                             if (directEnable)
                             {
 #pragma warning disable 0618
-                                _btAdapter.Enable();
+                                if (_btAdapter.Enable())
 #pragma warning restore 0618
+                                {
+                                    _btEnableCounter = 2;
+                                }
                             }
-                            _btEnableCounter = 2;
+
                             if (_bcReceiverUpdateDisplayHandler != null)
                             {   // some device don't send the update event
                                 _btUpdateHandler.PostDelayed(() =>
