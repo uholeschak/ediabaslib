@@ -3624,6 +3624,21 @@ namespace BmwDeepObd
             }
         }
 
+        public static bool OpenAppSettingDetails(Android.App.Activity activity, int requestCode)
+        {
+            try
+            {
+                Intent intent = new Intent(Settings.ActionApplicationDetailsSettings,
+                    Android.Net.Uri.Parse("package:" + Android.App.Application.Context.PackageName));
+                activity.StartActivityForResult(intent, requestCode);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public void EnableInterface()
         {
             switch (_selectedInterface)
