@@ -71,13 +71,11 @@ namespace BmwDeepObd
                         {
                             foreach (string key in keySet)
                             {
-                                Object value = bundle.Get(key);
-                                string valueString = string.Empty;
-                                if (value != null)
+                                string value = bundle.GetString(key);
+                                if (!string.IsNullOrEmpty(value))
                                 {
-                                    valueString = value.ToString();
+                                    Android.Util.Log.Info(Tag, string.Format("Key: {0}={1}", key, value));
                                 }
-                                Android.Util.Log.Info(Tag, string.Format("Key: {0}={1}", key, valueString));
                             }
                         }
                     }
