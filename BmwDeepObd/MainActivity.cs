@@ -890,13 +890,13 @@ namespace BmwDeepObd
             }
         }
 
-        public override void OnBackPressed()
+        public override void OnBackPressedEvent()
         {
             if (!ActivityCommon.DoubleClickForAppExit)
             {
                 _backPressed = false;
                 _instanceData.CheckCpuUsage = true;
-                base.OnBackPressed();
+                base.OnBackPressedEvent();
                 return;
             }
             if (_backPressed)
@@ -905,7 +905,7 @@ namespace BmwDeepObd
                 if (Stopwatch.GetTimestamp() - _lastBackPressedTime < 2000 * ActivityCommon.TickResolMs)
                 {
                     _instanceData.CheckCpuUsage = true;
-                    base.OnBackPressed();
+                    base.OnBackPressedEvent();
                     return;
                 }
             }

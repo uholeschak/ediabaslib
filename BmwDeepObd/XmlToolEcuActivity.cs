@@ -901,7 +901,7 @@ namespace BmwDeepObd
             _activityCommon = null;
         }
 
-        public override void OnBackPressed()
+        public override void OnBackPressedEvent()
         {
             UpdateResultSettings(_selectedResult);
             NoSelectionWarn(accepted =>
@@ -913,7 +913,7 @@ namespace BmwDeepObd
                 if (accepted)
                 {
                     StoreResults();
-                    base.OnBackPressed();
+                    base.OnBackPressedEvent();
                 }
             });
         }
