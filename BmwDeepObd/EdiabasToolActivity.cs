@@ -370,7 +370,7 @@ namespace BmwDeepObd
             _activityCommon = null;
         }
 
-        public override void OnBackPressed()
+        public override void OnBackPressedEvent()
         {
             if (!IsJobRunning())
             {
@@ -381,10 +381,10 @@ namespace BmwDeepObd
                         return;
                     }
 
-                    base.OnBackPressed();
+                    base.OnBackPressedEvent();
                 }))
                 {
-                    base.OnBackPressed();
+                    base.OnBackPressedEvent();
                 }
             }
         }

@@ -201,7 +201,7 @@ namespace BmwDeepObd
             base.OnSaveInstanceState(outState);
         }
 
-        public override void OnBackPressed()
+        public override void OnBackPressedEvent()
         {
             if (!StoreChangesRequest(accepted =>
             {
@@ -210,10 +210,10 @@ namespace BmwDeepObd
                     UpdateResult();
                 }
 
-                base.OnBackPressed();
+                base.OnBackPressedEvent();
             }))
             {
-                base.OnBackPressed();
+                base.OnBackPressedEvent();
             }
         }
 
