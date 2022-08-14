@@ -362,10 +362,10 @@ namespace BmwDeepObd
             _activityCommon = null;
         }
 
-        public override void OnBackPressed()
+        public override void OnBackPressedEvent()
         {
             StoreSettings();
-            base.OnBackPressed();
+            base.OnBackPressedEvent();
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)

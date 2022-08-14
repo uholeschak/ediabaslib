@@ -423,7 +423,7 @@ namespace BmwDeepObd
             }
         }
 
-        public override void OnBackPressed()
+        public override void OnBackPressedEvent()
         {
             if (IsJobRunning())
             {
@@ -432,7 +432,7 @@ namespace BmwDeepObd
                 return;
             }
             StoreResults();
-            base.OnBackPressed();
+            base.OnBackPressedEvent();
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)

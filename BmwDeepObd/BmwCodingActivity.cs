@@ -360,7 +360,7 @@ namespace BmwDeepObd
 
         }
 
-        public override void OnBackPressed()
+        public override void OnBackPressedEvent()
         {
             ConnectionActiveWarn(accepted =>
             {
@@ -384,10 +384,10 @@ namespace BmwDeepObd
                     {
                         return;
                     }
-                    base.OnBackPressed();
+                    base.OnBackPressedEvent();
                 }))
             {
-                base.OnBackPressed();
+                base.OnBackPressedEvent();
             }
         }
 
