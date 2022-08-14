@@ -10,6 +10,7 @@ using Android.Content.Res;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
+using AndroidX.Activity;
 using AndroidX.AppCompat.App;
 using AndroidX.Core.View;
 
@@ -82,6 +83,10 @@ namespace BmwDeepObd
 
             GestureListener gestureListener = new GestureListener(this);
             _gestureDetector = new GestureDetectorCompat(this, gestureListener);
+
+            BackPressCallback backPressCallback = new BackPressCallback(this);
+            OnBackPressedDispatcher.AddCallback(backPressCallback);
+
             _currentConfiguration = Resources?.Configuration;
             _activityManager = GetSystemService(Context.ActivityService) as Android.App.ActivityManager;
 
@@ -390,6 +395,11 @@ namespace BmwDeepObd
             }
         }
 
+        public virtual void OnBackPressedEvent()
+        {
+            Finish();
+        }
+
         public void EnableFullScreenMode(bool enable)
         {
             if (Build.VERSION.SdkInt <= BuildVersionCodes.Q)
@@ -612,6 +622,21 @@ namespace BmwDeepObd
                 }
 
                 return true;
+            }
+        }
+
+        public class BackPressCallback : OnBackPressedCallback
+        {
+            private readonly BaseActivity _baseActivity;
+
+            public BackPressCallback(BaseActivity baseActivity) : base(true)
+            {
+                _baseActivity = baseActivity;
+            }
+
+            public override void HandleOnBackPressed()
+            {
+                _baseActivity.OnBackPressedEvent();
             }
         }
     }

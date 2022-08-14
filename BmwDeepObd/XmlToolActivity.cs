@@ -835,7 +835,7 @@ namespace BmwDeepObd
             _activityCommon = null;
         }
 
-        public override void OnBackPressed()
+        public override void OnBackPressedEvent()
         {
             if (IsJobRunning())
             {
@@ -846,6 +846,7 @@ namespace BmwDeepObd
                 OnBackPressedContinue();
                 return;
             }
+
             int resourceId = Resource.String.xml_tool_msg_save_config_select;
             if (!_ecuList.Any(x => x.Selected))
             {
@@ -876,10 +877,10 @@ namespace BmwDeepObd
                 {
                     return;
                 }
-                base.OnBackPressed();
+                base.OnBackPressedEvent();
             }))
             {
-                base.OnBackPressed();
+                base.OnBackPressedEvent();
             }
         }
 
