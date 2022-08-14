@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Android.Content;
 
 namespace BmwDeepObd
@@ -65,15 +66,17 @@ namespace BmwDeepObd
                     Android.OS.Bundle bundle = intent.Extras;
                     if (bundle != null)
                     {
-                        foreach (string key in bundle.KeySet())
+                        ICollection<string> keySet = bundle.KeySet();
+                        if (keySet != null)
                         {
-                            Object value = bundle.Get(key);
-                            string valueString = string.Empty;
-                            if (value != null)
+                            foreach (string key in keySet)
                             {
-                                valueString = value.ToString();
+                                string value = bundle.GetString(key);
+                                if (!string.IsNullOrEmpty(value))
+                                {
+                                    Android.Util.Log.Info(Tag, string.Format("Key: {0}={1}", key, value));
+                                }
                             }
-                            Android.Util.Log.Info(Tag, string.Format("Key: {0}={1}", key, valueString));
                         }
                     }
 #endif
