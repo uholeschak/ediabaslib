@@ -1136,7 +1136,7 @@ namespace BmwDeepObd
 
         public override bool OnPrepareOptionsMenu(IMenu menu)
         {
-            bool commActive = ActivityCommon.CommActive;
+            bool commActive = IsCommActive();
             bool interfaceAvailable = _activityCommon.IsInterfaceAvailable();
             bool pageSgdb = !string.IsNullOrEmpty(GetSelectedPageSgdb());
             bool selectedPageFuncAvail = SelectedPageFunctionsAvailable();
@@ -2146,6 +2146,21 @@ namespace BmwDeepObd
                 return true;
             }
             _errorEvalThread = null;
+            return false;
+        }
+
+        private bool IsCommActive()
+        {
+            if (ActivityCommon.CommActive)
+            {
+                return true;
+            }
+
+            if (IsErrorEvalJobRunning())
+            {
+                return true;
+            }
+
             return false;
         }
 
