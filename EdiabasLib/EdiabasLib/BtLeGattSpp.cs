@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using Android.Bluetooth;
 using Android.Content;
+using Android.OS;
 
 namespace EdiabasLib
 {
@@ -259,14 +260,21 @@ namespace EdiabasLib
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool ReadGattSppData(BluetoothGattCharacteristic characteristic)
+        private bool ReceiveGattSppData(BluetoothGattCharacteristic characteristic, byte[] value = null)
         {
             try
             {
                 if (characteristic.Uuid != null && _gattCharacteristicUuidSppRead != null &&
                     characteristic.Uuid.Equals(_gattCharacteristicUuidSppRead))
                 {
-                    byte[] data = characteristic.GetValue();
+                    byte[] data = value;
+                    if (Build.VERSION.SdkInt < BuildVersionCodes.Tiramisu)
+                    {
+#pragma warning disable CS0618
+                        data = characteristic.GetValue();
+#pragma warning restore CS0618
+                    }
+
                     if (data != null)
                     {
 #if DEBUG
@@ -407,7 +415,27 @@ namespace EdiabasLib
                 }
             }
 
+#pragma warning disable CS0672
             public override void OnCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, GattStatus status)
+#pragma warning restore CS0672
+            {
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
+                {
+                    return;
+                }
+
+                if (gatt != _btLeGattSpp._bluetoothGatt)
+                {
+                    return;
+                }
+
+                if (status == GattStatus.Success)
+                {
+                    _btLeGattSpp.ReceiveGattSppData(characteristic);
+                }
+            }
+
+            public override void OnCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, byte[] value, GattStatus status)
             {
                 if (gatt != _btLeGattSpp._bluetoothGatt)
                 {
@@ -416,7 +444,7 @@ namespace EdiabasLib
 
                 if (status == GattStatus.Success)
                 {
-                    _btLeGattSpp.ReadGattSppData(characteristic);
+                    _btLeGattSpp.ReceiveGattSppData(characteristic, value);
                 }
             }
 
@@ -452,14 +480,31 @@ namespace EdiabasLib
                 _btLeGattSpp._btGattWriteEvent.Set();
             }
 
+#pragma warning disable CS0672
             public override void OnCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic)
+#pragma warning restore CS0672
+            {
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
+                {
+                    return;
+                }
+
+                if (gatt != _btLeGattSpp._bluetoothGatt)
+                {
+                    return;
+                }
+
+                _btLeGattSpp.ReceiveGattSppData(characteristic);
+            }
+
+            public override void OnCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, byte[] value)
             {
                 if (gatt != _btLeGattSpp._bluetoothGatt)
                 {
                     return;
                 }
 
-                _btLeGattSpp.ReadGattSppData(characteristic);
+                _btLeGattSpp.ReceiveGattSppData(characteristic, value);
             }
         }
 
