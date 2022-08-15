@@ -207,11 +207,25 @@ namespace EdiabasLib
                 }
 
                 _gattWriteStatus = GattStatus.Failure;
-                descriptor.SetValue(BluetoothGattDescriptor.EnableNotificationValue.ToArray());
-                if (!_bluetoothGatt.WriteDescriptor(descriptor))
+                byte[] enableNotifyArray = BluetoothGattDescriptor.EnableNotificationValue.ToArray();
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
                 {
-                    LogString("*** GATT SPP write config descriptor failed");
-                    return false;
+                    if (_bluetoothGatt.WriteDescriptor(descriptor, enableNotifyArray) != (int) CurrentBluetoothStatusCodes.Success)
+                    {
+                        LogString("*** GATT SPP write config descriptor failed");
+                        return false;
+                    }
+                }
+                else
+                {
+#pragma warning disable CS0618
+                    descriptor.SetValue(enableNotifyArray);
+                    if (!_bluetoothGatt.WriteDescriptor(descriptor))
+#pragma warning restore CS0618
+                    {
+                        LogString("*** GATT SPP write config descriptor failed");
+                        return false;
+                    }
                 }
 
                 if (!_btGattWriteEvent.WaitOne(2000))
