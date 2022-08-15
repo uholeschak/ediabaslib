@@ -3471,14 +3471,25 @@ namespace BmwDeepObd
             }
             else
             {
+                // ReSharper disable once ReplaceWithSingleAssignment.True
+                bool buttonEnabled = true;
+
                 if (ActivityCommon.JobReader.PageList.Count == 0)
                 {
-                    _connectButtonInfo.Enabled = false;
+                    buttonEnabled = false;
                 }
+
                 if (!_activityCommon.IsInterfaceAvailable())
                 {
-                    _connectButtonInfo.Enabled = false;
+                    buttonEnabled = false;
                 }
+
+                if (IsErrorEvalJobRunning())
+                {
+                    buttonEnabled = false;
+                }
+
+                _connectButtonInfo.Enabled = buttonEnabled;
                 _connectButtonInfo.Checked = false;
             }
             if (_connectButtonInfo.Button != null)
