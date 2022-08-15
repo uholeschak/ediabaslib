@@ -597,7 +597,7 @@ namespace BmwDeepObd
 
             // get last active tab
             JobReader.PageInfo currentPage = null;
-            if (ActivityCommon.CommActive)
+            if (IsCommActive())
             {
                 _ignoreTabsChange = true;
                 currentPage = ActivityCommon.EdiabasThread?.JobPageInfo;
@@ -764,7 +764,7 @@ namespace BmwDeepObd
                 HandleStartDialogs(firstStart);
             }
 
-            if (!ActivityCommon.CommActive)
+            if (!IsCommActive())
             {
                 UpdateCheck();
             }
@@ -782,12 +782,18 @@ namespace BmwDeepObd
                                 return;
                             }
 
+                            if (SupportActionBar == null)
+                            {
+                                return;
+                            }
+
+                            bool commActive = IsCommActive();
                             if (_autoHideStarted)
                             {
                                 if (Stopwatch.GetTimestamp() - _autoHideStartTime >= AutoHideTimeout * ActivityCommon.TickResolMs)
                                 {
                                     _autoHideStarted = false;
-                                    if (ActivityCommon.CommActive && SupportActionBar.IsShowing)
+                                    if (commActive && SupportActionBar.IsShowing)
                                     {
                                         SupportActionBar.Hide();
                                     }
@@ -795,7 +801,7 @@ namespace BmwDeepObd
                             }
                             else
                             {
-                                if (SupportActionBar.IsShowing && ActivityCommon.CommActive)
+                                if (SupportActionBar.IsShowing && commActive)
                                 {
                                     _autoHideStartTime = Stopwatch.GetTimestamp();
                                     _autoHideStarted = true;
@@ -1808,7 +1814,7 @@ namespace BmwDeepObd
                 }
             }
 
-            if (!ActivityCommon.CommActive)
+            if (!IsCommActive())
             {
                 if (_activityCommon.InitReaderThread(_instanceData.BmwPath, _instanceData.VagPath, result =>
                 {
@@ -4888,7 +4894,7 @@ namespace BmwDeepObd
 
         private void ReadConfigFile()
         {
-            if (ActivityCommon.CommActive)
+            if (IsCommActive())
             {
                 UpdateJobReaderSettings();
                 _updateHandler?.Post(CreateActionBarTabs);
@@ -6117,7 +6123,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (ActivityCommon.CommActive)
+            if (IsCommActive())
             {
                 return false;
             }
