@@ -451,6 +451,11 @@ namespace EdiabasLib
 
             public override void OnCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, byte[] value, GattStatus status)
             {
+                if (Build.VERSION.SdkInt < BuildVersionCodes.Tiramisu)
+                {
+                    return;
+                }
+
                 if (gatt != _btLeGattSpp._bluetoothGatt)
                 {
                     return;
@@ -513,6 +518,11 @@ namespace EdiabasLib
 
             public override void OnCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, byte[] value)
             {
+                if (Build.VERSION.SdkInt < BuildVersionCodes.Tiramisu)
+                {
+                    return;
+                }
+
                 if (gatt != _btLeGattSpp._bluetoothGatt)
                 {
                     return;
