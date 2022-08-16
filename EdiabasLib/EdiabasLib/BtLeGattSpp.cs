@@ -89,7 +89,8 @@ namespace EdiabasLib
                 _gattServicesDiscovered = false;
                 _btGattSppInStream = new MemoryQueueBufferStream(true);
                 _btGattSppOutStream = new BGattOutputStream(this);
-                _bluetoothGatt = device.ConnectGatt(context, false, new BGattCallback(this), BluetoothTransports.Le);
+                BGattBaseCallback bGattCallback = Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu ? new BGatt2Callback(this) : new BGatt1Callback(this);
+                _bluetoothGatt = device.ConnectGatt(context, false, bGattCallback, BluetoothTransports.Le);
                 if (_bluetoothGatt == null)
                 {
                     LogString("*** ConnectGatt failed");
@@ -370,11 +371,11 @@ namespace EdiabasLib
             _logStringHandler?.Invoke(info);
         }
 
-        private class BGattCallback : BluetoothGattCallback
+        private class BGattBaseCallback : BluetoothGattCallback
         {
-            readonly BtLeGattSpp _btLeGattSpp;
+            protected readonly BtLeGattSpp _btLeGattSpp;
 
-            public BGattCallback(BtLeGattSpp btLeGattSpp)
+            protected BGattBaseCallback(BtLeGattSpp btLeGattSpp)
             {
                 _btLeGattSpp = btLeGattSpp;
             }
@@ -429,44 +430,6 @@ namespace EdiabasLib
                 }
             }
 
-#pragma warning disable CS0672
-            public override void OnCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, GattStatus status)
-#pragma warning restore CS0672
-            {
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
-                {
-                    return;
-                }
-
-                if (gatt != _btLeGattSpp._bluetoothGatt)
-                {
-                    return;
-                }
-
-                if (status == GattStatus.Success)
-                {
-                    _btLeGattSpp.ReceiveGattSppData(characteristic);
-                }
-            }
-
-            public override void OnCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, byte[] value, GattStatus status)
-            {
-                if (Build.VERSION.SdkInt < BuildVersionCodes.Tiramisu)
-                {
-                    return;
-                }
-
-                if (gatt != _btLeGattSpp._bluetoothGatt)
-                {
-                    return;
-                }
-
-                if (status == GattStatus.Success)
-                {
-                    _btLeGattSpp.ReceiveGattSppData(characteristic, value);
-                }
-            }
-
             public override void OnCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, GattStatus status)
             {
                 if (gatt != _btLeGattSpp._bluetoothGatt)
@@ -498,6 +461,28 @@ namespace EdiabasLib
                 _btLeGattSpp._gattWriteStatus = status;
                 _btLeGattSpp._btGattWriteEvent.Set();
             }
+        }
+
+        private class BGatt1Callback : BGattBaseCallback
+        {
+            public BGatt1Callback(BtLeGattSpp btLeGattSpp) : base(btLeGattSpp)
+            {
+            }
+
+#pragma warning disable CS0672
+            public override void OnCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, GattStatus status)
+#pragma warning restore CS0672
+            {
+                if (gatt != _btLeGattSpp._bluetoothGatt)
+                {
+                    return;
+                }
+
+                if (status == GattStatus.Success)
+                {
+                    _btLeGattSpp.ReceiveGattSppData(characteristic);
+                }
+            }
 
 #pragma warning disable CS0672
             public override void OnCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic)
@@ -515,14 +500,29 @@ namespace EdiabasLib
 
                 _btLeGattSpp.ReceiveGattSppData(characteristic);
             }
+        }
 
-            public override void OnCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, byte[] value)
+        private class BGatt2Callback : BGattBaseCallback
+        {
+            public BGatt2Callback(BtLeGattSpp btLeGattSpp) : base(btLeGattSpp)
             {
-                if (Build.VERSION.SdkInt < BuildVersionCodes.Tiramisu)
+            }
+
+            public override void OnCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, byte[] value, GattStatus status)
+            {
+                if (gatt != _btLeGattSpp._bluetoothGatt)
                 {
                     return;
                 }
 
+                if (status == GattStatus.Success)
+                {
+                    _btLeGattSpp.ReceiveGattSppData(characteristic, value);
+                }
+            }
+
+            public override void OnCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, byte[] value)
+            {
                 if (gatt != _btLeGattSpp._bluetoothGatt)
                 {
                     return;
