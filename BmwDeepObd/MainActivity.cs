@@ -6866,12 +6866,23 @@ namespace BmwDeepObd
                     return RecyclerView.NoId;
                 }
 
+                if (_pageList[position].PageInfo == null)
+                {
+                    return RecyclerView.NoId;
+                }
+
                 return position + _idOffset;
             }
 
             public override bool ContainsItem(long itemId)
             {
-                if (itemId < _idOffset || itemId >= _pageList.Count + _idOffset)
+                int position = (int)(itemId - _idOffset);
+                if (position < 0 || position >= _pageList.Count)
+                {
+                    return false;
+                }
+
+                if (_pageList[position].PageInfo == null)
                 {
                     return false;
                 }
