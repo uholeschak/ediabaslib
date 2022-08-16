@@ -6866,7 +6866,7 @@ namespace BmwDeepObd
                     return RecyclerView.NoId;
                 }
 
-                if (_pageList[position].PageInfo == null)
+                if (_pageList[position].PageInfo?.InfoObject == null)
                 {
                     return RecyclerView.NoId;
                 }
@@ -6882,7 +6882,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                if (_pageList[position].PageInfo == null)
+                if (_pageList[position].PageInfo?.InfoObject == null)
                 {
                     return false;
                 }
