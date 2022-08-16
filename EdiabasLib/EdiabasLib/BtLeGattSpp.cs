@@ -569,10 +569,23 @@ namespace EdiabasLib
                         BitConverter.ToString(sendData).Replace("-", ""), Encoding.UTF8.GetString(sendData)));
 #endif
                     _btLeGattSpp._gattWriteStatus = GattStatus.Failure;
-                    _btLeGattSpp._gattCharacteristicSppWrite.SetValue(sendData);
-                    if (!_btLeGattSpp._bluetoothGatt.WriteCharacteristic(_btLeGattSpp._gattCharacteristicSppWrite))
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
                     {
-                        throw new IOException("WriteCharacteristic failed");
+                        if (_btLeGattSpp._bluetoothGatt.WriteCharacteristic(_btLeGattSpp._gattCharacteristicSppWrite, sendData, (int) GattWriteType.Default)
+                            != (int)CurrentBluetoothStatusCodes.Success)
+                        {
+                            throw new IOException("WriteCharacteristic failed");
+                        }
+                    }
+                    else
+                    {
+#pragma warning disable CS0618
+                        _btLeGattSpp._gattCharacteristicSppWrite.SetValue(sendData);
+                        if (!_btLeGattSpp._bluetoothGatt.WriteCharacteristic(_btLeGattSpp._gattCharacteristicSppWrite))
+#pragma warning restore CS0618
+                        {
+                            throw new IOException("WriteCharacteristic failed");
+                        }
                     }
 
                     if (!_btLeGattSpp._btGattWriteEvent.WaitOne(2000))
