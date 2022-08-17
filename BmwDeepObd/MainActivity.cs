@@ -6895,6 +6895,10 @@ namespace BmwDeepObd
                 int position = _pageList.Count;
                 _pageList.Add(new TabPageInfo(pageInfo, IdOffset, resourceId, title));
                 IdOffset++;
+                if (IdOffset < 0)
+                {
+                    IdOffset = 0;
+                }
                 NotifyItemInserted(position);
             }
         }
