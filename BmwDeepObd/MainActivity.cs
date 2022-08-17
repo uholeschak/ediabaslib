@@ -6838,12 +6838,11 @@ namespace BmwDeepObd
             }
 
             private readonly List<TabPageInfo> _pageList;
-            private long _idOffset;
+            private static long IdOffset;
 
             public TabsFragmentStateAdapter(FragmentManager fm, Lifecycle lifecycle) : base(fm, lifecycle)
             {
                 _pageList = new List<TabPageInfo>();
-                _idOffset = 0;
             }
 
             public override int ItemCount => _pageList.Count;
@@ -6894,8 +6893,8 @@ namespace BmwDeepObd
             public void AddPage(JobReader.PageInfo pageInfo, int resourceId, string title)
             {
                 int position = _pageList.Count;
-                _pageList.Add(new TabPageInfo(pageInfo, _idOffset, resourceId, title));
-                _idOffset++;
+                _pageList.Add(new TabPageInfo(pageInfo, IdOffset, resourceId, title));
+                IdOffset++;
                 NotifyItemInserted(position);
             }
         }
