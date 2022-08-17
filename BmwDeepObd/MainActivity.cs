@@ -6888,8 +6888,10 @@ namespace BmwDeepObd
 
             public void ClearPages()
             {
-                NotifyItemRangeRemoved(0, _pageList.Count);
+                int size = _pageList.Count;
                 _pageList.Clear();
+                NotifyItemRangeRemoved(0, size);
+                NotifyItemRangeChanged(0, size);
             }
 
             public void AddPage(JobReader.PageInfo pageInfo, int resourceId, string title)
