@@ -6903,7 +6903,9 @@ namespace BmwDeepObd
                 {
                     IdOffset = 0;
                 }
+
                 NotifyItemInserted(position);
+                NotifyItemChanged(position);
             }
         }
 
