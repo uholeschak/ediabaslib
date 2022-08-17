@@ -6823,14 +6823,16 @@ namespace BmwDeepObd
         {
             private class TabPageInfo
             {
-                public TabPageInfo(JobReader.PageInfo pageInfo, int resourceId, string title)
+                public TabPageInfo(JobReader.PageInfo pageInfo, long itemId, int resourceId, string title)
                 {
+                    ItemId = itemId;
                     PageInfo = pageInfo;
                     ResourceId = resourceId;
                     Title = title;
                 }
 
                 public JobReader.PageInfo PageInfo { get; }
+                public long ItemId { get; }
                 public int ResourceId { get; }
                 public string Title { get; }
             }
@@ -6866,28 +6868,21 @@ namespace BmwDeepObd
                     return RecyclerView.NoId;
                 }
 
-                if (_pageList[position].PageInfo?.InfoObject == null)
-                {
-                    return RecyclerView.NoId;
-                }
-
-                return position + _idOffset;
+                TabPageInfo tabPageInfo = _pageList[position];
+                return tabPageInfo.ItemId;
             }
 
             public override bool ContainsItem(long itemId)
             {
-                int position = (int)(itemId - _idOffset);
-                if (position < 0 || position >= _pageList.Count)
+                foreach (TabPageInfo tabPageInfo in _pageList)
                 {
-                    return false;
+                    if (tabPageInfo.ItemId == itemId)
+                    {
+                        return true;
+                    }
                 }
 
-                if (_pageList[position].PageInfo?.InfoObject == null)
-                {
-                    return false;
-                }
-
-                return true;
+                return false;
             }
 
             public void ClearPages()
@@ -6899,7 +6894,7 @@ namespace BmwDeepObd
             public void AddPage(JobReader.PageInfo pageInfo, int resourceId, string title)
             {
                 int position = _pageList.Count;
-                _pageList.Add(new TabPageInfo(pageInfo, resourceId, title));
+                _pageList.Add(new TabPageInfo(pageInfo, _idOffset, resourceId, title));
                 _idOffset++;
                 NotifyItemInserted(position);
             }
