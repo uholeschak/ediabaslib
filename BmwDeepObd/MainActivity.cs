@@ -6855,7 +6855,7 @@ namespace BmwDeepObd
                 }
 
                 TabPageInfo tabPageInfo = _pageList[position];
-                Fragment fragmentPage = TabContentFragment.NewInstance(tabPageInfo.ResourceId, position);
+                Fragment fragmentPage = TabContentFragment.NewInstance(tabPageInfo.ResourceId, position, tabPageInfo.ItemId);
                 tabPageInfo.PageInfo.InfoObject = fragmentPage;
                 return fragmentPage;
             }
@@ -6909,19 +6909,20 @@ namespace BmwDeepObd
             private int _pageInfoIndex;
             private View _view;
 
-            public TabContentFragment()
+            public TabContentFragment(int contentLayoutId): base(contentLayoutId)
             {
                 _resourceId = -1;
                 _pageInfoIndex = -1;
                 _view = null;
             }
 
-            public static TabContentFragment NewInstance(int resourceId, int pageInfoIndex)
+            public static TabContentFragment NewInstance(int resourceId, int pageInfoIndex, long itemId)
             {
-                TabContentFragment fragment = new TabContentFragment();
+                TabContentFragment fragment = new TabContentFragment((int) itemId);
                 Bundle bundle = new Bundle();
                 bundle.PutInt("ResourceId", resourceId);
                 bundle.PutInt("PageInfoIndex", pageInfoIndex);
+                bundle.PutLong("ItemId", itemId);
                 fragment.Arguments = bundle;
                 return fragment;
             }
