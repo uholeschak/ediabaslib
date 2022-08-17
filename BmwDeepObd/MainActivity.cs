@@ -6942,7 +6942,7 @@ namespace BmwDeepObd
                 }
                 _view = null;
 #if DEBUG
-                Log.Info(Tag, string.Format("TabContentFragment OnCreate: {0}", _pageInfoIndex));
+                Log.Info(Tag, string.Format("TabContentFragment OnCreate: Resource={0}, PageIdx={1}", _resourceId, _pageInfoIndex));
 #endif
             }
 
