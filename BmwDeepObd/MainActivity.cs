@@ -6837,11 +6837,13 @@ namespace BmwDeepObd
                 public string Title { get; }
             }
 
-            private readonly List<TabPageInfo> _pageList;
             private static long IdOffset;
+            private readonly FragmentManager _fragmentManager;
+            private readonly List<TabPageInfo> _pageList;
 
             public TabsFragmentStateAdapter(FragmentManager fm, Lifecycle lifecycle) : base(fm, lifecycle)
             {
+                _fragmentManager = fm;
                 _pageList = new List<TabPageInfo>();
             }
 
@@ -6855,7 +6857,7 @@ namespace BmwDeepObd
                 }
 
                 TabPageInfo tabPageInfo = _pageList[position];
-                Fragment fragmentPage = TabContentFragment.NewInstance(tabPageInfo.ResourceId, position, tabPageInfo.ItemId);
+                Fragment fragmentPage = TabContentFragment.NewInstance(tabPageInfo.ResourceId, position);
                 tabPageInfo.PageInfo.InfoObject = fragmentPage;
                 return fragmentPage;
             }
@@ -6909,20 +6911,19 @@ namespace BmwDeepObd
             private int _pageInfoIndex;
             private View _view;
 
-            public TabContentFragment(int contentLayoutId): base(contentLayoutId)
+            public TabContentFragment()
             {
                 _resourceId = -1;
                 _pageInfoIndex = -1;
                 _view = null;
             }
 
-            public static TabContentFragment NewInstance(int resourceId, int pageInfoIndex, long itemId)
+            public static TabContentFragment NewInstance(int resourceId, int pageInfoIndex)
             {
-                TabContentFragment fragment = new TabContentFragment((int) itemId);
+                TabContentFragment fragment = new TabContentFragment();
                 Bundle bundle = new Bundle();
                 bundle.PutInt("ResourceId", resourceId);
                 bundle.PutInt("PageInfoIndex", pageInfoIndex);
-                bundle.PutLong("ItemId", itemId);
                 fragment.Arguments = bundle;
                 return fragment;
             }
