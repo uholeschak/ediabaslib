@@ -6857,7 +6857,7 @@ namespace BmwDeepObd
                 }
 
                 TabPageInfo tabPageInfo = _pageList[position];
-                Fragment fragmentPage = TabContentFragment.NewInstance(tabPageInfo.ResourceId, position, tabPageInfo.ItemId);
+                Fragment fragmentPage = TabContentFragment.NewInstance(tabPageInfo.ResourceId, position);
                 tabPageInfo.PageInfo.InfoObject = fragmentPage;
                 return fragmentPage;
             }
