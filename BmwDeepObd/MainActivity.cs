@@ -6930,8 +6930,16 @@ namespace BmwDeepObd
             public override void OnCreate(Bundle savedInstanceState)
             {
                 base.OnCreate(savedInstanceState);
-                _resourceId = Arguments.GetInt("ResourceId", -1);
-                _pageInfoIndex = Arguments.GetInt("PageInfoIndex", -1);
+                if (Arguments != null)
+                {
+                    _resourceId = Arguments.GetInt("ResourceId", -1);
+                    _pageInfoIndex = Arguments.GetInt("PageInfoIndex", -1);
+                }
+                else
+                {
+                    _resourceId = -1;
+                    _pageInfoIndex = -1;
+                }
                 _view = null;
 #if DEBUG
                 Log.Info(Tag, string.Format("TabContentFragment OnCreate: {0}", _pageInfoIndex));
