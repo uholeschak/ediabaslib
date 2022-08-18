@@ -6891,6 +6891,7 @@ namespace BmwDeepObd
                 _pageList.Clear();
                 NotifyItemRangeRemoved(0, size);
                 NotifyItemRangeChanged(0, size);
+                _fragmentManager?.PopBackStack(null, AndroidX.Fragment.App.FragmentManager.PopBackStackInclusive);
             }
 
             public void AddPage(JobReader.PageInfo pageInfo, int resourceId, string title)
