@@ -626,7 +626,6 @@ namespace BmwDeepObd
             }
 
             _fragmentStateAdapter.ClearPages();
-            _fragmentStateAdapter.NotifyDataSetChanged();
             _tabLayout.Visibility = ViewStates.Gone;
 
             foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
@@ -6905,7 +6904,6 @@ namespace BmwDeepObd
                 }
 
                 NotifyItemInserted(position);
-                NotifyItemChanged(position);
             }
         }
 
