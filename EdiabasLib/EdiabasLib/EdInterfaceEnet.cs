@@ -2457,7 +2457,7 @@ namespace EdiabasLib
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine("WriteNetworkStream exception: {0}", ex.Message);
+                    Debug.WriteLine("WriteNetworkStream exception: {0}", EdiabasNet.GetExceptionText(ex));
                     throw;
                 }
             }
