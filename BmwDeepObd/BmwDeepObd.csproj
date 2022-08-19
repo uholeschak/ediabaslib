@@ -807,7 +807,7 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\xml\filepaths.xml" />
+    <AndroidResource Include="Resources\xml\file_paths.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\bmw_coding.xml">
