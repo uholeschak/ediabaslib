@@ -6812,8 +6812,13 @@ namespace BmwDeepObd
 
                 return true;
             }
-            catch (Exception)
+#pragma warning disable CS0168
+            catch (Exception ex)
+#pragma warning restore CS0168
             {
+#if DEBUG
+                Log.Info(Tag, string.Format("StartEditXml Exception: {0}", EdiabasNet.GetExceptionText(ex)));
+#endif
                 return false;
             }
         }

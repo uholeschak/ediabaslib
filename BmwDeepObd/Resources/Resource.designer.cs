@@ -24994,7 +24994,7 @@ namespace BmwDeepObd
 			public const int device_filter = 2131951616;
 			
 			// aapt resource value: 0x7F130001
-			public const int filepaths = 2131951617;
+			public const int file_paths = 2131951617;
 			
 			// aapt resource value: 0x7F130002
 			public const int standalone_badge = 2131951618;
