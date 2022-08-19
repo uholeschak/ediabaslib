@@ -46,6 +46,8 @@
   <string name="manufacturer_select">Выбранный производитель {0}. Для выбора другого нажмите \'Отменить\'.</string>
   <string name="no_xml_editor_installed">Пожалуйста, установите сначала XML редактор.</string>
   <string name="choose_xml_editor">Выберите XML редактор.</string>
+  <!--Translate-->
+  <string name="xml_access_denied">Отказано в доступе к файлу XML.\nПожалуйста, проверьте расположение файла и права доступа.</string>
   <string name="error_no_error">Ошибки отсутствуют</string>
   <string name="error_reading_errors">Считывание ошибок: {0}%</string>
   <!--Translate-->

@@ -6819,6 +6819,7 @@ namespace BmwDeepObd
 #if DEBUG
                 Log.Info(Tag, string.Format("StartEditXml Exception: {0}", EdiabasNet.GetExceptionText(ex)));
 #endif
+                _activityCommon.ShowAlert(GetString(Resource.String.xml_access_denied), Resource.String.alert_title_error);
                 return false;
             }
         }

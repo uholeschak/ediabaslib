@@ -45,6 +45,7 @@
   <string name="manufacturer_select">The current manufacturer is {0}, to choose a different one select \'abort\'.</string>
   <string name="no_xml_editor_installed">Please install a XML editor first.</string>
   <string name="choose_xml_editor">Choose an XML editor.</string>
+  <string name="xml_access_denied">Access to XML file denied.\nPlease check the file location and access rights.</string>
   <string name="error_no_error">No errors present</string>
   <string name="error_reading_errors">Reading error memory: {0}%</string>
   <string name="error_no_response">No response</string>

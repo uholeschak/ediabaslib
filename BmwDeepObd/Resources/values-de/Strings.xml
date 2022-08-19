@@ -46,6 +46,7 @@
   <string name="manufacturer_select">Der aktuelle Hersteller ist {0}, um einen anderen zu wählen drücken Sie bitte \'Abbrechen\'.</string>
   <string name="no_xml_editor_installed">Bitte installieren Sie zunächst einen XML Editor.</string>
   <string name="choose_xml_editor">Wählen Sie ein XML Editor aus.</string>
+  <string name="xml_access_denied">Zugriff auf die XML Datei verweigert.\nBitte überprüfen sie den Speicherort und die Zugriffsrechte.</string>
   <string name="error_no_error">Keine Fehler vorhanden</string>
   <string name="error_reading_errors">Fehlerspeicher lesen: {0}%</string>
   <string name="error_reset_condition">Die Bedingungen für das Fehlerlöschen wurden nicht erfüllt.\nBitte stoppen sie den Motor, schalten die Zündung ein und versuchen Sie es noch einmal.</string>
