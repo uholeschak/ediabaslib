@@ -568,6 +568,8 @@ namespace BmwDeepObd
                     _radioButtonNoBtHandling.Checked = true;
                     break;
             }
+
+            _checkBoxDisableBtAtExit.Enabled = Build.VERSION.SdkInt < BuildVersionCodes.Tiramisu;
             _checkBoxDisableBtAtExit.Checked = ActivityCommon.BtDisableHandling == ActivityCommon.BtDisableType.DisableIfByApp;
 
             switch (ActivityCommon.LockTypeCommunication)
