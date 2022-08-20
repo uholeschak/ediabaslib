@@ -3857,6 +3857,11 @@ namespace BmwDeepObd
 
         public static bool IsBluetoothEnabledByApp()
         {
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
+            {
+                return false;
+            }
+
             return _btEnableCounter > 0;
         }
 
@@ -3895,6 +3900,12 @@ namespace BmwDeepObd
             {
                 return false;
             }
+
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
+            {
+                return false;
+            }
+
             try
             {
 #pragma warning disable CS0618
