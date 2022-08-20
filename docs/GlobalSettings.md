@@ -26,7 +26,8 @@ This page allows to change some global app settings.
   * _No automatic Bluetooth handling_: Bluetooth must be enabled manually.
 * _Bluetooth disable_ options:
   * _Disable Bluetooth at exit, if unused and enabled by app_: At app exit disable Bluetooth if the app has enabled it.  
-  If the Bluetooth connection is in use for other services it will not be disabled.
+  If the Bluetooth connection is in use for other services it will not be disabled.  
+  This feature is only available for Android 12 and lower.
 * _Lock during communication_ and _Lock during data logging_ options:
   * _Device enters energy saving mode and the communication will be stopped_: No lock is active, the device enters energy saving mode as usual and the communication will be stopped.
   * _Keep CPU active_: The CPU keeps running but the display will be switched off.
