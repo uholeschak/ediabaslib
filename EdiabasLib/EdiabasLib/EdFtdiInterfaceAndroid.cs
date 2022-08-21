@@ -265,10 +265,7 @@ namespace EdiabasLib
                 _currentWordLength = dataBits;
                 _currentParity = parity;
 
-                if (!_usbPort.PurgeHwBuffers(true, true))
-                {
-                    return EdInterfaceObd.InterfaceErrorResult.ConfigError;
-                }
+                _usbPort.PurgeHwBuffers(true, true);
                 lock (QueueLock)
                 {
                     ReadQueue.Clear();
@@ -366,10 +363,8 @@ namespace EdiabasLib
                         return false;
                     }
                 }
-                if (!_usbPort.PurgeHwBuffers(true, false))
-                {
-                    return false;
-                }
+
+                _usbPort.PurgeHwBuffers(true, false);
                 lock (QueueLock)
                 {
                     ReadQueue.Clear();
@@ -407,7 +402,7 @@ namespace EdiabasLib
                         return false;
                     }
                 }
-                int bytesWritten;
+
                 byte[] sendBuffer = new byte[length];
                 Array.Copy(sendData, sendBuffer, sendBuffer.Length);
 
@@ -421,11 +416,7 @@ namespace EdiabasLib
                     _usbPort.DTR = true;
                     long startTime = Stopwatch.GetTimestamp();
 
-                    bytesWritten = _usbPort.Write(sendBuffer, WriteTimeout);
-                    if (bytesWritten != length)
-                    {
-                        return false;
-                    }
+                    _usbPort.Write(sendBuffer, WriteTimeout);
                     while ((Stopwatch.GetTimestamp() - startTime) < waitTime)
                     {
                     }
@@ -435,11 +426,7 @@ namespace EdiabasLib
                 {
                     long waitTime = (long) (byteTime*length);
 
-                    bytesWritten = _usbPort.Write(sendBuffer, WriteTimeout);
-                    if (bytesWritten != length)
-                    {
-                        return false;
-                    }
+                    _usbPort.Write(sendBuffer, WriteTimeout);
                     if (waitTime > 10)
                     {
                         Thread.Sleep((int) waitTime);
