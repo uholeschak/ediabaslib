@@ -25,14 +25,6 @@
     <field clr-name="Two" jni-name="STOPBITS_2" value="2" />
   </mapping>
 
-  <mapping clr-enum-type="Hoho.Android.UsbSerial.Driver.FlowControl" jni-interface="com/hoho/android/usbserial/driver/UsbSerialPort">
-    <field clr-name="None" jni-name="FLOWCONTROL_NONE" value="0" />
-    <field clr-name="RtsCtsIn" jni-name="FLOWCONTROL_RTSCTS_IN" value="1" />
-    <field clr-name="RtsCtsOut" jni-name="FLOWCONTROL_RTSCTS_OUT" value="2" />
-    <field clr-name="XOnXOffIn" jni-name="FLOWCONTROL_XONXOFF_IN" value="4" />
-    <field clr-name="XOnXOffOut" jni-name="FLOWCONTROL_XONXOFF_OUT" value="8" />
-  </mapping>
-
   <mapping clr-enum-type="Hoho.Android.UsbSerial.Driver.DataBits" jni-interface="com/hoho/android/usbserial/driver/UsbSerialPort">
     <field clr-name="Five" jni-name="DATABITS_5" value="5" />
     <field clr-name="Six" jni-name="DATABITS_6" value="6" />
