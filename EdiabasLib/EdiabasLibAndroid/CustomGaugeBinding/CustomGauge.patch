@@ -1,0 +1,25 @@
+diff --git a/CustomGauge/src/main/java/pl/pawelkleczkowski/customgauge/CustomGauge.java b/CustomGauge/src/main/java/pl/pawelkleczkowski/customgauge/CustomGauge.java
+index 9913a85..3c8bf97 100644
+--- a/CustomGauge/src/main/java/pl/pawelkleczkowski/customgauge/CustomGauge.java
++++ b/CustomGauge/src/main/java/pl/pawelkleczkowski/customgauge/CustomGauge.java
+@@ -84,7 +84,7 @@ public class CustomGauge extends View {
+         init();
+     }
+ 
+-    private void init() {
++    public void init() {
+         //main Paint
+         mPaint = new Paint();
+         mPaint.setColor(mStrokeColor);
+diff --git a/build.gradle b/build.gradle
+index cef47c5..8572e31 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -25,3 +25,7 @@ allprojects {
+ task clean(type: Delete) {
+     delete rootProject.buildDir
+ }
++
++allprojects {
++    tasks.withType(Javadoc).all { enabled = false }
++}
