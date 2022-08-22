@@ -23,6 +23,13 @@ namespace BmwDeepObd
 {
     public class EdiabasThread : IDisposable
     {
+        public enum UpdateState
+        {
+            Init,
+            DetectVehicle,
+            ReadErrors
+        }
+
         public class EdiabasErrorReport
         {
             public EdiabasErrorReport(string ecuName, string sgbd, string sgbdResolved, string vagDataFileName, string vagUdsFileName, bool readIs, bool isValid, Dictionary<string, EdiabasNet.ResultData> errorDict = null, List<Dictionary<string, EdiabasNet.ResultData>> errorDetailSet = null, string execptionText = null)
@@ -244,6 +251,12 @@ namespace BmwDeepObd
         }
 
         public string EdiabasErrorMessage
+        {
+            get;
+            private set;
+        }
+
+        public UpdateState UpdateProgressState
         {
             get;
             private set;
@@ -728,6 +741,7 @@ namespace BmwDeepObd
                     EdiabasErrorReportList = null;
                     EdiabasErrorMessage = "No Page info";
                     ResultPageInfo = null;
+                    UpdateProgressState = UpdateState.Init;
                     UpdateProgress = 0;
                 }
                 return false;
@@ -815,6 +829,7 @@ namespace BmwDeepObd
                             {
                                 lock (DataLock)
                                 {
+                                    UpdateProgressState = UpdateState.DetectVehicle;
                                     UpdateProgress = percent;
                                 }
 
@@ -1058,6 +1073,7 @@ namespace BmwDeepObd
                     {   // first update
                         lock (DataLock)
                         {
+                            UpdateProgressState = UpdateState.ReadErrors;
                             UpdateProgress = index * 100 / pageInfo.ErrorsInfo.EcuList.Count;
                         }
                         DataUpdatedEvent();
@@ -1070,6 +1086,7 @@ namespace BmwDeepObd
                     EdiabasErrorReportList = errorReportList;
                     EdiabasErrorMessage = string.Empty;
                     ResultPageInfo = pageInfo;
+                    UpdateProgressState = UpdateState.ReadErrors;
                     UpdateProgress = 100;
                 }
                 return true;
@@ -1102,6 +1119,7 @@ namespace BmwDeepObd
                             EdiabasErrorReportList = null;
                             EdiabasErrorMessage = exText;
                             ResultPageInfo = pageInfo;
+                            UpdateProgressState = UpdateState.Init;
                             UpdateProgress = 0;
                         }
                         return false;
@@ -1266,6 +1284,7 @@ namespace BmwDeepObd
                     EdiabasErrorReportList = null;
                     EdiabasErrorMessage = exText;
                     ResultPageInfo = pageInfo;
+                    UpdateProgressState = UpdateState.Init;
                     UpdateProgress = 0;
                 }
                 return false;
@@ -1281,6 +1300,7 @@ namespace BmwDeepObd
                 EdiabasErrorReportList = null;
                 EdiabasErrorMessage = string.Empty;
                 ResultPageInfo = pageInfo;
+                UpdateProgressState = UpdateState.Init;
                 UpdateProgress = 0;
             }
             return true;
@@ -2868,6 +2888,7 @@ namespace BmwDeepObd
             BatteryVoltage = null;
             AdapterSerial = null;
             ResultPageInfo = null;
+            UpdateProgressState = UpdateState.Init;
             UpdateProgress = 0;
 
             _ediabasInitReq = true;

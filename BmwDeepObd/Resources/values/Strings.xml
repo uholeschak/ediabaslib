@@ -47,7 +47,10 @@
   <string name="choose_xml_editor">Choose an XML editor.</string>
   <string name="xml_access_denied">Access to XML file denied.\nPlease check the file location and access rights.</string>
   <string name="error_no_error">No errors present</string>
-  <string name="error_reading_errors">Reading error memory: {0}%</string>
+  <string name="error_reading_errors">Reading error memory: {0}</string>
+  <string name="error_reading_state_init">Initializing</string>
+  <string name="error_reading_state_detect">Detecting vehicle: {0}%</string>
+  <string name="error_reading_state_read">Progress: {0}%</string>
   <string name="error_no_response">No response</string>
   <string name="error_reset_condition">The error reset conditions have not been met.\nPlease stop the engine, turn on ignition and retry again.</string>
   <string name="error_error_code">Error code</string>

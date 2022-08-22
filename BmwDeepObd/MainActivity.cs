@@ -3673,6 +3673,7 @@ namespace BmwDeepObd
                     if (pageInfo.ErrorsInfo != null)
                     {   // read errors
                         List<EdiabasThread.EdiabasErrorReport> errorReportList = null;
+                        EdiabasThread.UpdateState updateState;
                         int updateProgress;
                         lock (EdiabasThread.DataLock)
                         {
@@ -3680,12 +3681,30 @@ namespace BmwDeepObd
                             {
                                 errorReportList = ActivityCommon.EdiabasThread.EdiabasErrorReportList;
                             }
+
+                            updateState = ActivityCommon.EdiabasThread.UpdateProgressState;
                             updateProgress = ActivityCommon.EdiabasThread.UpdateProgress;
                         }
 
                         if (errorReportList == null)
                         {
-                            tempResultList.Add(new TableResultItem(string.Format(GetString(Resource.String.error_reading_errors), updateProgress), null));
+                            string state = string.Empty;
+                            switch (updateState)
+                            {
+                                case EdiabasThread.UpdateState.Init:
+                                    state = GetString(Resource.String.error_reading_state_init);
+                                    break;
+
+                                case EdiabasThread.UpdateState.DetectVehicle:
+                                    state = string.Format(GetString(Resource.String.error_reading_state_detect), updateProgress);
+                                    break;
+
+                                case EdiabasThread.UpdateState.ReadErrors:
+                                    state = string.Format(GetString(Resource.String.error_reading_state_read), updateProgress);
+                                    break;
+                            }
+
+                            tempResultList.Add(new TableResultItem(string.Format(GetString(Resource.String.error_reading_errors), state), null));
                         }
                         else
                         {
