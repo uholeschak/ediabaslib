@@ -50,8 +50,8 @@
   <string name="error_no_error">Keine Fehler vorhanden</string>
   <string name="error_reading_errors">Fehlerspeicher lesen: {0}</string>
   <string name="error_reading_state_init">Initialisieren</string>
-  <string name="error_reading_state_detect">Fahrzeug erkennen: {0}%</string>
-  <string name="error_reading_state_read">Fortschritt: {0}%</string>
+  <string name="error_reading_state_detect">Erkennen {0}%</string>
+  <string name="error_reading_state_read">Fortschritt {0}%</string>
   <string name="error_reset_condition">Die Bedingungen für das Fehlerlöschen wurden nicht erfüllt.\nBitte stoppen sie den Motor, schalten die Zündung ein und versuchen Sie es noch einmal.</string>
   <string name="error_no_response">Keine Antwort</string>
   <string name="error_error_code">Fehlercode</string>
