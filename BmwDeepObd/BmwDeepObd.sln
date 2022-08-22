@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29519.181
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32811.315
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BmwDeepObd", "BmwDeepObd.csproj", "{5FC5723C-A88B-46E3-957C-FF24F9D8212F}"
 EndProject
@@ -10,8 +10,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UsbSerialBinding", "..\EdiabasLib\EdiabasLibAndroid\UsbSerialBinding\UsbSerialBinding.csproj", "{C70078EC-34D9-46A7-A04A-4412CFE27509}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomGaugeBinding", "..\EdiabasLib\EdiabasLibAndroid\CustomGaugeBinding\CustomGaugeBinding.csproj", "{6372B7DD-E31C-48F5-8C47-F6FA2BB37070}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GaugeViewBinding", "..\EdiabasLib\EdiabasLibAndroid\GaugeViewBinding\GaugeViewBinding.csproj", "{FA79B07E-02AA-4DB1-B8A9-C49CB7D48074}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpZipLibAndroid", "..\EdiabasLib\SharpZipLibAndroid\SharpZipLibAndroid.csproj", "{82A3338B-1DB5-4A95-AD9D-C5757E71418D}"
 EndProject
@@ -44,10 +42,6 @@ Global
 		{6372B7DD-E31C-48F5-8C47-F6FA2BB37070}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6372B7DD-E31C-48F5-8C47-F6FA2BB37070}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6372B7DD-E31C-48F5-8C47-F6FA2BB37070}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FA79B07E-02AA-4DB1-B8A9-C49CB7D48074}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FA79B07E-02AA-4DB1-B8A9-C49CB7D48074}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FA79B07E-02AA-4DB1-B8A9-C49CB7D48074}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FA79B07E-02AA-4DB1-B8A9-C49CB7D48074}.Release|Any CPU.Build.0 = Release|Any CPU
 		{82A3338B-1DB5-4A95-AD9D-C5757E71418D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{82A3338B-1DB5-4A95-AD9D-C5757E71418D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{82A3338B-1DB5-4A95-AD9D-C5757E71418D}.Release|Any CPU.ActiveCfg = Release|Any CPU
