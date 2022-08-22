@@ -52,8 +52,8 @@
   <string name="error_reading_errors">Считывание ошибок: {0}</string>
   <!--Translate-->
   <string name="error_reading_state_init">Инициализация</string>
-  <string name="error_reading_state_detect">Обнаружение: {0}%</string>
-  <string name="error_reading_state_read">Прогресс: {0}%</string>
+  <string name="error_reading_state_detect">Обнаружение {0}%</string>
+  <string name="error_reading_state_read">Прогресс {0}%</string>
   <!--Translate-->
   <string name="error_reset_condition">Условия сброса ошибки не выполнены.\nПожалуйста, остановите двигатель, включите зажигание и повторите попытку.</string>
   <string name="error_no_response">Нет подтверждения</string>
