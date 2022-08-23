@@ -441,97 +441,96 @@ namespace BMW.Rheingold.Programming.API
 			return list;
 		}
 
-		private IOtherBindingDetailsStatus[] BuildOtherBindingDetailStatus(PsdzOtherBindingDetailsStatus[] arrPsdzOtherBindingDetailStatus)
-		{
-			List<OtherBindingDetailsStatus> list = new List<OtherBindingDetailsStatus>();
-			if (arrPsdzOtherBindingDetailStatus != null && arrPsdzOtherBindingDetailStatus.Count<PsdzOtherBindingDetailsStatus>() > 0)
-			{
-				foreach (PsdzOtherBindingDetailsStatus psdzOtherBindingDetailsStatus in arrPsdzOtherBindingDetailStatus)
-				{
-					list.Add(new OtherBindingDetailsStatus
-					{
-						EcuName = psdzOtherBindingDetailsStatus.EcuName,
-						OtherBindingStatus = this.BuildEcuCertCheckingStatus(psdzOtherBindingDetailsStatus.OtherBindingStatus),
-						RollenName = psdzOtherBindingDetailsStatus.RollenName
-					});
-				}
-			}
-			if (list != null && list.Count<OtherBindingDetailsStatus>() > 0)
-			{
-				return list.ToArray();
-			}
-			return null;
-		}
+        private IOtherBindingDetailsStatus[] BuildOtherBindingDetailStatus(PsdzOtherBindingDetailsStatus[] arrPsdzOtherBindingDetailStatus)
+        {
+            List<OtherBindingDetailsStatus> list = new List<OtherBindingDetailsStatus>();
+            if (arrPsdzOtherBindingDetailStatus != null && arrPsdzOtherBindingDetailStatus.Count() > 0)
+            {
+                foreach (PsdzOtherBindingDetailsStatus psdzOtherBindingDetailsStatus in arrPsdzOtherBindingDetailStatus)
+                {
+                    list.Add(new OtherBindingDetailsStatus
+                    {
+                        EcuName = psdzOtherBindingDetailsStatus.EcuName,
+                        OtherBindingStatus = BuildEcuCertCheckingStatus(psdzOtherBindingDetailsStatus.OtherBindingStatus),
+                        RollenName = psdzOtherBindingDetailsStatus.RollenName
+                    });
+                }
+            }
+            if (list != null && list.Count() > 0)
+            {
+                return list.ToArray();
+            }
+            return null;
+        }
 
-		private EcuCertCheckingStatus? BuildEcuCertCheckingStatus(PsdzEcuCertCheckingStatus? bindingsStatus)
-		{
-			if (bindingsStatus != null)
-			{
-				switch (bindingsStatus.GetValueOrDefault())
-				{
-					case PsdzEcuCertCheckingStatus.CheckStillRunning:
-						return new EcuCertCheckingStatus?(EcuCertCheckingStatus.CheckStillRunning);
-					case PsdzEcuCertCheckingStatus.Empty:
-						return new EcuCertCheckingStatus?(EcuCertCheckingStatus.Empty);
-					case PsdzEcuCertCheckingStatus.Incomplete:
-						return new EcuCertCheckingStatus?(EcuCertCheckingStatus.Incomplete);
-					case PsdzEcuCertCheckingStatus.Malformed:
-						return new EcuCertCheckingStatus?(EcuCertCheckingStatus.Malformed);
-					case PsdzEcuCertCheckingStatus.Ok:
-						return new EcuCertCheckingStatus?(EcuCertCheckingStatus.Ok);
-					case PsdzEcuCertCheckingStatus.Other:
-						return new EcuCertCheckingStatus?(EcuCertCheckingStatus.Other);
-					case PsdzEcuCertCheckingStatus.SecurityError:
-						return new EcuCertCheckingStatus?(EcuCertCheckingStatus.SecurityError);
-					case PsdzEcuCertCheckingStatus.Unchecked:
-						return new EcuCertCheckingStatus?(EcuCertCheckingStatus.Unchecked);
-					case PsdzEcuCertCheckingStatus.WrongVin17:
-						return new EcuCertCheckingStatus?(EcuCertCheckingStatus.WrongVin17);
-				}
-			}
-			return new EcuCertCheckingStatus?(EcuCertCheckingStatus.Empty);
-		}
+        private EcuCertCheckingStatus? BuildEcuCertCheckingStatus(PsdzEcuCertCheckingStatus? bindingsStatus)
+        {
+            switch (bindingsStatus)
+            {
+                case PsdzEcuCertCheckingStatus.CheckStillRunning:
+                    return EcuCertCheckingStatus.CheckStillRunning;
+                case PsdzEcuCertCheckingStatus.Empty:
+                    return EcuCertCheckingStatus.Empty;
+                case PsdzEcuCertCheckingStatus.Incomplete:
+                    return EcuCertCheckingStatus.Incomplete;
+                case PsdzEcuCertCheckingStatus.Malformed:
+                    return EcuCertCheckingStatus.Malformed;
+                case PsdzEcuCertCheckingStatus.Ok:
+                    return EcuCertCheckingStatus.Ok;
+                case PsdzEcuCertCheckingStatus.Other:
+                    return EcuCertCheckingStatus.Other;
+                case PsdzEcuCertCheckingStatus.SecurityError:
+                    return EcuCertCheckingStatus.SecurityError;
+                case PsdzEcuCertCheckingStatus.Unchecked:
+                    return EcuCertCheckingStatus.Unchecked;
+                case PsdzEcuCertCheckingStatus.WrongVin17:
+                    return EcuCertCheckingStatus.WrongVin17;
+                default:
+                    return EcuCertCheckingStatus.Empty;
+            }
+        }
 
-		private IBindingDetailsStatus[] BuildDetailStatus(PsdzBindingDetailsStatus[] arrPsdzBindingDetailStatus)
-		{
-			List<BindingDetailsStatus> list = new List<BindingDetailsStatus>();
-			if (arrPsdzBindingDetailStatus != null && arrPsdzBindingDetailStatus.Count<PsdzBindingDetailsStatus>() > 0)
-			{
-				foreach (PsdzBindingDetailsStatus psdzBindingDetailsStatus in arrPsdzBindingDetailStatus)
-				{
-					list.Add(new BindingDetailsStatus
-					{
-						BindingStatus = this.BuildEcuCertCheckingStatus(psdzBindingDetailsStatus.BindingStatus),
-						CertificateStatus = this.BuildEcuCertCheckingStatus(psdzBindingDetailsStatus.CertificateStatus),
-						RollenName = psdzBindingDetailsStatus.RollenName
-					});
-				}
-			}
-			if (list != null && list.Count<BindingDetailsStatus>() > 0)
-			{
-				return list.ToArray();
-			}
-			return null;
-		}
+        private IBindingDetailsStatus[] BuildDetailStatus(PsdzBindingDetailsStatus[] arrPsdzBindingDetailStatus)
+        {
+            List<BindingDetailsStatus> list = new List<BindingDetailsStatus>();
+            if (arrPsdzBindingDetailStatus != null && arrPsdzBindingDetailStatus.Count() > 0)
+            {
+                foreach (PsdzBindingDetailsStatus psdzBindingDetailsStatus in arrPsdzBindingDetailStatus)
+                {
+                    list.Add(new BindingDetailsStatus
+                    {
+                        BindingStatus = BuildEcuCertCheckingStatus(psdzBindingDetailsStatus.BindingStatus),
+                        CertificateStatus = BuildEcuCertCheckingStatus(psdzBindingDetailsStatus.CertificateStatus),
+                        RollenName = psdzBindingDetailsStatus.RollenName
+                    });
+                }
+            }
+            if (list != null && list.Count() > 0)
+            {
+                return list.ToArray();
+            }
+            return null;
+        }
 
-		private IEnumerable<IEcuFailureResponse> BuildEcuCertCheckingResultFailedEcus(IEnumerable<PsdzEcuFailureResponse> psdzFailedEcus)
-		{
-			List<EcuFailureResponse> list = new List<EcuFailureResponse>();
-			if (psdzFailedEcus != null && psdzFailedEcus.Count<PsdzEcuFailureResponse>() > 0)
-			{
-				foreach (PsdzEcuFailureResponse psdzEcuFailureResponse in psdzFailedEcus)
-				{
-					list.Add(new EcuFailureResponse
-					{
-						Ecu = this.BuildEcuIdentifier(psdzEcuFailureResponse.Ecu.BaseVariant, psdzEcuFailureResponse.Ecu.DiagAddrAsInt),
-						Reason = psdzEcuFailureResponse.Reason
-					});
-				}
-			}
-			return list;
-		}
+        private IEnumerable<IEcuFailureResponse> BuildEcuCertCheckingResultFailedEcus(IEnumerable<PsdzEcuFailureResponse> psdzFailedEcus)
+        {
+            List<EcuFailureResponse> list = new List<EcuFailureResponse>();
+            if (psdzFailedEcus != null && psdzFailedEcus.Count() > 0)
+            {
+                foreach (PsdzEcuFailureResponse psdzFailedEcu in psdzFailedEcus)
+                {
+                    list.Add(new EcuFailureResponse
+                    {
+                        Ecu = BuildEcuIdentifier(psdzFailedEcu.Ecu.BaseVariant, psdzFailedEcu.Ecu.DiagAddrAsInt),
+                        Reason = psdzFailedEcu.Reason
+                    });
+                }
+                return list;
+            }
+            return list;
+        }
 
-		internal IIstufenTriple Build(IPsdzIstufenTriple istufenTriple)
+        internal IIstufenTriple Build(IPsdzIstufenTriple istufenTriple)
 		{
 			if (istufenTriple == null)
 			{
