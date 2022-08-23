@@ -254,26 +254,25 @@ namespace BMW.Rheingold.Programming.API
 			return null;
 		}
 
-		public IEcuObj Build(IPsdzEcu ecuInput)
-		{
-			if (ecuInput == null)
-			{
-				return null;
-			}
-			EcuObj ecuObj = new EcuObj();
-			ecuObj.BaseVariant = ecuInput.BaseVariant;
-			ecuObj.EcuVariant = ecuInput.EcuVariant;
-			ecuObj.BnTnName = ecuInput.BnTnName;
-			ecuObj.GatewayDiagAddrAsInt = ((ecuInput.GatewayDiagAddr != null) ? new int?(ecuInput.GatewayDiagAddr.Offset) : null);
-			ecuObj.DiagnosticBus = this.busEnumMapper.GetValue(ecuInput.DiagnosticBus);
-			ecuObj.SerialNumber = ecuInput.SerialNumber;
-			ecuObj.EcuIdentifier = this.Build(ecuInput.PrimaryKey);
-			ecuObj.StandardSvk = this.Build(ecuInput.StandardSvk);
-			ecuObj.BusConnections = ((ecuInput.BusConnections != null) ? ecuInput.BusConnections.Select(new Func<PsdzBus, Bus>(this.busEnumMapper.GetValue)).ToList<Bus>() : null);
-			ecuObj.EcuDetailInfo = ((ecuInput.EcuDetailInfo != null) ? new EcuObjDetailInfo(ecuInput.EcuDetailInfo.ByteValue) : null);
-			ecuObj.EcuStatusInfo = ((ecuInput.EcuStatusInfo != null) ? new EcuObjStatusInfo(ecuInput.EcuStatusInfo.ByteValue, ecuInput.EcuStatusInfo.HasIndividualData) : null);
-			ecuObj.EcuPdxInfo = this.Build(ecuInput.PsdzEcuPdxInfo);
-
+        public IEcuObj Build(IPsdzEcu ecuInput)
+        {
+            if (ecuInput == null)
+            {
+                return null;
+            }
+            EcuObj ecuObj = new EcuObj();
+            ecuObj.BaseVariant = ecuInput.BaseVariant;
+            ecuObj.EcuVariant = ecuInput.EcuVariant;
+            ecuObj.BnTnName = ecuInput.BnTnName;
+            ecuObj.GatewayDiagAddrAsInt = ((ecuInput.GatewayDiagAddr != null) ? new int?(ecuInput.GatewayDiagAddr.Offset) : null);
+            ecuObj.DiagnosticBus = busEnumMapper.GetValue(ecuInput.DiagnosticBus);
+            ecuObj.SerialNumber = ecuInput.SerialNumber;
+            ecuObj.EcuIdentifier = Build(ecuInput.PrimaryKey);
+            ecuObj.StandardSvk = Build(ecuInput.StandardSvk);
+            ecuObj.BusConnections = ((ecuInput.BusConnections != null) ? ecuInput.BusConnections.Select(busEnumMapper.GetValue).ToList() : null);
+            ecuObj.EcuDetailInfo = ((ecuInput.EcuDetailInfo != null) ? new EcuObjDetailInfo(ecuInput.EcuDetailInfo.ByteValue) : null);
+            ecuObj.EcuStatusInfo = ((ecuInput.EcuStatusInfo != null) ? new EcuObjStatusInfo(ecuInput.EcuStatusInfo.ByteValue, ecuInput.EcuStatusInfo.HasIndividualData) : null);
+            ecuObj.EcuPdxInfo = Build(ecuInput.PsdzEcuPdxInfo);
             PdszDatabase database = ClientContext.GetDatabase(this.vehicle);
             if (database != null)
             {
@@ -285,8 +284,8 @@ namespace BMW.Rheingold.Programming.API
                     //ecuObj.XepEcuVariant = xep_ECUVARIANTS;
                     ecuObj.EcuVariant = ecuVar.Name.ToUpper(CultureInfo.InvariantCulture);
                     PdszDatabase.EcuClique ecuClique = database.FindEcuClique(ecuVar);
-					//ecuObj.XepEcuClique = ecuClique;
-					PdszDatabase.EcuGroup ecuGroup = database.FindEcuGroup(ecuVar, this.vehicle, this.ffmResolver);
+                    //ecuObj.XepEcuClique = ecuClique;
+                    PdszDatabase.EcuGroup ecuGroup = database.FindEcuGroup(ecuVar, this.vehicle, this.ffmResolver);
                     if (ecuGroup != null)
                     {
                         ecuObj.EcuGroup = ecuGroup.Name.ToUpper(CultureInfo.InvariantCulture);
@@ -299,28 +298,30 @@ namespace BMW.Rheingold.Programming.API
                 }
             }
 
-			return ecuObj;
-		}
+            return ecuObj;
+        }
 
-		private IEcuPdxInfo Build(IPsdzEcuPdxInfo psdzEcuPdxInfo)
-		{
-			if (psdzEcuPdxInfo != null)
-			{
-				return new EcuObjPdxInfo
-				{
-					CertVersion = psdzEcuPdxInfo.CertVersion,
-					IsCert2018 = psdzEcuPdxInfo.IsCert2018,
-					IsCert2021 = psdzEcuPdxInfo.IsCert2021,
-					IsCertEnabled = psdzEcuPdxInfo.IsCertEnabled,
-					IsSecOcEnabled = psdzEcuPdxInfo.IsSecOcEnabled,
-					IsSfaEnabled = psdzEcuPdxInfo.IsSfaEnabled,
-					IsIPSecEnabled = psdzEcuPdxInfo.IsIPSecEnabled,
-					IsLcsServicePackSupported = psdzEcuPdxInfo.IsLcsServicePackSupported,
-					IsLcsSystemTimeSwitchSupported = psdzEcuPdxInfo.IsLcsSystemTimeSwitchSupported
-				};
-			}
-			return null;
-		}
+        private IEcuPdxInfo Build(IPsdzEcuPdxInfo psdzEcuPdxInfo)
+        {
+            if (psdzEcuPdxInfo != null)
+            {
+                return new EcuObjPdxInfo
+                {
+                    CertVersion = psdzEcuPdxInfo.CertVersion,
+                    IsCert2018 = psdzEcuPdxInfo.IsCert2018,
+                    IsCert2021 = psdzEcuPdxInfo.IsCert2021,
+                    IsCertEnabled = psdzEcuPdxInfo.IsCertEnabled,
+                    IsSecOcEnabled = psdzEcuPdxInfo.IsSecOcEnabled,
+                    IsSfaEnabled = psdzEcuPdxInfo.IsSfaEnabled,
+                    IsIPSecEnabled = psdzEcuPdxInfo.IsIPSecEnabled,
+                    IsLcsServicePackSupported = psdzEcuPdxInfo.IsLcsServicePackSupported,
+                    IsLcsSystemTimeSwitchSupported = psdzEcuPdxInfo.IsLcsSystemTimeSwitchSupported,
+                    //IsMirrorProtocolSupported = psdzEcuPdxInfo.IsMirrorProtocolSupported,
+                    //IsEcuAuthEnabled = psdzEcuPdxInfo.IsEcuAuthEnabled
+                };
+            }
+            return null;
+        }
 
         public ECU Build(IEcuObj ecuInput)
         {
