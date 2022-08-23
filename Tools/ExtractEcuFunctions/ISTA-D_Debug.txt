@@ -171,6 +171,9 @@ More Debug info:
 <add key="TesterGUI.PreferEthernet" value="true" />
 <add key="BMW.Rheingold.xVM.ICOM.Dirtyflag.Detection" value="false" />
 
+This could be automated with (backup ReleaseMod before):
+AssemblyPatcher.exe "TesterGUI\bin\ReleaseMod"
+
 Make sure the EDIABAS.INI settings has default values in case ModifyEdiabasIni is true:
 [XEthernet]
 RemoteHost       = Autodetect
@@ -180,7 +183,10 @@ DiagnosticPort   = 6801
 TimeoutConnect   = 2000
 
 Remove Environment variable: COMPLUS_MDA
-If the dealer number is 0 execute RCleanerV4.4.exe once. Export [HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\BMWGroup] before if required.
+If the dealer number is 0 execute RCleanerV4.4.exe once.
+Export before if required:
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\BMWGroup]
+[HKEY_CURRENT_USER\SOFTWARE\BMWGroup\ISPI\Rheingold]
 
 Debugging:
 Disable debugger detection in dnSpy (uncheck System.Diagnostics.Debugger option)!
