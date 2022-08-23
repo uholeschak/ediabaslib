@@ -324,30 +324,29 @@ namespace BMW.Rheingold.Programming.API
 
         public ECU Build(IEcuObj ecuInput)
         {
-            ECU ecu = null;
-            EcuObj ecuObj = ecuInput as EcuObj;
-            if (ecuObj != null)
+            ECU eCU = null;
+            if (ecuInput is EcuObj ecuObj)
             {
-                ecu = new ECU();
-                ecu.ID_SG_ADR = (long)ecuObj.EcuIdentifier.DiagAddrAsInt;
-                ecu.TITLE_ECUTREE = ecuObj.EcuRep;
-                ecu.ECU_SGBD = ecuObj.EcuVariant;
-                ecu.VARIANTE = ecuObj.EcuVariant;
-                ecu.ECU_GRUPPE = ecuObj.EcuGroup;
-                ecu.ECU_GROBNAME = ecuObj.BaseVariant;
-                //ecu.XepEcuClique = ecuObj.XepEcuClique;
-                //ecu.ECUTitle = ((ecuObj.XepEcuClique != null) ? ecuObj.XepEcuClique.Title : string.Empty);
-                //ecu.XepEcuVariant = ecuObj.XepEcuVariant;
-                ecu.ProgrammingVariantName = ecuObj.BnTnName;
-                ecu.StatusInfo = ecuObj.EcuStatusInfo;
-            }
+                eCU = new ECU();
+                eCU.ID_SG_ADR = ecuObj.EcuIdentifier.DiagAddrAsInt;
+                eCU.TITLE_ECUTREE = ecuObj.EcuRep;
+                eCU.ECU_SGBD = ecuObj.EcuVariant;
+                eCU.VARIANTE = ecuObj.EcuVariant;
+                eCU.ECU_GRUPPE = ecuObj.EcuGroup;
+                eCU.ECU_GROBNAME = ecuObj.BaseVariant;
+                //eCU.XepEcuClique = ecuObj.XepEcuClique;
+                //eCU.ECUTitle = ((ecuObj.XepEcuClique != null) ? ecuObj.XepEcuClique.Title : string.Empty);
+                //eCU.XepEcuVariant = ecuObj.XepEcuVariant;
+                eCU.ProgrammingVariantName = ecuObj.BnTnName;
+                eCU.StatusInfo = ecuObj.EcuStatusInfo;
 #if false
-            if (ecu.XepEcuVariant == null)
-            {
-                this.vdc.FillEcuNames(ecu, this.vehicle, this.ffmResolver);
-            }
+				if (eCU.XepEcuVariant == null)
+                {
+                    vdc.FillEcuNames(eCU, vehicle, ffmResolver);
+                }
 #endif
-            return ecu;
+            }
+            return eCU;
         }
 
         public IEcuIdentifier Build(IPsdzEcuIdentifier ecuIdentifierInput)
