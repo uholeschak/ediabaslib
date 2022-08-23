@@ -350,96 +350,97 @@ namespace BMW.Rheingold.Programming.API
             return ecu;
         }
 
-		public IEcuIdentifier Build(IPsdzEcuIdentifier ecuIdentifierInput)
-		{
-			if (ecuIdentifierInput == null)
-			{
-				return null;
-			}
-			return this.BuildEcuIdentifier(ecuIdentifierInput.BaseVariant, ecuIdentifierInput.DiagAddrAsInt);
-		}
+        public IEcuIdentifier Build(IPsdzEcuIdentifier ecuIdentifierInput)
+        {
+            if (ecuIdentifierInput == null)
+            {
+                return null;
+            }
+            return BuildEcuIdentifier(ecuIdentifierInput.BaseVariant, ecuIdentifierInput.DiagAddrAsInt);
+        }
 
-		public ISwt Build(IPsdzSwtAction swtAction)
-		{
-			if (swtAction == null)
-			{
-				return null;
-			}
-			Swt swt = new Swt();
-			foreach (IPsdzSwtEcu swtEcuInput in swtAction.SwtEcus)
-			{
-				ISwtEcu swtEcu = this.Build(swtEcuInput);
-				swt.AddEcu(swtEcu);
-			}
-			return swt;
-		}
+        public ISwt Build(IPsdzSwtAction swtAction)
+        {
+            if (swtAction == null)
+            {
+                return null;
+            }
+            Swt swt = new Swt();
+            foreach (IPsdzSwtEcu swtEcu2 in swtAction.SwtEcus)
+            {
+                ISwtEcu swtEcu = Build(swtEcu2);
+                swt.AddEcu(swtEcu);
+            }
+            return swt;
+        }
 
-		public ISwtApplicationId Build(IPsdzSwtApplicationId swtApplicationId)
-		{
-			if (swtApplicationId == null)
-			{
-				return null;
-			}
-			return this.BuildSwtApplicationId(swtApplicationId.ApplicationNumber, swtApplicationId.UpgradeIndex);
-		}
+        public ISwtApplicationId Build(IPsdzSwtApplicationId swtApplicationId)
+        {
+            if (swtApplicationId == null)
+            {
+                return null;
+            }
+            return BuildSwtApplicationId(swtApplicationId.ApplicationNumber, swtApplicationId.UpgradeIndex);
+        }
 
-		public IAsamJobInputDictionary BuildAsamJobParamDictionary()
-		{
-			return new AsamJobInputDictionary();
-		}
+        public IAsamJobInputDictionary BuildAsamJobParamDictionary()
+        {
+            return new AsamJobInputDictionary();
+        }
 
-		public IEcuIdentifier BuildEcuIdentifier(string baseVariant, int diagAddrAsInt)
-		{
-			return new EcuId(baseVariant, diagAddrAsInt);
-		}
+        public IEcuIdentifier BuildEcuIdentifier(string baseVariant, int diagAddrAsInt)
+        {
+            return new EcuId(baseVariant, diagAddrAsInt);
+        }
 
-		public ISwtApplicationId BuildSwtApplicationId(int appNo, int upgradeIdx)
-		{
-			return new SwtApplicationIdObj(appNo, upgradeIdx);
-		}
+        public ISwtApplicationId BuildSwtApplicationId(int appNo, int upgradeIdx)
+        {
+            return new SwtApplicationIdObj(appNo, upgradeIdx);
+        }
 
-		public IFetchEcuCertCheckingResult Build(PsdzFetchEcuCertCheckingResult psdzFetchEcuCertCheckingResult)
-		{
-			if (psdzFetchEcuCertCheckingResult == null)
-			{
-				return null;
-			}
-			return this.BuildFetchEcuCertCheckingResult(psdzFetchEcuCertCheckingResult);
-		}
+        public IFetchEcuCertCheckingResult Build(PsdzFetchEcuCertCheckingResult psdzFetchEcuCertCheckingResult)
+        {
+            if (psdzFetchEcuCertCheckingResult == null)
+            {
+                return null;
+            }
+            return BuildFetchEcuCertCheckingResult(psdzFetchEcuCertCheckingResult);
+        }
 
-		private IFetchEcuCertCheckingResult BuildFetchEcuCertCheckingResult(PsdzFetchEcuCertCheckingResult psdzFetchEcuCertCheckingResult)
-		{
-			if (psdzFetchEcuCertCheckingResult == null)
-			{
-				return null;
-			}
-			return new FetchEcuCertCheckingResult
-			{
-				FailedEcus = this.BuildEcuCertCheckingResultFailedEcus(psdzFetchEcuCertCheckingResult.FailedEcus),
-				Results = this.BuildEcuCertCheckingResults(psdzFetchEcuCertCheckingResult.Results)
-			};
-		}
+        private IFetchEcuCertCheckingResult BuildFetchEcuCertCheckingResult(PsdzFetchEcuCertCheckingResult psdzFetchEcuCertCheckingResult)
+        {
+            if (psdzFetchEcuCertCheckingResult == null)
+            {
+                return null;
+            }
+            return new FetchEcuCertCheckingResult
+            {
+                FailedEcus = BuildEcuCertCheckingResultFailedEcus(psdzFetchEcuCertCheckingResult.FailedEcus),
+                Results = BuildEcuCertCheckingResults(psdzFetchEcuCertCheckingResult.Results)
+            };
+        }
 
-		private IEnumerable<IEcuCertCheckingResponse> BuildEcuCertCheckingResults(IEnumerable<PsdzEcuCertCheckingResponse> results)
-		{
-			List<EcuCertCheckingResponse> list = new List<EcuCertCheckingResponse>();
-			if (results != null && results.Count<PsdzEcuCertCheckingResponse>() > 0)
-			{
-				foreach (PsdzEcuCertCheckingResponse psdzEcuCertCheckingResponse in results)
-				{
-					list.Add(new EcuCertCheckingResponse
-					{
-						BindingDetailStatus = this.BuildDetailStatus(psdzEcuCertCheckingResponse.BindingDetailStatus),
-						BindingsStatus = this.BuildEcuCertCheckingStatus(psdzEcuCertCheckingResponse.BindingsStatus),
-						CertificateStatus = this.BuildEcuCertCheckingStatus(psdzEcuCertCheckingResponse.CertificateStatus),
-						Ecu = this.BuildEcuIdentifier(psdzEcuCertCheckingResponse.Ecu.BaseVariant, psdzEcuCertCheckingResponse.Ecu.DiagAddrAsInt),
-						OtherBindingDetailStatus = this.BuildOtherBindingDetailStatus(psdzEcuCertCheckingResponse.OtherBindingDetailStatus),
-						OtherBindingsStatus = this.BuildEcuCertCheckingStatus(psdzEcuCertCheckingResponse.OtherBindingsStatus)
-					});
-				}
-			}
-			return list;
-		}
+        private IEnumerable<IEcuCertCheckingResponse> BuildEcuCertCheckingResults(IEnumerable<PsdzEcuCertCheckingResponse> results)
+        {
+            List<EcuCertCheckingResponse> list = new List<EcuCertCheckingResponse>();
+            if (results != null && results.Count() > 0)
+            {
+                foreach (PsdzEcuCertCheckingResponse result in results)
+                {
+                    list.Add(new EcuCertCheckingResponse
+                    {
+                        BindingDetailStatus = BuildDetailStatus(result.BindingDetailStatus),
+                        BindingsStatus = BuildEcuCertCheckingStatus(result.BindingsStatus),
+                        CertificateStatus = BuildEcuCertCheckingStatus(result.CertificateStatus),
+                        Ecu = BuildEcuIdentifier(result.Ecu.BaseVariant, result.Ecu.DiagAddrAsInt),
+                        OtherBindingDetailStatus = BuildOtherBindingDetailStatus(result.OtherBindingDetailStatus),
+                        OtherBindingsStatus = BuildEcuCertCheckingStatus(result.OtherBindingsStatus)
+                    });
+                }
+                return list;
+            }
+            return list;
+        }
 
         private IOtherBindingDetailsStatus[] BuildOtherBindingDetailStatus(PsdzOtherBindingDetailsStatus[] arrPsdzOtherBindingDetailStatus)
         {
