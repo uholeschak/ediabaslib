@@ -51,64 +51,64 @@ namespace BMW.Rheingold.Programming.API
 			};
 		}
 
-		public IVehicleProfile Build(IPsdzFp fp)
-		{
-			VehicleProfile vehicleProfile = (VehicleProfile)this.Build(fp);
-			vehicleProfile.Baureihenverbund = fp.Baureihenverbund;
-			vehicleProfile.Entwicklungsbaureihe = fp.Entwicklungsbaureihe;
-			return vehicleProfile;
-		}
+        public IVehicleProfile Build(IPsdzFp fp)
+        {
+            VehicleProfile obj = (VehicleProfile)Build((IPsdzStandardFp)fp);
+            obj.Baureihenverbund = fp.Baureihenverbund;
+            obj.Entwicklungsbaureihe = fp.Entwicklungsbaureihe;
+            return obj;
+        }
 
-		public IVehicleProfile Build(IPsdzStandardFp standardFp)
-		{
-			if (standardFp == null)
-			{
-				return null;
-			}
-			if (!standardFp.IsValid)
-			{
-				//Log.Warning("ProgrammingObjectBuilder.Build()", "Vehicle profile 'standardFp' is not valid!", Array.Empty<object>());
-				return null;
-			}
-			IDictionary<int, IEnumerable<IVehicleProfileCriterion>> dictionary = new Dictionary<int, IEnumerable<IVehicleProfileCriterion>>();
-			foreach (int key in standardFp.Category2Criteria.Keys)
-			{
-				IEnumerable<IVehicleProfileCriterion> value = standardFp.Category2Criteria[key].Select(new Func<IPsdzStandardFpCriterion, IVehicleProfileCriterion>(this.Build));
-				dictionary.Add(key, value);
-			}
-			return new VehicleProfile(standardFp.AsString, standardFp.CategoryId2CategoryName, dictionary);
-		}
+        public IVehicleProfile Build(IPsdzStandardFp standardFp)
+        {
+            if (standardFp == null)
+            {
+                return null;
+            }
+            if (!standardFp.IsValid)
+            {
+                //Log.Warning("ProgrammingObjectBuilder.Build()", "Vehicle profile 'standardFp' is not valid!");
+                return null;
+            }
+            IDictionary<int, IEnumerable<IVehicleProfileCriterion>> dictionary = new Dictionary<int, IEnumerable<IVehicleProfileCriterion>>();
+            foreach (int key in standardFp.Category2Criteria.Keys)
+            {
+                IEnumerable<IVehicleProfileCriterion> value = standardFp.Category2Criteria[key].Select(Build);
+                dictionary.Add(key, value);
+            }
+            return new VehicleProfile(standardFp.AsString, standardFp.CategoryId2CategoryName, dictionary);
+        }
 
-		public IVehicleProfileCriterion Build(IPsdzStandardFpCriterion criterion)
-		{
-			if (criterion == null)
-			{
-				return null;
-			}
-			return new VehicleProfileCriterion(criterion.Value, criterion.Name, criterion.NameEn);
-		}
+        public IVehicleProfileCriterion Build(IPsdzStandardFpCriterion criterion)
+        {
+            if (criterion == null)
+            {
+                return null;
+            }
+            return new VehicleProfileCriterion(criterion.Value, criterion.Name, criterion.NameEn);
+        }
 
-		public BMW.Rheingold.CoreFramework.Contracts.Programming.IFa Build(BMW.Rheingold.CoreFramework.Contracts.Vehicle.IFa faInput)
-		{
-			if (faInput == null)
-			{
-				return null;
-			}
-			VehicleOrder vehicleOrder = new VehicleOrder();
-			if (!string.IsNullOrWhiteSpace(faInput.VERSION) && Regex.IsMatch(faInput.VERSION.Trim(), "^\\d+$"))
-			{
-				vehicleOrder.FaVersion = int.Parse(faInput.VERSION);
-			}
-			vehicleOrder.Entwicklungsbaureihe = FormatConverter.ConvertToBn2020ConformModelSeries(faInput.BR);
-			vehicleOrder.Lackcode = faInput.LACK;
-			vehicleOrder.Polstercode = faInput.POLSTER;
-			vehicleOrder.Type = faInput.TYPE;
-			vehicleOrder.Zeitkriterium = faInput.C_DATE;
-			vehicleOrder.EWords = ((faInput.E_WORT != null) ? new List<string>(faInput.E_WORT) : null);
-			vehicleOrder.HOWords = ((faInput.HO_WORT != null) ? new List<string>(faInput.HO_WORT) : null);
-			vehicleOrder.Salapas = ((faInput.SA != null) ? new List<string>(faInput.SA) : null);
-			return vehicleOrder;
-		}
+        public BMW.Rheingold.CoreFramework.Contracts.Programming.IFa Build(BMW.Rheingold.CoreFramework.Contracts.Vehicle.IFa faInput)
+        {
+            if (faInput == null)
+            {
+                return null;
+            }
+            BMW.Rheingold.Programming.API.VehicleOrder vehicleOrder = new BMW.Rheingold.Programming.API.VehicleOrder();
+            if (!string.IsNullOrWhiteSpace(faInput.VERSION) && Regex.IsMatch(faInput.VERSION.Trim(), "^\\d+$"))
+            {
+                vehicleOrder.FaVersion = int.Parse(faInput.VERSION);
+            }
+            vehicleOrder.Entwicklungsbaureihe = FormatConverter.ConvertToBn2020ConformModelSeries(faInput.BR);
+            vehicleOrder.Lackcode = faInput.LACK;
+            vehicleOrder.Polstercode = faInput.POLSTER;
+            vehicleOrder.Type = faInput.TYPE;
+            vehicleOrder.Zeitkriterium = faInput.C_DATE;
+            vehicleOrder.EWords = ((faInput.E_WORT != null) ? new List<string>(faInput.E_WORT) : null);
+            vehicleOrder.HOWords = ((faInput.HO_WORT != null) ? new List<string>(faInput.HO_WORT) : null);
+            vehicleOrder.Salapas = ((faInput.SA != null) ? new List<string>(faInput.SA) : null);
+            return vehicleOrder;
+        }
 
         public IStandardSvk Build(IPsdzStandardSvk svkInput)
         {
