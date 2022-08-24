@@ -573,28 +573,52 @@ namespace PsdzClient.Core
 		{
 			get
 			{
-				return this.gsgbdField;
+				return this.mainSeriesSgbdField;
 			}
 			set
 			{
-				if (this.gsgbdField != null)
+				if (this.mainSeriesSgbdField != null)
 				{
-					if (!this.gsgbdField.Equals(value))
+					if (!this.mainSeriesSgbdField.Equals(value))
 					{
-						this.gsgbdField = value;
+						this.mainSeriesSgbdField = value;
 						this.OnPropertyChanged("Gsgbd");
 						return;
 					}
 				}
 				else
 				{
-					this.gsgbdField = value;
+					this.mainSeriesSgbdField = value;
 					this.OnPropertyChanged("Gsgbd");
 				}
 			}
 		}
 
-		[DefaultValue(BNType.UNKNOWN)]
+        public string MainSeriesSgbd
+        {
+            get
+            {
+                return mainSeriesSgbdField;
+            }
+            set
+            {
+                if (mainSeriesSgbdField != null)
+                {
+                    if (!mainSeriesSgbdField.Equals(value))
+                    {
+                        mainSeriesSgbdField = value;
+                        OnPropertyChanged("MainSeriesSgbd");
+                    }
+                }
+                else
+                {
+                    mainSeriesSgbdField = value;
+                    OnPropertyChanged("MainSeriesSgbd");
+                }
+            }
+        }
+
+        [DefaultValue(BNType.UNKNOWN)]
 		public BNType BNType
 		{
 			get
@@ -2894,7 +2918,7 @@ namespace PsdzClient.Core
 
 		private string ereiheField;
 
-		private string gsgbdField;
+		private string mainSeriesSgbdField;
 
 		private BNType bNTypeField;
 

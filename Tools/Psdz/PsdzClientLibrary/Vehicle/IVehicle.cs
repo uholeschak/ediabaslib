@@ -213,7 +213,9 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
 		string Gsgbd { get; }
 
-		decimal? Gwsz { get; }
+        string MainSeriesSgbd { get; }
+
+        decimal? Gwsz { get; }
 
 		GwszUnitType? GwszUnit { get; }
 
