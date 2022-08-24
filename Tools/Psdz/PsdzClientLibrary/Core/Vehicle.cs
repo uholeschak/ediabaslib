@@ -2461,71 +2461,79 @@ namespace PsdzClient.Core
 		}
 
         // ToDo: Check on update
-		public bool? IsABSVehicle()
-		{
-			if (base.ECU != null && base.ECU.Count > 0)
-			{
-				string[] array = new string[]
-				{
-					"ASCMK20",
-					"absmk4",
-					"absmk4g",
-					"abs5",
-					"abs_uc",
-					"asc4gus",
-					"asc5",
-					"asc57",
-					"asc57r75",
-					"asc5d",
-					"ascmk20",
-					"ascmk4.prg",
-					"ascmk4g",
-					"ascmk4g1",
-					"asc_l22",
-					"asc_t"
-				};
-				ECU ecu = this.getECU(new long?(86L), null);
-				if (ecu != null && ecu.IDENT_SUCCESSFULLY)
-				{
-					string[] array2 = array;
-					for (int i = 0; i < array2.Length; i++)
-					{
-						if (array2[i].Equals(ecu.VARIANTE, StringComparison.OrdinalIgnoreCase))
-						{
-							return new bool?(true);
-						}
-					}
-					return new bool?(false);
-				}
-				ecu = this.getECU(new long?(41L), null);
-				if (ecu != null && ecu.IDENT_SUCCESSFULLY)
-				{
-					string[] array2 = array;
-					for (int i = 0; i < array2.Length; i++)
-					{
-						if (array2[i].Equals(ecu.VARIANTE, StringComparison.OrdinalIgnoreCase))
-						{
-							return new bool?(true);
-						}
-					}
-					return new bool?(false);
-				}
-				ecu = this.getECU(new long?(54L), null);
-				if (ecu != null && ecu.IDENT_SUCCESSFULLY)
-				{
-					string[] array2 = array;
-					for (int i = 0; i < array2.Length; i++)
-					{
-						if (array2[i].Equals(ecu.VARIANTE, StringComparison.OrdinalIgnoreCase))
-						{
-							return new bool?(true);
-						}
-					}
-					return new bool?(false);
-				}
-			}
-			return null;
-		}
+        public bool? IsABSVehicle()
+        {
+            if (base.ECU != null && base.ECU.Count > 0)
+            {
+                string[] array = new string[16]
+                {
+                    "ASCMK20", "absmk4", "absmk4g", "abs5", "abs_uc", "asc4gus", "asc5", "asc57", "asc57r75", "asc5d",
+                    "ascmk20", "ascmk4.prg", "ascmk4g", "ascmk4g1", "asc_l22", "asc_t"
+                };
+                ECU eCU = getECU(86L, null);
+                if (eCU != null && eCU.IDENT_SUCCESSFULLY)
+                {
+                    string[] array2 = array;
+                    int num2 = 0;
+                    while (true)
+                    {
+                        if (num2 < array2.Length)
+                        {
+                            if (array2[num2].Equals(eCU.VARIANTE, StringComparison.OrdinalIgnoreCase))
+                            {
+                                break;
+                            }
+                            num2++;
+                            continue;
+                        }
+                        return false;
+                    }
+                    return true;
+                }
+                eCU = getECU(41L, null);
+                if (eCU != null && eCU.IDENT_SUCCESSFULLY)
+                {
+                    string[] array2 = array;
+                    int num2 = 0;
+                    while (true)
+                    {
+                        if (num2 < array2.Length)
+                        {
+                            if (array2[num2].Equals(eCU.VARIANTE, StringComparison.OrdinalIgnoreCase))
+                            {
+                                break;
+                            }
+                            num2++;
+                            continue;
+                        }
+                        return false;
+                    }
+                    return true;
+                }
+                eCU = getECU(54L, null);
+                if (eCU != null && eCU.IDENT_SUCCESSFULLY)
+                {
+                    string[] array2 = array;
+                    int num2 = 0;
+                    while (true)
+                    {
+                        if (num2 < array2.Length)
+                        {
+                            if (array2[num2].Equals(eCU.VARIANTE, StringComparison.OrdinalIgnoreCase))
+                            {
+                                break;
+                            }
+                            num2++;
+                            continue;
+                        }
+                        return false;
+                    }
+                    return true;
+                }
+            }
+            return null;
+        }
+
 #if false
 		private static ObservableCollection<Fault> CalculateFaultList(Vehicle vehicle, IEnumerable<ECU> ecus, IEnumerable<DTC> combinedFaults, ObservableCollection<ZFSResult> zfs, IFFMDynamicResolver ffmFesolver = null)
 		{
@@ -2720,7 +2728,7 @@ namespace PsdzClient.Core
 			}
 		}
 #endif
-		public bool GetProgrammingEnabledForBn(string bn)
+        public bool GetProgrammingEnabledForBn(string bn)
 		{
 			return Vehicle.GetBnTypes(bn).Contains(base.BNType);
 		}
