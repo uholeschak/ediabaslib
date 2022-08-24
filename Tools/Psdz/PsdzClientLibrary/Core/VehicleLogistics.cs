@@ -601,285 +601,285 @@ namespace PsdzClient.Core
 
         // ToDo: Check on update
         public static BNType getBNType(Vehicle vecInfo)
-		{
-			if (vecInfo == null)
-			{
-				//Log.Warning("VehicleLogistics.getBNType()", "vehicle was null");
-				return BNType.UNKNOWN;
-			}
-			if (string.IsNullOrEmpty(vecInfo.Ereihe))
-			{
-				return BNType.UNKNOWN;
-			}
-			switch (vecInfo.Ereihe.ToUpper())
-			{
-				case "M12":
-					return BNType.BEV2010;
-				case "K19":
-					if (!string.IsNullOrEmpty(vecInfo.VINType) && (vecInfo.VINType.Equals("0C05") || vecInfo.VINType.Equals("0C15")))
-					{
-						return BNType.BN2020_MOTORBIKE;
-					}
-					return BNType.BN2000_MOTORBIKE;
-				case "K18":
-					if (!string.IsNullOrEmpty(vecInfo.VINType) && (vecInfo.VINType.Equals("0C04") || vecInfo.VINType.Equals("0C14")))
-					{
-						return BNType.BN2020_MOTORBIKE;
-					}
-					return BNType.BN2000_MOTORBIKE;
-				case "V99":
-					return BNType.BN2020_CAMPAGNA;
-				case "V98":
-					return BNType.BN2000_MOTORBIKE;
-				case "RODING_ROADSTER":
-					return BNType.BN2000_RODING;
-				case "N18":
-					return BNType.BN2000_PGO;
-				case "RR5":
-				case "RR4":
-				case "RR6":
-					return BNType.BN2020;
-				case "U06":
-				case "U11":
-					return BNType.BN2020;
-				case "R55":
-				case "R56":
-				case "R57":
-				case "R58":
-				case "R59":
-				case "R60":
-				case "R61":
-					return BNType.BN2000;
-				case "RR1":
-				case "RR3":
-				case "RR2":
-					return BNType.BN2000;
-				case "K21":
-					if (!string.IsNullOrEmpty(vecInfo.VINType) && (vecInfo.VINType.Equals("0A06") || vecInfo.VINType.Equals("0A16")))
-					{
-						return BNType.BN2000_MOTORBIKE;
-					}
-					return BNType.BN2020_MOTORBIKE;
-				case "K46":
-					if (!string.IsNullOrEmpty(vecInfo.VINType) && !"XXXX".Equals(vecInfo.VINType, StringComparison.OrdinalIgnoreCase) && (vecInfo.VINType.Equals("0D10") || vecInfo.VINType.Equals("0D21") || vecInfo.VINType.Equals("0D30") || vecInfo.VINType.Equals("0D40") || vecInfo.VINType.Equals("0D50") || vecInfo.VINType.Equals("0D60") || vecInfo.VINType.Equals("0D70") || vecInfo.VINType.Equals("0D80") || vecInfo.VINType.Equals("0D90")))
-					{
-						return BNType.BN2020_MOTORBIKE;
-					}
-					return BNType.BN2000_MOTORBIKE;
-				case "K17":
-				case "K66":
-				case "K60":
-				case "K67":
-				case "K61":
-				case "K63":
-				case "K69":
-				case "K08":
-				case "K09":
-				case "K02":
-				case "K07":
-				case "K03":
-				case "K84":
-				case "K82":
-				case "K83":
-				case "K48":
-				case "K80":
-				case "K49":
-				case "K81":
-				case "K22":
-				case "K33":
-				case "K23":
-				case "K32":
-				case "K54":
-				case "K47":
-				case "K51":
-				case "K35":
-				case "K53":
-				case "K50":
-				case "K34":
-				case "K52":
-					return BNType.BN2020_MOTORBIKE;
-				case "E39":
-				case "E38":
-				case "E46":
-				case "E53":
-				case "E36":
-				case "E52":
-				case "R50":
-				case "R52":
-				case "R53":
-				case "E83":
-				case "E85":
-				case "E86":
-					return BNType.IBUS;
-				case "E63":
-				case "E62":
-				case "E61":
-				case "E60":
-				case "E66":
-				case "E67":
-				case "E64":
-				case "E88":
-				case "E71":
-				case "E65":
-				case "E89":
-				case "E70":
-				case "E68":
-				case "E72":
-				case "E81":
-				case "E82":
-				case "E92":
-				case "E84":
-				case "E93":
-				case "E91":
-				case "E90":
-				case "E87":
-					return BNType.BN2000;
-				case "AERO":
-					return BNType.BN2000_MORGAN;
-				case "K599":
-				case "247":
-				case "248":
-				case "259":
-				case "259R":
-				case "259S":
-				case "R21":
-				case "259C":
-				case "R22":
-				case "259E":
-				case "R28":
-				case "K41":
-				case "K30":
-				case "K569":
-				case "247E":
-				case "K589":
-				case "E169":
-				case "E189":
-					return BNType.BNK01X_MOTORBIKE;
-				case "G14":
-				case "G11":
-				case "G38":
-				case "G12":
-				case "RR12":
-				case "RR11":
-				case "G31":
-				case "G32":
-				case "G30":
-				case "RR31":
-				case "RR21":
-				case "RR22":
-					return BNType.BN2020;
-				case "K14":
-				case "K15":
-				case "K16":
-				case "A67":
-				case "K28":
-				case "K75":
-				case "K29":
-				case "K73":
-				case "K72":
-				case "K71":
-				case "K70":
-				case "K42":
-				case "K43":
-				case "K40":
-				case "K25":
-				case "K26":
-				case "K27":
-				case "H61":
-				case "K44":
-				case "C01":
-				case "H91":
-				case "R13":
-					return BNType.BN2000_MOTORBIKE;
-				case "GT1":
-					return BNType.BN2000_GIBBS;
-				case "MF30":
-				case "MF25":
-				case "MF35":
-				case "MF3":
-				case "MF4":
-				case "MF5":
-				case "MF4-S":
-				case "MF28":
-					return BNType.BN2000_WIESMANN;
-				case "M13":
-				case "I20":
-				case "I15":
-				case "I12":
-				case "F20":
-				case "F21":
-				case "F23":
-				case "F54":
-				case "F22":
-				case "F25":
-				case "F56":
-				case "F55":
-				case "F57":
-				case "F26":
-				case "F46":
-				case "F52":
-				case "F45":
-				case "F44":
-				case "F40":
-				case "G02":
-				case "F49":
-				case "G15":
-				case "G01":
-				case "F48":
-				case "G06":
-				case "G16":
-				case "G07":
-				case "G08":
-				case "G05":
-				case "J29":
-				case "I01":
-				case "F83":
-				case "F93":
-				case "F95":
-				case "F82":
-				case "F80":
-				case "F96":
-				case "F81":
-				case "F87":
-				case "F97":
-				case "F86":
-				case "F98":
-				case "F10":
-				case "F85":
-				case "F18":
-				case "F12":
-				case "F11":
-				case "F03":
-				case "F13":
-				case "F15":
-				case "F02":
-				case "F14":
-				case "F39":
-				case "F01":
-				case "F16":
-				case "F34":
-				case "F06":
-				case "F07":
-				case "F35":
-				case "F05":
-				case "F32":
-				case "F04":
-				case "F33":
-				case "F60":
-				case "F31":
-				case "F30":
-				case "G29":
-				case "G28":
-				case "G20":
-				case "G21":
-					return BNType.BN2020;
-				default:
-					if (!vecInfo.Ereihe.ToUpper().StartsWith("F", StringComparison.Ordinal) && !vecInfo.Ereihe.ToUpper().StartsWith("G", StringComparison.Ordinal) && !vecInfo.Ereihe.ToUpper().StartsWith("U", StringComparison.Ordinal))
-					{
-						return BNType.UNKNOWN;
-					}
-					return BNType.BN2020;
-			}
-		}
-	}
+        {
+            if (vecInfo == null)
+            {
+                //Log.Warning("VehicleLogistics.getBNType()", "vehicle was null");
+                return BNType.UNKNOWN;
+            }
+            if (string.IsNullOrEmpty(vecInfo.Ereihe))
+            {
+                return BNType.UNKNOWN;
+            }
+            switch (vecInfo.Ereihe.ToUpper())
+            {
+                case "M12":
+                    return BNType.BEV2010;
+                case "K19":
+                    if (!string.IsNullOrEmpty(vecInfo.VINType) && (vecInfo.VINType.Equals("0C05") || vecInfo.VINType.Equals("0C15")))
+                    {
+                        return BNType.BN2020_MOTORBIKE;
+                    }
+                    return BNType.BN2000_MOTORBIKE;
+                case "K18":
+                    if (!string.IsNullOrEmpty(vecInfo.VINType) && (vecInfo.VINType.Equals("0C04") || vecInfo.VINType.Equals("0C14")))
+                    {
+                        return BNType.BN2020_MOTORBIKE;
+                    }
+                    return BNType.BN2000_MOTORBIKE;
+                case "V99":
+                    return BNType.BN2020_CAMPAGNA;
+                case "V98":
+                    return BNType.BN2000_MOTORBIKE;
+                case "RODING_ROADSTER":
+                    return BNType.BN2000_RODING;
+                case "N18":
+                    return BNType.BN2000_PGO;
+                case "RR5":
+                case "RR4":
+                case "RR6":
+                    return BNType.BN2020;
+                case "U06":
+                case "U11":
+                    return BNType.BN2020;
+                case "R55":
+                case "R56":
+                case "R57":
+                case "R58":
+                case "R59":
+                case "R60":
+                case "R61":
+                    return BNType.BN2000;
+                case "RR1":
+                case "RR3":
+                case "RR2":
+                    return BNType.BN2000;
+                case "K21":
+                    if (!string.IsNullOrEmpty(vecInfo.VINType) && (vecInfo.VINType.Equals("0A06") || vecInfo.VINType.Equals("0A16")))
+                    {
+                        return BNType.BN2000_MOTORBIKE;
+                    }
+                    return BNType.BN2020_MOTORBIKE;
+                case "K46":
+                    if (!string.IsNullOrEmpty(vecInfo.VINType) && !"XXXX".Equals(vecInfo.VINType, StringComparison.OrdinalIgnoreCase) && (vecInfo.VINType.Equals("0D10") || vecInfo.VINType.Equals("0D21") || vecInfo.VINType.Equals("0D30") || vecInfo.VINType.Equals("0D40") || vecInfo.VINType.Equals("0D50") || vecInfo.VINType.Equals("0D60") || vecInfo.VINType.Equals("0D70") || vecInfo.VINType.Equals("0D80") || vecInfo.VINType.Equals("0D90")))
+                    {
+                        return BNType.BN2020_MOTORBIKE;
+                    }
+                    return BNType.BN2000_MOTORBIKE;
+                case "K17":
+                case "K66":
+                case "K60":
+                case "K67":
+                case "K61":
+                case "K63":
+                case "K69":
+                case "K08":
+                case "K09":
+                case "K02":
+                case "K07":
+                case "K03":
+                case "K84":
+                case "K82":
+                case "K83":
+                case "K48":
+                case "K80":
+                case "K49":
+                case "K81":
+                case "K22":
+                case "K33":
+                case "K23":
+                case "K32":
+                case "K54":
+                case "K47":
+                case "K51":
+                case "K35":
+                case "K53":
+                case "K50":
+                case "K34":
+                case "K52":
+                    return BNType.BN2020_MOTORBIKE;
+                case "E39":
+                case "E38":
+                case "E46":
+                case "E53":
+                case "E36":
+                case "E52":
+                case "R50":
+                case "R52":
+                case "R53":
+                case "E83":
+                case "E85":
+                case "E86":
+                    return BNType.IBUS;
+                case "E63":
+                case "E62":
+                case "E61":
+                case "E60":
+                case "E66":
+                case "E67":
+                case "E64":
+                case "E88":
+                case "E71":
+                case "E65":
+                case "E89":
+                case "E70":
+                case "E68":
+                case "E72":
+                case "E81":
+                case "E82":
+                case "E92":
+                case "E84":
+                case "E93":
+                case "E91":
+                case "E90":
+                case "E87":
+                    return BNType.BN2000;
+                case "AERO":
+                    return BNType.BN2000_MORGAN;
+                case "K599":
+                case "247":
+                case "248":
+                case "259":
+                case "259R":
+                case "259S":
+                case "R21":
+                case "259C":
+                case "R22":
+                case "259E":
+                case "R28":
+                case "K41":
+                case "K30":
+                case "K569":
+                case "247E":
+                case "K589":
+                case "E169":
+                case "E189":
+                    return BNType.BNK01X_MOTORBIKE;
+                case "G14":
+                case "G11":
+                case "G38":
+                case "G12":
+                case "RR12":
+                case "RR11":
+                case "G31":
+                case "G32":
+                case "G30":
+                case "RR31":
+                case "RR21":
+                case "RR22":
+                    return BNType.BN2020;
+                case "K14":
+                case "K15":
+                case "K16":
+                case "A67":
+                case "K28":
+                case "K75":
+                case "K29":
+                case "K73":
+                case "K72":
+                case "K71":
+                case "K70":
+                case "K42":
+                case "K43":
+                case "K40":
+                case "K25":
+                case "K26":
+                case "K27":
+                case "H61":
+                case "K44":
+                case "C01":
+                case "H91":
+                case "R13":
+                    return BNType.BN2000_MOTORBIKE;
+                case "GT1":
+                    return BNType.BN2000_GIBBS;
+                case "MF30":
+                case "MF25":
+                case "MF35":
+                case "MF3":
+                case "MF4":
+                case "MF5":
+                case "MF4-S":
+                case "MF28":
+                    return BNType.BN2000_WIESMANN;
+                case "M13":
+                case "I20":
+                case "I15":
+                case "I12":
+                case "F20":
+                case "F21":
+                case "F23":
+                case "F54":
+                case "F22":
+                case "F25":
+                case "F56":
+                case "F55":
+                case "F57":
+                case "F26":
+                case "F46":
+                case "F52":
+                case "F45":
+                case "F44":
+                case "F40":
+                case "G02":
+                case "F49":
+                case "G15":
+                case "G01":
+                case "F48":
+                case "G06":
+                case "G16":
+                case "G07":
+                case "G08":
+                case "G05":
+                case "J29":
+                case "I01":
+                case "F83":
+                case "F93":
+                case "F95":
+                case "F82":
+                case "F80":
+                case "F96":
+                case "F81":
+                case "F87":
+                case "F97":
+                case "F86":
+                case "F98":
+                case "F10":
+                case "F85":
+                case "F18":
+                case "F12":
+                case "F11":
+                case "F03":
+                case "F13":
+                case "F15":
+                case "F02":
+                case "F14":
+                case "F39":
+                case "F01":
+                case "F16":
+                case "F34":
+                case "F06":
+                case "F07":
+                case "F35":
+                case "F05":
+                case "F32":
+                case "F04":
+                case "F33":
+                case "F60":
+                case "F31":
+                case "F30":
+                case "G29":
+                case "G28":
+                case "G20":
+                case "G21":
+                    return BNType.BN2020;
+                default:
+                    if (!vecInfo.Ereihe.ToUpper().StartsWith("F", StringComparison.Ordinal) && !vecInfo.Ereihe.ToUpper().StartsWith("G", StringComparison.Ordinal) && !vecInfo.Ereihe.ToUpper().StartsWith("U", StringComparison.Ordinal))
+                    {
+                        return BNType.UNKNOWN;
+                    }
+                    return BNType.BN2020;
+            }
+        }
+    }
 }
