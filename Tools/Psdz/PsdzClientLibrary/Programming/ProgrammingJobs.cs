@@ -1946,6 +1946,7 @@ namespace PsdzClient.Programming
                         else
                         {
                             ResetOperationState();
+                            UpdateOptions(optionsDict);
                         }
                     }
 
