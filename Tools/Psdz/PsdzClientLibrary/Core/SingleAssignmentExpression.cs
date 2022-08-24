@@ -19,59 +19,60 @@ namespace PsdzClient.Core
 		}
 
         // ToDo: Check on update
-		public static RuleExpression Deserialize(Stream ms, EExpressionType type, Vehicle vec)
-		{
-			byte[] buffer = new byte[8];
-			ms.Read(buffer, 0, 8);
-			long num = BitConverter.ToInt64(buffer, 0);
-			SingleAssignmentExpression singleAssignmentExpression;
-			switch (type)
-			{
-				case EExpressionType.ISTUFE:
-					singleAssignmentExpression = new IStufeExpression();
-					break;
-				case EExpressionType.VALID_FROM:
-					singleAssignmentExpression = new ValidFromExpression();
+        public static RuleExpression Deserialize(Stream ms, EExpressionType type, Vehicle vec)
+        {
+            byte[] buffer = new byte[8];
+            ms.Read(buffer, 0, 8);
+            long num = BitConverter.ToInt64(buffer, 0);
+            SingleAssignmentExpression singleAssignmentExpression;
+            switch (type)
+            {
+                case EExpressionType.ISTUFE:
+                    singleAssignmentExpression = new IStufeExpression();
                     break;
-				case EExpressionType.VALID_TO:
-					singleAssignmentExpression = new ValidToExpression();
+                case EExpressionType.VALID_FROM:
+                    singleAssignmentExpression = new ValidFromExpression();
                     break;
-				case EExpressionType.COUNTRY:
-					singleAssignmentExpression = new CountryExpression();
+                case EExpressionType.VALID_TO:
+                    singleAssignmentExpression = new ValidToExpression();
                     break;
-				case EExpressionType.ECUGROUP:
-					singleAssignmentExpression = new EcuGroupExpression();
+                case EExpressionType.COUNTRY:
+                    singleAssignmentExpression = new CountryExpression();
                     break;
-				case EExpressionType.ECUVARIANT:
-					singleAssignmentExpression = new EcuVariantExpression();
+                case EExpressionType.ECUGROUP:
+                    singleAssignmentExpression = new EcuGroupExpression();
                     break;
-				case EExpressionType.ECUCLIQUE:
-					singleAssignmentExpression = new EcuCliqueExpression();
+                case EExpressionType.ECUVARIANT:
+                    singleAssignmentExpression = new EcuVariantExpression();
                     break;
-				case EExpressionType.EQUIPMENT:
-					singleAssignmentExpression = new EquipmentExpression();
+                case EExpressionType.ECUCLIQUE:
+                    singleAssignmentExpression = new EcuCliqueExpression();
                     break;
-				case EExpressionType.SALAPA:
-					singleAssignmentExpression = new SaLaPaExpression();
+                case EExpressionType.EQUIPMENT:
+                    singleAssignmentExpression = new EquipmentExpression();
                     break;
-				case EExpressionType.SIFA:
-					singleAssignmentExpression = new SiFaExpression();
+                case EExpressionType.SALAPA:
+                    singleAssignmentExpression = new SaLaPaExpression();
                     break;
-				case EExpressionType.ECUREPRESENTATIVE:
-					singleAssignmentExpression = new EcuRepresentativeExpression();
+                case EExpressionType.SIFA:
+                    singleAssignmentExpression = new SiFaExpression();
                     break;
-				case EExpressionType.ECUPROGRAMMINGVARIANT:
-					singleAssignmentExpression = new EcuProgrammingVariantExpression();
+                case EExpressionType.ECUREPRESENTATIVE:
+                    singleAssignmentExpression = new EcuRepresentativeExpression();
                     break;
-				default:
+                case EExpressionType.ECUPROGRAMMINGVARIANT:
+                    singleAssignmentExpression = new EcuProgrammingVariantExpression();
+                    break;
+                default:
+                    //Log.Warning("SingleAssignmentExpression.Deserialize()", "unhandled SingleAssignmentExpression found: {0}", type.ToString());
                     throw new Exception("Unknown expression type");
-			}
-			singleAssignmentExpression.value = num;
+            }
+            singleAssignmentExpression.value = num;
             singleAssignmentExpression.vecInfo = vec;
-			return singleAssignmentExpression;
-		}
+            return singleAssignmentExpression;
+        }
 
-		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, ValidationRuleInternalResults internalResult)
+        public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, ValidationRuleInternalResults internalResult)
 		{
 			return false;
 		}

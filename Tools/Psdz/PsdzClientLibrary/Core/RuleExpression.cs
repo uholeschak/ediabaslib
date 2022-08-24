@@ -83,45 +83,47 @@ namespace PsdzClient.Core
         }
 
         // ToDo: Check on update
-		public static RuleExpression Deserialize(Stream ms, Vehicle vec)
-		{
-			EExpressionType type = (EExpressionType)((byte)ms.ReadByte());
-			switch (type)
-			{
-				case EExpressionType.COMP:
-					return CompareExpression.Deserialize(ms, vec);
-				case EExpressionType.AND:
-					return AndExpression.Deserialize(ms, vec);
-				case EExpressionType.OR:
-					return OrExpression.Deserialize(ms, vec);
-				case EExpressionType.NOT:
-					return NotExpression.Deserialize(ms, vec);
-				case EExpressionType.DATE:
-					return DateExpression.Deserialize(ms, vec);
-				case EExpressionType.ISTUFE:
-				case EExpressionType.VALID_FROM:
-				case EExpressionType.VALID_TO:
-				case EExpressionType.COUNTRY:
-				case EExpressionType.ECUGROUP:
-				case EExpressionType.ECUVARIANT:
-				case EExpressionType.ECUCLIQUE:
-				case EExpressionType.EQUIPMENT:
-				case EExpressionType.SALAPA:
-				case EExpressionType.SIFA:
-				case EExpressionType.ECUREPRESENTATIVE:
-				case EExpressionType.ECUPROGRAMMINGVARIANT:
-					return SingleAssignmentExpression.Deserialize(ms, type, vec);
-				case EExpressionType.CHARACTERISTIC:
-					return CharacteristicExpression.Deserialize(ms, vec);
-				case EExpressionType.MANUFACTORINGDATE:
-					return ManufactoringDateExpression.Deserialize(ms, vec);
-				case EExpressionType.ISTUFEX:
-					return IStufeXExpression.Deserialize(ms, vec);
-			}
-			throw new Exception("Unknown Expression-Type");
-		}
+        public static RuleExpression Deserialize(Stream ms, Vehicle vec)
+        {
+            EExpressionType eExpressionType = (EExpressionType)(byte)ms.ReadByte();
+            switch (eExpressionType)
+            {
+                case EExpressionType.COMP:
+                    return CompareExpression.Deserialize(ms, vec);
+                case EExpressionType.AND:
+                    return AndExpression.Deserialize(ms, vec);
+                case EExpressionType.OR:
+                    return OrExpression.Deserialize(ms, vec);
+                case EExpressionType.NOT:
+                    return NotExpression.Deserialize(ms, vec);
+                case EExpressionType.DATE:
+                    return DateExpression.Deserialize(ms, vec);
+                case EExpressionType.CHARACTERISTIC:
+                    return CharacteristicExpression.Deserialize(ms, vec);
+                case EExpressionType.MANUFACTORINGDATE:
+                    return ManufactoringDateExpression.Deserialize(ms, vec);
+                case EExpressionType.ISTUFEX:
+                    return IStufeXExpression.Deserialize(ms, vec);
+                case EExpressionType.ISTUFE:
+                case EExpressionType.VALID_FROM:
+                case EExpressionType.VALID_TO:
+                case EExpressionType.COUNTRY:
+                case EExpressionType.ECUGROUP:
+                case EExpressionType.ECUVARIANT:
+                case EExpressionType.ECUCLIQUE:
+                case EExpressionType.EQUIPMENT:
+                case EExpressionType.SALAPA:
+                case EExpressionType.SIFA:
+                case EExpressionType.ECUREPRESENTATIVE:
+                case EExpressionType.ECUPROGRAMMINGVARIANT:
+                    return SingleAssignmentExpression.Deserialize(ms, eExpressionType, vec);
+                default:
+                    //Log.Error("RuleExpression.Deserialize()", "Unknown Expression-Type");
+                    throw new Exception("Unknown Expression-Type");
+            }
+        }
 
-		public static bool Evaluate(Vehicle vec, RuleExpression exp, IFFMDynamicResolver ffmResolver, ValidationRuleInternalResults internalResult = null)
+        public static bool Evaluate(Vehicle vec, RuleExpression exp, IFFMDynamicResolver ffmResolver, ValidationRuleInternalResults internalResult = null)
 		{
 			if (internalResult == null)
 			{
