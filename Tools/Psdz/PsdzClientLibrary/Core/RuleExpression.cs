@@ -124,87 +124,20 @@ namespace PsdzClient.Core
         }
 
         public static bool Evaluate(Vehicle vec, RuleExpression exp, IFFMDynamicResolver ffmResolver, ValidationRuleInternalResults internalResult = null)
-		{
-			if (internalResult == null)
-			{
-				internalResult = new ValidationRuleInternalResults();
-			}
-			if (exp is AndExpression)
-			{
-				return exp.Evaluate(vec, ffmResolver, internalResult);
-			}
-			if (exp is OrExpression)
-			{
-				return exp.Evaluate(vec, ffmResolver, internalResult);
-			}
-			if (exp is CharacteristicExpression)
-			{
-				return exp.Evaluate(vec, ffmResolver, internalResult);
-			}
-			if (exp is DateExpression)
-			{
-				return exp.Evaluate(vec, ffmResolver, internalResult);
-			}
-			if (exp is EcuCliqueExpression)
-			{
-				return exp.Evaluate(vec, ffmResolver, internalResult);
-			}
-			if (exp is NotExpression)
-			{
-				return exp.Evaluate(vec, ffmResolver, internalResult);
-			}
-			if (exp is SaLaPaExpression)
-			{
-				return exp.Evaluate(vec, ffmResolver, internalResult);
-			}
-			if (exp is CountryExpression)
-			{
-				return exp.Evaluate(vec, ffmResolver, internalResult);
-			}
-			if (exp is IStufeExpression)
-			{
-				return exp.Evaluate(vec, ffmResolver, internalResult);
-			}
-			if (exp is IStufeXExpression)
-			{
-				return exp.Evaluate(vec, ffmResolver, internalResult);
-			}
-			if (exp is EquipmentExpression)
-			{
-				return exp.Evaluate(vec, ffmResolver, internalResult);
-			}
-			if (exp is ValidFromExpression)
-			{
-				return exp.Evaluate(vec, ffmResolver, internalResult);
-			}
-			if (exp is ValidToExpression)
-			{
-				return exp.Evaluate(vec, ffmResolver, internalResult);
-			}
-			if (exp is SiFaExpression)
-			{
-				return exp.Evaluate(vec, ffmResolver, internalResult);
-			}
-			if (exp is EcuRepresentativeExpression)
-			{
-				return exp.Evaluate(vec, ffmResolver, internalResult);
-			}
-			if (exp is ManufactoringDateExpression)
-			{
-				return exp.Evaluate(vec, ffmResolver, internalResult);
-			}
-			if (exp is EcuVariantExpression)
-			{
-				return exp.Evaluate(vec, ffmResolver, internalResult);
-			}
-			if (exp is EcuProgrammingVariantExpression)
-			{
-				return exp.Evaluate(vec, ffmResolver, internalResult);
-			}
-			return false;
-		}
+        {
+            if (internalResult == null)
+            {
+                internalResult = new ValidationRuleInternalResults();
+            }
+            if (!(exp is AndExpression) && !(exp is OrExpression) && !(exp is CharacteristicExpression) && !(exp is DateExpression) && !(exp is EcuCliqueExpression) && !(exp is NotExpression) && !(exp is SaLaPaExpression) && !(exp is CountryExpression) && !(exp is IStufeExpression) && !(exp is IStufeXExpression) && !(exp is EquipmentExpression) && !(exp is ValidFromExpression) && !(exp is ValidToExpression) && !(exp is SiFaExpression) && !(exp is EcuRepresentativeExpression) && !(exp is ManufactoringDateExpression) && !(exp is EcuVariantExpression) && !(exp is EcuProgrammingVariantExpression))
+            {
+                //Log.Error("RuleExpression.Evaluate(Vehicle vec, RuleExpression exp)", "RuleExpression {0} not implemented.", exp.ToString());
+                return false;
+            }
+            return exp.Evaluate(vec, ffmResolver, internalResult);
+        }
 
-		public static string ParseAndSerializeVariantRule(string rule)
+        public static string ParseAndSerializeVariantRule(string rule)
 		{
 			return RuleExpression.SerializeToString(VariantRuleParser.Parse(rule));
 		}
