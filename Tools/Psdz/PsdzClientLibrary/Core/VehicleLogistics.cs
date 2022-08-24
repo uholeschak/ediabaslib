@@ -111,7 +111,7 @@ namespace PsdzClient.Core
         }
 
         // ToDo: Check on update
-        private static BaseEcuCharacteristics GetCharacteristics(Vehicle vecInfo)
+        public static BaseEcuCharacteristics GetCharacteristics(Vehicle vecInfo)
         {
             int customHashCode = vecInfo.GetCustomHashCode();
             if (ecuCharacteristics.TryGetValue(customHashCode, out var value))
