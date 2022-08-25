@@ -175,22 +175,23 @@ namespace BMW.Rheingold.Programming
 			propertyChanged(this, new PropertyChangedEventArgs(propertyName));
 		}
 
-		// Note: this type is marked as 'beforefieldinit'.
-		static ProgrammingActionData()
-		{
-			ProgrammingActionType[] array = new ProgrammingActionType[3];
-			//RuntimeHelpers.InitializeArray(array, fieldof(< PrivateImplementationDetails >.C452C71638C6C900156C4B50EB7D38764085EC72).FieldHandle);
-			ProgrammingActionData.FlashActions = array;
-			ProgrammingActionType[] array2 = new ProgrammingActionType[5];
-			//RuntimeHelpers.InitializeArray(array2, fieldof(< PrivateImplementationDetails > .78EEF7ACC8767B132B453121E3E6BA4C0A8906C7).FieldHandle);
-			ProgrammingActionData.EscalationActions = array2;
-		}
+        private static readonly ProgrammingActionType[] FlashActions = new ProgrammingActionType[3]
+        {
+            ProgrammingActionType.BootloaderProgramming,
+            ProgrammingActionType.Programming,
+            ProgrammingActionType.DataProgramming
+        };
 
-		private static readonly ProgrammingActionType[] FlashActions;
+        private static readonly ProgrammingActionType[] EscalationActions = new ProgrammingActionType[5]
+        {
+            ProgrammingActionType.BootloaderProgramming,
+            ProgrammingActionType.Programming,
+            ProgrammingActionType.DataProgramming,
+            ProgrammingActionType.Coding,
+            ProgrammingActionType.IbaDeploy
+        };
 
-		private static readonly ProgrammingActionType[] EscalationActions;
-
-		private ProgrammingActionState stateProgramming;
+        private ProgrammingActionState stateProgramming;
 
 		private IEcu parentEcu;
 
