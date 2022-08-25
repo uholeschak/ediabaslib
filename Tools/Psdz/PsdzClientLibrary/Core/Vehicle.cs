@@ -2531,86 +2531,75 @@ namespace PsdzClient.Core
                     return true;
                 }
             }
-            return null;
-        }
+			return null;
+		}
 
 #if false
-		private static ObservableCollection<Fault> CalculateFaultList(Vehicle vehicle, IEnumerable<ECU> ecus, IEnumerable<DTC> combinedFaults, ObservableCollection<ZFSResult> zfs, IFFMDynamicResolver ffmFesolver = null)
-		{
-			bool flag = true;
-			bool flag2 = true;
-			if (ConfigSettings.OperationalMode != OperationalMode.ISTA)
-			{
-				flag = ConfigSettings.getConfigStringAsBoolean("TesterGUI.HideBogusFaults", true);
-				flag2 = ConfigSettings.getConfigStringAsBoolean("TesterGUI.HideUnknownFaults", false);
+        private static ObservableCollection<Fault> CalculateFaultList(Vehicle vehicle, IEnumerable<ECU> ecus, IEnumerable<DTC> combinedFaults, ObservableCollection<ZFSResult> zfs, IFFMDynamicResolver ffmFesolver = null)
+        {
+            bool flag = true;
+            bool flag2 = true;
+            if (ConfigSettings.OperationalMode != 0)
+            {
+                flag = ConfigSettings.getConfigStringAsBoolean("TesterGUI.HideBogusFaults", defaultValue: true);
+                flag2 = ConfigSettings.getConfigStringAsBoolean("TesterGUI.HideUnknownFaults", defaultValue: false);
 			}
 			ObservableCollection<Fault> observableCollection = new ObservableCollection<Fault>();
 			try
 			{
 				if (ecus != null)
-				{
-					foreach (ECU ecu in from item in ecus
-										where item.FEHLER != null
-										select item)
-					{
-						foreach (DTC dtc in ecu.FEHLER)
-						{
-							if (dtc.IsVirtual)
+                {
+                    foreach (ECU item in ecus.Where((ECU item) => item.FEHLER != null))
+                    {
+                        foreach (DTC item2 in item.FEHLER)
+                        {
+							Fault fault = new Fault(item, item2, zfs, vehicle.IsNewFaultMemoryActive);
+							if (item2.Relevance == true)
 							{
-								Vehicle.UpdateVirtualDtcTime(dtc, vehicle, zfs);
+                                if (ffmFesolver != null && ConfigSettings.getConfigStringAsBoolean("EnableRelevanceFaultCode", defaultValue: true))
+                                {
+                                    fault.ResolveRelevanceFaultCode(vehicle, ffmFesolver);
+                                    if (fault.DTC.Relevance == true)
+                                    {
+                                        observableCollection.AddIfNotContains(fault);
+                                    }
+                                }
+                                else
+                                {
+                                    observableCollection.AddIfNotContains(fault);
+                                }
+                            }
+                            else if (item2.Relevance == false && !flag)
+                            {
+                                observableCollection.AddIfNotContains(new Fault(item, item2, zfs, vehicle.IsNewFaultMemoryActive));
 							}
-							Fault fault = new Fault(ecu, dtc, zfs, vehicle.IsNewFaultMemoryActive);
-							bool? relevance = dtc.Relevance;
-							if (relevance.GetValueOrDefault() & relevance != null)
-							{
-								if (ffmFesolver != null && ConfigSettings.getConfigStringAsBoolean("EnableRelevanceFaultCode", true))
-								{
-									fault.ResolveRelevanceFaultCode(vehicle, ffmFesolver);
-									relevance = fault.DTC.Relevance;
-									if (relevance.GetValueOrDefault() & relevance != null)
-									{
-										observableCollection.AddIfNotContains(fault);
-									}
-								}
-								else
-								{
-									observableCollection.AddIfNotContains(fault);
-								}
-							}
-							else
-							{
-								relevance = dtc.Relevance;
-								if ((!relevance.GetValueOrDefault() & relevance != null) && !flag)
-								{
-									observableCollection.AddIfNotContains(new Fault(ecu, dtc, zfs, vehicle.IsNewFaultMemoryActive));
-								}
-								else if (dtc.Relevance == null && !flag2)
-								{
-									observableCollection.AddIfNotContains(new Fault(ecu, dtc, zfs, vehicle.IsNewFaultMemoryActive));
-								}
+                            else if (!item2.Relevance.HasValue && !flag2)
+                            {
+                                observableCollection.AddIfNotContains(new Fault(item, item2, zfs, vehicle.IsNewFaultMemoryActive));
 							}
 						}
 					}
 				}
-				if (combinedFaults == null)
-				{
-					return observableCollection;
-				}
-				foreach (DTC dtc2 in combinedFaults)
-				{
-					Fault fault2 = new Fault(null, dtc2, null, vehicle.IsNewFaultMemoryActive);
-					fault2.ResolveLabels(vehicle, null);
+                if (combinedFaults == null)
+                {
+                    return observableCollection;
+                }
+                foreach (DTC combinedFault in combinedFaults)
+                {
+                    Fault fault2 = new Fault(null, combinedFault, null, vehicle.IsNewFaultMemoryActive);
+                    fault2.ResolveLabels(vehicle, null);
 					observableCollection.AddIfNotContains(fault2);
 				}
+				return observableCollection;
 			}
 			catch (Exception exception)
 			{
-				//Log.ErrorException("Vehicle.CalculateFaultList()", exception);
-			}
-			return observableCollection;
-		}
+                Log.ErrorException("Vehicle.CalculateFaultList()", exception);
+                return observableCollection;
+            }
+        }
 
-		private static void UpdateVirtualDtcTime(DTC dtc, Vehicle vehicle, ObservableCollection<ZFSResult> zfs)
+        private static void UpdateVirtualDtcTime(DTC dtc, Vehicle vehicle, ObservableCollection<ZFSResult> zfs)
 		{
 			if (vehicle.IsNewFaultMemoryActive)
 			{
@@ -2739,62 +2728,73 @@ namespace PsdzClient.Core
             //return (ConfigSettings.IsProgrammingEnabled() || (considerLogisticBase && ConfigSettings.IsLogisticBaseEnabled())) && this.GetProgrammingEnabledForBn(ConfigSettings.getConfigString("BMW.Rheingold.Programming.BN", "BN2020,BN2020_MOTORBIKE")) && ConfigSettings.OperationalMode != OperationalMode.TELESERVICE;
         }
 
-		private static ISet<BNType> GetBnTypes(string bnTypes)
-		{
-			ISet<BNType> set = new HashSet<BNType>();
-			if (string.IsNullOrEmpty(bnTypes))
-			{
-				return set;
-			}
-			foreach (string text in bnTypes.Split(new char[]
-			{
-				','
-			}))
-			{
-				BNType item;
-				if (Enum.TryParse<BNType>(text, false, out item))
-				{
-					set.Add(item);
-				}
-			}
-			return set;
-		}
+        private static ISet<BNType> GetBnTypes(string bnTypes)
+        {
+            ISet<BNType> set = new HashSet<BNType>();
+            if (string.IsNullOrEmpty(bnTypes))
+            {
+                return set;
+            }
+            string[] array = bnTypes.Split(',');
+            foreach (string text in array)
+            {
+                if (Enum.TryParse<BNType>(text, ignoreCase: false, out var result))
+                {
+                    set.Add(result);
+                    continue;
+                }
+                //Log.Error("Vehicle.GetBnTypes()", "Ignore BN \"{0}\", because of missconfiguration.", text);
+            }
+            return set;
+        }
 
-		public int GetCustomHashCode()
-		{
-			int num = 37;
-			int num2 = 327;
-			num = 37 * this.GetHashCode();
-			if (!string.IsNullOrWhiteSpace(base.VIN17))
-			{
-				num += base.VIN17.GetHashCode();
-				num *= num2;
-			}
-			ObservableCollection<ECU> ecu = base.ECU;
-			if (ecu != null && ecu.Any<ECU>())
-			{
-				foreach (ECU ecu2 in base.ECU)
-				{
-					num += ecu2.GetHashCode();
-					num *= num2;
-				}
-			}
-			if (!string.IsNullOrWhiteSpace(base.Ereihe))
-			{
-				num += base.Ereihe.GetHashCode();
-				num *= num2;
-			}
-			if (this.C_DATETIME != null)
-			{
-				num += this.C_DATETIME.GetHashCode();
-				num *= num2;
-			}
-			return num;
-		}
+		// ToDo: Check on update
+        public int GetCustomHashCode()
+        {
+            int num = 37;
+            int num2 = 327;
+            num = 37 * GetHashCode();
+            if (!string.IsNullOrWhiteSpace(base.VIN17))
+            {
+                num += base.VIN17.GetHashCode();
+                num *= num2;
+            }
+            ObservableCollection<ECU> eCU = base.ECU;
+            if (eCU != null && eCU.Any())
+            {
+                foreach (ECU item in base.ECU)
+                {
+                    num += item.GetHashCode();
+                    num *= num2;
+                    if (!string.IsNullOrEmpty(item.VARIANTE))
+                    {
+                        num += item.VARIANTE.GetHashCode();
+                        num *= num2;
+                    }
+                }
+            }
+            if (!string.IsNullOrWhiteSpace(base.Ereihe))
+            {
+                num += base.Ereihe.GetHashCode();
+                num *= num2;
+            }
+            if (!string.IsNullOrWhiteSpace(base.Baureihenverbund))
+            {
+                num += base.Baureihenverbund.GetHashCode();
+                num *= num2;
+            }
+            if (C_DATETIME.HasValue)
+            {
+                num += C_DATETIME.GetHashCode();
+                num *= num2;
+            }
+            return num;
+        }
 
+        // ToDo: Check on update
         public const string BnProgramming = "BN2020,BN2020_MOTORBIKE";
 
-		private static readonly DateTime LciDateE36 = DateTime.Parse("1998-03-01", CultureInfo.InvariantCulture);
+        private static readonly DateTime LciDateE36 = DateTime.Parse("1998-03-01", CultureInfo.InvariantCulture);
 
 		private static readonly DateTime LciDateE60 = DateTime.Parse("2005-09-01", CultureInfo.InvariantCulture);
 
