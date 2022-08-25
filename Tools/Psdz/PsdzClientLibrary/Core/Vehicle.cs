@@ -1814,6 +1814,12 @@ namespace PsdzClient.Core
 				this.OnPropertyChanged("IsNoVehicleCommunicationRunning");
 			}
 		}
+
+        public bool IsVehicleWithOnlyVin7()
+        {
+            return VIN10Prefix.Equals("FILLER17II", StringComparison.InvariantCultureIgnoreCase);
+        }
+
 #if false
 		public bool evalILevelExpression(string iLevelExpressions)
 		{

@@ -124,263 +124,271 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         VehicleTypeNotLicensed
     }
 
-	[AuthorAPI(SelectableTypeDeclaration = true)]
-	public interface IVehicle : INotifyPropertyChanged
-	{
-		string AEKurzbezeichnung { get; }
+    [AuthorAPI(SelectableTypeDeclaration = true)]
+    public interface IVehicle : INotifyPropertyChanged
+    {
+        string AEKurzbezeichnung { get; }
 
-		string AELeistungsklasse { get; }
+        string AELeistungsklasse { get; }
 
-		string AEUeberarbeitung { get; }
+        string AEUeberarbeitung { get; }
 
-		string Abgas { get; }
+        string Abgas { get; }
 
-		string Antrieb { get; }
+        string Antrieb { get; }
 
-		string ApplicationVersion { get; }
+        string ApplicationVersion { get; }
 
-		BNMixed BNMixed { get; }
+        BNMixed BNMixed { get; }
 
-		BNType BNType { get; }
+        BNType BNType { get; }
 
-		string BasicType { get; }
+        string BasicType { get; }
 
-		string Baureihe { get; }
+        string Baureihe { get; }
 
-		string Baureihenverbund { get; }
+        string Baureihenverbund { get; }
 
-		string BaustandsJahr { get; }
+        string BaustandsJahr { get; }
 
-		string BaustandsMonat { get; }
+        string BaustandsMonat { get; }
 
-		BrandName? BrandName { get; }
+        BrandName? BrandName { get; }
 
-		//IEnumerable<ICbsInfo> CBS { get; }
+        //IEnumerable<ICbsInfo> CBS { get; }
 
-		bool CVDRequestFailed { get; }
+        bool CVDRequestFailed { get; set; }
 
-		bool CvsRequestFailed { get; }
+        bool CvsRequestFailed { get; set; }
 
-		ChassisType ChassisType { get; }
+        ChassisType ChassisType { get; }
 
-		//IEnumerable<IDtc> CombinedFaults { get; }
+        //IEnumerable<IDtc> CombinedFaults { get; }
 
-		VisibilityType ConnectIMIBIPState { get; }
+        VisibilityType ConnectIMIBIPState { get; }
 
-		string ConnectIMIBImage { get; }
+        string ConnectIMIBImage { get; }
 
-		string EMotBaureihe { get; }
+        string EMotBaureihe { get; }
 
-		VisibilityType ConnectIMIBState { get; }
+        VisibilityType ConnectIMIBState { get; }
 
-		VisibilityType ConnectIPState { get; }
+        VisibilityType ConnectIPState { get; }
 
-		string ConnectImage { get; }
+        string ConnectImage { get; }
 
-		VisibilityType ConnectState { get; }
+        VisibilityType ConnectState { get; }
 
-		bool DOMRequestFailed { get; }
+        bool DOMRequestFailed { get; set; }
 
-		//IEnumerable<IDiagCode> DiagCodes { get; }
+        //IEnumerable<IDiagCode> DiagCodes { get; }
 
-		ObservableCollection<string> DiagCodesProgramming { get; }
+        ObservableCollection<string> DiagCodesProgramming { get; }
 
-		string Drehmoment { get; }
+        string Drehmoment { get; }
 
-		string DriveType { get; }
+        string DriveType { get; }
 
-		string ECTypeApproval { get; }
+        string ECTypeApproval { get; }
 
-		IEnumerable<IEcu> ECU { get; }
+        IEnumerable<IEcu> ECU { get; }
 
-		string Ereihe { get; }
+        string Ereihe { get; }
 
-		IFa FA { get; }
+        IFa FA { get; }
 
-		bool FASTAAlreadyDone { get; }
+        bool FASTAAlreadyDone { get; }
 
-		IEnumerable<IFfmResult> FFM { get; }
+        IEnumerable<IFfmResult> FFM { get; }
 
-		DateTime? FirstRegistration { get; }
+        DateTime? FirstRegistration { get; }
 
-		string GMType { get; }
+        string GMType { get; }
 
-		string Getriebe { get; }
+        string Getriebe { get; }
 
-		string CountryOfAssembly { get; }
+        string CountryOfAssembly { get; }
 
-		string BaseVersion { get; }
+        string BaseVersion { get; }
 
-		string Gsgbd { get; }
+        string Gsgbd { get; }
 
         string MainSeriesSgbd { get; }
 
+        string MainSeriesSgbdAdditional { get; }
+
         decimal? Gwsz { get; }
 
-		GwszUnitType? GwszUnit { get; }
+        GwszUnitType? GwszUnit { get; }
 
-		string Hubraum { get; }
+        string Hubraum { get; }
 
-		string Hybridkennzeichen { get; }
+        string Hybridkennzeichen { get; }
 
-		string ILevel { get; }
+        string ILevel { get; }
 
-		string ILevelBackup { get; }
+        string ILevelBackup { get; }
 
-		string ILevelWerk { get; }
+        string ILevelWerk { get; }
 
-		IEnumerable<decimal> InstalledAdapters { get; }
+        IEnumerable<decimal> InstalledAdapters { get; }
 
-		bool KL15FaultILevelAlreadyAlerted { get; }
+        bool KL15FaultILevelAlreadyAlerted { get; }
 
-		bool KL15OverrideVoltageCheck { get; }
+        bool KL15OverrideVoltageCheck { get; }
 
-		string Karosserie { get; }
+        string Karosserie { get; }
 
-		string Kl15Voltage { get; }
+        string Kl15Voltage { get; }
 
-		string Kl30Voltage { get; }
+        string Kl30Voltage { get; }
 
-		DateTime KlVoltageLastMessageTime { get; }
+        DateTime KlVoltageLastMessageTime { get; }
 
-		bool KlVoltageLastMessageTimeSpecified { get; }
+        bool KlVoltageLastMessageTimeSpecified { get; }
 
-		string Kraftstoffart { get; }
+        string Kraftstoffart { get; }
 
-		string Land { get; }
+        string Land { get; }
 
-		DateTime LastChangeDate { get; }
+        DateTime LastChangeDate { get; }
 
-		DateTime LastSaveDate { get; }
+        DateTime LastSaveDate { get; }
 
-		string Leistung { get; }
+        string Leistung { get; }
 
-		string Leistungsklasse { get; }
+        string Leistungsklasse { get; }
 
-		string Lenkung { get; }
+        string Lenkung { get; }
 
-		//IVciDevice MIB { get; }
+        //IVciDevice MIB { get; }
 
-		string MOTBezeichnung { get; }
+        string MOTBezeichnung { get; }
 
-		string MOTEinbaulage { get; }
+        string MOTEinbaulage { get; }
 
-		string MOTKraftstoffart { get; }
+        string MOTKraftstoffart { get; }
 
-		string Marke { get; }
+        string Marke { get; }
 
-		string Modelljahr { get; }
+        string Modelljahr { get; }
 
-		string Modellmonat { get; }
+        string Modellmonat { get; }
 
-		string Modelltag { get; }
+        string Modelltag { get; }
 
-		string Motor { get; }
+        string Motor { get; }
 
-		string Motorarbeitsverfahren { get; }
+        string Motorarbeitsverfahren { get; }
 
-		bool PADVehicle { get; }
+        bool PADVehicle { get; }
 
-		bool Pannenfall { get; }
+        bool Pannenfall { get; }
 
-		string Prodart { get; }
+        string Prodart { get; }
 
-		DateTime ProductionDate { get; }
+        DateTime ProductionDate { get; }
 
-		bool ProductionDateSpecified { get; }
+        bool ProductionDateSpecified { get; }
 
-		string ProgmanVersion { get; }
+        string ProgmanVersion { get; }
 
-		int PwfState { get; }
+        int PwfState { get; }
 
-		bool RepHistoryRequestFailed { get; }
+        bool RepHistoryRequestFailed { get; }
 
-		int SelectedDiagBUS { get; }
+        int SelectedDiagBUS { get; }
 
-		IEcu SelectedECU { get; }
+        IEcu SelectedECU { get; }
 
-		string SerialBodyShell { get; }
+        string SerialBodyShell { get; }
 
-		string SerialEngine { get; }
+        string SerialEngine { get; }
 
-		List<DealerSessionProperty> DealerSessionProperties { get; }
+        List<DealerSessionProperty> DealerSessionProperties { get; }
 
-		string SerialGearBox { get; }
+        string SerialGearBox { get; }
 
-		//IEnumerable<IServiceHistoryEntry> ServiceHistory { get; }
+        //IEnumerable<IServiceHistoryEntry> ServiceHistory { get; }
 
-		//bool SimulatedParts { get; }
+        bool SimulatedParts { get; }
 
-		string Status_FunctionName { get; }
+        string Status_FunctionName { get; }
 
-		double Status_FunctionProgress { get; }
+        double Status_FunctionProgress { get; }
 
-		StateType Status_FunctionState { get; }
+        StateType Status_FunctionState { get; }
 
-		DateTime Status_FunctionStateLastChangeTime { get; }
+        DateTime Status_FunctionStateLastChangeTime { get; }
 
-		bool Status_FunctionStateLastChangeTimeSpecified { get; }
+        bool Status_FunctionStateLastChangeTimeSpecified { get; }
 
-		bool TecCampaignsRequestFailed { get; }
+        bool TecCampaignsRequestFailed { get; }
 
-		//IEnumerable<ITechnicalCampaign> TechnicalCampaigns { get; }
+        //IEnumerable<ITechnicalCampaign> TechnicalCampaigns { get; }
 
-		string Typ { get; }
+        string Typ { get; }
 
-		string Ueberarbeitung { get; }
+        string Ueberarbeitung { get; }
 
-		IVciDevice VCI { get; }
+        IVciDevice VCI { get; }
 
-		string VIN17 { get; set; }
+        string VIN17 { get; set; }
 
-		bool IsSendFastaDataForbidden { get; set; }
+        bool IsSendFastaDataForbidden { get; set; }
 
-		bool IsSendFastaDataForbiddenBitsQueueFull { get; set; }
+        bool IsSendFastaDataForbiddenBitsQueueFull { get; set; }
 
-		string VIN17_OEM { get; }
+        string VIN17_OEM { get; }
 
-		string VIN7 { get; }
+        string VIN7 { get; }
 
-		string VINType { get; }
+        string VINType { get; }
 
-		bool VehicleIdentAlreadyDone { get; }
+        bool VehicleIdentAlreadyDone { get; }
 
-		IdentificationLevel VehicleIdentLevel { get; }
+        IdentificationLevel VehicleIdentLevel { get; }
 
-		string VerkaufsBezeichnung { get; }
+        string VerkaufsBezeichnung { get; }
 
-		string RoadMap { get; }
+        string RoadMap { get; }
 
-		string WarrentyType { get; }
+        string WarrentyType { get; }
 
-		string ZCS { get; }
+        string ZCS { get; }
 
-		//IEnumerable<IZfsResult> ZFS { get; }
+        //IEnumerable<IZfsResult> ZFS { get; }
 
-		bool ZFS_SUCCESSFULLY { get; }
+        bool ZFS_SUCCESSFULLY { get; }
 
-		string refSchema { get; }
+        string refSchema { get; }
 
-		string version { get; }
+        string version { get; }
 
-		bool IsPowerSafeModeActive { get; }
+        bool IsPowerSafeModeActive { get; }
 
-		bool IsPowerSafeModeActiveByOldEcus { get; set; }
+        bool IsPowerSafeModeActiveByOldEcus { get; set; }
 
-		bool IsPowerSafeModeActiveByNewEcus { get; set; }
+        bool IsPowerSafeModeActiveByNewEcus { get; set; }
 
-		bool IsVehicleBreakdownAlreadyShown { get; set; }
+        bool IsVehicleBreakdownAlreadyShown { get; set; }
 
-		bool IsMotorcycle();
+        string ChassisCode { get; set; }
 
-		IEcu getECU(long? sgAdr);
+        //ITransmissionDataType TransmissionDataType { get; }
 
-		IEcu getECU(long? sgAdr, long? subAddress);
+        bool IsMotorcycle();
 
-		IEcu getECUbyECU_GRUPPE(string ECU_GRUPPE);
+        IEcu getECU(long? sgAdr);
 
-		bool hasSA(string checkSA);
+        IEcu getECU(long? sgAdr, long? subAddress);
 
-		bool IsProgrammingSupported(bool considerLogisticBase);
-	}
+        IEcu getECUbyECU_GRUPPE(string ECU_GRUPPE);
+
+        bool hasSA(string checkSA);
+
+        bool IsProgrammingSupported(bool considerLogisticBase);
+
+        bool IsVehicleWithOnlyVin7();
+    }
 }
