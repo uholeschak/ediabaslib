@@ -1820,566 +1820,275 @@ namespace PsdzClient.Core
             return VIN10Prefix.Equals("FILLER17II", StringComparison.InvariantCultureIgnoreCase);
         }
 
+        // ToDo: Check on update
+        public bool evalILevelExpression(string iLevelExpressions)
+        {
+            bool flag = false;
+            bool flag2 = true;
+            try
+            {
+                if (string.IsNullOrEmpty(iLevelExpressions))
+                {
+                    return true;
+                }
+                if (string.IsNullOrEmpty(base.ILevel))
+                {
+                    //Log.Info("Vehicle.evaILevelExpression()", "ILevel unknown; result will be true; expression was: {0}", iLevelExpressions);
+                    return true;
+                }
+                if (iLevelExpressions.Contains("&"))
+                {
+                    flag2 = false;
+                    flag = true;
+                }
+                //if (CoreFramework.DebugLevel > 0)
+                //{
+                //    Log.Info("Vehicle.evalILevelExpression()", "expression:{0} vehicle iLEVEL:{1}", iLevelExpressions, base.ILevel);
+                //}
+                string[] separator = new string[2] { "&", "|" };
+                string[] array = iLevelExpressions.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+                foreach (string text in array)
+                {
+                    string[] separator2 = new string[1] { "," };
+                    string[] array2 = text.Split(separator2, StringSplitOptions.RemoveEmptyEntries);
+                    if (array2.Length != 2)
+                    {
+                        continue;
+                    }
+                    //Log.Info("Vehicle.evalILevelExpression()", "expression {0} {1}", base.ILevel, text);
+                    if (string.Compare(base.ILevel, 0, array2[1], 0, 4, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        switch (array2[0])
+                        {
+                            case "<":
+                                //if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(base.ILevel) < FormatConverter.ExtractNumericalILevel(array2[1]))
+                                //{
+                                //    Log.Info("Vehicle.evalILevelExpression()", "< was true");
+                                //}
+                                flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(base.ILevel) < FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(base.ILevel) < FormatConverter.ExtractNumericalILevel(array2[1]))));
+                                break;
+                            case "=":
+                                //if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(base.ILevel) == FormatConverter.ExtractNumericalILevel(array2[1]))
+                                //{
+                                //    Log.Info("Vehicle.evalILevelExpression()", "= was true");
+                                //}
+                                flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(base.ILevel) == FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(base.ILevel) == FormatConverter.ExtractNumericalILevel(array2[1]))));
+                                break;
+                            case ">=":
+                                //if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(base.ILevel) >= FormatConverter.ExtractNumericalILevel(array2[1]))
+                                //{
+                                //    Log.Info("Vehicle.evalILevelExpression()", ">= was true");
+                                //}
+                                flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(base.ILevel) >= FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(base.ILevel) >= FormatConverter.ExtractNumericalILevel(array2[1]))));
+                                break;
+                            case ">":
+                                //if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(base.ILevel) > FormatConverter.ExtractNumericalILevel(array2[1]))
+                                //{
+                                //    Log.Info("Vehicle.evalILevelExpression()", "> was true");
+                                //}
+                                flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(base.ILevel) > FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(base.ILevel) > FormatConverter.ExtractNumericalILevel(array2[1]))));
+                                break;
+                            case "<=":
+                                //if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(base.ILevel) <= FormatConverter.ExtractNumericalILevel(array2[1]))
+                                //{
+                                //    Log.Info("Vehicle.evalILevelExpression()", "<= was true");
+                                //}
+                                flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(base.ILevel) <= FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(base.ILevel) <= FormatConverter.ExtractNumericalILevel(array2[1]))));
+                                break;
+                            case "!=":
+                            case "<>":
+                                //if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(base.ILevel) != FormatConverter.ExtractNumericalILevel(array2[1]))
+                                //{
+                                //    Log.Info("Vehicle.evalILevelExpression()", "!= was true");
+                                //}
+                                flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(base.ILevel) != FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(base.ILevel) != FormatConverter.ExtractNumericalILevel(array2[1]))));
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        //Log.Warning("Vehicle.evalILevelExpression()", "iLevel main type does not match");
+                    }
+                }
+                return flag;
+            }
+            catch (Exception)
+            {
+                //Log.WarningException("Vehicle.evalILevelExpression()", exception);
+                return true;
+            }
+        }
+
+        // ToDo: Check on update
+        public bool? HasMSAButton()
+        {
+            switch (Produktlinie.ToUpper())
+            {
+                case "PL6-ALT":
+                    if (base.FA != null && base.FA.C_DATETIME.HasValue && base.FA.C_DATETIME > LciDateE60)
+                    {
+                        return true;
+                    }
+                    return false;
+                case "PL5-ALT":
+                case "PL3-ALT":
+                    return false;
+                case "PL5":
+                case "PL2":
+                case "PL3":
+                case "PL7":
+                case "PL4":
+                case "35LG":
+                case "PL6":
+                case "PLLI":
+                case "PLLU":
+                    return true;
+                default:
+                    return null;
+            }
+        }
+
+        public bool isECUAlreadyScanned(ECU checkSG)
+        {
+            try
+            {
+                foreach (ECU item in base.ECU)
+                {
+                    if (item.ID_SG_ADR != checkSG.ID_SG_ADR)
+                    {
+                        if (!string.IsNullOrEmpty(item.ECU_ADR) && !string.IsNullOrEmpty(checkSG.ECU_ADR) && string.Compare(item.ECU_ADR, checkSG.ECU_ADR, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            return true;
+                        }
+                        continue;
+                    }
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                //Log.WarningException("Vehicle.isECUAlreadyScanned()", exception);
+            }
+            return false;
+        }
+
+        // ToDo: Check on update
+        public T getResultAs<T>(string resultName)
+        {
+            try
+            {
+                Type typeFromHandle = typeof(T);
+                if (!string.IsNullOrEmpty(resultName))
+                {
+                    object obj = null;
+                    switch (resultName)
+                    {
+                        case "/VehicleConfiguration.RootNode/GetGroupListEx/Arguments/Fahrzeugauftrag":
+                            obj = base.FA.STANDARD_FA;
+                            break;
+                        case "/VehicleConfiguration.RootNode/GetGroupListEx/Arguments/BaureihenVerbund":
+                            obj = BasisEReihe;
+                            break;
+                        case "/Result/Baustand":
+                            obj = base.FA.C_DATE;
+                            break;
+                        case "/VehicleConfiguration.RootNode/GetGroupListEx/Arguments/IStufe":
+                            obj = base.ILevel;
+                            break;
+                        case "/Result/HOWortListe":
+                            {
+                                string text4 = string.Empty;
+                                foreach (string item in base.FA.HO_WORT)
+                                {
+                                    text4 = text4 + item + ",";
+                                }
+                                text4 = text4.TrimEnd(',');
+                                obj = text4;
+                                break;
+                            }
+                        case "/Result/SonderAusstattungsListe":
+                            {
+                                string text3 = string.Empty;
+                                foreach (string item2 in base.FA.SA)
+                                {
+                                    text3 = text3 + item2 + ",";
+                                }
+                                text3 = text3.TrimEnd(',');
+                                obj = text3;
+                                break;
+                            }
+                        case "/Result/GruppenListe":
+                        case "/Result/DList":
+                            {
+                                string text2 = string.Empty;
+                                foreach (ECU item3 in base.ECU)
+                                {
+                                    text2 = text2 + item3.ECU_GRUPPE + ",";
+                                }
+                                text2 = text2.TrimEnd(',');
+                                obj = text2;
+                                break;
+                            }
+                        case "/Result/EWortListe":
+                            {
+                                string text = string.Empty;
+                                foreach (string item4 in base.FA.E_WORT)
+                                {
+                                    text = text + item4 + ",";
+                                }
+                                text = text.TrimEnd(',');
+                                obj = text;
+                                break;
+                            }
+                        default:
+                            //Log.Error("VehicleHelper.getResultAs<T>", "Unknown resultName '{0}' found!", resultName);
+                            break;
+                    }
+                    if (obj != null)
+                    {
+                        if (obj.GetType() != typeFromHandle)
+                        {
+                            return (T)Convert.ChangeType(obj, typeFromHandle);
+                        }
+                        return (T)obj;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                //Log.WarningException("Vehicle.getISTAResultAs(string resultName)", exception);
+            }
+            return default(T);
+        }
 #if false
-		public bool evalILevelExpression(string iLevelExpressions)
-		{
-			bool flag = false;
-			bool flag2 = true;
-			try
-			{
-				if (string.IsNullOrEmpty(iLevelExpressions))
-				{
-					return true;
-				}
-				if (string.IsNullOrEmpty(base.ILevel))
-				{
-					return true;
-				}
-				if (iLevelExpressions.Contains("&"))
-				{
-					flag2 = false;
-					flag = true;
-				}
-				string[] separator = new string[]
-				{
-					"&",
-					"|"
-				};
-				foreach (string text in iLevelExpressions.Split(separator, StringSplitOptions.RemoveEmptyEntries))
-				{
-					string[] separator2 = new string[]
-					{
-						","
-					};
-					string[] array2 = text.Split(separator2, StringSplitOptions.RemoveEmptyEntries);
-					if (array2.Length == 2)
-					{
-						if (string.Compare(base.ILevel, 0, array2[1], 0, 4, StringComparison.OrdinalIgnoreCase) == 0)
-						{
-							string text2 = array2[0];
-							if (text2 != null)
-							{
-								uint num = < PrivateImplementationDetails >.ComputeStringHash(text2);
-								if (num <= 957132539U)
-								{
-									if (num != 284975636U)
-									{
-										if (num != 940354920U)
-										{
-											if (num == 957132539U)
-											{
-												if (text2 == "<")
-												{
-													if (flag2)
-													{
-														bool flag3 = flag;
-														int? num3 = FormatConverter.ExtractNumericalILevel(base.ILevel);
-														int? num2 = FormatConverter.ExtractNumericalILevel(array2[1]);
-														flag = (flag3 | (num3.GetValueOrDefault() < num2.GetValueOrDefault() & (num3 != null & num2 != null)));
-													}
-													else
-													{
-														bool flag4 = flag;
-														int? num2 = FormatConverter.ExtractNumericalILevel(base.ILevel);
-														int? num3 = FormatConverter.ExtractNumericalILevel(array2[1]);
-														flag = (flag4 & (num2.GetValueOrDefault() < num3.GetValueOrDefault() & (num2 != null & num3 != null)));
-													}
-												}
-											}
-										}
-										else if (text2 == "=")
-										{
-											if (flag2)
-											{
-												bool flag5 = flag;
-												int? num2 = FormatConverter.ExtractNumericalILevel(base.ILevel);
-												int? num3 = FormatConverter.ExtractNumericalILevel(array2[1]);
-												flag = (flag5 | (num2.GetValueOrDefault() == num3.GetValueOrDefault() & num2 != null == (num3 != null)));
-											}
-											else
-											{
-												bool flag6 = flag;
-												int? num3 = FormatConverter.ExtractNumericalILevel(base.ILevel);
-												int? num2 = FormatConverter.ExtractNumericalILevel(array2[1]);
-												flag = (flag6 & (num3.GetValueOrDefault() == num2.GetValueOrDefault() & num3 != null == (num2 != null)));
-											}
-										}
-									}
-									else if (text2 == ">=")
-									{
-										if (flag2)
-										{
-											bool flag7 = flag;
-											int? num3 = FormatConverter.ExtractNumericalILevel(base.ILevel);
-											int? num2 = FormatConverter.ExtractNumericalILevel(array2[1]);
-											flag = (flag7 | (num3.GetValueOrDefault() >= num2.GetValueOrDefault() & (num3 != null & num2 != null)));
-										}
-										else
-										{
-											bool flag8 = flag;
-											int? num2 = FormatConverter.ExtractNumericalILevel(base.ILevel);
-											int? num3 = FormatConverter.ExtractNumericalILevel(array2[1]);
-											flag = (flag8 & (num2.GetValueOrDefault() >= num3.GetValueOrDefault() & (num2 != null & num3 != null)));
-										}
-									}
-								}
-								else
-								{
-									if (num <= 2428715011U)
-									{
-										if (num != 990687777U)
-										{
-											if (num != 2428715011U)
-											{
-												goto IL_757;
-											}
-											if (!(text2 == "!="))
-											{
-												goto IL_757;
-											}
-										}
-										else
-										{
-											if (!(text2 == ">"))
-											{
-												goto IL_757;
-											}
-											int? num2;
-											int? num3;
-											if (flag2)
-											{
-												bool flag9 = flag;
-												num2 = FormatConverter.ExtractNumericalILevel(base.ILevel);
-												num3 = FormatConverter.ExtractNumericalILevel(array2[1]);
-												flag = (flag9 | (num2.GetValueOrDefault() > num3.GetValueOrDefault() & (num2 != null & num3 != null)));
-												goto IL_757;
-											}
-											bool flag10 = flag;
-											num3 = FormatConverter.ExtractNumericalILevel(base.ILevel);
-											num2 = FormatConverter.ExtractNumericalILevel(array2[1]);
-											flag = (flag10 & (num3.GetValueOrDefault() > num2.GetValueOrDefault() & (num3 != null & num2 != null)));
-											goto IL_757;
-										}
-									}
-									else if (num != 2482446367U)
-									{
-										if (num != 2499223986U)
-										{
-											goto IL_757;
-										}
-										if (!(text2 == "<="))
-										{
-											goto IL_757;
-										}
-										int? num2;
-										int? num3;
-										if (flag2)
-										{
-											bool flag11 = flag;
-											num2 = FormatConverter.ExtractNumericalILevel(base.ILevel);
-											num3 = FormatConverter.ExtractNumericalILevel(array2[1]);
-											flag = (flag11 | (num2.GetValueOrDefault() <= num3.GetValueOrDefault() & (num2 != null & num3 != null)));
-											goto IL_757;
-										}
-										bool flag12 = flag;
-										num3 = FormatConverter.ExtractNumericalILevel(base.ILevel);
-										num2 = FormatConverter.ExtractNumericalILevel(array2[1]);
-										flag = (flag12 & (num3.GetValueOrDefault() <= num2.GetValueOrDefault() & (num3 != null & num2 != null)));
-										goto IL_757;
-									}
-									else if (!(text2 == "<>"))
-									{
-										goto IL_757;
-									}
-									if (flag2)
-									{
-										bool flag13 = flag;
-										int? num3 = FormatConverter.ExtractNumericalILevel(base.ILevel);
-										int? num2 = FormatConverter.ExtractNumericalILevel(array2[1]);
-										flag = (flag13 | !(num3.GetValueOrDefault() == num2.GetValueOrDefault() & num3 != null == (num2 != null)));
-									}
-									else
-									{
-										bool flag14 = flag;
-										int? num2 = FormatConverter.ExtractNumericalILevel(base.ILevel);
-										int? num3 = FormatConverter.ExtractNumericalILevel(array2[1]);
-										flag = (flag14 & !(num2.GetValueOrDefault() == num3.GetValueOrDefault() & num2 != null == (num3 != null)));
-									}
-								}
-							}
-						}
-						else
-						{
-							//Log.Warning("Vehicle.evalILevelExpression()", "iLevel main type does not match", Array.Empty<object>());
-						}
-					}
-					IL_757:;
-				}
-			}
-			catch (Exception exception)
-			{
-				//Log.WarningException("Vehicle.evalILevelExpression()", exception);
-				return true;
-			}
-			return flag;
-		}
-
-		public bool? HasMSAButton()
-		{
-			string text = this.Produktlinie.ToUpper();
-			if (text != null)
-			{
-				uint num = < PrivateImplementationDetails >.ComputeStringHash(text);
-				if (num <= 217051978U)
-				{
-					if (num <= 183496740U)
-					{
-						if (num != 149941502U)
-						{
-							if (num != 166719121U)
-							{
-								if (num != 183496740U)
-								{
-									goto IL_212;
-								}
-								if (!(text == "PL5"))
-								{
-									goto IL_212;
-								}
-							}
-							else if (!(text == "PL2"))
-							{
-								goto IL_212;
-							}
-						}
-						else if (!(text == "PL3"))
-						{
-							goto IL_212;
-						}
-					}
-					else if (num != 200274359U)
-					{
-						if (num != 204446827U)
-						{
-							if (num != 217051978U)
-							{
-								goto IL_212;
-							}
-							if (!(text == "PL7"))
-							{
-								goto IL_212;
-							}
-						}
-						else
-						{
-							if (!(text == "PL6-ALT"))
-							{
-								goto IL_212;
-							}
-							if (base.FA != null && base.FA.C_DATETIME != null && base.FA.C_DATETIME > Vehicle.LciDateE60)
-							{
-								return new bool?(true);
-							}
-							return new bool?(false);
-						}
-					}
-					else if (!(text == "PL4"))
-					{
-						goto IL_212;
-					}
-				}
-				else
-				{
-					if (num > 2184974868U)
-					{
-						if (num <= 3046534054U)
-						{
-							if (num != 2826802770U)
-							{
-								if (num != 3046534054U)
-								{
-									goto IL_212;
-								}
-								if (!(text == "PL5-ALT"))
-								{
-									goto IL_212;
-								}
-							}
-							else
-							{
-								if (!(text == "PLLI"))
-								{
-									goto IL_212;
-								}
-								goto IL_20B;
-							}
-						}
-						else if (num != 3162355150U)
-						{
-							if (num != 3604331608U)
-							{
-								goto IL_212;
-							}
-							if (!(text == "PL3-ALT"))
-							{
-								goto IL_212;
-							}
-						}
-						else
-						{
-							if (text == "PLLU")
-							{
-								goto IL_20B;
-							}
-							goto IL_212;
-						}
-						return new bool?(false);
-					}
-					if (num != 233829597U)
-					{
-						if (num != 671913016U)
-						{
-							if (num != 2184974868U)
-							{
-								goto IL_212;
-							}
-							if (!(text == "35LG"))
-							{
-								goto IL_212;
-							}
-						}
-						else
-						{
-							if (!(text == "-"))
-							{
-								goto IL_212;
-							}
-							goto IL_212;
-						}
-					}
-					else if (!(text == "PL6"))
-					{
-						goto IL_212;
-					}
-				}
-				IL_20B:
-				return new bool?(true);
-			}
-			IL_212:
-			return null;
-		}
-
-		public bool isECUAlreadyScanned(ECU checkSG)
-		{
-			try
-			{
-				foreach (ECU ecu in base.ECU)
-				{
-					if (ecu.ID_SG_ADR == checkSG.ID_SG_ADR)
-					{
-						return true;
-					}
-					if (!string.IsNullOrEmpty(ecu.ECU_ADR) && !string.IsNullOrEmpty(checkSG.ECU_ADR) && string.Compare(ecu.ECU_ADR, checkSG.ECU_ADR, StringComparison.OrdinalIgnoreCase) == 0)
-					{
-						return true;
-					}
-				}
-			}
-			catch (Exception exception)
-			{
-				//Log.WarningException("Vehicle.isECUAlreadyScanned()", exception);
-			}
-			return false;
-		}
-
-		public T getResultAs<T>(string resultName)
-		{
-			try
-			{
-				Type typeFromHandle = typeof(T);
-				if (!string.IsNullOrEmpty(resultName))
-				{
-					object obj = null;
-					if (resultName != null)
-					{
-						uint num = < PrivateImplementationDetails >.ComputeStringHash(resultName);
-						if (num > 1444285944U)
-						{
-							if (num <= 1946743292U)
-							{
-								if (num != 1857409602U)
-								{
-									if (num != 1946743292U)
-									{
-										goto IL_31E;
-									}
-									if (resultName == "/Result/HOWortListe")
-									{
-										string text = string.Empty;
-										foreach (string str in base.FA.HO_WORT)
-										{
-											text = text + str + ",";
-										}
-										text = text.TrimEnd(new char[]
-										{
-											','
-										});
-										obj = text;
-										goto IL_337;
-									}
-									goto IL_31E;
-								}
-								else if (!(resultName == "/Result/GruppenListe"))
-								{
-									goto IL_31E;
-								}
-							}
-							else if (num != 2030676002U)
-							{
-								if (num != 3210309580U)
-								{
-									if (num != 3286336872U)
-									{
-										goto IL_31E;
-									}
-									if (resultName == "/Result/SonderAusstattungsListe")
-									{
-										string text2 = string.Empty;
-										foreach (string str2 in base.FA.SA)
-										{
-											text2 = text2 + str2 + ",";
-										}
-										text2 = text2.TrimEnd(new char[]
-										{
-											','
-										});
-										obj = text2;
-										goto IL_337;
-									}
-									goto IL_31E;
-								}
-								else if (!(resultName == "/Result/DList"))
-								{
-									goto IL_31E;
-								}
-							}
-							else
-							{
-								if (resultName == "/Result/EWortListe")
-								{
-									string text3 = string.Empty;
-									foreach (string str3 in base.FA.E_WORT)
-									{
-										text3 = text3 + str3 + ",";
-									}
-									text3 = text3.TrimEnd(new char[]
-									{
-										','
-									});
-									obj = text3;
-									goto IL_337;
-								}
-								goto IL_31E;
-							}
-							string text4 = string.Empty;
-							foreach (ECU ecu in base.ECU)
-							{
-								text4 = text4 + ecu.ECU_GRUPPE + ",";
-							}
-							text4 = text4.TrimEnd(new char[]
-							{
-								','
-							});
-							obj = text4;
-							goto IL_337;
-						}
-						if (num <= 1032288925U)
-						{
-							if (num != 680186856U)
-							{
-								if (num == 1032288925U)
-								{
-									if (resultName == "/VehicleConfiguration.RootNode/GetGroupListEx/Arguments/Fahrzeugauftrag")
-									{
-										obj = base.FA.STANDARD_FA;
-										goto IL_337;
-									}
-								}
-							}
-							else if (resultName == "/VehicleConfiguration.RootNode/GetGroupListEx/Arguments/BaureihenVerbund")
-							{
-								obj = this.BasisEReihe;
-								goto IL_337;
-							}
-						}
-						else if (num != 1270135361U)
-						{
-							if (num == 1444285944U)
-							{
-								if (resultName == "/Result/Baustand")
-								{
-									obj = base.FA.C_DATE;
-									goto IL_337;
-								}
-							}
-						}
-						else if (resultName == "/VehicleConfiguration.RootNode/GetGroupListEx/Arguments/IStufe")
-						{
-							obj = base.ILevel;
-							goto IL_337;
-						}
-					}
-					IL_31E:
-					Log.Error("VehicleHelper.getResultAs<T>", "Unknown resultName '{0}' found!", new object[]
-					{
-						resultName
-					});
-					IL_337:
-					if (obj != null)
-					{
-						if (obj.GetType() != typeFromHandle)
-						{
-							return (T)((object)Convert.ChangeType(obj, typeFromHandle));
-						}
-						return (T)((object)obj);
-					}
-				}
-			}
-			catch (Exception exception)
-			{
-				Log.WarningException("Vehicle.getISTAResultAs(string resultName)", exception);
-			}
-			return default(T);
-		}
-
 		public void AddDiagCode(string diagCodeString, string diagCodeSuffixString, string originatingAblauf, IList<string> reparaturPaketList, bool teileClearingFlag)
-		{
-			if (!string.IsNullOrEmpty(diagCodeString))
-			{
-				if (base.DiagCodes == null)
-				{
-					base.DiagCodes = new ObservableCollection<typeDiagCode>();
-				}
-				typeDiagCode typeDiagCode = new typeDiagCode();
-				typeDiagCode.DiagnoseCode = diagCodeString;
-				typeDiagCode.DiagnoseCodeSuffix = diagCodeSuffixString;
-				typeDiagCode.Origin = ((originatingAblauf == null) ? string.Empty : originatingAblauf);
-				if (reparaturPaketList != null)
-				{
-					typeDiagCode.ReparaturPaket = new ObservableCollection<string>(reparaturPaketList);
-				}
-				else
-				{
-					typeDiagCode.ReparaturPaket = new ObservableCollection<string>();
-				}
-				typeDiagCode.TeileClearing = teileClearingFlag;
-				base.DiagCodes.Add(typeDiagCode);
-				if (!string.IsNullOrEmpty(diagCodeString) && !this.diagCodesProgramming.Contains(diagCodeString))
-				{
-					this.diagCodesProgramming.Add(diagCodeString);
-				}
-			}
-		}
+        {
+            if (!string.IsNullOrEmpty(diagCodeString))
+            {
+                if (base.DiagCodes == null)
+                {
+                    base.DiagCodes = new ObservableCollection<typeDiagCode>();
+                }
+                typeDiagCode typeDiagCode2 = new typeDiagCode();
+                typeDiagCode2.DiagnoseCode = diagCodeString;
+                typeDiagCode2.DiagnoseCodeSuffix = diagCodeSuffixString;
+                typeDiagCode2.Origin = ((originatingAblauf == null) ? string.Empty : originatingAblauf);
+                if (reparaturPaketList != null)
+                {
+                    typeDiagCode2.ReparaturPaket = new ObservableCollection<string>(reparaturPaketList);
+                }
+                else
+                {
+                    typeDiagCode2.ReparaturPaket = new ObservableCollection<string>();
+                }
+                typeDiagCode2.TeileClearing = teileClearingFlag;
+                base.DiagCodes.Add(typeDiagCode2);
+                if (!string.IsNullOrEmpty(diagCodeString) && !diagCodesProgramming.Contains(diagCodeString))
+                {
+                    diagCodesProgramming.Add(diagCodeString);
+                }
+            }
+        }
 #endif
         // ToDo: Check on update
         public bool IsPreE65Vehicle()
