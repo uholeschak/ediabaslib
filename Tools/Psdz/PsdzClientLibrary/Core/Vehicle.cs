@@ -145,132 +145,125 @@ namespace PsdzClient.Core
 		[XmlIgnore]
 		public List<IRxSwinObject> RxSwinObjectList { get; set; }
 #endif
-		[XmlIgnore]
-		public FA TargetFA
-		{
-			get
-			{
-				return this.targetFA;
-			}
-			set
-			{
-				this.targetFA = value;
-			}
-		}
+        [XmlIgnore]
+        public FA TargetFA
+        {
+            get
+            {
+                return targetFA;
+            }
+            set
+            {
+                targetFA = value;
+            }
+        }
 
-		[XmlIgnore]
-		public string TargetILevel
-		{
-			get
-			{
-				return this.targetILevel;
-			}
-			set
-			{
-				this.targetILevel = value;
-			}
-		}
+        [XmlIgnore]
+        public string TargetILevel
+        {
+            get
+            {
+                return targetILevel;
+            }
+            set
+            {
+                targetILevel = value;
+            }
+        }
 
-		[XmlIgnore]
-		public string SerialGearBox7
-		{
-			get
-			{
-				if (!string.IsNullOrEmpty(base.SerialGearBox) && base.SerialGearBox.Length >= 7)
-				{
-					return base.SerialGearBox.Substring(0, 7);
-				}
-				return base.SerialGearBox;
-			}
-		}
+        [XmlIgnore]
+        public string SerialGearBox7
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(base.SerialGearBox) && base.SerialGearBox.Length >= 7)
+                {
+                    return base.SerialGearBox.Substring(0, 7);
+                }
+                return base.SerialGearBox;
+            }
+        }
 
-		public bool SetVINRangeTypeFromVINRanges()
-		{
+        public string SetVINRangeTypeFromVINRanges()
+        {
             PdszDatabase database = ClientContext.GetDatabase(this);
-			if (database != null && !"XXXXXXX".Equals(this.VIN7) && !string.IsNullOrEmpty(this.VIN7) && !this.VIN7.Equals(this.vinRangeTypeLastResolvedType, StringComparison.OrdinalIgnoreCase))
-			{
+            if (database != null && !"XXXXXXX".Equals(this.VIN7) && !string.IsNullOrEmpty(this.VIN7) && !this.VIN7.Equals(this.vinRangeTypeLastResolvedType, StringComparison.OrdinalIgnoreCase))
+            {
                 PdszDatabase.VinRanges vinRangesByVin = database.GetVinRangesByVin17(this.VINType, this.VIN7, false);
 				if (vinRangesByVin != null)
 				{
-					this.vinRangeType = vinRangesByVin.TypeKey;
-					this.vinRangeTypeLastResolvedType = this.VIN7;
-					return true;
+                    this.vinRangeTypeLastResolvedType = this.VIN7;
+					return vinRangesByVin.TypeKey;
 				}
 			}
-			return false;
+			return null;
 		}
 
-		[XmlIgnore]
-		public string VINRangeType
-		{
-			get
-			{
-				return this.vinRangeType;
-			}
-			set
-			{
-				this.vinRangeType = value;
-			}
-		}
+        [XmlIgnore]
+        public string VINRangeType
+        {
+            get
+            {
+                return vinRangeType;
+            }
+            set
+            {
+                if (vinRangeType != value)
+                {
+                    vinRangeType = value;
+                    OnPropertyChanged("VINRangeType");
+                }
+            }
+        }
 
-		[XmlIgnore]
-		public bool IsClosingOperationActive
-		{
-			get
-			{
-				return this.isClosingOperationActive;
-			}
-			set
-			{
-				this.isClosingOperationActive = value;
-			}
-		}
+        [XmlIgnore]
+        public bool IsClosingOperationActive
+        {
+            get
+            {
+                return isClosingOperationActive;
+            }
+            set
+            {
+                isClosingOperationActive = value;
+            }
+        }
 #if false
-		[XmlIgnore]
-		public ParameterContainer SessionDataStore
-		{
-			get
-			{
-				return this.sessionDataStore;
-			}
-		}
-#endif
-		public string VIN10Prefix
-		{
-			get
-			{
-				string result;
-				try
-				{
-					if (string.IsNullOrEmpty(base.VIN17))
-					{
-						result = null;
-					}
-					else
-					{
-						result = base.VIN17.Substring(0, 10);
-					}
-				}
-				catch (Exception)
-				{
-					//Log.WarningException("Vehicle.VIN10Prefix", exception);
-					result = null;
-				}
-				return result;
-			}
-		}
 
-		public string BasisEReihe
-		{
-			get
-			{
-				if (!string.IsNullOrEmpty(base.Gsgbd) && base.Gsgbd.Length >= 3 && !base.Gsgbd.Equals("zcs_all"))
-				{
-					return base.Gsgbd.Substring(0, 3);
-				}
-				return base.Ereihe;
-			}
-		}
+        [XmlIgnore]
+        public ParameterContainer SessionDataStore => sessionDataStore;
+#endif
+        public string VIN10Prefix
+        {
+            get
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(base.VIN17))
+                    {
+                        return null;
+                    }
+                    return base.VIN17.Substring(0, 10);
+                }
+                catch (Exception)
+                {
+                    //Log.WarningException("Vehicle.VIN10Prefix", exception);
+                    return null;
+                }
+            }
+        }
+
+        public string BasisEReihe
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(base.MainSeriesSgbd) && base.MainSeriesSgbd.Length >= 3 && !base.MainSeriesSgbd.Equals("zcs_all"))
+                {
+                    return base.MainSeriesSgbd.Substring(0, 3);
+                }
+                return base.Ereihe;
+            }
+        }
 
         public string VIN7
         {
