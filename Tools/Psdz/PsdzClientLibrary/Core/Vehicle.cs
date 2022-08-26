@@ -41,79 +41,80 @@ namespace PsdzClient.Core
         }
 
 #if false
-		public List<string> PermanentSAEFehlercodesInFaultList()
-		{
-			List<string> list = new List<string>();
-			if (this.FaultList != null && this.FaultList.Count != 0)
-			{
-				foreach (Fault fault in this.FaultList)
-				{
-					if (fault.DTC.FortAsHexString == "S 0751")
-					{
-						list.Add("S 0751");
-					}
-					if (fault.DTC.FortAsHexString == "S 0756")
-					{
-						list.Add("S 0756");
-					}
-				}
-				return list;
-			}
-			return new List<string>();
-		}
+        public List<string> PermanentSAEFehlercodesInFaultList()
+        {
+            List<string> list = new List<string>();
+            if (FaultList != null && FaultList.Count != 0)
+            {
+                foreach (Fault fault in FaultList)
+                {
+                    if (fault.DTC.FortAsHexString == "S 0751")
+                    {
+                        list.Add("S 0751");
+                    }
+                    if (fault.DTC.FortAsHexString == "S 0756")
+                    {
+                        list.Add("S 0756");
+                    }
+                }
+                return list;
+            }
+            return new List<string>();
+        }
 #endif
-		[XmlIgnore]
-		public bool Sp2021Enabled
-		{
-			get
-			{
-				return this.sp2021Enabled;
-			}
-			set
-			{
-				this.sp2021Enabled = value;
-			}
-		}
 
-		public string HmiVersion
-		{
-			get
-			{
-				return this.hmiVersion;
-			}
-			set
-			{
-				this.hmiVersion = value;
-				this.OnPropertyChanged("HmiVersion");
-			}
-		}
+        [XmlIgnore]
+        public bool Sp2021Enabled
+        {
+            get
+            {
+                return sp2021Enabled;
+            }
+            set
+            {
+                sp2021Enabled = value;
+            }
+        }
 
-		public string EBezeichnungUIText
-		{
-			get
-			{
-				return this.eBezeichnungUIText;
-			}
-			set
-			{
-				this.eBezeichnungUIText = value;
-				this.OnPropertyChanged("EBezeichnungUIText");
-			}
-		}
+        public string HmiVersion
+        {
+            get
+            {
+                return hmiVersion;
+            }
+            set
+            {
+                hmiVersion = value;
+                OnPropertyChanged("HmiVersion");
+            }
+        }
 
-		[XmlIgnore]
-		public string SalesDesignationBadgeUIText
-		{
-			get
-			{
-				return this.salesDesignationBadgeUIText;
-			}
-			set
-			{
-				this.salesDesignationBadgeUIText = value;
-				this.OnPropertyChanged("SalesDesignationBadgeUIText");
-			}
-		}
+        public string EBezeichnungUIText
+        {
+            get
+            {
+                return eBezeichnungUIText;
+            }
+            set
+            {
+                eBezeichnungUIText = value;
+                OnPropertyChanged("EBezeichnungUIText");
+            }
+        }
+
+        [XmlIgnore]
+        public string SalesDesignationBadgeUIText
+        {
+            get
+            {
+                return salesDesignationBadgeUIText;
+            }
+            set
+            {
+                salesDesignationBadgeUIText = value;
+                OnPropertyChanged("SalesDesignationBadgeUIText");
+            }
+        }
 
         public string KraftstoffartEinbaulage
         {
@@ -131,19 +132,14 @@ namespace PsdzClient.Core
             }
         }
 
-		public ObservableCollection<string> DiagCodesProgramming
-		{
-			get
-			{
-				return this.diagCodesProgramming;
-			}
-		}
-#if false
-		[XmlIgnore]
-		public RxSwinData RxSwin { get; set; }
+        public ObservableCollection<string> DiagCodesProgramming => diagCodesProgramming;
 
-		[XmlIgnore]
-		public List<IRxSwinObject> RxSwinObjectList { get; set; }
+#if false
+        [XmlIgnore]
+        public RxSwinData RxSwin { get; set; }
+
+        [XmlIgnore]
+        public List<IRxSwinObject> RxSwinObjectList { get; set; }
 #endif
         [XmlIgnore]
         public FA TargetFA
