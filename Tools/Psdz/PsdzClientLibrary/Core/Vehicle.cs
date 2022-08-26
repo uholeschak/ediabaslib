@@ -946,314 +946,117 @@ namespace PsdzClient.Core
 			}
 			return result;
 		}
+
+        public bool IsVINLessEReihe()
+        {
+            switch (base.Ereihe)
+            {
+                case "247":
+                case "K599":
+                case "248":
+                case "259":
+                case "259R":
+                case "259S":
+                case "R22":
+                case "R21":
+                case "R28":
+                case "259C":
+                case "K30":
+                case "K41":
+                case "247E":
+                case "K569":
+                case "E169":
+                case "E189":
+                case "K589":
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        public bool IsEreiheValid()
+        {
+            if (!string.IsNullOrEmpty(base.Ereihe) && !(base.Ereihe == "UNBEK"))
+            {
+                return true;
+            }
+            return false;
+        }
 #if false
-		public bool IsVINLessEReihe()
-		{
-			string ereihe = base.Ereihe;
-			if (ereihe != null)
-			{
-				uint num = < PrivateImplementationDetails >.ComputeStringHash(ereihe);
-				if (num <= 1523257365U)
-				{
-					if (num <= 870152785U)
-					{
-						if (num <= 752709452U)
-						{
-							if (num != 714685471U)
-							{
-								if (num != 752709452U)
-								{
-									return false;
-								}
-								if (!(ereihe == "247"))
-								{
-									return false;
-								}
-							}
-							else if (!(ereihe == "K599"))
-							{
-								return false;
-							}
-						}
-						else if (num != 786117595U)
-						{
-							if (num != 870152785U)
-							{
-								return false;
-							}
-							if (!(ereihe == "248"))
-							{
-								return false;
-							}
-						}
-						else if (!(ereihe == "259"))
-						{
-							return false;
-						}
-					}
-					else if (num <= 1276256427U)
-					{
-						if (num != 1259478808U)
-						{
-							if (num != 1276256427U)
-							{
-								return false;
-							}
-							if (!(ereihe == "259R"))
-							{
-								return false;
-							}
-						}
-						else if (!(ereihe == "259S"))
-						{
-							return false;
-						}
-					}
-					else if (num != 1472924508U)
-					{
-						if (num != 1523257365U)
-						{
-							return false;
-						}
-						if (!(ereihe == "R22"))
-						{
-							return false;
-						}
-					}
-					else if (!(ereihe == "R21"))
-					{
-						return false;
-					}
-				}
-				else if (num <= 2442436689U)
-				{
-					if (num <= 1623923079U)
-					{
-						if (num != 1527920712U)
-						{
-							if (num != 1623923079U)
-							{
-								return false;
-							}
-							if (!(ereihe == "R28"))
-							{
-								return false;
-							}
-						}
-						else if (!(ereihe == "259C"))
-						{
-							return false;
-						}
-					}
-					else if (num != 2426497713U)
-					{
-						if (num != 2442436689U)
-						{
-							return false;
-						}
-						if (!(ereihe == "K30"))
-						{
-							return false;
-						}
-					}
-					else if (!(ereihe == "K41"))
-					{
-						return false;
-					}
-				}
-				else if (num <= 2845166379U)
-				{
-					if (num != 2729132584U)
-					{
-						if (num != 2845166379U)
-						{
-							return false;
-						}
-						if (!(ereihe == "247E"))
-						{
-							return false;
-						}
-					}
-					else if (!(ereihe == "K569"))
-					{
-						return false;
-					}
-				}
-				else if (num != 2929478274U)
-				{
-					if (num != 3233663528U)
-					{
-						if (num != 3434009218U)
-						{
-							return false;
-						}
-						if (!(ereihe == "E169"))
-						{
-							return false;
-						}
-					}
-					else if (!(ereihe == "E189"))
-					{
-						return false;
-					}
-				}
-				else if (!(ereihe == "K589"))
-				{
-					return false;
-				}
-				return true;
-			}
-			return false;
-		}
+        public ECU GetECUbyDTC(decimal id)
+        {
+            if (base.ECU != null)
+            {
+                foreach (ECU item in base.ECU)
+                {
+                    if (item.FEHLER != null)
+                    {
+                        foreach (DTC item2 in item.FEHLER)
+                        {
+                            if (id.Equals(item2.Id))
+                            {
+                                return item;
+                            }
+                        }
+                    }
+                    if (item.INFO == null)
+                    {
+                        continue;
+                    }
+                    foreach (DTC item3 in item.INFO)
+                    {
+                        if (id.Equals(item3.Id))
+                        {
+                            return item;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
 
-		public bool IsEreiheValid()
-		{
-			return !string.IsNullOrEmpty(base.Ereihe) && !(base.Ereihe == "UNBEK");
-		}
-
-		public ECU GetECUbyDTC(decimal id)
-		{
-			if (base.ECU != null)
-			{
-				using (IEnumerator<ECU> enumerator = base.ECU.GetEnumerator())
-				{
-					while (enumerator.MoveNext())
-					{
-						ECU ecu = enumerator.Current;
-						if (ecu.FEHLER != null)
-						{
-							foreach (DTC dtc in ecu.FEHLER)
-							{
-								if (id.Equals(dtc.Id))
-								{
-									return ecu;
-								}
-							}
-						}
-						if (ecu.INFO != null)
-						{
-							foreach (DTC dtc2 in ecu.INFO)
-							{
-								if (id.Equals(dtc2.Id))
-								{
-									return ecu;
-								}
-							}
-						}
-					}
-					goto IL_D6;
-				}
-				ECU result;
-				return result;
-			}
-			IL_D6:
-			return null;
-		}
-
-		public DTC GetDTC(decimal id)
-		{
-			if (base.ECU != null)
-			{
-				using (IEnumerator<ECU> enumerator = base.ECU.GetEnumerator())
-				{
-					while (enumerator.MoveNext())
-					{
-						ECU ecu = enumerator.Current;
-						if (ecu.FEHLER != null)
-						{
-							foreach (DTC dtc in ecu.FEHLER)
-							{
-								if (id.Equals(dtc.Id))
-								{
-									return dtc;
-								}
-							}
-						}
-						if (ecu.INFO != null)
-						{
-							foreach (DTC dtc2 in ecu.INFO)
-							{
-								if (id.Equals(dtc2.Id))
-								{
-									return dtc2;
-								}
-							}
-						}
-					}
-					goto IL_EF;
-				}
-				DTC result;
-				return result;
-			}
-			IL_EF:
-			if (base.CombinedFaults != null)
-			{
-				return base.CombinedFaults.FirstOrDefault(delegate (DTC item)
-				{
-					decimal? id2 = item.Id;
-					decimal id3 = id;
-					return id2.GetValueOrDefault() == id3 & id2 != null;
-				});
-			}
-			return null;
-		}
-
-		public DTC GetFaultCode(FaultCode faultCode)
-		{
-			if (faultCode == null)
-			{
-				//Log.Warning("Vehicle.GetFaultCode()", "faultCode was null", Array.Empty<object>());
-				return null;
-			}
-			try
-			{
-				if (base.ECU != null)
-				{
-					foreach (ECU ecu in base.ECU)
-					{
-						if (ecu.FEHLER != null)
-						{
-							foreach (DTC dtc in ecu.FEHLER)
-							{
-								if (dtc.Id != null)
-								{
-									decimal? id = dtc.Id;
-									decimal id2 = faultCode.ID;
-									if (id.GetValueOrDefault() == id2 & id != null)
-									{
-										return dtc;
-									}
-								}
-								if (dtc.Id == null)
-								{
-									long? f_ORT = dtc.F_ORT;
-									long? f_ORT2 = faultCode.F_ORT;
-									if ((f_ORT.GetValueOrDefault() == f_ORT2.GetValueOrDefault() & f_ORT != null == (f_ORT2 != null)) && !dtc.IsVirtual && !dtc.IsCombined)
-									{
-										return dtc;
-									}
-								}
-							}
-						}
-					}
-				}
-				if (base.CombinedFaults != null)
-				{
-					return base.CombinedFaults.FirstOrDefault(delegate (DTC item)
-					{
-						decimal? id3 = item.Id;
-						decimal signedId = faultCode.SignedId;
-						return id3.GetValueOrDefault() == signedId & id3 != null;
-					});
-				}
-			}
-			catch (Exception exception)
-			{
-				//Log.WarningException("Vehicle.GetFaultCode()", exception);
-			}
-			return null;
-		}
+        public DTC GetDTC(decimal id)
+        {
+            if (base.ECU != null)
+            {
+                foreach (ECU item in base.ECU)
+                {
+                    if (item.FEHLER != null)
+                    {
+                        foreach (DTC item2 in item.FEHLER)
+                        {
+                            if (id.Equals(item2.Id))
+                            {
+                                return item2;
+                            }
+                        }
+                    }
+                    if (item.INFO == null)
+                    {
+                        continue;
+                    }
+                    foreach (DTC item3 in item.INFO)
+                    {
+                        if (id.Equals(item3.Id))
+                        {
+                            return item3;
+                        }
+                    }
+                }
+            }
+            if (base.CombinedFaults != null)
+            {
+                return base.CombinedFaults.FirstOrDefault(delegate (DTC item)
+                {
+                    decimal? id2 = item.Id;
+                    decimal num = id;
+                    return (id2.GetValueOrDefault() == num) & id2.HasValue;
+                });
+            }
+            return null;
+        }
 #endif
+
         public void CalculateFaultProperties(IFFMDynamicResolver ffmResolver = null)
         {
 #if false
