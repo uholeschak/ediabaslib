@@ -756,197 +756,158 @@ namespace PsdzClient.Core
 			}
 		}
 #endif
-		[XmlIgnore]
-		IVciDevice IVehicle.VCI
-		{
-			get
-			{
-				return base.VCI;
-			}
-		}
+        [XmlIgnore]
+        IVciDevice IVehicle.VCI => base.VCI;
+
 #if false
-		[XmlIgnore]
-		IEnumerable<IZfsResult> IVehicle.ZFS
-		{
-			get
-			{
-				return base.ZFS;
-			}
-		}
+        [XmlIgnore]
+        IEnumerable<IZfsResult> IVehicle.ZFS => base.ZFS;
 #endif
-		[XmlIgnore]
-		public double Clamp15MinValue
-		{
-			get
-			{
-				return this.clamp15MinValue;
-			}
-			set
-			{
-				if (this.clamp15MinValue != value)
-				{
-					this.clamp15MinValue = value;
-					this.OnPropertyChanged("Clamp15MinValue");
-				}
-			}
-		}
 
-		public bool WithLfpBattery
-		{
-			get
-			{
-				return this.withLfpBattery;
-			}
-			set
-			{
-				if (this.withLfpBattery != value)
-				{
-					this.withLfpBattery = value;
-					this.OnPropertyChanged("WithLfpBattery");
-				}
-			}
-		}
+        [XmlIgnore]
+        public double Clamp15MinValue
+        {
+            get
+            {
+                return clamp15MinValue;
+            }
+            set
+            {
+                if (clamp15MinValue != value)
+                {
+                    clamp15MinValue = value;
+                    OnPropertyChanged("Clamp15MinValue");
+                }
+            }
+        }
 
-		[XmlIgnore]
-		public double Clamp30MinValue
-		{
-			get
-			{
-				return this.clamp30MinValue;
-			}
-			set
-			{
-				if (this.clamp30MinValue != value)
-				{
-					this.clamp30MinValue = value;
-					this.OnPropertyChanged("Clamp30MinValue");
-				}
-			}
-		}
+        public bool WithLfpBattery
+        {
+            get
+            {
+                return withLfpBattery;
+            }
+            set
+            {
+                if (withLfpBattery != value)
+                {
+                    withLfpBattery = value;
+                    OnPropertyChanged("WithLfpBattery");
+                }
+            }
+        }
 
-		[XmlIgnore]
-		public HashSet<int> ValidPWFStates
-		{
-			get
-			{
-				return this.validPWFStates;
-			}
-			set
-			{
-				if (this.validPWFStates != value)
-				{
-					this.validPWFStates = value;
-					this.OnPropertyChanged("ValidPWFStates");
-				}
-			}
-		}
+        [XmlIgnore]
+        public double Clamp30MinValue
+        {
+            get
+            {
+                return clamp30MinValue;
+            }
+            set
+            {
+                if (clamp30MinValue != value)
+                {
+                    clamp30MinValue = value;
+                    OnPropertyChanged("Clamp30MinValue");
+                }
+            }
+        }
 
-		public override void OnPropertyChanged(string propertyName)
-		{
-			base.OnPropertyChanged(propertyName);
-			if ("SerialGearBox".Equals(propertyName))
-			{
-				base.OnPropertyChanged("SerialGearBox7");
-			}
-		}
+        [XmlIgnore]
+        public HashSet<int> ValidPWFStates
+        {
+            get
+            {
+                return validPWFStates;
+            }
+            set
+            {
+                if (validPWFStates != value)
+                {
+                    validPWFStates = value;
+                    OnPropertyChanged("ValidPWFStates");
+                }
+            }
+        }
 
-		public string GetFSCfromUpdateIndex(string updateIndex, string huVariante)
-		{
-			string[] source = new string[]
-			{
-				"HU_MGU",
-				"ENAVEVO"
-			};
-			string result;
-			try
-			{
-				int num = Convert.ToInt32(updateIndex, 16);
-				if (source.Any((string x) => huVariante.Equals(x)))
-				{
-					string str = updateIndex.Substring(0, 2);
-					result = updateIndex.Substring(2, 2) + "-" + str;
-				}
-				else if (num > 45)
-				{
-					int months = num - 54;
-					DateTime dateTime = new DateTime(2018, 7, 1);
-					DateTime dateTime2 = dateTime.AddMonths(months);
-					new DateTime(2017, 10, 1);
-					result = dateTime2.Month + "-" + dateTime2.Year;
-				}
-				else if (num > 33)
-				{
-					int num2 = 46 - num;
-					int months2 = -1 * (num2 * 3 - 3);
-					DateTime dateTime3 = new DateTime(2017, 10, 1);
-					DateTime dateTime4 = dateTime3.AddMonths(months2);
-					result = dateTime4.Month + "-" + dateTime4.Year;
-				}
-				else
-				{
-					result = "-";
-				}
-			}
-			catch
-			{
-				result = "-";
-			}
-			return result;
-		}
+        // ToDo: Check on update
+        public override void OnPropertyChanged(string propertyName)
+        {
+            base.OnPropertyChanged(propertyName);
+            switch (propertyName)
+            {
+                case "Gwsz":
+                    base.OnPropertyChanged("DisplayGwsz");
+                    break;
+                case "SerialGearBox":
+                    base.OnPropertyChanged("SerialGearBox7");
+                    break;
+            }
+        }
 
-		public static Vehicle Deserialize(string filename)
-		{
-			try
-			{
-				if (File.Exists(filename))
-				{
-					using (FileStream fileStream = File.OpenRead(filename))
-					{
-						using (XmlTextReader xmlTextReader = new XmlTextReader(fileStream))
-						{
-							Vehicle vehicle = (Vehicle)new XmlSerializer(typeof(Vehicle)).Deserialize(xmlTextReader);
-							vehicle.CalculateFaultProperties(null);
-							return vehicle;
-						}
-					}
-				}
-				return null;
-			}
-			catch (Exception)
-			{
-				//Log.WarningException(Log.CurrentMethod() + "()", exception);
-			}
-			return null;
-		}
+        // ToDo: Check on update
+        public string GetFSCfromUpdateIndex(string updateIndex, string huVariante)
+        {
+            string[] source = new string[2] { "HU_MGU", "ENAVEVO" };
+            try
+            {
+                int num2 = Convert.ToInt32(updateIndex, 16);
+                if (source.Any((string x) => huVariante.Equals(x)))
+                {
+                    string text = updateIndex.Substring(0, 2);
+                    return updateIndex.Substring(2, 2) + "-" + text;
+                }
+                if (num2 > 45)
+                {
+                    int months = num2 - 54;
+                    DateTime dateTime = new DateTime(2018, 7, 1).AddMonths(months);
+                    new DateTime(2017, 10, 1);
+                    return dateTime.Month + "-" + dateTime.Year;
+                }
+                if (num2 > 33)
+                {
+                    int num3 = 46 - num2;
+                    int months2 = -1 * (num3 * 3 - 3);
+                    DateTime dateTime2 = new DateTime(2017, 10, 1).AddMonths(months2);
+                    return dateTime2.Month + "-" + dateTime2.Year;
+                }
+                return "-";
+            }
+            catch
+            {
+                //Log.Warning("Vehicle.ValidateFSC", "Exception Occurred validating HDDUpdateIndex {0}", updateIndex);
+                return "-";
+            }
+        }
 
-		public object Clone()
-		{
-			return base.MemberwiseClone();
-		}
+        public object Clone()
+        {
+            return MemberwiseClone();
+        }
 
-		public Vehicle DeepClone()
-		{
-			Vehicle result;
-			try
-			{
-				XmlSerializer xmlSerializer = new XmlSerializer(typeof(Vehicle));
-				using (MemoryStream memoryStream = new MemoryStream())
-				{
-					xmlSerializer.Serialize(memoryStream, this);
-					memoryStream.Seek(0L, SeekOrigin.Begin);
-					Vehicle vehicle = (Vehicle)xmlSerializer.Deserialize(memoryStream);
-					vehicle.CalculateFaultProperties(null);
-					result = vehicle;
-				}
-			}
-			catch (Exception)
-			{
-				//Log.WarningException(Log.CurrentMethod() + "()", exception);
-				throw;
-			}
-			return result;
-		}
+        public Vehicle DeepClone()
+        {
+            try
+            {
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(Vehicle));
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    xmlSerializer.Serialize(memoryStream, this);
+                    memoryStream.Seek(0L, SeekOrigin.Begin);
+                    Vehicle obj = (Vehicle)xmlSerializer.Deserialize(memoryStream);
+                    obj.CalculateFaultProperties();
+                    return obj;
+                }
+            }
+            catch (Exception)
+            {
+                //Log.WarningException(Log.CurrentMethod() + "()", exception);
+                throw;
+            }
+        }
 
+        // ToDo: Check on update
         public bool IsVINLessEReihe()
         {
             switch (base.Ereihe)
