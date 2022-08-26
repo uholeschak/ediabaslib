@@ -1621,106 +1621,107 @@ namespace PsdzClient.Core
 			return num;
 		}
 #if false
-		public typeCBSInfo getCBSMeasurementValue(typeCBSMeaurementType mType)
-		{
-			try
-			{
-				if (base.CBS == null)
-				{
-					return null;
-				}
-				foreach (typeCBSInfo typeCBSInfo in base.CBS)
-				{
-					if (typeCBSInfo.Type == mType)
-					{
-						return typeCBSInfo;
-					}
-				}
-				return null;
-			}
-			catch (Exception exception)
-			{
-				Log.WarningException("Vehicle.getCBSMeasurementValue()", exception);
-			}
-			return null;
-		}
+        public typeCBSInfo getCBSMeasurementValue(typeCBSMeaurementType mType)
+        {
+            try
+            {
+                if (base.CBS == null)
+                {
+                    return null;
+                }
+                foreach (typeCBSInfo cB in base.CBS)
+                {
+                    if (cB.Type == mType)
+                    {
+                        return cB;
+                    }
+                }
+                return null;
+            }
+            catch (Exception exception)
+            {
+                //Log.WarningException("Vehicle.getCBSMeasurementValue()", exception);
+            }
+            return null;
+        }
 
-		public bool addOrUpdateCBSMeasurementValue(typeCBSInfo cbsNew)
-		{
-			try
-			{
-				if (cbsNew == null)
-				{
-					return false;
-				}
-				if (base.CBS == null)
-				{
-					base.CBS = new ObservableCollection<typeCBSInfo>();
-				}
-				foreach (typeCBSInfo typeCBSInfo in base.CBS)
-				{
-					if (typeCBSInfo.Type == cbsNew.Type)
-					{
-						base.CBS.Remove(typeCBSInfo);
-						base.CBS.Add(cbsNew);
-						return true;
-					}
-				}
-				base.CBS.Add(cbsNew);
-				return true;
-			}
-			catch (Exception exception)
-			{
-				Log.WarningException("Vehicle.addOrUpdateCBSMeasurementValue()", exception);
-			}
-			return false;
-		}
+        public bool addOrUpdateCBSMeasurementValue(typeCBSInfo cbsNew)
+        {
+            try
+            {
+                if (cbsNew == null)
+                {
+                    return false;
+                }
+                if (base.CBS == null)
+                {
+                    base.CBS = new ObservableCollection<typeCBSInfo>();
+                }
+                foreach (typeCBSInfo cB in base.CBS)
+                {
+                    if (cB.Type == cbsNew.Type)
+                    {
+                        base.CBS.Remove(cB);
+                        base.CBS.Add(cbsNew);
+                        return true;
+                    }
+                }
+                base.CBS.Add(cbsNew);
+                return true;
+            }
+            catch (Exception exception)
+            {
+                //Log.WarningException("Vehicle.addOrUpdateCBSMeasurementValue()", exception);
+            }
+            return false;
+        }
 
-		public bool addOrUpdateCBSMeasurementValues(IList<typeCBSInfo> cbsNewList)
-		{
-			try
-			{
-				if (cbsNewList == null)
-				{
-					return false;
-				}
-				if (base.CBS == null)
-				{
-					base.CBS = new ObservableCollection<typeCBSInfo>();
-				}
-				foreach (typeCBSInfo typeCBSInfo in cbsNewList)
-				{
-					bool flag = false;
-					foreach (typeCBSInfo typeCBSInfo2 in base.CBS)
-					{
-						if (typeCBSInfo2.Type == typeCBSInfo.Type)
-						{
-							int num = base.CBS.IndexOf(typeCBSInfo2);
-							if (num >= 0 && num < base.CBS.Count)
-							{
-								base.CBS[num] = typeCBSInfo;
-							}
-							flag = true;
-						}
-					}
-					if (!flag)
-					{
-						base.CBS.Add(typeCBSInfo);
-					}
-				}
-				return true;
-			}
-			catch (Exception exception)
-			{
-				Log.WarningException("Vehicle.addOrUpdateCBSMeasurementValue()", exception);
-			}
-			return false;
-		}
+        public bool addOrUpdateCBSMeasurementValues(IList<typeCBSInfo> cbsNewList)
+        {
+            int num = 1;
+            try
+            {
+                if (cbsNewList == null)
+                {
+                    return false;
+                }
+                if (base.CBS == null)
+                {
+                    base.CBS = new ObservableCollection<typeCBSInfo>();
+                }
+                foreach (typeCBSInfo cbsNew in cbsNewList)
+                {
+                    bool flag = false;
+                    foreach (typeCBSInfo cB in base.CBS)
+                    {
+                        if (cB.Type == cbsNew.Type)
+                        {
+                            int num2 = base.CBS.IndexOf(cB);
+                            if (num2 >= 0 && num2 < base.CBS.Count)
+                            {
+                                base.CBS[num2] = cbsNew;
+                            }
+                            flag = true;
+                        }
+                    }
+                    if (!flag)
+                    {
+                        base.CBS.Add(cbsNew);
+                    }
+                }
+                return true;
+            }
+            catch (Exception exception)
+            {
+                //Log.WarningException("Vehicle.addOrUpdateCBSMeasurementValue()", exception);
+            }
+            return false;
+        }
 #endif
-		public void AddEcu(ECU ecu)
-		{
-			base.ECU.Add(ecu);
-		}
+        public void AddEcu(ECU ecu)
+        {
+            base.ECU.Add(ecu);
+        }
 
         public bool AddOrUpdateECU(ECU nECU)
         {
@@ -1793,18 +1794,18 @@ namespace PsdzClient.Core
         }
 
         [XmlIgnore]
-		public bool IsNoVehicleCommunicationRunning
-		{
-			get
-			{
-				return this.noVehicleCommunicationRunning;
-			}
-			set
-			{
-				this.noVehicleCommunicationRunning = value;
-				this.OnPropertyChanged("IsNoVehicleCommunicationRunning");
-			}
-		}
+        public bool IsNoVehicleCommunicationRunning
+        {
+            get
+            {
+                return noVehicleCommunicationRunning;
+            }
+            set
+            {
+                noVehicleCommunicationRunning = value;
+                OnPropertyChanged("IsNoVehicleCommunicationRunning");
+            }
+        }
 
         public bool IsVehicleWithOnlyVin7()
         {
@@ -2243,7 +2244,6 @@ namespace PsdzClient.Core
 #if false
         private static ObservableCollection<Fault> CalculateFaultList(Vehicle vehicle, IEnumerable<ECU> ecus, IEnumerable<DTC> combinedFaults, ObservableCollection<ZFSResult> zfs, IFFMDynamicResolver ffmFesolver = null)
         {
-            int num = 17;
             bool flag = true;
             bool flag2 = true;
             if (ConfigSettings.OperationalMode != 0)
