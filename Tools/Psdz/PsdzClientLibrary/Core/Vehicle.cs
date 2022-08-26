@@ -272,177 +272,163 @@ namespace PsdzClient.Core
 			}
 		}
 
-		public string VIN7
-		{
-			get
-			{
-				try
-				{
-					if (string.IsNullOrEmpty(base.VIN17))
-					{
-						return null;
-					}
-					return base.VIN17.Substring(10, 7);
-				}
-				catch (Exception)
-				{
-					//Log.WarningException("Vehicle.get_VIN7", exception);
-				}
-				return null;
-			}
-		}
-
-		public string GMType
-		{
-			get
-			{
-				try
-				{
-					if (base.FA != null && !string.IsNullOrEmpty(base.FA.TYPE) && base.FA.TYPE.Length == 4)
-					{
-						return base.FA.TYPE;
-					}
-					if (string.IsNullOrEmpty(base.VIN17))
-					{
-						return null;
-					}
-					if (!string.IsNullOrEmpty(this.VINRangeType))
-					{
-						return this.VINRangeType;
-					}
-					string text = base.VIN17.Substring(3, 4);
-					if (!string.IsNullOrEmpty(text))
-					{
-						string text2 = text.Substring(0, 3);
-						switch (text[3])
-						{
-							case 'A':
-								text2 += "1";
-                                return text2;
-							case 'B':
-								text2 += "2";
-                                return text2;
-							case 'C':
-								text2 += "3";
-                                return text2;
-							case 'D':
-								text2 += "4";
-                                return text2;
-							case 'E':
-								text2 += "5";
-                                return text2;
-							case 'F':
-								text2 += "6";
-                                return text2;
-							case 'G':
-								text2 += "7";
-                                return text2;
-							case 'H':
-								text2 += "8";
-                                return text2;
-							case 'J':
-								text2 += "9";
-                                return text2;
-						}
-						return text;
-					}
-				}
-				catch (Exception)
-				{
-					//Log.WarningException("Vehicle.get_VINType", exception);
-				}
-				return null;
-			}
-		}
-
-		public string VINType
-		{
-			get
-			{
-				try
-				{
-					if (!string.IsNullOrEmpty(base.VIN17) && base.VIN17.Length >= 17)
-					{
-						return base.VIN17.Substring(3, 4);
-					}
-					return null;
-				}
-				catch (Exception)
-				{
-					//Log.WarningException("Vehicle.get_VINType", exception);
-				}
-				return null;
-			}
-		}
-
-		public bool IsBusy
-		{
-			get
-			{
-				return this.isBusy;
-			}
-			set
-			{
-				this.isBusy = value;
-				this.OnPropertyChanged("IsBusy");
-			}
-		}
-
-		public string EMotBaureihe
-		{
-			get
-			{
-				return base.EMotor.EMOTBaureihe;
-			}
-		}
-
-		public string Produktlinie
-		{
-			get
-			{
-                return this.productLine;
+        public string VIN7
+        {
+            get
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(base.VIN17))
+                    {
+                        return null;
+                    }
+                    return base.VIN17.Substring(10, 7);
+                }
+                catch (Exception)
+                {
+                    //Log.WarningException("Vehicle.get_VIN7", exception);
+                }
+                return null;
             }
-			set
-			{
-				if (this.productLine != value)
-				{
-					this.productLine = value;
-					this.OnPropertyChanged("Produktlinie");
-				}
-			}
-		}
-
-		public string Sicherheitsrelevant
-		{
-			get
-			{
-                return this.securityRelevant;
+        }
+        // ToDo: Check on update
+        public string GMType
+        {
+            get
+            {
+                try
+                {
+                    if (base.FA != null && !string.IsNullOrEmpty(base.FA.TYPE) && base.FA.TYPE.Length == 4)
+                    {
+                        return base.FA.TYPE;
+                    }
+                    if (string.IsNullOrEmpty(base.VIN17))
+                    {
+                        return null;
+                    }
+                    if (!string.IsNullOrEmpty(VINRangeType))
+                    {
+                        return VINRangeType;
+                    }
+                    string text = base.VIN17.Substring(3, 4);
+                    if (!string.IsNullOrEmpty(text))
+                    {
+                        string text2 = text.Substring(0, 3);
+                        switch (text[3])
+                        {
+                            case 'A':
+                                return text2 + "1";
+                            case 'B':
+                                return text2 + "2";
+                            case 'C':
+                                return text2 + "3";
+                            case 'D':
+                                return text2 + "4";
+                            case 'E':
+                                return text2 + "5";
+                            case 'F':
+                                return text2 + "6";
+                            case 'G':
+                                return text2 + "7";
+                            case 'H':
+                                return text2 + "8";
+                            default:
+                                return text;
+                            case 'J':
+                                return text2 + "9";
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    //Log.WarningException("Vehicle.get_VINType", exception);
+                }
+                return null;
             }
-			set
-			{
-				if (this.securityRelevant != value)
-				{
-					this.securityRelevant = value;
-					this.OnPropertyChanged("Sicherheitsrelevant");
-				}
-			}
-		}
+        }
 
-		public string Tueren
-		{
-			get
-			{
-                return this.doorNumber;
+        public string VINType
+        {
+            get
+            {
+                try
+                {
+                    if (!string.IsNullOrEmpty(base.VIN17) && base.VIN17.Length >= 17)
+                    {
+                        return base.VIN17.Substring(3, 4);
+                    }
+                    return null;
+                }
+                catch (Exception)
+                {
+                    //Log.WarningException("Vehicle.get_VINType", exception);
+                }
+                return null;
             }
-			set
-			{
-				if (value != this.doorNumber)
-				{
-					this.doorNumber = value;
-					this.OnPropertyChanged("Tueren");
-				}
-			}
-		}
+        }
+
+        public bool IsBusy
+        {
+            get
+            {
+                return isBusy;
+            }
+            set
+            {
+                isBusy = value;
+                OnPropertyChanged("IsBusy");
+            }
+        }
+
+        public string EMotBaureihe => base.EMotor.EMOTBaureihe;
+
+        public string Produktlinie
+        {
+            get
+            {
+                return productLine;
+            }
+            set
+            {
+                if (productLine != value)
+                {
+                    productLine = value;
+                    OnPropertyChanged("Produktlinie");
+                }
+            }
+        }
+
+        public string Sicherheitsrelevant
+        {
+            get
+            {
+                return securityRelevant;
+            }
+            set
+            {
+                if (securityRelevant != value)
+                {
+                    securityRelevant = value;
+                    OnPropertyChanged("Sicherheitsrelevant");
+                }
+            }
+        }
+
+        public string Tueren
+        {
+            get
+            {
+                return doorNumber;
+            }
+            set
+            {
+                if (doorNumber != value)
+                {
+                    doorNumber = value;
+                    OnPropertyChanged("Tueren");
+                }
+            }
+        }
 #if false
 		[XmlIgnore]
 		public IList<Fault> FaultList
@@ -493,268 +479,199 @@ namespace PsdzClient.Core
 			}
 		}
 #endif
-		[XmlIgnore]
-		public bool IsFastaReadDone { get; set; }
+        [XmlIgnore]
+        public bool IsFastaReadDone { get; set; }
 
-		[XmlIgnore]
-		public bool IsProgrammingSessionStartable { get; set; }
+        [XmlIgnore]
+        public bool IsProgrammingSessionStartable { get; set; }
 
-		[XmlIgnore]
-		public bool IsVehicleTestDone
-		{
-			get
-			{
-				return this.vehicleTestDone;
-			}
-			set
-			{
-				if (this.vehicleTestDone != value)
-				{
-					this.vehicleTestDone = value;
-					this.OnPropertyChanged("IsVehicleTestDone");
-				}
-			}
-		}
+        [XmlIgnore]
+        public bool IsVehicleTestDone
+        {
+            get
+            {
+                return vehicleTestDone;
+            }
+            set
+            {
+                if (vehicleTestDone != value)
+                {
+                    vehicleTestDone = value;
+                    OnPropertyChanged("IsVehicleTestDone");
+                }
+            }
+        }
 
-		public bool IsReadingFastaDataFinished
-		{
-			get
-			{
-				return this.isReadingFastaDataFinished;
-			}
-			set
-			{
-				this.isReadingFastaDataFinished = value;
-				this.OnPropertyChanged("IsReadingFastaDataFinished");
-			}
-		}
+        public bool IsReadingFastaDataFinished
+        {
+            get
+            {
+                return isReadingFastaDataFinished;
+            }
+            set
+            {
+                isReadingFastaDataFinished = value;
+                OnPropertyChanged("IsReadingFastaDataFinished");
+            }
+        }
 
-		public bool IsNewFaultMemoryActive
-		{
-			get
-			{
-				return this.isNewFaultMemoryActiveField;
-			}
-			set
-			{
-				this.isNewFaultMemoryActiveField = value;
-				this.OnPropertyChanged("IsNewFaultMemoryActive");
-			}
-		}
+        public bool IsNewFaultMemoryActive
+        {
+            get
+            {
+                return isNewFaultMemoryActiveField;
+            }
+            set
+            {
+                isNewFaultMemoryActiveField = value;
+                OnPropertyChanged("IsNewFaultMemoryActive");
+            }
+        }
 
-		public bool IsNewFaultMemoryExpertModeActive
-		{
-			get
-			{
-				return this.isNewFaultMemoryExpertModeActiveField;
-			}
-			set
-			{
-				this.isNewFaultMemoryExpertModeActiveField = value;
-				this.OnPropertyChanged("IsNewFaultMemoryExpertModeActive");
-			}
-		}
+        public bool IsNewFaultMemoryExpertModeActive
+        {
+            get
+            {
+                return isNewFaultMemoryExpertModeActiveField;
+            }
+            set
+            {
+                isNewFaultMemoryExpertModeActiveField = value;
+                OnPropertyChanged("IsNewFaultMemoryExpertModeActive");
+            }
+        }
 
-		[XmlIgnore]
-		public bool IsVehicleBreakdownAlreadyShown { get; set; }
+        [XmlIgnore]
+        public bool IsVehicleBreakdownAlreadyShown { get; set; }
 
-		[XmlIgnore]
-		public bool IsPowerSafeModeActive
-		{
-			get
-			{
-				return this.powerSafeModeByOldEcus || this.powerSafeModeByNewEcus;
-			}
-		}
+        [XmlIgnore]
+        public bool IsPowerSafeModeActive
+        {
+            get
+            {
+                if (!powerSafeModeByOldEcus)
+                {
+                    return powerSafeModeByNewEcus;
+                }
+                return true;
+            }
+        }
 
-		[XmlIgnore]
-		public bool IsPowerSafeModeActiveByOldEcus
-		{
-			get
-			{
-				return this.powerSafeModeByOldEcus;
-			}
-			set
-			{
-				this.powerSafeModeByOldEcus = value;
-			}
-		}
+        [XmlIgnore]
+        public bool IsPowerSafeModeActiveByOldEcus
+        {
+            get
+            {
+                return powerSafeModeByOldEcus;
+            }
+            set
+            {
+                //Log.Info("Vehicle.IsPowerSafeModeActiveByOldEcus_set", "Setting vehicle power safe modus from \"{0}\" to \"{1}\".", powerSafeModeByOldEcus, value);
+                powerSafeModeByOldEcus = value;
+            }
+        }
 
-		[XmlIgnore]
-		public bool VinNotReadbleFromCarAbort
-		{
-			get
-			{
-				return this.vinNotReadbleFromCarAbort;
-			}
-			set
-			{
-				this.vinNotReadbleFromCarAbort = value;
-			}
-		}
+        [XmlIgnore]
+        public bool VinNotReadbleFromCarAbort
+        {
+            get
+            {
+                return vinNotReadbleFromCarAbort;
+            }
+            set
+            {
+                vinNotReadbleFromCarAbort = value;
+            }
+        }
 
-		[XmlIgnore]
-		public bool IsPowerSafeModeActiveByNewEcus
-		{
-			get
-			{
-				return this.powerSafeModeByNewEcus;
-			}
-			set
-			{
-				this.powerSafeModeByNewEcus = value;
-			}
-		}
+        [XmlIgnore]
+        public bool IsPowerSafeModeActiveByNewEcus
+        {
+            get
+            {
+                return powerSafeModeByNewEcus;
+            }
+            set
+            {
+                //Log.Info("Vehicle.IsPowerSafeModeActiveByNewEcus_set", "Setting vehicle power safe modus from \"{0}\" to \"{1}\".", powerSafeModeByNewEcus, value);
+                powerSafeModeByNewEcus = value;
+            }
+        }
 
-		[XmlIgnore]
-		public int? FaultCodeSum
-		{
-			get
-			{
-				return this.faultCodeSum;
-			}
-			set
-			{
-				this.faultCodeSum = value;
-				this.OnPropertyChanged("FaultCodeSum");
-			}
-		}
+        [XmlIgnore]
+        public int? FaultCodeSum
+        {
+            get
+            {
+                return faultCodeSum;
+            }
+            set
+            {
+                faultCodeSum = value;
+                OnPropertyChanged("FaultCodeSum");
+            }
+        }
 
-		[XmlIgnore]
-		public DateTime? C_DATETIME
-		{
-			get
-			{
-				try
-				{
-					if (base.FA != null)
-					{
-						DateTime? c_DATETIME = base.FA.C_DATETIME;
-						if (c_DATETIME != null)
-						{
-							c_DATETIME = base.FA.C_DATETIME;
-							DateTime minValue = DateTime.MinValue;
-							if (c_DATETIME > minValue)
-							{
-								return base.FA.C_DATETIME;
-							}
-						}
-					}
-					if (!string.IsNullOrEmpty(base.Modelljahr) && !string.IsNullOrEmpty(base.Modellmonat))
-					{
-						if (this.cDatetimeByModelYearMonth == null)
-						{
-							this.cDatetimeByModelYearMonth = new DateTime?(DateTime.Parse(string.Format(CultureInfo.InvariantCulture, "{0}-{1}-01", base.Modelljahr, base.Modellmonat), CultureInfo.InvariantCulture));
-						}
-						return this.cDatetimeByModelYearMonth;
-					}
-				}
-				catch (Exception)
-				{
-					//Log.WarningException("Vehicle.get_C_DATETIME()", exception);
-				}
-				return null;
-			}
-		}
+        [XmlIgnore]
+        public DateTime? C_DATETIME
+        {
+            get
+            {
+                try
+                {
+                    if (base.FA != null && base.FA.C_DATETIME.HasValue && base.FA.C_DATETIME > DateTime.MinValue)
+                    {
+                        return base.FA.C_DATETIME;
+                    }
+                    if (!string.IsNullOrEmpty(base.Modelljahr) && !string.IsNullOrEmpty(base.Modellmonat))
+                    {
+                        if (!cDatetimeByModelYearMonth.HasValue)
+                        {
+                            cDatetimeByModelYearMonth = DateTime.Parse(string.Format(CultureInfo.InvariantCulture, "{0}-{1}-01", base.Modelljahr, base.Modellmonat), CultureInfo.InvariantCulture);
+                        }
+                        return cDatetimeByModelYearMonth;
+                    }
+                }
+                catch (Exception)
+                {
+                    //Log.WarningException("Vehicle.get_C_DATETIME()", exception);
+                }
+                return null;
+            }
+        }
 #if false
-		[XmlIgnore]
-		IEnumerable<ICbsInfo> IVehicle.CBS
-		{
-			get
-			{
-				return base.CBS;
-			}
-		}
+        [XmlIgnore]
+        IEnumerable<ICbsInfo> IVehicle.CBS => base.CBS;
 
-		[XmlIgnore]
-		IEnumerable<IDtc> IVehicle.CombinedFaults
-		{
-			get
-			{
-				return base.CombinedFaults;
-			}
-		}
+        [XmlIgnore]
+        IEnumerable<IDtc> IVehicle.CombinedFaults => base.CombinedFaults;
 
-		[XmlIgnore]
-		IEnumerable<IDiagCode> IVehicle.DiagCodes
-		{
-			get
-			{
-				return base.DiagCodes;
-			}
-		}
+        [XmlIgnore]
+        IEnumerable<IDiagCode> IVehicle.DiagCodes => base.DiagCodes;
 #endif
-		[XmlIgnore]
-		IEnumerable<IEcu> IVehicle.ECU
-		{
-			get
-			{
-				return base.ECU;
-			}
-		}
+        [XmlIgnore]
+        IEnumerable<IEcu> IVehicle.ECU => base.ECU;
 
-		[XmlIgnore]
-		IFa IVehicle.FA
-		{
-			get
-			{
-				return base.FA;
-			}
-		}
+        [XmlIgnore]
+        IFa IVehicle.FA => base.FA;
 
-		[XmlIgnore]
-		IEnumerable<IFfmResult> IVehicle.FFM
-		{
-			get
-			{
-				return base.FFM;
-			}
-		}
+        [XmlIgnore]
+        IEnumerable<IFfmResult> IVehicle.FFM => base.FFM;
 
-		[XmlIgnore]
-		IEnumerable<decimal> IVehicle.InstalledAdapters
-		{
-			get
-			{
-				return base.InstalledAdapters;
-			}
-		}
+        [XmlIgnore]
+        IEnumerable<decimal> IVehicle.InstalledAdapters => base.InstalledAdapters;
 
-		[XmlIgnore]
-		IEcu IVehicle.SelectedECU
-		{
-			get
-			{
-				return base.SelectedECU;
-			}
-		}
+        [XmlIgnore]
+        IEcu IVehicle.SelectedECU => base.SelectedECU;
 #if false
-		[XmlIgnore]
-		IVciDevice IVehicle.MIB
-		{
-			get
-			{
-				return base.MIB;
-			}
-		}
+        [XmlIgnore]
+        IVciDevice IVehicle.MIB => base.MIB;
 
-		[XmlIgnore]
-		IEnumerable<IServiceHistoryEntry> IVehicle.ServiceHistory
-		{
-			get
-			{
-				return base.ServiceHistory;
-			}
-		}
+        [XmlIgnore]
+        IEnumerable<IServiceHistoryEntry> IVehicle.ServiceHistory => base.ServiceHistory;
 
-		[XmlIgnore]
-		IEnumerable<ITechnicalCampaign> IVehicle.TechnicalCampaigns
-		{
-			get
-			{
-				return base.TechnicalCampaigns;
-			}
-		}
+        [XmlIgnore]
+        IEnumerable<ITechnicalCampaign> IVehicle.TechnicalCampaigns => base.TechnicalCampaigns;
 #endif
         [XmlIgnore]
         IVciDevice IVehicle.VCI => base.VCI;
