@@ -2236,13 +2236,14 @@ namespace PsdzClient.Core
                     }
                     return true;
                 }
-            }
+			}
 			return null;
 		}
 
 #if false
         private static ObservableCollection<Fault> CalculateFaultList(Vehicle vehicle, IEnumerable<ECU> ecus, IEnumerable<DTC> combinedFaults, ObservableCollection<ZFSResult> zfs, IFFMDynamicResolver ffmFesolver = null)
         {
+            int num = 17;
             bool flag = true;
             bool flag2 = true;
             if (ConfigSettings.OperationalMode != 0)
@@ -2253,7 +2254,7 @@ namespace PsdzClient.Core
 			ObservableCollection<Fault> observableCollection = new ObservableCollection<Fault>();
 			try
 			{
-				if (ecus != null)
+                if (ecus != null)
                 {
                     foreach (ECU item in ecus.Where((ECU item) => item.FEHLER != null))
                     {
@@ -2285,7 +2286,7 @@ namespace PsdzClient.Core
 							}
 						}
 					}
-				}
+                }
                 if (combinedFaults == null)
                 {
                     return observableCollection;
@@ -2298,130 +2299,86 @@ namespace PsdzClient.Core
 				}
 				return observableCollection;
 			}
-			catch (Exception exception)
-			{
-                Log.ErrorException("Vehicle.CalculateFaultList()", exception);
+            catch (Exception exception)
+            {
+                //Log.ErrorException("Vehicle.CalculateFaultList()", exception);
                 return observableCollection;
             }
         }
 
-        private static void UpdateVirtualDtcTime(DTC dtc, Vehicle vehicle, ObservableCollection<ZFSResult> zfs)
-		{
-			if (vehicle.IsNewFaultMemoryActive)
-			{
-				ulong? num = (from x in zfs.Where(delegate (ZFSResult x)
-				{
-					long? stat_DM_MELDUNG_NR = x.STAT_DM_MELDUNG_NR;
-					long? f_ORT = dtc.F_ORT;
-					return stat_DM_MELDUNG_NR.GetValueOrDefault() == f_ORT.GetValueOrDefault() & stat_DM_MELDUNG_NR != null == (f_ORT != null);
-				}).ToList<ZFSResult>()
-							  select x.STAT_DM_ZEITSTEMPEL).Max<ulong?>();
-				if (num != null)
-				{
-					ulong? num2 = num;
-					if (num2.GetValueOrDefault() > 0UL & num2 != null)
-					{
-						DateTime vehicleLifeStartDate = vehicle.VehicleLifeStartDate;
-						if (vehicleLifeStartDate != default(DateTime))
-						{
-							vehicleLifeStartDate.AddSeconds(num.Value);
-							dtc.Current.F_UW_ZEIT = new long?((long)TimeSpan.FromTicks(vehicleLifeStartDate.Ticks).TotalSeconds + 1L);
-						}
-						else
-						{
-							dtc.Current.F_UW_ZEIT = new long?((long)(num.Value + 1UL));
-						}
-					}
-				}
-				long? f_UW_ZEIT = dtc.Current.F_UW_ZEIT;
-				if (f_UW_ZEIT.GetValueOrDefault() <= 0L & f_UW_ZEIT != null)
-				{
-					TimeSpan timeSpan = TimeSpan.FromTicks(vehicle.Status_FunctionStateLastChangeTime.Ticks);
-					dtc.Current.F_UW_ZEIT = new long?((long)timeSpan.TotalSeconds);
-				}
-			}
-		}
+        private static int? CalculateFaultCodeSum(IEnumerable<IEcu> ecus, IEnumerable<DTC> combinedFaults)
+        {
+            int num2 = 0;
+            bool flag = true;
+            bool flag2 = true;
+            if (ConfigSettings.OperationalMode != 0)
+            {
+                flag = ConfigSettings.getConfigStringAsBoolean("TesterGUI.HideBogusFaults", defaultValue: true);
+                flag2 = ConfigSettings.getConfigStringAsBoolean("TesterGUI.HideUnknownFaults", defaultValue: false);
+            }
+            try
+            {
+                if (ecus != null)
+                {
+                    foreach (IEcu ecu in ecus)
+                    {
+                        if (ecu.FEHLER == null)
+                        {
+                            continue;
+                        }
+                        foreach (IDtc item in ecu.FEHLER)
+                        {
+                            bool? relevance = item.Relevance;
+                            if (relevance.HasValue)
+                            {
+                                if (relevance.GetValueOrDefault())
+                                {
+                                    num2++;
+                                }
+                                else if (!flag)
+                                {
+                                    num2++;
+                                }
+                            }
+                            else if (!flag2)
+                            {
+                                num2++;
+                            }
+                        }
+                    }
+                }
+                if (combinedFaults != null && combinedFaults.Any())
+                {
+                    num2 += combinedFaults.Count();
+                }
+                if (num2 == 0 && (ecus == null || !ecus.Any() || ecus.Any(delegate (IEcu item)
+                    {
+                        int num3 = 19;
+                        return !item.FS_SUCCESSFULLY && !item.BUS.ToString().Contains("VIRTUAL");
+                    })))
+                {
+                    return null;
+                }
+                return num2;
+            }
+            catch (Exception exception)
+            {
+                //Log.WarningException("Vehicle.CalculateFaultCodeSum()", exception);
+                return null;
+            }
+        }
 
-		private static int? CalculateFaultCodeSum(IEnumerable<IEcu> ecus, IEnumerable<DTC> combinedFaults)
-		{
-			int num = 0;
-			bool flag = true;
-			bool flag2 = true;
-			if (ConfigSettings.OperationalMode != OperationalMode.ISTA)
-			{
-				flag = ConfigSettings.getConfigStringAsBoolean("TesterGUI.HideBogusFaults", true);
-				flag2 = ConfigSettings.getConfigStringAsBoolean("TesterGUI.HideUnknownFaults", false);
-			}
-			int? result;
-			try
-			{
-				if (ecus != null)
-				{
-					foreach (IEcu ecu in ecus)
-					{
-						if (ecu.FEHLER != null)
-						{
-							foreach (IDtc dtc in ecu.FEHLER)
-							{
-								bool? relevance = dtc.Relevance;
-								if (relevance != null)
-								{
-									if (relevance.GetValueOrDefault())
-									{
-										num++;
-									}
-									else if (!flag)
-									{
-										num++;
-									}
-								}
-								else if (!flag2)
-								{
-									num++;
-								}
-							}
-						}
-					}
-				}
-				if (combinedFaults != null && combinedFaults.Any<DTC>())
-				{
-					num += combinedFaults.Count<DTC>();
-				}
-				if (num == 0)
-				{
-					if (ecus != null && ecus.Any<IEcu>())
-					{
-						if (!ecus.Any((IEcu item) => !item.FS_SUCCESSFULLY && !item.BUS.ToString().Contains("VIRTUAL")))
-						{
-							goto IL_11B;
-						}
-					}
-					result = null;
-					return result;
-				}
-				IL_11B:
-				result = new int?(num);
-			}
-			catch (Exception exception)
-			{
-				//Log.WarningException("Vehicle.CalculateFaultCodeSum()", exception);
-				result = null;
-			}
-			return result;
-		}
-
-		public void AddCombinedDTC(DTC dtc)
-		{
-			if (dtc == null)
-			{
-				Log.Warning("Vehicle.AddCombinedDTC()", "dtc was null", Array.Empty<object>());
-				return;
-			}
-			if (dtc.IsVirtual && dtc.IsCombined && base.CombinedFaults != null)
-			{
-				base.CombinedFaults.AddIfNotContains(dtc);
-			}
-		}
+        public void AddCombinedDTC(DTC dtc)
+        {
+            if (dtc == null)
+            {
+                //Log.Warning("Vehicle.AddCombinedDTC()", "dtc was null");
+            }
+            else if (dtc.IsVirtual && dtc.IsCombined && base.CombinedFaults != null)
+            {
+                base.CombinedFaults.AddIfNotContains(dtc);
+            }
+        }
 #endif
         public bool GetProgrammingEnabledForBn(string bn)
 		{
