@@ -174,98 +174,38 @@ namespace PsdzClient.Core
 			}
 		}
 #if false
-		public string GetDataValue(string name)
-		{
-			if (this.ecuGroup != null && !string.IsNullOrEmpty(name))
-			{
-				string text = name.ToUpperInvariant();
-				if (text != null)
-				{
-					uint num = < PrivateImplementationDetails >.ComputeStringHash(text);
-					if (num <= 1458105184U)
-					{
-						if (num <= 1035818431U)
-						{
-							if (num != 410075207U)
-							{
-								if (num == 1035818431U)
-								{
-									if (text == "FAULTMEMORYDELETEWAITINGTIME")
-									{
-										return this.ecuGroup.FaultMemoryDeleteWaitingTime.ToString(CultureInfo.InvariantCulture);
-									}
-								}
-							}
-							else if (text == "NODECLASS")
-							{
-								return "5717890";
-							}
-						}
-						else if (num != 1304193470U)
-						{
-							if (num != 1387956774U)
-							{
-								if (num == 1458105184U)
-								{
-									if (text == "ID")
-									{
-										return this.ecuGroup.Id.ToString(CultureInfo.InvariantCulture);
-									}
-								}
-							}
-							else if (text == "NAME")
-							{
-								return this.ecuGroup.Name;
-							}
-						}
-						else if (text == "OBDIDENTIFICATION")
-						{
-							return this.ecuGroup.ObdIdentification.ToString(CultureInfo.InvariantCulture);
-						}
-					}
-					else if (num <= 2641724604U)
-					{
-						if (num != 1944305449U)
-						{
-							if (num == 2641724604U)
-							{
-								if (text == "VIRTUELL")
-								{
-									return this.ecuGroup.Virtuell.ToString(CultureInfo.InvariantCulture);
-								}
-							}
-						}
-						else if (text == "VALIDFROM")
-						{
-							return this.ecuGroup.ValidFrom.ToString();
-						}
-					}
-					else if (num != 2726887280U)
-					{
-						if (num != 2819690657U)
-						{
-							if (num == 3895374777U)
-							{
-								if (text == "FAULTMEMORYDELETEIDENTIFICATIO")
-								{
-									return this.ecuGroup.FaultMemoryDeleteIdentificatio.ToString(CultureInfo.InvariantCulture);
-								}
-							}
-						}
-						else if (text == "SICHERHEITSRELEVANT")
-						{
-							return this.ecuGroup.Sicherheitsrelevant.ToString(CultureInfo.InvariantCulture);
-						}
-					}
-					else if (text == "VALIDTO")
-					{
-						return this.ecuGroup.ValidTo.ToString();
-					}
-				}
-				return string.Empty;
-			}
-			return null;
-		}
+        public string GetDataValue(string name)
+        {
+            if (ecuGroup != null && !string.IsNullOrEmpty(name))
+            {
+                switch (name.ToUpperInvariant())
+                {
+                    case "FAULTMEMORYDELETEWAITINGTIME":
+                        return ecuGroup.FaultMemoryDeleteWaitingTime.ToString(CultureInfo.InvariantCulture);
+                    case "NODECLASS":
+                        return "5717890";
+                    case "ID":
+                        return ecuGroup.Id.ToString(CultureInfo.InvariantCulture);
+                    case "NAME":
+                        return ecuGroup.Name;
+                    case "OBDIDENTIFICATION":
+                        return ecuGroup.ObdIdentification.ToString(CultureInfo.InvariantCulture);
+                    case "VIRTUELL":
+                        return ecuGroup.Virtuell.ToString(CultureInfo.InvariantCulture);
+                    case "VALIDFROM":
+                        return ecuGroup.ValidFrom.ToString();
+                    case "FAULTMEMORYDELETEIDENTIFICATIO":
+                        return ecuGroup.FaultMemoryDeleteIdentificatio.ToString(CultureInfo.InvariantCulture);
+                    case "SICHERHEITSRELEVANT":
+                        return ecuGroup.Sicherheitsrelevant.ToString(CultureInfo.InvariantCulture);
+                    case "VALIDTO":
+                        return ecuGroup.ValidTo.ToString();
+                    default:
+                        return string.Empty;
+                }
+            }
+            return null;
+        }
 #endif
 		public ISPELocator[] GetIncomingLinks()
 		{

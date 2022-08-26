@@ -183,294 +183,104 @@ namespace PsdzClient.Core
 			}
 		}
 #if false
-		public string GetDataValue(string name)
-		{
-			if (this.ecuVariant != null && !string.IsNullOrEmpty(name))
-			{
-				string text = name.ToUpperInvariant();
-				if (text != null)
-				{
-					uint num = < PrivateImplementationDetails >.ComputeStringHash(text);
-					if (num <= 869559705U)
-					{
-						if (num <= 526602168U)
-						{
-							if (num <= 72914907U)
-							{
-								if (num != 16830413U)
-								{
-									if (num != 25111569U)
-									{
-										if (num == 72914907U)
-										{
-											if (text == "TITLE_JA")
-											{
-												return this.ecuVariant.Title_ja;
-											}
-										}
-									}
-									else if (text == "SORT")
-									{
-										if (this.ecuVariant.Sort == null)
-										{
-											return "0";
-										}
-										return this.ecuVariant.Sort.ToString();
-									}
-								}
-								else if (text == "TITLE_ENUS")
-								{
-									return this.ecuVariant.Title_enus;
-								}
-							}
-							else if (num <= 410075207U)
-							{
-								if (num != 405672864U)
-								{
-									if (num == 410075207U)
-									{
-										if (text == "NODECLASS")
-										{
-											return "5719042";
-										}
-									}
-								}
-								else if (text == "TITLE_ENGB")
-								{
-									return this.ecuVariant.Title_engb;
-								}
-							}
-							else if (num != 419325489U)
-							{
-								if (num == 526602168U)
-								{
-									if (text == "TITLE_NL")
-									{
-										return this.ecuVariant.Title_nl;
-									}
-								}
-							}
-							else if (text == "TITLE_ZHTW")
-							{
-								return this.ecuVariant.Title_zhtw;
-							}
-						}
-						else if (num <= 576390572U)
-						{
-							if (num <= 567617109U)
-							{
-								if (num != 528176286U)
-								{
-									if (num == 567617109U)
-									{
-										if (text == "TITLE_ZHCN")
-										{
-											return this.ecuVariant.Title_zhcn;
-										}
-									}
-								}
-								else if (text == "TITLE_TH")
-								{
-									return this.ecuVariant.Title_th;
-								}
-							}
-							else if (num != 572932585U)
-							{
-								if (num == 576390572U)
-								{
-									if (text == "TITLE_KO")
-									{
-										return this.ecuVariant.Title_ko;
-									}
-								}
-							}
-							else if (text == "TITLE")
-							{
-								return this.ecuVariant.Title;
-							}
-						}
-						else if (num <= 678189119U)
-						{
-							if (num != 628842000U)
-							{
-								if (num == 678189119U)
-								{
-									if (text == "TITLE_RU")
-									{
-										return this.ecuVariant.Title_ru;
-									}
-								}
-							}
-							else if (text == "TITLE_TR")
-							{
-								return this.ecuVariant.Title_tr;
-							}
-						}
-						else if (num != 727562098U)
-						{
-							if (num == 869559705U)
-							{
-								if (text == "TITLE_CSCZ")
-								{
-									return this.ecuVariant.Title_cscz;
-								}
-							}
-						}
-						else if (text == "TITLE_DEDE")
-						{
-							return this.ecuVariant.Title_dede;
-						}
-					}
-					else if (num <= 2819690657U)
-					{
-						if (num <= 1458105184U)
-						{
-							if (num != 1035818431U)
-							{
-								if (num != 1387956774U)
-								{
-									if (num == 1458105184U)
-									{
-										if (text == "ID")
-										{
-											return this.ecuVariant.Id.ToString(CultureInfo.InvariantCulture);
-										}
-									}
-								}
-								else if (text == "NAME")
-								{
-									return this.ecuVariant.Name;
-								}
-							}
-							else if (text == "FAULTMEMORYDELETEWAITINGTIME")
-							{
-								if (this.ecuVariant.FaultMemoryDeleteWaitingTime == null)
-								{
-									return string.Empty;
-								}
-								return this.ecuVariant.FaultMemoryDeleteWaitingTime.ToString();
-							}
-						}
-						else if (num <= 2700653218U)
-						{
-							if (num != 1944305449U)
-							{
-								if (num == 2700653218U)
-								{
-									if (text == "TITLE_PLPL")
-									{
-										return this.ecuVariant.Title_plpl;
-									}
-								}
-							}
-							else if (text == "VALIDFROM")
-							{
-								if (this.ecuVariant.ValidFrom == null)
-								{
-									return string.Empty;
-								}
-								return this.ecuVariant.ValidFrom.ToString();
-							}
-						}
-						else if (num != 2726887280U)
-						{
-							if (num == 2819690657U)
-							{
-								if (text == "SICHERHEITSRELEVANT")
-								{
-									if (this.ecuVariant.Sicherheitsrelevant == null)
-									{
-										return "0";
-									}
-									return this.ecuVariant.Sicherheitsrelevant.ToString();
-								}
-							}
-						}
-						else if (text == "VALIDTO")
-						{
-							if (this.ecuVariant.ValidTo == null)
-							{
-								return string.Empty;
-							}
-							return this.ecuVariant.ValidTo.ToString();
-						}
-					}
-					else if (num <= 3949971919U)
-					{
-						if (num <= 3780518443U)
-						{
-							if (num != 2915361786U)
-							{
-								if (num == 3780518443U)
-								{
-									if (text == "TITLE_EL")
-									{
-										return this.ecuVariant.Title_el;
-									}
-								}
-							}
-							else if (text == "ECUGROUPID")
-							{
-								if (this.ecuVariant.EcuGroupId == null)
-								{
-									return "0";
-								}
-								return this.ecuVariant.EcuGroupId.ToString();
-							}
-						}
-						else if (num != 3915430943U)
-						{
-							if (num == 3949971919U)
-							{
-								if (text == "TITLE_SV")
-								{
-									return this.ecuVariant.Title_sv;
-								}
-							}
-						}
-						else if (text == "TITLE_IT")
-						{
-							return this.ecuVariant.Title_it;
-						}
-					}
-					else if (num <= 3998627490U)
-					{
-						if (num != 3950119014U)
-						{
-							if (num == 3998627490U)
-							{
-								if (text == "TITLE_ES")
-								{
-									return this.ecuVariant.Title_es;
-								}
-							}
-						}
-						else if (text == "TITLE_PT")
-						{
-							return this.ecuVariant.Title_pt;
-						}
-					}
-					else if (num != 4183872847U)
-					{
-						if (num == 4249850490U)
-						{
-							if (text == "TITLE_FR")
-							{
-								return this.ecuVariant.Title_fr;
-							}
-						}
-					}
-					else if (text == "TITLE_ID")
-					{
-						return this.ecuVariant.Title_id;
-					}
-				}
-				return string.Empty;
-			}
-			return null;
-		}
+        public string GetDataValue(string name)
+        {
+            if (ecuVariant != null && !string.IsNullOrEmpty(name))
+            {
+                switch (name.ToUpperInvariant())
+                {
+                    case "TITLE_JA":
+                        return ecuVariant.Title_ja;
+                    case "SORT":
+                        if (!ecuVariant.Sort.HasValue)
+                        {
+                            return "0";
+                        }
+                        return ecuVariant.Sort.ToString();
+                    case "TITLE_ENUS":
+                        return ecuVariant.Title_enus;
+                    case "NODECLASS":
+                        return "5719042";
+                    case "TITLE_ENGB":
+                        return ecuVariant.Title_engb;
+                    case "TITLE_NL":
+                        return ecuVariant.Title_nl;
+                    case "TITLE_ZHTW":
+                        return ecuVariant.Title_zhtw;
+                    case "TITLE_ZHCN":
+                        return ecuVariant.Title_zhcn;
+                    case "TITLE_TH":
+                        return ecuVariant.Title_th;
+                    case "TITLE_KO":
+                        return ecuVariant.Title_ko;
+                    case "TITLE":
+                        return ecuVariant.Title;
+                    case "TITLE_RU":
+                        return ecuVariant.Title_ru;
+                    case "TITLE_TR":
+                        return ecuVariant.Title_tr;
+                    case "TITLE_CSCZ":
+                        return ecuVariant.Title_cscz;
+                    case "TITLE_DEDE":
+                        return ecuVariant.Title_dede;
+                    case "ID":
+                        return ecuVariant.Id.ToString(CultureInfo.InvariantCulture);
+                    case "NAME":
+                        return ecuVariant.Name;
+                    case "FAULTMEMORYDELETEWAITINGTIME":
+                        if (!ecuVariant.FaultMemoryDeleteWaitingTime.HasValue)
+                        {
+                            return string.Empty;
+                        }
+                        return ecuVariant.FaultMemoryDeleteWaitingTime.ToString();
+                    case "TITLE_PLPL":
+                        return ecuVariant.Title_plpl;
+                    case "VALIDFROM":
+                        if (!ecuVariant.ValidFrom.HasValue)
+                        {
+                            return string.Empty;
+                        }
+                        return ecuVariant.ValidFrom.ToString();
+                    case "SICHERHEITSRELEVANT":
+                        if (!ecuVariant.Sicherheitsrelevant.HasValue)
+                        {
+                            return "0";
+                        }
+                        return ecuVariant.Sicherheitsrelevant.ToString();
+                    case "VALIDTO":
+                        if (!ecuVariant.ValidTo.HasValue)
+                        {
+                            return string.Empty;
+                        }
+                        return ecuVariant.ValidTo.ToString();
+                    case "TITLE_EL":
+                        return ecuVariant.Title_el;
+                    case "ECUGROUPID":
+                        if (!ecuVariant.EcuGroupId.HasValue)
+                        {
+                            return "0";
+                        }
+                        return ecuVariant.EcuGroupId.ToString();
+                    case "TITLE_SV":
+                        return ecuVariant.Title_sv;
+                    case "TITLE_IT":
+                        return ecuVariant.Title_it;
+                    case "TITLE_ES":
+                        return ecuVariant.Title_es;
+                    case "TITLE_PT":
+                        return ecuVariant.Title_pt;
+                    case "TITLE_FR":
+                        return ecuVariant.Title_fr;
+                    case "TITLE_ID":
+                        return ecuVariant.Title_id;
+                    default:
+                        return string.Empty;
+                }
+            }
+            return null;
+        }
 #endif
-		public ISPELocator[] GetIncomingLinks()
+        public ISPELocator[] GetIncomingLinks()
 		{
 			return new ISPELocator[0];
 		}
@@ -490,281 +300,120 @@ namespace PsdzClient.Core
 			return this.children;
 		}
 
-		public T GetDataValue<T>(string name)
-		{
-			try
-			{
-				if (!string.IsNullOrEmpty(name) && this.ecuVariant != null)
-				{
-					object obj = null;
-					string text = name.ToUpperInvariant();
-					if (text != null)
-					{
-						uint num = < PrivateImplementationDetails >.ComputeStringHash(text);
-						if (num <= 869559705U)
-						{
-							if (num <= 526602168U)
-							{
-								if (num <= 72914907U)
-								{
-									if (num != 16830413U)
-									{
-										if (num != 25111569U)
-										{
-											if (num == 72914907U)
-											{
-												if (text == "TITLE_JA")
-												{
-													obj = this.ecuVariant.Title_ja;
-												}
-											}
-										}
-										else if (text == "SORT")
-										{
-											obj = this.ecuVariant.Sort;
-										}
-									}
-									else if (text == "TITLE_ENUS")
-									{
-										obj = this.ecuVariant.Title_enus;
-									}
-								}
-								else if (num <= 410075207U)
-								{
-									if (num != 405672864U)
-									{
-										if (num == 410075207U)
-										{
-											if (text == "NODECLASS")
-											{
-												obj = "5719042";
-											}
-										}
-									}
-									else if (text == "TITLE_ENGB")
-									{
-										obj = this.ecuVariant.Title_engb;
-									}
-								}
-								else if (num != 419325489U)
-								{
-									if (num == 526602168U)
-									{
-										if (text == "TITLE_NL")
-										{
-											obj = this.ecuVariant.Title_nl;
-										}
-									}
-								}
-								else if (text == "TITLE_ZHTW")
-								{
-									obj = this.ecuVariant.Title_zhtw;
-								}
-							}
-							else if (num <= 576390572U)
-							{
-								if (num <= 567617109U)
-								{
-									if (num != 528176286U)
-									{
-										if (num == 567617109U)
-										{
-											if (text == "TITLE_ZHCN")
-											{
-												obj = this.ecuVariant.Title_zhcn;
-											}
-										}
-									}
-									else if (text == "TITLE_TH")
-									{
-										obj = this.ecuVariant.Title_th;
-									}
-								}
-								else if (num != 572932585U)
-								{
-									if (num == 576390572U)
-									{
-										if (text == "TITLE_KO")
-										{
-											obj = this.ecuVariant.Title_ko;
-										}
-									}
-								}
-								else if (text == "TITLE")
-								{
-									obj = this.ecuVariant.Title;
-								}
-							}
-							else if (num <= 678189119U)
-							{
-								if (num != 628842000U)
-								{
-									if (num == 678189119U)
-									{
-										if (text == "TITLE_RU")
-										{
-											obj = this.ecuVariant.Title_ru;
-										}
-									}
-								}
-								else if (text == "TITLE_TR")
-								{
-									obj = this.ecuVariant.Title_tr;
-								}
-							}
-							else if (num != 727562098U)
-							{
-								if (num == 869559705U)
-								{
-									if (text == "TITLE_CSCZ")
-									{
-										obj = this.ecuVariant.Title_cscz;
-									}
-								}
-							}
-							else if (text == "TITLE_DEDE")
-							{
-								obj = this.ecuVariant.Title_dede;
-							}
-						}
-						else if (num <= 2819690657U)
-						{
-							if (num <= 1458105184U)
-							{
-								if (num != 1035818431U)
-								{
-									if (num != 1387956774U)
-									{
-										if (num == 1458105184U)
-										{
-											if (text == "ID")
-											{
-												obj = this.ecuVariant.Id;
-											}
-										}
-									}
-									else if (text == "NAME")
-									{
-										obj = this.ecuVariant.Name;
-									}
-								}
-								else if (text == "FAULTMEMORYDELETEWAITINGTIME")
-								{
-									obj = this.ecuVariant.FaultMemoryDeleteWaitingTime;
-								}
-							}
-							else if (num <= 2700653218U)
-							{
-								if (num != 1944305449U)
-								{
-									if (num == 2700653218U)
-									{
-										if (text == "TITLE_PLPL")
-										{
-											obj = this.ecuVariant.Title_plpl;
-										}
-									}
-								}
-								else if (text == "VALIDFROM")
-								{
-									obj = (this.ecuVariant.ValidFrom != null);
-								}
-							}
-							else if (num != 2726887280U)
-							{
-								if (num == 2819690657U)
-								{
-									if (text == "SICHERHEITSRELEVANT")
-									{
-										obj = this.ecuVariant.Sicherheitsrelevant;
-									}
-								}
-							}
-							else if (text == "VALIDTO")
-							{
-								obj = (this.ecuVariant.ValidTo != null);
-							}
-						}
-						else if (num <= 3949971919U)
-						{
-							if (num <= 3780518443U)
-							{
-								if (num != 2915361786U)
-								{
-									if (num == 3780518443U)
-									{
-										if (text == "TITLE_EL")
-										{
-											obj = this.ecuVariant.Title_el;
-										}
-									}
-								}
-								else if (text == "ECUGROUPID")
-								{
-									obj = this.ecuVariant.EcuGroupId;
-								}
-							}
-							else if (num != 3915430943U)
-							{
-								if (num == 3949971919U)
-								{
-									if (text == "TITLE_SV")
-									{
-										obj = this.ecuVariant.Title_sv;
-									}
-								}
-							}
-							else if (text == "TITLE_IT")
-							{
-								obj = this.ecuVariant.Title_it;
-							}
-						}
-						else if (num <= 3998627490U)
-						{
-							if (num != 3950119014U)
-							{
-								if (num == 3998627490U)
-								{
-									if (text == "TITLE_ES")
-									{
-										obj = this.ecuVariant.Title_es;
-									}
-								}
-							}
-							else if (text == "TITLE_PT")
-							{
-								obj = this.ecuVariant.Title_pt;
-							}
-						}
-						else if (num != 4183872847U)
-						{
-							if (num == 4249850490U)
-							{
-								if (text == "TITLE_FR")
-								{
-									obj = this.ecuVariant.Title_fr;
-								}
-							}
-						}
-						else if (text == "TITLE_ID")
-						{
-							obj = this.ecuVariant.Title_id;
-						}
-					}
-					if (obj != null)
-					{
-						return (T)((object)Convert.ChangeType(obj, typeof(T)));
-					}
-				}
-			}
-			catch (Exception exception)
-			{
-				Log.WarningException("EcuVariantLocator.GetDataValue<T>()", exception);
-			}
-			return default(T);
-		}
+        public T GetDataValue<T>(string name)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(name) && ecuVariant != null)
+                {
+                    object obj = null;
+                    switch (name.ToUpperInvariant())
+                    {
+                        case "TITLE_JA":
+                            obj = ecuVariant.Title_ja;
+                            break;
+                        case "SORT":
+                            obj = ecuVariant.Sort;
+                            break;
+                        case "TITLE_ENUS":
+                            obj = ecuVariant.Title_enus;
+                            break;
+                        case "NODECLASS":
+                            obj = "5719042";
+                            break;
+                        case "TITLE_ENGB":
+                            obj = ecuVariant.Title_engb;
+                            break;
+                        case "TITLE_NL":
+                            obj = ecuVariant.Title_nl;
+                            break;
+                        case "TITLE_ZHTW":
+                            obj = ecuVariant.Title_zhtw;
+                            break;
+                        case "TITLE_ZHCN":
+                            obj = ecuVariant.Title_zhcn;
+                            break;
+                        case "TITLE_TH":
+                            obj = ecuVariant.Title_th;
+                            break;
+                        case "TITLE_KO":
+                            obj = ecuVariant.Title_ko;
+                            break;
+                        case "TITLE":
+                            obj = ecuVariant.Title;
+                            break;
+                        case "TITLE_RU":
+                            obj = ecuVariant.Title_ru;
+                            break;
+                        case "TITLE_TR":
+                            obj = ecuVariant.Title_tr;
+                            break;
+                        case "TITLE_CSCZ":
+                            obj = ecuVariant.Title_cscz;
+                            break;
+                        case "TITLE_DEDE":
+                            obj = ecuVariant.Title_dede;
+                            break;
+                        case "ID":
+                            obj = ecuVariant.Id;
+                            break;
+                        case "NAME":
+                            obj = ecuVariant.Name;
+                            break;
+                        case "FAULTMEMORYDELETEWAITINGTIME":
+                            obj = ecuVariant.FaultMemoryDeleteWaitingTime;
+                            break;
+                        case "TITLE_PLPL":
+                            obj = ecuVariant.Title_plpl;
+                            break;
+                        case "VALIDFROM":
+                            obj = ecuVariant.ValidFrom.HasValue;
+                            break;
+                        case "SICHERHEITSRELEVANT":
+                            obj = ecuVariant.Sicherheitsrelevant;
+                            break;
+                        case "VALIDTO":
+                            obj = ecuVariant.ValidTo.HasValue;
+                            break;
+                        case "TITLE_EL":
+                            obj = ecuVariant.Title_el;
+                            break;
+                        case "ECUGROUPID":
+                            obj = ecuVariant.EcuGroupId;
+                            break;
+                        case "TITLE_SV":
+                            obj = ecuVariant.Title_sv;
+                            break;
+                        case "TITLE_IT":
+                            obj = ecuVariant.Title_it;
+                            break;
+                        case "TITLE_ES":
+                            obj = ecuVariant.Title_es;
+                            break;
+                        case "TITLE_PT":
+                            obj = ecuVariant.Title_pt;
+                            break;
+                        case "TITLE_FR":
+                            obj = ecuVariant.Title_fr;
+                            break;
+                        case "TITLE_ID":
+                            obj = ecuVariant.Title_id;
+                            break;
+                    }
+                    if (obj != null)
+                    {
+                        return (T)Convert.ChangeType(obj, typeof(T));
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                //Log.WarningException("EcuVariantLocator.GetDataValue<T>()", exception);
+            }
+            return default(T);
+        }
 #endif
-		private readonly PdszDatabase.EcuVar ecuVariant;
+        private readonly PdszDatabase.EcuVar ecuVariant;
 
 		//private readonly ISPELocator[] children;
 
