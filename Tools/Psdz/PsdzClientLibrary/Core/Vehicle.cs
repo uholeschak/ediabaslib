@@ -1735,41 +1735,44 @@ namespace PsdzClient.Core
 			base.ECU.Add(ecu);
 		}
 
-		public bool AddOrUpdateECU(ECU nECU)
-		{
-			try
-			{
-				if (nECU == null)
-				{
-					return false;
-				}
-				if (base.ECU == null)
-				{
-					base.ECU = new ObservableCollection<ECU>();
-				}
-				foreach (ECU ecu in base.ECU)
-				{
-					if (ecu.ID_SG_ADR == nECU.ID_SG_ADR)
-					{
-						int num = base.ECU.IndexOf(ecu);
-						if (num >= 0 && num < base.ECU.Count)
-						{
-							base.ECU[num] = nECU;
-							return true;
-						}
-					}
-				}
-				base.ECU.Add(nECU);
-				return true;
-			}
-			catch (Exception)
-			{
-				//Log.WarningException("Vehicle.AddOrUpdateECU()", exception);
-			}
-			return false;
-		}
+        public bool AddOrUpdateECU(ECU nECU)
+        {
+            try
+            {
+                if (nECU == null)
+                {
+                    //Log.Warning("Vehicle.AddOrUpdateECU()", "ecu was null");
+                    return false;
+                }
+                if (base.ECU == null)
+                {
+                    base.ECU = new ObservableCollection<ECU>();
+                }
+                foreach (ECU item in base.ECU)
+                {
+                    if (item.ID_SG_ADR == nECU.ID_SG_ADR)
+                    {
+                        int num2 = base.ECU.IndexOf(item);
+                        if (num2 >= 0 && num2 < base.ECU.Count)
+                        {
+                            base.ECU[num2] = nECU;
+                            //Log.Info("Vehicle.AddOrUpdateECU()", "updating ecu: \"{0:X2}\" (hex.), slave address: \"{1:X2}\" (hex.).", nECU.ID_SG_ADR, nECU.ID_LIN_SLAVE_ADR);
+                            return true;
+                        }
+                    }
+                }
+                base.ECU.Add(nECU);
+                //Log.Info("Vehicle.AddOrUpdateECU()", "adding ecu: \"{0:X2}\" (hex.), slave address: \"{1:X2}\" (hex.).", nECU.ID_SG_ADR, nECU.ID_LIN_SLAVE_ADR);
+                return true;
+            }
+            catch (Exception)
+            {
+                //Log.WarningException("Vehicle.AddOrUpdateECU()", exception);
+            }
+            return false;
+        }
 
-		public bool getISTACharacteristics(decimal id, out string value, long datavalueId, ValidationRuleInternalResults internalResult)
+        public bool getISTACharacteristics(decimal id, out string value, long datavalueId, ValidationRuleInternalResults internalResult)
 		{
             PdszDatabase.CharacteristicRoots characteristicRootsById = ClientContext.GetDatabase(this)?.GetCharacteristicRootsById(id.ToString(CultureInfo.InvariantCulture));
 			if (characteristicRootsById != null)
@@ -1780,28 +1783,29 @@ namespace PsdzClient.Core
 			return false;
 		}
 
-		public void UpdateStatus(string name, StateType type, double? progress)
-		{
-			try
-			{
-				string status_FunctionName = base.Status_FunctionName;
-				StateType status_FunctionState = base.Status_FunctionState;
-				base.Status_FunctionName = name;
-				base.Status_FunctionState = type;
-				base.Status_FunctionStateLastChangeTime = DateTime.Now;
-				if (progress != null)
-				{
-					base.Status_FunctionProgress = progress.Value;
-				}
-				this.IsNoVehicleCommunicationRunning = (base.Status_FunctionState != StateType.running);
-			}
-			catch (Exception)
-			{
-				//Log.WarningException("Vehicle.UpdateStatus()", exception);
-			}
-		}
+        public void UpdateStatus(string name, StateType type, double? progress)
+        {
+            try
+            {
+                string status_FunctionName = base.Status_FunctionName;
+                StateType status_FunctionState = base.Status_FunctionState;
+                //Log.Info("Vehicle.UpdateStatus()", "Change state from '{0}/{1}' to '{2}/{3}'", status_FunctionName, status_FunctionState, name, type);
+                base.Status_FunctionName = name;
+                base.Status_FunctionState = type;
+                base.Status_FunctionStateLastChangeTime = DateTime.Now;
+                if (progress.HasValue)
+                {
+                    base.Status_FunctionProgress = progress.Value;
+                }
+                IsNoVehicleCommunicationRunning = base.Status_FunctionState != StateType.running;
+            }
+            catch (Exception)
+            {
+                //Log.WarningException("Vehicle.UpdateStatus()", exception);
+            }
+        }
 
-		[XmlIgnore]
+        [XmlIgnore]
 		public bool IsNoVehicleCommunicationRunning
 		{
 			get
