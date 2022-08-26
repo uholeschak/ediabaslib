@@ -1254,372 +1254,340 @@ namespace PsdzClient.Core
 			return null;
 		}
 #endif
-		public void CalculateFaultProperties(IFFMDynamicResolver ffmResolver = null)
-		{
+        public void CalculateFaultProperties(IFFMDynamicResolver ffmResolver = null)
+        {
 #if false
-			IEnumerable<Fault> collection = Vehicle.CalculateFaultList(this, base.ECU, base.CombinedFaults, base.ZFS, ffmResolver);
-			this.FaultCodeSum = Vehicle.CalculateFaultCodeSum(base.ECU, base.CombinedFaults);
-			string method = "Vehicle.CalculateFaultProperties()";
-			string msg = "FaultCodeSum changed from \"{0}\" to \"{1}\".";
-			object[] array = new object[2];
-			int num = 0;
-			IList<Fault> list = this.FaultList;
-			array[num] = ((list != null) ? new int?(list.Count) : null);
-			array[1] = this.FaultCodeSum;
-			//Log.Info(method, msg, array);
-			this.FaultList = new List<Fault>(collection);
+			IEnumerable<Fault> collection = CalculateFaultList(this, base.ECU, base.CombinedFaults, base.ZFS, ffmResolver);
+            FaultCodeSum = CalculateFaultCodeSum(base.ECU, base.CombinedFaults);
+            Log.Info("Vehicle.CalculateFaultProperties()", "FaultCodeSum changed from \"{0}\" to \"{1}\".", FaultList?.Count, FaultCodeSum);
+            FaultList = new List<Fault>(collection);
 #endif
-		}
+        }
 
-		public typeECU_Transaction getECUTransaction(ECU transECU, string transId)
-		{
-			if (transECU == null)
-			{
-				return null;
-			}
-			if (string.IsNullOrEmpty(transId))
-			{
-				return null;
-			}
-			try
-			{
-				if (transECU.TAL != null)
-				{
-					foreach (typeECU_Transaction typeECU_Transaction in transECU.TAL)
-					{
-						if (string.Compare(typeECU_Transaction.transactionId, transId, StringComparison.OrdinalIgnoreCase) == 0)
-						{
-							return typeECU_Transaction;
-						}
-					}
-				}
-			}
-			catch (Exception)
-			{
-				//Log.WarningException("Vehicle.getECUTransaction()", exception);
-			}
-			return null;
-		}
+        public typeECU_Transaction getECUTransaction(ECU transECU, string transId)
+        {
+            if (transECU == null)
+            {
+                return null;
+            }
+            if (string.IsNullOrEmpty(transId))
+            {
+                return null;
+            }
+            try
+            {
+                if (transECU.TAL != null)
+                {
+                    foreach (typeECU_Transaction item in transECU.TAL)
+                    {
+                        if (string.Compare(item.transactionId, transId, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            return item;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                //Log.WarningException("Vehicle.getECUTransaction()", exception);
+            }
+            return null;
+        }
 
-		public bool hasBusType(BusType bus)
-		{
-			if (base.ECU != null)
-			{
-				using (IEnumerator<ECU> enumerator = base.ECU.GetEnumerator())
-				{
-					while (enumerator.MoveNext())
-					{
-						if (enumerator.Current.BUS == bus)
-						{
-							return true;
-						}
-					}
-					return false;
-				}
-			}
-			return false;
-		}
-
-		public bool hasSA(string checkSA)
-		{
-			if (string.IsNullOrEmpty(checkSA))
-			{
-				//Log.Warning("CoreFramework.hasSA()", "checkSA was null or empty", Array.Empty<object>());
-				return false;
-			}
-			if (base.FA == null)
-			{
-				return false;
-			}
-			FA fa = (this.targetFA != null) ? this.targetFA : base.FA;
-			if (fa.SA != null)
-			{
-				using (IEnumerator<string> enumerator = fa.SA.GetEnumerator())
-				{
-					while (enumerator.MoveNext())
-					{
-						if (string.Compare(enumerator.Current, checkSA, StringComparison.OrdinalIgnoreCase) == 0)
-						{
-							return true;
-						}
-					}
-				}
-			}
-			if (fa.E_WORT != null)
-			{
-				using (IEnumerator<string> enumerator = fa.E_WORT.GetEnumerator())
-				{
-					while (enumerator.MoveNext())
-					{
-						if (string.Compare(enumerator.Current, checkSA, StringComparison.OrdinalIgnoreCase) == 0)
-						{
-							return true;
-						}
-					}
-				}
-			}
-			if (fa.HO_WORT != null)
-			{
-				using (IEnumerator<string> enumerator = fa.HO_WORT.GetEnumerator())
-				{
-					while (enumerator.MoveNext())
-					{
-						if (string.Compare(enumerator.Current, checkSA, StringComparison.OrdinalIgnoreCase) == 0)
-						{
-							return true;
-						}
-					}
-                    return fa.DealerInstalledSA != null && fa.DealerInstalledSA.Any((string item) => string.Equals(item, checkSA, StringComparison.OrdinalIgnoreCase));
-				}
-			}
-
+        public bool hasBusType(BusType bus)
+        {
+            if (base.ECU != null)
+            {
+                foreach (ECU item in base.ECU)
+                {
+                    if (item.BUS == bus)
+                    {
+                        return true;
+                    }
+                }
+            }
             return false;
         }
 
-		public bool HasUnidentifiedECU()
-		{
-			bool flag = false;
-			if (base.ECU != null)
-			{
-				foreach (ECU ecu in base.ECU)
-				{
-					if (string.IsNullOrEmpty(ecu.VARIANTE) || !ecu.COMMUNICATION_SUCCESSFULLY)
-					{
-						flag |= true;
-					}
-				}
-				return flag;
-			}
-			return true;
-		}
+        public bool hasSA(string checkSA)
+        {
+            if (string.IsNullOrEmpty(checkSA))
+            {
+                //Log.Warning("CoreFramework.hasSA()", "checkSA was null or empty");
+                return false;
+            }
+            if (base.FA == null)
+            {
+                return false;
+            }
+            FA fA = ((targetFA != null) ? targetFA : base.FA);
+            if (fA.SA != null)
+            {
+                foreach (string item in fA.SA)
+                {
+                    if (string.Compare(item, checkSA, StringComparison.OrdinalIgnoreCase) != 0)
+                    {
+                        if (item.Length == 4 && string.Compare(item.Substring(1), checkSA, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            return true;
+                        }
+                        continue;
+                    }
+                    return true;
+                }
+            }
+            if (fA.E_WORT != null)
+            {
+                foreach (string item2 in fA.E_WORT)
+                {
+                    if (string.Compare(item2, checkSA, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+            if (fA.HO_WORT != null)
+            {
+                foreach (string item3 in fA.HO_WORT)
+                {
+                    if (string.Compare(item3, checkSA, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+            if (fA.DealerInstalledSA != null && fA.DealerInstalledSA.Any((string item) => string.Equals(item, checkSA, StringComparison.OrdinalIgnoreCase)))
+            {
+                return true;
+            }
+            return false;
+        }
 
-		public bool? hasFFM(string checkFFM)
-		{
-			if (string.IsNullOrEmpty(checkFFM))
-			{
-				//Log.Warning("CoreFramework.hasFFM()", "checkFFM was null or empty", Array.Empty<object>());
-				return new bool?(true);
-			}
-			if (base.FFM != null)
-			{
-				using (IEnumerator<FFMResult> enumerator = base.FFM.GetEnumerator())
-				{
-					while (enumerator.MoveNext())
-					{
-						FFMResult ffmresult = enumerator.Current;
-						if (string.Compare(ffmresult.Name, checkFFM, StringComparison.OrdinalIgnoreCase) == 0)
-						{
-							return ffmresult.Result;
-						}
-					}
-                    return null;
-				}
-			}
-			return null;
-		}
+        public bool HasUnidentifiedECU()
+        {
+            bool flag = false;
+            if (base.ECU != null)
+            {
+                foreach (ECU item in base.ECU)
+                {
+                    if (string.IsNullOrEmpty(item.VARIANTE) || !item.COMMUNICATION_SUCCESSFULLY)
+                    {
+                        flag = true;
+                    }
+                }
+                return flag;
+            }
+            return true;
+        }
 
-		public void AddOrUpdateFFM(FFMResult ffm)
-		{
-			if (base.FFM != null && ffm != null)
-			{
-				foreach (FFMResult ffmresult in base.FFM)
-				{
-					if (string.Compare(ffmresult.Name, ffm.Name, StringComparison.OrdinalIgnoreCase) == 0)
-					{
-						ffmresult.ID = ffm.ID;
-						ffmresult.Evaluation = ffm.Evaluation;
-						ffmresult.ReEvaluationNeeded = ffm.ReEvaluationNeeded;
-						ffmresult.Result = ffm.Result;
-						return;
-					}
-				}
-				base.FFM.Add(ffm);
-			}
-		}
+        public bool? hasFFM(string checkFFM)
+        {
+            if (string.IsNullOrEmpty(checkFFM))
+            {
+                //Log.Warning("CoreFramework.hasFFM()", "checkFFM was null or empty");
+                return true;
+            }
+            if (base.FFM != null)
+            {
+                foreach (FFMResult item in base.FFM)
+                {
+                    if (string.Compare(item.Name, checkFFM, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        return item.Result;
+                    }
+                }
+            }
+            return null;
+        }
 
-		public ECU getECU(long? sgAdr)
-		{
-			try
-			{
-				foreach (ECU ecu in base.ECU)
-				{
-					long id_SG_ADR = ecu.ID_SG_ADR;
-					long? num = sgAdr;
-					if (id_SG_ADR == num.GetValueOrDefault() & num != null)
-					{
-						return ecu;
-					}
-					if (!string.IsNullOrEmpty(ecu.ECU_ADR))
-					{
-						string a = string.Empty;
-						if (ecu.ECU_ADR.Length >= 4 && ecu.ECU_ADR.Substring(0, 2).ToLower() == "0x")
-						{
-							a = ecu.ECU_ADR.ToUpper().Substring(2);
-						}
-						if (ecu.ECU_ADR.Length == 2)
-						{
-							a = ecu.ECU_ADR.ToUpper();
-						}
-						if (a == string.Format(CultureInfo.InvariantCulture, "{0:X2}", sgAdr))
-						{
-							return ecu;
-						}
-					}
-				}
-			}
-			catch (Exception)
-			{
-				//Log.WarningException("Vehicle.getECU()", exception);
-			}
-			return null;
-		}
+        public void AddOrUpdateFFM(FFMResult ffm)
+        {
+            if (base.FFM == null || ffm == null)
+            {
+                return;
+            }
+            foreach (FFMResult item in base.FFM)
+            {
+                if (string.Compare(item.Name, ffm.Name, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    item.ID = ffm.ID;
+                    item.Evaluation = ffm.Evaluation;
+                    item.ReEvaluationNeeded = ffm.ReEvaluationNeeded;
+                    item.Result = ffm.Result;
+                    return;
+                }
+            }
+            base.FFM.Add(ffm);
+        }
 
-		public ECU getECU(long? sgAdr, long? subAddress)
-		{
-			try
-			{
-				foreach (ECU ecu in base.ECU)
-				{
-					long id_SG_ADR = ecu.ID_SG_ADR;
-					long? num = sgAdr;
-					if (id_SG_ADR == num.GetValueOrDefault() & num != null)
-					{
-						num = ecu.ID_LIN_SLAVE_ADR;
-						long? num2 = subAddress;
-						if (num.GetValueOrDefault() == num2.GetValueOrDefault() & num != null == (num2 != null))
-						{
-							return ecu;
-						}
-					}
-				}
-			}
-			catch (Exception)
-			{
-				//Log.WarningException("Vehcile.getECU()", exception);
-			}
-			return null;
-		}
+        public ECU getECU(long? sgAdr)
+        {
+            try
+            {
+                foreach (ECU item in base.ECU)
+                {
+                    if (item.ID_SG_ADR != sgAdr)
+                    {
+                        if (!string.IsNullOrEmpty(item.ECU_ADR))
+                        {
+                            string text = string.Empty;
+                            if (item.ECU_ADR.Length >= 4 && item.ECU_ADR.Substring(0, 2).ToLower() == "0x")
+                            {
+                                text = item.ECU_ADR.ToUpper().Substring(2);
+                            }
+                            if (item.ECU_ADR.Length == 2)
+                            {
+                                text = item.ECU_ADR.ToUpper();
+                            }
+                            if (text == string.Format(CultureInfo.InvariantCulture, "{0:X2}", sgAdr))
+                            {
+                                return item;
+                            }
+                        }
+                        continue;
+                    }
+                    return item;
+                }
+            }
+            catch (Exception)
+            {
+                //Log.WarningException("Vehicle.getECU()", exception);
+            }
+            return null;
+        }
 
-		public ECU getECUbyECU_SGBD(string ECU_SGBD)
-		{
-			if (string.IsNullOrEmpty(ECU_SGBD))
-			{
-				return null;
-			}
-			try
-			{
-				foreach (string b in ECU_SGBD.Split(new char[]
-				{
-					'|'
-				}))
-				{
-					foreach (ECU ecu in base.ECU)
-					{
-						if (string.Equals(ecu.ECU_SGBD, b, StringComparison.OrdinalIgnoreCase) || string.Equals(ecu.VARIANTE, b, StringComparison.OrdinalIgnoreCase))
-						{
-							return ecu;
-						}
-					}
-				}
-			}
-			catch (Exception)
-			{
-				//Log.WarningException("Vehicle.getECUbyECU_SGBD()", exception);
+        public ECU getECU(long? sgAdr, long? subAddress)
+        {
+            try
+            {
+                foreach (ECU item in base.ECU)
+                {
+                    if (item.ID_SG_ADR == sgAdr && item.ID_LIN_SLAVE_ADR == subAddress)
+                    {
+                        return item;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                //Log.WarningException("Vehcile.getECU()", exception);
+            }
+            return null;
+        }
+
+        public ECU getECUbyECU_SGBD(string ECU_SGBD)
+        {
+            if (string.IsNullOrEmpty(ECU_SGBD))
+            {
                 return null;
-			}
-			return null;
-		}
+            }
+            try
+            {
+                string[] array = ECU_SGBD.Split('|');
+                foreach (string b in array)
+                {
+                    foreach (ECU item in base.ECU)
+                    {
+                        if (string.Equals(item.ECU_SGBD, b, StringComparison.OrdinalIgnoreCase) || string.Equals(item.VARIANTE, b, StringComparison.OrdinalIgnoreCase))
+                        {
+                            return item;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                //Log.WarningException("Vehicle.getECUbyECU_SGBD()", exception);
+            }
+            return null;
+        }
 
-		public ECU getECUbyTITLE_ECUTREE(string grobName)
-		{
-			if (string.IsNullOrEmpty(grobName))
-			{
-				return null;
-			}
-			try
-			{
-				foreach (ECU ecu in base.ECU)
-				{
-					if (string.Compare(ecu.TITLE_ECUTREE, grobName, StringComparison.OrdinalIgnoreCase) == 0)
-					{
-						return ecu;
-					}
-				}
-			}
-			catch (Exception)
-			{
-				//Log.WarningException("Vehicle.getECUbyTITLE_ECUTREE()", exception);
-			}
-			return null;
-		}
+        public ECU getECUbyTITLE_ECUTREE(string grobName)
+        {
+            if (string.IsNullOrEmpty(grobName))
+            {
+                return null;
+            }
+            try
+            {
+                foreach (ECU item in base.ECU)
+                {
+                    if (string.Compare(item.TITLE_ECUTREE, grobName, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        return item;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                //Log.WarningException("Vehicle.getECUbyTITLE_ECUTREE()", exception);
+            }
+            return null;
+        }
 
-		public ECU getECUbyECU_GRUPPE(string ECU_GRUPPE)
-		{
-			if (string.IsNullOrEmpty(ECU_GRUPPE))
-			{
-				//Log.Warning("Vehicle.getECUbyECU_GRUPPE()", "parameter was null or empty", Array.Empty<object>());
-				return null;
-			}
-			if (base.ECU == null)
-			{
-				//Log.Warning("Vehicle.getECUbyECU_GRUPPE()", "ECU was null", Array.Empty<object>());
-				return null;
-			}
-			try
-			{
-				foreach (ECU ecu in base.ECU)
-				{
-					if (!string.IsNullOrEmpty(ecu.ECU_GRUPPE))
-					{
-						string[] array = ECU_GRUPPE.Split(new char[]
-						{
-							'|'
-						});
-						foreach (string a in ecu.ECU_GRUPPE.Split(new char[]
-						{
-							'|'
-						}))
-						{
-							foreach (string b in array)
-							{
-								if (string.Equals(a, b, StringComparison.OrdinalIgnoreCase))
-								{
-									return ecu;
-								}
-							}
-						}
-					}
-				}
-			}
-			catch (Exception)
-			{
-				//Log.WarningException("Vehicle.getECUbyECU_GRUPPE()", exception);
-			}
-			return null;
-		}
+        public ECU getECUbyECU_GRUPPE(string ECU_GRUPPE)
+        {
+            if (string.IsNullOrEmpty(ECU_GRUPPE))
+            {
+                //Log.Warning("Vehicle.getECUbyECU_GRUPPE()", "parameter was null or empty");
+                return null;
+            }
+            if (base.ECU == null)
+            {
+                //Log.Warning("Vehicle.getECUbyECU_GRUPPE()", "ECU was null");
+                return null;
+            }
+            try
+            {
+                foreach (ECU item in base.ECU)
+                {
+                    if (string.IsNullOrEmpty(item.ECU_GRUPPE))
+                    {
+                        continue;
+                    }
+                    string[] array = ECU_GRUPPE.Split('|');
+                    string[] array2 = item.ECU_GRUPPE.Split('|');
+                    foreach (string a in array2)
+                    {
+                        string[] array3 = array;
+                        foreach (string b in array3)
+                        {
+                            if (string.Equals(a, b, StringComparison.OrdinalIgnoreCase))
+                            {
+                                return item;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                //Log.WarningException("Vehicle.getECUbyECU_GRUPPE()", exception);
+            }
+            return null;
+        }
 
-		public uint getDiagProtECUCount(typeDiagProtocoll ecuDiag)
-		{
-			uint num = 0U;
-			try
-			{
-				using (IEnumerator<ECU> enumerator = base.ECU.GetEnumerator())
-				{
-					while (enumerator.MoveNext())
-					{
-						if (enumerator.Current.DiagProtocoll == ecuDiag)
-						{
-							num += 1U;
-						}
-					}
-				}
-			}
-			catch (Exception)
-			{
-				//Log.WarningException("Vehcile.getECU()", exception);
-			}
-			return num;
-		}
+        public uint getDiagProtECUCount(typeDiagProtocoll ecuDiag)
+        {
+            uint num2 = 0u;
+            try
+            {
+                foreach (ECU item in base.ECU)
+                {
+                    if (item.DiagProtocoll == ecuDiag)
+                    {
+                        num2++;
+                    }
+                }
+                return num2;
+            }
+            catch (Exception)
+            {
+                //Log.WarningException("Vehcile.getECU()", exception);
+                return num2;
+            }
+        }
+
 #if false
         public typeCBSInfo getCBSMeasurementValue(typeCBSMeaurementType mType)
         {
