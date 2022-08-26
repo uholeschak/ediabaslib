@@ -21,38 +21,25 @@ namespace PsdzClient.Core
 	{
 		public Vehicle(ClientContext clientContext) : base(clientContext)
         {
-			base.ConnectState = VisibilityType.Collapsed;
-			//this.pKodeList = new ObservableCollectionEx<Fault>();
-			//this.FaultList = new List<Fault>();
-			//this.VirtualFaultInfoList = new BlockingCollection<VirtualFaultInfo>();
-			//this.sessionDataStore = new ParameterContainer();
-			//base.Testplan = new TestPlanType();
-			this.diagCodesProgramming = new ObservableCollection<string>();
-			this.IsClosingOperationActive = false;
-			this.validPWFStates = new HashSet<int>(new int[]
-			{
-				0,
-				1,
-				2,
-				3,
-				4,
-				5,
-				6,
-				7,
-				8,
-				9,
-				10,
-				11,
-				12,
-				13,
-				14,
-				15,
-				16
-			});
-			this.clamp15MinValue = 0.0;
-			this.clamp30MinValue = 9.95;
-			//this.RxSwin = new RxSwinData();
-		}
+            //TransmissionDataType = new TransmissionDataType();
+            base.ConnectState = VisibilityType.Collapsed;
+            //pKodeList = new ObservableCollectionEx<Fault>();
+            //FaultList = new List<Fault>();
+            //VirtualFaultInfoList = new BlockingCollection<VirtualFaultInfo>();
+            //sessionDataStore = new ParameterContainer();
+            //base.Testplan = new TestPlanType();
+            diagCodesProgramming = new ObservableCollection<string>();
+            IsClosingOperationActive = false;
+            validPWFStates = new HashSet<int>(new int[]
+            {
+                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                10, 11, 12, 13, 14, 15, 16
+            });
+            clamp15MinValue = 0.0;
+            clamp30MinValue = 9.95; //new VoltageThreshold(BatteryEnum.Pb).MinError;
+            //RxSwin = new RxSwinData();
+        }
+
 #if false
 		public List<string> PermanentSAEFehlercodesInFaultList()
 		{
