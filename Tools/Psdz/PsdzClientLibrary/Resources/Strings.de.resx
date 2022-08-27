@@ -188,7 +188,10 @@ Bitte schließen Sie ein zertifiziertes Ladegerät während des gesamten Kodierv
     <value>FA geschrieben.</value>
   </data>
   <data name="GenerateInfoFilesFailed" xml:space="preserve">
-    <value>Generieren der Fahrzeug Infodatein fehlgeschlagen.</value>
+    <value>Generieren der Fahrzeug Infodateien fehlgeschlagen.</value>
+  </data>
+  <data name="GeneratingInfoFiles" xml:space="preserve">
+    <value>Fahrzeug Infodateien werden generiert.</value>
   </data>
   <data name="HostStarted" xml:space="preserve">
     <value>Service Host gestartet.</value>

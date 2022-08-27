@@ -1293,7 +1293,7 @@ namespace PsdzClient
             "G90"
         };
 
-        public delegate bool ProgressDelegate(int progress, int failures);
+        public delegate bool ProgressDelegate(bool startConvert, int progress =-1, int failures = -1);
 
         private bool _disposed;
         private string _databasePath;
@@ -1707,6 +1707,15 @@ namespace PsdzClient
                         return false;
                     }
 
+                    if (progressHandler != null)
+                    {
+                        if (progressHandler.Invoke(true, 0, 0))
+                        {
+                            log.ErrorFormat("GenerateTestModuleData Aborted");
+                            return false;
+                        }
+                    }
+
                     testModules = ConvertAllTestModules(progressHandler);
                     if (testModules == null)
                     {
@@ -1774,7 +1783,7 @@ namespace PsdzClient
                     if (progressHandler != null)
                     {
                         int percent = index * 100 / swiActions.Count;
-                        if (progressHandler.Invoke(percent, failCount))
+                        if (progressHandler.Invoke(false, percent, failCount))
                         {
                             log.ErrorFormat("ConvertAllTestModules Aborted at {0}%", percent);
                             return null;
@@ -1810,10 +1819,7 @@ namespace PsdzClient
                     index++;
                 }
 
-                if (progressHandler != null)
-                {
-                    progressHandler.Invoke(100, failCount);
-                }
+                progressHandler?.Invoke(false, 100, failCount);
 
                 log.InfoFormat("ConvertAllTestModules Count: {0}, Failures: {1}", moduleDataDict.Count, failCount);
                 if (moduleDataDict.Count == 0)

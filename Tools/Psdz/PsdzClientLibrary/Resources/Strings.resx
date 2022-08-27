@@ -190,6 +190,9 @@ Please connect a certified charger for the whole coding session.</value>
   <data name="GenerateInfoFilesFailed" xml:space="preserve">
     <value>Generating vehicle info files failed.</value>
   </data>
+  <data name="GeneratingInfoFiles" xml:space="preserve">
+    <value>Generating vehicle info files.</value>
+  </data>
   <data name="HostStarted" xml:space="preserve">
     <value>Service host started.</value>
   </data>

@@ -418,11 +418,19 @@ namespace PsdzClient.Programming
                     }
 
                     int failCount = -1;
-                    bool result = ProgrammingService.PdszDatabase.GenerateTestModuleData((progress, failures) =>
+                    bool result = ProgrammingService.PdszDatabase.GenerateTestModuleData((startConvert, progress, failures) =>
                     {
-                        failCount = failures;
-                        string message = string.Format(CultureInfo.InvariantCulture, Strings.TestModuleProgress, progress, failures);
-                        ProgressEvent?.Invoke(progress, false, message);
+                        if (startConvert)
+                        {
+                            sbResult.AppendLine(Strings.GeneratingInfoFiles);
+                            UpdateStatus(sbResult.ToString());
+                        }
+                        else
+                        {
+                            failCount = failures;
+                            string message = string.Format(CultureInfo.InvariantCulture, Strings.TestModuleProgress, progress, failures);
+                            ProgressEvent?.Invoke(progress, false, message);
+                        }
 
                         if (cts != null)
                         {

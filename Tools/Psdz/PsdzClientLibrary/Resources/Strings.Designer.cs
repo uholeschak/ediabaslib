@@ -260,6 +260,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Generating vehicle info files. ähnelt.
+        /// </summary>
+        internal static string GeneratingInfoFiles {
+            get {
+                return ResourceManager.GetString("GeneratingInfoFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Service host started. ähnelt.
         /// </summary>
         internal static string HostStarted {
