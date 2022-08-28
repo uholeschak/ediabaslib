@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <VehicleSeriesInfoDataXml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <TimeStamp>2022-07-05 23:32:08</TimeStamp>
+  <TimeStamp>2022-08-27 01:34:09</TimeStamp>
   <VehicleSeriesDict>
     <item>
       <key>
@@ -5633,7 +5633,6 @@
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
-            <BrandList>BMW i</BrandList>
           </VSI>
         </ArrayOfVSI>
       </value>
@@ -5649,7 +5648,6 @@
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
-            <BrandList>BMW i</BrandList>
           </VSI>
         </ArrayOfVSI>
       </value>
@@ -5665,7 +5663,6 @@
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
-            <BrandList>BMW i</BrandList>
           </VSI>
         </ArrayOfVSI>
       </value>
@@ -5681,7 +5678,6 @@
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
-            <BrandList>BMW i</BrandList>
           </VSI>
         </ArrayOfVSI>
       </value>
@@ -5697,7 +5693,6 @@
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
-            <BrandList>BMW i</BrandList>
           </VSI>
         </ArrayOfVSI>
       </value>
@@ -5713,7 +5708,6 @@
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
-            <BrandList>BMW i</BrandList>
           </VSI>
         </ArrayOfVSI>
       </value>
@@ -5729,7 +5723,6 @@
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
-            <BrandList>BMW i</BrandList>
           </VSI>
         </ArrayOfVSI>
       </value>
@@ -5772,21 +5765,6 @@
             <Series>K01X</Series>
             <BrSgbd>MRK24</BrSgbd>
             <BrandList>BMW MOTORRAD</BrandList>
-          </VSI>
-        </ArrayOfVSI>
-      </value>
-    </item>
-    <item>
-      <key>
-        <string>G09</string>
-      </key>
-      <value>
-        <ArrayOfVSI>
-          <VSI>
-            <Series>G09</Series>
-            <BrSgbd>F01</BrSgbd>
-            <BnType>BN2020</BnType>
-            <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
       </value>
