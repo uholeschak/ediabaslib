@@ -2329,24 +2329,49 @@ namespace PsdzClient
         {
             try
             {
-                string vehicleSeriesFile = Path.Combine(_databasePath, VehicleStructsBmw.VehicleSeriesXmlFile);
-                if (File.Exists(vehicleSeriesFile))
-                {
-                    return true;
-                }
-
-                VehicleStructsBmw.VehicleSeriesInfoData vehicleSeriesInfoData = ExtractVehicleSeriesInfo(clientContext);
-                if (vehicleSeriesInfoData == null)
-                {
-                    log.InfoFormat(CultureInfo.InvariantCulture, "SaveVehicleSeriesInfo ExtractVehicleSeriesInfo failed");
-                    return false;
-                }
-
-                log.InfoFormat(CultureInfo.InvariantCulture, "SaveVehicleSeriesInfo Saving: {0}", vehicleSeriesFile);
+                VehicleStructsBmw.VehicleSeriesInfoData vehicleSeriesInfoData = null;
                 XmlSerializer serializer = new XmlSerializer(typeof(VehicleStructsBmw.VehicleSeriesInfoData));
-                using (FileStream fileStream = File.Create(vehicleSeriesFile))
+                string vehicleSeriesFile = Path.Combine(_databasePath, VehicleStructsBmw.VehicleSeriesXmlFile);
+                try
                 {
-                    serializer.Serialize(fileStream, vehicleSeriesInfoData);
+                    if (File.Exists(vehicleSeriesFile))
+                    {
+                        using (FileStream fileStream = new FileStream(vehicleSeriesFile, FileMode.Open))
+                        {
+                            vehicleSeriesInfoData = serializer.Deserialize(fileStream) as VehicleStructsBmw.VehicleSeriesInfoData;
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    log.ErrorFormat("SaveVehicleSeriesInfo Deserialize Exception: '{0}'", e.Message);
+                }
+
+                bool dataValid = true;
+                if (vehicleSeriesInfoData != null)
+                {
+                    DbInfo dbInfo = GetDbInfo();
+                    if (vehicleSeriesInfoData.Version == null || !vehicleSeriesInfoData.Version.IsIdentical(dbInfo?.Version, dbInfo?.DateTime))
+                    {
+                        log.ErrorFormat("GenerateEcuCharacteristicsData Version mismatch");
+                        dataValid = false;
+                    }
+                }
+
+                if (vehicleSeriesInfoData == null || !dataValid)
+                {
+                    vehicleSeriesInfoData = ExtractVehicleSeriesInfo(clientContext);
+                    if (vehicleSeriesInfoData == null)
+                    {
+                        log.InfoFormat(CultureInfo.InvariantCulture, "SaveVehicleSeriesInfo ExtractVehicleSeriesInfo failed");
+                        return false;
+                    }
+
+                    log.InfoFormat(CultureInfo.InvariantCulture, "SaveVehicleSeriesInfo Saving: {0}", vehicleSeriesFile);
+                    using (FileStream fileStream = File.Create(vehicleSeriesFile))
+                    {
+                        serializer.Serialize(fileStream, vehicleSeriesInfoData);
+                    }
                 }
             }
             catch (Exception ex)
