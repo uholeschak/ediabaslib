@@ -2235,14 +2235,7 @@ namespace PsdzClient
                 bool dataValid = true;
                 if (ecuCharacteristicsData != null)
                 {
-                    DbInfo dbInfo = GetDbInfo();
-                    if (dbInfo == null)
-                    {
-                        log.ErrorFormat("GenerateEcuCharacteristicsData No dbInfo");
-                        return false;
-                    }
-
-                    if (ecuCharacteristicsData.Version == null || !ecuCharacteristicsData.Version.IsIdentical(dbInfo))
+                    if (ecuCharacteristicsData.Version == null || !ecuCharacteristicsData.Version.IsIdentical(GetDbInfo()))
                     {
                         log.ErrorFormat("GenerateEcuCharacteristicsData Version mismatch");
                         dataValid = false;
