@@ -1209,15 +1209,22 @@ namespace PsdzClient
         [XmlType("EcuCharacteristicsXml")]
         public class EcuCharacteristicsData
         {
-            public EcuCharacteristicsData() : this(null)
+            public EcuCharacteristicsData() : this(null, null)
             {
             }
 
-            public EcuCharacteristicsData(SerializableDictionary<string, string> ecuXmlDict)
+            public EcuCharacteristicsData(SerializableDictionary<string, string> ecuXmlDict, DbInfo dbInfo)
             {
                 EcuXmlDict = ecuXmlDict;
+                if (dbInfo != null)
+                {
+                    Version = dbInfo.Version;
+                    Date = dbInfo.DateTime;
+                }
             }
 
+            [XmlElement("Version"), DefaultValue(null)] public string Version { get; set; }
+            [XmlElement("Date"), DefaultValue(null)] public DateTime Date { get; set; }
             [XmlElement("EcuXmlDict"), DefaultValue(null)] public SerializableDictionary<string, string> EcuXmlDict { get; set; }
         }
 
@@ -2188,7 +2195,30 @@ namespace PsdzClient
                     }
                 }
 
-                if (ecuCharacteristicsData == null)
+                bool dataValid = true;
+                if (ecuCharacteristicsData != null)
+                {
+                    DbInfo dbInfo = GetDbInfo();
+                    if (dbInfo == null)
+                    {
+                        log.ErrorFormat("GenerateEcuCharacteristicsData No dbInfo");
+                        return false;
+                    }
+
+                    if (ecuCharacteristicsData.Version == null || string.Compare(ecuCharacteristicsData.Version, dbInfo.Version, StringComparison.OrdinalIgnoreCase) != 0)
+                    {
+                        log.ErrorFormat("GenerateEcuCharacteristicsData Invalid version");
+                        dataValid = false;
+                    }
+
+                    if (ecuCharacteristicsData.Date != dbInfo.DateTime)
+                    {
+                        log.ErrorFormat("GenerateEcuCharacteristicsData Invalid date");
+                        dataValid = false;
+                    }
+                }
+
+                if (ecuCharacteristicsData == null || !dataValid)
                 {
                     log.InfoFormat("GenerateEcuCharacteristicsData Converting Xml");
                     if (!IsExecutable())
@@ -2299,7 +2329,7 @@ namespace PsdzClient
                 }
 
                 log.InfoFormat("ReadEcuCharacteristicsXml Resources: {0}", ecuXmlDict.Count);
-                EcuCharacteristicsData ecuCharacteristicsData = new EcuCharacteristicsData(ecuXmlDict);
+                EcuCharacteristicsData ecuCharacteristicsData = new EcuCharacteristicsData(ecuXmlDict, GetDbInfo());
                 return ecuCharacteristicsData;
             }
             catch (Exception e)

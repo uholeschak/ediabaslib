@@ -560,6 +560,11 @@ namespace PsdzClient.Programming
                 sbResult.AppendLine(Strings.VehicleConnecting);
                 UpdateStatus(sbResult.ToString());
 
+                if (ProgrammingService == null)
+                {
+                    return false;
+                }
+
                 PdszDatabase.DbInfo dbInfo = ProgrammingService.PdszDatabase.GetDbInfo();
                 if (dbInfo != null)
                 {
@@ -577,11 +582,6 @@ namespace PsdzClient.Programming
                 }
 
                 string ipAddress = hostParts[0];
-                if (ProgrammingService == null)
-                {
-                    return false;
-                }
-
                 if (!InitProgrammingObjects(istaFolder))
                 {
                     return false;
