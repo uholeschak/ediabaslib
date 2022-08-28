@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Xml.Serialization;
@@ -64,21 +65,60 @@ namespace BmwFileReader
             [XmlElement("DateCompare"), DefaultValue(null)] public string DateCompare { get; set; }
         }
 
+        [XmlType("VersionInfo")]
+        public class VersionInfo
+        {
+            public VersionInfo() : this(null, null)
+            {
+            }
+
+            public VersionInfo(string version, DateTime? dateTime)
+            {
+                Version = version;
+                if (dateTime != null)
+                {
+                    Date = dateTime.Value;
+                }
+            }
+
+            public bool IsIdentical(string version, DateTime? dateTime)
+            {
+                if (Version == null || version == null ||
+                    string.Compare(Version, version, StringComparison.OrdinalIgnoreCase) != 0)
+                {
+                    return false;
+                }
+
+                if (dateTime == null || Date != dateTime)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            [XmlElement("Version"), DefaultValue(null)] public string Version { get; set; }
+            [XmlElement("Date"), DefaultValue(null)] public DateTime Date { get; set; }
+        }
+
+        [XmlInclude(typeof(VersionInfo))]
         [XmlInclude(typeof(VehicleSeriesInfo))]
         [XmlType("VehicleSeriesInfoDataXml")]
         public class VehicleSeriesInfoData
         {
-            public VehicleSeriesInfoData() : this(null, null)
+            public VehicleSeriesInfoData() : this(null, null, null)
             {
             }
 
-            public VehicleSeriesInfoData(string timeStamp, SerializableDictionary<string, List<VehicleSeriesInfo>> vehicleSeriesDict)
+            public VehicleSeriesInfoData(string timeStamp, VersionInfo versionInfo, SerializableDictionary<string, List<VehicleSeriesInfo>> vehicleSeriesDict)
             {
                 TimeStamp = timeStamp;
+                Version = versionInfo;
                 VehicleSeriesDict = vehicleSeriesDict;
             }
 
             [XmlElement("TimeStamp"), DefaultValue(null)] public string TimeStamp { get; set; }
+            [XmlElement("Version"), DefaultValue(null)] public VersionInfo Version { get; set; }
             [XmlElement("VehicleSeriesDict"), DefaultValue(null)] public SerializableDictionary<string, List<VehicleSeriesInfo>> VehicleSeriesDict { get; set; }
         }
 
