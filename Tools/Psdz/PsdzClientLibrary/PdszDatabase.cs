@@ -1172,6 +1172,47 @@ namespace PsdzClient
             }
         }
 
+        [XmlType("VersionInfo")]
+        public class VersionInfo
+        {
+            public VersionInfo() : this(null)
+            {
+            }
+
+            public VersionInfo(DbInfo dbInfo)
+            {
+                if (dbInfo != null)
+                {
+                    Version = dbInfo.Version;
+                    Date = dbInfo.DateTime;
+                }
+            }
+
+            public bool IsIdentical(DbInfo dbInfo)
+            {
+                if (dbInfo == null)
+                {
+                    return false;
+                }
+
+                if (Version == null || dbInfo.Version == null ||
+                    string.Compare(Version, dbInfo.Version, StringComparison.OrdinalIgnoreCase) != 0)
+                {
+                    return false;
+                }
+
+                if (Date != dbInfo.DateTime)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            [XmlElement("Version"), DefaultValue(null)] public string Version { get; set; }
+            [XmlElement("Date"), DefaultValue(null)] public DateTime Date { get; set; }
+        }
+
         [XmlInclude(typeof(TestModuleData))]
         [XmlType("TestModules")]
         public class TestModules
@@ -1206,6 +1247,7 @@ namespace PsdzClient
             [XmlElement("ModuleRef"), DefaultValue(null)] public string ModuleRef { get; set;  }
         }
 
+        [XmlInclude(typeof(VersionInfo))]
         [XmlType("EcuCharacteristicsXml")]
         public class EcuCharacteristicsData
         {
@@ -1213,18 +1255,13 @@ namespace PsdzClient
             {
             }
 
-            public EcuCharacteristicsData(SerializableDictionary<string, string> ecuXmlDict, DbInfo dbInfo)
+            public EcuCharacteristicsData(SerializableDictionary<string, string> ecuXmlDict, VersionInfo versionInfo)
             {
                 EcuXmlDict = ecuXmlDict;
-                if (dbInfo != null)
-                {
-                    Version = dbInfo.Version;
-                    Date = dbInfo.DateTime;
-                }
+                Version = versionInfo;
             }
 
-            [XmlElement("Version"), DefaultValue(null)] public string Version { get; set; }
-            [XmlElement("Date"), DefaultValue(null)] public DateTime Date { get; set; }
+            [XmlElement("Version"), DefaultValue(null)] public VersionInfo Version { get; set; }
             [XmlElement("EcuXmlDict"), DefaultValue(null)] public SerializableDictionary<string, string> EcuXmlDict { get; set; }
         }
 
@@ -2205,15 +2242,9 @@ namespace PsdzClient
                         return false;
                     }
 
-                    if (ecuCharacteristicsData.Version == null || string.Compare(ecuCharacteristicsData.Version, dbInfo.Version, StringComparison.OrdinalIgnoreCase) != 0)
+                    if (ecuCharacteristicsData.Version == null || !ecuCharacteristicsData.Version.IsIdentical(dbInfo))
                     {
-                        log.ErrorFormat("GenerateEcuCharacteristicsData Invalid version");
-                        dataValid = false;
-                    }
-
-                    if (ecuCharacteristicsData.Date != dbInfo.DateTime)
-                    {
-                        log.ErrorFormat("GenerateEcuCharacteristicsData Invalid date");
+                        log.ErrorFormat("GenerateEcuCharacteristicsData Version mismatch");
                         dataValid = false;
                     }
                 }
@@ -2329,7 +2360,8 @@ namespace PsdzClient
                 }
 
                 log.InfoFormat("ReadEcuCharacteristicsXml Resources: {0}", ecuXmlDict.Count);
-                EcuCharacteristicsData ecuCharacteristicsData = new EcuCharacteristicsData(ecuXmlDict, GetDbInfo());
+                VersionInfo versionInfo = new VersionInfo(GetDbInfo());
+                EcuCharacteristicsData ecuCharacteristicsData = new EcuCharacteristicsData(ecuXmlDict, versionInfo);
                 return ecuCharacteristicsData;
             }
             catch (Exception e)
