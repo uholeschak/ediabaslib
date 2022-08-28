@@ -1172,47 +1172,6 @@ namespace PsdzClient
             }
         }
 
-        [XmlType("VersionInfo")]
-        public class VersionInfo
-        {
-            public VersionInfo() : this(null)
-            {
-            }
-
-            public VersionInfo(DbInfo dbInfo)
-            {
-                if (dbInfo != null)
-                {
-                    Version = dbInfo.Version;
-                    Date = dbInfo.DateTime;
-                }
-            }
-
-            public bool IsIdentical(DbInfo dbInfo)
-            {
-                if (dbInfo == null)
-                {
-                    return false;
-                }
-
-                if (Version == null || dbInfo.Version == null ||
-                    string.Compare(Version, dbInfo.Version, StringComparison.OrdinalIgnoreCase) != 0)
-                {
-                    return false;
-                }
-
-                if (Date != dbInfo.DateTime)
-                {
-                    return false;
-                }
-
-                return true;
-            }
-
-            [XmlElement("Version"), DefaultValue(null)] public string Version { get; set; }
-            [XmlElement("Date"), DefaultValue(null)] public DateTime Date { get; set; }
-        }
-
         [XmlInclude(typeof(TestModuleData))]
         [XmlType("TestModules")]
         public class TestModules
@@ -1247,7 +1206,7 @@ namespace PsdzClient
             [XmlElement("ModuleRef"), DefaultValue(null)] public string ModuleRef { get; set;  }
         }
 
-        [XmlInclude(typeof(VersionInfo))]
+        [XmlInclude(typeof(VehicleStructsBmw.VersionInfo))]
         [XmlType("EcuCharacteristicsXml")]
         public class EcuCharacteristicsData
         {
@@ -1255,13 +1214,13 @@ namespace PsdzClient
             {
             }
 
-            public EcuCharacteristicsData(SerializableDictionary<string, string> ecuXmlDict, VersionInfo versionInfo)
+            public EcuCharacteristicsData(VehicleStructsBmw.VersionInfo versionInfo, SerializableDictionary<string, string> ecuXmlDict)
             {
-                EcuXmlDict = ecuXmlDict;
                 Version = versionInfo;
+                EcuXmlDict = ecuXmlDict;
             }
 
-            [XmlElement("Version"), DefaultValue(null)] public VersionInfo Version { get; set; }
+            [XmlElement("Version"), DefaultValue(null)] public VehicleStructsBmw.VersionInfo Version { get; set; }
             [XmlElement("EcuXmlDict"), DefaultValue(null)] public SerializableDictionary<string, string> EcuXmlDict { get; set; }
         }
 
@@ -2235,7 +2194,8 @@ namespace PsdzClient
                 bool dataValid = true;
                 if (ecuCharacteristicsData != null)
                 {
-                    if (ecuCharacteristicsData.Version == null || !ecuCharacteristicsData.Version.IsIdentical(GetDbInfo()))
+                    DbInfo dbInfo = GetDbInfo();
+                    if (ecuCharacteristicsData.Version == null || !ecuCharacteristicsData.Version.IsIdentical(dbInfo?.Version, dbInfo?.DateTime))
                     {
                         log.ErrorFormat("GenerateEcuCharacteristicsData Version mismatch");
                         dataValid = false;
@@ -2353,8 +2313,9 @@ namespace PsdzClient
                 }
 
                 log.InfoFormat("ReadEcuCharacteristicsXml Resources: {0}", ecuXmlDict.Count);
-                VersionInfo versionInfo = new VersionInfo(GetDbInfo());
-                EcuCharacteristicsData ecuCharacteristicsData = new EcuCharacteristicsData(ecuXmlDict, versionInfo);
+                DbInfo dbInfo = GetDbInfo();
+                VehicleStructsBmw.VersionInfo versionInfo = new VehicleStructsBmw.VersionInfo(dbInfo?.Version, dbInfo?.DateTime);
+                EcuCharacteristicsData ecuCharacteristicsData = new EcuCharacteristicsData(versionInfo, ecuXmlDict);
                 return ecuCharacteristicsData;
             }
             catch (Exception e)
@@ -2555,7 +2516,9 @@ namespace PsdzClient
                 }
 
                 string timeStamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
-                VehicleStructsBmw.VehicleSeriesInfoData vehicleSeriesInfoData = new VehicleStructsBmw.VehicleSeriesInfoData(timeStamp, sgbdDict);
+                DbInfo dbInfo = GetDbInfo();
+                VehicleStructsBmw.VersionInfo versionInfo = new VehicleStructsBmw.VersionInfo(dbInfo?.Version, dbInfo?.DateTime);
+                VehicleStructsBmw.VehicleSeriesInfoData vehicleSeriesInfoData = new VehicleStructsBmw.VehicleSeriesInfoData(timeStamp, versionInfo, sgbdDict);
                 StringBuilder sb = new StringBuilder();
                 foreach (KeyValuePair<string, List<VehicleStructsBmw.VehicleSeriesInfo>> keyValue in vehicleSeriesInfoData.VehicleSeriesDict.OrderBy(x => x.Key))
                 {
