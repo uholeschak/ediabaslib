@@ -1,6 +1,10 @@
 <?xml version="1.0"?>
 <VehicleSeriesInfoDataXml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <TimeStamp>2022-08-27 01:34:09</TimeStamp>
+  <TimeStamp>2022-08-29 22:04:47</TimeStamp>
+  <Version>
+    <Version>4.36.40</Version>
+    <Date>2022-07-26T19:39:49</Date>
+  </Version>
   <VehicleSeriesDict>
     <item>
       <key>
