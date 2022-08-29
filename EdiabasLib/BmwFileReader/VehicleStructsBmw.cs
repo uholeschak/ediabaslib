@@ -97,9 +97,28 @@ namespace BmwFileReader
                 return true;
             }
 
-            public bool IsMinDate(DateTime? dateTime)
+            public bool IsMinVersion(string version, DateTime? dateTime)
             {
-                if (dateTime == null || Date < dateTime)
+                try
+                {
+                    if (version == null || Version == null)
+                    {
+                        return false;
+                    }
+
+                    Version versionArg = new Version(version);
+                    Version versionThis = new Version(Version);
+                    if (versionThis < versionArg)
+                    {
+                        return false;
+                    }
+
+                    if (dateTime == null || Date < dateTime)
+                    {
+                        return false;
+                    }
+                }
+                catch (Exception)
                 {
                     return false;
                 }
