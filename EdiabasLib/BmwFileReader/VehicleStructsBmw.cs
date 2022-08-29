@@ -97,6 +97,16 @@ namespace BmwFileReader
                 return true;
             }
 
+            public bool IsMinDate(DateTime? dateTime)
+            {
+                if (dateTime == null || Date < dateTime)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
             [XmlElement("Version"), DefaultValue(null)] public string Version { get; set; }
             [XmlElement("Date"), DefaultValue(null)] public DateTime Date { get; set; }
         }
