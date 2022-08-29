@@ -311,7 +311,7 @@ namespace PsdzClient
                     return false;
                 }
 
-                if (!versionInfo.IsMinDate(dbInfo.DateTime))
+                if (!versionInfo.IsMinVersion(dbInfo.Version, dbInfo.DateTime))
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "DetectVehicleBmwFast Vehicles series too old");
                     return false;
