@@ -500,6 +500,17 @@ namespace BmwFileReader
             return vehicleSeriesInfoData.TimeStamp ?? string.Empty;
         }
 
+        public static VehicleStructsBmw.VersionInfo GetVehicleSeriesInfoVersion()
+        {
+            VehicleStructsBmw.VehicleSeriesInfoData vehicleSeriesInfoData = ReadVehicleSeriesInfo();
+            if (vehicleSeriesInfoData == null)
+            {
+                return null;
+            }
+
+            return vehicleSeriesInfoData.Version;
+        }
+
         public static VehicleStructsBmw.VehicleSeriesInfo GetVehicleSeriesInfo(string series, DateTime? cDate, EdiabasNet ediabas)
         {
             string cDateStr = "No date";

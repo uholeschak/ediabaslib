@@ -633,7 +633,7 @@ namespace PsdzClient.Programming
                     enetConnection = new EdInterfaceEnet.EnetConnection(interfaceType, IPAddress.Parse(ipAddress));
                 }
 
-                PsdzContext.DetectVehicle = new DetectVehicle(ecuPath, enetConnection, useIcom, addTimeout);
+                PsdzContext.DetectVehicle = new DetectVehicle(ProgrammingService.PdszDatabase, ecuPath, enetConnection, useIcom, addTimeout);
                 bool detectResult = PsdzContext.DetectVehicle.DetectVehicleBmwFast(() =>
                 {
                     if (cts != null)

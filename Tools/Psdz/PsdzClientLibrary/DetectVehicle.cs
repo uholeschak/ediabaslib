@@ -47,6 +47,7 @@ namespace PsdzClient
 
         public delegate bool AbortDelegate();
 
+        private PdszDatabase _pdszDatabase;
         private bool _disposed;
         private EdiabasNet _ediabas;
         private bool _abortRequest;
@@ -63,8 +64,9 @@ namespace PsdzClient
         public string ILevelCurrent { get; private set; }
         public string ILevelBackup { get; private set; }
 
-        public DetectVehicle(string ecuPath, EdInterfaceEnet.EnetConnection enetConnection = null, bool allowAllocate = true, int addTimeout = 0)
+        public DetectVehicle(PdszDatabase pdszDatabase, string ecuPath, EdInterfaceEnet.EnetConnection enetConnection = null, bool allowAllocate = true, int addTimeout = 0)
         {
+            _pdszDatabase = pdszDatabase;
             EdInterfaceEnet edInterfaceEnet = new EdInterfaceEnet(false);
             _ediabas = new EdiabasNet
             {
@@ -293,6 +295,26 @@ namespace PsdzClient
                 {
                     ConstructYear = cDate.Value.ToString("yyyy", CultureInfo.InvariantCulture);
                     ConstructMonth = cDate.Value.ToString("MM", CultureInfo.InvariantCulture);
+                }
+
+                VehicleStructsBmw.VersionInfo versionInfo = VehicleInfoBmw.GetVehicleSeriesInfoVersion();
+                if (versionInfo == null)
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "Vehicle series no version info");
+                    return false;
+                }
+
+                PdszDatabase.DbInfo dbInfo = _pdszDatabase.GetDbInfo();
+                if (dbInfo == null)
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "DetectVehicleBmwFast no DbInfo");
+                    return false;
+                }
+
+                if (!versionInfo.IsMinDate(dbInfo.DateTime))
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "DetectVehicleBmwFast Vehicles series too old");
+                    return false;
                 }
 
                 VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(vehicleType, cDate, _ediabas);
