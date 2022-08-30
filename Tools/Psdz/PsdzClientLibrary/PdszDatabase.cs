@@ -2572,7 +2572,24 @@ namespace PsdzClient
             {
                 string rulesZipFile = Path.Combine(_databasePath, VehicleStructsBmw.RulesZipFile);
                 string rulesCsFile = Path.Combine(_databasePath, VehicleStructsBmw.RulesCsFile);
+                VehicleStructsBmw.RulesInfoData rulesInfoData = null;
                 if (File.Exists(rulesZipFile) && File.Exists(rulesCsFile))
+                {
+                    rulesInfoData = VehicleInfoBmw.ReadRulesInfoFromFile(_databasePath);
+                }
+
+                DbInfo dbInfo = GetDbInfo();
+                bool dataValid = true;
+                if (rulesInfoData != null)
+                {
+                    if (rulesInfoData.Version == null || !rulesInfoData.Version.IsIdentical(dbInfo?.Version, dbInfo?.DateTime))
+                    {
+                        log.ErrorFormat("SaveFaultRulesInfo Version mismatch");
+                        dataValid = false;
+                    }
+                }
+
+                if (rulesInfoData != null && dataValid)
                 {
                     return true;
                 }
@@ -2591,7 +2608,8 @@ namespace PsdzClient
                     return false;
                 }
 
-                VehicleStructsBmw.RulesInfoData rulesInfoData = new VehicleStructsBmw.RulesInfoData(faultRulesDict, ecuFuncRulesDict);
+                VehicleStructsBmw.VersionInfo versionInfo = new VehicleStructsBmw.VersionInfo(dbInfo?.Version, dbInfo?.DateTime);
+                rulesInfoData = new VehicleStructsBmw.RulesInfoData(versionInfo, faultRulesDict, ecuFuncRulesDict);
                 if (!SaveFaultRulesClass(rulesInfoData, rulesCsFile))
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo SaveFaultRulesFunction failed");
