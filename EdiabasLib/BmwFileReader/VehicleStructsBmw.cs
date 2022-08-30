@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Xml.Serialization;
 
 namespace BmwFileReader
@@ -68,6 +69,56 @@ namespace BmwFileReader
         [XmlType("VersionInfo")]
         public class VersionInfo
         {
+            public class VersionStringComparer : IComparer<string>
+            {
+                public int Compare(string x, string y)
+                {
+                    if (string.IsNullOrEmpty(x) || string.IsNullOrEmpty(y))
+                    {
+                        return 0;
+                    }
+
+                    if (string.Compare(x, y, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        return 0;
+                    }
+
+                    var version = new { First = GetVersion(x), Second = GetVersion(y) };
+                    int limit = Math.Max(version.First.Length, version.Second.Length);
+                    for (int i = 0; i < limit; i++)
+                    {
+                        int first = version.First.ElementAtOrDefault(i);
+                        int second = version.Second.ElementAtOrDefault(i);
+                        if (first > second)
+                        {
+                            return 1;
+                        }
+
+                        if (second > first)
+                        {
+                            return -1;
+                        }
+                    }
+                    return 0;
+                }
+
+                private int[] GetVersion(string version)
+                {
+                    return (from part in version.Split('.')
+                        select Parse(part)).ToArray();
+                }
+
+                private int Parse(string version)
+                {
+                    if (!int.TryParse(version, out var result))
+                    {
+                        return 0;
+                    }
+
+                    return result;
+                }
+            }
+
             public VersionInfo() : this(null, null)
             {
             }
@@ -83,8 +134,14 @@ namespace BmwFileReader
 
             public bool IsIdentical(string version, DateTime? dateTime)
             {
-                if (Version == null || version == null ||
-                    string.Compare(Version, version, StringComparison.OrdinalIgnoreCase) != 0)
+                if (Version == null || version == null)
+                {
+                    return false;
+                }
+
+                VersionStringComparer versionComparer = new VersionStringComparer();
+                int compareResult = versionComparer.Compare(version, Version);
+                if (compareResult != 0)
                 {
                     return false;
                 }
@@ -106,9 +163,9 @@ namespace BmwFileReader
                         return false;
                     }
 
-                    Version versionArg = new Version(version);
-                    Version versionThis = new Version(Version);
-                    if (versionThis < versionArg)
+                    VersionStringComparer versionComparer = new VersionStringComparer();
+                    int compareResult = versionComparer.Compare(Version, version);
+                    if (compareResult < 0)
                     {
                         return false;
                     }
