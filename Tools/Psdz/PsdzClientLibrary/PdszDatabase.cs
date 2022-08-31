@@ -1279,6 +1279,7 @@ namespace PsdzClient
         };
 
         // ToDo: Check on update
+        // Function ResolveBatteryType
         private static List<string> ereiheOfVehicleWithLfpBattery = new List<string>
         {
             "F80",
