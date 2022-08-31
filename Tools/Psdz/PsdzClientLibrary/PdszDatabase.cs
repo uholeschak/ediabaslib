@@ -2688,7 +2688,7 @@ public class RulesInfo
 {{
     public const string DatabaseVersion = ""{dbInfo.Version}"";
 
-    public const string DatabaseDate = {dbInfo.DateTime};
+    public const DateTime DatabaseDate = DateTime.FromBinary({dbInfo.DateTime.ToBinary()});
 
     public RuleEvalBmw RuleEvalClass {{ get; private set; }}
 
