@@ -26,6 +26,10 @@ namespace PsdzClientLibrary
 
         public static bool IsPhev(this IVehicle vec) => vec.HasHybridMark("PHEV");
 
+        public static bool IsHybr(this IVehicle vec) => vec.HasHybridMark("HYBR");
+
+        public static bool IsErex(this IVehicle vec) => vec.HasHybridMark("EREX");
+
         private static bool HasEcu(this IVehicle vec, string sgbd) => vec.ECU != null && vec.ECU.Any<IEcu>((Func<IEcu, bool>)(ecu =>
         {
             string ecuSgbd = ecu.ECU_SGBD;

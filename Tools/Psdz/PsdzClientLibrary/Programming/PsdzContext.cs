@@ -620,7 +620,7 @@ namespace PsdzClient.Programming
                 }
             }
 
-            Vehicle.WithLfpBattery = programmingService.PdszDatabase.WithLfpBattery(Vehicle);
+            Vehicle.WithLfpBattery = programmingService.PdszDatabase.ResolveBatteryType(Vehicle) == PdszDatabase.BatteryEnum.LFP;
             EcuCharacteristics = VehicleLogistics.GetCharacteristics(Vehicle);
             return true;
         }

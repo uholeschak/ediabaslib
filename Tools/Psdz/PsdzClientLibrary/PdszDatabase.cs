@@ -19,6 +19,7 @@ using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 using log4net;
 using PsdzClient.Core;
+using PsdzClientLibrary;
 
 namespace PsdzClient
 {
@@ -66,6 +67,13 @@ namespace PsdzClient
             VarGroupId,
             VarPrgEcuId,
             SwiRegister,
+        }
+
+        public enum BatteryEnum
+        {
+            Pb,
+            LFP,
+            PbNew
         }
 
         public class EcuTranslation
@@ -1276,24 +1284,6 @@ namespace PsdzClient
             "99999999706",
             "99999999707",
             "99999999708"
-        };
-
-        // ToDo: Check on update
-        // Function ResolveBatteryType
-        private static List<string> ereiheOfVehicleWithLfpBattery = new List<string>
-        {
-            "F80",
-            "F82",
-            "F83",
-            "F90",
-            "F91",
-            "F92",
-            "F93",
-            "G80",
-            "G82",
-            "G83",
-            "G81",
-            "G90"
         };
 
         public delegate bool ProgressDelegate(bool startConvert, int progress =-1, int failures = -1);
@@ -3677,20 +3667,22 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             return characteristicsList;
         }
 
-        public bool WithLfpBattery(Vehicle vehicle)
+        // ToDo: Check on update
+        public BatteryEnum ResolveBatteryType(Vehicle vecInfo)
         {
-            string series = vehicle?.Ereihe ?? string.Empty;
-            log.InfoFormat("WithLfpBattery : Series={0}", series);
-
-            if (string.IsNullOrEmpty(series))
+            if (new List<string>
+                {
+                    "F80", "F82", "F83", "F90", "F91", "F92", "F93", "G80", "G81", "G82",
+                    "G83", "G90"
+                }.Contains(vecInfo.Ereihe))
             {
-                return false;
+                return BatteryEnum.LFP;
             }
-
-            bool result = ereiheOfVehicleWithLfpBattery.Contains(series.ToUpperInvariant());
-            log.InfoFormat("WithLfpBattery : LPF={0}", result);
-
-            return result;
+            if (!vecInfo.IsBev() && !vecInfo.IsPhev() && !vecInfo.IsHybr() && !vecInfo.IsErex() && !vecInfo.Ereihe.Equals("I01") && !vecInfo.hasSA("1CE"))
+            {
+                return BatteryEnum.Pb;
+            }
+            return BatteryEnum.PbNew;
         }
 
         public bool IsVehicleAnAlpina(Vehicle vehicle)
