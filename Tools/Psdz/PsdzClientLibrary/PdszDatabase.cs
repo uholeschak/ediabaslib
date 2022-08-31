@@ -2673,23 +2673,34 @@ namespace PsdzClient
                     return false;
                 }
 
+                DbInfo dbInfo = GetDbInfo();
+                if (dbInfo == null)
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "SaveFaultRulesFunction GetDbInfo failed");
+                    return false;
+                }
+
                 StringBuilder sb = new StringBuilder();
                 sb.Append(
-@"using BmwFileReader;
+$@"using BmwFileReader;
 
 public class RulesInfo
-{
-    public RuleEvalBmw RuleEvalClass { get; private set; }
+{{
+    public const string DatabaseVersion = ""{dbInfo.Version}"";
+
+    public const string DatabaseDate = {dbInfo.DateTime};
+
+    public RuleEvalBmw RuleEvalClass {{ get; private set; }}
 
     public RulesInfo(RuleEvalBmw ruleEvalBmw)
-    {
+    {{
         RuleEvalClass = ruleEvalBmw;
-    }
+    }}
 
     public bool IsFaultRuleValid(string id)
-    {
+    {{
         switch (id.Trim())
-        {
+        {{
 ");
                 foreach (KeyValuePair<string, VehicleStructsBmw.RuleInfo> ruleInfo in rulesInfoData.FaultRuleDict)
                 {
