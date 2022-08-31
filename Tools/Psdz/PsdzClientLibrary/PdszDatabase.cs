@@ -14,7 +14,6 @@ using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using BmwFileReader;
-using EdiabasLib;
 using HarmonyLib;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
@@ -1300,6 +1299,7 @@ namespace PsdzClient
 
         private bool _disposed;
         private string _databasePath;
+        private string _databaseExtractPath;
         private string _testModulePath;
         private string _frameworkPath;
         private SQLiteConnection _mDbConnection;
@@ -1376,6 +1376,19 @@ namespace PsdzClient
         public PdszDatabase(string istaFolder)
         {
             _databasePath = Path.Combine(istaFolder, "SQLiteDBs");
+            _databaseExtractPath = Path.Combine(_databasePath, "Extract");
+            if (!Directory.Exists(_databaseExtractPath))
+            {
+                try
+                {
+                    Directory.CreateDirectory(_databaseExtractPath);
+                }
+                catch (Exception e)
+                {
+                    log.InfoFormat("PdszDatabase CreateDirectory Exception: {0}", e.Message);
+                }
+            }
+
             _testModulePath = Path.Combine(istaFolder, "Testmodule");
             _frameworkPath = Path.Combine(istaFolder, "TesterGUI", "bin","ReleaseMod");
             if (!Directory.Exists(_frameworkPath))
@@ -1659,7 +1672,7 @@ namespace PsdzClient
             {
                 TestModules testModules = null;
                 XmlSerializer serializer = new XmlSerializer(typeof(TestModules));
-                string testModulesZipFile = Path.Combine(_databasePath, TestModulesZipFile);
+                string testModulesZipFile = Path.Combine(_databaseExtractPath, TestModulesZipFile);
                 if (File.Exists(testModulesZipFile))
                 {
                     try
@@ -2149,7 +2162,7 @@ namespace PsdzClient
             {
                 EcuCharacteristicsData ecuCharacteristicsData = null;
                 XmlSerializer serializer = new XmlSerializer(typeof(EcuCharacteristicsData));
-                string ecuCharacteristicsZipFile = Path.Combine(_databasePath, EcuCharacteristicsZipFile);
+                string ecuCharacteristicsZipFile = Path.Combine(_databaseExtractPath, EcuCharacteristicsZipFile);
                 if (File.Exists(ecuCharacteristicsZipFile))
                 {
                     try
@@ -2331,7 +2344,7 @@ namespace PsdzClient
             {
                 VehicleStructsBmw.VehicleSeriesInfoData vehicleSeriesInfoData = null;
                 XmlSerializer serializer = new XmlSerializer(typeof(VehicleStructsBmw.VehicleSeriesInfoData));
-                string vehicleSeriesFile = Path.Combine(_databasePath, VehicleStructsBmw.VehicleSeriesXmlFile);
+                string vehicleSeriesFile = Path.Combine(_databaseExtractPath, VehicleStructsBmw.VehicleSeriesXmlFile);
                 try
                 {
                     if (File.Exists(vehicleSeriesFile))
@@ -2570,12 +2583,12 @@ namespace PsdzClient
         {
             try
             {
-                string rulesZipFile = Path.Combine(_databasePath, VehicleStructsBmw.RulesZipFile);
-                string rulesCsFile = Path.Combine(_databasePath, VehicleStructsBmw.RulesCsFile);
+                string rulesZipFile = Path.Combine(_databaseExtractPath, VehicleStructsBmw.RulesZipFile);
+                string rulesCsFile = Path.Combine(_databaseExtractPath, VehicleStructsBmw.RulesCsFile);
                 VehicleStructsBmw.RulesInfoData rulesInfoData = null;
                 if (File.Exists(rulesZipFile) && File.Exists(rulesCsFile))
                 {
-                    rulesInfoData = VehicleInfoBmw.ReadRulesInfoFromFile(_databasePath);
+                    rulesInfoData = VehicleInfoBmw.ReadRulesInfoFromFile(_databaseExtractPath);
                 }
 
                 DbInfo dbInfo = GetDbInfo();
