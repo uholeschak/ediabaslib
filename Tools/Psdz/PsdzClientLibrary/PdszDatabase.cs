@@ -1183,15 +1183,17 @@ namespace PsdzClient
         [XmlType("TestModules")]
         public class TestModules
         {
-            public TestModules() : this(null)
+            public TestModules() : this(null, null)
             {
             }
 
-            public TestModules(SerializableDictionary<string, TestModuleData> moduleDataDict)
+            public TestModules(VehicleStructsBmw.VersionInfo versionInfo, SerializableDictionary<string, TestModuleData> moduleDataDict)
             {
+                Version = versionInfo;
                 ModuleDataDict = moduleDataDict;
             }
 
+            [XmlElement("Version"), DefaultValue(null)] public VehicleStructsBmw.VersionInfo Version { get; set; }
             [XmlElement("ModuleDataDict"), DefaultValue(null)] public SerializableDictionary<string, TestModuleData> ModuleDataDict { get; set; }
         }
 
@@ -1705,7 +1707,18 @@ namespace PsdzClient
                     }
                 }
 
-                if (testModules == null)
+                bool dataValid = true;
+                if (testModules != null)
+                {
+                    DbInfo dbInfo = GetDbInfo();
+                    if (testModules.Version == null || !testModules.Version.IsIdentical(dbInfo?.Version, dbInfo?.DateTime))
+                    {
+                        log.ErrorFormat("GenerateTestModuleData Version mismatch");
+                        dataValid = false;
+                    }
+                }
+
+                if (testModules == null || !dataValid)
                 {
                     log.InfoFormat("GenerateTestModuleData Converting test modules");
                     if (!IsExecutable())
@@ -1835,7 +1848,9 @@ namespace PsdzClient
                     return null;
                 }
 
-                return new TestModules(moduleDataDict);
+                DbInfo dbInfo = GetDbInfo();
+                VehicleStructsBmw.VersionInfo versionInfo = new VehicleStructsBmw.VersionInfo(dbInfo?.Version, dbInfo?.DateTime);
+                return new TestModules(versionInfo, moduleDataDict);
             }
             catch (Exception e)
             {
