@@ -58,6 +58,8 @@ namespace BmwFileReader
                 return ToString("");
             }
 
+            [XmlElement("DbVer"), DefaultValue("")] public string DatabaseVersion { get; set; }
+            [XmlElement("DbDat")] public DateTime DatabaseDate { get; set; }
             [XmlArray("EFCLL"), DefaultValue(null)] public List<EcuFaultCodeLabel> EcuFaultCodeLabelList { get; set; }
             [XmlArray("EFMLL"), DefaultValue(null)] public List<EcuFaultModeLabel> EcuFaultModeLabelList { get; set; }
             [XmlArray("EECLL"), DefaultValue(null)] public List<EcuEnvCondLabel> EcuEnvCondLabelList { get; set; }
