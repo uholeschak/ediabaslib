@@ -18,6 +18,19 @@ namespace ExtractEcuFunctions
     {
         const string DbPassword = "6505EFBDC3E5F324";
 
+        public class DbInfo
+        {
+            public DbInfo(string version, DateTime dateTime)
+            {
+                Version = version;
+                DateTime = dateTime;
+            }
+
+            public string Version { get; set; }
+
+            public DateTime DateTime { get; set; }
+        }
+
         private static List<string> LangList = new List<string>
         {
             "de", "en", "fr", "th",
@@ -225,8 +238,11 @@ namespace ExtractEcuFunctions
                     mDbConnection.Open();
 
                     outTextWriter?.WriteLine("*** Fault data {0} ***", language);
+                    DbInfo dbInfo = GetDbInfo(mDbConnection);
                     EcuFunctionStructs.EcuFaultData ecuFaultData = new EcuFunctionStructs.EcuFaultData
                     {
+                        DatabaseVersion = dbInfo.Version,
+                        DatabaseDate = dbInfo.DateTime,
                         EcuFaultCodeLabelList = GetFaultCodeLabels(mDbConnection, language),
                         EcuFaultModeLabelList = GetFaultModeLabels(mDbConnection, language),
                         EcuEnvCondLabelList = GetEnvCondLabels(mDbConnection, language)
@@ -481,6 +497,27 @@ namespace ExtractEcuFunctions
                 outTextWriter?.WriteLine(e);
                 return false;
             }
+        }
+
+        private static DbInfo GetDbInfo(SQLiteConnection mDbConnection)
+        {
+            DbInfo dbInfo = null;
+            string sql = @"SELECT VERSION, CREATIONDATE FROM RG_VERSION";
+            using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
+            {
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        string version = reader["VERSION"].ToString().Trim();
+                        DateTime dateTime = reader.GetDateTime(1);
+                        dbInfo = new DbInfo(version, dateTime);
+                        break;
+                    }
+                }
+            }
+
+            return dbInfo;
         }
 
         private static EcuFunctionStructs.EcuVariant GetEcuVariant(SQLiteConnection mDbConnection, string ecuName)
