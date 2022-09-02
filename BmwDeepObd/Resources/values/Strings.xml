@@ -164,6 +164,7 @@
   <string name="compress_trace_file_failed">Compressing trace file failed.</string>
   <string name="send_trace_file_failed">Sending trace file failed.</string>
   <string name="send_trace_file_failed_retry">Sending trace file failed.\nPlease check your network connection.\nDo you want to retry sending?</string>
+  <string name="send_trace_backup_info">You could retry sending later, with the following function of the main menu:\nResend trace file.</string>
   <string name="send_trace_file_failed_message">Do you want to retry sending?</string>
   <string name="send_trace_message">Send optional information</string>
   <string name="send_trace_email">E-mail:</string>
