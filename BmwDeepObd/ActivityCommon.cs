@@ -5613,7 +5613,10 @@ namespace BmwDeepObd
 
                                 if (!ignoreDismiss)
                                 {
-                                    StoreBackupTraceFile(appDataDir, traceFile);
+                                    if (StoreBackupTraceFile(appDataDir, traceFile))
+                                    {
+                                        ShowAlert(_activity.GetString(Resource.String.send_trace_backup_info), Resource.String.alert_title_info);
+                                    }
                                 }
                             };
                         }

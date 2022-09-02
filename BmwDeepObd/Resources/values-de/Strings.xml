@@ -190,6 +190,7 @@
   <string name="send_trace_file_failed">Trace-Datei senden fehlgeschlagen.</string>
   <string name="send_trace_file_failed_retry">Trace-Datei senden fehlgeschlagen.\nBitte überprüfen Sie Ihre Netzwerkverbindung.\nWollen Sie das Senden wiederholen?</string>
   <string name="send_trace_file_failed_message">Wollen Sie das Senden wiederholen?</string>
+  <string name="send_trace_backup_info">Sie können über folgende Haupmenüfunktion das Senden später noch wiederholen:\nTrace Datei erneut senden.</string>
   <string name="send_trace_message">Optionale Informationen senden</string>
   <string name="send_trace_email">E-Mail:</string>
   <string name="send_trace_info">Zusätzliche Informationen (z.B. Fahrzeug- und Adaptertyp, Randbedingungen):</string>

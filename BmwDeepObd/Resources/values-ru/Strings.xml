@@ -194,6 +194,8 @@
   <string name="send_trace_file_failed">Не удалось отправить Trace-файл.</string>
   <string name="send_trace_file_failed_retry">Не удалось отправить Trace-файл.\nПожалуйста, проверьте подключение к сети.\nХотите повторить отправку?</string>
   <string name="send_trace_file_failed_message">Хотите повторить отправку?</string>
+  <!--Translate-->
+  <string name="send_trace_backup_info">Вы можете повторить отправку позже, используя следующую функцию главного меню:\nПовторно отправить файл трассировки.</string>
   <string name="send_trace_message">Отсылать дополнительную информацию</string>
   <string name="send_trace_email">Электронная почта:</string>
   <string name="send_trace_info">Дополнительная информация (например тип автомобиля и адаптера, ограничения):</string>
