@@ -3308,6 +3308,8 @@ namespace BmwDeepObd
             {   // OnDestroy already executed
                 return;
             }
+
+            long responseCount = ActivityCommon.EdiabasThread.GetResponseCount();
             StopEdiabasThread(true);
             UpdateDisplay();
 
@@ -3315,7 +3317,8 @@ namespace BmwDeepObd
             _translatedList = null;
 
             UpdateCheck();
-            if (_instanceData.CommErrorsCount > ActivityCommon.MinSendCommErrors && _instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir))
+            if (_instanceData.CommErrorsCount > ActivityCommon.MinSendCommErrors && responseCount > 0 &&
+                _instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir))
             {
                 _activityCommon.RequestSendTraceFile(_instanceData.AppDataPath, _instanceData.TraceDir, GetType());
             }
