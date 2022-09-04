@@ -180,7 +180,6 @@ namespace EdiabasLib
         protected InterfaceReceiveDataDelegate InterfaceReceiveDataFuncInt;
         protected InterfaceSendPulseDelegate InterfaceSendPulseFuncProtected;
         protected InterfaceSendPulseDelegate InterfaceSendPulseFuncInt;
-        protected Stopwatch StopWatch = new Stopwatch();
         protected byte[] KeyBytesProtected = ByteArray0;
         protected byte[] StateProtected = new byte[2];
         protected byte[] SendBuffer = new byte[TransBufferSize];
