@@ -476,6 +476,11 @@ namespace BmwDeepObd
 
         public long GetResponseCount()
         {
+            if (Ediabas?.EdInterfaceClass == null)
+            {
+                return 0;
+            }
+
             return Ediabas.EdInterfaceClass.ResponseCount;
         }
 
