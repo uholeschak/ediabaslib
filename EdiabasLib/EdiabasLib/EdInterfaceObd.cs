@@ -2843,12 +2843,19 @@ namespace EdiabasLib
             {
                 return true;
             }
+
             // add extra delay for internal signal transitions
             timeout += AddRecTimeout;
             timeoutTelEnd += AddRecTimeout;
             if (UseExtInterfaceFunc)
             {
-                return InterfaceReceiveDataFuncUse(receiveData, offset, length, timeout, timeoutTelEnd, logResponse ? EdiabasProtected : null);
+                bool result = InterfaceReceiveDataFuncUse(receiveData, offset, length, timeout, timeoutTelEnd, logResponse ? EdiabasProtected : null);
+                if (result)
+                {
+                    IncResponseCount(1);
+                }
+
+                return result;
             }
 #if USE_SERIAL_PORT
             try
@@ -2915,6 +2922,8 @@ namespace EdiabasLib
             {
                 return false;
             }
+
+            IncResponseCount(1);
             return true;
 #else
             return false;

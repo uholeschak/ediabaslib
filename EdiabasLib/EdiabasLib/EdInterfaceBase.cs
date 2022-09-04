@@ -42,6 +42,8 @@ namespace EdiabasLib
         public static int BaudAuto = 2;
 
         private bool _disposed;
+        private long _responseCounter;
+        private object _responseCounterLock = new object();
         protected EdiabasNet EdiabasProtected;
         protected object ConnectParameterProtected;
         protected object MutexLock = new object();
@@ -139,6 +141,7 @@ namespace EdiabasLib
             CommParameterProtected = null;
             CommAnswerLenProtected[0] = 0;
             CommAnswerLenProtected[1] = 0;
+            ResponseCount = 0;
             return true;
         }
 
@@ -225,6 +228,33 @@ namespace EdiabasLib
         public abstract Int64 GetPort(UInt32 index);
 
         public abstract bool Connected { get; }
+
+        public virtual long ResponseCount
+        {
+            get
+            {
+                lock (_responseCounterLock)
+                {
+                    return _responseCounter;
+                }
+            }
+            set
+            {
+                lock (_responseCounterLock)
+                {
+                    _responseCounter = value;
+                }
+            }
+        }
+
+        public virtual long IncResponseCount(long offset)
+        {
+            lock (_responseCounterLock)
+            {
+                _responseCounter += offset;
+                return _responseCounter;
+            }
+        }
 
         public bool EnableTransmitCache
         {
