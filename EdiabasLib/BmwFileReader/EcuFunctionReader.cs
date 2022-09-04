@@ -35,7 +35,22 @@ namespace BmwFileReader
 
         public bool Init(string language)
         {
-            if (GetEcuFaultDataCached(language) == null)
+            EcuFunctionStructs.EcuFaultData ecuFaultData = GetEcuFaultDataCached(language);
+            if (ecuFaultData == null)
+            {
+                return false;
+            }
+
+            try
+            {
+                DateTime rulesInfoDate = DateTime.Parse(RulesInfo.DatabaseDate, CultureInfo.InvariantCulture);
+                VehicleStructsBmw.VersionInfo rulesInfoVersion = new VehicleStructsBmw.VersionInfo(RulesInfo.DatabaseVersion, rulesInfoDate);
+                if (!rulesInfoVersion.IsMinVersion(ecuFaultData.DatabaseVersion, ecuFaultData.DatabaseDate))
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
             {
                 return false;
             }
