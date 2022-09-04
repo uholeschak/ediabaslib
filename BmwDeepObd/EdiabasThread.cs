@@ -474,6 +474,11 @@ namespace BmwDeepObd
             return _stopThread;
         }
 
+        public long GetResponseCount()
+        {
+            return Ediabas.EdInterfaceClass.ResponseCount;
+        }
+
         // ReSharper disable once UnusedMethodReturnValue.Local
         private bool OpenDataLog(JobReader.PageInfo pageInfo)
         {

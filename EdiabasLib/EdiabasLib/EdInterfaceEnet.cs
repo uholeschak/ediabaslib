@@ -2163,6 +2163,8 @@ namespace EdiabasLib
             {
                 return false;
             }
+
+            IncResponseCount(1);
             return true;
         }
 
