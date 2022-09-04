@@ -396,7 +396,7 @@ namespace BmwDeepObd
         public const ThemeType ThemeDefault = ThemeType.Dark;
         public const int FileIoRetries = 10;
         public const int FileIoRetryDelay = 1000;
-        public const int MinSendCommErrors = 10;
+        public const int MinSendCommErrors = 3;
         public const SslProtocols DefaultSslProtocols = SslProtocols.None;
         public const string PrimaryVolumeName = "primary";
         public const string MtcBtAppName = @"com.microntek.bluetooth";
