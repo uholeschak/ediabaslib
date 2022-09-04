@@ -935,7 +935,12 @@ namespace BmwDeepObd
 
         private bool SendTraceFile(EventHandler<EventArgs> handler)
         {
-            long responseCount = _ediabas.EdInterfaceClass.ResponseCount;
+            long responseCount = 0;
+            if (_ediabas?.EdInterfaceClass != null)
+            {
+                responseCount = _ediabas.EdInterfaceClass.ResponseCount;
+            }
+
             if (_instanceData.CommErrorsCount >= ActivityCommon.MinSendCommErrors && responseCount > 0 &&
                 _instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir))
             {
