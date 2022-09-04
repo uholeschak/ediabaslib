@@ -84,7 +84,7 @@ The application has a configuration menu with the following options:
 * _Resend trace file_: Retry sending of the last trace file. Only visible if sending has failed.
 * _Global settings_: Opens the [global app settings](GlobalSettings.md) page.
 * _Online help_: Displays this help page.
-* _App info_: Displays the app version and unique id.
+* _App info_: Displays the app version and unique app id.
 
 ![Menu](Deep_OBD_for_BMW_and_VAG_AppMenuSmall.png)
 
