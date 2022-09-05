@@ -7,7 +7,6 @@ namespace BmwDeepObd
         ResizeableActivity = true,
         LargeHeap = true,
         UsesCleartextTraffic = true,
-        AllowBackup = false,
         Name = ActivityCommon.AppNameSpace + ".DeepObd"
         )]
     [Android.App.MetaData("android.webkit.WebView.EnableSafeBrowsing", Value = "false")]
