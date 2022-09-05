@@ -109,6 +109,7 @@ namespace EdiabasLib
 #if USE_SERIAL_PORT
         protected static System.IO.Ports.SerialPort SerialPort;
         protected static AutoResetEvent CommReceiveEvent;
+        protected Stopwatch StopWatch = new Stopwatch();
 #endif
         protected static AutoResetEvent CommThreadReqEvent;
         protected static AutoResetEvent CommThreadResEvent;

@@ -44,8 +44,19 @@ namespace BmwFileReader
             try
             {
                 DateTime rulesInfoDate = DateTime.Parse(RulesInfo.DatabaseDate, CultureInfo.InvariantCulture);
-                VehicleStructsBmw.VersionInfo rulesInfoVersion = new VehicleStructsBmw.VersionInfo(RulesInfo.DatabaseVersion, rulesInfoDate);
-                if (!rulesInfoVersion.IsMinVersion(ecuFaultData.DatabaseVersion, ecuFaultData.DatabaseDate))
+                VehicleStructsBmw.VersionInfo rulesVersionInfo = new VehicleStructsBmw.VersionInfo(RulesInfo.DatabaseVersion, rulesInfoDate);
+                if (!rulesVersionInfo.IsMinVersion(ecuFaultData.DatabaseVersion, ecuFaultData.DatabaseDate))
+                {
+                    return false;
+                }
+
+                VehicleStructsBmw.VersionInfo seriesVersionInfo = VehicleInfoBmw.GetVehicleSeriesInfoVersion();
+                if (seriesVersionInfo == null)
+                {
+                    return false;
+                }
+
+                if (!seriesVersionInfo.IsMinVersion(ecuFaultData.DatabaseVersion, ecuFaultData.DatabaseDate))
                 {
                     return false;
                 }
