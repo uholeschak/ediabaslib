@@ -3707,7 +3707,16 @@ namespace BmwDeepObd
                                     break;
                             }
 
-                            tempResultList.Add(new TableResultItem(string.Format(GetString(Resource.String.error_reading_errors), state), null));
+                            StringBuilder sbInfo = new StringBuilder();
+                            sbInfo.Append(string.Format(GetString(Resource.String.error_reading_errors), state));
+                            bool relevantOnly = ActivityCommon.EcuFunctionsActive && ActivityCommon.ShowOnlyRelevantErrors;
+                            if (relevantOnly)
+                            {
+                                sbInfo.Append("\r\n");
+                                sbInfo.Append(GetString(Resource.String.error_reading_relevant_only));
+                            }
+
+                            tempResultList.Add(new TableResultItem(sbInfo.ToString(), null));
                         }
                         else
                         {
