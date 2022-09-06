@@ -12,6 +12,7 @@ using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using Android.App.Backup;
 using Android.Content;
 using Android.Content.PM;
 using Android.Content.Res;
@@ -441,6 +442,7 @@ namespace BmwDeepObd
         private IMenu _optionsMenu;
         private Timer _autoHideTimer;
         private Handler _updateHandler;
+        private BackupManager _backupManager;
         private TabLayout _tabLayout;
         private ViewPager2 _viewPager;
         private TabsFragmentStateAdapter _fragmentStateAdapter;
@@ -555,6 +557,7 @@ namespace BmwDeepObd
             StoreLastAppState(LastAppState.Init);
 
             _updateHandler = new Handler(Looper.MainLooper);
+            _backupManager = new BackupManager(this);
             _imageBackground = FindViewById<ImageView>(Resource.Id.imageBackground);
 
             if (_httpClient == null)
@@ -3012,6 +3015,7 @@ namespace BmwDeepObd
                     }
                 }
 
+                _backupManager?.DataChanged();
                 return true;
             }
             catch (Exception ex)
