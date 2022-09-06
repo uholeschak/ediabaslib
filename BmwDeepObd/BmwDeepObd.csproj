@@ -356,6 +356,7 @@
     <Compile Include="BaseActivity.cs" />
     <Compile Include="BmwActuatorActivity.cs" />
     <Compile Include="CanAdapterActivity.cs" />
+    <Compile Include="CustomBackupAgent.cs" />
     <Compile Include="CustomProgressDialog.cs" />
     <Compile Include="ExpansionAlarmReceiver.cs" />
     <Compile Include="ExpansionDownloaderActivity.cs" />
