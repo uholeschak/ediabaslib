@@ -554,11 +554,11 @@ namespace BmwDeepObd
             GetSettings();
             _activityCommon.SetPreferredNetworkInterface();
 
-            StoreLastAppState(LastAppState.Init);
-
             _updateHandler = new Handler(Looper.MainLooper);
             _backupManager = new BackupManager(this);
             _imageBackground = FindViewById<ImageView>(Resource.Id.imageBackground);
+
+            StoreLastAppState(LastAppState.Init);
 
             if (_httpClient == null)
             {
