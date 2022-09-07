@@ -8,7 +8,7 @@
     <exclude domain="file" path="LogConfigTool"/>
     <exclude domain="file" path="LogEdiabasTool"/>
     <exclude domain="file" path="TraceBackup"/>
-    <include domain="external" path="./"/>
+    <include domain="external" path="."/>
     <exclude domain="external" path="Ecu"/>
     <exclude domain="external" path="Download"/>
     <exclude domain="external" path="Log"/>
