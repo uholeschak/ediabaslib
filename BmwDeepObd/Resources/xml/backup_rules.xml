@@ -5,12 +5,14 @@
         <include domain="file" path="."/>
         <exclude domain="file" path="Ecu"/>
         <exclude domain="file" path="Download"/>
+        <exclude domain="file" path="Log"/>
         <exclude domain="file" path="LogConfigTool"/>
         <exclude domain="file" path="LogEdiabasTool"/>
         <exclude domain="file" path="TraceBackup"/>
         <include domain="external" path="."/>
         <exclude domain="external" path="Ecu"/>
         <exclude domain="external" path="Download"/>
+        <exclude domain="external" path="Log"/>
         <exclude domain="external" path="LogConfigTool"/>
         <exclude domain="external" path="LogEdiabasTool"/>
         <exclude domain="external" path="TraceBackup"/>
