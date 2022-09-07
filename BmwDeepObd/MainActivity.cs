@@ -3702,6 +3702,10 @@ namespace BmwDeepObd
                                     state = GetString(Resource.String.error_reading_state_init);
                                     break;
 
+                                case EdiabasThread.UpdateState.Error:
+                                    state = GetString(Resource.String.error_reading_state_error);
+                                    break;
+
                                 case EdiabasThread.UpdateState.DetectVehicle:
                                     state = string.Format(GetString(Resource.String.error_reading_state_detect), updateProgress);
                                     break;
