@@ -26,6 +26,7 @@ namespace BmwDeepObd
         public enum UpdateState
         {
             Init,
+            Error,
             DetectVehicle,
             ReadErrors
         }
@@ -890,12 +891,17 @@ namespace BmwDeepObd
                     }
                     catch (Exception ex)
                     {
-                        string exText = String.Empty;
+                        string exText = string.Empty;
                         if (!AbortEdiabasJob())
                         {
                             exText = EdiabasNet.GetExceptionText(ex);
                         }
                         errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, ecuInfo.Sgbd, string.Empty, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, false, true, null, null, exText));
+                        lock (DataLock)
+                        {
+                            UpdateProgressState = UpdateState.Error;
+                        }
+                        DataUpdatedEvent();
                         continue;
                     }
 
@@ -1077,6 +1083,11 @@ namespace BmwDeepObd
                             exText = EdiabasNet.GetExceptionText(ex);
                         }
                         errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, ecuInfo.Sgbd, string.Empty, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, false, true, null, null, exText));
+                        lock (DataLock)
+                        {
+                            UpdateProgressState = UpdateState.Error;
+                        }
+                        DataUpdatedEvent();
                         continue;
                     }
                     if (EdiabasErrorReportList == null)
@@ -1118,7 +1129,7 @@ namespace BmwDeepObd
                     }
                     catch (Exception ex)
                     {
-                        string exText = String.Empty;
+                        string exText = string.Empty;
                         if (!AbortEdiabasJob())
                         {
                             exText = EdiabasNet.GetExceptionText(ex);
@@ -1129,7 +1140,7 @@ namespace BmwDeepObd
                             EdiabasErrorReportList = null;
                             EdiabasErrorMessage = exText;
                             ResultPageInfo = pageInfo;
-                            UpdateProgressState = UpdateState.Init;
+                            UpdateProgressState = UpdateState.Error;
                             UpdateProgress = 0;
                         }
                         return false;
@@ -1283,7 +1294,7 @@ namespace BmwDeepObd
             catch (Exception ex)
             {
                 _ediabasInitReq = true;
-                string exText = String.Empty;
+                string exText = string.Empty;
                 if (!AbortEdiabasJob())
                 {
                     exText = EdiabasNet.GetExceptionText(ex);
@@ -1294,7 +1305,7 @@ namespace BmwDeepObd
                     EdiabasErrorReportList = null;
                     EdiabasErrorMessage = exText;
                     ResultPageInfo = pageInfo;
-                    UpdateProgressState = UpdateState.Init;
+                    UpdateProgressState = UpdateState.Error;
                     UpdateProgress = 0;
                 }
                 return false;
@@ -1310,7 +1321,7 @@ namespace BmwDeepObd
                 EdiabasErrorReportList = null;
                 EdiabasErrorMessage = string.Empty;
                 ResultPageInfo = pageInfo;
-                UpdateProgressState = UpdateState.Init;
+                UpdateProgressState = UpdateState.Error;
                 UpdateProgress = 0;
             }
             return true;
