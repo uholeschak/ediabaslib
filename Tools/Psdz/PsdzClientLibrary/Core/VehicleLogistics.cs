@@ -919,5 +919,11 @@ namespace PsdzClient.Core
                     return BNType.BN2020;
             }
         }
+
+        public static string getBrSgbd(Vehicle vecInfo)
+        {
+            string text = GetCharacteristics(vecInfo)?.brSgbd;
+            return text;
+        }
     }
 }

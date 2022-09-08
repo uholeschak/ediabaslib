@@ -563,6 +563,7 @@ namespace PsdzClient.Programming
             Vehicle.SetVINRangeTypeFromVINRanges();
             Vehicle.BNType = VehicleLogistics.getBNType(Vehicle);
             Vehicle.BNMixed = VehicleLogistics.getBNMixed(Vehicle.Ereihe, null);
+            Vehicle.MainSeriesSgbd = VehicleLogistics.getBrSgbd(Vehicle);
 
             CharacteristicExpression.EnumBrand brand = CharacteristicExpression.EnumBrand.BMWBMWiMINI;
             if (Vehicle.IsMotorcycle())
