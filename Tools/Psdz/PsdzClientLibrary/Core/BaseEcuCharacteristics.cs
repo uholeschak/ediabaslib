@@ -207,14 +207,14 @@ namespace PsdzClient.Core
                                 }
                             }
                         }
-                        catch (Exception exception)
+                        catch (Exception)
                         {
                             //Log.WarningException(GetType().Name + ".GetAvailableSALAPAs()", exception);
                         }
                     }
                     return observableCollectionEx;
                 }
-                catch (Exception exception2)
+                catch (Exception)
                 {
                     //Log.WarningException(GetType().Name + ".GetAvailableSALAPAs()", exception2);
                     return observableCollectionEx;
