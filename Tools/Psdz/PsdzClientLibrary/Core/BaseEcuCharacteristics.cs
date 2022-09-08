@@ -764,94 +764,94 @@ namespace PsdzClient.Core
 			}
 		}
 
-		public void ProcessCompatibilityInfo(Vehicle vecInfo, string compatibilityInfo)
-		{
-			string[] array = compatibilityInfo.Split('\n');
-			string value = ((!string.IsNullOrEmpty(vecInfo.VINRangeType)) ? vecInfo.VINRangeType : vecInfo.Typ);
-			string[] array2 = array;
-			foreach (string text in array2)
-			{
-				try
-				{
-					if (string.IsNullOrEmpty(text) || text.Length < 10)
-					{
-						continue;
-					}
-					string[] array3 = text.Trim().Split(';');
-					if (!int.TryParse(array3[0], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var result))
-					{
-						continue;
-					}
-					string group = array3[1];
-					if (vecInfo.getECU(result) != null || !array3[2].Contains(value))
-					{
-						continue;
-					}
-					if (array3.Length == 5)
-					{
-						if (string.IsNullOrEmpty(vecInfo.ILevelWerk) || string.IsNullOrEmpty(array3[4]) || array3[4].Contains(vecInfo.ILevelWerk))
-						{
-							goto IL_0219;
-						}
-						continue;
-					}
-					if (array3.Length != 7)
-					{
-						goto IL_0219;
-					}
-					if (!string.IsNullOrEmpty(vecInfo.ILevelWerk) && !string.IsNullOrEmpty(array3[4]) && !array3[4].Contains(vecInfo.ILevelWerk))
-					{
-						//Log.Info(GetType().Name + ".ProcessCompatibilityInfo()", "checking iLevel: '{0}'", array3[4]);
-						continue;
-					}
-					//Log.Info(GetType().Name + ".ProcessCompatibilityInfo()", "checking production date from: '{0}' to '{1}'", array3[5], array3[6]);
-					if (string.IsNullOrEmpty(array3[5]) || array3[5].Length != 6)
-					{
-						goto IL_01ce;
-					}
-					DateTime dateTime = DateTime.ParseExact(array3[5], "MMyyyy", CultureInfo.InvariantCulture);
-					if (!vecInfo.ProductionDateSpecified || !(vecInfo.ProductionDate < dateTime))
-					{
-						goto IL_01ce;
-					}
-					goto end_IL_004a;
-					IL_0219:
-					string[] array4 = array3[3].Split('&');
-					bool flag = true;
-					string[] array5 = array4;
-					foreach (string text2 in array5)
-					{
-						if (!string.IsNullOrEmpty(text2))
-						{
-							flag = ((!text2.StartsWith("-", StringComparison.Ordinal)) ? (flag & vecInfo.hasSA(text2)) : (flag & !vecInfo.hasSA(text2.Replace("-", string.Empty))));
-						}
-					}
-					if (flag)
-					{
-						ECU item = CreateECU(result, group);
-						vecInfo.ECU.AddIfNotContains(item);
-					}
-					goto end_IL_004a;
-					IL_01ce:
-					if (string.IsNullOrEmpty(array3[6]) || array3[6].Length != 6)
-					{
-						goto IL_0219;
-					}
-					DateTime dateTime2 = DateTime.ParseExact(array3[6], "MMyyyy", CultureInfo.InvariantCulture);
-					if (!vecInfo.ProductionDateSpecified || !(vecInfo.ProductionDate > dateTime2.AddMonths(1)))
-					{
-						goto IL_0219;
-					}
-					end_IL_004a:;
-				}
-				catch (Exception)
-				{
-					//Log.WarningException(GetType().Name + ".ProcessCompatibilityInfo()", exception);
-				}
-			}
-		}
+        private void ProcessCompatibilityInfo(Vehicle vecInfo, string compatibilityInfo)
+        {
+            string[] array = compatibilityInfo.Split('\n');
+            string value = ((!string.IsNullOrEmpty(vecInfo.VINRangeType)) ? vecInfo.VINRangeType : vecInfo.Typ);
+            string[] array2 = array;
+            foreach (string text in array2)
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(text) || text.Length < 10)
+                    {
+                        continue;
+                    }
+                    string[] array3 = text.Trim().Split(';');
+                    if (!int.TryParse(array3[0], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var result))
+                    {
+                        continue;
+                    }
+                    string group = array3[1];
+                    if (vecInfo.getECU(result) != null || !array3[2].Contains(value))
+                    {
+                        continue;
+                    }
+                    if (array3.Length == 5)
+                    {
+                        if (string.IsNullOrEmpty(vecInfo.ILevelWerk) || string.IsNullOrEmpty(array3[4]) || array3[4].Contains(vecInfo.ILevelWerk))
+                        {
+                            goto IL_0219;
+                        }
+                        continue;
+                    }
+                    if (array3.Length != 7)
+                    {
+                        goto IL_0219;
+                    }
+                    if (!string.IsNullOrEmpty(vecInfo.ILevelWerk) && !string.IsNullOrEmpty(array3[4]) && !array3[4].Contains(vecInfo.ILevelWerk))
+                    {
+                        //Log.Info(GetType().Name + ".ProcessCompatibilityInfo()", "checking iLevel: '{0}'", array3[4]);
+                        continue;
+                    }
+                    //Log.Info(GetType().Name + ".ProcessCompatibilityInfo()", "checking production date from: '{0}' to '{1}'", array3[5], array3[6]);
+                    if (string.IsNullOrEmpty(array3[5]) || array3[5].Length != 6)
+                    {
+                        goto IL_01ce;
+                    }
+                    DateTime dateTime = DateTime.ParseExact(array3[5], "MMyyyy", CultureInfo.InvariantCulture);
+                    if (!vecInfo.ProductionDateSpecified || !(vecInfo.ProductionDate < dateTime))
+                    {
+                        goto IL_01ce;
+                    }
+                    goto end_IL_004a;
+                    IL_0219:
+                    string[] array4 = array3[3].Split('&');
+                    bool flag = true;
+                    string[] array5 = array4;
+                    foreach (string text2 in array5)
+                    {
+                        if (!string.IsNullOrEmpty(text2))
+                        {
+                            flag = ((!text2.StartsWith("-", StringComparison.Ordinal)) ? (flag & vecInfo.hasSA(text2)) : (flag & !vecInfo.hasSA(text2.Replace("-", string.Empty))));
+                        }
+                    }
+                    if (flag)
+                    {
+                        ECU item = CreateECU(result, group);
+                        vecInfo.ECU.AddIfNotContains(item);
+                    }
+                    goto end_IL_004a;
+                    IL_01ce:
+                    if (string.IsNullOrEmpty(array3[6]) || array3[6].Length != 6)
+                    {
+                        goto IL_0219;
+                    }
+                    DateTime dateTime2 = DateTime.ParseExact(array3[6], "MMyyyy", CultureInfo.InvariantCulture);
+                    if (!vecInfo.ProductionDateSpecified || !(vecInfo.ProductionDate > dateTime2.AddMonths(1)))
+                    {
+                        goto IL_0219;
+                    }
+                    end_IL_004a:;
+                }
+                catch (Exception)
+                {
+                    //Log.WarningException(GetType().Name + ".ProcessCompatibilityInfo()", exception);
+                }
+            }
+        }
 
-		private void SetupMinimalECUConfiguration(Vehicle vecInfo)
+        private void SetupMinimalECUConfiguration(Vehicle vecInfo)
 		{
 			if (vecInfo == null)
 			{
