@@ -175,58 +175,55 @@ namespace PsdzClient.Core
 			CalculateECUConfiguration(vecInfo, ffmResolver, null, null);
 		}
 
-#if false
-		public virtual ObservableCollectionEx<XEP_SALAPAS> GetAvailableSALAPAs(Vehicle vecInfo)
-		{
-			int num = 9;
-			ObservableCollectionEx<XEP_SALAPAS> observableCollectionEx = new ObservableCollectionEx<XEP_SALAPAS>();
-			if (vecInfo != null && !string.IsNullOrEmpty(compatibilityInfo))
-			{
-				try
-				{
-					string[] array = compatibilityInfo.Split('\n');
-					foreach (string text in array)
-					{
-						try
-						{
-							if (!string.IsNullOrEmpty(text) && text.Length >= 10)
-							{
-								string[] array2 = text.Split(';');
-								if (array2[2].Contains(vecInfo.Typ))
-								{
-									string[] array3 = array2[3].Split('&');
-									foreach (string text2 in array3)
-									{
-										if (!string.IsNullOrEmpty(text2))
-										{
-											XEP_SALAPAS saLaPaByProductTypeAndSalesKey = DatabaseProviderFactory.Instance.GetSaLaPaByProductTypeAndSalesKey("M", text2.Replace("-", string.Empty));
-											if (saLaPaByProductTypeAndSalesKey != null)
-											{
-												observableCollectionEx.AddIfNotContains(saLaPaByProductTypeAndSalesKey);
-											}
-										}
-									}
-								}
-							}
-						}
-						catch (Exception exception)
-						{
-							Log.WarningException(GetType().Name + ".GetAvailableSALAPAs()", exception);
-						}
-					}
-					return observableCollectionEx;
-				}
-				catch (Exception exception2)
-				{
-					Log.WarningException(GetType().Name + ".GetAvailableSALAPAs()", exception2);
-					return observableCollectionEx;
-				}
-			}
-			return observableCollectionEx;
-		}
-#endif
+        public virtual ObservableCollectionEx<PdszDatabase.SaLaPa> GetAvailableSALAPAs(Vehicle vecInfo)
+        {
+            ObservableCollectionEx<PdszDatabase.SaLaPa> observableCollectionEx = new ObservableCollectionEx<PdszDatabase.SaLaPa>();
+            if (vecInfo != null && !string.IsNullOrEmpty(compatibilityInfo))
+            {
+                try
+                {
+                    string[] array = compatibilityInfo.Split('\n');
+                    foreach (string text in array)
+                    {
+                        try
+                        {
+                            if (!string.IsNullOrEmpty(text) && text.Length >= 10)
+                            {
+                                string[] array2 = text.Split(';');
+                                if (array2[2].Contains(vecInfo.Typ))
+                                {
+                                    string[] array3 = array2[3].Split('&');
+                                    foreach (string text2 in array3)
+                                    {
+                                        if (!string.IsNullOrEmpty(text2))
+                                        {
+                                            PdszDatabase.SaLaPa saLaPaByProductTypeAndSalesKey = ClientContext.GetDatabase(vecInfo)?.GetSaLaPaByProductTypeAndSalesKey("M", text2.Replace("-", string.Empty));
+                                            if (saLaPaByProductTypeAndSalesKey != null)
+                                            {
+                                                observableCollectionEx.AddIfNotContains(saLaPaByProductTypeAndSalesKey);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception exception)
+                        {
+                            //Log.WarningException(GetType().Name + ".GetAvailableSALAPAs()", exception);
+                        }
+                    }
+                    return observableCollectionEx;
+                }
+                catch (Exception exception2)
+                {
+                    //Log.WarningException(GetType().Name + ".GetAvailableSALAPAs()", exception2);
+                    return observableCollectionEx;
+                }
+            }
+            return observableCollectionEx;
+        }
 
-		public ICollection<IBusLogisticsEntry> GetBusTable()
+        public ICollection<IBusLogisticsEntry> GetBusTable()
 		{
 			return busTable;
 		}

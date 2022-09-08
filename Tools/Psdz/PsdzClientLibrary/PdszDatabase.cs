@@ -3816,6 +3816,39 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             return saLaPa;
         }
 
+        public SaLaPa GetSaLaPaByProductTypeAndSalesKey(string productType, string salesKey)
+        {
+            log.InfoFormat("GetSaLaPaByProductTypeAndSalesKey Type: {0}, Key: {1}", productType, salesKey);
+            if (string.IsNullOrEmpty(productType) || string.IsNullOrEmpty(salesKey))
+            {
+                return null;
+            }
+
+            SaLaPa saLaPa = null;
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, " + DatabaseFunctions.SqlTitleItems + ", NAME, PRODUCT_TYPE FROM XEP_SALAPAS WHERE (NAME = '{0}' AND PRODUCT_TYPE = '{1}')", productType, salesKey);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            saLaPa = ReadXepSaLaPa(reader);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetSaLaPaById Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            log.InfoFormat("GetSaLaPaById Name: {0}", saLaPa?.Name);
+            return saLaPa;
+        }
+
         public EcuReps GetEcuRepsById(string ecuId)
         {
             log.InfoFormat("GetEcuRepsById Sortcut: {0}", ecuId);
