@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.DiagnosticsBusinessData;
 using PsdzClient.Core;
 using PsdzClientLibrary;
 
@@ -596,6 +597,43 @@ namespace PsdzClient.Core
                     return GetEcuCharacteristics("GibbsEcuCharacteristics.xml", vecInfo);
                 case BNType.BN2020_CAMPAGNA:
                     return GetEcuCharacteristics("CampagnaEcuCharacteristics.xml", vecInfo);
+            }
+        }
+
+        // ToDo: Check on update
+        public static BNMixed getBNMixed(string br, FA fa)
+        {
+            if (string.IsNullOrEmpty(br))
+            {
+                return BNMixed.UNKNOWN;
+            }
+            switch (br.ToUpper())
+            {
+                case "RODING_ROADSTER":
+                case "M12":
+                case "AERO":
+                    return BNMixed.HETEROGENEOUS;
+                case "RR1":
+                case "RR2":
+                case "RR3":
+                    if (fa != null && fa.AlreadyDone && fa.C_DATETIME >= DiagnosticsBusinessData.DTimeRR_S2)
+                    {
+                        return BNMixed.HETEROGENEOUS;
+                    }
+                    return BNMixed.HOMOGENEOUS;
+                case "F01":
+                case "F02":
+                case "F03":
+                case "F04":
+                case "F06":
+                case "F07":
+                    if (fa != null && fa.AlreadyDone && fa.C_DATETIME > DiagnosticsBusinessData.DTimeF01BN2020MostDomain)
+                    {
+                        return BNMixed.HETEROGENEOUS;
+                    }
+                    return BNMixed.HOMOGENEOUS;
+                default:
+                    return BNMixed.HOMOGENEOUS;
             }
         }
 
