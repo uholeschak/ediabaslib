@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
@@ -559,6 +560,17 @@ namespace PsdzClient.Programming
             Vehicle.VIN17 = DetectVehicle.Vin;
             Vehicle.Modelljahr = DetectVehicle.ConstructYear;
             Vehicle.Modellmonat = DetectVehicle.ConstructMonth;
+            Vehicle.Modelltag = "01";
+            try
+            {
+                Vehicle.ProductionDate = DateTime.ParseExact(string.Format(CultureInfo.InvariantCulture, "{0}.{1}", Vehicle.Modellmonat, Vehicle.Modelljahr), "MM.yyyy", new CultureInfo("de-DE"));
+                Vehicle.ProductionDateSpecified = true;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
             Vehicle.Ereihe = DetectVehicle.Series;
             Vehicle.SetVINRangeTypeFromVINRanges();
             Vehicle.BNType = VehicleLogistics.getBNType(Vehicle);
