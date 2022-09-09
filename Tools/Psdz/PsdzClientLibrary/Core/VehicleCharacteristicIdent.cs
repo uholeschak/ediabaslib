@@ -231,82 +231,92 @@ namespace PsdzClient.Core
 			return true;
 		}
 
-		protected override bool ComputeHybridkennzeichen(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.Hybridkennzeichen = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeHybridkennzeichen(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            //reactor.SetHybridkennzeichen(characteristic.Name, DataSource.Database);
+            vecInfo.Hybridkennzeichen = characteristic.Name;
+            return true;
+        }
 
-		protected override bool ComputeKarosserie(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.Karosserie = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeKarosserie(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            //reactor.SetKarosserie(characteristic.Name, DataSource.Database);
+            vecInfo.Karosserie = characteristic.Name;
+            return true;
+        }
 
-		protected override bool ComputeLand(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.Land = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeLand(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            //reactor.SetLand(characteristic.Name, DataSource.Database);
+            vecInfo.Land = characteristic.Name;
+            return true;
+        }
 
-		protected override bool ComputeLenkung(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.Lenkung = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeLenkung(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            //reactor.SetLenkung(characteristic.Name, DataSource.Database);
+            vecInfo.Lenkung = characteristic.Name;
+            return true;
+        }
 
-		protected override bool ComputeMOTKraftstoffart(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.MOTKraftstoffart = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeMOTKraftstoffart(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            vecInfo.MOTKraftstoffart = characteristic.Name;
+            return true;
+        }
 
-		protected override bool ComputeMotorarbeitsverfahren(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.Motorarbeitsverfahren = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeMotorarbeitsverfahren(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            //reactor.SetMotorarbeitsverfahren(characteristic.Name, DataSource.Database);
+            vecInfo.Motorarbeitsverfahren = characteristic.Name;
+            return true;
+        }
 
-		protected override bool ComputeProdart(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.Prodart = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeProdart(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            //reactor.SetProdart(characteristic.Name, DataSource.Database);
+            vecInfo.Prodart = characteristic.Name;
+            return true;
+        }
 
-		protected override bool ComputeProduktlinie(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.Produktlinie = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeProduktlinie(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            //reactor.SetProduktlinie(characteristic.Name, DataSource.Database);
+            vecInfo.Produktlinie = characteristic.Name;
+            return true;
+        }
 
-		protected override bool ComputeSicherheitsrelevant(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.Sicherheitsrelevant = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeSicherheitsrelevant(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            //reactor.SetSicherheitsrelevant(characteristic.Name, DataSource.Database);
+            vecInfo.Sicherheitsrelevant = characteristic.Name;
+            return true;
+        }
 
-		protected override bool ComputeTueren(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.Tueren = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeTueren(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            //reactor.SetTueren(characteristic.Name, DataSource.Database);
+            vecInfo.Tueren = characteristic.Name;
+            return true;
+        }
 
-		protected override bool ComputeTyp(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.Typ = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeTyp(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            //reactor.SetTyp(characteristic.Name, DataSource.Database);
+            vecInfo.Typ = characteristic.Name;
+            return true;
+        }
 
 		protected override bool ComputeVerkaufsBezeichnung(params object[] parameters)
 		{
@@ -391,58 +401,66 @@ namespace PsdzClient.Core
 			return true;
 		}
 
-		protected override bool ComputeLeistungsklasse(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.Leistungsklasse = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeLeistungsklasse(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            //reactor.SetLeistungsklasse(characteristic.Name, DataSource.Database);
+            vecInfo.Leistungsklasse = characteristic.Name;
+            return true;
+        }
 
-		protected override bool ComputeMotor(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.Motor = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeMotor(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            //reactor.SetMotor(characteristic.Name, DataSource.Database);
+            vecInfo.Motor = characteristic.Name;
+            return true;
+        }
 
-		protected override bool ComputeHubraum(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.Hubraum = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeHubraum(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            //reactor.SetHubraum(characteristic.Name, DataSource.Database);
+            vecInfo.Hubraum = characteristic.Name;
+            return true;
+        }
 
-		protected override bool ComputeKraftstoffart(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.Kraftstoffart = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeKraftstoffart(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            //reactor.SetKraftstoffart(characteristic.Name, DataSource.Database);
+            vecInfo.Kraftstoffart = characteristic.Name;
+            return true;
+        }
 
-		protected override bool ComputeMOTBezeichnung(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.MOTBezeichnung = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeMOTBezeichnung(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            //reactor.SetMOTBezeichnung(characteristic.Name, DataSource.Database);
+            vecInfo.MOTBezeichnung = characteristic.Name;
+            return true;
+        }
 
-		protected override bool ComputeMOTEinbaulage(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.MOTEinbaulage = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeMOTEinbaulage(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            //reactor.SetMOTEinbaulage(characteristic.Name, DataSource.Database);
+            vecInfo.MOTEinbaulage = characteristic.Name;
+            return true;
+        }
 
-		protected override bool ComputeUeberarbeitung(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.Ueberarbeitung = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeUeberarbeitung(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            //reactor.SetUeberarbeitung(characteristic.Name, DataSource.Database);
+            vecInfo.Ueberarbeitung = characteristic.Name;
+            return true;
+        }
 
         protected override bool ComputeKraftstoffartEinbaulage(params object[] parameters)
         {
             GetIdentParameters(parameters);
+            //reactor.SetKraftstoffartEinbaulage(characteristic.Name, DataSource.Database);
             vecInfo.KraftstoffartEinbaulage = this.characteristic.Name;
             return true;
         }
@@ -471,48 +489,48 @@ namespace PsdzClient.Core
 		}
 
         protected override bool ComputeHeatMOTFortlaufendeNum(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.GetHeatMotorByDriveId(this.characteristic.DriveId).HeatMOTFortlaufendeNum = this.characteristic.Name;
-			return true;
-		}
+        {
+            GetIdentParameters(parameters);
+            GetHeatMotorByDriveId(characteristic.DriveId).HeatMOTFortlaufendeNum = characteristic.Name;
+            return true;
+        }
 
-		protected override bool ComputeHeatMOTKraftstoffart(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.GetHeatMotorByDriveId(this.characteristic.DriveId).HeatMOTKraftstoffart = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeHeatMOTKraftstoffart(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            GetHeatMotorByDriveId(characteristic.DriveId).HeatMOTKraftstoffart = characteristic.Name;
+            return true;
+        }
 
-		protected override bool ComputeHeatMOTLebenszyklus(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.GetHeatMotorByDriveId(this.characteristic.DriveId).HeatMOTLebenszyklus = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeHeatMOTLebenszyklus(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            GetHeatMotorByDriveId(characteristic.DriveId).HeatMOTLebenszyklus = characteristic.Name;
+            return true;
+        }
 
-		protected override bool ComputeHeatMOTLeistungsklasse(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.GetHeatMotorByDriveId(this.characteristic.DriveId).HeatMOTLeistungsklasse = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeHeatMOTLeistungsklasse(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            GetHeatMotorByDriveId(characteristic.DriveId).HeatMOTLeistungsklasse = characteristic.Name;
+            return true;
+        }
 
-		protected override bool ComputeHeatMOTPlatzhalter1(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.GetHeatMotorByDriveId(this.characteristic.DriveId).HeatMOTPlatzhalter1 = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeHeatMOTPlatzhalter1(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            GetHeatMotorByDriveId(characteristic.DriveId).HeatMOTPlatzhalter1 = characteristic.Name;
+            return true;
+        }
 
-		protected override bool ComputeHeatMOTPlatzhalter2(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.GetHeatMotorByDriveId(this.characteristic.DriveId).HeatMOTPlatzhalter2 = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeHeatMOTPlatzhalter2(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            GetHeatMotorByDriveId(characteristic.DriveId).HeatMOTPlatzhalter2 = characteristic.Name;
+            return true;
+        }
 
-		protected override bool ComputeDefault(params object[] parameters)
+        protected override bool ComputeDefault(params object[] parameters)
 		{
 			this.GetIdentParameters(parameters);
             //Log.Warning("VehicleIdent.UpdateVehicleCharacteristics()", "found unknown key:{0} value: {1}", characteristic.RootNodeClass, characteristic.Name);
