@@ -307,11 +307,11 @@ namespace PsdzClient.Core
             }
             if (!((istaVisible.GetValueOrDefault() == default(decimal)) & istaVisible.HasValue))
             {
-				this.vecInfo.VerkaufsBezeichnung = this.characteristic.Name;
+				vecInfo.VerkaufsBezeichnung = characteristic.Name;
 			}
 			else
 			{
-				this.vecInfo.VerkaufsBezeichnung = DefaultEmptyCharacteristicValue;
+				vecInfo.VerkaufsBezeichnung = DefaultEmptyCharacteristicValue;
 			}
 			return true;
 		}
@@ -323,27 +323,29 @@ namespace PsdzClient.Core
 			return true;
 		}
 
-		protected override bool ComputeEMOTBaureihe(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.EMotor.EMOTBaureihe = this.characteristic.Name;
-			if (string.IsNullOrWhiteSpace(this.vecInfo.GenericMotor.Engine2) || this.vecInfo.GenericMotor.Engine2 == DefaultEmptyCharacteristicValue)
-			{
-				this.vecInfo.GenericMotor.Engine2 = this.characteristic.Name;
-			}
-			return true;
-		}
+        protected override bool ComputeEMOTBaureihe(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            //reactor.SetEMOTBaureihe(characteristic.Name, DataSource.Database);
+            vecInfo.EMotor.EMOTBaureihe = characteristic.Name;
+            if (string.IsNullOrWhiteSpace(vecInfo.GenericMotor.Engine2) || vecInfo.GenericMotor.Engine2 == DefaultEmptyCharacteristicValue)
+            {
+                vecInfo.GenericMotor.Engine2 = characteristic.Name;
+            }
+            return true;
+        }
 
-		protected override bool ComputeEMOTBezeichnung(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.EMotor.EMOTBezeichnung = this.characteristic.Name;
-			if (string.IsNullOrWhiteSpace(this.vecInfo.GenericMotor.EngineLabel2) || this.vecInfo.GenericMotor.EngineLabel2 == DefaultEmptyCharacteristicValue)
-			{
-				this.vecInfo.GenericMotor.EngineLabel2 = this.characteristic.Name;
-			}
-			return true;
-		}
+        protected override bool ComputeEMOTBezeichnung(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            //reactor.SetEMOTBezeichnung(characteristic.Name, DataSource.Database);
+            vecInfo.EMotor.EMOTBezeichnung = this.characteristic.Name;
+            if (string.IsNullOrWhiteSpace(vecInfo.GenericMotor.EngineLabel2) || vecInfo.GenericMotor.EngineLabel2 == DefaultEmptyCharacteristicValue)
+            {
+                vecInfo.GenericMotor.EngineLabel2 = characteristic.Name;
+            }
+            return true;
+        }
 
 		protected override bool ComputeEMOTDrehmoment(params object[] parameters)
 		{
@@ -448,7 +450,7 @@ namespace PsdzClient.Core
 		{
             GetIdentParameters(parameters);
             GetHeatMotorByDriveId(characteristic.DriveId).HeatMOTBaureihe = characteristic.Name;
-            if (string.IsNullOrWhiteSpace(vecInfo.GenericMotor.Engine2) || characteristic.Name != "-")
+            if (string.IsNullOrWhiteSpace(vecInfo.GenericMotor.Engine2) || characteristic.Name != DefaultEmptyCharacteristicValue)
             {
                 vecInfo.GenericMotor.Engine2 = string.Join(",", vecInfo.HeatMotors.Select((HeatMotor v) => v.HeatMOTBaureihe));
             }
@@ -460,7 +462,7 @@ namespace PsdzClient.Core
             GetIdentParameters(parameters);
             GetHeatMotorByDriveId(characteristic.DriveId).HeatMOTBezeichnung = characteristic.Name;
             //reactor.AddInfoToDataholderAboutHeatMotors(vecInfo.HeatMotors, DataSource.Database);
-            if (string.IsNullOrWhiteSpace(vecInfo.GenericMotor.EngineLabel2) || characteristic.Name != "-")
+            if (string.IsNullOrWhiteSpace(vecInfo.GenericMotor.EngineLabel2) || characteristic.Name != DefaultEmptyCharacteristicValue)
             {
                 vecInfo.GenericMotor.EngineLabel2 = string.Join(",", vecInfo.HeatMotors.Select((HeatMotor v) => v.HeatMOTBezeichnung));
             }
@@ -511,16 +513,16 @@ namespace PsdzClient.Core
 
         protected override bool ComputeDefault(params object[] parameters)
 		{
-			this.GetIdentParameters(parameters);
+			GetIdentParameters(parameters);
             //Log.Warning("VehicleIdent.UpdateVehicleCharacteristics()", "found unknown key:{0} value: {1}", characteristic.RootNodeClass, characteristic.Name);
             return false;
 		}
 
-		private void GetIdentParameters(params object[] parameters)
-		{
-			this.vecInfo = (Vehicle)parameters[0];
-			this.characteristic = (PdszDatabase.Characteristics)parameters[1];
-		}
+        private void GetIdentParameters(params object[] parameters)
+        {
+            vecInfo = (Vehicle)parameters[0];
+            characteristic = (PdszDatabase.Characteristics)parameters[1];
+        }
 
         private HeatMotor GetHeatMotorByDriveId(string driveId)
         {
