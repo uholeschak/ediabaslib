@@ -314,9 +314,8 @@ namespace PsdzClient.Core
             {
                 istaVisible = visible;
             }
-			decimal d = 0m;
-			if (!(istaVisible.GetValueOrDefault() == d & istaVisible != null))
-			{
+            if (!((istaVisible.GetValueOrDefault() == default(decimal)) & istaVisible.HasValue))
+            {
 				this.vecInfo.VerkaufsBezeichnung = this.characteristic.Name;
 			}
 			else
