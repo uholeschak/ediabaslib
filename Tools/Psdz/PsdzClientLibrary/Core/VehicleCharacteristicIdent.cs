@@ -11,49 +11,49 @@ namespace PsdzClient.Core
 {
 	public class VehicleCharacteristicIdent : VehicleCharacteristicAbstract
 	{
-		public bool AssignVehicleCharacteristic(string vehicleCode, Vehicle vehicle, PdszDatabase.Characteristics characteristic)
-		{
-			return base.ComputeCharacteristic(vehicleCode, new object[]
-			{
-				vehicle,
-				characteristic
-			});
-		}
+        public bool AssignVehicleCharacteristic(string vehicleCode, Vehicle vehicle, PdszDatabase.Characteristics characteristic)
+        {
+            return ComputeCharacteristic(vehicleCode, vehicle, characteristic);
+        }
 
-		protected override bool ComputeAbgas(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.Abgas = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeAbgas(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            vecInfo.Abgas = characteristic.Name;
+            return true;
+        }
 
-		protected override bool ComputeAEBezeichnung(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.AEBezeichnung = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeAEBezeichnung(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            //reactor.SetAEBezeichnung(characteristic.Name, DataSource.Database);
+            vecInfo.AEBezeichnung = characteristic.Name;
+            return true;
+        }
 
-		protected override bool ComputeAEKurzbezeichnung(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.AEKurzbezeichnung = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeAEKurzbezeichnung(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            //reactor.SetAEKurzbezeichnung(characteristic.Name, DataSource.Database);
+            vecInfo.AEKurzbezeichnung = characteristic.Name;
+            return true;
+        }
 
-		protected override bool ComputeAELeistungsklasse(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.AELeistungsklasse = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeAELeistungsklasse(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            //reactor.SetAELeistungsklasse(characteristic.Name, DataSource.Database);
+            vecInfo.AELeistungsklasse = characteristic.Name;
+            return true;
+        }
 
-		protected override bool ComputeAEUeberarbeitung(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.AEUeberarbeitung = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeAEUeberarbeitung(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            //reactor.SetAEUeberarbeitung(characteristic.Name, DataSource.Database);
+            vecInfo.AEUeberarbeitung = characteristic.Name;
+            return true;
+        }
 
 		protected override bool ComputeAntrieb(params object[] parameters)
 		{
@@ -104,81 +104,60 @@ namespace PsdzClient.Core
 			return true;
 		}
 
-		protected override bool ComputeBrandName(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			string text = this.characteristic.Name.ToUpper(CultureInfo.InvariantCulture);
-			if (text != null)
-			{
-				if (text == "BMW PKW")
-				{
-					this.vecInfo.BrandName = new BrandName?(BrandName.BMWPKW);
-					this.vecInfo.Marke = "BMW PKW";
-					return true;
-				}
-				if (text == "BMW I")
-				{
-					this.vecInfo.BrandName = new BrandName?(BrandName.BMWi);
-					this.vecInfo.Marke = "BMW i";
-					return true;
-				}
-				if (text == "HUSQVARNA")
-				{
-					this.vecInfo.BrandName = new BrandName?(BrandName.HUSQVARNA);
-					this.vecInfo.Marke = "HUSQVARNA";
-					return true;
-				}
-				if (text == "TOYOTA")
-				{
-					this.vecInfo.BrandName = new BrandName?(BrandName.TOYOTA);
-					this.vecInfo.Marke = "TOYOTA";
-					return true;
-				}
-				if (text == "BMW M GMBH PKW")
-				{
-					this.vecInfo.BrandName = new BrandName?(BrandName.BMWMGmbHPKW);
-					this.vecInfo.Marke = "BMW PKW";
-					return true;
-				}
-				if (text == "ROLLS-ROYCE PKW")
-				{
-					this.vecInfo.BrandName = new BrandName?(BrandName.ROLLSROYCEPKW);
-					this.vecInfo.Marke = "ROLLS-ROYCE PKW";
-					return true;
-				}
-				if (text == "ROSENBAU")
-				{
-					this.vecInfo.BrandName = new BrandName?(BrandName.ROSENBAUER);
-					this.vecInfo.Marke = "ROSENBAU";
-					return true;
-				}
-			    if (text == "BMW USA PKW")
-			    {
-				    this.vecInfo.BrandName = new BrandName?(BrandName.BMWUSAPKW);
-				    this.vecInfo.Marke = "BMW PKW";
-				    return true;
-			    }
-				if (text == "BMW MOTORRAD")
-				{
-					this.vecInfo.BrandName = new BrandName?(BrandName.BMWMOTORRAD);
-					this.vecInfo.Marke = "BMW MOTORRAD";
-					return true;
-				}
-				if (text == "MINI PKW")
-				{
-					this.vecInfo.BrandName = new BrandName?(BrandName.MINIPKW);
-					this.vecInfo.Marke = "MINI PKW";
-					return true;
-				}
-			}
-#if false
-			Log.Warning("VehicleIdent.UpdateVehicleCharacteristics()", "found unknown brand name: {0}", new object[]
-			{
-				this.characteristic.Name
-			});
-#endif
-			return true;
-		}
+        protected override bool ComputeBrandName(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            string text = characteristic.Name.ToUpper(CultureInfo.InvariantCulture);
+            //reactor.SetMarke(text, DataSource.Database);
+            vecInfo.Marke = text;
+            switch (text)
+            {
+                case "BMW PKW":
+                    //reactor.SetBrandName(BrandName.BMWPKW, DataSource.Database);
+                    vecInfo.BrandName = BrandName.BMWPKW;
+                    break;
+                case "BMW I":
+                    //reactor.SetBrandName(BrandName.BMWi, DataSource.Database);
+                    vecInfo.BrandName = BrandName.BMWi;
+                    break;
+                case "HUSQVARNA":
+                    //reactor.SetBrandName(BrandName.HUSQVARNA, DataSource.Database);
+                    vecInfo.BrandName = BrandName.HUSQVARNA;
+                    break;
+                case "TOYOTA":
+                    //reactor.SetBrandName(BrandName.TOYOTA, DataSource.Database);
+                    vecInfo.BrandName = BrandName.TOYOTA;
+                    break;
+                case "BMW M GMBH PKW":
+                    //reactor.SetBrandName(BrandName.BMWMGmbHPKW, DataSource.Database);
+                    vecInfo.BrandName = BrandName.BMWMGmbHPKW;
+                    break;
+                case "ROLLS-ROYCE PKW":
+                    //reactor.SetBrandName(BrandName.ROLLSROYCEPKW, DataSource.Database);
+                    vecInfo.BrandName = BrandName.ROLLSROYCEPKW;
+                    break;
+                case "ROSENBAU":
+                    //reactor.SetBrandName(BrandName.ROSENBAUER, DataSource.Database);
+                    vecInfo.BrandName = BrandName.ROSENBAUER;
+                    break;
+                case "BMW USA PKW":
+                    //reactor.SetBrandName(BrandName.BMWUSAPKW, DataSource.Database);
+                    vecInfo.BrandName = BrandName.BMWUSAPKW;
+                    break;
+                case "BMW MOTORRAD":
+                    //reactor.SetBrandName(BrandName.BMWMOTORRAD, DataSource.Database);
+                    vecInfo.BrandName = BrandName.BMWMOTORRAD;
+                    break;
+                case "MINI PKW":
+                    //reactor.SetBrandName(BrandName.MINIPKW, DataSource.Database);
+                    vecInfo.BrandName = BrandName.MINIPKW;
+                    break;
+                default:
+                    //Log.Warning("VehicleIdent.UpdateVehicleCharacteristics()", "found unknown brand name: {0}", characteristic.Name);
+                    break;
+            }
+            return true;
+        }
 
 		protected override bool ComputeCountryOfAssembly(params object[] parameters)
 		{
