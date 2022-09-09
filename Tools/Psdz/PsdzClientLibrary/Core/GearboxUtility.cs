@@ -10,28 +10,24 @@ namespace PsdzClient.Core
 {
 	public static class GearboxUtility
 	{
-		public static void SetGearboxType(Vehicle vehicle, string gearboxType, [CallerMemberName] string caller = null)
-		{
-			if (!GearboxUtility.useLegacyGearboxTypeDetection(vehicle))
-			{
-				return;
-			}
-			//Log.Info("GearboxUtility.SetGearboxType()", "Gearbox type set to " + gearboxType + ". Called from: " + caller, Array.Empty<object>());
-			vehicle.Getriebe = gearboxType;
-		}
+        public static void SetGearboxType(Vehicle vehicle, string gearboxType, [CallerMemberName] string caller = null)
+        {
+            if (useLegacyGearboxTypeDetection(vehicle))
+            {
+                //Log.Info("GearboxUtility.SetGearboxType()", "Gearbox type set to " + gearboxType + ". Called from: " + caller);
+                vehicle.Getriebe = gearboxType;
+            }
+        }
 
-		public static void SetAutomaticGearboxByEgsEcu(Vehicle vehicle)
-		{
-			if (!GearboxUtility.useLegacyGearboxTypeDetection(vehicle))
-			{
-				return;
-			}
-			if (vehicle.getECUbyECU_GRUPPE("G_EGS") != null && string.CompareOrdinal(vehicle.Getriebe, "AUT") != 0)
-			{
-				//Log.Info("GearboxUtility.SetAutomaticGearboxByEgsEcu()", "found EGS ecu in vehicle with recoginzed manual gearbox; will be overwritten", Array.Empty<object>());
-				vehicle.Getriebe = "AUT";
-			}
-		}
+        // ToDo: Check on update
+        public static void SetAutomaticGearboxByEgsEcu(Vehicle vehicle)
+        {
+            if (useLegacyGearboxTypeDetection(vehicle) && vehicle.getECUbyECU_GRUPPE("G_EGS") != null && string.CompareOrdinal(vehicle.Getriebe, "AUT") != 0)
+            {
+                //Log.Info("GearboxUtility.SetAutomaticGearboxByEgsEcu()", "found EGS ecu in vehicle with recoginzed manual gearbox; will be overwritten");
+                vehicle.Getriebe = "AUT";
+            }
+        }
 
         // ToDo: Check on update
         public static void PerformGearboxAssignments(Vehicle vehicle)
@@ -114,21 +110,20 @@ namespace PsdzClient.Core
 #endif
 		private static DateTime legacyDetectionConditionDate = new DateTime(2020, 7, 1);
 
-		private static Predicate<Vehicle> useLegacyGearboxTypeDetection = delegate (Vehicle v)
-		{
-			bool result;
-			try
-			{
-				result = (new DateTime(int.Parse(v.Modelljahr), int.Parse(v.Modellmonat), 1) < GearboxUtility.legacyDetectionConditionDate);
-			}
-			catch (Exception)
-			{
-				result = false;
-			}
-			return result;
-		};
+        private static Predicate<Vehicle> useLegacyGearboxTypeDetection = delegate (Vehicle v)
+        {
+            try
+            {
+                return new DateTime(int.Parse(v.Modelljahr), int.Parse(v.Modellmonat), 1) < legacyDetectionConditionDate;
+            }
+            catch (Exception ex)
+            {
+                //Log.Error("GearboxUtility.useLegacyGearboxTypeDetection", "Error occured when checking the condition, possible problem with vehicle construction date - year: " + v.Modelljahr + ", month: " + v.Modellmonat, ex);
+                return false;
+            }
+        };
 
-		public const string Manual = "MECH";
+        public const string Manual = "MECH";
 
 		public const string Automatic = "AUT";
 
