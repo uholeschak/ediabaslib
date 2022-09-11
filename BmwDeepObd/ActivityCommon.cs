@@ -1920,6 +1920,15 @@ namespace BmwDeepObd
             return true;
         }
 
+        public static bool IsExtrenalStorageAccessSupported()
+        {
+            if (Build.VERSION.SdkInt < BuildVersionCodes.Tiramisu)
+            {
+                return false;
+            }
+            return true;
+        }
+
         public static List<string> GetRecentConfigList()
         {
             lock (RecentConfigLockObject)

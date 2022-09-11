@@ -356,32 +356,35 @@ namespace BmwDeepObd
                         break;
                     }
 
-                    bool finish = true;
-                    AlertDialog alertDialog = new AlertDialog.Builder(this)
-                        .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
-                        {
-                            ActivityCommon.OpenAppSettingDetails(this, (int)ActivityRequest.RequestAppStorePermissions);
-                        })
-                        .SetNegativeButton(Resource.String.button_no, (sender, args) =>
-                        {
-                        })
-                        .SetCancelable(true)
-                        .SetMessage(Resource.String.access_denied_ext_storage)
-                        .SetTitle(Resource.String.alert_title_warning)
-                        .Show();
-
-                    alertDialog.DismissEvent += (sender, args) =>
+                    if (ActivityCommon.IsExtrenalStorageAccessSupported())
                     {
-                        if (_actvityDestroyed)
-                        {
-                            return;
-                        }
+                        bool finish = true;
+                        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                            .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                            {
+                                ActivityCommon.OpenAppSettingDetails(this, (int)ActivityRequest.RequestAppStorePermissions);
+                            })
+                            .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                            {
+                            })
+                            .SetCancelable(true)
+                            .SetMessage(Resource.String.access_denied_ext_storage)
+                            .SetTitle(Resource.String.alert_title_warning)
+                            .Show();
 
-                        if (finish)
+                        alertDialog.DismissEvent += (sender, args) =>
                         {
-                            Finish();
-                        }
-                    };
+                            if (_actvityDestroyed)
+                            {
+                                return;
+                            }
+
+                            if (finish)
+                            {
+                                Finish();
+                            }
+                        };
+                    }
                     break;
             }
         }
@@ -889,7 +892,10 @@ namespace BmwDeepObd
                 Finish();
             }
 
-            ActivityCompat.RequestPermissions(this, _permissionsExternalStorage, ActivityCommon.RequestPermissionExternalStorage);
+            if (ActivityCommon.IsExtrenalStorageAccessSupported())
+            {
+                ActivityCompat.RequestPermissions(this, _permissionsExternalStorage, ActivityCommon.RequestPermissionExternalStorage);
+            }
         }
 
         private void StoragePermissionGranted()
