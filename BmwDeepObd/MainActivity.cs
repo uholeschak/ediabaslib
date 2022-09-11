@@ -963,7 +963,7 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestAppSettingsAccessFiles:
-                    RequestStoragePermissions();
+                    StoragePermissionGranted();
                     UpdateOptionsMenu();
                     break;
 
@@ -3130,14 +3130,10 @@ namespace BmwDeepObd
 
         private void RequestStoragePermissions(bool finish = false)
         {
-            if (RequestStorageManagerPermissions())
-            {
-                return;
-            }
-
             if (_permissionsExternalStorage.All(permission => ContextCompat.CheckSelfPermission(this, permission) == Permission.Granted))
             {
                 StoragePermissionGranted();
+                RequestStorageManagerPermissions();
                 return;
             }
 
