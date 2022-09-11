@@ -64,6 +64,7 @@ namespace BmwDeepObd
         {
             RequestAppStorePermissions,
             RequestAppDetailBtSettings,
+            RequestAppSettingsAccessFiles,
             RequestOverlayPermissions,
             RequestSelectDevice,
             RequestAdapterConfig,
@@ -413,7 +414,7 @@ namespace BmwDeepObd
         private const int AutoHideTimeout = 3000;
         private readonly string[] _permissionsExternalStorage =
         {
-            Android.Manifest.Permission.WriteExternalStorage
+            Android.Manifest.Permission.WriteExternalStorage,
         };
 
         public const string ExtraShowTitle = "show_title";
@@ -431,6 +432,8 @@ namespace BmwDeepObd
         private bool _storageAccessGranted;
         private bool _overlayPermissionRequested;
         private bool _overlayPermissionGranted;
+        private bool _storageManagerPermissionRequested;
+        private bool _storageManagerPermissionGranted;
         private bool _createTabsPending;
         private bool _ignoreTabsChange;
         private bool _tabsCreated;
@@ -739,6 +742,7 @@ namespace BmwDeepObd
             {
                 _onResumeExecuted = true;
                 RequestStoragePermissions();
+                RequestStorageManagerPermissions();
             }
 
             if (_storageAccessGranted)
@@ -956,6 +960,11 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestAppDetailBtSettings:
+                    UpdateOptionsMenu();
+                    break;
+
+                case ActivityRequest.RequestAppSettingsAccessFiles:
+                    RequestStoragePermissions();
                     UpdateOptionsMenu();
                     break;
 
@@ -3077,6 +3086,42 @@ namespace BmwDeepObd
                             handler?.Invoke(o, eventArgs);
                         }
                     };
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool RequestStorageManagerPermissions()
+        {
+            if (_storageManagerPermissionRequested || _storageManagerPermissionGranted)
+            {
+                return false;
+            }
+
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
+            {
+                if (Android.OS.Environment.IsExternalStorageManager)
+                {
+                    _storageManagerPermissionGranted = true;
+                }
+
+                if (!_storageManagerPermissionGranted && !_storageManagerPermissionRequested)
+                {
+                    _storageManagerPermissionRequested = true;
+                    new AlertDialog.Builder(this)
+                        .SetPositiveButton(Resource.String.button_yes, (s, a) =>
+                        {
+                            ActivityCommon.OpenAppSettingAccessFiles(this, (int)ActivityRequest.RequestAppSettingsAccessFiles);
+                        })
+                        .SetNegativeButton(Resource.String.button_no, (s, a) =>
+                        {
+                        })
+                        .SetCancelable(true)
+                        .SetMessage(Resource.String.access_manage_files)
+                        .SetTitle(Resource.String.alert_title_warning)
+                        .Show();
                     return true;
                 }
             }

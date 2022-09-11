@@ -3641,6 +3641,26 @@ namespace BmwDeepObd
             }
         }
 
+        public static bool OpenAppSettingAccessFiles(Android.App.Activity activity, int requestCode)
+        {
+            try
+            {
+                if (Build.VERSION.SdkInt < BuildVersionCodes.R)
+                {
+                    return false;
+                }
+
+                Intent intent = new Intent(Settings.ActionManageAppAllFilesAccessPermission,
+                    Android.Net.Uri.Parse("package:" + Android.App.Application.Context.PackageName));
+                activity.StartActivityForResult(intent, requestCode);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public void EnableInterface()
         {
             switch (_selectedInterface)
