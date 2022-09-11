@@ -1714,33 +1714,36 @@ namespace BmwDeepObd
                         break;
                     }
 
-                    bool finish = true;
-                    AlertDialog alertDialog = new AlertDialog.Builder(this)
-                        .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
-                        {
-                            ActivityCommon.OpenAppSettingDetails(this, (int)ActivityRequest.RequestAppStorePermissions);
-                        })
-                        .SetNegativeButton(Resource.String.button_no, (sender, args) =>
-                        {
-                            Finish();
-                        })
-                        .SetCancelable(true)
-                        .SetMessage(Resource.String.access_denied_ext_storage)
-                        .SetTitle(Resource.String.alert_title_warning)
-                        .Show();
-
-                    alertDialog.DismissEvent += (sender, args) =>
+                    if (ActivityCommon.IsExtrenalStorageAccessSupported())
                     {
-                        if (_activityCommon == null)
-                        {
-                            return;
-                        }
+                        bool finish = true;
+                        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                            .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                            {
+                                ActivityCommon.OpenAppSettingDetails(this, (int)ActivityRequest.RequestAppStorePermissions);
+                            })
+                            .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                            {
+                                Finish();
+                            })
+                            .SetCancelable(true)
+                            .SetMessage(Resource.String.access_denied_ext_storage)
+                            .SetTitle(Resource.String.alert_title_warning)
+                            .Show();
 
-                        if (finish)
+                        alertDialog.DismissEvent += (sender, args) =>
                         {
-                            Finish();
-                        }
-                    };
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+
+                            if (finish)
+                            {
+                                Finish();
+                            }
+                        };
+                    }
                     break;
 
                 case ActivityCommon.RequestPermissionBluetooth:
@@ -3099,7 +3102,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
+            if (!ActivityCommon.IsExtrenalStorageAccessSupported())
             {
                 string[] permissions = _activityCommon.RetrievePermissions();
                 if (permissions != null)
@@ -3151,7 +3154,10 @@ namespace BmwDeepObd
                 Finish();
             }
 
-            ActivityCompat.RequestPermissions(this, _permissionsExternalStorage, ActivityCommon.RequestPermissionExternalStorage);
+            if (ActivityCommon.IsExtrenalStorageAccessSupported())
+            {
+                ActivityCompat.RequestPermissions(this, _permissionsExternalStorage, ActivityCommon.RequestPermissionExternalStorage);
+            }
         }
 
         private void StoragePermissionGranted()
