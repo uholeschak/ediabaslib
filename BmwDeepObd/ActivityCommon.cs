@@ -4767,6 +4767,23 @@ namespace BmwDeepObd
             }
         }
 
+        public string[] RetrievePermissions()
+        {
+            try
+            {
+                PackageInfo packageInfo = _packageManager?.GetPackageInfo(_context.PackageName, PackageInfoFlags.Permissions);
+                if (packageInfo?.RequestedPermissions != null)
+                {
+                    return packageInfo.RequestedPermissions.ToArray();
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         public string GetCertificateInfo()
         {
             try

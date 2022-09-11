@@ -3101,6 +3101,15 @@ namespace BmwDeepObd
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
             {
+                string[] permissions = _activityCommon.RetrievePermissions();
+                if (permissions != null)
+                {
+                    if (!permissions.Contains("android.permission.MANAGE_EXTERNAL_STORAGE", StringComparer.OrdinalIgnoreCase))
+                    {
+                        return false;
+                    }
+                }
+
                 if (Android.OS.Environment.IsExternalStorageManager)
                 {
                     _storageManagerPermissionGranted = true;
