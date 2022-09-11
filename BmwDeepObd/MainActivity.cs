@@ -742,7 +742,6 @@ namespace BmwDeepObd
             {
                 _onResumeExecuted = true;
                 RequestStoragePermissions();
-                RequestStorageManagerPermissions();
             }
 
             if (_storageAccessGranted)
@@ -3100,7 +3099,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
             {
                 if (Android.OS.Environment.IsExternalStorageManager)
                 {
@@ -3131,6 +3130,11 @@ namespace BmwDeepObd
 
         private void RequestStoragePermissions(bool finish = false)
         {
+            if (RequestStorageManagerPermissions())
+            {
+                return;
+            }
+
             if (_permissionsExternalStorage.All(permission => ContextCompat.CheckSelfPermission(this, permission) == Permission.Granted))
             {
                 StoragePermissionGranted();
