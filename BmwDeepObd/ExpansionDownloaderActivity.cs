@@ -892,10 +892,7 @@ namespace BmwDeepObd
                 Finish();
             }
 
-            if (ActivityCommon.IsExtrenalStorageAccessSupported())
-            {
-                ActivityCompat.RequestPermissions(this, _permissionsExternalStorage, ActivityCommon.RequestPermissionExternalStorage);
-            }
+            ActivityCompat.RequestPermissions(this, _permissionsExternalStorage, ActivityCommon.RequestPermissionExternalStorage);
         }
 
         private void StoragePermissionGranted()
