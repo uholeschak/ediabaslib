@@ -278,7 +278,7 @@
       <HintPath>packages\Xamarin.AndroidX.ViewPager2.1.0.0.16\lib\monoandroid12.0\Xamarin.AndroidX.ViewPager2.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.AndroidX.WebKit, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Xamarin.AndroidX.WebKit.1.4.0.8\lib\monoandroid12.0\Xamarin.AndroidX.WebKit.dll</HintPath>
+      <HintPath>packages\Xamarin.AndroidX.WebKit.1.5.0\lib\monoandroid12.0\Xamarin.AndroidX.WebKit.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Google.Android.Material, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Xamarin.Google.Android.Material.1.6.1.1\lib\monoandroid12.0\Xamarin.Google.Android.Material.dll</HintPath>
@@ -870,7 +870,6 @@
     <Error Condition="!Exists('packages\Xamarin.AndroidX.VectorDrawable.1.1.0.14\build\monoandroid12.0\Xamarin.AndroidX.VectorDrawable.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.VectorDrawable.1.1.0.14\build\monoandroid12.0\Xamarin.AndroidX.VectorDrawable.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.VectorDrawable.Animated.1.1.0.14\build\monoandroid12.0\Xamarin.AndroidX.VectorDrawable.Animated.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.VectorDrawable.Animated.1.1.0.14\build\monoandroid12.0\Xamarin.AndroidX.VectorDrawable.Animated.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.ViewPager.1.0.0.14\build\monoandroid12.0\Xamarin.AndroidX.ViewPager.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.ViewPager.1.0.0.14\build\monoandroid12.0\Xamarin.AndroidX.ViewPager.targets'))" />
-    <Error Condition="!Exists('packages\Xamarin.AndroidX.WebKit.1.4.0.8\build\monoandroid12.0\Xamarin.AndroidX.WebKit.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.WebKit.1.4.0.8\build\monoandroid12.0\Xamarin.AndroidX.WebKit.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.Jetbrains.Annotations.23.0.0.4\build\monoandroid12.0\Xamarin.Jetbrains.Annotations.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Jetbrains.Annotations.23.0.0.4\build\monoandroid12.0\Xamarin.Jetbrains.Annotations.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.Core.Core.Ktx.1.8.0.1\build\monoandroid12.0\Xamarin.AndroidX.Core.Core.Ktx.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.Core.Core.Ktx.1.8.0.1\build\monoandroid12.0\Xamarin.AndroidX.Core.Core.Ktx.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.Loader.1.1.0.14\build\monoandroid12.0\Xamarin.AndroidX.Loader.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.Loader.1.1.0.14\build\monoandroid12.0\Xamarin.AndroidX.Loader.targets'))" />
@@ -903,6 +902,7 @@
     <Error Condition="!Exists('packages\Xamarin.AndroidX.AppCompat.AppCompatResources.1.5.0\build\monoandroid12.0\Xamarin.AndroidX.AppCompat.AppCompatResources.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.AppCompat.AppCompatResources.1.5.0\build\monoandroid12.0\Xamarin.AndroidX.AppCompat.AppCompatResources.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.Fragment.1.5.2\build\monoandroid12.0\Xamarin.AndroidX.Fragment.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.Fragment.1.5.2\build\monoandroid12.0\Xamarin.AndroidX.Fragment.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.AppCompat.1.5.0\build\monoandroid12.0\Xamarin.AndroidX.AppCompat.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.AppCompat.1.5.0\build\monoandroid12.0\Xamarin.AndroidX.AppCompat.targets'))" />
+    <Error Condition="!Exists('packages\Xamarin.AndroidX.WebKit.1.5.0\build\monoandroid12.0\Xamarin.AndroidX.WebKit.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.WebKit.1.5.0\build\monoandroid12.0\Xamarin.AndroidX.WebKit.targets'))" />
   </Target>
   <PropertyGroup>
     <PostBuildEvent>copy /y "$(ProjectDir)Xml\BmwDeepObd.xsd" "$(ProjectDir)Xml\E61R\"</PostBuildEvent>
@@ -936,7 +936,6 @@
   <Import Project="packages\Xamarin.AndroidX.VectorDrawable.1.1.0.14\build\monoandroid12.0\Xamarin.AndroidX.VectorDrawable.targets" Condition="Exists('packages\Xamarin.AndroidX.VectorDrawable.1.1.0.14\build\monoandroid12.0\Xamarin.AndroidX.VectorDrawable.targets')" />
   <Import Project="packages\Xamarin.AndroidX.VectorDrawable.Animated.1.1.0.14\build\monoandroid12.0\Xamarin.AndroidX.VectorDrawable.Animated.targets" Condition="Exists('packages\Xamarin.AndroidX.VectorDrawable.Animated.1.1.0.14\build\monoandroid12.0\Xamarin.AndroidX.VectorDrawable.Animated.targets')" />
   <Import Project="packages\Xamarin.AndroidX.ViewPager.1.0.0.14\build\monoandroid12.0\Xamarin.AndroidX.ViewPager.targets" Condition="Exists('packages\Xamarin.AndroidX.ViewPager.1.0.0.14\build\monoandroid12.0\Xamarin.AndroidX.ViewPager.targets')" />
-  <Import Project="packages\Xamarin.AndroidX.WebKit.1.4.0.8\build\monoandroid12.0\Xamarin.AndroidX.WebKit.targets" Condition="Exists('packages\Xamarin.AndroidX.WebKit.1.4.0.8\build\monoandroid12.0\Xamarin.AndroidX.WebKit.targets')" />
   <Import Project="packages\Xamarin.Jetbrains.Annotations.23.0.0.4\build\monoandroid12.0\Xamarin.Jetbrains.Annotations.targets" Condition="Exists('packages\Xamarin.Jetbrains.Annotations.23.0.0.4\build\monoandroid12.0\Xamarin.Jetbrains.Annotations.targets')" />
   <Import Project="packages\Xamarin.AndroidX.Core.Core.Ktx.1.8.0.1\build\monoandroid12.0\Xamarin.AndroidX.Core.Core.Ktx.targets" Condition="Exists('packages\Xamarin.AndroidX.Core.Core.Ktx.1.8.0.1\build\monoandroid12.0\Xamarin.AndroidX.Core.Core.Ktx.targets')" />
   <Import Project="packages\Xamarin.AndroidX.Loader.1.1.0.14\build\monoandroid12.0\Xamarin.AndroidX.Loader.targets" Condition="Exists('packages\Xamarin.AndroidX.Loader.1.1.0.14\build\monoandroid12.0\Xamarin.AndroidX.Loader.targets')" />
@@ -968,4 +967,5 @@
   <Import Project="packages\Xamarin.AndroidX.AppCompat.AppCompatResources.1.5.0\build\monoandroid12.0\Xamarin.AndroidX.AppCompat.AppCompatResources.targets" Condition="Exists('packages\Xamarin.AndroidX.AppCompat.AppCompatResources.1.5.0\build\monoandroid12.0\Xamarin.AndroidX.AppCompat.AppCompatResources.targets')" />
   <Import Project="packages\Xamarin.AndroidX.Fragment.1.5.2\build\monoandroid12.0\Xamarin.AndroidX.Fragment.targets" Condition="Exists('packages\Xamarin.AndroidX.Fragment.1.5.2\build\monoandroid12.0\Xamarin.AndroidX.Fragment.targets')" />
   <Import Project="packages\Xamarin.AndroidX.AppCompat.1.5.0\build\monoandroid12.0\Xamarin.AndroidX.AppCompat.targets" Condition="Exists('packages\Xamarin.AndroidX.AppCompat.1.5.0\build\monoandroid12.0\Xamarin.AndroidX.AppCompat.targets')" />
+  <Import Project="packages\Xamarin.AndroidX.WebKit.1.5.0\build\monoandroid12.0\Xamarin.AndroidX.WebKit.targets" Condition="Exists('packages\Xamarin.AndroidX.WebKit.1.5.0\build\monoandroid12.0\Xamarin.AndroidX.WebKit.targets')" />
 </Project>
