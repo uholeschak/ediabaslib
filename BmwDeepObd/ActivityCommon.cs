@@ -1924,9 +1924,9 @@ namespace BmwDeepObd
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.Tiramisu)
             {
-                return false;
+                return true;
             }
-            return true;
+            return false;
         }
 
         public static List<string> GetRecentConfigList()

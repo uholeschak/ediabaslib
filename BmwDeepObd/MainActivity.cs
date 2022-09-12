@@ -1714,36 +1714,39 @@ namespace BmwDeepObd
                         break;
                     }
 
-                    if (ActivityCommon.IsExtrenalStorageAccessSupported())
+                    if (!ActivityCommon.IsExtrenalStorageAccessSupported())
                     {
-                        bool finish = true;
-                        AlertDialog alertDialog = new AlertDialog.Builder(this)
-                            .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
-                            {
-                                ActivityCommon.OpenAppSettingDetails(this, (int)ActivityRequest.RequestAppStorePermissions);
-                            })
-                            .SetNegativeButton(Resource.String.button_no, (sender, args) =>
-                            {
-                                Finish();
-                            })
-                            .SetCancelable(true)
-                            .SetMessage(Resource.String.access_denied_ext_storage)
-                            .SetTitle(Resource.String.alert_title_warning)
-                            .Show();
-
-                        alertDialog.DismissEvent += (sender, args) =>
-                        {
-                            if (_activityCommon == null)
-                            {
-                                return;
-                            }
-
-                            if (finish)
-                            {
-                                Finish();
-                            }
-                        };
+                        StoragePermissionGranted();
+                        break;
                     }
+
+                    bool finish = true;
+                    AlertDialog alertDialog = new AlertDialog.Builder(this)
+                        .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                        {
+                            ActivityCommon.OpenAppSettingDetails(this, (int)ActivityRequest.RequestAppStorePermissions);
+                        })
+                        .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                        {
+                            Finish();
+                        })
+                        .SetCancelable(true)
+                        .SetMessage(Resource.String.access_denied_ext_storage)
+                        .SetTitle(Resource.String.alert_title_warning)
+                        .Show();
+
+                    alertDialog.DismissEvent += (sender, args) =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
+                        if (finish)
+                        {
+                            Finish();
+                        }
+                    };
                     break;
 
                 case ActivityCommon.RequestPermissionBluetooth:
