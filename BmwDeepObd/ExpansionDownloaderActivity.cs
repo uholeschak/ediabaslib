@@ -899,7 +899,14 @@ namespace BmwDeepObd
                 {
                     return;
                 }
-                StoragePermissionGranted();
+
+                if (!ActivityCommon.IsExtrenalStorageAccessRequired())
+                {
+                    StoragePermissionGranted();
+                    return;
+                }
+
+                Finish();
                 return;
             }
 
