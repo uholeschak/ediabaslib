@@ -3156,7 +3156,13 @@ namespace BmwDeepObd
 
             if (finish)
             {
-                StoragePermissionGranted();
+                if (!ActivityCommon.IsExtrenalStorageAccessRequired())
+                {
+                    StoragePermissionGranted();
+                    return;
+                }
+
+                Finish();
                 return;
             }
 
