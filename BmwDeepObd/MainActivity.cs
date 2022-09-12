@@ -1714,7 +1714,7 @@ namespace BmwDeepObd
                         break;
                     }
 
-                    if (!ActivityCommon.IsExtrenalStorageAccessSupported())
+                    if (!ActivityCommon.IsExtrenalStorageAccessRequired())
                     {
                         StoragePermissionGranted();
                         break;
@@ -1746,7 +1746,7 @@ namespace BmwDeepObd
 
                         if (finish)
                         {
-                            StoragePermissionGranted();
+                            Finish();
                         }
                     };
                     break;
@@ -3107,7 +3107,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (!ActivityCommon.IsExtrenalStorageAccessSupported())
+            if (!ActivityCommon.IsExtrenalStorageAccessRequired())
             {
                 string[] permissions = _activityCommon.RetrievePermissions();
                 if (permissions != null)

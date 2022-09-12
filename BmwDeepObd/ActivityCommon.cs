@@ -1920,9 +1920,9 @@ namespace BmwDeepObd
             return true;
         }
 
-        public static bool IsExtrenalStorageAccessSupported()
+        public static bool IsExtrenalStorageAccessRequired()
         {
-            if (Build.VERSION.SdkInt < BuildVersionCodes.Tiramisu)
+            if (Build.VERSION.SdkInt <= BuildVersionCodes.Q)
             {
                 return true;
             }
