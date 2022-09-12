@@ -1724,11 +1724,13 @@ namespace BmwDeepObd
                     AlertDialog alertDialog = new AlertDialog.Builder(this)
                         .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                         {
-                            ActivityCommon.OpenAppSettingDetails(this, (int)ActivityRequest.RequestAppStorePermissions);
+                            if (ActivityCommon.OpenAppSettingDetails(this, (int)ActivityRequest.RequestAppStorePermissions))
+                            {
+                                finish = false;
+                            }
                         })
                         .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                         {
-                            Finish();
                         })
                         .SetCancelable(true)
                         .SetMessage(Resource.String.access_denied_ext_storage)
@@ -1744,7 +1746,7 @@ namespace BmwDeepObd
 
                         if (finish)
                         {
-                            Finish();
+                            StoragePermissionGranted();
                         }
                     };
                     break;
@@ -3154,7 +3156,8 @@ namespace BmwDeepObd
 
             if (finish)
             {
-                Finish();
+                StoragePermissionGranted();
+                return;
             }
 
             ActivityCompat.RequestPermissions(this, _permissionsExternalStorage, ActivityCommon.RequestPermissionExternalStorage);
