@@ -883,29 +883,25 @@ namespace BmwDeepObd
 
         private void RequestStoragePermissions(bool finish = false)
         {
+            if (_actvityDestroyed)
+            {
+                return;
+            }
+
             if (_permissionsExternalStorage.All(permission => ContextCompat.CheckSelfPermission(this, permission) == Permission.Granted))
             {
-                if (_actvityDestroyed)
-                {
-                    return;
-                }
+                StoragePermissionGranted();
+                return;
+            }
+
+            if (!ActivityCommon.IsExtrenalStorageAccessRequired())
+            {
                 StoragePermissionGranted();
                 return;
             }
 
             if (finish)
             {
-                if (_actvityDestroyed)
-                {
-                    return;
-                }
-
-                if (!ActivityCommon.IsExtrenalStorageAccessRequired())
-                {
-                    StoragePermissionGranted();
-                    return;
-                }
-
                 Finish();
                 return;
             }
