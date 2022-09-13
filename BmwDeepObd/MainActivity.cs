@@ -3107,7 +3107,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (!ActivityCommon.IsExtrenalStorageAccessRequired())
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
             {
                 string[] permissions = _activityCommon.RetrievePermissions();
                 if (permissions != null)
