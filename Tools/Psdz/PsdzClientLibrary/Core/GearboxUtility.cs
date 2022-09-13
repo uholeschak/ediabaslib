@@ -116,7 +116,7 @@ namespace PsdzClient.Core
             {
                 return new DateTime(int.Parse(v.Modelljahr), int.Parse(v.Modellmonat), 1) < legacyDetectionConditionDate;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //Log.Error("GearboxUtility.useLegacyGearboxTypeDetection", "Error occured when checking the condition, possible problem with vehicle construction date - year: " + v.Modelljahr + ", month: " + v.Modellmonat, ex);
                 return false;

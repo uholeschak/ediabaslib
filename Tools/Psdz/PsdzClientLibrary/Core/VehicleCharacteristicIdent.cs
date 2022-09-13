@@ -201,14 +201,14 @@ namespace PsdzClient.Core
                 vecInfo.EBezeichnungUIText = DefaultEmptyCharacteristicValue;
             }
             return true;
-		}
+        }
 
         protected override bool ComputeGetriebe(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			GearboxUtility.SetGearboxTypeFromCharacteristics(this.vecInfo, this.characteristic);
-			return true;
-		}
+        {
+            GetIdentParameters(parameters);
+            GearboxUtility.SetGearboxTypeFromCharacteristics(vecInfo, characteristic);
+            return true;
+        }
 
         protected override bool ComputeHybridkennzeichen(params object[] parameters)
         {

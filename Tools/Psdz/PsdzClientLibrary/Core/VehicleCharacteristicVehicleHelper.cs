@@ -407,79 +407,73 @@ namespace PsdzClient.Core
 			return this.database.LookupVehicleCharIdByName(this.vehicle.Ueberarbeitung, new decimal?(40123522)) == this.datavalueId;
 		}
 
-		protected override bool ComputeVerkaufsBezeichnung(params object[] parameters)
-		{
-			BrandName? brandName = this.vehicle.BrandName;
-			if (brandName.GetValueOrDefault() == BrandName.GIBBS & brandName != null)
-			{
-				this.characteristicValue = "K 1300 S";
-				return this.database.LookupVehicleCharIdByName("K 1300 S", new decimal?(40122114)) == this.datavalueId;
-			}
-			this.characteristicValue = this.vehicle.VerkaufsBezeichnung;
-			return this.database.LookupVehicleCharIdByName(this.vehicle.VerkaufsBezeichnung, new decimal?(40122114)) == this.datavalueId;
-		}
+        protected override bool ComputeVerkaufsBezeichnung(params object[] parameters)
+        {
+            if (vehicle.BrandName == BrandName.GIBBS)
+            {
+                characteristicValue = "K 1300 S";
+                return database.LookupVehicleCharIdByName("K 1300 S", 40122114) == datavalueId;
+            }
+            characteristicValue = vehicle.VerkaufsBezeichnung;
+            return database.LookupVehicleCharIdByName(vehicle.VerkaufsBezeichnung, 40122114) == datavalueId;
+        }
 
-		private bool HandleHeatMotorCharacteristic(Func<HeatMotor, string> getProperty, long datavalueId, ValidationRuleInternalResults internalResult, out string value, string rootNodeClass, decimal characteristicNodeclass)
-		{
-            decimal rootClassValue;
-            if (!decimal.TryParse(rootNodeClass, NumberStyles.Integer, CultureInfo.InvariantCulture, out rootClassValue))
+        private bool HandleHeatMotorCharacteristic(Func<HeatMotor, string> getProperty, long datavalueId, ValidationRuleInternalResults internalResult, out string value, string rootNodeClass, decimal characteristicNodeclass)
+        {
+            if (!decimal.TryParse(rootNodeClass, NumberStyles.Integer, CultureInfo.InvariantCulture, out decimal rootClassValue))
             {
                 rootClassValue = 0;
             }
-			using (List<HeatMotor>.Enumerator enumerator = this.vehicle.HeatMotors.GetEnumerator())
-			{
-				while (enumerator.MoveNext())
-				{
-					HeatMotor hm = enumerator.Current;
-					ValidationRuleInternalResult validationRuleInternalResult = internalResult.FirstOrDefault((ValidationRuleInternalResult r) => r.Id == hm.DriveId && r.Type == ValidationRuleInternalResult.CharacteristicType.HeatMotor && r.CharacteristicId == rootClassValue);
-					bool flag = database.LookupVehicleCharIdByName(getProperty(hm), new decimal?(characteristicNodeclass)) == datavalueId;
-					if (validationRuleInternalResult == null)
-                    {
-						validationRuleInternalResult = new ValidationRuleInternalResult
-						{
-							Type = ValidationRuleInternalResult.CharacteristicType.HeatMotor,
-							Id = hm.DriveId,
-							CharacteristicId = rootClassValue
-						};
-						if (!(internalResult.RuleExpression is OrExpression))
-						{
-							validationRuleInternalResult.IsValid = true;
-						}
-						internalResult.Add(validationRuleInternalResult);
-					}
-					RuleExpression ruleExpression = internalResult.RuleExpression;
-					if (!(ruleExpression is AndExpression))
-					{
-						if (!(ruleExpression is OrExpression))
-						{
-							if (ruleExpression is NotExpression)
-							{
-								validationRuleInternalResult.IsValid &= !flag;
-							}
-						}
-						else
-						{
-							validationRuleInternalResult.IsValid = flag;
-						}
-					}
-					else
-					{
-						validationRuleInternalResult.IsValid = flag;
-					}
-				}
-			}
-			value = string.Join(",", from hm in this.vehicle.HeatMotors
-									 select getProperty(hm));
-			bool flag2 = (from r in internalResult
-						  group r by r.Id).Any((IGrouping<string, ValidationRuleInternalResult> g) => g.All((ValidationRuleInternalResult c) => c.IsValid));
-			if (!(internalResult.RuleExpression is NotExpression))
-			{
-				return flag2;
-			}
-			return !flag2;
-		}
 
-		//private IDatabaseProvider dbConnector;
+            foreach (HeatMotor hm2 in vehicle.HeatMotors)
+            {
+                ValidationRuleInternalResult validationRuleInternalResult = internalResult.FirstOrDefault((ValidationRuleInternalResult r) => r.Id == hm2.DriveId && r.Type == ValidationRuleInternalResult.CharacteristicType.HeatMotor && r.CharacteristicId == rootClassValue);
+                bool flag = database.LookupVehicleCharIdByName(getProperty(hm2), characteristicNodeclass) == (decimal)datavalueId;
+                if (validationRuleInternalResult == null)
+                {
+                    validationRuleInternalResult = new ValidationRuleInternalResult
+                    {
+                        Type = ValidationRuleInternalResult.CharacteristicType.HeatMotor,
+                        Id = hm2.DriveId,
+                        CharacteristicId = rootClassValue
+                    };
+                    if (!(internalResult.RuleExpression is OrExpression))
+                    {
+                        validationRuleInternalResult.IsValid = true;
+                    }
+                    internalResult.Add(validationRuleInternalResult);
+                }
+                RuleExpression ruleExpression = internalResult.RuleExpression;
+                if (!(ruleExpression is AndExpression))
+                {
+                    if (!(ruleExpression is OrExpression))
+                    {
+                        if (ruleExpression is NotExpression)
+                        {
+                            validationRuleInternalResult.IsValid &= !flag;
+                        }
+                    }
+                    else
+                    {
+                        validationRuleInternalResult.IsValid |= flag;
+                    }
+                }
+                else
+                {
+                    validationRuleInternalResult.IsValid &= flag;
+                }
+            }
+            value = string.Join(",", vehicle.HeatMotors.Select((HeatMotor hm) => getProperty(hm)));
+            bool flag2 = (from r in internalResult
+                group r by r.Id).Any((IGrouping<string, ValidationRuleInternalResult> g) => g.All((ValidationRuleInternalResult c) => c.IsValid));
+            if (!(internalResult.RuleExpression is NotExpression))
+            {
+                return flag2;
+            }
+            return !flag2;
+        }
+
+        //private IDatabaseProvider dbConnector;
         PdszDatabase database;
 
 		private string characteristicValue;
