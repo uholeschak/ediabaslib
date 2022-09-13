@@ -226,21 +226,19 @@ namespace PsdzClient.Core
 			return this.HandleHeatMotorCharacteristic((HeatMotor hm) => hm.HeatMOTBezeichnung, this.datavalueId, this.internalResult, out this.characteristicValue, this.characteristicRoots?.NodeClass, 99999999711m);
 		}
 
-		protected override bool ComputeEreihe(params object[] parameters)
-		{
-			this.characteristicValue = this.vehicle.Ereihe;
-			BrandName? brandName = this.vehicle.BrandName;
-			if (brandName.GetValueOrDefault() == BrandName.RODING & brandName != null)
-			{
-				return this.database.LookupVehicleCharIdByName("E89", new decimal?(40128130)) == this.datavalueId;
-			}
-			brandName = this.vehicle.BrandName;
-			if (brandName.GetValueOrDefault() == BrandName.GIBBS & brandName != null)
-			{
-				return this.database.LookupVehicleCharIdByName("K40", new decimal?(40128130)) == this.datavalueId;
-			}
-			return this.database.LookupVehicleCharIdByName(this.vehicle.Ereihe, new decimal?(40128130)) == this.datavalueId;
-		}
+        protected override bool ComputeEreihe(params object[] parameters)
+        {
+            characteristicValue = vehicle.Ereihe;
+            if (vehicle.BrandName == BrandName.RODING)
+            {
+                return database.LookupVehicleCharIdByName("E89", 40128130) == datavalueId;
+            }
+            if (vehicle.BrandName == BrandName.GIBBS)
+            {
+                return database.LookupVehicleCharIdByName("K40", 40128130) == datavalueId;
+            }
+            return database.LookupVehicleCharIdByName(vehicle.Ereihe, 40128130) == datavalueId;
+        }
 
 		protected override bool ComputeGetriebe(params object[] parameters)
 		{
@@ -356,33 +354,30 @@ namespace PsdzClient.Core
 			return this.database.LookupVehicleCharIdByName(this.vehicle.Prodart, new decimal?(40135682)) == this.datavalueId;
 		}
 
-		protected override bool ComputeProduktlinie(params object[] parameters)
-		{
-			this.characteristicValue = this.vehicle.Produktlinie;
-			BrandName? brandName = this.vehicle.BrandName;
-			if (brandName.GetValueOrDefault() == BrandName.RODING & brandName != null)
+        protected override bool ComputeProduktlinie(params object[] parameters)
+        {
+            characteristicValue = vehicle.Produktlinie;
+            if (vehicle.BrandName == BrandName.RODING)
 			{
-				return this.database.LookupVehicleCharIdByName("PL2", new decimal?(40039952514L)) == this.datavalueId;
-			}
-			brandName = this.vehicle.BrandName;
-			if (brandName.GetValueOrDefault() == BrandName.GIBBS & brandName != null)
+                return database.LookupVehicleCharIdByName("PL2", 40039952514L) == datavalueId;
+            }
+            if (vehicle.BrandName == BrandName.GIBBS)
 			{
-				return this.database.LookupVehicleCharIdByName("K", new decimal?(40039952514L)) == this.datavalueId;
-			}
-			brandName = this.vehicle.BrandName;
-			if (!(brandName.GetValueOrDefault() == BrandName.TOYOTA & brandName != null))
+                return database.LookupVehicleCharIdByName("K", 40039952514L) == datavalueId;
+            }
+            if (vehicle.BrandName == BrandName.TOYOTA)
 			{
-				return this.database.LookupVehicleCharIdByName(this.vehicle.Produktlinie, new decimal?(40039952514L)) == this.datavalueId;
-			}
-			decimal d = this.database.LookupVehicleCharIdByName(this.vehicle.Produktlinie, new decimal?(40039952514L));
-			if (!(d != 0m))
-			{
-				return this.database.LookupVehicleCharIdByName("MINI", new decimal?(40039952514L)) == this.datavalueId;
-			}
-			return d == this.datavalueId;
+                long num2 = database.LookupVehicleCharIdByName(vehicle.Produktlinie, 40039952514L);
+                if (!(num2 != 0m))
+                {
+					return database.LookupVehicleCharIdByName("MINI", 40039952514L) == datavalueId;
+                }
+                return num2 == datavalueId;
+            }
+            return database.LookupVehicleCharIdByName(vehicle.Produktlinie, 40039952514L) == datavalueId;
 		}
 
-		protected override bool ComputeSicherheitsrelevant(params object[] parameters)
+        protected override bool ComputeSicherheitsrelevant(params object[] parameters)
 		{
 			string sicherheitsrelevant = this.vehicle.Sicherheitsrelevant;
 			this.characteristicValue = sicherheitsrelevant;
