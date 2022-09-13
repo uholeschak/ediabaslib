@@ -4804,7 +4804,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             return titleDe;
         }
 
-        public long LookupVehicleCharIdByName(string name, decimal? nodeclassValue)
+        public decimal LookupVehicleCharIdByName(string name, decimal? nodeclassValue)
         {
             if (!nodeclassValue.HasValue)
             {
@@ -4817,7 +4817,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
                 return 0;
             }
 
-            if (!long.TryParse(charId, NumberStyles.Integer, CultureInfo.InvariantCulture, out long value))
+            if (!decimal.TryParse(charId, NumberStyles.Integer, CultureInfo.InvariantCulture, out decimal value))
             {
                 return 0;
             }

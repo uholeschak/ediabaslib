@@ -300,81 +300,81 @@ namespace PsdzClient.Core
 			return this.database.LookupVehicleCharIdByName(this.vehicle.Kraftstoffart, new decimal?(40125442)) == this.datavalueId;
 		}
 
-		protected override bool ComputeLand(params object[] parameters)
-		{
-			this.characteristicValue = this.vehicle.Land;
-			return this.database.LookupVehicleCharIdByName(this.vehicle.Land, new decimal?(40129538)) == this.datavalueId;
-		}
+        protected override bool ComputeLand(params object[] parameters)
+        {
+            characteristicValue = vehicle.Land;
+            return database.LookupVehicleCharIdByName(vehicle.Land, 40129538) == (decimal)datavalueId;
+        }
 
-		protected override bool ComputeLeistungsklasse(params object[] parameters)
-		{
-			this.characteristicValue = this.vehicle.Leistungsklasse;
-			return this.database.LookupVehicleCharIdByName(this.vehicle.Leistungsklasse, new decimal?(40136322)) == this.datavalueId;
-		}
+        protected override bool ComputeLeistungsklasse(params object[] parameters)
+        {
+            characteristicValue = vehicle.Leistungsklasse;
+            return database.LookupVehicleCharIdByName(vehicle.Leistungsklasse, 40136322) == (decimal)datavalueId;
+        }
 
-		protected override bool ComputeLenkung(params object[] parameters)
-		{
-			this.characteristicValue = this.vehicle.Lenkung;
-			return this.database.LookupVehicleCharIdByName(this.vehicle.Lenkung, new decimal?(40124802)) == this.datavalueId;
-		}
+        protected override bool ComputeLenkung(params object[] parameters)
+        {
+            characteristicValue = vehicle.Lenkung;
+            return database.LookupVehicleCharIdByName(vehicle.Lenkung, 40124802) == (decimal)datavalueId;
+        }
 
-		protected override bool ComputeMOTBezeichnung(params object[] parameters)
-		{
-			this.characteristicValue = this.vehicle.MOTBezeichnung;
-			return this.database.LookupVehicleCharIdByName(this.vehicle.MOTBezeichnung, new decimal?(99999999919L)) == this.datavalueId;
-		}
+        protected override bool ComputeMOTBezeichnung(params object[] parameters)
+        {
+            characteristicValue = vehicle.MOTBezeichnung;
+            return database.LookupVehicleCharIdByName(vehicle.MOTBezeichnung, 99999999919L) == (decimal)datavalueId;
+        }
 
-		protected override bool ComputeMOTEinbaulage(params object[] parameters)
-		{
-			this.characteristicValue = this.vehicle.MOTEinbaulage;
-			return this.database.LookupVehicleCharIdByName(this.vehicle.MOTEinbaulage, new decimal?(99999999916L)) == this.datavalueId;
-		}
+        protected override bool ComputeMOTEinbaulage(params object[] parameters)
+        {
+            characteristicValue = vehicle.MOTEinbaulage;
+            return database.LookupVehicleCharIdByName(vehicle.MOTEinbaulage, 99999999916L) == (decimal)datavalueId;
+        }
 
-		protected override bool ComputeMOTKraftstoffart(params object[] parameters)
-		{
-			this.characteristicValue = this.vehicle.MOTKraftstoffart;
-			return this.database.LookupVehicleCharIdByName(this.vehicle.MOTKraftstoffart, new decimal?(99999999917L)) == this.datavalueId;
-		}
+        protected override bool ComputeMOTKraftstoffart(params object[] parameters)
+        {
+            characteristicValue = vehicle.MOTKraftstoffart;
+            return database.LookupVehicleCharIdByName(vehicle.MOTKraftstoffart, 99999999917L) == (decimal)datavalueId;
+        }
 
-		protected override bool ComputeMotor(params object[] parameters)
-		{
-			this.characteristicValue = this.vehicle.Motor;
-			return this.database.LookupVehicleCharIdByName(this.vehicle.Motor, new decimal?(40132226)) == this.datavalueId;
-		}
+        protected override bool ComputeMotor(params object[] parameters)
+        {
+            characteristicValue = vehicle.Motor;
+            return database.LookupVehicleCharIdByName(vehicle.Motor, 40132226) == (decimal)datavalueId;
+        }
 
-		protected override bool ComputeMotorarbeitsverfahren(params object[] parameters)
-		{
-			this.characteristicValue = this.vehicle.Motorarbeitsverfahren;
-			return this.database.LookupVehicleCharIdByName(this.vehicle.Motorarbeitsverfahren, new decimal?(68771231746L)) == this.datavalueId;
-		}
+        protected override bool ComputeMotorarbeitsverfahren(params object[] parameters)
+        {
+            characteristicValue = vehicle.Motorarbeitsverfahren;
+            return database.LookupVehicleCharIdByName(vehicle.Motorarbeitsverfahren, 68771231746L) == (decimal)datavalueId;
+        }
 
-		protected override bool ComputeProdart(params object[] parameters)
-		{
-			this.characteristicValue = this.vehicle.Prodart;
-			return this.database.LookupVehicleCharIdByName(this.vehicle.Prodart, new decimal?(40135682)) == this.datavalueId;
-		}
+        protected override bool ComputeProdart(params object[] parameters)
+        {
+            characteristicValue = vehicle.Prodart;
+            return database.LookupVehicleCharIdByName(vehicle.Prodart, 40135682) == (decimal)datavalueId;
+        }
 
         protected override bool ComputeProduktlinie(params object[] parameters)
         {
             characteristicValue = vehicle.Produktlinie;
             if (vehicle.BrandName == BrandName.RODING)
 			{
-                return database.LookupVehicleCharIdByName("PL2", 40039952514L) == datavalueId;
+                return database.LookupVehicleCharIdByName("PL2", 40039952514L) == (decimal)datavalueId;
             }
             if (vehicle.BrandName == BrandName.GIBBS)
 			{
-                return database.LookupVehicleCharIdByName("K", 40039952514L) == datavalueId;
+                return database.LookupVehicleCharIdByName("K", 40039952514L) == (decimal)datavalueId;
             }
             if (vehicle.BrandName == BrandName.TOYOTA)
 			{
-                long num2 = database.LookupVehicleCharIdByName(vehicle.Produktlinie, 40039952514L);
+                decimal num2 = database.LookupVehicleCharIdByName(vehicle.Produktlinie, 40039952514L);
                 if (!(num2 != 0m))
                 {
-					return database.LookupVehicleCharIdByName("MINI", 40039952514L) == datavalueId;
+					return database.LookupVehicleCharIdByName("MINI", 40039952514L) == (decimal)datavalueId;
                 }
-                return num2 == datavalueId;
+                return num2 == (decimal)datavalueId;
             }
-            return database.LookupVehicleCharIdByName(vehicle.Produktlinie, 40039952514L) == datavalueId;
+            return database.LookupVehicleCharIdByName(vehicle.Produktlinie, 40039952514L) == (decimal)datavalueId;
 		}
 
         protected override bool ComputeSicherheitsrelevant(params object[] parameters)
@@ -407,10 +407,10 @@ namespace PsdzClient.Core
             if (vehicle.BrandName == BrandName.GIBBS)
             {
                 characteristicValue = "K 1300 S";
-                return database.LookupVehicleCharIdByName("K 1300 S", 40122114) == datavalueId;
+                return database.LookupVehicleCharIdByName("K 1300 S", 40122114) == (decimal)datavalueId;
             }
             characteristicValue = vehicle.VerkaufsBezeichnung;
-            return database.LookupVehicleCharIdByName(vehicle.VerkaufsBezeichnung, 40122114) == datavalueId;
+            return database.LookupVehicleCharIdByName(vehicle.VerkaufsBezeichnung, 40122114) == (decimal)datavalueId;
         }
 
         private bool HandleHeatMotorCharacteristic(Func<HeatMotor, string> getProperty, long datavalueId, ValidationRuleInternalResults internalResult, out string value, string rootNodeClass, decimal characteristicNodeclass)
