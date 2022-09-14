@@ -706,6 +706,7 @@ namespace CarSimulator
                 Thread.Sleep(100);
             }
 
+            bool llineFailed = false;
             try
             {
                 for (int i = 0; i < 10; i++)
@@ -715,12 +716,16 @@ namespace CarSimulator
                         sr.Append("\r\n");
                         sr.Append(string.Format("L-LINE test {0} failed", i + 1));
                         _form.UpdateTestStatusText(sr.ToString());
-                        return false;
+                        llineFailed = true;
                     }
                 }
-                sr.Append("\r\n");
-                sr.Append("L-LINE test OK");
-                _form.UpdateTestStatusText(sr.ToString());
+
+                if (!llineFailed)
+                {
+                    sr.Append("\r\n");
+                    sr.Append("L-LINE test OK");
+                    _form.UpdateTestStatusText(sr.ToString());
+                }
             }
             finally
             {
@@ -734,6 +739,11 @@ namespace CarSimulator
                 sr.Append("\r\n");
                 sr.Append("Set CAN mode failed!");
                 _form.UpdateTestStatusText(sr.ToString());
+                return false;
+            }
+
+            if (llineFailed)
+            {
                 return false;
             }
 
