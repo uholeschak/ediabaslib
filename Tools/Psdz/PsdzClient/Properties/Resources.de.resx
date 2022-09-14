@@ -118,12 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="VehiceNotDetected" xml:space="preserve">
-    <value>Vehicle not detected</value>
+    <value>Fahrzeug nicht gefunden</value>
   </data>
   <data name="VehicleIp" xml:space="preserve">
-    <value>Vehicle IP address: {0}</value>
+    <value>Fahrzeug IP Adresse: {0}</value>
   </data>
   <data name="VehicleSearching" xml:space="preserve">
-    <value>Searching vehicle ...</value>
+    <value>Fahrzeug suchen ...</value>
   </data>
 </root>

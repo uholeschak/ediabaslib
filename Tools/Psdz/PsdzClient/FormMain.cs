@@ -33,6 +33,7 @@ using log4net;
 using log4net.Config;
 using PsdzClient.Core;
 using PsdzClient.Programming;
+using PsdzClient.Properties;
 
 namespace PsdzClient
 {
@@ -784,6 +785,10 @@ namespace PsdzClient
             }
 
             bool preferIcom = checkBoxIcom.Checked;
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(Resources.VehicleSearching);
+            UpdateStatus(sb.ToString());
+
             SearchVehiclesTask().ContinueWith(task =>
             {
                 TaskActive = false;
@@ -848,6 +853,7 @@ namespace PsdzClient
                         {
                             ipAddressControlVehicleIp.Text = connectionSelected.IpAddress.ToString();
                             checkBoxIcom.Checked = connectionSelected.ConnectionType == EdInterfaceEnet.EnetConnection.InterfaceType.Icom;
+                            sb.AppendLine(string.Format(Resources.VehicleIp, connectionSelected.IpAddress));
                             ipValid = true;
                         }
                     }
@@ -858,11 +864,13 @@ namespace PsdzClient
 
                     if (!ipValid)
                     {
+                        sb.AppendLine(Resources.VehiceNotDetected);
                         ipAddressControlVehicleIp.Text = DefaultIp;
                         checkBoxIcom.Checked = false;
                     }
-                }));
 
+                    UpdateStatus(sb.ToString());
+                }));
             });
 
             TaskActive = true;
