@@ -10,101 +10,106 @@ namespace PsdzClient.Core
 {
 	public class VehicleCharacteristicVehicleHelper : VehicleCharacteristicAbstract
 	{
-		public VehicleCharacteristicVehicleHelper(Vehicle vec)
-		{
-			//this.dbConnector = DatabaseProviderFactory.Instance;
-			this.characteristicValue = string.Empty;
-            this.characteristicRoots = null;
-			this.vehicle = vec;
-			this.internalResult = new ValidationRuleInternalResults();
-		}
+        public VehicleCharacteristicVehicleHelper(Vehicle vec)
+        {
+            //dbConnector = DatabaseProviderFactory.Instance;
+            characteristicValue = string.Empty;
+            characteristicRoots = null;
+            vehicle = vec;
+            internalResult = new ValidationRuleInternalResults();
+        }
 
-		public bool GetISTACharacteristics(PdszDatabase.CharacteristicRoots characteristicRoots, out string value, decimal id, Vehicle vec, long dataValueId, ValidationRuleInternalResults internalResult)
-		{
-			this.characteristicRoots = characteristicRoots;
-			this.characteristicId = id;
-			this.vehicle = vec;
-			this.datavalueId = dataValueId;
-			this.internalResult = internalResult;
-            this.database = ClientContext.GetDatabase(vehicle);
-			bool result = base.ComputeCharacteristic(characteristicRoots.NodeClass, Array.Empty<object>());
-			value = this.characteristicValue;
-			return result;
-		}
+        public bool GetISTACharacteristics(PdszDatabase.CharacteristicRoots characteristicRoots, out string value, decimal id, Vehicle vec, long dataValueId, ValidationRuleInternalResults internalResult)
+        {
+            this.characteristicRoots = characteristicRoots;
+            characteristicId = id;
+            this.vehicle = vec;
+            datavalueId = dataValueId;
+            this.internalResult = internalResult;
+            bool result = ComputeCharacteristic(characteristicRoots.NodeClass);
+            value = characteristicValue;
+            return result;
+        }
 
-		protected override bool ComputeAbgas(params object[] parameters)
-		{
-			this.characteristicValue = this.vehicle.Abgas;
-			return this.database?.LookupVehicleCharIdByName(this.vehicle.Abgas, new decimal?(68771232130L)) == this.datavalueId;
-		}
+        protected override bool ComputeAbgas(params object[] parameters)
+        {
+            characteristicValue = vehicle.Abgas;
+            return database.LookupVehicleCharIdByName(vehicle.Abgas, 68771232130L) == (decimal)datavalueId;
+        }
 
-		protected override bool ComputeAEBezeichnung(params object[] parameters)
-		{
-			this.characteristicValue = this.vehicle.AEBezeichnung;
-			return this.database.LookupVehicleCharIdByName(this.vehicle.AEBezeichnung, new decimal?(99999999849L)) == this.datavalueId;
-		}
+        protected override bool ComputeAEBezeichnung(params object[] parameters)
+        {
+            characteristicValue = vehicle.AEBezeichnung;
+            return database.LookupVehicleCharIdByName(vehicle.AEBezeichnung, 99999999849L) == (decimal)datavalueId;
+        }
 
-		protected override bool ComputeAEKurzbezeichnung(params object[] parameters)
-		{
-			this.characteristicValue = this.vehicle.AEKurzbezeichnung;
-			return this.database.LookupVehicleCharIdByName(this.vehicle.AEKurzbezeichnung, new decimal?(99999999913L)) == this.datavalueId;
-		}
+        protected override bool ComputeAEKurzbezeichnung(params object[] parameters)
+        {
+            characteristicValue = vehicle.AEKurzbezeichnung;
+            return database.LookupVehicleCharIdByName(vehicle.AEKurzbezeichnung, 99999999913L) == (decimal)datavalueId;
+        }
 
-		protected override bool ComputeAELeistungsklasse(params object[] parameters)
-		{
-			this.characteristicValue = this.vehicle.AELeistungsklasse;
-			return this.database.LookupVehicleCharIdByName(this.vehicle.AELeistungsklasse, new decimal?(99999999914L)) == this.datavalueId;
-		}
+        protected override bool ComputeAELeistungsklasse(params object[] parameters)
+        {
+            characteristicValue = vehicle.AELeistungsklasse;
+            return database.LookupVehicleCharIdByName(vehicle.AELeistungsklasse, 99999999914L) == (decimal)datavalueId;
+        }
 
-		protected override bool ComputeAEUeberarbeitung(params object[] parameters)
-		{
-			this.characteristicValue = this.vehicle.AEUeberarbeitung;
-			return this.database.LookupVehicleCharIdByName(this.vehicle.AEUeberarbeitung, new decimal?(99999999915L)) == this.datavalueId;
-		}
+        protected override bool ComputeAEUeberarbeitung(params object[] parameters)
+        {
+            characteristicValue = vehicle.AEUeberarbeitung;
+            return database.LookupVehicleCharIdByName(vehicle.AEUeberarbeitung, 99999999915L) == (decimal)datavalueId;
+        }
 
-		protected override bool ComputeAntrieb(params object[] parameters)
-		{
-			this.characteristicValue = this.vehicle.Antrieb;
-			return this.database.LookupVehicleCharIdByName(this.vehicle.Antrieb, new decimal?(40124162)) == this.datavalueId;
-		}
+        protected override bool ComputeKraftstoffartEinbaulage(params object[] parameters)
+        {
+            characteristicValue = vehicle.KraftstoffartEinbaulage;
+            return database.LookupVehicleCharIdByName(vehicle.KraftstoffartEinbaulage, 53330059) == (decimal)datavalueId;
+        }
 
-		protected override bool ComputeBaseVersion(params object[] parameters)
-		{
-			this.characteristicValue = this.vehicle.BaseVersion;
-			return this.database.LookupVehicleCharIdByName(this.vehicle.BaseVersion, new decimal?(99999999852L)) == this.datavalueId;
-		}
+        protected override bool ComputeAntrieb(params object[] parameters)
+        {
+            characteristicValue = vehicle.Antrieb;
+            return database.LookupVehicleCharIdByName(vehicle.Antrieb, 40124162) == (decimal)datavalueId;
+        }
 
-		protected override bool ComputeBasicType(params object[] parameters)
-		{
-			this.characteristicValue = this.vehicle.BasicType;
-			return this.database.LookupVehicleCharIdByName(this.vehicle.BasicType, new decimal?(99999999912L)) == this.datavalueId;
-		}
+        protected override bool ComputeBaseVersion(params object[] parameters)
+        {
+            characteristicValue = vehicle.BaseVersion;
+            return database.LookupVehicleCharIdByName(vehicle.BaseVersion, 99999999852L) == (decimal)datavalueId;
+        }
 
-		protected override bool ComputeBaureihe(params object[] parameters)
-		{
-			this.characteristicValue = this.vehicle.Baureihe;
-			return this.database.LookupVehicleCharIdByName(this.vehicle.Baureihe, new decimal?(40126722)) == this.datavalueId;
-		}
+        protected override bool ComputeBasicType(params object[] parameters)
+        {
+            characteristicValue = vehicle.BasicType;
+            return database.LookupVehicleCharIdByName(vehicle.BasicType, 99999999912L) == (decimal)datavalueId;
+        }
 
-		protected override bool ComputeBaureihenverbund(params object[] parameters)
-		{
-			this.characteristicValue = this.vehicle.Baureihenverbund;
-			return this.database.LookupVehicleCharIdByName(this.vehicle.Baureihenverbund, new decimal?(99999999951L)) == this.datavalueId;
-		}
+        protected override bool ComputeBaureihe(params object[] parameters)
+        {
+            characteristicValue = vehicle.Baureihe;
+            return database.LookupVehicleCharIdByName(vehicle.Baureihe, 40126722) == (decimal)datavalueId;
+        }
 
-		protected override bool ComputeBaustandsJahr(params object[] parameters)
-		{
-			this.characteristicValue = this.vehicle.Modelljahr;
-			return this.database.LookupVehicleCharIdByName(this.vehicle.Modelljahr, null) == this.datavalueId;
-		}
+        protected override bool ComputeBaureihenverbund(params object[] parameters)
+        {
+            characteristicValue = vehicle.Baureihenverbund;
+            return database.LookupVehicleCharIdByName(vehicle.Baureihenverbund, 99999999951L) == (decimal)datavalueId;
+        }
 
-		protected override bool ComputeBaustandsMonat(params object[] parameters)
-		{
-			this.characteristicValue = this.vehicle.Modellmonat;
-			return this.database.LookupVehicleCharIdByName(this.vehicle.Modellmonat, null) == this.datavalueId;
-		}
+        protected override bool ComputeBaustandsJahr(params object[] parameters)
+        {
+            characteristicValue = vehicle.Modelljahr;
+            return database.LookupVehicleCharIdByName(vehicle.Modelljahr, null) == (decimal)datavalueId;
+        }
 
-		protected override bool ComputeBrandName(params object[] parameters)
+        protected override bool ComputeBaustandsMonat(params object[] parameters)
+        {
+            characteristicValue = vehicle.Modellmonat;
+            return database.LookupVehicleCharIdByName(vehicle.Modellmonat, null) == (decimal)datavalueId;
+        }
+
+        protected override bool ComputeBrandName(params object[] parameters)
 		{
 			this.characteristicValue = this.vehicle.Marke;
 			if (string.Equals("HUSQVARNA", this.vehicle.Marke, StringComparison.OrdinalIgnoreCase))
