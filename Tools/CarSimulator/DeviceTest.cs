@@ -394,7 +394,6 @@ namespace CarSimulator
                         DisconnectStream();
                         BluetoothSecurity.RemoveDevice(device.DeviceAddress);
                         Thread.Sleep(1000);
-                        retry = 0;
                     }
                 }
             }
