@@ -621,7 +621,6 @@ namespace CarSimulator
                     sr.Append("\r\n");
                     sr.Append("Set CAN mode failed!");
                     _form.UpdateTestStatusText(sr.ToString());
-                    SetCanModeAuto(sr, ref commError);
                     return false;
                 }
 
@@ -633,7 +632,6 @@ namespace CarSimulator
                         sr.Append("\r\n");
                         sr.Append("CAN test failed");
                         _form.UpdateTestStatusText(sr.ToString());
-                        SetCanModeAuto(sr, ref commError);
                         return false;
                     }
                 }
@@ -645,6 +643,7 @@ namespace CarSimulator
             finally
             {
                 _form.commThread.StopThread();
+                SetCanModeAuto(sr, ref commError);
             }
 
             if (!_form.commThread.StartThread(comPort, CommThread.ConceptType.ConceptBwmFast, false, true,
@@ -670,7 +669,6 @@ namespace CarSimulator
                     sr.Append("\r\n");
                     sr.Append("Set CAN mode failed!");
                     _form.UpdateTestStatusText(sr.ToString());
-                    SetCanModeAuto(sr, ref commError);
                     return false;
                 }
 
@@ -682,7 +680,6 @@ namespace CarSimulator
                         sr.Append("\r\n");
                         sr.Append(string.Format("K-LINE test {0} failed", i + 1));
                         _form.UpdateTestStatusText(sr.ToString());
-                        SetCanModeAuto(sr, ref commError);
                         return false;
                     }
                 }
@@ -693,6 +690,7 @@ namespace CarSimulator
             finally
             {
                 _form.commThread.StopThread();
+                SetCanModeAuto(sr, ref commError);
             }
 
             if (!_form.commThread.StartThread(comPort, CommThread.ConceptType.ConceptKwp2000Bmw, false, true,
@@ -719,7 +717,6 @@ namespace CarSimulator
                         sr.Append("\r\n");
                         sr.Append(string.Format("L-LINE test {0} failed", i + 1));
                         _form.UpdateTestStatusText(sr.ToString());
-                        SetCanModeAuto(sr, ref commError);
                         return false;
                     }
                 }
@@ -731,9 +728,10 @@ namespace CarSimulator
             finally
             {
                 _form.commThread.StopThread();
+                SetCanModeAuto(sr, ref commError);
             }
 
-            if (!SetCanModeAuto(sr, ref commError))
+            if (commError)
             {
                 return false;
             }
