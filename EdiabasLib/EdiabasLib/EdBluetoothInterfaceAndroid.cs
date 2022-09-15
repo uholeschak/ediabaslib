@@ -38,7 +38,7 @@ namespace EdiabasLib
         public const string Elm327Tag = "ELM327";
         public const string ElmDeepObdTag = "ELMDEEPOBD";
         public const string RawTag = "RAW";
-        public const int BtConnectDelay = 500;
+        public const int BtConnectDelay = 50;
         private static readonly UUID SppUuid = UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
         private const int ReadTimeoutOffsetLong = 1000;
         private const int ReadTimeoutOffsetShort = 100;
