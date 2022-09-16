@@ -375,7 +375,7 @@ namespace CarSimulator
                             _form.UpdateTestStatusText("Connection failed");
                             return false;
                         }
-                        
+
                         if (!RunTest(comPort, btDeviceName, out bool commError))
                         {
                             if (!commError || retry > 1)
@@ -396,6 +396,7 @@ namespace CarSimulator
                         DisconnectStream();
                         BluetoothSecurity.RemoveDevice(device.DeviceAddress);
                         Thread.Sleep(1000);
+                        retry = 0;
                     }
                 }
             }
@@ -840,7 +841,25 @@ namespace CarSimulator
             return resultArray;
         }
 
-        private bool BmwFastTest(bool lline = false)
+        private bool BmwFastTest(bool lline = false, int retry = 2)
+        {
+            for (int i = 0; i < retry; i++)
+            {
+                if (i > 0)
+                {
+                    Debug.WriteLine("BmwFastTest retry: {0}", (object)i);
+                }
+
+                if (BmwFastTestSingle(lline))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool BmwFastTestSingle(bool lline = false)
         {
             byte[] identRequest = { 0x82, 0x12, 0xF1, 0x1A, 0x80};
             byte[] identResponse = {
