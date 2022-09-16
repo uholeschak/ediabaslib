@@ -29,7 +29,6 @@ namespace CarSimulator
         private int _testCount;
         private bool _disposed;
 
-        public static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         public static readonly int RecTimeout = 2000;
         public const string DefaultBtName = "Deep OBD";
         public const string DefaultBtNameStd = "OBDII";
@@ -956,7 +955,6 @@ namespace CarSimulator
             {
                 // header byte
                 _dataStream.ReadTimeout = RecTimeout;
-                long startTime1 = Stopwatch.GetTimestamp();
                 for (int i = 0; i < 4; i++)
                 {
                     int data;
@@ -970,13 +968,7 @@ namespace CarSimulator
                         data = -1;
                     }
 
-                    if (data >= 0)
-                    {
-                        startTime1 = Stopwatch.GetTimestamp();
-                        receiveData[i] = (byte)data;
-                    }
-
-                    if ((Stopwatch.GetTimestamp() - startTime1) > RecTimeout * TickResolMs)
+                    if (data < 0)
                     {
                         while (_dataStream.DataAvailable)
                         {
@@ -993,6 +985,8 @@ namespace CarSimulator
                         Debug.WriteLine("Rec Timeout 1: {0}", (object)BitConverter.ToString(receiveData, 0, i).Replace("-", " "));
                         return 0;
                     }
+
+                    receiveData[i] = (byte)data;
                 }
 
                 if ((receiveData[0] & 0x80) != 0x80)
@@ -1020,7 +1014,6 @@ namespace CarSimulator
                     recLength += 3;
                 }
 
-                long startTime2 = Stopwatch.GetTimestamp();
                 for (int i = 0; i < recLength - 3; i++)
                 {
                     int data;
@@ -1034,13 +1027,7 @@ namespace CarSimulator
                         data = -1;
                     }
 
-                    if (data >= 0)
-                    {
-                        startTime2 = Stopwatch.GetTimestamp();
-                        receiveData[i + 4] = (byte)data;
-                    }
-
-                    if ((Stopwatch.GetTimestamp() - startTime2) > RecTimeout * TickResolMs)
+                    if (data < 0)
                     {
                         while (_dataStream.DataAvailable)
                         {
@@ -1055,8 +1042,11 @@ namespace CarSimulator
                         }
 
                         Debug.WriteLine("Rec Timeout 2: {0}", (object)BitConverter.ToString(receiveData, 0, i + 4).Replace("-", " "));
+                        Debug.WriteLine("Rec Length={0}, Expected={1}", i + 4, recLength);
                         return 0;
                     }
+
+                    receiveData[i + 4] = (byte)data;
                 }
 
                 if (CommThread.CalcChecksumBmwFast(receiveData, recLength) != receiveData[recLength])
