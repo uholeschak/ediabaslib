@@ -614,146 +614,158 @@ namespace CarSimulator
                 Thread.Sleep(100);
             }
 
+            bool result = true;
             try
             {
-                // can mode 500
-                if (AdapterCommandCustom(0x02, new byte[] { 0x01 }) == null)
+                try
                 {
-                    commError = true;
+                    // can mode 500
+                    if (AdapterCommandCustom(0x02, new byte[] { 0x01 }) == null)
+                    {
+                        commError = true;
+                        sr.Append("\r\n");
+                        sr.Append("Set CAN mode failed!");
+                        _form.UpdateTestStatusText(sr.ToString());
+                        return false;
+                    }
+
+                    for (int i = 0; i < 10; i++)
+                    {
+                        if (!BmwFastTest())
+                        {
+                            commError = true;
+                            sr.Append("\r\n");
+                            sr.Append("CAN test failed");
+                            _form.UpdateTestStatusText(sr.ToString());
+                            return false;
+                        }
+                    }
+
                     sr.Append("\r\n");
-                    sr.Append("Set CAN mode failed!");
+                    sr.Append("CAN test OK");
+                    _form.UpdateTestStatusText(sr.ToString());
+                }
+                finally
+                {
+                    _form.commThread.StopThread();
+                }
+
+                if (!_form.commThread.StartThread(comPort, CommThread.ConceptType.ConceptBwmFast, false, true,
+                    CommThread.ResponseType.E61, _form.threadConfigData, true))
+                {
+                    sr.Append("\r\n");
+                    sr.Append("Start COM thread failed!");
                     _form.UpdateTestStatusText(sr.ToString());
                     return false;
                 }
 
-                for (int i = 0; i < 10; i++)
+                while (!_form.commThread.Connected)
                 {
-                    if (!BmwFastTest())
+                    Thread.Sleep(100);
+                }
+
+                try
+                {
+                    // can mode off
+                    if (AdapterCommandCustom(0x02, new byte[] { 0x00 }) == null)
                     {
                         commError = true;
                         sr.Append("\r\n");
-                        sr.Append("CAN test failed");
+                        sr.Append("Set CAN mode failed!");
                         _form.UpdateTestStatusText(sr.ToString());
                         return false;
                     }
+
+                    for (int i = 0; i < 10; i++)
+                    {
+                        if (!BmwFastTest())
+                        {
+                            commError = true;
+                            sr.Append("\r\n");
+                            sr.Append(string.Format("K-LINE test {0} failed", i + 1));
+                            _form.UpdateTestStatusText(sr.ToString());
+                            return false;
+                        }
+                    }
+                    sr.Append("\r\n");
+                    sr.Append("K-LINE test OK");
+                    _form.UpdateTestStatusText(sr.ToString());
+                }
+                finally
+                {
+                    _form.commThread.StopThread();
                 }
 
-                sr.Append("\r\n");
-                sr.Append("CAN test OK");
-                _form.UpdateTestStatusText(sr.ToString());
-            }
-            finally
-            {
-                _form.commThread.StopThread();
-                SetCanModeAuto(sr, ref commError);
-            }
-
-            if (!_form.commThread.StartThread(comPort, CommThread.ConceptType.ConceptBwmFast, false, true,
-                CommThread.ResponseType.E61, _form.threadConfigData, true))
-            {
-                sr.Append("\r\n");
-                sr.Append("Start COM thread failed!");
-                _form.UpdateTestStatusText(sr.ToString());
-                return false;
-            }
-
-            while (!_form.commThread.Connected)
-            {
-                Thread.Sleep(100);
-            }
-
-            try
-            {
-                // can mode off
-                if (AdapterCommandCustom(0x02, new byte[] { 0x00 }) == null)
+                if (!_form.commThread.StartThread(comPort, CommThread.ConceptType.ConceptKwp2000Bmw, false, true,
+                    CommThread.ResponseType.E61, _form.threadConfigData, true))
                 {
-                    commError = true;
                     sr.Append("\r\n");
-                    sr.Append("Set CAN mode failed!");
+                    sr.Append("Start COM thread failed!");
                     _form.UpdateTestStatusText(sr.ToString());
                     return false;
                 }
 
-                for (int i = 0; i < 10; i++)
+                while (!_form.commThread.Connected)
                 {
-                    if (!BmwFastTest())
-                    {
-                        commError = true;
-                        sr.Append("\r\n");
-                        sr.Append(string.Format("K-LINE test {0} failed", i + 1));
-                        _form.UpdateTestStatusText(sr.ToString());
-                        return false;
-                    }
+                    Thread.Sleep(100);
                 }
-                sr.Append("\r\n");
-                sr.Append("K-LINE test OK");
-                _form.UpdateTestStatusText(sr.ToString());
+
+                try
+                {
+                    for (int i = 0; i < 10; i++)
+                    {
+                        if (!BmwFastTest(true))
+                        {
+                            commError = true;
+                            sr.Append("\r\n");
+                            sr.Append(string.Format("L-LINE test {0} failed", i + 1));
+                            _form.UpdateTestStatusText(sr.ToString());
+                            return false;
+                        }
+                    }
+
+                    sr.Append("\r\n");
+                    sr.Append("L-LINE test OK");
+                    _form.UpdateTestStatusText(sr.ToString());
+                }
+                finally
+                {
+                    _form.commThread.StopThread();
+                }
             }
             finally
             {
-                _form.commThread.StopThread();
-                SetCanModeAuto(sr, ref commError);
-            }
-
-            if (!_form.commThread.StartThread(comPort, CommThread.ConceptType.ConceptKwp2000Bmw, false, true,
-                CommThread.ResponseType.E61, _form.threadConfigData, true))
-            {
-                sr.Append("\r\n");
-                sr.Append("Start COM thread failed!");
-                _form.UpdateTestStatusText(sr.ToString());
-                return false;
-            }
-
-            while (!_form.commThread.Connected)
-            {
-                Thread.Sleep(100);
-            }
-
-            try
-            {
-                for (int i = 0; i < 10; i++)
+                if (!SetCanModeAuto(sr, ref commError))
                 {
-                    if (!BmwFastTest(true))
-                    {
-                        commError = true;
-                        sr.Append("\r\n");
-                        sr.Append(string.Format("L-LINE test {0} failed", i + 1));
-                        _form.UpdateTestStatusText(sr.ToString());
-                        return false;
-                    }
+                    result = false;
                 }
-
-                sr.Append("\r\n");
-                sr.Append("L-LINE test OK");
-                _form.UpdateTestStatusText(sr.ToString());
-            }
-            finally
-            {
-                _form.commThread.StopThread();
-                SetCanModeAuto(sr, ref commError);
             }
 
             if (commError)
             {
-                return false;
+                result = false;
             }
 
-            return true;
+            return result;
         }
 
         private bool SetCanModeAuto(StringBuilder sr, ref bool commError)
         {
-            // can mode auto
-            if (AdapterCommandCustom(0x02, new byte[] { 0xFF }) == null)
+            for (int i = 0; i < 3; i++)
             {
-                commError = true;
+                // can mode auto
+                if (AdapterCommandCustom(0x02, new byte[] { 0xFF }) != null)
+                {
+                    return true;
+                }
+
                 sr.Append("\r\n");
                 sr.Append("Set CAN mode failed!");
                 _form.UpdateTestStatusText(sr.ToString());
-                return false;
             }
 
-            return true;
+            commError = true;
+            return false;
         }
 
         private byte[] AdapterCommandCustom(byte command, byte[] data)
