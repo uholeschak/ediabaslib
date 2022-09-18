@@ -7,7 +7,9 @@ namespace BmwDeepObd
         ResizeableActivity = true,
         LargeHeap = true,
         UsesCleartextTraffic = true,
+#if DEBUG
         BackupAgent = typeof(CustomBackupAgent),
+#endif
         FullBackupOnly = true,
         RestoreAnyVersion = true,
         Name = ActivityCommon.AppNameSpace + ".DeepObd"

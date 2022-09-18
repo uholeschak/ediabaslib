@@ -1,4 +1,5 @@
-﻿using Android.App.Backup;
+﻿#if DEBUG
+using Android.App.Backup;
 using Android.OS;
 using Java.IO;
 
@@ -94,3 +95,4 @@ public class CustomBackupAgent : BackupAgent
         base.OnQuotaExceeded(backupDataBytes, quotaBytes);
     }
 }
+#endif
