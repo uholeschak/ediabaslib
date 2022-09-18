@@ -720,10 +720,10 @@ namespace BmwDeepObd
         private void UpdateAdaption()
         {
             bool isUdsEcu = XmlToolActivity.IsUdsEcu(_ecuInfo);
-            if (_spinnerVagAdaptionChannel.SelectedItemPosition >= 0 &&
-                _spinnerVagAdaptionChannel.SelectedItemPosition < _spinnerVagAdaptionChannelAdapter.Items.Count)
+            int channelIndex = _spinnerVagAdaptionChannel.SelectedItemPosition;
+            if (channelIndex >= 0 && channelIndex < _spinnerVagAdaptionChannelAdapter.Items.Count)
             {
-                StringObjType item = _spinnerVagAdaptionChannelAdapter.Items[_spinnerVagAdaptionChannel.SelectedItemPosition];
+                StringObjType item = _spinnerVagAdaptionChannelAdapter.Items[channelIndex];
                 int channel = (int)item.Data;
                 if (channel >= 0 || isUdsEcu)
                 {
@@ -818,10 +818,10 @@ namespace BmwDeepObd
                             {
                                 try
                                 {
-                                    if (_spinnerVagAdaptionValueNew.SelectedItemPosition >= 0 &&
-                                        _spinnerVagAdaptionValueNew.SelectedItemPosition < _spinnerVagAdaptionValueNewAdapter.Items.Count)
+                                    int valueIndex = _spinnerVagAdaptionValueNew.SelectedItemPosition;
+                                    if (valueIndex >= 0 && valueIndex < _spinnerVagAdaptionValueNewAdapter.Items.Count)
                                     {
-                                        UInt64 selectedValue = (UInt64)_spinnerVagAdaptionValueNewAdapter.Items[_spinnerVagAdaptionValueNew.SelectedItemPosition].Data;
+                                        UInt64 selectedValue = (UInt64)_spinnerVagAdaptionValueNewAdapter.Items[valueIndex].Data;
                                         string valueString = parseInfoAdp.DataTypeEntry.ToString(CultureInfo.InvariantCulture, _instanceData.AdaptionData, selectedValue,
                                             out string _, out object dataValueObject, out UInt32? _, out byte[] newData);
                                         bool restoreValue = true;
