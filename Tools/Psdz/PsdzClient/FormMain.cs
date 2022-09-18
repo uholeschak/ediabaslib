@@ -851,9 +851,10 @@ namespace PsdzClient
                     {
                         if (connectionSelected != null)
                         {
+                            bool iCom = connectionSelected.ConnectionType == EdInterfaceEnet.EnetConnection.InterfaceType.Icom;
                             ipAddressControlVehicleIp.Text = connectionSelected.IpAddress.ToString();
-                            checkBoxIcom.Checked = connectionSelected.ConnectionType == EdInterfaceEnet.EnetConnection.InterfaceType.Icom;
-                            sb.AppendLine(string.Format(Resources.VehicleIp, connectionSelected.IpAddress, connectionSelected.ConnectionType.ToString()));
+                            checkBoxIcom.Checked = iCom;
+                            sb.AppendLine(string.Format(Resources.VehicleIp, connectionSelected.IpAddress, iCom));
                             ipValid = true;
                         }
                     }
