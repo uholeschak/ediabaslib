@@ -1589,10 +1589,10 @@ namespace BmwDeepObd
             StringBuilder stringBuilder = new StringBuilder();
 
             FormatType formatType = FormatType.None;
-            if (_spinnerFormatType.SelectedItemPosition >= 0 &&
-                _spinnerFormatType.SelectedItemPosition < _spinnerFormatTypeAdapter.Items.Count)
+            int formatIndex = _spinnerFormatType.SelectedItemPosition;
+            if (formatIndex >= 0 && formatIndex < _spinnerFormatTypeAdapter.Items.Count)
             {
-                formatType = (FormatType)_spinnerFormatTypeAdapter.Items[_spinnerFormatType.SelectedItemPosition].Data;
+                formatType = (FormatType)_spinnerFormatTypeAdapter.Items[formatIndex].Data;
             }
 
             string convertType = string.Empty;
@@ -1624,19 +1624,21 @@ namespace BmwDeepObd
                 {
                     stringBuilder.Append("-");
                 }
-                if (_spinnerFormatLength1.SelectedItemPosition >= 0 &&
-                    _spinnerFormatLength1.SelectedItemPosition < _spinnerFormatLength1Adapter.Items.Count)
+
+                int format1Index = _spinnerFormatLength1.SelectedItemPosition;
+                if (format1Index >= 0 && format1Index < _spinnerFormatLength1Adapter.Items.Count)
                 {
-                    int value = (int) _spinnerFormatLength1Adapter.Items[_spinnerFormatLength1.SelectedItemPosition].Data;
+                    int value = (int) _spinnerFormatLength1Adapter.Items[format1Index].Data;
                     if (value >= 0)
                     {
                         stringBuilder.Append(value.ToString());
                     }
                 }
-                if (_spinnerFormatLength2.SelectedItemPosition >= 0 &&
-                    _spinnerFormatLength2.SelectedItemPosition < _spinnerFormatLength2Adapter.Count)
+
+                int format2Index = _spinnerFormatLength2.SelectedItemPosition;
+                if (format2Index >= 0 && format2Index < _spinnerFormatLength2Adapter.Count)
                 {
-                    int value = (int)_spinnerFormatLength2Adapter.Items[_spinnerFormatLength2.SelectedItemPosition].Data;
+                    int value = (int)_spinnerFormatLength2Adapter.Items[format2Index].Data;
                     if (value >= 0)
                     {
                         stringBuilder.Append(".");
@@ -1658,10 +1660,11 @@ namespace BmwDeepObd
                 {
                     resultInfo.DisplayOrder = displayOrder;
                 }
-                if (_spinnerGridType.SelectedItemPosition >= 0 &&
-                    _spinnerGridType.SelectedItemPosition < _spinnerGridTypeAdapter.Items.Count)
+
+                int typeIndex = _spinnerGridType.SelectedItemPosition;
+                if (typeIndex >= 0 && typeIndex < _spinnerGridTypeAdapter.Items.Count)
                 {
-                    _selectedResult.GridType = (JobReader.DisplayInfo.GridModeType)_spinnerGridTypeAdapter.Items[_spinnerGridType.SelectedItemPosition].Data;
+                    _selectedResult.GridType = (JobReader.DisplayInfo.GridModeType)_spinnerGridTypeAdapter.Items[typeIndex].Data;
                 }
                 if (Double.TryParse(_editTextMinValue.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out double minValue))
                 {
@@ -1685,10 +1688,10 @@ namespace BmwDeepObd
             resultInfo.Format = GetFormatString();
 
             FormatType formatType = FormatType.None;
-            if (_spinnerFormatType.SelectedItemPosition >= 0 &&
-                _spinnerFormatType.SelectedItemPosition < _spinnerFormatTypeAdapter.Items.Count)
+            int formatIndex = _spinnerFormatType.SelectedItemPosition;
+            if (formatIndex >= 0 && formatIndex < _spinnerFormatTypeAdapter.Items.Count)
             {
-                formatType = (FormatType)_spinnerFormatTypeAdapter.Items[_spinnerFormatType.SelectedItemPosition].Data;
+                formatType = (FormatType)_spinnerFormatTypeAdapter.Items[formatIndex].Data;
             }
             UpdateFormatFields(resultInfo, formatType == FormatType.User);
         }
