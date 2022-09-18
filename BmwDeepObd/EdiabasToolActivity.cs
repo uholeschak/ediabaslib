@@ -1265,12 +1265,12 @@ namespace BmwDeepObd
 
         private JobInfo GetSelectedJob()
         {
-            int pos = _spinnerJobs.SelectedItemPosition;
-            if (pos < 0 || pos >= _jobListAdapter.Items.Count)
+            int index = _spinnerJobs.SelectedItemPosition;
+            if (index < 0 || index >= _jobListAdapter.Items.Count)
             {
                 return null;
             }
-            return _jobListAdapter.Items[pos];
+            return _jobListAdapter.Items[index];
         }
 
         private void NewJobSelected(bool update = false)
@@ -1578,10 +1578,10 @@ namespace BmwDeepObd
             if (jobInfo != null)
             {
                 _infoListAdapter.Items.Add(new TableResultItem(GetString(Resource.String.tool_job_result), null));
-                if (_spinnerResults.SelectedItemPosition >= 0 &&
-                    _spinnerResults.SelectedItemPosition < _resultSelectListAdapter.ItemsVisible.Count)
+                int resultIndex = _spinnerResults.SelectedItemPosition;
+                if (resultIndex >= 0 && resultIndex < _resultSelectListAdapter.ItemsVisible.Count)
                 {
-                    ExtraInfo info = _resultSelectListAdapter.ItemsVisible[_spinnerResults.SelectedItemPosition];
+                    ExtraInfo info = _resultSelectListAdapter.ItemsVisible[resultIndex];
                     StringBuilder stringBuilderComments = new StringBuilder();
                     stringBuilderComments.Append(info.Name + " (" + info.Type + "):");
                     foreach (string comment in info.CommentList)
