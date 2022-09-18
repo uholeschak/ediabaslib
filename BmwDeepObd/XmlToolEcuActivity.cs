@@ -1782,10 +1782,10 @@ namespace BmwDeepObd
             _ecuInfo.DisplayMode = _checkBoxDisplayTypeGrid.Checked ? JobReader.PageInfo.DisplayModeType.Grid : JobReader.PageInfo.DisplayModeType.List;
 
             XmlToolActivity.DisplayFontSize fontSize = XmlToolActivity.DisplayFontSize.Small;
-            if (_spinnerFontSize.SelectedItemPosition >= 0 &&
-                _spinnerFontSize.SelectedItemPosition < _spinnerFontSizeAdapter.Items.Count)
+            int sizeIndex = _spinnerFontSize.SelectedItemPosition;
+            if (sizeIndex >= 0 && sizeIndex < _spinnerFontSizeAdapter.Items.Count)
             {
-                fontSize = (XmlToolActivity.DisplayFontSize)_spinnerFontSizeAdapter.Items[_spinnerFontSize.SelectedItemPosition].Data;
+                fontSize = (XmlToolActivity.DisplayFontSize)_spinnerFontSizeAdapter.Items[sizeIndex].Data;
             }
             _ecuInfo.FontSize = fontSize;
 
