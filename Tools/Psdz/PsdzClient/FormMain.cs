@@ -853,7 +853,7 @@ namespace PsdzClient
                         {
                             ipAddressControlVehicleIp.Text = connectionSelected.IpAddress.ToString();
                             checkBoxIcom.Checked = connectionSelected.ConnectionType == EdInterfaceEnet.EnetConnection.InterfaceType.Icom;
-                            sb.AppendLine(string.Format(Resources.VehicleIp, connectionSelected.IpAddress));
+                            sb.AppendLine(string.Format(Resources.VehicleIp, connectionSelected.IpAddress, connectionSelected.ConnectionType.ToString()));
                             ipValid = true;
                         }
                     }
