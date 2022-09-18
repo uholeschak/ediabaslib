@@ -1265,12 +1265,12 @@ namespace BmwDeepObd
 
         private JobInfo GetSelectedJob()
         {
-            int pos = _spinnerJobs.SelectedItemPosition;
-            if (pos < 0 || pos >= _jobListAdapter.Items.Count)
+            int index = _spinnerJobs.SelectedItemPosition;
+            if (index < 0 || index >= _jobListAdapter.Items.Count)
             {
                 return null;
             }
-            return _jobListAdapter.Items[pos];
+            return _jobListAdapter.Items[index];
         }
 
         private void NewJobSelected(bool update = false)

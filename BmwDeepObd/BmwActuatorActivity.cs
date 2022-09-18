@@ -477,10 +477,10 @@ namespace BmwDeepObd
 
         private void UpdateActuator()
         {
-            if (_spinnerBmwActuatorFunction.SelectedItemPosition >= 0 &&
-                _spinnerBmwActuatorFunction.SelectedItemPosition < _spinnerBmwActuatorFunctionAdapter.Items.Count)
+            int index = _spinnerBmwActuatorFunction.SelectedItemPosition;
+            if (index >= 0 && index < _spinnerBmwActuatorFunctionAdapter.Items.Count)
             {
-                StringObjType item = _spinnerBmwActuatorFunctionAdapter.Items[_spinnerBmwActuatorFunction.SelectedItemPosition];
+                StringObjType item = _spinnerBmwActuatorFunctionAdapter.Items[index];
                 int function = (int)item.Data;
                 if (function >= 0)
                 {
