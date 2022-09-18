@@ -955,16 +955,22 @@ namespace BmwDeepObd
             EdiabasInit();
 
             int blockSize = _spinnerCanAdapterBlockSize.SelectedItemPosition;
-            if (blockSize < 0) blockSize = 0;
+            if (blockSize < 0)
+            {
+                blockSize = 0;
+            }
 
             int separationTime = _spinnerCanAdapterSepTime.SelectedItemPosition;
-            if (separationTime < 0) separationTime = 0;
+            if (separationTime < 0)
+            {
+                separationTime = 0;
+            }
 
             int canMode = 0x01;
-            if (_spinnerCanAdapterMode.SelectedItemPosition >= 0 &&
-                _spinnerCanAdapterMode.SelectedItemPosition < _spinnerCanAdapterModeAdapter.Items.Count)
+            int canIndex = _spinnerCanAdapterMode.SelectedItemPosition;
+            if (canIndex >= 0 && canIndex < _spinnerCanAdapterModeAdapter.Items.Count)
             {
-                canMode = (int)_spinnerCanAdapterModeAdapter.Items[_spinnerCanAdapterMode.SelectedItemPosition].Data;
+                canMode = (int)_spinnerCanAdapterModeAdapter.Items[canIndex].Data;
             }
 
             byte[] btPinData = null;
