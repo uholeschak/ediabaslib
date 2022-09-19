@@ -1916,10 +1916,14 @@ namespace BmwDeepObd
                 return;
             }
 
-            string logDir = Path.Combine(_appDataDir, "LogEdiabasTool");
+            string logDir = string.Empty;
             try
             {
-                Directory.CreateDirectory(logDir);
+                if (!string.IsNullOrEmpty(_appDataDir))
+                {
+                    logDir = Path.Combine(_appDataDir, "LogEdiabasTool");
+                    Directory.CreateDirectory(logDir);
+                }
             }
             catch (Exception)
             {
