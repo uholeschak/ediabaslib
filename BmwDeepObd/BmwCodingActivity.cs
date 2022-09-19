@@ -1115,10 +1115,15 @@ namespace BmwDeepObd
             {
                 return;
             }
-            string logDir = Path.Combine(_appDataDir, "LogBmwCoding");
+
+            string logDir = string.Empty;
             try
             {
-                Directory.CreateDirectory(logDir);
+                if (!string.IsNullOrEmpty(_appDataDir))
+                {
+                    logDir = Path.Combine(_appDataDir, "LogBmwCoding");
+                    Directory.CreateDirectory(logDir);
+                }
             }
             catch (Exception)
             {
