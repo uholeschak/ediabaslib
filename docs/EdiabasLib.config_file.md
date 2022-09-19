@@ -17,8 +17,10 @@ The following properties could be specified in this file:
 * `EnetTesterAddress`: Tester address for ENET protocol, standard is 0xF4
 * `EnetControlPort`: Control port for ENET protocol, standard is 6811
 * `EnetDiagnosticPort`: Diagnostic port for ENET protocol, standard is 6801
-* `EnetTimeoutConnect`: Connect timeout for ENET protocol, default is 5000  
-When using BMW ICOM change these values to the output of the BMW ICOM web interface: http://XXXX:60080/cgi-bin/channeldeviceconfig.cgi  
+* `EnetTimeoutConnect`: Connect timeout for ENET protocol, default is 5000
+
+When using BMW ICOM change the values of `EnetControlPort` and `EnetDiagnosticPort` to the output from the BMW ICOM web interface:
+http://XXXX:60080/cgi-bin/channeldeviceconfig.cgi  
 `Diag Addr: 0x10 Diagnostic Port: 50160 Control Port: 50161`
 
 ## Non standard properties
