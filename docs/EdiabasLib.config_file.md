@@ -15,15 +15,25 @@ The following properties could be specified in this file:
 	* `auto:all`: Broadcast to all network interfaces.
 	* `auto:<interface name>`: Broadcast to all interfaces that start with `<interface name>` (case ignored).
 * `EnetTesterAddress`: Tester address for ENET protocol, standard is 0xF4
-* `EnetControlPort`: Control port for ENET protocol, standard is 6811
-* `EnetDiagnosticPort`: Diagnostic port for ENET protocol, standard is 6801
-* `EnetTimeoutConnect`: Connect timeout for ENET protocol, default is 5000
+* `EnetControlPort`, `ControlPort`: Control port for ENET protocol, standard is 6811
+* `EnetDiagnosticPort`, `DiagnosticPort`: Diagnostic port for ENET protocol, standard is 6801
+* `EnetTimeoutConnect`, `TimeoutConnect`: Connect timeout for ENET protocol, default is 5000
+
+When using BMW ICOM change the values of `EnetControlPort` and `EnetDiagnosticPort` to the output from the BMW ICOM web interface:  
+Example: `Diag Addr: 0x10 Diagnostic Port: 50160 Control Port: 50161`  
+URL: `http://XXXX:60080/cgi-bin/channeldeviceconfig.cgi`  
+User name: `root`  
+Password: `NZY11502` or `NZY1150263`  
+The standard ICOM configuration page could be found at: `http://XXXX:58000`.
 
 ## Non standard properties
 * `ObdComPort`: COM port name for OBD interface.
 * `AdsComPort`: COM port name for ADS interface (if not specifed ObdComPort will be used).
 * `AppendTrace`: 0=Override old log file, 1=Always append the logfiles.
 * `LockTrace`: 0=Allow changing `IfhTrace` level from the application, 1=Prevent changing the `IfhTrace` level from the application.
+* `EnetAddRecTimeout`: Additional ENET standard additional receive timeout, default is 1000
+* `EnetAddRecTimeout`: Additional ENET ICOM additional receive timeout, default is 2000
+* `EnetIcomAllocate`: 1=Allocate ICOM before connecting, default is 0. This parameter is only used if the diagnostic port has been set.
 
 ## FTDI D2XX driver properties
 For improved timing (especially required for ADS adapter) it's possible to access the FTDI D2XX driver directly. Android also supports access to FTDI USB D-CAN/K-Line adapters. To activate this mode use FTDI instead of COM in the com port name for _ObdComPort_ or _AdsComPort_. There are multiply ways the select the USB device:
