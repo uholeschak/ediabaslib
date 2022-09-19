@@ -19,9 +19,12 @@ The following properties could be specified in this file:
 * `EnetDiagnosticPort`: Diagnostic port for ENET protocol, standard is 6801
 * `EnetTimeoutConnect`: Connect timeout for ENET protocol, default is 5000
 
-When using BMW ICOM change the values of `EnetControlPort` and `EnetDiagnosticPort` to the output from the BMW ICOM web interface:
-http://XXXX:60080/cgi-bin/channeldeviceconfig.cgi  
-`Diag Addr: 0x10 Diagnostic Port: 50160 Control Port: 50161`
+When using BMW ICOM change the values of `EnetControlPort` and `EnetDiagnosticPort` to the output from the BMW ICOM web interface:  
+Example: `Diag Addr: 0x10 Diagnostic Port: 50160 Control Port: 50161`  
+URL: `http://XXXX:60080/cgi-bin/channeldeviceconfig.cgi`  
+User name: `root`  
+Password: `NZY11502` or `NZY1150263`  
+The standard ICOM configuration page could be found at: `http://XXXX:58000`.
 
 ## Non standard properties
 * `ObdComPort`: COM port name for OBD interface.
