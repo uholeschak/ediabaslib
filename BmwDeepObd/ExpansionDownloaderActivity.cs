@@ -1012,6 +1012,24 @@ namespace BmwDeepObd
                     return;
                 }
 
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
+                {
+                    AlertDialog alertDialog = new AlertDialog.Builder(this)
+                        .SetMessage(Resource.String.exp_down_obb_no_download)
+                        .SetTitle(Resource.String.alert_title_error)
+                        .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
+                        .Show();
+                    alertDialog.DismissEvent += (sender, args) =>
+                    {
+                        if (_actvityDestroyed)
+                        {
+                            return;
+                        }
+                        Finish();
+                    };
+                    return;
+                }
+
                 if (!GetExpansionFiles())
                 {
                     InitializeDownloadUi();
