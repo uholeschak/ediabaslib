@@ -1,4 +1,7 @@
-﻿using Google.Android.Vending.Expansion.Downloader;
+﻿using System;
+using Android.Content;
+using Android.OS;
+using Google.Android.Vending.Expansion.Downloader;
 
 namespace BmwDeepObd
 {
@@ -26,5 +29,78 @@ namespace BmwDeepObd
         /// to make sure that your receiver is in your unique package)
         /// </summary>
         public override string AlarmReceiverClassName => "BmwDeepObd.ExpansionAlarmReceiver";
+
+        // Catch exceptions from incompatible library version
+        protected override void OnHandleIntent(Intent intent)
+        {
+            try
+            {
+                base.OnHandleIntent(intent);
+            }
+            catch (Exception ex)
+            {
+                if (ex is Java.Lang.IllegalArgumentException)
+                {   // from PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+                    CancelAlarm();
+                    ScheduleAlarm(intent, 1000);
+                }
+            }
+        }
+
+        const string ExtraPendingIntent = "EPI";
+        const string ActionRetry = "android.intent.action.DOWNLOAD_WAKEUP";
+        protected Android.App.PendingIntent alarmIntent;
+
+        protected void ScheduleAlarm(Intent intent, int wakeUp)
+        {
+            try
+            {
+                if (Build.VERSION.SdkInt < BuildVersionCodes.S)
+                {
+                    return;
+                }
+
+                Android.App.AlarmManager alarms = GetSystemService(AlarmService) as Android.App.AlarmManager;
+                if (alarms == null)
+                {
+                    return;
+                }
+
+                Intent localIntent = new Intent(ActionRetry);
+                localIntent.PutExtra(ExtraPendingIntent, intent);
+                localIntent.SetClassName(PackageName ?? string.Empty, AlarmReceiverClassName);
+                alarmIntent = Android.App.PendingIntent.GetBroadcast(this, 0, localIntent,
+                    Android.App.PendingIntentFlags.OneShot | Android.App.PendingIntentFlags.Mutable);
+                alarms.Set(Android.App.AlarmType.RtcWakeup, Java.Lang.JavaSystem.CurrentTimeMillis() + wakeUp, alarmIntent);
+            }
+            catch (Exception)
+            {
+                alarmIntent = null;
+            }
+        }
+
+        protected void CancelAlarm()
+        {
+            try
+            {
+                if (alarmIntent == null)
+                {
+                    return;
+                }
+
+                Android.App.AlarmManager alarms = GetSystemService(AlarmService) as Android.App.AlarmManager;
+                if (alarms == null)
+                {
+                    return;
+                }
+
+                alarms.Cancel(alarmIntent);
+                alarmIntent = null;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
     }
 }
