@@ -99,6 +99,8 @@
   <string name="exp_down_button_cancel">Отменить</string>
   <string name="exp_down_button_cancel_verify">Отменить проверку</string>
   <string name="exp_down_obb_missing">Приложение не было загружено из Google Play и файл расширения отсутствует.\nЗагрузите OBB-файл при помощи APK-загрузчика и скопируйте его с именем:\n\'{0}\'\nв папку:\n{1}\nВ данном случае поддержка отсутствует, использование Google Play - единственный рекомендуемый способ.</string>
+  <!--Translate-->
+  <string name="exp_down_obb_no_download">Файл расширения отсутствует, но в этой версии Android автоматическая загрузка отключена.\nПереустановите приложение или скопируйте файл расширения вручную.</string>
   <string name="exp_down_time_remaining">Необходимое время: {0}</string>
 
   <!-- Downloader library -->
