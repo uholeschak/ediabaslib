@@ -969,14 +969,15 @@ namespace BmwDeepObd
                     BluetoothDevice device = _btAdapter.GetRemoteDevice(deviceAddress.ToUpperInvariant());
                     if (device != null)
                     {
-                        int connectTimeout = _activityCommon.MtcBtService ? 1000 : 2000;
+                        bool mtcBtService = _activityCommon.MtcBtService;
+                        int connectTimeout = mtcBtService ? 1000 : 2000;
                         _connectDeviceAddress = device.Address;
                         BluetoothSocket bluetoothSocket = null;
                         LogString("Device bond state: " + device.BondState);
                         LogString("Device type: " + device.Type);
 
                         adapterType = AdapterType.ConnectionFailed;
-                        if (!_activityCommon.MtcBtService && _btLeGattSpp != null)
+                        if (!mtcBtService && _btLeGattSpp != null)
                         {
                             if (device.Type == BluetoothDeviceType.Le || (device.Type == BluetoothDeviceType.Dual && device.BondState == Bond.None && !forceSecure))
                             {
@@ -1003,7 +1004,7 @@ namespace BmwDeepObd
                         {
                             try
                             {
-                                if (forceSecure || device.BondState == Bond.Bonded)
+                                if (forceSecure || mtcBtService || device.BondState == Bond.Bonded)
                                 {
                                     LogString("Connect with CreateRfcommSocketToServiceRecord");
                                     bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid);
@@ -1032,7 +1033,7 @@ namespace BmwDeepObd
                                     }
                                     LogString(_deviceConnected ? "Bt device is connected" : "Bt device is not connected");
                                     adapterType = AdapterTypeDetection(bluetoothSocket.InputStream, bluetoothSocket.OutputStream);
-                                    if (_activityCommon.MtcBtService && adapterType == AdapterType.Unknown)
+                                    if (mtcBtService && adapterType == AdapterType.Unknown)
                                     {
                                         for (int retry = 0; retry < 20; retry++)
                                         {
@@ -1066,7 +1067,7 @@ namespace BmwDeepObd
                             }
                         }
 
-                        if (adapterType == AdapterType.ConnectionFailed && !_activityCommon.MtcBtService)
+                        if (adapterType == AdapterType.ConnectionFailed && !mtcBtService)
                         {
                             try
                             {
