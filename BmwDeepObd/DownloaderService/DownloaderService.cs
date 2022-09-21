@@ -368,6 +368,16 @@ namespace ExpansionDownloader.Service
             }
         }
 
+        private static bool IsLvlCheckRequired(DownloadsDB db, PackageInfo pi)
+        {
+            // we need to update the LVL check and get a successful status to
+            // proceed
+            if (db.LastCheckedVersionCode != pi.VersionCode)
+            {
+                return true;
+            }
+            return false;
+        }
         #endregion
 
         #region Public Methods and Operators
@@ -443,31 +453,37 @@ namespace ExpansionDownloader.Service
         /// <see cref="DownloaderServiceRequirement.DownloadRequired"/>
         /// </returns>
         public static DownloaderServiceRequirement StartDownloadServiceIfRequired(
-            Context context, PendingIntent pendingIntent, Type serviceType)
+            Android.Content.Context context, PendingIntent pendingIntent, Type serviceType)
         {
             // first: do we need to do an LVL update?
             // we begin by getting our APK version from the package manager
             PackageInfo pi = context.PackageManager.GetPackageInfo(context.PackageName, 0);
 
-            var status = DownloaderServiceRequirement.NoDownloadRequired;
+            DownloaderServiceRequirement status = DownloaderServiceRequirement.NoDownloadRequired;
+
+            DownloadsDB db = DownloadsDB.GetDB(context);
 
             // we need to update the LVL check and get a successful status to proceed
-            if (IsLvlCheckRequired(pi))
+            if (IsLvlCheckRequired(db, pi))
             {
                 status = DownloaderServiceRequirement.LvlCheckRequired;
             }
 
             // we don't have to update LVL. Do we still have a download to start?
-            if (DownloadsDatabase.DownloadStatus == DownloaderServiceStatus.None)
+            if (!db.IsDownloadRequired)
             {
-                List<DownloadInfo> infos = DownloadsDatabase.GetDownloads();
-                IEnumerable<DownloadInfo> nonExisting =
-                    infos.Where(i => !Helpers.DoesFileExist(context, i.FileName, i.TotalBytes, true));
-
-				if (nonExisting.Any())
+                DownloadInfo[] infos = db.GetDownloads();
+                if (infos != null)
                 {
-                    status = DownloaderServiceRequirement.DownloadRequired;
-                    DownloadsDatabase.DownloadStatus = DownloaderServiceStatus.UnknownError;
+                    foreach (DownloadInfo info in infos)
+                    {
+                        if (!Helpers.DoesFileExist(context, info.FileName, info.TotalBytes, true))
+                        {
+                            status = DownloaderServiceRequirement.DownloadRequired;
+                            db.UpdateStatus(DownloaderServiceFlags.None);
+                            break;
+                        }
+                    }
                 }
             }
             else
@@ -845,16 +861,18 @@ namespace ExpansionDownloader.Service
             this.IsServiceRunning = true;
             try
             {
+                DownloadsDB db = DownloadsDB.GetDB(this);
+
                 var pendingIntent = (PendingIntent)intent.GetParcelableExtra(DownloaderServiceExtras.PendingIntent);
 
                 if (null != pendingIntent)
                 {
-                    this.downloadNotification.PendingIntent = pendingIntent;
+                    this.downloadNotification.ClientIntent = pendingIntent;
                     this.pPendingIntent = pendingIntent;
                 }
                 else if (null != this.pPendingIntent)
                 {
-                    this.downloadNotification.PendingIntent = this.pPendingIntent;
+                    this.downloadNotification.ClientIntent = this.pPendingIntent;
                 }
                 else
                 {
@@ -863,14 +881,14 @@ namespace ExpansionDownloader.Service
                 }
 
                 // when the LVL check completes, a successful response will update the service
-                if (IsLvlCheckRequired(this.packageInfo))
+                if (IsLvlCheckRequired(db, this.packageInfo))
                 {
                     this.UpdateLvl(this);
                     return;
                 }
 
                 // get each download
-                List<DownloadInfo> infos = DownloadsDatabase.GetDownloads();
+                DownloadInfo[] infos = db.GetDownloads();
                 this.BytesSoFar = 0;
                 this.TotalLength = 0;
                 this.fileCount = infos.Count();
@@ -878,10 +896,10 @@ namespace ExpansionDownloader.Service
                 {
                     // We do an (simple) integrity check on each file, just to 
                     // make sure and to verify that the file matches the state
-                    if (info.Status == DownloaderServiceStatus.Success
+                    if (info.Status == DownloadStatus.Successful
                         && !Helpers.DoesFileExist(this, info.FileName, info.TotalBytes, true))
                     {
-                        info.Status = DownloaderServiceStatus.None;
+                        info.Status = 0;
                         info.CurrentBytes = 0;
                     }
 
