@@ -10,7 +10,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -933,10 +932,8 @@ namespace ExpansionDownloader.Service
                 }
 
                 // loop through all downloads and fetch them
-                int types = Enum.GetValues(typeof(ApkExpansionPolicy.ExpansionFileType)).Length;
-                for (int index = 0; index < types; index++)
+                foreach (DownloadInfo info in infos)
                 {
-                    DownloadInfo info = infos[index];
                     Log.Debug(Tag,"Starting download of " + info.FileName);
 
                     long startingCount = info.CurrentBytes;
@@ -950,33 +947,26 @@ namespace ExpansionDownloader.Service
                         this.CancelAlarms();
                     }
 
-                    DownloadsDatabase.UpdateFromDatabase(ref info);
+                    db.UpdateFromDb(info);
                     bool setWakeWatchdog = false;
-                    DownloaderState notifyStatus;
-                    switch (info.Status)
+                    DownloaderClientState notifyStatus;
+                    switch ((DownloaderServiceStatus) info.Status)
                     {
                         case DownloaderServiceStatus.Forbidden:
-
                             // the URL is out of date
-                            this.UpdateLvl(this);
+                            UpdateLvl(this);
                             return;
                         case DownloaderServiceStatus.Success:
                             this.BytesSoFar += info.CurrentBytes - startingCount;
-
-                            if (index < infos.Count() - 1)
-                            {
-                                continue;
-                            }
-
-                            DownloadsDatabase.UpdateMetadata(this.packageInfo.VersionCode, DownloaderServiceStatus.None);
+                            db.UpdateMetadata(packageInfo.VersionCode, 0);
                             this.downloadNotification.OnDownloadStateChanged(DownloaderClientState.Completed);
-                            return;
+                            continue;
                         case DownloaderServiceStatus.FileDeliveredIncorrectly:
 
                             // we may be on a network that is returning us a web page on redirect
                             notifyStatus = DownloaderClientState.PausedNetworkSetupFailure;
                             info.CurrentBytes = 0;
-                            DownloadsDatabase.UpdateDownload(info);
+                            db.UpdateDownload(info);
                             setWakeWatchdog = true;
                             break;
                         case DownloaderServiceStatus.PausedByApp:
@@ -1054,7 +1044,19 @@ namespace ExpansionDownloader.Service
         {
             // the database automatically reads the metadata for version code 
             // and download status when the instance is created
-            return DownloadsDatabase.DownloadStatus == DownloaderServiceStatus.None;
+            DownloadsDB db = DownloadsDB.GetDB(this);
+            DownloaderServiceFlags flags = DownloaderServiceFlags.None;
+            if (db != null)
+            {
+                flags = db.Flags;
+            }
+
+            if (flags == 0)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -1094,7 +1096,8 @@ namespace ExpansionDownloader.Service
         /// </returns>
         private bool HandleFileUpdated(string filename, long fileSize)
         {
-            DownloadInfo di = DownloadsDatabase.GetDownloadInfo(filename);
+            DownloadsDB db = DownloadsDB.GetDB(this);
+            DownloadInfo di = db?.GetDownloadInfoByFileName(filename);
 
             if (di != null && di.FileName != null)
             {
@@ -1160,7 +1163,7 @@ namespace ExpansionDownloader.Service
 
             Log.Debug(Tag,"LVLDL scheduling retry in {0} seconds ({1})", wakeUp, cal.Time.ToLocaleString());
 
-            var intent = new Intent(DownloaderServiceActions.ActionRetry);
+            var intent = new Intent(DownloaderServiceAction.ActionRetry);
             intent.PutExtra(DownloaderServiceExtras.PendingIntent, this.pPendingIntent);
             intent.SetClassName(this.PackageName, this.AlarmReceiverClassName);
             this.alarmIntent = PendingIntent.GetBroadcast(this, 0, intent, PendingIntentFlags.OneShot);
@@ -1175,7 +1178,7 @@ namespace ExpansionDownloader.Service
         private void UpdateLvl(DownloaderService context)
         {
             var h = new Handler(context.MainLooper);
-            h.Post(new LvlRunnable(context, this.pPendingIntent));
+            h.Post(new LVLRunnable(context, this.pPendingIntent));
         }
 
         /// <summary>
