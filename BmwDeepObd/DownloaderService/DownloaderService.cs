@@ -523,21 +523,19 @@ namespace ExpansionDownloader.Service
                 
                 Log.Debug(Tag,"External media not mounted: {0}", path);
 
-                throw new GenerateSaveFileError(DownloaderServiceStatus.DeviceNotFound, "external media is not yet mounted");
+                throw new Google.Android.Vending.Expansion.Downloader.DownloaderService.GenerateSaveFileError((int) DownloaderServiceStatus.DeviceNotFound, "external media is not yet mounted");
             }
 
             if (File.Exists(path))
             {
                 Log.Debug(Tag,"File already exists: {0}", path);
 
-                throw new GenerateSaveFileError(
-                    DownloaderServiceStatus.FileAlreadyExists, "requested destination file already exists");
+                throw new Google.Android.Vending.Expansion.Downloader.DownloaderService.GenerateSaveFileError((int) DownloaderServiceStatus.FileAlreadyExists, "requested destination file already exists");
             }
 
             if (Helpers.GetAvailableBytes(Helpers.GetFilesystemRoot(path)) < filesize)
             {
-                throw new GenerateSaveFileError(
-                    DownloaderServiceStatus.InsufficientSpace, "insufficient space on external storage");
+                throw new Google.Android.Vending.Expansion.Downloader.DownloaderService.GenerateSaveFileError((int) DownloaderServiceStatus.InsufficientSpace, "insufficient space on external storage");
             }
 
             return path;
@@ -1253,41 +1251,6 @@ namespace ExpansionDownloader.Service
         }
 
         #endregion
-
-        /// <summary>
-        /// Exception thrown from methods called by generateSaveFile() for any fatal
-        /// error.
-        /// </summary>
-        public class GenerateSaveFileError : Exception
-        {
-            #region Constructors and Destructors
-
-            /// <summary>
-            /// Initializes a new instance of the <see cref="GenerateSaveFileError"/> class.
-            /// </summary>
-            /// <param name="status">
-            /// The status.
-            /// </param>
-            /// <param name="message">
-            /// The message.
-            /// </param>
-            public GenerateSaveFileError(DownloaderServiceStatus status, string message)
-                : base(message)
-            {
-                this.Status = status;
-            }
-
-            #endregion
-
-            #region Public Properties
-
-            /// <summary>
-            /// Gets the status.
-            /// </summary>
-            public DownloaderServiceStatus Status { get; private set; }
-
-            #endregion
-        }
 
         /// <summary>
         /// We use this to track network state, such as when WiFi, Cellular, etc. is
