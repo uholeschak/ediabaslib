@@ -13,7 +13,6 @@ using System;
 using System.IO;
 using System.Linq;
 
-using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.Net;
@@ -150,7 +149,7 @@ namespace ExpansionDownloader.Service
         /// <summary>
         /// Our binding to the network state broadcasts
         /// </summary>
-        private PendingIntent alarmIntent;
+        private Android.App.PendingIntent alarmIntent;
 
         /// <summary>
         /// Used for calculating time remaining and speed
@@ -200,7 +199,7 @@ namespace ExpansionDownloader.Service
         /// <summary>
         /// Our binding to the network state broadcasts
         /// </summary>
-        private PendingIntent pPendingIntent;
+        private Android.App.PendingIntent pPendingIntent;
 
         /// <summary>
         /// Package we are downloading for (defaults to package of application)
@@ -410,7 +409,7 @@ namespace ExpansionDownloader.Service
         public static DownloaderServiceRequirement StartDownloadServiceIfRequired(
             Android.Content.Context context, Intent intent, Type serviceType)
         {
-            var pendingIntent = (PendingIntent)intent.GetParcelableExtra(DownloaderServiceExtras.PendingIntent);
+            var pendingIntent = (Android.App.PendingIntent)intent.GetParcelableExtra(DownloaderServiceExtras.PendingIntent);
             return StartDownloadServiceIfRequired(context, pendingIntent, serviceType);
         }
 
@@ -454,7 +453,7 @@ namespace ExpansionDownloader.Service
         /// <see cref="DownloaderServiceRequirement.DownloadRequired"/>
         /// </returns>
         public static DownloaderServiceRequirement StartDownloadServiceIfRequired(
-            Android.Content.Context context, PendingIntent pendingIntent, Type serviceType)
+            Android.Content.Context context, Android.App.PendingIntent pendingIntent, Type serviceType)
         {
             // first: do we need to do an LVL update?
             // we begin by getting our APK version from the package manager
@@ -875,7 +874,7 @@ namespace ExpansionDownloader.Service
             {
                 DownloadsDB db = DownloadsDB.GetDB(this);
 
-                var pendingIntent = (PendingIntent)intent.GetParcelableExtra(DownloaderServiceExtras.PendingIntent);
+                var pendingIntent = (Android.App.PendingIntent)intent.GetParcelableExtra(DownloaderServiceExtras.PendingIntent);
 
                 if (null != pendingIntent)
                 {
@@ -908,8 +907,8 @@ namespace ExpansionDownloader.Service
                 {
                     // We do an (simple) integrity check on each file, just to 
                     // make sure and to verify that the file matches the state
-                    if (info.Status == DownloadStatus.Successful
-                        && !Helpers.DoesFileExist(this, info.FileName, info.TotalBytes, true))
+                    if ((DownloaderServiceStatus) info.Status == DownloaderServiceStatus.Success
+                         && !Helpers.DoesFileExist(this, info.FileName, info.TotalBytes, true))
                     {
                         info.Status = 0;
                         info.CurrentBytes = 0;
@@ -938,7 +937,7 @@ namespace ExpansionDownloader.Service
 
                     long startingCount = info.CurrentBytes;
 
-                    if (info.Status != DownloadStatus.Successful)
+                    if ((DownloaderServiceStatus) info.Status != DownloaderServiceStatus.Success)
                     {
                         var dt = new DownloadThread(info, this, this.downloadNotification);
                         this.CancelAlarms();
@@ -1066,7 +1065,7 @@ namespace ExpansionDownloader.Service
         {
             if (null != this.alarmIntent)
             {
-                var alarms = this.GetSystemService(AlarmService).JavaCast<AlarmManager>();
+                Android.App.AlarmManager alarms = GetSystemService(AlarmService) as Android.App.AlarmManager;
                 if (alarms == null)
                 {
                     Log.Debug(Tag,"LVLDL couldn't get alarm manager");
@@ -1124,12 +1123,12 @@ namespace ExpansionDownloader.Service
         {
             if (this.connectivityManager == null)
             {
-                this.connectivityManager = this.GetSystemService(ConnectivityService).JavaCast<ConnectivityManager>();
+                this.connectivityManager = this.GetSystemService(ConnectivityService) as ConnectivityManager;
             }
 
             if (this.wifiManager == null)
             {
-                this.wifiManager = this.GetSystemService(WifiService).JavaCast<WifiManager>();
+                this.wifiManager = this.GetSystemService(WifiService) as WifiManager;
             }
 
             if (this.connectivityManager == null)
@@ -1151,7 +1150,7 @@ namespace ExpansionDownloader.Service
         /// </param>
         private void ScheduleAlarm(int wakeUp)
         {
-            var alarms = this.GetSystemService(AlarmService).JavaCast<AlarmManager>();
+            Android.App.AlarmManager alarms = GetSystemService(AlarmService) as Android.App.AlarmManager;
             if (alarms == null)
             {
                 Log.Debug(Tag,"LVLDL couldn't get alarm manager");
@@ -1166,8 +1165,8 @@ namespace ExpansionDownloader.Service
             var intent = new Intent(DownloaderServiceAction.ActionRetry);
             intent.PutExtra(DownloaderServiceExtras.PendingIntent, this.pPendingIntent);
             intent.SetClassName(this.PackageName, this.AlarmReceiverClassName);
-            this.alarmIntent = PendingIntent.GetBroadcast(this, 0, intent, PendingIntentFlags.OneShot);
-            alarms.Set(AlarmType.RtcWakeup, cal.TimeInMillis, this.alarmIntent);
+            this.alarmIntent = Android.App.PendingIntent.GetBroadcast(this, 0, intent, Android.App.PendingIntentFlags.OneShot);
+            alarms.Set(Android.App.AlarmType.RtcWakeup, cal.TimeInMillis, this.alarmIntent);
         }
 
         /// <summary>
