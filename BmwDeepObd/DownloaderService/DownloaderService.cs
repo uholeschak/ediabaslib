@@ -238,9 +238,7 @@ namespace ExpansionDownloader.Service
             this.serviceConnection = DownloaderServiceMarshaller.CreateStub(this);
             this.serviceMessenger = this.serviceConnection.GetMessenger();
 
-            this.Control = DownloadsDatabase.DownloadStatus == DownloaderServiceStatus.PausedByApp
-                               ? DownloaderServiceControlAction.Paused
-                               : DownloaderServiceControlAction.Run;
+            this.Control = DownloaderServiceControlAction.Run;
         }
 
         #endregion
@@ -317,7 +315,11 @@ namespace ExpansionDownloader.Service
             {
                 this.status = value;
 
-				DownloadsDatabase.UpdateMetadata(DownloadsDatabase.VersionCode, this.status);
+                DownloadsDB db = DownloadsDB.GetDB(this);
+                if (db != null)
+                {
+                    db.UpdateMetadata(db.LastCheckedVersionCode, this.status);
+                }
             }
         }
 
@@ -407,7 +409,7 @@ namespace ExpansionDownloader.Service
         /// <see cref="DownloaderServiceRequirement.DownloadRequired"/>
         /// </returns>
         public static DownloaderServiceRequirement StartDownloadServiceIfRequired(
-            Context context, Intent intent, Type serviceType)
+            Android.Content.Context context, Intent intent, Type serviceType)
         {
             var pendingIntent = (PendingIntent)intent.GetParcelableExtra(DownloaderServiceExtras.PendingIntent);
             return StartDownloadServiceIfRequired(context, pendingIntent, serviceType);
@@ -747,7 +749,11 @@ namespace ExpansionDownloader.Service
         /// </param>
         public void SetDownloadFlags(DownloaderServiceFlags flags)
         {
-            DownloadsDatabase.Flags = flags;
+            DownloadsDB db = DownloadsDB.GetDB(this);
+            if (db != null)
+            {
+                db.UpdateFlags(flags);
+            }
         }
 
         #endregion
@@ -777,12 +783,19 @@ namespace ExpansionDownloader.Service
                 return DownloaderServiceNetworkAvailability.CannotUseRoaming;
             }
 
-            if (!DownloadsDatabase.Flags.HasFlag(DownloaderServiceFlags.DownloadOverCellular))
+            DownloadsDB db = DownloadsDB.GetDB(this);
+            DownloaderServiceFlags flags = DownloaderServiceFlags.None;
+            if (db != null)
             {
-                return DownloaderServiceNetworkAvailability.TypeDisallowedByRequestor;
+                flags = db.Flags;
             }
 
-            return DownloaderServiceNetworkAvailability.Ok;
+            if (flags.HasFlag(DownloaderServiceFlags.DownloadOverCellular))
+            {
+                return DownloaderServiceNetworkAvailability.Ok;
+            }
+
+            return DownloaderServiceNetworkAvailability.TypeDisallowedByRequestor;
         }
 
         /// <summary>
@@ -1211,11 +1224,15 @@ namespace ExpansionDownloader.Service
                     }
                     else if (this.networkState.HasFlag(NetworkState.IsCellular))
                     {
-                        DownloaderServiceFlags flags = DownloadsDatabase.Flags;
-                        if (!flags.HasFlag(DownloaderServiceFlags.DownloadOverCellular))
+                        DownloadsDB db = DownloadsDB.GetDB(this);
+                        if (db != null)
                         {
-                            this.Status = DownloaderServiceStatus.QueuedForWifi;
-                            this.Control = DownloaderServiceControlAction.Paused;
+                            DownloaderServiceFlags flags = db.Flags;
+                            if (!flags.HasFlag(DownloaderServiceFlags.DownloadOverCellular))
+                            {
+                                this.Status = DownloaderServiceStatus.QueuedForWifi;
+                                this.Control = DownloaderServiceControlAction.Paused;
+                            }
                         }
                     }
                 }
@@ -1300,7 +1317,7 @@ namespace ExpansionDownloader.Service
             /// <param name="intent">
             /// The intent.
             /// </param>
-            public override void OnReceive(Context context, Intent intent)
+            public override void OnReceive(Android.Content.Context context, Intent intent)
             {
                 this.service.PollNetworkState();
                 if (this.service.stateChanged && !this.service.IsServiceRunning)
