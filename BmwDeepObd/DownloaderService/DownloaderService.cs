@@ -12,13 +12,11 @@
 using System;
 using System.IO;
 using System.Linq;
-
-using Android.Content;
+using System.Reflection;
 using Android.Content.PM;
 using Android.Net;
 using Android.Net.Wifi;
 using Android.OS;
-using Android.Runtime;
 using Android.Telephony;
 using Android.Util;
 using Java.Util;
@@ -169,7 +167,7 @@ namespace ExpansionDownloader.Service
         /// <summary>
         /// Our binding to the network state broadcasts
         /// </summary>
-        private BroadcastReceiver connectionReceiver;
+        private Android.Content.BroadcastReceiver connectionReceiver;
 
         /// <summary>
         /// Bindings to important services
@@ -407,7 +405,7 @@ namespace ExpansionDownloader.Service
         /// <see cref="DownloaderServiceRequirement.DownloadRequired"/>
         /// </returns>
         public static DownloaderServiceRequirement StartDownloadServiceIfRequired(
-            Android.Content.Context context, Intent intent, Type serviceType)
+            Android.Content.Context context, Android.Content.Intent intent, Type serviceType)
         {
             var pendingIntent = (Android.App.PendingIntent)intent.GetParcelableExtra(DownloaderServiceExtras.PendingIntent);
             return StartDownloadServiceIfRequired(context, pendingIntent, serviceType);
@@ -495,7 +493,7 @@ namespace ExpansionDownloader.Service
             {
                 case DownloaderServiceRequirement.DownloadRequired:
                 case DownloaderServiceRequirement.LvlCheckRequired:
-                    var fileIntent = new Intent(context.ApplicationContext, serviceType);
+                    var fileIntent = new Android.Content.Intent(context.ApplicationContext, serviceType);
                     fileIntent.PutExtra(DownloaderServiceExtras.PendingIntent, pendingIntent);
                     context.StartService(fileIntent);
                     break;
@@ -646,7 +644,7 @@ namespace ExpansionDownloader.Service
         /// <returns>
         /// the binder
         /// </returns>
-        public override IBinder OnBind(Intent intent)
+        public override IBinder OnBind(Android.Content.Intent intent)
         {
             return this.serviceMessenger.Binder;
         }
@@ -717,7 +715,7 @@ namespace ExpansionDownloader.Service
                 this.Control = DownloaderServiceControlAction.Run;
             }
 
-            var fileIntent = new Intent(this, this.GetType());
+            var fileIntent = new Android.Content.Intent(this, this.GetType());
             fileIntent.PutExtra(DownloaderServiceExtras.PendingIntent, this.pPendingIntent);
             this.StartService(fileIntent);
         }
@@ -865,7 +863,7 @@ namespace ExpansionDownloader.Service
         /// <param name="intent">
         /// The intent that was recieved.
         /// </param>
-        protected override void OnHandleIntent(Intent intent)
+        protected override void OnHandleIntent(Android.Content.Intent intent)
         {
             Log.Debug(Tag,"DownloaderService.OnHandleIntent");
 
@@ -925,7 +923,7 @@ namespace ExpansionDownloader.Service
                     // We use this to track network state, such as when WiFi, Cellular, etc. is enabled
                     // when downloads are paused or in progress.
                     this.connectionReceiver = new InnerBroadcastReceiver(this);
-                    var intentFilter = new IntentFilter(ConnectivityManager.ConnectivityAction);
+                    var intentFilter = new Android.Content.IntentFilter(ConnectivityManager.ConnectivityAction);
                     intentFilter.AddAction(WifiManager.WifiStateChangedAction);
                     this.RegisterReceiver(this.connectionReceiver, intentFilter);
                 }
@@ -1096,7 +1094,20 @@ namespace ExpansionDownloader.Service
         private bool HandleFileUpdated(string filename, long fileSize)
         {
             DownloadsDB db = DownloadsDB.GetDB(this);
-            DownloadInfo di = db?.GetDownloadInfoByFileName(filename);
+            if (db == null)
+            {
+                return false;
+            }
+
+            MethodInfo getDownloadInfo = db.GetType().GetMethod("GetDownloadInfoByFileName", BindingFlags.NonPublic | BindingFlags.Instance);
+            if (getDownloadInfo == null)
+            {
+                return false;
+            }
+
+            object[] args = { filename };
+            // ReSharper disable once UsePatternMatching
+            DownloadInfo di = getDownloadInfo.Invoke(db, args) as DownloadInfo;
 
             if (di != null && di.FileName != null)
             {
@@ -1162,7 +1173,7 @@ namespace ExpansionDownloader.Service
 
             Log.Debug(Tag,"LVLDL scheduling retry in {0} seconds ({1})", wakeUp, cal.Time.ToLocaleString());
 
-            var intent = new Intent(DownloaderServiceAction.ActionRetry);
+            var intent = new Android.Content.Intent(DownloaderServiceAction.ActionRetry);
             intent.PutExtra(DownloaderServiceExtras.PendingIntent, this.pPendingIntent);
             intent.SetClassName(this.PackageName, this.AlarmReceiverClassName);
             this.alarmIntent = Android.App.PendingIntent.GetBroadcast(this, 0, intent, Android.App.PendingIntentFlags.OneShot);
@@ -1282,7 +1293,7 @@ namespace ExpansionDownloader.Service
         /// We use this to track network state, such as when WiFi, Cellular, etc. is
         /// enabled when downloads are paused or in progress.
         /// </summary>
-        private class InnerBroadcastReceiver : BroadcastReceiver
+        private class InnerBroadcastReceiver : Android.Content.BroadcastReceiver
         {
             #region Fields
 
@@ -1319,13 +1330,13 @@ namespace ExpansionDownloader.Service
             /// <param name="intent">
             /// The intent.
             /// </param>
-            public override void OnReceive(Android.Content.Context context, Intent intent)
+            public override void OnReceive(Android.Content.Context context, Android.Content.Intent intent)
             {
                 this.service.PollNetworkState();
                 if (this.service.stateChanged && !this.service.IsServiceRunning)
                 {
                     Log.Debug(Tag,"LVLDL InnerBroadcastReceiver Called");
-                    var fileIntent = new Intent(context, this.service.GetType());
+                    var fileIntent = new Android.Content.Intent(context, this.service.GetType());
                     fileIntent.PutExtra(DownloaderServiceExtras.PendingIntent, this.service.pPendingIntent);
 
                     // send a new intent to the service
