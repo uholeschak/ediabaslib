@@ -23,20 +23,13 @@ using Android.OS;
 using Android.Runtime;
 using Android.Telephony;
 using Android.Util;
+using Java.Util;
 
 using Google.Android.Vending.Expansion.Downloader;
 
 namespace ExpansionDownloader.Service
 {
-    //using ExpansionDownloader.Database;
-
-    using Java.Util;
-
-    //using LicenseVerificationLibrary.Policy;
-
-    //using Debug = System.Diagnostics.Debug;
-
-	/// <summary>
+    /// <summary>
     /// The downloader service.
     /// </summary>
     public abstract class DownloaderService : CustomIntentService, IDownloaderService
