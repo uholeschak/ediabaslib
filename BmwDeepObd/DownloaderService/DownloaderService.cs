@@ -675,14 +675,14 @@ namespace ExpansionDownloader.Service
                     "(Landroid/content/Context;Ljava/lang/CharSequence)V", new Android.Runtime.JValue[] {new (context), new (label) });
                 if (downloaderNotification != IntPtr.Zero)
                 {
-                    Java.Lang.Object handle = new Java.Lang.Object(downloaderNotification, JniHandleOwnership.TransferGlobalRef);
-                    JNIEnv.GetObjectClass(handle.Handle);
+                    Java.Lang.Object handle = new Java.Lang.Object(downloaderNotification, Android.Runtime.JniHandleOwnership.TransferGlobalRef);
+                    Android.Runtime.JNIEnv.GetObjectClass(handle.Handle);
                 }
                 //this.downloadNotification = new DownloadNotification(this, applicationLabel);
             }
-            catch (PackageManager.NameNotFoundException e)
+            catch (Exception e)
             {
-                Log.Error(Tag, e, "Oh oh!");
+                Log.Error(Tag, "OnCreate Exception: {0}", e.Message);
             }
         }
 
