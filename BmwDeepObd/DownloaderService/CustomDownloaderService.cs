@@ -675,10 +675,8 @@ namespace BmwDeepObd
                     "(Landroid/content/Context;Ljava/lang/CharSequence;)V", new Android.Runtime.JValue[] {new (context), new (label) });
                 if (downloaderNotification != IntPtr.Zero)
                 {
-                    Java.Lang.Object handle = new Java.Lang.Object(downloaderNotification, Android.Runtime.JniHandleOwnership.TransferGlobalRef);
-                    Android.Runtime.JNIEnv.GetObjectClass(handle.Handle);
+                    this.downloadNotification = GetObject<DownloadNotification>(downloaderNotification, Android.Runtime.JniHandleOwnership.DoNotTransfer);
                 }
-                //this.downloadNotification = new DownloadNotification(this, applicationLabel);
             }
             catch (Exception e)
             {
