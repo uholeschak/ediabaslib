@@ -22,6 +22,7 @@ using Android.Util;
 using Java.Util;
 
 using Google.Android.Vending.Expansion.Downloader;
+using Java.Interop;
 
 namespace BmwDeepObd
 {
@@ -226,8 +227,11 @@ namespace BmwDeepObd
         /// <summary>
         /// Initializes a new instance of the <see cref="DownloaderService"/> class.
         /// </summary>
-        protected CustomDownloaderService()
-            : base("LVLDownloadService")
+        protected CustomDownloaderService() : this("LVLDownloadService")
+        {
+        }
+
+        protected CustomDownloaderService(string paramString) : base(paramString)
         {
             Log.Debug(Tag,"LVLDL DownloaderService()");
 
@@ -672,13 +676,11 @@ namespace BmwDeepObd
                 Android.Content.Context context = this;
                 Java.Lang.ICharSequence label = new Java.Lang.String(applicationLabel);
                 IntPtr downloaderNotification = Android.Runtime.JNIEnv.CreateInstance(typeof(DownloadNotification),
-                    "(Landroid/content/Context;Ljava/lang/CharSequence)V", new Android.Runtime.JValue[] {new (context), new (label) });
+                    "(Landroid/content/Context;Ljava/lang/CharSequence;)V", new Android.Runtime.JValue[] {new (context), new (label) });
                 if (downloaderNotification != IntPtr.Zero)
                 {
-                    Java.Lang.Object handle = new Java.Lang.Object(downloaderNotification, Android.Runtime.JniHandleOwnership.TransferGlobalRef);
-                    Android.Runtime.JNIEnv.GetObjectClass(handle.Handle);
+                    this.downloadNotification = GetObject<DownloadNotification>(downloaderNotification, Android.Runtime.JniHandleOwnership.DoNotTransfer);
                 }
-                //this.downloadNotification = new DownloadNotification(this, applicationLabel);
             }
             catch (Exception e)
             {
