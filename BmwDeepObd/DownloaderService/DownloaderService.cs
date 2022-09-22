@@ -669,7 +669,16 @@ namespace ExpansionDownloader.Service
             {
                 this.packageInfo = this.PackageManager.GetPackageInfo(this.PackageName, 0);
                 string applicationLabel = this.PackageManager.GetApplicationLabel(this.ApplicationInfo);
-                this.downloadNotification = new DownloadNotification(this, applicationLabel);
+                Android.Content.Context context = this;
+                Java.Lang.ICharSequence label = new Java.Lang.String(applicationLabel);
+                IntPtr downloaderNotification = Android.Runtime.JNIEnv.CreateInstance(typeof(DownloadNotification),
+                    "(Landroid/content/Context;Ljava/lang/CharSequence)V", new Android.Runtime.JValue[] {new (context), new (label) });
+                if (downloaderNotification != IntPtr.Zero)
+                {
+                    Java.Lang.Object handle = new Java.Lang.Object(downloaderNotification, JniHandleOwnership.TransferGlobalRef);
+                    JNIEnv.GetObjectClass(handle.Handle);
+                }
+                //this.downloadNotification = new DownloadNotification(this, applicationLabel);
             }
             catch (PackageManager.NameNotFoundException e)
             {
@@ -935,10 +944,11 @@ namespace ExpansionDownloader.Service
 
                     if ((DownloaderServiceStatus) info.Status != DownloaderServiceStatus.Success)
                     {
-                        var dt = new DownloadThread(info, this, this.downloadNotification);
+                        // ToDo: Fix This
+                        //var dt = new DownloadThread(info, this, this.downloadNotification);
                         this.CancelAlarms();
                         this.ScheduleAlarm(ActiveThreadWatchdog);
-                        dt.Run();
+                        //dt.Run();
                         this.CancelAlarms();
                     }
 
@@ -1186,7 +1196,8 @@ namespace ExpansionDownloader.Service
         private void UpdateLvl(DownloaderService context)
         {
             var h = new Handler(context.MainLooper);
-            h.Post(new LVLRunnable(context, this.pPendingIntent));
+            // ToDo: Fix This
+            //h.Post(new LVLRunnable(context, this.pPendingIntent));
         }
 
         /// <summary>
