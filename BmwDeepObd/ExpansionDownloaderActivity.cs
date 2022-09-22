@@ -749,7 +749,8 @@ namespace BmwDeepObd
                 // Always force download of LVL
                 DownloadsDB.GetDB(this).UpdateMetadata(0, 0);
                 // Request to start the download
-                DownloaderServiceRequirement startResult = DownloaderService.StartDownloadServiceIfRequired(
+                // ReSharper disable once AccessToStaticMemberViaDerivedType
+                DownloaderServiceRequirement startResult = ExpansionDownloaderService.StartDownloadServiceIfRequired(
                     this, pendingIntent, typeof(ExpansionDownloaderService));
 
                 // The DownloaderService has started downloading the files, 
