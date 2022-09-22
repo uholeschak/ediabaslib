@@ -23,12 +23,12 @@ using Java.Util;
 
 using Google.Android.Vending.Expansion.Downloader;
 
-namespace ExpansionDownloader.Service
+namespace BmwDeepObd
 {
     /// <summary>
     /// The downloader service.
     /// </summary>
-    public abstract class DownloaderService : CustomIntentService, IDownloaderService
+    public abstract class CustomDownloaderService : CustomIntentService, IDownloaderService
     {
         #region Constants
         public const string Tag = "DownloaderService";
@@ -226,7 +226,7 @@ namespace ExpansionDownloader.Service
         /// <summary>
         /// Initializes a new instance of the <see cref="DownloaderService"/> class.
         /// </summary>
-        protected DownloaderService()
+        protected CustomDownloaderService()
             : base("LVLDownloadService")
         {
             Log.Debug(Tag,"LVLDL DownloaderService()");
@@ -331,17 +331,17 @@ namespace ExpansionDownloader.Service
         /// <summary>
         /// Gets AlarmReceiverClassName.
         /// </summary>
-        protected abstract string AlarmReceiverClassName { get; }
+        public abstract string AlarmReceiverClassName { get; }
 
         /// <summary>
         /// Gets PublicKey.
         /// </summary>
-        protected abstract string PublicKey { get; }
+        public abstract string PublicKey { get; }
 
         /// <summary>
         /// Gets Salt.
         /// </summary>
-        protected abstract byte[] Salt { get; }
+        public abstract byte[] GetSalt();
 
         /// <summary>
         /// Gets or sets a value indicating whether the service is running.
@@ -1193,7 +1193,7 @@ namespace ExpansionDownloader.Service
         /// </summary>
         /// <param name="context">
         /// </param>
-        private void UpdateLvl(DownloaderService context)
+        private void UpdateLvl(CustomDownloaderService context)
         {
             var h = new Handler(context.MainLooper);
             // ToDo: Fix This
@@ -1274,7 +1274,7 @@ namespace ExpansionDownloader.Service
             /// <summary>
             /// The m service.
             /// </summary>
-            private readonly DownloaderService service;
+            private readonly CustomDownloaderService service;
 
             #endregion
 
@@ -1286,7 +1286,7 @@ namespace ExpansionDownloader.Service
             /// <param name="service">
             /// The service.
             /// </param>
-            internal InnerBroadcastReceiver(DownloaderService service)
+            internal InnerBroadcastReceiver(CustomDownloaderService service)
             {
                 this.service = service;
             }
