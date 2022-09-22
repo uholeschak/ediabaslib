@@ -2,6 +2,7 @@
 using Android.Content;
 using Android.OS;
 using Google.Android.Vending.Expansion.Downloader;
+using Java.Interop;
 
 namespace BmwDeepObd
 {
@@ -29,7 +30,12 @@ namespace BmwDeepObd
         /// to make sure that your receiver is in your unique package)
         /// </summary>
         public override string AlarmReceiverClassName => "BmwDeepObd.ExpansionAlarmReceiver";
-
+#if false
+        [Export(SuperArgumentsString = "\"LVLDownloadService\"")]
+        public ExpansionDownloaderService()
+        {
+        }
+#endif
         // Catch exceptions from incompatible library version
         protected override void OnHandleIntent(Intent intent)
         {
