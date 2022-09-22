@@ -380,6 +380,29 @@ namespace BmwDeepObd
             }
             return false;
         }
+
+        public static int GetDbStatus(DownloadsDB db)
+        {
+            if (db == null)
+            {
+                return -1;
+            }
+
+            int status = -1;
+            try
+            {
+                IntPtr statusFieldId = Android.Runtime.JNIEnv.GetFieldID(db.Class.Handle, "mStatus", "I");
+                if (statusFieldId != IntPtr.Zero)
+                {
+                    status = Android.Runtime.JNIEnv.GetIntField(db.Handle, statusFieldId);
+                }
+            }
+            catch (Exception)
+            {
+                status = -1;
+            }
+            return status;
+        }
         #endregion
 
         #region Public Methods and Operators
@@ -462,8 +485,11 @@ namespace BmwDeepObd
             PackageInfo pi = context.PackageManager.GetPackageInfo(context.PackageName, 0);
 
             DownloaderServiceRequirement status = DownloaderServiceRequirement.NoDownloadRequired;
-
             DownloadsDB db = DownloadsDB.GetDB(context);
+            if (db == null)
+            {
+                return status;
+            }
 
             // we need to update the LVL check and get a successful status to proceed
             if (IsLvlCheckRequired(db, pi))
@@ -472,7 +498,7 @@ namespace BmwDeepObd
             }
 
             // we don't have to update LVL. Do we still have a download to start?
-            if (!db.IsDownloadRequired)
+            if (GetDbStatus(db) == 0)
             {
                 DownloadInfo[] infos = db.GetDownloads();
                 if (infos != null)
@@ -527,19 +553,19 @@ namespace BmwDeepObd
                 
                 Log.Debug(Tag,"External media not mounted: {0}", path);
 
-                throw new Google.Android.Vending.Expansion.Downloader.DownloaderService.GenerateSaveFileError((int) DownloaderServiceStatus.DeviceNotFound, "external media is not yet mounted");
+                throw new DownloaderService.GenerateSaveFileError((int) DownloaderServiceStatus.DeviceNotFound, "external media is not yet mounted");
             }
 
             if (File.Exists(path))
             {
                 Log.Debug(Tag,"File already exists: {0}", path);
 
-                throw new Google.Android.Vending.Expansion.Downloader.DownloaderService.GenerateSaveFileError((int) DownloaderServiceStatus.FileAlreadyExists, "requested destination file already exists");
+                throw new DownloaderService.GenerateSaveFileError((int) DownloaderServiceStatus.FileAlreadyExists, "requested destination file already exists");
             }
 
             if (Helpers.GetAvailableBytes(Helpers.GetFilesystemRoot(path)) < filesize)
             {
-                throw new Google.Android.Vending.Expansion.Downloader.DownloaderService.GenerateSaveFileError((int) DownloaderServiceStatus.InsufficientSpace, "insufficient space on external storage");
+                throw new DownloaderService.GenerateSaveFileError((int) DownloaderServiceStatus.InsufficientSpace, "insufficient space on external storage");
             }
 
             return path;
@@ -1052,13 +1078,7 @@ namespace BmwDeepObd
             // the database automatically reads the metadata for version code 
             // and download status when the instance is created
             DownloadsDB db = DownloadsDB.GetDB(this);
-            DownloaderServiceFlags flags = DownloaderServiceFlags.None;
-            if (db != null)
-            {
-                flags = db.Flags;
-            }
-
-            if (flags == 0)
+            if (GetDbStatus(db) == 0)
             {
                 return true;
             }
