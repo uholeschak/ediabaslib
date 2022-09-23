@@ -1001,8 +1001,7 @@ namespace BmwDeepObd
 
                     if ((DownloaderServiceStatus) info.Status != DownloaderServiceStatus.Success)
                     {
-                        // ToDo: Fix This
-                        var dt = new CustomDownloadThread(info, this, this.downloadNotification);
+                        CustomDownloadThread dt = new CustomDownloadThread(info, this, this.downloadNotification);
                         this.CancelAlarms();
                         this.ScheduleAlarm(ActiveThreadWatchdog);
                         dt.Run();
