@@ -837,16 +837,19 @@ namespace BmwDeepObd
         /// </returns>
         private NetworkState GetNetworkState(NetworkInfo info)
         {
-            var state = NetworkState.Disconnected;
+            NetworkState state = NetworkState.Disconnected;
+            if (info == null)
+            {
+                return state;
+            }
 
             switch (info.Type)
             {
                 case ConnectivityType.Wifi:
-#if __ANDROID_13__
                 case ConnectivityType.Ethernet:
                 case ConnectivityType.Bluetooth:
-#endif
-		            break;
+                    break;
+
                 case ConnectivityType.Wimax:
                     state = NetworkState.Is3G | NetworkState.Is4G | NetworkState.IsCellular;
                     break;
@@ -861,6 +864,7 @@ namespace BmwDeepObd
                         case NetworkType.Gprs:
                         case NetworkType.Iden:
                             break;
+
                         case NetworkType.Hsdpa:
                         case NetworkType.Hsupa:
                         case NetworkType.Hspa:
@@ -869,19 +873,13 @@ namespace BmwDeepObd
                         case NetworkType.Umts:
                             state |= NetworkState.Is3G;
                             break;
-#if __ANDROID_11__
+
                         case NetworkType.Lte:
                         case NetworkType.Ehrpd:
-							state |= NetworkState.Is3G | NetworkState.Is4G;
-                            break;
-#endif
-#if __ANDROID_13__
                         case NetworkType.Hspap:
-							state |= NetworkState.Is3G | NetworkState.Is4G;
+                            state |= NetworkState.Is3G | NetworkState.Is4G;
                             break;
-#endif
                     }
-
                     break;
             }
 
@@ -1230,10 +1228,12 @@ namespace BmwDeepObd
             NetworkState tempState = this.networkState;
 
             this.networkState = NetworkState.Disconnected;
-
-            if (info != null && info.IsConnected)
+            if (info != null)
             {
-                this.networkState = NetworkState.Connected;
+                if (info.IsConnected)
+                {
+                    this.networkState = NetworkState.Connected;
+                }
 
                 if (info.IsRoaming)
                 {
@@ -1246,6 +1246,10 @@ namespace BmwDeepObd
                 }
 
                 this.networkState |= this.GetNetworkState(info);
+            }
+            else
+            {
+                this.networkState |= this.GetNetworkState(null);
             }
 
             this.stateChanged = this.stateChanged || this.networkState != tempState;
