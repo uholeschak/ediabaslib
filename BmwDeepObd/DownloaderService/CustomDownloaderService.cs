@@ -1134,6 +1134,12 @@ namespace BmwDeepObd
         /// have the same name, we download it if it hasn't already been delivered by
         /// Market.
         /// </summary>
+        /// <param name="db">
+        /// database
+        /// </param>
+        /// <param name="index">
+        /// index the index of the file from market (0 = main, 1 = patch)
+        /// </param>
         /// <param name="filename">
         /// the name of the new file
         /// </param>
@@ -1143,9 +1149,8 @@ namespace BmwDeepObd
         /// <returns>
         /// The handle file updated.
         /// </returns>
-        private bool HandleFileUpdated(string filename, long fileSize)
+        public bool HandleFileUpdated(DownloadsDB db, int index, string filename, long fileSize)
         {
-            DownloadsDB db = DownloadsDB.GetDB(this);
             if (db == null)
             {
                 return false;
