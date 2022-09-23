@@ -211,11 +211,6 @@ namespace BmwDeepObd
         private bool stateChanged;
 
         /// <summary>
-        /// The status.
-        /// </summary>
-        private DownloaderServiceStatus status;
-
-        /// <summary>
         /// Bindings to important services
         /// </summary>
         private WifiManager wifiManager;
@@ -301,24 +296,7 @@ namespace BmwDeepObd
         /// <summary>
         /// Gets or sets the download state
         /// </summary>
-        public DownloaderServiceStatus Status
-        {
-            get
-            {
-                return this.status;
-            }
-
-            set
-            {
-                this.status = value;
-
-                DownloadsDB db = DownloadsDB.GetDB(this);
-                if (db != null)
-                {
-                    db.UpdateMetadata(db.LastCheckedVersionCode, this.status);
-                }
-            }
-        }
+        public DownloaderServiceStatus Status { get; private set; }
 
         /// <summary>
         /// Gets the total length of the downloads.
