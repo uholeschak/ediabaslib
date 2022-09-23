@@ -1193,16 +1193,19 @@ namespace BmwDeepObd
                 return;
             }
 
-            Calendar cal = Calendar.Instance;
-            cal.Add(CalendarField.Second, wakeUp);
-
-            Log.Debug(Tag,"LVLDL scheduling retry in {0} seconds ({1})", wakeUp, cal.Time.ToLocaleString());
+            Log.Debug(Tag,"LVLDL scheduling retry in {0} ms", wakeUp);
 
             var intent = new Android.Content.Intent(DownloaderServiceAction.ActionRetry);
             intent.PutExtra(DownloaderServiceExtras.PendingIntent, this.pPendingIntent);
             intent.SetClassName(this.PackageName, this.AlarmReceiverClassName);
-            this.alarmIntent = Android.App.PendingIntent.GetBroadcast(this, 0, intent, Android.App.PendingIntentFlags.OneShot);
-            alarms.Set(Android.App.AlarmType.RtcWakeup, cal.TimeInMillis, this.alarmIntent);
+
+            Android.App.PendingIntentFlags intentFlags = Android.App.PendingIntentFlags.OneShot;
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+            {
+                intentFlags |= Android.App.PendingIntentFlags.Immutable;
+            }
+            this.alarmIntent = Android.App.PendingIntent.GetBroadcast(this, 0, intent, intentFlags);
+            alarms.Set(Android.App.AlarmType.RtcWakeup, Java.Lang.JavaSystem.CurrentTimeMillis() + wakeUp, this.alarmIntent);
         }
 
         /// <summary>
