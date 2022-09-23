@@ -664,7 +664,7 @@ namespace BmwDeepObd
                 long timePassed = currentTime - this.millisecondsAtSample;
                 long bytesInSample = totalBytesSoFar - this.bytesAtSample;
                 float currentSpeedSample = bytesInSample / (float)timePassed;
-                if (Math.Abs(0 - this.averageDownloadSpeed) > SmoothingFactor)
+                if (0 != this.averageDownloadSpeed)
                 {
                     float smoothSpeed = SmoothingFactor * currentSpeedSample;
                     float averageSpeed = (1 - SmoothingFactor) * this.averageDownloadSpeed;
