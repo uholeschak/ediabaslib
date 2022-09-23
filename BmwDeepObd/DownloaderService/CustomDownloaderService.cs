@@ -32,7 +32,7 @@ namespace BmwDeepObd
     public abstract class CustomDownloaderService : CustomIntentService, IDownloaderService
     {
         #region Constants
-        public const string Tag = "DownloaderService";
+        public static string Tag = typeof(CustomDownloaderService).FullName;
         
         /// <summary>
         /// The buffer size used to stream the data.
@@ -575,7 +575,6 @@ namespace BmwDeepObd
 
             if (!Helpers.IsExternalMediaMounted)
             {
-                
                 Log.Debug(Tag,"External media not mounted: {0}", path);
 
                 throw new DownloaderService.GenerateSaveFileError((int) DownloaderServiceStatus.DeviceNotFound, "external media is not yet mounted");
@@ -1003,10 +1002,10 @@ namespace BmwDeepObd
                     if ((DownloaderServiceStatus) info.Status != DownloaderServiceStatus.Success)
                     {
                         // ToDo: Fix This
-                        //var dt = new DownloadThread(info, this, this.downloadNotification);
+                        var dt = new CustomDownloadThread(info, this, this.downloadNotification);
                         this.CancelAlarms();
                         this.ScheduleAlarm(ActiveThreadWatchdog);
-                        //dt.Run();
+                        dt.Run();
                         this.CancelAlarms();
                     }
 
