@@ -345,18 +345,7 @@ namespace BmwDeepObd
             }
         }
 
-        private static bool IsLvlCheckRequired(DownloadsDB db, PackageInfo pi)
-        {
-            // we need to update the LVL check and get a successful status to
-            // proceed
-            if (db.LastCheckedVersionCode != pi.VersionCode)
-            {
-                return true;
-            }
-            return false;
-        }
-
-        public static int GetDbStatus(DownloadsDB db)
+        private static int GetDbStatus(DownloadsDB db)
         {
             if (db == null)
             {
@@ -378,15 +367,76 @@ namespace BmwDeepObd
             }
             return status;
         }
+
+        private static bool IsLvlCheckRequired(DownloadsDB db, PackageInfo pi)
+        {
+            // we need to update the LVL check and get a successful status to
+            // proceed
+            if (db.LastCheckedVersionCode != pi.VersionCode)
+            {
+                return true;
+            }
+            return false;
+        }
         #endregion
 
         #region Public Methods and Operators
+
+        /**
+         * Returns whether the status is informational (i.e. 1xx).
+         */
+        public static bool IsStatusInformational(int status)
+        {
+            return (status >= 100 && status < 200);
+        }
+
+        /**
+         * Returns whether the status is a success (i.e. 2xx).
+         */
+        public static bool IsStatusSuccess(int status)
+        {
+            return (status >= 200 && status < 300);
+        }
+
+        /**
+         * Returns whether the status is an error (i.e. 4xx or 5xx).
+         */
+        public static bool IsStatusError(int status)
+        {
+            return (status >= 400 && status < 600);
+        }
+
+        /**
+         * Returns whether the status is a client error (i.e. 4xx).
+         */
+        public static bool IsStatusClientError(int status)
+        {
+            return (status >= 400 && status < 500);
+        }
+
+        /**
+         * Returns whether the status is a server error (i.e. 5xx).
+         */
+        public static bool IsStatusServerError(int status)
+        {
+            return (status >= 500 && status < 600);
+        }
+
+        /**
+         * Returns whether the download has completed (either with success or
+         * error).
+         */
+        public static bool IsStatusCompleted(int status)
+        {
+            return (status >= 200 && status < 300)
+                   || (status >= 400 && status < 600);
+        }
 
         /// <summary>
         /// This version assumes that the intent contains the pending intent as
         /// a parameter. This is used for responding to alarms.
         /// The pending intent must be in an extra with the key 
-        /// <see cref="DownloaderService#PendingIntent"/>.
+        /// <see cref="CustomDownloaderService#PendingIntent"/>.
         /// </summary>
         /// <param name="context">
         /// Your application Context.
