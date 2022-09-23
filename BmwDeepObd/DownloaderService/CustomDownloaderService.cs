@@ -794,7 +794,7 @@ namespace BmwDeepObd
         /// <returns>
         /// The ExpansionDownloader.Service.NetworkDisabledState.
         /// </returns>
-        internal DownloaderServiceNetworkAvailability GetNetworkAvailabilityState()
+        public DownloaderServiceNetworkAvailability GetNetworkAvailabilityState(DownloadsDB db)
         {
             if (!this.networkState.HasFlag(NetworkState.Connected))
             {
@@ -811,7 +811,6 @@ namespace BmwDeepObd
                 return DownloaderServiceNetworkAvailability.CannotUseRoaming;
             }
 
-            DownloadsDB db = DownloadsDB.GetDB(this);
             DownloaderServiceFlags flags = DownloaderServiceFlags.None;
             if (db != null)
             {
