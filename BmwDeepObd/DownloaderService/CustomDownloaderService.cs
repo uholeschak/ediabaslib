@@ -227,11 +227,8 @@ namespace BmwDeepObd
         /// <summary>
         /// Initializes a new instance of the <see cref="DownloaderService"/> class.
         /// </summary>
-        protected CustomDownloaderService() : this("LVLDownloadService")
-        {
-        }
-
-        protected CustomDownloaderService(string paramString) : base(paramString)
+        [Export(SuperArgumentsString = "\"LVLDownloadService\"")]
+        protected CustomDownloaderService() : base("LVLDownloadService")
         {
             Log.Debug(Tag,"LVLDL DownloaderService()");
 
