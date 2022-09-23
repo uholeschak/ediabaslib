@@ -22,6 +22,7 @@ using Android.Util;
 using Java.Util;
 
 using Google.Android.Vending.Expansion.Downloader;
+using Java.Interop;
 
 namespace BmwDeepObd
 {
@@ -210,11 +211,6 @@ namespace BmwDeepObd
         private bool stateChanged;
 
         /// <summary>
-        /// The status.
-        /// </summary>
-        private DownloaderServiceStatus status;
-
-        /// <summary>
         /// Bindings to important services
         /// </summary>
         private WifiManager wifiManager;
@@ -226,8 +222,8 @@ namespace BmwDeepObd
         /// <summary>
         /// Initializes a new instance of the <see cref="DownloaderService"/> class.
         /// </summary>
-        protected CustomDownloaderService()
-            : base("LVLDownloadService")
+        [Export(SuperArgumentsString = "\"LVLDownloadService\"")]
+        protected CustomDownloaderService() : base("LVLDownloadService")
         {
             Log.Debug(Tag,"LVLDL DownloaderService()");
 
@@ -300,24 +296,7 @@ namespace BmwDeepObd
         /// <summary>
         /// Gets or sets the download state
         /// </summary>
-        public DownloaderServiceStatus Status
-        {
-            get
-            {
-                return this.status;
-            }
-
-            set
-            {
-                this.status = value;
-
-                DownloadsDB db = DownloadsDB.GetDB(this);
-                if (db != null)
-                {
-                    db.UpdateMetadata(db.LastCheckedVersionCode, this.status);
-                }
-            }
-        }
+        public DownloaderServiceStatus Status { get; private set; }
 
         /// <summary>
         /// Gets the total length of the downloads.
@@ -366,6 +345,29 @@ namespace BmwDeepObd
             }
         }
 
+        private static int GetDbStatus(DownloadsDB db)
+        {
+            if (db == null)
+            {
+                return -1;
+            }
+
+            int status = -1;
+            try
+            {
+                IntPtr statusFieldId = Android.Runtime.JNIEnv.GetFieldID(db.Class.Handle, "mStatus", "I");
+                if (statusFieldId != IntPtr.Zero)
+                {
+                    status = Android.Runtime.JNIEnv.GetIntField(db.Handle, statusFieldId);
+                }
+            }
+            catch (Exception)
+            {
+                status = -1;
+            }
+            return status;
+        }
+
         private static bool IsLvlCheckRequired(DownloadsDB db, PackageInfo pi)
         {
             // we need to update the LVL check and get a successful status to
@@ -380,11 +382,61 @@ namespace BmwDeepObd
 
         #region Public Methods and Operators
 
+        /**
+         * Returns whether the status is informational (i.e. 1xx).
+         */
+        public static bool IsStatusInformational(int status)
+        {
+            return (status >= 100 && status < 200);
+        }
+
+        /**
+         * Returns whether the status is a success (i.e. 2xx).
+         */
+        public static bool IsStatusSuccess(int status)
+        {
+            return (status >= 200 && status < 300);
+        }
+
+        /**
+         * Returns whether the status is an error (i.e. 4xx or 5xx).
+         */
+        public static bool IsStatusError(int status)
+        {
+            return (status >= 400 && status < 600);
+        }
+
+        /**
+         * Returns whether the status is a client error (i.e. 4xx).
+         */
+        public static bool IsStatusClientError(int status)
+        {
+            return (status >= 400 && status < 500);
+        }
+
+        /**
+         * Returns whether the status is a server error (i.e. 5xx).
+         */
+        public static bool IsStatusServerError(int status)
+        {
+            return (status >= 500 && status < 600);
+        }
+
+        /**
+         * Returns whether the download has completed (either with success or
+         * error).
+         */
+        public static bool IsStatusCompleted(int status)
+        {
+            return (status >= 200 && status < 300)
+                   || (status >= 400 && status < 600);
+        }
+
         /// <summary>
         /// This version assumes that the intent contains the pending intent as
         /// a parameter. This is used for responding to alarms.
         /// The pending intent must be in an extra with the key 
-        /// <see cref="DownloaderService#PendingIntent"/>.
+        /// <see cref="CustomDownloaderService#PendingIntent"/>.
         /// </summary>
         /// <param name="context">
         /// Your application Context.
@@ -458,8 +510,11 @@ namespace BmwDeepObd
             PackageInfo pi = context.PackageManager.GetPackageInfo(context.PackageName, 0);
 
             DownloaderServiceRequirement status = DownloaderServiceRequirement.NoDownloadRequired;
-
             DownloadsDB db = DownloadsDB.GetDB(context);
+            if (db == null)
+            {
+                return status;
+            }
 
             // we need to update the LVL check and get a successful status to proceed
             if (IsLvlCheckRequired(db, pi))
@@ -468,7 +523,7 @@ namespace BmwDeepObd
             }
 
             // we don't have to update LVL. Do we still have a download to start?
-            if (!db.IsDownloadRequired)
+            if (GetDbStatus(db) == 0)
             {
                 DownloadInfo[] infos = db.GetDownloads();
                 if (infos != null)
@@ -523,19 +578,19 @@ namespace BmwDeepObd
                 
                 Log.Debug(Tag,"External media not mounted: {0}", path);
 
-                throw new Google.Android.Vending.Expansion.Downloader.DownloaderService.GenerateSaveFileError((int) DownloaderServiceStatus.DeviceNotFound, "external media is not yet mounted");
+                throw new DownloaderService.GenerateSaveFileError((int) DownloaderServiceStatus.DeviceNotFound, "external media is not yet mounted");
             }
 
             if (File.Exists(path))
             {
                 Log.Debug(Tag,"File already exists: {0}", path);
 
-                throw new Google.Android.Vending.Expansion.Downloader.DownloaderService.GenerateSaveFileError((int) DownloaderServiceStatus.FileAlreadyExists, "requested destination file already exists");
+                throw new DownloaderService.GenerateSaveFileError((int) DownloaderServiceStatus.FileAlreadyExists, "requested destination file already exists");
             }
 
             if (Helpers.GetAvailableBytes(Helpers.GetFilesystemRoot(path)) < filesize)
             {
-                throw new Google.Android.Vending.Expansion.Downloader.DownloaderService.GenerateSaveFileError((int) DownloaderServiceStatus.InsufficientSpace, "insufficient space on external storage");
+                throw new DownloaderService.GenerateSaveFileError((int) DownloaderServiceStatus.InsufficientSpace, "insufficient space on external storage");
             }
 
             return path;
@@ -609,7 +664,7 @@ namespace BmwDeepObd
                 long timePassed = currentTime - this.millisecondsAtSample;
                 long bytesInSample = totalBytesSoFar - this.bytesAtSample;
                 float currentSpeedSample = bytesInSample / (float)timePassed;
-                if (Math.Abs(0 - this.averageDownloadSpeed) > SmoothingFactor)
+                if (0 != this.averageDownloadSpeed)
                 {
                     float smoothSpeed = SmoothingFactor * currentSpeedSample;
                     float averageSpeed = (1 - SmoothingFactor) * this.averageDownloadSpeed;
@@ -767,7 +822,7 @@ namespace BmwDeepObd
         /// <returns>
         /// The ExpansionDownloader.Service.NetworkDisabledState.
         /// </returns>
-        internal DownloaderServiceNetworkAvailability GetNetworkAvailabilityState()
+        public DownloaderServiceNetworkAvailability GetNetworkAvailabilityState(DownloadsDB db)
         {
             if (!this.networkState.HasFlag(NetworkState.Connected))
             {
@@ -784,7 +839,6 @@ namespace BmwDeepObd
                 return DownloaderServiceNetworkAvailability.CannotUseRoaming;
             }
 
-            DownloadsDB db = DownloadsDB.GetDB(this);
             DownloaderServiceFlags flags = DownloaderServiceFlags.None;
             if (db != null)
             {
@@ -810,16 +864,19 @@ namespace BmwDeepObd
         /// </returns>
         private NetworkState GetNetworkState(NetworkInfo info)
         {
-            var state = NetworkState.Disconnected;
+            NetworkState state = NetworkState.Disconnected;
+            if (info == null)
+            {
+                return state;
+            }
 
             switch (info.Type)
             {
                 case ConnectivityType.Wifi:
-#if __ANDROID_13__
                 case ConnectivityType.Ethernet:
                 case ConnectivityType.Bluetooth:
-#endif
-		            break;
+                    break;
+
                 case ConnectivityType.Wimax:
                     state = NetworkState.Is3G | NetworkState.Is4G | NetworkState.IsCellular;
                     break;
@@ -834,6 +891,7 @@ namespace BmwDeepObd
                         case NetworkType.Gprs:
                         case NetworkType.Iden:
                             break;
+
                         case NetworkType.Hsdpa:
                         case NetworkType.Hsupa:
                         case NetworkType.Hspa:
@@ -842,19 +900,13 @@ namespace BmwDeepObd
                         case NetworkType.Umts:
                             state |= NetworkState.Is3G;
                             break;
-#if __ANDROID_11__
+
                         case NetworkType.Lte:
                         case NetworkType.Ehrpd:
-							state |= NetworkState.Is3G | NetworkState.Is4G;
-                            break;
-#endif
-#if __ANDROID_13__
                         case NetworkType.Hspap:
-							state |= NetworkState.Is3G | NetworkState.Is4G;
+                            state |= NetworkState.Is3G | NetworkState.Is4G;
                             break;
-#endif
                     }
-
                     break;
             }
 
@@ -1048,13 +1100,7 @@ namespace BmwDeepObd
             // the database automatically reads the metadata for version code 
             // and download status when the instance is created
             DownloadsDB db = DownloadsDB.GetDB(this);
-            DownloaderServiceFlags flags = DownloaderServiceFlags.None;
-            if (db != null)
-            {
-                flags = db.Flags;
-            }
-
-            if (flags == 0)
+            if (GetDbStatus(db) == 0)
             {
                 return true;
             }
@@ -1088,6 +1134,12 @@ namespace BmwDeepObd
         /// have the same name, we download it if it hasn't already been delivered by
         /// Market.
         /// </summary>
+        /// <param name="db">
+        /// database
+        /// </param>
+        /// <param name="index">
+        /// index the index of the file from market (0 = main, 1 = patch)
+        /// </param>
         /// <param name="filename">
         /// the name of the new file
         /// </param>
@@ -1097,9 +1149,8 @@ namespace BmwDeepObd
         /// <returns>
         /// The handle file updated.
         /// </returns>
-        private bool HandleFileUpdated(string filename, long fileSize)
+        public bool HandleFileUpdated(DownloadsDB db, int index, string filename, long fileSize)
         {
-            DownloadsDB db = DownloadsDB.GetDB(this);
             if (db == null)
             {
                 return false;
@@ -1174,16 +1225,19 @@ namespace BmwDeepObd
                 return;
             }
 
-            Calendar cal = Calendar.Instance;
-            cal.Add(CalendarField.Second, wakeUp);
-
-            Log.Debug(Tag,"LVLDL scheduling retry in {0} seconds ({1})", wakeUp, cal.Time.ToLocaleString());
+            Log.Debug(Tag,"LVLDL scheduling retry in {0} ms", wakeUp);
 
             var intent = new Android.Content.Intent(DownloaderServiceAction.ActionRetry);
             intent.PutExtra(DownloaderServiceExtras.PendingIntent, this.pPendingIntent);
             intent.SetClassName(this.PackageName, this.AlarmReceiverClassName);
-            this.alarmIntent = Android.App.PendingIntent.GetBroadcast(this, 0, intent, Android.App.PendingIntentFlags.OneShot);
-            alarms.Set(Android.App.AlarmType.RtcWakeup, cal.TimeInMillis, this.alarmIntent);
+
+            Android.App.PendingIntentFlags intentFlags = Android.App.PendingIntentFlags.OneShot;
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+            {
+                intentFlags |= Android.App.PendingIntentFlags.Immutable;
+            }
+            this.alarmIntent = Android.App.PendingIntent.GetBroadcast(this, 0, intent, intentFlags);
+            alarms.Set(Android.App.AlarmType.RtcWakeup, Java.Lang.JavaSystem.CurrentTimeMillis() + wakeUp, this.alarmIntent);
         }
 
         /// <summary>
@@ -1209,7 +1263,6 @@ namespace BmwDeepObd
             NetworkState tempState = this.networkState;
 
             this.networkState = NetworkState.Disconnected;
-
             if (info != null && info.IsConnected)
             {
                 this.networkState = NetworkState.Connected;
