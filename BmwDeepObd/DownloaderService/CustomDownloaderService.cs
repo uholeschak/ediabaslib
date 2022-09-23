@@ -703,6 +703,14 @@ namespace BmwDeepObd
         }
 
         /// <summary>
+        /// IsWifi connection
+        /// </summary>
+        public bool IsWiFi()
+        {
+            return (networkState & NetworkState.Connected) != 0 && (networkState & NetworkState.IsCellular) == 0;
+        }
+
+        /// <summary>
         /// The on client updated.
         /// </summary>
         /// <param name="messenger">
