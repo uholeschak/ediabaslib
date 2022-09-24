@@ -786,7 +786,6 @@ namespace BmwDeepObd
                 }
                 catch (DownloaderService.GenerateSaveFileError exc)
                 {
-                    //throw new StopRequestException(exc.Status, exc.Message);
                     throw new StopRequestException((DownloaderServiceStatus) CustomDownloaderService.GetSafeFileErrorStatus(exc),
                         CustomDownloaderService.GetSafeFileErrorMessage(exc));
                 }
