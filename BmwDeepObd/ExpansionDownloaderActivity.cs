@@ -789,8 +789,7 @@ namespace BmwDeepObd
         private void InitializeDownloadUi()
         {
             InitializeControls();
-            _downloaderServiceConnection = DownloaderClientMarshaller.CreateStub(
-                this, typeof(ExpansionDownloaderService));
+            _downloaderServiceConnection = DownloaderClientMarshaller.CreateStub(this, typeof(ExpansionDownloaderService));
         }
 
         /// <summary>
@@ -934,7 +933,6 @@ namespace BmwDeepObd
                 // For free titles, this is probably worth doing. (so no Market 
                 // request is necessary)
                 bool delivered = AreExpansionFilesDelivered();
-
                 if (delivered)
                 {
                     try
@@ -1038,7 +1036,14 @@ namespace BmwDeepObd
 
                 if (_activityActive)
                 {
-                    _downloaderServiceConnection?.Connect(this);
+                    try
+                    {
+                        _downloaderServiceConnection?.Connect(this);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                 }
             }
         }
