@@ -359,7 +359,7 @@
     <Compile Include="CustomBackupAgent.cs" />
     <Compile Include="CustomProgressDialog.cs" />
     <Compile Include="DownloaderService\CustomDownloaderService.cs" />
-    <Compile Include="DownloaderService\DownloadThread.cs" />
+    <Compile Include="DownloaderService\CustomDownloadThread.cs" />
     <Compile Include="ExpansionAlarmReceiver.cs" />
     <Compile Include="ExpansionDownloaderActivity.cs" />
     <Compile Include="ExpansionDownloaderService.cs" />

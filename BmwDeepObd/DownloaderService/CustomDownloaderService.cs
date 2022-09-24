@@ -345,7 +345,21 @@ namespace BmwDeepObd
             }
         }
 
-        private static int GetDbStatus(DownloadsDB db)
+        private static bool IsLvlCheckRequired(DownloadsDB db, PackageInfo pi)
+        {
+            // we need to update the LVL check and get a successful status to
+            // proceed
+            if (db.LastCheckedVersionCode != pi.VersionCode)
+            {
+                return true;
+            }
+            return false;
+        }
+        #endregion
+
+        #region Public Methods and Operators
+
+        public static int GetDbStatus(DownloadsDB db)
         {
             if (db == null)
             {
@@ -368,19 +382,59 @@ namespace BmwDeepObd
             return status;
         }
 
-        private static bool IsLvlCheckRequired(DownloadsDB db, PackageInfo pi)
+        public static int GetSafeFileErrorStatus(DownloaderService.GenerateSaveFileError ex)
         {
-            // we need to update the LVL check and get a successful status to
-            // proceed
-            if (db.LastCheckedVersionCode != pi.VersionCode)
+            if (ex == null)
             {
-                return true;
+                return -1;
             }
-            return false;
-        }
-        #endregion
 
-        #region Public Methods and Operators
+            int status = -1;
+            try
+            {
+                IntPtr statusFieldId = Android.Runtime.JNIEnv.GetFieldID(ex.Class.Handle, "mStatus", "I");
+                if (statusFieldId != IntPtr.Zero)
+                {
+                    status = Android.Runtime.JNIEnv.GetIntField(ex.Handle, statusFieldId);
+                }
+            }
+            catch (Exception)
+            {
+                status = -1;
+            }
+            return status;
+        }
+
+        public static string GetSafeFileErrorMessage(DownloaderService.GenerateSaveFileError ex)
+        {
+            if (ex == null)
+            {
+                return string.Empty;
+            }
+
+            string message = string.Empty;
+            try
+            {
+                IntPtr messageFieldId = Android.Runtime.JNIEnv.GetFieldID(ex.Class.Handle, "mMessage", "Ljava/lang/String;");
+                if (messageFieldId != IntPtr.Zero)
+                {
+                    IntPtr messageObject = Android.Runtime.JNIEnv.GetObjectField(ex.Handle, messageFieldId);
+                    if (messageObject != IntPtr.Zero)
+                    {
+                        Java.Lang.String javaString = GetObject<Java.Lang.String>(messageObject, Android.Runtime.JniHandleOwnership.DoNotTransfer);
+                        if (javaString != null)
+                        {
+                            message = javaString.ToString();
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                message = string.Empty;
+            }
+            return message;
+        }
 
         /**
          * Returns whether the status is informational (i.e. 1xx).
@@ -1023,7 +1077,6 @@ namespace BmwDeepObd
                             this.downloadNotification.OnDownloadStateChanged(DownloaderClientState.Completed);
                             continue;
                         case DownloaderServiceStatus.FileDeliveredIncorrectly:
-
                             // we may be on a network that is returning us a web page on redirect
                             notifyStatus = DownloaderClientState.PausedNetworkSetupFailure;
                             info.CurrentBytes = 0;
