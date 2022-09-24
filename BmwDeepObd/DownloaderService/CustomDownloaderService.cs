@@ -32,8 +32,8 @@ namespace BmwDeepObd
     public abstract class CustomDownloaderService : CustomIntentService, IDownloaderService
     {
         #region Constants
-        public static string Tag = typeof(CustomDownloaderService).FullName;
-        
+        private static readonly string Tag = typeof(CustomDownloaderService).FullName;
+
         /// <summary>
         /// The buffer size used to stream the data.
         /// </summary>
@@ -513,7 +513,7 @@ namespace BmwDeepObd
         public static DownloaderServiceRequirement StartDownloadServiceIfRequired(
             Android.Content.Context context, Android.Content.Intent intent, Type serviceType)
         {
-            var pendingIntent = (Android.App.PendingIntent)intent.GetParcelableExtra(DownloaderServiceExtras.PendingIntent);
+            Android.App.PendingIntent pendingIntent = intent.GetParcelableExtraType<Android.App.PendingIntent>(DownloaderServiceExtras.PendingIntent);
             return StartDownloadServiceIfRequired(context, pendingIntent, serviceType);
         }
 
@@ -989,8 +989,7 @@ namespace BmwDeepObd
             try
             {
                 DownloadsDB db = DownloadsDB.GetDB(this);
-
-                var pendingIntent = (Android.App.PendingIntent)intent.GetParcelableExtra(DownloaderServiceExtras.PendingIntent);
+                Android.App.PendingIntent pendingIntent = intent.GetParcelableExtraType<Android.App.PendingIntent>(DownloaderServiceExtras.PendingIntent);
 
                 if (null != pendingIntent)
                 {
