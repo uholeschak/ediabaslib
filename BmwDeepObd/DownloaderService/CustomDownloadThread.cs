@@ -10,11 +10,11 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Net;
 
 using Android.Content;
-using Android.OS;
 using Android.Runtime;
 using Android.Service.Controls.Actions;
 using Android.Util;
@@ -28,8 +28,8 @@ namespace BmwDeepObd
     /// </summary>
     public class CustomDownloadThread
     {
-        static string Tag = typeof(CustomDownloadThread).FullName;
-        
+        private static readonly string Tag = typeof(CustomDownloadThread).FullName;
+
         #region Fields
 
         /// <summary>
@@ -97,17 +97,17 @@ namespace BmwDeepObd
         /// </summary>
         internal void Run()
         {
-            Process.SetThreadPriority(Android.OS.ThreadPriority.Background);
+            Android.OS.Process.SetThreadPriority(Android.OS.ThreadPriority.Background);
 
-            var state = new State(this.downloadInfo, this.downloaderService);
-            PowerManager.WakeLock wakeLock = null;
+            State state = new State(this.downloadInfo, this.downloaderService);
+            Android.OS.PowerManager.WakeLock wakeLock = null;
             var finalStatus = DownloaderServiceStatus.UnknownError;
 
             try
             {
-                var pm = this.context.GetSystemService(Context.PowerService).JavaCast<PowerManager>();
-                wakeLock = pm.NewWakeLock(WakeLockFlags.Partial, this.GetType().Name);
-                wakeLock.Acquire();
+                Android.OS.PowerManager pm = this.context.GetSystemService(Context.PowerService) as Android.OS.PowerManager;
+                wakeLock = pm?.NewWakeLock(Android.OS.WakeLockFlags.Partial, this.GetType().Name);
+                wakeLock?.Acquire();
 
                 bool finished = false;
                 do
@@ -172,8 +172,7 @@ namespace BmwDeepObd
                 }
 
                 CleanupDestination(state, finalStatus);
-                this.NotifyDownloadCompleted(
-                    finalStatus, state.CountRetry, state.RetryAfter, state.RedirectCount, state.GotData);
+                this.NotifyDownloadCompleted(finalStatus, state.CountRetry, state.RetryAfter, state.RedirectCount, state.GotData);
             }
         }
 
@@ -195,7 +194,7 @@ namespace BmwDeepObd
                     request.Headers.Add("If-Match", innerState.HeaderETag);
                 }
 
-                request.AddRange(innerState.BytesSoFar);
+                request.Headers.Add("Range", string.Format(CultureInfo.InvariantCulture, "bytes={0}-", innerState.BytesSoFar));
             }
 
             // request.SendChunked = true;
@@ -305,29 +304,33 @@ namespace BmwDeepObd
         /// </param>
         private static void HandleServiceUnavailable(State state, HttpWebResponse response)
         {
-            string header = response.GetResponseHeader("Retry-After");
-            System.Diagnostics.Debug.WriteLine("DownloadThread : got HTTP response code 503 (retry after {0})", header);
-
             state.CountRetry = true;
-            int retryAfter;
-            int.TryParse(header, out retryAfter);
+            string header = response.GetResponseHeader("Retry-After");
 
-            state.RetryAfter = Math.Max(retryAfter, 0);
-
-            if (state.RetryAfter < CustomDownloaderService.MinimumRetryAfter)
+            if (!string.IsNullOrEmpty(header))
             {
-                state.RetryAfter = CustomDownloaderService.MinimumRetryAfter;
-            }
-            else if (state.RetryAfter > CustomDownloaderService.MaxRetryAfter)
-            {
-                state.RetryAfter = CustomDownloaderService.MaxRetryAfter;
+                Log.Info(Tag, string.Format("DownloadThread : got HTTP response code 503 (retry after {0})", header));
+
+                if (!int.TryParse(header, out int retryAfter))
+                {
+                    retryAfter = 0;
+                }
+
+                state.RetryAfter = Math.Max(retryAfter, 0);
+                if (state.RetryAfter < CustomDownloaderService.MinimumRetryAfter)
+                {
+                    state.RetryAfter = CustomDownloaderService.MinimumRetryAfter;
+                }
+                else if (state.RetryAfter > CustomDownloaderService.MaxRetryAfter)
+                {
+                    state.RetryAfter = CustomDownloaderService.MaxRetryAfter;
+                }
+
+                state.RetryAfter += Helpers.Random.NextInt(CustomDownloaderService.MinimumRetryAfter + 1);
+                state.RetryAfter *= 1000;
             }
 
-            state.RetryAfter += Helpers.Random.NextInt(CustomDownloaderService.MinimumRetryAfter + 1);
-            state.RetryAfter *= 1000;
-
-            throw new StopRequestException(
-                DownloaderServiceStatus.WaitingToRetry, "got 503 Service Unavailable, will retry later");
+            throw new StopRequestException(DownloaderServiceStatus.WaitingToRetry, "got 503 Service Unavailable, will retry later");
         }
 
         /// <summary>
@@ -728,8 +731,7 @@ namespace BmwDeepObd
         /// <param name="gotData">
         /// The got Data.
         /// </param>
-        private void NotifyDownloadCompleted(
-            DownloaderServiceStatus status, bool countRetry, int retryAfter, int redirectCount, bool gotData)
+        private void NotifyDownloadCompleted(DownloaderServiceStatus status, bool countRetry, int retryAfter, int redirectCount, bool gotData)
         {
             System.Diagnostics.Debug.WriteLine("NotifyDownloadCompleted");
             this.UpdateDownloadDatabase(status, countRetry, retryAfter, redirectCount, gotData);
@@ -1341,8 +1343,7 @@ namespace BmwDeepObd
             public StopRequestException(DownloaderServiceStatus finalStatus, string message, Exception throwable = null)
                 : base(message, throwable)
             {
-                System.Diagnostics.Debug.WriteLine(message);
-
+                Log.Error(Tag, string.Format("StopRequestException {0}", message ?? string.Empty));
                 this.FinalStatus = finalStatus;
             }
 
