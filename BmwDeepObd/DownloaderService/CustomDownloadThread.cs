@@ -194,7 +194,7 @@ namespace BmwDeepObd
                     request.Headers.Add("If-Match", innerState.HeaderETag);
                 }
 
-                request.Headers.Add("Range", string.Format(CultureInfo.InvariantCulture, "bytes={0}-", innerState.BytesSoFar));
+                request.AddRange(innerState.BytesSoFar);
             }
 
             // request.SendChunked = true;
@@ -574,7 +574,7 @@ namespace BmwDeepObd
         /// </param>
         private void HandleEndOfStream(State state, InnerState innerState)
         {
-            System.Diagnostics.Debug.WriteLine("HandleEndOfStream");
+            Log.Info(Tag, "HandleEndOfStream");
 
             this.downloadInfo.CurrentBytes = innerState.BytesSoFar;
 
@@ -665,7 +665,7 @@ namespace BmwDeepObd
         /// </param>
         private void HandleRedirect(State state, HttpWebResponse response, HttpStatusCode statusCode)
         {
-            System.Diagnostics.Debug.WriteLine("got HTTP redirect " + statusCode);
+            Log.Info(Tag, string.Format("got HTTP redirect {0}", statusCode));
 
             if (state.RedirectCount >= CustomDownloaderService.MaxRedirects)
             {
@@ -673,21 +673,27 @@ namespace BmwDeepObd
             }
 
             string header = response.GetResponseHeader("Location");
-            if (header == null)
+            if (string.IsNullOrEmpty(header))
             {
                 return;
             }
 
-            System.Diagnostics.Debug.WriteLine("Redirecting to " + header);
+            Log.Info(Tag, string.Format("Redirecting to: {0}", header));
 
             string newUri;
             try
             {
-                newUri = new Java.Net.URI(this.downloadInfo.Uri).Resolve(new Java.Net.URI(header)).ToString();
+                newUri = new Java.Net.URI(this.downloadInfo.Uri)?.Resolve(new Java.Net.URI(header))?.ToString();
             }
             catch (Java.Net.URISyntaxException)
             {
-                System.Diagnostics.Debug.WriteLine("Couldn't resolve redirect URI {0} for {1}", header, this.downloadInfo.Uri);
+                Log.Error(Tag, string.Format("Couldn't resolve redirect URI {0} for {1}", header, this.downloadInfo.Uri));
+                throw new StopRequestException(DownloaderServiceStatus.HttpDataError, "Couldn't resolve redirect URI");
+            }
+
+            if (string.IsNullOrEmpty(newUri))
+            {
+                Log.Error(Tag, string.Format("Empty redirect URI {0} for {1}", header, this.downloadInfo.Uri));
                 throw new StopRequestException(DownloaderServiceStatus.HttpDataError, "Couldn't resolve redirect URI");
             }
 
@@ -1241,10 +1247,9 @@ namespace BmwDeepObd
             /// <summary>
             /// Initializes a new instance of the <see cref="RetryDownloadException"/> class.
             /// </summary>
-            public RetryDownloadException()
-                : base("Retrying download...")
+            public RetryDownloadException() : base("Retrying download...")
             {
-                System.Diagnostics.Debug.WriteLine(this.Message);
+                Log.Info(Tag, string.Format("RetryDownloadException: {0}", this.Message));
             }
 
             #endregion
