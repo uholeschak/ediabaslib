@@ -361,7 +361,7 @@ namespace BmwDeepObd
 
         public static int GetDbStatus(DownloadsDB db)
         {
-            if (db == null)
+            if (db?.Class == null)
             {
                 return -1;
             }
@@ -384,7 +384,7 @@ namespace BmwDeepObd
 
         public static int GetSafeFileErrorStatus(DownloaderService.GenerateSaveFileError ex)
         {
-            if (ex == null)
+            if (ex?.Class == null)
             {
                 return -1;
             }
@@ -407,7 +407,7 @@ namespace BmwDeepObd
 
         public static string GetSafeFileErrorMessage(DownloaderService.GenerateSaveFileError ex)
         {
-            if (ex == null)
+            if (ex?.Class == null)
             {
                 return string.Empty;
             }
