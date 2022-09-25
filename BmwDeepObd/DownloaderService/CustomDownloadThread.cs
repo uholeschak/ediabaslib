@@ -402,23 +402,17 @@ namespace BmwDeepObd
                 {
                     if (!Helpers.IsExternalMediaMounted)
                     {
-                        throw new StopRequestException(
-                            DownloaderServiceStatus.DeviceNotFound, 
-                            "external media not mounted while writing destination file");
+                        throw new StopRequestException(DownloaderServiceStatus.DeviceNotFound, "external media not mounted while writing destination file");
                     }
 
                     long availableBytes = Helpers.GetAvailableBytes(Helpers.GetFilesystemRoot(state.Filename));
 
                     if (availableBytes < bytesRead)
                     {
-                        throw new StopRequestException(
-                            DownloaderServiceStatus.InsufficientSpace, 
-                            "insufficient space while writing destination file", 
-                            ex);
+                        throw new StopRequestException(DownloaderServiceStatus.InsufficientSpace, "insufficient space while writing destination file", ex);
                     }
 
-                    throw new StopRequestException(
-                        DownloaderServiceStatus.FileError, "while writing destination file: " + ex.Message, ex);
+                    throw new StopRequestException(DownloaderServiceStatus.FileError, "while writing destination file: " + ex.Message, ex);
                 }
             }
         }
