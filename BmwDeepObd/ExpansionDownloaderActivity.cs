@@ -33,9 +33,8 @@ namespace BmwDeepObd
     [Android.App.IntentFilter(new[] { Intent.ActionMain }, Categories = new[] { Intent.CategoryLauncher })]
     public class ExpansionDownloaderActivity : BaseActivity, IDownloaderClient
     {
-#if DEBUG
         private static readonly string Tag = typeof(ExpansionDownloaderActivity).FullName;
-#endif
+
         private enum ActivityRequest
         {
             RequestAppStorePermissions,
@@ -160,9 +159,7 @@ namespace BmwDeepObd
         /// </param>
         public void OnDownloadStateChanged(DownloaderClientState newState)
         {
-#if DEBUG
-            Android.Util.Log.Debug(Tag, "Download state: " + newState);
-#endif
+            Android.Util.Log.Info(Tag, string.Format("Download state: {0}", newState));
 
             if (_downloaderState != newState)
             {
@@ -764,19 +761,13 @@ namespace BmwDeepObd
             }
             catch (PackageManager.NameNotFoundException e)
             {
-#if DEBUG
-                Android.Util.Log.Debug(Tag, "Cannot find own package!");
-#endif
+                Android.Util.Log.Error(Tag, "Cannot find own package!");
                 e.PrintStackTrace();
             }
-#pragma warning disable 168
             catch (Exception ex)
-#pragma warning restore 168
             {
                 // ignored
-#if DEBUG
-                Android.Util.Log.Debug(Tag, "Exception: ", EdiabasLib.EdiabasNet.GetExceptionText(ex));
-#endif
+                Android.Util.Log.Error(Tag, string.Format("GetExpansionFiles Exception: {0}", ex.Message));
             }
 
             return result;
