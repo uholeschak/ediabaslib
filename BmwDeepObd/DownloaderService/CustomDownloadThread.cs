@@ -350,15 +350,15 @@ namespace BmwDeepObd
             }
             catch (FileNotFoundException ex)
             {
-                System.Diagnostics.Debug.WriteLine("LVLDL file " + state.Filename + " not found: " + ex);
+                Log.Error(Tag, string.Format("LVLDL file {0} not found: {1}", state.Filename, ex.Message));
             }
             catch (IOException ex)
             {
-                System.Diagnostics.Debug.WriteLine("LVLDL IOException trying to sync " + state.Filename + ": " + ex);
+                Log.Error(Tag, string.Format("LVLDL IOException trying to sync {0}: {1}", state.Filename, ex.Message));
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine("LVLDL exception while syncing file: {0}", ex.Message);
+                Log.Error(Tag, string.Format("LVLDL exception while syncing file: {0}", ex.Message));
             }
         }
 
@@ -440,9 +440,7 @@ namespace BmwDeepObd
                 case DownloaderServiceNetworkAvailability.NoConnection:
                     throw new StopRequestException(DownloaderServiceStatus.WaitingForNetwork, "waiting for network to return");
                 case DownloaderServiceNetworkAvailability.TypeDisallowedByRequestor:
-                    throw new StopRequestException(
-                        DownloaderServiceStatus.QueuedForWifiOrCellularPermission, 
-                        "waiting for wifi or for download over cellular to be authorized");
+                    throw new StopRequestException(DownloaderServiceStatus.QueuedForWifiOrCellularPermission, "waiting for wifi or for download over cellular to be authorized");
                 case DownloaderServiceNetworkAvailability.CannotUseRoaming:
                     throw new StopRequestException(DownloaderServiceStatus.WaitingForNetwork, "roaming is not allowed");
                 case DownloaderServiceNetworkAvailability.UnusableDueToSize:
@@ -477,8 +475,8 @@ namespace BmwDeepObd
         /// </param>
         private void ExecuteDownload(State state, HttpWebRequest request)
         {
-            var innerState = new InnerState();
-            var data = new byte[CustomDownloaderService.BufferSize];
+            InnerState innerState = new InnerState();
+            byte[] data = new byte[CustomDownloaderService.BufferSize];
 
             this.CheckPausedOrCanceled();
 
@@ -492,7 +490,7 @@ namespace BmwDeepObd
             HttpWebResponse response = this.SendRequest(state, request);
             this.HandleExceptionalStatus(state, innerState, response);
 
-            System.Diagnostics.Debug.WriteLine("DownloadThread : received response for {0}", this.downloadInfo.Uri);
+            Log.Info(Tag, string.Format("DownloadThread : received response for {0}", this.downloadInfo.Uri));
 
             this.ProcessResponseHeaders(state, innerState, response);
             Stream entityStream = this.OpenResponseEntity(state, response);
@@ -839,7 +837,7 @@ namespace BmwDeepObd
         /// entityStream stream for reading the HTTP response entity
         /// </param>
         /// <returns>
-        /// the number of bytes actually read or -1 if the end of the stream has been reached
+        /// the number of bytes actually read or 0 if the end of the stream has been reached
         /// </returns>
         private int ReadFromResponse(State state, InnerState innerState, byte[] data, Stream entityStream)
         {
@@ -1023,8 +1021,7 @@ namespace BmwDeepObd
                 if (!Helpers.IsFilenameValid(state.Filename))
                 {
                     // this should never happen
-                    throw new StopRequestException(
-                        DownloaderServiceStatus.FileError, "found invalid internal destination filename");
+                    throw new StopRequestException(DownloaderServiceStatus.FileError, "found invalid internal destination filename");
                 }
 
                 // We're resuming a download that got interrupted
@@ -1041,8 +1038,7 @@ namespace BmwDeepObd
                     {
                         // This should've been caught upon failure
                         File.Delete(state.Filename);
-                        throw new StopRequestException(
-                            DownloaderServiceStatus.CannotResume, "Trying to resume a download that can't be resumed");
+                        throw new StopRequestException(DownloaderServiceStatus.CannotResume, "Trying to resume a download that can't be resumed");
                     }
                     else
                     {
@@ -1053,8 +1049,7 @@ namespace BmwDeepObd
                         }
                         catch (FileNotFoundException exc)
                         {
-                            throw new StopRequestException(
-                                DownloaderServiceStatus.FileError, "while opening destination for resuming: " + exc, exc);
+                            throw new StopRequestException(DownloaderServiceStatus.FileError, "while opening destination for resuming: " + exc, exc);
                         }
 
                         innerState.BytesSoFar = (int)fileLength;
