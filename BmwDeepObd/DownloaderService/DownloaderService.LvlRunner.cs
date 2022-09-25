@@ -195,13 +195,13 @@ namespace BmwDeepObd
                                         // the file exists already and is the correct size
                                         // was delivered by Market or through another mechanism
                                         Log.Info(Tag, string.Format("file {0} found. Not downloading.", di.FileName));
-                                        di.Status = DownloadStatus.Successful;
+                                        di.Status = (DownloadStatus) DownloaderServiceStatus.Success;
                                         di.TotalBytes = fileSize;
                                         di.CurrentBytes = fileSize;
                                         di.Uri = expansionUrl;
                                         db.UpdateDownload(di);
                                     }
-                                    else if (dbdi.Status != DownloadStatus.Successful)
+                                    else if ((DownloaderServiceStatus) dbdi.Status != DownloaderServiceStatus.Success)
                                     {
                                         // we just update the URL
                                         dbdi.Uri = expansionUrl;
