@@ -53,7 +53,7 @@ namespace BmwDeepObd
             /// </param>
             internal LvlRunnable(CustomDownloaderService context, PendingIntent intent)
             {
-                Debug.WriteLine("DownloaderService.LvlRunnable.ctor");
+                Log.Info(Tag, "DownloaderService.LvlRunnable.ctor");
                 this.context = context;
                 this.context.pPendingIntent = intent;
             }
@@ -189,7 +189,7 @@ namespace BmwDeepObd
                                     {
                                         // the file exists already and is the correct size
                                         // was delivered by Market or through another mechanism
-                                        Debug.WriteLine(string.Format("file {0} found. Not downloading.", di.FileName));
+                                        Log.Info(Tag, string.Format("file {0} found. Not downloading.", di.FileName));
                                         di.Status = DownloadStatus.Successful;
                                         di.TotalBytes = fileSize;
                                         di.CurrentBytes = fileSize;

@@ -1308,7 +1308,7 @@ namespace BmwDeepObd
         /// </param>
         private void UpdateLvl(CustomDownloaderService context)
         {
-            var h = new Handler(context.MainLooper);
+            Handler h = new Handler(context.MainLooper);
             h.Post(new LvlRunnable(context, this.pPendingIntent));
         }
 
