@@ -10,13 +10,10 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
-using System.Globalization;
 using System.IO;
 using System.Net;
 
 using Android.Content;
-using Android.Runtime;
-using Android.Service.Controls.Actions;
 using Android.Util;
 using Google.Android.Vending.Expansion.Downloader;
 using Google.Android.Vending.Licensing;
@@ -554,7 +551,7 @@ namespace BmwDeepObd
                 return DownloaderServiceStatus.WaitingToRetry;
             }
 
-            System.Diagnostics.Debug.WriteLine("LVLDL reached max retries for " + this.downloadInfo.FailedCount);
+            Log.Error(Tag, string.Format("LVLDL reached max retries for {0}", this.downloadInfo.FailedCount));
 
             return DownloaderServiceStatus.HttpDataError;
         }
