@@ -101,7 +101,7 @@ namespace BmwDeepObd
 
             State state = new State(this.downloadInfo, this.downloaderService);
             Android.OS.PowerManager.WakeLock wakeLock = null;
-            var finalStatus = DownloaderServiceStatus.UnknownError;
+            DownloaderServiceStatus finalStatus = DownloaderServiceStatus.UnknownError;
 
             try
             {
@@ -253,8 +253,7 @@ namespace BmwDeepObd
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine("DownloadThread : exception when closing the file after download : " + ex);
-
+                Log.Error(Tag, string.Format("DownloadThread : exception when closing the file after download: {0}", ex.Message));
                 // nothing can really be done if the file can't be closed
             }
         }
@@ -271,7 +270,7 @@ namespace BmwDeepObd
         private static void HandleOtherStatus(InnerState innerState, HttpStatusCode statusCode)
         {
             DownloaderServiceStatus finalStatus;
-            var downloadStatus = (DownloaderServiceStatus)statusCode;
+            DownloaderServiceStatus downloadStatus = (DownloaderServiceStatus)statusCode;
 
             if (downloadStatus.IsError())
             {
@@ -574,7 +573,7 @@ namespace BmwDeepObd
         /// </param>
         private void HandleEndOfStream(State state, InnerState innerState)
         {
-            Log.Info(Tag, "HandleEndOfStream");
+            Log.Info(Tag, string.Format("HandleEndOfStream State={0}, InnerState={1}", state, innerState));
 
             this.downloadInfo.CurrentBytes = innerState.BytesSoFar;
 
@@ -737,9 +736,9 @@ namespace BmwDeepObd
         /// </param>
         private void NotifyDownloadCompleted(DownloaderServiceStatus status, bool countRetry, int retryAfter, int redirectCount, bool gotData)
         {
-            Log.Info(Tag, "NotifyDownloadCompleted");
+            Log.Info(Tag, string.Format("NotifyDownloadCompleted Status={0}", status));
             this.UpdateDownloadDatabase(status, countRetry, retryAfter, redirectCount, gotData);
-            if (CustomDownloaderService.IsStatusCompleted((int) status))
+            if (status.IsCompleted())
             {
                 // TBD: send status update?
             }
@@ -942,7 +941,7 @@ namespace BmwDeepObd
             Log.Info(Tag, string.Format("DownloadThread : Transfer-Encoding: {0}", headerTransferEncoding));
 
             bool noSizeInfo = string.IsNullOrEmpty(innerState.HeaderContentLength) &&
-                              (string.IsNullOrEmpty(headerTransferEncoding) || !"chunked".Equals(headerTransferEncoding, StringComparison.OrdinalIgnoreCase));
+                              (string.IsNullOrEmpty(headerTransferEncoding) || !headerTransferEncoding.Equals("chunked", StringComparison.OrdinalIgnoreCase));
             if (noSizeInfo)
             {
                 throw new StopRequestException(DownloaderServiceStatus.HttpDataError, "can't know size of download, giving up");
