@@ -10,13 +10,10 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
-using System.Globalization;
 using System.IO;
 using System.Net;
 
 using Android.Content;
-using Android.Runtime;
-using Android.Service.Controls.Actions;
 using Android.Util;
 using Google.Android.Vending.Expansion.Downloader;
 using Google.Android.Vending.Licensing;
@@ -405,23 +402,17 @@ namespace BmwDeepObd
                 {
                     if (!Helpers.IsExternalMediaMounted)
                     {
-                        throw new StopRequestException(
-                            DownloaderServiceStatus.DeviceNotFound, 
-                            "external media not mounted while writing destination file");
+                        throw new StopRequestException(DownloaderServiceStatus.DeviceNotFound, "external media not mounted while writing destination file");
                     }
 
                     long availableBytes = Helpers.GetAvailableBytes(Helpers.GetFilesystemRoot(state.Filename));
 
                     if (availableBytes < bytesRead)
                     {
-                        throw new StopRequestException(
-                            DownloaderServiceStatus.InsufficientSpace, 
-                            "insufficient space while writing destination file", 
-                            ex);
+                        throw new StopRequestException(DownloaderServiceStatus.InsufficientSpace, "insufficient space while writing destination file", ex);
                     }
 
-                    throw new StopRequestException(
-                        DownloaderServiceStatus.FileError, "while writing destination file: " + ex.Message, ex);
+                    throw new StopRequestException(DownloaderServiceStatus.FileError, "while writing destination file: " + ex.Message, ex);
                 }
             }
         }
@@ -554,7 +545,7 @@ namespace BmwDeepObd
                 return DownloaderServiceStatus.WaitingToRetry;
             }
 
-            System.Diagnostics.Debug.WriteLine("LVLDL reached max retries for " + this.downloadInfo.FailedCount);
+            Log.Error(Tag, string.Format("LVLDL reached max retries for {0}", this.downloadInfo.FailedCount));
 
             return DownloaderServiceStatus.HttpDataError;
         }

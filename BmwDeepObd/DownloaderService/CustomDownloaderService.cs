@@ -29,7 +29,7 @@ namespace BmwDeepObd
     /// <summary>
     /// The downloader service.
     /// </summary>
-    public abstract class CustomDownloaderService : CustomIntentService, IDownloaderService
+    public abstract partial class CustomDownloaderService : CustomIntentService, IDownloaderService
     {
         #region Constants
         private static readonly string Tag = typeof(CustomDownloaderService).FullName;
@@ -380,6 +380,23 @@ namespace BmwDeepObd
                 status = -1;
             }
             return status;
+        }
+
+        public static DownloadInfo GetDownloadInfoByFileName(DownloadsDB db, string filename)
+        {
+            if (db == null)
+            {
+                return null;
+            }
+
+            MethodInfo getDownloadInfo = db.GetType().GetMethod("GetDownloadInfoByFileName", BindingFlags.NonPublic | BindingFlags.Instance);
+            if (getDownloadInfo == null)
+            {
+                return null;
+            }
+
+            object[] args = { filename };
+            return getDownloadInfo.Invoke(db, args) as DownloadInfo;
         }
 
         public static int GetSafeFileErrorStatus(DownloaderService.GenerateSaveFileError ex)
@@ -1209,21 +1226,7 @@ namespace BmwDeepObd
         /// </returns>
         public bool HandleFileUpdated(DownloadsDB db, int index, string filename, long fileSize)
         {
-            if (db == null)
-            {
-                return false;
-            }
-
-            MethodInfo getDownloadInfo = db.GetType().GetMethod("GetDownloadInfoByFileName", BindingFlags.NonPublic | BindingFlags.Instance);
-            if (getDownloadInfo == null)
-            {
-                return false;
-            }
-
-            object[] args = { filename };
-            // ReSharper disable once UsePatternMatching
-            DownloadInfo di = getDownloadInfo.Invoke(db, args) as DownloadInfo;
-
+            DownloadInfo di = GetDownloadInfoByFileName(db, filename);
             if (di != null && di.FileName != null)
             {
                 if (filename == di.FileName)
@@ -1306,8 +1309,7 @@ namespace BmwDeepObd
         private void UpdateLvl(CustomDownloaderService context)
         {
             var h = new Handler(context.MainLooper);
-            // ToDo: Fix This
-            //h.Post(new LVLRunnable(context, this.pPendingIntent));
+            h.Post(new LvlRunnable(context, this.pPendingIntent));
         }
 
         /// <summary>
