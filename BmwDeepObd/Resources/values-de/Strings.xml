@@ -103,7 +103,7 @@
 
   <string name="state_unknown">Starten..."</string>
   <string name="state_idle">Warten auf Start des Downloads</string>
-  <string name="state_fetching_url">Suchen nach Resources für den Download</string>
+  <string name="state_fetching_url">Suchen nach Resourcen für den Download</string>
   <string name="state_connecting">Verbinden mit dem Download Server</string>
   <string name="state_downloading">Resourcen herunterladen</string>
   <string name="state_completed">Download abgeschlossen</string>
