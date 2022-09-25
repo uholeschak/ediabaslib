@@ -36,7 +36,12 @@ namespace BmwDeepObd
             /// <summary>
             /// The context.
             /// </summary>
-            private readonly CustomDownloaderService context;
+            private readonly Android.Content.Context context;
+
+            /// <summary>
+            /// The context.
+            /// </summary>
+            private readonly CustomDownloaderService downloaderService;
 
             #endregion
 
@@ -51,11 +56,12 @@ namespace BmwDeepObd
             /// <param name="intent">
             /// The intent.
             /// </param>
-            internal LvlRunnable(CustomDownloaderService context, PendingIntent intent)
+            internal LvlRunnable(Android.Content.Context context, CustomDownloaderService downloader, PendingIntent intent)
             {
-                Debug.WriteLine("DownloaderService.LvlRunnable.ctor");
+                Log.Info(Tag, "DownloaderService.LvlRunnable.ctor");
                 this.context = context;
-                this.context.pPendingIntent = intent;
+                this.downloaderService = downloader;
+                this.downloaderService.pPendingIntent = intent;
             }
 
             #endregion
@@ -67,19 +73,18 @@ namespace BmwDeepObd
             /// </summary>
             public void Run()
             {
-                this.context.IsServiceRunning = true;
-                this.context.downloadNotification.OnDownloadStateChanged(DownloaderClientState.FetchingUrl);
+                this.downloaderService.IsServiceRunning = true;
+                this.downloaderService.downloadNotification.OnDownloadStateChanged(DownloaderClientState.FetchingUrl);
                 string deviceId = Settings.Secure.GetString(this.context.ContentResolver, Settings.Secure.AndroidId);
 
-                var aep = new APKExpansionPolicy(
-                    this.context, new AESObfuscator(this.context.GetSalt(), this.context.PackageName, deviceId));
+                APKExpansionPolicy aep = new APKExpansionPolicy(this.context, new AESObfuscator(this.downloaderService.GetSalt(), this.context.PackageName, deviceId));
 
                 // reset our policy back to the start of the world to force a re-check
                 aep.ResetPolicy();
 
                 // let's try and get the OBB file from LVL first
                 // Construct the LicenseChecker with a IPolicy.
-                var checker = new LicenseChecker(this.context, aep, this.context.PublicKey);
+                LicenseChecker checker = new LicenseChecker(this.context, aep, this.downloaderService.PublicKey);
                 checker.CheckAccess(new ApkLicenseCheckerCallback(this, aep));
             }
 
@@ -126,13 +131,13 @@ namespace BmwDeepObd
                 #region Properties
 
                 /// <summary>
-                /// Gets Context.
+                /// Gets Downlaoder service.
                 /// </summary>
-                private CustomDownloaderService Context
+                private CustomDownloaderService Downloader
                 {
                     get
                     {
-                        return this.lvlRunnable.context;
+                        return this.lvlRunnable.downloaderService;
                     }
                 }
 
@@ -157,7 +162,7 @@ namespace BmwDeepObd
                     try
                     {
                         int count = this.policy.ExpansionURLCount;
-                        DownloadsDB db = DownloadsDB.GetDB(Context);
+                        DownloadsDB db = DownloadsDB.GetDB(Downloader);
                         if (count == 0)
                         {
                             Log.Info(Tag, "No expansion packs.");
@@ -169,10 +174,10 @@ namespace BmwDeepObd
                             string currentFileName = this.policy.GetExpansionFileName(index);
                             if (currentFileName != null)
                             {
-                                DownloadInfo di = new DownloadInfo(index, currentFileName, Context.PackageName );
+                                DownloadInfo di = new DownloadInfo(index, currentFileName, Downloader.PackageName);
                                 long fileSize = this.policy.GetExpansionFileSize(index);
                                 string expansionUrl = this.policy.GetExpansionURL(index);
-                                if (this.Context.HandleFileUpdated(db, index, currentFileName, fileSize))
+                                if (this.Downloader.HandleFileUpdated(db, index, currentFileName, fileSize))
                                 {
                                     status = (DownloaderServiceStatus)(-1);
                                     di.ResetDownload();
@@ -189,7 +194,7 @@ namespace BmwDeepObd
                                     {
                                         // the file exists already and is the correct size
                                         // was delivered by Market or through another mechanism
-                                        Debug.WriteLine(string.Format("file {0} found. Not downloading.", di.FileName));
+                                        Log.Info(Tag, string.Format("file {0} found. Not downloading.", di.FileName));
                                         di.Status = DownloadStatus.Successful;
                                         di.TotalBytes = fileSize;
                                         di.CurrentBytes = fileSize;
@@ -211,18 +216,18 @@ namespace BmwDeepObd
                         // we begin by getting our APK version from the package manager
                         try
                         {
-                            PackageInfo pi = this.Context.PackageManager.GetPackageInfo(this.Context.PackageName, 0);
+                            PackageInfo pi = this.Downloader.PackageManager.GetPackageInfo(this.Downloader.PackageName, 0);
                             db.UpdateMetadata(pi.VersionCode, status);
-                            DownloaderServiceRequirement required = StartDownloadServiceIfRequired(this.Context, this.Context.pPendingIntent, this.Context.GetType());
+                            DownloaderServiceRequirement required = StartDownloadServiceIfRequired(this.Downloader, this.Downloader.pPendingIntent, this.Downloader.GetType());
                             switch (required)
                             {
                                 case DownloaderServiceRequirement.NoDownloadRequired:
-                                    this.Context.downloadNotification.OnDownloadStateChanged(DownloaderClientState.Completed);
+                                    this.Downloader.downloadNotification.OnDownloadStateChanged(DownloaderClientState.Completed);
                                     break;
 
                                 case DownloaderServiceRequirement.LvlCheckRequired: // DANGER WILL ROBINSON!
                                     Log.Error(Tag, "In LVL checking loop!");
-                                    this.Context.downloadNotification.OnDownloadStateChanged(DownloaderClientState.FailedUnlicensed);
+                                    this.Downloader.downloadNotification.OnDownloadStateChanged(DownloaderClientState.FailedUnlicensed);
                                     throw new RuntimeException("Error with LVL checking and database integrity");
 
                                 case DownloaderServiceRequirement.DownloadRequired:
@@ -248,7 +253,7 @@ namespace BmwDeepObd
                     }
                     finally
                     {
-                        this.Context.IsServiceRunning = false;
+                        this.Downloader.IsServiceRunning = false;
                     }
                 }
 
@@ -262,11 +267,11 @@ namespace BmwDeepObd
                 {
                     try
                     {
-                        this.Context.downloadNotification.OnDownloadStateChanged(DownloaderClientState.FailedFetchingUrl);
+                        this.Downloader.downloadNotification.OnDownloadStateChanged(DownloaderClientState.FailedFetchingUrl);
                     }
                     finally
                     {
-                        this.Context.IsServiceRunning = false;
+                        this.Downloader.IsServiceRunning = false;
                     }
                 }
 
@@ -283,16 +288,16 @@ namespace BmwDeepObd
                         switch (reason)
                         {
                             case PolicyResponse.NotLicensed:
-                                this.Context.downloadNotification.OnDownloadStateChanged(DownloaderClientState.FailedUnlicensed);
+                                this.Downloader.downloadNotification.OnDownloadStateChanged(DownloaderClientState.FailedUnlicensed);
                                 break;
                             case PolicyResponse.Retry:
-                                this.Context.downloadNotification.OnDownloadStateChanged(DownloaderClientState.FailedFetchingUrl);
+                                this.Downloader.downloadNotification.OnDownloadStateChanged(DownloaderClientState.FailedFetchingUrl);
                                 break;
                         }
                     }
                     finally
                     {
-                        this.Context.IsServiceRunning = false;
+                        this.Downloader.IsServiceRunning = false;
                     }
                 }
 
