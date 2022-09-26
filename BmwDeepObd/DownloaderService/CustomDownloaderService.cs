@@ -775,8 +775,8 @@ namespace BmwDeepObd
 
             this.millisecondsAtSample = currentTime;
             this.bytesAtSample = totalBytesSoFar;
-            this.downloadNotification.OnDownloadProgress(
-                new DownloadProgressInfo(this.TotalLength, totalBytesSoFar, timeRemaining, this.averageDownloadSpeed));
+            SetDownloadProgress(this.downloadNotification, new DownloadProgressInfo(this.TotalLength, totalBytesSoFar, timeRemaining, this.averageDownloadSpeed));
+            //this.downloadNotification.OnDownloadProgress(new DownloadProgressInfo(this.TotalLength, totalBytesSoFar, timeRemaining, this.averageDownloadSpeed));
         }
 
         /// <summary>
