@@ -823,10 +823,8 @@ namespace BmwDeepObd
             {
                 this.packageInfo = this.PackageManager.GetPackageInfo(this.PackageName, 0);
                 string applicationLabel = this.PackageManager.GetApplicationLabel(this.ApplicationInfo);
-                Android.Content.Context context = this;
-                Java.Lang.ICharSequence label = new Java.Lang.String(applicationLabel);
                 IntPtr downloaderNotification = Android.Runtime.JNIEnv.CreateInstance(typeof(DownloadNotification),
-                    "(Landroid/content/Context;Ljava/lang/CharSequence;)V", new Android.Runtime.JValue[] {new (context), new (label) });
+                    "(Landroid/content/Context;Ljava/lang/CharSequence;)V", new Android.Runtime.JValue[] {new (this), new (new Java.Lang.String(applicationLabel)) });
                 if (downloaderNotification != IntPtr.Zero)
                 {
                     this.downloadNotification = GetObject<DownloadNotification>(downloaderNotification, Android.Runtime.JniHandleOwnership.DoNotTransfer);
