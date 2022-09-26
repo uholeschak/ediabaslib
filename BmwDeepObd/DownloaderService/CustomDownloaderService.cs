@@ -775,8 +775,8 @@ namespace BmwDeepObd
 
             this.millisecondsAtSample = currentTime;
             this.bytesAtSample = totalBytesSoFar;
-            SetDownloadProgress(this.downloadNotification, new DownloadProgressInfo(this.TotalLength, totalBytesSoFar, timeRemaining, this.averageDownloadSpeed));
-            //this.downloadNotification.OnDownloadProgress(new DownloadProgressInfo(this.TotalLength, totalBytesSoFar, timeRemaining, this.averageDownloadSpeed));
+            this.downloadNotification.OnDownloadProgress(
+                new DownloadProgressInfo(this.TotalLength, totalBytesSoFar, timeRemaining, this.averageDownloadSpeed));
         }
 
         /// <summary>
@@ -790,7 +790,6 @@ namespace BmwDeepObd
         /// </returns>
         public override IBinder OnBind(Android.Content.Intent intent)
         {
-            Log.Info(Tag, "Service Bound");
             return this.serviceMessenger.Binder;
         }
 
