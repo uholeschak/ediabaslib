@@ -142,6 +142,8 @@ namespace BmwDeepObd
         /// </param>
         public void OnDownloadProgress(DownloadProgressInfo progress)
         {
+            Android.Util.Log.Info(Tag, string.Format("Download progress: {0} of {1} bytes", progress.OverallProgress, progress.OverallTotal));
+
             _averageSpeedTextView.Text = string.Format("{0} Kb/s", Helpers.GetSpeedString(progress.CurrentSpeed));
             _timeRemainingTextView.Text = string.Format(Resources.GetString(Resource.String.exp_down_time_remaining), Helpers.GetTimeRemaining(progress.TimeRemaining));
             _progressBar.Max = (int)(progress.OverallTotal >> 8);
