@@ -781,6 +781,11 @@ namespace BmwDeepObd
         /// </summary>
         private void InitializeDownloadUi()
         {
+            if (_downloaderServiceConnection != null)
+            {
+                return;
+            }
+
             InitializeControls();
             _downloaderServiceConnection = DownloaderClientMarshaller.CreateStub(this, typeof(ExpansionDownloaderService));
         }
