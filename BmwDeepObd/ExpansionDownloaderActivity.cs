@@ -1022,11 +1022,7 @@ namespace BmwDeepObd
                     return;
                 }
 
-                if (!GetExpansionFiles())
-                {
-                    InitializeDownloadUi();
-                }
-
+                InitializeDownloadUi();
                 if (_activityActive)
                 {
                     try
@@ -1038,6 +1034,8 @@ namespace BmwDeepObd
                         // ignored
                     }
                 }
+
+                GetExpansionFiles();
             }
         }
     }
