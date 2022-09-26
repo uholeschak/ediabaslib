@@ -790,6 +790,7 @@ namespace BmwDeepObd
         /// </returns>
         public override IBinder OnBind(Android.Content.Intent intent)
         {
+            Log.Info(Tag, "Service Bound");
             return this.serviceMessenger.Binder;
         }
 
