@@ -453,6 +453,27 @@ namespace BmwDeepObd
             return message;
         }
 
+        public static void SetDownloadProgress(DownloadNotification downloadNotification, DownloadProgressInfo progress)
+        {
+            if (downloadNotification == null || progress == null)
+            {
+                return;
+            }
+
+            try
+            {
+                IntPtr progressMethodId = Android.Runtime.JNIEnv.GetMethodID(downloadNotification.Class.Handle, "onDownloadProgress", "(Lcom/google/android/vending/expansion/downloader/DownloadProgressInfo;)V");
+                if (progressMethodId != IntPtr.Zero)
+                {
+                    Android.Runtime.JNIEnv.CallVoidMethod(downloadNotification.Handle, progressMethodId, new Android.Runtime.JValue(progress));
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(Tag, "SetDownloadProgress Exception: {0}", ex.Message);
+            }
+        }
+
         /**
          * Returns whether the status is informational (i.e. 1xx).
          */
