@@ -453,6 +453,27 @@ namespace BmwDeepObd
             return message;
         }
 
+        public static void SetDownloadProgress(DownloadNotification downloadNotification, DownloadProgressInfo progress)
+        {
+            if (downloadNotification == null || progress == null)
+            {
+                return;
+            }
+
+            try
+            {
+                IntPtr progressMethodId = Android.Runtime.JNIEnv.GetMethodID(downloadNotification.Class.Handle, "onDownloadProgress", "(Lcom/google/android/vending/expansion/downloader/DownloadProgressInfo;)V");
+                if (progressMethodId != IntPtr.Zero)
+                {
+                    Android.Runtime.JNIEnv.CallVoidMethod(downloadNotification.Handle, progressMethodId, new Android.Runtime.JValue(progress));
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(Tag, "SetDownloadProgress Exception: {0}", ex.Message);
+            }
+        }
+
         /**
          * Returns whether the status is informational (i.e. 1xx).
          */
@@ -802,10 +823,8 @@ namespace BmwDeepObd
             {
                 this.packageInfo = this.PackageManager.GetPackageInfo(this.PackageName, 0);
                 string applicationLabel = this.PackageManager.GetApplicationLabel(this.ApplicationInfo);
-                Android.Content.Context context = this;
-                Java.Lang.ICharSequence label = new Java.Lang.String(applicationLabel);
                 IntPtr downloaderNotification = Android.Runtime.JNIEnv.CreateInstance(typeof(DownloadNotification),
-                    "(Landroid/content/Context;Ljava/lang/CharSequence;)V", new Android.Runtime.JValue[] {new (context), new (label) });
+                    "(Landroid/content/Context;Ljava/lang/CharSequence;)V", new Android.Runtime.JValue[] {new (this), new (new Java.Lang.String(applicationLabel)) });
                 if (downloaderNotification != IntPtr.Zero)
                 {
                     this.downloadNotification = GetObject<DownloadNotification>(downloaderNotification, Android.Runtime.JniHandleOwnership.DoNotTransfer);
