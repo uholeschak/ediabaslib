@@ -133,7 +133,7 @@ namespace BmwDeepObd
         /// <summary>
         /// The locker.
         /// </summary>
-        private readonly object locker = new object();
+        private static object locker = new object();
 
         /// <summary>
         /// Our binding to the network state broadcasts
@@ -326,11 +326,11 @@ namespace BmwDeepObd
         /// Gets or sets a value indicating whether the service is running.
         /// Note: Only use this internally.
         /// </summary>
-        private bool IsServiceRunning
+        private static bool IsServiceRunning
         {
             get
             {
-                lock (this.locker)
+                lock (locker)
                 {
                     return isRunning;
                 }
@@ -338,7 +338,7 @@ namespace BmwDeepObd
 
             set
             {
-                lock (this.locker)
+                lock (locker)
                 {
                     isRunning = value;
                 }
@@ -1021,7 +1021,7 @@ namespace BmwDeepObd
         {
             Log.Debug(Tag,"DownloaderService.OnHandleIntent");
 
-            this.IsServiceRunning = true;
+            IsServiceRunning = true;
             try
             {
                 DownloadsDB db = DownloadsDB.GetDB(this);
@@ -1178,7 +1178,7 @@ namespace BmwDeepObd
             }
             finally
             {
-                this.IsServiceRunning = false;
+                IsServiceRunning = false;
             }
         }
 
@@ -1368,7 +1368,7 @@ namespace BmwDeepObd
                 Log.Debug(Tag,"LVLDL Starting State: {0}", tempState);
                 Log.Debug(Tag,"LVLDL Ending State: {0}", this.networkState);
 
-                if (this.IsServiceRunning)
+                if (IsServiceRunning)
                 {
                     if (this.networkState.HasFlag(NetworkState.Roaming))
                     {
@@ -1438,7 +1438,7 @@ namespace BmwDeepObd
             public override void OnReceive(Android.Content.Context context, Android.Content.Intent intent)
             {
                 this.service.PollNetworkState();
-                if (this.service.stateChanged && !this.service.IsServiceRunning)
+                if (this.service.stateChanged && !IsServiceRunning)
                 {
                     Log.Debug(Tag,"LVLDL InnerBroadcastReceiver Called");
                     var fileIntent = new Android.Content.Intent(context, this.service.GetType());
