@@ -131,6 +131,16 @@ namespace BmwDeepObd
         /// </summary>
         private static Messenger clientMessenger;
 
+        /// <summary>
+        /// Gets the cntrol action.
+        /// </summary>
+        private static DownloaderServiceControlAction control;
+
+        /// <summary>
+        /// Gets or sets the download state
+        /// </summary>
+        private static DownloaderServiceStatus status;
+
         #endregion
 
         #region Fields
@@ -291,17 +301,25 @@ namespace BmwDeepObd
         /// <summary>
         /// Gets the cntrol action.
         /// </summary>
-        public DownloaderServiceControlAction Control { get; private set; }
+        public DownloaderServiceControlAction Control
+        {
+            get => control;
+            private set => control = value;
+        }
 
         /// <summary>
         /// Gets or sets the download state
         /// </summary>
-        public DownloaderServiceStatus Status { get; private set; }
+        public DownloaderServiceStatus Status
+        {
+            get => status;
+            private set => status = value;
+        }
 
-        /// <summary>
-        /// Gets the total length of the downloads.
-        /// </summary>
-        public long TotalLength { get; private set; }
+    /// <summary>
+    /// Gets the total length of the downloads.
+    /// </summary>
+    public long TotalLength { get; private set; }
 
         #endregion
 
