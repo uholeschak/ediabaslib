@@ -73,7 +73,7 @@ namespace BmwDeepObd
             /// </summary>
             public void Run()
             {
-                this.downloaderService.IsServiceRunning = true;
+                IsServiceRunning = true;
                 this.downloaderService.downloadNotification.OnDownloadStateChanged(DownloaderClientState.FetchingUrl);
                 string deviceId = Settings.Secure.GetString(this.context.ContentResolver, Settings.Secure.AndroidId);
 
@@ -253,7 +253,7 @@ namespace BmwDeepObd
                     }
                     finally
                     {
-                        this.Downloader.IsServiceRunning = false;
+                        IsServiceRunning = false;
                     }
                 }
 
@@ -271,7 +271,7 @@ namespace BmwDeepObd
                     }
                     finally
                     {
-                        this.Downloader.IsServiceRunning = false;
+                        IsServiceRunning = false;
                     }
                 }
 
@@ -297,7 +297,7 @@ namespace BmwDeepObd
                     }
                     finally
                     {
-                        this.Downloader.IsServiceRunning = false;
+                        IsServiceRunning = false;
                     }
                 }
 
