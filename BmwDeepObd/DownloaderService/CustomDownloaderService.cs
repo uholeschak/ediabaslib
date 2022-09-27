@@ -126,6 +126,11 @@ namespace BmwDeepObd
         /// </summary>
         private static volatile bool isRunning;
 
+        /// <summary>
+        /// Our binding to the network state broadcasts
+        /// </summary>
+        private static Messenger clientMessenger;
+
         #endregion
 
         #region Fields
@@ -159,11 +164,6 @@ namespace BmwDeepObd
         /// Used for calculating time remaining and speed
         /// </summary>
         private long bytesAtSample;
-
-        /// <summary>
-        /// Our binding to the network state broadcasts
-        /// </summary>
-        private Messenger clientMessenger;
 
         /// <summary>
         /// Our binding to the network state broadcasts
@@ -453,27 +453,6 @@ namespace BmwDeepObd
             return message;
         }
 
-        public static void SetDownloadProgress(DownloadNotification downloadNotification, DownloadProgressInfo progress)
-        {
-            if (downloadNotification == null || progress == null)
-            {
-                return;
-            }
-
-            try
-            {
-                IntPtr progressMethodId = Android.Runtime.JNIEnv.GetMethodID(downloadNotification.Class.Handle, "onDownloadProgress", "(Lcom/google/android/vending/expansion/downloader/DownloadProgressInfo;)V");
-                if (progressMethodId != IntPtr.Zero)
-                {
-                    Android.Runtime.JNIEnv.CallVoidMethod(downloadNotification.Handle, progressMethodId, new Android.Runtime.JValue(progress));
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(Tag, "SetDownloadProgress Exception: {0}", ex.Message);
-            }
-        }
-
         /**
          * Returns whether the status is informational (i.e. 1xx).
          */
@@ -640,7 +619,7 @@ namespace BmwDeepObd
             {
                 case DownloaderServiceRequirement.DownloadRequired:
                 case DownloaderServiceRequirement.LvlCheckRequired:
-                    var fileIntent = new Android.Content.Intent(context.ApplicationContext, serviceType);
+                    Android.Content.Intent fileIntent = new Android.Content.Intent(context, serviceType);
                     fileIntent.PutExtra(DownloaderServiceExtras.PendingIntent, pendingIntent);
                     context.StartService(fileIntent);
                     break;
@@ -775,8 +754,7 @@ namespace BmwDeepObd
 
             this.millisecondsAtSample = currentTime;
             this.bytesAtSample = totalBytesSoFar;
-            this.downloadNotification.OnDownloadProgress(
-                new DownloadProgressInfo(this.TotalLength, totalBytesSoFar, timeRemaining, this.averageDownloadSpeed));
+            this.downloadNotification?.OnDownloadProgress(new DownloadProgressInfo(this.TotalLength, totalBytesSoFar, timeRemaining, this.averageDownloadSpeed));
         }
 
         /// <summary>
@@ -809,8 +787,8 @@ namespace BmwDeepObd
         /// </param>
         public void OnClientUpdated(Messenger messenger)
         {
-            this.clientMessenger = messenger;
-            this.downloadNotification.SetMessenger(this.clientMessenger);
+            clientMessenger = messenger;
+            this.downloadNotification?.SetMessenger(clientMessenger);
         }
 
         /// <summary>
@@ -828,6 +806,10 @@ namespace BmwDeepObd
                 if (downloaderNotification != IntPtr.Zero)
                 {
                     this.downloadNotification = GetObject<DownloadNotification>(downloaderNotification, Android.Runtime.JniHandleOwnership.DoNotTransfer);
+                    if (clientMessenger != null)
+                    {
+                        this.downloadNotification?.SetMessenger(clientMessenger);
+                    }
                 }
             }
             catch (Exception e)
@@ -872,7 +854,7 @@ namespace BmwDeepObd
                 this.Control = DownloaderServiceControlAction.Run;
             }
 
-            var fileIntent = new Android.Content.Intent(this, this.GetType());
+            Android.Content.Intent fileIntent = new Android.Content.Intent(this, this.GetType());
             fileIntent.PutExtra(DownloaderServiceExtras.PendingIntent, this.pPendingIntent);
             this.StartService(fileIntent);
         }
@@ -882,7 +864,7 @@ namespace BmwDeepObd
         /// </summary>
         public void RequestDownloadStatus()
         {
-            this.downloadNotification.ResendState();
+            this.downloadNotification?.ResendState();
         }
 
         /// <summary>
@@ -1029,12 +1011,18 @@ namespace BmwDeepObd
 
                 if (null != pendingIntent)
                 {
-                    this.downloadNotification.ClientIntent = pendingIntent;
+                    if (this.downloadNotification != null)
+                    {
+                        this.downloadNotification.ClientIntent = pendingIntent;
+                    }
                     this.pPendingIntent = pendingIntent;
                 }
                 else if (null != this.pPendingIntent)
                 {
-                    this.downloadNotification.ClientIntent = this.pPendingIntent;
+                    if (this.downloadNotification != null)
+                    {
+                        this.downloadNotification.ClientIntent = this.pPendingIntent;
+                    }
                 }
                 else
                 {
@@ -1109,7 +1097,7 @@ namespace BmwDeepObd
                         case DownloaderServiceStatus.Success:
                             this.BytesSoFar += info.CurrentBytes - startingCount;
                             db.UpdateMetadata(packageInfo.VersionCode, 0);
-                            this.downloadNotification.OnDownloadStateChanged(DownloaderClientState.Completed);
+                            this.downloadNotification?.OnDownloadStateChanged(DownloaderClientState.Completed);
                             continue;
                         case DownloaderServiceStatus.FileDeliveredIncorrectly:
                             // we may be on a network that is returning us a web page on redirect
@@ -1165,11 +1153,11 @@ namespace BmwDeepObd
                     }
 
                     // failure or pause state
-                    this.downloadNotification.OnDownloadStateChanged(notifyStatus);
+                    this.downloadNotification?.OnDownloadStateChanged(notifyStatus);
                     return;
                 }
 
-                this.downloadNotification.OnDownloadStateChanged(DownloaderClientState.Completed);
+                this.downloadNotification?.OnDownloadStateChanged(DownloaderClientState.Completed);
             }
             catch (Exception ex)
             {
@@ -1441,7 +1429,7 @@ namespace BmwDeepObd
                 if (this.service.stateChanged && !IsServiceRunning)
                 {
                     Log.Debug(Tag,"LVLDL InnerBroadcastReceiver Called");
-                    var fileIntent = new Android.Content.Intent(context, this.service.GetType());
+                    Android.Content.Intent fileIntent = new Android.Content.Intent(context, this.service.GetType());
                     fileIntent.PutExtra(DownloaderServiceExtras.PendingIntent, this.service.pPendingIntent);
 
                     // send a new intent to the service
