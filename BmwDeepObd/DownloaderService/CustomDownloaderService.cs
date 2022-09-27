@@ -640,7 +640,7 @@ namespace BmwDeepObd
             {
                 case DownloaderServiceRequirement.DownloadRequired:
                 case DownloaderServiceRequirement.LvlCheckRequired:
-                    var fileIntent = new Android.Content.Intent(context.ApplicationContext, serviceType);
+                    Android.Content.Intent fileIntent = new Android.Content.Intent(context, serviceType);
                     fileIntent.PutExtra(DownloaderServiceExtras.PendingIntent, pendingIntent);
                     context.StartService(fileIntent);
                     break;
@@ -872,7 +872,7 @@ namespace BmwDeepObd
                 this.Control = DownloaderServiceControlAction.Run;
             }
 
-            var fileIntent = new Android.Content.Intent(this, this.GetType());
+            Android.Content.Intent fileIntent = new Android.Content.Intent(this, this.GetType());
             fileIntent.PutExtra(DownloaderServiceExtras.PendingIntent, this.pPendingIntent);
             this.StartService(fileIntent);
         }
@@ -1441,7 +1441,7 @@ namespace BmwDeepObd
                 if (this.service.stateChanged && !IsServiceRunning)
                 {
                     Log.Debug(Tag,"LVLDL InnerBroadcastReceiver Called");
-                    var fileIntent = new Android.Content.Intent(context, this.service.GetType());
+                    Android.Content.Intent fileIntent = new Android.Content.Intent(context, this.service.GetType());
                     fileIntent.PutExtra(DownloaderServiceExtras.PendingIntent, this.service.pPendingIntent);
 
                     // send a new intent to the service
