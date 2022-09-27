@@ -9,7 +9,7 @@ namespace BmwDeepObd
     [Android.App.Service(
         Name = ActivityCommon.AppNameSpace + "." + nameof(ExpansionDownloaderService)
         )]
-    public class ExpansionDownloaderService : DownloaderService
+    public class ExpansionDownloaderService : CustomDownloaderService
     {
         /// <summary>
         /// This public key comes from your Android Market publisher account, and it
@@ -30,12 +30,12 @@ namespace BmwDeepObd
         /// to make sure that your receiver is in your unique package)
         /// </summary>
         public override string AlarmReceiverClassName => "BmwDeepObd.ExpansionAlarmReceiver";
-#if false
+
         [Export(SuperArgumentsString = "\"LVLDownloadService\"")]
         public ExpansionDownloaderService()
         {
         }
-#endif
+
         // Catch exceptions from incompatible library version
         protected override void OnHandleIntent(Intent intent)
         {

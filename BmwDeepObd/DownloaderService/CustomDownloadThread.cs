@@ -477,7 +477,7 @@ namespace BmwDeepObd
             // check just before sending the request to avoid using an invalid connection at all
             this.CheckConnectivity();
 
-            this.downloadNotification.OnDownloadStateChanged(DownloaderClientState.Connecting);
+            this.downloadNotification?.OnDownloadStateChanged(DownloaderClientState.Connecting);
             HttpWebResponse response = this.SendRequest(state, request);
             this.HandleExceptionalStatus(state, innerState, response);
 
@@ -485,7 +485,7 @@ namespace BmwDeepObd
 
             this.ProcessResponseHeaders(state, innerState, response);
             Stream entityStream = this.OpenResponseEntity(state, response);
-            this.downloadNotification.OnDownloadStateChanged(DownloaderClientState.Downloading);
+            this.downloadNotification?.OnDownloadStateChanged(DownloaderClientState.Downloading);
             this.TransferData(state, innerState, data, entityStream);
         }
 
