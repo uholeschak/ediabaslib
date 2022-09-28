@@ -110,13 +110,13 @@
   <string name="state_paused_network_unavailable">Download angehalten weil das Netztwerk nicht verfügbar ist</string>
   <string name="state_paused_network_setup_failure">Download angehalten. Testen Sie eine Webseite im Browser</string>
   <string name="state_paused_by_request">Download angehalten</string>
-  <string name="state_paused_wifi_unavailable">Download angehalten da WiFi nicht verfügbar ist</string>
-  <string name="state_paused_wifi_disabled">Download angehalten da WiFi deaktiviert ist</string>
-  <string name="state_paused_roaming">Download angehalten weil Roaming aktiv ist</string>
-  <string name="state_paused_sdcard_unavailable">Download angehalten da der externe Speicher nicht verfügbar ist</string>
-  <string name="state_failed_unlicensed">Download fehlgeschlagen da die App unter Umständen nicht aus Google Play heruntergeladen wurde</string>
-  <string name="state_failed_fetching_url">Download fehlgeschlagen da die Resourcen nicht gefunden werden</string>
-  <string name="state_failed_sdcard_full">Download fehlgeschlagen da der externe Speicher voll ist</string>
+  <string name="state_paused_wifi_unavailable">Download angehalten, weil WiFi nicht verfügbar ist</string>
+  <string name="state_paused_wifi_disabled">Download angehalten, weil WiFi deaktiviert ist</string>
+  <string name="state_paused_roaming">Download angehalten, weil Roaming aktiv ist</string>
+  <string name="state_paused_sdcard_unavailable">Download angehalten, weil der externe Speicher nicht verfügbar ist</string>
+  <string name="state_failed_unlicensed">Download fehlgeschlagen, weil die App unter Umständen nicht aus Google Play heruntergeladen wurde</string>
+  <string name="state_failed_fetching_url">Download fehlgeschlagen, weil die Resourcen nicht gefunden wurden</string>
+  <string name="state_failed_sdcard_full">Download fehlgeschlagen, weil der externe Speicher voll ist</string>
   <string name="state_failed_cancelled">Download abgebrochen</string>
   <string name="state_failed">Download fehlgeschlagen</string>
 
