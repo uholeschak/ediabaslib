@@ -746,8 +746,7 @@ namespace BmwDeepObd
                 {
                     intentFlags |= Android.App.PendingIntentFlags.Mutable;
                 }
-                Android.App.PendingIntent pendingIntent = Android.App.PendingIntent.GetActivity(
-                    this, 0, intent, intentFlags);
+                Android.App.PendingIntent pendingIntent = Android.App.PendingIntent.GetActivity(this, 0, intent, intentFlags);
 
                 // Always force download of LVL
                 DownloadsDB db = DownloadsDB.GetDB(this);

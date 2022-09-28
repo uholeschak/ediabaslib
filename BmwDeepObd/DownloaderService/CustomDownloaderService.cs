@@ -303,8 +303,21 @@ namespace BmwDeepObd
         /// </summary>
         public DownloaderServiceControlAction Control
         {
-            get => control;
-            private set => control = value;
+            get
+            {
+                lock (locker)
+                {
+                    return control;
+                }
+            }
+
+            private set
+            {
+                lock (locker)
+                {
+                    control = value;
+                }
+            }
         }
 
         /// <summary>
@@ -312,8 +325,20 @@ namespace BmwDeepObd
         /// </summary>
         public DownloaderServiceStatus Status
         {
-            get => status;
-            private set => status = value;
+            get
+            {
+                lock (locker)
+                {
+                    return status;
+                }
+            }
+            private set
+            {
+                lock (locker)
+                {
+                    status = value;
+                }
+            }
         }
 
     /// <summary>
