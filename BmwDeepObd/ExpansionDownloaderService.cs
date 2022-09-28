@@ -35,18 +35,5 @@ namespace BmwDeepObd
         public ExpansionDownloaderService()
         {
         }
-
-        // Catch exceptions from incompatible library version
-        protected override void OnHandleIntent(Intent intent)
-        {
-            try
-            {
-                base.OnHandleIntent(intent);
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-        }
     }
 }
