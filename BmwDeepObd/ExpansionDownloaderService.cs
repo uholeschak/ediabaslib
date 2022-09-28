@@ -29,7 +29,7 @@ namespace BmwDeepObd
         /// because receivers must be unique across all of Android (it's a good idea
         /// to make sure that your receiver is in your unique package)
         /// </summary>
-        public override string AlarmReceiverClassName => "BmwDeepObd.ExpansionAlarmReceiver";
+        public override string AlarmReceiverClassName => ActivityCommon.AppNameSpace + "." + nameof(ExpansionAlarmReceiver);
 
         [Export(SuperArgumentsString = "\"LVLDownloadService\"")]
         public ExpansionDownloaderService()

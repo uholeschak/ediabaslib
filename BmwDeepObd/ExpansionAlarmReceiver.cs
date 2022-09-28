@@ -24,8 +24,7 @@ namespace BmwDeepObd
         {
             try
             {
-                DownloaderClientMarshaller.StartDownloadServiceIfRequired(
-                    context, intent, typeof(ExpansionDownloaderService));
+                DownloaderClientMarshaller.StartDownloadServiceIfRequired(context, intent, typeof(ExpansionDownloaderService));
             }
             catch (PackageManager.NameNotFoundException e)
             {
