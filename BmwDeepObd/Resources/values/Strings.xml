@@ -93,7 +93,6 @@
   <string name="exp_down_button_cancel">Cancel</string>
   <string name="exp_down_button_cancel_verify">Cancel Verification</string>
   <string name="exp_down_obb_missing">The app has not been downloaded from Google Play and the expansion file is missing.\nDownload the OBB file with an APK downloader from Google Play and copy it with the name:\n\'{0}\'\nin one of the directories:\n{1}\nThere is no support, the usage of Google Play is the only recommend way.</string>
-  <string name="exp_down_obb_no_download">The expansion file is missing, but in this Android version the automatic download has been disabled.\nPlease reinstall the app or copy the expansion file manually.</string>
   <string name="exp_down_time_remaining">Time remaining: {0}</string>
 
   <!-- Downloader library (modfications) -->

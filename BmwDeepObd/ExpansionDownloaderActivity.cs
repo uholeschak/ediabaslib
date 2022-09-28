@@ -189,7 +189,6 @@ namespace BmwDeepObd
                 case DownloaderClientState.FailedFetchingUrl:
                 case DownloaderClientState.FailedUnlicensed:
                     paused = true;
-                    showDashboard = false;
                     indeterminate = false;
                     break;
 
@@ -995,24 +994,6 @@ namespace BmwDeepObd
                     string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.exp_down_obb_missing), obbFileName, obbDirsName);
                     AlertDialog alertDialog = new AlertDialog.Builder(this)
                         .SetMessage(message)
-                        .SetTitle(Resource.String.alert_title_error)
-                        .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
-                        .Show();
-                    alertDialog.DismissEvent += (sender, args) =>
-                    {
-                        if (_actvityDestroyed)
-                        {
-                            return;
-                        }
-                        Finish();
-                    };
-                    return;
-                }
-
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
-                {
-                    AlertDialog alertDialog = new AlertDialog.Builder(this)
-                        .SetMessage(Resource.String.exp_down_obb_no_download)
                         .SetTitle(Resource.String.alert_title_error)
                         .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
                         .Show();
