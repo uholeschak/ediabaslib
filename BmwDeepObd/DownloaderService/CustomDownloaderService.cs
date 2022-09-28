@@ -986,6 +986,7 @@ namespace BmwDeepObd
         /// <returns>
         /// The ExpansionDownloader.Service.DownloaderService+NetworkState.
         /// </returns>
+#pragma warning disable CS0618
         private NetworkState GetNetworkState(NetworkInfo info)
         {
             NetworkState state = NetworkState.Disconnected;
@@ -1036,6 +1037,7 @@ namespace BmwDeepObd
 
             return state;
         }
+#pragma warning restore CS0618
 
         /// <summary>
         /// This is the main thread for the Downloader. 
@@ -1318,7 +1320,9 @@ namespace BmwDeepObd
             }
             else
             {
+#pragma warning disable CS0618
                 NetworkInfo activeInfo = this.connectivityManager.ActiveNetworkInfo;
+#pragma warning restore CS0618
                 this.UpdateNetworkState(activeInfo);
             }
         }
@@ -1371,6 +1375,7 @@ namespace BmwDeepObd
         /// <param name="info">
         /// The info.
         /// </param>
+#pragma warning disable CS0618
         private void UpdateNetworkState(NetworkInfo info)
         {
             NetworkState tempState = this.networkState;
@@ -1424,6 +1429,7 @@ namespace BmwDeepObd
                 }
             }
         }
+#pragma warning restore CS0618
 
         #endregion
 
