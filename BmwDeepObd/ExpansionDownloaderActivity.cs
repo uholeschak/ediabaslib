@@ -222,6 +222,11 @@ namespace BmwDeepObd
                 _useCellDataView.Visibility = showCellMessage ? ViewStates.Visible : ViewStates.Gone;
                 _progressBar.Indeterminate = indeterminate;
                 UpdatePauseButton(paused);
+
+                if (newState == DownloaderClientState.FailedUnlicensed)
+                {
+                    CheckGooglePlay();
+                }
             }
             else
             {
@@ -774,6 +779,72 @@ namespace BmwDeepObd
             return result;
         }
 
+        private void CheckGooglePlay()
+        {
+            if (IsFromGooglePlay(this))
+            {
+                return;
+            }
+
+            PackageInfo packageInfo = PackageManager?.GetPackageInfo(PackageName ?? string.Empty, 0);
+            long packageVersion = 0;
+            if (packageInfo != null)
+            {
+                packageVersion = PackageInfoCompat.GetLongVersionCode(packageInfo);
+            }
+            string obbFileName = string.Format(CultureInfo.InvariantCulture, "main.{0}.{1}.obb", packageVersion, PackageName);
+
+            Java.IO.File[] obbDirs;
+            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
+            {
+                obbDirs = GetObbDirs();
+            }
+            else
+            {
+                obbDirs = new[] { ObbDir };
+            }
+
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            if (obbDirs != null)
+            {
+                foreach (Java.IO.File dir in obbDirs)
+                {
+                    if (dir != null && !string.IsNullOrEmpty(dir.AbsolutePath))
+                    {
+                        if (sb.Length > 0)
+                        {
+                            sb.AppendLine();
+                        }
+                        sb.Append(@"'");
+                        sb.Append(dir.AbsolutePath);
+                        sb.Append(@"'");
+                    }
+                }
+            }
+
+            string obbDirsName = sb.ToString();
+            if (string.IsNullOrEmpty(obbDirsName))
+            {
+                obbDirsName = "-";
+            }
+
+            string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.exp_down_obb_missing), obbFileName, obbDirsName);
+            AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .SetMessage(message)
+                .SetTitle(Resource.String.alert_title_error)
+                .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
+                .Show();
+            alertDialog.DismissEvent += (sender, args) =>
+            {
+                if (_actvityDestroyed)
+                {
+                    return;
+                }
+                Finish();
+            };
+        }
+
         /// <summary>
         /// If the download isn't present, we initialize the download UI. This ties
         /// all of the controls into the remote service calls.
@@ -943,68 +1014,6 @@ namespace BmwDeepObd
                     {
                         // ignored
                     }
-                    return;
-                }
-
-                if (!IsFromGooglePlay(this))
-                {
-                    PackageInfo packageInfo = PackageManager?.GetPackageInfo(PackageName ?? string.Empty, 0);
-                    long packageVersion = 0;
-                    if (packageInfo != null)
-                    {
-                        packageVersion = PackageInfoCompat.GetLongVersionCode(packageInfo);
-                    }
-                    string obbFileName = string.Format(CultureInfo.InvariantCulture, "main.{0}.{1}.obb", packageVersion, PackageName);
-
-                    Java.IO.File[] obbDirs;
-                    // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                    if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
-                    {
-                        obbDirs = GetObbDirs();
-                    }
-                    else
-                    {
-                        obbDirs = new[] { ObbDir };
-                    }
-
-                    System.Text.StringBuilder sb = new System.Text.StringBuilder();
-                    if (obbDirs != null)
-                    {
-                        foreach (Java.IO.File dir in obbDirs)
-                        {
-                            if (dir != null && !string.IsNullOrEmpty(dir.AbsolutePath))
-                            {
-                                if (sb.Length > 0)
-                                {
-                                    sb.AppendLine();
-                                }
-                                sb.Append(@"'");
-                                sb.Append(dir.AbsolutePath);
-                                sb.Append(@"'");
-                            }
-                        }
-                    }
-
-                    string obbDirsName = sb.ToString();
-                    if (string.IsNullOrEmpty(obbDirsName))
-                    {
-                        obbDirsName = "-";
-                    }
-
-                    string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.exp_down_obb_missing), obbFileName, obbDirsName);
-                    AlertDialog alertDialog = new AlertDialog.Builder(this)
-                        .SetMessage(message)
-                        .SetTitle(Resource.String.alert_title_error)
-                        .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
-                        .Show();
-                    alertDialog.DismissEvent += (sender, args) =>
-                    {
-                        if (_actvityDestroyed)
-                        {
-                            return;
-                        }
-                        Finish();
-                    };
                     return;
                 }
 
