@@ -15,6 +15,7 @@ using Android.App;
 using Android.Content.PM;
 using Android.Provider;
 using Android.Util;
+using AndroidX.Core.Content.PM;
 using Google.Android.Vending.Expansion.Downloader;
 using Google.Android.Vending.Licensing;
 using Java.Lang;
@@ -217,7 +218,10 @@ namespace BmwDeepObd
                         try
                         {
                             PackageInfo pi = this.Downloader.PackageManager.GetPackageInfo(this.Downloader.PackageName, 0);
-                            db.UpdateMetadata(pi.VersionCode, status);
+                            if (pi != null)
+                            {
+                                db.UpdateMetadata((int)PackageInfoCompat.GetLongVersionCode(pi), status);
+                            }
                             DownloaderServiceRequirement required = StartDownloadServiceIfRequired(this.Downloader, this.Downloader.pPendingIntent, this.Downloader.GetType());
                             switch (required)
                             {

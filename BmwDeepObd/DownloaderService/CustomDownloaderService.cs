@@ -23,6 +23,7 @@ using Java.Util;
 
 using Google.Android.Vending.Expansion.Downloader;
 using Java.Interop;
+using AndroidX.Core.Content.PM;
 
 namespace BmwDeepObd
 {
@@ -392,7 +393,8 @@ namespace BmwDeepObd
         {
             // we need to update the LVL check and get a successful status to
             // proceed
-            if (db.LastCheckedVersionCode != pi.VersionCode)
+            int versionCode = (int) PackageInfoCompat.GetLongVersionCode(pi);
+            if (db.LastCheckedVersionCode != versionCode)
             {
                 return true;
             }
@@ -1139,7 +1141,7 @@ namespace BmwDeepObd
                             return;
                         case DownloaderServiceStatus.Success:
                             this.BytesSoFar += info.CurrentBytes - startingCount;
-                            db.UpdateMetadata(packageInfo.VersionCode, 0);
+                            db.UpdateMetadata((int) PackageInfoCompat.GetLongVersionCode(packageInfo), 0);
                             this.downloadNotification?.OnDownloadStateChanged(DownloaderClientState.Completed);
                             continue;
                         case DownloaderServiceStatus.FileDeliveredIncorrectly:
