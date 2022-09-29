@@ -1453,8 +1453,11 @@ namespace BmwDeepObd
 
                                 try
                                 {
-                                    NetworkType networkType = telephonyManager.DataNetworkType;
-                                    this.networkState |= CheckNetworkType(networkType);
+                                    if (telephonyManager.HasCarrierPrivileges)
+                                    {
+                                        NetworkType networkType = telephonyManager.DataNetworkType;
+                                        this.networkState |= CheckNetworkType(networkType);
+                                    }
                                 }
                                 catch (Exception ex)
                                 {
