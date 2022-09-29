@@ -231,6 +231,11 @@ namespace BmwDeepObd
         /// </summary>
         private WifiManager wifiManager;
 
+        /// <summary>
+        /// Bindings to important services
+        /// </summary>
+        private TelephonyManager telephonyManager;
+
         #endregion
 
         #region Constructors and Destructors
@@ -282,17 +287,22 @@ namespace BmwDeepObd
             /// <summary>
             /// The is 4 g.
             /// </summary>
-            Is4G = 8, 
+            Is4G = 8,
+
+            /// <summary>
+            /// The is 5 g.
+            /// </summary>
+            Is5G = 16,
 
             /// <summary>
             /// The is cellular.
             /// </summary>
-            IsCellular = 16, 
+            IsCellular = 32, 
 
             /// <summary>
             /// The is fail over.
             /// </summary>
-            IsFailOver = 32
+            IsFailOver = 64
         }
 
         #endregion
@@ -1035,30 +1045,7 @@ namespace BmwDeepObd
 
                 case ConnectivityType.Mobile:
                     state = NetworkState.IsCellular;
-                    switch ((NetworkType)info.Subtype)
-                    {
-                        case NetworkType.OneXrtt:
-                        case NetworkType.Cdma:
-                        case NetworkType.Edge:
-                        case NetworkType.Gprs:
-                        case NetworkType.Iden:
-                            break;
-
-                        case NetworkType.Hsdpa:
-                        case NetworkType.Hsupa:
-                        case NetworkType.Hspa:
-                        case NetworkType.Evdo0:
-                        case NetworkType.EvdoA:
-                        case NetworkType.Umts:
-                            state |= NetworkState.Is3G;
-                            break;
-
-                        case NetworkType.Lte:
-                        case NetworkType.Ehrpd:
-                        case NetworkType.Hspap:
-                            state |= NetworkState.Is3G | NetworkState.Is4G;
-                            break;
-                    }
+                    state |= CheckNetworkType((NetworkType)info.Subtype);
                     break;
             }
 
@@ -1364,16 +1351,29 @@ namespace BmwDeepObd
                 this.wifiManager = this.GetSystemService(WifiService) as WifiManager;
             }
 
+            if (this.telephonyManager == null)
+            {
+                this.telephonyManager = this.GetSystemService(TelephonyService) as TelephonyManager;
+            }
+
             if (this.connectivityManager == null)
             {
                 Log.Debug(Tag,"LVLDL couldn't get connectivity manager to poll network state");
             }
             else
             {
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+                {
+                    Network network = this.connectivityManager.ActiveNetwork;
+                    this.UpdateNetworkState(network);
+                }
+                else
+                {
 #pragma warning disable CS0618
-                NetworkInfo activeInfo = this.connectivityManager.ActiveNetworkInfo;
+                    NetworkInfo activeInfo = this.connectivityManager.ActiveNetworkInfo;
 #pragma warning restore CS0618
-                this.UpdateNetworkState(activeInfo);
+                    this.UpdateNetworkState(activeInfo);
+                }
             }
         }
 
@@ -1422,6 +1422,56 @@ namespace BmwDeepObd
         /// <summary>
         /// The update network state.
         /// </summary>
+        /// <param name="network">
+        /// The network.
+        /// </param>
+        private void UpdateNetworkState(Network network)
+        {
+            NetworkState tempState = this.networkState;
+
+            this.networkState = NetworkState.Disconnected;
+            if (network != null)
+            {
+                LinkProperties linkProperties = connectivityManager.GetLinkProperties(network);
+                NetworkCapabilities networkCapabilities = connectivityManager.GetNetworkCapabilities(network);
+                if (linkProperties != null && networkCapabilities != null)
+                {
+                    if (linkProperties.LinkAddresses.Count > 0)
+                    {
+                        this.networkState = NetworkState.Connected;
+
+                        if (networkCapabilities.HasTransport(TransportType.Cellular))
+                        {
+                            this.networkState |= NetworkState.IsCellular;
+
+                            if (telephonyManager != null)
+                            {
+                                if (telephonyManager.IsNetworkRoaming)
+                                {
+                                    this.networkState |= NetworkState.Roaming;
+                                }
+
+                                try
+                                {
+                                    NetworkType networkType = telephonyManager.DataNetworkType;
+                                    this.networkState |= CheckNetworkType(networkType);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Log.Error(Tag, string.Format("UpdateNetworkState Exception {0}", ex.Message));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            CheckNetworkChange(tempState);
+        }
+
+        /// <summary>
+        /// The update network state.
+        /// </summary>
         /// <param name="info">
         /// The info.
         /// </param>
@@ -1448,13 +1498,56 @@ namespace BmwDeepObd
                 this.networkState |= this.GetNetworkState(info);
             }
 
+            CheckNetworkChange(tempState);
+        }
+#pragma warning restore CS0618
+
+        private NetworkState CheckNetworkType(NetworkType networkType)
+        {
+            NetworkState state = NetworkState.Disconnected;
+            switch (networkType)
+            {
+                case NetworkType.OneXrtt:
+                case NetworkType.Cdma:
+                case NetworkType.Edge:
+                case NetworkType.Gprs:
+                case NetworkType.Iden:
+                    break;
+
+                case NetworkType.Hsdpa:
+                case NetworkType.Hsupa:
+                case NetworkType.Hspa:
+                case NetworkType.Evdo0:
+                case NetworkType.EvdoA:
+                case NetworkType.EvdoB:
+                case NetworkType.Umts:
+                case NetworkType.TdScdma:
+                    state |= NetworkState.Is3G;
+                    break;
+
+                case NetworkType.Lte:
+                case NetworkType.Ehrpd:
+                case NetworkType.Hspap:
+                    state |= NetworkState.Is3G | NetworkState.Is4G;
+                    break;
+
+                case NetworkType.Nr:
+                    state |= NetworkState.Is3G | NetworkState.Is4G | NetworkState.Is5G;
+                    break;
+            }
+
+            return state;
+        }
+
+        private void CheckNetworkChange(NetworkState tempState)
+        {
             this.stateChanged = this.stateChanged || this.networkState != tempState;
 
             if (this.stateChanged)
             {
-                Log.Debug(Tag,"LVLDL Network state changed: ");
-                Log.Debug(Tag,"LVLDL Starting State: {0}", tempState);
-                Log.Debug(Tag,"LVLDL Ending State: {0}", this.networkState);
+                Log.Debug(Tag, "LVLDL Network state changed: ");
+                Log.Debug(Tag, "LVLDL Starting State: {0}", tempState);
+                Log.Debug(Tag, "LVLDL Ending State: {0}", this.networkState);
 
                 if (IsServiceRunning)
                 {
@@ -1479,8 +1572,6 @@ namespace BmwDeepObd
                 }
             }
         }
-#pragma warning restore CS0618
-
         #endregion
 
         /// <summary>
