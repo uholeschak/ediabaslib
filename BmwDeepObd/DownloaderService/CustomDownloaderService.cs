@@ -182,6 +182,11 @@ namespace BmwDeepObd
         private Android.Content.BroadcastReceiver connectionReceiver;
 
         /// <summary>
+        /// Our binding to the network state callback
+        /// </summary>
+        private WifiCallback wifiCallback;
+
+        /// <summary>
         /// Bindings to important services
         /// </summary>
         private ConnectivityManager connectivityManager;
@@ -870,8 +875,30 @@ namespace BmwDeepObd
         {
             if (this.connectionReceiver != null)
             {
-                this.UnregisterReceiver(this.connectionReceiver);
+                try
+                {
+                    this.UnregisterReceiver(this.connectionReceiver);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+
                 this.connectionReceiver = null;
+            }
+
+            if (this.wifiCallback != null)
+            {
+                try
+                {
+                    this.connectivityManager?.UnregisterNetworkCallback(this.wifiCallback);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+
+                wifiCallback = null;
             }
 
             this.serviceConnection.Disconnect(this);
@@ -1106,14 +1133,31 @@ namespace BmwDeepObd
                 }
 
                 this.PollNetworkState();
-                if (this.connectionReceiver == null)
+                // We use this to track network state, such as when WiFi, Cellular, etc. is enabled
+                // when downloads are paused or in progress.
+                if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
                 {
-                    // We use this to track network state, such as when WiFi, Cellular, etc. is enabled
-                    // when downloads are paused or in progress.
-                    this.connectionReceiver = new InnerBroadcastReceiver(this);
-                    var intentFilter = new Android.Content.IntentFilter(ConnectivityManager.ConnectivityAction);
-                    intentFilter.AddAction(WifiManager.WifiStateChangedAction);
-                    this.RegisterReceiver(this.connectionReceiver, intentFilter);
+                    if (this.connectionReceiver == null)
+                    {
+                        this.connectionReceiver = new InnerBroadcastReceiver(this);
+#pragma warning disable CS0618
+                        var intentFilter = new Android.Content.IntentFilter(ConnectivityManager.ConnectivityAction);
+#pragma warning restore CS0618
+                        intentFilter.AddAction(WifiManager.WifiStateChangedAction);
+                        this.RegisterReceiver(this.connectionReceiver, intentFilter);
+                    }
+                }
+                else
+                {
+                    if (this.wifiCallback == null)
+                    {
+                        NetworkRequest.Builder builderWifi = new NetworkRequest.Builder();
+                        builderWifi.AddCapability(NetCapability.Internet);
+                        builderWifi.AddTransportType(TransportType.Wifi);
+                        NetworkRequest networkWifiRequest = builderWifi.Build();
+                        this.wifiCallback = new WifiCallback(this);
+                        connectivityManager.RequestNetwork(networkWifiRequest, this.wifiCallback);
+                    }
                 }
 
                 // loop through all downloads and fetch them
@@ -1476,10 +1520,11 @@ namespace BmwDeepObd
             /// </param>
             public override void OnReceive(Android.Content.Context context, Android.Content.Intent intent)
             {
+                Log.Debug(Tag, "InnerBroadcastReceiver Called");
                 this.service.PollNetworkState();
                 if (this.service.stateChanged && !IsServiceRunning)
                 {
-                    Log.Debug(Tag,"LVLDL InnerBroadcastReceiver Called");
+                    Log.Debug(Tag, "InnerBroadcastReceiver StartService");
                     Android.Content.Intent fileIntent = new Android.Content.Intent(context, this.service.GetType());
                     fileIntent.PutExtra(DownloaderServiceExtras.PendingIntent, this.service.pPendingIntent);
 
@@ -1489,6 +1534,42 @@ namespace BmwDeepObd
             }
 
             #endregion
+        }
+
+        private class WifiCallback : ConnectivityManager.NetworkCallback
+        {
+            private readonly CustomDownloaderService service;
+
+            public WifiCallback(CustomDownloaderService service)
+            {
+                this.service = service;
+            }
+
+            public override void OnAvailable(Network network)
+            {
+                Log.Debug(Tag, "WifiCallback OnAvailable Called");
+                CheckNetworkChange();
+            }
+
+            public override void OnLost(Network network)
+            {
+                Log.Debug(Tag, "WifiCallback OnLost Called");
+                CheckNetworkChange();
+            }
+
+            private void CheckNetworkChange()
+            {
+                this.service.PollNetworkState();
+                if (this.service.stateChanged && !IsServiceRunning)
+                {
+                    Log.Debug(Tag, "WifiCallback StartService");
+                    Android.Content.Intent fileIntent = new Android.Content.Intent(service, this.service.GetType());
+                    fileIntent.PutExtra(DownloaderServiceExtras.PendingIntent, this.service.pPendingIntent);
+
+                    // send a new intent to the service
+                    service.StartService(fileIntent);
+                }
+            }
         }
     }
 }
