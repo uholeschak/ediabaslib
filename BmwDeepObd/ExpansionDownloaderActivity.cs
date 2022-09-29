@@ -228,9 +228,12 @@ namespace BmwDeepObd
                 _progressBar.Indeterminate = indeterminate;
                 UpdatePauseButton(paused);
 
-                if (newState == DownloaderClientState.FailedUnlicensed)
+                switch (newState)
                 {
-                    CheckGooglePlay();
+                    case DownloaderClientState.FailedFetchingUrl:
+                    case DownloaderClientState.FailedUnlicensed:
+                        CheckGooglePlay();
+                        break;
                 }
             }
             else
