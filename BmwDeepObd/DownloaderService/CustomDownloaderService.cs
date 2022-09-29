@@ -1141,7 +1141,7 @@ namespace BmwDeepObd
                     {
                         this.connectionReceiver = new InnerBroadcastReceiver(this);
 #pragma warning disable CS0618
-                        var intentFilter = new Android.Content.IntentFilter(ConnectivityManager.ConnectivityAction);
+                        Android.Content.IntentFilter intentFilter = new Android.Content.IntentFilter(ConnectivityManager.ConnectivityAction);
 #pragma warning restore CS0618
                         intentFilter.AddAction(WifiManager.WifiStateChangedAction);
                         this.RegisterReceiver(this.connectionReceiver, intentFilter);
