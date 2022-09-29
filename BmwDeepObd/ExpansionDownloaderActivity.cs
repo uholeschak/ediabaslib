@@ -211,6 +211,11 @@ namespace BmwDeepObd
                     indeterminate = false;
                     break;
 
+                case DownloaderClientState.PausedNetworkUnavailable:
+                    showDashboard = false;
+                    paused = true;
+                    break;
+
                 default:
                     paused = true;
                     break;
