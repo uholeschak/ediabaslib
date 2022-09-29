@@ -19,7 +19,6 @@ using Android.Net.Wifi;
 using Android.OS;
 using Android.Telephony;
 using Android.Util;
-using Java.Util;
 
 using Google.Android.Vending.Expansion.Downloader;
 using Java.Interop;
@@ -1457,6 +1456,13 @@ namespace BmwDeepObd
                                     {
                                         NetworkType networkType = telephonyManager.DataNetworkType;
                                         this.networkState |= CheckNetworkType(networkType);
+                                    }
+                                    else
+                                    {
+                                        if (telephonyManager.DataState == DataConnectionStatus.Connected)
+                                        {
+                                            this.networkState |= NetworkState.Is3G;
+                                        }
                                     }
                                 }
                                 catch (Exception ex)
