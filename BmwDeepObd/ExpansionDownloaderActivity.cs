@@ -230,7 +230,6 @@ namespace BmwDeepObd
 
                 switch (newState)
                 {
-                    case DownloaderClientState.FailedFetchingUrl:
                     case DownloaderClientState.FailedUnlicensed:
                         CheckGooglePlay();
                         break;
