@@ -1151,12 +1151,18 @@ namespace BmwDeepObd
                 {
                     if (this.wifiCallback == null)
                     {
-                        NetworkRequest.Builder builderWifi = new NetworkRequest.Builder();
-                        builderWifi.AddCapability(NetCapability.Internet);
-                        builderWifi.AddTransportType(TransportType.Wifi);
-                        NetworkRequest networkWifiRequest = builderWifi.Build();
-                        this.wifiCallback = new WifiCallback(this);
-                        connectivityManager.RequestNetwork(networkWifiRequest, this.wifiCallback);
+                        if (connectivityManager != null)
+                        {
+                            this.wifiCallback = new WifiCallback(this);
+                            NetworkRequest.Builder builderWifi = new NetworkRequest.Builder();
+                            builderWifi.AddCapability(NetCapability.Internet);
+                            builderWifi.AddTransportType(TransportType.Wifi);
+                            NetworkRequest networkWifiRequest = builderWifi.Build();
+                            if (networkWifiRequest != null)
+                            {
+                                connectivityManager.RequestNetwork(networkWifiRequest, this.wifiCallback);
+                            }
+                        }
                     }
                 }
 
