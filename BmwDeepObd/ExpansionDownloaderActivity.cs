@@ -55,6 +55,7 @@ namespace BmwDeepObd
         private static string _assetFileName;
         private bool _storageAccessRequested;
         private bool _storageAccessGranted;
+        private bool _googlePlayErrorShown;
         private bool _downloadStarted;
         private bool _activityActive;
 
@@ -273,6 +274,7 @@ namespace BmwDeepObd
             _downloadStarted = false;
             _storageAccessRequested = false;
             _storageAccessGranted = false;
+            _googlePlayErrorShown = false;
         }
 
         protected override void OnStart()
@@ -280,6 +282,7 @@ namespace BmwDeepObd
             base.OnStart();
 
             _storageAccessRequested = false;
+            _googlePlayErrorShown = false;
             if (IsAssetPresent(this))
             {
                 try
@@ -793,6 +796,11 @@ namespace BmwDeepObd
 
         private void CheckGooglePlay()
         {
+            if (_googlePlayErrorShown)
+            {
+                return;
+            }
+
             if (IsFromGooglePlay(this))
             {
                 return;
@@ -841,20 +849,13 @@ namespace BmwDeepObd
                 obbDirsName = "-";
             }
 
+            _googlePlayErrorShown = true;
             string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.exp_down_obb_missing), obbFileName, obbDirsName);
-            AlertDialog alertDialog = new AlertDialog.Builder(this)
+            new AlertDialog.Builder(this)
                 .SetMessage(message)
                 .SetTitle(Resource.String.alert_title_error)
                 .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
                 .Show();
-            alertDialog.DismissEvent += (sender, args) =>
-            {
-                if (_actvityDestroyed)
-                {
-                    return;
-                }
-                Finish();
-            };
         }
 
         /// <summary>
