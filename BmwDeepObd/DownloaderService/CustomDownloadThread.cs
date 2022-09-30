@@ -42,7 +42,7 @@ namespace BmwDeepObd
         /// <summary>
         /// The download notification.
         /// </summary>
-        private readonly DownloadNotification downloadNotification;
+        private readonly CustomDownloadNotification downloadNotification;
 
         /// <summary>
         /// The downloader service.
@@ -70,7 +70,7 @@ namespace BmwDeepObd
         /// <param name="notification">
         /// The notification.
         /// </param>
-        public CustomDownloadThread(DownloadInfo info, CustomDownloaderService service, DownloadNotification notification)
+        public CustomDownloadThread(DownloadInfo info, CustomDownloaderService service, CustomDownloadNotification notification)
         {
             this.context = service;
             this.downloadInfo = info;

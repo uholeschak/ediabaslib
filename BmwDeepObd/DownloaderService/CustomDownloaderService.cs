@@ -193,7 +193,7 @@ namespace BmwDeepObd
         /// <summary>
         /// Our binding to the network state broadcasts
         /// </summary>
-        private DownloadNotification downloadNotification;
+        private CustomDownloadNotification downloadNotification;
 
         /// <summary>
         /// Byte counts
@@ -860,15 +860,19 @@ namespace BmwDeepObd
             {
                 this.packageInfo = this.PackageManager?.GetPackageInfo(this.PackageName ?? string.Empty, 0);
                 string applicationLabel = this.PackageManager?.GetApplicationLabel(this.ApplicationInfo);
+#if false
                 IntPtr downloaderNotification = Android.Runtime.JNIEnv.CreateInstance(typeof(DownloadNotification),
                     "(Landroid/content/Context;Ljava/lang/CharSequence;)V", new Android.Runtime.JValue[] {new (this), new (new Java.Lang.String(applicationLabel)) });
                 if (downloaderNotification != IntPtr.Zero)
                 {
                     this.downloadNotification = GetObject<DownloadNotification>(downloaderNotification, Android.Runtime.JniHandleOwnership.DoNotTransfer);
-                    if (clientMessenger != null)
-                    {
-                        this.downloadNotification?.SetMessenger(clientMessenger);
-                    }
+                }
+#else
+                this.downloadNotification = new CustomDownloadNotification(this, applicationLabel);
+#endif
+                if (clientMessenger != null)
+                {
+                    this.downloadNotification?.SetMessenger(clientMessenger);
                 }
             }
             catch (Exception e)
@@ -972,9 +976,9 @@ namespace BmwDeepObd
             }
         }
 
-        #endregion
+#endregion
 
-        #region Methods
+#region Methods
 
         /// <summary>
         /// The get network availability state.
@@ -1581,7 +1585,7 @@ namespace BmwDeepObd
                 }
             }
         }
-        #endregion
+#endregion
 
         /// <summary>
         /// We use this to track network state, such as when WiFi, Cellular, etc. is
@@ -1589,16 +1593,16 @@ namespace BmwDeepObd
         /// </summary>
         private class InnerBroadcastReceiver : Android.Content.BroadcastReceiver
         {
-            #region Fields
+#region Fields
 
             /// <summary>
             /// The m service.
             /// </summary>
             private readonly CustomDownloaderService service;
 
-            #endregion
+#endregion
 
-            #region Constructors and Destructors
+#region Constructors and Destructors
 
             /// <summary>
             /// Initializes a new instance of the <see cref="InnerBroadcastReceiver"/> class.
@@ -1611,9 +1615,9 @@ namespace BmwDeepObd
                 this.service = service;
             }
 
-            #endregion
+#endregion
 
-            #region Public Methods and Operators
+#region Public Methods and Operators
 
             /// <summary>
             /// The on receive.
@@ -1639,7 +1643,7 @@ namespace BmwDeepObd
                 }
             }
 
-            #endregion
+#endregion
         }
 
         private class WifiCallback : ConnectivityManager.NetworkCallback
