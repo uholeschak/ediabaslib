@@ -253,27 +253,25 @@ namespace BmwDeepObd
                 this.clientProxy.OnDownloadProgress(progress);
             }
 
-			if (progress.OverallTotal <= 0 || this.customNotification == null)
-			{
-				// we just show the text
-				this.notification.TickerText = new String(this.currentTitle);
-				this.notification.Icon = Android.Resource.Drawable.StatSysDownload;
-				this.notification.SetLatestEventInfo(this.context, this.label, this.currentText, this.ClientIntent);
-				this.currentNotification = this.notification;
-			}
-			else
-			{
+            if (this.customNotification != null)
+            {
                 this.customNotification.CurrentBytes = progress.OverallProgress;
                 this.customNotification.TotalBytes = progress.OverallTotal;
                 this.customNotification.Icon = Android.Resource.Drawable.StatSysDownload;
                 this.customNotification.PendingIntent = this.ClientIntent;
-                this.customNotification.Ticker = string.Format("{0}: {1}", this.label, this.currentText);
+                if (progress.OverallTotal <= 0)
+                {
+                    this.customNotification.Ticker = this.currentTitle;
+                }
+                else
+                {
+                    this.customNotification.Ticker = string.Format("{0}: {1}", this.label, this.currentText);
+                }
                 this.customNotification.Title = this.label;
                 this.customNotification.TimeRemaining = progress.TimeRemaining;
                 this.currentNotification = this.customNotification.UpdateNotification(this.context);
+                this.notificationManager.Notify(NotificationId, this.currentNotification);
             }
-
-			this.notificationManager.Notify(NotificationId, this.currentNotification);
         }
 
         /// <summary>
