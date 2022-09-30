@@ -30,8 +30,8 @@ namespace BmwDeepObd
         /// <summary>
         /// The notification id.
         /// </summary>
-        private static readonly int NotificationId = typeof(DownloadNotification).GetHashCode();
-        public const string NotificationChannelIdDefault = "DownloaderNotificationChannelDefault";
+        private static readonly int NotificationId = typeof(CustomDownloadNotification).GetHashCode();
+        public const string NotificationChannelIdLow = "DownloaderNotificationChannelLow";
 
         #endregion
 
@@ -97,7 +97,7 @@ namespace BmwDeepObd
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DownloadNotification"/> class.
+        /// Initializes a new instance of the <see cref="CustomDownloadNotification"/> class.
         /// </summary>
         /// <param name="ctx">
         /// The ctx.
@@ -131,7 +131,7 @@ namespace BmwDeepObd
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                 {
                     NotificationChannel notificationChannelDefault = new NotificationChannel(
-                    NotificationChannelIdDefault, this.context.Resources.GetString(Resource.String.app_name), NotificationImportance.Default);
+                        NotificationChannelIdLow, this.context.Resources.GetString(Resource.String.app_name), NotificationImportance.Low);
                     this.notificationManager.CreateNotificationChannel(notificationChannelDefault);
                 }
 
@@ -154,7 +154,7 @@ namespace BmwDeepObd
 
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                 {
-                    this.notificationManager.DeleteNotificationChannel(NotificationChannelIdDefault);
+                    this.notificationManager.DeleteNotificationChannel(NotificationChannelIdLow);
                 }
 
                 return true;
