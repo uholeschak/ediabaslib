@@ -637,7 +637,7 @@ namespace BmwDeepObd
         {
             // first: do we need to do an LVL update?
             // we begin by getting our APK version from the package manager
-            PackageInfo pi = context.PackageManager.GetPackageInfo(context.PackageName, 0);
+            PackageInfo pi = context.PackageManager?.GetPackageInfo(context.PackageName ?? string.Empty, 0);
 
             DownloaderServiceRequirement status = DownloaderServiceRequirement.NoDownloadRequired;
             DownloadsDB db = DownloadsDB.GetDB(context);
@@ -858,8 +858,8 @@ namespace BmwDeepObd
             base.OnCreate();
             try
             {
-                this.packageInfo = this.PackageManager.GetPackageInfo(this.PackageName, 0);
-                string applicationLabel = this.PackageManager.GetApplicationLabel(this.ApplicationInfo);
+                this.packageInfo = this.PackageManager?.GetPackageInfo(this.PackageName ?? string.Empty, 0);
+                string applicationLabel = this.PackageManager?.GetApplicationLabel(this.ApplicationInfo);
                 IntPtr downloaderNotification = Android.Runtime.JNIEnv.CreateInstance(typeof(DownloadNotification),
                     "(Landroid/content/Context;Ljava/lang/CharSequence;)V", new Android.Runtime.JValue[] {new (this), new (new Java.Lang.String(applicationLabel)) });
                 if (downloaderNotification != IntPtr.Zero)
