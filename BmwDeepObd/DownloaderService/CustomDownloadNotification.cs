@@ -158,6 +158,28 @@ namespace BmwDeepObd
                 return false;
             }
         }
+
+        private bool NotificationsEnabled()
+        {
+            try
+            {
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
+                {
+                    if (this.notificationManager == null)
+                    {
+                        return false;
+                    }
+                    return this.notificationManager.AreNotificationsEnabled();
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         #region Interfaces
 
         /// <summary>
@@ -257,7 +279,7 @@ namespace BmwDeepObd
                 this.clientProxy.OnDownloadProgress(progress);
             }
 
-            if (this.customNotification != null)
+            if (this.customNotification != null && NotificationsEnabled())
             {
                 this.customNotification.CurrentBytes = progress.OverallProgress;
                 this.customNotification.TotalBytes = progress.OverallTotal;
@@ -348,7 +370,7 @@ namespace BmwDeepObd
                 this.currentText = context.GetString(stringDownload);
                 this.currentTitle = this.label;
 
-                if (customNotification != null)
+                if (customNotification != null && NotificationsEnabled())
                 {
                     this.customNotification.Icon = iconResource;
                     this.customNotification.PendingIntent = this.ClientIntent;
