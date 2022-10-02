@@ -120,7 +120,9 @@ namespace BmwDeepObd
             }
             builder.SetTicker(this.Ticker);
             builder.SetContentIntent(this.PendingIntent);
-            builder.SetPriority(NotificationCompat.PriorityDefault);
+            builder.SetOnlyAlertOnce(true);
+            builder.SetPriority(NotificationCompat.PriorityLow);
+            builder.SetCategory(NotificationCompat.CategoryProgress);
 
             return builder.Build();
         }
