@@ -180,6 +180,7 @@ namespace BmwDeepObd
                                 string expansionUrl = this.policy.GetExpansionURL(index);
                                 if (this.Downloader.HandleFileUpdated(db, index, currentFileName, fileSize))
                                 {
+                                    Log.Info(Tag, string.Format("File: {0} new URL: {1}", di.FileName, expansionUrl));
                                     status = (DownloaderServiceStatus)(-1);
                                     di.ResetDownload();
                                     di.Uri = expansionUrl;
@@ -205,6 +206,7 @@ namespace BmwDeepObd
                                     else if ((DownloaderServiceStatus) dbdi.Status != DownloaderServiceStatus.Success)
                                     {
                                         // we just update the URL
+                                        Log.Info(Tag, string.Format("File: {0} update URL: {1}", di.FileName, expansionUrl));
                                         dbdi.Uri = expansionUrl;
                                         db.UpdateDownload(dbdi);
                                         status = (DownloaderServiceStatus) (-1);
