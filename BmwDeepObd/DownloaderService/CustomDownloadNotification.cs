@@ -201,6 +201,11 @@ namespace BmwDeepObd
             /// </summary>
             long TotalBytes { set; }
 
+            /// <summary>
+            /// Gets or sets  ongoing.
+            /// </summary>
+            bool Ongoing { set; }
+
             #endregion
 
             #region Public Methods and Operators
@@ -262,6 +267,7 @@ namespace BmwDeepObd
                 }
                 this.customNotification.Title = this.label;
                 this.customNotification.TimeRemaining = progress.TimeRemaining;
+                this.customNotification.Ongoing = true;
                 this.currentNotification = this.customNotification.UpdateNotification(this.context);
                 this.notificationManager.Notify(NotificationId, this.currentNotification);
             }
@@ -341,17 +347,8 @@ namespace BmwDeepObd
                     this.customNotification.PendingIntent = this.ClientIntent;
                     this.customNotification.Ticker = this.label + ": " + this.currentText;
                     this.customNotification.Title = this.currentTitle;
+                    this.customNotification.Ongoing = ongoingEvent;
                     this.currentNotification = this.customNotification.UpdateNotification(this.context);
-                    if (ongoingEvent)
-                    {
-                        this.currentNotification.Flags |= NotificationFlags.OngoingEvent;
-                    }
-                    else
-                    {
-                        this.currentNotification.Flags &= ~NotificationFlags.OngoingEvent;
-                        this.currentNotification.Flags |= NotificationFlags.AutoCancel;
-                    }
-
                     this.notificationManager.Notify(NotificationId, this.currentNotification);
                 }
             }
