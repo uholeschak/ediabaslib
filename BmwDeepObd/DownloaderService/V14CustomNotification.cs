@@ -64,6 +64,11 @@ namespace BmwDeepObd
         /// </summary>
         public bool Ongoing { private get; set; }
 
+        /// <summary>
+        /// Gets or sets completed
+        /// </summary>
+        public bool Completed { private get; set; }
+
         #endregion
 
         #region Public Methods and Operators
@@ -82,9 +87,16 @@ namespace BmwDeepObd
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CustomDownloadNotification.NotificationChannelIdLow);
 
             builder.SetContentTitle(this.Title);
-            if (this.TotalBytes > 0 && this.CurrentBytes != -1)
+            if (this.TotalBytes > 0 && this.CurrentBytes >= 0)
             {
-                builder.SetProgress((int)(this.TotalBytes >> 8), (int)(this.CurrentBytes >> 8), false);
+                if (Completed)
+                {
+                    builder.SetProgress((int)(this.TotalBytes >> 8), (int)(this.TotalBytes >> 8), false);
+                }
+                else
+                {
+                    builder.SetProgress((int)(this.TotalBytes >> 8), (int)(this.CurrentBytes >> 8), false);
+                }
             }
             else
             {
