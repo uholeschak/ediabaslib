@@ -269,7 +269,11 @@ namespace BmwDeepObd
             DownloaderServiceStatus finalStatus;
             DownloaderServiceStatus downloadStatus = (DownloaderServiceStatus)statusCode;
 
-            if (downloadStatus.IsError())
+            if (statusCode == HttpStatusCode.Gone)
+            {   // force LVL update
+                finalStatus = DownloaderServiceStatus.Forbidden;
+            }
+            else if (downloadStatus.IsError())
             {
                 finalStatus = downloadStatus;
             }
