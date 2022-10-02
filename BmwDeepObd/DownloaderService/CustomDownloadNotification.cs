@@ -9,10 +9,8 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Runtime;
 
 using Java.Lang;
 using Google.Android.Vending.Expansion.Downloader;
@@ -55,7 +53,7 @@ namespace BmwDeepObd
         /// <summary>
         /// The m notification manager.
         /// </summary>
-        private readonly NotificationManager notificationManager;
+        private readonly Android.App.NotificationManager notificationManager;
 
         /// <summary>
         /// The m client proxy.
@@ -70,7 +68,7 @@ namespace BmwDeepObd
         /// <summary>
         /// The m current notification.
         /// </summary>
-        private Notification currentNotification;
+        private Android.App.Notification currentNotification;
 
         /// <summary>
         /// The m current text.
@@ -105,9 +103,12 @@ namespace BmwDeepObd
             this.clientState = (DownloaderClientState)(-1);
             this.context = ctx;
             this.label = applicationLabel;
-            this.notificationManager = this.context.GetSystemService(Context.NotificationService) as NotificationManager;
+            this.notificationManager = this.context.GetSystemService(Context.NotificationService) as Android.App.NotificationManager;
             RegisterNotificationChannels();
-            this.customNotification = CustomNotificationFactory.CreateCustomNotification();
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.IceCreamSandwich)
+            {
+                this.customNotification = new V14CustomNotification();
+            }
         }
 
         #endregion
@@ -123,8 +124,8 @@ namespace BmwDeepObd
 
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                 {
-                    NotificationChannel notificationChannelDefault = new NotificationChannel(
-                        NotificationChannelIdLow, this.context.Resources.GetString(Resource.String.app_name), NotificationImportance.Low);
+                    Android.App.NotificationChannel notificationChannelDefault = new Android.App.NotificationChannel(
+                        NotificationChannelIdLow, this.context.Resources.GetString(Resource.String.app_name), Android.App.NotificationImportance.Low);
                     this.notificationManager.CreateNotificationChannel(notificationChannelDefault);
                 }
 
@@ -179,7 +180,7 @@ namespace BmwDeepObd
             /// <summary>
             /// Sets PendingIntent.
             /// </summary>
-            PendingIntent PendingIntent { set; }
+            Android.App.PendingIntent PendingIntent { set; }
 
             /// <summary>
             /// Sets Ticker.
@@ -219,7 +220,7 @@ namespace BmwDeepObd
             /// <returns>
             /// The Android.App.Notification.
             /// </returns>
-            Notification UpdateNotification(Context context);
+            Android.App.Notification UpdateNotification(Context context);
 
             #endregion
         }
@@ -231,7 +232,7 @@ namespace BmwDeepObd
         /// <summary>
         /// Gets or sets PendingIntent.
         /// </summary>
-        public PendingIntent ClientIntent { get; set; }
+        public Android.App.PendingIntent ClientIntent { get; set; }
 
         #endregion
 
