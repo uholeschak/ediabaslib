@@ -86,6 +86,8 @@ namespace BmwDeepObd
         {
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CustomDownloadNotification.NotificationChannelIdLow);
 
+            string contentText = Helpers.GetDownloadProgressString(this.CurrentBytes, this.TotalBytes);
+            string contentInfo = context.GetString(Resource.String.time_remaining_notification, Helpers.GetTimeRemaining(this.TimeRemaining));
             builder.SetContentTitle(this.Title);
             if (this.TotalBytes > 0 && this.CurrentBytes >= 0)
             {
@@ -103,15 +105,9 @@ namespace BmwDeepObd
                 builder.SetProgress(0, 0, true);
             }
 
-            if (Ongoing)
-            {
-                builder.SetContentText(Helpers.GetDownloadProgressString(this.CurrentBytes, this.TotalBytes));
-                builder.SetContentInfo(context.GetString(Resource.String.time_remaining_notification, Helpers.GetTimeRemaining(this.TimeRemaining)));
-            }
-            else
-            {
-                builder.SetContentText(Ticker);
-            }
+            builder.SetContentText(contentText);
+            builder.SetContentInfo(contentInfo);
+
             builder.SetSmallIcon(this.Icon != 0 ? this.Icon : Android.Resource.Drawable.StatSysDownload);
             builder.SetOngoing(Ongoing);
             if (!Ongoing)
@@ -119,6 +115,10 @@ namespace BmwDeepObd
                 builder.SetAutoCancel(true);
             }
             builder.SetTicker(this.Ticker);
+            builder.SetStyle(new NotificationCompat.BigTextStyle().
+                BigText(contentInfo + "\r\n" + Ticker).
+                SetBigContentTitle(contentText));
+
             builder.SetContentIntent(this.PendingIntent);
             builder.SetOnlyAlertOnce(true);
             builder.SetPriority(NotificationCompat.PriorityLow);
