@@ -361,7 +361,6 @@
     <Compile Include="DownloaderService\CustomDownloaderService.cs" />
     <Compile Include="DownloaderService\CustomDownloadNotification.cs" />
     <Compile Include="DownloaderService\CustomDownloadThread.cs" />
-    <Compile Include="DownloaderService\CustomNotificationFactory.cs" />
     <Compile Include="DownloaderService\DownloaderService.LvlRunner.cs" />
     <Compile Include="DownloaderService\V14CustomNotification.cs" />
     <Compile Include="ExpansionAlarmReceiver.cs" />
