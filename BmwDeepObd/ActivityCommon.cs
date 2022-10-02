@@ -443,6 +443,7 @@ namespace BmwDeepObd
 
         public const int RequestPermissionExternalStorage = 0;
         public const int RequestPermissionBluetooth = 1;
+        public const int RequestPermissionNotifications = 2;
         public static readonly string[] PermissionsBluetooth =
         {
             Android.Manifest.Permission.BluetoothScan,
@@ -1923,6 +1924,15 @@ namespace BmwDeepObd
         public static bool IsExtrenalStorageAccessRequired()
         {
             if (Build.VERSION.SdkInt <= BuildVersionCodes.Q)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool IsNotificationsAccessRequired()
+        {
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
             {
                 return true;
             }
