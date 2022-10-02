@@ -160,6 +160,13 @@ namespace BmwDeepObd
                 // sometimes the socket code throws unchecked exceptions
                 Log.Debug(Tag, string.Format("LVLDL Exception for {0}: {1}", this.downloadInfo.FileName, ex.Message));
                 finalStatus = DownloaderServiceStatus.UnknownError;
+                if (ex is WebException webException)
+                {
+                    if (webException.Status == WebExceptionStatus.ProtocolError)
+                    {   // force LVL update
+                        finalStatus = DownloaderServiceStatus.Forbidden;
+                    }
+                }
             }
             finally
             {
@@ -269,11 +276,7 @@ namespace BmwDeepObd
             DownloaderServiceStatus finalStatus;
             DownloaderServiceStatus downloadStatus = (DownloaderServiceStatus)statusCode;
 
-            if (statusCode == HttpStatusCode.Gone)
-            {   // force LVL update
-                finalStatus = DownloaderServiceStatus.Forbidden;
-            }
-            else if (downloadStatus.IsError())
+            if (downloadStatus.IsError())
             {
                 finalStatus = downloadStatus;
             }
