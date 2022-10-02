@@ -102,8 +102,16 @@ namespace BmwDeepObd
             {
                 builder.SetProgress(0, 0, true);
             }
-            builder.SetContentText(Helpers.GetDownloadProgressString(this.CurrentBytes, this.TotalBytes));
-            builder.SetContentInfo(context.GetString(Resource.String.time_remaining_notification, Helpers.GetTimeRemaining(this.TimeRemaining)));
+
+            if (Ongoing)
+            {
+                builder.SetContentText(Helpers.GetDownloadProgressString(this.CurrentBytes, this.TotalBytes));
+                builder.SetContentInfo(context.GetString(Resource.String.time_remaining_notification, Helpers.GetTimeRemaining(this.TimeRemaining)));
+            }
+            else
+            {
+                builder.SetContentText(Ticker);
+            }
             builder.SetSmallIcon(this.Icon != 0 ? this.Icon : Android.Resource.Drawable.StatSysDownload);
             builder.SetOngoing(Ongoing);
             if (!Ongoing)
