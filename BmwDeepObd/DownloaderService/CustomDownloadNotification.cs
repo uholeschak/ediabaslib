@@ -207,6 +207,11 @@ namespace BmwDeepObd
             /// </summary>
             bool Ongoing { set; }
 
+            /// <summary>
+            /// Gets or sets completed
+            /// </summary>
+            bool Completed { set; }
+
             #endregion
 
             #region Public Methods and Operators
@@ -269,6 +274,7 @@ namespace BmwDeepObd
                 this.customNotification.Title = this.label;
                 this.customNotification.TimeRemaining = progress.TimeRemaining;
                 this.customNotification.Ongoing = true;
+                this.customNotification.Completed = false;
                 this.currentNotification = this.customNotification.UpdateNotification(this.context);
                 this.notificationManager.Notify(NotificationId, this.currentNotification);
             }
@@ -349,6 +355,7 @@ namespace BmwDeepObd
                     this.customNotification.Ticker = this.label + ": " + this.currentText;
                     this.customNotification.Title = this.currentTitle;
                     this.customNotification.Ongoing = ongoingEvent;
+                    this.customNotification.Completed = newState == DownloaderClientState.Completed;
                     this.currentNotification = this.customNotification.UpdateNotification(this.context);
                     this.notificationManager.Notify(NotificationId, this.currentNotification);
                 }
