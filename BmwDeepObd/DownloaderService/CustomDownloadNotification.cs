@@ -53,11 +53,6 @@ namespace BmwDeepObd
         private readonly ICustomNotification customNotification;
 
         /// <summary>
-        /// The m notification.
-        /// </summary>
-        private readonly Notification notification;
-
-        /// <summary>
         /// The m notification manager.
         /// </summary>
         private readonly NotificationManager notificationManager;
@@ -111,10 +106,8 @@ namespace BmwDeepObd
             this.context = ctx;
             this.label = applicationLabel;
             this.notificationManager = this.context.GetSystemService(Context.NotificationService) as NotificationManager;
-            this.notification = new Notification();
             RegisterNotificationChannels();
             this.customNotification = CustomNotificationFactory.CreateCustomNotification();
-            this.currentNotification = this.notification;
         }
 
         #endregion
@@ -342,20 +335,25 @@ namespace BmwDeepObd
                 this.currentText = context.GetString(stringDownload);
                 this.currentTitle = this.label;
 
-                this.currentNotification.TickerText = new String(this.label + ": " + this.currentText);
-                this.currentNotification.Icon = iconResource;
-                this.currentNotification.SetLatestEventInfo(this.context, this.currentTitle, this.currentText, this.ClientIntent);
-                if (ongoingEvent)
+                if (customNotification != null)
                 {
-                    this.currentNotification.Flags |= NotificationFlags.OngoingEvent;
-                }
-                else
-                {
-                    this.currentNotification.Flags &= ~NotificationFlags.OngoingEvent;
-                    this.currentNotification.Flags |= NotificationFlags.AutoCancel;
-                }
+                    this.customNotification.Icon = iconResource;
+                    this.customNotification.PendingIntent = this.ClientIntent;
+                    this.customNotification.Ticker = this.label + ": " + this.currentText;
+                    this.customNotification.Title = this.currentTitle;
+                    this.currentNotification = this.customNotification.UpdateNotification(this.context);
+                    if (ongoingEvent)
+                    {
+                        this.currentNotification.Flags |= NotificationFlags.OngoingEvent;
+                    }
+                    else
+                    {
+                        this.currentNotification.Flags &= ~NotificationFlags.OngoingEvent;
+                        this.currentNotification.Flags |= NotificationFlags.AutoCancel;
+                    }
 
-                this.notificationManager.Notify(NotificationId, this.currentNotification);
+                    this.notificationManager.Notify(NotificationId, this.currentNotification);
+                }
             }
         }
 
