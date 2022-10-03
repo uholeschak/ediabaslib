@@ -84,7 +84,7 @@ namespace BmwDeepObd
         /// </returns>
         public Android.App.Notification UpdateNotification(Context context)
         {
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CustomDownloadNotification.NotificationChannelIdLow);
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CustomDownloadNotification.NotificationChannelDownload);
 
             string contentText = Helpers.GetDownloadProgressString(this.CurrentBytes, this.TotalBytes);
             string contentInfo = context.GetString(Resource.String.time_remaining_notification, Helpers.GetTimeRemaining(this.TimeRemaining));

@@ -29,7 +29,7 @@ namespace BmwDeepObd
         /// The notification id.
         /// </summary>
         private static readonly int NotificationId = typeof(CustomDownloadNotification).GetHashCode();
-        public const string NotificationChannelIdLow = "DownloaderNotificationChannelLow";
+        public const string NotificationChannelDownload = "DownloaderNotificationChannel";
 
         #endregion
 
@@ -122,11 +122,13 @@ namespace BmwDeepObd
                     return false;
                 }
 
+                UnregisterNotificationChannels();
+
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                 {
-                    Android.App.NotificationChannel notificationChannelDefault = new Android.App.NotificationChannel(
-                        NotificationChannelIdLow, this.context.Resources.GetString(Resource.String.app_name), Android.App.NotificationImportance.Low);
-                    this.notificationManager.CreateNotificationChannel(notificationChannelDefault);
+                    Android.App.NotificationChannel notificationChannelDownload = new Android.App.NotificationChannel(
+                        NotificationChannelDownload, this.context.Resources.GetString(Resource.String.notification_download), Android.App.NotificationImportance.Low);
+                    this.notificationManager.CreateNotificationChannel(notificationChannelDownload);
                 }
 
                 return true;
@@ -137,7 +139,7 @@ namespace BmwDeepObd
             }
         }
 
-        private bool UnregisterNotificationChannels()
+        private bool UnregisterNotificationChannels(bool unregisterAll = false)
         {
             try
             {
@@ -148,7 +150,12 @@ namespace BmwDeepObd
 
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                 {
-                    this.notificationManager.DeleteNotificationChannel(NotificationChannelIdLow);
+                    if (unregisterAll)
+                    {
+                        this.notificationManager.DeleteNotificationChannel(NotificationChannelDownload);
+                    }
+
+                    this.notificationManager.DeleteNotificationChannel("DownloaderNotificationChannelLow");
                 }
 
                 return true;

@@ -428,11 +428,13 @@ namespace BmwDeepObd
         public const string BroadcastXmlEditorPackageName = "XmlEditorPackageName";
         public const string BroadcastXmlEditorClassName = "XmlEditorClassName";
         public const string SettingBluetoothHciLog = "bluetooth_hci_log";
-        public const string NotificationChannelIdMin = "NotificationChannelMin";
-        public const string NotificationChannelIdLow = "NotificationChannelLow";
-        public const string NotificationChannelIdDefault = "NotificationChannelDefault";
-        public const string NotificationChannelIdHigh = "NotificationChannelHigh";
-        public const string NotificationChannelIdMax = "NotificationChannelMax";
+        public const string NotificationChannelCommunication = "NotificationCommunication";
+        public const string NotificationChannelGroupCustom = "NotificationGroupCustom";
+        public const string NotificationChannelCustomMin = "NotificationCustomMin";
+        public const string NotificationChannelCustomLow = "NotificationCustomLow";
+        public const string NotificationChannelCustomDefault = "NotificationCustomDefault";
+        public const string NotificationChannelCustomHigh = "NotificationCustomHigh";
+        public const string NotificationChannelCustomMax = "NotificationCustomMax";
         private const string MailInfoDownloadUrl = @"https://www.holeschak.de/BmwDeepObd/Mail.php";
         private const string UpdateCheckUrl = @"https://www.holeschak.de/BmwDeepObd/Update.php";
         private const string IbmTransVersion = @"version=2018-05-01";
@@ -2511,32 +2513,42 @@ namespace BmwDeepObd
                     return false;
                 }
 
+                UnregisterNotificationChannels();
+
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                 {
-                    Android.App.NotificationChannel notificationChannelMin = new Android.App.NotificationChannel(
-                        NotificationChannelIdMin,
-                        _context.Resources.GetString(Resource.String.app_name), Android.App.NotificationImportance.Min);
-                    _notificationManager.CreateNotificationChannel(notificationChannelMin);
+                    Android.App.NotificationChannel notificationChannelCommunication =
+                        new Android.App.NotificationChannel(NotificationChannelCommunication, _context.Resources.GetString(Resource.String.notification_communication), Android.App.NotificationImportance.Min);
+                    _notificationManager.CreateNotificationChannel(notificationChannelCommunication);
 
-                    Android.App.NotificationChannel notificationChannelLow = new Android.App.NotificationChannel(
-                        NotificationChannelIdLow,
-                        _context.Resources.GetString(Resource.String.app_name), Android.App.NotificationImportance.Low);
-                    _notificationManager.CreateNotificationChannel(notificationChannelLow);
+                    Android.App.NotificationChannelGroup notificationGroupCustom =
+                        new Android.App.NotificationChannelGroup(NotificationChannelGroupCustom, _context.Resources.GetString(Resource.String.notification_group_custom));
+                    _notificationManager.CreateNotificationChannelGroup(notificationGroupCustom);
 
-                    Android.App.NotificationChannel notificationChannelDefault = new Android.App.NotificationChannel(
-                        NotificationChannelIdDefault,
-                        _context.Resources.GetString(Resource.String.app_name), Android.App.NotificationImportance.Default);
-                    _notificationManager.CreateNotificationChannel(notificationChannelDefault);
+                    Android.App.NotificationChannel notificationChannelCustomMin =
+                        new Android.App.NotificationChannel(NotificationChannelCustomMin, _context.Resources.GetString(Resource.String.notification_custom_min), Android.App.NotificationImportance.Min);
+                    notificationChannelCustomMin.Group = NotificationChannelGroupCustom;
+                    _notificationManager.CreateNotificationChannel(notificationChannelCustomMin);
 
-                    Android.App.NotificationChannel notificationChannelHigh = new Android.App.NotificationChannel(
-                        NotificationChannelIdHigh,
-                        _context.Resources.GetString(Resource.String.app_name), Android.App.NotificationImportance.High);
-                    _notificationManager.CreateNotificationChannel(notificationChannelHigh);
+                    Android.App.NotificationChannel notificationChannelCustomLow =
+                        new Android.App.NotificationChannel(NotificationChannelCustomLow, _context.Resources.GetString(Resource.String.notification_custom_low), Android.App.NotificationImportance.Low);
+                    notificationChannelCustomLow.Group = NotificationChannelGroupCustom;
+                    _notificationManager.CreateNotificationChannel(notificationChannelCustomLow);
 
-                    Android.App.NotificationChannel notificationChannelMax = new Android.App.NotificationChannel(
-                        NotificationChannelIdMax,
-                        _context.Resources.GetString(Resource.String.app_name), Android.App.NotificationImportance.Max);
-                    _notificationManager.CreateNotificationChannel(notificationChannelMax);
+                    Android.App.NotificationChannel notificationChannelCustomDefault =
+                        new Android.App.NotificationChannel(NotificationChannelCustomDefault, _context.Resources.GetString(Resource.String.notification_custom_default), Android.App.NotificationImportance.Default);
+                    notificationChannelCustomDefault.Group = NotificationChannelGroupCustom;
+                    _notificationManager.CreateNotificationChannel(notificationChannelCustomDefault);
+
+                    Android.App.NotificationChannel notificationChannelCustomHigh =
+                        new Android.App.NotificationChannel(NotificationChannelCustomHigh, _context.Resources.GetString(Resource.String.notification_custom_high), Android.App.NotificationImportance.High);
+                    notificationChannelCustomHigh.Group = NotificationChannelGroupCustom;
+                    _notificationManager.CreateNotificationChannel(notificationChannelCustomHigh);
+
+                    Android.App.NotificationChannel notificationChannelCustomMax =
+                        new Android.App.NotificationChannel(NotificationChannelCustomMax, _context.Resources.GetString(Resource.String.notification_custom_max), Android.App.NotificationImportance.Max);
+                    notificationChannelCustomMax.Group = NotificationChannelGroupCustom;
+                    _notificationManager.CreateNotificationChannel(notificationChannelCustomMax);
                 }
 
                 return true;
@@ -2547,7 +2559,7 @@ namespace BmwDeepObd
             }
         }
 
-        public bool UnregisterNotificationChannels()
+        public bool UnregisterNotificationChannels(bool unregisterAll = false)
         {
             try
             {
@@ -2558,11 +2570,22 @@ namespace BmwDeepObd
 
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                 {
-                    _notificationManager.DeleteNotificationChannel(NotificationChannelIdMin);
-                    _notificationManager.DeleteNotificationChannel(NotificationChannelIdLow);
-                    _notificationManager.DeleteNotificationChannel(NotificationChannelIdDefault);
-                    _notificationManager.DeleteNotificationChannel(NotificationChannelIdHigh);
-                    _notificationManager.DeleteNotificationChannel(NotificationChannelIdMax);
+                    if (unregisterAll)
+                    {
+                        _notificationManager.DeleteNotificationChannel(NotificationChannelCommunication);
+                        _notificationManager.DeleteNotificationChannel(NotificationChannelCustomMin);
+                        _notificationManager.DeleteNotificationChannel(NotificationChannelCustomLow);
+                        _notificationManager.DeleteNotificationChannel(NotificationChannelCustomDefault);
+                        _notificationManager.DeleteNotificationChannel(NotificationChannelCustomHigh);
+                        _notificationManager.DeleteNotificationChannel(NotificationChannelCustomMax);
+                        _notificationManager.DeleteNotificationChannelGroup(NotificationChannelGroupCustom);
+                    }
+
+                    _notificationManager.DeleteNotificationChannel("NotificationChannelMin");
+                    _notificationManager.DeleteNotificationChannel("NotificationChannelLow");
+                    _notificationManager.DeleteNotificationChannel("NotificationChannelDefault");
+                    _notificationManager.DeleteNotificationChannel("NotificationChannelHigh");
+                    _notificationManager.DeleteNotificationChannel("NotificationChannelMax");
                 }
 
                 return true;
@@ -2594,23 +2617,23 @@ namespace BmwDeepObd
                     }
                 }
 
-                string notificationChannel = NotificationChannelIdDefault;
+                string notificationChannel = NotificationChannelCustomDefault;
                 switch (priority)
                 {
                     case NotificationCompat.PriorityMin:
-                        notificationChannel = NotificationChannelIdMin;
+                        notificationChannel = NotificationChannelCustomMin;
                         break;
 
                     case NotificationCompat.PriorityLow:
-                        notificationChannel = NotificationChannelIdLow;
+                        notificationChannel = NotificationChannelCustomLow;
                         break;
 
                     case NotificationCompat.PriorityHigh:
-                        notificationChannel = NotificationChannelIdHigh;
+                        notificationChannel = NotificationChannelCustomHigh;
                         break;
 
                     case NotificationCompat.PriorityMax:
-                        notificationChannel = NotificationChannelIdMax;
+                        notificationChannel = NotificationChannelCustomMax;
                         break;
                 }
 
