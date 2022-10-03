@@ -109,6 +109,16 @@
   <string name="alert_title_error">Error</string>
   <string name="alert_title_question">Question</string>
 
+  <!-- Notifications -->
+  <string name="notification_download">Download</string>
+  <string name="notification_communication">Communication</string>
+  <string name="notification_group_custom">Custom</string>
+  <string name="notification_custom_min">Custom minimum</string>
+  <string name="notification_custom_low">Custom low</string>
+  <string name="notification_custom_default">Custom default</string>
+  <string name="notification_custom_high">Custom high</string>
+  <string name="notification_custom_max">Custom maximum</string>
+
   <!-- Service -->
   <string name="service_notification">The communication is active</string>
   <string name="service_stop_comm_app">Open App and stop communication</string>

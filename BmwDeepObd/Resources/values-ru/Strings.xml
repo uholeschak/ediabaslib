@@ -139,6 +139,17 @@
   <string name="alert_title_error">Ошибка</string>
   <string name="alert_title_question">Вопрос</string>
 
+  <!-- Notifications -->
+  <!--Translate-->
+  <string name="notification_download">Скачать</string>
+  <string name="notification_communication">Коммуникация</string>
+  <string name="notification_group_custom">Пользовательский</string>
+  <string name="notification_custom_min">Пользовательский минимум</string>
+  <string name="notification_custom_low">Пользовательский низкий</string>
+  <string name="notification_custom_default">Пользовательское дефолт</string>
+  <string name="notification_custom_high">Пользовательский высокий</string>
+  <string name="notification_custom_max">Пользовательский максимум</string>
+
   <!-- Service -->
   <string name="service_notification">Соединение активно</string>
   <string name="service_stop_comm_app">Открыть приложение и прервать соединение</string>

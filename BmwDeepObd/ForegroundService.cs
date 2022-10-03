@@ -177,13 +177,14 @@ namespace BmwDeepObd
         {
             try
             {
-                Android.App.Notification notification = new NotificationCompat.Builder(this, ActivityCommon.NotificationChannelIdLow)
+                Android.App.Notification notification = new NotificationCompat.Builder(this, ActivityCommon.NotificationChannelCommunication)
                     .SetContentTitle(Resources.GetString(Resource.String.app_name))
                     .SetContentText(Resources.GetString(Resource.String.service_notification))
                     .SetSmallIcon(Resource.Drawable.ic_stat_obd)
                     .SetContentIntent(BuildIntentToShowMainActivity())
                     .SetOngoing(true)
                     .AddAction(BuildStopServiceAction())
+                    .SetPriority(NotificationCompat.PriorityLow)
                     .SetCategory(NotificationCompat.CategoryService)
                     .Build();
 
