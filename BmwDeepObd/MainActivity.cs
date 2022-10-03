@@ -1110,6 +1110,8 @@ namespace BmwDeepObd
                         string.Compare(_instanceData.LastLocale ?? string.Empty, ActivityCommon.SelectedLocale ?? string.Empty, StringComparison.OrdinalIgnoreCase) != 0)
                     {
                         StoreSettings();
+                        // update translations
+                        _activityCommon.RegisterNotificationChannels();
                         Recreate();
                         break;
                     }

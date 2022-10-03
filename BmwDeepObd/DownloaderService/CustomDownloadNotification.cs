@@ -129,7 +129,7 @@ namespace BmwDeepObd
             }
             catch (Exception)
             {
-                return false;
+                return true;
             }
         }
 

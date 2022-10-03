@@ -2570,16 +2570,6 @@ namespace BmwDeepObd
 
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                 {
-                    Android.App.NotificationChannel notificationChannelCommunication = _notificationManager.GetNotificationChannel(NotificationChannelCommunication);
-                    if (notificationChannelCommunication != null)
-                    {
-                        if (string.Compare(notificationChannelCommunication.Name ?? string.Empty,
-                                _context.Resources.GetString(Resource.String.notification_communication), StringComparison.Ordinal) != 0)
-                        {
-                            unregisterAll = true;
-                        }
-                    }
-
                     if (unregisterAll)
                     {
                         _notificationManager.DeleteNotificationChannel(NotificationChannelCommunication);
@@ -2623,7 +2613,7 @@ namespace BmwDeepObd
             }
             catch (Exception)
             {
-                return false;
+                return true;
             }
         }
 
