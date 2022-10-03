@@ -62,6 +62,7 @@ namespace BmwDeepObd
         private bool _storageAccessGranted;
         private bool _notificationGranted;
         private bool _googlePlayErrorShown;
+        private bool? _expansionFileDelivered;
         private bool _downloadStarted;
         private bool _activityActive;
 
@@ -287,6 +288,7 @@ namespace BmwDeepObd
             _storageAccessGranted = false;
             _notificationGranted = false;
             _googlePlayErrorShown = false;
+            _expansionFileDelivered = null;
 
             RegisterNotificationChannels();
         }
@@ -297,6 +299,7 @@ namespace BmwDeepObd
 
             _storageAccessRequested = false;
             _googlePlayErrorShown = false;
+            _expansionFileDelivered = null;
             if (IsAssetPresent(this))
             {
                 try
@@ -995,8 +998,12 @@ namespace BmwDeepObd
 
             if (ActivityCommon.IsNotificationsAccessRequired())
             {
-                RequestNotificationsPermissions();
-                return;
+                _expansionFileDelivered = AreExpansionFilesDelivered();
+                if (!_expansionFileDelivered.Value)
+                {
+                    RequestNotificationsPermissions();
+                    return;
+                }
             }
 
             if (_permissionsExternalStorage.All(permission => ContextCompat.CheckSelfPermission(this, permission) == Permission.Granted))
@@ -1123,7 +1130,7 @@ namespace BmwDeepObd
                 // delivered (presumably by Market) 
                 // For free titles, this is probably worth doing. (so no Market 
                 // request is necessary)
-                bool delivered = AreExpansionFilesDelivered();
+                bool delivered = _expansionFileDelivered.HasValue ? _expansionFileDelivered.Value : AreExpansionFilesDelivered();
                 if (delivered)
                 {
                     try
