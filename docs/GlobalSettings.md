@@ -64,6 +64,11 @@ This page allows to change some global app settings.
 * _ECU detection_ options:
   * _For BMW vehicles with DS2 protocol always scan all ECUs (slow)_: If the vehicle has been retrofitted the car database may be incorrect and not all ECUs may be detected.  
   This option allows to ignore the car database and all ECUs are scanned, which is very time consuming.
+* _File management_ options:  
+(These functions have to be used, if android prevents direct external access of the app folder.)
+  * _Copy directory to app_: Copy a directory from an external folder to the app folder.
+  * _Copy file or directory from app_: Copy a file or directory from the app folder to an external folder.
+  * _Delete file or directory from app_: Delete a file or directory from the app folder.
 * _Storage media_ options:
   * _Default or storage location_: If the default storage media for the ECU files is not appropriate, a different media could be selected here.  
   The application storage directory on the media will be always fixed to _de.holeschak.bmw_deep_obd_.
