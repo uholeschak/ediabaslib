@@ -2606,11 +2606,37 @@ namespace BmwDeepObd
             }
         }
 
+        public bool NotificationsEnabled()
+        {
+            try
+            {
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
+                {
+                    if (_notificationManager == null)
+                    {
+                        return false;
+                    }
+                    return _notificationManager.AreNotificationsEnabled();
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public bool ShowNotification(int id, int priority, string title, string message, bool update = false)
         {
             try
             {
                 if (_notificationManager == null || _context == null || id == ForegroundService.ServiceRunningNotificationId)
+                {
+                    return false;
+                }
+
+                if (!NotificationsEnabled())
                 {
                     return false;
                 }
