@@ -104,7 +104,6 @@ namespace BmwDeepObd
             this.context = ctx;
             this.label = applicationLabel;
             this.notificationManager = this.context.GetSystemService(Context.NotificationService) as Android.App.NotificationManager;
-            RegisterNotificationChannels();
             if (Build.VERSION.SdkInt >= BuildVersionCodes.IceCreamSandwich)
             {
                 this.customNotification = new V14CustomNotification();
@@ -112,59 +111,6 @@ namespace BmwDeepObd
         }
 
         #endregion
-
-        private bool RegisterNotificationChannels()
-        {
-            try
-            {
-                if (this.notificationManager == null)
-                {
-                    return false;
-                }
-
-                UnregisterNotificationChannels();
-
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                {
-                    Android.App.NotificationChannel notificationChannelDownload = new Android.App.NotificationChannel(
-                        NotificationChannelDownload, this.context.Resources.GetString(Resource.String.notification_download), Android.App.NotificationImportance.Low);
-                    this.notificationManager.CreateNotificationChannel(notificationChannelDownload);
-                }
-
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        private bool UnregisterNotificationChannels(bool unregisterAll = false)
-        {
-            try
-            {
-                if (this.notificationManager == null)
-                {
-                    return false;
-                }
-
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                {
-                    if (unregisterAll)
-                    {
-                        this.notificationManager.DeleteNotificationChannel(NotificationChannelDownload);
-                    }
-
-                    this.notificationManager.DeleteNotificationChannel("DownloaderNotificationChannelLow");
-                }
-
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
 
         private bool NotificationsEnabled()
         {
