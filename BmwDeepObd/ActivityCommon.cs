@@ -444,8 +444,8 @@ namespace BmwDeepObd
         public static readonly long TickResolMs = Stopwatch.Frequency / 1000;
 
         public const int RequestPermissionExternalStorage = 0;
-        public const int RequestPermissionBluetooth = 1;
-        public const int RequestPermissionNotifications = 2;
+        public const int RequestPermissionNotifications = 1;
+        public const int RequestPermissionBluetooth = 2;
         public static readonly string[] PermissionsBluetooth =
         {
             Android.Manifest.Permission.BluetoothScan,

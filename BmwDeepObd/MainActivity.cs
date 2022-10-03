@@ -417,6 +417,11 @@ namespace BmwDeepObd
             Android.Manifest.Permission.WriteExternalStorage,
         };
 
+        private readonly string[] _permissionsPostNotifications =
+        {
+            Android.Manifest.Permission.PostNotifications
+        };
+
         public const string ExtraShowTitle = "show_title";
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
         public static bool StoreXmlEditor = Build.VERSION.SdkInt >= BuildVersionCodes.LollipopMr1;
@@ -430,6 +435,7 @@ namespace BmwDeepObd
         private bool _activityActive;
         private bool _onResumeExecuted;
         private bool _storageAccessGranted;
+        private bool _notificationGranted;
         private bool _overlayPermissionRequested;
         private bool _overlayPermissionGranted;
         private bool _storageManagerPermissionRequested;
@@ -706,6 +712,7 @@ namespace BmwDeepObd
 
             _onResumeExecuted = false;
             _storageAccessGranted = false;
+            _notificationGranted = false;
             _overlayPermissionRequested = false;
             _overlayPermissionGranted = false;
             _activityCommon?.StartMtcService();
@@ -1749,6 +1756,16 @@ namespace BmwDeepObd
                             Finish();
                         }
                     };
+                    break;
+
+                case ActivityCommon.RequestPermissionNotifications:
+                    if (grantResults.Length > 0 && grantResults.All(permission => permission == Permission.Granted))
+                    {
+                        NotificationsPermissionGranted();
+                        break;
+                    }
+
+                    NotificationsPermissionGranted(false);
                     break;
 
                 case ActivityCommon.RequestPermissionBluetooth:
@@ -3152,6 +3169,12 @@ namespace BmwDeepObd
                 return;
             }
 
+            if (ActivityCommon.IsNotificationsAccessRequired())
+            {
+                RequestNotificationsPermissions();
+                return;
+            }
+
             if (_permissionsExternalStorage.All(permission => ContextCompat.CheckSelfPermission(this, permission) == Permission.Granted))
             {
                 StoragePermissionGranted();
@@ -3214,6 +3237,28 @@ namespace BmwDeepObd
                     messageView.MovementMethod = new LinkMovementMethod();
                 }
             }
+        }
+
+        private void RequestNotificationsPermissions()
+        {
+            if (_actvityDestroyed)
+            {
+                return;
+            }
+
+            if (_permissionsPostNotifications.All(permission => ContextCompat.CheckSelfPermission(this, permission) == Permission.Granted))
+            {
+                NotificationsPermissionGranted();
+                return;
+            }
+
+            ActivityCompat.RequestPermissions(this, _permissionsPostNotifications, ActivityCommon.RequestPermissionNotifications);
+        }
+
+        private void NotificationsPermissionGranted(bool granted = true)
+        {
+            _notificationGranted = granted;
+            StoragePermissionGranted();
         }
 
         private void UpdateDirectories()
