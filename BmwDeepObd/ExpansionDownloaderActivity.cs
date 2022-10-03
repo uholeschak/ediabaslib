@@ -141,6 +141,11 @@ namespace BmwDeepObd
         private View _useCellDataView;
 
         /// <summary>
+        /// The notification manager.
+        /// </summary>
+        private Android.App.NotificationManager _notificationManager;
+
+        /// <summary>
         /// Sets the state of the various controls based on the progressinfo 
         /// object sent from the downloader service.
         /// </summary>
@@ -282,6 +287,8 @@ namespace BmwDeepObd
             _storageAccessGranted = false;
             _notificationGranted = false;
             _googlePlayErrorShown = false;
+
+            RegisterNotificationChannels();
         }
 
         protected override void OnStart()
@@ -1042,6 +1049,64 @@ namespace BmwDeepObd
         {
             _notificationGranted = granted;
             StoragePermissionGranted();
+        }
+
+        private bool RegisterNotificationChannels()
+        {
+            try
+            {
+                if (_notificationManager == null)
+                {
+                    _notificationManager = GetSystemService(Context.NotificationService) as Android.App.NotificationManager;
+                }
+
+                if (_notificationManager == null)
+                {
+                    return false;
+                }
+
+                UnregisterNotificationChannels();
+
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                {
+                    Android.App.NotificationChannel notificationChannelDownload = new Android.App.NotificationChannel(
+                        CustomDownloadNotification.NotificationChannelDownload, Resources.GetString(Resource.String.notification_download), Android.App.NotificationImportance.Low);
+                    _notificationManager.CreateNotificationChannel(notificationChannelDownload);
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private bool UnregisterNotificationChannels(bool unregisterAll = false)
+        {
+            try
+            {
+                if (_notificationManager == null)
+                {
+                    return false;
+                }
+
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                {
+                    if (unregisterAll)
+                    {
+                        _notificationManager.DeleteNotificationChannel(CustomDownloadNotification.NotificationChannelDownload);
+                    }
+
+                    _notificationManager.DeleteNotificationChannel("DownloaderNotificationChannelLow");
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         private void StartDownload()
