@@ -1100,6 +1100,16 @@ namespace BmwDeepObd
 
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                 {
+                    Android.App.NotificationChannel notificationChannelDownload = _notificationManager.GetNotificationChannel(CustomDownloadNotification.NotificationChannelDownload);
+                    if (notificationChannelDownload != null)
+                    {
+                        if (string.Compare(notificationChannelDownload.Name ?? string.Empty,
+                                Resources.GetString(Resource.String.notification_download), StringComparison.Ordinal) != 0)
+                        {
+                            unregisterAll = true;
+                        }
+                    }
+
                     if (unregisterAll)
                     {
                         _notificationManager.DeleteNotificationChannel(CustomDownloadNotification.NotificationChannelDownload);
