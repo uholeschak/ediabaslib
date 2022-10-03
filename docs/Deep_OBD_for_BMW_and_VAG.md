@@ -11,6 +11,7 @@ Table of contents:
 	* [HowTo create Deep OBD for BMW and VAG pages](Page_specification.md)
 	* [Ediabas tool](EdiabasTool.md)
 	* [BMW coding](BMW_Coding.md)
+	* [Global settings](GlobalSettings.md)
 * [Log and trace files location](#log-and-trace-files-location)
 * [Background image](#background-image)
 
