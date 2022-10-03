@@ -1067,6 +1067,12 @@ namespace BmwDeepObd
         {
             Log.Debug(Tag,"DownloaderService.OnHandleIntent");
 
+            if (Control == DownloaderServiceControlAction.Paused && Status == DownloaderServiceStatus.PausedByApp)
+            {
+                Log.Debug(Tag, "LVLDL Downloader is paused by app");
+                return;
+            }
+
             IsServiceRunning = true;
             try
             {
