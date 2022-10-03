@@ -2631,6 +2631,7 @@ namespace BmwDeepObd
                     .SetPriority(priority)
                     .SetContentIntent(pendingIntent)
                     .SetAutoCancel(true)
+                    .SetCategory(NotificationCompat.CategoryMessage)
                     .Build();
 
                 _notificationManager.Notify(id, notification);

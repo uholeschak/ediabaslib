@@ -184,6 +184,7 @@ namespace BmwDeepObd
                     .SetContentIntent(BuildIntentToShowMainActivity())
                     .SetOngoing(true)
                     .AddAction(BuildStopServiceAction())
+                    .SetCategory(NotificationCompat.CategoryService)
                     .Build();
 
                 // Enlist this instance of the service as a foreground service
