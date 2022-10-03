@@ -1116,6 +1116,7 @@ namespace BmwDeepObd
                     }
 
                     _notificationManager.DeleteNotificationChannel("DownloaderNotificationChannelLow");
+                    _notificationManager.DeleteNotificationChannel("DownloaderNotificationChannelDefault");
                 }
 
                 return true;
