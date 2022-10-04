@@ -109,7 +109,7 @@ namespace BmwDeepObd
                 bool finished = false;
                 do
                 {
-                    Log.Info(Tag, string.Format("DownloadThread: initiating download for: {0} at: {1}", this.downloadInfo.FileName, this.downloadInfo.Uri));
+                    Log.Debug(Tag, string.Format("DownloadThread: initiating download for: {0} at: {1}", this.downloadInfo.FileName, this.downloadInfo.Uri));
                     Uri requestUri = new Uri(state.RequestUri);
                     int minute = (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
                     HttpWebRequest request = new HttpWebRequest(requestUri)
@@ -139,11 +139,11 @@ namespace BmwDeepObd
                     {
                         request.Abort();
                     }
-                    Log.Info(Tag, string.Format("DownloadThread: download for: {0} finished: {1}", this.downloadInfo.FileName, finished));
+                    Log.Debug(Tag, string.Format("DownloadThread: download for: {0} finished: {1}", this.downloadInfo.FileName, finished));
                 }
                 while (!finished);
 
-                Log.Info(Tag, string.Format("DownloadThread : download completed for: {0} at: {1}", this.downloadInfo.FileName, this.downloadInfo.Uri));
+                Log.Debug(Tag, string.Format("DownloadThread : download completed for: {0} at: {1}", this.downloadInfo.FileName, this.downloadInfo.Uri));
 
                 this.FinalizeDestinationFile(state);
                 finalStatus = DownloaderServiceStatus.Success;
@@ -152,7 +152,7 @@ namespace BmwDeepObd
             {
                 // remove the cause before printing, in case it contains PII
 
-                Log.Info(Tag, string.Format("DownloadThread: Aborting request for download {0}: {1}", this.downloadInfo.FileName, error.Message));
+                Log.Error(Tag, string.Format("DownloadThread: Aborting request for download {0}: {1}", this.downloadInfo.FileName, error.Message));
                 finalStatus = error.FinalStatus;
             }
             catch (Exception ex)
