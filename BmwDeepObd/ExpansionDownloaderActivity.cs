@@ -144,7 +144,7 @@ namespace BmwDeepObd
         /// <summary>
         /// The notification manager.
         /// </summary>
-        private Android.App.NotificationManager _notificationManager;
+        private NotificationManagerCompat _notificationManager;
 
         /// <summary>
         /// Sets the state of the various controls based on the progressinfo 
@@ -1064,7 +1064,7 @@ namespace BmwDeepObd
             {
                 if (_notificationManager == null)
                 {
-                    _notificationManager = GetSystemService(Context.NotificationService) as Android.App.NotificationManager;
+                    _notificationManager = NotificationManagerCompat.From(this);
                 }
 
                 if (_notificationManager == null)

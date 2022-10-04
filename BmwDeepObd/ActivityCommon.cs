@@ -651,6 +651,7 @@ namespace BmwDeepObd
         private readonly UsbManager _usbManager;
         private readonly LocationManager _locationManager;
         private readonly Android.App.NotificationManager _notificationManager;
+        private readonly NotificationManagerCompat _notificationManagerCompat;
         private readonly PowerManager _powerManager;
         private readonly PackageManager _packageManager;
         private readonly Android.App.ActivityManager _activityManager;
@@ -1114,8 +1115,9 @@ namespace BmwDeepObd
 
         public LocationManager LocationManager => _locationManager;
 
-        // ReSharper disable once ConvertToAutoProperty
         public Android.App.NotificationManager NotificationManager => _notificationManager;
+
+        public NotificationManagerCompat NotificationManagerCompat => _notificationManagerCompat;
 
         public PowerManager PowerManager => _powerManager;
 
@@ -1170,6 +1172,7 @@ namespace BmwDeepObd
             _usbManager = context?.GetSystemService(Context.UsbService) as UsbManager;
             _locationManager = context?.GetSystemService(Context.LocationService) as LocationManager;
             _notificationManager = context?.GetSystemService(Context.NotificationService) as Android.App.NotificationManager;
+            _notificationManagerCompat = NotificationManagerCompat.From(context);
             RegisterNotificationChannels();
             _powerManager = context?.GetSystemService(Context.PowerService) as PowerManager;
             if (_powerManager != null)
@@ -2508,7 +2511,7 @@ namespace BmwDeepObd
         {
             try
             {
-                if (_notificationManager == null || _context == null)
+                if (_notificationManagerCompat == null || _context == null)
                 {
                     return false;
                 }
@@ -2519,36 +2522,36 @@ namespace BmwDeepObd
                 {
                     Android.App.NotificationChannel notificationChannelCommunication =
                         new Android.App.NotificationChannel(NotificationChannelCommunication, _context.Resources.GetString(Resource.String.notification_communication), Android.App.NotificationImportance.Min);
-                    _notificationManager.CreateNotificationChannel(notificationChannelCommunication);
+                    _notificationManagerCompat.CreateNotificationChannel(notificationChannelCommunication);
 
                     Android.App.NotificationChannelGroup notificationGroupCustom =
                         new Android.App.NotificationChannelGroup(NotificationChannelGroupCustom, _context.Resources.GetString(Resource.String.notification_group_custom));
-                    _notificationManager.CreateNotificationChannelGroup(notificationGroupCustom);
+                    _notificationManagerCompat.CreateNotificationChannelGroup(notificationGroupCustom);
 
                     Android.App.NotificationChannel notificationChannelCustomMin =
                         new Android.App.NotificationChannel(NotificationChannelCustomMin, _context.Resources.GetString(Resource.String.notification_custom_min), Android.App.NotificationImportance.Min);
                     notificationChannelCustomMin.Group = NotificationChannelGroupCustom;
-                    _notificationManager.CreateNotificationChannel(notificationChannelCustomMin);
+                    _notificationManagerCompat.CreateNotificationChannel(notificationChannelCustomMin);
 
                     Android.App.NotificationChannel notificationChannelCustomLow =
                         new Android.App.NotificationChannel(NotificationChannelCustomLow, _context.Resources.GetString(Resource.String.notification_custom_low), Android.App.NotificationImportance.Low);
                     notificationChannelCustomLow.Group = NotificationChannelGroupCustom;
-                    _notificationManager.CreateNotificationChannel(notificationChannelCustomLow);
+                    _notificationManagerCompat.CreateNotificationChannel(notificationChannelCustomLow);
 
                     Android.App.NotificationChannel notificationChannelCustomDefault =
                         new Android.App.NotificationChannel(NotificationChannelCustomDefault, _context.Resources.GetString(Resource.String.notification_custom_default), Android.App.NotificationImportance.Default);
                     notificationChannelCustomDefault.Group = NotificationChannelGroupCustom;
-                    _notificationManager.CreateNotificationChannel(notificationChannelCustomDefault);
+                    _notificationManagerCompat.CreateNotificationChannel(notificationChannelCustomDefault);
 
                     Android.App.NotificationChannel notificationChannelCustomHigh =
                         new Android.App.NotificationChannel(NotificationChannelCustomHigh, _context.Resources.GetString(Resource.String.notification_custom_high), Android.App.NotificationImportance.High);
                     notificationChannelCustomHigh.Group = NotificationChannelGroupCustom;
-                    _notificationManager.CreateNotificationChannel(notificationChannelCustomHigh);
+                    _notificationManagerCompat.CreateNotificationChannel(notificationChannelCustomHigh);
 
                     Android.App.NotificationChannel notificationChannelCustomMax =
                         new Android.App.NotificationChannel(NotificationChannelCustomMax, _context.Resources.GetString(Resource.String.notification_custom_max), Android.App.NotificationImportance.Max);
                     notificationChannelCustomMax.Group = NotificationChannelGroupCustom;
-                    _notificationManager.CreateNotificationChannel(notificationChannelCustomMax);
+                    _notificationManagerCompat.CreateNotificationChannel(notificationChannelCustomMax);
                 }
 
                 return true;
@@ -2563,7 +2566,7 @@ namespace BmwDeepObd
         {
             try
             {
-                if (_notificationManager == null)
+                if (_notificationManagerCompat == null)
                 {
                     return false;
                 }
@@ -2572,20 +2575,20 @@ namespace BmwDeepObd
                 {
                     if (unregisterAll)
                     {
-                        _notificationManager.DeleteNotificationChannel(NotificationChannelCommunication);
-                        _notificationManager.DeleteNotificationChannel(NotificationChannelCustomMin);
-                        _notificationManager.DeleteNotificationChannel(NotificationChannelCustomLow);
-                        _notificationManager.DeleteNotificationChannel(NotificationChannelCustomDefault);
-                        _notificationManager.DeleteNotificationChannel(NotificationChannelCustomHigh);
-                        _notificationManager.DeleteNotificationChannel(NotificationChannelCustomMax);
-                        _notificationManager.DeleteNotificationChannelGroup(NotificationChannelGroupCustom);
+                        _notificationManagerCompat.DeleteNotificationChannel(NotificationChannelCommunication);
+                        _notificationManagerCompat.DeleteNotificationChannel(NotificationChannelCustomMin);
+                        _notificationManagerCompat.DeleteNotificationChannel(NotificationChannelCustomLow);
+                        _notificationManagerCompat.DeleteNotificationChannel(NotificationChannelCustomDefault);
+                        _notificationManagerCompat.DeleteNotificationChannel(NotificationChannelCustomHigh);
+                        _notificationManagerCompat.DeleteNotificationChannel(NotificationChannelCustomMax);
+                        _notificationManagerCompat.DeleteNotificationChannelGroup(NotificationChannelGroupCustom);
                     }
 
-                    _notificationManager.DeleteNotificationChannel("NotificationChannelMin");
-                    _notificationManager.DeleteNotificationChannel("NotificationChannelLow");
-                    _notificationManager.DeleteNotificationChannel("NotificationChannelDefault");
-                    _notificationManager.DeleteNotificationChannel("NotificationChannelHigh");
-                    _notificationManager.DeleteNotificationChannel("NotificationChannelMax");
+                    _notificationManagerCompat.DeleteNotificationChannel("NotificationChannelMin");
+                    _notificationManagerCompat.DeleteNotificationChannel("NotificationChannelLow");
+                    _notificationManagerCompat.DeleteNotificationChannel("NotificationChannelDefault");
+                    _notificationManagerCompat.DeleteNotificationChannel("NotificationChannelHigh");
+                    _notificationManagerCompat.DeleteNotificationChannel("NotificationChannelMax");
                 }
 
                 return true;
@@ -2602,11 +2605,11 @@ namespace BmwDeepObd
             {
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
                 {
-                    if (_notificationManager == null)
+                    if (_notificationManagerCompat == null)
                     {
                         return false;
                     }
-                    return _notificationManager.AreNotificationsEnabled();
+                    return _notificationManagerCompat.AreNotificationsEnabled();
                 }
 
                 return true;
@@ -2621,7 +2624,7 @@ namespace BmwDeepObd
         {
             try
             {
-                if (_notificationManager == null || _context == null || id == ForegroundService.ServiceRunningNotificationId)
+                if (_notificationManagerCompat == null || _context == null || id == ForegroundService.ServiceRunningNotificationId)
                 {
                     return false;
                 }
@@ -2633,12 +2636,15 @@ namespace BmwDeepObd
 
                 if (!update)
                 {
-                    Android.Service.Notification.StatusBarNotification[] notifications = _notificationManager.GetActiveNotifications();
-                    foreach (Android.Service.Notification.StatusBarNotification statusBarNotification in notifications)
+                    Android.Service.Notification.StatusBarNotification[] notifications = _notificationManager?.GetActiveNotifications();
+                    if (notifications != null)
                     {
-                        if (statusBarNotification.Id == id)
+                        foreach (Android.Service.Notification.StatusBarNotification statusBarNotification in notifications)
                         {
-                            return false;
+                            if (statusBarNotification.Id == id)
+                            {
+                                return false;
+                            }
                         }
                     }
                 }
@@ -2683,7 +2689,7 @@ namespace BmwDeepObd
                     .SetCategory(NotificationCompat.CategoryMessage)
                     .Build();
 
-                _notificationManager.Notify(id, notification);
+                _notificationManagerCompat.Notify(id, notification);
 
                 return true;
             }
@@ -2697,12 +2703,12 @@ namespace BmwDeepObd
         {
             try
             {
-                if (_notificationManager == null || _context == null || id == ForegroundService.ServiceRunningNotificationId)
+                if (_notificationManagerCompat == null || _context == null || id == ForegroundService.ServiceRunningNotificationId)
                 {
                     return false;
                 }
 
-                _notificationManager.Cancel(id);
+                _notificationManagerCompat.Cancel(id);
 
                 return true;
             }

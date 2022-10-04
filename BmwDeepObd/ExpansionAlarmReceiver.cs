@@ -1,7 +1,6 @@
 ﻿using Android.Content;
 using Android.Content.PM;
 using Android.Util;
-using Google.Android.Vending.Expansion.Downloader;
 
 namespace BmwDeepObd
 {

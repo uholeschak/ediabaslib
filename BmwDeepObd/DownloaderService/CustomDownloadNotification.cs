@@ -14,6 +14,7 @@ using Android.OS;
 
 using Java.Lang;
 using Google.Android.Vending.Expansion.Downloader;
+using AndroidX.Core.App;
 
 namespace BmwDeepObd
 {
@@ -53,7 +54,7 @@ namespace BmwDeepObd
         /// <summary>
         /// The m notification manager.
         /// </summary>
-        private readonly Android.App.NotificationManager notificationManager;
+        private readonly NotificationManagerCompat notificationManager;
 
         /// <summary>
         /// The m client proxy.
@@ -103,7 +104,11 @@ namespace BmwDeepObd
             this.clientState = (DownloaderClientState)(-1);
             this.context = ctx;
             this.label = applicationLabel;
-            this.notificationManager = this.context.GetSystemService(Context.NotificationService) as Android.App.NotificationManager;
+            this.notificationManager = NotificationManagerCompat.From(this.context);
+            if (this.notificationManager != null)
+            {
+                this.notificationManager.Cancel(NotificationId);
+            }
             if (Build.VERSION.SdkInt >= BuildVersionCodes.IceCreamSandwich)
             {
                 this.customNotification = new V14CustomNotification();
