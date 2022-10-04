@@ -1072,7 +1072,7 @@ namespace BmwDeepObd
 
             if (Control == DownloaderServiceControlAction.Paused && Status == DownloaderServiceStatus.PausedByApp)
             {
-                Log.Debug(Tag, "LVLDL Downloader is paused by app");
+                Log.Debug(Tag, "DownloaderService Downloader is paused by app");
                 return;
             }
 
@@ -1099,7 +1099,7 @@ namespace BmwDeepObd
                 }
                 else
                 {
-                    Log.Debug(Tag,"LVLDL Downloader started in bad state without notification intent.");
+                    Log.Debug(Tag, "DownloaderService Downloader started in bad state without notification intent.");
                     return;
                 }
 
@@ -1168,7 +1168,7 @@ namespace BmwDeepObd
                 // loop through all downloads and fetch them
                 foreach (DownloadInfo info in infos)
                 {
-                    Log.Debug(Tag,"Starting download of " + info.FileName);
+                    Log.Debug(Tag,string.Format("DownloadThread: Starting download of: {0}", info.FileName));
 
                     long startingCount = info.CurrentBytes;
 
@@ -1180,6 +1180,8 @@ namespace BmwDeepObd
                         dt.Run();
                         this.CancelAlarms();
                     }
+
+                    Log.Debug(Tag, string.Format("DownloadThread: Done download of: {0}", info.FileName));
 
                     db.UpdateFromDb(info);
                     bool setWakeWatchdog = false;
@@ -1297,7 +1299,7 @@ namespace BmwDeepObd
                 Android.App.AlarmManager alarms = GetSystemService(AlarmService) as Android.App.AlarmManager;
                 if (alarms == null)
                 {
-                    Log.Debug(Tag,"LVLDL couldn't get alarm manager");
+                    Log.Debug(Tag, "DownloaderService couldn't get alarm manager");
                     return;
                 }
 
@@ -1371,7 +1373,7 @@ namespace BmwDeepObd
 
             if (this.connectivityManager == null)
             {
-                Log.Debug(Tag,"LVLDL couldn't get connectivity manager to poll network state");
+                Log.Debug(Tag, "DownloaderService couldn't get connectivity manager to poll network state");
             }
             else
             {
@@ -1401,11 +1403,11 @@ namespace BmwDeepObd
             Android.App.AlarmManager alarms = GetSystemService(AlarmService) as Android.App.AlarmManager;
             if (alarms == null)
             {
-                Log.Debug(Tag,"LVLDL couldn't get alarm manager");
+                Log.Debug(Tag, "DownloaderService couldn't get alarm manager");
                 return;
             }
 
-            Log.Debug(Tag,"LVLDL scheduling retry in {0} ms", wakeUp);
+            Log.Debug(Tag, "DownloaderService scheduling retry in {0} ms", wakeUp);
 
             var intent = new Android.Content.Intent(DownloaderServiceAction.ActionRetry);
             intent.PutExtra(DownloaderServiceExtras.PendingIntent, this.pPendingIntent);
@@ -1568,9 +1570,9 @@ namespace BmwDeepObd
 
             if (this.stateChanged)
             {
-                Log.Debug(Tag, "LVLDL Network state changed: ");
-                Log.Debug(Tag, "LVLDL Starting State: {0}", tempState);
-                Log.Debug(Tag, "LVLDL Ending State: {0}", this.networkState);
+                Log.Debug(Tag, "DownloaderService Network state changed: ");
+                Log.Debug(Tag, "DownloaderService Starting State: {0}", tempState);
+                Log.Debug(Tag, "DownloaderService Ending State: {0}", this.networkState);
 
                 if (IsServiceRunning)
                 {
