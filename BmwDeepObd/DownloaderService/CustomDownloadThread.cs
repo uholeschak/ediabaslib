@@ -109,7 +109,7 @@ namespace BmwDeepObd
                 bool finished = false;
                 do
                 {
-                    Log.Debug(Tag, "DownloadThread : initiating download for " + this.downloadInfo.FileName + " at " + this.downloadInfo.Uri);
+                    Log.Debug(Tag, string.Format("DownloadThread : initiating download for: {0} at: {1}", this.downloadInfo.FileName, this.downloadInfo.Uri));
                     Uri requestUri = new Uri(state.RequestUri);
                     int minute = (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
                     HttpWebRequest request = new HttpWebRequest(requestUri)
@@ -132,18 +132,18 @@ namespace BmwDeepObd
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(Tag, string.Format("An exception in the download thread: {0}", ex.Message));
+                        Log.Error(Tag, string.Format("DownloadThread: Exception: {0}", ex.Message));
                         throw;
                     }
                     finally
                     {
                         request.Abort();
                     }
+                    Log.Debug(Tag, string.Format("DownloadThread: download for: {0} finished: {1}", this.downloadInfo.FileName, finished));
                 }
                 while (!finished);
 
-                Log.Debug(Tag, "DownloadThread : download completed for " + this.downloadInfo.FileName);
-                Log.Debug(Tag, "DownloadThread :   at " + this.downloadInfo.Uri);
+                Log.Debug(Tag, string.Format("DownloadThread : download completed for: {0} at: {1}", this.downloadInfo.FileName, this.downloadInfo.Uri));
 
                 this.FinalizeDestinationFile(state);
                 finalStatus = DownloaderServiceStatus.Success;
@@ -152,13 +152,13 @@ namespace BmwDeepObd
             {
                 // remove the cause before printing, in case it contains PII
 
-                Log.Debug(Tag, string.Format("LVLDL Aborting request for download {0}: {1}", this.downloadInfo.FileName, error.Message));
+                Log.Debug(Tag, string.Format("DownloadThread: Aborting request for download {0}: {1}", this.downloadInfo.FileName, error.Message));
                 finalStatus = error.FinalStatus;
             }
             catch (Exception ex)
             {
                 // sometimes the socket code throws unchecked exceptions
-                Log.Debug(Tag, string.Format("LVLDL Exception for {0}: {1}", this.downloadInfo.FileName, ex.Message));
+                Log.Debug(Tag, string.Format("DownloadThread: Exception for {0}: {1}", this.downloadInfo.FileName, ex.Message));
                 finalStatus = DownloaderServiceStatus.UnknownError;
                 if (ex is WebException webException)
                 {
@@ -175,6 +175,7 @@ namespace BmwDeepObd
                     wakeLock.Release();
                 }
 
+                Log.Debug(Tag, string.Format("DownloadThread: Finished for {0}", this.downloadInfo.FileName));
                 CleanupDestination(state, finalStatus);
                 this.NotifyDownloadCompleted(finalStatus, state.CountRetry, state.RetryAfter, state.RedirectCount, state.GotData);
             }
