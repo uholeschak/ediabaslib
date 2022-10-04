@@ -1177,7 +1177,7 @@ namespace BmwDeepObd
                         CustomDownloadThread dt = new CustomDownloadThread(info, this, this.downloadNotification);
                         this.CancelAlarms();
                         this.ScheduleAlarm(ActiveThreadWatchdog);
-                        dt.Run();
+                        new Java.Lang.Thread(dt).Run();
                         this.CancelAlarms();
                     }
 
