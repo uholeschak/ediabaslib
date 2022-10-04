@@ -110,10 +110,7 @@ namespace BmwDeepObd
 
             builder.SetSmallIcon(this.Icon != 0 ? this.Icon : Android.Resource.Drawable.StatSysDownload);
             builder.SetOngoing(Ongoing);
-            if (!Ongoing)
-            {
-                builder.SetAutoCancel(true);
-            }
+            builder.SetAutoCancel(true);
             builder.SetTicker(this.Ticker);
             builder.SetStyle(new NotificationCompat.BigTextStyle().
                 BigText(contentInfo + "\r\n" + Ticker).

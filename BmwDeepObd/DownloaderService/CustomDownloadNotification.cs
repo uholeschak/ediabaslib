@@ -29,7 +29,7 @@ namespace BmwDeepObd
         /// <summary>
         /// The notification id.
         /// </summary>
-        private static readonly int NotificationId = typeof(CustomDownloadNotification).GetHashCode();
+        public static readonly int NotificationId = typeof(CustomDownloadNotification).GetHashCode();
         public const string NotificationChannelDownload = "DownloaderNotificationChannel";
 
         #endregion
