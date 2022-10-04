@@ -827,6 +827,7 @@ namespace BmwDeepObd
         /// </returns>
         public override IBinder OnBind(Android.Content.Intent intent)
         {
+            Log.Info(Tag, "DownloaderService.OnBind");
             return this.serviceMessenger.Binder;
         }
 
@@ -855,6 +856,7 @@ namespace BmwDeepObd
         /// </summary>
         public override void OnCreate()
         {
+            Log.Info(Tag, "DownloaderService.OnCreate");
             base.OnCreate();
             try
             {
@@ -877,7 +879,7 @@ namespace BmwDeepObd
             }
             catch (Exception e)
             {
-                Log.Error(Tag, "OnCreate Exception: {0}", e.Message);
+                Log.Error(Tag, string.Format("OnCreate Exception: {0}", e.Message));
             }
         }
 
@@ -886,6 +888,7 @@ namespace BmwDeepObd
         /// </summary>
         public override void OnDestroy()
         {
+            Log.Info(Tag, "DownloaderService.OnDestroy");
             if (this.connectionReceiver != null)
             {
                 try
@@ -1272,6 +1275,7 @@ namespace BmwDeepObd
         /// </returns>
         protected override bool ShouldStop()
         {
+            Log.Info(Tag, "DownloaderService.ShouldStop");
             // the database automatically reads the metadata for version code 
             // and download status when the instance is created
             DownloadsDB db = DownloadsDB.GetDB(this);
