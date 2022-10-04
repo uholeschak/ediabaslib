@@ -109,7 +109,7 @@ namespace BmwDeepObd
                 bool finished = false;
                 do
                 {
-                    Log.Debug(Tag, string.Format("DownloadThread : initiating download for: {0} at: {1}", this.downloadInfo.FileName, this.downloadInfo.Uri));
+                    Log.Info(Tag, string.Format("DownloadThread: initiating download for: {0} at: {1}", this.downloadInfo.FileName, this.downloadInfo.Uri));
                     Uri requestUri = new Uri(state.RequestUri);
                     int minute = (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
                     HttpWebRequest request = new HttpWebRequest(requestUri)
@@ -139,11 +139,11 @@ namespace BmwDeepObd
                     {
                         request.Abort();
                     }
-                    Log.Debug(Tag, string.Format("DownloadThread: download for: {0} finished: {1}", this.downloadInfo.FileName, finished));
+                    Log.Info(Tag, string.Format("DownloadThread: download for: {0} finished: {1}", this.downloadInfo.FileName, finished));
                 }
                 while (!finished);
 
-                Log.Debug(Tag, string.Format("DownloadThread : download completed for: {0} at: {1}", this.downloadInfo.FileName, this.downloadInfo.Uri));
+                Log.Info(Tag, string.Format("DownloadThread : download completed for: {0} at: {1}", this.downloadInfo.FileName, this.downloadInfo.Uri));
 
                 this.FinalizeDestinationFile(state);
                 finalStatus = DownloaderServiceStatus.Success;
@@ -152,13 +152,13 @@ namespace BmwDeepObd
             {
                 // remove the cause before printing, in case it contains PII
 
-                Log.Debug(Tag, string.Format("DownloadThread: Aborting request for download {0}: {1}", this.downloadInfo.FileName, error.Message));
+                Log.Info(Tag, string.Format("DownloadThread: Aborting request for download {0}: {1}", this.downloadInfo.FileName, error.Message));
                 finalStatus = error.FinalStatus;
             }
             catch (Exception ex)
             {
                 // sometimes the socket code throws unchecked exceptions
-                Log.Debug(Tag, string.Format("DownloadThread: Exception for {0}: {1}", this.downloadInfo.FileName, ex.Message));
+                Log.Error(Tag, string.Format("DownloadThread: Exception for {0}: {1}", this.downloadInfo.FileName, ex.Message));
                 finalStatus = DownloaderServiceStatus.UnknownError;
                 if (ex is WebException webException)
                 {
@@ -175,7 +175,7 @@ namespace BmwDeepObd
                     wakeLock.Release();
                 }
 
-                Log.Debug(Tag, string.Format("DownloadThread: Finished for {0}", this.downloadInfo.FileName));
+                Log.Info(Tag, string.Format("DownloadThread: Finished for {0}", this.downloadInfo.FileName));
                 CleanupDestination(state, finalStatus);
                 this.NotifyDownloadCompleted(finalStatus, state.CountRetry, state.RetryAfter, state.RedirectCount, state.GotData);
             }
@@ -489,7 +489,7 @@ namespace BmwDeepObd
             HttpWebResponse response = this.SendRequest(state, request);
             this.HandleExceptionalStatus(state, innerState, response);
 
-            Log.Info(Tag, string.Format("DownloadThread : received response for {0}", this.downloadInfo.Uri));
+            Log.Info(Tag, string.Format("DownloadThread: received response for {0}", this.downloadInfo.Uri));
 
             this.ProcessResponseHeaders(state, innerState, response);
             Stream entityStream = this.OpenResponseEntity(state, response);
@@ -553,7 +553,7 @@ namespace BmwDeepObd
                 return DownloaderServiceStatus.WaitingToRetry;
             }
 
-            Log.Error(Tag, string.Format("LVLDL reached max retries for {0}", this.downloadInfo.FailedCount));
+            Log.Error(Tag, string.Format("DownloadThread: reached max retries for {0}", this.downloadInfo.FailedCount));
 
             return DownloaderServiceStatus.HttpDataError;
         }
@@ -570,7 +570,7 @@ namespace BmwDeepObd
         /// </param>
         private void HandleEndOfStream(State state, InnerState innerState)
         {
-            Log.Info(Tag, string.Format("HandleEndOfStream State={0}, InnerState={1}", state, innerState));
+            Log.Info(Tag, string.Format("DownloadThread: HandleEndOfStream State={0}, InnerState={1}", state, innerState));
 
             this.downloadInfo.CurrentBytes = innerState.BytesSoFar;
 
@@ -661,7 +661,7 @@ namespace BmwDeepObd
         /// </param>
         private void HandleRedirect(State state, HttpWebResponse response, HttpStatusCode statusCode)
         {
-            Log.Info(Tag, string.Format("got HTTP redirect {0}", statusCode));
+            Log.Info(Tag, string.Format("DownloadThread: got HTTP redirect {0}", statusCode));
 
             if (state.RedirectCount >= CustomDownloaderService.MaxRedirects)
             {
@@ -674,7 +674,7 @@ namespace BmwDeepObd
                 return;
             }
 
-            Log.Info(Tag, string.Format("Redirecting to: {0}", header));
+            Log.Info(Tag, string.Format("DownloadThread: Redirecting to: {0}", header));
 
             string newUri;
             try
@@ -683,13 +683,13 @@ namespace BmwDeepObd
             }
             catch (Java.Net.URISyntaxException)
             {
-                Log.Error(Tag, string.Format("Couldn't resolve redirect URI {0} for {1}", header, this.downloadInfo.Uri));
+                Log.Error(Tag, string.Format("DownloadThread: Couldn't resolve redirect URI {0} for {1}", header, this.downloadInfo.Uri));
                 throw new StopRequestException(DownloaderServiceStatus.HttpDataError, "Couldn't resolve redirect URI");
             }
 
             if (string.IsNullOrEmpty(newUri))
             {
-                Log.Error(Tag, string.Format("Empty redirect URI {0} for {1}", header, this.downloadInfo.Uri));
+                Log.Error(Tag, string.Format("DownloadThread: Empty redirect URI {0} for {1}", header, this.downloadInfo.Uri));
                 throw new StopRequestException(DownloaderServiceStatus.HttpDataError, "Couldn't resolve redirect URI");
             }
 
@@ -710,7 +710,7 @@ namespace BmwDeepObd
         private void LogNetworkState()
         {
             string network = this.downloaderService.GetNetworkAvailabilityState(db) == DownloaderServiceNetworkAvailability.Ok ? "Up" : "Down";
-            Log.Info(Tag, string.Format("Network is {0}.", network));
+            Log.Info(Tag, string.Format("DownloadThread: Network is {0}.", network));
         }
 
         /// <summary>
@@ -733,7 +733,7 @@ namespace BmwDeepObd
         /// </param>
         private void NotifyDownloadCompleted(DownloaderServiceStatus status, bool countRetry, int retryAfter, int redirectCount, bool gotData)
         {
-            Log.Info(Tag, string.Format("NotifyDownloadCompleted Status={0}", status));
+            Log.Info(Tag, string.Format("DownloadThread: NotifyDownloadCompleted Status={0}", status));
             this.UpdateDownloadDatabase(status, countRetry, retryAfter, redirectCount, gotData);
             if (status.IsCompleted())
             {
@@ -813,7 +813,7 @@ namespace BmwDeepObd
                     throw new StopRequestException(DownloaderServiceStatus.FileError, string.Format("while opening destination file: {0}", ex.Message), ex);
                 }
 
-                Log.Info(Tag, string.Format("DownloadThread : writing {0} to {1}", this.downloadInfo.Uri, state.Filename));
+                Log.Info(Tag, string.Format("DownloadThread: writing {0} to {1}", this.downloadInfo.Uri, state.Filename));
 
                 this.UpdateDatabaseFromHeaders(innerState);
 
@@ -922,7 +922,7 @@ namespace BmwDeepObd
                     // we're most likely on a bad wifi connection -- we should probably
                     // also look at the mime type --- but the size mismatch is enough
                     // to tell us that something is wrong here
-                    Log.Error(Tag, string.Format("LVLDL Incorrect file size delivered: Length={0} Total={1}", contentLength, this.downloadInfo.TotalBytes));
+                    Log.Error(Tag, string.Format("DownloadThread: Incorrect file size delivered: Length={0} Total={1}", contentLength, this.downloadInfo.TotalBytes));
                 }
             }
 
@@ -966,8 +966,8 @@ namespace BmwDeepObd
 
                 long totalBytesSoFar = innerState.BytesThisSession + this.downloaderService.BytesSoFar;
 
-                Log.Info(Tag, string.Format("DownloadThread : downloaded {0} out of {1}", this.downloadInfo.CurrentBytes, this.downloadInfo.TotalBytes));
-                Log.Info(Tag, string.Format("DownloadThread :      total {0} out of {1}", totalBytesSoFar, this.downloaderService.TotalLength));
+                Log.Info(Tag, string.Format("DownloadThread: downloaded {0} out of {1}", this.downloadInfo.CurrentBytes, this.downloadInfo.TotalBytes));
+                Log.Info(Tag, string.Format("DownloadThread:      total {0} out of {1}", totalBytesSoFar, this.downloaderService.TotalLength));
 
                 this.downloaderService.NotifyUpdateBytes(totalBytesSoFar);
             }
@@ -1230,7 +1230,7 @@ namespace BmwDeepObd
             /// </summary>
             public RetryDownloadException() : base("Retrying download...")
             {
-                Log.Info(Tag, string.Format("RetryDownloadException: {0}", this.Message));
+                Log.Info(Tag, string.Format("DownloadThread: RetryDownloadException: {0}", this.Message));
             }
 
             #endregion
@@ -1329,7 +1329,7 @@ namespace BmwDeepObd
             public StopRequestException(DownloaderServiceStatus finalStatus, string message, Exception throwable = null)
                 : base(message, throwable)
             {
-                Log.Error(Tag, string.Format("StopRequestException {0}", message ?? string.Empty));
+                Log.Error(Tag, string.Format("DownloadThread: StopRequestException {0}", message ?? string.Empty));
                 this.FinalStatus = finalStatus;
             }
 
