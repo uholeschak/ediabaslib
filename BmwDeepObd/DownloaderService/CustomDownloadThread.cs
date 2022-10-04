@@ -23,7 +23,7 @@ namespace BmwDeepObd
     /// <summary>
     /// The download thread.
     /// </summary>
-    public class CustomDownloadThread
+    public class CustomDownloadThread : Java.Lang.Object, Java.Lang.IRunnable
     {
         private static readonly string Tag = typeof(CustomDownloadThread).FullName;
 
@@ -92,7 +92,7 @@ namespace BmwDeepObd
         /// <summary>
         /// Executes the download in a separate thread
         /// </summary>
-        internal void Run()
+        public void Run()
         {
             Android.OS.Process.SetThreadPriority(Android.OS.ThreadPriority.Background);
 
