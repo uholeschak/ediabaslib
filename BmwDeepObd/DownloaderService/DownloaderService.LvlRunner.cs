@@ -9,8 +9,6 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System.Diagnostics;
-
 using Android.App;
 using Android.Content.PM;
 using Android.Provider;
@@ -18,7 +16,6 @@ using Android.Util;
 using AndroidX.Core.Content.PM;
 using Google.Android.Vending.Expansion.Downloader;
 using Google.Android.Vending.Licensing;
-using Java.Lang;
 
 namespace BmwDeepObd
 {
@@ -30,7 +27,7 @@ namespace BmwDeepObd
         /// <summary>
         /// The lvl runnable.
         /// </summary>
-        private class LvlRunnable : Object, IRunnable
+        private class LvlRunnable : Java.Lang.Object, Java.Lang.IRunnable
         {
             #region Fields
 
@@ -94,7 +91,7 @@ namespace BmwDeepObd
             /// <summary>
             /// The apk license checker callback.
             /// </summary>
-            private class ApkLicenseCheckerCallback : Object, ILicenseCheckerCallback
+            private class ApkLicenseCheckerCallback : Java.Lang.Object, ILicenseCheckerCallback
             {
                 #region Fields
 
@@ -235,7 +232,7 @@ namespace BmwDeepObd
                                 case DownloaderServiceRequirement.LvlCheckRequired: // DANGER WILL ROBINSON!
                                     Log.Error(Tag, "In LVL checking loop!");
                                     this.Downloader.downloadNotification.OnDownloadStateChanged(DownloaderClientState.FailedUnlicensed);
-                                    throw new RuntimeException("Error with LVL checking and database integrity");
+                                    throw new Java.Lang.RuntimeException("Error with LVL checking and database integrity");
 
                                 case DownloaderServiceRequirement.DownloadRequired:
                                     // do nothing: the download will notify the application when things are done
@@ -245,15 +242,15 @@ namespace BmwDeepObd
                         catch (PackageManager.NameNotFoundException e1)
                         {
                             e1.PrintStackTrace();
-                            throw new RuntimeException("Error with getting information from package name");
+                            throw new Java.Lang.RuntimeException("Error with getting information from package name");
                         }
-                        catch (Exception ex)
+                        catch (Java.Lang.Exception ex)
                         {
                             Log.Error(Tag, string.Format("LVL Update Exception: {0}", ex.Message));
                             throw;
                         }
                     }
-                    catch (Exception ex)
+                    catch (Java.Lang.Exception ex)
                     {
                         Log.Error(Tag, string.Format("Allow Exception: {0}", ex.Message));
                         throw;
