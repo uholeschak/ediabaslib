@@ -1,5 +1,6 @@
 ﻿using Android.Content;
 using Android.Content.PM;
+using Android.Util;
 using Google.Android.Vending.Expansion.Downloader;
 
 namespace BmwDeepObd
@@ -10,6 +11,8 @@ namespace BmwDeepObd
         )]
     public class ExpansionAlarmReceiver : BroadcastReceiver
     {
+        private static readonly string Tag = typeof(ExpansionAlarmReceiver).FullName;
+
         /// <summary>
         /// This method is called when the BroadcastReceiver is receiving an Intent
         /// broadcast.
@@ -24,7 +27,9 @@ namespace BmwDeepObd
         {
             try
             {
-                DownloaderClientMarshaller.StartDownloadServiceIfRequired(context, intent, typeof(ExpansionDownloaderService));
+                Log.Debug(Tag, "ExpansionAlarmReceiver.OnReceive");
+                // ReSharper disable once AccessToStaticMemberViaDerivedType
+                ExpansionDownloaderService.StartDownloadServiceIfRequired(context, intent, typeof(ExpansionDownloaderService));
             }
             catch (PackageManager.NameNotFoundException e)
             {
