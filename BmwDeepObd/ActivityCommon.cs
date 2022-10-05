@@ -2637,14 +2637,17 @@ namespace BmwDeepObd
 
                 if (!update)
                 {
-                    Android.Service.Notification.StatusBarNotification[] notifications = _notificationManager?.GetActiveNotifications();
-                    if (notifications != null)
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
                     {
-                        foreach (Android.Service.Notification.StatusBarNotification statusBarNotification in notifications)
+                        Android.Service.Notification.StatusBarNotification[] notifications = _notificationManager?.GetActiveNotifications();
+                        if (notifications != null)
                         {
-                            if (statusBarNotification.Id == id)
+                            foreach (Android.Service.Notification.StatusBarNotification statusBarNotification in notifications)
                             {
-                                return false;
+                                if (statusBarNotification.Id == id)
+                                {
+                                    return false;
+                                }
                             }
                         }
                     }
@@ -2687,6 +2690,7 @@ namespace BmwDeepObd
                     .SetPriority(priority)
                     .SetContentIntent(pendingIntent)
                     .SetAutoCancel(true)
+                    .SetOnlyAlertOnce(true)
                     .SetCategory(NotificationCompat.CategoryMessage)
                     .Build();
 
