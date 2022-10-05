@@ -105,10 +105,6 @@ namespace BmwDeepObd
             this.context = ctx;
             this.label = applicationLabel;
             this.notificationManager = NotificationManagerCompat.From(this.context);
-            if (this.notificationManager != null)
-            {
-                this.notificationManager.Cancel(NotificationId);
-            }
             if (Build.VERSION.SdkInt >= BuildVersionCodes.IceCreamSandwich)
             {
                 this.customNotification = new V14CustomNotification();

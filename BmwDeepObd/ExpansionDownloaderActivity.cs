@@ -896,6 +896,7 @@ namespace BmwDeepObd
                 return;
             }
 
+            _notificationManager?.CancelAll();
             InitializeControls();
             _downloaderServiceConnection = DownloaderClientMarshaller.CreateStub(this, typeof(ExpansionDownloaderService));
         }
