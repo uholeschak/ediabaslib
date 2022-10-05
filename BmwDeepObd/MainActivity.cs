@@ -760,6 +760,7 @@ namespace BmwDeepObd
             if (_activityCommon != null)
             {
                 _activityCommon.MtcBtDisconnectWarnShown = false;
+                _activityCommon.NotificationManagerCompat?.Cancel(CustomDownloadNotification.NotificationId);
             }
 
             UpdateLockState();
