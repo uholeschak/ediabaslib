@@ -397,6 +397,7 @@ namespace BmwDeepObd
         public const int FileIoRetries = 10;
         public const int FileIoRetryDelay = 1000;
         public const int MinSendCommErrors = 3;
+        public const int UserNotificationIdMax = 1000;
         public const SslProtocols DefaultSslProtocols = SslProtocols.None;
         public const string PrimaryVolumeName = "primary";
         public const string MtcBtAppName = @"com.microntek.bluetooth";
@@ -2624,7 +2625,7 @@ namespace BmwDeepObd
         {
             try
             {
-                if (_notificationManagerCompat == null || _context == null || id == ForegroundService.ServiceRunningNotificationId)
+                if (_notificationManagerCompat == null || _context == null || id > UserNotificationIdMax)
                 {
                     return false;
                 }
@@ -2703,7 +2704,7 @@ namespace BmwDeepObd
         {
             try
             {
-                if (_notificationManagerCompat == null || _context == null || id == ForegroundService.ServiceRunningNotificationId)
+                if (_notificationManagerCompat == null || _context == null || id > UserNotificationIdMax)
                 {
                     return false;
                 }

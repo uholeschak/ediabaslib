@@ -718,6 +718,11 @@ namespace BmwDeepObd
                 _pauseButton.Click -= OnButtonOnClick;
                 _pauseButton.Click += (sender, args) => 
                 {
+                    if (!_activityActive)
+                    {
+                        return;
+                    }
+
                     if (result)
                     {
                         try
@@ -725,6 +730,7 @@ namespace BmwDeepObd
                             Intent intent = new Intent(this, typeof(ActivityMain));
                             intent.SetFlags(ActivityFlags.SingleTop | ActivityFlags.NewTask | ActivityFlags.ClearTop);
                             StartActivity(intent);
+                            _notificationManager?.CancelAll();
                         }
                         catch (Exception)
                         {
