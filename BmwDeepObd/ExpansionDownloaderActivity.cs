@@ -730,7 +730,7 @@ namespace BmwDeepObd
                             Intent intent = new Intent(this, typeof(ActivityMain));
                             intent.SetFlags(ActivityFlags.SingleTop | ActivityFlags.NewTask | ActivityFlags.ClearTop);
                             StartActivity(intent);
-                            _notificationManager?.CancelAll();
+                            _notificationManager?.Cancel(CustomDownloadNotification.NotificationId);
                         }
                         catch (Exception)
                         {
@@ -902,7 +902,7 @@ namespace BmwDeepObd
                 return;
             }
 
-            _notificationManager?.CancelAll();
+            _notificationManager?.Cancel(CustomDownloadNotification.NotificationId);
             InitializeControls();
             _downloaderServiceConnection = DownloaderClientMarshaller.CreateStub(this, typeof(ExpansionDownloaderService));
         }
