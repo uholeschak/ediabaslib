@@ -2621,6 +2621,26 @@ namespace BmwDeepObd
             }
         }
 
+        public bool IsNotificationActive(int notificationId)
+        {
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+            {
+                Android.Service.Notification.StatusBarNotification[] notifications = _notificationManager?.GetActiveNotifications();
+                if (notifications != null)
+                {
+                    foreach (Android.Service.Notification.StatusBarNotification statusBarNotification in notifications)
+                    {
+                        if (statusBarNotification.Id == notificationId)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
         public bool ShowNotification(int id, int priority, string title, string message, bool update = false)
         {
             try
@@ -2635,22 +2655,9 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                if (!update)
+                if (!update && IsNotificationActive(id))
                 {
-                    if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
-                    {
-                        Android.Service.Notification.StatusBarNotification[] notifications = _notificationManager?.GetActiveNotifications();
-                        if (notifications != null)
-                        {
-                            foreach (Android.Service.Notification.StatusBarNotification statusBarNotification in notifications)
-                            {
-                                if (statusBarNotification.Id == id)
-                                {
-                                    return false;
-                                }
-                            }
-                        }
-                    }
+                    return false;
                 }
 
                 string notificationChannel = NotificationChannelCustomDefault;
