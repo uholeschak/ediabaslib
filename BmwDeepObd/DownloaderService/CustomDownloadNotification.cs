@@ -380,6 +380,52 @@ namespace BmwDeepObd
             }
         }
 
+        public static bool RegisterNotificationChannels(Context context)
+        {
+            try
+            {
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                {
+                    NotificationManagerCompat notificationManager = NotificationManagerCompat.From(context);
+                    UnregisterNotificationChannels(context);
+
+                    Android.App.NotificationChannel notificationChannelDownload =
+                        new Android.App.NotificationChannel(NotificationChannelDownload, context.Resources.GetString(Resource.String.notification_download), Android.App.NotificationImportance.Low);
+                    notificationManager.CreateNotificationChannel(notificationChannelDownload);
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public static bool UnregisterNotificationChannels(Context context, bool unregisterAll = false)
+        {
+            try
+            {
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                {
+                    NotificationManagerCompat notificationManager = NotificationManagerCompat.From(context);
+                    if (unregisterAll)
+                    {
+                        notificationManager.DeleteNotificationChannel(CustomDownloadNotification.NotificationChannelDownload);
+                    }
+
+                    notificationManager.DeleteNotificationChannel("DownloaderNotificationChannelLow");
+                    notificationManager.DeleteNotificationChannel("DownloaderNotificationChannelDefault");
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         #endregion
     }
 }

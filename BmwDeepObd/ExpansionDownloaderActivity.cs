@@ -142,11 +142,6 @@ namespace BmwDeepObd
         private View _useCellDataView;
 
         /// <summary>
-        /// The notification manager.
-        /// </summary>
-        private NotificationManagerCompat _notificationManager;
-
-        /// <summary>
         /// Sets the state of the various controls based on the progressinfo 
         /// object sent from the downloader service.
         /// </summary>
@@ -290,7 +285,7 @@ namespace BmwDeepObd
             _googlePlayErrorShown = false;
             _expansionFileDelivered = null;
 
-            RegisterNotificationChannels();
+            CustomDownloadNotification.RegisterNotificationChannels(this);
         }
 
         protected override void OnStart()
@@ -902,7 +897,16 @@ namespace BmwDeepObd
                 return;
             }
 
-            _notificationManager?.Cancel(CustomDownloadNotification.NotificationId);
+            try
+            {
+                NotificationManagerCompat notificationManager = NotificationManagerCompat.From(this);
+                notificationManager.Cancel(CustomDownloadNotification.NotificationId);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
             InitializeControls();
             _downloaderServiceConnection = DownloaderClientMarshaller.CreateStub(this, typeof(ExpansionDownloaderService));
         }
@@ -1063,65 +1067,6 @@ namespace BmwDeepObd
         {
             _notificationGranted = granted;
             StoragePermissionGranted();
-        }
-
-        private bool RegisterNotificationChannels()
-        {
-            try
-            {
-                if (_notificationManager == null)
-                {
-                    _notificationManager = NotificationManagerCompat.From(this);
-                }
-
-                if (_notificationManager == null)
-                {
-                    return false;
-                }
-
-                UnregisterNotificationChannels();
-
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                {
-                    Android.App.NotificationChannel notificationChannelDownload = new Android.App.NotificationChannel(
-                        CustomDownloadNotification.NotificationChannelDownload, Resources.GetString(Resource.String.notification_download), Android.App.NotificationImportance.Low);
-                    _notificationManager.CreateNotificationChannel(notificationChannelDownload);
-                }
-
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        private bool UnregisterNotificationChannels(bool unregisterAll = false)
-        {
-            try
-            {
-                if (_notificationManager == null)
-                {
-                    return false;
-                }
-
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                {
-                    if (unregisterAll)
-                    {
-                        _notificationManager.DeleteNotificationChannel(CustomDownloadNotification.NotificationChannelDownload);
-                    }
-
-                    _notificationManager.DeleteNotificationChannel("DownloaderNotificationChannelLow");
-                    _notificationManager.DeleteNotificationChannel("DownloaderNotificationChannelDefault");
-                }
-
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
         }
 
         private void StartDownload()
