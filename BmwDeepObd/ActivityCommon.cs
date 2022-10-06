@@ -2517,6 +2517,8 @@ namespace BmwDeepObd
                     return false;
                 }
 
+                CustomDownloadNotification.RegisterNotificationChannels(_context);
+
                 UnregisterNotificationChannels();
 
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
