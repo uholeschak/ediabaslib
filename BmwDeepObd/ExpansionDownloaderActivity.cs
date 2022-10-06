@@ -751,6 +751,7 @@ namespace BmwDeepObd
                 {
                     _statusTextView.SetText(Resource.String.exp_down_validation_failed);
                     _pauseButton.SetText(Resource.String.button_abort);
+                    CheckGooglePlay();
                 }
             });
         }
