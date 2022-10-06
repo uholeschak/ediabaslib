@@ -1880,6 +1880,32 @@ namespace BmwDeepObd
             return false;
         }
 
+        public bool RestartApp()
+        {
+            try
+            {
+                if (_activity == null)
+                {
+                    return false;
+                }
+
+                Intent intent = _packageManager?.GetLaunchIntentForPackage(_activity.PackageName);
+                if (intent == null)
+                {
+                    return false;
+                }
+                intent.SetFlags(ActivityFlags.NewTask | ActivityFlags.ClearTask);
+                _activity.StartActivity(intent);
+                _activity.Finish();
+                return true;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+            return false;
+        }
+
         public static Context GetPackageContext()
         {
             try

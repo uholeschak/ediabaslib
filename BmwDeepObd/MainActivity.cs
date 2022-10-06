@@ -5425,9 +5425,26 @@ namespace BmwDeepObd
         {
             if (string.IsNullOrEmpty(_assetFileName))
             {
-                _activityCommon.ShowAlert(GetString(Resource.String.exp_down_obb_missing), Resource.String.alert_title_error);
+                AlertDialog alertDialog = new AlertDialog.Builder(this)
+                    .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
+                    .SetCancelable(true)
+                    .SetMessage(Resource.String.obb_missing_restart)
+                    .SetTitle(Resource.String.alert_title_error)
+                    .Show();
+
+                alertDialog.DismissEvent += (sender, args) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    _activityCommon.RestartApp();
+                };
+
                 return;
             }
+
             try
             {
                 Directory.CreateDirectory(downloadDir);
