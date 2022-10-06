@@ -1703,7 +1703,7 @@ namespace BmwDeepObd
 
                 case Resource.Id.menu_exit:
                     OnDestroy();
-                    System.Environment.Exit(0);
+                    Java.Lang.Runtime.GetRuntime()?.Exit(0);
                     break;
             }
             return base.OnOptionsItemSelected(item);
