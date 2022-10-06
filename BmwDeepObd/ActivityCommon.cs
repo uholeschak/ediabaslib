@@ -1894,9 +1894,10 @@ namespace BmwDeepObd
                 {
                     return false;
                 }
-                intent.SetFlags(ActivityFlags.NewTask | ActivityFlags.ClearTask);
+                intent.SetFlags(ActivityFlags.NewTask);
                 _activity.StartActivity(intent);
                 _activity.Finish();
+                Java.Lang.Runtime.GetRuntime()?.Exit(0);
                 return true;
             }
             catch (Exception)
