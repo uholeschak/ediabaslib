@@ -277,7 +277,7 @@ namespace EdiabasLib
                         bool connected = false;
                         for (int retry = 0; retry < ConnectRetries; retry++)
                         {
-                            CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Test connection");
+                            CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Test connection, Retry: {0}", retry);
                             if (_edElmInterface.Elm327Init())
                             {
                                 CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Connected");
@@ -328,7 +328,7 @@ namespace EdiabasLib
                         bool connected = false;
                         for (int retry = 0; retry < ConnectRetries; retry++)
                         {
-                            CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Test connection");
+                            CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Test connection, Retry: {0}", retry);
                             CustomAdapter.EscapeMode = mtcBtEscapeMode;
                             if (retry > 0)
                             {
