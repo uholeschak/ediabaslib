@@ -4,8 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using Android.Bluetooth;
-using Android.Content;
-using Android.OS;
 using Java.Util;
 
 namespace EdiabasLib
@@ -176,6 +174,7 @@ namespace EdiabasLib
                     }
 
                     _connectDeviceAddress = device.Address;
+                    CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting: Raw mode: {0}, ELM device: {1}", CustomAdapter.RawMode, _elm327Device);
                     CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device bond state: {0}", device.BondState);
                     CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device type: {0}", device.Type);
 
@@ -816,11 +815,11 @@ namespace EdiabasLib
 
     public static class AndroidExtensions
     {
-        public static T GetParcelableExtraType<T>(this Intent intent, string name)
+        public static T GetParcelableExtraType<T>(this Android.Content.Intent intent, string name)
         {
             object parcel;
 
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
+            if (Android.OS.Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.Tiramisu)
             {
                 parcel = intent.GetParcelableExtra(name, Java.Lang.Class.FromType(typeof(T)));
             }
