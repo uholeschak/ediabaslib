@@ -1889,15 +1889,19 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                Intent intent = _packageManager?.GetLaunchIntentForPackage(_context.PackageName);
-                if (intent == null)
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.Honeycomb)
                 {
-                    return false;
+                    Intent intent = _packageManager?.GetLaunchIntentForPackage(_context.PackageName);
+                    if (intent == null)
+                    {
+                        return false;
+                    }
+
+                    ComponentName componentName = intent.Component;
+                    Intent mainIntent = Intent.MakeRestartActivityTask(componentName);
+                    _context.StartActivity(mainIntent);
                 }
 
-                ComponentName componentName = intent.Component;
-                Intent mainIntent = Intent.MakeRestartActivityTask(componentName);
-                _context.StartActivity(mainIntent);
                 Java.Lang.Runtime.GetRuntime()?.Exit(0);
                 return true;
             }
