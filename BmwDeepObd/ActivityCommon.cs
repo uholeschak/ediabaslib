@@ -1881,7 +1881,7 @@ namespace BmwDeepObd
             return false;
         }
 
-        public bool RestartApp(DestroyDelegate destroyDelegate)
+        public bool RestartAppHard(DestroyDelegate destroyDelegate)
         {
             try
             {
@@ -1905,6 +1905,34 @@ namespace BmwDeepObd
 
                 destroyDelegate?.Invoke();
                 Java.Lang.Runtime.GetRuntime()?.Exit(0);
+                return true;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+            return false;
+        }
+
+        public bool RestartAppSoft()
+        {
+            try
+            {
+                if (_activity == null)
+                {
+                    return false;
+                }
+
+                Intent intent = _packageManager?.GetLaunchIntentForPackage(_activity.PackageName);
+                if (intent == null)
+                {
+                    return false;
+                }
+
+                intent.SetFlags(ActivityFlags.NewTask | ActivityFlags.ClearTop);
+                _activity.Finish();
+                _activity.StartActivity(intent);
+
                 return true;
             }
             catch (Exception)
