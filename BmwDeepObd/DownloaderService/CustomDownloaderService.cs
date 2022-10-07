@@ -663,7 +663,7 @@ namespace BmwDeepObd
                         if (!Helpers.DoesFileExist(context, info.FileName, info.TotalBytes, true))
                         {
                             status = DownloaderServiceRequirement.DownloadRequired;
-                            db.UpdateStatus(DownloaderServiceFlags.None);
+                            db.UpdateStatus((DownloaderServiceFlags) (-1));
                             break;
                         }
                     }
