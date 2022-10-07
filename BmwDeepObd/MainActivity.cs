@@ -1702,6 +1702,7 @@ namespace BmwDeepObd
                 }
 
                 case Resource.Id.menu_exit:
+                    StoreSettings();
                     OnDestroy();
                     Java.Lang.Runtime.GetRuntime()?.Exit(0);
                     break;
@@ -5439,6 +5440,8 @@ namespace BmwDeepObd
                         return;
                     }
 
+                    StoreSettings();
+                    OnDestroy();
                     _activityCommon.RestartApp();
                 };
 
