@@ -6301,8 +6301,7 @@ namespace BmwDeepObd
                 }
 
                 StoreSettings();
-                OnDestroy();
-                _activityCommon.RestartApp();
+                _activityCommon.RestartApp(OnDestroy);
             };
         }
 

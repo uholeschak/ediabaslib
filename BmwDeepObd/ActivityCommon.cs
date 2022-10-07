@@ -390,6 +390,7 @@ namespace BmwDeepObd
         public delegate void WifiConnectedWarnDelegate();
         public delegate void InitThreadFinishDelegate(bool result);
         public delegate void CopyDocumentsThreadFinishDelegate(bool result, bool aborted);
+        public delegate void DestroyDelegate();
         public const int UdsDtcStatusOverride = 0x2C;
         public const BuildVersionCodes MinEthernetSettingsVersion = BuildVersionCodes.M;
         public const long UpdateCheckDelayDefault = TimeSpan.TicksPerDay;
@@ -1880,7 +1881,7 @@ namespace BmwDeepObd
             return false;
         }
 
-        public bool RestartApp()
+        public bool RestartApp(DestroyDelegate destroyDelegate)
         {
             try
             {
@@ -1902,6 +1903,7 @@ namespace BmwDeepObd
                     _context.StartActivity(mainIntent);
                 }
 
+                destroyDelegate?.Invoke();
                 Java.Lang.Runtime.GetRuntime()?.Exit(0);
                 return true;
             }
