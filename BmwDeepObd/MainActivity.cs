@@ -5426,25 +5426,7 @@ namespace BmwDeepObd
         {
             if (string.IsNullOrEmpty(_assetFileName))
             {
-                AlertDialog alertDialog = new AlertDialog.Builder(this)
-                    .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
-                    .SetCancelable(true)
-                    .SetMessage(Resource.String.obb_missing_restart)
-                    .SetTitle(Resource.String.alert_title_error)
-                    .Show();
-
-                alertDialog.DismissEvent += (sender, args) =>
-                {
-                    if (_activityCommon == null)
-                    {
-                        return;
-                    }
-
-                    StoreSettings();
-                    OnDestroy();
-                    _activityCommon.RestartApp();
-                };
-
+                ShowObbMissingRestart();
                 return;
             }
 
@@ -6260,6 +6242,12 @@ namespace BmwDeepObd
                 return false;
             }
 
+            if (string.IsNullOrEmpty(_assetFileName))
+            {
+                ShowObbMissingRestart();
+                return false;
+            }
+
             if (DisplayUpdateInfo((sender, args) =>
             {
                 CheckForEcuFiles(checkPackage);
@@ -6294,6 +6282,28 @@ namespace BmwDeepObd
                 return false;
             }
             return true;
+        }
+
+        private void ShowObbMissingRestart()
+        {
+            AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
+                .SetCancelable(true)
+                .SetMessage(Resource.String.obb_missing_restart)
+                .SetTitle(Resource.String.alert_title_error)
+                .Show();
+
+            alertDialog.DismissEvent += (sender, args) =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                StoreSettings();
+                OnDestroy();
+                _activityCommon.RestartApp();
+            };
         }
 
         private bool DisplayUpdateInfo(EventHandler<EventArgs> handler)
