@@ -66,6 +66,7 @@ namespace BmwDeepObd
             RequestAppDetailBtSettings,
             RequestAppSettingsAccessFiles,
             RequestOverlayPermissions,
+            RequestNotificationSettings,
             RequestSelectDevice,
             RequestAdapterConfig,
             RequestSelectConfig,
@@ -435,6 +436,7 @@ namespace BmwDeepObd
         private bool _activityActive;
         private bool _onResumeExecuted;
         private bool _storageAccessGranted;
+        private bool _notificationRequested;
         private bool _notificationGranted;
         private bool _overlayPermissionRequested;
         private bool _overlayPermissionGranted;
@@ -712,6 +714,7 @@ namespace BmwDeepObd
 
             _onResumeExecuted = false;
             _storageAccessGranted = false;
+            _notificationRequested = false;
             _notificationGranted = false;
             _overlayPermissionRequested = false;
             _overlayPermissionGranted = false;
@@ -1841,6 +1844,18 @@ namespace BmwDeepObd
             if (UseCommService())
             {
                 if (RequestOverlayPermissions((o, args) =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+                        ButtonConnectClick(sender, e);
+                    }))
+                {
+                    return;
+                }
+
+                if (RequestNotificationPermissions((o, args) =>
                     {
                         if (_activityCommon == null)
                         {
@@ -3116,6 +3131,51 @@ namespace BmwDeepObd
                     };
                     return true;
                 }
+            }
+
+            return false;
+        }
+
+        private bool RequestNotificationPermissions(EventHandler<EventArgs> handler)
+        {
+            if (_notificationRequested || _notificationGranted)
+            {
+                return false;
+            }
+
+            if (_activityCommon.NotificationsEnabled())
+            {
+                _notificationGranted = true;
+            }
+
+            if (!_notificationGranted && !_notificationRequested)
+            {
+                _notificationRequested = true;
+                bool yesSelected = false;
+                AlertDialog altertDialog = new AlertDialog.Builder(this)
+                    .SetPositiveButton(Resource.String.button_yes, (s, a) =>
+                    {
+                        ActivityCommon.ShowNotificationSettings(this, (int) ActivityRequest.RequestNotificationSettings);
+                    })
+                    .SetNegativeButton(Resource.String.button_no, (s, a) =>
+                    {
+                    })
+                    .SetCancelable(true)
+                    .SetMessage(Resource.String.notification_permission_denied)
+                    .SetTitle(Resource.String.alert_title_warning)
+                    .Show();
+                altertDialog.DismissEvent += (o, eventArgs) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+                    if (!yesSelected)
+                    {
+                        handler?.Invoke(o, eventArgs);
+                    }
+                };
+                return true;
             }
 
             return false;
