@@ -3143,7 +3143,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (_activityCommon.NotificationsEnabled())
+            if (_activityCommon.NotificationsEnabled(ActivityCommon.NotificationChannelCommunication))
             {
                 _notificationGranted = true;
             }

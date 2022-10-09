@@ -2664,7 +2664,7 @@ namespace BmwDeepObd
             }
         }
 
-        public bool NotificationsEnabled()
+        public bool NotificationsEnabled(string channelId = null)
         {
             try
             {
@@ -2674,7 +2674,26 @@ namespace BmwDeepObd
                     {
                         return false;
                     }
-                    return _notificationManagerCompat.AreNotificationsEnabled();
+
+                    if (_notificationManagerCompat.AreNotificationsEnabled())
+                    {
+                        return false;
+                    }
+
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                    {
+                        if (channelId != null)
+                        {
+                            NotificationChannelCompat notificationChannel = _notificationManagerCompat.GetNotificationChannelCompat(channelId);
+                            if (notificationChannel != null)
+                            {
+                                if (notificationChannel.Importance == (int) Android.App.NotificationImportance.None)
+                                {
+                                    return false;
+                                }
+                            }
+                        }
+                    }
                 }
 
                 return true;
