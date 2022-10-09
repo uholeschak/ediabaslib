@@ -3820,6 +3820,26 @@ namespace BmwDeepObd
             }
         }
 
+        public static bool ShowNotificationSettings(Android.App.Activity activity, int requestCode)
+        {
+            try
+            {
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                {
+                    Intent intent = new Intent(Settings.ActionAppNotificationSettings);
+                    intent.PutExtra(Settings.ExtraAppPackage, activity.PackageName);
+                    activity.StartActivityForResult(intent, requestCode);
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public void EnableInterface()
         {
             switch (_selectedInterface)
