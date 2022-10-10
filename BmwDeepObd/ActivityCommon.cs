@@ -2672,10 +2672,10 @@ namespace BmwDeepObd
                 {
                     if (_notificationManagerCompat == null)
                     {
-                        return false;
+                        return true;
                     }
 
-                    if (_notificationManagerCompat.AreNotificationsEnabled())
+                    if (!_notificationManagerCompat.AreNotificationsEnabled())
                     {
                         return false;
                     }
@@ -3839,16 +3839,22 @@ namespace BmwDeepObd
             }
         }
 
-        public static bool ShowNotificationSettings(Android.App.Activity activity, int requestCode, string channelId)
+        public bool ShowNotificationSettings(int requestCode, string channelId)
         {
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+            if (_activity == null)
+            {
+                return false;
+            }
+
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O &&
+                _notificationManagerCompat.AreNotificationsEnabled() && !string.IsNullOrEmpty(channelId))
             {
                 try
                 {
                     Intent intent = new Intent(Settings.ActionChannelNotificationSettings);
                     intent.PutExtra(Settings.ExtraChannelId, channelId);
-                    intent.PutExtra(Settings.ExtraAppPackage, activity.PackageName);
-                    activity.StartActivityForResult(intent, requestCode);
+                    intent.PutExtra(Settings.ExtraAppPackage, _activity.PackageName);
+                    _activity.StartActivityForResult(intent, requestCode);
                     return true;
                 }
                 catch (Exception)
@@ -3857,18 +3863,23 @@ namespace BmwDeepObd
                 }
             }
 
-            return ShowNotificationSettings(activity, requestCode);
+            return ShowNotificationSettings(requestCode);
         }
 
-        public static bool ShowNotificationSettings(Android.App.Activity activity, int requestCode)
+        public bool ShowNotificationSettings(int requestCode)
         {
+            if (_activity == null)
+            {
+                return false;
+            }
+
             if (Build.VERSION.SdkInt >= BuildVersionCodes.NMr1)
             {
                 try
                 {
                     Intent intent = new Intent(Settings.ActionAppNotificationSettings);
-                    intent.PutExtra(Settings.ExtraAppPackage, activity.PackageName);
-                    activity.StartActivityForResult(intent, requestCode);
+                    intent.PutExtra(Settings.ExtraAppPackage, _activity.PackageName);
+                    _activity.StartActivityForResult(intent, requestCode);
                     return true;
                 }
                 catch (Exception)
