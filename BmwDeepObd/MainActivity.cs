@@ -993,7 +993,6 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestNotificationSettings:
-                {
                     if (_activityCommon.NotificationsEnabled() && _instanceData.AutoStart)
                     {
                         ButtonConnectClick(_connectButtonInfo.Button, EventArgs.Empty);
@@ -1002,7 +1001,6 @@ namespace BmwDeepObd
 
                     _instanceData.AutoStart = false;
                     break;
-                }
 
                 case ActivityRequest.RequestSelectDevice:
                     // When DeviceListActivity returns with a device to connect
