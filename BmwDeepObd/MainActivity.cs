@@ -3155,7 +3155,7 @@ namespace BmwDeepObd
                 AlertDialog altertDialog = new AlertDialog.Builder(this)
                     .SetPositiveButton(Resource.String.button_yes, (s, a) =>
                     {
-                        ActivityCommon.ShowNotificationSettings(this, (int) ActivityRequest.RequestNotificationSettings);
+                        ActivityCommon.ShowNotificationSettings(this, (int) ActivityRequest.RequestNotificationSettings, ActivityCommon.NotificationChannelCommunication);
                     })
                     .SetNegativeButton(Resource.String.button_no, (s, a) =>
                     {
