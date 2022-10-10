@@ -994,8 +994,7 @@ namespace BmwDeepObd
 
                 case ActivityRequest.RequestNotificationSettings:
                 {
-                    bool notificationsEnabled = _activityCommon.NotificationsEnabled(ActivityCommon.NotificationChannelCommunication);
-                    if (notificationsEnabled && _instanceData.AutoStart)
+                    if (_activityCommon.NotificationsEnabled() && _instanceData.AutoStart)
                     {
                         ButtonConnectClick(_connectButtonInfo.Button, EventArgs.Empty);
                         break;

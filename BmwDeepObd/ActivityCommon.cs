@@ -3839,14 +3839,19 @@ namespace BmwDeepObd
             }
         }
 
-        public bool ShowNotificationSettings(int requestCode, string channelId)
+        public bool ShowNotificationSettings(int requestCode, string channelId = null)
         {
             if (_activity == null)
             {
                 return false;
             }
 
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.O && NotificationsEnabled() && !string.IsNullOrEmpty(channelId))
+            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+            {
+                return false;
+            }
+
+            if (NotificationsEnabled() && !string.IsNullOrEmpty(channelId))
             {
                 try
                 {
@@ -3862,29 +3867,16 @@ namespace BmwDeepObd
                 }
             }
 
-            return ShowNotificationSettings(requestCode);
-        }
-
-        public bool ShowNotificationSettings(int requestCode)
-        {
-            if (_activity == null)
+            try
             {
-                return false;
+                Intent intent = new Intent(Settings.ActionAppNotificationSettings);
+                intent.PutExtra(Settings.ExtraAppPackage, _activity.PackageName);
+                _activity.StartActivityForResult(intent, requestCode);
+                return true;
             }
-
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.NMr1)
+            catch (Exception)
             {
-                try
-                {
-                    Intent intent = new Intent(Settings.ActionAppNotificationSettings);
-                    intent.PutExtra(Settings.ExtraAppPackage, _activity.PackageName);
-                    _activity.StartActivityForResult(intent, requestCode);
-                    return true;
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
+                // ignored
             }
 
             return false;
