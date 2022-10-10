@@ -2682,7 +2682,7 @@ namespace BmwDeepObd
 
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                     {
-                        if (channelId != null)
+                        if (!string.IsNullOrEmpty(channelId))
                         {
                             NotificationChannelCompat notificationChannel = _notificationManagerCompat.GetNotificationChannelCompat(channelId);
                             if (notificationChannel != null)
@@ -3839,33 +3839,45 @@ namespace BmwDeepObd
             }
         }
 
-        public static bool ShowNotificationSettings(Android.App.Activity activity, int requestCode, int? channelId = null)
+        public static bool ShowNotificationSettings(Android.App.Activity activity, int requestCode, string channelId)
         {
-            try
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                try
                 {
-                    Intent intent;
-                    if (channelId != null)
-                    {
-                        intent = new Intent(Settings.ActionChannelNotificationSettings);
-                        intent.PutExtra(Settings.ExtraChannelId, channelId.Value);
-                    }
-                    else
-                    {
-                        intent = new Intent(Settings.ActionAppNotificationSettings);
-                    }
+                    Intent intent = new Intent(Settings.ActionChannelNotificationSettings);
+                    intent.PutExtra(Settings.ExtraChannelId, channelId);
                     intent.PutExtra(Settings.ExtraAppPackage, activity.PackageName);
                     activity.StartActivityForResult(intent, requestCode);
                     return true;
                 }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
 
-                return false;
-            }
-            catch (Exception)
+            return ShowNotificationSettings(activity, requestCode);
+        }
+
+        public static bool ShowNotificationSettings(Android.App.Activity activity, int requestCode)
+        {
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.NMr1)
             {
-                return false;
+                try
+                {
+                    Intent intent = new Intent(Settings.ActionAppNotificationSettings);
+                    intent.PutExtra(Settings.ExtraAppPackage, activity.PackageName);
+                    activity.StartActivityForResult(intent, requestCode);
+                    return true;
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
             }
+
+            return false;
         }
 
         public void EnableInterface()
