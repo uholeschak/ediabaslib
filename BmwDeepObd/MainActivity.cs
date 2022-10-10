@@ -3138,24 +3138,25 @@ namespace BmwDeepObd
 
         private bool RequestNotificationPermissions(EventHandler<EventArgs> handler)
         {
-            if (_notificationRequested || _notificationGranted)
-            {
-                return false;
-            }
-
-            if (_activityCommon.NotificationsEnabled(ActivityCommon.NotificationChannelCommunication))
+            bool notificationsEnabled = _activityCommon.NotificationsEnabled(ActivityCommon.NotificationChannelCommunication);
+            if (notificationsEnabled)
             {
                 _notificationGranted = true;
             }
 
-            if (!_notificationGranted && !_notificationRequested)
+            if (_notificationRequested || notificationsEnabled)
+            {
+                return false;
+            }
+
+            if (!_notificationRequested)
             {
                 _notificationRequested = true;
                 bool yesSelected = false;
                 AlertDialog altertDialog = new AlertDialog.Builder(this)
                     .SetPositiveButton(Resource.String.button_yes, (s, a) =>
                     {
-                        ActivityCommon.ShowNotificationSettings(this, (int) ActivityRequest.RequestNotificationSettings, ActivityCommon.NotificationChannelCommunication);
+                        _activityCommon.ShowNotificationSettings((int) ActivityRequest.RequestNotificationSettings, ActivityCommon.NotificationChannelCommunication);
                     })
                     .SetNegativeButton(Resource.String.button_no, (s, a) =>
                     {

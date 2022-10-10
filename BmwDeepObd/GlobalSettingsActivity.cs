@@ -282,7 +282,7 @@ namespace BmwDeepObd
             _buttonManageNotifications = FindViewById<Button>(Resource.Id.buttonManageNotifications);
             _buttonManageNotifications.Click += (sender, args) =>
             {
-                ActivityCommon.ShowNotificationSettings(this, (int) ActivityRequest.RequestNotificationSettings);
+                _activityCommon.ShowNotificationSettings((int) ActivityRequest.RequestNotificationSettings);
             };
             _textViewCaptionNotifications.Visibility = viewStateNotifications;
             _buttonManageNotifications.Visibility = viewStateNotifications;
