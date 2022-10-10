@@ -992,6 +992,19 @@ namespace BmwDeepObd
                     _instanceData.AutoStart = false;
                     break;
 
+                case ActivityRequest.RequestNotificationSettings:
+                {
+                    bool notificationsEnabled = _activityCommon.NotificationsEnabled(ActivityCommon.NotificationChannelCommunication);
+                    if (notificationsEnabled && _instanceData.AutoStart)
+                    {
+                        ButtonConnectClick(_connectButtonInfo.Button, EventArgs.Empty);
+                        break;
+                    }
+
+                    _instanceData.AutoStart = false;
+                    break;
+                }
+
                 case ActivityRequest.RequestSelectDevice:
                     // When DeviceListActivity returns with a device to connect
                     if (data?.Extras != null && resultCode == Android.App.Result.Ok)
@@ -3139,11 +3152,6 @@ namespace BmwDeepObd
         private bool RequestNotificationPermissions(EventHandler<EventArgs> handler)
         {
             bool notificationsEnabled = _activityCommon.NotificationsEnabled(ActivityCommon.NotificationChannelCommunication);
-            if (notificationsEnabled)
-            {
-                _notificationGranted = true;
-            }
-
             if (_notificationRequested || notificationsEnabled)
             {
                 return false;
@@ -3156,7 +3164,11 @@ namespace BmwDeepObd
                 AlertDialog altertDialog = new AlertDialog.Builder(this)
                     .SetPositiveButton(Resource.String.button_yes, (s, a) =>
                     {
-                        _activityCommon.ShowNotificationSettings((int) ActivityRequest.RequestNotificationSettings, ActivityCommon.NotificationChannelCommunication);
+                        if (_activityCommon.ShowNotificationSettings((int)ActivityRequest.RequestNotificationSettings, ActivityCommon.NotificationChannelCommunication))
+                        {
+                            _instanceData.AutoStart = true;
+                            yesSelected = true;
+                        }
                     })
                     .SetNegativeButton(Resource.String.button_no, (s, a) =>
                     {
