@@ -3846,8 +3846,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.O &&
-                _notificationManagerCompat.AreNotificationsEnabled() && !string.IsNullOrEmpty(channelId))
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O && NotificationsEnabled() && !string.IsNullOrEmpty(channelId))
             {
                 try
                 {
