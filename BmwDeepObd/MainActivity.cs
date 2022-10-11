@@ -66,7 +66,8 @@ namespace BmwDeepObd
             RequestAppDetailBtSettings,
             RequestAppSettingsAccessFiles,
             RequestOverlayPermissions,
-            RequestNotificationSettings,
+            RequestNotificationSettingsApp,
+            RequestNotificationSettingsChannel,
             RequestSelectDevice,
             RequestAdapterConfig,
             RequestSelectConfig,
@@ -992,8 +993,18 @@ namespace BmwDeepObd
                     _instanceData.AutoStart = false;
                     break;
 
-                case ActivityRequest.RequestNotificationSettings:
+                case ActivityRequest.RequestNotificationSettingsApp:
                     if (_activityCommon.NotificationsEnabled() && _instanceData.AutoStart)
+                    {
+                        ButtonConnectClick(_connectButtonInfo.Button, EventArgs.Empty);
+                        break;
+                    }
+
+                    _instanceData.AutoStart = false;
+                    break;
+
+                case ActivityRequest.RequestNotificationSettingsChannel:
+                    if (_activityCommon.NotificationsEnabled(ActivityCommon.NotificationChannelCommunication) && _instanceData.AutoStart)
                     {
                         ButtonConnectClick(_connectButtonInfo.Button, EventArgs.Empty);
                         break;
@@ -3161,7 +3172,8 @@ namespace BmwDeepObd
                 AlertDialog altertDialog = new AlertDialog.Builder(this)
                     .SetPositiveButton(Resource.String.button_yes, (s, a) =>
                     {
-                        if (_activityCommon.ShowNotificationSettings((int)ActivityRequest.RequestNotificationSettings, ActivityCommon.NotificationChannelCommunication))
+                        if (_activityCommon.ShowNotificationSettings((int)ActivityRequest.RequestNotificationSettingsApp,
+                                (int)ActivityRequest.RequestNotificationSettingsChannel, ActivityCommon.NotificationChannelCommunication))
                         {
                             _instanceData.AutoStart = true;
                             yesSelected = true;
