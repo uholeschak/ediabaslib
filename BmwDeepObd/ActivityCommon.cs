@@ -8939,7 +8939,7 @@ namespace BmwDeepObd
             SetLock(LockTypeCommunication);
             Thread initThread = new Thread(() =>
             {
-                bool result = InitUdsReader(vagPath);
+                bool result = InitUdsReader(vagPath, out string errorMessage);
                 _activity?.RunOnUiThread(() =>
                 {
                     if (_disposed)
@@ -8952,8 +8952,14 @@ namespace BmwDeepObd
                     SetLock(LockType.None);
                     if (!result)
                     {
+                        string message = _context.GetString(Resource.String.vag_uds_error);
+                        if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            message += "\r\n" + errorMessage;
+                        }
+
                         new AlertDialog.Builder(_context)
-                            .SetMessage(Resource.String.vag_uds_error)
+                            .SetMessage(message)
                             .SetTitle(Resource.String.alert_title_error)
                             .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
                             .Show();
@@ -8972,8 +8978,9 @@ namespace BmwDeepObd
             _udsReaderDict = null;
         }
 
-        public static bool InitUdsReader(string vagDir)
+        public static bool InitUdsReader(string vagDir, out string errorMessage)
         {
+            errorMessage = null;
             if (OldVagMode)
             {
                 return true;
@@ -9026,8 +9033,9 @@ namespace BmwDeepObd
                 VagUdsChecked = true;
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                errorMessage = EdiabasNet.GetExceptionText(ex);
                 return false;
             }
         }

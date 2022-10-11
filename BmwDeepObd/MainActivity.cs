@@ -6240,7 +6240,7 @@ namespace BmwDeepObd
         // ReSharper disable once UnusedParameter.Local
         private void DownloadEcuFiles(bool extraMessage = false)
         {
-            string ecuPath = Path.Combine(_instanceData.AppDataPath, ManufacturerEcuDirName);
+            string ecuPath = Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir);
             try
             {
                 ActivityCommon.FileSystemBlockInfo blockInfo = ActivityCommon.GetFileSystemBlockInfo(_instanceData.AppDataPath);
@@ -6249,7 +6249,7 @@ namespace BmwDeepObd
                 long requiredSize = EcuExtractSize;
                 if (freeSpace < requiredSize)
                 {
-                    string message = string.Format(new FileSizeFormatProvider(), GetString(Resource.String.ecu_download_free_space), requiredSize);
+                    string message = string.Format(new FileSizeFormatProvider(), GetString(Resource.String.ecu_download_free_space), requiredSize, freeSpace);
                     new AlertDialog.Builder(this)
                         .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                         {
