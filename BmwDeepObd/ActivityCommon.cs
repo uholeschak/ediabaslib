@@ -9113,7 +9113,7 @@ namespace BmwDeepObd
             SetLock(LockTypeCommunication);
             Thread initThread = new Thread(() =>
             {
-                bool result = InitEcuFunctionReader(bmwPath);
+                bool result = InitEcuFunctionReader(bmwPath, out string errorMessage);
                 _activity?.RunOnUiThread(() =>
                 {
                     if (_disposed)
@@ -9126,8 +9126,14 @@ namespace BmwDeepObd
                     SetLock(LockType.None);
                     if (!result)
                     {
+                        string message = _context.GetString(Resource.String.bmw_ecu_func_error);
+                        if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            message += "\r\n" + errorMessage;
+                        }
+
                         new AlertDialog.Builder(_context)
-                            .SetMessage(Resource.String.bmw_ecu_func_error)
+                            .SetMessage(message)
                             .SetTitle(Resource.String.alert_title_error)
                             .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
                             .Show();
@@ -9146,8 +9152,10 @@ namespace BmwDeepObd
             EcuFunctionsActive = false;
         }
 
-        public static bool InitEcuFunctionReader(string bmwPath)
+        public static bool InitEcuFunctionReader(string bmwPath, out string errorMessage)
         {
+            errorMessage = null;
+
             if (!UseBmwDatabase)
             {
                 return true;
@@ -9166,7 +9174,7 @@ namespace BmwDeepObd
                     _ecuFunctionReader = new EcuFunctionReader(bmwPath);
                 }
 
-                if (!_ecuFunctionReader.Init(GetCurrentLanguage()))
+                if (!_ecuFunctionReader.Init(GetCurrentLanguage(), out errorMessage))
                 {
                     return false;
                 }
@@ -9175,9 +9183,9 @@ namespace BmwDeepObd
                 EcuFunctionsChecked = true;
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // ignored
+                errorMessage = EdiabasNet.GetExceptionText(ex);
             }
 
             return false;

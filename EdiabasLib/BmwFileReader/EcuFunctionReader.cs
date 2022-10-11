@@ -33,8 +33,9 @@ namespace BmwFileReader
             _ecuEnvCondLabelDict = new Dictionary<string, EcuFunctionStructs.EcuEnvCondLabel>();
         }
 
-        public bool Init(string language)
+        public bool Init(string language, out string errorMessage)
         {
+            errorMessage = null;
             EcuFunctionStructs.EcuFaultData ecuFaultData = GetEcuFaultDataCached(language);
             if (ecuFaultData == null)
             {
@@ -61,8 +62,9 @@ namespace BmwFileReader
                     return false;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                errorMessage = ex.Message;
                 return false;
             }
 
