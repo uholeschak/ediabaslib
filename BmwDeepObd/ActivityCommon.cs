@@ -3839,7 +3839,7 @@ namespace BmwDeepObd
             }
         }
 
-        public bool ShowNotificationSettings(int requestCode, string channelId = null)
+        public bool ShowNotificationSettings(int requestCodeApp, int? requestCodeChannel = null, string channelId = null)
         {
             if (_activity == null)
             {
@@ -3851,14 +3851,14 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (NotificationsEnabled() && !string.IsNullOrEmpty(channelId))
+            if (NotificationsEnabled() && requestCodeChannel != null && !string.IsNullOrEmpty(channelId))
             {
                 try
                 {
                     Intent intent = new Intent(Settings.ActionChannelNotificationSettings);
                     intent.PutExtra(Settings.ExtraChannelId, channelId);
                     intent.PutExtra(Settings.ExtraAppPackage, _activity.PackageName);
-                    _activity.StartActivityForResult(intent, requestCode);
+                    _activity.StartActivityForResult(intent, requestCodeChannel.Value);
                     return true;
                 }
                 catch (Exception)
@@ -3871,7 +3871,7 @@ namespace BmwDeepObd
             {
                 Intent intent = new Intent(Settings.ActionAppNotificationSettings);
                 intent.PutExtra(Settings.ExtraAppPackage, _activity.PackageName);
-                _activity.StartActivityForResult(intent, requestCode);
+                _activity.StartActivityForResult(intent, requestCodeApp);
                 return true;
             }
             catch (Exception)
