@@ -40,7 +40,7 @@
   <string name="wifi_not_available">Wi-Fi недоступен.</string>
   <string name="config_select">Отсутствует правильная конфигурация.\nХотите создать или выбрать конфигурацию?</string>
   <string name="bt_device_not_selected">Bluetooth устройство не выбрано.\nХотите выбрать устройство?</string>
-  <string name="ecu_download_free_space">На этом устройстве недостаточно свободной памяти ({0:fs1}) для сохранения ECU файла.\nХотите выбрать другой носитель памяти?</string>
+  <string name="ecu_download_free_space">На этом устройстве недостаточно свободной памяти ({0:fs1} &lt; {1:fs1}) для сохранения ECU файла.\nХотите выбрать другой носитель памяти?</string>
   <string name="ecu_not_found">ECU файлы не найдены.</string>
   <string name="ecu_package">Для этого приложения доступны обновлённые ECU файлы.</string>
   <string name="ecu_download">Хотите загрузить ECU файлы (размер файла примерно {0:fs1})?</string>

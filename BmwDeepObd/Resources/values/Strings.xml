@@ -36,7 +36,7 @@
   <string name="wifi_not_available">Wi-Fi is not available.</string>
   <string name="config_select">No valid configuration is present.\nDo you want to generate or select a configuration now?</string>
   <string name="bt_device_not_selected">No Bluetooth device has been selected.\nDo you want to select a device now?</string>
-  <string name="ecu_download_free_space">There is not enough free space ({0:fs1}) on the device for storing the ECU files.\nDo you want to select a different storage media?</string>
+  <string name="ecu_download_free_space">There is not enough free space ({0:fs1} &lt; {1:fs1}) on the device for storing the ECU files.\nDo you want to select a different storage media?</string>
   <string name="ecu_not_found">No ECU files have been found.</string>
   <string name="ecu_package">Updated ECU files are available for this application.</string>
   <string name="ecu_download">Do you want to download the ECU files now (File size approx. {0:fs1})?</string>
