@@ -3105,53 +3105,55 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
+            if (Build.VERSION.SdkInt < BuildVersionCodes.S)
             {
-                if (Android.Provider.Settings.CanDrawOverlays(Android.App.Application.Context))
-                {
-                    _overlayPermissionGranted = true;
-                }
+                return false;
+            }
 
-                if (!_overlayPermissionGranted && !_overlayPermissionRequested)
-                {
-                    _overlayPermissionRequested = true;
-                    bool yesSelected = false;
-                    AlertDialog altertDialog = new AlertDialog.Builder(this)
-                        .SetPositiveButton(Resource.String.button_yes, (s, a) =>
-                        {
-                            try
-                            {
-                                Intent intent = new Intent(Android.Provider.Settings.ActionManageOverlayPermission,
-                                    Android.Net.Uri.Parse("package:" + Android.App.Application.Context.PackageName));
-                                StartActivityForResult(intent, (int)ActivityRequest.RequestOverlayPermissions);
-                                _instanceData.AutoStart = true;
-                                yesSelected = true;
-                            }
-                            catch (Exception)
-                            {
-                                // ignored
-                            }
-                        })
-                        .SetNegativeButton(Resource.String.button_no, (s, a) =>
-                        {
-                        })
-                        .SetCancelable(true)
-                        .SetMessage(Resource.String.overlay_permission_denied)
-                        .SetTitle(Resource.String.alert_title_warning)
-                        .Show();
-                    altertDialog.DismissEvent += (o, eventArgs) =>
+            if (Android.Provider.Settings.CanDrawOverlays(Android.App.Application.Context))
+            {
+                _overlayPermissionGranted = true;
+            }
+
+            if (!_overlayPermissionGranted && !_overlayPermissionRequested)
+            {
+                _overlayPermissionRequested = true;
+                bool yesSelected = false;
+                AlertDialog altertDialog = new AlertDialog.Builder(this)
+                    .SetPositiveButton(Resource.String.button_yes, (s, a) =>
                     {
-                        if (_activityCommon == null)
+                        try
                         {
-                            return;
+                            Intent intent = new Intent(Android.Provider.Settings.ActionManageOverlayPermission,
+                                Android.Net.Uri.Parse("package:" + Android.App.Application.Context.PackageName));
+                            StartActivityForResult(intent, (int)ActivityRequest.RequestOverlayPermissions);
+                            _instanceData.AutoStart = true;
+                            yesSelected = true;
                         }
-                        if (!yesSelected)
+                        catch (Exception)
                         {
-                            handler?.Invoke(o, eventArgs);
+                            // ignored
                         }
-                    };
-                    return true;
-                }
+                    })
+                    .SetNegativeButton(Resource.String.button_no, (s, a) =>
+                    {
+                    })
+                    .SetCancelable(true)
+                    .SetMessage(Resource.String.overlay_permission_denied)
+                    .SetTitle(Resource.String.alert_title_warning)
+                    .Show();
+                altertDialog.DismissEvent += (o, eventArgs) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+                    if (!yesSelected)
+                    {
+                        handler?.Invoke(o, eventArgs);
+                    }
+                };
+                return true;
             }
 
             return false;
@@ -3161,6 +3163,11 @@ namespace BmwDeepObd
         {
             bool notificationsEnabled = _activityCommon.NotificationsEnabled(ActivityCommon.NotificationChannelCommunication);
             if (_notificationRequested || notificationsEnabled)
+            {
+                return false;
+            }
+
+            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
             {
                 return false;
             }
