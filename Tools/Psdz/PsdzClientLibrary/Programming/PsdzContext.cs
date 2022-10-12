@@ -645,6 +645,37 @@ namespace PsdzClient.Programming
             return true;
         }
 
+        private static void FillConstructionDateInfos(Vehicle vehicle, string cDateString)
+        {
+            try
+            {
+                if (vehicle == null)
+                {
+                    return;
+                }
+                FA fA = vehicle.FA;
+                if (fA != null)
+                {
+                    fA.C_DATE = cDateString;
+                    if (!string.IsNullOrEmpty(fA.C_DATE))
+                    {
+                        DateTime value = FormatConverter.C_DATE2DateTime(cDateString, null, null);
+                        fA.C_DATETIME = value;
+                        vehicle.Modelljahr = value.ToString("yyyy", CultureInfo.InvariantCulture);
+                        vehicle.Modellmonat = value.ToString("MM", CultureInfo.InvariantCulture);
+                        vehicle.Modelltag = "01";
+                        vehicle.BaustandsJahr = value.ToString("yy", CultureInfo.InvariantCulture);
+                        vehicle.BaustandsMonat = value.ToString("MM", CultureInfo.InvariantCulture);
+                        //vehicle.Baustand = value.ToString("MMyy", CultureInfo.InvariantCulture);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
         public List<PdszDatabase.EcuInfo> GetEcuList(bool individualOnly = false)
         {
             List<PdszDatabase.EcuInfo> ecuList = new List<PdszDatabase.EcuInfo>();
