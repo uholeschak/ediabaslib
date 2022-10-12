@@ -573,8 +573,6 @@ namespace PsdzClient.Programming
 
             Vehicle.Ereihe = DetectVehicle.Series;
             Vehicle.SetVINRangeTypeFromVINRanges();
-            Vehicle.BNType = VehicleLogistics.getBNType(Vehicle);
-            Vehicle.BNMixed = VehicleLogistics.getBNMixed(Vehicle.Ereihe, null);
 
             CharacteristicExpression.EnumBrand brand = CharacteristicExpression.EnumBrand.BMWBMWiMINI;
             if (Vehicle.IsMotorcycle())
@@ -633,6 +631,8 @@ namespace PsdzClient.Programming
                 }
             }
 
+            Vehicle.BNType = VehicleLogistics.getBNType(Vehicle);
+            Vehicle.BNMixed = VehicleLogistics.getBNMixed(Vehicle.Ereihe, Vehicle.FA);
             Vehicle.WithLfpBattery = programmingService.PdszDatabase.ResolveBatteryType(Vehicle) == PdszDatabase.BatteryEnum.LFP;
             Vehicle.MainSeriesSgbd = VehicleLogistics.getBrSgbd(Vehicle);
             EcuCharacteristics = VehicleLogistics.GetCharacteristics(Vehicle);
