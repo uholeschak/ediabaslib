@@ -60,6 +60,7 @@ namespace PsdzClient
         public string Series { get; private set; }
         public string ConstructYear { get; private set; }
         public string ConstructMonth { get; private set; }
+        public DateTime? ConstructDate { get; private set; }
         public string ILevelShip { get; private set; }
         public string ILevelCurrent { get; private set; }
         public string ILevelBackup { get; private set; }
@@ -293,6 +294,7 @@ namespace PsdzClient
                 Series = vehicleType;
                 if (cDate.HasValue)
                 {
+                    ConstructDate = cDate.Value;
                     ConstructYear = cDate.Value.ToString("yyyy", CultureInfo.InvariantCulture);
                     ConstructMonth = cDate.Value.ToString("MM", CultureInfo.InvariantCulture);
                 }
@@ -645,6 +647,7 @@ namespace PsdzClient
             GroupSgdb = null;
             ModelSeries = null;
             Series = null;
+            ConstructDate = null;
             ConstructYear = null;
             ConstructMonth = null;
         }
