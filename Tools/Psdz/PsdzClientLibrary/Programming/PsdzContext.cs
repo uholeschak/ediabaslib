@@ -15,6 +15,7 @@ using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using BmwFileReader;
 using PsdzClient.Core;
+using PsdzClient.Utility;
 
 namespace PsdzClient.Programming
 {
@@ -629,6 +630,11 @@ namespace PsdzClient.Programming
                 {
                     return false;
                 }
+            }
+
+            if (!Vehicle.FA.C_DATETIME.HasValue && !string.IsNullOrEmpty(Vehicle.FA.C_DATE))
+            {
+                Vehicle.FA.C_DATETIME = FormatConverter.C_DATE2DateTime(Vehicle.FA.C_DATE, Vehicle.Modellmonat, Vehicle.Modelljahr);
             }
 
             Vehicle.BNType = VehicleLogistics.getBNType(Vehicle);
