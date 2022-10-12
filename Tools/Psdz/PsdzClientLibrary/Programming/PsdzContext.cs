@@ -559,17 +559,29 @@ namespace PsdzClient.Programming
             Vehicle.ILevelWerk = !string.IsNullOrEmpty(IstufeShipment) ? IstufeShipment : DetectVehicle.ILevelShip;
             Vehicle.ILevel = !string.IsNullOrEmpty(IstufeCurrent) ? IstufeCurrent: DetectVehicle.ILevelCurrent;
             Vehicle.VIN17 = DetectVehicle.Vin;
-            Vehicle.Modelljahr = DetectVehicle.ConstructYear;
-            Vehicle.Modellmonat = DetectVehicle.ConstructMonth;
-            Vehicle.Modelltag = "01";
-            try
+            if (DetectVehicle.ConstructDate != null)
             {
-                Vehicle.ProductionDate = DateTime.ParseExact(string.Format(CultureInfo.InvariantCulture, "{0}.{1}", Vehicle.Modellmonat, Vehicle.Modelljahr), "MM.yyyy", new CultureInfo("de-DE"));
+                Vehicle.Modelljahr = DetectVehicle.ConstructYear;
+                Vehicle.Modellmonat = DetectVehicle.ConstructMonth;
+                Vehicle.Modelltag = "01";
+                Vehicle.ProductionDate = DetectVehicle.ConstructDate.Value;
                 Vehicle.ProductionDateSpecified = true;
-            }
-            catch (Exception)
-            {
-                // ignored
+
+                if (string.IsNullOrEmpty(Vehicle.BaustandsJahr) || string.IsNullOrEmpty(Vehicle.BaustandsMonat))
+                {
+                    Vehicle.BaustandsJahr = DetectVehicle.ConstructDate.Value.ToString("yy", CultureInfo.InvariantCulture);
+                    Vehicle.BaustandsMonat = DetectVehicle.ConstructDate.Value.ToString("MM", CultureInfo.InvariantCulture);
+                }
+
+                if (string.IsNullOrEmpty(Vehicle.FA.C_DATE))
+                {
+                    Vehicle.FA.C_DATE = DetectVehicle.ConstructDate.Value.ToString("MMyy", CultureInfo.InvariantCulture);
+                }
+
+                if (Vehicle.FA.C_DATETIME == null)
+                {
+                    Vehicle.FA.C_DATETIME = DetectVehicle.ConstructDate.Value;
+                }
             }
 
             Vehicle.Ereihe = DetectVehicle.Series;
@@ -632,48 +644,12 @@ namespace PsdzClient.Programming
                 }
             }
 
-            if (!Vehicle.FA.C_DATETIME.HasValue && !string.IsNullOrEmpty(Vehicle.FA.C_DATE))
-            {
-                Vehicle.FA.C_DATETIME = FormatConverter.C_DATE2DateTime(Vehicle.FA.C_DATE, Vehicle.Modellmonat, Vehicle.Modelljahr);
-            }
-
             Vehicle.BNType = VehicleLogistics.getBNType(Vehicle);
             Vehicle.BNMixed = VehicleLogistics.getBNMixed(Vehicle.Ereihe, Vehicle.FA);
             Vehicle.WithLfpBattery = programmingService.PdszDatabase.ResolveBatteryType(Vehicle) == PdszDatabase.BatteryEnum.LFP;
             Vehicle.MainSeriesSgbd = VehicleLogistics.getBrSgbd(Vehicle);
             EcuCharacteristics = VehicleLogistics.GetCharacteristics(Vehicle);
             return true;
-        }
-
-        private static void FillConstructionDateInfos(Vehicle vehicle, string cDateString)
-        {
-            try
-            {
-                if (vehicle == null)
-                {
-                    return;
-                }
-                FA fA = vehicle.FA;
-                if (fA != null)
-                {
-                    fA.C_DATE = cDateString;
-                    if (!string.IsNullOrEmpty(fA.C_DATE))
-                    {
-                        DateTime value = FormatConverter.C_DATE2DateTime(cDateString, null, null);
-                        fA.C_DATETIME = value;
-                        vehicle.Modelljahr = value.ToString("yyyy", CultureInfo.InvariantCulture);
-                        vehicle.Modellmonat = value.ToString("MM", CultureInfo.InvariantCulture);
-                        vehicle.Modelltag = "01";
-                        vehicle.BaustandsJahr = value.ToString("yy", CultureInfo.InvariantCulture);
-                        vehicle.BaustandsMonat = value.ToString("MM", CultureInfo.InvariantCulture);
-                        //vehicle.Baustand = value.ToString("MMyy", CultureInfo.InvariantCulture);
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
         }
 
         public List<PdszDatabase.EcuInfo> GetEcuList(bool individualOnly = false)
