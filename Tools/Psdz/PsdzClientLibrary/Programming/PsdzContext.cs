@@ -573,14 +573,17 @@ namespace PsdzClient.Programming
                     VecInfo.BaustandsMonat = DetectVehicle.ConstructDate.Value.ToString("MM", CultureInfo.InvariantCulture);
                 }
 
-                if (string.IsNullOrEmpty(VecInfo.FA.C_DATE))
+                if (!VecInfo.FA.AlreadyDone)
                 {
-                    VecInfo.FA.C_DATE = DetectVehicle.ConstructDate.Value.ToString("MMyy", CultureInfo.InvariantCulture);
-                }
+                    if (string.IsNullOrEmpty(VecInfo.FA.C_DATE))
+                    {
+                        VecInfo.FA.C_DATE = DetectVehicle.ConstructDate.Value.ToString("MMyy", CultureInfo.InvariantCulture);
+                    }
 
-                if (VecInfo.FA.C_DATETIME == null)
-                {
-                    VecInfo.FA.C_DATETIME = DetectVehicle.ConstructDate.Value;
+                    if (VecInfo.FA.C_DATETIME == null)
+                    {
+                        VecInfo.FA.C_DATETIME = DetectVehicle.ConstructDate.Value;
+                    }
                 }
             }
 
