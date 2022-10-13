@@ -221,7 +221,7 @@ namespace PsdzClient.Core
                         text2 = text2.Substring(j, text2.Length - j);
                     }
                 }
-                catch (Exception exception)
+                catch (Exception)
                 {
                     //Log.WarningException("VehicleLogistics.DecodeVCMBackupFA()", exception);
                 }
@@ -249,6 +249,16 @@ namespace PsdzClient.Core
             {
                 //Log.Warning("VehicleLogistics.DecodeVCMBackupFA()", "fa byte stream was null or too short");
             }
+        }
+
+        public static ObservableCollectionEx<PdszDatabase.SaLaPa> GetAvailableSALAPAs(Vehicle vecInfo)
+        {
+            BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
+            if (characteristics != null)
+            {
+                return characteristics.GetAvailableSALAPAs(vecInfo);
+            }
+            return new ObservableCollectionEx<PdszDatabase.SaLaPa>();
         }
 
         // ToDo: Check on update
