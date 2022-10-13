@@ -3385,6 +3385,38 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             return ecuGroup;
         }
 
+        public EcuGroup GetEcuGroupByName(string groupName)
+        {
+            if (string.IsNullOrEmpty(groupName))
+            {
+                return null;
+            }
+
+            List<EcuGroup> ecuGroups = new List<EcuGroup>();
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NAME, VIRTUELL, SICHERHEITSRELEVANT, DIAGNOSTIC_ADDRESS FROM XEP_ECUGROUPS WHERE (NAME = '{0}' COLLATE UTF8CI)", groupName);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            ecuGroups.Add(ReadXepEcuGroup(reader));
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetEcuGroupByName Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            log.InfoFormat("GetEcuGroupByName: Found {0} groups for group name: {1}", ecuGroups.Count, groupName);
+            return ecuGroups.FirstOrDefault();
+        }
+
         public Equipment GetEquipmentById(string equipmentId)
         {
             if (string.IsNullOrEmpty(equipmentId))

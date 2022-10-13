@@ -1075,5 +1075,15 @@ namespace PsdzClient.Core
             string text = GetCharacteristics(vecInfo)?.brSgbd;
             return text;
         }
+
+        public static string getECU_GROBNAME(Vehicle vecInfo, long? sgAdr)
+        {
+            BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
+            if (characteristics != null)
+            {
+                return characteristics.getECU_GROBNAME(sgAdr);
+            }
+            return string.Empty;
+        }
     }
 }
