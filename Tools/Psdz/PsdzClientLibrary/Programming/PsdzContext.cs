@@ -645,6 +645,7 @@ namespace PsdzClient.Programming
             }
 
             Vehicle.BNType = VehicleLogistics.getBNType(Vehicle);
+            Vehicle.FA.AlreadyDone = true;
             Vehicle.BNMixed = VehicleLogistics.getBNMixed(Vehicle.Ereihe, Vehicle.FA);
             Vehicle.WithLfpBattery = programmingService.PdszDatabase.ResolveBatteryType(Vehicle) == PdszDatabase.BatteryEnum.LFP;
             Vehicle.MainSeriesSgbd = VehicleLogistics.getBrSgbd(Vehicle);
