@@ -738,9 +738,9 @@ namespace PsdzClient.Programming
                 vehicle.VCI.Port = diagPort;
                 vehicle.VCI.NetworkType = "LAN";
                 vehicle.VCI.VIN = PsdzContext.DetectVehicle.Vin;
-                PsdzContext.Vehicle = vehicle;
+                PsdzContext.VecInfo = vehicle;
 
-                ProgrammingService.CreateEcuProgrammingInfos(PsdzContext.Vehicle);
+                ProgrammingService.CreateEcuProgrammingInfos(PsdzContext.VecInfo);
                 if (!PsdzContext.UpdateVehicle(ProgrammingService))
                 {
                     sbResult.AppendLine(Strings.UpdateVehicleDataFailed);
@@ -865,7 +865,7 @@ namespace PsdzClient.Programming
                     return false;
                 }
 
-                ClientContext clientContext = ClientContext.GetClientContext(PsdzContext.Vehicle);
+                ClientContext clientContext = ClientContext.GetClientContext(PsdzContext.VecInfo);
                 if (clientContext == null)
                 {
                     sbResult.AppendLine(Strings.ContextMissing);
@@ -1730,7 +1730,7 @@ namespace PsdzClient.Programming
                 log.InfoFormat(CultureInfo.InvariantCulture, "ILevel Ship: {0}", psdzIstufeShip.Value);
 
                 IPsdzIstufe psdzIstufeTarget = ProgrammingService.Psdz.ObjectBuilder.BuildIstufe(bModifyFa ? PsdzContext.IstufeCurrent : latestIstufeTarget);
-                PsdzContext.Vehicle.TargetILevel = psdzIstufeTarget.Value;
+                PsdzContext.VecInfo.TargetILevel = psdzIstufeTarget.Value;
                 log.InfoFormat(CultureInfo.InvariantCulture, "ILevel Target: {0}", psdzIstufeTarget.Value);
 
                 IPsdzIstufe psdzIstufeLatest = ProgrammingService.Psdz.ObjectBuilder.BuildIstufe(latestIstufeTarget);
@@ -1833,7 +1833,7 @@ namespace PsdzClient.Programming
 
                 ProgrammingService.PdszDatabase.ResetXepRules();
                 log.InfoFormat(CultureInfo.InvariantCulture, "Getting ECU variants");
-                ProgrammingService.PdszDatabase.GetEcuVariants(PsdzContext.DetectVehicle.EcuList, PsdzContext.Vehicle);
+                ProgrammingService.PdszDatabase.GetEcuVariants(PsdzContext.DetectVehicle.EcuList, PsdzContext.VecInfo);
                 log.InfoFormat(CultureInfo.InvariantCulture, "Ecu variants: {0}", PsdzContext.DetectVehicle.EcuList.Count());
                 foreach (PdszDatabase.EcuInfo ecuInfo in PsdzContext.DetectVehicle.EcuList)
                 {
@@ -1848,7 +1848,7 @@ namespace PsdzClient.Programming
                 {
                     CheckVoltage(cts, sbResult, false, true);
 
-                    ProgrammingService.PdszDatabase.ReadSwiRegister(PsdzContext.Vehicle);
+                    ProgrammingService.PdszDatabase.ReadSwiRegister(PsdzContext.VecInfo);
                     if (ProgrammingService.PdszDatabase.SwiRegisterTree != null)
                     {
                         string treeText = ProgrammingService.PdszDatabase.SwiRegisterTree.ToString(clientContext.Language);
@@ -2431,7 +2431,7 @@ namespace PsdzClient.Programming
                                     }
                                     else
                                     {
-                                        log.InfoFormat(CultureInfo.InvariantCulture, "UpdateTargetFa Info object: {0}", swiInfoObj.ToString(ClientContext.GetLanguage(PsdzContext.Vehicle)));
+                                        log.InfoFormat(CultureInfo.InvariantCulture, "UpdateTargetFa Info object: {0}", swiInfoObj.ToString(ClientContext.GetLanguage(PsdzContext.VecInfo)));
                                     }
                                 }
 
@@ -2516,7 +2516,7 @@ namespace PsdzClient.Programming
         private bool CheckVoltage(CancellationTokenSource cts, StringBuilder sbResult, bool showInfo = false, bool addMessage = false)
         {
             log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage vehicle: Show info={0}", showInfo);
-            if (PsdzContext.Vehicle == null)
+            if (PsdzContext.VecInfo == null)
             {
                 log.ErrorFormat(CultureInfo.InvariantCulture, "CheckVoltage No vehicle");
                 return false;
@@ -2539,7 +2539,7 @@ namespace PsdzClient.Programming
 
                     log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage: Battery voltage={0}", voltage);
 
-                    bool lfpBattery = PsdzContext.Vehicle.WithLfpBattery;
+                    bool lfpBattery = PsdzContext.VecInfo.WithLfpBattery;
                     double minVoltageError = lfpBattery ? MinBatteryVoltageErrorLfp : MinBatteryVoltageErrorPb;
                     double minVoltageWarn = lfpBattery ? MinBatteryVoltageWarnLfp : MinBatteryVoltageWarnPb;
                     double maxVoltageWarn = lfpBattery ? MaxBatteryVoltageWarnLfp : MaxBatteryVoltageWarnPb;

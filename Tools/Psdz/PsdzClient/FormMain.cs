@@ -416,7 +416,7 @@ namespace PsdzClient
                 }
 
                 List<PdszDatabase.SwiAction> selectedSwiActions = GetSelectedSwiActions();
-                List<PdszDatabase.SwiAction> linkedSwiActions = _programmingJobs.ProgrammingService.PdszDatabase.ReadLinkedSwiActions(selectedSwiActions, _programmingJobs.PsdzContext?.Vehicle, null);
+                List<PdszDatabase.SwiAction> linkedSwiActions = _programmingJobs.ProgrammingService.PdszDatabase.ReadLinkedSwiActions(selectedSwiActions, _programmingJobs.PsdzContext?.VecInfo, null);
                 ProgrammingJobs.OptionsItem topItemCurrent = null;
                 int topIndexCurrent = checkedListBoxOptions.TopIndex;
                 if (topIndexCurrent >= 0 && topIndexCurrent < checkedListBoxOptions.Items.Count)
@@ -475,7 +475,7 @@ namespace PsdzClient
                                         }
                                         else
                                         {
-                                            if (!_programmingJobs.ProgrammingService.PdszDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, _programmingJobs.PsdzContext?.Vehicle, null))
+                                            if (!_programmingJobs.ProgrammingService.PdszDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, _programmingJobs.PsdzContext?.VecInfo, null))
                                             {
                                                 addItem = false;
                                             }

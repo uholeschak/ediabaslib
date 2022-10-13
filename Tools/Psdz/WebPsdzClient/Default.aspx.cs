@@ -703,7 +703,7 @@ namespace WebPsdzClient
 
                 Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = programmingJobs.OptionsDict;
                 List<PdszDatabase.SwiAction> selectedSwiActions = GetSelectedSwiActions(programmingJobs);
-                List<PdszDatabase.SwiAction> linkedSwiActions = programmingJobs.ProgrammingService.PdszDatabase.ReadLinkedSwiActions(selectedSwiActions, programmingJobs.PsdzContext?.Vehicle, null);
+                List<PdszDatabase.SwiAction> linkedSwiActions = programmingJobs.ProgrammingService.PdszDatabase.ReadLinkedSwiActions(selectedSwiActions, programmingJobs.PsdzContext?.VecInfo, null);
 
                 if (optionsDict != null && programmingJobs.SelectedOptions != null && swiRegisterEnum.HasValue)
                 {
@@ -752,7 +752,7 @@ namespace WebPsdzClient
                                     }
                                     else
                                     {
-                                        if (!programmingJobs.ProgrammingService.PdszDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, programmingJobs.PsdzContext?.Vehicle, null))
+                                        if (!programmingJobs.ProgrammingService.PdszDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, programmingJobs.PsdzContext?.VecInfo, null))
                                         {
                                             addItem = false;
                                         }

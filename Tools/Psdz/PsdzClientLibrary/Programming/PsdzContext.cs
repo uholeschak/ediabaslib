@@ -191,7 +191,7 @@ namespace PsdzClient.Programming
 
         public DetectVehicle DetectVehicle { get; set; }
 
-        public Vehicle Vehicle { get; set; }
+        public Vehicle VecInfo { get; set; }
 
         public IEnumerable<IPsdzEcuIdentifier> EcuListActual { get; set; }
 
@@ -481,18 +481,18 @@ namespace PsdzClient.Programming
         public void SetFaActual(IPsdzFa fa)
 		{
 			this.FaActual = fa;
-            if (Vehicle != null)
+            if (VecInfo != null)
             {
-                Vehicle.FA = ProgrammingUtils.BuildVehicleFa(fa, DetectVehicle.ModelSeries);
+                VecInfo.FA = ProgrammingUtils.BuildVehicleFa(fa, DetectVehicle.ModelSeries);
             }
 		}
 
 		public void SetFaTarget(IPsdzFa fa)
 		{
 			this.FaTarget = fa;
-            if (Vehicle != null)
+            if (VecInfo != null)
             {
-                Vehicle.TargetFA = ProgrammingUtils.BuildVehicleFa(fa, DetectVehicle.ModelSeries);
+                VecInfo.TargetFA = ProgrammingUtils.BuildVehicleFa(fa, DetectVehicle.ModelSeries);
             }
 		}
 
@@ -543,7 +543,7 @@ namespace PsdzClient.Programming
         public bool UpdateVehicle(ProgrammingService programmingService)
         {
             EcuCharacteristics = null;
-            if (Vehicle == null)
+            if (VecInfo == null)
             {
                 return false;
             }
@@ -554,46 +554,46 @@ namespace PsdzClient.Programming
                 return false;
             }
 
-            Vehicle.VehicleIdentLevel = IdentificationLevel.VINVehicleReadout;
-            Vehicle.VehicleIdentAlreadyDone = true;
-            Vehicle.ILevelWerk = !string.IsNullOrEmpty(IstufeShipment) ? IstufeShipment : DetectVehicle.ILevelShip;
-            Vehicle.ILevel = !string.IsNullOrEmpty(IstufeCurrent) ? IstufeCurrent: DetectVehicle.ILevelCurrent;
-            Vehicle.VIN17 = DetectVehicle.Vin;
+            VecInfo.VehicleIdentLevel = IdentificationLevel.VINVehicleReadout;
+            VecInfo.VehicleIdentAlreadyDone = true;
+            VecInfo.ILevelWerk = !string.IsNullOrEmpty(IstufeShipment) ? IstufeShipment : DetectVehicle.ILevelShip;
+            VecInfo.ILevel = !string.IsNullOrEmpty(IstufeCurrent) ? IstufeCurrent: DetectVehicle.ILevelCurrent;
+            VecInfo.VIN17 = DetectVehicle.Vin;
             if (DetectVehicle.ConstructDate != null)
             {
-                Vehicle.Modelljahr = DetectVehicle.ConstructYear;
-                Vehicle.Modellmonat = DetectVehicle.ConstructMonth;
-                Vehicle.Modelltag = "01";
-                Vehicle.ProductionDate = DetectVehicle.ConstructDate.Value;
-                Vehicle.ProductionDateSpecified = true;
+                VecInfo.Modelljahr = DetectVehicle.ConstructYear;
+                VecInfo.Modellmonat = DetectVehicle.ConstructMonth;
+                VecInfo.Modelltag = "01";
+                VecInfo.ProductionDate = DetectVehicle.ConstructDate.Value;
+                VecInfo.ProductionDateSpecified = true;
 
-                if (string.IsNullOrEmpty(Vehicle.BaustandsJahr) || string.IsNullOrEmpty(Vehicle.BaustandsMonat))
+                if (string.IsNullOrEmpty(VecInfo.BaustandsJahr) || string.IsNullOrEmpty(VecInfo.BaustandsMonat))
                 {
-                    Vehicle.BaustandsJahr = DetectVehicle.ConstructDate.Value.ToString("yy", CultureInfo.InvariantCulture);
-                    Vehicle.BaustandsMonat = DetectVehicle.ConstructDate.Value.ToString("MM", CultureInfo.InvariantCulture);
+                    VecInfo.BaustandsJahr = DetectVehicle.ConstructDate.Value.ToString("yy", CultureInfo.InvariantCulture);
+                    VecInfo.BaustandsMonat = DetectVehicle.ConstructDate.Value.ToString("MM", CultureInfo.InvariantCulture);
                 }
 
-                if (string.IsNullOrEmpty(Vehicle.FA.C_DATE))
+                if (string.IsNullOrEmpty(VecInfo.FA.C_DATE))
                 {
-                    Vehicle.FA.C_DATE = DetectVehicle.ConstructDate.Value.ToString("MMyy", CultureInfo.InvariantCulture);
+                    VecInfo.FA.C_DATE = DetectVehicle.ConstructDate.Value.ToString("MMyy", CultureInfo.InvariantCulture);
                 }
 
-                if (Vehicle.FA.C_DATETIME == null)
+                if (VecInfo.FA.C_DATETIME == null)
                 {
-                    Vehicle.FA.C_DATETIME = DetectVehicle.ConstructDate.Value;
+                    VecInfo.FA.C_DATETIME = DetectVehicle.ConstructDate.Value;
                 }
             }
 
-            Vehicle.Ereihe = DetectVehicle.Series;
-            Vehicle.SetVINRangeTypeFromVINRanges();
+            VecInfo.Ereihe = DetectVehicle.Series;
+            VecInfo.SetVINRangeTypeFromVINRanges();
 
             CharacteristicExpression.EnumBrand brand = CharacteristicExpression.EnumBrand.BMWBMWiMINI;
-            if (Vehicle.IsMotorcycle())
+            if (VecInfo.IsMotorcycle())
             {
                 brand = CharacteristicExpression.EnumBrand.BMWMotorrad;
             }
 
-            ClientContext clientContext = ClientContext.GetClientContext(Vehicle);
+            ClientContext clientContext = ClientContext.GetClientContext(VecInfo);
             if (clientContext != null)
             {
                 clientContext.SelectedBrand = brand;
@@ -626,10 +626,10 @@ namespace PsdzClient.Programming
                     }
                 }
 
-                Vehicle.ECU = EcuList;
+                VecInfo.ECU = EcuList;
             }
 
-            List<PdszDatabase.Characteristics> characteristicsList = programmingService.PdszDatabase.GetVehicleCharacteristics(Vehicle);
+            List<PdszDatabase.Characteristics> characteristicsList = programmingService.PdszDatabase.GetVehicleCharacteristics(VecInfo);
             if (characteristicsList == null)
             {
                 return false;
@@ -638,18 +638,18 @@ namespace PsdzClient.Programming
 
             foreach (PdszDatabase.Characteristics characteristics in characteristicsList)
             {
-                if (!vehicleCharacteristicIdent.AssignVehicleCharacteristic(characteristics.RootNodeClass, Vehicle, characteristics))
+                if (!vehicleCharacteristicIdent.AssignVehicleCharacteristic(characteristics.RootNodeClass, VecInfo, characteristics))
                 {
                     return false;
                 }
             }
 
-            Vehicle.BNType = VehicleLogistics.getBNType(Vehicle);
-            Vehicle.FA.AlreadyDone = true;
-            Vehicle.BNMixed = VehicleLogistics.getBNMixed(Vehicle.Ereihe, Vehicle.FA);
-            Vehicle.WithLfpBattery = programmingService.PdszDatabase.ResolveBatteryType(Vehicle) == PdszDatabase.BatteryEnum.LFP;
-            Vehicle.MainSeriesSgbd = VehicleLogistics.getBrSgbd(Vehicle);
-            EcuCharacteristics = VehicleLogistics.GetCharacteristics(Vehicle);
+            VecInfo.BNType = VehicleLogistics.getBNType(VecInfo);
+            VecInfo.FA.AlreadyDone = true;
+            VecInfo.BNMixed = VehicleLogistics.getBNMixed(VecInfo.Ereihe, VecInfo.FA);
+            VecInfo.WithLfpBattery = programmingService.PdszDatabase.ResolveBatteryType(VecInfo) == PdszDatabase.BatteryEnum.LFP;
+            VecInfo.MainSeriesSgbd = VehicleLogistics.getBrSgbd(VecInfo);
+            EcuCharacteristics = VehicleLogistics.GetCharacteristics(VecInfo);
             return true;
         }
 
@@ -662,7 +662,7 @@ namespace PsdzClient.Programming
                 {
                     if (individualOnly)
                     {
-                        if (Vehicle.IsMotorcycle() || ecuInfo.HasIndividualData)
+                        if (VecInfo.IsMotorcycle() || ecuInfo.HasIndividualData)
                         {
                             ecuList.Add(ecuInfo);
                         }
@@ -708,7 +708,7 @@ namespace PsdzClient.Programming
                     DetectVehicle = null;
                 }
 
-                Vehicle = null;
+                VecInfo = null;
 
 				// If disposing equals true, dispose all managed
 				// and unmanaged resources.
