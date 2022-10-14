@@ -3727,7 +3727,7 @@ namespace UdsFileReader
                 }
 
                 string udsDir = Path.Combine(rootDir, UdsDir);
-                List<string[]> redirList = ExtractFileSegment(new List<string> {Path.Combine(udsDir, "redir" + FileExtension)}, "DIR");
+                List<string[]> redirList = ExtractFileSegment(new List<string> {Path.Combine(udsDir, "redir" + FileExtension)}, "DIR", out errorMessage);
                 if (redirList == null)
                 {
                     return false;
@@ -3743,13 +3743,13 @@ namespace UdsFileReader
                     _redirMap.Add(redirArray[1].ToLowerInvariant(), redirArray[2]);
                 }
 
-                _textMap = CreateTextDict(udsDir, "tttext*" + FileExtension, "TXT");
+                _textMap = CreateTextDict(udsDir, "tttext*" + FileExtension, "TXT", out errorMessage);
                 if (_textMap == null)
                 {
                     return false;
                 }
 
-                _unitMap = CreateTextDict(udsDir, "unit*" + FileExtension, "UNT");
+                _unitMap = CreateTextDict(udsDir, "unit*" + FileExtension, "UNT", out errorMessage);
                 if (_unitMap == null)
                 {
                     return false;
@@ -3764,21 +3764,21 @@ namespace UdsFileReader
                     }
                 }
 
-                List<string[]> ttdopList = ExtractFileSegment(new List<string> { Path.Combine(udsDir, "ttdop" + FileExtension) }, "DOP");
+                List<string[]> ttdopList = ExtractFileSegment(new List<string> { Path.Combine(udsDir, "ttdop" + FileExtension) }, "DOP", out errorMessage);
                 if (ttdopList == null)
                 {
                     return false;
                 }
                 _ttdopLookup = ttdopList.ToLookup(item => UInt32.Parse(item[0]));
 
-                List<string[]> muxList = ExtractFileSegment(new List<string> { Path.Combine(udsDir, "mux" + FileExtension) }, "MUX");
+                List<string[]> muxList = ExtractFileSegment(new List<string> { Path.Combine(udsDir, "mux" + FileExtension) }, "MUX", out errorMessage);
                 if (muxList == null)
                 {
                     return false;
                 }
                 _muxLookup = muxList.ToLookup(item => UInt32.Parse(item[0]));
 
-                _chassisMap = CreateChassisDict(Path.Combine(udsDir, "chassis" + DataReader.FileExtension));
+                _chassisMap = CreateChassisDict(Path.Combine(udsDir, "chassis" + DataReader.FileExtension), out errorMessage);
                 if (_chassisMap == null)
                 {
                     return false;
@@ -3802,7 +3802,7 @@ namespace UdsFileReader
                     }
 
                     string fileName = Path.Combine(udsDir, Path.ChangeExtension(segmentInfo.FileName ?? string.Empty, FileExtension));
-                    List<string[]> lineList = ExtractFileSegment(new List<string> {fileName}, segmentInfo.SegmentName);
+                    List<string[]> lineList = ExtractFileSegment(new List<string> {fileName}, segmentInfo.SegmentName, out errorMessage);
                     if (lineList == null)
                     {
                         return false;
@@ -4415,7 +4415,7 @@ namespace UdsFileReader
                 return null;
             }
 
-            List<string[]> lineList = ExtractFileSegment(fileList, segmentInfoSel.SegmentName);
+            List<string[]> lineList = ExtractFileSegment(fileList, segmentInfoSel.SegmentName, out _);
             if (lineList == null)
             {
                 return null;
@@ -4673,8 +4673,9 @@ namespace UdsFileReader
             return resultList;
         }
 
-        public static Dictionary<uint, string[]> CreateTextDict(string dirName, string fileSpec, string segmentName)
+        public static Dictionary<uint, string[]> CreateTextDict(string dirName, string fileSpec, string segmentName, out string errorMessage)
         {
+            errorMessage = null;
             try
             {
                 string[] files = Directory.GetFiles(dirName, fileSpec, SearchOption.TopDirectoryOnly);
@@ -4682,7 +4683,7 @@ namespace UdsFileReader
                 {
                     return null;
                 }
-                List<string[]> textList = ExtractFileSegment(files.ToList(), segmentName);
+                List<string[]> textList = ExtractFileSegment(files.ToList(), segmentName, out errorMessage);
                 if (textList == null)
                 {
                     return null;
@@ -4711,8 +4712,9 @@ namespace UdsFileReader
             }
         }
 
-        public static Dictionary<string, ChassisInfo> CreateChassisDict(string fileName)
+        public static Dictionary<string, ChassisInfo> CreateChassisDict(string fileName, out string errorMessage)
         {
+            errorMessage = null;
             try
             {
                 List<string[]> textList = DataReader.ReadFileLines(fileName);
@@ -4750,8 +4752,9 @@ namespace UdsFileReader
 
                 return dict;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                errorMessage = ex.Message;
                 return null;
             }
         }
@@ -4773,8 +4776,9 @@ namespace UdsFileReader
             return BitConverter.ToString(result).Replace("-", "");
         }
 
-        public static List<string[]> ExtractFileSegment(List<string> fileList, string segmentName)
+        public static List<string[]> ExtractFileSegment(List<string> fileList, string segmentName, out string errorMessage)
         {
+            errorMessage = null;
             string segmentStart = "[" + segmentName + "]";
             string segmentEnd = "[/" + segmentName + "]";
 
@@ -4852,8 +4856,9 @@ namespace UdsFileReader
                         // closing of encrypted stream throws execption
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    errorMessage = ex.Message;
                     return null;
                 }
                 finally
@@ -4931,7 +4936,7 @@ namespace UdsFileReader
                     return false;
                 }
 
-                List<string[]> lineList = ExtractFileSegment(new List<string> { fileName }, "INC");
+                List<string[]> lineList = ExtractFileSegment(new List<string> { fileName }, "INC", out _);
                 if (lineList == null)
                 {
                     return false;
