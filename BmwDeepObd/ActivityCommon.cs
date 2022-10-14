@@ -3137,7 +3137,7 @@ namespace BmwDeepObd
                     WifiInfo wifiInfo = _maWifi.ConnectionInfo;
                     if (wifiInfo != null && _maWifi.DhcpInfo != null && wifiInfo.IpAddress != 0)
                     {
-                        ssid = wifiInfo.SSID;
+                        ssid = GetWifiSsid(wifiInfo);
                         dhcpServerAddress = TcpClientWithTimeout.ConvertIpAddress(_maWifi.DhcpInfo.ServerAddress);
                         return !string.IsNullOrEmpty(dhcpServerAddress);
                     }
@@ -3164,7 +3164,7 @@ namespace BmwDeepObd
                                         {
                                             if (inet4Address.IsSiteLocalAddress || inet4Address.IsLinkLocalAddress)
                                             {
-                                                ssid = wifiInfo.SSID;
+                                                ssid = GetWifiSsid(wifiInfo);
                                                 dhcpServerAddress = serverAddress;
                                                 break;
                                             }
@@ -3187,6 +3187,57 @@ namespace BmwDeepObd
             {
                 return false;
             }
+        }
+
+        public string GetWifiSsid(WifiInfo wifiInfo)
+        {
+            try
+            {
+                if (wifiInfo == null)
+                {
+                    return string.Empty;
+                }
+
+                string ssid = wifiInfo.SSID;
+                if (!string.IsNullOrEmpty(ssid) && !ssid.Contains("<unknown ssid>", StringComparison.OrdinalIgnoreCase))
+                {
+                    return ssid;
+                }
+
+                IList<ScanResult> scanResults = _maWifi.ScanResults;
+                if (scanResults != null)
+                {
+                    foreach (ScanResult scanResult in scanResults)
+                    {
+                        if (wifiInfo.Frequency != scanResult.Frequency)
+                        {
+                            continue;
+                        }
+
+                        if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
+                        {
+                            ssid = scanResult.WifiSsid?.ToString();
+                        }
+                        else
+                        {
+#pragma warning disable CS0618
+                            ssid = scanResult.Ssid;
+#pragma warning restore CS0618
+                        }
+
+                        if (!string.IsNullOrEmpty(ssid))
+                        {
+                            return ssid;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return string.Empty;
         }
 
         public bool IsValidEthernetConnection()
