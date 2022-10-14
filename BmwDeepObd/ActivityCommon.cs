@@ -9012,7 +9012,7 @@ namespace BmwDeepObd
                                         UdsReader.SegmentType.Adp,
                                         UdsReader.SegmentType.Mwb,
                                         UdsReader.SegmentType.Dtc
-                                    }))
+                                    }, out errorMessage))
                                 {
                                     return false;
                                 }
