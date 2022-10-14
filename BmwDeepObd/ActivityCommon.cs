@@ -408,6 +408,7 @@ namespace BmwDeepObd
         public const string AdapterSsidDeepObd = "Deep OBD BMW";
         public const string AdapterSsidEnetLink = "ENET-LINK_";
         public const string AdapterSsidModBmw = "modBMW ENET";
+        public const string AdapterSsidUniCar = "UniCarScan";
         public const string EmulatorEnetIp = ""; // = "169.254.0.1";
         public const string DeepObdAdapterIp = "192.168.100.1";
         public const string EnetLinkAdapterIp = "192.168.16.254";
@@ -2950,7 +2951,7 @@ namespace BmwDeepObd
                         defaultPassword = string.Empty;
                         return adapterIp;
                     }
-                    if (ssid.Contains(AdapterSsidModBmw))
+                    if (ssid.Contains(AdapterSsidModBmw) || ssid.Contains(AdapterSsidUniCar))
                     {
                         defaultPassword = DefaultPwdModBmw;
                         return adapterIp;
@@ -3408,7 +3409,7 @@ namespace BmwDeepObd
                     _lastEnetSsid = enetSsid;
                 }
 
-                bool validSsid = enetSsid.Contains(AdapterSsidDeepObd) || enetSsid.Contains(AdapterSsidEnetLink) || enetSsid.Contains(AdapterSsidModBmw);
+                bool validSsid = enetSsid.Contains(AdapterSsidDeepObd) || enetSsid.Contains(AdapterSsidEnetLink) || enetSsid.Contains(AdapterSsidModBmw) || enetSsid.Contains(AdapterSsidUniCar);
                 bool validEthernet = IsValidEthernetConnection();
                 bool ipSelected = !string.IsNullOrEmpty(SelectedEnetIp);
 
