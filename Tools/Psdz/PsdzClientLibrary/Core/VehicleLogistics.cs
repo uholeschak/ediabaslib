@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.DiagnosticsBusinessData;
+using BmwFileReader;
 using PsdzClient.Core;
 using PsdzClient.Utility;
 using PsdzClientLibrary;
@@ -1085,5 +1086,26 @@ namespace PsdzClient.Core
             }
             return string.Empty;
         }
+
+        public static int getECUAdrByECU_GRUPPE(Vehicle vecInfo, string grp)
+        {
+            if (vecInfo != null && !string.IsNullOrEmpty(grp))
+            {
+                PdszDatabase.EcuGroup ecuGroupByName = ClientContext.GetDatabase(vecInfo)?.GetEcuGroupByName(grp);
+                if (ecuGroupByName != null)
+                {
+                    Int64 diagAddrValue = ecuGroupByName.DiagAddr.ConvertToInt();
+                    if (diagAddrValue != -1)
+                    {
+                        return (int) diagAddrValue;
+                    }
+                }
+                //Log.Info(Log.CurrentMethod(), "No diagnostic address can be retrieved from database by group name: " + grp);
+                //BMW.Rheingold.DiagnosticsBusinessData.DiagnosticsBusinessData.AddServiceCode(Log.CurrentMethod(), 1);
+                return GetCharacteristics(vecInfo)?.getECUAdrByECU_GRUPPE(grp) ?? (-1);
+            }
+            return -1;
+        }
+
     }
 }

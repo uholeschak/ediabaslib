@@ -88,7 +88,7 @@ namespace PsdzClient.Core
             stringBuilder.Append("(\"EcuGroup\", ");
             if (ecuGroupById != null)
             {
-                stringBuilder.Append(ecuGroupById.DiagAddr.ToString(CultureInfo.InvariantCulture));
+                stringBuilder.Append(ecuGroupById.DiagAddr);
             }
             else
             {
