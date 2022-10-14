@@ -3359,6 +3359,7 @@ namespace BmwDeepObd
             _instanceData.AppDataPath = string.Empty;
             _instanceData.EcuPath = string.Empty;
             _instanceData.VagPath = string.Empty;
+            _instanceData.BmwPath = string.Empty;
             _instanceData.UserEcuFiles = false;
             if (string.IsNullOrEmpty(ActivityCommon.CustomStorageMedia))
             {
@@ -3384,18 +3385,9 @@ namespace BmwDeepObd
                 _instanceData.AppDataPath = Path.Combine(ActivityCommon.CustomStorageMedia, AppFolderName);
             }
 
-            if (string.IsNullOrEmpty(_instanceData.EcuPath))
-            {
-                _instanceData.EcuPath = Path.Combine(_instanceData.AppDataPath, ManufacturerEcuDirName);
-            }
-            if (string.IsNullOrEmpty(_instanceData.VagPath))
-            {
-                _instanceData.VagPath = Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir, ActivityCommon.VagBaseDir);
-            }
-            if (string.IsNullOrEmpty(_instanceData.BmwPath))
-            {
-                _instanceData.BmwPath = Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir, ActivityCommon.BmwBaseDir);
-            }
+            _instanceData.EcuPath = Path.Combine(_instanceData.AppDataPath, ManufacturerEcuDirName);
+            _instanceData.VagPath = Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir, ActivityCommon.VagBaseDir);
+            _instanceData.BmwPath = Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir, ActivityCommon.BmwBaseDir);
 
             string backgroundImageFile = Path.Combine(_instanceData.AppDataPath, "Images", "Background.jpg");
             if (File.Exists(backgroundImageFile))
