@@ -648,20 +648,21 @@ namespace PsdzClient.Core
 			return bus.ToString();
 		}
 
-#if false
 		protected bool IsGroupValid(string groupName, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
 		{
-			if (DatabaseProviderFactory.Instance != null && DatabaseProviderFactory.Instance.DatabaseAccessType != DatabaseType.None)
+            PdszDatabase database = ClientContext.GetDatabase(vecInfo);
+			if (database == null)
+            {
+                return false;
+            }
+
+            PdszDatabase.EcuGroup ecuGroupByName = database.GetEcuGroupByName(groupName);
+			if (ecuGroupByName != null)
 			{
-				XEP_ECUGROUPS ecuGroupByName = DatabaseProviderFactory.Instance.GetEcuGroupByName(groupName);
-				if (ecuGroupByName != null)
-				{
-					return DatabaseProviderFactory.Instance.EvaluateXepRulesById(ecuGroupByName.Id, vecInfo, ffmResolver);
-				}
+				return database.EvaluateXepRulesById(ecuGroupByName.Id, vecInfo, ffmResolver);
 			}
 			return false;
 		}
-#endif
 
 		protected ECU CreateECU(long adr, string group)
 		{
