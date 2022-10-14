@@ -3712,6 +3712,12 @@ namespace UdsFileReader
 
         public bool Init(string rootDir, HashSet<SegmentType> requiredSegments = null)
         {
+            return Init(rootDir, requiredSegments, out _);
+        }
+
+        public bool Init(string rootDir, HashSet<SegmentType> requiredSegments, out string errorMessage)
+        {
+            errorMessage = null;
             try
             {
                 DataReader = new DataReader();
@@ -3806,8 +3812,9 @@ namespace UdsFileReader
                 }
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                errorMessage = ex.Message;
                 return false;
             }
         }
