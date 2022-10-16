@@ -436,7 +436,7 @@ namespace BmwDeepObd
                 return;
             }
 
-            if (_btPermissionRequested)
+            if (_btPermissionRequested || _btPermissionGranted)
             {
                 return;
             }
