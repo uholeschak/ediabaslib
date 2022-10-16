@@ -94,10 +94,6 @@ namespace BmwDeepObd
         private static readonly Java.Util.UUID ZeroUuid = Java.Util.UUID.FromString("00000000-0000-0000-0000-000000000000");
         private const string DefaultModulePwd = "1234";
         private const int ResponseTimeout = 1000;
-        private static readonly string[] _permissionsLocation =
-        {
-            Android.Manifest.Permission.AccessFineLocation,
-        };
 
         // Return Intent extra
 #if DEBUG
@@ -442,7 +438,7 @@ namespace BmwDeepObd
                 return;
             }
 
-            string[] requestPermissions = Build.VERSION.SdkInt < BuildVersionCodes.S ? _permissionsLocation : ActivityCommon.PermissionsBluetooth;
+            string[] requestPermissions = Build.VERSION.SdkInt < BuildVersionCodes.S ? ActivityCommon.PermissionsLocation : ActivityCommon.PermissionsBluetooth;
             if (requestPermissions.All(permission => ContextCompat.CheckSelfPermission(this, permission) == Permission.Granted))
             {
                 BtPermissionGranted();
@@ -470,15 +466,7 @@ namespace BmwDeepObd
                                 new AlertDialog.Builder(this)
                                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                     {
-                                        try
-                                        {
-                                            Intent intent = new Intent(Android.Provider.Settings.ActionLocationSourceSettings);
-                                            StartActivityForResult(intent, (int)ActivityRequest.RequestLocationSettings);
-                                        }
-                                        catch (Exception)
-                                        {
-                                            // ignored
-                                        }
+                                        ActivityCommon.OpenLocationSettings(this, (int)ActivityRequest.RequestLocationSettings);
                                     })
                                     .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                                     {
