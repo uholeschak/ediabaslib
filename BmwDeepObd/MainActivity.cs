@@ -64,6 +64,7 @@ namespace BmwDeepObd
         {
             RequestAppStorePermissions,
             RequestAppDetailBtSettings,
+            RequestLocationSettings,
             RequestAppSettingsAccessFiles,
             RequestOverlayPermissions,
             RequestNotificationSettingsApp,
@@ -187,6 +188,7 @@ namespace BmwDeepObd
             public long LastVersionCode { get; set; }
             public bool VersionInfoShown { get; set; }
             public bool StorageRequirementsAccepted { get; set; }
+            public bool LocationProviderShown { get; set; }
             public bool BatteryWarningShown { get; set; }
             public bool ConfigMatchVehicleShown { get; set; }
             public bool DataLogTemporaryShown { get; set; }
@@ -439,6 +441,8 @@ namespace BmwDeepObd
         private bool _storageAccessGranted;
         private bool _notificationRequested;
         private bool _notificationGranted;
+        private bool _locationPersissionRequested;
+        private bool _locationPersissionGranted;
         private bool _overlayPermissionRequested;
         private bool _overlayPermissionGranted;
         private bool _storageManagerPermissionRequested;
@@ -717,6 +721,8 @@ namespace BmwDeepObd
             _storageAccessGranted = false;
             _notificationRequested = false;
             _notificationGranted = false;
+            _locationPersissionRequested = false;
+            _locationPersissionGranted = false;
             _overlayPermissionRequested = false;
             _overlayPermissionGranted = false;
             _activityCommon?.StartMtcService();
@@ -971,6 +977,10 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestAppDetailBtSettings:
+                    UpdateOptionsMenu();
+                    break;
+
+                case ActivityRequest.RequestLocationSettings:
                     UpdateOptionsMenu();
                     break;
 
@@ -1816,6 +1826,16 @@ namespace BmwDeepObd
                         .SetTitle(Resource.String.alert_title_warning)
                         .Show();
                     break;
+
+                case ActivityCommon.RequestPermissionLocation:
+                    if (grantResults.Length > 0 && grantResults.All(permission => permission == Permission.Granted))
+                    {
+                        UpdateOptionsMenu();
+                        LocationPermissionsGranted();
+                        break;
+                    }
+
+                    break;
             }
         }
 
@@ -1843,8 +1863,17 @@ namespace BmwDeepObd
                 }
                 ActivityCommon.ActivityStartedFromMain = true;
             }
+
             if (!ActivityCommon.CommActive && _connectTypeRequest == ActivityCommon.AutoConnectType.Offline)
             {
+                if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Enet)
+                {
+                    if (RequestLocationPermissions())
+                    {
+                        return;
+                    }
+                }
+
                 if (_activityCommon.ShowConnectWarning(retry =>
                 {
                     if (_activityCommon == null)
@@ -3352,6 +3381,69 @@ namespace BmwDeepObd
         {
             _notificationGranted = granted;
             StoragePermissionGranted();
+        }
+
+        public bool RequestLocationPermissions()
+        {
+            try
+            {
+                if (_locationPersissionGranted || _locationPersissionRequested)
+                {
+                    return false;
+                }
+
+                if (ActivityCommon.PermissionsLocation.All(permission => ContextCompat.CheckSelfPermission(this, permission) == Permission.Granted))
+                {
+                    LocationPermissionsGranted();
+                    return false;
+                }
+
+                _locationPersissionRequested = true;
+                ActivityCompat.RequestPermissions(this, ActivityCommon.PermissionsLocation, ActivityCommon.RequestPermissionLocation);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private void LocationPermissionsGranted()
+        {
+            _locationPersissionGranted = true;
+
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.P)
+            {
+                if (_activityCommon.LocationManager != null)
+                {
+                    try
+                    {
+                        if (!_activityCommon.LocationManager.IsLocationEnabled)
+                        {
+                            if (!_instanceData.LocationProviderShown)
+                            {
+                                _instanceData.LocationProviderShown = true;
+                                new AlertDialog.Builder(this)
+                                    .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                                    {
+                                        ActivityCommon.OpenLocationSettings(this, (int)ActivityRequest.RequestLocationSettings);
+                                    })
+                                    .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                                    {
+                                    })
+                                    .SetCancelable(true)
+                                    .SetMessage(Resource.String.location_provider_disabled)
+                                    .SetTitle(Resource.String.alert_title_warning)
+                                    .Show();
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+            }
         }
 
         private void UpdateDirectories()
