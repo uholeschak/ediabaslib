@@ -449,10 +449,16 @@ namespace BmwDeepObd
         public const int RequestPermissionExternalStorage = 0;
         public const int RequestPermissionNotifications = 1;
         public const int RequestPermissionBluetooth = 2;
+        public const int RequestPermissionLocation = 3;
         public static readonly string[] PermissionsBluetooth =
         {
             Android.Manifest.Permission.BluetoothScan,
             Android.Manifest.Permission.BluetoothConnect,
+        };
+
+        public static readonly string[] PermissionsLocation =
+        {
+            Android.Manifest.Permission.AccessFineLocation,
         };
 #if DEBUG
         private static readonly string Tag = typeof(ActivityCommon).FullName;
@@ -3848,6 +3854,24 @@ namespace BmwDeepObd
             }
         }
 
+        public bool RequestLocationPermissions()
+        {
+            try
+            {
+                if (PermissionsLocation.All(permission => ContextCompat.CheckSelfPermission(_activity, permission) == Permission.Granted))
+                {
+                    return true;
+                }
+
+                ActivityCompat.RequestPermissions(_activity, PermissionsLocation, RequestPermissionLocation);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public static bool OpenAppSettingDetails(Android.App.Activity activity, int requestCode)
         {
             try
@@ -3856,6 +3880,25 @@ namespace BmwDeepObd
                     Android.Net.Uri.Parse("package:" + Android.App.Application.Context.PackageName));
                 activity.StartActivityForResult(intent, requestCode);
                 return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public static bool OpenLocationSettings(Android.App.Activity activity, int requestCode)
+        {
+            try
+            {
+                if (Build.VERSION.SdkInt < BuildVersionCodes.P)
+                {
+                    return false;
+                }
+
+                Intent intent = new Intent(Settings.ActionLocationSourceSettings);
+                    activity.StartActivityForResult(intent, requestCode);
+                    return true;
             }
             catch (Exception)
             {
