@@ -725,6 +725,8 @@ namespace BmwDeepObd
             _locationPersissionGranted = false;
             _overlayPermissionRequested = false;
             _overlayPermissionGranted = false;
+            _storageManagerPermissionRequested = false;
+            _storageManagerPermissionGranted = false;
             _activityCommon?.StartMtcService();
         }
 
