@@ -3210,16 +3210,23 @@ namespace BmwDeepObd
                     return ssid;
                 }
 
+                if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+                {
+                    return string.Empty;
+                }
+
                 IList<ScanResult> scanResults = _maWifi.ScanResults;
                 if (scanResults != null)
                 {
+                    int matches = 0;
                     foreach (ScanResult scanResult in scanResults)
                     {
-                        if (wifiInfo.Frequency != scanResult.Frequency)
+                        if (wifiInfo.Frequency != scanResult.Frequency || wifiInfo.WifiStandard != scanResult.WifiStandard)
                         {
                             continue;
                         }
 
+                        matches++;
                         if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
                         {
                             ssid = scanResult.WifiSsid?.ToString();
@@ -3230,12 +3237,14 @@ namespace BmwDeepObd
                             ssid = scanResult.Ssid;
 #pragma warning restore CS0618
                         }
-
-                        if (!string.IsNullOrEmpty(ssid))
-                        {
-                            return ssid;
-                        }
                     }
+
+                    if (matches == 1)
+                    {
+                        return ssid;
+                    }
+
+                    return string.Empty;
                 }
             }
             catch (Exception)
