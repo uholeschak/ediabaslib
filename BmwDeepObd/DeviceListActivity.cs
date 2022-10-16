@@ -78,8 +78,6 @@ namespace BmwDeepObd
 
         public class InstanceData
         {
-            public bool BtPermissionRequested { get; set; }
-            public bool BtPermissionGranted { get; set; }
             public bool BtPermissionWarningShown { get; set; }
             public bool LocationProviderShown { get; set; }
             public bool MtcAntennaInfoShown { get; set; }
@@ -125,6 +123,8 @@ namespace BmwDeepObd
         private readonly AutoResetEvent _connectedEvent = new AutoResetEvent(false);
         private volatile string _connectDeviceAddress = string.Empty;
         private volatile bool _deviceConnected;
+        private bool _btPermissionRequested;
+        private bool _btPermissionGranted;
         private int _elmVerH = -1;
         private int _elmVerL = -1;
 
@@ -265,6 +265,9 @@ namespace BmwDeepObd
         protected override void OnStart()
         {
             base.OnStart();
+            _btPermissionRequested = false;
+            _btPermissionGranted = false;
+
             if (_activityCommon != null)
             {
                 if (_activityCommon.MtcBtService)
@@ -433,7 +436,7 @@ namespace BmwDeepObd
                 return;
             }
 
-            if (_instanceData.BtPermissionRequested)
+            if (_btPermissionRequested)
             {
                 return;
             }
@@ -445,13 +448,13 @@ namespace BmwDeepObd
                 return;
             }
 
-            _instanceData.BtPermissionRequested = true;
+            _btPermissionRequested = true;
             ActivityCompat.RequestPermissions(this, requestPermissions, ActivityCommon.RequestPermissionBluetooth);
         }
 
         private void BtPermissionGranted()
         {
-            _instanceData.BtPermissionGranted = true;
+            _btPermissionGranted = true;
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Q && Build.VERSION.SdkInt < BuildVersionCodes.S)
             {
                 if (_activityCommon.LocationManager != null)
