@@ -3432,7 +3432,7 @@ namespace BmwDeepObd
                                     {
                                     })
                                     .SetCancelable(true)
-                                    .SetMessage(Resource.String.location_provider_disabled)
+                                    .SetMessage(Resource.String.location_provider_disabled_wifi)
                                     .SetTitle(Resource.String.alert_title_warning)
                                     .Show();
                             }
