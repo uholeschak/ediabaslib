@@ -3205,7 +3205,7 @@ namespace BmwDeepObd
                 }
 
                 string ssid = wifiInfo.SSID;
-                if (!string.IsNullOrEmpty(ssid) && !ssid.Contains("<unknown ssid>", StringComparison.OrdinalIgnoreCase))
+                if (!string.IsNullOrEmpty(ssid) && !ssid.Contains(WifiManager.UnknownSsid, StringComparison.OrdinalIgnoreCase))
                 {
                     return ssid;
                 }
