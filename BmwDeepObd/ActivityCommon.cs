@@ -3854,24 +3854,6 @@ namespace BmwDeepObd
             }
         }
 
-        public bool RequestLocationPermissions()
-        {
-            try
-            {
-                if (PermissionsLocation.All(permission => ContextCompat.CheckSelfPermission(_activity, permission) == Permission.Granted))
-                {
-                    return true;
-                }
-
-                ActivityCompat.RequestPermissions(_activity, PermissionsLocation, RequestPermissionLocation);
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
         public static bool OpenAppSettingDetails(Android.App.Activity activity, int requestCode)
         {
             try
