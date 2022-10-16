@@ -269,7 +269,8 @@
   <string name="adapter_fw_update">Es ist ein Firmwareupdate für diesen Adapter verfügbar.\nWollen Sie die Adapter Konfiguration aufrufen um das Update zu installieren?</string>
   <string name="adapter_no_escape_mode">Für diesen Bluetooth Modultyp ist ein Firmwareupdate des OBD Adapters notwendig.</string>
   <string name="access_permission_rejected">Ohne Zugriffsberechtigung ist das Suchen nach Bluetooth Geräten nicht möglich.\nWollen Sie die App Einstellungen öffnen?</string>
-  <string name="location_provider_disabled">Die Standort-Dienste müssen für die Suche nach Bluetooth Geräten aktiviert sein.\nWollen Sie die Standort-Dienste aktivieren?</string>
+  <string name="location_provider_disabled_bt">Die Standort-Dienste müssen für die Suche nach Bluetooth Geräten aktiviert sein.\nWollen Sie die Standort-Dienste aktivieren?</string>
+  <string name="location_provider_disabled_wifi">Die Standort-Dienste müssen für die Erkennung der Wi-Fi Adapter aktiviert sein.\nWollen Sie die Standort-Dienste aktivieren?</string>
   <string name="bt_device_enter_mac">Geben Sie die Bluetooth Adresse eines bereits gekoppelten OBD Adapters in dem angegebenen Format ein</string>
   <string name="bt_device_mac_invalid">Die Bluetooth Adresse hat nicht das richtige Format</string>
   <string name="bt_device_connected">(Verbunden)</string>
