@@ -173,7 +173,7 @@
   <string name="extract_file">Dateien entpacken</string>
   <string name="verify_files">Dateien überprüfen</string>
   <string name="extract_failed">Das Entpacken der Dateien ist fehlgeschlagen.\nDie Zip-Datei scheint beschädigt zu sein.\nIn den meisten Fällen ist der Grund ein defektes Speichermedium.</string>
-  <string name="extract_failed_io">Das Speichern der extrahierten Dateien ist fehlgeschlagen.\nIst kein Speicher mehr auf dem Gerät verfügbar?\nEs wird empfohlen alle Dateischutz-Software (z.B. Antivirus) zu deinstallieren.</string>
+  <string name="extract_failed_io">Das Speichern der extrahierten Dateien ist fehlgeschlagen.\nIst das Dateisystem beschädigt?\nEs wird empfohlen alle Dateischutz-Software (z.B. Antivirus) zu deinstallieren.</string>
   <string name="write_files_failed">Das Speichern der Dateien ist fehlgeschlagen.\nIst kein Speicher mehr auf dem Gerät verfügbar?\nEs wird empfohlen alle Dateischutz-Software (z.B. Antivirus) zu deinstallieren.</string>
 
   <!-- Job reader -->
