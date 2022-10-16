@@ -280,7 +280,9 @@
   <string name="adapter_fw_update">Доступно обновление для этого устройства.\nХотите получить доступ к конфигурации устройства, чтобы установить обновление?</string>
   <string name="adapter_no_escape_mode">Для этого типа Bluetooth-модуля требуется обновление прошивки OBD адаптера.</string>
   <string name="access_permission_rejected">Без прав доступа поиск устройств Bluetooth невозможен.\nХотите открыть настройки приложения?</string>
-  <string name="location_provider_disabled">Для поиска Bluetooth устройств необходимо активировать службы определения местоположения.\nХотите активировать службы определения местоположения?</string>
+  <string name="location_provider_disabled_bt">Для поиска Bluetooth устройств необходимо активировать службы определения местоположения.\nХотите активировать службы определения местоположения?</string>
+  <!--Translate-->
+  <string name="location_provider_disabled_wifi">Службы определения местоположения должны быть включены для обнаружения адаптера Wi-Fi.\nВы хотите включить службу определения местоположения?</string>
   <string name="bt_device_enter_mac">Введите Bluetooth-адрес уже подключённого адаптера OBD в указанном формате</string>
   <string name="bt_device_mac_invalid">Неправильный формат Bluetooth-адреса</string>
   <string name="bt_device_connected">(Подключено)</string>
