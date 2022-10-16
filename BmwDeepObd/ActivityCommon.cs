@@ -3215,6 +3215,7 @@ namespace BmwDeepObd
                     return string.Empty;
                 }
 
+                ssid = string.Empty;
                 IList<ScanResult> scanResults = _maWifi.ScanResults;
                 if (scanResults != null)
                 {
