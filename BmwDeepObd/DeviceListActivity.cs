@@ -441,7 +441,7 @@ namespace BmwDeepObd
                 return;
             }
 
-            string[] requestPermissions = Build.VERSION.SdkInt < BuildVersionCodes.S ? ActivityCommon.PermissionsLocation : ActivityCommon.PermissionsBluetooth;
+            string[] requestPermissions = Build.VERSION.SdkInt < BuildVersionCodes.S ? ActivityCommon.PermissionsFineLocation : ActivityCommon.PermissionsBluetooth;
             if (requestPermissions.All(permission => ContextCompat.CheckSelfPermission(this, permission) == Permission.Granted))
             {
                 BtPermissionGranted();

@@ -456,7 +456,12 @@ namespace BmwDeepObd
             Android.Manifest.Permission.BluetoothConnect,
         };
 
-        public static readonly string[] PermissionsLocation =
+        public static readonly string[] PermissionsCoarseLocation =
+        {
+            Android.Manifest.Permission.AccessCoarseLocation,
+        };
+
+        public static readonly string[] PermissionsFineLocation =
         {
             Android.Manifest.Permission.AccessFineLocation,
         };
