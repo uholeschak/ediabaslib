@@ -456,11 +456,6 @@ namespace BmwDeepObd
             Android.Manifest.Permission.BluetoothConnect,
         };
 
-        public static readonly string[] PermissionsCoarseLocation =
-        {
-            Android.Manifest.Permission.AccessCoarseLocation,
-        };
-
         public static readonly string[] PermissionsFineLocation =
         {
             Android.Manifest.Permission.AccessFineLocation,
@@ -3232,16 +3227,22 @@ namespace BmwDeepObd
                             continue;
                         }
 
-                        matches++;
+                        string tempSsid;
                         if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
                         {
-                            ssid = scanResult.WifiSsid?.ToString();
+                            tempSsid = scanResult.WifiSsid?.ToString();
                         }
                         else
                         {
 #pragma warning disable CS0618
-                            ssid = scanResult.Ssid;
+                            tempSsid = scanResult.Ssid;
 #pragma warning restore CS0618
+                        }
+
+                        if (!string.IsNullOrEmpty(tempSsid) && string.Compare(tempSsid, ssid, StringComparison.Ordinal) != 0)
+                        {
+                            ssid = tempSsid;
+                            matches++;
                         }
                     }
 
