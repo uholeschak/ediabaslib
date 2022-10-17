@@ -3394,14 +3394,14 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                if (ActivityCommon.PermissionsLocation.All(permission => ContextCompat.CheckSelfPermission(this, permission) == Permission.Granted))
+                if (ActivityCommon.PermissionsCoarseLocation.All(permission => ContextCompat.CheckSelfPermission(this, permission) == Permission.Granted))
                 {
                     LocationPermissionsGranted();
                     return false;
                 }
 
                 _locationPersissionRequested = true;
-                ActivityCompat.RequestPermissions(this, ActivityCommon.PermissionsLocation, ActivityCommon.RequestPermissionLocation);
+                ActivityCompat.RequestPermissions(this, ActivityCommon.PermissionsCoarseLocation, ActivityCommon.RequestPermissionLocation);
                 return true;
             }
             catch (Exception)
