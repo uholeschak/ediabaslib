@@ -1833,10 +1833,19 @@ namespace BmwDeepObd
                     if (grantResults.Length > 0 && grantResults.All(permission => permission == Permission.Granted))
                     {
                         UpdateOptionsMenu();
-                        LocationPermissionsGranted();
-                        break;
+                        if (!LocationPermissionsGranted())
+                        {
+                            break;
+                        }
+
+                        if (_locationPersissionGranted && _instanceData.AutoStart)
+                        {
+                            ButtonConnectClick(_connectButtonInfo.Button, EventArgs.Empty);
+                            break;
+                        }
                     }
 
+                    _instanceData.AutoStart = false;
                     break;
             }
         }
@@ -3402,6 +3411,7 @@ namespace BmwDeepObd
 
                 _locationPersissionRequested = true;
                 ActivityCompat.RequestPermissions(this, ActivityCommon.PermissionsCoarseLocation, ActivityCommon.RequestPermissionLocation);
+                _instanceData.AutoStart = true;
                 return true;
             }
             catch (Exception)
@@ -3410,7 +3420,7 @@ namespace BmwDeepObd
             }
         }
 
-        private void LocationPermissionsGranted()
+        private bool LocationPermissionsGranted()
         {
             _locationPersissionGranted = true;
 
@@ -3437,6 +3447,7 @@ namespace BmwDeepObd
                                     .SetMessage(Resource.String.location_provider_disabled_wifi)
                                     .SetTitle(Resource.String.alert_title_warning)
                                     .Show();
+                                return false;
                             }
                         }
                     }
@@ -3446,6 +3457,8 @@ namespace BmwDeepObd
                     }
                 }
             }
+
+            return true;
         }
 
         private void UpdateDirectories()
