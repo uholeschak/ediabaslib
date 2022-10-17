@@ -1847,7 +1847,14 @@ namespace BmwDeepObd
                     if (grantResults.Length > 0 && grantResults.All(permission => permission == Permission.Granted))
                     {
                         UpdateOptionsMenu();
-                        if (!LocationPermissionsGranted())
+                        if (LocationPermissionsGranted((sender, args) =>
+                            {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
+                                ButtonConnectClick(sender, args);
+                            }))
                         {
                             break;
                         }
@@ -3181,7 +3188,10 @@ namespace BmwDeepObd
                             Intent intent = new Intent(Android.Provider.Settings.ActionManageOverlayPermission,
                                 Android.Net.Uri.Parse("package:" + Android.App.Application.Context.PackageName));
                             StartActivityForResult(intent, (int)ActivityRequest.RequestOverlayPermissions);
-                            _instanceData.AutoStart = true;
+                            if (handler != null)
+                            {
+                                _instanceData.AutoStart = true;
+                            }
                             yesSelected = true;
                         }
                         catch (Exception)
@@ -3236,7 +3246,10 @@ namespace BmwDeepObd
                         if (_activityCommon.ShowNotificationSettings((int)ActivityRequest.RequestNotificationSettingsApp,
                                 (int)ActivityRequest.RequestNotificationSettingsChannel, ActivityCommon.NotificationChannelCommunication))
                         {
-                            _instanceData.AutoStart = true;
+                            if (handler != null)
+                            {
+                                _instanceData.AutoStart = true;
+                            }
                             yesSelected = true;
                         }
                     })
@@ -3434,7 +3447,7 @@ namespace BmwDeepObd
             }
         }
 
-        private bool LocationPermissionsGranted()
+        private bool LocationPermissionsGranted(EventHandler<EventArgs> handler = null)
         {
             _locationPersissionGranted = true;
 
@@ -3449,10 +3462,18 @@ namespace BmwDeepObd
                             if (!_instanceData.LocationProviderShown)
                             {
                                 _instanceData.LocationProviderShown = true;
-                                new AlertDialog.Builder(this)
+                                bool yesSelected = false;
+                                AlertDialog altertDialog = new AlertDialog.Builder(this)
                                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                     {
-                                        ActivityCommon.OpenLocationSettings(this, (int)ActivityRequest.RequestLocationSettings);
+                                        if (ActivityCommon.OpenLocationSettings(this, (int)ActivityRequest.RequestLocationSettings))
+                                        {
+                                            if (handler != null)
+                                            {
+                                                _instanceData.AutoStart = true;
+                                            }
+                                            yesSelected = true;
+                                        }
                                     })
                                     .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                                     {
@@ -3461,7 +3482,18 @@ namespace BmwDeepObd
                                     .SetMessage(Resource.String.location_provider_disabled_wifi)
                                     .SetTitle(Resource.String.alert_title_warning)
                                     .Show();
-                                return false;
+                                altertDialog.DismissEvent += (o, eventArgs) =>
+                                {
+                                    if (_activityCommon == null)
+                                    {
+                                        return;
+                                    }
+                                    if (!yesSelected)
+                                    {
+                                        handler?.Invoke(o, eventArgs);
+                                    }
+                                };
+                                return true;
                             }
                         }
                     }
@@ -3472,7 +3504,7 @@ namespace BmwDeepObd
                 }
             }
 
-            return true;
+            return false;
         }
 
         private void UpdateDirectories()
