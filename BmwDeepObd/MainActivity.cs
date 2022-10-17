@@ -984,6 +984,19 @@ namespace BmwDeepObd
 
                 case ActivityRequest.RequestLocationSettings:
                     UpdateOptionsMenu();
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.P)
+                    {
+                        if (_activityCommon.LocationManager != null && _activityCommon.LocationManager.IsLocationEnabled)
+                        {
+                            if (_instanceData.AutoStart)
+                            {
+                                ButtonConnectClick(_connectButtonInfo.Button, EventArgs.Empty);
+                                break;
+                            }
+                        }
+                    }
+
+                    _instanceData.AutoStart = false;
                     break;
 
                 case ActivityRequest.RequestAppSettingsAccessFiles:
@@ -1016,6 +1029,7 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestNotificationSettingsChannel:
+                    UpdateOptionsMenu();
                     if (_activityCommon.NotificationsEnabled(ActivityCommon.NotificationChannelCommunication) && _instanceData.AutoStart)
                     {
                         ButtonConnectClick(_connectButtonInfo.Button, EventArgs.Empty);
