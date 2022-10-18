@@ -460,6 +460,12 @@ namespace BmwDeepObd
         {
             Android.Manifest.Permission.AccessFineLocation,
         };
+
+        public static readonly string[] PermissionsCombinedLocation =
+        {
+            Android.Manifest.Permission.AccessCoarseLocation,
+            Android.Manifest.Permission.AccessFineLocation,
+        };
 #if DEBUG
         private static readonly string Tag = typeof(ActivityCommon).FullName;
 #endif
