@@ -1853,17 +1853,21 @@ namespace BmwDeepObd
                                 {
                                     return;
                                 }
-                                ButtonConnectClick(sender, args);
+
+                                if (_instanceData.AutoStart)
+                                {
+                                    ButtonConnectClick(sender, args);
+                                }
                             }))
                         {
                             break;
                         }
+                    }
 
-                        if (_locationPersissionGranted && _instanceData.AutoStart)
-                        {
-                            ButtonConnectClick(_connectButtonInfo.Button, EventArgs.Empty);
-                            break;
-                        }
+                    if (_instanceData.AutoStart)
+                    {
+                        ButtonConnectClick(_connectButtonInfo.Button, EventArgs.Empty);
+                        break;
                     }
 
                     _instanceData.AutoStart = false;
@@ -1873,12 +1877,13 @@ namespace BmwDeepObd
 
         protected void ButtonConnectClick(object sender, EventArgs e)
         {
+            _instanceData.AutoStart = false;
             if (!CheckForEcuFiles())
             {
                 UpdateDisplay();
                 return;
             }
-            _instanceData.AutoStart = false;
+
             if (string.IsNullOrEmpty(_instanceData.DeviceAddress))
             {
                 if (!_activityCommon.RequestBluetoothDeviceSelect((int)ActivityRequest.RequestSelectDevice, _instanceData.AppDataPath, (s, args) =>
