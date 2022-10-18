@@ -3440,14 +3440,15 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                if (ActivityCommon.PermissionsFineLocation.All(permission => ContextCompat.CheckSelfPermission(this, permission) == Permission.Granted))
+                string[] requestPermissions = Build.VERSION.SdkInt < BuildVersionCodes.S ? ActivityCommon.PermissionsFineLocation : ActivityCommon.PermissionsCombinedLocation;
+                if (requestPermissions.All(permission => ContextCompat.CheckSelfPermission(this, permission) == Permission.Granted))
                 {
                     LocationPermissionsGranted();
                     return false;
                 }
 
                 _locationPersissionRequested = true;
-                ActivityCompat.RequestPermissions(this, ActivityCommon.PermissionsFineLocation, ActivityCommon.RequestPermissionLocation);
+                ActivityCompat.RequestPermissions(this, requestPermissions, ActivityCommon.RequestPermissionLocation);
                 _instanceData.AutoStart = true;
                 return true;
             }
