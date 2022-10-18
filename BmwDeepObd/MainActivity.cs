@@ -194,6 +194,7 @@ namespace BmwDeepObd
             public bool DataLogTemporaryShown { get; set; }
             public bool CheckCpuUsage { get; set; }
             public bool VerifyEcuFiles { get; set; }
+            public bool VerifyEcuMd5 { get; set; }
             public int CommErrorsCount { get; set; }
             public bool AutoStart { get; set; }
             public bool VagInfoShown { get; set; }
@@ -1966,6 +1967,11 @@ namespace BmwDeepObd
                     if (result)
                     {
                         ButtonConnectClick(sender, e);
+                    }
+                    else
+                    {
+                        _instanceData.VerifyEcuMd5 = true;
+                        _updateHandler?.Post(CompileCode);
                     }
                 }))
                 {
@@ -5453,13 +5459,15 @@ namespace BmwDeepObd
                 }
 
                 string ecuBaseDir = Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir);
-                if (_instanceData.VerifyEcuFiles)
+                if (_instanceData.VerifyEcuFiles || _instanceData.VerifyEcuMd5)
                 {
+                    bool checkMd5 = _instanceData.VerifyEcuMd5;
                     _instanceData.VerifyEcuFiles = false;
+                    _instanceData.VerifyEcuMd5 = false;
                     if (ValidEcuPackage(ecuBaseDir))
                     {
                         int lastPercent = -1;
-                        if (!ActivityCommon.VerifyContent(Path.Combine(ecuBaseDir, ContentFileName), false, percent =>
+                        if (!ActivityCommon.VerifyContent(Path.Combine(ecuBaseDir, ContentFileName), checkMd5, percent =>
                         {
                             if (_activityCommon == null)
                             {
@@ -7095,6 +7103,11 @@ namespace BmwDeepObd
                     if (result)
                     {
                         StartXmlTool(ecuFuncCall);
+                    }
+                    else
+                    {
+                        _instanceData.VerifyEcuMd5 = true;
+                        _updateHandler?.Post(CompileCode);
                     }
                 }))
                 {
