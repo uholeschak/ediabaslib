@@ -3430,6 +3430,11 @@ namespace BmwDeepObd
         {
             try
             {
+                if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+                {
+                    return false;
+                }
+
                 if (_locationPersissionGranted || _locationPersissionRequested)
                 {
                     return false;
