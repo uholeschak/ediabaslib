@@ -26,6 +26,18 @@ namespace BmwFileReader
 #endif
         private static VehicleStructsBmw.VehicleSeriesInfoData _vehicleSeriesInfoData;
         private static VehicleStructsBmw.RulesInfoData _rulesInfoData;
+        private static bool _resourceFailure;
+        public static bool ResourceFailure
+        {
+            get
+            {
+                bool result = _resourceFailure;
+                _resourceFailure = false;
+                return result;
+            }
+
+            private set => _resourceFailure = value;
+        }
 
         public static string FindResourceName(string resourceFileName)
         {
@@ -69,6 +81,7 @@ namespace BmwFileReader
                 string resourceName = FindResourceName(VehicleStructsBmw.VehicleSeriesXmlFile);
                 if (string.IsNullOrEmpty(resourceName))
                 {
+                    ResourceFailure = true;
                     return null;
                 }
 
@@ -86,6 +99,7 @@ namespace BmwFileReader
             }
             catch (Exception)
             {
+                ResourceFailure = true;
                 return null;
             }
         }
@@ -104,7 +118,13 @@ namespace BmwFileReader
             }
 
             _rulesInfoData = ReadRulesInfoFromFile(databaseDir);
-            return _rulesInfoData;
+            if (_rulesInfoData != null)
+            {
+                return _rulesInfoData;
+            }
+
+            ResourceFailure = true;
+            return null;
         }
 
         public static VehicleStructsBmw.RulesInfoData ReadRulesInfoFromResource()
