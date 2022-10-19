@@ -6535,7 +6535,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (VehicleInfoBmw.ResourceFailure)
+            if (VehicleInfoBmw.ResourceFailure == VehicleInfoBmw.FailureSource.File)
             {
                 _instanceData.VerifyEcuMd5 = true;
                 _updateHandler?.Post(CompileCode);

@@ -19,6 +19,13 @@ namespace BmwFileReader
 {
     public class VehicleInfoBmw
     {
+        public enum FailureSource
+        {
+            None,
+            Resource,
+            File
+        }
+
         public const string ResultUnknown = "UNBEK";
 
 #if Android
@@ -26,14 +33,15 @@ namespace BmwFileReader
 #endif
         private static VehicleStructsBmw.VehicleSeriesInfoData _vehicleSeriesInfoData;
         private static VehicleStructsBmw.RulesInfoData _rulesInfoData;
-        private static bool _resourceFailure;
-        public static bool ResourceFailure
+        private static FailureSource _resourceFailure = FailureSource.None;
+
+        public static FailureSource ResourceFailure
         {
             get
             {
-                bool result = _resourceFailure;
-                _resourceFailure = false;
-                return result;
+                FailureSource source = _resourceFailure;
+                _resourceFailure = FailureSource.None;
+                return source;
             }
 
             private set => _resourceFailure = value;
@@ -81,7 +89,7 @@ namespace BmwFileReader
                 string resourceName = FindResourceName(VehicleStructsBmw.VehicleSeriesXmlFile);
                 if (string.IsNullOrEmpty(resourceName))
                 {
-                    ResourceFailure = true;
+                    ResourceFailure = FailureSource.Resource;
                     return null;
                 }
 
@@ -99,7 +107,7 @@ namespace BmwFileReader
             }
             catch (Exception)
             {
-                ResourceFailure = true;
+                ResourceFailure = FailureSource.Resource;
                 return null;
             }
         }
@@ -123,7 +131,6 @@ namespace BmwFileReader
                 return _rulesInfoData;
             }
 
-            ResourceFailure = true;
             return null;
         }
 
@@ -156,6 +163,7 @@ namespace BmwFileReader
             }
             catch (Exception)
             {
+                ResourceFailure = FailureSource.Resource;
                 return null;
             }
         }
@@ -208,6 +216,7 @@ namespace BmwFileReader
             }
             catch (Exception)
             {
+                ResourceFailure = FailureSource.File;
                 return null;
             }
         }
