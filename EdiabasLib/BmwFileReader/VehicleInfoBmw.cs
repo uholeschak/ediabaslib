@@ -33,18 +33,12 @@ namespace BmwFileReader
 #endif
         private static VehicleStructsBmw.VehicleSeriesInfoData _vehicleSeriesInfoData;
         private static VehicleStructsBmw.RulesInfoData _rulesInfoData;
-        private static FailureSource _resourceFailure = FailureSource.None;
 
-        public static FailureSource ResourceFailure
+        public static FailureSource ResourceFailure { get; private set; }
+
+        public static void ClearResourceFailure()
         {
-            get
-            {
-                FailureSource source = _resourceFailure;
-                _resourceFailure = FailureSource.None;
-                return source;
-            }
-
-            private set => _resourceFailure = value;
+            ResourceFailure = FailureSource.None;
         }
 
         public static string FindResourceName(string resourceFileName)
