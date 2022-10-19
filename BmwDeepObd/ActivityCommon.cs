@@ -9021,12 +9021,19 @@ namespace BmwDeepObd
 
             if (!Directory.Exists(vagPath))
             {
-                new AlertDialog.Builder(_context)
+                AlertDialog altertDialog = new AlertDialog.Builder(_context)
                     .SetMessage(Resource.String.vag_uds_error)
                     .SetTitle(Resource.String.alert_title_error)
                     .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
                     .Show();
-                handler?.Invoke(false);
+                altertDialog.DismissEvent += (o, eventArgs) =>
+                {
+                    if (_disposed)
+                    {
+                        return;
+                    }
+                    handler?.Invoke(false);
+                };
                 return true;
             }
 
@@ -9057,12 +9064,23 @@ namespace BmwDeepObd
                             message += "\r\n" + errorMessage;
                         }
 
-                        new AlertDialog.Builder(_context)
+                        AlertDialog altertDialog = new AlertDialog.Builder(_context)
                             .SetMessage(message)
                             .SetTitle(Resource.String.alert_title_error)
                             .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
                             .Show();
+                        altertDialog.DismissEvent += (o, eventArgs) =>
+                        {
+                            if (_disposed)
+                            {
+                                return;
+                            }
+                            handler?.Invoke(false);
+                        };
+
+                        return;
                     }
+
                     handler?.Invoke(VagUdsActive);
                 });
             });
@@ -9259,6 +9277,7 @@ namespace BmwDeepObd
                             }
                             handler?.Invoke(false);
                         };
+
                         return;
                     }
 
