@@ -6534,6 +6534,13 @@ namespace BmwDeepObd
                 };
                 return false;
             }
+
+            if (VehicleInfoBmw.ResourceFailure)
+            {
+                _instanceData.VerifyEcuMd5 = true;
+                _updateHandler?.Post(CompileCode);
+            }
+
             return true;
         }
 
