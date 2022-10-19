@@ -118,7 +118,13 @@ namespace BmwFileReader
             }
 
             _rulesInfoData = ReadRulesInfoFromFile(databaseDir);
-            return _rulesInfoData;
+            if (_rulesInfoData != null)
+            {
+                return _rulesInfoData;
+            }
+
+            ResourceFailure = true;
+            return null;
         }
 
         public static VehicleStructsBmw.RulesInfoData ReadRulesInfoFromResource()
