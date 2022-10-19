@@ -1970,8 +1970,7 @@ namespace BmwDeepObd
                     }
                     else
                     {
-                        _instanceData.VerifyEcuMd5 = true;
-                        _updateHandler?.Post(CompileCode);
+                        VerifyEcuMd5();
                     }
                 }))
                 {
@@ -5369,6 +5368,12 @@ namespace BmwDeepObd
             StoreSettings();
         }
 
+        private void VerifyEcuMd5()
+        {
+            _instanceData.VerifyEcuMd5 = true;
+            _updateHandler?.Post(CompileCode);
+        }
+
         private void CompileCode()
         {
             if (!_activityActive || _compileProgress != null)
@@ -6535,10 +6540,11 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (VehicleInfoBmw.ResourceFailure == VehicleInfoBmw.FailureSource.File)
+            VehicleInfoBmw.FailureSource failureSource = VehicleInfoBmw.ResourceFailure;
+            VehicleInfoBmw.ClearResourceFailure();
+            if (failureSource == VehicleInfoBmw.FailureSource.File)
             {
-                _instanceData.VerifyEcuMd5 = true;
-                _updateHandler?.Post(CompileCode);
+                VerifyEcuMd5();
             }
 
             return true;
@@ -7113,8 +7119,7 @@ namespace BmwDeepObd
                     }
                     else
                     {
-                        _instanceData.VerifyEcuMd5 = true;
-                        _updateHandler?.Post(CompileCode);
+                        VerifyEcuMd5();
                     }
                 }))
                 {
