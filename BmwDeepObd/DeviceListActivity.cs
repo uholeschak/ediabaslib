@@ -1138,15 +1138,18 @@ namespace BmwDeepObd
                                     .SetMessage(Resource.String.adapter_connection_mtc_failed)
                                     .SetTitle(Resource.String.alert_title_error)
                                     .Show();
-                                alertDialog.DismissEvent += (sender, args) =>
+                                if (alertDialog != null)
                                 {
-                                    if (_activityCommon == null)
+                                    alertDialog.DismissEvent += (sender, args) =>
                                     {
-                                        return;
-                                    }
-                                    _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(),
-                                        GetType(), (o, eventArgs) => { });
-                                };
+                                        if (_activityCommon == null)
+                                        {
+                                            return;
+                                        }
+                                        _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(),
+                                            GetType(), (o, eventArgs) => { });
+                                    };
+                                }
                                 break;
                             }
 
@@ -1175,15 +1178,18 @@ namespace BmwDeepObd
                                     .SetMessage(Resource.String.adapter_connection_mtc_failed)
                                     .SetTitle(Resource.String.alert_title_error)
                                     .Show();
-                                alertDialog1.DismissEvent += (sender, args) =>
+                                if (alertDialog1 != null)
                                 {
-                                    if (_activityCommon == null)
+                                    alertDialog1.DismissEvent += (sender, args) =>
                                     {
-                                        return;
-                                    }
-                                    _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(),
-                                        GetType(), (o, eventArgs) => { });
-                                };
+                                        if (_activityCommon == null)
+                                        {
+                                            return;
+                                        }
+                                        _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(),
+                                            GetType(), (o, eventArgs) => { });
+                                    };
+                                }
                                 break;
                             }
 
@@ -1200,13 +1206,15 @@ namespace BmwDeepObd
                                 .SetMessage(Resource.String.unknown_adapter_type)
                                 .SetTitle(Resource.String.alert_title_error)
                                 .Show();
-                            alertDialog2.DismissEvent += (sender, args) =>
+                            if (alertDialog2 != null)
                             {
-                                if (_activityCommon == null)
+                                alertDialog2.DismissEvent += (sender, args) =>
                                 {
-                                    return;
-                                }
-                                _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(), GetType(), (o, eventArgs) =>
+                                    if (_activityCommon == null)
+                                    {
+                                        return;
+                                    }
+                                    _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(), GetType(), (o, eventArgs) =>
                                     {
                                         if (_activityCommon == null)
                                         {
@@ -1217,7 +1225,8 @@ namespace BmwDeepObd
                                             ReturnDeviceTypeRawWarn(deviceAddress, deviceName);
                                         }
                                     });
-                            };
+                                };
+                            }
                             break;
                         }
 
@@ -1246,10 +1255,13 @@ namespace BmwDeepObd
                                 .SetMessage(ActivityCommon.FromHtml(message))
                                 .SetTitle(Resource.String.alert_title_info)
                                 .Show();
-                            TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
-                            if (messageView != null)
+                            if (alertDialog != null)
                             {
-                                messageView.MovementMethod = new LinkMovementMethod();
+                                TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
+                                if (messageView != null)
+                                {
+                                    messageView.MovementMethod = new LinkMovementMethod();
+                                }
                             }
                             break;
                         }
@@ -1320,25 +1332,29 @@ namespace BmwDeepObd
                             builder.SetMessage(ActivityCommon.FromHtml(message));
 
                             AlertDialog alertDialog = builder.Show();
-                            alertDialog.DismissEvent += (sender, args) =>
+                            if (alertDialog != null)
                             {
-                                if (_activityCommon == null)
+                                alertDialog.DismissEvent += (sender, args) =>
                                 {
-                                    return;
-                                }
-
-                                _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(), GetType(), (o, eventArgs) =>
-                                {
-                                    if (yesSelected)
+                                    if (_activityCommon == null)
                                     {
-                                        ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.Elm327Tag, deviceName);
+                                        return;
                                     }
-                                });
-                            };
-                            TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
-                            if (messageView != null)
-                            {
-                                messageView.MovementMethod = new LinkMovementMethod();
+
+                                    _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(), GetType(), (o, eventArgs) =>
+                                    {
+                                        if (yesSelected)
+                                        {
+                                            ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.Elm327Tag, deviceName);
+                                        }
+                                    });
+                                };
+
+                                TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
+                                if (messageView != null)
+                                {
+                                    messageView.MovementMethod = new LinkMovementMethod();
+                                }
                             }
                             break;
                         }
