@@ -3761,6 +3761,11 @@ namespace BmwDeepObd
 
         public void SelectManufacturer(EventHandler<DialogClickEventArgs> handler)
         {
+            if (_disposed)
+            {
+                return;
+            }
+
             if (_selectManufacturerAlertDialog != null)
             {
                 return;
@@ -3838,6 +3843,10 @@ namespace BmwDeepObd
             {
             });
             _selectManufacturerAlertDialog = builder.Show();
+            if (_selectManufacturerAlertDialog == null)
+            {
+                return;
+            }
             _selectManufacturerAlertDialog.DismissEvent += (sender, args) =>
             {
                 if (_disposed)

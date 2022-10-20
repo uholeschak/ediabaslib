@@ -6758,6 +6758,11 @@ namespace BmwDeepObd
 
         private void SelectManufacturer()
         {
+            if (_activityCommon == null)
+            {
+                return;
+            }
+
             _activityCommon.SelectManufacturer((sender, args) =>
             {
                 if (_activityCommon == null)
@@ -6769,7 +6774,7 @@ namespace BmwDeepObd
                     _activityCommon.SelectedInterface = ActivityCommon.InterfaceType.Bluetooth;
                 }
 
-                ClearConfiguration();   // settings are store here
+                ClearConfiguration();   // settings are stored here
                 if (CheckForEcuFiles())
                 {
                     RequestConfigSelect();
