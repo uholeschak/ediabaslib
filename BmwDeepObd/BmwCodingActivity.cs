@@ -561,20 +561,23 @@ namespace BmwDeepObd
                 .SetTitle(Resource.String.alert_title_error)
                 .Show();
 
-            _alertDialogConnectError.DismissEvent += (sender, args) =>
+            if (_alertDialogConnectError != null)
             {
-                if (_activityCommon == null)
+                _alertDialogConnectError.DismissEvent += (sender, args) =>
                 {
-                    return;
-                }
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
 
-                _alertDialogConnectError = null;
-                UpdateConnectTime();
-                if (!ignoreDismiss)
-                {
-                    Finish();
-                }
-            };
+                    _alertDialogConnectError = null;
+                    UpdateConnectTime();
+                    if (!ignoreDismiss)
+                    {
+                        Finish();
+                    }
+                };
+            }
         }
 
         private void UpdateOptionsMenu()
@@ -659,15 +662,19 @@ namespace BmwDeepObd
                                     .SetMessage(errorMessage)
                                     .SetTitle(Resource.String.alert_title_error)
                                     .Show();
-                                alertDialogError.DismissEvent += (sender, args) =>
+                                if (alertDialogError != null)
                                 {
-                                    if (_activityCommon == null)
+                                    alertDialogError.DismissEvent += (sender, args) =>
                                     {
-                                        return;
-                                    }
+                                        if (_activityCommon == null)
+                                        {
+                                            return;
+                                        }
 
-                                    Finish();
-                                };
+                                        Finish();
+                                    };
+
+                                }
                             });
                         });
 
@@ -682,19 +689,23 @@ namespace BmwDeepObd
                     .SetMessage(ActivityCommon.FromHtml(infoMessage))
                     .SetTitle(Resource.String.alert_title_info)
                     .Show();
-                _alertDialogInfo.DismissEvent += (sender, args) =>
+                if (_alertDialogInfo != null)
                 {
-                    if (_activityCommon == null)
+                    _alertDialogInfo.DismissEvent += (sender, args) =>
                     {
-                        return;
-                    }
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
 
-                    _alertDialogInfo = null;
-                    if (!ignoreDismiss)
-                    {
-                        Finish();
-                    }
-                };
+                        _alertDialogInfo = null;
+                        if (!ignoreDismiss)
+                        {
+                            Finish();
+                        }
+                    };
+
+                }
 
                 TextView messageView = _alertDialogInfo.FindViewById<TextView>(Android.Resource.Id.Message);
                 if (messageView != null)

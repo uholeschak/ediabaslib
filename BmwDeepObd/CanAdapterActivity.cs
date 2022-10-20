@@ -1348,28 +1348,31 @@ namespace BmwDeepObd
                             .SetTitle(updateOk ? Resource.String.alert_title_info : Resource.String.alert_title_error)
                             .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
                             .Show();
-                        alertDialog.DismissEvent += (sender, args) =>
+                        if (alertDialog != null)
                         {
-                            if (_activityCommon == null)
+                            alertDialog.DismissEvent += (sender, args) =>
                             {
-                                return;
-                            }
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
 
-                            if (updateOk)
-                            {
-                                if (changeFirmware)
+                                if (updateOk)
                                 {
-                                    Intent intent = new Intent();
-                                    intent.PutExtra(ExtraInvalidateAdapter, true);
-                                    SetResult(Android.App.Result.Ok, intent);
-                                    Finish();
+                                    if (changeFirmware)
+                                    {
+                                        Intent intent = new Intent();
+                                        intent.PutExtra(ExtraInvalidateAdapter, true);
+                                        SetResult(Android.App.Result.Ok, intent);
+                                        Finish();
+                                    }
+                                    else
+                                    {
+                                        PerformRead();
+                                    }
                                 }
-                                else
-                                {
-                                    PerformRead();
-                                }
-                            }
-                        };
+                            };
+                        }
                     }
                 });
             });

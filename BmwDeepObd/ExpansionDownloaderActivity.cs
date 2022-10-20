@@ -404,18 +404,21 @@ namespace BmwDeepObd
                         .SetTitle(Resource.String.alert_title_warning)
                         .Show();
 
-                    alertDialog.DismissEvent += (sender, args) =>
+                    if (alertDialog != null)
                     {
-                        if (_actvityDestroyed)
+                        alertDialog.DismissEvent += (sender, args) =>
                         {
-                            return;
-                        }
+                            if (_actvityDestroyed)
+                            {
+                                return;
+                            }
 
-                        if (finish)
-                        {
-                            Finish();
-                        }
-                    };
+                            if (finish)
+                            {
+                                Finish();
+                            }
+                        };
+                    }
                     break;
 
                 case ActivityCommon.RequestPermissionNotifications:
