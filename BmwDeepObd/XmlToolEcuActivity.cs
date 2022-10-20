@@ -829,15 +829,18 @@ namespace BmwDeepObd
                     .SetMessage(Resource.String.xml_tool_ecu_msg_func_not_avail)
                     .SetTitle(Resource.String.alert_title_error);
                 AlertDialog alertDialog = builder.Show();
-                alertDialog.DismissEvent += (sender, args) =>
+                if (alertDialog != null)
                 {
-                    if (_activityCommon == null)
+                    alertDialog.DismissEvent += (sender, args) =>
                     {
-                        return;
-                    }
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
 
-                    Finish();
-                };
+                        Finish();
+                    };
+                }
                 return;
             }
 

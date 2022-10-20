@@ -2847,14 +2847,17 @@ namespace BmwDeepObd
                                     readEcus = false;
                                 });
                                 AlertDialog alertDialog = builder.Show();
-                                alertDialog.DismissEvent += (sender, args) =>
+                                if (alertDialog != null)
                                 {
-                                    if (_activityCommon == null)
+                                    alertDialog.DismissEvent += (sender, args) =>
                                     {
-                                        return;
-                                    }
-                                    waitSem.Release();
-                                };
+                                        if (_activityCommon == null)
+                                        {
+                                            return;
+                                        }
+                                        waitSem.Release();
+                                    };
+                                }
                             });
                             waitSem.WaitOne();
                         }
@@ -4456,7 +4459,10 @@ namespace BmwDeepObd
                                 TranslateAndSelectJobs(ecuInfo);
                             });
                         AlertDialog alertDialog = builder.Show();
-                        alertDialog.DismissEvent += DialogDismissEvent;
+                        if (alertDialog != null)
+                        {
+                            alertDialog.DismissEvent += DialogDismissEvent;
+                        }
                         return;
                     }
                 }
@@ -4542,17 +4548,20 @@ namespace BmwDeepObd
                 handler(null);
             });
             AlertDialog alertDialog = builder.Show();
-            alertDialog.DismissEvent += (sender, args) =>
+            if (alertDialog != null)
             {
-                if (_activityCommon == null)
+                alertDialog.DismissEvent += (sender, args) =>
                 {
-                    return;
-                }
-                if (!handlerCalled)
-                {
-                    handler(null);
-                }
-            };
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+                    if (!handlerCalled)
+                    {
+                        handler(null);
+                    }
+                };
+            }
         }
 
         private void SelectMwTabFromList(List<string> fileNames, MwTabFileSelected handler)
@@ -4581,17 +4590,20 @@ namespace BmwDeepObd
                 handler(null);
             });
             AlertDialog alertDialog = builder.Show();
-            alertDialog.DismissEvent += (sender, args) =>
+            if (alertDialog != null)
             {
-                if (_activityCommon == null)
+                alertDialog.DismissEvent += (sender, args) =>
                 {
-                    return;
-                }
-                if (!handlerCalled)
-                {
-                    handler(null);
-                }
-            };
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+                    if (!handlerCalled)
+                    {
+                        handler(null);
+                    }
+                };
+            }
         }
 
         private List<string> GetBestMatchingMwTab(EcuInfo ecuInfo, CustomProgressDialog progress)
@@ -7938,7 +7950,10 @@ namespace BmwDeepObd
                 .SetMessage(messageId)
                 .SetTitle(titleId);
             AlertDialog alertDialog = builder.Show();
-            alertDialog.DismissEvent += DialogDismissEvent;
+            if (alertDialog != null)
+            {
+                alertDialog.DismissEvent += DialogDismissEvent;
+            }
         }
 
         private void DialogDismissEvent(object eventObject, EventArgs eventArgs)
