@@ -3392,17 +3392,20 @@ namespace BmwDeepObd
                         ignoreDismiss = true;
                     })
                     .Show();
-                alertDialog.DismissEvent += (sender, args) =>
+                if (alertDialog != null)
                 {
-                    if (_disposed)
+                    alertDialog.DismissEvent += (sender, args) =>
                     {
-                        return;
-                    }
-                    if (!ignoreDismiss)
-                    {
-                        handler(true);
-                    }
-                };
+                        if (_disposed)
+                        {
+                            return;
+                        }
+                        if (!ignoreDismiss)
+                        {
+                            handler(true);
+                        }
+                    };
+                }
 
                 if (bound)
                 {
@@ -3433,17 +3436,20 @@ namespace BmwDeepObd
                 })
                 .SetNegativeButton(Resource.String.button_no, (s, e) => { })
                 .Show();
-                alertDialog.DismissEvent += (sender, args) =>
+                if (alertDialog != null)
                 {
-                    if (_disposed)
+                    alertDialog.DismissEvent += (sender, args) =>
                     {
-                        return;
-                    }
-                    if (!ignoreDismiss)
-                    {
-                        handler(false);
-                    }
-                };
+                        if (_disposed)
+                        {
+                            return;
+                        }
+                        if (!ignoreDismiss)
+                        {
+                            handler(false);
+                        }
+                    };
+                }
                 return true;
             }
 
@@ -3522,17 +3528,20 @@ namespace BmwDeepObd
                         })
                         .SetNegativeButton(Resource.String.button_no, (s, e) => { })
                         .Show();
-                        alertDialog.DismissEvent += (sender, args) =>
+                        if (alertDialog != null)
                         {
-                            if (_disposed)
+                            alertDialog.DismissEvent += (sender, args) =>
                             {
-                                return;
-                            }
-                            if (!ignoreDismiss)
-                            {
-                                handler(true);
-                            }
-                        };
+                                if (_disposed)
+                                {
+                                    return;
+                                }
+                                if (!ignoreDismiss)
+                                {
+                                    handler(true);
+                                }
+                            };
+                        }
 
                         result = true;
                     }
@@ -3546,7 +3555,7 @@ namespace BmwDeepObd
         {
             if (_selectedInterface == InterfaceType.Enet)
             {
-                AlertDialog alterDialog = new AlertDialog.Builder(_context)
+                AlertDialog alertDialog = new AlertDialog.Builder(_context)
                 .SetMessage(Resource.String.enet_adapter_wifi_info)
                 .SetTitle(Resource.String.alert_title_info)
                 .SetNeutralButton(Resource.String.button_ok, (s, e) =>
@@ -3570,14 +3579,17 @@ namespace BmwDeepObd
                     }
                 })
                 .Show();
-                alterDialog.DismissEvent += (sender, args) =>
+                if (alertDialog != null)
                 {
-                    if (_disposed)
+                    alertDialog.DismissEvent += (sender, args) =>
                     {
-                        return;
-                    }
-                    handler(sender, args);
-                };
+                        if (_disposed)
+                        {
+                            return;
+                        }
+                        handler(sender, args);
+                    };
+                }
                 return true;
             }
             try
@@ -3683,14 +3695,17 @@ namespace BmwDeepObd
             {
             });
             _selectMediaAlertDialog = builder.Show();
-            _selectMediaAlertDialog.DismissEvent += (sender, args) =>
+            if (_selectMediaAlertDialog != null)
             {
-                if (_disposed)
+                _selectMediaAlertDialog.DismissEvent += (sender, args) =>
                 {
-                    return;
-                }
-                _selectMediaAlertDialog = null;
-            };
+                    if (_disposed)
+                    {
+                        return;
+                    }
+                    _selectMediaAlertDialog = null;
+                };
+            }
         }
 
         public void SelectInterface(EventHandler<DialogClickEventArgs> handler)
@@ -3749,14 +3764,17 @@ namespace BmwDeepObd
                 {
                 });
             _selectInterfaceAlertDialog = builder.Show();
-            _selectInterfaceAlertDialog.DismissEvent += (sender, args) =>
+            if (_selectInterfaceAlertDialog != null)
             {
-                if (_disposed)
+                _selectInterfaceAlertDialog.DismissEvent += (sender, args) =>
                 {
-                    return;
-                }
-                _selectInterfaceAlertDialog = null;
-            };
+                    if (_disposed)
+                    {
+                        return;
+                    }
+                    _selectInterfaceAlertDialog = null;
+                };
+            }
         }
 
         public void SelectManufacturer(EventHandler<DialogClickEventArgs> handler)
@@ -3843,18 +3861,17 @@ namespace BmwDeepObd
             {
             });
             _selectManufacturerAlertDialog = builder.Show();
-            if (_selectManufacturerAlertDialog == null)
+            if (_selectManufacturerAlertDialog != null)
             {
-                return;
-            }
-            _selectManufacturerAlertDialog.DismissEvent += (sender, args) =>
-            {
-                if (_disposed)
+                _selectManufacturerAlertDialog.DismissEvent += (sender, args) =>
                 {
-                    return;
-                }
-                _selectManufacturerAlertDialog = null;
-            };
+                    if (_disposed)
+                    {
+                        return;
+                    }
+                    _selectManufacturerAlertDialog = null;
+                };
+            }
         }
 
         public bool RequestBtPermissions()
@@ -4181,18 +4198,22 @@ namespace BmwDeepObd
                 default:
                     return false;
             }
-            _activateAlertDialog.DismissEvent += (sender, args) =>
+
+            if (_activateAlertDialog != null)
             {
-                if (_disposed)
+                _activateAlertDialog.DismissEvent += (sender, args) =>
                 {
-                    return;
-                }
-                if (!ignoreDismiss)
-                {
-                    _activateAlertDialog = null;
-                    handler(sender, args);
-                }
-            };
+                    if (_disposed)
+                    {
+                        return;
+                    }
+                    if (!ignoreDismiss)
+                    {
+                        _activateAlertDialog = null;
+                        handler(sender, args);
+                    }
+                };
+            }
             return true;
         }
 
@@ -4490,14 +4511,18 @@ namespace BmwDeepObd
                                 .SetMessage(Resource.String.ftdi_fake_device)
                                 .SetTitle(Resource.String.alert_title_warning)
                                 .Show();
-                            _ftdiWarningAlertDialog.DismissEvent += (sender, args) =>
+                            if (_ftdiWarningAlertDialog != null)
                             {
-                                if (_disposed)
+                                _ftdiWarningAlertDialog.DismissEvent += (sender, args) =>
                                 {
-                                    return;
-                                }
-                                _ftdiWarningAlertDialog = null;
-                            };
+                                    if (_disposed)
+                                    {
+                                        return;
+                                    }
+                                    _ftdiWarningAlertDialog = null;
+                                };
+
+                            }
                         }
                     }
 
@@ -4554,14 +4579,18 @@ namespace BmwDeepObd
                     .SetMessage(message)
                     .SetTitle(Resource.String.alert_title_warning)
                     .Show();
-                _batteryVoltageAlertDialog.DismissEvent += (sender, args) =>
+                if (_batteryVoltageAlertDialog != null)
                 {
-                    if (_disposed)
+                    _batteryVoltageAlertDialog.DismissEvent += (sender, args) =>
                     {
-                        return;
-                    }
-                    _batteryVoltageAlertDialog = null;
-                };
+                        if (_disposed)
+                        {
+                            return;
+                        }
+                        _batteryVoltageAlertDialog = null;
+                    };
+
+                }
                 return true;
             }
 
@@ -5971,21 +6000,25 @@ namespace BmwDeepObd
                                 .SetMessage(messageText)
                                 .SetTitle(Resource.String.alert_title_error)
                                 .Show();
-                            alterDialog.DismissEvent += (sender, args) =>
+                            if (alterDialog != null)
                             {
-                                if (_disposed)
+                                alterDialog.DismissEvent += (sender, args) =>
                                 {
-                                    return;
-                                }
-
-                                if (!ignoreDismiss)
-                                {
-                                    if (StoreBackupTraceFile(appDataDir, traceFile))
+                                    if (_disposed)
                                     {
-                                        ShowAlert(_activity.GetString(Resource.String.send_trace_backup_info), Resource.String.alert_title_info);
+                                        return;
                                     }
-                                }
-                            };
+
+                                    if (!ignoreDismiss)
+                                    {
+                                        if (StoreBackupTraceFile(appDataDir, traceFile))
+                                        {
+                                            ShowAlert(_activity.GetString(Resource.String.send_trace_backup_info), Resource.String.alert_title_info);
+                                        }
+                                    }
+                                };
+
+                            }
                         }
                     });
                 }
@@ -7562,14 +7595,18 @@ namespace BmwDeepObd
                     .SetMessage(message)
                     .SetTitle(Resource.String.alert_title_question)
                     .Show();
-                alertDialog.DismissEvent += (sender, args) =>
+                if (alertDialog != null)
                 {
-                    if (_disposed)
+                    alertDialog.DismissEvent += (sender, args) =>
                     {
-                        return;
-                    }
-                    handler?.Invoke(sender, args);
-                };
+                        if (_disposed)
+                        {
+                            return;
+                        }
+                        handler?.Invoke(sender, args);
+                    };
+
+                }
             }
             catch (Exception)
             {
@@ -7921,17 +7958,21 @@ namespace BmwDeepObd
                                 .SetMessage(message)
                                 .SetTitle(Resource.String.alert_title_error)
                                 .Show();
-                            altertDialog.DismissEvent += (o, eventArgs) =>
+                            if (altertDialog != null)
                             {
-                                if (_disposed)
+                                altertDialog.DismissEvent += (o, eventArgs) =>
                                 {
-                                    return;
-                                }
-                                if (!yesSelected)
-                                {
-                                    handler(null);
-                                }
-                            };
+                                    if (_disposed)
+                                    {
+                                        return;
+                                    }
+                                    if (!yesSelected)
+                                    {
+                                        handler(null);
+                                    }
+                                };
+
+                            }
                         }
                         else
                         {
@@ -8023,17 +8064,21 @@ namespace BmwDeepObd
                                 .SetMessage(Resource.String.translate_failed)
                                 .SetTitle(Resource.String.alert_title_error)
                                 .Show();
-                            altertDialog.DismissEvent += (o, eventArgs) =>
+                            if (altertDialog != null)
                             {
-                                if (_disposed)
+                                altertDialog.DismissEvent += (o, eventArgs) =>
                                 {
-                                    return;
-                                }
-                                if (!yesSelected)
-                                {
-                                    handler(null);
-                                }
-                            };
+                                    if (_disposed)
+                                    {
+                                        return;
+                                    }
+                                    if (!yesSelected)
+                                    {
+                                        handler(null);
+                                    }
+                                };
+
+                            }
                         }
                     });
                 }
@@ -9035,14 +9080,18 @@ namespace BmwDeepObd
                     .SetTitle(Resource.String.alert_title_error)
                     .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
                     .Show();
-                altertDialog.DismissEvent += (o, eventArgs) =>
+                if (altertDialog != null)
                 {
-                    if (_disposed)
+                    altertDialog.DismissEvent += (o, eventArgs) =>
                     {
-                        return;
-                    }
-                    handler?.Invoke(false);
-                };
+                        if (_disposed)
+                        {
+                            return;
+                        }
+                        handler?.Invoke(false);
+                    };
+
+                }
                 return true;
             }
 
@@ -9078,14 +9127,18 @@ namespace BmwDeepObd
                             .SetTitle(Resource.String.alert_title_error)
                             .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
                             .Show();
-                        altertDialog.DismissEvent += (o, eventArgs) =>
+                        if (altertDialog != null)
                         {
-                            if (_disposed)
+                            altertDialog.DismissEvent += (o, eventArgs) =>
                             {
-                                return;
-                            }
-                            handler?.Invoke(false);
-                        };
+                                if (_disposed)
+                                {
+                                    return;
+                                }
+                                handler?.Invoke(false);
+                            };
+
+                        }
 
                         return;
                     }
@@ -9235,14 +9288,17 @@ namespace BmwDeepObd
                     .SetTitle(Resource.String.alert_title_error)
                     .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
                     .Show();
-                altertDialog.DismissEvent += (o, eventArgs) =>
+                if (altertDialog != null)
                 {
-                    if (_disposed)
+                    altertDialog.DismissEvent += (o, eventArgs) =>
                     {
-                        return;
-                    }
-                    handler?.Invoke(false);
-                };
+                        if (_disposed)
+                        {
+                            return;
+                        }
+                        handler?.Invoke(false);
+                    };
+                }
                 return true;
             }
 
@@ -9278,14 +9334,17 @@ namespace BmwDeepObd
                             .SetTitle(Resource.String.alert_title_error)
                             .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
                             .Show();
-                        altertDialog.DismissEvent += (o, eventArgs) =>
+                        if (altertDialog != null)
                         {
-                            if (_disposed)
+                            altertDialog.DismissEvent += (o, eventArgs) =>
                             {
-                                return;
-                            }
-                            handler?.Invoke(false);
-                        };
+                                if (_disposed)
+                                {
+                                    return;
+                                }
+                                handler?.Invoke(false);
+                            };
+                        }
 
                         return;
                     }
