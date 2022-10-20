@@ -1698,16 +1698,19 @@ namespace BmwDeepObd
                             .Show();
                         if (finishUpdate || _codingMode == CodingMode.Coding)
                         {
-                            alertDialog.DismissEvent += (sender, args) =>
+                            if (alertDialog != null)
                             {
-                                if (_activityCommon == null)
+                                alertDialog.DismissEvent += (sender, args) =>
                                 {
-                                    return;
-                                }
-                                _ecuInfo.JobList = null;    // force update
-                                SetResult(Android.App.Result.Ok);
-                                Finish();
-                            };
+                                    if (_activityCommon == null)
+                                    {
+                                        return;
+                                    }
+                                    _ecuInfo.JobList = null;    // force update
+                                    SetResult(Android.App.Result.Ok);
+                                    Finish();
+                                };
+                            }
                         }
                         else
                         {

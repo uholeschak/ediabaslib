@@ -1799,18 +1799,21 @@ namespace BmwDeepObd
                         .SetTitle(Resource.String.alert_title_warning)
                         .Show();
 
-                    alertDialog.DismissEvent += (sender, args) =>
+                    if (alertDialog != null)
                     {
-                        if (_activityCommon == null)
+                        alertDialog.DismissEvent += (sender, args) =>
                         {
-                            return;
-                        }
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
 
-                        if (finish)
-                        {
-                            Finish();
-                        }
-                    };
+                            if (finish)
+                            {
+                                Finish();
+                            }
+                        };
+                    }
                     break;
 
                 case ActivityCommon.RequestPermissionNotifications:
@@ -3216,17 +3219,20 @@ namespace BmwDeepObd
                     .SetMessage(Resource.String.overlay_permission_denied)
                     .SetTitle(Resource.String.alert_title_warning)
                     .Show();
-                altertDialog.DismissEvent += (o, eventArgs) =>
+                if (altertDialog != null)
                 {
-                    if (_activityCommon == null)
+                    altertDialog.DismissEvent += (o, eventArgs) =>
                     {
-                        return;
-                    }
-                    if (!yesSelected)
-                    {
-                        handler?.Invoke(o, eventArgs);
-                    }
-                };
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+                        if (!yesSelected)
+                        {
+                            handler?.Invoke(o, eventArgs);
+                        }
+                    };
+                }
                 return true;
             }
 
@@ -3270,17 +3276,20 @@ namespace BmwDeepObd
                     .SetMessage(Resource.String.notification_permission_denied)
                     .SetTitle(Resource.String.alert_title_warning)
                     .Show();
-                altertDialog.DismissEvent += (o, eventArgs) =>
+                if (altertDialog != null)
                 {
-                    if (_activityCommon == null)
+                    altertDialog.DismissEvent += (o, eventArgs) =>
                     {
-                        return;
-                    }
-                    if (!yesSelected)
-                    {
-                        handler?.Invoke(o, eventArgs);
-                    }
-                };
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+                        if (!yesSelected)
+                        {
+                            handler?.Invoke(o, eventArgs);
+                        }
+                    };
+                }
                 return true;
             }
 
@@ -3392,19 +3401,22 @@ namespace BmwDeepObd
                     .SetMessage(ActivityCommon.FromHtml(message))
                     .SetTitle(Resource.String.alert_title_info)
                     .Show();
-                _startAlertDialog.DismissEvent += (sender, args) =>
+                if (_startAlertDialog != null)
                 {
-                    if (_activityCommon == null)
+                    _startAlertDialog.DismissEvent += (sender, args) =>
                     {
-                        return;
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+                        _startAlertDialog = null;
+                        HandleStartDialogs(true);
+                    };
+                    TextView messageView = _startAlertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
+                    if (messageView != null)
+                    {
+                        messageView.MovementMethod = new LinkMovementMethod();
                     }
-                    _startAlertDialog = null;
-                    HandleStartDialogs(true);
-                };
-                TextView messageView = _startAlertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
-                if (messageView != null)
-                {
-                    messageView.MovementMethod = new LinkMovementMethod();
                 }
             }
         }
@@ -3498,17 +3510,21 @@ namespace BmwDeepObd
                                     .SetMessage(Resource.String.location_provider_disabled_wifi)
                                     .SetTitle(Resource.String.alert_title_warning)
                                     .Show();
-                                altertDialog.DismissEvent += (o, eventArgs) =>
+                                if (altertDialog != null)
                                 {
-                                    if (_activityCommon == null)
+                                    altertDialog.DismissEvent += (o, eventArgs) =>
                                     {
-                                        return;
-                                    }
-                                    if (!yesSelected)
-                                    {
-                                        handler?.Invoke(o, eventArgs);
-                                    }
-                                };
+                                        if (_activityCommon == null)
+                                        {
+                                            return;
+                                        }
+                                        if (!yesSelected)
+                                        {
+                                            handler?.Invoke(o, eventArgs);
+                                        }
+                                    };
+
+                                }
                                 return true;
                             }
                         }
@@ -4463,14 +4479,17 @@ namespace BmwDeepObd
                             .SetMessage(Resource.String.error_reset_condition)
                             .SetTitle(Resource.String.alert_title_warning)
                             .Show();
-                        _errorRestAlertDialog.DismissEvent += (sender, args) =>
+                        if (_errorRestAlertDialog != null)
                         {
-                            if (_activityCommon == null)
+                            _errorRestAlertDialog.DismissEvent += (sender, args) =>
                             {
-                                return;
-                            }
-                            _errorRestAlertDialog = null;
-                        };
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
+                                _errorRestAlertDialog = null;
+                            };
+                        }
                         break;
                     }
                 }
@@ -5873,20 +5892,23 @@ namespace BmwDeepObd
                                     .SetMessage(string.Format("OBB key: {0}\nContinue?", key))
                                     .SetTitle(Resource.String.alert_title_info)
                                     .Show();
-                                altertDialog.DismissEvent += (o, eventArgs) =>
+                                if (altertDialog != null)
                                 {
-                                    if (_activityCommon == null)
+                                    altertDialog.DismissEvent += (o, eventArgs) =>
                                     {
-                                        return;
-                                    }
-                                    if (!yesSelected)
-                                    {
-                                        _downloadProgress.Dismiss();
-                                        _downloadProgress.Dispose();
-                                        _downloadProgress = null;
-                                        UpdateLockState();
-                                    }
-                                };
+                                        if (_activityCommon == null)
+                                        {
+                                            return;
+                                        }
+                                        if (!yesSelected)
+                                        {
+                                            _downloadProgress.Dismiss();
+                                            _downloadProgress.Dispose();
+                                            _downloadProgress = null;
+                                            UpdateLockState();
+                                        }
+                                    };
+                                }
 #else
                                 ExtractObbFile(downloadInfo, key);
 #endif
@@ -6484,19 +6506,22 @@ namespace BmwDeepObd
                     .SetMessage(message)
                     .SetTitle(Resource.String.alert_title_question)
                     .Show();
-                _downloadEcuAlertDialog.DismissEvent += (sender, args) =>
+                if (_downloadEcuAlertDialog != null)
                 {
-                    if (_activityCommon == null)
+                    _downloadEcuAlertDialog.DismissEvent += (sender, args) =>
                     {
-                        return;
-                    }
-                    if (!_instanceData.StorageRequirementsAccepted)
-                    {
-                        Finish();
-                    }
-                    _downloadEcuAlertDialog = null;
-                    CheckForEcuFiles(checkPackage);
-                };
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+                        if (!_instanceData.StorageRequirementsAccepted)
+                        {
+                            Finish();
+                        }
+                        _downloadEcuAlertDialog = null;
+                        CheckForEcuFiles(checkPackage);
+                    };
+                }
                 return false;
             }
 
@@ -6529,14 +6554,17 @@ namespace BmwDeepObd
                     .SetMessage(message)
                     .SetTitle(Resource.String.alert_title_question)
                     .Show();
-                _downloadEcuAlertDialog.DismissEvent += (sender, args) =>
+                if (_downloadEcuAlertDialog != null)
                 {
-                    if (_activityCommon == null)
+                    _downloadEcuAlertDialog.DismissEvent += (sender, args) =>
                     {
-                        return;
-                    }
-                    _downloadEcuAlertDialog = null;
-                };
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+                        _downloadEcuAlertDialog = null;
+                    };
+                }
                 return false;
             }
 
@@ -6564,16 +6592,19 @@ namespace BmwDeepObd
                 .SetTitle(Resource.String.alert_title_error)
                 .Show();
 
-            alertDialog.DismissEvent += (sender, args) =>
+            if (alertDialog != null)
             {
-                if (_activityCommon == null)
+                alertDialog.DismissEvent += (sender, args) =>
                 {
-                    return;
-                }
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
 
-                StoreSettings();
-                _activityCommon.RestartAppSoft();
-            };
+                    StoreSettings();
+                    _activityCommon.RestartAppSoft();
+                };
+            }
         }
 
         private bool DisplayUpdateInfo(EventHandler<EventArgs> handler)
@@ -6633,15 +6664,18 @@ namespace BmwDeepObd
                     .SetMessage(message)
                     .SetTitle(Resource.String.alert_title_info)
                     .Show();
-                _downloadEcuAlertDialog.DismissEvent += (sender, args) =>
+                if (_downloadEcuAlertDialog != null)
                 {
-                    if (_activityCommon == null)
+                    _downloadEcuAlertDialog.DismissEvent += (sender, args) =>
                     {
-                        return;
-                    }
-                    _downloadEcuAlertDialog = null;
-                    handler?.Invoke(this, EventArgs.Empty);
-                };
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+                        _downloadEcuAlertDialog = null;
+                        handler?.Invoke(this, EventArgs.Empty);
+                    };
+                }
 
                 _instanceData.UpdateSkipVersion = -1;
                 StoreSettings();
@@ -6799,14 +6833,17 @@ namespace BmwDeepObd
                     .SetMessage(Resource.String.compile_crash)
                     .SetTitle(Resource.String.alert_title_error)
                     .Show();
-                _configSelectAlertDialog.DismissEvent += (sender, args) =>
+                if (_configSelectAlertDialog != null)
                 {
-                    if (_activityCommon == null)
+                    _configSelectAlertDialog.DismissEvent += (sender, args) =>
                     {
-                        return;
-                    }
-                    _configSelectAlertDialog = null;
-                };
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+                        _configSelectAlertDialog = null;
+                    };
+                }
                 return;
             }
             if (ActivityCommon.JobReader.PageList.Count > 0)
@@ -6833,14 +6870,17 @@ namespace BmwDeepObd
                 .SetMessage(message)
                 .SetTitle(Resource.String.alert_title_question)
                 .Show();
-            _configSelectAlertDialog.DismissEvent += (sender, args) =>
+            if (_configSelectAlertDialog != null)
             {
-                if (_activityCommon == null)
+                _configSelectAlertDialog.DismissEvent += (sender, args) =>
                 {
-                    return;
-                }
-                _configSelectAlertDialog = null;
-            };
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+                    _configSelectAlertDialog = null;
+                };
+            }
         }
 
         private void ClearConfiguration()
