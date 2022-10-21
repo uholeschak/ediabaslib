@@ -320,7 +320,7 @@ public class InternalBroadcastManager
     {
         while (true)
         {
-            BroadcastRecord[] brs;
+            List<BroadcastRecord> brs;
             lock(receiversDict)
             {
                 int N = pendingBroadcastList.Count;
@@ -329,9 +329,7 @@ public class InternalBroadcastManager
                     return;
                 }
 
-                brs = new BroadcastRecord[N];
-                pendingBroadcastList.CopyTo(brs);
-                pendingBroadcastList.Clear();
+                brs = new List<BroadcastRecord>(pendingBroadcastList);
             }
 
             foreach (BroadcastRecord br in brs)
