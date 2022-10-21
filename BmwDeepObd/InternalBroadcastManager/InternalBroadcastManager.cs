@@ -12,25 +12,25 @@ public class InternalBroadcastManager
 {
     private class ReceiverRecord
     {
-        public IntentFilter filter;
-        public BroadcastReceiver receiver;
-        public bool broadcasting;
-        public bool dead;
+        public IntentFilter Filter { get; private set; }
+        public BroadcastReceiver Receiver { get; private set; }
+        public bool Broadcasting { get; set; }
+        public bool Dead { get; set; }
 
         public ReceiverRecord(IntentFilter _filter, BroadcastReceiver _receiver)
         {
-            filter = _filter;
-            receiver = _receiver;
+            Filter = _filter;
+            Receiver = _receiver;
         }
 
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();
             builder.Append("Receiver{");
-            builder.Append(receiver);
+            builder.Append(Receiver);
             builder.Append(" filter=");
-            builder.Append(filter);
-            if (dead)
+            builder.Append(Filter);
+            if (Dead)
             {
                 builder.Append(" DEAD");
             }
@@ -41,43 +41,38 @@ public class InternalBroadcastManager
 
     private class BroadcastRecord
     {
-        public Intent intent;
-        public List<ReceiverRecord> receivers;
+        public Intent Intent { get; private set; }
+        public List<ReceiverRecord> Receivers { get; private set; }
 
         public BroadcastRecord(Intent _intent, List<ReceiverRecord> _receivers)
         {
-            intent = _intent;
-            receivers = _receivers;
+            Intent = _intent;
+            Receivers = _receivers;
         }
     }
 
-    private static string TAG = "LocalBroadcastManager";
-    private static bool DEBUG = false;
+    public const int MsgExecPendingBroadcasts = 1;
 
-    private Context mAppContext;
+    private static string Tag = typeof(InternalBroadcastManager).FullName;
+    private static bool DebugMode = false;
+    private static object lockObject = new object();
+    private static InternalBroadcastManager instance;
 
-    private Dictionary<BroadcastReceiver, List<ReceiverRecord>> mReceivers
-            = new Dictionary<BroadcastReceiver, List<ReceiverRecord>>();
-    private Dictionary<string, List<ReceiverRecord>> mActions = new Dictionary<string, List<ReceiverRecord>>();
-
-    private List<BroadcastRecord> mPendingBroadcasts = new List<BroadcastRecord>();
-
-    public const int MSG_EXEC_PENDING_BROADCASTS = 1;
-
-    private Handler mHandler;
-
-    private static object mLock = new object();
-    private static InternalBroadcastManager mInstance;
+    private Context appContext;
+    private Dictionary<BroadcastReceiver, List<ReceiverRecord>> receiversDict = new Dictionary<BroadcastReceiver, List<ReceiverRecord>>();
+    private Dictionary<string, List<ReceiverRecord>> actionsDict = new Dictionary<string, List<ReceiverRecord>>();
+    private List<BroadcastRecord> pendingBroadcastList = new List<BroadcastRecord>();
+    private Handler handler;
 
     public static InternalBroadcastManager GetInstance(Context context)
     {
-        lock (mLock)
+        lock (lockObject)
         {
-            if (mInstance == null)
+            if (instance == null)
             {
-                mInstance = new InternalBroadcastManager(context.ApplicationContext);
+                instance = new InternalBroadcastManager(context.ApplicationContext);
             }
-            return mInstance;
+            return instance;
         }
     }
 
@@ -91,9 +86,8 @@ public class InternalBroadcastManager
         {
             switch (msg.What)
             {
-                case MSG_EXEC_PENDING_BROADCASTS:
-                    // ToDo: Access ExecutePendingBroadcasts
-                    //ExecutePendingBroadcasts();
+                case MsgExecPendingBroadcasts:
+                    instance.ExecutePendingBroadcasts();
                     break;
 
                 default:
@@ -105,8 +99,8 @@ public class InternalBroadcastManager
 
     private InternalBroadcastManager(Context context)
     {
-        mAppContext = context;
-        mHandler = new BroadcastHandler(context.MainLooper);
+        appContext = context;
+        handler = new BroadcastHandler(context.MainLooper);
     }
 
     /**
@@ -119,26 +113,30 @@ public class InternalBroadcastManager
      */
     public void RegisterReceiver(BroadcastReceiver receiver, IntentFilter filter)
     {
-        lock(mReceivers)
+        lock(receiversDict)
         {
             ReceiverRecord entry = new ReceiverRecord(filter, receiver);
-            mReceivers.TryGetValue(receiver, out List<ReceiverRecord> filters);
+            receiversDict.TryGetValue(receiver, out List<ReceiverRecord> filters);
             if (filters == null)
             {
                 filters = new List<ReceiverRecord>();
-                mReceivers.Add(receiver, filters);
+                receiversDict.Add(receiver, filters);
             }
+
             filters.Add(entry);
             for (int i = 0; i < filter.CountActions(); i++)
             {
                 string action = filter.GetAction(i);
-                mActions.TryGetValue(action, out List<ReceiverRecord> entries);
-                if (entries == null)
+                if (action != null)
                 {
-                    entries = new List<ReceiverRecord>();
-                    mActions.Add(action, entries);
+                    actionsDict.TryGetValue(action, out List<ReceiverRecord> entries);
+                    if (entries == null)
+                    {
+                        entries = new List<ReceiverRecord>();
+                        actionsDict.Add(action, entries);
+                    }
+                    entries.Add(entry);
                 }
-                entries.Add(entry);
             }
         }
     }
@@ -154,37 +152,40 @@ public class InternalBroadcastManager
      */
     public void UnregisterReceiver(BroadcastReceiver receiver)
     {
-        lock(mReceivers)
+        lock(receiversDict)
         {
-            mReceivers.TryGetValue(receiver, out List<ReceiverRecord> filters);
+            receiversDict.TryGetValue(receiver, out List<ReceiverRecord> filters);
             if (filters == null)
             {
                 return;
             }
-            mReceivers.Remove(receiver);
 
-            for (int i = filters.Count() - 1; i >= 0; i--)
+            receiversDict.Remove(receiver);
+            for (int i = filters.Count - 1; i >= 0; i--)
             {
                 ReceiverRecord filter = filters[i];
-                filter.dead = true;
-                for (int j = 0; j < filter.filter.CountActions(); j++)
+                filter.Dead = true;
+                for (int j = 0; j < filter.Filter.CountActions(); j++)
                 {
-                    string action = filter.filter.GetAction(j);
-                    mActions.TryGetValue(action, out List<ReceiverRecord> receivers);
-                    if (receivers != null)
+                    string action = filter.Filter.GetAction(j);
+                    if (action != null)
                     {
-                        for (int k = receivers.Count - 1; k >= 0; k--)
+                        actionsDict.TryGetValue(action, out List<ReceiverRecord> receivers);
+                        if (receivers != null)
                         {
-                            ReceiverRecord rec = receivers[k];
-                            if (rec.receiver == receiver)
+                            for (int k = receivers.Count - 1; k >= 0; k--)
                             {
-                                rec.dead = true;
-                                receivers.RemoveAt(k);
+                                ReceiverRecord rec = receivers[k];
+                                if (rec.Receiver == receiver)
+                                {
+                                    rec.Dead = true;
+                                    receivers.RemoveAt(k);
+                                }
                             }
-                        }
-                        if (receivers.Count <= 0)
-                        {
-                            mActions.Remove(action);
+                            if (receivers.Count <= 0)
+                            {
+                                actionsDict.Remove(action);
+                            }
                         }
                     }
                 }
@@ -208,61 +209,61 @@ public class InternalBroadcastManager
      */
     public bool SendBroadcast(Intent intent)
     {
-        lock (mReceivers)
+        lock (receiversDict)
         {
             string action = intent.Action;
-            string type = intent.ResolveTypeIfNeeded(mAppContext.ContentResolver);
+            string type = intent.ResolveTypeIfNeeded(appContext.ContentResolver);
             Uri data = intent.Data;
             string scheme = intent.Scheme;
             ICollection<string> categories = intent.Categories;
-            bool debug = DEBUG || ((intent.Flags & ActivityFlags.DebugLogResolution) != 0);
+            bool debug = DebugMode || ((intent.Flags & ActivityFlags.DebugLogResolution) != 0);
             if (debug)
             {
                 Log.Verbose(
-                    TAG, "Resolving type " + type + " scheme " + scheme
+                    Tag, "Resolving type " + type + " scheme " + scheme
                          + " of intent " + intent);
             }
 
-            mActions.TryGetValue(intent.Action, out List<ReceiverRecord> entries);
+            actionsDict.TryGetValue(intent.Action, out List<ReceiverRecord> entries);
             if (entries != null)
             {
                 if (debug)
                 {
-                    Log.Verbose(TAG, "Action list: " + entries);
+                    Log.Verbose(Tag, "Action list: " + entries);
                 }
 
                 List<ReceiverRecord> receivers = null;
-                for (int i = 0; i < entries.Count; i++)
+                foreach (ReceiverRecord receiver in entries)
                 {
-                    ReceiverRecord receiver = entries[i];
                     if (debug)
                     {
-                        Log.Verbose(TAG, "Matching against filter " + receiver.filter);
+                        Log.Verbose(Tag, "Matching against filter " + receiver.Filter);
                     }
 
-                    if (receiver.broadcasting)
+                    if (receiver.Broadcasting)
                     {
                         if (debug)
                         {
-                            Log.Verbose(TAG, "  Filter's target already added");
+                            Log.Verbose(Tag, "  Filter's target already added");
                         }
                         continue;
                     }
 
-                    MatchResults match = receiver.filter.Match(action, type, scheme, data, categories, "LocalBroadcastManager");
+                    MatchResults match = receiver.Filter.Match(action, type, scheme, data, categories, Tag);
                     if (match >= 0)
                     {
                         if (debug)
                         {
-                            Log.Verbose(TAG, string.Format("  Filter matched!  match={0}", match));
+                            Log.Verbose(Tag, string.Format("  Filter matched!  match={0}", match));
                         }
 
                         if (receivers == null)
                         {
                             receivers = new List<ReceiverRecord>();
                         }
+
                         receivers.Add(receiver);
-                        receiver.broadcasting = true;
+                        receiver.Broadcasting = true;
                     }
                     else
                     {
@@ -277,21 +278,23 @@ public class InternalBroadcastManager
                                 case MatchResults.NoMatchType: reason = "type"; break;
                                 default: reason = "unknown reason"; break;
                             }
-                            Log.Verbose(TAG, "  Filter did not match: " + reason);
+
+                            Log.Verbose(Tag, "  Filter did not match: " + reason);
                         }
                     }
                 }
 
                 if (receivers != null)
                 {
-                    for (int i = 0; i < receivers.Count(); i++)
+                    foreach (ReceiverRecord receiver in receivers)
                     {
-                        receivers[i].broadcasting = false;
+                        receiver.Broadcasting = false;
                     }
-                    mPendingBroadcasts.Add(new BroadcastRecord(intent, receivers));
-                    if (!mHandler.HasMessages(MSG_EXEC_PENDING_BROADCASTS))
+
+                    pendingBroadcastList.Add(new BroadcastRecord(intent, receivers));
+                    if (!handler.HasMessages(MsgExecPendingBroadcasts))
                     {
-                        mHandler.SendEmptyMessage(MSG_EXEC_PENDING_BROADCASTS);
+                        handler.SendEmptyMessage(MsgExecPendingBroadcasts);
                     }
                     return true;
                 }
@@ -318,28 +321,26 @@ public class InternalBroadcastManager
         while (true)
         {
             BroadcastRecord[] brs;
-            lock(mReceivers)
+            lock(receiversDict)
             {
-                int N = mPendingBroadcasts.Count;
+                int N = pendingBroadcastList.Count;
                 if (N <= 0)
                 {
                     return;
                 }
+
                 brs = new BroadcastRecord[N];
-                mPendingBroadcasts.CopyTo(brs);
-                mPendingBroadcasts.Clear();
+                pendingBroadcastList.CopyTo(brs);
+                pendingBroadcastList.Clear();
             }
 
-            for (int i = 0; i < brs.Length; i++)
+            foreach (BroadcastRecord br in brs)
             {
-                BroadcastRecord br = brs[i];
-                int nbr = br.receivers.Count;
-                for (int j = 0; j < nbr; j++)
+                foreach (ReceiverRecord rec in br.Receivers)
                 {
-                    ReceiverRecord rec = br.receivers[j];
-                    if (!rec.dead)
+                    if (!rec.Dead)
                     {
-                        rec.receiver.OnReceive(mAppContext, br.intent);
+                        rec.Receiver.OnReceive(appContext, br.Intent);
                     }
                 }
             }
