@@ -51,33 +51,28 @@ public class InternalBroadcastManager
         }
     }
 
-    private static string Tag = typeof(InternalBroadcastManager).FullName;
-    private static bool DebugMode = false;
-
-    private Context mAppContext;
-
-    private Dictionary<BroadcastReceiver, List<ReceiverRecord>> mReceivers
-            = new Dictionary<BroadcastReceiver, List<ReceiverRecord>>();
-    private Dictionary<string, List<ReceiverRecord>> mActions = new Dictionary<string, List<ReceiverRecord>>();
-
-    private List<BroadcastRecord> mPendingBroadcasts = new List<BroadcastRecord>();
-
     public const int MsgExecPendingBroadcasts = 1;
 
-    private Handler mHandler;
+    private static string Tag = typeof(InternalBroadcastManager).FullName;
+    private static bool DebugMode = false;
+    private static object lockObject = new object();
+    private static InternalBroadcastManager instance;
 
-    private static object mLock = new object();
-    private static InternalBroadcastManager mInstance;
+    private Context appContext;
+    private Dictionary<BroadcastReceiver, List<ReceiverRecord>> receiversDict = new Dictionary<BroadcastReceiver, List<ReceiverRecord>>();
+    private Dictionary<string, List<ReceiverRecord>> actionsDict = new Dictionary<string, List<ReceiverRecord>>();
+    private List<BroadcastRecord> pendingBroadcastList = new List<BroadcastRecord>();
+    private Handler handler;
 
     public static InternalBroadcastManager GetInstance(Context context)
     {
-        lock (mLock)
+        lock (lockObject)
         {
-            if (mInstance == null)
+            if (instance == null)
             {
-                mInstance = new InternalBroadcastManager(context.ApplicationContext);
+                instance = new InternalBroadcastManager(context.ApplicationContext);
             }
-            return mInstance;
+            return instance;
         }
     }
 
@@ -92,7 +87,7 @@ public class InternalBroadcastManager
             switch (msg.What)
             {
                 case MsgExecPendingBroadcasts:
-                    mInstance.ExecutePendingBroadcasts();
+                    instance.ExecutePendingBroadcasts();
                     break;
 
                 default:
@@ -104,8 +99,8 @@ public class InternalBroadcastManager
 
     private InternalBroadcastManager(Context context)
     {
-        mAppContext = context;
-        mHandler = new BroadcastHandler(context.MainLooper);
+        appContext = context;
+        handler = new BroadcastHandler(context.MainLooper);
     }
 
     /**
@@ -118,26 +113,27 @@ public class InternalBroadcastManager
      */
     public void RegisterReceiver(BroadcastReceiver receiver, IntentFilter filter)
     {
-        lock(mReceivers)
+        lock(receiversDict)
         {
             ReceiverRecord entry = new ReceiverRecord(filter, receiver);
-            mReceivers.TryGetValue(receiver, out List<ReceiverRecord> filters);
+            receiversDict.TryGetValue(receiver, out List<ReceiverRecord> filters);
             if (filters == null)
             {
                 filters = new List<ReceiverRecord>();
-                mReceivers.Add(receiver, filters);
+                receiversDict.Add(receiver, filters);
             }
+
             filters.Add(entry);
             for (int i = 0; i < filter.CountActions(); i++)
             {
                 string action = filter.GetAction(i);
                 if (action != null)
                 {
-                    mActions.TryGetValue(action, out List<ReceiverRecord> entries);
+                    actionsDict.TryGetValue(action, out List<ReceiverRecord> entries);
                     if (entries == null)
                     {
                         entries = new List<ReceiverRecord>();
-                        mActions.Add(action, entries);
+                        actionsDict.Add(action, entries);
                     }
                     entries.Add(entry);
                 }
@@ -156,15 +152,15 @@ public class InternalBroadcastManager
      */
     public void UnregisterReceiver(BroadcastReceiver receiver)
     {
-        lock(mReceivers)
+        lock(receiversDict)
         {
-            mReceivers.TryGetValue(receiver, out List<ReceiverRecord> filters);
+            receiversDict.TryGetValue(receiver, out List<ReceiverRecord> filters);
             if (filters == null)
             {
                 return;
             }
 
-            mReceivers.Remove(receiver);
+            receiversDict.Remove(receiver);
             for (int i = filters.Count - 1; i >= 0; i--)
             {
                 ReceiverRecord filter = filters[i];
@@ -174,7 +170,7 @@ public class InternalBroadcastManager
                     string action = filter.Filter.GetAction(j);
                     if (action != null)
                     {
-                        mActions.TryGetValue(action, out List<ReceiverRecord> receivers);
+                        actionsDict.TryGetValue(action, out List<ReceiverRecord> receivers);
                         if (receivers != null)
                         {
                             for (int k = receivers.Count - 1; k >= 0; k--)
@@ -188,7 +184,7 @@ public class InternalBroadcastManager
                             }
                             if (receivers.Count <= 0)
                             {
-                                mActions.Remove(action);
+                                actionsDict.Remove(action);
                             }
                         }
                     }
@@ -213,10 +209,10 @@ public class InternalBroadcastManager
      */
     public bool SendBroadcast(Intent intent)
     {
-        lock (mReceivers)
+        lock (receiversDict)
         {
             string action = intent.Action;
-            string type = intent.ResolveTypeIfNeeded(mAppContext.ContentResolver);
+            string type = intent.ResolveTypeIfNeeded(appContext.ContentResolver);
             Uri data = intent.Data;
             string scheme = intent.Scheme;
             ICollection<string> categories = intent.Categories;
@@ -228,7 +224,7 @@ public class InternalBroadcastManager
                          + " of intent " + intent);
             }
 
-            mActions.TryGetValue(intent.Action, out List<ReceiverRecord> entries);
+            actionsDict.TryGetValue(intent.Action, out List<ReceiverRecord> entries);
             if (entries != null)
             {
                 if (debug)
@@ -295,10 +291,10 @@ public class InternalBroadcastManager
                         receiver.Broadcasting = false;
                     }
 
-                    mPendingBroadcasts.Add(new BroadcastRecord(intent, receivers));
-                    if (!mHandler.HasMessages(MsgExecPendingBroadcasts))
+                    pendingBroadcastList.Add(new BroadcastRecord(intent, receivers));
+                    if (!handler.HasMessages(MsgExecPendingBroadcasts))
                     {
-                        mHandler.SendEmptyMessage(MsgExecPendingBroadcasts);
+                        handler.SendEmptyMessage(MsgExecPendingBroadcasts);
                     }
                     return true;
                 }
@@ -325,16 +321,17 @@ public class InternalBroadcastManager
         while (true)
         {
             BroadcastRecord[] brs;
-            lock(mReceivers)
+            lock(receiversDict)
             {
-                int N = mPendingBroadcasts.Count;
+                int N = pendingBroadcastList.Count;
                 if (N <= 0)
                 {
                     return;
                 }
+
                 brs = new BroadcastRecord[N];
-                mPendingBroadcasts.CopyTo(brs);
-                mPendingBroadcasts.Clear();
+                pendingBroadcastList.CopyTo(brs);
+                pendingBroadcastList.Clear();
             }
 
             foreach (BroadcastRecord br in brs)
@@ -343,7 +340,7 @@ public class InternalBroadcastManager
                 {
                     if (!rec.Dead)
                     {
-                        rec.Receiver.OnReceive(mAppContext, br.Intent);
+                        rec.Receiver.OnReceive(appContext, br.Intent);
                     }
                 }
             }
