@@ -705,12 +705,11 @@ namespace BmwDeepObd
                         }
                     };
 
-                }
-
-                TextView messageView = _alertDialogInfo.FindViewById<TextView>(Android.Resource.Id.Message);
-                if (messageView != null)
-                {
-                    messageView.MovementMethod = new LinkMovementMethod();
+                    TextView messageView = _alertDialogInfo.FindViewById<TextView>(Android.Resource.Id.Message);
+                    if (messageView != null)
+                    {
+                        messageView.MovementMethod = new LinkMovementMethod();
+                    }
                 }
             }
             catch (Exception)
