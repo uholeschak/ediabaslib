@@ -237,9 +237,8 @@ public class InternalBroadcastManager
                 }
 
                 List<ReceiverRecord> receivers = null;
-                for (int i = 0; i < entries.Count; i++)
+                foreach (ReceiverRecord receiver in entries)
                 {
-                    ReceiverRecord receiver = entries[i];
                     if (debug)
                     {
                         Log.Verbose(Tag, "Matching against filter " + receiver.Filter);
@@ -266,6 +265,7 @@ public class InternalBroadcastManager
                         {
                             receivers = new List<ReceiverRecord>();
                         }
+
                         receivers.Add(receiver);
                         receiver.Broadcasting = true;
                     }
@@ -282,6 +282,7 @@ public class InternalBroadcastManager
                                 case MatchResults.NoMatchType: reason = "type"; break;
                                 default: reason = "unknown reason"; break;
                             }
+
                             Log.Verbose(Tag, "  Filter did not match: " + reason);
                         }
                     }
@@ -289,10 +290,11 @@ public class InternalBroadcastManager
 
                 if (receivers != null)
                 {
-                    for (int i = 0; i < receivers.Count; i++)
+                    foreach (ReceiverRecord receiver in receivers)
                     {
-                        receivers[i].Broadcasting = false;
+                        receiver.Broadcasting = false;
                     }
+
                     mPendingBroadcasts.Add(new BroadcastRecord(intent, receivers));
                     if (!mHandler.HasMessages(MsgExecPendingBroadcasts))
                     {
@@ -335,13 +337,10 @@ public class InternalBroadcastManager
                 mPendingBroadcasts.Clear();
             }
 
-            for (int i = 0; i < brs.Length; i++)
+            foreach (BroadcastRecord br in brs)
             {
-                BroadcastRecord br = brs[i];
-                int nbr = br.Receivers.Count;
-                for (int j = 0; j < nbr; j++)
+                foreach (ReceiverRecord rec in br.Receivers)
                 {
-                    ReceiverRecord rec = br.Receivers[j];
                     if (!rec.Dead)
                     {
                         rec.Receiver.OnReceive(mAppContext, br.Intent);
