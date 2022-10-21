@@ -2777,10 +2777,13 @@ namespace BmwDeepObd
                                         .SetMessage(Resource.String.xml_tool_no_response_manual)
                                         .SetTitle(Resource.String.alert_title_warning)
                                         .Show();
-                                    TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
-                                    if (messageView != null)
+                                    if (alertDialog != null)
                                     {
-                                        messageView.MovementMethod = new LinkMovementMethod();
+                                        TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
+                                        if (messageView != null)
+                                        {
+                                            messageView.MovementMethod = new LinkMovementMethod();
+                                        }
                                     }
                                 }
                             }

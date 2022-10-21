@@ -3412,6 +3412,7 @@ namespace BmwDeepObd
                         _startAlertDialog = null;
                         HandleStartDialogs(true);
                     };
+
                     TextView messageView = _startAlertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
                     if (messageView != null)
                     {
@@ -6779,10 +6780,13 @@ namespace BmwDeepObd
                     .SetMessage(ActivityCommon.FromHtml(message))
                     .SetTitle(Resource.String.alert_title_info)
                     .Show();
-                TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
-                if (messageView != null)
+                if (alertDialog != null)
                 {
-                    messageView.MovementMethod = new LinkMovementMethod();
+                    TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
+                    if (messageView != null)
+                    {
+                        messageView.MovementMethod = new LinkMovementMethod();
+                    }
                 }
                 _instanceData.VagInfoShown = true;
                 return;
