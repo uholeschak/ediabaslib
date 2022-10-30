@@ -50,7 +50,7 @@ namespace BmwDeepObd
 #endif
                         Intent broadcastIntent = new Intent(NotificationBroadcastAction);
                         broadcastIntent.PutExtra(StateBtSmallOn, smallOn);
-                        InternalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
+                        InternalBroadcastManager.InternalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
                     }
                     catch (Exception)
                     {
@@ -104,7 +104,7 @@ namespace BmwDeepObd
 #endif
                                     Intent broadcastIntent = new Intent(NotificationBroadcastAction);
                                     broadcastIntent.PutExtra(BtUpdateList, btState);
-                                    InternalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
+                                    InternalBroadcastManager.InternalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
                                     break;
                                 }
 
@@ -115,7 +115,7 @@ namespace BmwDeepObd
 #endif
                                     Intent broadcastIntent = new Intent(NotificationBroadcastAction);
                                     broadcastIntent.PutExtra(BtScanFinished, btState);
-                                    InternalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
+                                    InternalBroadcastManager.InternalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
                                     break;
                                 }
                             }
@@ -135,7 +135,7 @@ namespace BmwDeepObd
 #endif
                             Intent broadcastIntent = new Intent(NotificationBroadcastAction);
                             broadcastIntent.PutExtra(BtNewMac, mac);
-                            InternalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
+                            InternalBroadcastManager.InternalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
                         }
                         catch (Exception)
                         {
@@ -154,7 +154,7 @@ namespace BmwDeepObd
 
                             Intent broadcastIntent = new Intent(NotificationBroadcastAction);
                             broadcastIntent.PutExtra(StateBtConnected, ActivityCommon.MtcBtConnectState);
-                            InternalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
+                            InternalBroadcastManager.InternalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
                         }
                         catch (Exception)
                         {

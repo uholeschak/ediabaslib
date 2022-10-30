@@ -7626,7 +7626,7 @@ namespace BmwDeepObd
                             Intent broadcastIntent = new Intent(ActivityCommon.ActionPackageName);
                             broadcastIntent.PutExtra(ActivityCommon.BroadcastXmlEditorPackageName, packageName);
                             broadcastIntent.PutExtra(ActivityCommon.BroadcastXmlEditorClassName, className);
-                            InternalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
+                            InternalBroadcastManager.InternalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
                         }
                     }
                 }

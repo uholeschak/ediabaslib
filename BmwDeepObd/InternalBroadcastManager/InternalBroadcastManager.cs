@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 using Android.Content;
+using Android.Net;
 using Android.OS;
 using Android.Util;
-using System.Linq;
-using System.Text;
-using Android.Net;
 
-namespace BmwDeepObd;
+namespace BmwDeepObd.InternalBroadcastManager;
 
 public class InternalBroadcastManager
 {
