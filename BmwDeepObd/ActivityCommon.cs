@@ -1226,8 +1226,8 @@ namespace BmwDeepObd
                     context.RegisterReceiver(_gbcReceiver, new IntentFilter(GlobalBroadcastReceiver.MicBtReport));
 
                     _bcReceiver = new Receiver(this);
-                    context.RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.NotificationBroadcastAction));
-                    context.RegisterReceiver(_bcReceiver, new IntentFilter(ActionPackageName));
+                    InternalBroadcastManager.GetInstance(context).RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.NotificationBroadcastAction));
+                    InternalBroadcastManager.GetInstance(context).RegisterReceiver(_bcReceiver, new IntentFilter(ActionPackageName));
                     context.RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.ActionBroadcastCommand));
                     context.RegisterReceiver(_bcReceiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));
                     context.RegisterReceiver(_bcReceiver, new IntentFilter(GlobalBroadcastReceiver.NotificationBroadcastAction));
@@ -1383,11 +1383,13 @@ namespace BmwDeepObd
                     {
                         if (_gbcReceiver != null)
                         {
+                            InternalBroadcastManager.GetInstance(_context).UnregisterReceiver(_gbcReceiver);
                             _context.UnregisterReceiver(_gbcReceiver);
                             _gbcReceiver = null;
                         }
                         if (_bcReceiver != null)
                         {
+                            InternalBroadcastManager.GetInstance(_context).UnregisterReceiver(_bcReceiver);
                             _context.UnregisterReceiver(_bcReceiver);
                             _bcReceiver = null;
                         }

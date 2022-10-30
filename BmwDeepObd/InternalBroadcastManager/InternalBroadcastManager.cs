@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using Android.Net;
 
-namespace BmwDeepObd.BroadcastManager;
+namespace BmwDeepObd;
 
 public class InternalBroadcastManager
 {
@@ -330,6 +330,7 @@ public class InternalBroadcastManager
                 }
 
                 brs = new List<BroadcastRecord>(pendingBroadcastList);
+                pendingBroadcastList.Clear();
             }
 
             foreach (BroadcastRecord br in brs)
