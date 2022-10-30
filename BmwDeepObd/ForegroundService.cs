@@ -200,9 +200,8 @@ namespace BmwDeepObd
         private void SendStopCommBroadcast()
         {
             Intent broadcastIntent = new Intent(NotificationBroadcastAction);
-            broadcastIntent.SetPackage(Android.App.Application.Context.PackageName);    // Replacement for LocalBroadcastManager
             broadcastIntent.PutExtra(BroadcastMessageKey, BroadcastStopComm);
-            Android.App.Application.Context.SendBroadcast(broadcastIntent);
+            InternalBroadcastManager.GetInstance(this).SendBroadcast(broadcastIntent);
         }
 
         private void ShowMainActivity()
