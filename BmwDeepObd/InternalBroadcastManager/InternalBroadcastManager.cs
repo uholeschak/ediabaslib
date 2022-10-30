@@ -52,16 +52,16 @@ public class InternalBroadcastManager
 
     public const int MsgExecPendingBroadcasts = 1;
 
-    private static string Tag = typeof(InternalBroadcastManager).FullName;
-    private static bool DebugMode = false;
-    private static object lockObject = new object();
+    private static readonly string Tag = typeof(InternalBroadcastManager).FullName;
+    private static readonly bool DebugMode = false;
+    private static readonly object lockObject = new object();
     private static InternalBroadcastManager instance;
 
-    private Context appContext;
-    private Dictionary<BroadcastReceiver, List<ReceiverRecord>> receiversDict = new Dictionary<BroadcastReceiver, List<ReceiverRecord>>();
-    private Dictionary<string, List<ReceiverRecord>> actionsDict = new Dictionary<string, List<ReceiverRecord>>();
-    private List<BroadcastRecord> pendingBroadcastList = new List<BroadcastRecord>();
-    private Handler handler;
+    private readonly Context appContext;
+    private readonly Dictionary<BroadcastReceiver, List<ReceiverRecord>> receiversDict = new Dictionary<BroadcastReceiver, List<ReceiverRecord>>();
+    private readonly Dictionary<string, List<ReceiverRecord>> actionsDict = new Dictionary<string, List<ReceiverRecord>>();
+    private readonly List<BroadcastRecord> pendingBroadcastList = new List<BroadcastRecord>();
+    private readonly Handler handler;
 
     public static InternalBroadcastManager GetInstance(Context context)
     {
@@ -181,6 +181,7 @@ public class InternalBroadcastManager
                                     receivers.RemoveAt(k);
                                 }
                             }
+
                             if (receivers.Count <= 0)
                             {
                                 actionsDict.Remove(action);
@@ -211,19 +212,28 @@ public class InternalBroadcastManager
         lock (receiversDict)
         {
             string action = intent.Action;
-            string type = intent.ResolveTypeIfNeeded(appContext.ContentResolver);
+            ContentResolver contentResolver = appContext.ContentResolver;
+            string type = null;
+            if (contentResolver != null)
+            {
+                type = intent.ResolveTypeIfNeeded(contentResolver);
+            }
+
             Uri data = intent.Data;
             string scheme = intent.Scheme;
             ICollection<string> categories = intent.Categories;
             bool debug = DebugMode || ((intent.Flags & ActivityFlags.DebugLogResolution) != 0);
             if (debug)
             {
-                Log.Verbose(
-                    Tag, "Resolving type " + type + " scheme " + scheme
-                         + " of intent " + intent);
+                Log.Verbose(Tag, "Resolving type " + type + " scheme " + scheme + " of intent " + intent);
             }
 
-            actionsDict.TryGetValue(intent.Action, out List<ReceiverRecord> entries);
+            List<ReceiverRecord> entries = null;
+            if (intent.Action != null)
+            {
+                actionsDict.TryGetValue(intent.Action, out entries);
+            }
+
             if (entries != null)
             {
                 if (debug)
@@ -322,8 +332,8 @@ public class InternalBroadcastManager
             List<BroadcastRecord> brs;
             lock(receiversDict)
             {
-                int N = pendingBroadcastList.Count;
-                if (N <= 0)
+                int pendingCount = pendingBroadcastList.Count;
+                if (pendingCount <= 0)
                 {
                     return;
                 }
