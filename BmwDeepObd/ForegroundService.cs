@@ -201,7 +201,7 @@ namespace BmwDeepObd
         {
             Intent broadcastIntent = new Intent(NotificationBroadcastAction);
             broadcastIntent.PutExtra(BroadcastMessageKey, BroadcastStopComm);
-            InternalBroadcastManager.GetInstance(this).SendBroadcast(broadcastIntent);
+            InternalBroadcastManager.InternalBroadcastManager.GetInstance(this).SendBroadcast(broadcastIntent);
         }
 
         private void ShowMainActivity()
