@@ -6,4 +6,5 @@
   <cache-path name="cache" path="/" />
   <external-cache-path name="external_cache" path="/" />
   <external-media-path name="external_media" path="/" />
+  <root-path name="root" path="/" />
 </paths>
