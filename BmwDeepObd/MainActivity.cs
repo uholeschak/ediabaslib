@@ -3703,7 +3703,12 @@ namespace BmwDeepObd
                 return;
             }
 
-            long responseCount = ActivityCommon.EdiabasThread.GetResponseCount();
+            long responseCount = 0;
+            if (ActivityCommon.EdiabasThread != null)
+            {
+                responseCount = ActivityCommon.EdiabasThread.GetResponseCount();
+            }
+
             StopEdiabasThread(true);
             UpdateDisplay();
 
