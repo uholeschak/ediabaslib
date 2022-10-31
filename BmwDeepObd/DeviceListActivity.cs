@@ -1154,13 +1154,7 @@ namespace BmwDeepObd
                             }
 
                             new AlertDialog.Builder(this)
-                                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
-                                {
-                                    ReturnDeviceTypeRawWarn(deviceAddress, deviceName);
-                                })
-                                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
-                                {
-                                })
+                                .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
                                 .SetCancelable(true)
                                 .SetMessage(Resource.String.adapter_connection_failed)
                                 .SetTitle(Resource.String.alert_title_error)
