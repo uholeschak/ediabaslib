@@ -1190,8 +1190,7 @@ namespace BmwDeepObd
                     {
                         return true;
                     }
-                    _instanceData.AutoStart = false;
-                    _activityCommon.SelectBluetoothDevice((int)ActivityRequest.RequestSelectDevice, _appDataDir);
+                    SelectBluetoothDevice();
                     return true;
 
                 case Resource.Id.menu_adapter_config:
@@ -2139,6 +2138,13 @@ namespace BmwDeepObd
             popupContext.Show();
         }
 
+        private bool SelectBluetoothDevice()
+        {
+            EdiabasClose();
+            _instanceData.AutoStart = false;
+            return _activityCommon.SelectBluetoothDevice((int)ActivityRequest.RequestSelectDevice, _appDataDir);
+        }
+
         private void AdapterConfig()
         {
             if (!EdiabasClose())
@@ -2744,8 +2750,7 @@ namespace BmwDeepObd
                                     new AlertDialog.Builder(this)
                                         .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                         {
-                                            _instanceData.AutoStart = false;
-                                            _activityCommon.SelectBluetoothDevice((int) ActivityRequest.RequestSelectDevice, _appDataDir);
+                                            SelectBluetoothDevice();
                                         })
                                         .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                                         {
@@ -2770,8 +2775,7 @@ namespace BmwDeepObd
                                         new AlertDialog.Builder(this)
                                             .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                             {
-                                                _instanceData.AutoStart = false;
-                                                _activityCommon.SelectBluetoothDevice((int)ActivityRequest.RequestSelectDevice, _appDataDir);
+                                                SelectBluetoothDevice();
                                             })
                                             .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                                             {
