@@ -7331,14 +7331,19 @@ namespace BmwDeepObd
 
                 return true;
             }
-#pragma warning disable CS0168
             catch (Exception ex)
-#pragma warning restore CS0168
             {
+                string errorMessage = EdiabasNet.GetExceptionText(ex);
 #if DEBUG
-                Log.Info(Tag, string.Format("StartEditXml Exception: {0}", EdiabasNet.GetExceptionText(ex)));
+                Log.Info(Tag, string.Format("StartEditXml Exception: {0}", errorMessage));
 #endif
-                _activityCommon.ShowAlert(GetString(Resource.String.xml_access_denied), Resource.String.alert_title_error);
+                string message = GetString(Resource.String.xml_access_denied);
+                if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    message += "\r\n" + errorMessage;
+                }
+
+                _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
                 return false;
             }
         }
