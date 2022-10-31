@@ -2745,8 +2745,7 @@ namespace BmwDeepObd
                                         .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                         {
                                             _instanceData.AutoStart = false;
-                                            _activityCommon.SelectBluetoothDevice(
-                                                (int) ActivityRequest.RequestSelectDevice, _appDataDir);
+                                            _activityCommon.SelectBluetoothDevice((int) ActivityRequest.RequestSelectDevice, _appDataDir);
                                         })
                                         .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                                         {
@@ -2765,24 +2764,44 @@ namespace BmwDeepObd
                                 }
                                 else
                                 {
-                                    AlertDialog alertDialog = new AlertDialog.Builder(this)
-                                        .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
-                                        {
-                                            SelectConfigTypeRequest();
-                                        })
-                                        .SetNegativeButton(Resource.String.button_no, (sender, args) =>
-                                        {
-                                        })
-                                        .SetCancelable(true)
-                                        .SetMessage(Resource.String.xml_tool_no_response_manual)
-                                        .SetTitle(Resource.String.alert_title_warning)
-                                        .Show();
-                                    if (alertDialog != null)
+                                    bool rawMode = ActivityCommon.IsRawAdapter(_activityCommon.SelectedInterface, _instanceData.DeviceAddress);
+                                    if (rawMode)
                                     {
-                                        TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
-                                        if (messageView != null)
+                                        new AlertDialog.Builder(this)
+                                            .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                                            {
+                                                _instanceData.AutoStart = false;
+                                                _activityCommon.SelectBluetoothDevice((int)ActivityRequest.RequestSelectDevice, _appDataDir);
+                                            })
+                                            .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                                            {
+                                            })
+                                            .SetCancelable(true)
+                                            .SetMessage(Resource.String.xml_tool_no_response_raw)
+                                            .SetTitle(Resource.String.alert_title_warning)
+                                            .Show();
+                                    }
+                                    else
+                                    {
+                                        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                                            .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                                            {
+                                                SelectConfigTypeRequest();
+                                            })
+                                            .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                                            {
+                                            })
+                                            .SetCancelable(true)
+                                            .SetMessage(Resource.String.xml_tool_no_response_manual)
+                                            .SetTitle(Resource.String.alert_title_warning)
+                                            .Show();
+                                        if (alertDialog != null)
                                         {
-                                            messageView.MovementMethod = new LinkMovementMethod();
+                                            TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
+                                            if (messageView != null)
+                                            {
+                                                messageView.MovementMethod = new LinkMovementMethod();
+                                            }
                                         }
                                     }
                                 }

@@ -14149,55 +14149,58 @@ namespace BmwDeepObd
 			public const int xml_tool_no_response_manual = 2131755802;
 			
 			// aapt resource value: 0x7F10031B
-			public const int xml_tool_read_ecu_again = 2131755803;
+			public const int xml_tool_no_response_raw = 2131755803;
 			
 			// aapt resource value: 0x7F10031C
-			public const int xml_tool_read_ecu_info_failed = 2131755804;
+			public const int xml_tool_read_ecu_again = 2131755804;
 			
 			// aapt resource value: 0x7F10031D
-			public const int xml_tool_read_jobs_failed = 2131755805;
+			public const int xml_tool_read_ecu_info_failed = 2131755805;
 			
 			// aapt resource value: 0x7F10031E
-			public const int xml_tool_read_test_job_failed = 2131755806;
+			public const int xml_tool_read_jobs_failed = 2131755806;
 			
 			// aapt resource value: 0x7F10031F
-			public const int xml_tool_reset_ecu_setting = 2131755807;
+			public const int xml_tool_read_test_job_failed = 2131755807;
 			
 			// aapt resource value: 0x7F100320
-			public const int xml_tool_result_vin = 2131755808;
+			public const int xml_tool_reset_ecu_setting = 2131755808;
 			
 			// aapt resource value: 0x7F100321
-			public const int xml_tool_save_xml_failed = 2131755809;
+			public const int xml_tool_result_vin = 2131755809;
 			
 			// aapt resource value: 0x7F100322
-			public const int xml_tool_search_ecus = 2131755810;
-			
-			// aapt resource value: 0x7F100324
-			public const int xml_tool_select_ecu_type = 2131755812;
-			
-			// aapt resource value: 0x7F100325
-			public const int xml_tool_select_sgbd = 2131755813;
+			public const int xml_tool_save_xml_failed = 2131755810;
 			
 			// aapt resource value: 0x7F100323
-			public const int xml_tool_sel_mwtab_info = 2131755811;
+			public const int xml_tool_search_ecus = 2131755811;
+			
+			// aapt resource value: 0x7F100325
+			public const int xml_tool_select_ecu_type = 2131755813;
 			
 			// aapt resource value: 0x7F100326
-			public const int xml_tool_title = 2131755814;
+			public const int xml_tool_select_sgbd = 2131755814;
+			
+			// aapt resource value: 0x7F100324
+			public const int xml_tool_sel_mwtab_info = 2131755812;
 			
 			// aapt resource value: 0x7F100327
-			public const int yandex_api_key_title = 2131755815;
+			public const int xml_tool_title = 2131755815;
 			
 			// aapt resource value: 0x7F100328
-			public const int yandex_key_copy_title = 2131755816;
+			public const int yandex_api_key_title = 2131755816;
 			
 			// aapt resource value: 0x7F100329
-			public const int yandex_key_desc = 2131755817;
+			public const int yandex_key_copy_title = 2131755817;
 			
 			// aapt resource value: 0x7F10032A
-			public const int yandex_key_paste_title = 2131755818;
+			public const int yandex_key_desc = 2131755818;
 			
 			// aapt resource value: 0x7F10032B
-			public const int yandex_key_test_title = 2131755819;
+			public const int yandex_key_paste_title = 2131755819;
+			
+			// aapt resource value: 0x7F10032C
+			public const int yandex_key_test_title = 2131755820;
 			
 			static String()
 			{

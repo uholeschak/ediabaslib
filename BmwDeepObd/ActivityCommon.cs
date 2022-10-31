@@ -2876,6 +2876,30 @@ namespace BmwDeepObd
             return false;
         }
 
+        public static bool IsRawAdapter(InterfaceType interfaceType, string deviceAddress)
+        {
+            switch (interfaceType)
+            {
+                case InterfaceType.Bluetooth:
+                    if (deviceAddress == null)
+                    {
+                        return false;
+                    }
+                    string[] stringList = deviceAddress.Split('#', ';');
+                    if (stringList.Length > 1)
+                    {
+                        if (string.Compare(stringList[1], EdBluetoothInterface.RawTag, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
+            }
+
+            return false;
+        }
+
         public bool IsElmDevice(string deviceAddress)
         {
             switch (_selectedInterface)
