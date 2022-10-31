@@ -527,6 +527,7 @@
   <string name="xml_tool_no_response">No response from vehicle</string>
   <string name="xml_tool_no_response_manual">No response from vehicle.\nFor K-LINE vehicles an USB or Deep OBD adapter is required.\nHere you could find a list of <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/AdapterTypes.md'>supported adapters</a>.\nDo you want to switch to <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Configuration_Generator.md'>manual configuration</a>?</string>
   <string name="xml_tool_no_response_adapter">No response from vehicle.\nDo you want to check the adapter connection?</string>
+  <string name="xml_tool_no_response_raw">No response from vehicle.\nThe direct communication mode is active and could be the source of the problem.\nDo you want to select a different adapter?</string>
   <string name="xml_tool_read_jobs_failed">Reading jobs failed</string>
   <string name="xml_tool_aborting">Aborting operation</string>
   <string name="xml_tool_read_ecu_info_failed">Reading ECU information failed</string>

@@ -137,7 +137,7 @@ namespace BmwDeepObd
             ViewStates visibility = _bCustomAdapter ? ViewStates.Visible : ViewStates.Gone;
             ViewStates visibilityBt = _bCustomBtAdapter ? ViewStates.Visible : ViewStates.Gone;
             bool customElmAdapter = IsCustomElmAdapter(_interfaceType, _deviceAddress);
-            bool rawAdapter = IsRawAdapter(_interfaceType, _deviceAddress);
+            bool rawAdapter = ActivityCommon.IsRawAdapter(_interfaceType, _deviceAddress);
             bool usbAdapter = IsUsbAdapter(_interfaceType);
 
             if (!(customElmAdapter || rawAdapter))
@@ -1446,30 +1446,6 @@ namespace BmwDeepObd
                     if (stringList.Length > 1)
                     {
                         if (string.Compare(stringList[1], EdBluetoothInterface.ElmDeepObdTag, StringComparison.OrdinalIgnoreCase) == 0)
-                        {
-                            return true;
-                        }
-                    }
-
-                    return false;
-            }
-
-            return false;
-        }
-
-        private static bool IsRawAdapter(ActivityCommon.InterfaceType interfaceType, string deviceAddress)
-        {
-            switch (interfaceType)
-            {
-                case ActivityCommon.InterfaceType.Bluetooth:
-                    if (deviceAddress == null)
-                    {
-                        return false;
-                    }
-                    string[] stringList = deviceAddress.Split('#', ';');
-                    if (stringList.Length > 1)
-                    {
-                        if (string.Compare(stringList[1], EdBluetoothInterface.RawTag, StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             return true;
                         }

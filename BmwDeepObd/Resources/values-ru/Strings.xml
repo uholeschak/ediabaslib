@@ -566,6 +566,8 @@
   <string name="xml_tool_no_response">Автомобиль не отвечает</string>
   <string name="xml_tool_no_response_manual">Автомобиль не отвечает.\nЕсли у вашего автомобиля используется К-LINE коммуникация, то необходимо использовать USB или Deep ОDB адаптер.\nЗдесь приведён список <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Configuration_Generator.md'>поддерживаемых адаптеров</a>.\nПерейти к <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Configuration_Generator.md'>ручной настройке</a>?</string>
   <string name="xml_tool_no_response_adapter">Автомобиль не отвечает.\nХотите проверить соединение адаптера?</string>
+  <!--Translate-->
+  <string name="xml_tool_no_response_raw">Автомобиль не отвечает.\nРежим прямой связи активен и может быть источником проблемы.\nВы хотите выбрать другой адаптер?</string>
   <string name="xml_tool_read_jobs_failed">Не удалось считать задания</string>
   <string name="xml_tool_aborting">Отмена операции</string>
   <string name="xml_tool_read_ecu_info_failed">Не удалось считать ECU информацию</string>
