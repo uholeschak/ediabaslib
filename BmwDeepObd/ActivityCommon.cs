@@ -10064,6 +10064,9 @@ namespace BmwDeepObd
                 if (extDir != null && extState != null && extDir.IsDirectory && extState.Equals(Android.OS.Environment.MediaMounted))
                 {
                     _externalPath = extDir.AbsolutePath;
+#if DEBUG
+                    Android.Util.Log.Info(Tag, string.Format("SetStoragePath: ExternalStorageDirectory: {0}", _externalPath));
+#endif
                 }
             }
 
@@ -10084,6 +10087,9 @@ namespace BmwDeepObd
                             if (extState != null && extDir.IsDirectory && extState.Equals(Android.OS.Environment.MediaMounted) && IsWritable(extDir.AbsolutePath))
                             {
                                 _externalWritePath = extDir.AbsolutePath;
+#if DEBUG
+                                Android.Util.Log.Info(Tag, string.Format("SetStoragePath: GetExternalFilesDirs[1]: {0}", _externalWritePath));
+#endif
                             }
                         }
                     }
@@ -10099,6 +10105,9 @@ namespace BmwDeepObd
                             if (extState != null && extDir.IsDirectory && extState.Equals(Android.OS.Environment.MediaMounted) && IsWritable(extDir.AbsolutePath))
                             {
                                 _externalWritePath = extDir.AbsolutePath;
+#if DEBUG
+                                Android.Util.Log.Info(Tag, string.Format("SetStoragePath: GetExternalFilesDirs[0]: {0}", _externalWritePath));
+#endif
                             }
                         }
                     }
