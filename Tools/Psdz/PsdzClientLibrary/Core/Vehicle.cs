@@ -1775,16 +1775,6 @@ namespace PsdzClient.Core
             return false;
         }
 
-        // ToDo: Check on update
-        public bool IsPowertrainSystemCustomerVehicle()
-        {
-            if (base.BNType != BNType.BN2000_GIBBS && base.BNType != BNType.BN2000_RODING && base.BNType != BNType.BN2000_WIESMANN)
-            {
-                return base.BNType == BNType.BN2000_PGO;
-            }
-            return true;
-        }
-
         IEcu IVehicle.getECU(long? sgAdr)
 		{
 			return this.getECU(sgAdr);
@@ -1875,9 +1865,9 @@ namespace PsdzClient.Core
                     }
                     return true;
                 }
-			}
-			return null;
-		}
+            }
+            return null;
+        }
 
 #if false
         private static ObservableCollection<Fault> CalculateFaultList(Vehicle vehicle, IEnumerable<ECU> ecus, IEnumerable<DTC> combinedFaults, ObservableCollection<ZFSResult> zfs, IFFMDynamicResolver ffmFesolver = null)
@@ -2049,7 +2039,7 @@ namespace PsdzClient.Core
             return set;
         }
 
-		// ToDo: Check on update
+        // ToDo: Check on update
         public int GetCustomHashCode()
         {
             int num = 37;
