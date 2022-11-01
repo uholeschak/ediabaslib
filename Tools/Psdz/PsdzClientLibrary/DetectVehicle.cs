@@ -13,6 +13,14 @@ namespace PsdzClient
 {
     public class DetectVehicle : IDisposable
     {
+        public enum DetectResult
+        {
+            Ok,
+            NoResponse,
+            Aborted,
+            InvalidDatabase
+        }
+
         private static readonly ILog log = LogManager.GetLogger(typeof(DetectVehicle));
         private readonly Regex _vinRegex = new Regex(@"^(?!0{7,})([a-zA-Z0-9]{7,})$");
         private static readonly Tuple<string, string, string>[] ReadVinJobsBmwFast =
@@ -91,7 +99,7 @@ namespace PsdzClient
             ResetValues();
         }
 
-        public bool DetectVehicleBmwFast(AbortDelegate abortFunc)
+        public DetectResult DetectVehicleBmwFast(AbortDelegate abortFunc)
         {
             log.InfoFormat(CultureInfo.InvariantCulture, "DetectVehicleBmwFast Start");
             ResetValues();
@@ -103,7 +111,7 @@ namespace PsdzClient
                 if (!Connect())
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "DetectVehicleBmwFast Connect failed");
-                    return false;
+                    return DetectResult.NoResponse;
                 }
 
                 List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
@@ -112,7 +120,7 @@ namespace PsdzClient
                 {
                     if (_abortRequest)
                     {
-                        return false;
+                        return DetectResult.Aborted;
                     }
 
                     try
@@ -157,7 +165,7 @@ namespace PsdzClient
                 if (string.IsNullOrEmpty(detectedVin))
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "No VIN detected");
-                    return false;
+                    return DetectResult.NoResponse;
                 }
 
                 Vin = detectedVin;
@@ -169,7 +177,7 @@ namespace PsdzClient
                 {
                     if (_abortRequest)
                     {
-                        return false;
+                        return DetectResult.Aborted;
                     }
 
                     log.InfoFormat(CultureInfo.InvariantCulture, "Read BR job: {0},{1}", job.Item1, job.Item2);
@@ -303,27 +311,27 @@ namespace PsdzClient
                 if (versionInfo == null)
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "Vehicle series no version info");
-                    return false;
+                    return DetectResult.InvalidDatabase;
                 }
 
                 PdszDatabase.DbInfo dbInfo = _pdszDatabase.GetDbInfo();
                 if (dbInfo == null)
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "DetectVehicleBmwFast no DbInfo");
-                    return false;
+                    return DetectResult.InvalidDatabase;
                 }
 
                 if (!versionInfo.IsMinVersion(dbInfo.Version, dbInfo.DateTime))
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "DetectVehicleBmwFast Vehicles series too old");
-                    return false;
+                    return DetectResult.InvalidDatabase;
                 }
 
                 VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(vehicleType, cDate, _ediabas);
                 if (vehicleSeriesInfo == null)
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "Vehicle series info not found");
-                    return false;
+                    return DetectResult.InvalidDatabase;
                 }
 
                 log.InfoFormat(CultureInfo.InvariantCulture, "Group SGBD: {0}", vehicleSeriesInfo.BrSgbd);
@@ -331,7 +339,7 @@ namespace PsdzClient
 
                 if (_abortRequest)
                 {
-                    return false;
+                    return DetectResult.Aborted;
                 }
 
                 try
@@ -416,7 +424,7 @@ namespace PsdzClient
                 catch (Exception)
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "No ident response");
-                    return false;
+                    return DetectResult.NoResponse;
                 }
 
                 string iLevelShip = null;
@@ -426,7 +434,7 @@ namespace PsdzClient
                 {
                     if (_abortRequest)
                     {
-                        return false;
+                        return DetectResult.Aborted;
                     }
 
                     log.InfoFormat(CultureInfo.InvariantCulture, "Read ILevel job: {0},{1}", job.Item1, job.Item2);
@@ -506,7 +514,7 @@ namespace PsdzClient
                 if (string.IsNullOrEmpty(iLevelShip))
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "ILevel not found");
-                    return false;
+                    return DetectResult.NoResponse;
                 }
 
                 log.InfoFormat(CultureInfo.InvariantCulture, "ILevel: Ship={0}, Current={1}, Backup={2}", iLevelShip,
@@ -518,16 +526,16 @@ namespace PsdzClient
 
                 if (_abortRequest)
                 {
-                    return false;
+                    return DetectResult.Aborted;
                 }
 
                 log.InfoFormat(CultureInfo.InvariantCulture, "DetectVehicleBmwFast Finish");
-                return true;
+                return DetectResult.Ok;
             }
             catch (Exception ex)
             {
                 log.ErrorFormat(CultureInfo.InvariantCulture, "DetectVehicleBmwFast Exception: {0}", ex.Message);
-                return false;
+                return DetectResult.NoResponse;
             }
             finally
             {

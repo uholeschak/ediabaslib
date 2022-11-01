@@ -634,7 +634,7 @@ namespace PsdzClient.Programming
                 }
 
                 PsdzContext.DetectVehicle = new DetectVehicle(ProgrammingService.PdszDatabase, ecuPath, enetConnection, useIcom, addTimeout);
-                bool detectResult = PsdzContext.DetectVehicle.DetectVehicleBmwFast(() =>
+                DetectVehicle.DetectResult detectResult = PsdzContext.DetectVehicle.DetectVehicleBmwFast(() =>
                 {
                     if (cts != null)
                     {
@@ -652,7 +652,7 @@ namespace PsdzClient.Programming
                     return false;
                 }
 
-                if (!detectResult)
+                if (detectResult != DetectVehicle.DetectResult.Ok)
                 {
                     if (series.Length > 0)
                     {
@@ -663,7 +663,17 @@ namespace PsdzClient.Programming
                         }
                     }
 
-                    sbResult.AppendLine(Strings.VehicleDetectionFailed);
+                    switch (detectResult)
+                    {
+                        case DetectVehicle.DetectResult.InvalidDatabase:
+                            sbResult.AppendLine(Strings.VehicleDatabaseInvalid);
+                            break;
+
+                        default:
+                            sbResult.AppendLine(Strings.VehicleDetectionFailed);
+                            break;
+                    }
+
                     UpdateStatus(sbResult.ToString());
                     return false;
                 }

@@ -774,6 +774,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Vehicle database invalid or too old. ähnelt.
+        /// </summary>
+        internal static string VehicleDatabaseInvalid {
+            get {
+                return ResourceManager.GetString("VehicleDatabaseInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Detecting vehicle ... ähnelt.
         /// </summary>
         internal static string VehicleDetecting {

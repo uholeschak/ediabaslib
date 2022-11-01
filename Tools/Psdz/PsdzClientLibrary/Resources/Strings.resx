@@ -368,6 +368,9 @@ Possibly the software is not consistent in all ECUs.</value>
   <data name="VehicleConnecting" xml:space="preserve">
     <value>Connecting vehicle ...</value>
   </data>
+  <data name="VehicleDatabaseInvalid" xml:space="preserve">
+    <value>Vehicle database invalid or too old.</value>
+  </data>
   <data name="VehicleDetecting" xml:space="preserve">
     <value>Detecting vehicle ...</value>
   </data>

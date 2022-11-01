@@ -368,6 +368,9 @@ Möglicherweise ist die Sofware in den Steuergeräten nicht konsitent.</value>
   <data name="VehicleConnecting" xml:space="preserve">
     <value>Fahrzeug verbinden ...</value>
   </data>
+  <data name="VehicleDatabaseInvalid" xml:space="preserve">
+    <value>Fahrzeugdatenbank ungültig oder zu alt.</value>
+  </data>
   <data name="VehicleDetecting" xml:space="preserve">
     <value>Fahrzeug erkennen ...</value>
   </data>

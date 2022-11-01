@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <VehicleSeriesInfoDataXml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <TimeStamp>2022-08-29 22:04:47</TimeStamp>
+  <TimeStamp>2022-11-01 17:19:06</TimeStamp>
   <Version>
-    <Version>4.36.40</Version>
-    <Date>2022-07-26T19:39:49</Date>
+    <Version>4.37.40</Version>
+    <Date>2022-09-20T10:39:47</Date>
   </Version>
   <VehicleSeriesDict>
     <item>
@@ -1690,7 +1690,7 @@
               <GroupSgbd>D_EGS</GroupSgbd>
             </EcuList>
             <EcuList>
-              <DiagAddr>52</DiagAddr>
+              <DiagAddr>25</DiagAddr>
               <Name>VGSG</Name>
               <GroupSgbd>D_VGSG</GroupSgbd>
             </EcuList>
@@ -5628,6 +5628,36 @@
     </item>
     <item>
       <key>
+        <string>G70</string>
+      </key>
+      <value>
+        <ArrayOfVSI>
+          <VSI>
+            <Series>G70</Series>
+            <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
+            <BrandList>BMW PKW</BrandList>
+          </VSI>
+        </ArrayOfVSI>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>G73</string>
+      </key>
+      <value>
+        <ArrayOfVSI>
+          <VSI>
+            <Series>G73</Series>
+            <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
+            <BrandList>BMW PKW</BrandList>
+          </VSI>
+        </ArrayOfVSI>
+      </value>
+    </item>
+    <item>
+      <key>
         <string>G60</string>
       </key>
       <value>
@@ -5694,36 +5724,6 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G61</Series>
-            <BrSgbd>F01</BrSgbd>
-            <BnType>BN2020</BnType>
-            <BrandList>BMW PKW</BrandList>
-          </VSI>
-        </ArrayOfVSI>
-      </value>
-    </item>
-    <item>
-      <key>
-        <string>G70</string>
-      </key>
-      <value>
-        <ArrayOfVSI>
-          <VSI>
-            <Series>G70</Series>
-            <BrSgbd>F01</BrSgbd>
-            <BnType>BN2020</BnType>
-            <BrandList>BMW PKW</BrandList>
-          </VSI>
-        </ArrayOfVSI>
-      </value>
-    </item>
-    <item>
-      <key>
-        <string>G73</string>
-      </key>
-      <value>
-        <ArrayOfVSI>
-          <VSI>
-            <Series>G73</Series>
             <BrSgbd>F01</BrSgbd>
             <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
