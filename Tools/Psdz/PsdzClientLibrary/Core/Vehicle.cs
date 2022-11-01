@@ -1750,9 +1750,9 @@ namespace PsdzClient.Core
         // ToDo: Check on update
         public bool IsMotorcycle()
         {
-            if (base.BNType != BNType.BN2000_MOTORBIKE && base.BNType != BNType.BN2020_MOTORBIKE && base.BNType != BNType.BNK01X_MOTORBIKE && base.BNType != BNType.BN2000_GIBBS)
+            if (base.BNType != BNType.BN2000_MOTORBIKE && base.BNType != BNType.BN2020_MOTORBIKE)
             {
-                return base.BNType == BNType.BN2020_CAMPAGNA;
+                return base.BNType == BNType.BNK01X_MOTORBIKE;
             }
             return true;
         }
