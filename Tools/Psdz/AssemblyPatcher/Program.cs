@@ -265,6 +265,10 @@ namespace AssemblyPatcher
                                         //patcher.Save(file.Replace(".dll", "Test.dll"));
                                     }
                                 }
+                                else
+                                {
+                                    Console.WriteLine("'ENET::remotehost=' seems to be already patched");
+                                }
                             }
                         }
                         catch (Exception)
