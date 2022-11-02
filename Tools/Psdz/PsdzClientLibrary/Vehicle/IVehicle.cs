@@ -155,6 +155,8 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         BrandName? BrandName { get; }
 
+        DateTime? C_DATETIME { get; }
+
         //IEnumerable<ICbsInfo> CBS { get; }
 
         bool CVDRequestFailed { get; set; }
