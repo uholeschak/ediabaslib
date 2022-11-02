@@ -168,6 +168,7 @@
     <Compile Include="Core\IBusLogisticsEntry.cs" />
     <Compile Include="Core\IBusNameEntry.cs" />
     <Compile Include="Core\ICombinedEcuHousingEntry.cs" />
+    <Compile Include="Core\IDiagnosticsBusinessData.cs" />
     <Compile Include="Core\IEcuGroupLocator.cs" />
     <Compile Include="Core\IEcuLogisticsEntry.cs" />
     <Compile Include="Core\IEcuTreeConfiguration.cs" />
