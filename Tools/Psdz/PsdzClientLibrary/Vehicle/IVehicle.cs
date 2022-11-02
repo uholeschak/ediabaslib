@@ -291,6 +291,8 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         bool ProductionDateSpecified { get; }
 
+        string Produktlinie { get; set; }
+
         string ProgmanVersion { get; }
 
         int PwfState { get; }
@@ -312,6 +314,8 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         //IEnumerable<IServiceHistoryEntry> ServiceHistory { get; }
 
         bool SimulatedParts { get; }
+
+        bool Sp2021Enabled { get; set; }
 
         string Status_FunctionName { get; }
 
