@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using BMW.Rheingold.DiagnosticsBusinessData;
 using BmwFileReader;
 using PsdzClient.Core;
 using PsdzClient.Utility;

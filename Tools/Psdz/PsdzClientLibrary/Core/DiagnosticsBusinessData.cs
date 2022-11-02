@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using PsdzClient.Core;
 
-namespace BMW.Rheingold.DiagnosticsBusinessData
+namespace PsdzClient.Core
 {
 	public class DiagnosticsBusinessData
 	{

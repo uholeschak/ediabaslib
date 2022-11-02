@@ -211,7 +211,7 @@
     <Compile Include="Core\VehicleCharacteristicVehicleHelper.cs" />
     <Compile Include="Core\XGBMBusLogisticsEntry.cs" />
     <Compile Include="DetectVehicle.cs" />
-    <Compile Include="DiagnosticsBusinessData.cs" />
+    <Compile Include="Core\DiagnosticsBusinessData.cs" />
     <Compile Include="PdszDatabase.cs" />
     <Compile Include="Programming\AsamJobInputDictionary.cs" />
     <Compile Include="Programming\BindingDetailsStatus.cs" />
