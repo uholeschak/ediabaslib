@@ -264,6 +264,7 @@ namespace PsdzClient.Core
         // ToDo: Check on update
         public static BaseEcuCharacteristics GetCharacteristics(Vehicle vecInfo)
         {
+            IDiagnosticsBusinessData service = DiagnosticsBusinessData.Instance;
             int customHashCode = vecInfo.GetCustomHashCode();
             if (ecuCharacteristics.TryGetValue(customHashCode, out var value))
             {
@@ -325,7 +326,7 @@ namespace PsdzClient.Core
                     case "R53":
                         return GetEcuCharacteristics<R50EcuCharacteristics>("BNT-XML-R50.xml", vecInfo);
                     case "F25":
-                        if (vecInfo.C_DATETIME.HasValue && !(vecInfo.C_DATETIME < DiagnosticsBusinessData.DTimeF25Lci))
+                        if (vecInfo.C_DATETIME.HasValue && !(vecInfo.C_DATETIME < service.DTimeF25Lci))
                         {
                             return GetEcuCharacteristics<F25_1404EcuCharacteristics>("BNT-XML-F25_1404.xml", vecInfo);
                         }
@@ -369,7 +370,7 @@ namespace PsdzClient.Core
                     case "RR1":
                     case "RR3":
                     case "RR2":
-                        if (vecInfo.C_DATETIME.HasValue && !(vecInfo.C_DATETIME < DiagnosticsBusinessData.DTimeRR_S2))
+                        if (vecInfo.C_DATETIME.HasValue && !(vecInfo.C_DATETIME < service.DTimeRR_S2))
                         {
                             return GetEcuCharacteristics<RR2EcuCharacteristics>("BNT-XML-RR2.xml", vecInfo);
                         }
@@ -424,7 +425,7 @@ namespace PsdzClient.Core
                     case "K19":
                     case "K18":
                     case "K21":
-                        if (GetBNType(vecInfo) == BNType.BN2000_MOTORBIKE)
+                        if (service.GetBNType(vecInfo) == BNType.BN2000_MOTORBIKE)
                         {
                             return GetEcuCharacteristics<MREcuCharacteristics>("BNT-XML-BIKE-K024.xml", vecInfo);
                         }
@@ -446,7 +447,7 @@ namespace PsdzClient.Core
                         }
                         return GetEcuCharacteristics<E70EcuCharacteristics>("BNT-XML-E70_NOAMPT_NOAMPH.xml", vecInfo);
                     case "K46":
-                        if (GetBNType(vecInfo) == BNType.BN2020_MOTORBIKE)
+                        if (service.GetBNType(vecInfo) == BNType.BN2020_MOTORBIKE)
                         {
                             return GetEcuCharacteristics<MRXEcuCharacteristics>("BNT-XML-BIKE-K001.xml", vecInfo);
                         }
@@ -590,7 +591,7 @@ namespace PsdzClient.Core
                     case "F06":
                     case "F07":
                     case "F04":
-                        if (vecInfo.C_DATETIME.HasValue && !(vecInfo.C_DATETIME < DiagnosticsBusinessData.DTimeF01Lci))
+                        if (vecInfo.C_DATETIME.HasValue && !(vecInfo.C_DATETIME < service.DTimeF01Lci))
                         {
                             if (vecInfo.ECU != null)
                             {
@@ -743,6 +744,7 @@ namespace PsdzClient.Core
         // ToDo: Check on update
         public static BNMixed getBNMixed(string br, FA fa)
         {
+            IDiagnosticsBusinessData service = DiagnosticsBusinessData.Instance;
             if (string.IsNullOrEmpty(br))
             {
                 return BNMixed.UNKNOWN;
@@ -756,7 +758,7 @@ namespace PsdzClient.Core
                 case "RR1":
                 case "RR2":
                 case "RR3":
-                    if (fa != null && fa.AlreadyDone && fa.C_DATETIME >= DiagnosticsBusinessData.DTimeRR_S2)
+                    if (fa != null && fa.AlreadyDone && fa.C_DATETIME >= service.DTimeRR_S2)
                     {
                         return BNMixed.HETEROGENEOUS;
                     }
@@ -767,7 +769,7 @@ namespace PsdzClient.Core
                 case "F04":
                 case "F06":
                 case "F07":
-                    if (fa != null && fa.AlreadyDone && fa.C_DATETIME > DiagnosticsBusinessData.DTimeF01BN2020MostDomain)
+                    if (fa != null && fa.AlreadyDone && fa.C_DATETIME > service.DTimeF01BN2020MostDomain)
                     {
                         return BNMixed.HETEROGENEOUS;
                     }
@@ -775,100 +777,6 @@ namespace PsdzClient.Core
                 default:
                     return BNMixed.HOMOGENEOUS;
             }
-        }
-
-        // ToDo: Check on update
-        public static BNType GetBNType(Vehicle vecInfo)
-        {
-            if (vecInfo == null)
-            {
-                return BNType.UNKNOWN;
-            }
-            if (vecInfo.Prodart == "P")
-            {
-                if (!string.IsNullOrEmpty(vecInfo.Baureihenverbund))
-                {
-                    switch (vecInfo.Baureihenverbund.ToUpper())
-                    {
-                        case "M012":
-                            return BNType.BEV2010;
-                        case "R050":
-                        case "E083":
-                        case "E085":
-                            return BNType.IBUS;
-                        case "R056":
-                        case "E065":
-                        case "E060":
-                        case "E070":
-                        case "E89X":
-                        case "RR01":
-                            return BNType.BN2000;
-                        case "U006":
-                        case "M013":
-                        case "F010":
-                        case "F025":
-                        case "F020":
-                        case "J001":
-                        case "S18A":
-                        case "I001":
-                        case "F001":
-                        case "G070":
-                        case "S15A":
-                        case "S18T":
-                        case "S15C":
-                        case "F056":
-                        case "I020":
-                        case "RR21":
-                            return BNType.BN2020;
-                        default:
-                            return BNType.BN2020;
-                    }
-                }
-                //Log.Warning(Log.CurrentMethod(), "Baureihenverbund is null or empty. BNType will be determined by Ereihe!");
-                switch (vecInfo.Ereihe)
-                {
-                    case "E38":
-                    case "E39":
-                    case "E32":
-                    case "E30":
-                    case "E31":
-                    case "E46":
-                    case "E34":
-                    case "E52":
-                    case "E53":
-                    case "E36":
-                        return BNType.IBUS;
-                    default:
-                        //Log.Warning(Log.CurrentMethod(), "Ereihe is null or empty. No BNType can be determined!");
-                        return BNType.UNKNOWN;
-                }
-            }
-            if (vecInfo.Prodart == "M")
-            {
-                if (!string.IsNullOrEmpty(vecInfo.Baureihenverbund))
-                {
-                    switch (vecInfo.Baureihenverbund.ToUpper())
-                    {
-                        case "XS01":
-                        case "K001":
-                        case "KE01":
-                        case "X001":
-                        case "KS01":
-                            return BNType.BN2020_MOTORBIKE;
-                        case "K024":
-                        case "KH24":
-                            return BNType.BN2000_MOTORBIKE;
-                        case "K01X":
-                            return BNType.BNK01X_MOTORBIKE;
-                        default:
-                            return BNType.BN2020_MOTORBIKE;
-                    }
-                }
-                //Log.Info(Log.CurrentMethod(), "Baureihenverbund was empty, returning default value.");
-                return BNType.BN2020_MOTORBIKE;
-            }
-            //Log.Info(Log.CurrentMethod(), "Returning BNType.UNKNOWN for Prodart: " + vecInfo?.Prodart);
-            return BNType.UNKNOWN;
         }
 
         public static string getBrSgbd(Vehicle vecInfo)

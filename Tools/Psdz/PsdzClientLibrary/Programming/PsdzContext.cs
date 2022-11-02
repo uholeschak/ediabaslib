@@ -647,7 +647,7 @@ namespace PsdzClient.Programming
                 }
             }
 
-            VecInfo.BNType = VehicleLogistics.GetBNType(VecInfo);
+            VecInfo.BNType = DiagnosticsBusinessData.Instance.GetBNType(VecInfo);
             VecInfo.FA.AlreadyDone = true;
             VecInfo.BNMixed = VehicleLogistics.getBNMixed(VecInfo.Ereihe, VecInfo.FA);
             VecInfo.WithLfpBattery = programmingService.PdszDatabase.ResolveBatteryType(VecInfo) == PdszDatabase.BatteryEnum.LFP;

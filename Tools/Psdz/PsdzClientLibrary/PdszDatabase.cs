@@ -2479,7 +2479,7 @@ namespace PsdzClient
                             foreach (string series in seriesHash)
                             {
                                 vehicleSeries.Ereihe = series;
-                                BNType bnType = VehicleLogistics.GetBNType(vehicleSeries);
+                                BNType bnType = DiagnosticsBusinessData.Instance.GetBNType(vehicleSeries);
                                 if (bnType != BNType.UNKNOWN)
                                 {
                                     bnTypes.Add(bnType);

@@ -7,6 +7,9 @@ namespace PsdzClient.Core
 {
 	public class DiagnosticsBusinessData : IDiagnosticsBusinessData
     {
+        private static readonly DiagnosticsBusinessData instance = new DiagnosticsBusinessData();
+        public static IDiagnosticsBusinessData Instance => instance;
+
         private const string ILevelBN2020RegexPattern = "([A-Z0-9]{4}|[A-Z0-9]{3})-[0-9]{2}[-_](0[1-9]|1[0-2])[-_][0-9]{3}";
 
         //private IFasta2Service fastaService = ServiceLocator.Current.GetService<IFasta2Service>();
@@ -422,8 +425,13 @@ namespace PsdzClient.Core
             return null;
         }
 
+        // ToDo: Check on update
         public BNType GetBNType(IVehicle vecInfo)
         {
+            if (vecInfo == null)
+            {
+                return BNType.UNKNOWN;
+            }
             if (vecInfo.Prodart == "P")
             {
                 if (!string.IsNullOrEmpty(vecInfo.Baureihenverbund))
