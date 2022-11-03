@@ -24,14 +24,11 @@
   <string name="back_button_twice_for_exit">Дважды нажмите кнопку, чтобы выйти</string>
   <string name="no_ext_storage">Внешняя память недоступна</string>
   <string name="access_denied_ext_storage">Доступ к внешней памяти необходим для выполнения приложения.\nХотите открыть настройки приложения?</string>
-  <!--Translate-->
-  <string name="access_manage_files">Требуется доступ к управлению файлами,\для доступа к внешнему хранилищу.\nХотите открыть настройки управления?</string>
+  <string name="access_manage_files">Требуется доступ к управлению файлами,\для доступа к внешнему хранилищу.\nОткрыть настройки управления?</string>
   <string name="overlay_permission_denied">Для коммуникации в фоновом режиме необходимо отображение через другие приложения (оверлейное отображение).\nХотите открыть настройки приложения?</string>
-  <!--Translate-->
-  <string name="notification_permission_denied">Для фоновой связи требуется уведомление.\nХотите открыть настройки приложения?</string>
+  <string name="notification_permission_denied">Для фоновой связи требуется уведомление.\nОткрыть настройки приложения?</string>
   <string name="store_settings_failed">Не удалось сохранить настройки. Пожалуйста, переустановите приложение.</string>
   <string name="store_settings_filename">Настройки были сохранены в:</string>
-  <!--Translate-->
   <string name="long_click_show_title">Нажмите и удерживайте, чтобы показать заголовок</string>
   <string name="low_memory_detected">Недостаточно системной памяти!</string>
   <string name="bt_enable">Bluetooth не активирован.\nХотите его активировать?</string>
@@ -50,21 +47,17 @@
   <string name="manufacturer_select">Выбранный производитель {0}. Для выбора другого нажмите \'Отменить\'.</string>
   <string name="no_xml_editor_installed">Пожалуйста, установите сначала XML редактор.</string>
   <string name="choose_xml_editor">Выберите XML редактор.</string>
-  <!--Translate-->
-  <string name="xml_access_denied">Отказано в доступе к файлу XML.\nПожалуйста, проверьте расположение файла и права доступа.</string>
+  <string name="xml_access_denied">Отказано в доступе к файлу XML.\nПожалуйста, проверьте наличие файла и права доступа.</string>
   <string name="error_no_error">Ошибки отсутствуют</string>
   <string name="error_reading_errors">Считывание ошибок: {0}</string>
-  <!--Translate-->
-  <string name="error_reading_relevant_only">(Отображаются только релевантные данные,\nкоторые можно изменить в глобальных настройках.)</string>
+  <string name="error_reading_relevant_only">(Отображаются только важные данные,\nкоторые можно изменить в глобальных настройках.)</string>
   <string name="error_reading_state_init">Инициализация</string>
   <string name="error_reading_state_error">Ошибка</string>
   <string name="error_reading_state_detect">Обнаружение {0}%</string>
   <string name="error_reading_state_read">Прогресс {0}%</string>
-  <!--Translate-->
   <string name="error_reset_condition">Условия сброса ошибки не выполнены.\nПожалуйста, остановите двигатель, включите зажигание и повторите попытку.</string>
   <string name="error_no_response">Нет подтверждения</string>
   <string name="error_error_code">Код ошибки</string>
-  <!--Translate-->
   <string name="error_info_code">Инфокод</string>
   <string name="error_shadow">(Shadow)</string>
   <string name="error_env_title">Условия окружающей среды:</string>
@@ -78,7 +71,7 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную информацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:\n</string>
-  <string name="version_last_changes">- Улучшена загрузка файла расширения.\n- Оптимизированный тайм-аут Bluetooth.\n- Исправлен доступ к внешнему хранилищу.\n- Поддержка Android 13.\n- Чтение информационных кодов BMW.\n- Возможность показывать только релевантные ошибки BWM.\n- Улучшен сброс ошибки VAG.\n- Поддержка UniCarScan UCSI-2100 / UCSI-3000.\n- Исправлены незначительные проблемы</string>
+  <string name="version_last_changes">- Улучшена загрузка файла расширения.\n- Оптимизирована коммуникация для Bluetooth.\n- Исправлен доступ к внешнему хранилищу.\n- Поддержка Android 13.\n- Чтение информационных кодов BMW.\n- Возможность показывать только существенные ошибки BWM.\n- Улучшен сброс ошибки VAG.\n- Поддержка UniCarScan UCSI-2100 / UCSI-3000.\n- Исправлены незначительные проблемы</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string formatted="false" name="vag_mode_info">VAG режим пока что экспериментальный и предназначен только для автомобилей до {0}.\nНеобходимо &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;Deep OBD устройство&lt;/a&gt; с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.\nКонфигурации для нового режима VAG необходимо генерировать заново.\nВ диалоговом окне настроек можно снова выбрать старый режим VAG.</string>
 
@@ -102,7 +95,6 @@
   <string name="exp_down_button_cancel_verify">Отменить проверку</string>
   <string name="exp_down_obb_missing">Приложение не было загружено из Google Play и файл расширения отсутствует.\nЗагрузите OBB-файл при помощи APK-загрузчика и скопируйте его с именем:\n\'{0}\'\nв папку:\n{1}\nВ данном случае поддержка отсутствует, использование Google Play - единственный рекомендуемый способ.</string>
   <string name="exp_down_time_remaining">Необходимое время: {0}</string>
-  <!--Translate-->
   <string name="obb_missing_restart">Файл расширения не найден,\nнеобходимо перезапустить приложение.</string>
 
   <!-- Downloader library -->
@@ -144,13 +136,12 @@
   <string name="alert_title_question">Вопрос</string>
 
   <!-- Notifications -->
-  <!--Translate-->
   <string name="notification_download">Скачать</string>
   <string name="notification_communication">Коммуникация</string>
   <string name="notification_group_custom">Пользовательский</string>
   <string name="notification_custom_min">Пользовательский минимум</string>
   <string name="notification_custom_low">Пользовательский низкий</string>
-  <string name="notification_custom_default">Пользовательское дефолт</string>
+  <string name="notification_custom_default">Пользовательское по умолчанию</string>
   <string name="notification_custom_high">Пользовательский высокий</string>
   <string name="notification_custom_max">Пользовательский максимум</string>
 
