@@ -24,7 +24,7 @@
   <string name="back_button_twice_for_exit">Дважды нажмите кнопку, чтобы выйти</string>
   <string name="no_ext_storage">Внешняя память недоступна</string>
   <string name="access_denied_ext_storage">Доступ к внешней памяти необходим для выполнения приложения.\nХотите открыть настройки приложения?</string>
-  <string name="access_manage_files">Требуется доступ к управлению файлами,\для доступа к внешнему хранилищу.\nОткрыть настройки управления?</string>
+  <string name="access_manage_files">Для доступа к внешнему хранилищу\nтребуется доступ к управлению файлами.\nОткрыть настройки управления?</string>
   <string name="overlay_permission_denied">Для коммуникации в фоновом режиме необходимо отображение через другие приложения (оверлейное отображение).\nХотите открыть настройки приложения?</string>
   <string name="notification_permission_denied">Для фоновой связи требуется уведомление.\nОткрыть настройки приложения?</string>
   <string name="store_settings_failed">Не удалось сохранить настройки. Пожалуйста, переустановите приложение.</string>
@@ -172,8 +172,7 @@
   <string name="extract_file">Разархивировать файлы</string>
   <string name="verify_files">Проверка файлов</string>
   <string name="extract_failed">Не удалось разархивировать файлы.\nВозможно поврежден Zip-файл.\nВ большинстве случаев причиной является дефектный носитель данных.</string>
-  <!--Translate-->
-  <string name="extract_failed_io">Не удалось сохранить разархивированные файлы.\nФайловая система повреждена?\nНа данном устройстве недостаточно свободаной памяти?\nРекомендуется удалить всё программное обеспечение для защиты файлов (например, антивирус).</string>
+  <string name="extract_failed_io">Не удалось сохранить разархивированные файлы.\nПовреждена файловая система?\nНа данном устройстве недостаточно свободаной памяти?\nРекомендуется удалить всё программное обеспечение для защиты файлов (например, антивирус).</string>
   <string name="write_files_failed">Не удалось сохранить файлы.\nНа данном устройстве недостаточно свободаной памяти?\nРекомендуется удалить всё программное обеспечение для защиты файлов (например, антивирус).</string>
 
   <!-- Job reader -->
@@ -205,7 +204,6 @@
   <string name="send_trace_file_failed">Не удалось отправить Trace-файл.</string>
   <string name="send_trace_file_failed_retry">Не удалось отправить Trace-файл.\nПожалуйста, проверьте подключение к сети.\nХотите повторить отправку?</string>
   <string name="send_trace_file_failed_message">Хотите повторить отправку?</string>
-  <!--Translate-->
   <string name="send_trace_backup_info">Вы можете повторить отправку позже, используя следующую функцию главного меню:\nПовторно отправить файл трассировки.</string>
   <string name="send_trace_message">Отсылать дополнительную информацию</string>
   <string name="send_trace_email">Электронная почта:</string>
@@ -248,8 +246,7 @@
   <string name="bt_mtc_antenna_info">Для некоторых Android-Радио рекомендуется заменить антенный кабель внутреннего модуля Bluetooth и вывести его из корпуса.\nАнтенный кабель должен иметь длину 15,5 см. Для модулей без кабелей - кажущаяся оптимальная длина составляет 16,0 см.</string>
   <string name="bt_mtc_module_error">Устройства Android с модулем Bluetooth SD-GT936, похоже, имеют проблемы коммуникации с адаптерами OBD.\nСоединение, вероятно, не будет работать правильно.</string>  <string name="bt_module_name">(Модуль Bluetooth: {0})</string>
   <string name="bt_mtc_module_escape_mode">Bluetooth модуль {0} имеет ограниченный канал связи, поэтому необходимо использовать специальный режим связи.\nПо техническим причинам в этом режиме поддерживаются не все протоколы OBD, и требуется самая новая прошивка адаптера.</string>
-  <!--Translate-->
-  <string name="bt_mtc_module_pwd">Текущий контакт Bluetooth {0} не является значением по умолчанию {1} для адаптеров.\nЛибо вы меняете контакт адаптера, либо текущий контакт Bluetooth.\nВы хотите изменить текущий контакт на {1}?</string>
+  <string name="bt_mtc_module_pwd">Текущий пин для Bluetooth {0} не является значением для адаптера по умолчанию {1}.\nЛибо вы меняете пин адаптера, либо текущий пин для Bluetooth.\nВы хотите изменить текущий пин на {1}?</string>
   <string name="title_paired_devices">Авторизированные устройства</string>
   <string name="title_other_devices">Другие доступные устройства</string>
   <string name="button_scan">Поиск устройств</string>
@@ -263,7 +260,6 @@
   <string name="limited_elm_adapter_type">Адаптер ELM327 не является оригинальным и не поддерживает все функции. Не все операции могут быть выполнены.</string>
   <string name="elm_no_can">Автомобиль не поддерживает D-CAN, коммуникация с ELM327 адаптером невозможна.</string>
   <string name="fake_elm_try">Вы всё-таки хотите попробовать использовать адаптер?</string>
-  <!--Translate-->
   <string formatted="false" name="recommened_adapter_type">Рекомендуется ELM327 устройство v1.4b, v1.5 или оригинальной версии v2.1,&lt;br&gt;которое базируется на процессоре PIC18F25K80 (не на MCP2515 чипе).&lt;br&gt;По ссылке &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;github.com/uholeschak/ediabaslib&lt;/a&gt; можете найти улучшенную прошивку.\nОригинальные адаптеры Deep OBD содержат лицензию на кодирование одного автомобиля.</string>
   <string formatted="false" name="adapter_elm_replacement">ELM327 устройства медленные и поддерживают только D-CAN (автомобили начиная с 3/2007).&lt;br&gt;Вы можете купить улучшенную прошивку&lt;br&gt;&lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;github.com/uholeschak/ediabaslib&lt;/a&gt;.\nОригинальные адаптеры Deep OBD содержат лицензию на кодирование одного автомобиля.</string>
   <string name="adapter_elm_firmware">Рекомендуется прошить альтернативное программное обеспечение ELM327.\nОткрыть конфигурацию адаптера для обновления программного обеспечения?</string>
@@ -272,8 +268,7 @@
   <string name="adapter_no_escape_mode">Для этого типа Bluetooth-модуля требуется обновление прошивки OBD адаптера.</string>
   <string name="access_permission_rejected">Без прав доступа поиск устройств Bluetooth невозможен.\nХотите открыть настройки приложения?</string>
   <string name="location_provider_disabled_bt">Для поиска Bluetooth устройств необходимо активировать службы определения местоположения.\nХотите активировать службы определения местоположения?</string>
-  <!--Translate-->
-  <string name="location_provider_disabled_wifi">Службы определения местоположения должны быть включены для обнаружения адаптера Wi-Fi.\nВы хотите включить службу определения местоположения?</string>
+  <string name="location_provider_disabled_wifi">Для обнаружения адаптеров Wi-Fi необходимо включить службы определения местоположения.nАктивировать службы определения местоположения?</string>
   <string name="bt_device_enter_mac">Введите Bluetooth-адрес уже подключённого адаптера OBD в указанном формате</string>
   <string name="bt_device_mac_invalid">Неправильный формат Bluetooth-адреса</string>
   <string name="bt_device_connected">(Подключено)</string>
@@ -327,7 +322,6 @@
   <string name="menu_extract_ecu">Извлечь файлы ECU</string>
   <string name="menu_submenu_log">Протокол данных</string>
   <string name="menu_send_trace">Отправить журнал данных</string>
-  <!--Translate-->
   <string name="menu_send_last_trace">Повторно отправить файл трассировки</string>
   <string name="menu_global_settings">Глобальные настройки</string>
   <string name="menu_submenu_help">Онлайн помощь</string>
@@ -466,8 +460,7 @@
   <string name="settings_old_vag_mode">Использовать старый режим VAG</string>
   <string name="settings_caption_bmw_database">База данных BMW</string>
   <string name="settings_use_bmw_database">Использовать базу данных BMW</string>
-  <!--Translate-->
-  <string name="settings_show_only_relevant_errors">Показывать только релевантные ошибки</string>
+  <string name="settings_show_only_relevant_errors">Показывать только существенные ошибки</string>
   <string name="settings_caption_scan_all_ecus">Распознавание ECU</string>
   <string name="settings_scan_all_ecus">Для автомобилей BMW с протоколом DS2 всегда сканировать все ECU (медленно)</string>
   <string name="settings_check_ecu_files">Проверка ECU файлов при запуске</string>
@@ -502,7 +495,6 @@
   <string name="tool_job_bin_args">Данные (шеснадцатиричные по желаанию с пробелами)</string>
   <string name="tool_job_arg_assist">Помощник по аргументам</string>
   <string name="tool_job_arguments_error_detail">Без аргументов будут считаны все ошибки</string>
-  <!--Translate-->
   <string name="tool_job_arguments_info_detail">Без аргументов считывается вся информация</string>
   <string name="tool_job_results">Результаты:</string>
   <string name="tool_job_result">Результат:</string>
@@ -557,8 +549,7 @@
   <string name="xml_tool_no_response">Автомобиль не отвечает</string>
   <string name="xml_tool_no_response_manual">Автомобиль не отвечает.\nЕсли у вашего автомобиля используется К-LINE коммуникация, то необходимо использовать USB или Deep ОDB адаптер.\nЗдесь приведён список <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Configuration_Generator.md'>поддерживаемых адаптеров</a>.\nПерейти к <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Configuration_Generator.md'>ручной настройке</a>?</string>
   <string name="xml_tool_no_response_adapter">Автомобиль не отвечает.\nХотите проверить соединение адаптера?</string>
-  <!--Translate-->
-  <string name="xml_tool_no_response_raw">Автомобиль не отвечает.\nРежим прямой связи активен и может быть источником проблемы.\nВы хотите выбрать другой адаптер?</string>
+  <string name="xml_tool_no_response_raw">Автомобиль не отвечает.\nАктивен режим прямой связи, это может служить источником проблемы.\nВыбрать другой адаптер?</string>
   <string name="xml_tool_read_jobs_failed">Не удалось считать задания</string>
   <string name="xml_tool_aborting">Отмена операции</string>
   <string name="xml_tool_read_ecu_info_failed">Не удалось считать ECU информацию</string>
