@@ -93,16 +93,16 @@ namespace PsdzClient.Core
         }
 
         public static void SetGearboxTypeFromCharacteristics(Vehicle vehicle, PdszDatabase.Characteristics gearboxCharacteristic)
-		{
+        {
             string name = gearboxCharacteristic.Name;
             //Log.Info("GearboxUtility.SetGearboxTypeFromCharacteristics()", "Gearbox type: '" + name + "' found in the xep_characteristics table.");
             //Reactor.Instance.SetGetriebe(name, DataSource.Database);
             vehicle.Getriebe = name;
-		}
+        }
 #if false
 		public static void SetServiceCodeIfGearboxIsNotDetected(Vehicle vehicle, IFasta2Service fasta)
 		{
-			if (vehicle.Getriebe == "X")
+			if (vehicle.Getriebe == UnknownGearbox)
 			{
 				fasta.AddServiceCode("NVI04_Gearbox_X", vehicle.Ereihe + ", " + vehicle.Typ, LayoutGroup.D);
 			}
@@ -125,10 +125,10 @@ namespace PsdzClient.Core
 
         public const string Manual = "MECH";
 
-		public const string Automatic = "AUT";
+        public const string Automatic = "AUT";
 
-		public const string NoGearbox = "-";
+        public const string NoGearbox = "-";
 
-		public const string UnknownGearbox = "X";
-	}
+        public const string UnknownGearbox = "X";
+    }
 }
