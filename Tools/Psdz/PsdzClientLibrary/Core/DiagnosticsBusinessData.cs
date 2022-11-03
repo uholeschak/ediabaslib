@@ -102,7 +102,7 @@ namespace PsdzClient.Core
                                 return "E65";
                             }
                         }
-                        //AddServiceCode(Log.CurrentMethod(), 1);
+                        AddServiceCode(string.Empty, 1);
                         return "-";
                     }
                     if (vecInfo.Prodart == "M")
@@ -110,7 +110,7 @@ namespace PsdzClient.Core
                         switch (vecInfo.BNType)
                         {
                             default:
-                                //AddServiceCode(Log.CurrentMethod(), 2);
+                                AddServiceCode(string.Empty, 2);
                                 return "-";
                             case BNType.BN2000_MOTORBIKE:
                                 return "MRK24";
@@ -120,7 +120,7 @@ namespace PsdzClient.Core
                                 return "MRK24";
                         }
                     }
-                    //AddServiceCode(Log.CurrentMethod(), 3);
+                    AddServiceCode(string.Empty, 3);
                     return "";
                 case BNType.IBUS:
                     return "-";
@@ -138,7 +138,7 @@ namespace PsdzClient.Core
                         case "PL6":
                             if (!vecInfo.C_DATETIME.HasValue)
                             {
-                                //AddServiceCode(Log.CurrentMethod(), 2);
+                                AddServiceCode(string.Empty, 2);
                                 //Log.Info(Log.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is null");
                                 if (vecInfo.Ereihe == "F01" || vecInfo.Ereihe == "F02" || vecInfo.Ereihe == "F03" || vecInfo.Ereihe == "F04" || vecInfo.Ereihe == "F06" || vecInfo.Ereihe == "F07" || vecInfo.Ereihe == "F10" || vecInfo.Ereihe == "F11" || vecInfo.Ereihe == "F12" || vecInfo.Ereihe == "F13" || vecInfo.Ereihe == "F18")
                                 {
@@ -155,7 +155,7 @@ namespace PsdzClient.Core
                         case "PL5-ALT":
                             if (!vecInfo.C_DATETIME.HasValue)
                             {
-                                //AddServiceCode(Log.CurrentMethod(), 1);
+                                AddServiceCode(string.Empty, 1);
                                 //Log.Info(Log.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is null");
                                 return "RR1_2020";
                             }
@@ -166,7 +166,7 @@ namespace PsdzClient.Core
                             }
                             break;
                         default:
-                            //AddServiceCode(Log.CurrentMethod(), 3);
+                            AddServiceCode(string.Empty, 3);
                             //Log.Info(Log.CurrentMethod(), "Reached default block, produck line: " + vecInfo.Produktlinie);
                             break;
                     }
@@ -184,7 +184,7 @@ namespace PsdzClient.Core
         {
             if ((string.Compare(vecInfo.Ereihe, "M12", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(vecInfo.Ereihe, "M2_", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(vecInfo.Ereihe, "UNBEK", StringComparison.OrdinalIgnoreCase) == 0) && string.Compare(typsnr, "CZ31", StringComparison.OrdinalIgnoreCase) == 0)
             {
-                //AddServiceCode(Log.CurrentMethod(), 1);
+                AddServiceCode(string.Empty, 1);
                 vecInfo.VerkaufsBezeichnung = "ACTIVEE";
                 vecInfo.Motor = "IB1";
                 vecInfo.Leistung = "23";
@@ -205,7 +205,7 @@ namespace PsdzClient.Core
             }
             if ((string.Compare(vecInfo.Ereihe, "E82", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(vecInfo.Ereihe, "UNBEK", StringComparison.OrdinalIgnoreCase) == 0) && (string.Compare(typsnr, "UP31", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(typsnr, "UP33", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(typsnr, "UP3C", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(typsnr, "UP9C", StringComparison.OrdinalIgnoreCase) == 0))
             {
-                //AddServiceCode(Log.CurrentMethod(), 2);
+                AddServiceCode(string.Empty, 2);
                 vecInfo.VerkaufsBezeichnung = "ActiveE";
                 vecInfo.Motor = "IB1";
                 vecInfo.Leistung = "23";
@@ -226,7 +226,7 @@ namespace PsdzClient.Core
             }
             if (string.Compare(vecInfo.Ereihe, "R56", StringComparison.OrdinalIgnoreCase) == 0 && (string.Compare(typsnr, "MF74", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(typsnr, "MF84", StringComparison.OrdinalIgnoreCase) == 0))
             {
-                //AddServiceCode(Log.CurrentMethod(), 3);
+                AddServiceCode(string.Empty, 3);
                 vecInfo.VerkaufsBezeichnung = "MINI E";
                 vecInfo.Motor = "I15";
                 vecInfo.Leistung = "140";
@@ -312,7 +312,7 @@ namespace PsdzClient.Core
                             {
                                 if (!vecInfo.C_DATETIME.HasValue)
                                 {
-                                    //AddServiceCode(Log.CurrentMethod(), 1);
+                                    AddServiceCode(string.Empty, 1);
                                     //Log.Info(Log.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is null");
                                     list.Add(16);
                                     list.Add(50);
@@ -335,7 +335,7 @@ namespace PsdzClient.Core
                                 {
                                     if (!vecInfo.C_DATETIME.HasValue)
                                     {
-                                        //AddServiceCode(Log.CurrentMethod(), 3);
+                                        AddServiceCode(string.Empty, 3);
                                         //Log.Info(Log.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is null");
                                         list.Add(16);
                                         list.Add(50);
@@ -360,7 +360,7 @@ namespace PsdzClient.Core
                             }
                             else if (!vecInfo.C_DATETIME.HasValue)
                             {
-                                //AddServiceCode(Log.CurrentMethod(), 2);
+                                AddServiceCode(string.Empty, 2);
                                 //Log.Info(Log.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is null");
                                 list.Add(16);
                                 list.Add(50);
@@ -530,6 +530,11 @@ namespace PsdzClient.Core
                 return false;
             }
             return false;
+        }
+
+        public void AddServiceCode(string methodName, int identifier)
+        {
+            //fastaService.AddServiceCode(ServiceCodeName, string.Format(ServiceCodeValuePattern, methodName, identifier), layoutGroup);
         }
     }
 }

@@ -43,9 +43,9 @@ namespace PsdzClient.Core
         void BN2000HandleKMMFixes(IVehicle vecInfo, IEcuKom ecuKom, bool resetMOSTDone, IProgressMonitor monitor, int retryCount, DoECUIdentDelegate doECUIdentDelegate);
 
         void HandleECUGroups(IVehicle vecInfo, IEcuKom ecuKom, List<IEcu> ecusToRemoveKMM);
-
+#endif
         void AddServiceCode(string methodName, int identifier);
-
+#if false
         void SetVehicleLifeStartDate(IVehicle vehicle, IEcuKom ecuKom);
 
         void MaskResultsFromFSLesenExpertForFSLesenDetail(IEcuJob ecuJob);
