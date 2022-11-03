@@ -10,7 +10,7 @@ namespace PsdzClient.Core
 {
 	public static class GearboxUtility
 	{
-        public static void SetGearboxType(Vehicle vehicle, string gearboxType, [CallerMemberName] string caller = null)
+        public static void SetGearboxType(IVehicle vehicle, string gearboxType, [CallerMemberName] string caller = null)
         {
             if (useLegacyGearboxTypeDetection(vehicle))
             {
@@ -110,7 +110,7 @@ namespace PsdzClient.Core
 #endif
 		private static DateTime legacyDetectionConditionDate = new DateTime(2020, 7, 1);
 
-        private static Predicate<Vehicle> useLegacyGearboxTypeDetection = delegate (Vehicle v)
+        private static Predicate<IVehicle> useLegacyGearboxTypeDetection = delegate (IVehicle v)
         {
             try
             {

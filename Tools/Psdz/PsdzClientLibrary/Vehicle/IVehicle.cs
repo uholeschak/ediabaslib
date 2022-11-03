@@ -133,29 +133,27 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         string AEUeberarbeitung { get; }
 
-        string Abgas { get; }
+        string Abgas { get; set; }
 
-        string Antrieb { get; }
+        string Antrieb { get; set; }
 
         string ApplicationVersion { get; }
 
-        BNMixed BNMixed { get; }
+        BNMixed BNMixed { get; set; }
 
-        BNType BNType { get; }
+        BNType BNType { get; set; }
 
         string BasicType { get; }
 
-        string Baureihe { get; }
+        string Baureihe { get; set; }
 
-        string Baureihenverbund { get; }
+        string Baureihenverbund { get; set; }
 
         string BaustandsJahr { get; }
 
         string BaustandsMonat { get; }
 
         BrandName? BrandName { get; }
-
-        DateTime? C_DATETIME { get; }
 
         //IEnumerable<ICbsInfo> CBS { get; }
 
@@ -195,7 +193,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         IEnumerable<IEcu> ECU { get; }
 
-        string Ereihe { get; }
+        string Ereihe { get; set; }
 
         IFa FA { get; }
 
@@ -207,7 +205,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         string GMType { get; }
 
-        string Getriebe { get; }
+        string Getriebe { get; set; }
 
         string CountryOfAssembly { get; }
 
@@ -223,13 +221,13 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         GwszUnitType? GwszUnit { get; }
 
-        string Hubraum { get; }
+        string Hubraum { get; set; }
 
         string Hybridkennzeichen { get; }
 
-        string ILevel { get; }
+        string ILevel { get; set; }
 
-        string ILevelBackup { get; }
+        string ILevelBackup { get; set; }
 
         string ILevelWerk { get; }
 
@@ -239,7 +237,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         bool KL15OverrideVoltageCheck { get; }
 
-        string Karosserie { get; }
+        string Karosserie { get; set; }
 
         string Kl15Voltage { get; }
 
@@ -251,21 +249,21 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         string Kraftstoffart { get; }
 
-        string Land { get; }
+        string Land { get; set; }
 
         DateTime LastChangeDate { get; }
 
         DateTime LastSaveDate { get; }
 
-        string Leistung { get; }
+        string Leistung { get; set; }
 
         string Leistungsklasse { get; }
 
-        string Lenkung { get; }
+        string Lenkung { get; set; }
 
         //IVciDevice MIB { get; }
 
-        string MOTBezeichnung { get; }
+        string MOTBezeichnung { get; set; }
 
         string MOTEinbaulage { get; }
 
@@ -279,11 +277,11 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         string Modelltag { get; }
 
-        string Motor { get; }
+        string Motor { get; set; }
 
         string Motorarbeitsverfahren { get; }
 
-        bool PADVehicle { get; }
+        bool PADVehicle { get; set; }
 
         bool Pannenfall { get; }
 
@@ -292,8 +290,6 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         DateTime ProductionDate { get; }
 
         bool ProductionDateSpecified { get; }
-
-        string Produktlinie { get; set; }
 
         string ProgmanVersion { get; }
 
@@ -317,8 +313,6 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         bool SimulatedParts { get; }
 
-        bool Sp2021Enabled { get; set; }
-
         string Status_FunctionName { get; }
 
         double Status_FunctionProgress { get; }
@@ -333,9 +327,9 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         //IEnumerable<ITechnicalCampaign> TechnicalCampaigns { get; }
 
-        string Typ { get; }
+        string Typ { get; set; }
 
-        string Ueberarbeitung { get; }
+        string Ueberarbeitung { get; set; }
 
         IVciDevice VCI { get; }
 
@@ -355,7 +349,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         IdentificationLevel VehicleIdentLevel { get; }
 
-        string VerkaufsBezeichnung { get; }
+        string VerkaufsBezeichnung { get; set; }
 
         string RoadMap { get; }
 
@@ -381,7 +375,19 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         string ChassisCode { get; set; }
 
+        bool OrderDataRequestFailed { get; set; }
+
         //ITransmissionDataType TransmissionDataType { get; }
+
+        string Produktlinie { get; set; }
+
+        bool Sp2021Enabled { get; set; }
+
+        DateTime? C_DATETIME { get; }
+
+        DateTime VehicleLifeStartDate { get; set; }
+
+        bool IsEcuIdentSuccessfull { get; set; }
 
         bool IsMotorcycle();
 
@@ -391,10 +397,20 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         IEcu getECUbyECU_GRUPPE(string ECU_GRUPPE);
 
+        IEcu getECUbyECU_SGBD(string ECU_SGBD);
+
+        bool AddEcu(IEcu ecu);
+
+        bool RemoveEcu(IEcu ecu);
+
         bool hasSA(string checkSA);
 
         bool IsProgrammingSupported(bool considerLogisticBase);
 
         bool IsVehicleWithOnlyVin7();
+
+        bool IsEreiheValid();
+
+        bool hasBusType(BusType bus);
     }
 }

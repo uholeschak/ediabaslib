@@ -30,7 +30,7 @@ namespace PsdzClient.Core
 
         string GetMainSeriesSgbdAdditional(IVehicle vecInfo);
 
-        void SpecialTreatmentBasedOnEreihe(string typsnr, Vehicle vecInfo);
+        void SpecialTreatmentBasedOnEreihe(string typsnr, IVehicle vecInfo);
 
         List<int> GetGatewayEcuAdresses(IVehicle vecInfo);
 

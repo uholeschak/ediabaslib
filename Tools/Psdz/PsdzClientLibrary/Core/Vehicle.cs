@@ -224,6 +224,8 @@ namespace PsdzClient.Core
                 isClosingOperationActive = value;
             }
         }
+
+        public bool IsEcuIdentSuccessfull { get; set; }
 #if false
 
         [XmlIgnore]
@@ -1145,7 +1147,17 @@ namespace PsdzClient.Core
             return null;
         }
 
-        public ECU getECUbyECU_SGBD(string ECU_SGBD)
+        public bool AddEcu(IEcu ecu)
+        {
+            return base.ECU.AddIfNotContains(ecu as ECU);
+        }
+
+        public bool RemoveEcu(IEcu ecu)
+        {
+            return base.ECU.Remove(ecu as ECU);
+        }
+
+        public IEcu getECUbyECU_SGBD(string ECU_SGBD)
         {
             if (string.IsNullOrEmpty(ECU_SGBD))
             {

@@ -180,7 +180,7 @@ namespace PsdzClient.Core
             return null;
         }
 
-        public void SpecialTreatmentBasedOnEreihe(string typsnr, Vehicle vecInfo)
+        public void SpecialTreatmentBasedOnEreihe(string typsnr, IVehicle vecInfo)
         {
             if ((string.Compare(vecInfo.Ereihe, "M12", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(vecInfo.Ereihe, "M2_", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(vecInfo.Ereihe, "UNBEK", StringComparison.OrdinalIgnoreCase) == 0) && string.Compare(typsnr, "CZ31", StringComparison.OrdinalIgnoreCase) == 0)
             {

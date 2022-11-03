@@ -1524,6 +1524,22 @@ namespace PsdzClient.Core
             }
         }
 
+        public bool OrderDataRequestFailed
+        {
+            get
+            {
+                return orderDataRequestFailed;
+            }
+            set
+            {
+                if (orderDataRequestFailed != value)
+                {
+                    orderDataRequestFailed = value;
+                    OnPropertyChanged("OrderDataRequestFailed");
+                }
+            }
+        }
+
         public string Drehmoment
         {
             get
@@ -2754,6 +2770,8 @@ namespace PsdzClient.Core
         private string modelltag;
 
         private string chassisCode;
+
+        private bool orderDataRequestFailed;
 
         private ClientContext _clientContext;
 	}
