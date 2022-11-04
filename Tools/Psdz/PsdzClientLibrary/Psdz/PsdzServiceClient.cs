@@ -81,205 +81,93 @@ namespace BMW.Rheingold.Psdz.Client
             individualDataRestoreService = new IndividualDataRestoreServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/IndividualDataRestoreService", clientId, clientLogDir));
         }
 
+        public IConfigurationService ConfigurationService => configurationService;
+
+        public IConnectionFactoryService ConnectionFactoryService => connectionFactoryService;
+
+        public IConnectionManagerService ConnectionManagerService => connectionManagerService;
+
+        public IEcuService EcuService => ecuService;
+
+        public IEventManagerService EventManagerService { get; private set; }
+
+        public ILogService LogService => logService;
+
+        public ILogicService LogicService => logicService;
+
+        public IMacrosService MacrosService => macrosService;
+
+        public IObjectBuilderService ObjectBuilderService => objectBuilderServiceClient;
+
+        public IProgrammingService ProgrammingService => programmingService;
+
+        public ITalExecutionService TalExecutionService => talExecutionService;
+
+        public IVcmService VcmService => vcmService;
+
+        public ICbbTlsConfiguratorService CbbTlsConfiguratorService => cbbTlsConfiguratorService;
+
+        public ICertificateManagementService CertificateManagementService => certificateManagementService;
+
+        public IIndividualDataRestoreService IndividualDataRestoreService => individualDataRestoreService;
+
+        public ISecureFeatureActivationService SecureFeatureActivationService => secureFeatureActivationService;
+
+        public IKdsService KdsService => kdsService;
+
+        public ISecurityManagementService SecurityManagementService => securityManagementService;
+
+        public ISecureCodingService SecureCodingService => secureCodingService;
+
         private static EndpointAddress CreateEndpointAddress(string uri, string clientId, string clientLogDir)
-		{
-			return new EndpointAddress(new Uri(uri), new AddressHeader[]
-			{
-				AddressHeader.CreateAddressHeader("ClientIdentification", string.Empty, clientId),
-				AddressHeader.CreateAddressHeader("ClientLogDir", string.Empty, clientLogDir)
-			});
-		}
+        {
+            return new EndpointAddress(new Uri(uri), AddressHeader.CreateAddressHeader("ClientIdentification", string.Empty, clientId), AddressHeader.CreateAddressHeader("ClientLogDir", string.Empty, clientLogDir));
+        }
 
-		public IConfigurationService ConfigurationService
-		{
-			get
-			{
-				return this.configurationService;
-			}
-		}
+        public void AddPsdzEventListener(IPsdzEventListener psdzEventListener)
+        {
+            psdzEventService.AddEventListener(psdzEventListener);
+        }
 
-		public IConnectionFactoryService ConnectionFactoryService
-		{
-			get
-			{
-				return this.connectionFactoryService;
-			}
-		}
+        public void AddPsdzProgressListener(IPsdzProgressListener psdzProgressListener)
+        {
+            psdzProgressListenerDispatcher.AddPsdzProgressListener(psdzProgressListener);
+        }
 
-		public IConnectionManagerService ConnectionManagerService
-		{
-			get
-			{
-				return this.connectionManagerService;
-			}
-		}
+        public void CloseAllConnections()
+        {
+            psdzEventService.RemoveAllEventListener();
+            connectionFactoryService.CloseCachedChannels();
+            configurationService.CloseCachedChannels();
+            connectionManagerService.CloseCachedChannels();
+            vcmService.CloseCachedChannels();
+            logicService.CloseCachedChannels();
+            programmingService.CloseCachedChannels();
+            ecuService.CloseCachedChannels();
+            objectBuilderServiceClient.CloseCachedChannels();
+            talExecutionService.CloseCachedChannels();
+            logService.CloseCachedChannels();
+            macrosService.CloseCachedChannels();
+            individualDataRestoreService.CloseCachedChannels();
+            secureFeatureActivationService.CloseCachedChannels();
+            psdzProgressListenerDispatcher.Clear();
+        }
 
-		public IEcuService EcuService
-		{
-			get
-			{
-				return this.ecuService;
-			}
-		}
+        public void Dispose()
+        {
+            psdzEventService.RemoveAllEventListener();
+            CloseAllConnections();
+            psdzProgressListenerDispatcher.Clear();
+        }
 
-		public IEventManagerService EventManagerService { get; private set; }
+        public void RemovePsdzEventListener(IPsdzEventListener psdzEventListener)
+        {
+            psdzEventService.RemoveEventListener(psdzEventListener);
+        }
 
-		public ILogService LogService
-		{
-			get
-			{
-				return this.logService;
-			}
-		}
-
-		public ILogicService LogicService
-		{
-			get
-			{
-				return this.logicService;
-			}
-		}
-
-		public IMacrosService MacrosService
-		{
-			get
-			{
-				return this.macrosService;
-			}
-		}
-
-		public IObjectBuilderService ObjectBuilderService
-		{
-			get
-			{
-				return this.objectBuilderServiceClient;
-			}
-		}
-
-		public BMW.Rheingold.Psdz.IProgrammingService ProgrammingService
-		{
-			get
-			{
-				return this.programmingService;
-			}
-		}
-
-		public ITalExecutionService TalExecutionService
-		{
-			get
-			{
-				return this.talExecutionService;
-			}
-		}
-
-		public IVcmService VcmService
-		{
-			get
-			{
-				return this.vcmService;
-			}
-		}
-
-		public ICbbTlsConfiguratorService CbbTlsConfiguratorService
-		{
-			get
-			{
-				return this.cbbTlsConfiguratorService;
-			}
-		}
-
-		public ICertificateManagementService CertificateManagementService
-		{
-			get
-			{
-				return this.certificateManagementService;
-			}
-		}
-
-		public IIndividualDataRestoreService IndividualDataRestoreService
-		{
-			get
-			{
-				return this.individualDataRestoreService;
-			}
-		}
-
-		public ISecureFeatureActivationService SecureFeatureActivationService
-		{
-			get
-			{
-				return this.secureFeatureActivationService;
-			}
-		}
-
-		public IKdsService KdsService
-		{
-			get
-			{
-				return this.kdsService;
-			}
-		}
-
-		public ISecurityManagementService SecurityManagementService
-		{
-			get
-			{
-				return this.securityManagementService;
-			}
-		}
-
-		public ISecureCodingService SecureCodingService
-		{
-			get
-			{
-				return this.secureCodingService;
-			}
-		}
-
-		public void AddPsdzEventListener(IPsdzEventListener psdzEventListener)
-		{
-			this.psdzEventService.AddEventListener(psdzEventListener);
-		}
-
-		public void AddPsdzProgressListener(IPsdzProgressListener psdzProgressListener)
-		{
-			this.psdzProgressListenerDispatcher.AddPsdzProgressListener(psdzProgressListener);
-		}
-
-		public void CloseAllConnections()
-		{
-			this.psdzEventService.RemoveAllEventListener();
-			this.connectionFactoryService.CloseCachedChannels();
-			this.configurationService.CloseCachedChannels();
-			this.connectionManagerService.CloseCachedChannels();
-			this.vcmService.CloseCachedChannels();
-			this.logicService.CloseCachedChannels();
-			this.programmingService.CloseCachedChannels();
-			this.ecuService.CloseCachedChannels();
-			this.objectBuilderServiceClient.CloseCachedChannels();
-			this.talExecutionService.CloseCachedChannels();
-			this.logService.CloseCachedChannels();
-			this.macrosService.CloseCachedChannels();
-			this.individualDataRestoreService.CloseCachedChannels();
-			this.secureFeatureActivationService.CloseCachedChannels();
-			this.psdzProgressListenerDispatcher.Clear();
-		}
-
-		public void Dispose()
-		{
-			this.psdzEventService.RemoveAllEventListener();
-			this.CloseAllConnections();
-			this.psdzProgressListenerDispatcher.Clear();
-		}
-
-		public void RemovePsdzEventListener(IPsdzEventListener psdzEventListener)
-		{
-			this.psdzEventService.RemoveEventListener(psdzEventListener);
-		}
-
-		public void RemovePsdzProgressListener(IPsdzProgressListener psdzProgressListener)
-		{
-			this.psdzProgressListenerDispatcher.RemovePsdzProgressListener(psdzProgressListener);
-		}
+        public void RemovePsdzProgressListener(IPsdzProgressListener psdzProgressListener)
+        {
+            psdzProgressListenerDispatcher.RemovePsdzProgressListener(psdzProgressListener);
+        }
     }
 }
