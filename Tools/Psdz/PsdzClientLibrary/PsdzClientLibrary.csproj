@@ -126,6 +126,7 @@
     <Compile Include="Contracts\IFSCProvided.cs" />
     <Compile Include="Contracts\IFscType.cs" />
     <Compile Include="Contracts\INavFSCProvided.cs" />
+    <Compile Include="Contracts\ITransmissionDataType.cs" />
     <Compile Include="Core\AIF.cs" />
     <Compile Include="Core\AndExpression.cs" />
     <Compile Include="Core\AuthorAPIAttribute.cs" />
@@ -193,6 +194,7 @@
     <Compile Include="Core\SingleAssignmentExpression.cs" />
     <Compile Include="Core\SVK.cs" />
     <Compile Include="Core\Symbol.cs" />
+    <Compile Include="Core\TransmissionDataType.cs" />
     <Compile Include="Core\typeBasicFeatures.cs" />
     <Compile Include="Core\typeECU_Transaction.cs" />
     <Compile Include="Core\typeSWTStatus.cs" />

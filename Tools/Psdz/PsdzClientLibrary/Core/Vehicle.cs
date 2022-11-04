@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using PsdzClient.Contracts;
 using PsdzClient.Utility;
 
 namespace PsdzClient.Core
@@ -21,7 +22,6 @@ namespace PsdzClient.Core
 	{
 		public Vehicle(ClientContext clientContext) : base(clientContext)
         {
-            //TransmissionDataType = new TransmissionDataType();
             base.ConnectState = VisibilityType.Collapsed;
             //pKodeList = new ObservableCollectionEx<Fault>();
             //FaultList = new List<Fault>();
@@ -704,6 +704,9 @@ namespace PsdzClient.Core
                 }
             }
         }
+
+        [XmlIgnore]
+        public ITransmissionDataType TransmissionDataType { get; private set; } = new TransmissionDataType();
 
         [XmlIgnore]
         public PdszDatabase.BatteryEnum BatteryType

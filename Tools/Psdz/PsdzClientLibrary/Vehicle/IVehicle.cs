@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using PsdzClient.Contracts;
 using PsdzClient.Core;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
@@ -377,7 +377,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         bool OrderDataRequestFailed { get; set; }
 
-        //ITransmissionDataType TransmissionDataType { get; }
+        ITransmissionDataType TransmissionDataType { get; }
 
         string Produktlinie { get; set; }
 
