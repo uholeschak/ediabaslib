@@ -650,7 +650,8 @@ namespace PsdzClient.Programming
             VecInfo.BNType = DiagnosticsBusinessData.Instance.GetBNType(VecInfo);
             VecInfo.FA.AlreadyDone = true;
             VecInfo.BNMixed = VehicleLogistics.getBNMixed(VecInfo.Ereihe, VecInfo.FA);
-            VecInfo.WithLfpBattery = programmingService.PdszDatabase.ResolveBatteryType(VecInfo) == PdszDatabase.BatteryEnum.LFP;
+            VecInfo.BatteryType = PdszDatabase.ResolveBatteryType(VecInfo);
+            VecInfo.WithLfpBattery = VecInfo.BatteryType == PdszDatabase.BatteryEnum.LFP;
             VecInfo.MainSeriesSgbd = VehicleLogistics.getBrSgbd(VecInfo);
             EcuCharacteristics = VehicleLogistics.GetCharacteristics(VecInfo);
             return true;

@@ -706,6 +706,23 @@ namespace PsdzClient.Core
         }
 
         [XmlIgnore]
+        public PdszDatabase.BatteryEnum BatteryType
+        {
+            get
+            {
+                return batteryType;
+            }
+            set
+            {
+                if (batteryType != value)
+                {
+                    batteryType = value;
+                    OnPropertyChanged("BatteryType");
+                }
+            }
+        }
+
+        [XmlIgnore]
         public double Clamp30MinValue
         {
             get
@@ -2129,7 +2146,9 @@ namespace PsdzClient.Core
 
 		private bool withLfpBattery;
 
-		private bool isClosingOperationActive;
+        private PdszDatabase.BatteryEnum batteryType;
+
+        private bool isClosingOperationActive;
 
 		private bool powerSafeModeByOldEcus;
 

@@ -3726,7 +3726,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
         }
 
         // ToDo: Check on update
-        public BatteryEnum ResolveBatteryType(Vehicle vecInfo)
+        public static BatteryEnum ResolveBatteryType(Vehicle vecInfo)
         {
             if (new List<string>
                 {
