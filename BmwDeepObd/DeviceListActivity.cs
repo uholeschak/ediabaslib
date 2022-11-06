@@ -2155,7 +2155,7 @@ namespace BmwDeepObd
                     {
                         // remove 0x00
                         LogByte((byte)data);
-                        stringBuilder.Append(Convert.ToChar(data));
+                        stringBuilder.Append(EdElmInterface.ConvertToChar(data));
                         startTime = Stopwatch.GetTimestamp();
                     }
                     if (data == 0x3E)
