@@ -1080,7 +1080,7 @@ namespace EdiabasLib
                 int data = _inStream.ReadByteAsync();
                 if (data >= 0)
                 {
-                    stringBuilder.Append(Convert.ToChar(data));
+                    stringBuilder.Append(ConvertToChar(data));
                     if (data == 0x3E)
                     {
                         Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM data mode already terminated: " + stringBuilder);
@@ -1104,7 +1104,7 @@ namespace EdiabasLib
                     int data = _inStream.ReadByteAsync();
                     if (data >= 0)
                     {
-                        stringBuilder.Append(Convert.ToChar(data));
+                        stringBuilder.Append(ConvertToChar(data));
                         if (data == 0x3E)
                         {
                             if (Ediabas != null)
@@ -1164,11 +1164,11 @@ namespace EdiabasLib
                                 Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM CAN rec: {0}", answer);
                                 return answer;
                             }
-                            stringBuilder.Append(Convert.ToChar(data));
+                            stringBuilder.Append(ConvertToChar(data));
                         }
                         else
                         {
-                            stringBuilder.Append(Convert.ToChar(data));
+                            stringBuilder.Append(ConvertToChar(data));
                         }
                         if (data == 0x3E)
                         {
@@ -1265,7 +1265,7 @@ namespace EdiabasLib
                                             break;
 
                                         default:
-                                            recString.Append(Convert.ToChar(buffer[pos]));
+                                            recString.Append(ConvertToChar(buffer[pos]));
                                             break;
                                     }
                                 }
@@ -1493,6 +1493,18 @@ namespace EdiabasLib
                 sum += data[i + offset];
             }
             return sum;
+        }
+
+        public static char ConvertToChar(int data)
+        {
+            try
+            {
+                return Convert.ToChar(data);
+            }
+            catch (Exception)
+            {
+                return '.';
+            }
         }
 
         public void Dispose()
