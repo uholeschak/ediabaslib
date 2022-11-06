@@ -1643,17 +1643,31 @@ namespace BmwDeepObd
 
         public bool StartForegroundService()
         {
-            Intent startServiceIntent = new Intent(_context, typeof(ForegroundService));
-            startServiceIntent.SetAction(ForegroundService.ActionStartService);
-            _context.StartService(startServiceIntent);
+            try
+            {
+                Intent startServiceIntent = new Intent(_context, typeof(ForegroundService));
+                startServiceIntent.SetAction(ForegroundService.ActionStartService);
+                _context.StartService(startServiceIntent);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
             return true;
         }
 
         public bool StopForegroundService()
         {
-            Intent stopServiceIntent = new Intent(_context, typeof(ForegroundService));
-            stopServiceIntent.SetAction(ForegroundService.ActionStopService);
-            _context.StopService(stopServiceIntent);
+            try
+            {
+                Intent stopServiceIntent = new Intent(_context, typeof(ForegroundService));
+                stopServiceIntent.SetAction(ForegroundService.ActionStopService);
+                _context.StopService(stopServiceIntent);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
             return true;
         }
 
