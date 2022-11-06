@@ -1584,9 +1584,12 @@ namespace BmwDeepObd
                     {
                         bluetoothInStream.ReadByteAsync();
                     }
-                    byte[] sendData = Encoding.UTF8.GetBytes("ATI\r");
+
+                    string command = "ATI\r";
+                    byte[] sendData = Encoding.UTF8.GetBytes(command);
                     LogData(sendData, 0, sendData.Length, "Send");
                     bluetoothOutStream.Write(sendData, 0, sendData.Length);
+                    LogString("ELM CMD send: " + command);
 
                     string response = GetElm327Reponse(bluetoothInStream);
                     if (response != null)
