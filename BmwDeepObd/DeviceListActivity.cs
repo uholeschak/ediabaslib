@@ -2054,6 +2054,11 @@ namespace BmwDeepObd
                 {
                     restricted = true;
                 }
+
+                if (elmDevDesc.ToUpperInvariant().Contains(EdElmInterface.Elm327ObdSolutionsIdentifier))
+                {
+                    restricted = true;
+                }
             }
 
             if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, @"AT#1", false))

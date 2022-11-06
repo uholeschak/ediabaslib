@@ -47,6 +47,7 @@ namespace EdiabasLib
         }
 
         public const string Elm327CarlyIdentifier = "CARLY-UNIVERSAL";
+        public const string Elm327ObdSolutionsIdentifier = "OBD SOLUTIONS LLC";
         public const string Elm327WgSoftIdentifier = "WGSOFT";
         public const double Elm327WgSoftMinVer = 2.4;
 
@@ -264,6 +265,11 @@ namespace EdiabasLib
             if (elmDevDesc.ToUpperInvariant().Contains(Elm327CarlyIdentifier))
             {
                 _elm327TransportType = TransportType.Carly;
+            }
+
+            if (elmDevDesc.ToUpperInvariant().Contains(Elm327ObdSolutionsIdentifier))
+            {
+                Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Warning: OBD SOLUTIONS LLC Chip detected");
             }
 
             if (!Elm327SendCommand("AT#1", false))
@@ -1499,7 +1505,7 @@ namespace EdiabasLib
         {
             try
             {
-                return Convert.ToChar(data);
+                return Convert.ToChar(data, CultureInfo.InvariantCulture);
             }
             catch (Exception)
             {
