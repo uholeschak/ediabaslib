@@ -678,9 +678,16 @@ namespace BmwDeepObd
             {
                 case DownloaderServiceRequirement.DownloadRequired:
                 case DownloaderServiceRequirement.LvlCheckRequired:
-                    Android.Content.Intent fileIntent = new Android.Content.Intent(context, serviceType);
-                    fileIntent.PutExtra(DownloaderServiceExtras.PendingIntent, pendingIntent);
-                    context.StartService(fileIntent);
+                    try
+                    {
+                        Android.Content.Intent fileIntent = new Android.Content.Intent(context, serviceType);
+                        fileIntent.PutExtra(DownloaderServiceExtras.PendingIntent, pendingIntent);
+                        context.StartService(fileIntent);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Debug(Tag, "StartDownloadServiceIfRequired StartService Exception: {0}", ex.Message);
+                    }
                     break;
             }
 
@@ -1647,11 +1654,18 @@ namespace BmwDeepObd
                 if (this.service.stateChanged && !IsServiceRunning)
                 {
                     Log.Debug(Tag, "InnerBroadcastReceiver StartService");
-                    Android.Content.Intent fileIntent = new Android.Content.Intent(context, this.service.GetType());
-                    fileIntent.PutExtra(DownloaderServiceExtras.PendingIntent, this.service.pPendingIntent);
+                    try
+                    {
+                        Android.Content.Intent fileIntent = new Android.Content.Intent(context, this.service.GetType());
+                        fileIntent.PutExtra(DownloaderServiceExtras.PendingIntent, this.service.pPendingIntent);
 
-                    // send a new intent to the service
-                    context.StartService(fileIntent);
+                        // send a new intent to the service
+                        context.StartService(fileIntent);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Debug(Tag, "InnerBroadcastReceiver StartService Exception: {0}", ex.Message);
+                    }
                 }
             }
 
@@ -1685,11 +1699,18 @@ namespace BmwDeepObd
                 if (this.service.stateChanged && !IsServiceRunning)
                 {
                     Log.Debug(Tag, "WifiCallback StartService");
-                    Android.Content.Intent fileIntent = new Android.Content.Intent(service, this.service.GetType());
-                    fileIntent.PutExtra(DownloaderServiceExtras.PendingIntent, this.service.pPendingIntent);
+                    try
+                    {
+                        Android.Content.Intent fileIntent = new Android.Content.Intent(service, this.service.GetType());
+                        fileIntent.PutExtra(DownloaderServiceExtras.PendingIntent, this.service.pPendingIntent);
 
-                    // send a new intent to the service
-                    service.StartService(fileIntent);
+                        // send a new intent to the service
+                        service.StartService(fileIntent);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Debug(Tag, "WifiCallback StartService Exception: {0}", ex.Message);
+                    }
                 }
             }
         }
