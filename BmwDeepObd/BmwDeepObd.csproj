@@ -140,7 +140,7 @@
       <HintPath>packages\Xamarin.Android.Support.Annotations.28.0.0.3\lib\monoandroid90\Xamarin.Android.Support.Annotations.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.AndroidX.Activity, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Xamarin.AndroidX.Activity.1.6.0.1\lib\monoandroid12.0\Xamarin.AndroidX.Activity.dll</HintPath>
+      <HintPath>packages\Xamarin.AndroidX.Activity.1.6.1\lib\monoandroid12.0\Xamarin.AndroidX.Activity.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.AndroidX.Annotation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Xamarin.AndroidX.Annotation.1.5.0.1\lib\monoandroid12.0\Xamarin.AndroidX.Annotation.dll</HintPath>
@@ -206,7 +206,7 @@
       <HintPath>packages\Xamarin.AndroidX.Emoji2.ViewsHelper.1.2.0.1\lib\monoandroid12.0\Xamarin.AndroidX.Emoji2.ViewsHelper.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.AndroidX.Fragment, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Xamarin.AndroidX.Fragment.1.5.3.1\lib\monoandroid12.0\Xamarin.AndroidX.Fragment.dll</HintPath>
+      <HintPath>packages\Xamarin.AndroidX.Fragment.1.5.4\lib\monoandroid12.0\Xamarin.AndroidX.Fragment.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.AndroidX.Interpolator, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Xamarin.AndroidX.Interpolator.1.0.0.15\lib\monoandroid12.0\Xamarin.AndroidX.Interpolator.dll</HintPath>
@@ -903,13 +903,13 @@
     <Error Condition="!Exists('packages\Xamarin.KotlinX.Coroutines.Core.Jvm.1.6.4.1\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Core.Jvm.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.KotlinX.Coroutines.Core.Jvm.1.6.4.1\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Core.Jvm.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.KotlinX.Coroutines.Android.1.6.4.1\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Android.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.KotlinX.Coroutines.Android.1.6.4.1\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Android.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.Lifecycle.ViewModelSavedState.2.5.1.1\build\monoandroid12.0\Xamarin.AndroidX.Lifecycle.ViewModelSavedState.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.Lifecycle.ViewModelSavedState.2.5.1.1\build\monoandroid12.0\Xamarin.AndroidX.Lifecycle.ViewModelSavedState.targets'))" />
-    <Error Condition="!Exists('packages\Xamarin.AndroidX.Activity.1.6.0.1\build\monoandroid12.0\Xamarin.AndroidX.Activity.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.Activity.1.6.0.1\build\monoandroid12.0\Xamarin.AndroidX.Activity.targets'))" />
-    <Error Condition="!Exists('packages\Xamarin.AndroidX.Fragment.1.5.3.1\build\monoandroid12.0\Xamarin.AndroidX.Fragment.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.Fragment.1.5.3.1\build\monoandroid12.0\Xamarin.AndroidX.Fragment.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.AppCompat.1.5.1.1\build\monoandroid12.0\Xamarin.AndroidX.AppCompat.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.AppCompat.1.5.1.1\build\monoandroid12.0\Xamarin.AndroidX.AppCompat.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.ConstraintLayout.2.1.4.2\build\monoandroid12.0\Xamarin.AndroidX.ConstraintLayout.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.ConstraintLayout.2.1.4.2\build\monoandroid12.0\Xamarin.AndroidX.ConstraintLayout.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.Transition.1.4.1.8\build\monoandroid12.0\Xamarin.AndroidX.Transition.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.Transition.1.4.1.8\build\monoandroid12.0\Xamarin.AndroidX.Transition.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.ViewPager2.1.0.0.17\build\monoandroid12.0\Xamarin.AndroidX.ViewPager2.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.ViewPager2.1.0.0.17\build\monoandroid12.0\Xamarin.AndroidX.ViewPager2.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.Google.Android.Material.1.7.0.1\build\monoandroid12.0\Xamarin.Google.Android.Material.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Google.Android.Material.1.7.0.1\build\monoandroid12.0\Xamarin.Google.Android.Material.targets'))" />
+    <Error Condition="!Exists('packages\Xamarin.AndroidX.Activity.1.6.1\build\monoandroid12.0\Xamarin.AndroidX.Activity.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.Activity.1.6.1\build\monoandroid12.0\Xamarin.AndroidX.Activity.targets'))" />
+    <Error Condition="!Exists('packages\Xamarin.AndroidX.Fragment.1.5.4\build\monoandroid12.0\Xamarin.AndroidX.Fragment.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.Fragment.1.5.4\build\monoandroid12.0\Xamarin.AndroidX.Fragment.targets'))" />
   </Target>
   <PropertyGroup>
     <PostBuildEvent>copy /y "$(ProjectDir)Xml\BmwDeepObd.xsd" "$(ProjectDir)Xml\E61R\"</PostBuildEvent>
@@ -968,11 +968,11 @@
   <Import Project="packages\Xamarin.KotlinX.Coroutines.Core.Jvm.1.6.4.1\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Core.Jvm.targets" Condition="Exists('packages\Xamarin.KotlinX.Coroutines.Core.Jvm.1.6.4.1\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Core.Jvm.targets')" />
   <Import Project="packages\Xamarin.KotlinX.Coroutines.Android.1.6.4.1\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Android.targets" Condition="Exists('packages\Xamarin.KotlinX.Coroutines.Android.1.6.4.1\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Android.targets')" />
   <Import Project="packages\Xamarin.AndroidX.Lifecycle.ViewModelSavedState.2.5.1.1\build\monoandroid12.0\Xamarin.AndroidX.Lifecycle.ViewModelSavedState.targets" Condition="Exists('packages\Xamarin.AndroidX.Lifecycle.ViewModelSavedState.2.5.1.1\build\monoandroid12.0\Xamarin.AndroidX.Lifecycle.ViewModelSavedState.targets')" />
-  <Import Project="packages\Xamarin.AndroidX.Activity.1.6.0.1\build\monoandroid12.0\Xamarin.AndroidX.Activity.targets" Condition="Exists('packages\Xamarin.AndroidX.Activity.1.6.0.1\build\monoandroid12.0\Xamarin.AndroidX.Activity.targets')" />
-  <Import Project="packages\Xamarin.AndroidX.Fragment.1.5.3.1\build\monoandroid12.0\Xamarin.AndroidX.Fragment.targets" Condition="Exists('packages\Xamarin.AndroidX.Fragment.1.5.3.1\build\monoandroid12.0\Xamarin.AndroidX.Fragment.targets')" />
   <Import Project="packages\Xamarin.AndroidX.AppCompat.1.5.1.1\build\monoandroid12.0\Xamarin.AndroidX.AppCompat.targets" Condition="Exists('packages\Xamarin.AndroidX.AppCompat.1.5.1.1\build\monoandroid12.0\Xamarin.AndroidX.AppCompat.targets')" />
   <Import Project="packages\Xamarin.AndroidX.ConstraintLayout.2.1.4.2\build\monoandroid12.0\Xamarin.AndroidX.ConstraintLayout.targets" Condition="Exists('packages\Xamarin.AndroidX.ConstraintLayout.2.1.4.2\build\monoandroid12.0\Xamarin.AndroidX.ConstraintLayout.targets')" />
   <Import Project="packages\Xamarin.AndroidX.Transition.1.4.1.8\build\monoandroid12.0\Xamarin.AndroidX.Transition.targets" Condition="Exists('packages\Xamarin.AndroidX.Transition.1.4.1.8\build\monoandroid12.0\Xamarin.AndroidX.Transition.targets')" />
   <Import Project="packages\Xamarin.AndroidX.ViewPager2.1.0.0.17\build\monoandroid12.0\Xamarin.AndroidX.ViewPager2.targets" Condition="Exists('packages\Xamarin.AndroidX.ViewPager2.1.0.0.17\build\monoandroid12.0\Xamarin.AndroidX.ViewPager2.targets')" />
   <Import Project="packages\Xamarin.Google.Android.Material.1.7.0.1\build\monoandroid12.0\Xamarin.Google.Android.Material.targets" Condition="Exists('packages\Xamarin.Google.Android.Material.1.7.0.1\build\monoandroid12.0\Xamarin.Google.Android.Material.targets')" />
+  <Import Project="packages\Xamarin.AndroidX.Activity.1.6.1\build\monoandroid12.0\Xamarin.AndroidX.Activity.targets" Condition="Exists('packages\Xamarin.AndroidX.Activity.1.6.1\build\monoandroid12.0\Xamarin.AndroidX.Activity.targets')" />
+  <Import Project="packages\Xamarin.AndroidX.Fragment.1.5.4\build\monoandroid12.0\Xamarin.AndroidX.Fragment.targets" Condition="Exists('packages\Xamarin.AndroidX.Fragment.1.5.4\build\monoandroid12.0\Xamarin.AndroidX.Fragment.targets')" />
 </Project>
