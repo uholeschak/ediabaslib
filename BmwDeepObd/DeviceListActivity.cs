@@ -1576,7 +1576,7 @@ namespace BmwDeepObd
 
                 // ELM327
                 bool elmReports2X = false;
-                Regex elmVerRegEx = new Regex(@"ELM327\s+v(\d)\.(\d)", RegexOptions.IgnoreCase);
+                Regex elmVerRegEx = new Regex(@"ELM327\s+v(\d+)\.(\d+)", RegexOptions.IgnoreCase);
                 for (int retries = 0; retries < 2; retries++)
                 {
                     bluetoothInStream.Flush();
@@ -1608,7 +1608,7 @@ namespace BmwDeepObd
                         }
                         if (_elmVerH >= 0 && _elmVerL >= 0)
                         {
-                            LogString(string.Format("ELM327 detected: {0}.{1}", _elmVerH, _elmVerL));
+                            LogString(string.Format("ELM327 version detected: {0}.{1}", _elmVerH, _elmVerL));
                             if (_elmVerH >= 2)
                             {
                                 LogString("Version >= 2.x detected");
@@ -2054,11 +2054,6 @@ namespace BmwDeepObd
                 {
                     restricted = true;
                 }
-
-                if (elmDevDesc.ToUpperInvariant().Contains(EdElmInterface.Elm327ObdSolutionsIdentifier))
-                {
-                    restricted = true;
-                }
             }
 
             if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, @"AT#1", false))
@@ -2085,6 +2080,42 @@ namespace BmwDeepObd
                         }
                     }
                 }
+            }
+
+            if (Elm327SendCommand(bluetoothInStream, bluetoothOutStream, @"STI", false))
+            {
+                string stnVers = GetElm327Reponse(bluetoothInStream);
+                if (stnVers != null)
+                {
+                    LogString(string.Format("STN Vers: {0}", stnVers));
+                    Regex stnVerRegEx = new Regex(@"STN\d+\s+v(\d+)\.(\d+)\.(\d+)", RegexOptions.IgnoreCase);
+                    MatchCollection matchesVer = stnVerRegEx.Matches(stnVers);
+                    if ((matchesVer.Count == 1) && (matchesVer[0].Groups.Count == 4))
+                    {
+                        if (!Int32.TryParse(matchesVer[0].Groups[1].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int stnVerH))
+                        {
+                            stnVerH = -1;
+                        }
+                        if (!Int32.TryParse(matchesVer[0].Groups[2].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int stnVerM))
+                        {
+                            stnVerM = -1;
+                        }
+                        if (!Int32.TryParse(matchesVer[0].Groups[3].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int stnVerL))
+                        {
+                            stnVerL = -1;
+                        }
+
+                        if (stnVerL >= 0 && stnVerM >= 0 && stnVerH >= 0)
+                        {
+                            LogString(string.Format("STN version detected: {0}.{1}.{2}", stnVerH, stnVerM, stnVerL));
+                            restricted = true;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                LogString("*** STN read firmware version failed");
             }
 
             if (!restricted)
