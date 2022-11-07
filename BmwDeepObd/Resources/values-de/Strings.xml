@@ -760,6 +760,7 @@
   <string name="can_adapter_fw_update_present">Es ist ein Firmwareupdate für den Adpter vorhanden.\nWollen Sie das Update jetzt installieren?</string>
   <string name="can_adapter_fw_update_info">Während des Updates darf die Kommunikation auf keinen Fall unterbrochen werden.\nWollen Sie fortfahren?</string>
   <string name="can_adapter_fw_update_info_ftdi">Für das Update ist es notwendig, dass der Bootloader einmalig in das Gerät geflasht wurde.\nWenn die Applikation nicht mehr startet, muss der Prozessor während des Verbindungsaufbaus zurückgesetzt werden, aber die USB Kommunikation darf nicht unterbrochen werden.\nWollen Sie fortfahren?</string>
+  <string name="can_adapter_fw_elm_info">Die ELM327 Firmware wird zur Verfügung gestellt so wie sie ist ohne Support.\nBitte lesen sie die original ELM327 Documentation für mehr Details.</string>
   <string name="can_adapter_fw_update_connect">Verbindungsaufbau zum Gerät, ein Prozessor-Reset kann notwendig sein.</string>
   <string name="can_adapter_fw_update_active">Firmware Aktualisierung aktiv.\nBitte Kommunikation nicht unterbrechen.</string>
   <string name="can_adapter_fw_update_conn_failed">Verbindung zum Adapter fehlgeschlagen</string>
