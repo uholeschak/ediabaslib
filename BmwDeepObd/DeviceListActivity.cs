@@ -59,6 +59,7 @@ namespace BmwDeepObd
             Elm327Fake,         // ELM327 fake version
             Elm327FakeOpt,      // ELM327 fake version optional command
             Elm327Limited,      // ELM327 limited support
+            StnFwUpdate,        // STN fimrware update required
             Elm327NoCan,        // ELM327 no CAN support
             Custom,             // custom adapter
             CustomNoEscape,     // custom adapter with no escape support
@@ -1260,6 +1261,23 @@ namespace BmwDeepObd
                             break;
                         }
 
+                        case AdapterType.StnFwUpdate:
+                        {
+                            new AlertDialog.Builder(this)
+                                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                                {
+                                    ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.Elm327Tag, deviceName);
+                                })
+                                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                                {
+                                })
+                                .SetCancelable(true)
+                                .SetMessage(Resource.String.adapter_stn_firmware)
+                                .SetTitle(Resource.String.alert_title_warning)
+                                .Show();
+                            break;
+                        }
+
                         case AdapterType.Elm327Custom:
                         {
                             new AlertDialog.Builder(this)
@@ -1688,7 +1706,7 @@ namespace BmwDeepObd
                                 break;
                             }
 
-                            if (!Elm327CheckCompatibility(bluetoothInStream, bluetoothOutStream, out bool restricted))
+                            if (!Elm327CheckCompatibility(bluetoothInStream, bluetoothOutStream, out bool restricted, out bool fwUpdate))
                             {
                                 LogString("*** ELM not compatible");
                                 adapterType = AdapterType.Elm327Fake;
@@ -1698,6 +1716,10 @@ namespace BmwDeepObd
                             if (restricted)
                             {
                                 adapterType = AdapterType.Elm327Limited;
+                            }
+                            else if (fwUpdate)
+                            {
+                                adapterType = AdapterType.StnFwUpdate;
                             }
 
                             if (!Elm327CheckCan(bluetoothInStream, bluetoothOutStream, out bool canSupport))
@@ -2031,9 +2053,10 @@ namespace BmwDeepObd
             return true;
         }
 
-        private bool Elm327CheckCompatibility(Stream bluetoothInStream, Stream bluetoothOutStream, out bool restricted)
+        private bool Elm327CheckCompatibility(Stream bluetoothInStream, Stream bluetoothOutStream, out bool restricted, out bool fwUpdate)
         {
             restricted = false;
+            fwUpdate = false;
             bluetoothInStream.Flush();
             while (bluetoothInStream.HasData())
             {
@@ -2046,6 +2069,7 @@ namespace BmwDeepObd
                 return false;
             }
 
+            bool stnChip = false;
             string elmDevDesc = GetElm327Reponse(bluetoothInStream);
             if (elmDevDesc != null)
             {
@@ -2053,6 +2077,11 @@ namespace BmwDeepObd
                 if (elmDevDesc.ToUpperInvariant().Contains(EdElmInterface.Elm327CarlyIdentifier))
                 {
                     restricted = true;
+                }
+
+                if (elmDevDesc.ToUpperInvariant().Contains(EdElmInterface.Elm327ObdSolutionsIdentifier))
+                {
+                    stnChip = true;
                 }
             }
 
@@ -2082,12 +2111,18 @@ namespace BmwDeepObd
                 }
             }
 
-            if (Elm327SendCommand(bluetoothInStream, bluetoothOutStream, @"STI", false))
+            if (stnChip)
             {
+                if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, @"STI", false))
+                {
+                    LogString("*** STN read firmware version failed");
+                    return false;
+                }
+
                 string stnVers = GetElm327Reponse(bluetoothInStream);
                 if (stnVers != null)
                 {
-                    LogString(string.Format("STN Vers: {0}", stnVers));
+                    LogString(string.Format("STN Version: {0}", stnVers));
                     Regex stnVerRegEx = new Regex(@"STN\d+\s+v(\d+)\.(\d+)\.(\d+)", RegexOptions.IgnoreCase);
                     MatchCollection matchesVer = stnVerRegEx.Matches(stnVers);
                     if ((matchesVer.Count == 1) && (matchesVer[0].Groups.Count == 4))
@@ -2108,14 +2143,14 @@ namespace BmwDeepObd
                         if (stnVerL >= 0 && stnVerM >= 0 && stnVerH >= 0)
                         {
                             LogString(string.Format("STN version detected: {0}.{1}.{2}", stnVerH, stnVerM, stnVerL));
-                            restricted = true;
+                            int stnVer = stnVerH * 100 + stnVerM;
+                            if (stnVer < 501)
+                            {
+                                fwUpdate = true;
+                            }
                         }
                     }
                 }
-            }
-            else
-            {
-                LogString("*** STN read firmware version failed");
             }
 
             if (!restricted)
@@ -2135,6 +2170,11 @@ namespace BmwDeepObd
             else
             {
                 LogString("Standard ELM firmware");
+            }
+
+            if (fwUpdate)
+            {
+                LogString("STN firmware update required");
             }
 
             return true;
