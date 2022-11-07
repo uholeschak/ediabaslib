@@ -282,7 +282,7 @@ namespace BmwDeepObd
                 GetString(customElmAdapter ? Resource.String.button_can_adapter_fw_change_custom : Resource.String.button_can_adapter_fw_change_elm);
             _buttonFwUpdateChange.Click += (sender, args) =>
             {
-                PerformUpdateMessage(true);
+                PerformUpdateMessage(true, !customElmAdapter);
             };
 
             _checkBoxExpert = FindViewById<CheckBox>(Resource.Id.checkBoxCanAdapterExpert);
@@ -1169,9 +1169,14 @@ namespace BmwDeepObd
             UpdateDisplay();
         }
 
-        private void PerformUpdateMessage(bool changeFirmware = false)
+        private void PerformUpdateMessage(bool changeFirmware = false, bool elmFirmware = false)
         {
-            int messageId = Resource.String.can_adapter_fw_update_info;
+            string message = GetString(Resource.String.can_adapter_fw_update_info);
+            if (elmFirmware)
+            {
+                message = GetString(Resource.String.can_adapter_fw_elm_info) + "\r\n" + message;
+            }
+
             switch (_interfaceType)
             {
                 case ActivityCommon.InterfaceType.Bluetooth:
@@ -1183,7 +1188,7 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityCommon.InterfaceType.Ftdi:
-                    messageId = Resource.String.can_adapter_fw_update_info_ftdi;
+                    message = GetString(Resource.String.can_adapter_fw_update_info_ftdi);
                     break;
             }
 
@@ -1196,7 +1201,7 @@ namespace BmwDeepObd
                 {
                 })
                 .SetCancelable(true)
-                .SetMessage(messageId)
+                .SetMessage(message)
                 .SetTitle(Resource.String.alert_title_warning)
                 .Show();
         }
