@@ -47,7 +47,6 @@ namespace EdiabasLib
         }
 
         public const string Elm327CarlyIdentifier = "CARLY-UNIVERSAL";
-        public const string Elm327ObdSolutionsIdentifier = "OBD SOLUTIONS LLC";
         public const string Elm327WgSoftIdentifier = "WGSOFT";
         public const double Elm327WgSoftMinVer = 2.4;
 
@@ -267,11 +266,6 @@ namespace EdiabasLib
                 _elm327TransportType = TransportType.Carly;
             }
 
-            if (elmDevDesc.ToUpperInvariant().Contains(Elm327ObdSolutionsIdentifier))
-            {
-                Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Warning: OBD SOLUTIONS LLC Chip detected");
-            }
-
             if (!Elm327SendCommand("AT#1", false))
             {
                 Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Sending #1 failed");
@@ -291,6 +285,18 @@ namespace EdiabasLib
                     }
                 }
             }
+
+            if (!Elm327SendCommand("STI", false))
+            {
+                Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Sending STI failed");
+                return false;
+            }
+            string stnVers = Elm327ReceiveAnswer(Elm327CommandTimeout);
+            if (stnVers.ToUpperInvariant().Contains("STN"))
+            {
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "STN Version: {0}", stnVers);
+            }
+
             Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM transport type: {0}", _elm327TransportType);
 
             if (_elm327TransportType != TransportType.Standard)
