@@ -12,6 +12,8 @@
 			<action android:name="android.intent.action.VIEW" />
 			<data android:mimeType="*/*" />
 		</intent>
+        <package android:name="com.microntek.bluetooth" />
+        <package android:name="OCTech.Mobile.Applications.OBDLink" />
 	</queries>
 	<uses-permission android:name="android.permission.BLUETOOTH" />
 	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
