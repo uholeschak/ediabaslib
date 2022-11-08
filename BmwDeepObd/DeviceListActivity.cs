@@ -1267,10 +1267,11 @@ namespace BmwDeepObd
                             new AlertDialog.Builder(this)
                                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                 {
-                                    ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.Elm327Tag, deviceName);
+                                    _activityCommon.StartApp(ObdLinkPackageName, true);
                                 })
                                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                                 {
+                                    ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.Elm327Tag, deviceName);
                                 })
                                 .SetCancelable(true)
                                 .SetMessage(Resource.String.adapter_stn_firmware)

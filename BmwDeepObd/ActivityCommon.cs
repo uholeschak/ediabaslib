@@ -1889,7 +1889,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool StartApp(String packageName, bool marketRedirect)
+        public bool StartApp(String packageName, bool marketRedirect = false)
         {
             try
             {
