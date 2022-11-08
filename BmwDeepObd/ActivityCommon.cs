@@ -1889,15 +1889,23 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool StartApp(String packageName)
+        public bool StartApp(String packageName, bool marketRedirect)
         {
             try
             {
                 Intent intent = _packageManager?.GetLaunchIntentForPackage(packageName);
                 if (intent == null)
                 {
-                    return false;
+                    if (!marketRedirect)
+                    {
+                        return false;
+                    }
+
+                    intent = new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"market://details?id=" + packageName));
+                    _context.StartActivity(intent);
+                    return true;
                 }
+
                 intent.AddCategory(Intent.CategoryLauncher);
                 intent.SetFlags(ActivityFlags.NewTask);
                 _context.StartActivity(intent);

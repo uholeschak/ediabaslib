@@ -89,6 +89,7 @@ namespace BmwDeepObd
             public bool MtcOffline { get; set; }
         }
 
+        private const string ObdLinkPackageName = "OCTech.Mobile.Applications.OBDLink";
         private static readonly Java.Util.UUID SppUuid = Java.Util.UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
         private static readonly Java.Util.UUID ZeroUuid = Java.Util.UUID.FromString("00000000-0000-0000-0000-000000000000");
         private const string DefaultModulePwd = "1234";
