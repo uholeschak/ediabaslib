@@ -2123,7 +2123,7 @@ namespace BmwDeepObd
                 if (stnVers != null)
                 {
                     LogString(string.Format("STN Version: {0}", stnVers));
-                    Regex stnVerRegEx = new Regex(@"STN\d+\s+v(\d+)\.(\d+)\.(\d+)", RegexOptions.IgnoreCase);
+                    Regex stnVerRegEx = new Regex(@"STN1100\s+v(\d+)\.(\d+)\.(\d+)", RegexOptions.IgnoreCase);
                     MatchCollection matchesVer = stnVerRegEx.Matches(stnVers);
                     if ((matchesVer.Count == 1) && (matchesVer[0].Groups.Count == 4))
                     {
