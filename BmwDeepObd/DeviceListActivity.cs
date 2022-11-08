@@ -89,6 +89,7 @@ namespace BmwDeepObd
             public bool MtcOffline { get; set; }
         }
 
+        private const string ObdLinkPackageName = "OCTech.Mobile.Applications.OBDLink";
         private static readonly Java.Util.UUID SppUuid = Java.Util.UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
         private static readonly Java.Util.UUID ZeroUuid = Java.Util.UUID.FromString("00000000-0000-0000-0000-000000000000");
         private const string DefaultModulePwd = "1234";
@@ -1266,10 +1267,11 @@ namespace BmwDeepObd
                             new AlertDialog.Builder(this)
                                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                 {
-                                    ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.Elm327Tag, deviceName);
+                                    _activityCommon.StartApp(ObdLinkPackageName, true);
                                 })
                                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                                 {
+                                    ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.Elm327Tag, deviceName);
                                 })
                                 .SetCancelable(true)
                                 .SetMessage(Resource.String.adapter_stn_firmware)
@@ -2123,7 +2125,7 @@ namespace BmwDeepObd
                 if (stnVers != null)
                 {
                     LogString(string.Format("STN Version: {0}", stnVers));
-                    Regex stnVerRegEx = new Regex(@"STN\d+\s+v(\d+)\.(\d+)\.(\d+)", RegexOptions.IgnoreCase);
+                    Regex stnVerRegEx = new Regex(@"STN1100\s+v(\d+)\.(\d+)\.(\d+)", RegexOptions.IgnoreCase);
                     MatchCollection matchesVer = stnVerRegEx.Matches(stnVers);
                     if ((matchesVer.Count == 1) && (matchesVer[0].Groups.Count == 4))
                     {
