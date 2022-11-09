@@ -555,7 +555,6 @@ namespace PsdzClient.Programming
             }
 
             VecInfo.VehicleIdentLevel = IdentificationLevel.VINVehicleReadout;
-            VecInfo.VehicleIdentAlreadyDone = true;
             VecInfo.ILevelWerk = !string.IsNullOrEmpty(IstufeShipment) ? IstufeShipment : DetectVehicle.ILevelShip;
             VecInfo.ILevel = !string.IsNullOrEmpty(IstufeCurrent) ? IstufeCurrent: DetectVehicle.ILevelCurrent;
             VecInfo.VIN17 = DetectVehicle.Vin;
@@ -650,6 +649,15 @@ namespace PsdzClient.Programming
             IDiagnosticsBusinessData service = DiagnosticsBusinessData.Instance;
             VecInfo.BNType = DiagnosticsBusinessData.Instance.GetBNType(VecInfo);
             VecInfo.FA.AlreadyDone = true;
+            if (VecInfo.ECU != null && VecInfo.ECU.Count > 1)
+            {
+                VecInfo.VehicleIdentAlreadyDone = true;
+            }
+            else
+            {
+                CalculateECUConfiguration();
+            }
+
             VecInfo.BNMixed = VehicleLogistics.getBNMixed(VecInfo.Ereihe, VecInfo.FA);
             VecInfo.BatteryType = PdszDatabase.ResolveBatteryType(VecInfo);
             VecInfo.WithLfpBattery = VecInfo.BatteryType == PdszDatabase.BatteryEnum.LFP;
@@ -657,6 +665,28 @@ namespace PsdzClient.Programming
             VecInfo.MainSeriesSgbdAdditional = service.GetMainSeriesSgbdAdditional(VecInfo);
             EcuCharacteristics = VehicleLogistics.GetCharacteristics(VecInfo);
             return true;
+        }
+
+        private void CalculateECUConfiguration()
+        {
+            if (VecInfo.BNType != BNType.BN2020_MOTORBIKE && VecInfo.BNType != BNType.BNK01X_MOTORBIKE && VecInfo.BNType != BNType.BN2000_MOTORBIKE)
+            {
+                if (VecInfo.BNType == BNType.IBUS)
+                {
+                    VehicleLogistics.CalculateECUConfiguration(VecInfo, null);
+                    if (VecInfo.ECU != null && VecInfo.ECU.Count > 1)
+                    {
+                        VecInfo.VehicleIdentAlreadyDone = true;
+                    }
+                }
+                return;
+            }
+
+            VehicleLogistics.CalculateECUConfiguration(VecInfo, null);
+            if (VecInfo.ECU != null && VecInfo.ECU.Count > 1)
+            {
+                VecInfo.VehicleIdentAlreadyDone = true;
+            }
         }
 
         public List<PdszDatabase.EcuInfo> GetEcuList(bool individualOnly = false)
