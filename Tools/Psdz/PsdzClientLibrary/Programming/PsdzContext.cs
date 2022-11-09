@@ -647,12 +647,14 @@ namespace PsdzClient.Programming
                 }
             }
 
+            IDiagnosticsBusinessData service = DiagnosticsBusinessData.Instance;
             VecInfo.BNType = DiagnosticsBusinessData.Instance.GetBNType(VecInfo);
             VecInfo.FA.AlreadyDone = true;
             VecInfo.BNMixed = VehicleLogistics.getBNMixed(VecInfo.Ereihe, VecInfo.FA);
             VecInfo.BatteryType = PdszDatabase.ResolveBatteryType(VecInfo);
             VecInfo.WithLfpBattery = VecInfo.BatteryType == PdszDatabase.BatteryEnum.LFP;
             VecInfo.MainSeriesSgbd = VehicleLogistics.getBrSgbd(VecInfo);
+            VecInfo.MainSeriesSgbdAdditional = service.GetMainSeriesSgbdAdditional(VecInfo);
             EcuCharacteristics = VehicleLogistics.GetCharacteristics(VecInfo);
             return true;
         }
