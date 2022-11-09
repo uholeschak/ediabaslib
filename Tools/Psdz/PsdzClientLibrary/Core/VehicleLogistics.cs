@@ -114,6 +114,29 @@ namespace PsdzClient.Core
             }
         }
 
+        public static void CalculateMaxAssembledECUList(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        {
+            if (vecInfo == null)
+            {
+                //Log.Warning("VehicleLogistics.CalculateECUConfiguration()", "vecInfo was null");
+                return;
+            }
+            if (vecInfo.BNType == BNType.UNKNOWN)
+            {
+                //Log.Warning("VehicleLogistics.CalculateECUConfiguration()", "BNType was unknown");
+                return;
+            }
+            BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
+            if (characteristics != null)
+            {
+                characteristics.CalculateMaxAssembledECUList(vecInfo, ffmResolver);
+            }
+            else
+            {
+                //Log.Warning("VehicleLogistics.CalculateMaxAssembledECUList()", "no fitting BaseEcuCharacteristics found");
+            }
+        }
+
         public static void DecodeVCMBackupFA(byte[] fa, Vehicle vehicle)
         {
             if (vehicle == null)
@@ -249,6 +272,39 @@ namespace PsdzClient.Core
             {
                 //Log.Warning("VehicleLogistics.DecodeVCMBackupFA()", "fa byte stream was null or too short");
             }
+        }
+
+        public static BaseEcuCharacteristics CallGetCharacteristics(Vehicle vecInfo)
+        {
+            return GetCharacteristics(vecInfo);
+        }
+
+        public static void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        {
+            if (vecInfo == null)
+            {
+                //Log.Warning("VehicleLogistics.CalculateECUConfiguration()", "vecInfo was null");
+                return;
+            }
+            if (vecInfo.BNType == BNType.UNKNOWN)
+            {
+                //Log.Warning("VehicleLogistics.CalculateECUConfiguration()", "BNType was unknown");
+                return;
+            }
+            BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
+            if (characteristics != null)
+            {
+                characteristics.CalculateECUConfiguration(vecInfo, ffmResolver);
+            }
+            else
+            {
+                //Log.Warning("vehicleLogistics.CaCalculateECUConfiguration()", "no fitting BaseEcuCharacteristics found");
+            }
+        }
+
+        public static void ShapeECUConfiguration(Vehicle vecInfo)
+        {
+            GetCharacteristics(vecInfo)?.ShapeECUConfiguration(vecInfo);
         }
 
         public static ObservableCollectionEx<PdszDatabase.SaLaPa> GetAvailableSALAPAs(Vehicle vecInfo)

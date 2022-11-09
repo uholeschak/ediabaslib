@@ -243,146 +243,146 @@ namespace PsdzClient.Core
 			return interConnectionTable;
 		}
 
-		public virtual void ShapeECUConfiguration(Vehicle vecInfo)
-		{
-			if (vecInfo == null)
-			{
-				//Log.Warning(GetType().Name + ".ShapeECUConfiguration()", "vecInfo was null");
-				return;
-			}
-			if (vecInfo.ECU == null)
-			{
-				//Log.Warning(GetType().Name + ".ShapeECUConfiguration()", "vecInfo.ecu was null");
-				return;
-			}
-			if (xorConfiguration != null)
-			{
-				foreach (int[] item in xorConfiguration)
-				{
-					if (item == null || item.Length < 2)
-					{
-						continue;
-					}
-					int validAdr = -1;
-					int[] array = item;
-					foreach (int num2 in array)
-					{
-						ECU eCU = vecInfo.getECU(num2);
-						if (eCU != null && eCU.IDENT_SUCCESSFULLY)
-						{
-							validAdr = num2;
-						}
-					}
-					if (validAdr <= -1)
-					{
-						continue;
-					}
-					IEnumerable<int> enumerable = item.Where((int x) => x != validAdr);
-					if (enumerable == null)
-					{
-						continue;
-					}
-					foreach (int item2 in enumerable)
-					{
-						ECU eCU2 = vecInfo.getECU(item2);
-						if (eCU2 != null && !eCU2.IDENT_SUCCESSFULLY)
-						{
-							vecInfo.ECU.Remove(eCU2);
-						}
-					}
-				}
-			}
-			if (unsureConfiguration == null)
-			{
-				return;
-			}
-			foreach (int item3 in unsureConfiguration)
-			{
-				ECU eCU3 = vecInfo.getECU(item3);
-				if (eCU3 != null && !eCU3.IDENT_SUCCESSFULLY)
-				{
-					vecInfo.ECU.Remove(eCU3);
-				}
-			}
-		}
+        public virtual void ShapeECUConfiguration(Vehicle vecInfo)
+        {
+            if (vecInfo == null)
+            {
+                //Log.Warning(GetType().Name + ".ShapeECUConfiguration()", "vecInfo was null");
+                return;
+            }
+            if (vecInfo.ECU == null)
+            {
+                //Log.Warning(GetType().Name + ".ShapeECUConfiguration()", "vecInfo.ecu was null");
+                return;
+            }
+            if (xorConfiguration != null)
+            {
+                foreach (int[] item in xorConfiguration)
+                {
+                    if (item == null || item.Length < 2)
+                    {
+                        continue;
+                    }
+                    int validAdr = -1;
+                    int[] array = item;
+                    foreach (int num2 in array)
+                    {
+                        ECU eCU = vecInfo.getECU(num2);
+                        if (eCU != null && eCU.IDENT_SUCCESSFULLY)
+                        {
+                            validAdr = num2;
+                        }
+                    }
+                    if (validAdr <= -1)
+                    {
+                        continue;
+                    }
+                    IEnumerable<int> enumerable = item.Where((int x) => x != validAdr);
+                    if (enumerable == null)
+                    {
+                        continue;
+                    }
+                    foreach (int item2 in enumerable)
+                    {
+                        ECU eCU2 = vecInfo.getECU(item2);
+                        if (eCU2 != null && !eCU2.IDENT_SUCCESSFULLY)
+                        {
+                            vecInfo.ECU.Remove(eCU2);
+                        }
+                    }
+                }
+            }
+            if (unsureConfiguration == null)
+            {
+                return;
+            }
+            foreach (int item3 in unsureConfiguration)
+            {
+                ECU eCU3 = vecInfo.getECU(item3);
+                if (eCU3 != null && !eCU3.IDENT_SUCCESSFULLY)
+                {
+                    vecInfo.ECU.Remove(eCU3);
+                }
+            }
+        }
 
-		public virtual BusType getBus(long? sgAdr, string group = null)
-		{
-			ValidateIfDiagnosticsHasValidLicense();
-			if (!sgAdr.HasValue)
-			{
-				//Log.Info(GetType().Name + ".getBus()", "sgAdr was null");
-				return BusType.UNKNOWN;
-			}
-			long? num2 = sgAdr;
-			if (num2 < 0L)
-			{
-				num2 = sgAdr;
-				if (num2 > 255L)
-				{
-					//Log.Info(GetType().Name + ".getBus()", "sgAdr out of range. sgAdr was: {0}", sgAdr);
-					return BusType.UNKNOWN;
-				}
-			}
-			try
-			{
-				foreach (IEcuLogisticsEntry item in ecuTable)
-				{
-					if (item.DiagAddress == sgAdr)
-					{
-						return item.Bus;
-					}
-				}
-			}
-			catch (Exception)
-			{
-				//Log.WarningException(GetType().Name + ".getBus()", exception);
-			}
-			LogMissingBus(group, sgAdr);
-			//Log.Info(GetType().Name + ".getBus()", "no bus found for ecu address: {0}", sgAdr.Value.ToString("X2"));
-			return BusType.UNKNOWN;
-		}
+        public virtual BusType getBus(long? sgAdr, string group = null)
+        {
+            ValidateIfDiagnosticsHasValidLicense();
+            if (!sgAdr.HasValue)
+            {
+                //Log.Info(GetType().Name + ".getBus()", "sgAdr was null");
+                return BusType.UNKNOWN;
+            }
+            long? num2 = sgAdr;
+            if (num2 < 0L)
+            {
+                num2 = sgAdr;
+                if (num2 > 255L)
+                {
+                    //Log.Info(GetType().Name + ".getBus()", "sgAdr out of range. sgAdr was: {0}", sgAdr);
+                    return BusType.UNKNOWN;
+                }
+            }
+            try
+            {
+                foreach (IEcuLogisticsEntry item in ecuTable)
+                {
+                    if (item.DiagAddress == sgAdr)
+                    {
+                        return item.Bus;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                //Log.WarningException(GetType().Name + ".getBus()", exception);
+            }
+            LogMissingBus(group, sgAdr);
+            //Log.Info(GetType().Name + ".getBus()", "no bus found for ecu address: {0}", sgAdr.Value.ToString("X2"));
+            return BusType.UNKNOWN;
+        }
 
-		public BusType getBus(long? sgAdr, long? subAdr, string group = null)
-		{
-			ValidateIfDiagnosticsHasValidLicense();
-			if (!sgAdr.HasValue)
-			{
-				//Log.Warning(GetType().Name + ".getBus()", "sgAdr was null");
-				return BusType.UNKNOWN;
-			}
-			if (sgAdr < 0L && sgAdr > 255L)
-			{
-				//Log.Warning(GetType().Name + ".getBus()", "sgAdr out of range. sgAdr was: {0}", sgAdr);
-				return BusType.UNKNOWN;
-			}
-			try
-			{
-				foreach (IEcuLogisticsEntry item in ecuTable)
-				{
-					if (subAdr.HasValue && !(subAdr < 0L))
-					{
-						if (item.DiagAddress == sgAdr && item.SubDiagAddress == subAdr)
-						{
-							return item.Bus;
-						}
-					}
-					else if (item.DiagAddress == sgAdr)
-					{
-						return item.Bus;
-					}
-				}
-				LogMissingBus(group, sgAdr);
-				//Log.Warning(GetType().Name + ".getBus()", "no bus found for ecu address/subaddress: {0:X2} {1:X2}", sgAdr, subAdr);
-			}
-			catch (Exception)
-			{
-				//Log.WarningException(GetType().Name + ".getBus()", exception);
-			}
-			return BusType.UNKNOWN;
-		}
+        public BusType getBus(long? sgAdr, long? subAdr, string group = null)
+        {
+            ValidateIfDiagnosticsHasValidLicense();
+            if (!sgAdr.HasValue)
+            {
+                //Log.Warning(GetType().Name + ".getBus()", "sgAdr was null");
+                return BusType.UNKNOWN;
+            }
+            if (sgAdr < 0L && sgAdr > 255L)
+            {
+                //Log.Warning(GetType().Name + ".getBus()", "sgAdr out of range. sgAdr was: {0}", sgAdr);
+                return BusType.UNKNOWN;
+            }
+            try
+            {
+                foreach (IEcuLogisticsEntry item in ecuTable)
+                {
+                    if (subAdr.HasValue && !(subAdr < 0L))
+                    {
+                        if (item.DiagAddress == sgAdr && item.SubDiagAddress == subAdr)
+                        {
+                            return item.Bus;
+                        }
+                    }
+                    else if (item.DiagAddress == sgAdr)
+                    {
+                        return item.Bus;
+                    }
+                }
+                LogMissingBus(group, sgAdr);
+                //Log.Warning(GetType().Name + ".getBus()", "no bus found for ecu address/subaddress: {0:X2} {1:X2}", sgAdr, subAdr);
+            }
+            catch (Exception)
+            {
+                //Log.WarningException(GetType().Name + ".getBus()", exception);
+            }
+            return BusType.UNKNOWN;
+        }
 
-		public int getECUAdrByECU_GRUPPE(string grp)
+        public int getECUAdrByECU_GRUPPE(string grp)
 		{
 			ValidateIfDiagnosticsHasValidLicense();
 			if (string.IsNullOrEmpty(grp))
@@ -578,10 +578,8 @@ namespace PsdzClient.Core
 			return false;
 		}
 
-#if false
 		public void CalculateMaxAssembledECUList(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
 		{
-			int num = 6;
 			ValidateIfDiagnosticsHasValidLicense();
 			if (vecInfo == null)
 			{
@@ -612,26 +610,26 @@ namespace PsdzClient.Core
 						if (vecInfo.getECU(num2) == null)
 						{
 							string ecuVariant = array2[1];
-							XEP_ECUVARIANTS ecuVariantByName = DatabaseProviderFactory.Instance.GetEcuVariantByName(ecuVariant);
-							if (ecuVariantByName != null && DatabaseProviderFactory.Instance.EvaluateXepRulesById(ecuVariantByName.Id, vecInfo, ffmResolver) && ecuVariantByName.EcuGroupId.HasValue && DatabaseProviderFactory.Instance.EvaluateXepRulesById(ecuVariantByName.Id, vecInfo, ffmResolver))
+                            PdszDatabase database = ClientContext.GetDatabase(vecInfo);
+                            PdszDatabase.EcuVar ecuVariantByName = database.GetEcuVariantByName(ecuVariant);
+							if (ecuVariantByName != null && database.EvaluateXepRulesById(ecuVariantByName.Id, vecInfo, ffmResolver) && !string.IsNullOrEmpty(ecuVariantByName.GroupId) && database.EvaluateXepRulesById(ecuVariantByName.Id, vecInfo, ffmResolver))
 							{
 								ECU item = CreateECU(num2, array2[2]);
 								vecInfo.ECU.Add(item);
 							}
 						}
 					}
-					catch (Exception exception)
+					catch (Exception)
 					{
 						//Log.WarningException(GetType().Name + ".CalculateMaxAssembledECUList()", exception);
 					}
 				}
 			}
-			catch (Exception exception2)
+			catch (Exception)
 			{
 				//Log.WarningException(GetType().Name + ".CalculateMaxAssembledECUList()", exception2);
 			}
 		}
-#endif
 
 		internal string GetBusAlias(BusType bus)
 		{
