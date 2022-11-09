@@ -781,7 +781,12 @@ namespace PsdzClient.Core
 
         public static string getBrSgbd(Vehicle vecInfo)
         {
-            string text = GetCharacteristics(vecInfo)?.brSgbd;
+            IDiagnosticsBusinessData service = DiagnosticsBusinessData.Instance;
+            string text = service.GetMainSeriesSgbd(vecInfo);
+            if (string.IsNullOrEmpty(text))
+            {
+                text = GetCharacteristics(vecInfo)?.brSgbd;
+            }
             return text;
         }
 

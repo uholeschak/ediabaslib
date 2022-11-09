@@ -22,6 +22,7 @@ namespace PsdzClient.Core
 	{
 		public Vehicle(ClientContext clientContext) : base(clientContext)
         {
+            TransmissionDataType = new TransmissionDataType();
             base.ConnectState = VisibilityType.Collapsed;
             //pKodeList = new ObservableCollectionEx<Fault>();
             //FaultList = new List<Fault>();
@@ -706,7 +707,7 @@ namespace PsdzClient.Core
         }
 
         [XmlIgnore]
-        public ITransmissionDataType TransmissionDataType { get; private set; } = new TransmissionDataType();
+        public ITransmissionDataType TransmissionDataType { get; private set; }
 
         [XmlIgnore]
         public PdszDatabase.BatteryEnum BatteryType
