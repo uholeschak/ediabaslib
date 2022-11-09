@@ -295,11 +295,11 @@ namespace PsdzClient
 
         public class EcuVar
         {
-            public EcuVar(string id, string name, string groupId, EcuTranslation ecuTranslation)
+            public EcuVar(string id, string name, string ecuGroupId, EcuTranslation ecuTranslation)
             {
                 Id = id;
                 Name = name;
-                GroupId = groupId;
+                EcuGroupId = ecuGroupId;
                 EcuTranslation = ecuTranslation;
             }
 
@@ -307,7 +307,7 @@ namespace PsdzClient
 
             public string Name { get; set; }
 
-            public string GroupId { get; set; }
+            public string EcuGroupId { get; set; }
 
             public EcuTranslation EcuTranslation { get; set; }
 
@@ -316,8 +316,8 @@ namespace PsdzClient
                 StringBuilder sb = new StringBuilder();
                 sb.Append(prefix);
                 sb.Append(string.Format(CultureInfo.InvariantCulture,
-                    "EcuVar: Id={0}, Name={1}, GroupId={2}, Title='{3}'",
-                    Id, Name, GroupId, EcuTranslation.GetTitle(language)));
+                    "EcuVar: Id={0}, Name={1}, EcuGroupId={2}, Title='{3}'",
+                    Id, Name, EcuGroupId, EcuTranslation.GetTitle(language)));
                 return sb.ToString();
             }
         }
@@ -3339,13 +3339,13 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
 
         public EcuGroup FindEcuGroup(EcuVar ecuVar, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
         {
-            if (ecuVar == null || string.IsNullOrEmpty(ecuVar.GroupId))
+            if (ecuVar == null || string.IsNullOrEmpty(ecuVar.EcuGroupId))
             {
                 return null;
             }
 
             EcuGroup ecuGroup = null;
-            string groupId = ecuVar.GroupId;
+            string groupId = ecuVar.EcuGroupId;
             log.InfoFormat("FindEcuGroup Id: {0}", groupId);
             if (EvaluateXepRulesById(groupId, vehicle, ffmResolver, null))
             {
@@ -3960,7 +3960,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
 
         public bool GetSwiActionsForEcuGroup(EcuInfo ecuInfo)
         {
-            if (ecuInfo.EcuVar == null || string.IsNullOrEmpty(ecuInfo.EcuVar.GroupId))
+            if (ecuInfo.EcuVar == null || string.IsNullOrEmpty(ecuInfo.EcuVar.EcuGroupId))
             {
                 return false;
             }
@@ -3970,7 +3970,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
                 string sql = string.Format(CultureInfo.InvariantCulture,
                     @"SELECT ID, NAME, ACTIONCATEGORY, SELECTABLE, SHOW_IN_PLAN, EXECUTABLE, " + DatabaseFunctions.SqlTitleItems +
                     @", NODECLASS FROM XEP_SWIACTION WHERE ID IN (SELECT SWI_ACTION_ID FROM XEP_REF_ECUGROUPS_SWIACTION WHERE ECUGROUP_ID = {0})",
-                    ecuInfo.EcuVar.GroupId);
+                    ecuInfo.EcuVar.EcuGroupId);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
@@ -5176,8 +5176,8 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
         {
             string id = reader["ID"].ToString().Trim();
             string name = reader["NAME"].ToString().Trim();
-            string groupId = reader["ECUGROUPID"].ToString().Trim();
-            return new EcuVar(id, name, groupId, GetTranslation(reader));
+            string ecuGroupId = reader["ECUGROUPID"].ToString().Trim();
+            return new EcuVar(id, name, ecuGroupId, GetTranslation(reader));
         }
 
         private static EcuPrgVar ReadXepEcuPrgVar(SQLiteDataReader reader)

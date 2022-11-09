@@ -52,9 +52,9 @@ namespace PsdzClient.Core
 				foreach (PdszDatabase.EcuVar ecuVar in ecuVariantsByEcuCliquesId)
 				{
 					flag = database.EvaluateXepRulesById(ecuVar.Id, vec, ffmResolver, null);
-					if (flag && !string.IsNullOrEmpty(ecuVar.GroupId))
+					if (flag && !string.IsNullOrEmpty(ecuVar.EcuGroupId))
 					{
-						flag = database.EvaluateXepRulesById(ecuVar.GroupId, vec, ffmResolver, null);
+						flag = database.EvaluateXepRulesById(ecuVar.EcuGroupId, vec, ffmResolver, null);
 						if (flag)
 						{
 							break;

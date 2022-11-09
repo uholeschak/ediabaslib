@@ -611,13 +611,16 @@ namespace PsdzClient.Core
 						{
 							string ecuVariant = array2[1];
                             PdszDatabase database = ClientContext.GetDatabase(vecInfo);
-                            PdszDatabase.EcuVar ecuVariantByName = database.GetEcuVariantByName(ecuVariant);
-							if (ecuVariantByName != null && database.EvaluateXepRulesById(ecuVariantByName.Id, vecInfo, ffmResolver) && !string.IsNullOrEmpty(ecuVariantByName.GroupId) && database.EvaluateXepRulesById(ecuVariantByName.Id, vecInfo, ffmResolver))
-							{
-								ECU item = CreateECU(num2, array2[2]);
-								vecInfo.ECU.Add(item);
-							}
-						}
+                            if (database != null)
+                            {
+                                PdszDatabase.EcuVar ecuVariantByName = database.GetEcuVariantByName(ecuVariant);
+                                if (ecuVariantByName != null && database.EvaluateXepRulesById(ecuVariantByName.Id, vecInfo, ffmResolver) && !string.IsNullOrEmpty(ecuVariantByName.EcuGroupId) && database.EvaluateXepRulesById(ecuVariantByName.Id, vecInfo, ffmResolver))
+                                {
+                                    ECU item = CreateECU(num2, array2[2]);
+                                    vecInfo.ECU.Add(item);
+                                }
+                            }
+                        }
 					}
 					catch (Exception)
 					{

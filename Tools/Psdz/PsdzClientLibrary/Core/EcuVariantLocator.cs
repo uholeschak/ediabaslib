@@ -79,9 +79,9 @@ namespace PsdzClient.Core
 					return this.parents;
 				}
 				List<ISPELocator> list = new List<ISPELocator>();
-				if (string.IsNullOrEmpty(this.ecuVariant.GroupId))
+				if (string.IsNullOrEmpty(this.ecuVariant.EcuGroupId))
 				{
-					PdszDatabase.EcuGroup ecuGroupById = ClientContext.GetDatabase(this.vecInfo)?.GetEcuGroupById(this.ecuVariant.GroupId);
+					PdszDatabase.EcuGroup ecuGroupById = ClientContext.GetDatabase(this.vecInfo)?.GetEcuGroupById(this.ecuVariant.EcuGroupId);
 					if (ecuGroupById != null)
 					{
 						list.Add(new EcuGroupLocator(ecuGroupById, this.vecInfo, this.ffmResolver));
