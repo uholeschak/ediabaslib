@@ -2118,28 +2118,32 @@ namespace BmwDeepObd
             {
                 //stnVers = "STN1100 v1.2.3";
                 LogString(string.Format("STN Version: {0}", stnVers));
-                Regex stnVerRegEx = new Regex(@"STN1100\s+v(\d+)\.(\d+)\.(\d+)", RegexOptions.IgnoreCase);
+                Regex stnVerRegEx = new Regex(@"STN(\d+)\s+v(\d+)\.(\d+)\.(\d+)", RegexOptions.IgnoreCase);
                 MatchCollection matchesVer = stnVerRegEx.Matches(stnVers);
-                if ((matchesVer.Count == 1) && (matchesVer[0].Groups.Count == 4))
+                if ((matchesVer.Count == 1) && (matchesVer[0].Groups.Count == 5))
                 {
-                    if (!Int32.TryParse(matchesVer[0].Groups[1].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int stnVerH))
+                    if (!Int32.TryParse(matchesVer[0].Groups[1].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int stnType))
+                    {
+                        stnType = -1;
+                    }
+                    if (!Int32.TryParse(matchesVer[0].Groups[2].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int stnVerH))
                     {
                         stnVerH = -1;
                     }
-                    if (!Int32.TryParse(matchesVer[0].Groups[2].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int stnVerM))
+                    if (!Int32.TryParse(matchesVer[0].Groups[3].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int stnVerM))
                     {
                         stnVerM = -1;
                     }
-                    if (!Int32.TryParse(matchesVer[0].Groups[3].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int stnVerL))
+                    if (!Int32.TryParse(matchesVer[0].Groups[4].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int stnVerL))
                     {
                         stnVerL = -1;
                     }
 
-                    if (stnVerL >= 0 && stnVerM >= 0 && stnVerH >= 0)
+                    if (stnType >= 0 && stnVerL >= 0 && stnVerM >= 0 && stnVerH >= 0)
                     {
-                        LogString(string.Format("STN version detected: {0}.{1}.{2}", stnVerH, stnVerM, stnVerL));
-                        int stnVer = stnVerH * 100 + stnVerM;
-                        if (stnVer < 501)
+                        LogString(string.Format("STN{0:0000} version detected: {1}.{2}.{3}", stnType, stnVerH, stnVerM, stnVerL));
+                        int stnVer = stnVerH * 10000 + stnVerM * 100 + stnVerL;
+                        if (stnVer < 50107)
                         {
                             fwUpdate = true;
                         }
