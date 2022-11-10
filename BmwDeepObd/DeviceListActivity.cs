@@ -2146,6 +2146,8 @@ namespace BmwDeepObd
                         int minVer = 0;
                         switch (stnType)
                         {
+                            case 1150:  // OBDLink MX Bluetooth 1
+                            case 1151:  // OBDLink MX Bluetooth 2
                             case 1155:  // OBDLink LX Bluetooth
                                 minVer = 50619;
                                 break;
