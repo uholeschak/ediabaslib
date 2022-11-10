@@ -2116,7 +2116,7 @@ namespace BmwDeepObd
             string stnVers = GetElm327Reponse(bluetoothInStream);
             if (stnVers != null)
             {
-                //stnVers = "STN1100 v1.2.3";
+                //stnVers = "STN2255 v5.7.0";
                 LogString(string.Format("STN Version: {0}", stnVers));
                 Regex stnVerRegEx = new Regex(@"STN(\d+)\s+v(\d+)\.(\d+)\.(\d+)", RegexOptions.IgnoreCase);
                 MatchCollection matchesVer = stnVerRegEx.Matches(stnVers);
@@ -2143,7 +2143,25 @@ namespace BmwDeepObd
                     {
                         LogString(string.Format("STN{0:0000} version detected: {1}.{2}.{3}", stnType, stnVerH, stnVerM, stnVerL));
                         int stnVer = stnVerH * 10000 + stnVerM * 100 + stnVerL;
-                        if (stnVer < 50107)
+                        int minVer = 0;
+                        switch (stnType)
+                        {
+                            case 1155:  // OBDLink LX Bluetooth
+                                minVer = 50619;
+                                break;
+
+                            case 1110:
+                            case 1130:  // OBDLink SX
+                            case 1170:
+                            case 2100:
+                            case 2120:
+                            case 2230:  // OBDLink EX
+                            case 2255:  // OBDLink MX+
+                                minVer = 50701;
+                                break;
+                        }
+
+                        if (stnVer < minVer)
                         {
                             fwUpdate = true;
                         }
