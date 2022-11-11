@@ -77,7 +77,7 @@
             this.textBoxStatus.Name = "textBoxStatus";
             this.textBoxStatus.ReadOnly = true;
             this.textBoxStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxStatus.Size = new System.Drawing.Size(1060, 326);
+            this.textBoxStatus.Size = new System.Drawing.Size(1060, 394);
             this.textBoxStatus.TabIndex = 22;
             this.textBoxStatus.TabStop = false;
             // 
@@ -95,7 +95,7 @@
             // 
             this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonClose.Location = new System.Drawing.Point(997, 558);
+            this.buttonClose.Location = new System.Drawing.Point(997, 626);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(75, 23);
             this.buttonClose.TabIndex = 0;
@@ -107,7 +107,7 @@
             // 
             this.buttonAbort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonAbort.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonAbort.Location = new System.Drawing.Point(916, 558);
+            this.buttonAbort.Location = new System.Drawing.Point(916, 626);
             this.buttonAbort.Name = "buttonAbort";
             this.buttonAbort.Size = new System.Drawing.Size(75, 23);
             this.buttonAbort.TabIndex = 1;
@@ -413,7 +413,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonAbort;
-            this.ClientSize = new System.Drawing.Size(1084, 593);
+            this.ClientSize = new System.Drawing.Size(1084, 661);
             this.Controls.Add(this.labelSerialOem);
             this.Controls.Add(this.comboBoxSerialOem);
             this.Controls.Add(this.buttonUploadSerials);
@@ -448,7 +448,7 @@
             this.Controls.Add(this.textBoxStatus);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(1100, 600);
+            this.MinimumSize = new System.Drawing.Size(1100, 700);
             this.Name = "FormMain";
             this.Text = "Bundle/Apk Uploader";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);

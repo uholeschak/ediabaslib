@@ -105,6 +105,7 @@ namespace ApkUploader
             buttonSetAppInfo.Enabled = enable;
             buttonUploadSerials.Enabled = enable;
             buttonClose.Enabled = enable;
+            comboBoxSerialOem.Enabled = enable;
             comboBoxTrackAssign.Enabled = enable;
             comboBoxTrackUnassign.Enabled = enable;
             checkBoxUpdateName.Enabled = enable;
