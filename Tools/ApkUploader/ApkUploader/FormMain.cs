@@ -27,7 +27,7 @@ namespace ApkUploader
         private const string PackageName = @"de.holeschak.bmw_deep_obd";
         private const string ExpansionKeep = @"*";
         private static readonly string[] TracksEdit = { "alpha", "beta", "production", "internal" };
-        private static readonly string[] SerialsOem = { "DeepOBD", "DeepOBDIBus" };
+        private static readonly string[] SerialsOem = { "DeepOBD", "DeepOBDIbus" };
         private volatile Thread _serviceThread;
         private readonly string _apkPath;
         private CancellationTokenSource _cts;
