@@ -366,7 +366,7 @@
             // buttonSelectSerialFile
             // 
             this.buttonSelectSerialFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonSelectSerialFile.Location = new System.Drawing.Point(1042, 197);
+            this.buttonSelectSerialFile.Location = new System.Drawing.Point(1042, 198);
             this.buttonSelectSerialFile.Name = "buttonSelectSerialFile";
             this.buttonSelectSerialFile.Size = new System.Drawing.Size(30, 23);
             this.buttonSelectSerialFile.TabIndex = 21;
