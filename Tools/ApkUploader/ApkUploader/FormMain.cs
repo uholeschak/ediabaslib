@@ -615,6 +615,9 @@ namespace ApkUploader
                     return false;
                 }
 
+                sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "Serial OEM: {0}", serialInfos[0].Oem));
+                UpdateStatus(sb.ToString());
+
                 if (!ReadCredentialsFile("serial_credentials.xml", out string url, out string userName, out string password))
                 {
                     sb.AppendLine("Reading serial credentials failed!");
@@ -1669,7 +1672,11 @@ namespace ApkUploader
             {
                 comboBoxSerialOem.Items.Add(oem);
             }
-            comboBoxSerialOem.SelectedIndex = 0;
+            comboBoxSerialOem.SelectedItem = Properties.Settings.Default.SerialOem;
+            if (comboBoxSerialOem.SelectedIndex < 0)
+            {
+                comboBoxSerialOem.SelectedIndex = 0;
+            }
             comboBoxSerialOem.EndUpdate();
         }
 
@@ -1890,6 +1897,7 @@ namespace ApkUploader
                 Properties.Settings.Default.SerialFileName = textBoxSerialFileName.Text;
                 Properties.Settings.Default.TrackAssign = comboBoxTrackAssign.Text;
                 Properties.Settings.Default.TrackUnassign = comboBoxTrackUnassign.Text;
+                Properties.Settings.Default.SerialOem = comboBoxSerialOem.Text;
                 Properties.Settings.Default.Save();
             }
             catch (Exception)
