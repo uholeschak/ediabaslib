@@ -27,6 +27,7 @@ namespace ApkUploader
         private const string PackageName = @"de.holeschak.bmw_deep_obd";
         private const string ExpansionKeep = @"*";
         private static readonly string[] TracksEdit = { "alpha", "beta", "production", "internal" };
+        private static readonly string[] SerialsOem = { "DeepOBD", "DeepOBDIBus" };
         private volatile Thread _serviceThread;
         private readonly string _apkPath;
         private CancellationTokenSource _cts;
@@ -1661,6 +1662,14 @@ namespace ApkUploader
                 comboBoxTrackUnassign.SelectedIndex = 0;
             }
             comboBoxTrackUnassign.EndUpdate();
+
+            comboBoxSerialOem.BeginUpdate();
+            foreach (string oem in SerialsOem)
+            {
+                comboBoxSerialOem.Items.Add(oem);
+            }
+            comboBoxSerialOem.SelectedIndex = 0;
+            comboBoxSerialOem.EndUpdate();
         }
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
@@ -1789,7 +1798,14 @@ namespace ApkUploader
 
         private void buttonUploadSerials_Click(object sender, EventArgs e)
         {
-            List<SerialInfo> serialInfos = ReadSerialInfo(textBoxSerialFileName.Text, "DeepOBD", out string message);
+            string oem = comboBoxSerialOem.Text;
+            if (string.IsNullOrEmpty(oem))
+            {
+                UpdateStatus("No OEM selected!");
+                return;
+            }
+
+            List<SerialInfo> serialInfos = ReadSerialInfo(textBoxSerialFileName.Text, oem, out string message);
             if (!string.IsNullOrEmpty(message))
             {
                 UpdateStatus(message);
