@@ -1264,19 +1264,45 @@ namespace BmwDeepObd
 
                         case AdapterType.StnFwUpdate:
                         {
-                            new AlertDialog.Builder(this)
+                            bool yesSelected = false;
+                            AlertDialog alertDialog = new AlertDialog.Builder(this)
                                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                 {
                                     _activityCommon.StartApp(ObdLinkPackageName, true);
+                                    yesSelected = true;
                                 })
                                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                                 {
-                                    ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.Elm327Tag, deviceName);
                                 })
                                 .SetCancelable(true)
                                 .SetMessage(Resource.String.adapter_stn_firmware)
                                 .SetTitle(Resource.String.alert_title_warning)
                                 .Show();
+                            if (alertDialog != null)
+                            {
+                                alertDialog.DismissEvent += (sender, args) =>
+                                {
+                                    if (_activityCommon == null)
+                                    {
+                                        return;
+                                    }
+
+                                    if (yesSelected)
+                                    {
+                                        return;
+                                    }
+
+                                    _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(), GetType(), (o, eventArgs) =>
+                                    {
+                                        if (_activityCommon == null)
+                                        {
+                                            return;
+                                        }
+
+                                        ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.Elm327Tag, deviceName);
+                                    });
+                                };
+                            }
                             break;
                         }
 
@@ -1357,6 +1383,11 @@ namespace BmwDeepObd
 
                                     _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(), GetType(), (o, eventArgs) =>
                                     {
+                                        if (_activityCommon == null)
+                                        {
+                                            return;
+                                        }
+
                                         if (yesSelected)
                                         {
                                             ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.Elm327Tag, deviceName);
