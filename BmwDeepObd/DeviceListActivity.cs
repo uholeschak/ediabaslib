@@ -2175,6 +2175,7 @@ namespace BmwDeepObd
                         LogString(string.Format("STN{0:0000} version detected: {1}.{2}.{3}", stnType, stnVerH, stnVerM, stnVerL));
                         int stnVer = stnVerH * 10000 + stnVerM * 100 + stnVerL;
                         int minVer = 0;
+                        // ToDo: Update versions from: https://www.scantool.net/scantool/downloads/updates/
                         switch (stnType)
                         {
                             case 1000:  // OBDLink CI
