@@ -457,6 +457,10 @@ namespace CarSimulator
                     adapterName = "SPP-UART 2";
                     break;
 
+                case 8:
+                    adapterName = "Default 115200";
+                    break;
+
                 case 16:
                     adapterName = "ESP8622";
                     break;
