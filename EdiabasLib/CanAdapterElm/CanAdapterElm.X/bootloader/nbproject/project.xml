@@ -44,6 +44,10 @@
                     <name>spp_uart2</name>
                     <type>2</type>
                 </confElem>
+                <confElem>
+                    <name>def115200</name>
+                    <type>2</type>
+                </confElem>
             </confList>
             <formatting>
                 <project-formatting-style>false</project-formatting-style>

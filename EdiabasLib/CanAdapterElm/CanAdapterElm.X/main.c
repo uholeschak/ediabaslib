@@ -140,6 +140,9 @@
 // ELM327 BT v1.5 Mini YiChip YC1021
 // has LED_OBD_TX = pa4, LED_OBD_RX = pa6, LED_RS_TX = pa7, LED_RS_RX = pa5
 // with reprogrammed YC1021 Eeprom 115200 @ 16MHz without problems
+#elif ADAPTER_TYPE == 0x08
+// Standard fimrware with baud rate 115200 (e.g. YC1021 with external Bluetooth board)
+#define REQUIRES_BT_REC_TIMOUT
 #elif ADAPTER_TYPE == 0x10
 // ELM327 Wifi v1.5 Mini ESP8266ex
 // has LED_OBD_RX and LED_RS_TX swapped
