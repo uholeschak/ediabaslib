@@ -45,6 +45,7 @@ using Mono.CSharp;
 
 [assembly: Android.App.UsesFeature("android.hardware.bluetooth", Required = false)]
 [assembly: Android.App.UsesFeature("android.hardware.bluetooth_le", Required = false)]
+[assembly: Android.App.UsesFeature("android.software.companion_device_setup")]
 
 namespace BmwDeepObd
 {
