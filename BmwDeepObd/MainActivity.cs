@@ -6438,6 +6438,11 @@ namespace BmwDeepObd
         // ReSharper disable once UnusedParameter.Local
         private void DownloadEcuFiles(bool extraMessage = false)
         {
+            if (_downloadProgress != null)
+            {
+                return;
+            }
+
             string ecuPath = Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir);
             try
             {
@@ -6497,6 +6502,11 @@ namespace BmwDeepObd
             if (!_activityActive || !_storageAccessGranted || _downloadEcuAlertDialog != null)
             {
                 return true;
+            }
+
+            if (_downloadProgress != null)
+            {
+                return false;
             }
 
             if (!_instanceData.StorageRequirementsAccepted)
