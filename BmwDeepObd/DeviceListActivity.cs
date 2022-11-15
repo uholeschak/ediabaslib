@@ -70,7 +70,6 @@ namespace BmwDeepObd
         enum BtOperation
         {
             SelectAdapter,          // select the adapter
-            SelectAdapterSecure,    // select the adapter secure
             ConnectObd,             // connect device as OBD
             ConnectPhone,           // connect device as phone
             DisconnectPhone,        // disconnect phone
@@ -928,8 +927,7 @@ namespace BmwDeepObd
         /// </summary>
         /// <param name="deviceAddress">Device Bluetooth address</param>
         /// <param name="deviceName">Device Bluetooth name</param>
-        /// <param name="forceSecure">Force secure connection</param>
-        private void DetectAdapter(string deviceAddress, string deviceName, bool forceSecure = false)
+        private void DetectAdapter(string deviceAddress, string deviceName)
         {
             if (string.IsNullOrEmpty(deviceAddress) || string.IsNullOrEmpty(deviceName))
             {
@@ -972,7 +970,7 @@ namespace BmwDeepObd
                         adapterType = AdapterType.ConnectionFailed;
                         if (!mtcBtService && _btLeGattSpp != null)
                         {
-                            if (device.Type == BluetoothDeviceType.Le || (device.Type == BluetoothDeviceType.Dual && device.BondState == Bond.None && !forceSecure))
+                            if (device.Type == BluetoothDeviceType.Le || (device.Type == BluetoothDeviceType.Dual && device.BondState == Bond.None))
                             {
                                 try
                                 {
@@ -997,27 +995,10 @@ namespace BmwDeepObd
                         {
                             try
                             {
-                                if (forceSecure || mtcBtService || device.BondState == Bond.Bonded)
+                                if (mtcBtService || device.BondState == Bond.Bonded)
                                 {
-                                    if (forceSecure && device.BondState != Bond.Bonded)
-                                    {
-                                        LogString("Device bonding required");
-                                        if (device.CreateBond())
-                                        {
-                                            LogString("Bonding started");
-                                        }
-                                        else
-                                        {
-                                            LogString("Bonding start failed");
-                                        }
-
-                                        adapterType = AdapterType.Unknown;
-                                    }
-                                    else
-                                    {
-                                        LogString("Connect with CreateRfcommSocketToServiceRecord");
-                                        bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid);
-                                    }
+                                    LogString("Connect with CreateRfcommSocketToServiceRecord");
+                                    bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid);
                                 }
                                 else
                                 {
@@ -2430,14 +2411,15 @@ namespace BmwDeepObd
         /// </summary>
         private void SelectBtDeviceAction(string name, string address, bool paired)
         {
-            bool showMenu = !paired;
+            bool leDevice = false;
+            BluetoothDevice device = null;
 
             try
             {
-                BluetoothDevice device = _btAdapter.GetRemoteDevice(address.ToUpperInvariant());
+                device = _btAdapter.GetRemoteDevice(address.ToUpperInvariant());
                 if (device != null && device.Type == BluetoothDeviceType.Le)
                 {
-                    showMenu = false;
+                    leDevice = true;
                 }
             }
             catch (Exception)
@@ -2445,19 +2427,27 @@ namespace BmwDeepObd
                 // ignored
             }
 
-            if (!showMenu)
-            {
-                DetectAdapter(address, name);
-                return;
-            }
-
             List<BtOperation> operationList = new List<BtOperation>();
             List<string> itemList = new List<string>();
-            itemList.Add(GetString(Resource.String.bt_device_select_secure));
-            operationList.Add(BtOperation.SelectAdapterSecure);
+            if (paired)
+            {
+                itemList.Add(GetString(Resource.String.bt_device_select));
+                operationList.Add(BtOperation.SelectAdapter);
 
-            itemList.Add(GetString(Resource.String.bt_device_select));
-            operationList.Add(BtOperation.SelectAdapter);
+                itemList.Add(GetString(Resource.String.bt_device_delete));
+                operationList.Add(BtOperation.DeleteDevice);
+            }
+            else
+            {
+                if (!leDevice)
+                {
+                    itemList.Add(GetString(Resource.String.bt_device_connect_obd));
+                    operationList.Add(BtOperation.ConnectObd);
+                }
+
+                itemList.Add(GetString(Resource.String.bt_device_select));
+                operationList.Add(BtOperation.SelectAdapter);
+            }
 
             Java.Lang.ICharSequence[] items = new Java.Lang.ICharSequence[itemList.Count];
             for (int i = 0; i < itemList.Count; i++)
@@ -2477,8 +2467,36 @@ namespace BmwDeepObd
                 {
                     switch (operationList[args.Which])
                     {
-                        case BtOperation.SelectAdapterSecure:
-                            DetectAdapter(address, name, true);
+                        case BtOperation.ConnectObd:
+                            if (device != null)
+                            {
+                                try
+                                {
+                                    device.CreateBond();
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
+                            }
+                            break;
+
+                        case BtOperation.DeleteDevice:
+                            if (device != null)
+                            {
+                                try
+                                {
+                                    Java.Lang.Reflect.Method removeBond = device.Class.GetMethod("removeBond");
+                                    if (removeBond != null)
+                                    {
+                                        removeBond.Invoke(device);
+                                    }
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
+                            }
                             break;
 
                         case BtOperation.SelectAdapter:
