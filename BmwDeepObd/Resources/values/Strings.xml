@@ -253,7 +253,8 @@
   <string name="bt_device_connected">(Connected)</string>
   <string name="bt_device_menu_tite">Choose an operation for this device</string>
   <string name="bt_device_select">Select OBD adapter</string>
-  <string name="bt_device_select_secure">Select OBD adapter (secure connection)</string>
+  <string name="bt_device_pair">Pair device</string>
+  <string name="bt_device_unpair">Unpair device</string>
   <string name="bt_device_connect_obd">Connect as OBD adapter</string>
   <string name="bt_device_connect_phone">Connect as phone</string>
   <string name="bt_device_disconnect_phone">Disconnect phone</string>

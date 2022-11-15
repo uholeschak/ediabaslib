@@ -277,7 +277,8 @@
   <string name="bt_device_connected">(Verbunden)</string>
   <string name="bt_device_menu_tite">Wählen Sie einen Vorgang für dieses Gerät</string>
   <string name="bt_device_select">OBD Adapter auswählen</string>
-  <string name="bt_device_select_secure">OBD Adapter auswählen (sichere Verbindung)</string>
+  <string name="bt_device_pair">Gerät koppeln</string>
+  <string name="bt_device_unpair">Gerät entkoppeln</string>
   <string name="bt_device_connect_obd">Als OBD Adapter verbinden</string>
   <string name="bt_device_connect_phone">Als Telefon verbinden</string>
   <string name="bt_device_disconnect_phone">Telefon trennen</string>

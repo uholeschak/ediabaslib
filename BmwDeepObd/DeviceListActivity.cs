@@ -70,6 +70,8 @@ namespace BmwDeepObd
         enum BtOperation
         {
             SelectAdapter,          // select the adapter
+            PairDevice,             // pair device
+            UnpairDevice,           // unpair device
             ConnectObd,             // connect device as OBD
             ConnectPhone,           // connect device as phone
             DisconnectPhone,        // disconnect phone
@@ -2434,19 +2436,19 @@ namespace BmwDeepObd
                 itemList.Add(GetString(Resource.String.bt_device_select));
                 operationList.Add(BtOperation.SelectAdapter);
 
-                itemList.Add(GetString(Resource.String.bt_device_delete));
-                operationList.Add(BtOperation.DeleteDevice);
+                itemList.Add(GetString(Resource.String.bt_device_unpair));
+                operationList.Add(BtOperation.UnpairDevice);
             }
             else
             {
+                itemList.Add(GetString(Resource.String.bt_device_connect_obd));
+                operationList.Add(BtOperation.SelectAdapter);
+
                 if (!leDevice)
                 {
-                    itemList.Add(GetString(Resource.String.bt_device_connect_obd));
-                    operationList.Add(BtOperation.ConnectObd);
+                    itemList.Add(GetString(Resource.String.bt_device_pair));
+                    operationList.Add(BtOperation.PairDevice);
                 }
-
-                itemList.Add(GetString(Resource.String.bt_device_select));
-                operationList.Add(BtOperation.SelectAdapter);
             }
 
             Java.Lang.ICharSequence[] items = new Java.Lang.ICharSequence[itemList.Count];
@@ -2467,7 +2469,7 @@ namespace BmwDeepObd
                 {
                     switch (operationList[args.Which])
                     {
-                        case BtOperation.ConnectObd:
+                        case BtOperation.PairDevice:
                             if (device != null)
                             {
                                 try
@@ -2481,7 +2483,7 @@ namespace BmwDeepObd
                             }
                             break;
 
-                        case BtOperation.DeleteDevice:
+                        case BtOperation.UnpairDevice:
                             if (device != null)
                             {
                                 try
