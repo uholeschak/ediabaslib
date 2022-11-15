@@ -201,10 +201,8 @@ namespace EdiabasLib
                     if (_bluetoothInStream == null || _bluetoothOutStream == null)
                     {
                         // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                        bool bonding = false;
                         if (mtcBtService || device.BondState == Bond.Bonded)
                         {
-                            bonding = true;
                             _bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid);
                         }
                         else
@@ -214,10 +212,6 @@ namespace EdiabasLib
 
                         try
                         {
-                            if (bonding)
-                            {
-                                device.CreateBond();
-                            }
                             _bluetoothSocket?.Connect();
                         }
                         catch (Exception)
