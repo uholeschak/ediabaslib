@@ -997,12 +997,11 @@ namespace BmwDeepObd
                         {
                             try
                             {
-                                bool bonding = false;
                                 if (forceSecure || mtcBtService || device.BondState == Bond.Bonded)
                                 {
-                                    bonding = true;
                                     LogString("Connect with CreateRfcommSocketToServiceRecord");
                                     bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid);
+                                    device.CreateBond();
                                 }
                                 else
                                 {
@@ -1014,10 +1013,6 @@ namespace BmwDeepObd
                                 {
                                     try
                                     {
-                                        if (bonding)
-                                        {
-                                            device.CreateBond();
-                                        }
                                         bluetoothSocket.Connect();
                                     }
                                     catch (Exception)
