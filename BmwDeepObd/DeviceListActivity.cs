@@ -997,12 +997,27 @@ namespace BmwDeepObd
                         {
                             try
                             {
-                                bool bonding = false;
                                 if (forceSecure || mtcBtService || device.BondState == Bond.Bonded)
                                 {
-                                    bonding = true;
-                                    LogString("Connect with CreateRfcommSocketToServiceRecord");
-                                    bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid);
+                                    if (forceSecure && device.BondState != Bond.Bonded)
+                                    {
+                                        LogString("Device bonding required");
+                                        if (device.CreateBond())
+                                        {
+                                            LogString("Bonding started");
+                                        }
+                                        else
+                                        {
+                                            LogString("Bonding start failed");
+                                        }
+
+                                        adapterType = AdapterType.Unknown;
+                                    }
+                                    else
+                                    {
+                                        LogString("Connect with CreateRfcommSocketToServiceRecord");
+                                        bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid);
+                                    }
                                 }
                                 else
                                 {
@@ -1014,10 +1029,6 @@ namespace BmwDeepObd
                                 {
                                     try
                                     {
-                                        if (bonding)
-                                        {
-                                            device.CreateBond();
-                                        }
                                         bluetoothSocket.Connect();
                                     }
                                     catch (Exception)
@@ -2736,20 +2747,39 @@ namespace BmwDeepObd
                             BluetoothDevice device = intent.GetParcelableExtraType<BluetoothDevice>(BluetoothDevice.ExtraDevice);
                             if (device != null)
                             {
+                                bool changed = false;
                                 if (device.BondState == Bond.Bonded)
                                 {
                                     for (int i = 0; i < _chat._newDevicesArrayAdapter.Count; i++)
                                     {
                                         string item = _chat._newDevicesArrayAdapter.GetItem(i);
-                                        if (ExtractDeviceInfo(_chat._newDevicesArrayAdapter.GetItem(i), out string _, out string address))
+                                        if (ExtractDeviceInfo(item, out string _, out string address))
                                         {
                                             if (string.Compare(address, device.Address, StringComparison.OrdinalIgnoreCase) == 0)
                                             {
                                                 _chat._newDevicesArrayAdapter.Remove(item);
+                                                changed = true;
                                             }
                                         }
                                     }
+                                }
+                                else if (device.BondState == Bond.None)
+                                {
+                                    for (int i = 0; i < _chat._pairedDevicesArrayAdapter.Count; i++)
+                                    {
+                                        string item = _chat._pairedDevicesArrayAdapter.GetItem(i);
+                                        if (ExtractDeviceInfo(item, out string _, out string address))
+                                        {
+                                            if (string.Compare(address, device.Address, StringComparison.OrdinalIgnoreCase) == 0)
+                                            {
+                                                changed = true;
+                                            }
+                                        }
+                                    }
+                                }
 
+                                if (changed)
+                                {
                                     _chat.UpdatePairedDevices();
                                 }
                             }
