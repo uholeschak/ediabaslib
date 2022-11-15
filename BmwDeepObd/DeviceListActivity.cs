@@ -2441,7 +2441,7 @@ namespace BmwDeepObd
             }
             else
             {
-                itemList.Add(GetString(Resource.String.bt_device_connect_obd));
+                itemList.Add(GetString(Resource.String.bt_device_select));
                 operationList.Add(BtOperation.SelectAdapter);
 
                 if (!leDevice)
