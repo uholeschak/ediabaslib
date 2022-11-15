@@ -204,7 +204,6 @@ namespace EdiabasLib
                         if (mtcBtService || device.BondState == Bond.Bonded)
                         {
                             _bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid);
-                            device.CreateBond();
                         }
                         else
                         {
