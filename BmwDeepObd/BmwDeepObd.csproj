@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="packages\Xamarin.Build.Download.0.11.3\build\Xamarin.Build.Download.props" Condition="Exists('packages\Xamarin.Build.Download.0.11.3\build\Xamarin.Build.Download.props')" />
+  <Import Project="packages\Xamarin.Build.Download.0.11.4\build\Xamarin.Build.Download.props" Condition="Exists('packages\Xamarin.Build.Download.0.11.4\build\Xamarin.Build.Download.props')" />
   <Import Project="packages\Xamarin.AndroidX.Migration.1.0.10\build\monoandroid120\Xamarin.AndroidX.Migration.props" Condition="Exists('packages\Xamarin.AndroidX.Migration.1.0.10\build\monoandroid120\Xamarin.AndroidX.Migration.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -855,8 +855,6 @@
     <Error Condition="!Exists('packages\Xamarin.Android.Arch.Core.Common.1.1.1.3\build\monoandroid90\Xamarin.Android.Arch.Core.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Android.Arch.Core.Common.1.1.1.3\build\monoandroid90\Xamarin.Android.Arch.Core.Common.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.Migration.1.0.10\build\monoandroid120\Xamarin.AndroidX.Migration.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.Migration.1.0.10\build\monoandroid120\Xamarin.AndroidX.Migration.props'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.Migration.1.0.10\build\monoandroid120\Xamarin.AndroidX.Migration.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.Migration.1.0.10\build\monoandroid120\Xamarin.AndroidX.Migration.targets'))" />
-    <Error Condition="!Exists('packages\Xamarin.Build.Download.0.11.3\build\Xamarin.Build.Download.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Build.Download.0.11.3\build\Xamarin.Build.Download.props'))" />
-    <Error Condition="!Exists('packages\Xamarin.Build.Download.0.11.3\build\Xamarin.Build.Download.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Build.Download.0.11.3\build\Xamarin.Build.Download.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.ConstraintLayout.Core.1.0.4.2\build\monoandroid12.0\Xamarin.AndroidX.ConstraintLayout.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.ConstraintLayout.Core.1.0.4.2\build\monoandroid12.0\Xamarin.AndroidX.ConstraintLayout.Core.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.MultiDex.2.0.1.15\build\monoandroid12.0\Xamarin.AndroidX.MultiDex.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.MultiDex.2.0.1.15\build\monoandroid12.0\Xamarin.AndroidX.MultiDex.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.10\build\monoandroid12.0\Xamarin.Google.Guava.ListenableFuture.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.10\build\monoandroid12.0\Xamarin.Google.Guava.ListenableFuture.targets'))" />
@@ -913,6 +911,8 @@
     <Error Condition="!Exists('packages\Xamarin.Google.Android.Material.1.7.0.1\build\monoandroid12.0\Xamarin.Google.Android.Material.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Google.Android.Material.1.7.0.1\build\monoandroid12.0\Xamarin.Google.Android.Material.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.Activity.1.6.1\build\monoandroid12.0\Xamarin.AndroidX.Activity.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.Activity.1.6.1\build\monoandroid12.0\Xamarin.AndroidX.Activity.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.Fragment.1.5.4\build\monoandroid12.0\Xamarin.AndroidX.Fragment.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.Fragment.1.5.4\build\monoandroid12.0\Xamarin.AndroidX.Fragment.targets'))" />
+    <Error Condition="!Exists('packages\Xamarin.Build.Download.0.11.4\build\Xamarin.Build.Download.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Build.Download.0.11.4\build\Xamarin.Build.Download.props'))" />
+    <Error Condition="!Exists('packages\Xamarin.Build.Download.0.11.4\build\Xamarin.Build.Download.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Build.Download.0.11.4\build\Xamarin.Build.Download.targets'))" />
   </Target>
   <PropertyGroup>
     <PostBuildEvent>copy /y "$(ProjectDir)Xml\BmwDeepObd.xsd" "$(ProjectDir)Xml\E61R\"</PostBuildEvent>
@@ -920,7 +920,6 @@
   <Import Project="packages\Xamarin.Android.Support.Annotations.28.0.0.3\build\monoandroid90\Xamarin.Android.Support.Annotations.targets" Condition="Exists('packages\Xamarin.Android.Support.Annotations.28.0.0.3\build\monoandroid90\Xamarin.Android.Support.Annotations.targets')" />
   <Import Project="packages\Xamarin.Android.Arch.Core.Common.1.1.1.3\build\monoandroid90\Xamarin.Android.Arch.Core.Common.targets" Condition="Exists('packages\Xamarin.Android.Arch.Core.Common.1.1.1.3\build\monoandroid90\Xamarin.Android.Arch.Core.Common.targets')" />
   <Import Project="packages\Xamarin.AndroidX.Migration.1.0.10\build\monoandroid120\Xamarin.AndroidX.Migration.targets" Condition="Exists('packages\Xamarin.AndroidX.Migration.1.0.10\build\monoandroid120\Xamarin.AndroidX.Migration.targets')" />
-  <Import Project="packages\Xamarin.Build.Download.0.11.3\build\Xamarin.Build.Download.targets" Condition="Exists('packages\Xamarin.Build.Download.0.11.3\build\Xamarin.Build.Download.targets')" />
   <Import Project="packages\Xamarin.AndroidX.ConstraintLayout.Core.1.0.4.2\build\monoandroid12.0\Xamarin.AndroidX.ConstraintLayout.Core.targets" Condition="Exists('packages\Xamarin.AndroidX.ConstraintLayout.Core.1.0.4.2\build\monoandroid12.0\Xamarin.AndroidX.ConstraintLayout.Core.targets')" />
   <Import Project="packages\Xamarin.AndroidX.MultiDex.2.0.1.15\build\monoandroid12.0\Xamarin.AndroidX.MultiDex.targets" Condition="Exists('packages\Xamarin.AndroidX.MultiDex.2.0.1.15\build\monoandroid12.0\Xamarin.AndroidX.MultiDex.targets')" />
   <Import Project="packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.10\build\monoandroid12.0\Xamarin.Google.Guava.ListenableFuture.targets" Condition="Exists('packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.10\build\monoandroid12.0\Xamarin.Google.Guava.ListenableFuture.targets')" />
@@ -977,4 +976,5 @@
   <Import Project="packages\Xamarin.Google.Android.Material.1.7.0.1\build\monoandroid12.0\Xamarin.Google.Android.Material.targets" Condition="Exists('packages\Xamarin.Google.Android.Material.1.7.0.1\build\monoandroid12.0\Xamarin.Google.Android.Material.targets')" />
   <Import Project="packages\Xamarin.AndroidX.Activity.1.6.1\build\monoandroid12.0\Xamarin.AndroidX.Activity.targets" Condition="Exists('packages\Xamarin.AndroidX.Activity.1.6.1\build\monoandroid12.0\Xamarin.AndroidX.Activity.targets')" />
   <Import Project="packages\Xamarin.AndroidX.Fragment.1.5.4\build\monoandroid12.0\Xamarin.AndroidX.Fragment.targets" Condition="Exists('packages\Xamarin.AndroidX.Fragment.1.5.4\build\monoandroid12.0\Xamarin.AndroidX.Fragment.targets')" />
+  <Import Project="packages\Xamarin.Build.Download.0.11.4\build\Xamarin.Build.Download.targets" Condition="Exists('packages\Xamarin.Build.Download.0.11.4\build\Xamarin.Build.Download.targets')" />
 </Project>
