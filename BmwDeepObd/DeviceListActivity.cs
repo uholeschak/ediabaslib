@@ -2707,7 +2707,7 @@ namespace BmwDeepObd
                                     for (int i = 0; i < _chat._newDevicesArrayAdapter.Count; i++)
                                     {
                                         string item = _chat._newDevicesArrayAdapter.GetItem(i);
-                                        if (!ExtractDeviceInfo(_chat._newDevicesArrayAdapter.GetItem(i), out string _, out string address))
+                                        if (!ExtractDeviceInfo(item, out string _, out string address))
                                         {
                                             return;
                                         }
