@@ -2604,7 +2604,7 @@ namespace BmwDeepObd
 
         private void GetSettings()
         {
-            PackageInfo packageInfo = PackageManager?.GetPackageInfo(PackageName ?? string.Empty, 0);
+            PackageInfo packageInfo = _activityCommon.GetPackageInfo();
             _currentVersionCode = packageInfo != null ? PackageInfoCompat.GetLongVersionCode(packageInfo) : 0;
             string assetFileName = ExpansionDownloaderActivity.GetAssetFilename();
             if (!string.IsNullOrEmpty(assetFileName))
