@@ -5157,7 +5157,20 @@ namespace BmwDeepObd
         {
             try
             {
-                return _packageManager?.GetPackageInfo(_context.PackageName, 0);
+                string packageName = _context.PackageName;
+                if (string.IsNullOrEmpty(packageName))
+                {
+                    return null;
+                }
+
+                if (Build.VERSION.SdkInt < BuildVersionCodes.Tiramisu)
+                {
+#pragma warning disable CS0618
+                    return _packageManager?.GetPackageInfo(packageName, 0);
+#pragma warning restore CS0618
+                }
+
+                return _packageManager.GetPackageInfo(packageName, PackageManager.PackageInfoFlags.Of(0));
             }
             catch (Exception)
             {
