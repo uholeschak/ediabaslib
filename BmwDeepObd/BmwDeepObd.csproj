@@ -445,6 +445,9 @@
     <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\ELM327V15.X\dist\def115200\production\ELM327V15.X.production.hex">
       <Link>HexFiles\Type8\ELM327V15.X.production.hex</Link>
     </EmbeddedResource>
+    <None Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\ELM327V15.X\dist\hc04\production\ELM327V15.X.production.hex">
+      <Link>HexFiles\Type4\ELM327V15.X.production.hex</Link>
+    </None>
     <None Include=".editorconfig" />
     <None Include="Assets\Ecu.bin" />
     <None Include="packages.config" />
