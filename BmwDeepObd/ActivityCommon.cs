@@ -5221,6 +5221,35 @@ namespace BmwDeepObd
             return GetInstallerPackageName(_packageManager, _context?.PackageName);
         }
 
+        public static IList<PackageInfo> GetInstalledPackages(PackageManager packageManager, PackageInfoFlags infoFlags = 0)
+        {
+            try
+            {
+                if (packageManager == null)
+                {
+                    return null;
+                }
+
+                if (Build.VERSION.SdkInt < BuildVersionCodes.Tiramisu)
+                {
+#pragma warning disable CS0618
+                    return packageManager.GetInstalledPackages(infoFlags);
+#pragma warning restore CS0618
+                }
+
+                return packageManager.GetInstalledPackages(PackageManager.PackageInfoFlags.Of((int)infoFlags));
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public IList<PackageInfo> GetInstalledPackages(PackageInfoFlags infoFlags = 0)
+        {
+            return GetInstalledPackages(_packageManager, infoFlags);
+        }
+
         public string[] RetrievePermissions()
         {
             try
@@ -5769,7 +5798,7 @@ namespace BmwDeepObd
                     try
                     {
                         StringBuilder sbPackages = new StringBuilder();
-                        IList<PackageInfo> installedPackages = _packageManager?.GetInstalledPackages(PackageInfoFlags.MatchSystemOnly);
+                        IList<PackageInfo> installedPackages = GetInstalledPackages(PackageInfoFlags.MatchSystemOnly);
                         if (installedPackages != null)
                         {
                             foreach (PackageInfo packageInfoLocal in installedPackages)
