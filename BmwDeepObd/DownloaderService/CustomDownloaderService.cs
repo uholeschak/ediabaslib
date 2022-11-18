@@ -867,7 +867,7 @@ namespace BmwDeepObd
             base.OnCreate();
             try
             {
-                this.packageInfo = this.PackageManager?.GetPackageInfo(this.PackageName ?? string.Empty, 0);
+                this.packageInfo = ActivityCommon.GetPackageInfo(this.PackageManager, this.PackageName);
                 string applicationLabel = this.PackageManager?.GetApplicationLabel(this.ApplicationInfo);
 #if false
                 IntPtr downloaderNotification = Android.Runtime.JNIEnv.CreateInstance(typeof(DownloadNotification),

@@ -558,7 +558,7 @@ namespace BmwDeepObd
         public static string GetObbFilename(Context context)
         {
             Regex regex = new Regex(@"^main\.([0-9]+)\." + context.PackageName + @"\.obb$", RegexOptions.IgnoreCase);
-            PackageInfo packageInfo = context.PackageManager?.GetPackageInfo(context.PackageName ?? string.Empty, 0);
+            PackageInfo packageInfo = ActivityCommon.GetPackageInfo(context.PackageManager, context.PackageName);
             long packageVersion = -1;
             if (packageInfo != null)
             {
