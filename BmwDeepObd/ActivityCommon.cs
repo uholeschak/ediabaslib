@@ -5153,7 +5153,7 @@ namespace BmwDeepObd
             return File.Exists(traceFile);
         }
 
-        public PackageInfo GetPackageInfo()
+        public PackageInfo GetPackageInfo(PackageInfoFlags infoFlags = 0)
         {
             try
             {
@@ -5166,11 +5166,11 @@ namespace BmwDeepObd
                 if (Build.VERSION.SdkInt < BuildVersionCodes.Tiramisu)
                 {
 #pragma warning disable CS0618
-                    return _packageManager?.GetPackageInfo(packageName, 0);
+                    return _packageManager?.GetPackageInfo(packageName, infoFlags);
 #pragma warning restore CS0618
                 }
 
-                return _packageManager.GetPackageInfo(packageName, PackageManager.PackageInfoFlags.Of(0));
+                return _packageManager.GetPackageInfo(packageName, PackageManager.PackageInfoFlags.Of((int) infoFlags));
             }
             catch (Exception)
             {
@@ -5182,7 +5182,7 @@ namespace BmwDeepObd
         {
             try
             {
-                PackageInfo packageInfo = _packageManager?.GetPackageInfo(_context.PackageName, PackageInfoFlags.Permissions);
+                PackageInfo packageInfo = GetPackageInfo(PackageInfoFlags.Permissions);
                 if (packageInfo?.RequestedPermissions != null)
                 {
                     return packageInfo.RequestedPermissions.ToArray();
@@ -5203,12 +5203,12 @@ namespace BmwDeepObd
                 Signature[] signatures;
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.P)
                 {
-                    PackageInfo packageInfo = _packageManager?.GetPackageInfo(_context.PackageName, PackageInfoFlags.SigningCertificates);
+                    PackageInfo packageInfo = GetPackageInfo(PackageInfoFlags.SigningCertificates);
                     signatures = packageInfo?.SigningInfo?.GetApkContentsSigners();
                 }
                 else
                 {
-                    PackageInfo packageInfo = _packageManager?.GetPackageInfo(_context.PackageName, PackageInfoFlags.Signatures);
+                    PackageInfo packageInfo = GetPackageInfo(PackageInfoFlags.Signatures);
 #pragma warning disable 618
                     signatures = packageInfo?.Signatures?.ToArray();
 #pragma warning restore 618

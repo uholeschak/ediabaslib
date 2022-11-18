@@ -195,7 +195,7 @@ namespace BmwDeepObd
                     string userAgent = webSettings.UserAgentString;
                     if (!string.IsNullOrEmpty(userAgent))
                     {
-                        PackageInfo packageInfo = PackageManager?.GetPackageInfo(PackageName ?? string.Empty, 0);
+                        PackageInfo packageInfo = _activityCommon.GetPackageInfo();
                         long packageVersion = -1;
                         if (packageInfo != null)
                         {
