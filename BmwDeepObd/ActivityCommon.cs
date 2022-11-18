@@ -5187,6 +5187,40 @@ namespace BmwDeepObd
             return GetPackageInfo(_packageManager, _context?.PackageName, infoFlags);
         }
 
+        public static string GetInstallerPackageName(PackageManager packageManager, string packageName)
+        {
+            try
+            {
+                if (packageManager == null)
+                {
+                    return string.Empty;
+                }
+
+                if (string.IsNullOrEmpty(packageName))
+                {
+                    return string.Empty;
+                }
+
+                if (Build.VERSION.SdkInt < BuildVersionCodes.R)
+                {
+#pragma warning disable CS0618
+                    return packageManager.GetInstallerPackageName(packageName);
+#pragma warning restore CS0618
+                }
+
+                return packageManager.GetInstallSourceInfo(packageName).InstallingPackageName;
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+        }
+
+        public string GetInstallerPackageName()
+        {
+            return GetInstallerPackageName(_packageManager, _context?.PackageName);
+        }
+
         public string[] RetrievePermissions()
         {
             try
@@ -5553,7 +5587,7 @@ namespace BmwDeepObd
                     try
                     {
                       obbName = Path.GetFileName(ExpansionDownloaderActivity.GetObbFilename(_activity)) ?? string.Empty;
-                      installer = PackageManager.GetInstallerPackageName(_activity?.PackageName ?? string.Empty);
+                      installer = GetInstallerPackageName();
                     }
                     catch (Exception)
                     {
@@ -6308,16 +6342,7 @@ namespace BmwDeepObd
 
                 PackageInfo packageInfo = GetPackageInfo();
                 string certInfo = GetCertificateInfo();
-
-                string installer = string.Empty;
-                try
-                {
-                    installer = PackageManager.GetInstallerPackageName(_activity?.PackageName ?? string.Empty);
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
+                string installer = GetInstallerPackageName();
 
                 MultipartFormDataContent formUpdate = new MultipartFormDataContent
                 {
