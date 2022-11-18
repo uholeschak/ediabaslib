@@ -209,7 +209,7 @@ namespace BmwDeepObd
 
             try
             {
-                IList<PackageInfo> installedPackages = _context?.PackageManager.GetInstalledPackages(PackageInfoFlags.MatchSystemOnly);
+                IList<PackageInfo> installedPackages = ActivityCommon.GetInstalledPackages(_context?.PackageManager, PackageInfoFlags.MatchSystemOnly);
                 if (installedPackages == null)
                 {
                     return _hctApiVerDetected.Value;
