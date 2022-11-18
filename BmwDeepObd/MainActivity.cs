@@ -5780,12 +5780,11 @@ namespace BmwDeepObd
                     System.Threading.Tasks.Task<HttpResponseMessage> taskDownload;
                     if (isPhp)
                     {
+                        string installer = _activityCommon.GetInstallerPackageName();
                         string obbName = string.Empty;
-                        string installer = string.Empty;
                         try
                         {
                             obbName = Path.GetFileName(_assetFileName) ?? string.Empty;
-                            installer = PackageManager?.GetInstallerPackageName(PackageName ?? string.Empty);
                         }
                         catch (Exception)
                         {
