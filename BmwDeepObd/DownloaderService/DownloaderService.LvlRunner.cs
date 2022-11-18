@@ -217,7 +217,7 @@ namespace BmwDeepObd
                         // we begin by getting our APK version from the package manager
                         try
                         {
-                            PackageInfo pi = this.Downloader.PackageManager?.GetPackageInfo(this.Downloader.PackageName ?? string.Empty, 0);
+                            PackageInfo pi = ActivityCommon.GetPackageInfo(this.Downloader.PackageManager, this.Downloader.PackageName);
                             if (pi != null)
                             {
                                 db.UpdateMetadata((int)PackageInfoCompat.GetLongVersionCode(pi), status);

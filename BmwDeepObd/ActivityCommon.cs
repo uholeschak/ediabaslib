@@ -5153,11 +5153,15 @@ namespace BmwDeepObd
             return File.Exists(traceFile);
         }
 
-        public PackageInfo GetPackageInfo(PackageInfoFlags infoFlags = 0)
+        public static PackageInfo GetPackageInfo(PackageManager packageManager, string packageName, PackageInfoFlags infoFlags = 0)
         {
             try
             {
-                string packageName = _context.PackageName;
+                if (packageManager == null)
+                {
+                    return null;
+                }
+
                 if (string.IsNullOrEmpty(packageName))
                 {
                     return null;
@@ -5166,16 +5170,21 @@ namespace BmwDeepObd
                 if (Build.VERSION.SdkInt < BuildVersionCodes.Tiramisu)
                 {
 #pragma warning disable CS0618
-                    return _packageManager?.GetPackageInfo(packageName, infoFlags);
+                    return packageManager.GetPackageInfo(packageName, infoFlags);
 #pragma warning restore CS0618
                 }
 
-                return _packageManager.GetPackageInfo(packageName, PackageManager.PackageInfoFlags.Of((int) infoFlags));
+                return packageManager.GetPackageInfo(packageName, PackageManager.PackageInfoFlags.Of((int)infoFlags));
             }
             catch (Exception)
             {
                 return null;
             }
+        }
+
+        public PackageInfo GetPackageInfo(PackageInfoFlags infoFlags = 0)
+        {
+            return GetPackageInfo(_packageManager, _context?.PackageName, infoFlags);
         }
 
         public string[] RetrievePermissions()

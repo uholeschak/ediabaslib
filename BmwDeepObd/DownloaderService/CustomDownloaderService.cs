@@ -637,7 +637,7 @@ namespace BmwDeepObd
         {
             // first: do we need to do an LVL update?
             // we begin by getting our APK version from the package manager
-            PackageInfo pi = context.PackageManager?.GetPackageInfo(context.PackageName ?? string.Empty, 0);
+            PackageInfo pi = ActivityCommon.GetPackageInfo(context.PackageManager, context.PackageName);
 
             DownloaderServiceRequirement status = DownloaderServiceRequirement.NoDownloadRequired;
             DownloadsDB db = DownloadsDB.GetDB(context);

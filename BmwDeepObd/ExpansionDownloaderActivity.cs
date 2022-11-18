@@ -837,7 +837,7 @@ namespace BmwDeepObd
                 return;
             }
 
-            PackageInfo packageInfo = PackageManager?.GetPackageInfo(PackageName ?? string.Empty, 0);
+            PackageInfo packageInfo = ActivityCommon.GetPackageInfo(PackageManager, PackageName);
             long packageVersion = 0;
             if (packageInfo != null)
             {
