@@ -5279,6 +5279,40 @@ namespace BmwDeepObd
             return GetInstalledApplications(_packageManager, infoFlags);
         }
 
+        public static ActivityInfo GetActivityInfo(PackageManager packageManager, ComponentName componentName, PackageInfoFlags infoFlags = 0)
+        {
+            try
+            {
+                if (packageManager == null)
+                {
+                    return null;
+                }
+
+                if (componentName == null)
+                {
+                    return null;
+                }
+
+                if (Build.VERSION.SdkInt < BuildVersionCodes.Tiramisu)
+                {
+#pragma warning disable CS0618
+                    return packageManager.GetActivityInfo(componentName, infoFlags);
+#pragma warning restore CS0618
+                }
+
+                return packageManager.GetActivityInfo(componentName, PackageManager.ComponentInfoFlags.Of((int)infoFlags));
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public ActivityInfo GetActivityInfo(PackageInfoFlags infoFlags = 0)
+        {
+            return GetActivityInfo(_packageManager, _activity?.ComponentName, infoFlags);
+        }
+
         public string[] RetrievePermissions()
         {
             try
