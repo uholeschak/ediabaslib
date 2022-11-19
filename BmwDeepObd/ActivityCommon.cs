@@ -5313,6 +5313,40 @@ namespace BmwDeepObd
             return GetActivityInfo(_packageManager, _activity?.ComponentName, infoFlags);
         }
 
+        public static IList<ResolveInfo> QueryIntentActivities(PackageManager packageManager, Intent intent, PackageInfoFlags infoFlags = 0)
+        {
+            try
+            {
+                if (packageManager == null)
+                {
+                    return null;
+                }
+
+                if (intent == null)
+                {
+                    return null;
+                }
+
+                if (Build.VERSION.SdkInt < BuildVersionCodes.Tiramisu)
+                {
+#pragma warning disable CS0618
+                    return packageManager.QueryIntentActivities(intent, infoFlags);
+#pragma warning restore CS0618
+                }
+
+                return packageManager.QueryIntentActivities(intent, PackageManager.ResolveInfoFlags.Of((int)infoFlags));
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public IList<ResolveInfo> QueryIntentActivities(Intent intent, PackageInfoFlags infoFlags = 0)
+        {
+            return QueryIntentActivities(_packageManager, intent, infoFlags);
+        }
+
         public string[] RetrievePermissions()
         {
             try

@@ -7294,7 +7294,7 @@ namespace BmwDeepObd
                 viewIntent.SetDataAndType(fileUri, mimeType);
                 viewIntent.SetFlags(ActivityFlags.GrantReadUriPermission | ActivityFlags.GrantWriteUriPermission | ActivityFlags.NewTask);
 
-                IList<ResolveInfo> activities = _activityCommon.PackageManager?.QueryIntentActivities(viewIntent, PackageInfoFlags.MatchDefaultOnly);
+                IList<ResolveInfo> activities = _activityCommon.QueryIntentActivities(viewIntent, PackageInfoFlags.MatchDefaultOnly);
                 if (activities == null || activities.Count == 0)
                 {
                     _activityCommon.ShowAlert(GetString(Resource.String.no_xml_editor_installed), Resource.String.alert_title_error);
