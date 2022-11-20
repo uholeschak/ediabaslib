@@ -59,4 +59,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/button_scan" />
+    <Button
+        android:id="@+id/button_bt_settings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/button_bt_settings" />
 </LinearLayout>

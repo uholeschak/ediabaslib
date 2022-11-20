@@ -120,6 +120,7 @@ namespace BmwDeepObd
         private ProgressBar _progressBar;
         private TextView _textViewTitlePairedDevices;
         private Button _scanButton;
+        private Button _btSettingsButton;
         private ActivityCommon _activityCommon;
         private string _appDataDir;
         private readonly StringBuilder _sbLog = new StringBuilder();
@@ -202,6 +203,13 @@ namespace BmwDeepObd
                 }
             };
 
+            _btSettingsButton = FindViewById<Button>(Resource.Id.button_bt_settings);
+            _btSettingsButton.Visibility = _activityCommon.MtcBtService ? ViewStates.Gone : ViewStates.Visible;
+            _btSettingsButton.Click += (sender, e) =>
+            {
+                OpenBluetoothSettings();
+            };
+
             // Initialize array adapters. One for already paired devices and
             // one for newly discovered devices
             _pairedDevicesArrayAdapter = new ArrayAdapter<string> (this, Resource.Layout.device_name);
@@ -257,6 +265,11 @@ namespace BmwDeepObd
             {
                 UpdatePairedDevices();
             }
+        }
+
+        private void _btSettingsButton_Click(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         protected override void OnSaveInstanceState(Bundle outState)
@@ -832,6 +845,7 @@ namespace BmwDeepObd
                 _progressBar.Visibility = ViewStates.Invisible;
                 SetTitle(Resource.String.select_device);
                 _scanButton.Enabled = false;
+                _btSettingsButton.Enabled = false;
                 return;
             }
 
@@ -840,12 +854,14 @@ namespace BmwDeepObd
                 _progressBar.Visibility = ViewStates.Visible;
                 SetTitle(Resource.String.scanning);
                 _scanButton.Enabled = false;
+                _btSettingsButton.Enabled = false;
             }
             else
             {
                 _progressBar.Visibility = ViewStates.Invisible;
                 SetTitle(Resource.String.select_device);
                 _scanButton.Enabled = true;
+                _btSettingsButton.Enabled = true;
             }
         }
 
@@ -877,15 +893,7 @@ namespace BmwDeepObd
                 }
                 else
                 {
-                    try
-                    {
-                        Intent intent = new Intent(Android.Provider.Settings.ActionBluetoothSettings);
-                        StartActivityForResult(intent, (int)ActivityRequest.RequestBluetoothSettings);
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
+                    OpenBluetoothSettings();
                 }
             }
 #pragma warning disable 168
@@ -896,6 +904,20 @@ namespace BmwDeepObd
 #if DEBUG
                 Android.Util.Log.Info(Tag, string.Format("DoDiscovery Exception: {0}", EdiabasNet.GetExceptionText(ex)));
 #endif
+            }
+        }
+
+        private bool OpenBluetoothSettings()
+        {
+            try
+            {
+                Intent intent = new Intent(Android.Provider.Settings.ActionBluetoothSettings);
+                StartActivityForResult(intent, (int)ActivityRequest.RequestBluetoothSettings);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
 

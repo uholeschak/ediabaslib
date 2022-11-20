@@ -228,6 +228,7 @@
   <string name="title_paired_devices">Paired devices</string>
   <string name="title_other_devices">Other available devices</string>
   <string name="button_scan">Scan for devices</string>
+  <string name="button_bt_settings">Open Bluetooth settings</string>
   <string name="detect_adapter">Detecting adapter type</string>
   <string name="adapter_connection_mtc_failed">Bluetooth connection to the adapter failed.\nPlease try to delete the adapter and connect it again to fix this problem.\nReconnecting the smartphone may also help to improve the communication.\nUse OBD adapters with BC417 Bluetooth chip.</string>
   <string name="adapter_connection_failed">Bluetooth connection to the adapter failed.\nIf another app uses the connection terminate the app or reboot the android device.</string>
