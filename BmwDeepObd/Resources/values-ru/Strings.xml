@@ -250,6 +250,8 @@
   <string name="title_paired_devices">Авторизированные устройства</string>
   <string name="title_other_devices">Другие доступные устройства</string>
   <string name="button_scan">Поиск устройств</string>
+  <!--Translate-->
+  <string name="button_bt_settings">Откройте настройки Bluetooth</string>
   <string name="detect_adapter">Определение типа устройства</string>
   <string name="adapter_connection_mtc_failed">Не удалось установить соединение с Bluetooth адаптером.\nПопробуйте устранить эту проблему путём удаления и нового подключения адаптера.\nПовторное подключение смартфона также может улучшить качество связи.\nИспользуйте OBD адаптер с BC417 Bluetooth чипом.</string>
   <string name="adapter_connection_failed">Не удалось установить Bloetooth соединение с устройством.\nЗакройте другие приложения, если они используют это соединение или перезагрузите ваше Android устройство.</string>

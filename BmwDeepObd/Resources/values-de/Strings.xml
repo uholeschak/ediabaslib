@@ -252,6 +252,7 @@
   <string name="title_paired_devices">Gekoppelte Geräte</string>
   <string name="title_other_devices">Andere verfügbare Geräte</string>
   <string name="button_scan">Nach Geräten suchen</string>
+  <string name="button_bt_settings">Bluetooth Einstellungen öffnen</string>
   <string name="detect_adapter">Adaptertyp erkennen</string>
   <string name="adapter_connection_mtc_failed">Es konnte keine Bluetooth-Verbindung zum Adapter hergestellt werden.\nVersuchen Sie den Adapter zu löschen und neu zu verbinden um das Problem zu lösen.\nEine erneutes Verbinden des Smartphones kann auch helfen die Kommunikation zu verbessern.\nVerwenden Sie OBD Adapter mit BC417 Bluetooth Chip.</string>
   <string name="adapter_connection_failed">Es konnte keine Bluetooth-Verbindung zum Adapter hergestellt werden.\nWenn eine andere App diese Verbindung verwendet beenden Sie diese App oder starten Sie das Android Gerät neu.</string>
