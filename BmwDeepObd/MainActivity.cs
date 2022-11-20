@@ -6497,7 +6497,7 @@ namespace BmwDeepObd
         // ReSharper disable once UnusedParameter.Local
         private bool CheckForEcuFiles(bool checkPackage = false)
         {
-            if (!_activityActive || !_storageAccessGranted || _downloadEcuAlertDialog != null)
+            if (!_activityActive || !_storageAccessGranted || _downloadEcuAlertDialog != null || ActivityCommon.CommActive)
             {
                 return true;
             }
