@@ -6507,6 +6507,11 @@ namespace BmwDeepObd
                 return false;
             }
 
+            if (ActivityCommon.CommActive)
+            {
+                return false;
+            }
+
             if (!_instanceData.StorageRequirementsAccepted)
             {
                 string message = string.Format(new FileSizeFormatProvider(), GetString(Resource.String.storage_requirements), EcuExtractSize);
