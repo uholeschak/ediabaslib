@@ -17,20 +17,13 @@ This chapter describes how to replace the ELM327 BT V1.5 HW: V01_M_V2.3 adapter 
 * Do a full read with eeprom powered from programmer (do not apply power from obd side).  
   It's recommended that you disconnect VCC pin 8 of the 24C32 chip first!  
   It may take a few read tries to get the full dump correctly, if the first 0x80 bytes only contain 0xFF your read is incorrect.
-* EEPROM layout variant 1:
-  * BT address: 0x0F93 (6 bytes, normally keep unchanged)
-  * BLE address: 0x0F99 (6 bytes, normally keep unchanged)
-  * PinCode: 0x0F9F, 1 byte length (max 15) and 15 byte PIN ASCII chars
-  * BT 2.x name: 0xFAF, 1 byte length (max 32) and 32 byte BT name ASCII chars
-  * BLE name: 0xFD0, 1 byte length (max 24) and 32 byte BLE name ASCII chars
-  * BaudRate: 0xFF0 (2 bytes, low byte first); default value: 0x04E2 is 38400 baud (for `default` PIC firmware), change to 0x01A1 for 115200 baud (for `yc1021` firmware)
-* EEPROM layout variant 2:
-  * BT address: 0x0F88 (6 bytes, normally keep unchanged)
-  * BLE address: 0x0F8E (6 bytes, normally keep unchanged)
-  * PinCode: 0x0F94, 1 byte length (max 15) and 15 byte PIN ASCII chars
-  * BT 2.x name: 0xFA4, 1 byte length (max 32) and 32 byte BT name ASCII chars
-  * BLE name: 0xFC5, 1 byte length (max 24) and 32 byte BLE name ASCII chars
-  * BaudRate: 0xFE5 (2 bytes, low byte first); default value: 0x04E2 is 38400 baud (for `default` PIC firmware), change to 0x01A1 for 115200 baud (for `yc1021` firmware)
+* EEPROM layout variant 1 / 2:
+  * BT address: 0x0F93 / 0x0F88 (6 bytes, normally keep unchanged)
+  * BLE address: 0x0F99 / 0x0F8E (6 bytes, normally keep unchanged)
+  * PinCode: 0x0F9F / 0x0F94, 1 byte length (max 15) and 15 byte PIN ASCII chars
+  * BT 2.x name: 0x0FAF / 0x0FA4, 1 byte length (max 32) and 32 byte BT name ASCII chars
+  * BLE name: 0x0FD0 / 0x0FC5, 1 byte length (max 24) and 32 byte BLE name ASCII chars
+  * BaudRate: 0x0FF0 / 0x0FE5 (2 bytes, low byte first); default value: 0x04E2 is 38400 baud (for `default` PIC firmware), change to 0x01A1 for 115200 baud (for `yc1021` firmware)
 * Optionally you could use preconfigured settings file `modified.bin` from the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest).
 * Write the changed binary back to the 24C32 eeprom (again powered from programmer, not from obd side).  
 
