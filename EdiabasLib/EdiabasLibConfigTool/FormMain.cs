@@ -318,7 +318,8 @@ namespace EdiabasLibConfigTool
                             string.Compare(ssidString, Patch.AdapterSsidElm, StringComparison.OrdinalIgnoreCase) == 0 ||
                             string.Compare(ssidString, Patch.AdapterSsidEspLink, StringComparison.OrdinalIgnoreCase) == 0 ||
                             ssidString.StartsWith(Patch.AdapterSsidEnetLink, StringComparison.OrdinalIgnoreCase) ||
-                            ssidString.StartsWith(Patch.AdapterSsidModBmw, StringComparison.OrdinalIgnoreCase)
+                            ssidString.StartsWith(Patch.AdapterSsidModBmw, StringComparison.OrdinalIgnoreCase) ||
+                            ssidString.StartsWith(Patch.AdapterSsidUniCar, StringComparison.OrdinalIgnoreCase)
                             )
                         {
                             string bssString = conn.wlanAssociationAttributes.Dot11Bssid.ToString();
@@ -346,7 +347,8 @@ namespace EdiabasLibConfigTool
                             string.Compare(ap.Name, Patch.AdapterSsidElm, StringComparison.OrdinalIgnoreCase) == 0 || 
                             string.Compare(ap.Name, Patch.AdapterSsidEspLink, StringComparison.OrdinalIgnoreCase) == 0 ||
                             ap.Name.StartsWith(Patch.AdapterSsidEnetLink, StringComparison.OrdinalIgnoreCase) ||
-                            ap.Name.StartsWith(Patch.AdapterSsidModBmw, StringComparison.OrdinalIgnoreCase)
+                            ap.Name.StartsWith(Patch.AdapterSsidModBmw, StringComparison.OrdinalIgnoreCase) ||
+                            ap.Name.StartsWith(Patch.AdapterSsidUniCar, StringComparison.OrdinalIgnoreCase)
                             )
                         {
                             ListViewItem listViewItem =

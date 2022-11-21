@@ -102,6 +102,10 @@ namespace EdiabasLibConfigTool
                     {
                         authRequest.Password = Patch.PassordWifiModBmw;
                     }
+                    else if (ap.Name.StartsWith(Patch.AdapterSsidUniCar, StringComparison.OrdinalIgnoreCase))
+                    {
+                        authRequest.Password = Patch.PassordWifiUniCar;
+                    }
                     else
                     {
                         authRequest.Password = _form.WifiPassword;
@@ -135,6 +139,7 @@ namespace EdiabasLibConfigTool
                     bool isEnet = string.Compare(ssidString, Patch.AdapterSsidEnet, StringComparison.OrdinalIgnoreCase) == 0;
                     bool isEnetLink = ssidString.StartsWith(Patch.AdapterSsidEnetLink, StringComparison.OrdinalIgnoreCase);
                     bool isModBmw = ssidString.StartsWith(Patch.AdapterSsidModBmw, StringComparison.OrdinalIgnoreCase);
+                    bool isUniCar = ssidString.StartsWith(Patch.AdapterSsidUniCar, StringComparison.OrdinalIgnoreCase);
 
                     IPInterfaceProperties ipProp = wlanIface.NetworkInterface.GetIPProperties();
                     if (ipProp == null)
@@ -149,11 +154,11 @@ namespace EdiabasLibConfigTool
                         return false;
                     }
 
-                    if (isEnet || isEnetLink || isModBmw)
+                    if (isEnet || isEnetLink || isModBmw || isUniCar)
                     {
                         if (configure)
                         {
-                            string rootPwd = isModBmw ? "admin" : "root";
+                            string rootPwd = isModBmw || isUniCar ? "admin" : "root";
                             Process.Start(string.Format("http://{0}", ipAddr));
                             _form.UpdateStatusText(string.Format(Resources.Strings.WifiUrlOk, rootPwd));
                             TestOk = true;
@@ -167,7 +172,7 @@ namespace EdiabasLibConfigTool
                         {
                             Thread.CurrentThread.CurrentCulture = cultureInfo;
                             Thread.CurrentThread.CurrentUICulture = cultureInfo;
-                            if (isEnet || isEnetLink || isModBmw)
+                            if (isEnet || isEnetLink || isModBmw || isUniCar)
                             {
                                 TestOk = RunWifiTestEnetRetry(ipAddr, out bool configRequired);
                                 if (TestOk && configRequired)
