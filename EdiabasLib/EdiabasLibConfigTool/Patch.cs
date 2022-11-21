@@ -23,6 +23,8 @@ namespace EdiabasLibConfigTool
         public const string PassordWifiEnetLink = @"12345678";
         public const string AdapterSsidModBmw = @"modBMW ENET";
         public const string PassordWifiModBmw = @"12345678";
+        public const string AdapterSsidUniCar = @"UniCarScan";
+        public const string PassordWifiUniCar = @"12345678";
         public const string ApiDirName = @"Api32";
         public const string Api32DllName = @"api32.dll";
         public const string Api64DllName = @"api64.dll";
@@ -221,7 +223,8 @@ namespace EdiabasLibConfigTool
                     string ssidString = Encoding.ASCII.GetString(conn.wlanAssociationAttributes.dot11Ssid.SSID).TrimEnd('\0');
                     if (string.Compare(ssidString, AdapterSsidEnet, StringComparison.OrdinalIgnoreCase) == 0 ||
                         ssidString.StartsWith(Patch.AdapterSsidEnetLink, StringComparison.OrdinalIgnoreCase) ||
-                        ssidString.StartsWith(Patch.AdapterSsidModBmw, StringComparison.OrdinalIgnoreCase))
+                        ssidString.StartsWith(Patch.AdapterSsidModBmw, StringComparison.OrdinalIgnoreCase) ||
+                        ssidString.StartsWith(Patch.AdapterSsidUniCar, StringComparison.OrdinalIgnoreCase))
                     {
                         UpdateConfigNode(settingsNode, @"EnetRemoteHost", @"auto:all");
                         UpdateConfigNode(settingsNode, @"Interface", @"ENET");
