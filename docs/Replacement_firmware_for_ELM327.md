@@ -52,7 +52,7 @@ The source for the firmware could be found in the subdirectory `CanAdapterElm`. 
 * `hc04`: For adapter with BC417 Bluetooth chip and hc04, hc05 and hc06 firmware
 * `esp8266`: For adapter with ESP8266 WiFi chip [Replace ESP8266ex firmware](Replace_Elm327_Wifi_Mini_Firmware.md)
 * `yc1021`: For adapter with integrated YC1021 Bluetooth chip (non standard LEDs) [Replace YC1021 firmware](Replace_Elm327_BT_Mini_Firmware.md)
-* `spp_uart` and `spp_uart2` (with modified LED configuration): [OpenSource Bluetooth firmware](Custom_Bluetooth_firmware.md) for adapters with BC417 Bluetooth chip (recommended for Android car radios with Rockchip platform)
+* `spp_uart` and `spp_uart2` (with modified LED configuration): [OpenSource Bluetooth firmware](Custom_Bluetooth_firmware.md) for adapters with BC417 Bluetooth chip (recommended for old Android car radios with Rockchip platform)
   * `spp_uart.xpv` and `spp_uart.xdv`: Firmware for Bluetooth module with BC417 chipset
   * `usbspi.dll`: This is a replacement library for _BlueSuite_ and _BlueLab_ for programming CSR BC03/BC04 Bluetooth chipsets via FT232R breakout boards. For more information see the [`ReadMe.txt`](../EdiabasLib/CanAdapterElm/Bluetooth/spp_uart/ReadMe.txt) file.
 
