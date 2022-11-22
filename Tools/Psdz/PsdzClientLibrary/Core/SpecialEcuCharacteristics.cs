@@ -602,6 +602,7 @@ namespace PsdzClient.Core
 
     public class R50EcuCharacteristics : BaseEcuCharacteristics
     {
+        // ToDo: Check on update
         public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             if (vecInfo == null)
@@ -811,7 +812,32 @@ namespace PsdzClient.Core
         }
     }
 
-    public class MRXEcuCharacteristics : BaseEcuCharacteristics { }
+    public class MRXEcuCharacteristics : BaseEcuCharacteristics
+    {
+        public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        {
+            if (vecInfo == null)
+            {
+                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                return;
+            }
+            if (vecInfo.ECU == null)
+            {
+                vecInfo.ECU = new ObservableCollection<ECU>();
+            }
+            HashSet<int> hashSet = new HashSet<int>();
+            if (vecInfo.hasSA("369"))
+            {
+                hashSet.Add(92);
+            }
+            if (vecInfo.Ereihe != "K60")
+            {
+                hashSet.Add(96);
+            }
+            brSgbd = ((vecInfo.Ereihe == "K60" || vecInfo.Ereihe == "K02" || vecInfo.Ereihe == "K03" || vecInfo.Ereihe == "K08" || vecInfo.Ereihe == "K09") ? "X_KS01" : "X_K001");
+            CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, null);
+        }
+    }
 
     public class MREcuCharacteristics : BaseEcuCharacteristics
     {
@@ -852,7 +878,24 @@ namespace PsdzClient.Core
         }
     }
 
-    public class E70EcuCharacteristicsAMPH : BaseEcuCharacteristics { }
+    public class E70EcuCharacteristicsAMPH : BaseEcuCharacteristics
+    {
+        // ToDo: Check on update
+        public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        {
+            if (vecInfo == null)
+            {
+                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                return;
+            }
+            HashSet<int> hashSet = new HashSet<int>();
+            if (GearboxUtility.HasVehicleGearboxECU(vecInfo))
+            {
+                hashSet.Add(24);
+            }
+            CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, null);
+        }
+    }
 
     public class E70EcuCharacteristics : BaseEcuCharacteristics
     {
@@ -1107,6 +1150,7 @@ namespace PsdzClient.Core
 
     public class BNT_G01_G02_G08_F97_F98_SP2015 : BaseEcuCharacteristics
     {
+        // ToDo: Check on update
         public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             if (vecInfo == null)
@@ -1161,7 +1205,10 @@ namespace PsdzClient.Core
         }
     }
 
-    public class F56EcuCharacteristics : BaseEcuCharacteristics { }
+    public class F56EcuCharacteristics : BaseEcuCharacteristics
+    {
+        // No CalculateECUConfiguration
+    }
 
     public class F20EcuCharacteristics : BaseEcuCharacteristics
     {
