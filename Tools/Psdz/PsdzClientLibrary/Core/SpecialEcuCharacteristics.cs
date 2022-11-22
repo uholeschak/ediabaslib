@@ -371,7 +371,78 @@ namespace PsdzClient.Core
         }
     }
 
-    public class E52EcuCharacteristics : BaseEcuCharacteristics { }
+    public class E52EcuCharacteristics : BaseEcuCharacteristics
+    {
+        // ToDo: Check on update
+        public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        {
+            if (vecInfo == null)
+            {
+                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                return;
+            }
+            HashSet<int> hashSet = new HashSet<int>();
+            switch (vecInfo.Motor)
+            {
+                case "M73":
+                    hashSet.Add(16);
+                    hashSet.Add(20);
+                    hashSet.Add(34);
+                    break;
+                case "M67":
+                    hashSet.Add(18);
+                    hashSet.Add(19);
+                    break;
+                case "M57":
+                    hashSet.Add(18);
+                    break;
+                default:
+                    hashSet.Add(18);
+                    break;
+            }
+            if (GearboxUtility.HasVehicleGearboxECU(vecInfo))
+            {
+                hashSet.Add(50);
+            }
+            if (vecInfo.hasSA("534"))
+            {
+                hashSet.Add(91);
+            }
+            if (vecInfo.hasSA("459"))
+            {
+                hashSet.Add(114);
+            }
+            if (vecInfo.hasSA("256"))
+            {
+                hashSet.Add(80);
+            }
+            if (vecInfo.hasSA("508"))
+            {
+                hashSet.Add(96);
+            }
+            if (vecInfo.hasSA("403"))
+            {
+                hashSet.Add(8);
+            }
+            if (vecInfo.hasSA("602"))
+            {
+                hashSet.Add(240);
+            }
+            if (vecInfo.hasSA("265"))
+            {
+                hashSet.Add(112);
+            }
+            if (vecInfo.hasSA("0549"))
+            {
+                hashSet.Add(40);
+            }
+            if (vecInfo.hasSA("0540"))
+            {
+                hashSet.Add(166);
+            }
+            CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, null);
+        }
+    }
 
     public class E53EcuCharacteristics : BaseEcuCharacteristics
     {
@@ -489,7 +560,25 @@ namespace PsdzClient.Core
         }
     }
 
-    public class F25_1404EcuCharacteristics : BaseEcuCharacteristics { }
+    public class F25_1404EcuCharacteristics : BaseEcuCharacteristics
+    {
+        // ToDo: Check on update
+        public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        {
+            if (vecInfo == null)
+            {
+                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                return;
+            }
+            HashSet<int> hashSet = new HashSet<int>();
+            if (GearboxUtility.HasVehicleGearboxECU(vecInfo))
+            {
+                hashSet.Add(24);
+                hashSet.Add(94);
+            }
+            CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, null);
+        }
+    }
 
     public class F25EcuCharacteristics : BaseEcuCharacteristics
     {
@@ -744,7 +833,25 @@ namespace PsdzClient.Core
         }
     }
 
-    public class E70EcuCharacteristicsAMPT : BaseEcuCharacteristics { }
+    public class E70EcuCharacteristicsAMPT : BaseEcuCharacteristics
+    {
+        // ToDo: Check on update
+        public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        {
+            if (vecInfo == null)
+            {
+                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                return;
+            }
+            HashSet<int> hashSet = new HashSet<int>();
+            if (GearboxUtility.HasVehicleGearboxECU(vecInfo))
+            {
+                hashSet.Add(24);
+            }
+            CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, null);
+        }
+    }
+
     public class E70EcuCharacteristicsAMPH : BaseEcuCharacteristics { }
 
     public class E70EcuCharacteristics : BaseEcuCharacteristics
@@ -850,7 +957,113 @@ namespace PsdzClient.Core
         }
     }
 
-    public class E85EcuCharacteristics : BaseEcuCharacteristics { }
+    public class E85EcuCharacteristics : BaseEcuCharacteristics
+    {
+        private readonly DateTime lciDate = DateTime.Parse("01.01.2006", new CultureInfo("de-DE"));
+
+        public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        {
+            if (vecInfo == null)
+            {
+                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                return;
+            }
+            HashSet<int> hashSet = new HashSet<int>();
+            HashSet<int> hashSet2 = new HashSet<int>();
+            if (!vecInfo.C_DATETIME.HasValue || vecInfo.C_DATETIME < lciDate)
+            {
+                if (vecInfo.BaseVersion == "US")
+                {
+                    hashSet.Add(173);
+                    hashSet.Add(174);
+                }
+                hashSet.Add(161);
+                hashSet.Add(162);
+            }
+            switch (vecInfo.Motor)
+            {
+                case "M73":
+                    hashSet.Add(16);
+                    hashSet.Add(20);
+                    hashSet.Add(34);
+                    break;
+                case "M67":
+                    hashSet.Add(18);
+                    hashSet.Add(19);
+                    break;
+                case "M57":
+                    hashSet.Add(18);
+                    break;
+                default:
+                    hashSet.Add(18);
+                    break;
+            }
+            if (vecInfo.C_DATETIME.HasValue)
+            {
+                DateTime? c_DATETIME = vecInfo.C_DATETIME;
+                DateTime minValue = DateTime.MinValue;
+                if (c_DATETIME.HasValue && c_DATETIME.GetValueOrDefault() > minValue && vecInfo.C_DATETIME < lciDate)
+                {
+                    hashSet.Add(161);
+                    hashSet.Add(162);
+                }
+            }
+            if (GearboxUtility.HasVehicleGearboxECU(vecInfo))
+            {
+                hashSet.Add(50);
+                hashSet.Add(24);
+            }
+            if (vecInfo.hasSA("534"))
+            {
+                hashSet.Add(91);
+            }
+            if (vecInfo.hasSA("459"))
+            {
+                hashSet.Add(114);
+            }
+            if (vecInfo.hasSA("256"))
+            {
+                hashSet.Add(80);
+            }
+            if (vecInfo.hasSA("508"))
+            {
+                hashSet.Add(96);
+            }
+            if (vecInfo.hasSA("403"))
+            {
+                hashSet.Add(8);
+            }
+            if (vecInfo.hasSA("602"))
+            {
+                hashSet.Add(240);
+            }
+            if (vecInfo.hasSA("265"))
+            {
+                hashSet.Add(112);
+            }
+            if (vecInfo.hasSA("549"))
+            {
+                hashSet.Add(40);
+            }
+            if (vecInfo.hasSA("540") && IsGroupValid("d_00a6", vecInfo, ffmResolver))
+            {
+                hashSet.Add(166);
+            }
+            if (IsGroupValid("d_0074", vecInfo, ffmResolver))
+            {
+                hashSet.Add(116);
+            }
+            if (vecInfo.hasSA("399"))
+            {
+                hashSet.Add(156);
+            }
+            if ("M54".Equals(vecInfo.Motor, StringComparison.OrdinalIgnoreCase))
+            {
+                hashSet2.Add(101);
+            }
+            CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, hashSet2);
+        }
+    }
 
     public class F15EcuCharacteristics : BaseEcuCharacteristics
     {
@@ -892,7 +1105,42 @@ namespace PsdzClient.Core
         }
     }
 
-    public class BNT_G01_G02_G08_F97_F98_SP2015 : BaseEcuCharacteristics { }
+    public class BNT_G01_G02_G08_F97_F98_SP2015 : BaseEcuCharacteristics
+    {
+        public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        {
+            if (vecInfo == null)
+            {
+                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                return;
+            }
+            HashSet<int> hashSet = new HashSet<int>();
+            if (GearboxUtility.HasVehicleGearboxECU(vecInfo))
+            {
+                hashSet.Add(24);
+                hashSet.Add(94);
+            }
+            ObservableCollection<ECU> eCU = vecInfo.ECU;
+            if (eCU != null)
+            {
+                foreach (ECU item in eCU)
+                {
+                    if (!item.ECU_GROBNAME.Equals("EMA_LI"))
+                    {
+                        if (item.ECU_GROBNAME.Equals("EMA_RE"))
+                        {
+                            hashSet.AddIfNotContains(77);
+                            break;
+                        }
+                        continue;
+                    }
+                    hashSet.AddIfNotContains(78);
+                    break;
+                }
+            }
+            CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, null);
+        }
+    }
 
     public class E89EcuCharacteristics : BaseEcuCharacteristics
     {
