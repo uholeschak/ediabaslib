@@ -16,36 +16,6 @@ namespace PsdzClient.Core
 {
     public class VehicleLogistics
     {
-        public class E46EcuCharacteristics : BaseEcuCharacteristics { }
-        public class E36EcuCharacteristics : BaseEcuCharacteristics { }
-        public class E39EcuCharacteristics : BaseEcuCharacteristics { }
-        public class E38EcuCharacteristics : BaseEcuCharacteristics { }
-        public class E52EcuCharacteristics : BaseEcuCharacteristics { }
-        public class E53EcuCharacteristics : BaseEcuCharacteristics { }
-        public class F01EcuCharacteristics : BaseEcuCharacteristics { }
-        public class F25_1404EcuCharacteristics : BaseEcuCharacteristics { }
-        public class F25EcuCharacteristics : BaseEcuCharacteristics { }
-        public class R50EcuCharacteristics : BaseEcuCharacteristics { }
-        public class RR6EcuCharacteristics : BaseEcuCharacteristics { }
-        public class R55EcuCharacteristics : BaseEcuCharacteristics { }
-        public class RR2EcuCharacteristics : BaseEcuCharacteristics { }
-        public class RREcuCharacteristics : BaseEcuCharacteristics { }
-        public class BNT_G11_G12_G3X_SP2015 : BaseEcuCharacteristics { }
-        public class MRXEcuCharacteristics : BaseEcuCharacteristics { }
-        public class MREcuCharacteristics : BaseEcuCharacteristics { }
-        public class E70EcuCharacteristicsAMPT : BaseEcuCharacteristics { }
-        public class E70EcuCharacteristicsAMPH : BaseEcuCharacteristics { }
-        public class E70EcuCharacteristics : BaseEcuCharacteristics { }
-        public class E60EcuCharacteristics : BaseEcuCharacteristics { }
-        public class E83EcuCharacteristics : BaseEcuCharacteristics { }
-        public class E85EcuCharacteristics : BaseEcuCharacteristics { }
-        public class F15EcuCharacteristics : BaseEcuCharacteristics { }
-        public class F01_1307EcuCharacteristics : BaseEcuCharacteristics { }
-        public class BNT_G01_G02_G08_F97_F98_SP2015 : BaseEcuCharacteristics { }
-        public class E89EcuCharacteristics : BaseEcuCharacteristics { }
-        public class F56EcuCharacteristics : BaseEcuCharacteristics { }
-        public class F20EcuCharacteristics : BaseEcuCharacteristics { }
-
         private static ConcurrentDictionary<object, BaseEcuCharacteristics> ecuCharacteristics;
 
         static VehicleLogistics()

@@ -192,6 +192,7 @@
     <Compile Include="Core\SGBDBusLogisticsEntry.cs" />
     <Compile Include="Core\SiFaExpression.cs" />
     <Compile Include="Core\SingleAssignmentExpression.cs" />
+    <Compile Include="Core\SpecialEcuCharacteristics.cs" />
     <Compile Include="Core\SVK.cs" />
     <Compile Include="Core\Symbol.cs" />
     <Compile Include="Core\TransmissionDataType.cs" />
