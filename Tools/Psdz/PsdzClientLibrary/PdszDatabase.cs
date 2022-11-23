@@ -295,9 +295,10 @@ namespace PsdzClient
 
         public class EcuVar
         {
-            public EcuVar(string id, string name, string validFrom, string validTo, string safetyRelevant, string ecuGroupId, string sort, EcuTranslation ecuTranslation)
+            public EcuVar(string id, string faultMemDelWaitTime, string name, string validFrom, string validTo, string safetyRelevant, string ecuGroupId, string sort, EcuTranslation ecuTranslation)
             {
                 Id = id;
+                FaultMemDelWaitTime = faultMemDelWaitTime;
                 Name = name;
                 ValidFrom = validFrom;
                 ValidTo = validTo;
@@ -308,6 +309,8 @@ namespace PsdzClient
             }
 
             public string Id { get; set; }
+
+            public string FaultMemDelWaitTime { get; set; }
 
             public string Name { get; set; }
 
@@ -328,8 +331,8 @@ namespace PsdzClient
                 StringBuilder sb = new StringBuilder();
                 sb.Append(prefix);
                 sb.Append(string.Format(CultureInfo.InvariantCulture,
-                    "EcuVar: Id={0}, Name={1}, ValidFrom={2}, ValidTo={3}, SafetyRel={4}, EcuGroupId={5}, Sort={6}, Title='{7}'",
-                    Id, Name, ValidFrom, ValidTo, SafetyRelevant, EcuGroupId, Sort, EcuTranslation.GetTitle(language)));
+                    "EcuVar: Id={0}, FaultTime={1}, Name={2}, ValidFrom={3}, ValidTo={4}, SafetyRel={5}, EcuGroupId={6}, Sort={7}, Title='{8}'",
+                    Id, FaultMemDelWaitTime, Name, ValidFrom, ValidTo, SafetyRelevant, EcuGroupId, Sort, EcuTranslation.GetTitle(language)));
                 return sb.ToString();
             }
         }
@@ -3102,7 +3105,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             EcuVar ecuVar = null;
             try
             {
-                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NAME, " + DatabaseFunctions.SqlTitleItems + ", VALIDFROM, VALIDTO, SICHERHEITSRELEVANT, ECUGROUPID, SORT FROM XEP_ECUVARIANTS WHERE (lower(NAME) = '{0}')", sgbdName.ToLowerInvariant());
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, FAULTMEMORYDELETEWAITINGTIME, NAME, " + DatabaseFunctions.SqlTitleItems + ", VALIDFROM, VALIDTO, SICHERHEITSRELEVANT, ECUGROUPID, SORT FROM XEP_ECUVARIANTS WHERE (lower(NAME) = '{0}')", sgbdName.ToLowerInvariant());
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
@@ -5187,13 +5190,14 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
         private static EcuVar ReadXepEcuVar(SQLiteDataReader reader)
         {
             string id = reader["ID"].ToString().Trim();
+            string faultMemDelWaitTime = reader["FAULTMEMORYDELETEWAITINGTIME"].ToString().Trim();
             string name = reader["NAME"].ToString().Trim();
             string validFrom = reader["VALIDFROM"].ToString().Trim();
             string validTo = reader["VALIDTO"].ToString().Trim();
             string safetyRelevant = reader["SICHERHEITSRELEVANT"].ToString().Trim();
             string ecuGroupId = reader["ECUGROUPID"].ToString().Trim();
             string sort = reader["SORT"].ToString().Trim();
-            return new EcuVar(id, name, validFrom, validTo, safetyRelevant, ecuGroupId, sort, GetTranslation(reader));
+            return new EcuVar(id, faultMemDelWaitTime, name, validFrom, validTo, safetyRelevant, ecuGroupId, sort, GetTranslation(reader));
         }
 
         private static EcuPrgVar ReadXepEcuPrgVar(SQLiteDataReader reader)

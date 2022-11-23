@@ -182,7 +182,7 @@ namespace PsdzClient.Core
 				return false;
 			}
 		}
-#if false
+
         public string GetDataValue(string name)
         {
             if (ecuVariant != null && !string.IsNullOrEmpty(name))
@@ -228,11 +228,11 @@ namespace PsdzClient.Core
                     case "NAME":
                         return ecuVariant.Name;
                     case "FAULTMEMORYDELETEWAITINGTIME":
-                        if (!ecuVariant.FaultMemoryDeleteWaitingTime.HasValue)
+                        if (string.IsNullOrEmpty(ecuVariant.FaultMemDelWaitTime))
                         {
                             return string.Empty;
                         }
-                        return ecuVariant.FaultMemoryDeleteWaitingTime.ToString();
+                        return ecuVariant.FaultMemDelWaitTime;
                     case "TITLE_PLPL":
                         return ecuVariant.EcuTranslation.TextPl;
                     case "VALIDFROM":
@@ -279,7 +279,7 @@ namespace PsdzClient.Core
             }
             return null;
         }
-#endif
+
         public ISPELocator[] GetIncomingLinks()
 		{
 			return new ISPELocator[0];
