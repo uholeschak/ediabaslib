@@ -236,23 +236,23 @@ namespace PsdzClient.Core
                     case "TITLE_PLPL":
                         return ecuVariant.EcuTranslation.TextPl;
                     case "VALIDFROM":
-                        if (!ecuVariant.ValidFrom.HasValue)
+                        if (string.IsNullOrEmpty(ecuVariant.ValidFrom))
                         {
                             return string.Empty;
                         }
-                        return ecuVariant.ValidFrom.ToString();
+                        return ecuVariant.ValidFrom;
                     case "SICHERHEITSRELEVANT":
-                        if (!ecuVariant.Sicherheitsrelevant.HasValue)
+                        if (string.IsNullOrEmpty(ecuVariant.SafetyRelevant))
                         {
                             return "0";
                         }
-                        return ecuVariant.Sicherheitsrelevant.ToString();
+                        return ecuVariant.SafetyRelevant;
                     case "VALIDTO":
-                        if (!ecuVariant.ValidTo.HasValue)
+                        if (string.IsNullOrEmpty(ecuVariant.ValidTo))
                         {
                             return string.Empty;
                         }
-                        return ecuVariant.ValidTo.ToString();
+                        return ecuVariant.ValidTo;
                     case "TITLE_EL":
                         return ecuVariant.EcuTranslation.TextEl;
                     case "ECUGROUPID":

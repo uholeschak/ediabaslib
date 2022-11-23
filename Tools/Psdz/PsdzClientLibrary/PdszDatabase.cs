@@ -295,10 +295,13 @@ namespace PsdzClient
 
         public class EcuVar
         {
-            public EcuVar(string id, string name, string ecuGroupId, string sort, EcuTranslation ecuTranslation)
+            public EcuVar(string id, string name, string validFrom, string validTo, string safetyRelevant, string ecuGroupId, string sort, EcuTranslation ecuTranslation)
             {
                 Id = id;
                 Name = name;
+                ValidFrom = validFrom;
+                ValidTo = validTo;
+                SafetyRelevant = safetyRelevant;
                 EcuGroupId = ecuGroupId;
                 Sort = sort;
                 EcuTranslation = ecuTranslation;
@@ -307,6 +310,12 @@ namespace PsdzClient
             public string Id { get; set; }
 
             public string Name { get; set; }
+
+            public string ValidFrom { get; set; }
+
+            public string ValidTo { get; set; }
+
+            public string SafetyRelevant { get; set; }
 
             public string EcuGroupId { get; set; }
 
@@ -319,8 +328,8 @@ namespace PsdzClient
                 StringBuilder sb = new StringBuilder();
                 sb.Append(prefix);
                 sb.Append(string.Format(CultureInfo.InvariantCulture,
-                    "EcuVar: Id={0}, Name={1}, EcuGroupId={2}, Title='{3}'",
-                    Id, Name, EcuGroupId, EcuTranslation.GetTitle(language)));
+                    "EcuVar: Id={0}, Name={1}, ValidFrom={2}, ValidTo={3}, SafetyRel={4}, EcuGroupId={5}, Sort={6}, Title='{7}'",
+                    Id, Name, ValidFrom, ValidTo, SafetyRelevant, EcuGroupId, Sort, EcuTranslation.GetTitle(language)));
                 return sb.ToString();
             }
         }
@@ -3093,7 +3102,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             EcuVar ecuVar = null;
             try
             {
-                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NAME, " + DatabaseFunctions.SqlTitleItems + ", ECUGROUPID, SORT FROM XEP_ECUVARIANTS WHERE (lower(NAME) = '{0}')", sgbdName.ToLowerInvariant());
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NAME, " + DatabaseFunctions.SqlTitleItems + ", VALIDFROM, VALIDTO, SICHERHEITSRELEVANT, ECUGROUPID, SORT FROM XEP_ECUVARIANTS WHERE (lower(NAME) = '{0}')", sgbdName.ToLowerInvariant());
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
@@ -5179,9 +5188,12 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
         {
             string id = reader["ID"].ToString().Trim();
             string name = reader["NAME"].ToString().Trim();
+            string validFrom = reader["VALIDFROM"].ToString().Trim();
+            string validTo = reader["VALIDTO"].ToString().Trim();
+            string safetyRelevant = reader["SICHERHEITSRELEVANT"].ToString().Trim();
             string ecuGroupId = reader["ECUGROUPID"].ToString().Trim();
             string sort = reader["SORT"].ToString().Trim();
-            return new EcuVar(id, name, ecuGroupId, sort, GetTranslation(reader));
+            return new EcuVar(id, name, validFrom, validTo, safetyRelevant, ecuGroupId, sort, GetTranslation(reader));
         }
 
         private static EcuPrgVar ReadXepEcuPrgVar(SQLiteDataReader reader)
