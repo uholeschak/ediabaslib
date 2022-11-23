@@ -295,11 +295,12 @@ namespace PsdzClient
 
         public class EcuVar
         {
-            public EcuVar(string id, string name, string ecuGroupId, EcuTranslation ecuTranslation)
+            public EcuVar(string id, string name, string ecuGroupId, string sort, EcuTranslation ecuTranslation)
             {
                 Id = id;
                 Name = name;
                 EcuGroupId = ecuGroupId;
+                Sort = sort;
                 EcuTranslation = ecuTranslation;
             }
 
@@ -308,6 +309,8 @@ namespace PsdzClient
             public string Name { get; set; }
 
             public string EcuGroupId { get; set; }
+
+            public string Sort { get; set; }
 
             public EcuTranslation EcuTranslation { get; set; }
 
@@ -3090,7 +3093,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             EcuVar ecuVar = null;
             try
             {
-                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NAME, " + DatabaseFunctions.SqlTitleItems + ", ECUGROUPID FROM XEP_ECUVARIANTS WHERE (lower(NAME) = '{0}')", sgbdName.ToLowerInvariant());
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NAME, " + DatabaseFunctions.SqlTitleItems + ", ECUGROUPID, SORT FROM XEP_ECUVARIANTS WHERE (lower(NAME) = '{0}')", sgbdName.ToLowerInvariant());
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
@@ -5177,7 +5180,8 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             string id = reader["ID"].ToString().Trim();
             string name = reader["NAME"].ToString().Trim();
             string ecuGroupId = reader["ECUGROUPID"].ToString().Trim();
-            return new EcuVar(id, name, ecuGroupId, GetTranslation(reader));
+            string sort = reader["SORT"].ToString().Trim();
+            return new EcuVar(id, name, ecuGroupId, sort, GetTranslation(reader));
         }
 
         private static EcuPrgVar ReadXepEcuPrgVar(SQLiteDataReader reader)

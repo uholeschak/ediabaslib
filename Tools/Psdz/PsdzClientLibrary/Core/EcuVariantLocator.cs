@@ -192,11 +192,11 @@ namespace PsdzClient.Core
                     case "TITLE_JA":
                         return ecuVariant.EcuTranslation.TextJa;
                     case "SORT":
-                        if (!ecuVariant.Sort.HasValue)
+                        if (string.IsNullOrEmpty(ecuVariant.Sort))
                         {
                             return "0";
                         }
-                        return ecuVariant.Sort.ToString();
+                        return ecuVariant.Sort;
                     case "TITLE_ENUS":
                         return ecuVariant.EcuTranslation.TextEn;
                     case "NODECLASS":
