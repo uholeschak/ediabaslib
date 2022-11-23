@@ -190,7 +190,7 @@ namespace PsdzClient.Core
                 switch (name.ToUpperInvariant())
                 {
                     case "TITLE_JA":
-                        return ecuVariant.Title_ja;
+                        return ecuVariant.EcuTranslation.TextJa;
                     case "SORT":
                         if (!ecuVariant.Sort.HasValue)
                         {
@@ -198,31 +198,31 @@ namespace PsdzClient.Core
                         }
                         return ecuVariant.Sort.ToString();
                     case "TITLE_ENUS":
-                        return ecuVariant.Title_enus;
+                        return ecuVariant.EcuTranslation.TextEn;
                     case "NODECLASS":
                         return "5719042";
                     case "TITLE_ENGB":
-                        return ecuVariant.Title_engb;
+                        return ecuVariant.EcuTranslation.TextEn;
                     case "TITLE_NL":
-                        return ecuVariant.Title_nl;
+                        return ecuVariant.EcuTranslation.TextNl;
                     case "TITLE_ZHTW":
-                        return ecuVariant.Title_zhtw;
+                        return ecuVariant.EcuTranslation.TextZh;
                     case "TITLE_ZHCN":
-                        return ecuVariant.Title_zhcn;
+                        return ecuVariant.EcuTranslation.TextZh;
                     case "TITLE_TH":
-                        return ecuVariant.Title_th;
+                        return ecuVariant.EcuTranslation.TextTh;
                     case "TITLE_KO":
-                        return ecuVariant.Title_ko;
+                        return ecuVariant.EcuTranslation.TextKo;
                     case "TITLE":
-                        return ecuVariant.Title;
+                        return ecuVariant.EcuTranslation.GetTitle(ClientContext.GetClientContext(vecInfo));
                     case "TITLE_RU":
-                        return ecuVariant.Title_ru;
+                        return ecuVariant.EcuTranslation.TextRu;
                     case "TITLE_TR":
-                        return ecuVariant.Title_tr;
+                        return ecuVariant.EcuTranslation.TextTr;
                     case "TITLE_CSCZ":
-                        return ecuVariant.Title_cscz;
+                        return ecuVariant.EcuTranslation.TextCs;
                     case "TITLE_DEDE":
-                        return ecuVariant.Title_dede;
+                        return ecuVariant.EcuTranslation.TextDe;
                     case "ID":
                         return ecuVariant.Id.ToString(CultureInfo.InvariantCulture);
                     case "NAME":
@@ -234,7 +234,7 @@ namespace PsdzClient.Core
                         }
                         return ecuVariant.FaultMemoryDeleteWaitingTime.ToString();
                     case "TITLE_PLPL":
-                        return ecuVariant.Title_plpl;
+                        return ecuVariant.EcuTranslation.TextPl;
                     case "VALIDFROM":
                         if (!ecuVariant.ValidFrom.HasValue)
                         {
@@ -254,25 +254,25 @@ namespace PsdzClient.Core
                         }
                         return ecuVariant.ValidTo.ToString();
                     case "TITLE_EL":
-                        return ecuVariant.Title_el;
+                        return ecuVariant.EcuTranslation.TextEl;
                     case "ECUGROUPID":
-                        if (!ecuVariant.EcuGroupId.HasValue)
+                        if (string.IsNullOrEmpty(ecuVariant.EcuGroupId))
                         {
                             return "0";
                         }
-                        return ecuVariant.EcuGroupId.ToString();
+                        return ecuVariant.EcuGroupId;
                     case "TITLE_SV":
-                        return ecuVariant.Title_sv;
+                        return ecuVariant.EcuTranslation.TextSv;
                     case "TITLE_IT":
-                        return ecuVariant.Title_it;
+                        return ecuVariant.EcuTranslation.TextIt;
                     case "TITLE_ES":
-                        return ecuVariant.Title_es;
+                        return ecuVariant.EcuTranslation.TextEs;
                     case "TITLE_PT":
-                        return ecuVariant.Title_pt;
+                        return ecuVariant.EcuTranslation.TextPt;
                     case "TITLE_FR":
-                        return ecuVariant.Title_fr;
+                        return ecuVariant.EcuTranslation.TextFr;
                     case "TITLE_ID":
-                        return ecuVariant.Title_id;
+                        return ecuVariant.EcuTranslation.TextId;
                     default:
                         return string.Empty;
                 }
