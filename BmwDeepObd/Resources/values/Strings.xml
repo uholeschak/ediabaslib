@@ -230,7 +230,7 @@
   <string name="button_scan">Scan for devices</string>
   <string name="button_bt_settings">Open Bluetooth settings</string>
   <string name="detect_adapter">Detecting adapter type</string>
-  <string name="adapter_connection_mtc_failed">Bluetooth connection to the adapter failed.\nPlease try to delete the adapter and connect it again to fix this problem.\nReconnecting the smartphone may also help to improve the communication.\nUse OBD adapters with YC1021 or BC417 (for older Android radios) Bluetooth chip.</string>
+  <string name="adapter_connection_mtc_failed">Bluetooth connection to the adapter failed.\nPlease try to delete the adapter and connect it again to fix this problem.\nReconnecting the smartphone may also help to improve the communication.\nUse OBD adapters with YC1021 (for newer Android radios) or BC417 (for older Android radios) Bluetooth chip.</string>
   <string name="adapter_connection_failed">Bluetooth connection to the adapter failed.\nIf another app uses the connection terminate the app or reboot the android device.</string>
   <string name="unknown_adapter_type">Adapter type detection failed.\nDo you still want to use this adapter (the telegrams will be send unmodified)?</string>
   <string name="adapter_raw_warn">The direct communication mode is only useful for adapters without firmware or for flashing the adapter!\nCommunication with the car is not possible in the most cases!\nDo you want to continue anyway?</string>
