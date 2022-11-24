@@ -3153,7 +3153,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             EcuVar ecuVar = null;
             try
             {
-                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NAME, " + DatabaseFunctions.SqlTitleItems + ", ECUGROUPID FROM XEP_ECUVARIANTS WHERE (ID = {0})", varId);
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, FAULTMEMORYDELETEWAITINGTIME, NAME, " + DatabaseFunctions.SqlTitleItems + ", VALIDFROM, VALIDTO, SICHERHEITSRELEVANT, ECUGROUPID, SORT FROM XEP_ECUVARIANTS WHERE (ID = {0})", varId);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
