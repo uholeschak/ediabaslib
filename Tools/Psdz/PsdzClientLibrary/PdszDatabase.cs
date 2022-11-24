@@ -3379,9 +3379,10 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             EcuGroup ecuGroup = null;
             string groupId = ecuVar.EcuGroupId;
             log.InfoFormat("FindEcuGroup Id: {0}", groupId);
-            if (EvaluateXepRulesById(groupId, vehicle, ffmResolver, null))
+            ecuGroup = GetEcuGroupById(groupId);
+            if (ecuGroup == null)
             {
-                ecuGroup = GetEcuGroupById(groupId);
+                log.InfoFormat("FindEcuGroup No EcuGroup found ECU variant: {0}/{1}", ecuVar.Name, groupId);
             }
             return ecuGroup;
         }
