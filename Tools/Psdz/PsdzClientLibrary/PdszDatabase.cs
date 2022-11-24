@@ -409,8 +409,8 @@ namespace PsdzClient
                 StringBuilder sb = new StringBuilder();
                 sb.Append(prefix);
                 sb.Append(string.Format(CultureInfo.InvariantCulture,
-                    "EcuGroup: Id={0}, Name={1}, Virt={2}, Safety={3}, Addr={4}",
-                    Id, Name, Virt, SafetyRelevant, DiagAddr));
+                    "EcuGroup: Id={0}, ObdId={1}, FaultMemDelIdent={2}, FaultMemDelWait={3}, Name={4}, Virt={5}, Safety={6}, ValidFrom={7}, ValidTo={8}, Addr={9}",
+                    Id, ObdIdent, FaultMemDelIdent, FaultMemDelWaitTime, Name, Virt, SafetyRelevant, ValidFrom, ValidTo, DiagAddr));
                 return sb.ToString();
             }
         }
