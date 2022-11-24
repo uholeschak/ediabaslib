@@ -367,13 +367,13 @@ namespace PsdzClient.Core
                             obj = ecuVariant.EcuTranslation.TextPl;
                             break;
                         case "VALIDFROM":
-                            obj = ecuVariant.ValidFrom;
+                            obj = !string.IsNullOrEmpty(ecuVariant.ValidFrom);
                             break;
                         case "SICHERHEITSRELEVANT":
                             obj = ecuVariant.SafetyRelevant;
                             break;
                         case "VALIDTO":
-                            obj = ecuVariant.ValidTo;
+                            obj = !string.IsNullOrEmpty(ecuVariant.ValidTo);
                             break;
                         case "TITLE_EL":
                             obj = ecuVariant.EcuTranslation.TextEl;
