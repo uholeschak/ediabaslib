@@ -173,7 +173,7 @@ namespace PsdzClient.Core
 				return false;
 			}
 		}
-#if false
+
         public string GetDataValue(string name)
         {
             if (ecuGroup != null && !string.IsNullOrEmpty(name))
@@ -181,7 +181,7 @@ namespace PsdzClient.Core
                 switch (name.ToUpperInvariant())
                 {
                     case "FAULTMEMORYDELETEWAITINGTIME":
-                        return ecuGroup.FaultMemoryDeleteWaitingTime.ToString(CultureInfo.InvariantCulture);
+                        return ecuGroup.FaultMemDelWaitTime;
                     case "NODECLASS":
                         return "5717890";
                     case "ID":
@@ -189,25 +189,25 @@ namespace PsdzClient.Core
                     case "NAME":
                         return ecuGroup.Name;
                     case "OBDIDENTIFICATION":
-                        return ecuGroup.ObdIdentification.ToString(CultureInfo.InvariantCulture);
+                        return ecuGroup.ObdIdent;
                     case "VIRTUELL":
-                        return ecuGroup.Virtuell.ToString(CultureInfo.InvariantCulture);
+                        return ecuGroup.Virt;
                     case "VALIDFROM":
-                        return ecuGroup.ValidFrom.ToString();
+                        return ecuGroup.ValidFrom;
                     case "FAULTMEMORYDELETEIDENTIFICATIO":
-                        return ecuGroup.FaultMemoryDeleteIdentificatio.ToString(CultureInfo.InvariantCulture);
+                        return ecuGroup.FaultMemDelIdent;
                     case "SICHERHEITSRELEVANT":
-                        return ecuGroup.Sicherheitsrelevant.ToString(CultureInfo.InvariantCulture);
+                        return ecuGroup.SafetyRelevant;
                     case "VALIDTO":
-                        return ecuGroup.ValidTo.ToString();
+                        return ecuGroup.ValidTo;
                     default:
                         return string.Empty;
                 }
             }
             return null;
         }
-#endif
-		public ISPELocator[] GetIncomingLinks()
+        
+        public ISPELocator[] GetIncomingLinks()
 		{
 			return new ISPELocator[0];
 		}
@@ -226,12 +226,12 @@ namespace PsdzClient.Core
 		{
 			return this.children;
 		}
-
-		public T GetDataValue<T>(string name)
+#endif
+        public T GetDataValue<T>(string name)
 		{
 			throw new NotImplementedException();
 		}
-#endif
+
 		private readonly PdszDatabase.EcuGroup ecuGroup;
 
 		private readonly Vehicle vecInfo;

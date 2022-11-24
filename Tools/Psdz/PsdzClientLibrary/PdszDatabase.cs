@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Data.SQLite;
 using System.Globalization;
 using System.IO;
@@ -9,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Psdz.Model;
@@ -368,22 +370,37 @@ namespace PsdzClient
 
         public class EcuGroup
         {
-            public EcuGroup(string id, string name, string virt, string safetyRelevant, string diagAddr)
+            public EcuGroup(string id, string obdIdent, string faultMemDelIdent, string faultMemDelWaitTime, string name, string virt, string safetyRelevant, string validFrom, string validTo, string diagAddr)
             {
                 Id = id;
+                ObdIdent = obdIdent;
+                FaultMemDelIdent = faultMemDelIdent;
+                FaultMemDelWaitTime = faultMemDelWaitTime;
                 Name = name;
                 Virt = virt;
                 SafetyRelevant = safetyRelevant;
+                ValidFrom = validFrom;
+                ValidTo = validTo;
                 DiagAddr = diagAddr;
             }
 
             public string Id { get; set; }
+
+            public string ObdIdent { get; set; }
+
+            public string FaultMemDelIdent { get; set; }
+
+            public string FaultMemDelWaitTime { get; set; }
 
             public string Name { get; set; }
 
             public string Virt { get; set; }
 
             public string SafetyRelevant { get; set; }
+
+            public string ValidFrom { get; set; }
+
+            public string ValidTo { get; set; }
 
             public string DiagAddr { get; set; }
 
@@ -3379,7 +3396,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             EcuGroup ecuGroup = null;
             try
             {
-                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NAME, VIRTUELL, SICHERHEITSRELEVANT, DIAGNOSTIC_ADDRESS FROM XEP_ECUGROUPS WHERE (ID = {0})", groupId);
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, OBDIDENTIFICATION, FAULTMEMORYDELETEIDENTIFICATIO, FAULTMEMORYDELETEWAITINGTIME, NAME, VIRTUELL, SICHERHEITSRELEVANT, VALIDTO, VALIDFROM, DIAGNOSTIC_ADDRESS FROM XEP_ECUGROUPS WHERE (ID = {0})", groupId);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
@@ -3410,7 +3427,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             List<EcuGroup> ecuGroups = new List<EcuGroup>();
             try
             {
-                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NAME, VIRTUELL, SICHERHEITSRELEVANT, DIAGNOSTIC_ADDRESS FROM XEP_ECUGROUPS WHERE (NAME = '{0}' COLLATE UTF8CI)", groupName);
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, OBDIDENTIFICATION, FAULTMEMORYDELETEIDENTIFICATIO, FAULTMEMORYDELETEWAITINGTIME, NAME, VIRTUELL, SICHERHEITSRELEVANT, VALIDTO, VALIDFROM, DIAGNOSTIC_ADDRESS FROM XEP_ECUGROUPS WHERE (NAME = '{0}' COLLATE UTF8CI)", groupName);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
@@ -5212,11 +5229,16 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
         private static EcuGroup ReadXepEcuGroup(SQLiteDataReader reader)
         {
             string id = reader["ID"].ToString().Trim();
+            string obdIdent = reader["OBDIDENTIFICATION"].ToString().Trim();
+            string faultMemDelIdent = reader["FAULTMEMORYDELETEIDENTIFICATIO"].ToString().Trim();
+            string faultMemDelWaitTime = reader["FAULTMEMORYDELETEWAITINGTIME"].ToString().Trim();
             string name = reader["NAME"].ToString().Trim();
             string virt = reader["VIRTUELL"].ToString().Trim();
             string safetyRelevant = reader["SICHERHEITSRELEVANT"].ToString().Trim();
+            string validFrom = reader["VALIDFROM"].ToString().Trim();
+            string validTo = reader["VALIDTO"].ToString().Trim();
             string diagAddr = reader["DIAGNOSTIC_ADDRESS"].ToString().Trim();
-            return new EcuGroup(id, name, virt, safetyRelevant, diagAddr);
+            return new EcuGroup(id, obdIdent, faultMemDelIdent, faultMemDelWaitTime, name, virt, safetyRelevant, validFrom, validTo, diagAddr);
         }
 
         private static SwiAction ReadXepSwiAction(SQLiteDataReader reader, SwiActionSource swiActionSource)

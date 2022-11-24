@@ -29,9 +29,9 @@ namespace PsdzClient.Core
 
         string SignedId { get; }
 
-        //string GetDataValue(string name);
+        string GetDataValue(string name);
 
-        //T GetDataValue<T>(string name);
+        T GetDataValue<T>(string name);
 
         ISPELocator[] GetIncomingLinks();
 
