@@ -250,11 +250,9 @@
   <string name="title_paired_devices">Авторизированные устройства</string>
   <string name="title_other_devices">Другие доступные устройства</string>
   <string name="button_scan">Поиск устройств</string>
-  <!--Translate-->
   <string name="button_bt_settings">Откройте настройки Bluetooth</string>
   <string name="detect_adapter">Определение типа устройства</string>
-  <!--Translate-->
-  <string name="adapter_connection_mtc_failed">Не удалось установить соединение с Bluetooth адаптером.\nПопробуйте устранить эту проблему путём удаления и нового подключения адаптера.\nПовторное подключение смартфона также может улучшить качество связи.\nИспользуйте OBD адаптер с YC1021 (для более новых радиостанций Android) или BC417 (для старых радиостанций Android) Bluetooth чипом.</string>
+  <string name="adapter_connection_mtc_failed">Не удалось установить соединение с Bluetooth адаптером.\nПопробуйте устранить эту проблему путём удаления и нового подключения адаптера.\nПовторное подключение смартфона также может улучшить качество связи.\nИспользуйте OBD адаптер с Bluetooth чипом YC1021 (для более новых радиостанций на Android) или Bluetooth чипом BC417 (для старых радиостанций на Android).</string>
   <string name="adapter_connection_failed">Не удалось установить Bloetooth соединение с устройством.\nЗакройте другие приложения, если они используют это соединение или перезагрузите ваше Android устройство.</string>
   <string name="unknown_adapter_type">Не установлен тип устройства.\nХотите все равно использовать это устройство (Пакеты данных будут посланы без изменений)?</string>
   <string name="adapter_raw_warn">Режим прямой связи целесообразен только для адаптеров без прошивки или для перепрошивки адаптера!\nСоединение с автомобилем в большинстве случаев невозможно!\nХотите продолжить?</string>
@@ -265,8 +263,7 @@
   <string name="fake_elm_try">Вы всё-таки хотите попробовать использовать адаптер?</string>
   <string formatted="false" name="recommened_adapter_type">Рекомендуется ELM327 устройство v1.4b, v1.5 или оригинальной версии v2.1,&lt;br&gt;которое базируется на процессоре PIC18F25K80 (не на MCP2515 чипе).&lt;br&gt;По ссылке &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;github.com/uholeschak/ediabaslib&lt;/a&gt; можете найти улучшенную прошивку.\nОригинальные адаптеры Deep OBD содержат лицензию на кодирование одного автомобиля.</string>
   <string formatted="false" name="adapter_elm_replacement">ELM327 устройства медленные и поддерживают только D-CAN (автомобили начиная с 3/2007).&lt;br&gt;Вы можете купить улучшенную прошивку&lt;br&gt;&lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;github.com/uholeschak/ediabaslib&lt;/a&gt;.\nОригинальные адаптеры Deep OBD содержат лицензию на кодирование одного автомобиля.</string>
-  <!--Translate-->
-  <string name="adapter_stn_firmware">Рекомендуется сначала обновить прошивку адаптера.\nВы хотите открыть приложение OBDLink для выполнения обновления?</string>
+  <string name="adapter_stn_firmware">Рекомендуется сначала обновить прошивку адаптера.\nХотите открыть приложение OBDLink для выполнения обновления?</string>
   <string name="adapter_elm_firmware">Рекомендуется прошить альтернативное программное обеспечение ELM327.\nОткрыть конфигурацию адаптера для обновления программного обеспечения?</string>
   <string name="adapter_cfg_required">Устройство, возможно, требуется настроить.\nХотите получить доступ к конфигурации устройства?</string>
   <string name="adapter_fw_update">Доступно обновление для этого устройства.\nХотите получить доступ к конфигурации устройства, чтобы установить обновление?</string>
@@ -279,10 +276,8 @@
   <string name="bt_device_connected">(Подключено)</string>
   <string name="bt_device_menu_tite">Выберите одну из нижеперечисленных опций для этого устройства</string>
   <string name="bt_device_select">Выбрать OBD адаптер</string>
-  <!--Translate-->
-  <string name="bt_device_pair">Подключить устройство</string>
-  <!--Translate-->
-  <string name="bt_device_unpair">Отключить устройство</string>
+  <string name="bt_device_pair">Соединить устройство</string>
+  <string name="bt_device_unpair">Отсоединить устройство</string>
   <string name="bt_device_connect_obd">Подключить как OBD адаптер</string>
   <string name="bt_device_connect_phone">Подключить как телефон</string>
   <string name="bt_device_disconnect_phone">Отсоединить телефон</string>
@@ -766,7 +761,6 @@
   <string name="can_adapter_fw_update_present">Доступно обновление для этого адаптера.\nХотите установить обновление?</string>
   <string name="can_adapter_fw_update_info">Во время обновления связь не должна прерываться ни при каких обстоятельствах.\nПродолжить?</string>
   <string name="can_adapter_fw_update_info_ftdi">Для обновления требуется, чтобы загрузчик уже был прошит в устройство один раз.\nЕсли приложение больше не запускается, вам необходимо перезагрузить процессор на этапе подключения, но соединение USB не должно прерываться.\nПродолжить?</string>
-  <!--Translate-->
   <string name="can_adapter_fw_elm_info">Прошивка ELM327 предоставляется в неизменном виде и без какой-либо поддержки.\nПожалуйста, прочитайте оригинальную документацию ELM327 1.4b для более подробной информации.</string>
   <string name="can_adapter_fw_update_connect">При подключении к устройству может потребоваться перезагрузка процессора.</string>
   <string name="can_adapter_fw_update_active">Обновление прошивки.\nПожалуйста не прерывайте связь.</string>
