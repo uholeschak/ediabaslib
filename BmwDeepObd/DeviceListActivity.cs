@@ -2166,11 +2166,27 @@ namespace BmwDeepObd
                 return false;
             }
 
-            string stnVers = GetElm327Reponse(bluetoothInStream);
+            string stnVers = GetElm327Reponse(bluetoothInStream, true);
+            string stnVersExt = null;
             if (stnVers != null)
             {
-                //stnVers = "STN2255 v5.7.0";
                 LogString(string.Format("STN Version: {0}", stnVers));
+                if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, @"STIX", false))
+                {
+                    LogString("*** STN read ext firmware version failed");
+                    return false;
+                }
+
+                stnVersExt = GetElm327Reponse(bluetoothInStream, true);
+                if (stnVersExt != null)
+                {
+                    LogString(string.Format("STN Ext Version: {0}", stnVersExt));
+                }
+            }
+
+            if (stnVers != null && stnVersExt != null)
+            {
+                //stnVers = "STN2255 v5.7.0";
                 Regex stnVerRegEx = new Regex(@"STN(\d+)\s+v(\d+)\.(\d+)\.(\d+)", RegexOptions.IgnoreCase);
                 MatchCollection matchesVer = stnVerRegEx.Matches(stnVers);
                 if ((matchesVer.Count == 1) && (matchesVer[0].Groups.Count == 5))
@@ -2302,8 +2318,9 @@ namespace BmwDeepObd
         /// Get response from EL327
         /// </summary>
         /// <param name="bluetoothInStream">Bluetooth input stream</param>
+        /// <param name="checkValid">Check if resposne is valid</param>
         /// <returns>Response string, null for no reponse</returns>
-        private string GetElm327Reponse(Stream bluetoothInStream)
+        private string GetElm327Reponse(Stream bluetoothInStream, bool checkValid = false)
         {
             LogData(null, 0, 0, "Resp");
             string response = null;
@@ -2354,7 +2371,16 @@ namespace BmwDeepObd
             }
             else
             {
-                LogString("ELM CMD rec: " + response.Replace("\r", "").Replace(">", ""));
+                string bareResponse = response.Replace("\r", "").Replace(">", "");
+                LogString("ELM CMD rec: " + bareResponse);
+                if (checkValid)
+                {
+                    if (bareResponse.Trim().StartsWith("?"))
+                    {
+                        LogString("*** ELM response not valid");
+                        response = null;
+                    }
+                }
             }
             return response;
         }

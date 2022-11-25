@@ -316,8 +316,10 @@ namespace EdiabasLib
                     if (data != null)
                     {
 #if DEBUG
+                        string dataText = Encoding.UTF8.GetString(data);
+                        dataText = dataText.Replace("\r", "");
                         Android.Util.Log.Info(Tag, string.Format("GATT SPP data received: {0} '{1}'",
-                            BitConverter.ToString(data).Replace("-", ""), Encoding.UTF8.GetString(data)));
+                            BitConverter.ToString(data).Replace("-", ""), dataText));
 #endif
                         _btGattSppInStream?.Write(data);
                         _btGattReceivedEvent.Set();
