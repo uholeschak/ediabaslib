@@ -22,6 +22,8 @@ namespace EdiabasLib
         private static readonly Java.Util.UUID GattServiceWgSoftSpp = Java.Util.UUID.FromString("0000fff0-0000-1000-8000-00805f9b34fb");
         private static readonly Java.Util.UUID GattCharacteristicWgSoftSppRead = Java.Util.UUID.FromString("0000fff1-0000-1000-8000-00805f9b34fb");
         private static readonly Java.Util.UUID GattCharacteristicWgSoftSppWrite = Java.Util.UUID.FromString("0000fff2-0000-1000-8000-00805f9b34fb");
+        private static readonly Java.Util.UUID GattServiceVLinkerSpp = Java.Util.UUID.FromString("e7810a71-73ae-499d-8c15-faa9aef0c3f2");
+        private static readonly Java.Util.UUID GattCharacteristicVLinkerSpp = Java.Util.UUID.FromString("bef8d6c9-9c21-4c9e-b632-bd58c1009f9f");
         private static readonly Java.Util.UUID GattCharacteristicConfig = Java.Util.UUID.FromString("00002902-0000-1000-8000-00805f9b34fb");
 
         private bool _disposed;
@@ -161,7 +163,8 @@ namespace EdiabasLib
 #endif
                     }
                 }
-                else
+
+                if (_gattCharacteristicSppRead == null || _gattCharacteristicSppWrite == null)
                 {
                     gattServiceSpp = _bluetoothGatt.GetService(GattServiceWgSoftSpp);
                     BluetoothGattCharacteristic gattCharacteristicSppRead = gattServiceSpp?.GetCharacteristic(GattCharacteristicWgSoftSppRead);
@@ -175,10 +178,30 @@ namespace EdiabasLib
                             _gattCharacteristicSppWrite = gattCharacteristicSppWrite;
                             _gattCharacteristicUuidSppRead = GattCharacteristicWgSoftSppRead;
                             _gattCharacteristicUuidSppWrite = GattCharacteristicWgSoftSppWrite;
-                        }
 #if DEBUG
-                        Android.Util.Log.Info(Tag, "SPP characteristic WgSoft found");
+                            Android.Util.Log.Info(Tag, "SPP characteristic WgSoft found");
 #endif
+                        }
+                    }
+                }
+
+                if (_gattCharacteristicSppRead == null || _gattCharacteristicSppWrite == null)
+                {
+                    gattServiceSpp = _bluetoothGatt.GetService(GattServiceVLinkerSpp);
+                    gattCharacteristicSpp = gattServiceSpp?.GetCharacteristic(GattCharacteristicVLinkerSpp);
+                    if (gattCharacteristicSpp != null)
+                    {
+                        if ((gattCharacteristicSpp.Properties & (GattProperty.Read | GattProperty.Write | GattProperty.Notify)) ==
+                            (GattProperty.Read | GattProperty.Write | GattProperty.Notify))
+                        {
+                            _gattCharacteristicSppRead = gattCharacteristicSpp;
+                            _gattCharacteristicSppWrite = gattCharacteristicSpp;
+                            _gattCharacteristicUuidSppRead = GattCharacteristicVLinkerSpp;
+                            _gattCharacteristicUuidSppWrite = GattCharacteristicVLinkerSpp;
+#if DEBUG
+                            Android.Util.Log.Info(Tag, "SPP characteristic VLinker found");
+#endif
+                        }
                     }
                 }
 
