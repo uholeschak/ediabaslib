@@ -41,7 +41,7 @@ namespace EdiabasLib
                 Java.Util.UUID.FromString("0000ffe1-0000-1000-8000-00805f9b34fb"), Java.Util.UUID.FromString("0000ffe1-0000-1000-8000-00805f9b34fb")),
             new GattSppInfo("WgSoft", Java.Util.UUID.FromString("0000fff0-0000-1000-8000-00805f9b34fb"),
             Java.Util.UUID.FromString("0000fff1-0000-1000-8000-00805f9b34fb"), Java.Util.UUID.FromString("0000fff2-0000-1000-8000-00805f9b34fb")),
-            new GattSppInfo("VLinker", Java.Util.UUID.FromString("e7810a71-73ae-499d-8c15-faa9aef0c3f2"),
+            new GattSppInfo("vLinker", Java.Util.UUID.FromString("e7810a71-73ae-499d-8c15-faa9aef0c3f2"),
             Java.Util.UUID.FromString("bef8d6c9-9c21-4c9e-b632-bd58c1009f9f"), Java.Util.UUID.FromString("bef8d6c9-9c21-4c9e-b632-bd58c1009f9f"))
         };
 
