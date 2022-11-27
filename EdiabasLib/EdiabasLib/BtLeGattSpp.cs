@@ -147,7 +147,7 @@ namespace EdiabasLib
                         continue;
                     }
 
-                    Android.Util.Log.Info(Tag, string.Format("GATT service: {0}", gattService.Uuid));
+                    Android.Util.Log.Info(Tag, string.Format("GATT service: UUID={0}, Type={1}", gattService.Uuid, gattService.Type));
                     foreach (BluetoothGattCharacteristic gattCharacteristic in gattService.Characteristics)
                     {
                         if (gattCharacteristic.Uuid == null)
