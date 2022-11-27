@@ -54,8 +54,6 @@ namespace EdiabasLib
         private BluetoothGatt _bluetoothGatt;
         private BluetoothGattCharacteristic _gattCharacteristicSppRead;
         private BluetoothGattCharacteristic _gattCharacteristicSppWrite;
-        private Java.Util.UUID _gattCharacteristicUuidSppRead;
-        private Java.Util.UUID _gattCharacteristicUuidSppWrite;
         private volatile State _gattConnectionState = State.Disconnected;
         private volatile bool _gattServicesDiscovered;
         private GattStatus _gattWriteStatus = GattStatus.Failure;
@@ -163,8 +161,6 @@ namespace EdiabasLib
 
                 _gattCharacteristicSppRead = null;
                 _gattCharacteristicSppWrite = null;
-                _gattCharacteristicUuidSppRead = null;
-                _gattCharacteristicUuidSppWrite = null;
 
                 foreach (GattSppInfo gattSppInfo in _gattSppInfoList)
                 {
@@ -180,14 +176,56 @@ namespace EdiabasLib
                             {
                                 _gattCharacteristicSppRead = gattCharacteristicSppRead;
                                 _gattCharacteristicSppWrite = gattCharacteristicSppWrite;
-                                _gattCharacteristicUuidSppRead = gattSppInfo.CharacteristicReadUuid;
-                                _gattCharacteristicUuidSppWrite = gattSppInfo.CharacteristicWriteUuid;
 #if DEBUG
                                 Android.Util.Log.Info(Tag, "SPP characteristic found: " + gattSppInfo.Name);
 #endif
                                 LogString("GATT SPP characteristic found: " + gattSppInfo.Name);
                                 break;
                             }
+                        }
+                    }
+                }
+
+                if (_gattCharacteristicSppRead == null || _gattCharacteristicSppWrite == null)
+                {
+                    LogString("*** No known GATT SPP characteristic start autodetect");
+                    foreach (BluetoothGattService gattService in services)
+                    {
+                        if (gattService.Uuid == null || gattService.Characteristics == null || gattService.Type != GattServiceType.Primary)
+                        {
+                            continue;
+                        }
+
+                        LogString(string.Format("GATT service: UUID={0}", gattService.Uuid));
+                        BluetoothGattCharacteristic gattCharacteristicSppRead = null;
+                        BluetoothGattCharacteristic gattCharacteristicSppWrite = null;
+                        foreach (BluetoothGattCharacteristic gattCharacteristic in gattService.Characteristics)
+                        {
+                            if (gattCharacteristic.Uuid == null)
+                            {
+                                continue;
+                            }
+
+                            if ((gattCharacteristic.Properties & (GattProperty.Read | GattProperty.Notify)) == (GattProperty.Read | GattProperty.Notify))
+                            {
+                                gattCharacteristicSppRead = gattCharacteristic;
+                            }
+
+                            if ((gattCharacteristic.Properties & (GattProperty.Write)) == (GattProperty.Write))
+                            {
+                                gattCharacteristicSppWrite = gattCharacteristic;
+                            }
+                        }
+
+                        if (gattCharacteristicSppRead != null && gattCharacteristicSppWrite != null)
+                        {
+                            _gattCharacteristicSppRead = gattCharacteristicSppRead;
+                            _gattCharacteristicSppWrite = gattCharacteristicSppWrite;
+#if DEBUG
+                            Android.Util.Log.Info(Tag, "SPP characteristic found");
+#endif
+                            LogString("GATT SPP characteristic found");
+                            break;
                         }
                     }
                 }
@@ -289,8 +327,8 @@ namespace EdiabasLib
         {
             try
             {
-                if (characteristic.Uuid != null && _gattCharacteristicUuidSppRead != null &&
-                    characteristic.Uuid.Equals(_gattCharacteristicUuidSppRead))
+                if (characteristic.Uuid != null && _gattCharacteristicSppRead?.Uuid != null &&
+                    characteristic.Uuid.Equals(_gattCharacteristicSppRead.Uuid))
                 {
                     byte[] data = value;
                     if (Build.VERSION.SdkInt < BuildVersionCodes.Tiramisu)
@@ -452,8 +490,8 @@ namespace EdiabasLib
                 GattStatus resultStatus = GattStatus.Failure;
                 if (status == GattStatus.Success)
                 {
-                    if (characteristic.Uuid != null && _btLeGattSpp._gattCharacteristicUuidSppWrite != null &&
-                        characteristic.Uuid.Equals(_btLeGattSpp._gattCharacteristicUuidSppWrite))
+                    if (characteristic.Uuid != null && _btLeGattSpp._gattCharacteristicSppWrite?.Uuid != null &&
+                        characteristic.Uuid.Equals(_btLeGattSpp._gattCharacteristicSppWrite.Uuid))
                     {
                         resultStatus = status;
                     }
