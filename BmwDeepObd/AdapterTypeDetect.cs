@@ -60,10 +60,10 @@ public class AdapterTypeDetect
     /// <summary>
     /// Detects the CAN adapter type
     /// </summary>
-    /// <param name="bluetoothInStream">Bluetooth input stream</param>
-    /// <param name="bluetoothOutStream">Bluetooth output stream</param>
+    /// <param name="adapterInStream">Adapter input stream</param>
+    /// <param name="adapterOutStream">Adapter output stream</param>
     /// <returns>Adapter type</returns>
-    public AdapterType AdapterTypeDetection(Stream bluetoothInStream, Stream bluetoothOutStream)
+    public AdapterType AdapterTypeDetection(Stream adapterInStream, Stream adapterOutStream)
     {
         AdapterType adapterType = AdapterType.Unknown;
         ElmVerH = -1;
@@ -75,25 +75,25 @@ public class AdapterTypeDetect
             byte[] customData = { 0x82, 0xF1, 0xF1, 0xFE, 0xFE, 0x00 }; // ignition state
             customData[^1] = EdCustomAdapterCommon.CalcChecksumBmwFast(customData, 0, customData.Length - 1);
             // custom adapter
-            bluetoothInStream.Flush();
-            while (bluetoothInStream.HasData())
+            adapterInStream.Flush();
+            while (adapterInStream.HasData())
             {
-                bluetoothInStream.ReadByteAsync();
+                adapterInStream.ReadByteAsync();
             }
 #if DEBUG
             Android.Util.Log.Info(Tag, string.Format("Send: {0}", BitConverter.ToString(customData).Replace("-", " ")));
 #endif
             LogData(customData, 0, customData.Length, "Send");
-            bluetoothOutStream.Write(customData, 0, customData.Length);
+            adapterOutStream.Write(customData, 0, customData.Length);
 
             LogData(null, 0, 0, "Resp");
             List<byte> responseList = new List<byte>();
             long startTime = Stopwatch.GetTimestamp();
             for (; ; )
             {
-                while (bluetoothInStream.HasData())
+                while (adapterInStream.HasData())
                 {
-                    int data = bluetoothInStream.ReadByteAsync();
+                    int data = adapterInStream.ReadByteAsync();
                     if (data >= 0)
                     {
 #if DEBUG
@@ -134,8 +134,8 @@ public class AdapterTypeDetect
                     }
 
                     bool escapeMode = _activityCommon.MtcBtEscapeMode;
-                    BtEscapeStreamReader inStream = new BtEscapeStreamReader(bluetoothInStream);
-                    BtEscapeStreamWriter outStream = new BtEscapeStreamWriter(bluetoothOutStream);
+                    BtEscapeStreamReader inStream = new BtEscapeStreamReader(adapterInStream);
+                    BtEscapeStreamWriter outStream = new BtEscapeStreamWriter(adapterOutStream);
                     if (!SetCustomEscapeMode(inStream, outStream, ref escapeMode, out bool noEscapeSupport))
                     {
                         LogString("*** Set escape mode failed");
@@ -206,19 +206,19 @@ public class AdapterTypeDetect
             Regex elmVerRegEx = new Regex(@"ELM327\s+v(\d+)\.(\d+)", RegexOptions.IgnoreCase);
             for (int retries = 0; retries < 2; retries++)
             {
-                bluetoothInStream.Flush();
-                while (bluetoothInStream.HasData())
+                adapterInStream.Flush();
+                while (adapterInStream.HasData())
                 {
-                    bluetoothInStream.ReadByteAsync();
+                    adapterInStream.ReadByteAsync();
                 }
 
                 string command = "ATI\r";
                 byte[] sendData = Encoding.UTF8.GetBytes(command);
                 LogData(sendData, 0, sendData.Length, "Send");
-                bluetoothOutStream.Write(sendData, 0, sendData.Length);
+                adapterOutStream.Write(sendData, 0, sendData.Length);
                 LogString("ELM CMD send: " + command);
 
-                string response = GetElm327Reponse(bluetoothInStream);
+                string response = GetElm327Reponse(adapterInStream);
                 if (response != null)
                 {
                     MatchCollection matchesVer = elmVerRegEx.Matches(response);
@@ -260,18 +260,18 @@ public class AdapterTypeDetect
             {
                 foreach (EdElmInterface.ElmInitEntry elmInitEntry in EdBluetoothInterface.Elm327InitCommands)
                 {
-                    bluetoothInStream.Flush();
-                    while (bluetoothInStream.HasData())
+                    adapterInStream.Flush();
+                    while (adapterInStream.HasData())
                     {
-                        bluetoothInStream.ReadByteAsync();
+                        adapterInStream.ReadByteAsync();
                     }
-                    if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, elmInitEntry.Command, false))
+                    if (!Elm327SendCommand(adapterInStream, adapterOutStream, elmInitEntry.Command, false))
                     {
                         adapterType = AdapterType.Elm327Invalid;
                         break;
                     }
 
-                    string response = GetElm327Reponse(bluetoothInStream);
+                    string response = GetElm327Reponse(adapterInStream);
                     if (response == null)
                     {
                         LogString("*** No ELM response");
@@ -315,7 +315,7 @@ public class AdapterTypeDetect
                     case AdapterType.Elm327:
                     case AdapterType.Elm327FakeOpt:
                         {
-                            if (!Elm327CheckCustomFirmware(bluetoothInStream, bluetoothOutStream, out bool customFirmware))
+                            if (!Elm327CheckCustomFirmware(adapterInStream, adapterOutStream, out bool customFirmware))
                             {
                                 LogString("*** ELM firmware detection failed");
                             }
@@ -325,7 +325,7 @@ public class AdapterTypeDetect
                                 break;
                             }
 
-                            if (!Elm327CheckCompatibility(bluetoothInStream, bluetoothOutStream, out bool restricted, out bool fwUpdate))
+                            if (!Elm327CheckCompatibility(adapterInStream, adapterOutStream, out bool restricted, out bool fwUpdate))
                             {
                                 LogString("*** ELM not compatible");
                                 adapterType = AdapterType.Elm327Fake;
@@ -341,7 +341,7 @@ public class AdapterTypeDetect
                                 adapterType = AdapterType.StnFwUpdate;
                             }
 
-                            if (!Elm327CheckCan(bluetoothInStream, bluetoothOutStream, out bool canSupport))
+                            if (!Elm327CheckCan(adapterInStream, adapterOutStream, out bool canSupport))
                             {
                                 LogString("*** ELM CAN detection failed");
                                 adapterType = AdapterType.Elm327Invalid;
@@ -583,27 +583,27 @@ public class AdapterTypeDetect
     /// <summary>
     /// Check for vehicle can support
     /// </summary>
-    /// <param name="bluetoothInStream"></param>
-    /// <param name="bluetoothOutStream"></param>
+    /// <param name="adapterInStream"></param>
+    /// <param name="adapterOutStream"></param>
     /// <param name="canSupport">True: CAN supported</param>
     /// <returns></returns>
-    private bool Elm327CheckCan(Stream bluetoothInStream, Stream bluetoothOutStream, out bool canSupport)
+    private bool Elm327CheckCan(Stream adapterInStream, Stream adapterOutStream, out bool canSupport)
     {
         canSupport = true;
-        Elm327SendCommand(bluetoothInStream, bluetoothOutStream, "ATCTM1");     // standard multiplier
+        Elm327SendCommand(adapterInStream, adapterOutStream, "ATCTM1");     // standard multiplier
         int timeout = 1000 / 4; // 1sec
-        if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, string.Format("ATST{0:X02}", timeout)))
+        if (!Elm327SendCommand(adapterInStream, adapterOutStream, string.Format("ATST{0:X02}", timeout)))
         {
             LogString("*** ELM setting timeout failed");
             return false;
         }
 
-        if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, "0000000000000000", false)) // dummy data
+        if (!Elm327SendCommand(adapterInStream, adapterOutStream, "0000000000000000", false)) // dummy data
         {
             LogString("*** ELM sending data failed");
             return false;
         }
-        string answer = GetElm327Reponse(bluetoothInStream);
+        string answer = GetElm327Reponse(adapterInStream);
         if (answer != null)
         {
             if (answer.Contains("CAN ERROR\r"))
@@ -616,12 +616,12 @@ public class AdapterTypeDetect
         if (canSupport)
         {
             // fake adapters are not able to send short telegrams
-            if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, "00", false))
+            if (!Elm327SendCommand(adapterInStream, adapterOutStream, "00", false))
             {
                 LogString("*** ELM sending data failed");
                 return false;
             }
-            answer = GetElm327Reponse(bluetoothInStream);
+            answer = GetElm327Reponse(adapterInStream);
             if (answer != null)
             {
                 if (answer.Contains("CAN ERROR\r"))
@@ -635,22 +635,22 @@ public class AdapterTypeDetect
         return true;
     }
 
-    private bool Elm327CheckCustomFirmware(Stream bluetoothInStream, Stream bluetoothOutStream, out bool customFirmware)
+    private bool Elm327CheckCustomFirmware(Stream adapterInStream, Stream adapterOutStream, out bool customFirmware)
     {
         customFirmware = false;
-        bluetoothInStream.Flush();
-        while (bluetoothInStream.HasData())
+        adapterInStream.Flush();
+        while (adapterInStream.HasData())
         {
-            bluetoothInStream.ReadByteAsync();
+            adapterInStream.ReadByteAsync();
         }
 
-        if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, @"AT@2", false))
+        if (!Elm327SendCommand(adapterInStream, adapterOutStream, @"AT@2", false))
         {
             LogString("*** ELM read device identifier failed");
             return false;
         }
 
-        string answer = GetElm327Reponse(bluetoothInStream);
+        string answer = GetElm327Reponse(adapterInStream);
         if (answer != null)
         {
             if (answer.StartsWith("DEEPOBD"))
@@ -672,23 +672,23 @@ public class AdapterTypeDetect
         return true;
     }
 
-    private bool Elm327CheckCompatibility(Stream bluetoothInStream, Stream bluetoothOutStream, out bool restricted, out bool fwUpdate)
+    private bool Elm327CheckCompatibility(Stream adapterInStream, Stream adapterOutStream, out bool restricted, out bool fwUpdate)
     {
         restricted = false;
         fwUpdate = false;
-        bluetoothInStream.Flush();
-        while (bluetoothInStream.HasData())
+        adapterInStream.Flush();
+        while (adapterInStream.HasData())
         {
-            bluetoothInStream.ReadByteAsync();
+            adapterInStream.ReadByteAsync();
         }
 
-        if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, @"AT@1", false))
+        if (!Elm327SendCommand(adapterInStream, adapterOutStream, @"AT@1", false))
         {
             LogString("*** ELM read device description failed");
             return false;
         }
 
-        string elmDevDesc = GetElm327Reponse(bluetoothInStream);
+        string elmDevDesc = GetElm327Reponse(adapterInStream);
         if (elmDevDesc != null)
         {
             LogString(string.Format("ELM ID: {0}", elmDevDesc));
@@ -698,13 +698,13 @@ public class AdapterTypeDetect
             }
         }
 
-        if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, @"AT#1", false))
+        if (!Elm327SendCommand(adapterInStream, adapterOutStream, @"AT#1", false))
         {
             LogString("*** ELM read manufacturer failed");
             return false;
         }
 
-        string elmManufact = GetElm327Reponse(bluetoothInStream);
+        string elmManufact = GetElm327Reponse(adapterInStream);
         if (elmManufact != null)
         {
             LogString(string.Format("ELM Manufacturer: {0}", elmManufact));
@@ -724,24 +724,24 @@ public class AdapterTypeDetect
             }
         }
 
-        if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, @"STI", false))
+        if (!Elm327SendCommand(adapterInStream, adapterOutStream, @"STI", false))
         {
             LogString("*** STN read firmware version failed");
             return false;
         }
 
-        string stnVers = GetElm327Reponse(bluetoothInStream, true);
+        string stnVers = GetElm327Reponse(adapterInStream, true);
         string stnVersExt = null;
         if (stnVers != null)
         {
             LogString(string.Format("STN Version: {0}", stnVers));
-            if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, @"STIX", false))
+            if (!Elm327SendCommand(adapterInStream, adapterOutStream, @"STIX", false))
             {
                 LogString("*** STN read ext firmware version failed");
                 return false;
             }
 
-            stnVersExt = GetElm327Reponse(bluetoothInStream, true);
+            stnVersExt = GetElm327Reponse(adapterInStream, true);
             if (stnVersExt != null)
             {
                 LogString(string.Format("STN Ext Version: {0}", stnVersExt));
@@ -820,7 +820,7 @@ public class AdapterTypeDetect
 
         if (!restricted)
         {
-            if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, @"ATPP2COFF"))
+            if (!Elm327SendCommand(adapterInStream, adapterOutStream, @"ATPP2COFF"))
             {
                 LogString("*** ELM ATPP2COFF failed, fake device");
                 return false;
@@ -848,21 +848,21 @@ public class AdapterTypeDetect
     /// <summary>
     /// Send command to EL327
     /// </summary>
-    /// <param name="bluetoothInStream">Bluetooth input stream</param>
-    /// <param name="bluetoothOutStream">Bluetooth output stream</param>
+    /// <param name="adapterInStream">Adapter input stream</param>
+    /// <param name="adapterOutStream">Adapter output stream</param>
     /// <param name="command">Command to send</param>
     /// <param name="readAnswer">True: Check for valid answer</param>
     /// <returns>True: command ok</returns>
-    private bool Elm327SendCommand(Stream bluetoothInStream, Stream bluetoothOutStream, string command, bool readAnswer = true)
+    private bool Elm327SendCommand(Stream adapterInStream, Stream adapterOutStream, string command, bool readAnswer = true)
     {
         byte[] sendData = Encoding.UTF8.GetBytes(command + "\r");
         LogData(sendData, 0, sendData.Length, "Send");
-        bluetoothOutStream.Write(sendData, 0, sendData.Length);
+        adapterOutStream.Write(sendData, 0, sendData.Length);
         LogString("ELM CMD send: " + command);
 
         if (readAnswer)
         {
-            string answer = GetElm327Reponse(bluetoothInStream);
+            string answer = GetElm327Reponse(adapterInStream);
             if (answer == null)
             {
                 LogString("*** No ELM response");
@@ -881,10 +881,10 @@ public class AdapterTypeDetect
     /// <summary>
     /// Get response from EL327
     /// </summary>
-    /// <param name="bluetoothInStream">Bluetooth input stream</param>
+    /// <param name="adapterInStream">Adapter input stream</param>
     /// <param name="checkValid">Check if resposne is valid</param>
     /// <returns>Response string, null for no reponse</returns>
-    private string GetElm327Reponse(Stream bluetoothInStream, bool checkValid = false)
+    private string GetElm327Reponse(Stream adapterInStream, bool checkValid = false)
     {
         LogData(null, 0, 0, "Resp");
         string response = null;
@@ -893,9 +893,9 @@ public class AdapterTypeDetect
         bool lengthMessage = false;
         for (; ; )
         {
-            while (bluetoothInStream.HasData())
+            while (adapterInStream.HasData())
             {
-                int data = bluetoothInStream.ReadByteAsync();
+                int data = adapterInStream.ReadByteAsync();
                 if (data >= 0 && data != 0x00)
                 {
                     // remove 0x00
