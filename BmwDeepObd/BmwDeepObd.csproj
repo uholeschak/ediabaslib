@@ -347,6 +347,7 @@
       <Link>VehicleInfoVag.cs</Link>
     </Compile>
     <Compile Include="ActivityCommon.cs" />
+    <Compile Include="AdapterTypeDetect.cs" />
     <Compile Include="ArgAssistBaseActivity.cs" />
     <Compile Include="ArgAssistControlActivity.cs" />
     <Compile Include="ArgAssistStatActivity.cs" />
