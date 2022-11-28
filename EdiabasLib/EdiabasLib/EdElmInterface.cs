@@ -944,7 +944,7 @@ namespace EdiabasLib
             catch (Exception ex)
             {
 #if __ANDROID__ && DEBUG
-                Android.Util.Log.Info(Tag, string.Format("*** ELM stream failure: {0}", EdiabasNet.GetExceptionText(ex)));
+                Android.Util.Log.Info(Tag, string.Format("ELM stream failure: {0}", EdiabasNet.GetExceptionText(ex)));
 #endif
                 Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** ELM stream failure: {0}", EdiabasNet.GetExceptionText(ex));
                 StreamFailure = true;
@@ -1001,6 +1001,9 @@ namespace EdiabasLib
                 {
                     stringBuilder.Append((string.Format("{0:X02}", data)));
                 }
+#if __ANDROID__ && DEBUG
+                Android.Util.Log.Info(Tag, string.Format("ELM CAN send: {0}", stringBuilder));
+#endif
                 Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM CAN send: {0}", stringBuilder.ToString());
                 stringBuilder.Append("\r");
                 byte[] sendData = Encoding.UTF8.GetBytes(stringBuilder.ToString());
@@ -1009,6 +1012,9 @@ namespace EdiabasLib
             }
             catch (Exception ex)
             {
+#if __ANDROID__ && DEBUG
+                Android.Util.Log.Info(Tag, string.Format("ELM stream failure: {0}", EdiabasNet.GetExceptionText(ex)));
+#endif
                 Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** ELM stream failure: {0}", EdiabasNet.GetExceptionText(ex));
                 StreamFailure = true;
                 return false;
