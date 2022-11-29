@@ -41,7 +41,6 @@ namespace EdiabasLib
         protected static object NetworkData;
         protected static object WifiManager;
 
-        // ReSharper disable once UnusedMember.Global
         public static NetworkStream NetworkStream => TcpStream;
 
         public static EdiabasNet Ediabas

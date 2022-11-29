@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Android.Net.Rtp;
+using System;
 using System.Net;
 using System.Net.Sockets;
 // ReSharper disable UseNullPropagation
@@ -35,6 +36,8 @@ namespace EdiabasLib
         static EdElmWifiInterface()
         {
         }
+
+        public static NetworkStream NetworkStream => TcpElmStream;
 
         public static EdiabasNet Ediabas { get; set; }
 

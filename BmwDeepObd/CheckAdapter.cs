@@ -85,6 +85,19 @@ public class CheckAdapter : IDisposable
                             break;
                         }
 
+                        case ActivityCommon.InterfaceType.ElmWifi:
+                        {
+                            NetworkStream networkStream = EdElmWifiInterface.NetworkStream;
+                            if (networkStream == null)
+                            {
+                                connectOk = false;
+                                break;
+                            }
+                            inStream = networkStream;
+                            outStream = networkStream;
+                            break;
+                        }
+
                         case ActivityCommon.InterfaceType.DeepObdWifi:
                         {
                             NetworkStream networkStream = EdCustomWiFiInterface.NetworkStream;

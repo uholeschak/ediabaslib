@@ -460,6 +460,7 @@ namespace BmwDeepObd
         private Timer _autoHideTimer;
         private Handler _updateHandler;
         private BackupManager _backupManager;
+        private CheckAdapter _checkAdapter;
         private TabLayout _tabLayout;
         private ViewPager2 _viewPager;
         private TabsFragmentStateAdapter _fragmentStateAdapter;
@@ -573,6 +574,7 @@ namespace BmwDeepObd
 
             _updateHandler = new Handler(Looper.MainLooper);
             _backupManager = new BackupManager(this);
+            _checkAdapter = new CheckAdapter(_activityCommon);
             _imageBackground = FindViewById<ImageView>(Resource.Id.imageBackground);
 
             StoreLastAppState(LastAppState.Init);
@@ -906,6 +908,9 @@ namespace BmwDeepObd
 
             _activityCommon?.Dispose();
             _activityCommon = null;
+
+            _checkAdapter?.Dispose();
+            _checkAdapter = null;
 
             if (_updateHandler != null)
             {
@@ -1987,6 +1992,30 @@ namespace BmwDeepObd
             }
             else
             {
+                if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.ElmWifi)
+                {
+                    if (_checkAdapter.StartCheckAdapter(_instanceData.AppDataPath,
+                            _activityCommon.SelectedInterface, _instanceData.DeviceAddress,
+                            checkError =>
+                            {
+                                RunOnUiThread(() =>
+                                {
+                                    if (!checkError)
+                                    {
+                                        if (StartEdiabasThread())
+                                        {
+                                            UpdateSelectedPage();
+                                        }
+                                    }
+
+                                    UpdateDisplay();
+                                });
+                            }))
+                    {
+                        return;
+                    }
+                }
+
                 if (StartEdiabasThread())
                 {
                     UpdateSelectedPage();
