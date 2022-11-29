@@ -15,6 +15,8 @@ namespace BmwDeepObd;
 
 public class CheckAdapter : IDisposable
 {
+    public delegate bool FinishDelegate(bool error = false);
+
     public const string ObdLinkPackageName = "OCTech.Mobile.Applications.OBDLink";
 
     private bool _disposed;
@@ -38,7 +40,7 @@ public class CheckAdapter : IDisposable
         _adapterTypeDetect = new AdapterTypeDetect(_activityCommon);
     }
 
-    public void StartCheckAdapter()
+    public void StartCheckAdapter(FinishDelegate finishHandler)
     {
         EdiabasInit();
 
@@ -121,40 +123,26 @@ public class CheckAdapter : IDisposable
                 {
                     case AdapterTypeDetect.AdapterType.ConnectionFailed:
                         {
-                            if (_activityCommon.MtcBtService)
-                            {
-                                AlertDialog alertDialog = new AlertDialog.Builder(_context)
-                                    .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
-                                    .SetCancelable(true)
-                                    .SetMessage(Resource.String.adapter_connection_mtc_failed)
-                                    .SetTitle(Resource.String.alert_title_error)
-                                    .Show();
-                                if (alertDialog != null)
-                                {
-                                    alertDialog.DismissEvent += (sender, args) =>
-                                    {
-                                        if (_activityCommon == null)
-                                        {
-                                            return;
-                                        }
-                                    };
-                                }
-                                break;
-                            }
-
-                            new AlertDialog.Builder(_context)
+                            AlertDialog alertDialog = new AlertDialog.Builder(_context)
                                 .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
                                 .SetCancelable(true)
                                 .SetMessage(Resource.String.adapter_connection_failed)
                                 .SetTitle(Resource.String.alert_title_error)
                                 .Show();
+                            if (alertDialog != null)
+                            {
+                                alertDialog.DismissEvent += (sender, args) =>
+                                {
+                                    finishHandler?.Invoke(true);
+                                };
+                            }
                             break;
                         }
 
                     case AdapterTypeDetect.AdapterType.Unknown:
                     {
                         bool yesSelected = false;
-                            AlertDialog alertDialog2 = new AlertDialog.Builder(_context)
+                            AlertDialog alertDialog = new AlertDialog.Builder(_context)
                                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                 {
                                     yesSelected = true;
@@ -166,14 +154,23 @@ public class CheckAdapter : IDisposable
                                 .SetMessage(Resource.String.unknown_adapter_type)
                                 .SetTitle(Resource.String.alert_title_error)
                                 .Show();
-                            if (alertDialog2 != null)
+                            if (alertDialog != null)
                             {
-                                alertDialog2.DismissEvent += (sender, args) =>
+                                alertDialog.DismissEvent += (sender, args) =>
                                 {
                                     if (_activityCommon == null)
                                     {
                                         return;
                                     }
+                                    _activityCommon.RequestSendMessage(_appDataDir, _adapterTypeDetect.SbLog.ToString(), GetType(), (o, eventArgs) =>
+                                    {
+                                        if (_activityCommon == null)
+                                        {
+                                            return;
+                                        }
+
+                                        finishHandler?.Invoke(!yesSelected);
+                                    });
                                 };
                             }
                             break;
@@ -181,38 +178,8 @@ public class CheckAdapter : IDisposable
 
                     case AdapterTypeDetect.AdapterType.Elm327:
                     case AdapterTypeDetect.AdapterType.Elm327Limited:
-                        {
-                            string message;
-                            switch (adapterType)
-                            {
-                                case AdapterTypeDetect.AdapterType.Elm327Limited:
-                                    message = string.Format(CultureInfo.InvariantCulture, _context.GetString(Resource.String.limited_elm_adapter_type), _adapterTypeDetect.ElmVerH, _adapterTypeDetect.ElmVerL);
-                                    message += "<br>" + _context.GetString(Resource.String.recommened_adapter_type);
-                                    break;
-
-                                default:
-                                    message = _context.GetString(Resource.String.adapter_elm_replacement);
-                                    break;
-                            }
-
-                            AlertDialog alertDialog = new AlertDialog.Builder(_context)
-                                .SetNeutralButton(Resource.String.button_ok, (sender, args) =>
-                                {
-                                })
-                                .SetCancelable(true)
-                                .SetMessage(ActivityCommon.FromHtml(message))
-                                .SetTitle(Resource.String.alert_title_info)
-                                .Show();
-                            if (alertDialog != null)
-                            {
-                                TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
-                                if (messageView != null)
-                                {
-                                    messageView.MovementMethod = new LinkMovementMethod();
-                                }
-                            }
-                            break;
-                        }
+                        finishHandler?.Invoke();
+                        break;
 
                     case AdapterTypeDetect.AdapterType.StnFwUpdate:
                         {
@@ -241,28 +208,27 @@ public class CheckAdapter : IDisposable
 
                                     if (yesSelected)
                                     {
+                                        finishHandler?.Invoke(true);
                                         return;
                                     }
+
+                                    _activityCommon.RequestSendMessage(_appDataDir, _adapterTypeDetect.SbLog.ToString(), GetType(), (o, eventArgs) =>
+                                    {
+                                        if (_activityCommon == null)
+                                        {
+                                            return;
+                                        }
+
+                                        finishHandler?.Invoke();
+                                    });
                                 };
                             }
                             break;
                         }
 
                     case AdapterTypeDetect.AdapterType.Elm327Custom:
-                        {
-                            new AlertDialog.Builder(_context)
-                                .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
-                                {
-                                })
-                                .SetNegativeButton(Resource.String.button_no, (sender, args) =>
-                                {
-                                })
-                                .SetCancelable(true)
-                                .SetMessage(Resource.String.adapter_elm_firmware)
-                                .SetTitle(Resource.String.alert_title_info)
-                                .Show();
-                            break;
-                        }
+                        finishHandler?.Invoke();
+                        break;
 
                     case AdapterTypeDetect.AdapterType.Elm327Invalid:
                     case AdapterTypeDetect.AdapterType.Elm327Fake:
@@ -316,7 +282,7 @@ public class CheckAdapter : IDisposable
                                     }
                                     _activityCommon.RequestSendMessage(_appDataDir, _adapterTypeDetect.SbLog.ToString(), GetType(), (o, eventArgs) =>
                                     {
-                                        TerminateCheck(isError);
+                                        finishHandler?.Invoke(isError);
                                     });
                                 };
 
@@ -331,15 +297,10 @@ public class CheckAdapter : IDisposable
 
                     case AdapterTypeDetect.AdapterType.Custom:
                     case AdapterTypeDetect.AdapterType.CustomUpdate:
-                        TerminateCheck(false);
-                        break;
-
                     case AdapterTypeDetect.AdapterType.CustomNoEscape:
-                        TerminateCheck(false);
-                        break;
-
                     case AdapterTypeDetect.AdapterType.EchoOnly:
-                        TerminateCheck(false);
+                    default:
+                        finishHandler?.Invoke();
                         break;
                 }
             });
@@ -348,11 +309,6 @@ public class CheckAdapter : IDisposable
             Priority = System.Threading.ThreadPriority.Highest
         };
         detectThread.Start();
-    }
-
-    private void TerminateCheck(bool error)
-    {
-
     }
 
     private void LogString(string info)
@@ -424,6 +380,7 @@ public class CheckAdapter : IDisposable
 
             // Note disposing has been done.
             _disposed = true;
+            _activityCommon = null;
         }
     }
 
