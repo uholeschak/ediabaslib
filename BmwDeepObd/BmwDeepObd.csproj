@@ -354,6 +354,7 @@
     <Compile Include="AtmelBootloader.cs" />
     <Compile Include="BaseActivity.cs" />
     <Compile Include="BmwActuatorActivity.cs" />
+    <Compile Include="CheckAdapter.cs" />
     <Compile Include="InternalBroadcastManager\InternalBroadcastManager.cs" />
     <Compile Include="CanAdapterActivity.cs" />
     <Compile Include="CustomBackupAgent.cs" />

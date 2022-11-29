@@ -1116,6 +1116,10 @@ namespace BmwDeepObd
             set => _selectedEnetIp = value;
         }
 
+        public Context Context => _context;
+
+        public Android.App.Activity Activity => _activity;
+
         public Java.Lang.Object ClipboardManager => _clipboardManager;
 
         public BluetoothAdapter BtAdapter => _btAdapter;
