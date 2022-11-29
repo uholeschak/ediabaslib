@@ -22,15 +22,17 @@ public class CheckAdapter : IDisposable
     private Context _context;
     private Android.App.Activity _activity;
     private ActivityCommon.InterfaceType _interfaceType;
+    private string _appDataDir;
     private string _deviceAddress;
     private AdapterTypeDetect _adapterTypeDetect;
     private EdiabasNet _ediabas;
 
-    public CheckAdapter(ActivityCommon activityCommon, ActivityCommon.InterfaceType interfaceType, string deviceAddress)
+    public CheckAdapter(ActivityCommon activityCommon, string appDataDir, ActivityCommon.InterfaceType interfaceType, string deviceAddress)
     {
         _activityCommon = activityCommon;
         _context = _activityCommon.Context;
         _activity = _activityCommon.Activity;
+        _appDataDir = appDataDir;
         _interfaceType = interfaceType;
         _deviceAddress = deviceAddress;
         _adapterTypeDetect = new AdapterTypeDetect(_activityCommon);
@@ -267,7 +269,6 @@ public class CheckAdapter : IDisposable
                     case AdapterTypeDetect.AdapterType.Elm327FakeOpt:
                     case AdapterTypeDetect.AdapterType.Elm327NoCan:
                         {
-                            bool yesSelected = false;
                             AlertDialog.Builder builder = new AlertDialog.Builder(_context);
 
                             string message;
@@ -290,20 +291,15 @@ public class CheckAdapter : IDisposable
                                     break;
                             }
 
-                            if (adapterType == AdapterTypeDetect.AdapterType.Elm327FakeOpt)
+                            builder.SetNeutralButton(Resource.String.button_ok, (sender, args) => { });
+                            bool isError = adapterType != AdapterTypeDetect.AdapterType.Elm327FakeOpt;
+                            if (isError)
                             {
-                                message += "<br>" + _context.GetString(Resource.String.fake_elm_try);
-                                builder.SetPositiveButton(Resource.String.button_yes, (sender, args) =>
-                                {
-                                    yesSelected = true;
-                                });
-                                builder.SetNegativeButton(Resource.String.button_no, (sender, args) => { });
-                                builder.SetTitle(Resource.String.alert_title_warning);
+                                builder.SetTitle(Resource.String.alert_title_error);
                             }
                             else
                             {
-                                builder.SetNeutralButton(Resource.String.button_ok, (sender, args) => { });
-                                builder.SetTitle(Resource.String.alert_title_error);
+                                builder.SetTitle(Resource.String.alert_title_warning);
                             }
 
                             builder.SetCancelable(true);
@@ -318,6 +314,10 @@ public class CheckAdapter : IDisposable
                                     {
                                         return;
                                     }
+                                    _activityCommon.RequestSendMessage(_appDataDir, _adapterTypeDetect.SbLog.ToString(), GetType(), (o, eventArgs) =>
+                                    {
+                                        TerminateCheck(isError);
+                                    });
                                 };
 
                                 TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
@@ -331,29 +331,15 @@ public class CheckAdapter : IDisposable
 
                     case AdapterTypeDetect.AdapterType.Custom:
                     case AdapterTypeDetect.AdapterType.CustomUpdate:
-                        new AlertDialog.Builder(_context)
-                            .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
-                            {
-                            })
-                            .SetNegativeButton(Resource.String.button_no, (sender, args) =>
-                            {
-                            })
-                            .SetCancelable(true)
-                            .SetMessage(adapterType == AdapterTypeDetect.AdapterType.CustomUpdate ? Resource.String.adapter_fw_update : Resource.String.adapter_cfg_required)
-                            .SetTitle(Resource.String.alert_title_info)
-                            .Show();
+                        TerminateCheck(false);
                         break;
 
                     case AdapterTypeDetect.AdapterType.CustomNoEscape:
-                        new AlertDialog.Builder(_context)
-                            .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
-                            .SetCancelable(true)
-                            .SetMessage(Resource.String.adapter_no_escape_mode)
-                            .SetTitle(Resource.String.alert_title_error)
-                            .Show();
+                        TerminateCheck(false);
                         break;
 
                     case AdapterTypeDetect.AdapterType.EchoOnly:
+                        TerminateCheck(false);
                         break;
                 }
             });
@@ -362,6 +348,11 @@ public class CheckAdapter : IDisposable
             Priority = System.Threading.ThreadPriority.Highest
         };
         detectThread.Start();
+    }
+
+    private void TerminateCheck(bool error)
+    {
+
     }
 
     private void LogString(string info)
