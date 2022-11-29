@@ -944,7 +944,7 @@ namespace BmwDeepObd
             progress.ButtonAbort.Visibility = ViewStates.Gone;
             progress.Show();
 
-            _adapterTypeDetect.ClearLog();
+            _adapterTypeDetect.SbLog.Clear();
             _deviceConnected = false;
 
             LogString("Device address: " + deviceAddress);
@@ -1117,7 +1117,7 @@ namespace BmwDeepObd
                     adapterType = AdapterTypeDetect.AdapterType.ConnectionFailed;
                 }
 
-                if (_adapterTypeDetect.LogMessage.Length == 0)
+                if (_adapterTypeDetect.SbLog.Length == 0)
                 {
                     LogString("Empty log");
                 }
@@ -1151,7 +1151,7 @@ namespace BmwDeepObd
                                         {
                                             return;
                                         }
-                                        _activityCommon.RequestSendMessage(_appDataDir, _adapterTypeDetect.LogMessage,
+                                        _activityCommon.RequestSendMessage(_appDataDir, _adapterTypeDetect.SbLog.ToString(),
                                             GetType(), (o, eventArgs) => { });
                                     };
                                 }
@@ -1185,7 +1185,7 @@ namespace BmwDeepObd
                                         {
                                             return;
                                         }
-                                        _activityCommon.RequestSendMessage(_appDataDir, _adapterTypeDetect.LogMessage,
+                                        _activityCommon.RequestSendMessage(_appDataDir, _adapterTypeDetect.SbLog.ToString(),
                                             GetType(), (o, eventArgs) => { });
                                     };
                                 }
@@ -1213,7 +1213,7 @@ namespace BmwDeepObd
                                     {
                                         return;
                                     }
-                                    _activityCommon.RequestSendMessage(_appDataDir, _adapterTypeDetect.LogMessage, GetType(), (o, eventArgs) =>
+                                    _activityCommon.RequestSendMessage(_appDataDir, _adapterTypeDetect.SbLog.ToString(), GetType(), (o, eventArgs) =>
                                     {
                                         if (_activityCommon == null)
                                         {
@@ -1295,7 +1295,7 @@ namespace BmwDeepObd
                                         return;
                                     }
 
-                                    _activityCommon.RequestSendMessage(_appDataDir, _adapterTypeDetect.LogMessage, GetType(), (o, eventArgs) =>
+                                    _activityCommon.RequestSendMessage(_appDataDir, _adapterTypeDetect.SbLog.ToString(), GetType(), (o, eventArgs) =>
                                     {
                                         if (_activityCommon == null)
                                         {
@@ -1384,7 +1384,7 @@ namespace BmwDeepObd
                                         return;
                                     }
 
-                                    _activityCommon.RequestSendMessage(_appDataDir, _adapterTypeDetect.LogMessage, GetType(), (o, eventArgs) =>
+                                    _activityCommon.RequestSendMessage(_appDataDir, _adapterTypeDetect.SbLog.ToString(), GetType(), (o, eventArgs) =>
                                     {
                                         if (_activityCommon == null)
                                         {
