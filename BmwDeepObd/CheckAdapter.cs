@@ -15,7 +15,7 @@ namespace BmwDeepObd;
 
 public class CheckAdapter : IDisposable
 {
-    public delegate bool FinishDelegate(bool error = false);
+    public delegate void FinishDelegate(bool checkError = false);
 
     public const string ObdLinkPackageName = "OCTech.Mobile.Applications.OBDLink";
 
@@ -24,24 +24,33 @@ public class CheckAdapter : IDisposable
     private Context _context;
     private Android.App.Activity _activity;
     private ActivityCommon.InterfaceType _interfaceType;
+    private FinishDelegate _finishHandler;
     private string _appDataDir;
     private string _deviceAddress;
     private AdapterTypeDetect _adapterTypeDetect;
     private EdiabasNet _ediabas;
+    private Thread _adapterThread;
 
-    public CheckAdapter(ActivityCommon activityCommon, string appDataDir, ActivityCommon.InterfaceType interfaceType, string deviceAddress)
+    public CheckAdapter(ActivityCommon activityCommon)
     {
         _activityCommon = activityCommon;
         _context = _activityCommon.Context;
         _activity = _activityCommon.Activity;
-        _appDataDir = appDataDir;
-        _interfaceType = interfaceType;
-        _deviceAddress = deviceAddress;
         _adapterTypeDetect = new AdapterTypeDetect(_activityCommon);
     }
 
-    public void StartCheckAdapter(FinishDelegate finishHandler)
+    public bool StartCheckAdapter(string appDataDir, ActivityCommon.InterfaceType interfaceType, string deviceAddress, FinishDelegate finishHandler)
     {
+        if (IsJobRunning())
+        {
+            return false;
+        }
+
+        _finishHandler = finishHandler;
+        _appDataDir = appDataDir;
+        _interfaceType = interfaceType;
+        _deviceAddress = deviceAddress;
+
         EdiabasInit();
 
         CustomProgressDialog progress = new CustomProgressDialog(_context);
@@ -51,7 +60,7 @@ public class CheckAdapter : IDisposable
 
         _adapterTypeDetect.SbLog.Clear();
 
-        Thread detectThread = new Thread(() =>
+        _adapterThread = new Thread(() =>
         {
             AdapterTypeDetect.AdapterType adapterType = AdapterTypeDetect.AdapterType.Unknown;
             try
@@ -104,6 +113,7 @@ public class CheckAdapter : IDisposable
             {
                 adapterType = AdapterTypeDetect.AdapterType.ConnectionFailed;
             }
+            EdiabasClose();
 
             if (_adapterTypeDetect.SbLog.Length == 0)
             {
@@ -133,7 +143,7 @@ public class CheckAdapter : IDisposable
                             {
                                 alertDialog.DismissEvent += (sender, args) =>
                                 {
-                                    finishHandler?.Invoke(true);
+                                    CheckFinished(true);
                                 };
                             }
                             break;
@@ -169,7 +179,7 @@ public class CheckAdapter : IDisposable
                                             return;
                                         }
 
-                                        finishHandler?.Invoke(!yesSelected);
+                                        CheckFinished(!yesSelected);
                                     });
                                 };
                             }
@@ -178,7 +188,7 @@ public class CheckAdapter : IDisposable
 
                     case AdapterTypeDetect.AdapterType.Elm327:
                     case AdapterTypeDetect.AdapterType.Elm327Limited:
-                        finishHandler?.Invoke();
+                        CheckFinished();
                         break;
 
                     case AdapterTypeDetect.AdapterType.StnFwUpdate:
@@ -208,7 +218,7 @@ public class CheckAdapter : IDisposable
 
                                     if (yesSelected)
                                     {
-                                        finishHandler?.Invoke(true);
+                                        CheckFinished(true);
                                         return;
                                     }
 
@@ -219,7 +229,7 @@ public class CheckAdapter : IDisposable
                                             return;
                                         }
 
-                                        finishHandler?.Invoke();
+                                        CheckFinished();
                                     });
                                 };
                             }
@@ -227,7 +237,7 @@ public class CheckAdapter : IDisposable
                         }
 
                     case AdapterTypeDetect.AdapterType.Elm327Custom:
-                        finishHandler?.Invoke();
+                        CheckFinished();
                         break;
 
                     case AdapterTypeDetect.AdapterType.Elm327Invalid:
@@ -282,7 +292,7 @@ public class CheckAdapter : IDisposable
                                     }
                                     _activityCommon.RequestSendMessage(_appDataDir, _adapterTypeDetect.SbLog.ToString(), GetType(), (o, eventArgs) =>
                                     {
-                                        finishHandler?.Invoke(isError);
+                                        CheckFinished(isError);
                                     });
                                 };
 
@@ -300,7 +310,7 @@ public class CheckAdapter : IDisposable
                     case AdapterTypeDetect.AdapterType.CustomNoEscape:
                     case AdapterTypeDetect.AdapterType.EchoOnly:
                     default:
-                        finishHandler?.Invoke();
+                        CheckFinished();
                         break;
                 }
             });
@@ -308,7 +318,14 @@ public class CheckAdapter : IDisposable
         {
             Priority = System.Threading.ThreadPriority.Highest
         };
-        detectThread.Start();
+        _adapterThread.Start();
+
+        return true;
+    }
+
+    private void CheckFinished(bool checkError = false)
+    {
+        _finishHandler.Invoke(checkError);
     }
 
     private void LogString(string info)
@@ -330,12 +347,31 @@ public class CheckAdapter : IDisposable
 
     private bool EdiabasClose()
     {
+        if (IsJobRunning())
+        {
+            return false;
+        }
+
         if (_ediabas != null)
         {
             _ediabas.Dispose();
             _ediabas = null;
         }
         return true;
+    }
+
+    private bool IsJobRunning()
+    {
+        if (_adapterThread == null)
+        {
+            return false;
+        }
+        if (_adapterThread.IsAlive)
+        {
+            return true;
+        }
+        _adapterThread = null;
+        return false;
     }
 
     private bool InterfacePrepare()
@@ -375,6 +411,11 @@ public class CheckAdapter : IDisposable
             if (disposing)
             {
                 // Dispose managed resources.
+                if (IsJobRunning())
+                {
+                    _adapterThread.Join();
+                }
+
                 EdiabasClose();
             }
 
