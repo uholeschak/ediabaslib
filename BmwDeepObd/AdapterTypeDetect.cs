@@ -39,11 +39,11 @@ public class AdapterTypeDetect
     private readonly StringBuilder _sbLog = new StringBuilder();
     private readonly ActivityCommon _activityCommon;
 
-    public string LogMessage
+    public StringBuilder SbLog
     {
         get
         {
-            return _sbLog.ToString();
+            return _sbLog;
         }
     }
 
@@ -947,11 +947,6 @@ public class AdapterTypeDetect
             }
         }
         return response;
-    }
-
-    public void ClearLog()
-    {
-        _sbLog.Clear();
     }
 
     public void LogData(byte[] data, int offset, int length, string info = null)
