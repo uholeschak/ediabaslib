@@ -949,7 +949,12 @@ public class AdapterTypeDetect
         return response;
     }
 
-    private void LogData(byte[] data, int offset, int length, string info = null)
+    public void ClearLog()
+    {
+        _sbLog.Clear();
+    }
+
+    public void LogData(byte[] data, int offset, int length, string info = null)
     {
         if (!string.IsNullOrEmpty(info))
         {
@@ -970,7 +975,7 @@ public class AdapterTypeDetect
         }
     }
 
-    private void LogString(string info)
+    public void LogString(string info)
     {
         if (_sbLog.Length > 0)
         {
@@ -979,7 +984,7 @@ public class AdapterTypeDetect
         _sbLog.Append(info);
     }
 
-    private void LogByte(byte data)
+    public void LogByte(byte data)
     {
         _sbLog.Append(string.Format(ActivityMain.Culture, "{0:X02} ", data));
     }

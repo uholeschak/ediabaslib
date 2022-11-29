@@ -49,24 +49,6 @@ namespace BmwDeepObd
         ConfigurationChanges = ActivityConfigChanges)]
     public class DeviceListActivity : BaseActivity, View.IOnClickListener
     {
-        enum AdapterType
-        {
-            ConnectionFailed,   // connection to adapter failed
-            Unknown,            // unknown adapter
-            Elm327,             // ELM327
-            Elm327Custom,       // ELM327 with custom firmware
-            Elm327Invalid,      // ELM327 invalid type
-            Elm327Fake,         // ELM327 fake version
-            Elm327FakeOpt,      // ELM327 fake version optional command
-            Elm327Limited,      // ELM327 limited support
-            StnFwUpdate,        // STN fimrware update required
-            Elm327NoCan,        // ELM327 no CAN support
-            Custom,             // custom adapter
-            CustomNoEscape,     // custom adapter with no escape support
-            CustomUpdate,       // custom adapter with firmware update
-            EchoOnly,           // only echo response
-        }
-
         enum BtOperation
         {
             SelectAdapter,          // select the adapter
@@ -107,6 +89,7 @@ namespace BmwDeepObd
 
         // Member fields
         private InstanceData _instanceData = new InstanceData();
+        private AdapterTypeDetect _adapterTypeDetect;
         private BluetoothAdapter _btAdapter;
         private BtLeGattSpp _btLeGattSpp;
         private Timer _deviceUpdateTimer;
@@ -123,14 +106,11 @@ namespace BmwDeepObd
         private Button _btSettingsButton;
         private ActivityCommon _activityCommon;
         private string _appDataDir;
-        private readonly StringBuilder _sbLog = new StringBuilder();
         private readonly AutoResetEvent _connectedEvent = new AutoResetEvent(false);
         private volatile string _connectDeviceAddress = string.Empty;
         private volatile bool _deviceConnected;
         private bool _btPermissionRequested;
         private bool _btPermissionGranted;
-        private int _elmVerH = -1;
-        private int _elmVerL = -1;
 
         private enum ActivityRequest
         {
@@ -256,6 +236,7 @@ namespace BmwDeepObd
             filter.AddAction(BluetoothDevice.ActionBondStateChanged);
             RegisterReceiver(_receiver, filter);
 
+            _adapterTypeDetect = new AdapterTypeDetect(_activityCommon);
             // Get the local Bluetooth adapter
             _btAdapter = _activityCommon.BtAdapter;
             _btLeGattSpp = new BtLeGattSpp(LogString);
@@ -963,7 +944,7 @@ namespace BmwDeepObd
             progress.ButtonAbort.Visibility = ViewStates.Gone;
             progress.Show();
 
-            _sbLog.Clear();
+            _adapterTypeDetect.ClearLog();
             _deviceConnected = false;
 
             LogString("Device address: " + deviceAddress);
@@ -978,7 +959,7 @@ namespace BmwDeepObd
 
             Thread detectThread = new Thread(() =>
             {
-                AdapterType adapterType = AdapterType.Unknown;
+                AdapterTypeDetect.AdapterType adapterType = AdapterTypeDetect.AdapterType.Unknown;
                 try
                 {
                     BluetoothDevice device = _btAdapter.GetRemoteDevice(deviceAddress.ToUpperInvariant());
@@ -991,7 +972,7 @@ namespace BmwDeepObd
                         LogString("Device bond state: " + device.BondState);
                         LogString("Device type: " + device.Type);
 
-                        adapterType = AdapterType.ConnectionFailed;
+                        adapterType = AdapterTypeDetect.AdapterType.ConnectionFailed;
                         if (!mtcBtService && _btLeGattSpp != null)
                         {
                             if (device.Type == BluetoothDeviceType.Le || (device.Type == BluetoothDeviceType.Dual && device.BondState == Bond.None))
@@ -1005,7 +986,7 @@ namespace BmwDeepObd
                                     else
                                     {
                                         LogString("Connect to LE GATT device success");
-                                        adapterType = AdapterTypeDetection(_btLeGattSpp.BtGattSppInStream, _btLeGattSpp.BtGattSppOutStream);
+                                        adapterType = _adapterTypeDetect.AdapterTypeDetection(_btLeGattSpp.BtGattSppInStream, _btLeGattSpp.BtGattSppOutStream);
                                     }
                                 }
                                 finally
@@ -1015,7 +996,7 @@ namespace BmwDeepObd
                             }
                         }
 
-                        if (adapterType == AdapterType.ConnectionFailed)
+                        if (adapterType == AdapterTypeDetect.AdapterType.ConnectionFailed)
                         {
                             try
                             {
@@ -1047,8 +1028,8 @@ namespace BmwDeepObd
                                         Thread.Sleep(EdBluetoothInterface.BtConnectDelay);
                                     }
                                     LogString(_deviceConnected ? "Bt device is connected" : "Bt device is not connected");
-                                    adapterType = AdapterTypeDetection(bluetoothSocket.InputStream, bluetoothSocket.OutputStream);
-                                    if (mtcBtService && adapterType == AdapterType.Unknown)
+                                    adapterType = _adapterTypeDetect.AdapterTypeDetection(bluetoothSocket.InputStream, bluetoothSocket.OutputStream);
+                                    if (mtcBtService && adapterType == AdapterTypeDetect.AdapterType.Unknown)
                                     {
                                         for (int retry = 0; retry < 20; retry++)
                                         {
@@ -1061,9 +1042,9 @@ namespace BmwDeepObd
                                             }
 
                                             LogString(_deviceConnected ? "Bt device is connected" : "Bt device is not connected");
-                                            adapterType = AdapterTypeDetection(bluetoothSocket.InputStream, bluetoothSocket.OutputStream);
-                                            if (adapterType != AdapterType.Unknown &&
-                                                adapterType != AdapterType.ConnectionFailed)
+                                            adapterType = _adapterTypeDetect.AdapterTypeDetection(bluetoothSocket.InputStream, bluetoothSocket.OutputStream);
+                                            if (adapterType != AdapterTypeDetect.AdapterType.Unknown &&
+                                                adapterType != AdapterTypeDetect.AdapterType.ConnectionFailed)
                                             {
                                                 break;
                                             }
@@ -1074,7 +1055,7 @@ namespace BmwDeepObd
                             catch (Exception ex)
                             {
                                 LogString("*** Connect exception: " + EdiabasNet.GetExceptionText(ex));
-                                adapterType = AdapterType.ConnectionFailed;
+                                adapterType = AdapterTypeDetect.AdapterType.ConnectionFailed;
                             }
                             finally
                             {
@@ -1082,7 +1063,7 @@ namespace BmwDeepObd
                             }
                         }
 
-                        if (adapterType == AdapterType.ConnectionFailed && !mtcBtService)
+                        if (adapterType == AdapterTypeDetect.AdapterType.ConnectionFailed && !mtcBtService)
                         {
                             try
                             {
@@ -1111,13 +1092,13 @@ namespace BmwDeepObd
                                     }
 
                                     LogString(_deviceConnected ? "Bt device is connected" : "Bt device is not connected");
-                                    adapterType = AdapterTypeDetection(bluetoothSocket.InputStream, bluetoothSocket.OutputStream);
+                                    adapterType = _adapterTypeDetect.AdapterTypeDetection(bluetoothSocket.InputStream, bluetoothSocket.OutputStream);
                                 }
                             }
                             catch (Exception ex)
                             {
                                 LogString("*** Connect exception: " + EdiabasNet.GetExceptionText(ex));
-                                adapterType = AdapterType.ConnectionFailed;
+                                adapterType = AdapterTypeDetect.AdapterType.ConnectionFailed;
                             }
                             finally
                             {
@@ -1133,10 +1114,10 @@ namespace BmwDeepObd
                 catch (Exception ex)
                 {
                     LogString("*** General exception: " + EdiabasNet.GetExceptionText(ex));
-                    adapterType = AdapterType.ConnectionFailed;
+                    adapterType = AdapterTypeDetect.AdapterType.ConnectionFailed;
                 }
 
-                if (_sbLog.Length == 0)
+                if (_adapterTypeDetect.LogMessage.Length == 0)
                 {
                     LogString("Empty log");
                 }
@@ -1152,7 +1133,7 @@ namespace BmwDeepObd
 
                     switch (adapterType)
                     {
-                        case AdapterType.ConnectionFailed:
+                        case AdapterTypeDetect.AdapterType.ConnectionFailed:
                         {
                             if (_activityCommon.MtcBtService)
                             {
@@ -1170,7 +1151,7 @@ namespace BmwDeepObd
                                         {
                                             return;
                                         }
-                                        _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(),
+                                        _activityCommon.RequestSendMessage(_appDataDir, _adapterTypeDetect.LogMessage,
                                             GetType(), (o, eventArgs) => { });
                                     };
                                 }
@@ -1186,7 +1167,7 @@ namespace BmwDeepObd
                             break;
                         }
 
-                        case AdapterType.Unknown:
+                        case AdapterTypeDetect.AdapterType.Unknown:
                         {
                             if (_activityCommon.MtcBtService)
                             {
@@ -1204,7 +1185,7 @@ namespace BmwDeepObd
                                         {
                                             return;
                                         }
-                                        _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(),
+                                        _activityCommon.RequestSendMessage(_appDataDir, _adapterTypeDetect.LogMessage,
                                             GetType(), (o, eventArgs) => { });
                                     };
                                 }
@@ -1232,7 +1213,7 @@ namespace BmwDeepObd
                                     {
                                         return;
                                     }
-                                    _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(), GetType(), (o, eventArgs) =>
+                                    _activityCommon.RequestSendMessage(_appDataDir, _adapterTypeDetect.LogMessage, GetType(), (o, eventArgs) =>
                                     {
                                         if (_activityCommon == null)
                                         {
@@ -1248,14 +1229,14 @@ namespace BmwDeepObd
                             break;
                         }
 
-                        case AdapterType.Elm327:
-                        case AdapterType.Elm327Limited:
+                        case AdapterTypeDetect.AdapterType.Elm327:
+                        case AdapterTypeDetect.AdapterType.Elm327Limited:
                         {
                             string message;
                             switch (adapterType)
                             {
-                                case AdapterType.Elm327Limited:
-                                    message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.limited_elm_adapter_type), _elmVerH, _elmVerL);
+                                case AdapterTypeDetect.AdapterType.Elm327Limited:
+                                    message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.limited_elm_adapter_type), _adapterTypeDetect.ElmVerH, _adapterTypeDetect.ElmVerL);
                                     message += "<br>" + GetString(Resource.String.recommened_adapter_type);
                                     break;
 
@@ -1284,7 +1265,7 @@ namespace BmwDeepObd
                             break;
                         }
 
-                        case AdapterType.StnFwUpdate:
+                        case AdapterTypeDetect.AdapterType.StnFwUpdate:
                         {
                             bool yesSelected = false;
                             AlertDialog alertDialog = new AlertDialog.Builder(this)
@@ -1314,7 +1295,7 @@ namespace BmwDeepObd
                                         return;
                                     }
 
-                                    _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(), GetType(), (o, eventArgs) =>
+                                    _activityCommon.RequestSendMessage(_appDataDir, _adapterTypeDetect.LogMessage, GetType(), (o, eventArgs) =>
                                     {
                                         if (_activityCommon == null)
                                         {
@@ -1328,7 +1309,7 @@ namespace BmwDeepObd
                             break;
                         }
 
-                        case AdapterType.Elm327Custom:
+                        case AdapterTypeDetect.AdapterType.Elm327Custom:
                         {
                             new AlertDialog.Builder(this)
                                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
@@ -1346,10 +1327,10 @@ namespace BmwDeepObd
                             break;
                         }
 
-                        case AdapterType.Elm327Invalid:
-                        case AdapterType.Elm327Fake:
-                        case AdapterType.Elm327FakeOpt:
-                        case AdapterType.Elm327NoCan:
+                        case AdapterTypeDetect.AdapterType.Elm327Invalid:
+                        case AdapterTypeDetect.AdapterType.Elm327Fake:
+                        case AdapterTypeDetect.AdapterType.Elm327FakeOpt:
+                        case AdapterTypeDetect.AdapterType.Elm327NoCan:
                         {
                             bool yesSelected = false;
                             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -1357,13 +1338,13 @@ namespace BmwDeepObd
                             string message;
                             switch (adapterType)
                             {
-                                case AdapterType.Elm327Fake:
-                                case AdapterType.Elm327FakeOpt:
-                                    message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.fake_elm_adapter_type), _elmVerH, _elmVerL);
+                                case AdapterTypeDetect.AdapterType.Elm327Fake:
+                                case AdapterTypeDetect.AdapterType.Elm327FakeOpt:
+                                    message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.fake_elm_adapter_type), _adapterTypeDetect.ElmVerH, _adapterTypeDetect.ElmVerL);
                                     message += "<br>" + GetString(Resource.String.recommened_adapter_type);
                                     break;
 
-                                case AdapterType.Elm327NoCan:
+                                case AdapterTypeDetect.AdapterType.Elm327NoCan:
                                     message = GetString(Resource.String.elm_no_can);
                                     message += "<br>" + GetString(Resource.String.adapter_elm_replacement);
                                     break;
@@ -1374,7 +1355,7 @@ namespace BmwDeepObd
                                     break;
                             }
 
-                            if (adapterType == AdapterType.Elm327FakeOpt)
+                            if (adapterType == AdapterTypeDetect.AdapterType.Elm327FakeOpt)
                             {
                                 message += "<br>" + GetString(Resource.String.fake_elm_try);
                                 builder.SetPositiveButton(Resource.String.button_yes, (sender, args) =>
@@ -1403,7 +1384,7 @@ namespace BmwDeepObd
                                         return;
                                     }
 
-                                    _activityCommon.RequestSendMessage(_appDataDir, _sbLog.ToString(), GetType(), (o, eventArgs) =>
+                                    _activityCommon.RequestSendMessage(_appDataDir, _adapterTypeDetect.LogMessage, GetType(), (o, eventArgs) =>
                                     {
                                         if (_activityCommon == null)
                                         {
@@ -1426,8 +1407,8 @@ namespace BmwDeepObd
                             break;
                         }
 
-                        case AdapterType.Custom:
-                        case AdapterType.CustomUpdate:
+                        case AdapterTypeDetect.AdapterType.Custom:
+                        case AdapterTypeDetect.AdapterType.CustomUpdate:
                             new AlertDialog.Builder(this)
                                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                                 {
@@ -1438,12 +1419,12 @@ namespace BmwDeepObd
                                     ReturnDeviceType(deviceAddress, deviceName);
                                 })
                                 .SetCancelable(true)
-                                .SetMessage(adapterType == AdapterType.CustomUpdate ? Resource.String.adapter_fw_update : Resource.String.adapter_cfg_required)
+                                .SetMessage(adapterType == AdapterTypeDetect.AdapterType.CustomUpdate ? Resource.String.adapter_fw_update : Resource.String.adapter_cfg_required)
                                 .SetTitle(Resource.String.alert_title_info)
                                 .Show();
                             break;
 
-                        case AdapterType.CustomNoEscape:
+                        case AdapterTypeDetect.AdapterType.CustomNoEscape:
                             new AlertDialog.Builder(this)
                                 .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
                                 .SetCancelable(true)
@@ -1452,7 +1433,7 @@ namespace BmwDeepObd
                                 .Show();
                             break;
 
-                        case AdapterType.EchoOnly:
+                        case AdapterTypeDetect.AdapterType.EchoOnly:
                             ReturnDeviceType(deviceAddress + ";" + EdBluetoothInterface.RawTag, deviceName);
                             break;
 
@@ -1501,888 +1482,6 @@ namespace BmwDeepObd
             // Set result and finish this Activity
             SetResult(Android.App.Result.Ok, intent);
             Finish();
-        }
-
-        /// <summary>
-        /// Detects the CAN adapter type
-        /// </summary>
-        /// <param name="bluetoothInStream">Bluetooth input stream</param>
-        /// <param name="bluetoothOutStream">Bluetooth output stream</param>
-        /// <returns>Adapter type</returns>
-        private AdapterType AdapterTypeDetection(Stream bluetoothInStream, Stream bluetoothOutStream)
-        {
-            AdapterType adapterType = AdapterType.Unknown;
-            _elmVerH = -1;
-            _elmVerL = -1;
-
-            try
-            {
-                const int minIgnitionRespLen = 6;
-                byte[] customData = { 0x82, 0xF1, 0xF1, 0xFE, 0xFE, 0x00 }; // ignition state
-                customData[^1] = EdCustomAdapterCommon.CalcChecksumBmwFast(customData, 0, customData.Length - 1);
-                // custom adapter
-                bluetoothInStream.Flush();
-                while (bluetoothInStream.HasData())
-                {
-                    bluetoothInStream.ReadByteAsync();
-                }
-#if DEBUG
-                Android.Util.Log.Info(Tag, string.Format("Send: {0}", BitConverter.ToString(customData).Replace("-", " ")));
-#endif
-                LogData(customData, 0, customData.Length, "Send");
-                bluetoothOutStream.Write(customData, 0, customData.Length);
-
-                LogData(null, 0, 0, "Resp");
-                List<byte> responseList = new List<byte>();
-                long startTime = Stopwatch.GetTimestamp();
-                for (; ; )
-                {
-                    while (bluetoothInStream.HasData())
-                    {
-                        int data = bluetoothInStream.ReadByteAsync();
-                        if (data >= 0)
-                        {
-#if DEBUG
-                            Android.Util.Log.Info(Tag, string.Format("Rec: {0:X02}", data));
-#endif
-                            LogByte((byte)data);
-                            responseList.Add((byte)data);
-                            startTime = Stopwatch.GetTimestamp();
-                        }
-                    }
-
-                    if (responseList.Count >= customData.Length + minIgnitionRespLen &&
-                        responseList.Count >= customData.Length + (responseList[customData.Length] & 0x3F) + 3)
-                    {
-                        LogString("Custom adapter length");
-                        bool validEcho = !customData.Where((t, i) => responseList[i] != t).Any();
-                        if (!validEcho)
-                        {
-                            LogString("*** Echo incorrect");
-                            break;
-                        }
-
-                        if (responseList.Count > customData.Length)
-                        {
-                            byte[] addResponse = responseList.GetRange(customData.Length, responseList.Count - customData.Length).ToArray();
-                            if (EdCustomAdapterCommon.CalcChecksumBmwFast(addResponse, 0, addResponse.Length - 1) != addResponse[^1])
-                            {
-                                LogString("*** Checksum incorrect");
-                                break;
-                            }
-                        }
-
-                        LogString("Ignition response ok");
-                        LogString("Escape mode: " + (_activityCommon.MtcBtEscapeMode ? "1" : "0"));
-                        if (!string.IsNullOrEmpty(_activityCommon.MtcBtModuleName))
-                        {
-                            LogString("Bt module: " + _activityCommon.MtcBtModuleName);
-                        }
-
-                        bool escapeMode = _activityCommon.MtcBtEscapeMode;
-                        BtEscapeStreamReader inStream = new BtEscapeStreamReader(bluetoothInStream);
-                        BtEscapeStreamWriter outStream = new BtEscapeStreamWriter(bluetoothOutStream);
-                        if (!SetCustomEscapeMode(inStream, outStream, ref escapeMode, out bool noEscapeSupport))
-                        {
-                            LogString("*** Set escape mode failed");
-                        }
-
-                        inStream.SetEscapeMode(escapeMode);
-                        outStream.SetEscapeMode(escapeMode);
-
-                        if (!ReadCustomFwVersion(inStream, outStream, out int adapterTypeId, out int fwVersion))
-                        {
-                            LogString("*** Read firmware version failed");
-                            if (noEscapeSupport && _activityCommon.MtcBtEscapeMode)
-                            {
-                                LogString("Custom adapter with no escape mode support");
-                                return AdapterType.CustomNoEscape;
-                            }
-                            break;
-                        }
-                        LogString(string.Format("AdapterType: {0}", adapterTypeId));
-                        LogString(string.Format("AdapterVersion: {0}.{1}", fwVersion >> 8, fwVersion & 0xFF));
-
-                        if (adapterTypeId >= 0x0002)
-                        {
-                            if (ReadCustomSerial(inStream, outStream, out byte[] adapterSerial))
-                            {
-                                LogString("AdapterSerial: " + BitConverter.ToString(adapterSerial).Replace("-", ""));
-                            }
-                        }
-
-                        int fwUpdateVersion = PicBootloader.GetFirmwareVersion((uint)adapterTypeId);
-                        if (fwUpdateVersion >= 0 && fwUpdateVersion > fwVersion)
-                        {
-                            LogString("Custom adapter with old firmware detected");
-                            return AdapterType.CustomUpdate;
-                        }
-                        LogString("Custom adapter detected");
-
-                        return AdapterType.Custom;
-                    }
-                    if (Stopwatch.GetTimestamp() - startTime > ResponseTimeout * ActivityCommon.TickResolMs)
-                    {
-                        if (responseList.Count >= customData.Length)
-                        {
-                            bool validEcho = !customData.Where((t, i) => responseList[i] != t).Any();
-                            if (validEcho)
-                            {
-                                if (responseList.Count > customData.Length)
-                                {
-                                    byte[] addResponse = responseList.GetRange(customData.Length, responseList.Count - customData.Length).ToArray();
-                                    if (EdCustomAdapterCommon.CalcChecksumBmwFast(addResponse, 0, addResponse.Length - 1) != addResponse[addResponse.Length - 1])
-                                    {
-                                        LogString("*** Additional response checksum incorrect");
-                                        break;
-                                    }
-                                }
-
-                                LogString("Valid echo detected");
-                                adapterType = AdapterType.EchoOnly;
-                            }
-                        }
-                        break;
-                    }
-                }
-                LogString("No custom adapter found");
-
-                // ELM327
-                bool elmReports2X = false;
-                Regex elmVerRegEx = new Regex(@"ELM327\s+v(\d+)\.(\d+)", RegexOptions.IgnoreCase);
-                for (int retries = 0; retries < 2; retries++)
-                {
-                    bluetoothInStream.Flush();
-                    while (bluetoothInStream.HasData())
-                    {
-                        bluetoothInStream.ReadByteAsync();
-                    }
-
-                    string command = "ATI\r";
-                    byte[] sendData = Encoding.UTF8.GetBytes(command);
-                    LogData(sendData, 0, sendData.Length, "Send");
-                    bluetoothOutStream.Write(sendData, 0, sendData.Length);
-                    LogString("ELM CMD send: " + command);
-
-                    string response = GetElm327Reponse(bluetoothInStream);
-                    if (response != null)
-                    {
-                        MatchCollection matchesVer = elmVerRegEx.Matches(response);
-                        if ((matchesVer.Count == 1) && (matchesVer[0].Groups.Count == 3))
-                        {
-                            if (!Int32.TryParse(matchesVer[0].Groups[1].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _elmVerH))
-                            {
-                                _elmVerH = -1;
-                            }
-                            if (!Int32.TryParse(matchesVer[0].Groups[2].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _elmVerL))
-                            {
-                                _elmVerL = -1;
-                            }
-                        }
-                        if (_elmVerH >= 0 && _elmVerL >= 0)
-                        {
-                            LogString(string.Format("ELM327 version detected: {0}.{1}", _elmVerH, _elmVerL));
-                            if (_elmVerH >= 2)
-                            {
-                                LogString("Version >= 2.x detected");
-                                elmReports2X = true;
-                            }
-                            adapterType = AdapterType.Elm327;
-                            break;
-                        }
-                    }
-                }
-                if (adapterType == AdapterType.Elm327)
-                {
-                    foreach (EdElmInterface.ElmInitEntry elmInitEntry in EdBluetoothInterface.Elm327InitCommands)
-                    {
-                        bluetoothInStream.Flush();
-                        while (bluetoothInStream.HasData())
-                        {
-                            bluetoothInStream.ReadByteAsync();
-                        }
-                        if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, elmInitEntry.Command, false))
-                        {
-                            adapterType = AdapterType.Elm327Invalid;
-                            break;
-                        }
-
-                        string response = GetElm327Reponse(bluetoothInStream);
-                        if (response == null)
-                        {
-                            LogString("*** No ELM response");
-                            adapterType = AdapterType.Elm327Invalid;
-                            break;
-                        }
-
-                        if (elmInitEntry.OkResponse)
-                        {
-                            if (!response.Contains("OK\r"))
-                            {
-                                LogString("*** No ELM OK found");
-                                bool optional = elmInitEntry.Version >= 0;
-                                if (!optional)
-                                {
-                                    adapterType = AdapterType.Elm327Invalid;
-                                    break;
-                                }
-                                if (elmReports2X && elmInitEntry.Version >= 200)
-                                {
-                                    LogString("*** ELM command optional, fake 2.X");
-                                    adapterType = AdapterType.Elm327FakeOpt;
-                                }
-                                else
-                                {
-                                    LogString("*** ELM command optional, fake");
-                                }
-                            }
-                        }
-                    }
-
-                    switch (adapterType)
-                    {
-                        case AdapterType.Elm327Invalid:
-                            if (elmReports2X)
-                            {
-                                adapterType = AdapterType.Elm327Fake;
-                            }
-                            break;
-
-                        case AdapterType.Elm327:
-                        case AdapterType.Elm327FakeOpt:
-                        {
-                            if (!Elm327CheckCustomFirmware(bluetoothInStream, bluetoothOutStream, out bool customFirmware))
-                            {
-                                LogString("*** ELM firmware detection failed");
-                            }
-                            if (customFirmware)
-                            {
-                                adapterType = AdapterType.Elm327Custom;
-                                break;
-                            }
-
-                            if (!Elm327CheckCompatibility(bluetoothInStream, bluetoothOutStream, out bool restricted, out bool fwUpdate))
-                            {
-                                LogString("*** ELM not compatible");
-                                adapterType = AdapterType.Elm327Fake;
-                                break;
-                            }
-
-                            if (restricted)
-                            {
-                                adapterType = AdapterType.Elm327Limited;
-                            }
-                            else if (fwUpdate)
-                            {
-                                adapterType = AdapterType.StnFwUpdate;
-                            }
-
-                            if (!Elm327CheckCan(bluetoothInStream, bluetoothOutStream, out bool canSupport))
-                            {
-                                LogString("*** ELM CAN detection failed");
-                                adapterType = AdapterType.Elm327Invalid;
-                                break;
-                            }
-
-                            if (!canSupport)
-                            {
-                                LogString("*** ELM no vehicle CAN support");
-                                adapterType = AdapterType.Elm327NoCan;
-                            }
-                            break;
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                LogString("*** Exception: " + EdiabasNet.GetExceptionText(ex));
-                return AdapterType.ConnectionFailed;
-            }
-            LogString("Adapter type: " + adapterType);
-            return adapterType;
-        }
-
-        private bool SetCustomEscapeMode(BtEscapeStreamReader inStream, BtEscapeStreamWriter outStream, ref bool escapeMode, out bool noEscapeSupport)
-        {
-            const int escapeRespLen = 8;
-            byte escapeModeValue = (byte) ((escapeMode ? 0x03 : 0x00) ^ EdCustomAdapterCommon.EscapeXor);
-            byte[] escapeData = { 0x84, 0xF1, 0xF1, 0x06, escapeModeValue,
-                EdCustomAdapterCommon.EscapeCodeDefault ^ EdCustomAdapterCommon.EscapeXor, EdCustomAdapterCommon.EscapeMaskDefault ^ EdCustomAdapterCommon.EscapeXor, 0x00 };
-            escapeData[^1] = EdCustomAdapterCommon.CalcChecksumBmwFast(escapeData, 0, escapeData.Length - 1);
-
-            LogString(string.Format("Set escape mode: {0}", escapeMode));
-
-            noEscapeSupport = false;
-
-            LogData(escapeData, 0, escapeData.Length, "Send");
-            outStream.Write(escapeData, 0, escapeData.Length);
-
-            LogData(null, 0, 0, "Resp");
-            List<byte> responseList = new List<byte>();
-            long startTime = Stopwatch.GetTimestamp();
-            for (; ; )
-            {
-                while (inStream.HasData())
-                {
-                    int data = inStream.ReadByte();
-                    if (data >= 0)
-                    {
-                        LogByte((byte)data);
-                        responseList.Add((byte)data);
-                        startTime = Stopwatch.GetTimestamp();
-                    }
-                }
-
-                if (responseList.Count >= escapeData.Length + escapeRespLen)
-                {
-                    LogString("Escape mode length");
-                    bool validEcho = !escapeData.Where((t, i) => responseList[i] != t).Any();
-                    if (!validEcho)
-                    {
-                        LogString("*** Echo incorrect");
-                        break;
-                    }
-
-                    byte[] addResponse = responseList.GetRange(escapeData.Length, responseList.Count - escapeData.Length).ToArray();
-                    if (EdCustomAdapterCommon.CalcChecksumBmwFast(addResponse, 0, addResponse.Length - 1) != addResponse[^1])
-                    {
-                        LogString("*** Checksum incorrect");
-                        escapeMode = false;
-                        return false;
-                    }
-
-                    if (responseList[escapeData.Length + 4] != escapeModeValue)
-                    {
-                        LogString("*** Escape mode incorrect");
-                        escapeMode = false;
-                        return false;
-                    }
-
-                    if (escapeMode)
-                    {
-                        if (responseList[escapeData.Length + 5] != (EdCustomAdapterCommon.EscapeCodeDefault ^ EdCustomAdapterCommon.EscapeXor))
-                        {
-                            LogString("*** Escape code incorrect");
-                            escapeMode = false;
-                            return false;
-                        }
-
-                        if (responseList[escapeData.Length + 6] != (EdCustomAdapterCommon.EscapeMaskDefault ^ EdCustomAdapterCommon.EscapeXor))
-                        {
-                            LogString("*** Escape mask incorrect");
-                            escapeMode = false;
-                            return false;
-                        }
-                    }
-
-                    break;
-                }
-                if (Stopwatch.GetTimestamp() - startTime > ResponseTimeout * ActivityCommon.TickResolMs)
-                {
-                    if (responseList.Count == escapeData.Length)
-                    {
-                        bool validEcho = !escapeData.Where((t, i) => responseList[i] != t).Any();
-                        if (validEcho)
-                        {
-                            LogString("Escape mode echo correct");
-                            escapeMode = false;
-                            noEscapeSupport = true;
-                            break;
-                        }
-                    }
-
-                    LogString("*** Escape mode timeout");
-                    escapeMode = false;
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        private bool ReadCustomFwVersion(BtEscapeStreamReader inStream, BtEscapeStreamWriter outStream, out int adapterTypeId, out int fwVersion)
-        {
-            adapterTypeId = -1;
-            fwVersion = -1;
-            const int fwRespLen = 9;
-            byte[] fwData = { 0x82, 0xF1, 0xF1, 0xFD, 0xFD, 0x00 };
-            fwData[^1] = EdCustomAdapterCommon.CalcChecksumBmwFast(fwData, 0, fwData.Length - 1);
-
-            LogString("Reading firmware version");
-
-            LogData(fwData, 0, fwData.Length, "Send");
-            outStream.Write(fwData, 0, fwData.Length);
-
-            LogData(null, 0, 0, "Resp");
-            List<byte> responseList = new List<byte>();
-            long startTime = Stopwatch.GetTimestamp();
-            for (; ; )
-            {
-                while (inStream.HasData())
-                {
-                    int data = inStream.ReadByte();
-                    if (data >= 0)
-                    {
-                        LogByte((byte)data);
-                        responseList.Add((byte)data);
-                        startTime = Stopwatch.GetTimestamp();
-                    }
-                }
-
-                if (responseList.Count >= fwData.Length + fwRespLen)
-                {
-                    LogString("FW data length");
-                    bool validEcho = !fwData.Where((t, i) => responseList[i] != t).Any();
-                    if (!validEcho)
-                    {
-                        LogString("*** Echo incorrect");
-                        break;
-                    }
-
-                    byte[] addResponse = responseList.GetRange(fwData.Length, responseList.Count - fwData.Length).ToArray();
-                    if (EdCustomAdapterCommon.CalcChecksumBmwFast(addResponse, 0, addResponse.Length - 1) != addResponse[^1])
-                    {
-                        LogString("*** Checksum incorrect");
-                        return false;
-                    }
-
-                    adapterTypeId = responseList[fwData.Length + 5] + (responseList[fwData.Length + 4] << 8);
-                    fwVersion = responseList[fwData.Length + 7] + (responseList[fwData.Length + 6] << 8);
-                    break;
-                }
-                if (Stopwatch.GetTimestamp() - startTime > ResponseTimeout * ActivityCommon.TickResolMs)
-                {
-                    LogString("*** FW data timeout");
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        private bool ReadCustomSerial(BtEscapeStreamReader inStream, BtEscapeStreamWriter outStream, out byte[] adapterSerial)
-        {
-            adapterSerial = null;
-            const int idRespLen = 13;
-            byte[] idData = { 0x82, 0xF1, 0xF1, 0xFB, 0xFB, 0x00 };
-            idData[^1] = EdCustomAdapterCommon.CalcChecksumBmwFast(idData, 0, idData.Length - 1);
-
-            LogString("Reading id data");
-
-            LogData(idData, 0, idData.Length, "Send");
-            outStream.Write(idData, 0, idData.Length);
-
-            LogData(null, 0, 0, "Resp");
-            List<byte> responseList = new List<byte>();
-            long startTime = Stopwatch.GetTimestamp();
-            for (;;)
-            {
-                while (inStream.HasData())
-                {
-                    int data = inStream.ReadByte();
-                    if (data >= 0)
-                    {
-                        LogByte((byte) data);
-                        responseList.Add((byte) data);
-                        startTime = Stopwatch.GetTimestamp();
-                    }
-                }
-
-                if (responseList.Count >= idData.Length + idRespLen)
-                {
-                    LogString("Id data length");
-                    bool validEcho = !idData.Where((t, i) => responseList[i] != t).Any();
-                    if (!validEcho)
-                    {
-                        LogString("*** Echo incorrect");
-                        break;
-                    }
-
-                    byte[] addResponse = responseList.GetRange(idData.Length, responseList.Count - idData.Length).ToArray();
-                    if (EdCustomAdapterCommon.CalcChecksumBmwFast(addResponse, 0, addResponse.Length - 1) != addResponse[^1])
-                    {
-                        LogString("*** Checksum incorrect");
-                        return false;
-                    }
-
-                    adapterSerial = responseList.GetRange(idData.Length + 4, 8).ToArray();
-                    break;
-                }
-                if (Stopwatch.GetTimestamp() - startTime > ResponseTimeout * ActivityCommon.TickResolMs)
-                {
-                    LogString("*** Id data timeout");
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        /// <summary>
-        /// Check for vehicle can support
-        /// </summary>
-        /// <param name="bluetoothInStream"></param>
-        /// <param name="bluetoothOutStream"></param>
-        /// <param name="canSupport">True: CAN supported</param>
-        /// <returns></returns>
-        private bool Elm327CheckCan(Stream bluetoothInStream, Stream bluetoothOutStream, out bool canSupport)
-        {
-            canSupport = true;
-            Elm327SendCommand(bluetoothInStream, bluetoothOutStream, "ATCTM1");     // standard multiplier
-            int timeout = 1000 / 4; // 1sec
-            if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, string.Format("ATST{0:X02}", timeout)))
-            {
-                LogString("*** ELM setting timeout failed");
-                return false;
-            }
-
-            if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, "0000000000000000", false)) // dummy data
-            {
-                LogString("*** ELM sending data failed");
-                return false;
-            }
-            string answer = GetElm327Reponse(bluetoothInStream);
-            if (answer != null)
-            {
-                if (answer.Contains("CAN ERROR\r"))
-                {
-                    LogString("*** ELM CAN error");
-                    canSupport = false;
-                }
-            }
-
-            if (canSupport)
-            {
-                // fake adapters are not able to send short telegrams
-                if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, "00", false))
-                {
-                    LogString("*** ELM sending data failed");
-                    return false;
-                }
-                answer = GetElm327Reponse(bluetoothInStream);
-                if (answer != null)
-                {
-                    if (answer.Contains("CAN ERROR\r"))
-                    {
-                        LogString("*** ELM CAN error, fake adapter");
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-
-        private bool Elm327CheckCustomFirmware(Stream bluetoothInStream, Stream bluetoothOutStream, out bool customFirmware)
-        {
-            customFirmware = false;
-            bluetoothInStream.Flush();
-            while (bluetoothInStream.HasData())
-            {
-                bluetoothInStream.ReadByteAsync();
-            }
-
-            if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, @"AT@2", false))
-            {
-                LogString("*** ELM read device identifier failed");
-                return false;
-            }
-
-            string answer = GetElm327Reponse(bluetoothInStream);
-            if (answer != null)
-            {
-                if (answer.StartsWith("DEEPOBD"))
-                {
-                    customFirmware = true;
-                }
-            }
-
-            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-            if (customFirmware)
-            {
-                LogString("Custom ELM firmware");
-            }
-            else
-            {
-                LogString("No custom ELM firmware");
-            }
-
-            return true;
-        }
-
-        private bool Elm327CheckCompatibility(Stream bluetoothInStream, Stream bluetoothOutStream, out bool restricted, out bool fwUpdate)
-        {
-            restricted = false;
-            fwUpdate = false;
-            bluetoothInStream.Flush();
-            while (bluetoothInStream.HasData())
-            {
-                bluetoothInStream.ReadByteAsync();
-            }
-
-            if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, @"AT@1", false))
-            {
-                LogString("*** ELM read device description failed");
-                return false;
-            }
-
-            string elmDevDesc = GetElm327Reponse(bluetoothInStream);
-            if (elmDevDesc != null)
-            {
-                LogString(string.Format("ELM ID: {0}", elmDevDesc));
-                if (elmDevDesc.ToUpperInvariant().Contains(EdElmInterface.Elm327CarlyIdentifier))
-                {
-                    restricted = true;
-                }
-            }
-
-            if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, @"AT#1", false))
-            {
-                LogString("*** ELM read manufacturer failed");
-                return false;
-            }
-
-            string elmManufact = GetElm327Reponse(bluetoothInStream);
-            if (elmManufact != null)
-            {
-                LogString(string.Format("ELM Manufacturer: {0}", elmManufact));
-                if (elmManufact.ToUpperInvariant().Contains(EdElmInterface.Elm327WgSoftIdentifier))
-                {
-                    if (elmDevDesc != null)
-                    {
-                        string verString = elmDevDesc.Trim('\r', '\n', '>', ' ');
-                        if (double.TryParse(verString, NumberStyles.Float, CultureInfo.InvariantCulture, out double version))
-                        {
-                            if (version < EdElmInterface.Elm327WgSoftMinVer)
-                            {
-                                restricted = true;
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, @"STI", false))
-            {
-                LogString("*** STN read firmware version failed");
-                return false;
-            }
-
-            string stnVers = GetElm327Reponse(bluetoothInStream, true);
-            string stnVersExt = null;
-            if (stnVers != null)
-            {
-                LogString(string.Format("STN Version: {0}", stnVers));
-                if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, @"STIX", false))
-                {
-                    LogString("*** STN read ext firmware version failed");
-                    return false;
-                }
-
-                stnVersExt = GetElm327Reponse(bluetoothInStream, true);
-                if (stnVersExt != null)
-                {
-                    LogString(string.Format("STN Ext Version: {0}", stnVersExt));
-                }
-            }
-
-            if (stnVers != null && stnVersExt != null)
-            {
-                //stnVers = "STN2255 v5.7.0";
-                Regex stnVerRegEx = new Regex(@"STN(\d+)\s+v(\d+)\.(\d+)\.(\d+)", RegexOptions.IgnoreCase);
-                MatchCollection matchesVer = stnVerRegEx.Matches(stnVers);
-                if ((matchesVer.Count == 1) && (matchesVer[0].Groups.Count == 5))
-                {
-                    if (!Int32.TryParse(matchesVer[0].Groups[1].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int stnType))
-                    {
-                        stnType = -1;
-                    }
-                    if (!Int32.TryParse(matchesVer[0].Groups[2].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int stnVerH))
-                    {
-                        stnVerH = -1;
-                    }
-                    if (!Int32.TryParse(matchesVer[0].Groups[3].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int stnVerM))
-                    {
-                        stnVerM = -1;
-                    }
-                    if (!Int32.TryParse(matchesVer[0].Groups[4].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int stnVerL))
-                    {
-                        stnVerL = -1;
-                    }
-
-                    if (stnType >= 0 && stnVerL >= 0 && stnVerM >= 0 && stnVerH >= 0)
-                    {
-                        LogString(string.Format("STN{0:0000} version detected: {1}.{2}.{3}", stnType, stnVerH, stnVerM, stnVerL));
-                        int stnVer = stnVerH * 10000 + stnVerM * 100 + stnVerL;
-                        int minVer = 0;
-                        // ToDo: Update versions from: https://www.scantool.net/scantool/downloads/updates/
-                        switch (stnType)
-                        {
-                            case 1000:  // OBDLink CI
-                                minVer = 20200;
-                                break;
-
-                            case 1100:  // OBDLink
-                            case 1101:  // OBDLink S
-                                minVer = 40200;
-                                break;
-
-                            case 1120:  // microOBD 200
-                                minVer = 40201;
-                                break;
-
-                            case 1150:  // OBDLink MX Bluetooth
-                            case 1151:  // OBDLink MX Bluetooth 2
-                            case 1155:  // OBDLink LX Bluetooth
-                                minVer = 50619;
-                                break;
-
-                            case 1110:
-                            case 1130:  // OBDLink SX
-                            case 1170:
-                            case 2100:
-                            case 2120:
-                            case 2230:  // OBDLink EX
-                            case 2255:  // OBDLink MX+
-                                minVer = 50701;
-                                break;
-                        }
-
-                        if (stnVer < minVer)
-                        {
-                            fwUpdate = true;
-                        }
-                    }
-                }
-            }
-
-            if (!restricted)
-            {
-                if (!Elm327SendCommand(bluetoothInStream, bluetoothOutStream, @"ATPP2COFF"))
-                {
-                    LogString("*** ELM ATPP2COFF failed, fake device");
-                    return false;
-                }
-            }
-
-            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-            if (restricted)
-            {
-                LogString("Restricted ELM firmware");
-            }
-            else
-            {
-                LogString("Standard ELM firmware");
-            }
-
-            if (fwUpdate)
-            {
-                LogString("STN firmware update required");
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Send command to EL327
-        /// </summary>
-        /// <param name="bluetoothInStream">Bluetooth input stream</param>
-        /// <param name="bluetoothOutStream">Bluetooth output stream</param>
-        /// <param name="command">Command to send</param>
-        /// <param name="readAnswer">True: Check for valid answer</param>
-        /// <returns>True: command ok</returns>
-        private bool Elm327SendCommand(Stream bluetoothInStream, Stream bluetoothOutStream, string command, bool readAnswer = true)
-        {
-            byte[] sendData = Encoding.UTF8.GetBytes(command + "\r");
-            LogData(sendData, 0, sendData.Length, "Send");
-            bluetoothOutStream.Write(sendData, 0, sendData.Length);
-            LogString("ELM CMD send: " + command);
-
-            if (readAnswer)
-            {
-                string answer = GetElm327Reponse(bluetoothInStream);
-                if (answer == null)
-                {
-                    LogString("*** No ELM response");
-                    return false;
-                }
-                // check for OK
-                if (!answer.Contains("OK\r"))
-                {
-                    LogString("*** ELM invalid response");
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        /// <summary>
-        /// Get response from EL327
-        /// </summary>
-        /// <param name="bluetoothInStream">Bluetooth input stream</param>
-        /// <param name="checkValid">Check if resposne is valid</param>
-        /// <returns>Response string, null for no reponse</returns>
-        private string GetElm327Reponse(Stream bluetoothInStream, bool checkValid = false)
-        {
-            LogData(null, 0, 0, "Resp");
-            string response = null;
-            StringBuilder stringBuilder = new StringBuilder();
-            long startTime = Stopwatch.GetTimestamp();
-            bool lengthMessage = false;
-            for (; ; )
-            {
-                while (bluetoothInStream.HasData())
-                {
-                    int data = bluetoothInStream.ReadByteAsync();
-                    if (data >= 0 && data != 0x00)
-                    {
-                        // remove 0x00
-                        LogByte((byte)data);
-                        stringBuilder.Append(EdElmInterface.ConvertToChar(data));
-                        startTime = Stopwatch.GetTimestamp();
-                    }
-                    if (data == 0x3E)
-                    {
-                        // prompt
-                        response = stringBuilder.ToString();
-                        break;
-                    }
-                    if (stringBuilder.Length > 500)
-                    {
-                        if (!lengthMessage)
-                        {
-                            lengthMessage = true;
-                            LogString("*** ELM response too long");
-                        }
-                        break;
-                    }
-                }
-                if (response != null)
-                {
-                    break;
-                }
-                if (Stopwatch.GetTimestamp() - startTime > ResponseTimeout * ActivityCommon.TickResolMs)
-                {
-                    LogString("*** ELM response timeout");
-                    break;
-                }
-            }
-            if (response == null)
-            {
-                LogString("*** No ELM prompt");
-            }
-            else
-            {
-                string bareResponse = response.Replace("\r", "").Replace(">", "");
-                LogString("ELM CMD rec: " + bareResponse);
-                if (checkValid)
-                {
-                    if (bareResponse.Trim().StartsWith("?"))
-                    {
-                        LogString("*** ELM response not valid");
-                        response = null;
-                    }
-                }
-            }
-            return response;
         }
 
         /// <summary>
@@ -2687,39 +1786,9 @@ namespace BmwDeepObd
             return true;
         }
 
-        private void LogData(byte[] data, int offset, int length, string info = null)
-        {
-            if (!string.IsNullOrEmpty(info))
-            {
-                if (_sbLog.Length > 0)
-                {
-                    _sbLog.Append("\n");
-                }
-                _sbLog.Append(" (");
-                _sbLog.Append(info);
-                _sbLog.Append("): ");
-            }
-            if (data != null)
-            {
-                for (int i = 0; i < length; i++)
-                {
-                    _sbLog.Append(string.Format(ActivityMain.Culture, "{0:X02} ", data[offset + i]));
-                }
-            }
-        }
-
         private void LogString(string info)
         {
-            if (_sbLog.Length > 0)
-            {
-                _sbLog.Append("\n");
-            }
-            _sbLog.Append(info);
-        }
-
-        private void LogByte(byte data)
-        {
-            _sbLog.Append(string.Format(ActivityMain.Culture, "{0:X02} ", data));
+            _adapterTypeDetect.LogString(info);
         }
 
         public class Receiver : BroadcastReceiver
