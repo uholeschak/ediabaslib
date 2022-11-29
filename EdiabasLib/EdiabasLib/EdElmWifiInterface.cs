@@ -36,6 +36,8 @@ namespace EdiabasLib
         {
         }
 
+        public static NetworkStream NetworkStream => TcpElmStream;
+
         public static EdiabasNet Ediabas { get; set; }
 
         public static bool InterfaceConnect(string port, object parameter)
