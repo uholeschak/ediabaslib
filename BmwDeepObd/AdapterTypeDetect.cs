@@ -216,6 +216,9 @@ public class AdapterTypeDetect
                 byte[] sendData = Encoding.UTF8.GetBytes(command);
                 LogData(sendData, 0, sendData.Length, "Send");
                 adapterOutStream.Write(sendData, 0, sendData.Length);
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format("ELM CMD send: {0}", command));
+#endif
                 LogString("ELM CMD send: " + command);
 
                 string response = GetElm327Reponse(adapterInStream);
@@ -858,6 +861,9 @@ public class AdapterTypeDetect
         byte[] sendData = Encoding.UTF8.GetBytes(command + "\r");
         LogData(sendData, 0, sendData.Length, "Send");
         adapterOutStream.Write(sendData, 0, sendData.Length);
+#if DEBUG
+        Android.Util.Log.Info(Tag, string.Format("ELM CMD send: {0}", command));
+#endif
         LogString("ELM CMD send: " + command);
 
         if (readAnswer)
@@ -936,6 +942,9 @@ public class AdapterTypeDetect
         else
         {
             string bareResponse = response.Replace("\r", "").Replace(">", "");
+#if DEBUG
+            Android.Util.Log.Info(Tag, string.Format("ELM CMD rec: {0}", bareResponse));
+#endif
             LogString("ELM CMD rec: " + bareResponse);
             if (checkValid)
             {
