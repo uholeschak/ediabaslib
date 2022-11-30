@@ -174,7 +174,7 @@ public class CheckAdapter : IDisposable
                                 {
                                 })
                                 .SetCancelable(true)
-                                .SetMessage(Resource.String.unknown_adapter_type)
+                                .SetMessage(Resource.String.unknown_adapter_generic)
                                 .SetTitle(Resource.String.alert_title_error)
                                 .Show();
                             if (alertDialog != null)
