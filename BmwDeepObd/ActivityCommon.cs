@@ -5567,7 +5567,19 @@ namespace BmwDeepObd
                 string traceBackupFile = Path.Combine(traceBackupDir, TraceFileName);
                 if (storeMessage)
                 {
-                    File.WriteAllText(traceBackupFile, message);
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        using (StreamWriter streamWriter = new StreamWriter(ms, Encoding.UTF8))
+                        {
+                            streamWriter.Write(message);
+                            streamWriter.Flush();
+                            ms.Position = 0;
+                            if (!CreateZipFile(ms, TraceFileName, traceBackupFile))
+                            {
+                                return false;
+                            }
+                        }
+                    }
                 }
                 else
                 {
