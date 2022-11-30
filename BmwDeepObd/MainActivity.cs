@@ -197,6 +197,7 @@ namespace BmwDeepObd
             public bool VerifyEcuMd5 { get; set; }
             public int CommErrorsCount { get; set; }
             public bool AutoStart { get; set; }
+            public bool AdapterCheckOk { get; set; }
             public bool VagInfoShown { get; set; }
             public string DataLogDir { get; set; }
             public string TraceDir { get; set; }
@@ -1102,6 +1103,7 @@ namespace BmwDeepObd
                         if (interfaceType != ActivityCommon.InterfaceType.None)
                         {
                             _activityCommon.SelectedInterface = interfaceType;
+                            _instanceData.AdapterCheckOk = false;
                             _instanceData.DeviceName = data.Extras.GetString(XmlToolActivity.ExtraDeviceName);
                             _instanceData.DeviceAddress = data.Extras.GetString(XmlToolActivity.ExtraDeviceAddress);
                             _activityCommon.SelectedEnetIp = data.Extras.GetString(XmlToolActivity.ExtraEnetIp);
@@ -1992,7 +1994,8 @@ namespace BmwDeepObd
             }
             else
             {
-                if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.ElmWifi)
+                if (!_instanceData.AdapterCheckOk &&
+                    _activityCommon.SelectedInterface == ActivityCommon.InterfaceType.ElmWifi)
                 {
                     if (_checkAdapter.StartCheckAdapter(_instanceData.AppDataPath,
                             _activityCommon.SelectedInterface, _instanceData.DeviceAddress,
@@ -2002,6 +2005,7 @@ namespace BmwDeepObd
                                 {
                                     if (!checkError)
                                     {
+                                        _instanceData.AdapterCheckOk = true;
                                         if (StartEdiabasThread())
                                         {
                                             UpdateSelectedPage();
@@ -2400,7 +2404,6 @@ namespace BmwDeepObd
                     _instanceData.TraceDir = Path.Combine(_instanceData.AppDataPath, "Log");
                 }
 
-                _instanceData.TraceBackupDir = Path.Combine(_instanceData.AppDataPath, ActivityCommon.TraceBackupDir);
                 _translationList = null;
                 _translatedList = null;
                 _maxDispUpdateTime = 0;
@@ -3603,6 +3606,7 @@ namespace BmwDeepObd
             _instanceData.EcuPath = Path.Combine(_instanceData.AppDataPath, ManufacturerEcuDirName);
             _instanceData.VagPath = Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir, ActivityCommon.VagBaseDir);
             _instanceData.BmwPath = Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir, ActivityCommon.BmwBaseDir);
+            _instanceData.TraceBackupDir = Path.Combine(_instanceData.AppDataPath, ActivityCommon.TraceBackupDir);
 
             string backgroundImageFile = Path.Combine(_instanceData.AppDataPath, "Images", "Background.jpg");
             if (File.Exists(backgroundImageFile))
@@ -5409,6 +5413,7 @@ namespace BmwDeepObd
 
         private void UpdateJobReaderSettings()
         {
+            _instanceData.AdapterCheckOk = false;
             if (ActivityCommon.JobReader.PageList.Count > 0)
             {
                 ActivityCommon.SelectedManufacturer = ActivityCommon.JobReader.Manufacturer;
