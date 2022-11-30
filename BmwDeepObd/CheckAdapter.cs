@@ -360,11 +360,6 @@ public class CheckAdapter : IDisposable
 
     private bool EdiabasClose()
     {
-        if (IsJobRunning())
-        {
-            return false;
-        }
-
         if (_ediabas != null)
         {
             _ediabas.Dispose();
