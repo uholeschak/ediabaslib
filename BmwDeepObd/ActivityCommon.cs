@@ -5569,15 +5569,15 @@ namespace BmwDeepObd
                 {
                     using (MemoryStream ms = new MemoryStream())
                     {
-                        using (StreamWriter streamWriter = new StreamWriter(ms, Encoding.UTF8))
+                        using (StreamWriter streamWriter = new StreamWriter(ms, Encoding.UTF8, 1024, true))
                         {
                             streamWriter.Write(message);
-                            streamWriter.Flush();
-                            ms.Position = 0;
-                            if (!CreateZipFile(ms, TraceFileName, traceBackupFile))
-                            {
-                                return false;
-                            }
+                        }
+
+                        ms.Position = 0;
+                        if (!CreateZipFile(ms, TraceFileName, traceBackupFile))
+                        {
+                            return false;
                         }
                     }
                 }
