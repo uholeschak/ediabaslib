@@ -611,6 +611,9 @@ public class AdapterTypeDetect
         {
             if (answer.Contains("CAN ERROR\r"))
             {
+#if DEBUG
+                Android.Util.Log.Info(Tag, "ELM CAN error");
+#endif
                 LogString("*** ELM CAN error");
                 canSupport = false;
             }
@@ -629,6 +632,9 @@ public class AdapterTypeDetect
             {
                 if (answer.Contains("CAN ERROR\r"))
                 {
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "ELM CAN error, fake adapter");
+#endif
                     LogString("*** ELM CAN error, fake adapter");
                     return false;
                 }
@@ -833,6 +839,9 @@ public class AdapterTypeDetect
         // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
         if (restricted)
         {
+#if DEBUG
+            Android.Util.Log.Info(Tag, "Restricted ELM firmware");
+#endif
             LogString("Restricted ELM firmware");
         }
         else
@@ -842,6 +851,9 @@ public class AdapterTypeDetect
 
         if (fwUpdate)
         {
+#if DEBUG
+            Android.Util.Log.Info(Tag, "STN firmware update required");
+#endif
             LogString("STN firmware update required");
         }
 
