@@ -47,7 +47,7 @@ namespace EdiabasLib
         }
 
 #if __ANDROID__ && DEBUG
-        private static readonly string Tag = typeof(BtLeGattSpp).FullName;
+        private static readonly string Tag = typeof(EdElmInterface).FullName;
 #endif
         public const string Elm327CarlyIdentifier = "CARLY-UNIVERSAL";
         public const string Elm327WgSoftIdentifier = "WGSOFT";
