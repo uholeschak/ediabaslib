@@ -149,7 +149,7 @@ public class CheckAdapter : IDisposable
                             AlertDialog alertDialog = new AlertDialog.Builder(_context)
                                 .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
                                 .SetCancelable(true)
-                                .SetMessage(Resource.String.adapter_connection_failed)
+                                .SetMessage(Resource.String.adapter_connection_generic)
                                 .SetTitle(Resource.String.alert_title_error)
                                 .Show();
                             if (alertDialog != null)
