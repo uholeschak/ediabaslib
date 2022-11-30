@@ -156,7 +156,15 @@ public class CheckAdapter : IDisposable
                             {
                                 alertDialog.DismissEvent += (sender, args) =>
                                 {
-                                    CheckFinished(true);
+                                    _activityCommon.RequestSendMessage(_appDataDir, _adapterTypeDetect.SbLog.ToString(), GetType(), (o, eventArgs) =>
+                                    {
+                                        if (_activityCommon == null)
+                                        {
+                                            return;
+                                        }
+
+                                        CheckFinished(true);
+                                    });
                                 };
                             }
                             break;

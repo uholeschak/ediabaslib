@@ -1157,12 +1157,24 @@ namespace BmwDeepObd
                                 break;
                             }
 
-                            new AlertDialog.Builder(this)
+                            AlertDialog alertDialog2 = new AlertDialog.Builder(this)
                                 .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
                                 .SetCancelable(true)
                                 .SetMessage(Resource.String.adapter_connection_failed)
                                 .SetTitle(Resource.String.alert_title_error)
                                 .Show();
+                            if (alertDialog2 != null)
+                            {
+                                alertDialog2.DismissEvent += (sender, args) =>
+                                {
+                                    if (_activityCommon == null)
+                                    {
+                                        return;
+                                    }
+                                    _activityCommon.RequestSendMessage(_appDataDir, _adapterTypeDetect.SbLog.ToString(),
+                                        GetType(), (o, eventArgs) => { });
+                                };
+                            }
                             break;
                         }
 
