@@ -5525,25 +5525,34 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool StoreBackupTraceFile(string appDataDir, string traceFile)
+        public bool StoreBackupTraceFile(string appDataDir, string traceFile, string message)
         {
             try
             {
+                bool storeMessage = false;
                 if (!File.Exists(traceFile))
                 {
-                    return false;
+                    if (string.IsNullOrEmpty(message))
+                    {
+                        return false;
+                    }
+
+                    storeMessage = true;
                 }
 
                 string traceBackupDir = Path.Combine(appDataDir, TraceBackupDir);
                 string traceFileDir = Path.GetDirectoryName(traceFile);
-                if (string.IsNullOrEmpty(traceFileDir))
+                if (!storeMessage)
                 {
-                    return false;
-                }
+                    if (string.IsNullOrEmpty(traceFileDir))
+                    {
+                        return false;
+                    }
 
-                if (string.Compare(traceFileDir, traceBackupDir, StringComparison.OrdinalIgnoreCase) == 0)
-                {
-                    return false;
+                    if (string.Compare(traceFileDir, traceBackupDir, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        return false;
+                    }
                 }
 
                 try
@@ -5556,7 +5565,14 @@ namespace BmwDeepObd
                 }
 
                 string traceBackupFile = Path.Combine(traceBackupDir, TraceFileName);
-                File.Copy(traceFile, traceBackupFile, true);
+                if (storeMessage)
+                {
+                    File.WriteAllText(traceBackupFile, message);
+                }
+                else
+                {
+                    File.Copy(traceFile, traceBackupFile, true);
+                }
             }
             catch (Exception)
             {
@@ -6245,7 +6261,7 @@ namespace BmwDeepObd
 
                                     if (!ignoreDismiss)
                                     {
-                                        if (StoreBackupTraceFile(appDataDir, traceFile))
+                                        if (StoreBackupTraceFile(appDataDir, traceFile, message))
                                         {
                                             ShowAlert(_activity.GetString(Resource.String.send_trace_backup_info), Resource.String.alert_title_info);
                                         }

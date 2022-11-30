@@ -2404,7 +2404,6 @@ namespace BmwDeepObd
                     _instanceData.TraceDir = Path.Combine(_instanceData.AppDataPath, "Log");
                 }
 
-                _instanceData.TraceBackupDir = Path.Combine(_instanceData.AppDataPath, ActivityCommon.TraceBackupDir);
                 _translationList = null;
                 _translatedList = null;
                 _maxDispUpdateTime = 0;
@@ -3607,6 +3606,7 @@ namespace BmwDeepObd
             _instanceData.EcuPath = Path.Combine(_instanceData.AppDataPath, ManufacturerEcuDirName);
             _instanceData.VagPath = Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir, ActivityCommon.VagBaseDir);
             _instanceData.BmwPath = Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir, ActivityCommon.BmwBaseDir);
+            _instanceData.TraceBackupDir = Path.Combine(_instanceData.AppDataPath, ActivityCommon.TraceBackupDir);
 
             string backgroundImageFile = Path.Combine(_instanceData.AppDataPath, "Images", "Background.jpg");
             if (File.Exists(backgroundImageFile))
