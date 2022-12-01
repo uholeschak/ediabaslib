@@ -26,8 +26,10 @@ namespace BmwDeepObd
 
         // Intent extra
         public const string ExtraAppDataDir = "app_data_dir";
+        public const string ExtraCopyFileName = "copy_file_name";
         public const string ExtraSelection = "selection";
         public const string SelectionStorageLocation = "storage_location";
+        public const string SelectionCopyFromApp = "copy_from_app";
         public const string ExtraExportFile = "export_file";
         public const string ExtraImportFile = "import_file";
         public const string ExtraSettingsMode = "settigs_mode";
@@ -47,6 +49,7 @@ namespace BmwDeepObd
 
         private InstanceData _instanceData = new InstanceData();
         private string _appDataDir;
+        private string _copyFileName;
         private string _selection;
         private ActivityCommon _activityCommon;
         private string _exportFileName;
@@ -137,6 +140,7 @@ namespace BmwDeepObd
 
             SetResult(Android.App.Result.Canceled);
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
+            _copyFileName = Intent.GetStringExtra(ExtraCopyFileName);
             _selection = Intent.GetStringExtra(ExtraSelection);
 
             _activityCommon = new ActivityCommon(this);
@@ -421,8 +425,19 @@ namespace BmwDeepObd
                                 {
                                     DocumentFile srcDir = DocumentFile.FromFile(new Java.IO.File(_instanceData.CopyFromAppSrcPath));
                                     DocumentFile dstDir = DocumentFile.FromTreeUri(this, Android.Net.Uri.Parse(_instanceData.CopyFromAppDstUri));
-                                    if (_activityCommon.RequestCopyDocumentsThread(srcDir, dstDir, (result, aborted) => { }))
+                                    if (_activityCommon.RequestCopyDocumentsThread(srcDir, dstDir, (result, aborted) =>
+                                        {
+                                            if (HasSelection())
+                                            {
+                                                Finish();
+                                            }
+                                        }))
                                     {
+                                        if (HasSelection())
+                                        {
+                                            break;
+                                        }
+
                                         ActivityCommon.CopyFromAppSrc = _instanceData.CopyFromAppSrcPath;
                                         ActivityCommon.CopyFromAppDst = _instanceData.CopyFromAppDstUri;
                                     }
@@ -433,6 +448,11 @@ namespace BmwDeepObd
                                 }
                             }
                         }
+                    }
+
+                    if (HasSelection())
+                    {
+                        Finish();
                     }
                     break;
 
@@ -904,11 +924,21 @@ namespace BmwDeepObd
                 case SelectionStorageLocation:
                     SelectMedia();
                     break;
+
+                case SelectionCopyFromApp:
+                    _instanceData.CopyFromAppSrcPath = _copyFileName;
+                    SelectCopyAppDir(true);
+                    break;
             }
         }
 
+        private bool HasSelection()
+        {
+            return !string.IsNullOrEmpty(_selection);
+        }
+
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool ShowDevelopmentSettings()
+            private bool ShowDevelopmentSettings()
         {
             try
             {
@@ -956,6 +986,10 @@ namespace BmwDeepObd
             }
             catch (Exception)
             {
+                if (HasSelection())
+                {
+                    Finish();
+                }
                 return false;
             }
         }
