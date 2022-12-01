@@ -425,13 +425,15 @@ namespace BmwDeepObd
                                 {
                                     DocumentFile srcDir = DocumentFile.FromFile(new Java.IO.File(_instanceData.CopyFromAppSrcPath));
                                     DocumentFile dstDir = DocumentFile.FromTreeUri(this, Android.Net.Uri.Parse(_instanceData.CopyFromAppDstUri));
-                                    if (_activityCommon.RequestCopyDocumentsThread(srcDir, dstDir, (result, aborted) => { }))
-                                    {
-                                        if (!string.IsNullOrEmpty(_selection))
+                                    if (_activityCommon.RequestCopyDocumentsThread(srcDir, dstDir, (result, aborted) =>
                                         {
-                                            Finish();
-                                        }
-                                        else
+                                            if (!string.IsNullOrEmpty(_selection))
+                                            {
+                                                Finish();
+                                            }
+                                        }))
+                                    {
+                                        if (string.IsNullOrEmpty(_selection))
                                         {
                                             ActivityCommon.CopyFromAppSrc = _instanceData.CopyFromAppSrcPath;
                                             ActivityCommon.CopyFromAppDst = _instanceData.CopyFromAppDstUri;
