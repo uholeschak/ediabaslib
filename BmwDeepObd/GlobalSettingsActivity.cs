@@ -427,17 +427,19 @@ namespace BmwDeepObd
                                     DocumentFile dstDir = DocumentFile.FromTreeUri(this, Android.Net.Uri.Parse(_instanceData.CopyFromAppDstUri));
                                     if (_activityCommon.RequestCopyDocumentsThread(srcDir, dstDir, (result, aborted) =>
                                         {
-                                            if (!string.IsNullOrEmpty(_selection))
+                                            if (HasSelection())
                                             {
                                                 Finish();
                                             }
                                         }))
                                     {
-                                        if (string.IsNullOrEmpty(_selection))
+                                        if (HasSelection())
                                         {
-                                            ActivityCommon.CopyFromAppSrc = _instanceData.CopyFromAppSrcPath;
-                                            ActivityCommon.CopyFromAppDst = _instanceData.CopyFromAppDstUri;
+                                            break;
                                         }
+
+                                        ActivityCommon.CopyFromAppSrc = _instanceData.CopyFromAppSrcPath;
+                                        ActivityCommon.CopyFromAppDst = _instanceData.CopyFromAppDstUri;
                                     }
                                 }
                                 catch (Exception)
@@ -446,6 +448,11 @@ namespace BmwDeepObd
                                 }
                             }
                         }
+                    }
+
+                    if (HasSelection())
+                    {
+                        Finish();
                     }
                     break;
 
@@ -925,8 +932,13 @@ namespace BmwDeepObd
             }
         }
 
+        private bool HasSelection()
+        {
+            return !string.IsNullOrEmpty(_selection);
+        }
+
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool ShowDevelopmentSettings()
+            private bool ShowDevelopmentSettings()
         {
             try
             {
@@ -974,6 +986,10 @@ namespace BmwDeepObd
             }
             catch (Exception)
             {
+                if (HasSelection())
+                {
+                    Finish();
+                }
                 return false;
             }
         }
