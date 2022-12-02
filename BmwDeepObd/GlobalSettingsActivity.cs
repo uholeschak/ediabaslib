@@ -927,7 +927,7 @@ namespace BmwDeepObd
 
                 case SelectionCopyFromApp:
                     _instanceData.CopyFromAppSrcPath = _copyFileName;
-                    SelectCopyAppDir(true);
+                    SelectCopyDocumentTree(true);
                     break;
             }
         }
