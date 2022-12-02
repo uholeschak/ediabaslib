@@ -1427,12 +1427,19 @@ namespace BmwDeepObd
             IMenuItem sendTraceMenu = menu.FindItem(Resource.Id.menu_send_trace);
             sendTraceMenu?.SetEnabled(interfaceAvailable && !commActive && _instanceData.TraceActive && ActivityCommon.IsTraceFilePresent(_instanceData.TraceDir));
 
+            bool backupTrace = ActivityCommon.IsTraceFilePresent(_instanceData.TraceBackupDir);
             IMenuItem sendLastTraceMenu = menu.FindItem(Resource.Id.menu_send_last_trace);
             if (sendLastTraceMenu != null)
             {
-                bool backupTrace = ActivityCommon.IsTraceFilePresent(_instanceData.TraceBackupDir);
                 sendLastTraceMenu.SetEnabled(interfaceAvailable && !commActive && backupTrace);
                 sendLastTraceMenu.SetVisible(backupTrace);
+            }
+
+            IMenuItem copyLastTraceMenu = menu.FindItem(Resource.Id.menu_copy_last_trace);
+            if (copyLastTraceMenu != null)
+            {
+                copyLastTraceMenu.SetEnabled(interfaceAvailable && !commActive && backupTrace);
+                copyLastTraceMenu.SetVisible(backupTrace && ActivityCommon.IsDocumentTreeSupported());
             }
 
             IMenuItem translationSubmenu = menu.FindItem(Resource.Id.menu_translation_submenu);
@@ -1679,8 +1686,6 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_send_last_trace:
-                    CopyTraceBackup();
-                    return true;
                     SendBackupTraceFileAlways((sender, args) =>
                     {
                         if (_activityCommon == null)
@@ -1689,6 +1694,10 @@ namespace BmwDeepObd
                         }
                         UpdateOptionsMenu();
                     });
+                    return true;
+
+                case Resource.Id.menu_copy_last_trace:
+                    CopyTraceBackup();
                     return true;
 
                 case Resource.Id.menu_translation_enable:
@@ -5741,20 +5750,25 @@ namespace BmwDeepObd
             StartGlobalSettings(GlobalSettingsActivity.SelectionStorageLocation);
         }
 
-        private void CopyTraceBackup()
+        private bool CopyTraceBackup()
         {
             if (string.IsNullOrEmpty(_instanceData.TraceBackupDir))
             {
-                return;
+                return false;
             }
 
             string traceFile = Path.Combine(_instanceData.TraceBackupDir, ActivityCommon.TraceFileName);
             if (!File.Exists(traceFile))
             {
-                return;
+                return false;
             }
 
-            StartGlobalSettings(GlobalSettingsActivity.SelectionCopyFromApp, traceFile);
+            if (!ActivityCommon.IsDocumentTreeSupported())
+            {
+                return false;
+            }
+
+            return StartGlobalSettings(GlobalSettingsActivity.SelectionCopyFromApp, traceFile);
         }
 
         private void DownloadFile(string url, string downloadDir, string unzipTargetDir = null)
@@ -7068,10 +7082,6 @@ namespace BmwDeepObd
 
                 if (!string.IsNullOrEmpty(selection))
                 {
-                    if (!ActivityCommon.IsDocumentTreeSupported())
-                    {
-                        return false;
-                    }
                     serverIntent.PutExtra(GlobalSettingsActivity.ExtraCopyFileName, copyFileName);
                 }
 
