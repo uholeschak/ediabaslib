@@ -1679,6 +1679,8 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_send_last_trace:
+                    //CopyTraceBackup();
+                    //return true;
                     SendBackupTraceFileAlways((sender, args) =>
                     {
                         if (_activityCommon == null)
@@ -1714,7 +1716,7 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_global_settings:
-                    EditGlobalSettings();
+                    StartGlobalSettings();
                     return true;
 
                 case Resource.Id.menu_submenu_help:
@@ -5736,7 +5738,23 @@ namespace BmwDeepObd
 
         private void SelectMedia()
         {
-            EditGlobalSettings(GlobalSettingsActivity.SelectionStorageLocation);
+            StartGlobalSettings(GlobalSettingsActivity.SelectionStorageLocation);
+        }
+
+        private void CopyTraceBackup()
+        {
+            if (string.IsNullOrEmpty(_instanceData.TraceBackupDir))
+            {
+                return;
+            }
+
+            string traceFile = Path.Combine(_instanceData.TraceBackupDir, ActivityCommon.TraceFileName);
+            if (!File.Exists(traceFile))
+            {
+                return;
+            }
+
+            StartGlobalSettings(GlobalSettingsActivity.SelectionCopyFromApp, traceFile);
         }
 
         private void DownloadFile(string url, string downloadDir, string unzipTargetDir = null)
@@ -7037,14 +7055,20 @@ namespace BmwDeepObd
             ActivityCommon.ActivityStartedFromMain = true;
         }
 
-        private void EditGlobalSettings(string selection = null)
+        private void StartGlobalSettings(string selection = null, string copyFileName = null)
         {
             Intent serverIntent = new Intent(this, typeof(GlobalSettingsActivity));
             serverIntent.PutExtra(GlobalSettingsActivity.ExtraAppDataDir, _instanceData.AppDataPath);
-            if (selection != null)
+            if (!string.IsNullOrEmpty(selection))
             {
                 serverIntent.PutExtra(GlobalSettingsActivity.ExtraSelection, selection);
             }
+
+            if (!string.IsNullOrEmpty(selection))
+            {
+                serverIntent.PutExtra(GlobalSettingsActivity.ExtraCopyFileName, copyFileName);
+            }
+
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestGlobalSettings);
             ActivityCommon.ActivityStartedFromMain = true;
         }
