@@ -77,6 +77,7 @@ namespace BmwDeepObd
             RequestBmwCoding,
             RequestYandexKey,
             RequestGlobalSettings,
+            RequestGlobalSettingsCopy,
             RequestEditConfig,
             RequestEditXml,
         }
@@ -1135,44 +1136,48 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestGlobalSettings:
-                    if (data?.Extras != null && resultCode == Android.App.Result.Ok)
+                case ActivityRequest.RequestGlobalSettingsCopy:
+                    if ((ActivityRequest)requestCode == ActivityRequest.RequestGlobalSettings)
                     {
-                        string exportFileName = data.Extras.GetString(GlobalSettingsActivity.ExtraExportFile);
-                        string importFileName = data.Extras.GetString(GlobalSettingsActivity.ExtraImportFile);
-                        SettingsMode settingsMode = (SettingsMode) data.Extras.GetInt(GlobalSettingsActivity.ExtraSettingsMode, (int) SettingsMode.Private);
-                        if (!string.IsNullOrEmpty(exportFileName))
+                        if (data?.Extras != null && resultCode == Android.App.Result.Ok)
                         {
-                            if (!StoreSettings(exportFileName, settingsMode, out string errorMessage))
+                            string exportFileName = data.Extras.GetString(GlobalSettingsActivity.ExtraExportFile);
+                            string importFileName = data.Extras.GetString(GlobalSettingsActivity.ExtraImportFile);
+                            SettingsMode settingsMode = (SettingsMode)data.Extras.GetInt(GlobalSettingsActivity.ExtraSettingsMode, (int)SettingsMode.Private);
+                            if (!string.IsNullOrEmpty(exportFileName))
                             {
-                                string message = GetString(Resource.String.store_settings_failed);
-                                if (errorMessage != null)
+                                if (!StoreSettings(exportFileName, settingsMode, out string errorMessage))
                                 {
-                                    message += "\r\n" + errorMessage;
+                                    string message = GetString(Resource.String.store_settings_failed);
+                                    if (errorMessage != null)
+                                    {
+                                        message += "\r\n" + errorMessage;
+                                    }
+
+                                    _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
                                 }
-
-                                _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
+                                else
+                                {
+                                    string message = GetString(Resource.String.store_settings_filename) + "\r\n" + exportFileName;
+                                    _activityCommon.ShowAlert(message, Resource.String.alert_title_info);
+                                }
                             }
-                            else
+                            else if (!string.IsNullOrEmpty(importFileName))
                             {
-                                string message = GetString(Resource.String.store_settings_filename) + "\r\n" + exportFileName;
-                                _activityCommon.ShowAlert(message, Resource.String.alert_title_info);
+                                GetSettings(importFileName, SettingsMode.Private);
                             }
                         }
-                        else if (!string.IsNullOrEmpty(importFileName))
-                        {
-                            GetSettings(importFileName, SettingsMode.Private);
-                        }
-                    }
 
-                    _activityCommon.SetPreferredNetworkInterface();
-                    if ((_instanceData.LastThemeType ?? ActivityCommon.ThemeDefault) != (ActivityCommon.SelectedTheme ?? ActivityCommon.ThemeDefault) ||
-                        string.Compare(_instanceData.LastLocale ?? string.Empty, ActivityCommon.SelectedLocale ?? string.Empty, StringComparison.OrdinalIgnoreCase) != 0)
-                    {
-                        StoreSettings();
-                        // update translations
-                        _activityCommon.RegisterNotificationChannels();
-                        Recreate();
-                        break;
+                        _activityCommon.SetPreferredNetworkInterface();
+                        if ((_instanceData.LastThemeType ?? ActivityCommon.ThemeDefault) != (ActivityCommon.SelectedTheme ?? ActivityCommon.ThemeDefault) ||
+                            string.Compare(_instanceData.LastLocale ?? string.Empty, ActivityCommon.SelectedLocale ?? string.Empty, StringComparison.OrdinalIgnoreCase) != 0)
+                        {
+                            StoreSettings();
+                            // update translations
+                            _activityCommon.RegisterNotificationChannels();
+                            Recreate();
+                            break;
+                        }
                     }
 
                     StoreSettings();
@@ -7073,19 +7078,27 @@ namespace BmwDeepObd
         {
             try
             {
+                ActivityRequest requestCode = ActivityRequest.RequestGlobalSettings;
                 Intent serverIntent = new Intent(this, typeof(GlobalSettingsActivity));
                 serverIntent.PutExtra(GlobalSettingsActivity.ExtraAppDataDir, _instanceData.AppDataPath);
                 if (!string.IsNullOrEmpty(selection))
                 {
+                    switch (selection)
+                    {
+                        case GlobalSettingsActivity.SelectionCopyFromApp:
+                            requestCode = ActivityRequest.RequestGlobalSettingsCopy;
+                            break;
+                    }
+
                     serverIntent.PutExtra(GlobalSettingsActivity.ExtraSelection, selection);
                 }
 
-                if (!string.IsNullOrEmpty(selection))
+                if (!string.IsNullOrEmpty(copyFileName))
                 {
                     serverIntent.PutExtra(GlobalSettingsActivity.ExtraCopyFileName, copyFileName);
                 }
 
-                StartActivityForResult(serverIntent, (int)ActivityRequest.RequestGlobalSettings);
+                StartActivityForResult(serverIntent, (int) requestCode);
                 ActivityCommon.ActivityStartedFromMain = true;
 
                 return true;
