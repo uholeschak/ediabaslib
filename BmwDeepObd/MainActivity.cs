@@ -1679,8 +1679,8 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_send_last_trace:
-                    //CopyTraceBackup();
-                    //return true;
+                    CopyTraceBackup();
+                    return true;
                     SendBackupTraceFileAlways((sender, args) =>
                     {
                         if (_activityCommon == null)
@@ -7055,22 +7055,35 @@ namespace BmwDeepObd
             ActivityCommon.ActivityStartedFromMain = true;
         }
 
-        private void StartGlobalSettings(string selection = null, string copyFileName = null)
+        private bool StartGlobalSettings(string selection = null, string copyFileName = null)
         {
-            Intent serverIntent = new Intent(this, typeof(GlobalSettingsActivity));
-            serverIntent.PutExtra(GlobalSettingsActivity.ExtraAppDataDir, _instanceData.AppDataPath);
-            if (!string.IsNullOrEmpty(selection))
+            try
             {
-                serverIntent.PutExtra(GlobalSettingsActivity.ExtraSelection, selection);
-            }
+                Intent serverIntent = new Intent(this, typeof(GlobalSettingsActivity));
+                serverIntent.PutExtra(GlobalSettingsActivity.ExtraAppDataDir, _instanceData.AppDataPath);
+                if (!string.IsNullOrEmpty(selection))
+                {
+                    serverIntent.PutExtra(GlobalSettingsActivity.ExtraSelection, selection);
+                }
 
-            if (!string.IsNullOrEmpty(selection))
+                if (!string.IsNullOrEmpty(selection))
+                {
+                    if (!ActivityCommon.IsDocumentTreeSupported())
+                    {
+                        return false;
+                    }
+                    serverIntent.PutExtra(GlobalSettingsActivity.ExtraCopyFileName, copyFileName);
+                }
+
+                StartActivityForResult(serverIntent, (int)ActivityRequest.RequestGlobalSettings);
+                ActivityCommon.ActivityStartedFromMain = true;
+
+                return true;
+            }
+            catch (Exception)
             {
-                serverIntent.PutExtra(GlobalSettingsActivity.ExtraCopyFileName, copyFileName);
+                return false;
             }
-
-            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestGlobalSettings);
-            ActivityCommon.ActivityStartedFromMain = true;
         }
 
         private void AdapterConfig()

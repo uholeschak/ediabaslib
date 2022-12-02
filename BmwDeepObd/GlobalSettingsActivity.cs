@@ -927,7 +927,10 @@ namespace BmwDeepObd
 
                 case SelectionCopyFromApp:
                     _instanceData.CopyFromAppSrcPath = _copyFileName;
-                    SelectCopyDocumentTree(true);
+                    if (!SelectCopyDocumentTree(true))
+                    {
+                        Finish();
+                    }
                     break;
             }
         }
@@ -986,10 +989,6 @@ namespace BmwDeepObd
             }
             catch (Exception)
             {
-                if (HasSelection())
-                {
-                    Finish();
-                }
                 return false;
             }
         }
