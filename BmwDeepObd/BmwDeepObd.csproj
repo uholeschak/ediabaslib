@@ -549,6 +549,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Xml\G31\Axis.ccpage" />
+    <None Include="Xml\G31\G31DeepObdWifi.cccfg" />
     <None Include="Xml\G31\G31ElmWifi.cccfg" />
     <None Include="Xml\G31\G31Ftdi.cccfg" />
     <None Include="Xml\G31\Kafas.ccpage" />

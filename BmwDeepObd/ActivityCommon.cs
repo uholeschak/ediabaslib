@@ -1116,7 +1116,7 @@ namespace BmwDeepObd
             set => _selectedEnetIp = value;
         }
 
-        public bool AdapterCheckRequired => _selectedInterface == InterfaceType.ElmWifi;
+        public bool AdapterCheckRequired => _selectedInterface == InterfaceType.ElmWifi || _selectedInterface == InterfaceType.DeepObdWifi;
 
         public Context Context => _context;
 
