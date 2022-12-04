@@ -304,6 +304,7 @@
   <string name="menu_download_ecu">Download ECU files</string>
   <string name="menu_extract_ecu">Extract ECU files</string>
   <string name="menu_submenu_log">Data logging</string>
+  <string name="menu_trace_submenu">Trace file</string>
   <string name="menu_send_trace">Send trace file</string>
   <string name="menu_send_last_trace">Resend trace file</string>
   <string name="menu_copy_last_trace">Copy last trace file</string>
