@@ -1913,6 +1913,7 @@ namespace BmwDeepObd
             _instanceData.AutoStart = false;
             if (!CheckForEcuFiles())
             {
+                UpdateOptionsMenu();
                 UpdateDisplay();
                 return;
             }
@@ -1928,6 +1929,7 @@ namespace BmwDeepObd
                         _instanceData.AutoStart = true;
                     }))
                 {
+                    UpdateOptionsMenu();
                     UpdateDisplay();
                     return;
                 }
@@ -1956,6 +1958,7 @@ namespace BmwDeepObd
                     }
                 }))
                 {
+                    UpdateOptionsMenu();
                     UpdateDisplay();
                     return;
                 }
@@ -2034,6 +2037,7 @@ namespace BmwDeepObd
                                         }
                                     }
 
+                                    UpdateOptionsMenu();
                                     UpdateDisplay();
                                 });
                             }))
@@ -2047,6 +2051,8 @@ namespace BmwDeepObd
                     UpdateSelectedPage();
                 }
             }
+
+            UpdateOptionsMenu();
             UpdateDisplay();
         }
 
