@@ -7096,6 +7096,7 @@ namespace BmwDeepObd
                 if (!string.IsNullOrEmpty(copyFileName))
                 {
                     serverIntent.PutExtra(GlobalSettingsActivity.ExtraCopyFileName, copyFileName);
+                    serverIntent.PutExtra(GlobalSettingsActivity.ExtraDeleteFile, true);
                 }
 
                 StartActivityForResult(serverIntent, (int) requestCode);
