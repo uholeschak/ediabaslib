@@ -1116,6 +1116,8 @@ namespace BmwDeepObd
             set => _selectedEnetIp = value;
         }
 
+        public bool AdapterCheckRequired => _selectedInterface == InterfaceType.ElmWifi;
+
         public Context Context => _context;
 
         public Android.App.Activity Activity => _activity;
