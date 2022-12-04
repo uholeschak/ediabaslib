@@ -2244,23 +2244,26 @@ namespace BmwDeepObd
             if (!_instanceData.AdapterCheckOk && 
                 _activityCommon.SelectedInterface == ActivityCommon.InterfaceType.ElmWifi)
             {
-                if (_checkAdapter.StartCheckAdapter(_appDataDir,
-                        _activityCommon.SelectedInterface, _instanceData.DeviceAddress,
-                        checkError =>
-                        {
-                            RunOnUiThread(() =>
-                            {
-                                if (!checkError)
-                                {
-                                    _instanceData.AdapterCheckOk = true;
-                                    ExecuteAnalyzeJob(searchStartIndex);
-                                }
-
-                                UpdateOptionsMenu();
-                            });
-                        }))
+                if (EdiabasClose())
                 {
-                    return;
+                    if (_checkAdapter.StartCheckAdapter(_appDataDir,
+                            _activityCommon.SelectedInterface, _instanceData.DeviceAddress,
+                            checkError =>
+                            {
+                                RunOnUiThread(() =>
+                                {
+                                    if (!checkError)
+                                    {
+                                        _instanceData.AdapterCheckOk = true;
+                                        ExecuteAnalyzeJob(searchStartIndex);
+                                    }
+
+                                    UpdateOptionsMenu();
+                                });
+                            }))
+                    {
+                        return;
+                    }
                 }
             }
 
