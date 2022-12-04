@@ -352,6 +352,7 @@ namespace BmwDeepObd
 
             public bool ForceAppend { get; set; }
             public bool AutoStart { get; set; }
+            public bool AdapterCheckOk { get; set; }
             public int AutoStartSearchStartIndex { get; set; }
             public bool AddErrorsPage { get; set; }
             public bool NoErrorsPageUpdate { get; set; }
@@ -592,6 +593,7 @@ namespace BmwDeepObd
         private volatile bool _ediabasJobAbort;
         private ActivityCommon _activityCommon;
         private RuleEvalBmw _ruleEvalBmw;
+        private CheckAdapter _checkAdapter;
         private EdiabasNet _ediabas;
         private SgFunctions _sgFunctions;
         private Thread _jobThread;
@@ -693,6 +695,8 @@ namespace BmwDeepObd
                 SelectedInterface = (ActivityCommon.InterfaceType)
                     Intent.GetIntExtra(ExtraInterface, (int)ActivityCommon.InterfaceType.None)
             };
+
+            _checkAdapter = new CheckAdapter(_activityCommon);
 
             _ecuDir = Intent.GetStringExtra(ExtraInitDir);
             _vagDir = Intent.GetStringExtra(ExtraVagDir);
@@ -830,6 +834,9 @@ namespace BmwDeepObd
                 _jobThread.Join();
             }
             EdiabasClose(true);
+
+            _checkAdapter?.Dispose();
+            _checkAdapter = null;
 
             _activityCommon?.Dispose();
             _activityCommon = null;
@@ -1812,6 +1819,8 @@ namespace BmwDeepObd
                 {
                     return;
                 }
+
+                _instanceData.AdapterCheckOk = false;
                 EdiabasClose();
                 UpdateOptionsMenu();
                 SelectInterfaceEnable();
@@ -2231,6 +2240,30 @@ namespace BmwDeepObd
             {
                 return;
             }
+
+            if (!_instanceData.AdapterCheckOk && 
+                _activityCommon.SelectedInterface == ActivityCommon.InterfaceType.ElmWifi)
+            {
+                if (_checkAdapter.StartCheckAdapter(_appDataDir,
+                        _activityCommon.SelectedInterface, _instanceData.DeviceAddress,
+                        checkError =>
+                        {
+                            RunOnUiThread(() =>
+                            {
+                                if (!checkError)
+                                {
+                                    _instanceData.AdapterCheckOk = true;
+                                    ExecuteAnalyzeJob(searchStartIndex);
+                                }
+
+                                UpdateOptionsMenu();
+                            });
+                        }))
+                {
+                    return;
+                }
+            }
+
             ExecuteAnalyzeJob(searchStartIndex);
         }
 

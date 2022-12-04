@@ -908,11 +908,11 @@ namespace BmwDeepObd
                 }
             }
 
-            _activityCommon?.Dispose();
-            _activityCommon = null;
-
             _checkAdapter?.Dispose();
             _checkAdapter = null;
+
+            _activityCommon?.Dispose();
+            _activityCommon = null;
 
             if (_updateHandler != null)
             {
