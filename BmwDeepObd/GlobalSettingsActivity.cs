@@ -27,6 +27,7 @@ namespace BmwDeepObd
         // Intent extra
         public const string ExtraAppDataDir = "app_data_dir";
         public const string ExtraCopyFileName = "copy_file_name";
+        public const string ExtraDeleteFile = "delete_file";
         public const string ExtraSelection = "selection";
         public const string SelectionStorageLocation = "storage_location";
         public const string SelectionCopyFromApp = "copy_from_app";
@@ -50,6 +51,7 @@ namespace BmwDeepObd
         private InstanceData _instanceData = new InstanceData();
         private string _appDataDir;
         private string _copyFileName;
+        private bool _deleteFile;
         private string _selection;
         private ActivityCommon _activityCommon;
         private string _exportFileName;
@@ -141,6 +143,7 @@ namespace BmwDeepObd
             SetResult(Android.App.Result.Canceled);
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
             _copyFileName = Intent.GetStringExtra(ExtraCopyFileName);
+            _deleteFile = Intent.GetBooleanExtra(ExtraDeleteFile, false);
             _selection = Intent.GetStringExtra(ExtraSelection);
 
             _activityCommon = new ActivityCommon(this);
@@ -429,6 +432,18 @@ namespace BmwDeepObd
                                         {
                                             if (HasSelection())
                                             {
+                                                if (result && !aborted && _deleteFile)
+                                                {
+                                                    try
+                                                    {
+                                                        File.Delete(_copyFileName);
+                                                    }
+                                                    catch (Exception)
+                                                    {
+                                                        // ignored
+                                                    }
+                                                }
+
                                                 Finish();
                                             }
                                         }))

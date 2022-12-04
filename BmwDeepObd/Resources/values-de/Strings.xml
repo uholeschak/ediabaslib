@@ -328,6 +328,7 @@
   <string name="menu_download_ecu">ECU Dateien herunterladen</string>
   <string name="menu_extract_ecu">ECU Dateien entpacken</string>
   <string name="menu_submenu_log">Datenaufzeichnung</string>
+  <string name="menu_trace_submenu">Trace Datei</string>
   <string name="menu_send_trace">Trace Datei senden</string>
   <string name="menu_send_last_trace">Trace Datei erneut senden</string>
   <string name="menu_copy_last_trace">Letzte Trace Datei kopieren</string>

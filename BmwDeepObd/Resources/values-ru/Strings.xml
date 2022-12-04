@@ -326,7 +326,11 @@
   <string name="menu_download_ecu">Скачать ECU файл.</string>
   <string name="menu_extract_ecu">Извлечь файлы ECU</string>
   <string name="menu_submenu_log">Протокол данных</string>
-  <string name="menu_send_trace">Отправить журнал данных</string>
+  <!--Translate-->
+  <string name="menu_trace_submenu">Файл трассировки</string>
+  <!--Translate-->
+  <string name="menu_send_trace">Отправить файл трассировки</string>
+  <!--Translate-->
   <string name="menu_send_last_trace">Повторно отправить файл трассировки</string>
   <!--Translate-->
   <string name="menu_copy_last_trace">Скопировать последний файл трассировки</string>

@@ -1429,6 +1429,12 @@ namespace BmwDeepObd
                 logSubMenu.SetEnabled(interfaceAvailable && !commActive);
             }
 
+            IMenuItem traceSubmenu = menu.FindItem(Resource.Id.menu_trace_submenu);
+            if (traceSubmenu != null)
+            {
+                traceSubmenu.SetEnabled(!commActive);
+            }
+
             IMenuItem sendTraceMenu = menu.FindItem(Resource.Id.menu_send_trace);
             sendTraceMenu?.SetEnabled(interfaceAvailable && !commActive && _instanceData.TraceActive && ActivityCommon.IsTraceFilePresent(_instanceData.TraceDir));
 
@@ -7096,6 +7102,7 @@ namespace BmwDeepObd
                 if (!string.IsNullOrEmpty(copyFileName))
                 {
                     serverIntent.PutExtra(GlobalSettingsActivity.ExtraCopyFileName, copyFileName);
+                    serverIntent.PutExtra(GlobalSettingsActivity.ExtraDeleteFile, true);
                 }
 
                 StartActivityForResult(serverIntent, (int) requestCode);
