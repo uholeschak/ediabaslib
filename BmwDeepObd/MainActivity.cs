@@ -2019,8 +2019,7 @@ namespace BmwDeepObd
             }
             else
             {
-                if (!_instanceData.AdapterCheckOk &&
-                    _activityCommon.SelectedInterface == ActivityCommon.InterfaceType.ElmWifi)
+                if (!_instanceData.AdapterCheckOk && _activityCommon.AdapterCheckRequired)
                 {
                     if (_checkAdapter.StartCheckAdapter(_instanceData.AppDataPath,
                             _activityCommon.SelectedInterface, _instanceData.DeviceAddress,

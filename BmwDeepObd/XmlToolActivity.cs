@@ -2241,8 +2241,7 @@ namespace BmwDeepObd
                 return;
             }
 
-            if (!_instanceData.AdapterCheckOk && 
-                _activityCommon.SelectedInterface == ActivityCommon.InterfaceType.ElmWifi)
+            if (!_instanceData.AdapterCheckOk && _activityCommon.AdapterCheckRequired)
             {
                 if (EdiabasClose())
                 {
