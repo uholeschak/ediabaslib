@@ -117,6 +117,7 @@ namespace ApkUploader
             buttonSelectBundleFile.Enabled = enable;
             buttonSelectObbFile.Enabled = enable;
             buttonSelectResourceFolder.Enabled = enable;
+            buttonSelectSerialFile.Enabled = enable;
 
             buttonAbort.Enabled = !enable;
         }
