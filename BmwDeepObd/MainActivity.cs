@@ -7109,9 +7109,16 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                Intent pickIntent = new Intent(Intent.ActionPick);
+                Intent intent = new Intent(Intent.ActionPick);
                 Android.Net.Uri uri = Android.Net.Uri.Parse(folderPath);
-                StartActivityForResult(pickIntent, (int)ActivityRequest.RequestOpenFileManager);
+                intent.SetDataAndType(uri, "resource/folder");
+                ActivityInfo activityInfo = intent.ResolveActivityInfo(_activityCommon.PackageManager, 0);
+                if (activityInfo == null)
+                {
+                    return false;
+                }
+
+                StartActivityForResult(intent, (int)ActivityRequest.RequestOpenFileManager);
             }
             catch (Exception)
             {
