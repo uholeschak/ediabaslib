@@ -1204,10 +1204,19 @@ namespace BmwDeepObd
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestAdapterConfig);
         }
 
-        private void EditYandexKey()
+        private bool EditYandexKey()
         {
-            Intent serverIntent = new Intent(this, typeof(YandexKeyActivity));
-            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestYandexKey);
+            try
+            {
+                Intent serverIntent = new Intent(this, typeof(YandexKeyActivity));
+                StartActivityForResult(serverIntent, (int)ActivityRequest.RequestYandexKey);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private void StartArgAssist()

@@ -76,6 +76,7 @@ namespace BmwDeepObd
             RequestEdiabasTool,
             RequestBmwCoding,
             RequestYandexKey,
+            RequestOpenFileManager,
             RequestGlobalSettings,
             RequestGlobalSettingsCopy,
             RequestEditConfig,
@@ -1135,6 +1136,11 @@ namespace BmwDeepObd
                     UpdateDisplay();
                     break;
 
+                case ActivityRequest.RequestOpenFileManager:
+                    UpdateOptionsMenu();
+                    UpdateDisplay();
+                    break;
+
                 case ActivityRequest.RequestGlobalSettings:
                 case ActivityRequest.RequestGlobalSettingsCopy:
                     if ((ActivityRequest)requestCode == ActivityRequest.RequestGlobalSettings)
@@ -1450,7 +1456,7 @@ namespace BmwDeepObd
             if (copyLastTraceMenu != null)
             {
                 copyLastTraceMenu.SetEnabled(interfaceAvailable && !commActive && backupTrace);
-                copyLastTraceMenu.SetVisible(backupTrace && ActivityCommon.IsDocumentTreeSupported());
+                copyLastTraceMenu.SetVisible(backupTrace);
             }
 
             IMenuItem translationSubmenu = menu.FindItem(Resource.Id.menu_translation_submenu);
@@ -5781,7 +5787,7 @@ namespace BmwDeepObd
 
             if (!ActivityCommon.IsDocumentTreeSupported())
             {
-                return false;
+                return OpenFileManager(_instanceData.TraceBackupDir);
             }
 
             return StartGlobalSettings(GlobalSettingsActivity.SelectionCopyFromApp, traceFile);
@@ -7078,11 +7084,41 @@ namespace BmwDeepObd
             }
         }
 
-        private void EditYandexKey()
+        private bool EditYandexKey()
         {
-            Intent serverIntent = new Intent(this, typeof(YandexKeyActivity));
-            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestYandexKey);
-            ActivityCommon.ActivityStartedFromMain = true;
+            try
+            {
+                Intent serverIntent = new Intent(this, typeof(YandexKeyActivity));
+                StartActivityForResult(serverIntent, (int)ActivityRequest.RequestYandexKey);
+                ActivityCommon.ActivityStartedFromMain = true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool OpenFileManager(string folderPath)
+        {
+            try
+            {
+                if (!Directory.Exists(folderPath))
+                {
+                    return false;
+                }
+
+                Intent pickIntent = new Intent(Intent.ActionPick);
+                Android.Net.Uri uri = Android.Net.Uri.Parse(folderPath);
+                StartActivityForResult(pickIntent, (int)ActivityRequest.RequestOpenFileManager);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private bool StartGlobalSettings(string selection = null, string copyFileName = null)
