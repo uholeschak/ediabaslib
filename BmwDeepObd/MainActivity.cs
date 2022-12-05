@@ -1714,7 +1714,11 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_copy_last_trace:
-                    CopyTraceBackup();
+                    if (!CopyTraceBackup())
+                    {
+                        string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.open_folder_browser_failed), _instanceData.TraceBackupDir ?? "-");
+                        _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
+                    }
                     return true;
 
                 case Resource.Id.menu_translation_enable:
