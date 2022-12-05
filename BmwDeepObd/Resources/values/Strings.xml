@@ -45,6 +45,7 @@
   <string name="ecu_extract">The ECU files have to be extracted (Size approx. {0:fs1}),\nthis requires the download of update information.\nIf the extraction is very slow please use a faster storage media.\nDo you want to continue?</string>
   <string name="ecu_extract_confirm">To extract the ECU files (Size approx. {0:fs1})\nthe download of update information is required.\nIf the extraction is very slow please use a faster storage media.\nDo you want to continue?</string>
   <string name="manufacturer_select">The current manufacturer is {0}, to choose a different one select \'abort\'.</string>
+  <string name="open_folder_browser_failed">Unable to open a file browser for folder:\n{0}.</string>
   <string name="no_xml_editor_installed">Please install a XML editor first.</string>
   <string name="choose_xml_editor">Choose an XML editor.</string>
   <string name="xml_access_denied">Access to XML file denied.\nPlease check the file location and access rights.</string>
