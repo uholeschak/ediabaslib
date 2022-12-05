@@ -81,7 +81,10 @@ The application has a configuration menu with the following options:
 	* _Translate ECU text_: If this menu item is checked, automatic ECU text translation is active.
 	* _Yandex API Key_: For automatic translation with Yantex.Translate a free API Key is required, that allows a limited amount of translations per day. To get this key, a Yandex account is required. This menu provides a GUI that assists in obtaining the API Key.
 	* _Clear translation cache_: To enforce a new translation this menu resets the translation cache.
-* _Send trace file_: Send a trace file from the last vehicle communication.
+* _Trace file_: Selecting this menu entry will open a sub menu with options for trace file handling.
+	* _Send trace file_: Send a trace file from the last vehicle communication.
+	* _Resend trace file_: Resend the last trace file, if sending has failed previously.
+	* _Copy last trace file_: Copy the last trace file to a different location, if sending has failed previously.
 * _Resend trace file_: Retry sending of the last trace file. Only visible if sending has failed.
 * _Global settings_: Opens the [global app settings](GlobalSettings.md) page.
 * _Online help_: Displays this help page.
