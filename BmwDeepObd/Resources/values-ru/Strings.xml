@@ -47,6 +47,8 @@
   <string name="manufacturer_select">Выбранный производитель {0}. Для выбора другого нажмите \'Отменить\'.</string>
   <!--Translate-->
   <string name="open_folder_browser_failed">Не удалось открыть файловый браузер для папки:\n{0}.</string>
+  <!--Translate-->
+  <string name="no_folder_browser_installed">Сначала установите файловый браузер.</string>
   <string name="no_xml_editor_installed">Пожалуйста, установите сначала XML редактор.</string>
   <string name="choose_xml_editor">Выберите XML редактор.</string>
   <string name="xml_access_denied">Отказано в доступе к файлу XML.\nПожалуйста, проверьте наличие файла и права доступа.</string>

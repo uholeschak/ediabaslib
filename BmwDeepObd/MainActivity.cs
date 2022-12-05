@@ -1714,9 +1714,13 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_copy_last_trace:
-                    if (!CopyTraceBackup())
+                    if (!CopyTraceBackup(out bool notInstalled))
                     {
                         string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.open_folder_browser_failed), _instanceData.TraceBackupDir ?? "-");
+                        if (notInstalled)
+                        {
+                            message = "\r\n" + GetString(Resource.String.no_folder_browser_installed) + "\r\n" + message;
+                        }
                         _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
                     }
                     return true;
@@ -5776,8 +5780,9 @@ namespace BmwDeepObd
             StartGlobalSettings(GlobalSettingsActivity.SelectionStorageLocation);
         }
 
-        private bool CopyTraceBackup()
+        private bool CopyTraceBackup(out bool notInstalled)
         {
+            notInstalled = false;
             if (string.IsNullOrEmpty(_instanceData.TraceBackupDir))
             {
                 return false;
@@ -5791,7 +5796,7 @@ namespace BmwDeepObd
 
             if (!ActivityCommon.IsDocumentTreeSupported())
             {
-                return OpenFileManager(_instanceData.TraceBackupDir);
+                return OpenFileManager(_instanceData.TraceBackupDir, out notInstalled);
             }
 
             return StartGlobalSettings(GlobalSettingsActivity.SelectionCopyFromApp, traceFile);
@@ -7104,8 +7109,9 @@ namespace BmwDeepObd
             return true;
         }
 
-        private bool OpenFileManager(string folderPath)
+        private bool OpenFileManager(string folderPath, out bool notInstalled)
         {
+            notInstalled = false;
             try
             {
                 if (!Directory.Exists(folderPath))
@@ -7119,6 +7125,7 @@ namespace BmwDeepObd
                 ActivityInfo activityInfo = intent.ResolveActivityInfo(_activityCommon.PackageManager, 0);
                 if (activityInfo == null)
                 {
+                    notInstalled = true;
                     return false;
                 }
 
