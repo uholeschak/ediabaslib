@@ -76,7 +76,7 @@ namespace BmwDeepObd
             RequestEdiabasTool,
             RequestBmwCoding,
             RequestYandexKey,
-            RequestOpenFileManager,
+            RequestOpenExternalFile,
             RequestGlobalSettings,
             RequestGlobalSettingsCopy,
             RequestEditConfig,
@@ -1136,7 +1136,7 @@ namespace BmwDeepObd
                     UpdateDisplay();
                     break;
 
-                case ActivityRequest.RequestOpenFileManager:
+                case ActivityRequest.RequestOpenExternalFile:
                     UpdateOptionsMenu();
                     UpdateDisplay();
                     break;
@@ -1714,13 +1714,9 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_copy_last_trace:
-                    if (!CopyTraceBackup(out bool notInstalled))
+                    if (!CopyTraceBackup())
                     {
-                        string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.open_folder_browser_failed), _instanceData.TraceBackupDir ?? "-");
-                        if (notInstalled)
-                        {
-                            message = "\r\n" + GetString(Resource.String.no_folder_browser_installed) + "\r\n" + message;
-                        }
+                        string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.open_trace_file_failed), _instanceData.TraceBackupDir ?? "-");
                         _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
                     }
                     return true;
@@ -5780,9 +5776,8 @@ namespace BmwDeepObd
             StartGlobalSettings(GlobalSettingsActivity.SelectionStorageLocation);
         }
 
-        private bool CopyTraceBackup(out bool notInstalled)
+        private bool CopyTraceBackup()
         {
-            notInstalled = false;
             if (string.IsNullOrEmpty(_instanceData.TraceBackupDir))
             {
                 return false;
@@ -5796,7 +5791,7 @@ namespace BmwDeepObd
 
             if (!ActivityCommon.IsDocumentTreeSupported())
             {
-                return OpenFileManager(_instanceData.TraceBackupDir, out notInstalled);
+                return OpenExternalFile(traceFile);
             }
 
             return StartGlobalSettings(GlobalSettingsActivity.SelectionCopyFromApp, traceFile);
@@ -7109,48 +7104,52 @@ namespace BmwDeepObd
             return true;
         }
 
-        private bool OpenFileManager(string folderPath, out bool notInstalled)
+        private bool OpenExternalFile(string filePath)
         {
-            notInstalled = false;
             try
             {
-                if (!Directory.Exists(folderPath))
+                if (!File.Exists(filePath))
                 {
                     return false;
                 }
 
-                Intent intent = new Intent(Intent.ActionView);
-                Android.Net.Uri folderUri = FileProvider.GetUriForFile(Android.App.Application.Context, PackageName + ".fileprovider", new Java.IO.File(folderPath));
-#if DEBUG
-                Log.Info(Tag, string.Format("OpenFileManager FolderUri: {0}", folderUri?.ToString()));
-#endif
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
+                string extension = Path.GetExtension(filePath);
+                if (string.IsNullOrEmpty(extension))
                 {
-                    intent.SetDataAndType(folderUri, Android.Provider.DocumentsContract.Document.MimeTypeDir);
-                }
-                else
-                {
-                    intent.SetDataAndType(folderUri, "*/*");
-                }
-                intent.SetFlags(ActivityFlags.GrantReadUriPermission | ActivityFlags.NewTask);
-
-                ActivityInfo activityInfo = intent.ResolveActivityInfo(_activityCommon.PackageManager, 0);
-                if (activityInfo == null)
-                {
-#if DEBUG
-                    Log.Info(Tag, "OpenFileManager ResolveActivityInfo failed");
-#endif
-                    notInstalled = true;
                     return false;
                 }
 
-                StartActivityForResult(intent, (int)ActivityRequest.RequestOpenFileManager);
+                string bareExt = extension.TrimStart('.');
+#if DEBUG
+                Log.Info(Tag, string.Format("OpenExternalFile File Ext: {0}", bareExt));
+#endif
+                Intent viewIntent = new Intent(Intent.ActionView);
+                Android.Net.Uri fileUri = FileProvider.GetUriForFile(Android.App.Application.Context, PackageName + ".fileprovider", new Java.IO.File(filePath));
+#if DEBUG
+                Log.Info(Tag, string.Format("OpenExternalFile File Uri: {0}", fileUri?.ToString()));
+#endif
+                string mimeType = Android.Webkit.MimeTypeMap.Singleton?.GetMimeTypeFromExtension(bareExt);
+                viewIntent.SetDataAndType(fileUri, mimeType);
+                viewIntent.SetFlags(ActivityFlags.GrantReadUriPermission | ActivityFlags.GrantWriteUriPermission | ActivityFlags.NewTask);
+
+                IList<ResolveInfo> activities = _activityCommon.QueryIntentActivities(viewIntent, PackageInfoFlags.MatchDefaultOnly);
+                if (activities == null || activities.Count == 0)
+                {
+#if DEBUG
+                    Log.Info(Tag, "OpenExternalFile QueryIntentActivities failed");
+#endif
+                    return false;
+                }
+
+                Intent chooseIntent = Intent.CreateChooser(viewIntent, GetString(Resource.String.choose_file_app));
+                StartActivityForResult(chooseIntent, (int)ActivityRequest.RequestOpenExternalFile);
+                ActivityCommon.ActivityStartedFromMain = true;
             }
             catch (Exception ex)
             {
 #if DEBUG
                 string errorMessage = EdiabasNet.GetExceptionText(ex);
-                Log.Info(Tag, string.Format("OpenFileManager Exception: {0}", errorMessage));
+                Log.Info(Tag, string.Format("OpenExternalFile Exception: {0}", errorMessage));
 #endif
                 return false;
             }
