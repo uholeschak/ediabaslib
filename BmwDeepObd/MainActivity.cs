@@ -7119,20 +7119,39 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                Intent intent = new Intent(Intent.ActionPick);
-                Android.Net.Uri uri = Android.Net.Uri.Parse(folderPath);
-                intent.SetDataAndType(uri, "resource/folder");
+                Intent intent = new Intent(Intent.ActionView);
+                Android.Net.Uri folderUri = FileProvider.GetUriForFile(Android.App.Application.Context, PackageName + ".fileprovider", new Java.IO.File(folderPath));
+#if DEBUG
+                Log.Info(Tag, string.Format("OpenFileManager FolderUri: {0}", folderUri?.ToString()));
+#endif
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
+                {
+                    intent.SetDataAndType(folderUri, Android.Provider.DocumentsContract.Document.MimeTypeDir);
+                }
+                else
+                {
+                    intent.SetDataAndType(folderUri, "*/*");
+                }
+                intent.SetFlags(ActivityFlags.GrantReadUriPermission | ActivityFlags.NewTask);
+
                 ActivityInfo activityInfo = intent.ResolveActivityInfo(_activityCommon.PackageManager, 0);
                 if (activityInfo == null)
                 {
+#if DEBUG
+                    Log.Info(Tag, "OpenFileManager ResolveActivityInfo failed");
+#endif
                     notInstalled = true;
                     return false;
                 }
 
                 StartActivityForResult(intent, (int)ActivityRequest.RequestOpenFileManager);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+#if DEBUG
+                string errorMessage = EdiabasNet.GetExceptionText(ex);
+                Log.Info(Tag, string.Format("OpenFileManager Exception: {0}", errorMessage));
+#endif
                 return false;
             }
 

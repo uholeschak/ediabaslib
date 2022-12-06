@@ -46,7 +46,7 @@
   <string name="ecu_extract">Die ECU Dateien müssen entpackt werden (Größe ca. {0:fs1}),\nder Download von Update-Informationen ist hierfür notwendig.\nWenn das Entpacken sehr langsam ist, verwenden Sie bitte ein schnelleres Speichermedium.\nWollen Sie fortfahren?</string>
   <string name="ecu_extract_confirm">Für das Entpacken der ECU Dateien (Größe ca. {0:fs1})\nist der Download von Update-Informationen notwendig.\nWenn das Entpacken sehr langsam ist, verwenden Sie bitte ein schnelleres Speichermedium.\nWollen Sie fortfahren?</string>
   <string name="manufacturer_select">Der aktuelle Hersteller ist {0}, um einen anderen zu wählen drücken Sie bitte \'Abbrechen\'.</string>
-  <string name="open_folder_browser_failed">Dateibrowser kann nicht geöffnet werden für Ordner:\n{0}.</string>
+  <string name="open_folder_browser_failed">Der Dateibrowser kann nicht geöffnet werden für den Ordner:\n{0}.</string>
   <string name="no_folder_browser_installed">Bitte installieren Sie zunächst einen Dateibrowser.</string>
   <string name="no_xml_editor_installed">Bitte installieren Sie zunächst einen XML Editor.</string>
   <string name="choose_xml_editor">Wählen Sie ein XML Editor aus.</string>
