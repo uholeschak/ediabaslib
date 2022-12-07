@@ -125,9 +125,9 @@
                   <item android:id="@+id/menu_send_last_trace"
                         android:icon="@android:drawable/ic_menu_save"
                         android:title="@string/menu_send_last_trace" />
-                  <item android:id="@+id/menu_copy_last_trace"
+                  <item android:id="@+id/menu_open_last_trace"
                         android:icon="@android:drawable/ic_menu_save"
-                        android:title="@string/menu_copy_last_trace" />
+                        android:title="@string/menu_open_last_trace" />
               </menu>
           </item>
           <item android:id="@+id/menu_translation_submenu"
