@@ -7147,7 +7147,7 @@ namespace BmwDeepObd
 #if DEBUG
                     Log.Info(Tag, "OpenExternalFile QueryIntentActivities failed");
 #endif
-                    return string.Empty;
+                    return string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.no_ext_app_installed), bareExt);
                 }
 
                 Intent chooseIntent = Intent.CreateChooser(viewIntent, GetString(Resource.String.choose_file_app));
