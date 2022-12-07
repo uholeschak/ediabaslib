@@ -1716,7 +1716,13 @@ namespace BmwDeepObd
                 case Resource.Id.menu_copy_last_trace:
                     if (!CopyTraceBackup())
                     {
-                        string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.open_trace_file_failed), _instanceData.TraceBackupDir ?? "-");
+                        if (string.IsNullOrEmpty(_instanceData.TraceBackupDir))
+                        {
+                            return true;
+                        }
+
+                        string traceFile = Path.Combine(_instanceData.TraceBackupDir, ActivityCommon.TraceFileName);
+                        string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.open_trace_file_failed), traceFile);
                         _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
                     }
                     return true;
