@@ -25,7 +25,7 @@ This chapter describes how to replace the ELM327 Wifi V1.5 HW: V01W_M_V1.0 adapt
 * Optionally set the Hostname to `deepobd`.
 * At the _Services_ page remove the _SNTP_ server.
 * Goto the _Debug log_ page, select _UART debug log_: `off`.
-* Goto the _µC Console_, select _Baud_ `38400` for `default` PIC firmware and `115200` for `esp8266` firmware.
+* Goto the _ÂµC Console_, select _Baud_ `38400` for `default` PIC firmware and `115200` for `esp8266` firmware.
 * Change the _SSID_ at the _WiFi Soft-AP_ page to `DeepOBD`, this is required for the `EdiabasLibConfigTool.exe` to work correctly.
 * Optionally you could use preconfigured settings from the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest): `python.exe esptool.py --port COMX --baud 460800 write_flash 0x7e000 userdata.bin 0xfd000 sysdata.bin`
 * **Hint: A power on reset is required before every single flash operation.**
