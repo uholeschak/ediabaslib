@@ -5795,12 +5795,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (!ActivityCommon.IsDocumentTreeSupported())
-            {
-                return OpenExternalFile(traceFile);
-            }
-
-            return StartGlobalSettings(GlobalSettingsActivity.SelectionCopyFromApp, traceFile);
+            return OpenExternalFile(traceFile);
         }
 
         private void DownloadFile(string url, string downloadDir, string unzipTargetDir = null)
