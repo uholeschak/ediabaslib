@@ -48,6 +48,8 @@
   <!--Translate-->
   <string name="open_trace_file_failed">Не удается открыть файл трассировки:\n{0}.</string>
   <!--Translate-->
+  <string name="no_ext_app_installed">Сначала установите приложение, которое может открывать {0} файлов.</string>
+  <!--Translate-->
   <string name="choose_file_app">Открыть файл.</string>
   <string name="no_xml_editor_installed">Пожалуйста, установите сначала XML редактор.</string>
   <string name="choose_xml_editor">Выберите XML редактор.</string>
