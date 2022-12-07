@@ -84,7 +84,7 @@ The application has a configuration menu with the following options:
 * _Trace file_: Selecting this menu entry will open a sub menu with options for trace file handling.
 	* _Send trace file_: Send a trace file from the last vehicle communication.
 	* _Resend trace file_: Resend the last trace file, if sending has failed previously.
-	* _Copy last trace file_: Copy the last trace file to a different location, if sending has failed previously.
+	* _Open last trace file_: Open the last trace file with an external app that supports zip files, if sending has failed previously.
 * _Resend trace file_: Retry sending of the last trace file. Only visible if sending has failed.
 * _Global settings_: Opens the [global app settings](GlobalSettings.md) page.
 * _Online help_: Displays this help page.
