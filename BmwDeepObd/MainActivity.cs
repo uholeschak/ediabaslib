@@ -1714,7 +1714,9 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_copy_last_trace:
-                    if (!CopyTraceBackup())
+                {
+                    string errorMessage = CopyTraceBackup();
+                    if (errorMessage != null)
                     {
                         if (string.IsNullOrEmpty(_instanceData.TraceBackupDir))
                         {
@@ -1723,9 +1725,15 @@ namespace BmwDeepObd
 
                         string traceFile = Path.Combine(_instanceData.TraceBackupDir, ActivityCommon.TraceFileName);
                         string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.open_trace_file_failed), traceFile);
+                        if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            message = errorMessage + "\r\n" + message;
+                        }
+
                         _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
                     }
                     return true;
+                }
 
                 case Resource.Id.menu_translation_enable:
                     if (!ActivityCommon.EnableTranslation && !ActivityCommon.IsTranslationAvailable())
@@ -5782,17 +5790,17 @@ namespace BmwDeepObd
             StartGlobalSettings(GlobalSettingsActivity.SelectionStorageLocation);
         }
 
-        private bool CopyTraceBackup()
+        private string CopyTraceBackup()
         {
             if (string.IsNullOrEmpty(_instanceData.TraceBackupDir))
             {
-                return false;
+                return string.Empty;
             }
 
             string traceFile = Path.Combine(_instanceData.TraceBackupDir, ActivityCommon.TraceFileName);
             if (!File.Exists(traceFile))
             {
-                return false;
+                return string.Empty;
             }
 
             return OpenExternalFile(traceFile);
@@ -7105,19 +7113,19 @@ namespace BmwDeepObd
             return true;
         }
 
-        private bool OpenExternalFile(string filePath)
+        private string OpenExternalFile(string filePath)
         {
             try
             {
                 if (!File.Exists(filePath))
                 {
-                    return false;
+                    return string.Empty;
                 }
 
                 string extension = Path.GetExtension(filePath);
                 if (string.IsNullOrEmpty(extension))
                 {
-                    return false;
+                    return string.Empty;
                 }
 
                 string bareExt = extension.TrimStart('.');
@@ -7139,7 +7147,7 @@ namespace BmwDeepObd
 #if DEBUG
                     Log.Info(Tag, "OpenExternalFile QueryIntentActivities failed");
 #endif
-                    return false;
+                    return string.Empty;
                 }
 
                 Intent chooseIntent = Intent.CreateChooser(viewIntent, GetString(Resource.String.choose_file_app));
@@ -7148,14 +7156,19 @@ namespace BmwDeepObd
             }
             catch (Exception ex)
             {
-#if DEBUG
                 string errorMessage = EdiabasNet.GetExceptionText(ex);
+#if DEBUG
                 Log.Info(Tag, string.Format("OpenExternalFile Exception: {0}", errorMessage));
 #endif
-                return false;
+                string message = GetString(Resource.String.file_access_denied);
+                if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    message += "\r\n" + errorMessage;
+                }
+                return message;
             }
 
-            return true;
+            return null;
         }
 
         private bool StartGlobalSettings(string selection = null, string copyFileName = null)
@@ -7525,7 +7538,7 @@ namespace BmwDeepObd
 #if DEBUG
                 Log.Info(Tag, string.Format("StartEditXml Exception: {0}", errorMessage));
 #endif
-                string message = GetString(Resource.String.xml_access_denied);
+                string message = GetString(Resource.String.file_access_denied);
                 if (!string.IsNullOrEmpty(errorMessage))
                 {
                     message += "\r\n" + errorMessage;
