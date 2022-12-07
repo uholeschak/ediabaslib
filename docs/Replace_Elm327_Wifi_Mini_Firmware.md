@@ -4,7 +4,7 @@ This chapter describes how to replace the ELM327 Wifi V1.5 HW: V01W_M_V1.0 adapt
 
 ### Requirements:
 
-* [ELM327 Wifi V1.5 HW: V01W_M_V1.0 adapter](http://s.aliexpress.com/BBBv6fYJ)
+* ELM327 Wifi V1.5 HW: V01W_M_V1.0 adapter
 * Usb to serial with 3.3v I/O
 * PicKit 3/4 (to program the PIC18F25K80)
 
