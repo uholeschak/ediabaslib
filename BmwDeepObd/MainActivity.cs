@@ -1452,11 +1452,11 @@ namespace BmwDeepObd
                 sendLastTraceMenu.SetVisible(backupTrace);
             }
 
-            IMenuItem copyLastTraceMenu = menu.FindItem(Resource.Id.menu_copy_last_trace);
-            if (copyLastTraceMenu != null)
+            IMenuItem openLastTraceMenu = menu.FindItem(Resource.Id.menu_open_last_trace);
+            if (openLastTraceMenu != null)
             {
-                copyLastTraceMenu.SetEnabled(interfaceAvailable && !commActive && backupTrace);
-                copyLastTraceMenu.SetVisible(backupTrace);
+                openLastTraceMenu.SetEnabled(interfaceAvailable && !commActive && backupTrace);
+                openLastTraceMenu.SetVisible(backupTrace);
             }
 
             IMenuItem translationSubmenu = menu.FindItem(Resource.Id.menu_translation_submenu);
@@ -1713,7 +1713,7 @@ namespace BmwDeepObd
                     });
                     return true;
 
-                case Resource.Id.menu_copy_last_trace:
+                case Resource.Id.menu_open_last_trace:
                 {
                     string errorMessage = CopyTraceBackup();
                     if (errorMessage != null)

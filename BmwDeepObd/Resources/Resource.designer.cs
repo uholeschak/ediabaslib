@@ -9492,28 +9492,28 @@ namespace BmwDeepObd
 			public const int menu_cfg_submenu = 2131231179;
 			
 			// aapt resource value: 0x7F0801CC
-			public const int menu_copy_last_trace = 2131231180;
+			public const int menu_download_ecu = 2131231180;
 			
 			// aapt resource value: 0x7F0801CD
-			public const int menu_download_ecu = 2131231181;
+			public const int menu_ediabas_tool = 2131231181;
 			
 			// aapt resource value: 0x7F0801CE
-			public const int menu_ediabas_tool = 2131231182;
+			public const int menu_enet_ip = 2131231182;
 			
 			// aapt resource value: 0x7F0801CF
-			public const int menu_enet_ip = 2131231183;
+			public const int menu_exit = 2131231183;
 			
 			// aapt resource value: 0x7F0801D0
-			public const int menu_exit = 2131231184;
+			public const int menu_global_settings = 2131231184;
 			
 			// aapt resource value: 0x7F0801D1
-			public const int menu_global_settings = 2131231185;
+			public const int menu_info = 2131231185;
 			
 			// aapt resource value: 0x7F0801D2
-			public const int menu_info = 2131231186;
+			public const int menu_manufacturer = 2131231186;
 			
 			// aapt resource value: 0x7F0801D3
-			public const int menu_manufacturer = 2131231187;
+			public const int menu_open_last_trace = 2131231187;
 			
 			// aapt resource value: 0x7F0801D4
 			public const int menu_recent_cfg_clear = 2131231188;
@@ -12877,34 +12877,34 @@ namespace BmwDeepObd
 			public const int menu_connect = 2131755375;
 			
 			// aapt resource value: 0x7F100170
-			public const int menu_copy_last_trace = 2131755376;
+			public const int menu_download_ecu = 2131755376;
 			
 			// aapt resource value: 0x7F100171
-			public const int menu_download_ecu = 2131755377;
+			public const int menu_ediabas_tool = 2131755377;
 			
 			// aapt resource value: 0x7F100172
-			public const int menu_ediabas_tool = 2131755378;
+			public const int menu_enet_ip = 2131755378;
 			
 			// aapt resource value: 0x7F100173
-			public const int menu_enet_ip = 2131755379;
+			public const int menu_exit = 2131755379;
 			
 			// aapt resource value: 0x7F100174
-			public const int menu_exit = 2131755380;
+			public const int menu_extract_ecu = 2131755380;
 			
 			// aapt resource value: 0x7F100175
-			public const int menu_extract_ecu = 2131755381;
+			public const int menu_global_settings = 2131755381;
 			
 			// aapt resource value: 0x7F100176
-			public const int menu_global_settings = 2131755382;
+			public const int menu_hint_copy_folder = 2131755382;
 			
 			// aapt resource value: 0x7F100177
-			public const int menu_hint_copy_folder = 2131755383;
+			public const int menu_info = 2131755383;
 			
 			// aapt resource value: 0x7F100178
-			public const int menu_info = 2131755384;
+			public const int menu_manufacturer = 2131755384;
 			
 			// aapt resource value: 0x7F100179
-			public const int menu_manufacturer = 2131755385;
+			public const int menu_open_last_trace = 2131755385;
 			
 			// aapt resource value: 0x7F10017A
 			public const int menu_recent_cfg_clear = 2131755386;
