@@ -122,6 +122,9 @@
                   <item android:id="@+id/menu_send_trace"
                         android:icon="@android:drawable/ic_menu_save"
                         android:title="@string/menu_send_trace" />
+                  <item android:id="@+id/menu_open_trace"
+                        android:icon="@android:drawable/ic_menu_save"
+                        android:title="@string/menu_open_trace" />
                   <item android:id="@+id/menu_send_last_trace"
                         android:icon="@android:drawable/ic_menu_save"
                         android:title="@string/menu_send_last_trace" />

@@ -333,6 +333,7 @@
   <string name="menu_submenu_log">Datenaufzeichnung</string>
   <string name="menu_trace_submenu">Trace Datei</string>
   <string name="menu_send_trace">Trace Datei senden</string>
+  <string name="menu_open_trace">Trace Datei öffnen</string>
   <string name="menu_send_last_trace">Trace Datei erneut senden</string>
   <string name="menu_open_last_trace">Letzte Trace Datei öffnen</string>
   <string name="menu_global_settings">Globale Einstellungen</string>

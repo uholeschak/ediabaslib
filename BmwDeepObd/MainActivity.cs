@@ -1441,22 +1441,26 @@ namespace BmwDeepObd
                 traceSubmenu.SetEnabled(!commActive);
             }
 
+            bool tracePresent = ActivityCommon.IsTraceFilePresent(_instanceData.TraceDir);
             IMenuItem sendTraceMenu = menu.FindItem(Resource.Id.menu_send_trace);
-            sendTraceMenu?.SetEnabled(interfaceAvailable && !commActive && _instanceData.TraceActive && ActivityCommon.IsTraceFilePresent(_instanceData.TraceDir));
+            sendTraceMenu?.SetEnabled(interfaceAvailable && !commActive && _instanceData.TraceActive && tracePresent);
 
-            bool backupTrace = ActivityCommon.IsTraceFilePresent(_instanceData.TraceBackupDir);
+            IMenuItem openTraceMenu = menu.FindItem(Resource.Id.menu_open_trace);
+            openTraceMenu?.SetEnabled(interfaceAvailable && !commActive && _instanceData.TraceActive && tracePresent);
+
+            bool backupTracePresent = ActivityCommon.IsTraceFilePresent(_instanceData.TraceBackupDir);
             IMenuItem sendLastTraceMenu = menu.FindItem(Resource.Id.menu_send_last_trace);
             if (sendLastTraceMenu != null)
             {
-                sendLastTraceMenu.SetEnabled(interfaceAvailable && !commActive && backupTrace);
-                sendLastTraceMenu.SetVisible(backupTrace);
+                sendLastTraceMenu.SetEnabled(interfaceAvailable && !commActive && backupTracePresent);
+                sendLastTraceMenu.SetVisible(backupTracePresent);
             }
 
             IMenuItem openLastTraceMenu = menu.FindItem(Resource.Id.menu_open_last_trace);
             if (openLastTraceMenu != null)
             {
-                openLastTraceMenu.SetEnabled(interfaceAvailable && !commActive && backupTrace);
-                openLastTraceMenu.SetVisible(backupTrace);
+                openLastTraceMenu.SetEnabled(interfaceAvailable && !commActive && backupTracePresent);
+                openLastTraceMenu.SetVisible(backupTracePresent);
             }
 
             IMenuItem translationSubmenu = menu.FindItem(Resource.Id.menu_translation_submenu);
@@ -1702,6 +1706,28 @@ namespace BmwDeepObd
                     });
                     return true;
 
+                case Resource.Id.menu_open_trace:
+                {
+                    string traceFile = Path.Combine(_instanceData.TraceDir, ActivityCommon.TraceFileName);
+                    string errorMessage = OpenTraceFile(traceFile);
+                    if (errorMessage != null)
+                    {
+                        if (string.IsNullOrEmpty(traceFile))
+                        {
+                            return true;
+                        }
+
+                        string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.open_trace_file_failed), traceFile);
+                        if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            message = errorMessage + "\r\n" + message;
+                        }
+
+                        _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
+                    }
+                    return true;
+                }
+
                 case Resource.Id.menu_send_last_trace:
                     SendBackupTraceFileAlways((sender, args) =>
                     {
@@ -1715,15 +1741,15 @@ namespace BmwDeepObd
 
                 case Resource.Id.menu_open_last_trace:
                 {
-                    string errorMessage = CopyTraceBackup();
+                    string traceFile = Path.Combine(_instanceData.TraceBackupDir, ActivityCommon.TraceFileName);
+                    string errorMessage = OpenTraceFile(traceFile);
                     if (errorMessage != null)
                     {
-                        if (string.IsNullOrEmpty(_instanceData.TraceBackupDir))
+                        if (string.IsNullOrEmpty(traceFile))
                         {
                             return true;
                         }
 
-                        string traceFile = Path.Combine(_instanceData.TraceBackupDir, ActivityCommon.TraceFileName);
                         string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.open_trace_file_failed), traceFile);
                         if (!string.IsNullOrEmpty(errorMessage))
                         {
@@ -5790,14 +5816,8 @@ namespace BmwDeepObd
             StartGlobalSettings(GlobalSettingsActivity.SelectionStorageLocation);
         }
 
-        private string CopyTraceBackup()
+        private string OpenTraceFile(string traceFile)
         {
-            if (string.IsNullOrEmpty(_instanceData.TraceBackupDir))
-            {
-                return string.Empty;
-            }
-
-            string traceFile = Path.Combine(_instanceData.TraceBackupDir, ActivityCommon.TraceFileName);
             if (!File.Exists(traceFile))
             {
                 return string.Empty;

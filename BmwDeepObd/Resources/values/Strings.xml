@@ -309,6 +309,7 @@
   <string name="menu_submenu_log">Data logging</string>
   <string name="menu_trace_submenu">Trace file</string>
   <string name="menu_send_trace">Send trace file</string>
+  <string name="menu_open_trace">Open trace file</string>
   <string name="menu_send_last_trace">Resend trace file</string>
   <string name="menu_open_last_trace">Open last trace file</string>
   <string name="menu_global_settings">Global settings</string>
