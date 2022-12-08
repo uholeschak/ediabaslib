@@ -337,6 +337,8 @@
   <!--Translate-->
   <string name="menu_send_trace">Отправить файл трассировки</string>
   <!--Translate-->
+  <string name="menu_open_trace">Открыть файл трассировки</string>
+  <!--Translate-->
   <string name="menu_send_last_trace">Повторно отправить файл трассировки</string>
   <!--Translate-->
   <string name="menu_open_last_trace">Открыть последний файл трассировки</string>
