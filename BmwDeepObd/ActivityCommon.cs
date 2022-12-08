@@ -5542,21 +5542,15 @@ namespace BmwDeepObd
                     storeMessage = true;
                 }
 
-                string traceBackupDir = Path.Combine(appDataDir, TraceBackupDir);
-                string traceFileDir = Path.GetDirectoryName(traceFile);
                 if (!storeMessage)
                 {
-                    if (string.IsNullOrEmpty(traceFileDir))
-                    {
-                        return false;
-                    }
-
-                    if (string.Compare(traceFileDir, traceBackupDir, StringComparison.OrdinalIgnoreCase) == 0)
+                    if (IsBackupTraceFile(appDataDir, traceFile))
                     {
                         return false;
                     }
                 }
 
+                string traceBackupDir = Path.Combine(appDataDir, TraceBackupDir);
                 try
                 {
                     Directory.CreateDirectory(traceBackupDir);
@@ -5592,6 +5586,30 @@ namespace BmwDeepObd
             {
                 return false;
             }
+            return true;
+        }
+
+        public bool IsBackupTraceFile(string appDataDir, string traceFile)
+        {
+            try
+            {
+                string traceBackupDir = Path.Combine(appDataDir, TraceBackupDir);
+                string traceFileDir = Path.GetDirectoryName(traceFile);
+                if (string.IsNullOrEmpty(traceFileDir))
+                {
+                    return false;
+                }
+
+                if (string.Compare(traceFileDir, traceBackupDir, StringComparison.OrdinalIgnoreCase) != 0)
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
             return true;
         }
 
@@ -5654,7 +5672,14 @@ namespace BmwDeepObd
                 return false;
             }
 
-            DeleteBackupTraceFile(appDataDir);
+            if (deleteFile)
+            {
+                if (!IsBackupTraceFile(appDataDir, traceFile))
+                {
+                    DeleteBackupTraceFile(appDataDir);
+                }
+            }
+
             if (_sendHttpClient == null)
             {
                 _sendHttpClient = new HttpClient(new HttpClientHandler()
