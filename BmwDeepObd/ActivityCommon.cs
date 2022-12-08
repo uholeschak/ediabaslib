@@ -5595,6 +5595,26 @@ namespace BmwDeepObd
             return true;
         }
 
+        public bool DeleteBackupTraceFile(string appDataDir)
+        {
+            try
+            {
+                string traceBackupDir = Path.Combine(appDataDir, TraceBackupDir);
+                string traceBackupFile = Path.Combine(traceBackupDir, TraceFileName);
+                if (!File.Exists(traceBackupFile))
+                {
+                    return false;
+                }
+
+                File.Delete(traceBackupFile);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
         public bool SendTraceFileInfoDlg(string appDataDir, string traceFile, string message, Type classType, EventHandler<EventArgs> handler, bool deleteFile = false)
         {
             try
@@ -5634,6 +5654,7 @@ namespace BmwDeepObd
                 return false;
             }
 
+            DeleteBackupTraceFile(appDataDir);
             if (_sendHttpClient == null)
             {
                 _sendHttpClient = new HttpClient(new HttpClientHandler()
