@@ -5672,12 +5672,9 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (deleteFile)
+            if (!IsBackupTraceFile(appDataDir, traceFile))
             {
-                if (!IsBackupTraceFile(appDataDir, traceFile))
-                {
-                    DeleteBackupTraceFile(appDataDir);
-                }
+                DeleteBackupTraceFile(appDataDir);
             }
 
             if (_sendHttpClient == null)
