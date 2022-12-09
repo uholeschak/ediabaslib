@@ -292,6 +292,7 @@ namespace BmwDeepObd
         {
             base.OnStart();
 
+            ClearActivityStack();
             _storageAccessRequested = false;
             _googlePlayErrorShown = false;
             _expansionFileDelivered = null;

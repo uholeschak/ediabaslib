@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
@@ -47,6 +48,8 @@ namespace BmwDeepObd
 #if DEBUG
         private static readonly string Tag = typeof(BaseActivity).FullName;
 #endif
+        private static object _activityStackLock = new object();
+        private static List<Android.App.Activity> ActivityStack = new List<Android.App.Activity>();
         public const ConfigChanges ActivityConfigChanges =
             ConfigChanges.KeyboardHidden | ConfigChanges.Orientation | ConfigChanges.ScreenLayout |
             ConfigChanges.ScreenSize | ConfigChanges.SmallestScreenSize;
@@ -79,6 +82,7 @@ namespace BmwDeepObd
                 _instanceDataBase = GetInstanceState(savedInstanceState, _instanceDataBase, InstanceDataKeyBase) as InstanceDataBase;
             }
 
+            AddActivityToStack(this);
             ResetTitle();
 
             GestureListener gestureListener = new GestureListener(this);
@@ -360,6 +364,12 @@ namespace BmwDeepObd
             SetLocale(this, ActivityMain.GetLocaleSetting());
         }
 
+        public override void Finish()
+        {
+            RemoveActivityFromStack(this);
+            base.Finish();
+        }
+
         public Android.App.ActivityManager.MemoryInfo GetMemoryInfo()
         {
             try
@@ -392,6 +402,44 @@ namespace BmwDeepObd
             catch (Exception)
             {
                 // ignored
+            }
+        }
+
+        public static void ClearActivityStack()
+        {
+            lock (_activityStackLock)
+            {
+                ActivityStack.Clear();
+            }
+        }
+
+        public static bool AddActivityToStack(Android.App.Activity activity)
+        {
+            lock (_activityStackLock)
+            {
+                if (!ActivityStack.Contains(activity))
+                {
+                    ActivityStack.Add(activity);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool RemoveActivityFromStack(Android.App.Activity activity)
+        {
+            lock (_activityStackLock)
+            {
+                return ActivityStack.Remove(activity);
+            }
+        }
+
+        public static bool IsActivityOnStack(Android.App.Activity activity)
+        {
+            lock (_activityStackLock)
+            {
+                return ActivityStack.Contains(activity);
             }
         }
 

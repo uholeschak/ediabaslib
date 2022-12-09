@@ -723,6 +723,7 @@ namespace BmwDeepObd
         {
             base.OnStart();
 
+            ClearActivityStack();
             _onResumeExecuted = false;
             _storageAccessGranted = false;
             _notificationRequested = false;
