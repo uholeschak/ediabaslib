@@ -1514,6 +1514,11 @@ namespace BmwDeepObd
 
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
+            if (_activityCommon == null)
+            {
+                return base.OnOptionsItemSelected(item);
+            }
+
             if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
                 string tooltipText = item.TooltipText;
@@ -1709,7 +1714,7 @@ namespace BmwDeepObd
                 case Resource.Id.menu_open_trace:
                 {
                     string traceFile = Path.Combine(_instanceData.TraceDir, ActivityCommon.TraceFileName);
-                    string errorMessage = OpenTraceFile(traceFile);
+                    string errorMessage = _activityCommon.OpenExternalFile(traceFile, (int)ActivityRequest.RequestOpenExternalFile);
                     if (errorMessage != null)
                     {
                         if (string.IsNullOrEmpty(traceFile))
@@ -1742,7 +1747,7 @@ namespace BmwDeepObd
                 case Resource.Id.menu_open_last_trace:
                 {
                     string traceFile = Path.Combine(_instanceData.TraceBackupDir, ActivityCommon.TraceFileName);
-                    string errorMessage = OpenTraceFile(traceFile);
+                    string errorMessage = _activityCommon.OpenExternalFile(traceFile, (int)ActivityRequest.RequestOpenExternalFile);
                     if (errorMessage != null)
                     {
                         if (string.IsNullOrEmpty(traceFile))
@@ -5816,16 +5821,6 @@ namespace BmwDeepObd
             StartGlobalSettings(GlobalSettingsActivity.SelectionStorageLocation);
         }
 
-        private string OpenTraceFile(string traceFile)
-        {
-            if (!File.Exists(traceFile))
-            {
-                return string.Empty;
-            }
-
-            return OpenExternalFile(traceFile);
-        }
-
         private void DownloadFile(string url, string downloadDir, string unzipTargetDir = null)
         {
             if (string.IsNullOrEmpty(_assetFileName))
@@ -7131,64 +7126,6 @@ namespace BmwDeepObd
             }
 
             return true;
-        }
-
-        private string OpenExternalFile(string filePath)
-        {
-            try
-            {
-                if (!File.Exists(filePath))
-                {
-                    return string.Empty;
-                }
-
-                string extension = Path.GetExtension(filePath);
-                if (string.IsNullOrEmpty(extension))
-                {
-                    return string.Empty;
-                }
-
-                string bareExt = extension.TrimStart('.');
-#if DEBUG
-                Log.Info(Tag, string.Format("OpenExternalFile File Ext: {0}", bareExt));
-#endif
-                Intent viewIntent = new Intent(Intent.ActionView);
-                Android.Net.Uri fileUri = FileProvider.GetUriForFile(Android.App.Application.Context, PackageName + ".fileprovider", new Java.IO.File(filePath));
-#if DEBUG
-                Log.Info(Tag, string.Format("OpenExternalFile File Uri: {0}", fileUri?.ToString()));
-#endif
-                string mimeType = Android.Webkit.MimeTypeMap.Singleton?.GetMimeTypeFromExtension(bareExt);
-                viewIntent.SetDataAndType(fileUri, mimeType);
-                viewIntent.SetFlags(ActivityFlags.GrantReadUriPermission | ActivityFlags.GrantWriteUriPermission | ActivityFlags.NewTask);
-
-                IList<ResolveInfo> activities = _activityCommon.QueryIntentActivities(viewIntent, PackageInfoFlags.MatchDefaultOnly);
-                if (activities == null || activities.Count == 0)
-                {
-#if DEBUG
-                    Log.Info(Tag, "OpenExternalFile QueryIntentActivities failed");
-#endif
-                    return string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.no_ext_app_installed), bareExt);
-                }
-
-                Intent chooseIntent = Intent.CreateChooser(viewIntent, GetString(Resource.String.choose_file_app));
-                StartActivityForResult(chooseIntent, (int)ActivityRequest.RequestOpenExternalFile);
-                ActivityCommon.ActivityStartedFromMain = true;
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = EdiabasNet.GetExceptionText(ex);
-#if DEBUG
-                Log.Info(Tag, string.Format("OpenExternalFile Exception: {0}", errorMessage));
-#endif
-                string message = GetString(Resource.String.file_access_denied);
-                if (!string.IsNullOrEmpty(errorMessage))
-                {
-                    message += "\r\n" + errorMessage;
-                }
-                return message;
-            }
-
-            return null;
         }
 
         private bool StartGlobalSettings(string selection = null, string copyFileName = null)
