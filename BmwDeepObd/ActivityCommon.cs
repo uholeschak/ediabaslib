@@ -3956,6 +3956,68 @@ namespace BmwDeepObd
             }
         }
 
+        public string OpenExternalFile(string filePath, int requestCode)
+        {
+            if (_activity == null)
+            {
+                return string.Empty;
+            }
+
+            try
+            {
+                if (!File.Exists(filePath))
+                {
+                    return string.Empty;
+                }
+
+                string extension = Path.GetExtension(filePath);
+                if (string.IsNullOrEmpty(extension))
+                {
+                    return string.Empty;
+                }
+
+                string bareExt = extension.TrimStart('.');
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format("OpenExternalFile File Ext: {0}", bareExt));
+#endif
+                Intent viewIntent = new Intent(Intent.ActionView);
+                Android.Net.Uri fileUri = FileProvider.GetUriForFile(Android.App.Application.Context, _activity.PackageName + ".fileprovider", new Java.IO.File(filePath));
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format("OpenExternalFile File Uri: {0}", fileUri?.ToString()));
+#endif
+                string mimeType = Android.Webkit.MimeTypeMap.Singleton?.GetMimeTypeFromExtension(bareExt);
+                viewIntent.SetDataAndType(fileUri, mimeType);
+                viewIntent.SetFlags(ActivityFlags.GrantReadUriPermission | ActivityFlags.GrantWriteUriPermission | ActivityFlags.NewTask);
+
+                IList<ResolveInfo> activities = QueryIntentActivities(viewIntent, PackageInfoFlags.MatchDefaultOnly);
+                if (activities == null || activities.Count == 0)
+                {
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "OpenExternalFile QueryIntentActivities failed");
+#endif
+                    return string.Format(CultureInfo.InvariantCulture, _activity.GetString(Resource.String.no_ext_app_installed), bareExt);
+                }
+
+                Intent chooseIntent = Intent.CreateChooser(viewIntent, _activity.GetString(Resource.String.choose_file_app));
+                _activity.StartActivityForResult(chooseIntent, requestCode);
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = EdiabasNet.GetExceptionText(ex);
+#if DEBUG
+                Log.Info(Tag, string.Format("OpenExternalFile Exception: {0}", errorMessage));
+#endif
+                string message = _activity.GetString(Resource.String.file_access_denied);
+                if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    message += "\r\n" + errorMessage;
+                }
+                return message;
+            }
+
+            return null;
+        }
+
         public static bool OpenAppSettingDetails(Android.App.Activity activity, int requestCode)
         {
             try
