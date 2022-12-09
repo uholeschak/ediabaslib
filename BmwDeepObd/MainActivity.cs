@@ -1714,6 +1714,11 @@ namespace BmwDeepObd
                 case Resource.Id.menu_open_trace:
                 case Resource.Id.menu_open_last_trace:
                 {
+                    if (ActivityCommon.CommActive)
+                    {
+                        return true;
+                    }
+
                     string baseDir = item.ItemId == Resource.Id.menu_open_trace ? _instanceData.TraceDir : _instanceData.TraceBackupDir;
                     if (string.IsNullOrEmpty(baseDir))
                     {
@@ -3830,6 +3835,7 @@ namespace BmwDeepObd
             {
                 return false;
             }
+
             if (ActivityCommon.CollectDebugInfo ||
                 (_instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir)))
             {
