@@ -4005,7 +4005,7 @@ namespace BmwDeepObd
             {
                 string errorMessage = EdiabasNet.GetExceptionText(ex);
 #if DEBUG
-                Log.Info(Tag, string.Format("OpenExternalFile Exception: {0}", errorMessage));
+                Android.Util.Log.Info(Tag, string.Format("OpenExternalFile Exception: {0}", errorMessage));
 #endif
                 string message = _activity.GetString(Resource.String.file_access_denied);
                 if (!string.IsNullOrEmpty(errorMessage))
