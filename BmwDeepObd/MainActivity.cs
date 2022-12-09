@@ -981,7 +981,6 @@ namespace BmwDeepObd
 
         protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
         {
-            ActivityCommon.ActivityStartedFromMain = false;
             switch ((ActivityRequest)requestCode)
             {
                 case ActivityRequest.RequestAppStorePermissions:
@@ -1566,10 +1565,7 @@ namespace BmwDeepObd
 
                 case Resource.Id.menu_scan:
                     _instanceData.AutoStart = false;
-                    if (_activityCommon.SelectBluetoothDevice((int) ActivityRequest.RequestSelectDevice, _instanceData.AppDataPath))
-                    {
-                        ActivityCommon.ActivityStartedFromMain = true;
-                    }
+                    _activityCommon.SelectBluetoothDevice((int)ActivityRequest.RequestSelectDevice, _instanceData.AppDataPath);
                     return true;
 
                 case Resource.Id.menu_adapter_config:
@@ -1979,7 +1975,6 @@ namespace BmwDeepObd
                     UpdateDisplay();
                     return;
                 }
-                ActivityCommon.ActivityStartedFromMain = true;
             }
 
             if (!ActivityCommon.CommActive && _connectTypeRequest == ActivityCommon.AutoConnectType.Offline)
@@ -7110,7 +7105,6 @@ namespace BmwDeepObd
             {
                 Intent serverIntent = new Intent(this, typeof(YandexKeyActivity));
                 StartActivityForResult(serverIntent, (int)ActivityRequest.RequestYandexKey);
-                ActivityCommon.ActivityStartedFromMain = true;
             }
             catch (Exception)
             {
@@ -7146,7 +7140,6 @@ namespace BmwDeepObd
                 }
 
                 StartActivityForResult(serverIntent, (int) requestCode);
-                ActivityCommon.ActivityStartedFromMain = true;
 
                 return true;
             }
@@ -7189,7 +7182,6 @@ namespace BmwDeepObd
             serverIntent.PutExtra(CanAdapterActivity.ExtraInterfaceType, (int)_activityCommon.SelectedInterface);
             serverIntent.PutExtra(CanAdapterActivity.ExtraAppDataDir, _instanceData.AppDataPath);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestAdapterConfig);
-            ActivityCommon.ActivityStartedFromMain = true;
         }
 
         private void EnetIpConfig()
@@ -7256,7 +7248,6 @@ namespace BmwDeepObd
             serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, initDir);
             serverIntent.PutExtra(FilePickerActivity.ExtraFileExtensions, ".cccfg");
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectConfig);
-            ActivityCommon.ActivityStartedFromMain = true;
         }
 
         private void EditConfigFileIntent()
@@ -7278,7 +7269,6 @@ namespace BmwDeepObd
             serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, initDir);
             serverIntent.PutExtra(FilePickerActivity.ExtraFileExtensions, ".cccfg;.ccpages;.ccpage");
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestEditConfig);
-            ActivityCommon.ActivityStartedFromMain = true;
         }
 
         private void StartXmlTool(XmlToolActivity.EcuFunctionCallType ecuFuncCall = XmlToolActivity.EcuFunctionCallType.None)
@@ -7346,7 +7336,6 @@ namespace BmwDeepObd
                 serverIntent.PutExtra(XmlToolActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
                 serverIntent.PutExtra(XmlToolActivity.ExtraFileName, _instanceData.ConfigFileName);
                 StartActivityForResult(serverIntent, (int)ActivityRequest.RequestXmlTool);
-                ActivityCommon.ActivityStartedFromMain = true;
             }
             catch (Exception)
             {
@@ -7388,7 +7377,6 @@ namespace BmwDeepObd
                 serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceAddress, _instanceData.DeviceAddress);
                 serverIntent.PutExtra(EdiabasToolActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
                 StartActivityForResult(serverIntent, (int)ActivityRequest.RequestEdiabasTool);
-                ActivityCommon.ActivityStartedFromMain = true;
             }
             catch (Exception)
             {
@@ -7448,7 +7436,6 @@ namespace BmwDeepObd
                     {
                         viewIntent.SetComponent(new ComponentName(_instanceData.XmlEditorPackageName, _instanceData.XmlEditorClassName));
                         StartActivityForResult(viewIntent, (int)ActivityRequest.RequestEditXml);
-                        ActivityCommon.ActivityStartedFromMain = true;
                         return true;
                     }
                     catch (Exception)
@@ -7477,7 +7464,6 @@ namespace BmwDeepObd
                     chooseIntent = Intent.CreateChooser(viewIntent, GetString(Resource.String.choose_xml_editor));
                 }
                 StartActivityForResult(chooseIntent, (int)ActivityRequest.RequestEditXml);
-                ActivityCommon.ActivityStartedFromMain = true;
 
                 return true;
             }

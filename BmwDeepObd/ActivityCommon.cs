@@ -928,8 +928,6 @@ namespace BmwDeepObd
 
         public static EcuFunctionReader EcuFunctionReader => _ecuFunctionReader;
 
-        public static bool ActivityStartedFromMain { get; set; }
-
         public static bool MtcBtConnectState { get; set; }
 
         public static bool BtInitiallyEnabled { get; set; }
@@ -4407,7 +4405,8 @@ namespace BmwDeepObd
 
         public bool BluetoothDisableAtExit()
         {
-            if (!ActivityStartedFromMain && !BtInitiallyEnabled && BtDisableHandling == BtDisableType.DisableIfByApp &&
+            bool startedFromMain = BaseActivity.IsActivityOnStack(typeof(ActivityMain));
+            if (!startedFromMain && !BtInitiallyEnabled && BtDisableHandling == BtDisableType.DisableIfByApp &&
                 IsBluetoothEnabledByApp() && !IsBluetoothConnected() && !MtcBtService &&
                 !CommActive)
             {

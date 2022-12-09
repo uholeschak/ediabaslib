@@ -435,12 +435,20 @@ namespace BmwDeepObd
             }
         }
 
-        public static bool IsActivityOnStack(Android.App.Activity activity)
+        public static bool IsActivityOnStack(Type activityType)
         {
             lock (_activityStackLock)
             {
-                return ActivityStack.Contains(activity);
+                foreach (Android.App.Activity activity in ActivityStack)
+                {
+                    if (activity.GetType() == activityType)
+                    {
+                        return true;
+                    }
+                }
             }
+
+            return false;
         }
 
         public virtual void OnBackPressedEvent()
