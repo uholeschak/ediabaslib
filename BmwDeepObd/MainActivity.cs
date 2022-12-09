@@ -1712,8 +1712,15 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_open_trace:
+                case Resource.Id.menu_open_last_trace:
                 {
-                    string traceFile = Path.Combine(_instanceData.TraceDir, ActivityCommon.TraceFileName);
+                    string baseDir = item.ItemId == Resource.Id.menu_open_trace ? _instanceData.TraceDir : _instanceData.TraceBackupDir;
+                    if (string.IsNullOrEmpty(baseDir))
+                    {
+                        return true;
+                    }
+
+                    string traceFile = Path.Combine(baseDir, ActivityCommon.TraceFileName);
                     string errorMessage = _activityCommon.OpenExternalFile(traceFile, (int)ActivityRequest.RequestOpenExternalFile);
                     if (errorMessage != null)
                     {
@@ -1743,28 +1750,6 @@ namespace BmwDeepObd
                         UpdateOptionsMenu();
                     });
                     return true;
-
-                case Resource.Id.menu_open_last_trace:
-                {
-                    string traceFile = Path.Combine(_instanceData.TraceBackupDir, ActivityCommon.TraceFileName);
-                    string errorMessage = _activityCommon.OpenExternalFile(traceFile, (int)ActivityRequest.RequestOpenExternalFile);
-                    if (errorMessage != null)
-                    {
-                        if (string.IsNullOrEmpty(traceFile))
-                        {
-                            return true;
-                        }
-
-                        string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.open_trace_file_failed), traceFile);
-                        if (!string.IsNullOrEmpty(errorMessage))
-                        {
-                            message = errorMessage + "\r\n" + message;
-                        }
-
-                        _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
-                    }
-                    return true;
-                }
 
                 case Resource.Id.menu_translation_enable:
                     if (!ActivityCommon.EnableTranslation && !ActivityCommon.IsTranslationAvailable())
