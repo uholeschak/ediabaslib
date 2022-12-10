@@ -419,11 +419,17 @@ namespace BmwDeepObd
             {
                 if (!ActivityStack.Contains(activity))
                 {
+#if DEBUG
+                    Android.Util.Log.Debug(Tag, string.Format("AddActivityToStack: Adding Name={0}", activity.GetType().Name));
+#endif
                     ActivityStack.Add(activity);
                     return true;
                 }
             }
 
+#if DEBUG
+            Android.Util.Log.Debug(Tag, string.Format("AddActivityToStack: Already present Name={0}", activity.GetType().Name));
+#endif
             return false;
         }
 
@@ -431,23 +437,45 @@ namespace BmwDeepObd
         {
             lock (_activityStackLock)
             {
-                return ActivityStack.Remove(activity);
+                int index = ActivityStack.IndexOf(activity);
+                if (index >= 0)
+                {
+                    // remove from the activiy to the end
+                    int removeCount = ActivityStack.Count - index;
+#if DEBUG
+                    Android.Util.Log.Debug(Tag, string.Format("RemoveActivityFromStack: Removing Name={0}, Count={1}", activity.GetType().Name, removeCount));
+#endif
+                    ActivityStack.RemoveRange(index, removeCount);
+                    return true;
+                }
             }
+
+#if DEBUG
+            Android.Util.Log.Debug(Tag, string.Format("RemoveActivityFromStack: Not found Name={0}", activity.GetType().Name));
+#endif
+            return false;
         }
 
-        public static bool IsActivityOnStack(Type activityType)
+        public static bool IsLastActivityOnStack(Type activityType)
         {
             lock (_activityStackLock)
             {
-                foreach (Android.App.Activity activity in ActivityStack)
+                if (ActivityStack.Count > 0)
                 {
+                    Android.App.Activity activity = ActivityStack[^1];
                     if (activity.GetType() == activityType)
                     {
+#if DEBUG
+                        Android.Util.Log.Debug(Tag, string.Format("IsLastActivityOnStack: Is last Name={0}", activityType.Name));
+#endif
                         return true;
                     }
                 }
             }
 
+#if DEBUG
+            Android.Util.Log.Debug(Tag, string.Format("IsLastActivityOnStack: Is not last Name={0}", activityType.Name));
+#endif
             return false;
         }
 
