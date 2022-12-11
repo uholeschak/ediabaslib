@@ -28,9 +28,18 @@
       <item android:id="@+id/menu_submenu_log"
             android:icon="@android:drawable/ic_menu_save"
             android:title="@string/menu_submenu_log" />
-      <item android:id="@+id/menu_send_trace"
+      <item android:id="@+id/menu_trace_submenu"
             android:icon="@android:drawable/ic_menu_save"
-            android:title="@string/menu_send_trace" />
+            android:title="@string/menu_trace_submenu">
+          <menu>
+              <item android:id="@+id/menu_send_trace"
+                    android:icon="@android:drawable/ic_menu_save"
+                    android:title="@string/menu_send_trace" />
+              <item android:id="@+id/menu_open_trace"
+                    android:icon="@android:drawable/ic_menu_save"
+                    android:title="@string/menu_open_trace" />
+          </menu>
+      </item>
       <item android:id="@+id/menu_translation_submenu"
             android:icon="@android:drawable/ic_menu_manage"
             android:title="@string/menu_translation_submenu" >
