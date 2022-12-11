@@ -3930,7 +3930,10 @@ namespace BmwDeepObd
         {
             if (MtcBtService)
             {
-                return true;
+                if (Build.VERSION.SdkInt < BuildVersionCodes.S)
+                {
+                    return true;
+                }
             }
 
             if (Build.VERSION.SdkInt < BuildVersionCodes.S)
