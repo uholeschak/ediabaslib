@@ -115,7 +115,7 @@ namespace BmwDeepObd
 
         private enum ActivityRequest
         {
-            RequestDummy,
+            RequestOpenExternalFile,
         }
 
         private InstanceData _instanceData = new InstanceData();
@@ -433,6 +433,14 @@ namespace BmwDeepObd
                     });
                     return true;
 
+                case Resource.Id.menu_open_trace:
+                    if (IsEdiabasConnected())
+                    {
+                        return true;
+                    }
+                    OpenTraceFile();
+                    return true;
+
                 case Resource.Id.menu_submenu_help:
                     _activityCommon.ShowWifiConnectedWarning(() =>
                     {
@@ -475,7 +483,7 @@ namespace BmwDeepObd
         {
             switch ((ActivityRequest)requestCode)
             {
-                case ActivityRequest.RequestDummy:
+                case ActivityRequest.RequestOpenExternalFile:
                     UpdateOptionsMenu();
                     break;
             }
@@ -506,8 +514,15 @@ namespace BmwDeepObd
             IMenuItem logSubMenu = menu.FindItem(Resource.Id.menu_submenu_log);
             logSubMenu?.SetEnabled(interfaceAvailable && !commActive);
 
+            IMenuItem traceSubmenu = menu.FindItem(Resource.Id.menu_trace_submenu);
+            traceSubmenu?.SetEnabled(!commActive);
+
+            bool tracePresent = ActivityCommon.IsTraceFilePresent(_instanceData.TraceDir);
             IMenuItem sendTraceMenu = menu.FindItem(Resource.Id.menu_send_trace);
-            sendTraceMenu?.SetEnabled(interfaceAvailable && !commActive && _instanceData.TraceActive && ActivityCommon.IsTraceFilePresent(_instanceData.TraceDir));
+            sendTraceMenu?.SetEnabled(interfaceAvailable && !commActive && _instanceData.TraceActive && tracePresent);
+
+            IMenuItem openTraceMenu = menu.FindItem(Resource.Id.menu_open_trace);
+            openTraceMenu?.SetEnabled(interfaceAvailable && !commActive && _instanceData.TraceActive && tracePresent);
 
             return base.OnPrepareOptionsMenu(menu);
         }
@@ -1580,6 +1595,40 @@ namespace BmwDeepObd
                 return _activityCommon.SendTraceFile(_appDataDir, _instanceData.TraceDir, GetType(), handler);
             }
             return false;
+        }
+
+        private bool OpenTraceFile()
+        {
+            string baseDir = _instanceData.TraceDir;
+            if (string.IsNullOrEmpty(baseDir))
+            {
+                return false;
+            }
+
+            if (!StopEdiabasThread())
+            {
+                return false;
+            }
+
+            string traceFile = Path.Combine(baseDir, ActivityCommon.TraceFileName);
+            string errorMessage = _activityCommon.OpenExternalFile(traceFile, (int)ActivityRequest.RequestOpenExternalFile);
+            if (errorMessage != null)
+            {
+                if (string.IsNullOrEmpty(traceFile))
+                {
+                    return true;
+                }
+
+                string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.open_trace_file_failed), traceFile);
+                if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    message = errorMessage + "\r\n" + message;
+                }
+
+                _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
+                return false;
+            }
+            return true;
         }
 
         private void ReportError(string msg)
