@@ -429,6 +429,8 @@ namespace BmwDeepObd
                         {
                             return;
                         }
+
+                        StartEdiabasThread();
                         UpdateOptionsMenu();
                     });
                     return true;
@@ -484,6 +486,7 @@ namespace BmwDeepObd
             switch ((ActivityRequest)requestCode)
             {
                 case ActivityRequest.RequestOpenExternalFile:
+                    StartEdiabasThread();
                     UpdateOptionsMenu();
                     break;
             }
@@ -1100,6 +1103,7 @@ namespace BmwDeepObd
         {
             UpdateConnectTime();
 
+            StartEdiabasThread();
             lock (_requestLock)
             {
                 if (_requestQueue.Count > 0)
@@ -1573,7 +1577,14 @@ namespace BmwDeepObd
                 {
                     return false;
                 }
-                return _activityCommon.RequestSendTraceFile(_appDataDir, _instanceData.TraceDir, GetType(), handler);
+
+                if (!_activityCommon.RequestSendTraceFile(_appDataDir, _instanceData.TraceDir, GetType(), handler))
+                {
+                    StartEdiabasThread();
+                    return false;
+                }
+
+                return true;
             }
             return false;
         }
@@ -1592,13 +1603,25 @@ namespace BmwDeepObd
                 {
                     return false;
                 }
-                return _activityCommon.SendTraceFile(_appDataDir, _instanceData.TraceDir, GetType(), handler);
+
+                if (!_activityCommon.SendTraceFile(_appDataDir, _instanceData.TraceDir, GetType(), handler))
+                {
+                    StartEdiabasThread();
+                    return false;
+                }
+
+                return true;
             }
             return false;
         }
 
         private bool OpenTraceFile()
         {
+            if (IsEdiabasConnected())
+            {
+                return false;
+            }
+
             string baseDir = _instanceData.TraceDir;
             if (string.IsNullOrEmpty(baseDir))
             {
@@ -1614,6 +1637,7 @@ namespace BmwDeepObd
             string errorMessage = _activityCommon.OpenExternalFile(traceFile, (int)ActivityRequest.RequestOpenExternalFile);
             if (errorMessage != null)
             {
+                StartEdiabasThread();
                 if (string.IsNullOrEmpty(traceFile))
                 {
                     return true;
