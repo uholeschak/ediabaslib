@@ -456,27 +456,23 @@ namespace BmwDeepObd
             return false;
         }
 
-        public static bool IsLastActivityOnStack(Type activityType)
+        public static bool IsActivityListEmpty()
         {
             lock (_activityStackLock)
             {
-                if (ActivityStack.Count > 0)
+                if (ActivityStack.Count == 0)
                 {
-                    Android.App.Activity activity = ActivityStack[^1];
-                    if (activity.GetType() == activityType)
-                    {
 #if DEBUG
-                        Android.Util.Log.Debug(Tag, string.Format("IsLastActivityOnStack: Is last Name={0}", activityType.Name));
+                    Android.Util.Log.Debug(Tag, "IsActivityListEmpty: Empty");
 #endif
-                        return true;
-                    }
+                    return true;
                 }
-            }
 
 #if DEBUG
-            Android.Util.Log.Debug(Tag, string.Format("IsLastActivityOnStack: Is not last Name={0}", activityType.Name));
+                Android.Util.Log.Debug(Tag, "IsActivityListEmpty: Not empty");
 #endif
-            return false;
+                return false;
+            }
         }
 
         public virtual void OnBackPressedEvent()
