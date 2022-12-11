@@ -424,7 +424,10 @@ namespace BmwDeepObd
         {
             if (_activityCommon.MtcBtService)
             {
-                return;
+                if (Build.VERSION.SdkInt < BuildVersionCodes.S)
+                {
+                    return;
+                }
             }
 
             if (Build.VERSION.SdkInt < BuildVersionCodes.Q)
