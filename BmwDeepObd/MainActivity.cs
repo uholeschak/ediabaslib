@@ -75,8 +75,8 @@ namespace BmwDeepObd
             RequestXmlTool,
             RequestEdiabasTool,
             RequestBmwCoding,
-            RequestYandexKey,
             RequestOpenExternalFile,
+            RequestYandexKey,
             RequestGlobalSettings,
             RequestGlobalSettingsCopy,
             RequestEditConfig,
@@ -1129,14 +1129,14 @@ namespace BmwDeepObd
                     UpdateDisplay();
                     break;
 
-                case ActivityRequest.RequestYandexKey:
-                    ActivityCommon.EnableTranslation = ActivityCommon.IsTranslationAvailable();
-                    StoreSettings();
+                case ActivityRequest.RequestOpenExternalFile:
                     UpdateOptionsMenu();
                     UpdateDisplay();
                     break;
 
-                case ActivityRequest.RequestOpenExternalFile:
+                case ActivityRequest.RequestYandexKey:
+                    ActivityCommon.EnableTranslation = ActivityCommon.IsTranslationAvailable();
+                    StoreSettings();
                     UpdateOptionsMenu();
                     UpdateDisplay();
                     break;
@@ -1436,10 +1436,7 @@ namespace BmwDeepObd
             }
 
             IMenuItem traceSubmenu = menu.FindItem(Resource.Id.menu_trace_submenu);
-            if (traceSubmenu != null)
-            {
-                traceSubmenu.SetEnabled(!commActive);
-            }
+            traceSubmenu?.SetEnabled(!commActive);
 
             bool tracePresent = ActivityCommon.IsTraceFilePresent(_instanceData.TraceDir);
             IMenuItem sendTraceMenu = menu.FindItem(Resource.Id.menu_send_trace);
@@ -1709,38 +1706,12 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_open_trace:
-                case Resource.Id.menu_open_last_trace:
-                {
                     if (ActivityCommon.CommActive)
                     {
                         return true;
                     }
-
-                    string baseDir = item.ItemId == Resource.Id.menu_open_trace ? _instanceData.TraceDir : _instanceData.TraceBackupDir;
-                    if (string.IsNullOrEmpty(baseDir))
-                    {
-                        return true;
-                    }
-
-                    string traceFile = Path.Combine(baseDir, ActivityCommon.TraceFileName);
-                    string errorMessage = _activityCommon.OpenExternalFile(traceFile, (int)ActivityRequest.RequestOpenExternalFile);
-                    if (errorMessage != null)
-                    {
-                        if (string.IsNullOrEmpty(traceFile))
-                        {
-                            return true;
-                        }
-
-                        string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.open_trace_file_failed), traceFile);
-                        if (!string.IsNullOrEmpty(errorMessage))
-                        {
-                            message = errorMessage + "\r\n" + message;
-                        }
-
-                        _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
-                    }
+                    OpenTraceFile();
                     return true;
-                }
 
                 case Resource.Id.menu_send_last_trace:
                     SendBackupTraceFileAlways((sender, args) =>
@@ -1751,6 +1722,14 @@ namespace BmwDeepObd
                         }
                         UpdateOptionsMenu();
                     });
+                    return true;
+
+                case Resource.Id.menu_open_last_trace:
+                    if (ActivityCommon.CommActive)
+                    {
+                        return true;
+                    }
+                    OpenTraceFile(true);
                     return true;
 
                 case Resource.Id.menu_translation_enable:
@@ -3838,6 +3817,35 @@ namespace BmwDeepObd
                 return _activityCommon.SendTraceFile(_instanceData.AppDataPath, _instanceData.TraceDir, GetType(), handler);
             }
             return false;
+        }
+
+        private bool OpenTraceFile(bool backupTrace = false)
+        {
+            string baseDir = backupTrace ? _instanceData.TraceBackupDir : _instanceData.TraceDir;
+            if (string.IsNullOrEmpty(baseDir))
+            {
+                return false;
+            }
+
+            string traceFile = Path.Combine(baseDir, ActivityCommon.TraceFileName);
+            string errorMessage = _activityCommon.OpenExternalFile(traceFile, (int)ActivityRequest.RequestOpenExternalFile);
+            if (errorMessage != null)
+            {
+                if (string.IsNullOrEmpty(traceFile))
+                {
+                    return true;
+                }
+
+                string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.open_trace_file_failed), traceFile);
+                if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    message = errorMessage + "\r\n" + message;
+                }
+
+                _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
+                return false;
+            }
+            return true;
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local

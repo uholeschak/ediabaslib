@@ -39,6 +39,7 @@ namespace BmwDeepObd
             RequestSelectDevice,
             RequestAdapterConfig,
             RequestSelectJobs,
+            RequestOpenExternalFile,
             RequestYandexKey,
             RequestEdiabasTool,
         }
@@ -1110,8 +1111,15 @@ namespace BmwDeepObd
             IMenuItem logSubMenu = menu.FindItem(Resource.Id.menu_submenu_log);
             logSubMenu?.SetEnabled(interfaceAvailable && !commActive);
 
+            IMenuItem traceSubmenu = menu.FindItem(Resource.Id.menu_trace_submenu);
+            traceSubmenu?.SetEnabled(!commActive);
+
+            bool tracePresent = ActivityCommon.IsTraceFilePresent(_instanceData.TraceDir);
             IMenuItem sendTraceMenu = menu.FindItem(Resource.Id.menu_send_trace);
-            sendTraceMenu?.SetEnabled(interfaceAvailable && !commActive && _instanceData.TraceActive && ActivityCommon.IsTraceFilePresent(_instanceData.TraceDir));
+            sendTraceMenu?.SetEnabled(interfaceAvailable && !commActive && _instanceData.TraceActive && tracePresent);
+
+            IMenuItem openTraceMenu = menu.FindItem(Resource.Id.menu_open_trace);
+            openTraceMenu?.SetEnabled(interfaceAvailable && !commActive && _instanceData.TraceActive && tracePresent);
 
             IMenuItem translationSubmenu = menu.FindItem(Resource.Id.menu_translation_submenu);
             if (translationSubmenu != null)
@@ -1251,6 +1259,14 @@ namespace BmwDeepObd
                         }
                         UpdateOptionsMenu();
                     });
+                    return true;
+
+                case Resource.Id.menu_open_trace:
+                    if (IsJobRunning())
+                    {
+                        return true;
+                    }
+                    OpenTraceFile();
                     return true;
 
                 case Resource.Id.menu_translation_enable:
@@ -1436,6 +1452,40 @@ namespace BmwDeepObd
                 return _activityCommon.SendTraceFile(_appDataDir, _instanceData.TraceDir, GetType(), handler);
             }
             return false;
+        }
+
+        private bool OpenTraceFile()
+        {
+            string baseDir = _instanceData.TraceDir;
+            if (string.IsNullOrEmpty(baseDir))
+            {
+                return false;
+            }
+
+            if (!EdiabasClose())
+            {
+                return false;
+            }
+
+            string traceFile = Path.Combine(baseDir, ActivityCommon.TraceFileName);
+            string errorMessage = _activityCommon.OpenExternalFile(traceFile, (int)ActivityRequest.RequestOpenExternalFile);
+            if (errorMessage != null)
+            {
+                if (string.IsNullOrEmpty(traceFile))
+                {
+                    return true;
+                }
+
+                string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.open_trace_file_failed), traceFile);
+                if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    message = errorMessage + "\r\n" + message;
+                }
+
+                _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
+                return false;
+            }
+            return true;
         }
 
         private void UpdateDisplay()
