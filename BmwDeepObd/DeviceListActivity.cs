@@ -971,13 +971,25 @@ namespace BmwDeepObd
                         int connectTimeout = mtcBtService ? 1000 : 2000;
                         _connectDeviceAddress = device.Address;
                         BluetoothSocket bluetoothSocket = null;
-                        LogString("Device bond state: " + device.BondState);
-                        LogString("Device type: " + device.Type);
+                        Bond bondState = Bond.None;
+                        BluetoothDeviceType deviceType = BluetoothDeviceType.Unknown;
+
+                        try
+                        {
+                            bondState = device.BondState;
+                            deviceType = device.Type;
+                            LogString("Device bond state: " + bondState);
+                            LogString("Device type: " + deviceType);
+                        }
+                        catch (Exception ex)
+                        {
+                            LogString("*** Device state exception: " + EdiabasNet.GetExceptionText(ex));
+                        }
 
                         adapterType = AdapterTypeDetect.AdapterType.ConnectionFailed;
                         if (!mtcBtService && _btLeGattSpp != null)
                         {
-                            if (device.Type == BluetoothDeviceType.Le || (device.Type == BluetoothDeviceType.Dual && device.BondState == Bond.None))
+                            if (deviceType == BluetoothDeviceType.Le || (deviceType == BluetoothDeviceType.Dual && bondState == Bond.None))
                             {
                                 try
                                 {
@@ -1002,7 +1014,7 @@ namespace BmwDeepObd
                         {
                             try
                             {
-                                if (mtcBtService || device.BondState == Bond.Bonded)
+                                if (mtcBtService || bondState == Bond.Bonded)
                                 {
                                     LogString("Connect with CreateRfcommSocketToServiceRecord");
                                     bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid);
