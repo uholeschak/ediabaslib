@@ -989,6 +989,10 @@ namespace BmwDeepObd
                     }
                     break;
 
+                case ActivityRequest.RequestOpenExternalFile:
+                    UpdateOptionsMenu();
+                    break;
+
                 case ActivityRequest.RequestYandexKey:
                     ActivityCommon.EnableTranslation = ActivityCommon.IsTranslationAvailable();
                     UpdateOptionsMenu();
