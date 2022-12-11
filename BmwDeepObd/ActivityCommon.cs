@@ -4408,8 +4408,8 @@ namespace BmwDeepObd
 
         public bool BluetoothDisableAtExit()
         {
-            bool isMainActivity = BaseActivity.IsLastActivityOnStack(typeof(ActivityMain));
-            if (isMainActivity && !BtInitiallyEnabled && BtDisableHandling == BtDisableType.DisableIfByApp &&
+            bool isEmpty = BaseActivity.IsActivityListEmpty();
+            if (isEmpty && !BtInitiallyEnabled && BtDisableHandling == BtDisableType.DisableIfByApp &&
                 IsBluetoothEnabledByApp() && !IsBluetoothConnected() && !MtcBtService &&
                 !CommActive)
             {
