@@ -174,13 +174,28 @@ namespace EdiabasLib
                     }
 
                     _connectDeviceAddress = device.Address;
+
                     CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting: Raw mode: {0}, ELM device: {1}", CustomAdapter.RawMode, _elm327Device);
-                    CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device bond state: {0}", device.BondState);
-                    CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device type: {0}", device.Type);
+                    Bond bondState = Bond.None;
+                    BluetoothDeviceType deviceType = BluetoothDeviceType.Unknown;
+                    if (!mtcBtService)
+                    {
+                        try
+                        {
+                            bondState = device.BondState;
+                            deviceType = device.Type;
+                            CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device bond state: {0}", bondState);
+                            CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device type: {0}", deviceType);
+                        }
+                        catch (Exception ex)
+                        {
+                            CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device state exception: {0}", EdiabasNet.GetExceptionText(ex));
+                        }
+                    }
 
                     if (!mtcBtService && context != null)
                     {
-                        if (device.Type == BluetoothDeviceType.Le || (device.Type == BluetoothDeviceType.Dual && device.BondState == Bond.None))
+                        if (deviceType == BluetoothDeviceType.Le || (deviceType == BluetoothDeviceType.Dual && bondState == Bond.None))
                         {
                             _btLeGattSpp ??= new BtLeGattSpp();
 
@@ -201,7 +216,7 @@ namespace EdiabasLib
                     if (_bluetoothInStream == null || _bluetoothOutStream == null)
                     {
                         // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                        if (mtcBtService || device.BondState == Bond.Bonded)
+                        if (mtcBtService || bondState == Bond.Bonded)
                         {
                             _bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid);
                         }
@@ -360,9 +375,10 @@ namespace EdiabasLib
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                InterfaceDisconnect ();
+                CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "InterfaceConnect exception: {0}", EdiabasNet.GetExceptionText(ex));
+                InterfaceDisconnect();
                 return false;
             }
             return true;

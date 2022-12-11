@@ -974,16 +974,19 @@ namespace BmwDeepObd
                         Bond bondState = Bond.None;
                         BluetoothDeviceType deviceType = BluetoothDeviceType.Unknown;
 
-                        try
+                        if (!mtcBtService)
                         {
-                            bondState = device.BondState;
-                            deviceType = device.Type;
-                            LogString("Device bond state: " + bondState);
-                            LogString("Device type: " + deviceType);
-                        }
-                        catch (Exception ex)
-                        {
-                            LogString("*** Device state exception: " + EdiabasNet.GetExceptionText(ex));
+                            try
+                            {
+                                bondState = device.BondState;
+                                deviceType = device.Type;
+                                LogString("Device bond state: " + bondState);
+                                LogString("Device type: " + deviceType);
+                            }
+                            catch (Exception ex)
+                            {
+                                LogString("*** Device state exception: " + EdiabasNet.GetExceptionText(ex));
+                            }
                         }
 
                         adapterType = AdapterTypeDetect.AdapterType.ConnectionFailed;
