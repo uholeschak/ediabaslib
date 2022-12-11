@@ -19,7 +19,7 @@ Search for `PIC18F25K80 ELM327` on Aliexpress. It's best to buy it with a Blueto
 For programming the firmware see: [programming](#programming-elm327-adapter-with-deep-obd-firmware)
 
 ## Buy a preprogrammed adapter
-You could buy the preprogrammed [Bluetooth adapter](https://www.ebay.de/itm/255849403156) also at EBAY.  
+You could buy the preprogrammed [Bluetooth adapter](https://www.ebay.de/itm/255873781501) also at EBAY.  
 Adapters from this link include a **license** for the [BMW coding](BMW_Coding.md) function of one F series or higher vehicle.  
 If the link is outdated (what it is most of the time) all adapters are sold, in this case please simply wait for an update of the link.  
 
