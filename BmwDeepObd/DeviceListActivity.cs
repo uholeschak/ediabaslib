@@ -422,14 +422,6 @@ namespace BmwDeepObd
 
         private void RequestBtPermissions()
         {
-            if (_activityCommon.MtcBtService)
-            {
-                if (Build.VERSION.SdkInt < BuildVersionCodes.S)
-                {
-                    return;
-                }
-            }
-
             if (Build.VERSION.SdkInt < BuildVersionCodes.Q)
             {
                 return;
