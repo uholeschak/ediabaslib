@@ -100,7 +100,8 @@ Below are some screenshots from the example E61 configuration:
 ## Log and trace files location
 The location of the log and trace files depends from the Android version.  
 Beginning with Android KitKat (4.4) writing to the external SdCard is not possible any more. For older Android versions log and trace files are stored in a subdirectory relative to _de.holeschak.bmw_deep_obd_ on the external SDCard. For KitKat and above the data could be found in the directory _Android\data\de.holeschak.bmw_deep_obd\files_ of the external SDCard.  
-The standard log files are stored in the subdirectory _Log_, whereas the [Ediabas tool](EdiabasTool.md) uses the subdirectory _LogEdiabasTool_ and the [configuration generator](Configuration_Generator.md) the subdirectory _LogConfigTool_.
+The standard log files are stored in the subdirectory _Log_, whereas the [Ediabas tool](EdiabasTool.md) uses the subdirectory _LogEdiabasTool_ and the [configuration generator](Configuration_Generator.md) the subdirectory _LogConfigTool_.  
+The sending of the trace files failes, the backup trace files are stored in the subdirectory _TraceBackup_.
 
 ## Background image
 It's possible to replace the background image. Simply store a custom _Background.jpg_ file in the directory _de.holeschak.bmw_deep_obd\files\Images_ (The _Images_ subdirectory has to be created first).
