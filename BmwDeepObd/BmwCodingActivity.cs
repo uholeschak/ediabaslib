@@ -124,10 +124,12 @@ namespace BmwDeepObd
         private string _ecuDir;
         private string _appDataDir;
         private string _deviceAddress;
+        private Handler _startHandler;
         private EdiabasNet _ediabas;
         private volatile bool _ediabasJobAbort;
         private Thread _ediabasThread;
         private AutoResetEvent _ediabasThreadWakeEvent = new AutoResetEvent(false);
+        private object _ediabasThreadLock = new object();
         private object _ediabasLock = new object();
         private object _requestLock = new object();
         private object _timeLock = new object();
@@ -178,7 +180,7 @@ namespace BmwDeepObd
 
             _activityCommon.SetPreferredNetworkInterface();
 
-            StartEdiabasThread();
+            _startHandler = new Handler(Looper.MainLooper);
 
             _webViewCoding = FindViewById<WebView>(Resource.Id.webViewCoding);
             try
@@ -340,6 +342,20 @@ namespace BmwDeepObd
         {
             base.OnDestroy();
 
+            if (_startHandler != null)
+            {
+                try
+                {
+                    _startHandler.RemoveCallbacksAndMessages(null);
+                    _startHandler.Dispose();
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+                _startHandler = null;
+            }
+
             StopEdiabasThread();
 
             if (_infoHttpClient != null)
@@ -357,7 +373,6 @@ namespace BmwDeepObd
 
             _activityCommon?.Dispose();
             _activityCommon = null;
-
         }
 
         public override void OnBackPressedEvent()
@@ -430,7 +445,6 @@ namespace BmwDeepObd
                             return;
                         }
 
-                        StartEdiabasThread();
                         UpdateOptionsMenu();
                     });
                     return true;
@@ -486,7 +500,6 @@ namespace BmwDeepObd
             switch ((ActivityRequest)requestCode)
             {
                 case ActivityRequest.RequestOpenExternalFile:
-                    StartEdiabasThread();
                     UpdateOptionsMenu();
                     break;
             }
@@ -1114,6 +1127,14 @@ namespace BmwDeepObd
                 _ediabasThreadWakeEvent.Set();
             }
 
+            if (_startHandler != null)
+            {
+                if (!IsEdiabasThreadRunning())
+                {
+                    _startHandler?.Post(StartHandlerAction);
+                }
+            }
+
             return string.Empty;
         }
 
@@ -1177,6 +1198,16 @@ namespace BmwDeepObd
             }
         }
 
+        private void StartHandlerAction()
+        {
+            if (_activityCommon == null)
+            {
+                return;
+            }
+
+            StartEdiabasThread();
+        }
+
         private bool StartEdiabasThread()
         {
             if (IsEdiabasThreadRunning())
@@ -1188,8 +1219,11 @@ namespace BmwDeepObd
 
             _ediabasJobAbort = false;
             _ediabasThreadWakeEvent.Reset();
-            _ediabasThread = new Thread(EdiabasThread);
-            _ediabasThread.Start();
+            lock (_ediabasThreadLock)
+            {
+                _ediabasThread = new Thread(EdiabasThread);
+                _ediabasThread.Start();
+            }
             UpdateOptionsMenu();
 
             return true;
@@ -1201,7 +1235,10 @@ namespace BmwDeepObd
             _ediabasThreadWakeEvent.Set();
             if (IsEdiabasThreadRunning())
             {
+                // ReSharper disable once InconsistentlySynchronizedField
                 _ediabasThread.Join();
+                // clear thread pointer
+                IsEdiabasThreadRunning();
             }
 
             lock (_ediabasLock)
@@ -1219,15 +1256,19 @@ namespace BmwDeepObd
 
         private bool IsEdiabasThreadRunning()
         {
-            if (_ediabasThread == null)
+            lock (_ediabasThreadLock)
             {
-                return false;
+                if (_ediabasThread == null)
+                {
+                    return false;
+                }
+                if (_ediabasThread.IsAlive)
+                {
+                    return true;
+                }
+                _ediabasThread = null;
             }
-            if (_ediabasThread.IsAlive)
-            {
-                return true;
-            }
-            _ediabasThread = null;
+
             return false;
         }
 
@@ -1577,13 +1618,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                if (!_activityCommon.RequestSendTraceFile(_appDataDir, _instanceData.TraceDir, GetType(), handler))
-                {
-                    StartEdiabasThread();
-                    return false;
-                }
-
-                return true;
+                return _activityCommon.RequestSendTraceFile(_appDataDir, _instanceData.TraceDir, GetType(), handler);
             }
             return false;
         }
@@ -1603,13 +1638,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                if (!_activityCommon.SendTraceFile(_appDataDir, _instanceData.TraceDir, GetType(), handler))
-                {
-                    StartEdiabasThread();
-                    return false;
-                }
-
-                return true;
+                return _activityCommon.SendTraceFile(_appDataDir, _instanceData.TraceDir, GetType(), handler);
             }
             return false;
         }
@@ -1636,7 +1665,6 @@ namespace BmwDeepObd
             string errorMessage = _activityCommon.OpenExternalFile(traceFile, (int)ActivityRequest.RequestOpenExternalFile);
             if (errorMessage != null)
             {
-                StartEdiabasThread();
                 if (string.IsNullOrEmpty(traceFile))
                 {
                     return true;
