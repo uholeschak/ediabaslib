@@ -1103,7 +1103,6 @@ namespace BmwDeepObd
         {
             UpdateConnectTime();
 
-            StartEdiabasThread();
             lock (_requestLock)
             {
                 if (_requestQueue.Count > 0)
