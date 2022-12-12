@@ -82,7 +82,8 @@ The application has a configuration menu with the following options:
 	* _Yandex API Key_: For automatic translation with Yantex.Translate a free API Key is required, that allows a limited amount of translations per day. To get this key, a Yandex account is required. This menu provides a GUI that assists in obtaining the API Key.
 	* _Clear translation cache_: To enforce a new translation this menu resets the translation cache.
 * _Trace file_: Selecting this menu entry will open a sub menu with options for trace file handling.
-	* _Send trace file_: Send a trace file from the last vehicle communication.
+	* _Send trace file_: Send the trace file from the last vehicle communication.
+	* _Open trace file_: Open the trace file from the last vehicle communication with an external app that supports zip files.
 	* _Resend trace file_: Resend the last trace file, if sending has failed previously.
 	* _Open last trace file_: Open the last trace file with an external app that supports zip files, if sending has failed previously.
 * _Resend trace file_: Retry sending of the last trace file. Only visible if sending has failed.
