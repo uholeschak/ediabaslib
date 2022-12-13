@@ -680,6 +680,7 @@ namespace BmwDeepObd
         private EthernetCallback _ethernetCallback;
         private readonly TcpClientWithTimeout.NetworkData _networkData;
         private Handler _btUpdateHandler;
+        protected Java.Lang.Runnable _btUpdateRunnable;
         private Timer _usbCheckTimer;
         private int _usbDeviceDetectCount;
         private GlobalBroadcastReceiver _gbcReceiver;
@@ -1185,6 +1186,19 @@ namespace BmwDeepObd
 #pragma warning restore 618
             }
             _btUpdateHandler = new Handler(Looper.MainLooper);
+            _btUpdateRunnable = new Java.Lang.Runnable(() =>
+            {
+                if (_disposed)
+                {
+                    return;
+                }
+                if (_btUpdateHandler == null)
+                {
+                    return;
+                }
+                _bcReceiverUpdateDisplayHandler?.Invoke();
+            });
+
             _maWifi = (WifiManager)context?.ApplicationContext?.GetSystemService(Context.WifiService);
             _maConnectivity = (ConnectivityManager)context?.ApplicationContext?.GetSystemService(Context.ConnectivityService);
             _networkData = new TcpClientWithTimeout.NetworkData(_maConnectivity);
@@ -4163,20 +4177,10 @@ namespace BmwDeepObd
                                 }
                             }
 
-                            if (_bcReceiverUpdateDisplayHandler != null)
+                            if (_bcReceiverUpdateDisplayHandler != null && _btUpdateHandler != null)
                             {   // some device don't send the update event
-                                _btUpdateHandler.PostDelayed(() =>
-                                {
-                                    if (_disposed)
-                                    {
-                                        return;
-                                    }
-                                    if (_btUpdateHandler == null)
-                                    {
-                                        return;
-                                    }
-                                    _bcReceiverUpdateDisplayHandler?.Invoke();
-                                }, 1000);
+                                _btUpdateHandler.RemoveCallbacks(_btUpdateRunnable);
+                                _btUpdateHandler.PostDelayed(_btUpdateRunnable, 1000);
                             }
                         }
                         catch (Exception)
