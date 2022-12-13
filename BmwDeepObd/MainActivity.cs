@@ -866,6 +866,15 @@ namespace BmwDeepObd
             }
         }
 
+        public override void Finish()
+        {
+            base.Finish();
+            if (!ActivityCommon.CommActive && _activityCommon != null)
+            {
+                _activityCommon.BluetoothDisableAtExit();
+            }
+        }
+
         protected override void OnDestroy()
         {
             base.OnDestroy();
