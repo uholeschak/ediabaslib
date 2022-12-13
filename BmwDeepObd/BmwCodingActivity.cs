@@ -182,7 +182,15 @@ namespace BmwDeepObd
             _activityCommon.SetPreferredNetworkInterface();
 
             _startHandler = new Handler(Looper.MainLooper);
-            _startRunnable = new Java.Lang.Runnable(StartHandlerAction);
+            _startRunnable = new Java.Lang.Runnable(() =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                StartEdiabasThread();
+            });
 
             _webViewCoding = FindViewById<WebView>(Resource.Id.webViewCoding);
             try
@@ -1201,16 +1209,6 @@ namespace BmwDeepObd
             {
                 _ediabas.SetConfigProperty("IfhTrace", "0");
             }
-        }
-
-        private void StartHandlerAction()
-        {
-            if (_activityCommon == null)
-            {
-                return;
-            }
-
-            StartEdiabasThread();
         }
 
         private bool StartEdiabasThread()
