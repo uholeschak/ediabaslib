@@ -125,6 +125,7 @@ namespace BmwDeepObd
         private string _appDataDir;
         private string _deviceAddress;
         private Handler _startHandler;
+        private Java.Lang.Runnable _startRunnable;
         private EdiabasNet _ediabas;
         private volatile bool _ediabasJobAbort;
         private Thread _ediabasThread;
@@ -181,6 +182,7 @@ namespace BmwDeepObd
             _activityCommon.SetPreferredNetworkInterface();
 
             _startHandler = new Handler(Looper.MainLooper);
+            _startRunnable = new Java.Lang.Runnable(StartHandlerAction);
 
             _webViewCoding = FindViewById<WebView>(Resource.Id.webViewCoding);
             try
@@ -1131,7 +1133,10 @@ namespace BmwDeepObd
             {
                 if (!IsEdiabasThreadRunning())
                 {
-                    _startHandler?.Post(StartHandlerAction);
+                    if (!_startHandler.HasCallbacks(_startRunnable))
+                    {
+                        _startHandler.Post(_startRunnable);
+                    }
                 }
             }
 
