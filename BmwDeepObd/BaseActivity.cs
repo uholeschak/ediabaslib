@@ -73,6 +73,7 @@ namespace BmwDeepObd
         protected Timer _autoFullScreenTimer;
         protected Timer _memoryCheckTimer;
         protected Handler _longPressHandler;
+        protected Java.Lang.Runnable _longPressRunnable;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -105,6 +106,29 @@ namespace BmwDeepObd
             }
 
             _longPressHandler = new Handler(Looper.MainLooper);
+            _longPressRunnable = new Java.Lang.Runnable(() =>
+                {
+                    if (_actvityDestroyed)
+                    {
+                        return;
+                    }
+
+                    if (SupportActionBar == null)
+                    {
+                        return;
+                    }
+
+                    if (_touchShowTitle && !SupportActionBar.IsShowing)
+                    {
+                        SupportActionBar.Show();
+                        _instanceDataBase.ActionBarVisible = true;
+                        if (!_instanceDataBase.LongClickShown)
+                        {
+                            _instanceDataBase.LongClickShown = true;
+                            Toast.MakeText(this, GetString(Resource.String.long_click_show_title), ToastLength.Short)?.Show();
+                        }
+                    }
+                });
 
             if (_instanceDataBase != null)
             {
@@ -324,37 +348,24 @@ namespace BmwDeepObd
             switch (ev.Action)
             {
                 case MotionEventActions.Up:
-                    _longPressHandler?.RemoveCallbacksAndMessages(null);
+                    if (_longPressHandler == null)
+                    {
+                        break;
+                    }
+
+                    _longPressHandler.RemoveCallbacks(_longPressRunnable);
                     break;
 
                 case MotionEventActions.Down:
-                    _longPressHandler?.RemoveCallbacksAndMessages(null);
+                    if (_longPressHandler == null)
+                    {
+                        break;
+                    }
 
+                    _longPressHandler.RemoveCallbacks(_longPressRunnable);
                     if (ActivityCommon.AutoHideTitleBar || ActivityCommon.SuppressTitleBar)
                     {
-                        _longPressHandler?.PostDelayed(() =>
-                        {
-                            if (_actvityDestroyed)
-                            {
-                                return;
-                            }
-
-                            if (SupportActionBar == null)
-                            {
-                                return;
-                            }
-
-                            if (_touchShowTitle && !SupportActionBar.IsShowing)
-                            {
-                                SupportActionBar.Show();
-                                _instanceDataBase.ActionBarVisible = true;
-                                if (!_instanceDataBase.LongClickShown)
-                                {
-                                    _instanceDataBase.LongClickShown = true;
-                                    Toast.MakeText(this, GetString(Resource.String.long_click_show_title), ToastLength.Short)?.Show();
-                                }
-                            }
-                        }, LongPressTimeout);
+                        _longPressHandler.PostDelayed(_longPressRunnable, LongPressTimeout);
                     }
                     break;
             }
