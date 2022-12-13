@@ -312,6 +312,11 @@ namespace BmwDeepObd
 
         public override bool DispatchTouchEvent(MotionEvent ev)
         {
+            if (_actvityDestroyed)
+            {
+                return base.DispatchTouchEvent(ev);
+            }
+
             _gestureDetector.OnTouchEvent(ev);
 #if DEBUG
             Android.Util.Log.Debug(Tag, string.Format("DispatchTouchEvent: {0}", ev.Action));
@@ -319,17 +324,22 @@ namespace BmwDeepObd
             switch (ev.Action)
             {
                 case MotionEventActions.Up:
-                    _longPressHandler.RemoveCallbacksAndMessages(null);
+                    _longPressHandler?.RemoveCallbacksAndMessages(null);
                     break;
 
                 case MotionEventActions.Down:
-                    _longPressHandler.RemoveCallbacksAndMessages(null);
+                    _longPressHandler?.RemoveCallbacksAndMessages(null);
 
                     if (ActivityCommon.AutoHideTitleBar || ActivityCommon.SuppressTitleBar)
                     {
-                        _longPressHandler.PostDelayed(() =>
+                        _longPressHandler?.PostDelayed(() =>
                         {
                             if (_actvityDestroyed)
+                            {
+                                return;
+                            }
+
+                            if (SupportActionBar == null)
                             {
                                 return;
                             }
