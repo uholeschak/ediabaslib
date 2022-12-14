@@ -462,6 +462,7 @@ namespace BmwDeepObd
         private IMenu _optionsMenu;
         private Timer _autoHideTimer;
         private Handler _updateHandler;
+        private Java.Lang.Runnable _createActionBarRunnable;
         private BackupManager _backupManager;
         private CheckAdapter _checkAdapter;
         private TabLayout _tabLayout;
@@ -576,6 +577,7 @@ namespace BmwDeepObd
             _activityCommon.SetPreferredNetworkInterface();
 
             _updateHandler = new Handler(Looper.MainLooper);
+            _createActionBarRunnable = new Java.Lang.Runnable(CreateActionBarTabs);
             _backupManager = new BackupManager(this);
             _checkAdapter = new CheckAdapter(_activityCommon);
             _imageBackground = FindViewById<ImageView>(Resource.Id.imageBackground);
@@ -611,7 +613,25 @@ namespace BmwDeepObd
             }
         }
 
-        void CreateActionBarTabs()
+        private void PostCreateActionBarTabs()
+        {
+            if (_activityCommon == null)
+            {
+                return;
+            }
+
+            if (_updateHandler == null)
+            {
+                return;
+            }
+
+            if (_updateHandler.HasCallbacks(_createActionBarRunnable))
+            {
+                _updateHandler.Post(_createActionBarRunnable);
+            }
+        }
+
+        private void CreateActionBarTabs()
         {
             if (!_activityActive)
             {
@@ -787,10 +807,12 @@ namespace BmwDeepObd
             {
                 _updateHandler?.Post(CompileCode);
             }
+
             if (_createTabsPending)
             {
-                _updateHandler?.Post(CreateActionBarTabs);
+                PostCreateActionBarTabs();
             }
+
             if (_startAlertDialog == null)
             {
                 HandleStartDialogs(firstStart);
@@ -5452,7 +5474,7 @@ namespace BmwDeepObd
             if (IsCommActive())
             {
                 UpdateJobReaderSettings();
-                _updateHandler?.Post(CreateActionBarTabs);
+                PostCreateActionBarTabs();
                 return;
             }
 
@@ -5537,9 +5559,10 @@ namespace BmwDeepObd
             }
             if (ActivityCommon.JobReader.PageList.Count == 0 && !_instanceData.CheckCpuUsage)
             {
-                _updateHandler?.Post(CreateActionBarTabs);
+                PostCreateActionBarTabs();
                 return;
             }
+
             StoreLastAppState(LastAppState.Compile);
             _compileProgress = new CustomProgressDialog(this);
             _compileProgress.SetMessage(GetString(_instanceData.CheckCpuUsage ? Resource.String.compile_cpu_usage : Resource.String.compile_start));
@@ -5799,7 +5822,9 @@ namespace BmwDeepObd
                     {
                         return;
                     }
-                    _updateHandler?.Post(CreateActionBarTabs);
+
+                    PostCreateActionBarTabs();
+
                     _compileProgress.Dismiss();
                     _compileProgress.Dispose();
                     _compileProgress = null;
@@ -7026,7 +7051,9 @@ namespace BmwDeepObd
             ActivityCommon.JobReader.Clear();
             _instanceData.ConfigFileName = string.Empty;
             StoreSettings();
-            _updateHandler?.Post(CreateActionBarTabs);
+
+            PostCreateActionBarTabs();
+
             UpdateDirectories();
             UpdateOptionsMenu();
             UpdateDisplay();
