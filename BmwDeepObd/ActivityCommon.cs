@@ -680,7 +680,7 @@ namespace BmwDeepObd
         private EthernetCallback _ethernetCallback;
         private readonly TcpClientWithTimeout.NetworkData _networkData;
         private Handler _btUpdateHandler;
-        protected Java.Lang.Runnable _btUpdateRunnable;
+        private Java.Lang.Runnable _btUpdateRunnable;
         private Timer _usbCheckTimer;
         private int _usbDeviceDetectCount;
         private GlobalBroadcastReceiver _gbcReceiver;
