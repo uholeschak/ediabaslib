@@ -463,6 +463,7 @@ namespace BmwDeepObd
         private Timer _autoHideTimer;
         private Handler _updateHandler;
         private Java.Lang.Runnable _createActionBarRunnable;
+        private Java.Lang.Runnable _compileCodeRunnable;
         private BackupManager _backupManager;
         private CheckAdapter _checkAdapter;
         private TabLayout _tabLayout;
@@ -578,6 +579,7 @@ namespace BmwDeepObd
 
             _updateHandler = new Handler(Looper.MainLooper);
             _createActionBarRunnable = new Java.Lang.Runnable(CreateActionBarTabs);
+            _compileCodeRunnable = new Java.Lang.Runnable(CompileCode);
             _backupManager = new BackupManager(this);
             _checkAdapter = new CheckAdapter(_activityCommon);
             _imageBackground = FindViewById<ImageView>(Resource.Id.imageBackground);
@@ -805,7 +807,7 @@ namespace BmwDeepObd
             UpdateLockState();
             if (_compileCodePending)
             {
-                _updateHandler?.Post(CompileCode);
+                PostCompileCode();
             }
 
             if (_createTabsPending)
@@ -5516,7 +5518,8 @@ namespace BmwDeepObd
             {
                 RequestConfigSelect();
             }
-            CompileCode();
+
+            PostCompileCode();
         }
 
         private void UpdateJobReaderSettings()
@@ -5538,7 +5541,25 @@ namespace BmwDeepObd
         private void VerifyEcuMd5()
         {
             _instanceData.VerifyEcuMd5 = true;
-            _updateHandler?.Post(CompileCode);
+            PostCompileCode();
+        }
+
+        private void PostCompileCode()
+        {
+            if (_activityCommon == null)
+            {
+                return;
+            }
+
+            if (_updateHandler == null)
+            {
+                return;
+            }
+
+            if (!_updateHandler.HasCallbacks(_compileCodeRunnable))
+            {
+                _updateHandler.Post(_compileCodeRunnable);
+            }
         }
 
         private void CompileCode()
