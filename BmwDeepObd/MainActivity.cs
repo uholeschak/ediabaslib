@@ -625,7 +625,7 @@ namespace BmwDeepObd
                 return;
             }
 
-            if (_updateHandler.HasCallbacks(_createActionBarRunnable))
+            if (!_updateHandler.HasCallbacks(_createActionBarRunnable))
             {
                 _updateHandler.Post(_createActionBarRunnable);
             }
