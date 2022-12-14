@@ -464,6 +464,8 @@ namespace BmwDeepObd
         private Handler _updateHandler;
         private Java.Lang.Runnable _createActionBarRunnable;
         private Java.Lang.Runnable _compileCodeRunnable;
+        private Java.Lang.Runnable _updateDisplayRunnable;
+        private Java.Lang.Runnable _updateDisplayForceRunnable;
         private BackupManager _backupManager;
         private CheckAdapter _checkAdapter;
         private TabLayout _tabLayout;
@@ -580,6 +582,16 @@ namespace BmwDeepObd
             _updateHandler = new Handler(Looper.MainLooper);
             _createActionBarRunnable = new Java.Lang.Runnable(CreateActionBarTabs);
             _compileCodeRunnable = new Java.Lang.Runnable(CompileCode);
+            _updateDisplayRunnable = new Java.Lang.Runnable(() =>
+            {
+                UpdateDisplay();
+            });
+
+            _updateDisplayForceRunnable = new Java.Lang.Runnable(() =>
+            {
+                UpdateDisplay(true);
+            });
+
             _backupManager = new BackupManager(this);
             _checkAdapter = new CheckAdapter(_activityCommon);
             _imageBackground = FindViewById<ImageView>(Resource.Id.imageBackground);
@@ -994,8 +1006,7 @@ namespace BmwDeepObd
         public override void OnConfigurationChanged(Configuration newConfig)
         {
             base.OnConfigurationChanged(newConfig);
-
-            _updateHandler?.Post(() => { UpdateDisplay(true); });
+            PostUpdateDisplay(true);
         }
 
         protected override void OnNewIntent(Intent intent)
@@ -4011,6 +4022,33 @@ namespace BmwDeepObd
             return true;
         }
 
+        private void PostUpdateDisplay(bool force = false)
+        {
+            if (_activityCommon == null)
+            {
+                return;
+            }
+
+            if (_updateHandler == null)
+            {
+                return;
+            }
+
+            if (force)
+            {
+                if (!_updateHandler.HasCallbacks(_updateDisplayForceRunnable))
+                {
+                    _updateHandler.Post(_updateDisplayForceRunnable);
+                }
+                return;
+            }
+
+            if (!_updateHandler.HasCallbacks(_updateDisplayRunnable))
+            {
+                _updateHandler.Post(_updateDisplayRunnable);
+            }
+        }
+
         private void UpdateDisplay(bool forceUpdate = false)
         {
             if (!_activityActive || (_activityCommon == null))
@@ -4283,7 +4321,7 @@ namespace BmwDeepObd
                                     bool commActive = ActivityCommon.CommActive && ActivityCommon.EdiabasThread.CommActive;
                                     if (!commActive)
                                     {
-                                        _updateHandler?.Post(() => { UpdateDisplay(); });
+                                        PostUpdateDisplay();
                                         return;
                                     }
 
@@ -4685,7 +4723,7 @@ namespace BmwDeepObd
                                 _translateActive = false;
                                 _translatedList = transList;
                                 UpdateOptionsMenu();
-                                _updateHandler?.Post(() => { UpdateDisplay(); });
+                                PostUpdateDisplay();
                             });
                         }))
                         {
