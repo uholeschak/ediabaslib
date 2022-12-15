@@ -7761,10 +7761,7 @@ namespace BmwDeepObd
                             }
                         }
                     }
-                    activityMain._updateHandler?.Post(() =>
-                    {
-                        activityMain.UpdateDisplay();
-                    });
+                    activityMain.PostUpdateDisplay();
                 }
 
                 _view = view;
