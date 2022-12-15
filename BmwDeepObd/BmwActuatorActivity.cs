@@ -69,7 +69,6 @@ namespace BmwDeepObd
         private Button _buttonBmwActuatorExecuteContinuous;
         private Button _buttonBmwActuatorStop;
         private ActivityCommon _activityCommon;
-        private Handler _updateHandler;
         private XmlToolActivity.EcuInfo _ecuInfo;
         private EdiabasNet _ediabas;
         private Thread _jobThread;
@@ -112,7 +111,6 @@ namespace BmwDeepObd
             {
 
             }, BroadcastReceived);
-            _updateHandler = new Handler(Looper.MainLooper);
 
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
             _traceDir = Intent.GetStringExtra(ExtraTraceDir);
@@ -249,20 +247,6 @@ namespace BmwDeepObd
             EdiabasClose();
             _activityCommon?.Dispose();
             _activityCommon = null;
-
-            if (_updateHandler != null)
-            {
-                try
-                {
-                    _updateHandler.RemoveCallbacksAndMessages(null);
-                    _updateHandler.Dispose();
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-                _updateHandler = null;
-            }
         }
 
         public override void OnBackPressedEvent()
