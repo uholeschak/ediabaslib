@@ -241,6 +241,11 @@ namespace BmwDeepObd
 
         private void ThreadTerminated(object sender, EventArgs e)
         {
+            PostStopEdiabasThread();
+        }
+
+        private void PostStopEdiabasThread()
+        {
             if (_stopHandler == null)
             {
                 return;
