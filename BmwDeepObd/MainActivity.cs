@@ -466,6 +466,8 @@ namespace BmwDeepObd
         private Java.Lang.Runnable _compileCodeRunnable;
         private Java.Lang.Runnable _updateDisplayRunnable;
         private Java.Lang.Runnable _updateDisplayForceRunnable;
+        private Java.Lang.Runnable _selectTabPageRunnable;
+        private int _selectTabPageIndex;
         private BackupManager _backupManager;
         private CheckAdapter _checkAdapter;
         private TabLayout _tabLayout;
@@ -592,6 +594,29 @@ namespace BmwDeepObd
                 UpdateDisplay(true);
             });
 
+            _selectTabPageRunnable = new Java.Lang.Runnable(() =>
+            {
+                if (!_activityActive)
+                {
+                    return;
+                }
+
+                try
+                {
+                    if (_selectTabPageIndex  < 0 || _selectTabPageIndex >= _tabLayout.TabCount)
+                    {
+                        return;
+                    }
+
+                    _tabLayout.GetTabAt(_selectTabPageIndex)?.Select();
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            });
+
+
             _backupManager = new BackupManager(this);
             _checkAdapter = new CheckAdapter(_activityCommon);
             _imageBackground = FindViewById<ImageView>(Resource.Id.imageBackground);
@@ -624,6 +649,15 @@ namespace BmwDeepObd
                 {
                     ActivityCommon.BtInitiallyEnabled = _activityCommon.IsBluetoothEnabled();
                 }
+            }
+        }
+
+        private void PostSelectTabPage(int pageIndex)
+        {
+            _selectTabPageIndex = pageIndex;
+            if (!_updateHandler.HasCallbacks(_selectTabPageRunnable))
+            {
+                _updateHandler.Post(_selectTabPageRunnable);
             }
         }
 
@@ -710,15 +744,7 @@ namespace BmwDeepObd
                     pageIndex = 0;
                 }
 
-                _updateHandler?.Post(() =>
-                {
-                    if (!_activityActive)
-                    {
-                        return;
-                    }
-
-                    _tabLayout.GetTabAt(pageIndex)?.Select();
-                });
+                PostSelectTabPage(pageIndex);
             }
 
             _ignoreTabsChange = false;
