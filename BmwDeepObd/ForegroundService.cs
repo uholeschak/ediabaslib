@@ -28,6 +28,7 @@ namespace BmwDeepObd
         private bool _isStarted;
         private ActivityCommon _activityCommon;
         private Handler _stopHandler;
+        private Java.Lang.Runnable _stopRunnable;
 
         public ActivityCommon ActivityCommon => _activityCommon;
 
@@ -38,6 +39,7 @@ namespace BmwDeepObd
             Android.Util.Log.Info(Tag, "OnCreate: the service is initializing.");
 #endif
             _stopHandler = new Handler(Looper.MainLooper);
+            _stopRunnable = new Java.Lang.Runnable(StopEdiabasThread);
             _activityCommon = new ActivityCommon(this, null, BroadcastReceived);
             _activityCommon.SetLock(ActivityCommon.LockType.Cpu);
 
@@ -239,7 +241,15 @@ namespace BmwDeepObd
 
         private void ThreadTerminated(object sender, EventArgs e)
         {
-            _stopHandler?.Post(StopEdiabasThread);
+            if (_stopHandler == null)
+            {
+                return;
+            }
+
+            if (!_stopHandler.HasCallbacks(_stopRunnable))
+            {
+                _stopHandler.Post(_stopRunnable);
+            }
         }
 
         private void StopEdiabasThread()
