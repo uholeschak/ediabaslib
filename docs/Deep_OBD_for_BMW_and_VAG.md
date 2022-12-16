@@ -108,7 +108,8 @@ It's possible to replace the background image. Simply store a custom _Background
 
 ## Visual Studio Settings fpr Compilation
 Visual Studio Android settings.  
-It's recommended to install and configure Android Studio before and then use a common configuration.
+It's recommended to install and configure Android Studio before and then use a common configuration.  
+Update the components ind Android Studio only.
 * Java SDK location: `C:\Program Files\Java\jdk-11.0.12`
 * Android SDK location: `C:\Users\<user>\AppData\Local\Android\android-sdk`
 * Archive location: `C:\Users\<user>\AppData\Local\Xamarin\Mono for Android\Archives`
