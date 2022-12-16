@@ -466,8 +466,7 @@ namespace BmwDeepObd
         private Java.Lang.Runnable _compileCodeRunnable;
         private Java.Lang.Runnable _updateDisplayRunnable;
         private Java.Lang.Runnable _updateDisplayForceRunnable;
-        private Java.Lang.Runnable _selectTabPageRunnable;
-        private int _selectTabPageIndex;
+        private SelectTabPageRunnable _selectTabPageRunnable;
         private BackupManager _backupManager;
         private CheckAdapter _checkAdapter;
         private TabLayout _tabLayout;
@@ -594,28 +593,7 @@ namespace BmwDeepObd
                 UpdateDisplay(true);
             });
 
-            _selectTabPageRunnable = new Java.Lang.Runnable(() =>
-            {
-                if (!_activityActive)
-                {
-                    return;
-                }
-
-                try
-                {
-                    if (_selectTabPageIndex  < 0 || _selectTabPageIndex >= _tabLayout.TabCount)
-                    {
-                        return;
-                    }
-
-                    _tabLayout.GetTabAt(_selectTabPageIndex)?.Select();
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-            });
-
+            _selectTabPageRunnable = new SelectTabPageRunnable(this);
 
             _backupManager = new BackupManager(this);
             _checkAdapter = new CheckAdapter(_activityCommon);
@@ -654,7 +632,7 @@ namespace BmwDeepObd
 
         private void PostSelectTabPage(int pageIndex)
         {
-            _selectTabPageIndex = pageIndex;
+            _selectTabPageRunnable.SelectTabPageIndex = pageIndex;
             if (!_updateHandler.HasCallbacks(_selectTabPageRunnable))
             {
                 _updateHandler.Post(_selectTabPageRunnable);
@@ -7825,6 +7803,47 @@ namespace BmwDeepObd
                 }
 
                 _view = null;
+            }
+        }
+
+        public class SelectTabPageRunnable : Java.Lang.Object, Java.Lang.IRunnable
+        {
+            private ActivityMain _activityMain;
+            public int SelectTabPageIndex { get; set; }
+
+            public SelectTabPageRunnable(ActivityMain activityMain)
+            {
+                _activityMain = activityMain;
+                SelectTabPageIndex = -1;
+            }
+
+            public void Run()
+            {
+                try
+                {
+                    if (!_activityMain._activityActive)
+                    {
+                        return;
+                    }
+
+                    TabLayout tabLayout = _activityMain._tabLayout;
+                    if (tabLayout == null)
+                    {
+                        return;
+                    }
+
+                    int selectTabPageIndex = SelectTabPageIndex;
+                    if (selectTabPageIndex < 0 || selectTabPageIndex >= tabLayout.TabCount)
+                    {
+                        return;
+                    }
+
+                    tabLayout.GetTabAt(selectTabPageIndex)?.Select();
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
             }
         }
 
