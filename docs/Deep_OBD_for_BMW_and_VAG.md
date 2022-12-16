@@ -105,3 +105,13 @@ The sending of the trace files failes, the backup trace files are stored in the 
 
 ## Background image
 It's possible to replace the background image. Simply store a custom _Background.jpg_ file in the directory _de.holeschak.bmw_deep_obd\files\Images_ (The _Images_ subdirectory has to be created first).
+
+## Visual Studio Settings fpr Compilation
+Visual Studio Android settings (It's recommended to install and configure Android Studio before):
+* Java SDK location: `C:\Program Files\Java\jdk-11.0.12`
+* Android SDK location: `C:\Users\<user>\AppData\Local\Android\android-sdk`
+* Archive location: `C:\Users\<user>\AppData\Local\Xamarin\Mono for Android\Archives`
+* Activate option: Keep application cache
+* Activate option: Install Android SDK automatically
+* Deactivate option: Use AndroidX migrator
+* Extra -> Android -> Android SDK Manager: Enable Repository complete list (if Android Studio is installed)
