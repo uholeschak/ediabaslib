@@ -415,6 +415,10 @@
                         {
                             ecuReset = true;
                         }
+                        else if (channelsOffCount == 3)
+                        {
+                            errorReset = true;
+                        }
 
                         // set channel state
                         ediabas.ArgString = "ARG;STEUERN_DIGITALSIGNALE;0x02;4;0xC3";
