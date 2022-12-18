@@ -286,6 +286,7 @@
             // folderBrowserDialog
             // 
             this.folderBrowserDialog.Description = "Select response root folder";
+            this.folderBrowserDialog.RootFolder = System.Environment.SpecialFolder.MyComputer;
             this.folderBrowserDialog.ShowNewFolderButton = false;
             // 
             // buttonRootFolder
