@@ -95,6 +95,7 @@ namespace PsdzClient
             // folderBrowserDialogIsta
             // 
             this.folderBrowserDialogIsta.RootFolder = System.Environment.SpecialFolder.MyComputer;
+            this.folderBrowserDialogIsta.ShowNewFolderButton = false;
             // 
             // buttonIstaFolder
             // 
