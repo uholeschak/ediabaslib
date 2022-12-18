@@ -92,6 +92,10 @@ namespace PsdzClient
             this.buttonAbort.UseVisualStyleBackColor = true;
             this.buttonAbort.Click += new System.EventHandler(this.buttonAbort_Click);
             // 
+            // folderBrowserDialogIsta
+            // 
+            this.folderBrowserDialogIsta.RootFolder = System.Environment.SpecialFolder.MyComputer;
+            // 
             // buttonIstaFolder
             // 
             this.buttonIstaFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
