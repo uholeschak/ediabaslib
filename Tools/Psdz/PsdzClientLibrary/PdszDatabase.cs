@@ -1400,7 +1400,19 @@ namespace PsdzClient
 
         public PdszDatabase(string istaFolder)
         {
+            if (!Directory.Exists(istaFolder))
+            {
+                log.ErrorFormat("PdszDatabase: ISTA path not existing: {0}", istaFolder);
+                throw new Exception(string.Format("ISTA path not existing: {0}", istaFolder));
+            }
+
             _databasePath = Path.Combine(istaFolder, "SQLiteDBs");
+            if (!Directory.Exists(_databasePath))
+            {
+                log.ErrorFormat("PdszDatabase: ISTA database path not existing: {0}", _databasePath);
+                throw new Exception(string.Format("ISTA database path not existing: {0}", _databasePath));
+            }
+
             _databaseExtractPath = Path.Combine(_databasePath, "Extract");
             if (!Directory.Exists(_databaseExtractPath))
             {
@@ -1415,6 +1427,12 @@ namespace PsdzClient
             }
 
             _testModulePath = Path.Combine(istaFolder, "Testmodule");
+            if (!Directory.Exists(_testModulePath))
+            {
+                log.ErrorFormat("PdszDatabase: ISTA testmodule path not existing: {0}", _testModulePath);
+                throw new Exception(string.Format("ISTA testmodule path not existing: {0}", _testModulePath));
+            }
+
             _frameworkPath = Path.Combine(istaFolder, "TesterGUI", "bin","ReleaseMod");
             if (!Directory.Exists(_frameworkPath))
             {
@@ -1423,12 +1441,11 @@ namespace PsdzClient
 
             if (!Directory.Exists(_frameworkPath))
             {
-                log.ErrorFormat("PdszDatabase: Framework path not existing: {0}", _frameworkPath);
+                log.ErrorFormat("PdszDatabase: ISTA framework path not existing: {0}", _frameworkPath);
+                throw new Exception(string.Format("ISTA framework path not existing: {0}", _frameworkPath));
             }
-            else
-            {
-                log.InfoFormat("PdszDatabase: Framework path: {0}", _frameworkPath);
-            }
+
+            log.InfoFormat("PdszDatabase: ISTA framework path: {0}", _frameworkPath);
 
             string databaseFile = Path.Combine(_databasePath, "DiagDocDb.sqlite");
             string connection = "Data Source=\"" + databaseFile + "\";";
