@@ -529,8 +529,8 @@ namespace CarSimulator
             checkBoxMoving.Enabled = !testing;
             checkBoxVariableValues.Enabled = !testing;
             checkBoxIgnitionOk.Enabled = !testing;
-            checkBoxAdsAdapter.Enabled = !testing;
-            checkBoxKLineResponder.Enabled = !testing;
+            checkBoxAdsAdapter.Enabled = !connected && !testing;
+            checkBoxKLineResponder.Enabled = !connected && !testing;
             checkBoxBtNameStd.Enabled = !connected && !testing;
             if (connected)
             {
