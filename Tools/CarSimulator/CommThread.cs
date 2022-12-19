@@ -1123,6 +1123,12 @@ namespace CarSimulator
 
             if (_pcanHandle != PCANBasic.PCAN_NONEBUS)
             {
+                UInt32 iEventBuffer = (UInt32)new IntPtr(-1);   // invalid handle
+                TPCANStatus stsResult = PCANBasic.SetValue(_pcanHandle, TPCANParameter.PCAN_RECEIVE_EVENT, ref iEventBuffer, sizeof(UInt32));
+                if (stsResult != TPCANStatus.PCAN_ERROR_OK)
+                {
+                    Debug.WriteLine("Removing CAN handle failed");
+                }
                 PCANBasic.Uninitialize(_pcanHandle);
                 _pcanHandle = PCANBasic.PCAN_NONEBUS;
             }
