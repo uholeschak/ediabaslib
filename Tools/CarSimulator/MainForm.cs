@@ -61,6 +61,7 @@ namespace CarSimulator
             UpdatePorts();
             timerUpdate.Enabled = true;
             UpdateDisplay();
+            UpdateCommThreadConfig();
         }
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -532,12 +533,13 @@ namespace CarSimulator
             checkBoxAdsAdapter.Enabled = !connected && !testing;
             checkBoxKLineResponder.Enabled = !connected && !testing;
             checkBoxBtNameStd.Enabled = !connected && !testing;
-            if (connected)
-            {
-                _commThread.Moving = checkBoxMoving.Checked;
-                _commThread.VariableValues = checkBoxVariableValues.Checked;
-                _commThread.IgnitionOk = checkBoxIgnitionOk.Checked;
-            }
+        }
+
+        private void UpdateCommThreadConfig()
+        {
+            _commThread.Moving = checkBoxMoving.Checked;
+            _commThread.VariableValues = checkBoxVariableValues.Checked;
+            _commThread.IgnitionOk = checkBoxIgnitionOk.Checked;
         }
 
         private void buttonConnect_Click(object sender, EventArgs e)
@@ -548,9 +550,12 @@ namespace CarSimulator
             }
             else
             {
-                if (listPorts.SelectedIndex < 0) return;
-                string selectedPort = listPorts.SelectedItem.ToString();
+                if (listPorts.SelectedIndex < 0)
+                {
+                    return;
+                }
 
+                string selectedPort = listPorts.SelectedItem.ToString();
                 CommThread.ConceptType conceptType = CommThread.ConceptType.ConceptBwmFast;
                 if (radioButtonKwp2000Bmw.Checked) conceptType = CommThread.ConceptType.ConceptKwp2000Bmw;
                 if (radioButtonKwp2000S.Checked) conceptType = CommThread.ConceptType.ConceptKwp2000S;
@@ -596,6 +601,7 @@ namespace CarSimulator
                     MessageBox.Show("Reading response file failed!");
                 }
 
+                UpdateCommThreadConfig();
                 _commThread.StartThread(selectedPort, conceptType, checkBoxAdsAdapter.Checked, checkBoxKLineResponder.Checked, responseType, _configData);
             }
 
@@ -615,17 +621,17 @@ namespace CarSimulator
 
         private void checkBoxMoving_CheckedChanged(object sender, EventArgs e)
         {
-            UpdateDisplay();
+            UpdateCommThreadConfig();
         }
 
         private void checkBoxIgnitionOk_CheckedChanged(object sender, EventArgs e)
         {
-            UpdateDisplay();
+            UpdateCommThreadConfig();
         }
 
         private void checkBoxVariableValues_CheckedChanged(object sender, EventArgs e)
         {
-            UpdateDisplay();
+            UpdateCommThreadConfig();
         }
 
         private void buttonErrorReset_Click(object sender, EventArgs e)
