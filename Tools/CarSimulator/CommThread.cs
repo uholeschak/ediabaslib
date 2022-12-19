@@ -8224,6 +8224,27 @@ namespace CarSimulator
                 ObdSend(_sendData, bmwTcpClientData);
             }
             else if (
+                _receiveData[0] == 0x83 &&
+                _receiveData[1] == 0x76 &&
+                _receiveData[2] == 0xF1 &&
+                _receiveData[3] == 0x22 &&
+                _receiveData[4] == 0xDA &&
+                _receiveData[5] == 0xD8)
+            {   // read voltage
+                int i = 0;
+                _sendData[i++] = 0x85;
+                _sendData[i++] = 0xF1;
+                _sendData[i++] = _receiveData[1];
+                _sendData[i++] = 0x62;
+                _sendData[i++] = _receiveData[4];
+                _sendData[i++] = _receiveData[5];
+
+                int value = _batteryVoltage / 10;
+                _sendData[i++] = (byte)(value >> 8);
+                _sendData[i++] = (byte)value;
+                ObdSend(_sendData, bmwTcpClientData);
+            }
+            else if (
                 _receiveData[0] >= 0x86 &&
                 _receiveData[1] == 0x76 &&
                 _receiveData[2] == 0xF1 &&
