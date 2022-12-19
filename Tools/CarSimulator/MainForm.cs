@@ -623,6 +623,11 @@ namespace CarSimulator
             UpdateDisplay();
         }
 
+        private void checkBoxVariableValues_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateDisplay();
+        }
+
         private void buttonErrorReset_Click(object sender, EventArgs e)
         {
             _commThread.ErrorDefault = true;
@@ -721,6 +726,7 @@ namespace CarSimulator
             checkBoxBtNameStd.Checked = true;
             checkBoxIgnitionOk.Checked = true;
             checkBoxKLineResponder.Checked = true;
+            UpdateDisplay();
         }
     }
 }

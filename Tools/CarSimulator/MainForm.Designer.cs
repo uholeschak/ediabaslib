@@ -106,6 +106,7 @@
             this.checkBoxVariableValues.TabIndex = 7;
             this.checkBoxVariableValues.Text = "Variable values";
             this.checkBoxVariableValues.UseVisualStyleBackColor = true;
+            this.checkBoxVariableValues.CheckedChanged += new System.EventHandler(this.checkBoxVariableValues_CheckedChanged);
             // 
             // radioButtonBmwFast
             // 
