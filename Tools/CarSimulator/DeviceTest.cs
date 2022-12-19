@@ -282,6 +282,7 @@ namespace CarSimulator
             });
             _workerThread.Priority = ThreadPriority.Normal;
             _workerThread.Start();
+            _form.UpdateTestStatusText();
 
             return true;
         }

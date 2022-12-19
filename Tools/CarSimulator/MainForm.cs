@@ -514,9 +514,9 @@ namespace CarSimulator
 
         private void UpdateDisplay()
         {
-            bool connected = _commThread.ThreadRunning();
-            bool testing = _deviceTest.TestActive;
-            bool testAborted = _deviceTest.AbortTest;
+            bool connected = _commThread != null && _commThread.ThreadRunning();
+            bool testing = _deviceTest != null && _deviceTest.TestActive;
+            bool testAborted = _deviceTest != null && _deviceTest.AbortTest;
             textBoxEcuFolder.Text = _ecuFolder;
             buttonConnect.Text = connected && !testing ? "Disconnect" : "Connect";
             buttonConnect.Enabled = !testing;
@@ -701,7 +701,6 @@ namespace CarSimulator
             string selectedPort = listPorts.SelectedItem.ToString();
             string btDeviceName = checkBoxBtNameStd.Checked ? DeviceTest.DefaultBtNameStd : DeviceTest.DefaultBtName;
             _deviceTest.ExecuteTest(sender == buttonDeviceTestWifi, selectedPort, btDeviceName);
-            UpdateDisplay();
         }
 
         private void buttonAbortTest_Click(object sender, EventArgs e)
