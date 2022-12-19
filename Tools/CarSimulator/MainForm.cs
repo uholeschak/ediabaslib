@@ -95,8 +95,12 @@ namespace CarSimulator
                 return;
             }
             // ReSharper disable once ConstantNullCoalescingCondition
-            string[] ports = SerialPort.GetPortNames() ?? new string[0];
-            if (_lastPortCount == ports.Length) return;
+            string[] ports = SerialPort.GetPortNames() ?? Array.Empty<string>();
+            if (_lastPortCount == ports.Length)
+            {
+                return;
+            }
+
             listPorts.BeginUpdate();
             listPorts.Items.Clear();
             int index = listPorts.Items.Add("ENET");
@@ -120,6 +124,7 @@ namespace CarSimulator
             {
                 // ignored
             }
+
             listPorts.SelectedIndex = indexEnet;
             listPorts.EndUpdate();
 
@@ -600,7 +605,7 @@ namespace CarSimulator
         private void timerUpdate_Tick(object sender, EventArgs e)
         {
             UpdatePorts();
-            UpdateDisplay();
+            //UpdateDisplay();
             if (_closeRequest && !_deviceTest.TestActive)
             {
                 _closeRequest = false;
@@ -690,8 +695,8 @@ namespace CarSimulator
         {
             string selectedPort = listPorts.SelectedItem.ToString();
             string btDeviceName = checkBoxBtNameStd.Checked ? DeviceTest.DefaultBtNameStd : DeviceTest.DefaultBtName;
-            UpdateDisplay();
             _deviceTest.ExecuteTest(sender == buttonDeviceTestWifi, selectedPort, btDeviceName);
+            UpdateDisplay();
         }
 
         private void buttonAbortTest_Click(object sender, EventArgs e)
