@@ -18,7 +18,7 @@ namespace CarSimulator
         private string _rootFolder;
         private string _ecuFolder;
         private string _responseDir;
-        private readonly CommThread _commThread;
+        private CommThread _commThread;
         private int _lastPortCount;
         private readonly CommThread.ConfigData _configData;
         private EdiabasNet _ediabas;
@@ -84,6 +84,13 @@ namespace CarSimulator
                 _ediabas.Dispose();
                 _ediabas = null;
             }
+
+            if (_commThread != null)
+            {
+                _commThread.Dispose();
+                _commThread = null;
+            }
+
             Properties.Settings.Default.RootFolder = _rootFolder;
             Properties.Settings.Default.EcuFolder = _ecuFolder;
             Properties.Settings.Default.Save();
