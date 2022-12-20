@@ -321,7 +321,7 @@ namespace CarSimulator
         private readonly SerialPort _serialPort;
         private readonly AutoResetEvent _serialReceiveEvent;
         private readonly AutoResetEvent _pcanReceiveEvent;
-        private Random random = new Random();
+        private Random _random = new Random();
         private readonly Object _networkChangeLock = new Object();
         private readonly byte[] _sendData;
         private readonly byte[] _receiveData;
@@ -762,7 +762,6 @@ namespace CarSimulator
             _icomIdentBroadcastCount = 0;
             _timeIcomIdentBroadcast = new Stopwatch();
             _serialPort = new SerialPort();
-            _serialPort.DataReceived += SerialDataReceived;
             _serialReceiveEvent = new AutoResetEvent(false);
             _pcanReceiveEvent = new AutoResetEvent(false);
             _sendData = new byte[MaxBufferLength];
@@ -1061,6 +1060,10 @@ namespace CarSimulator
                 _serialPort.DtrEnable = false;
                 _serialPort.RtsEnable = false;
                 _serialPort.Open();
+                if (_serialPort.IsOpen)
+                {
+                    _serialPort.DataReceived += SerialDataReceived;
+                }
             }
             catch (Exception)
             {
@@ -1136,6 +1139,7 @@ namespace CarSimulator
             {
                 if (_serialPort.IsOpen)
                 {
+                    _serialPort.DataReceived -= SerialDataReceived;
                     _serialPort.Close();
                 }
             }
@@ -2072,7 +2076,7 @@ namespace CarSimulator
                 response.Add(0x00);     // Hops
 
                 byte[] transId = new byte[4];
-                random.NextBytes(transId);
+                _random.NextBytes(transId);
                 response.AddRange(transId); // Transaction ID
 
                 response.Add(0x00);     // Seconds
