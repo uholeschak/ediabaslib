@@ -539,6 +539,7 @@ namespace CarSimulator
             checkBoxAdsAdapter.Enabled = !connected && !testing;
             checkBoxKLineResponder.Enabled = !connected && !testing;
             checkBoxBtNameStd.Enabled = !connected && !testing;
+            groupBoxConcepts.Enabled = !connected && !testing;
         }
 
         private void UpdateCommThreadConfig()
@@ -643,6 +644,7 @@ namespace CarSimulator
         private void buttonErrorReset_Click(object sender, EventArgs e)
         {
             _commThread.ErrorDefault = true;
+            UpdateDisplay();
         }
 
         private void treeViewDirectories_AfterSelect(object sender, TreeViewEventArgs e)
