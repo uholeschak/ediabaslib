@@ -1193,12 +1193,13 @@ namespace CarSimulator
 
         private void SrvLocConnect()
         {
-            return;
+#if false
             // a virtual network adapter with an auto ip address
             // is required tp receive the UPD broadcasts
             _srvLocError = false;
             _srvLocClient = new UdpClient(SrvLocPort);
             StartSrvLocListen();
+#endif
         }
 
         private void SrvLocDisconnect()
