@@ -1166,6 +1166,7 @@ namespace CarSimulator
                 if (_udpClient != null)
                 {
                     _udpClient.Close();
+                    _udpClient.Dispose();
                     _udpClient = null;
                 }
             }
@@ -1209,6 +1210,7 @@ namespace CarSimulator
                 if (_srvLocClient != null)
                 {
                     _srvLocClient.Close();
+                    _srvLocClient.Dispose();
                     _srvLocClient = null;
                 }
             }
@@ -9903,6 +9905,7 @@ namespace CarSimulator
                     Disconnect();
                     _serialReceiveEvent?.Dispose();
                     _pcanReceiveEvent?.Dispose();
+                    _serialPort?.Dispose();
                 }
 
                 // Note disposing has been done.
