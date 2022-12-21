@@ -524,22 +524,23 @@ namespace CarSimulator
             bool connected = _commThread != null && _commThread.ThreadRunning();
             bool testing = _deviceTest != null && _deviceTest.TestActive;
             bool testAborted = _deviceTest != null && _deviceTest.AbortTest;
+            bool active = connected || testing; 
             textBoxEcuFolder.Text = _ecuFolder;
             buttonConnect.Text = connected && !testing ? "Disconnect" : "Connect";
             buttonConnect.Enabled = !testing;
             buttonErrorDefault.Enabled = !testing;
-            buttonDeviceTestBt.Enabled = !connected && !testing;
-            buttonDeviceTestWifi.Enabled = !connected && !testing;
+            buttonDeviceTestBt.Enabled = !active;
+            buttonDeviceTestWifi.Enabled = !active;
             buttonAbortTest.Enabled = testing && !testAborted;
-            buttonEcuFolder.Enabled = !connected && !testing;
-            buttonRootFolder.Enabled = !connected && !testing;
+            buttonEcuFolder.Enabled = !active;
+            buttonRootFolder.Enabled = !active;
             checkBoxMoving.Enabled = !testing;
             checkBoxVariableValues.Enabled = !testing;
             checkBoxIgnitionOk.Enabled = !testing;
-            checkBoxAdsAdapter.Enabled = !connected && !testing;
-            checkBoxKLineResponder.Enabled = !connected && !testing;
-            checkBoxBtNameStd.Enabled = !connected && !testing;
-            groupBoxConcepts.Enabled = !connected && !testing;
+            checkBoxAdsAdapter.Enabled = !active;
+            checkBoxKLineResponder.Enabled = !active;
+            checkBoxBtNameStd.Enabled = !active;
+            groupBoxConcepts.Enabled = !active;
         }
 
         private void UpdateCommThreadConfig()
