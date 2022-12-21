@@ -66,8 +66,10 @@ namespace CarSimulator
 
                 bco.DiscoverDevicesComplete += (sender, args) =>
                 {
+                    BluetoothComponent bcoLocal = args.UserState as BluetoothComponent;
                     _searching = false;
                     UpdateButtonStatus();
+                    bcoLocal?.Dispose();
                     BeginInvoke((Action)(() =>
                     {
                         if (args.Error == null && !args.Cancelled)
@@ -89,6 +91,7 @@ namespace CarSimulator
                         }
                     }));
                 };
+
                 bco.DiscoverDevicesAsync(1000, true, false, true, IsWinVistaOrHigher(), bco);
                 _searching = true;
                 UpdateStatusText("Searching ...");
