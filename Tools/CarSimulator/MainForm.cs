@@ -66,7 +66,12 @@ namespace CarSimulator
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            _commThread.StopThread();
+            if (_commThread != null)
+            {
+                _commThread.Dispose();
+                _commThread = null;
+            }
+
             if (_deviceTest != null)
             {
                 _deviceTest.Dispose();
@@ -83,12 +88,6 @@ namespace CarSimulator
             {
                 _ediabas.Dispose();
                 _ediabas = null;
-            }
-
-            if (_commThread != null)
-            {
-                _commThread.Dispose();
-                _commThread = null;
             }
 
             Properties.Settings.Default.RootFolder = _rootFolder;
