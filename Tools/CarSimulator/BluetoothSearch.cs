@@ -189,7 +189,7 @@ namespace CarSimulator
             }
             BluetoothDeviceInfo devInfo = GetSelectedBtDevice();
             buttonSearch.Enabled = !_searching && _cli != null;
-            buttonCancel.Enabled = true;
+            buttonCancel.Enabled = !_searching;
             buttonOk.Enabled = buttonSearch.Enabled && devInfo != null;
         }
 
