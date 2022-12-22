@@ -166,7 +166,7 @@ namespace CarSimulator
             return true;
         }
 
-        private int CleanupBtDevices(string name)
+        private int CleanupBtDevices(string[] names)
         {
             try
             {
@@ -178,7 +178,17 @@ namespace CarSimulator
                     {
                         foreach (BluetoothDeviceInfo deviceInfo in deviceArray)
                         {
-                            if (string.Compare(deviceInfo.DeviceName, name, StringComparison.Ordinal) == 0)
+                            bool matched = false;
+                            foreach (string name in names)
+                            {
+                                if (string.Compare(deviceInfo.DeviceName, name, StringComparison.Ordinal) == 0)
+                                {
+                                    matched = true;
+                                    break;
+                                }
+                            }
+
+                            if (matched)
                             {
                                 if (BluetoothSecurity.RemoveDevice(deviceInfo.DeviceAddress))
                                 {
@@ -432,7 +442,7 @@ namespace CarSimulator
 
                     DisconnectStream();
                     BluetoothSecurity.RemoveDevice(device.DeviceAddress);
-                    int removeDevices = CleanupBtDevices(btDeviceName);
+                    int removeDevices = CleanupBtDevices(new string[] { DefaultBtName, DefaultBtNameStd });
                     if (removeDevices > 0)
                     {
                         _form.UpdateTestStatusText($"Removed {removeDevices} Bluetooth devices");
