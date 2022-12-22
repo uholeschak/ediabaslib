@@ -67,10 +67,10 @@ namespace CarSimulator
 
                 _bco.DiscoverDevicesComplete += (sender, args) =>
                 {
+                    _bco?.Dispose();
+                    _bco = null;
                     _searching = false;
                     UpdateButtonStatus();
-                    _bco.Dispose();
-                    _bco = null;
 
                     BeginInvoke((Action)(() =>
                     {
