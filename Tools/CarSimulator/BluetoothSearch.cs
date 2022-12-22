@@ -189,7 +189,7 @@ namespace CarSimulator
             }
             BluetoothDeviceInfo devInfo = GetSelectedBtDevice();
             buttonSearch.Enabled = !_searching && _cli != null;
-            buttonCancel.Enabled = !_searching;
+            buttonCancel.Enabled = true;
             buttonOk.Enabled = buttonSearch.Enabled && devInfo != null;
         }
 
@@ -236,7 +236,7 @@ namespace CarSimulator
 
         private void BluetoothSearch_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!buttonCancel.Enabled)
+            if (_searching)
             {
                 e.Cancel = true;
             }
@@ -281,6 +281,14 @@ namespace CarSimulator
                     DialogResult = DialogResult.OK;
                     Close();
                 }
+            }
+        }
+
+        private void buttonCancel_Click(object sender, EventArgs e)
+        {
+            if (_searching)
+            {
+                DialogResult = DialogResult.None;
             }
         }
     }
