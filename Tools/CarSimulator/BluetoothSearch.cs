@@ -11,6 +11,7 @@ namespace CarSimulator
     {
         private readonly BluetoothClient _cli;
         private readonly List<BluetoothDeviceInfo> _deviceList;
+        private BluetoothComponent _bco;
         private volatile bool _searching;
         private ListViewItem _selectedItem;
         private bool _ignoreSelection;
@@ -41,8 +42,8 @@ namespace CarSimulator
             try
             {
                 _deviceList.Clear();
-                BluetoothComponent bco = new BluetoothComponent(_cli);
-                bco.DiscoverDevicesProgress += (sender, args) =>
+                _bco = new BluetoothComponent(_cli);
+                _bco.DiscoverDevicesProgress += (sender, args) =>
                 {
                     if (args.Error == null && !args.Cancelled && args.Devices != null)
                     {
@@ -64,12 +65,13 @@ namespace CarSimulator
                     }
                 };
 
-                bco.DiscoverDevicesComplete += (sender, args) =>
+                _bco.DiscoverDevicesComplete += (sender, args) =>
                 {
-                    BluetoothComponent bcoLocal = args.UserState as BluetoothComponent;
                     _searching = false;
                     UpdateButtonStatus();
-                    bcoLocal?.Dispose();
+                    _bco.Dispose();
+                    _bco = null;
+
                     BeginInvoke((Action)(() =>
                     {
                         if (args.Error == null && !args.Cancelled)
@@ -92,7 +94,7 @@ namespace CarSimulator
                     }));
                 };
 
-                bco.DiscoverDevicesAsync(1000, true, false, true, IsWinVistaOrHigher(), bco);
+                _bco.DiscoverDevicesAsync(1000, true, false, true, IsWinVistaOrHigher(), _bco);
                 _searching = true;
                 UpdateStatusText("Searching ...");
                 UpdateButtonStatus();
@@ -228,6 +230,7 @@ namespace CarSimulator
 
         private void BluetoothSearch_FormClosed(object sender, FormClosedEventArgs e)
         {
+            _bco?.Dispose();
             _cli?.Dispose();
         }
 
