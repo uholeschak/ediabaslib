@@ -166,6 +166,37 @@ namespace CarSimulator
             return true;
         }
 
+        private int CleanupBtDevices(string name)
+        {
+            try
+            {
+                int removedDevice = 0;
+                using (BluetoothClient btClient = new BluetoothClient())
+                {
+                    BluetoothDeviceInfo[] deviceArray = btClient.DiscoverDevices(1000, true, false, false, false);
+                    if (deviceArray != null)
+                    {
+                        foreach (BluetoothDeviceInfo deviceInfo in deviceArray)
+                        {
+                            if (string.Compare(deviceInfo.DeviceName, name, StringComparison.Ordinal) == 0)
+                            {
+                                if (BluetoothSecurity.RemoveDevice(deviceInfo.DeviceAddress))
+                                {
+                                    removedDevice++;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return removedDevice;
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+        }
+
         private bool ConnectWifiDevice(string comPort, string btDeviceName, out bool espLink)
         {
             espLink = false;
@@ -401,6 +432,11 @@ namespace CarSimulator
 
                     DisconnectStream();
                     BluetoothSecurity.RemoveDevice(device.DeviceAddress);
+                    int removeDevices = CleanupBtDevices(btDeviceName);
+                    if (removeDevices > 0)
+                    {
+                        _form.UpdateTestStatusText($"Removed {removeDevices} Bluetooth devices");
+                    }
                 }
             }
             finally
