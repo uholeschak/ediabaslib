@@ -45,11 +45,8 @@
   <string name="config_match_vehicle">Используйте только те конфигурации, которые точно соответствуют автомобилю.\nСоздавайте конфигурации с помощью генератора конфигураций, поддержка использования сторонних конфигураций отсутствует.</string>
   <string name="ecu_extract_confirm">Для распаковки файлов ECU (Размер около{0:fs1})\nтребуется загрузка информации об обновлении.\nЕсли распаковка происходит очень медленно, используйте более быстрый носитель данных.\nХотите продолжить? </string>
   <string name="manufacturer_select">Выбранный производитель {0}. Для выбора другого нажмите \'Отменить\'.</string>
-  <!--Translate-->
   <string name="open_trace_file_failed">Не удается открыть файл трассировки:\n{0}.</string>
-  <!--Translate-->
-  <string name="no_ext_app_installed">Сначала установите приложение, которое может открывать {0} файлов.</string>
-  <!--Translate-->
+  <string name="no_ext_app_installed">Сначала установите приложение, которое может открыть {0} файл.</string>
   <string name="choose_file_app">Открыть файл.</string>
   <string name="no_xml_editor_installed">Пожалуйста, установите сначала XML редактор.</string>
   <string name="choose_xml_editor">Выберите XML редактор.</string>
@@ -332,15 +329,10 @@
   <string name="menu_download_ecu">Скачать ECU файл.</string>
   <string name="menu_extract_ecu">Извлечь файлы ECU</string>
   <string name="menu_submenu_log">Протокол данных</string>
-  <!--Translate-->
   <string name="menu_trace_submenu">Файл трассировки</string>
-  <!--Translate-->
   <string name="menu_send_trace">Отправить файл трассировки</string>
-  <!--Translate-->
   <string name="menu_open_trace">Открыть файл трассировки</string>
-  <!--Translate-->
   <string name="menu_send_last_trace">Повторно отправить файл трассировки</string>
-  <!--Translate-->
   <string name="menu_open_last_trace">Открыть последний файл трассировки</string>
   <string name="menu_global_settings">Глобальные настройки</string>
   <string name="menu_submenu_help">Онлайн помощь</string>
