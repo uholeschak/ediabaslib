@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using InTheHand.Net.Bluetooth;
+using InTheHand.Net.Bluetooth.Factory;
 using InTheHand.Net.Sockets;
 
 namespace CarSimulator
@@ -10,6 +12,7 @@ namespace CarSimulator
     public partial class BluetoothSearch : Form
     {
         private readonly BluetoothClient _cli;
+        private IBluetoothClient _icli;
         private readonly List<BluetoothDeviceInfo> _deviceList;
         private BluetoothComponent _bco;
         private volatile bool _searching;
@@ -23,6 +26,11 @@ namespace CarSimulator
             try
             {
                 _cli = new BluetoothClient();
+                FieldInfo impField = typeof(BluetoothClient).GetField("m_impl", BindingFlags.NonPublic | BindingFlags.Instance);
+                if (impField != null)
+                {
+                    _icli = impField.GetValue(_cli) as IBluetoothClient;
+                }
             }
             catch (Exception ex)
             {
@@ -48,94 +56,99 @@ namespace CarSimulator
             try
             {
                 _deviceList.Clear();
-#if true
-                _bco = new BluetoothComponent(_cli);
-                _bco.DiscoverDevicesProgress += (sender, args) =>
+
+                if (_icli == null)
                 {
-                    if (args.Error == null && !args.Cancelled && args.Devices != null)
+                    _bco = new BluetoothComponent(_cli);
+                    _bco.DiscoverDevicesProgress += (sender, args) =>
                     {
+                        if (args.Error == null && !args.Cancelled && args.Devices != null)
+                        {
+                            try
+                            {
+                                foreach (BluetoothDeviceInfo device in args.Devices)
+                                {
+                                    device.Refresh();
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                            BeginInvoke((Action)(() =>
+                            {
+                                UpdateDeviceList(args.Devices, false);
+                            }));
+                        }
+                    };
+
+                    _bco.DiscoverDevicesComplete += (sender, args) =>
+                    {
+                        _bco?.Dispose();
+                        _bco = null;
+                        _searching = false;
+                        UpdateButtonStatus();
+
+                        BeginInvoke((Action)(() =>
+                        {
+                            if (args.Error == null && !args.Cancelled)
+                            {
+                                UpdateDeviceList(args.Devices, true);
+                                UpdateStatusText(listViewDevices.Items.Count > 0 ? "Devices found" : "No devices found");
+                            }
+                            else
+                            {
+                                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                                if (args.Error != null)
+                                {
+                                    UpdateStatusText(string.Format("Searching failed: {0}", args.Error.Message));
+                                }
+                                else
+                                {
+                                    UpdateStatusText("Searching failed");
+                                }
+                            }
+                        }));
+                    };
+                    _bco.DiscoverDevicesAsync(255, true, false, true, IsWinVistaOrHigher(), _bco);
+                }
+                else
+                {
+                    IAsyncResult asyncResult = _icli.BeginDiscoverDevices(255, true, false, true, IsWinVistaOrHigher(), ar =>
+                    {
+                        if (ar.IsCompleted)
+                        {
+                            _searching = false;
+                            UpdateButtonStatus();
+
+                            BluetoothDeviceInfo[] devices = _cli.EndDiscoverDevices(ar);
+
+                            BeginInvoke((Action)(() =>
+                            {
+                                UpdateDeviceList(devices, true);
+                                UpdateStatusText(listViewDevices.Items.Count > 0 ? "Devices found" : "No devices found");
+                            }));
+                        }
+                    }, this, (p1, p2) =>
+                    {
+                        BluetoothDeviceInfo deviceInfo = new BluetoothDeviceInfo(p1.DeviceAddress);
                         try
                         {
-                            foreach (BluetoothDeviceInfo device in args.Devices)
-                            {
-                                device.Refresh();
-                            }
+                            deviceInfo.Refresh();
                         }
                         catch (Exception)
                         {
                             // ignored
                         }
-                        BeginInvoke((Action)(() =>
-                        {
-                            UpdateDeviceList(args.Devices, false);
-                        }));
-                    }
-                };
-
-                _bco.DiscoverDevicesComplete += (sender, args) =>
-                {
-                    _bco?.Dispose();
-                    _bco = null;
-                    _searching = false;
-                    UpdateButtonStatus();
-
-                    BeginInvoke((Action)(() =>
-                    {
-                        if (args.Error == null && !args.Cancelled)
-                        {
-                            UpdateDeviceList(args.Devices, true);
-                            UpdateStatusText(listViewDevices.Items.Count > 0 ? "Devices found" : "No devices found");
-                        }
-                        else
-                        {
-                            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                            if (args.Error != null)
-                            {
-                                UpdateStatusText(string.Format("Searching failed: {0}", args.Error.Message));
-                            }
-                            else
-                            {
-                                UpdateStatusText("Searching failed");
-                            }
-                        }
-                    }));
-                };
-                _bco.DiscoverDevicesAsync(255, true, false, true, IsWinVistaOrHigher(), _bco);
-#else
-                IAsyncResult asyncResult = _cli.BeginDiscoverDevices(255, true, false, true, IsWinVistaOrHigher(), ar =>
-                {
-                    if (ar.IsCompleted)
-                    {
-                        _searching = false;
-                        UpdateButtonStatus();
-
-                        BluetoothDeviceInfo[] devices = _cli.EndDiscoverDevices(ar);
 
                         BeginInvoke((Action)(() =>
                         {
-                            UpdateDeviceList(devices, true);
-                            UpdateStatusText(listViewDevices.Items.Count > 0 ? "Devices found" : "No devices found");
+                            UpdateDeviceList(new[] { deviceInfo }, false);
                         }));
-                    }
-                }, this, (p1, p2) =>
-                {
-                    BluetoothDeviceInfo deviceInfo = new BluetoothDeviceInfo(p1.DeviceAddress);
-                    try
-                    {
-                        deviceInfo.Refresh();
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
 
-                    BeginInvoke((Action)(() =>
-                    {
-                        UpdateDeviceList(new[] { deviceInfo }, false);
-                    }));
+                    }, this);
+                }
 
-                }, this);
-#endif
                 _searching = true;
                 UpdateStatusText("Searching ...");
                 UpdateButtonStatus();
