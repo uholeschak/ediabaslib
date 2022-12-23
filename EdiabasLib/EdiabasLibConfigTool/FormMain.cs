@@ -493,7 +493,7 @@ namespace EdiabasLibConfigTool
                         }
                     }));
                 };
-                _bco.DiscoverDevicesAsync(1000, true, false, true, IsWinVistaOrHigher(), _bco);
+                _bco.DiscoverDevicesAsync(255, true, false, true, IsWinVistaOrHigher(), _bco);
                 _searching = true;
                 UpdateButtonStatus();
             }

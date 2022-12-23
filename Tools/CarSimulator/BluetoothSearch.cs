@@ -48,6 +48,7 @@ namespace CarSimulator
             try
             {
                 _deviceList.Clear();
+#if true
                 _bco = new BluetoothComponent(_cli);
                 _bco.DiscoverDevicesProgress += (sender, args) =>
                 {
@@ -99,8 +100,25 @@ namespace CarSimulator
                         }
                     }));
                 };
+                _bco.DiscoverDevicesAsync(255, true, false, true, IsWinVistaOrHigher(), _bco);
+#else
+                IAsyncResult asyncResult = _cli.BeginDiscoverDevices(255, true, false, true, IsWinVistaOrHigher(), ar =>
+                {
+                    if (ar.IsCompleted)
+                    {
+                        _searching = false;
+                        UpdateButtonStatus();
 
-                _bco.DiscoverDevicesAsync(1000, true, false, true, IsWinVistaOrHigher(), _bco);
+                        BluetoothDeviceInfo[] devices = _cli.EndDiscoverDevices(ar);
+
+                        BeginInvoke((Action)(() =>
+                        {
+                            UpdateDeviceList(devices, true);
+                            UpdateStatusText(listViewDevices.Items.Count > 0 ? "Devices found" : "No devices found");
+                        }));
+                    }
+                }, this);
+#endif
                 _searching = true;
                 UpdateStatusText("Searching ...");
                 UpdateButtonStatus();
