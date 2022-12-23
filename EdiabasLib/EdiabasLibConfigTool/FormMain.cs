@@ -26,6 +26,7 @@ namespace EdiabasLibConfigTool
         private readonly WifiMod _wifi;
         private readonly WlanClient _wlanClient;
         private readonly Test _test;
+        private BluetoothComponent _bco;
         private bool _lastActiveProbing;
         private string _ediabasDirBmw;
         private string _ediabasDirVag;
@@ -431,13 +432,19 @@ namespace EdiabasLibConfigTool
             {
                 return false;
             }
+
+            if (_bco != null)
+            {
+                return false;
+            }
+
             try
             {
                 _test.TestOk = false;
                 _test.ConfigPossible = false;
                 _deviceList.Clear();
-                BluetoothComponent bco = new BluetoothComponent(_cli);
-                bco.DiscoverDevicesProgress += (sender, args) =>
+                _bco = new BluetoothComponent(_cli);
+                _bco.DiscoverDevicesProgress += (sender, args) =>
                 {
                     if (args.Error == null && !args.Cancelled && args.Devices != null)
                     {
@@ -459,8 +466,10 @@ namespace EdiabasLibConfigTool
                     }
                 };
 
-                bco.DiscoverDevicesComplete += (sender, args) =>
+                _bco.DiscoverDevicesComplete += (sender, args) =>
                 {
+                    _bco?.Dispose();
+                    _bco = null;
                     _searching = false;
                     UpdateButtonStatus();
                     BeginInvoke((Action)(() =>
@@ -484,7 +493,7 @@ namespace EdiabasLibConfigTool
                         }
                     }));
                 };
-                bco.DiscoverDevicesAsync(1000, true, false, true, IsWinVistaOrHigher(), bco);
+                _bco.DiscoverDevicesAsync(1000, true, false, true, IsWinVistaOrHigher(), _bco);
                 _searching = true;
                 UpdateButtonStatus();
             }
@@ -755,6 +764,7 @@ namespace EdiabasLibConfigTool
                 SetEnableActiveProbing(true);
             }
 
+            _bco?.Dispose();
             _cli?.Dispose();
             _test?.Dispose();
             try

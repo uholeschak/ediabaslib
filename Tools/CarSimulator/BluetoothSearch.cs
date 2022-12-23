@@ -39,6 +39,12 @@ namespace CarSimulator
             {
                 return false;
             }
+
+            if (_bco != null)
+            {
+                return false;
+            }
+
             try
             {
                 _deviceList.Clear();
