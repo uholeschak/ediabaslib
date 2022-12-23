@@ -117,6 +117,23 @@ namespace CarSimulator
                             UpdateStatusText(listViewDevices.Items.Count > 0 ? "Devices found" : "No devices found");
                         }));
                     }
+                }, this, (p1, p2) =>
+                {
+                    BluetoothDeviceInfo deviceInfo = new BluetoothDeviceInfo(p1.DeviceAddress);
+                    try
+                    {
+                        deviceInfo.Refresh();
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+
+                    BeginInvoke((Action)(() =>
+                    {
+                        UpdateDeviceList(new[] { deviceInfo }, false);
+                    }));
+
                 }, this);
 #endif
                 _searching = true;
