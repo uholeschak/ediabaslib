@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using InTheHand.Net.Bluetooth;
+using InTheHand.Net.Bluetooth.Factory;
 using InTheHand.Net.Sockets;
 using Microsoft.Win32;
 using SimpleWifi;
@@ -16,6 +16,7 @@ using System.ComponentModel;
 using System.Security.AccessControl;
 using System.Threading.Tasks;
 using EdiabasLib;
+using System.Reflection;
 
 namespace EdiabasLibConfigTool
 {
@@ -26,7 +27,7 @@ namespace EdiabasLibConfigTool
         private readonly WifiMod _wifi;
         private readonly WlanClient _wlanClient;
         private readonly Test _test;
-        private BluetoothComponent _bco;
+        private IBluetoothClient _icli;
         private bool _lastActiveProbing;
         private string _ediabasDirBmw;
         private string _ediabasDirVag;
@@ -104,6 +105,11 @@ namespace EdiabasLibConfigTool
             try
             {
                 _cli = new BluetoothClient();
+                FieldInfo impField = typeof(BluetoothClient).GetField("m_impl", BindingFlags.NonPublic | BindingFlags.Instance);
+                if (impField != null)
+                {
+                    _icli = impField.GetValue(_cli) as IBluetoothClient;
+                }
             }
             catch (Exception ex)
             {
@@ -407,6 +413,11 @@ namespace EdiabasLibConfigTool
 
         private bool StartDeviceSearch()
         {
+            if (_searching)
+            {
+                return false;
+            }
+
             UpdateStatusText(Resources.Strings.Searching);
             _vehicleTaskActive = true;
             _detectedVehicles = null;
@@ -428,12 +439,7 @@ namespace EdiabasLibConfigTool
             });
 
             UpdateDeviceList(null, true);
-            if (_cli == null)
-            {
-                return false;
-            }
-
-            if (_bco != null)
+            if (_cli == null || _icli == null)
             {
                 return false;
             }
@@ -443,57 +449,55 @@ namespace EdiabasLibConfigTool
                 _test.TestOk = false;
                 _test.ConfigPossible = false;
                 _deviceList.Clear();
-                _bco = new BluetoothComponent(_cli);
-                _bco.DiscoverDevicesProgress += (sender, args) =>
+
+                IAsyncResult asyncResult = _icli.BeginDiscoverDevices(255, true, false, true, IsWinVistaOrHigher(), ar =>
                 {
-                    if (args.Error == null && !args.Cancelled && args.Devices != null)
+                    if (ar.IsCompleted)
                     {
+                        _searching = false;
+                        UpdateButtonStatus();
+
                         try
                         {
-                            foreach (BluetoothDeviceInfo device in args.Devices)
+                            BluetoothDeviceInfo[] devices = _cli.EndDiscoverDevices(ar);
+                            BeginInvoke((Action)(() =>
                             {
-                                device.Refresh();
-                            }
+                                UpdateDeviceList(devices, true);
+                                ShowSearchEndMessage();
+                            }));
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            // ignored
-                        }
-                        BeginInvoke((Action)(() =>
-                        {
-                            UpdateDeviceList(args.Devices, false);
-                        }));
-                    }
-                };
-
-                _bco.DiscoverDevicesComplete += (sender, args) =>
-                {
-                    _bco?.Dispose();
-                    _bco = null;
-                    _searching = false;
-                    UpdateButtonStatus();
-                    BeginInvoke((Action)(() =>
-                    {
-                        if (args.Error == null && !args.Cancelled)
-                        {
-                            UpdateDeviceList(args.Devices, true);
-                            ShowSearchEndMessage();
-                        }
-                        else
-                        {
-                            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                            if (args.Error != null)
-                            {
-                                UpdateStatusText(string.Format(Resources.Strings.SearchingFailedMessage, args.Error.Message));
-                            }
-                            else
+                            string message = ex.Message;
+                            if (string.IsNullOrEmpty(message))
                             {
                                 UpdateStatusText(Resources.Strings.SearchingFailed);
                             }
+                            else
+                            {
+                                UpdateStatusText(string.Format(Resources.Strings.SearchingFailedMessage, message));
+                            }
                         }
+                    }
+                }, this, (p1, p2) =>
+                {
+                    BluetoothDeviceInfo deviceInfo = new BluetoothDeviceInfo(p1.DeviceAddress);
+                    try
+                    {
+                        deviceInfo.Refresh();
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+
+                    BeginInvoke((Action)(() =>
+                    {
+                        UpdateDeviceList(new[] { deviceInfo }, false);
                     }));
-                };
-                _bco.DiscoverDevicesAsync(255, true, false, true, IsWinVistaOrHigher(), _bco);
+
+                }, this);
+
                 _searching = true;
                 UpdateButtonStatus();
             }
@@ -764,7 +768,6 @@ namespace EdiabasLibConfigTool
                 SetEnableActiveProbing(true);
             }
 
-            _bco?.Dispose();
             _cli?.Dispose();
             _test?.Dispose();
             try

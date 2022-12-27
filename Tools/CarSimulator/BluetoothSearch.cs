@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Bluetooth.Factory;
 using InTheHand.Net.Sockets;
 
@@ -46,7 +45,7 @@ namespace CarSimulator
                 return false;
             }
 
-            if (_cli == null)
+            if (_cli == null || _icli == null)
             {
                 return false;
             }
