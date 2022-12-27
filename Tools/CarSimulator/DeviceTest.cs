@@ -158,6 +158,7 @@ namespace CarSimulator
                     _btClient.Connect(ep);
                 }
                 _dataStream = _btClient.GetStream();
+                Thread.Sleep(500);
             }
             catch (Exception)
             {
