@@ -14,7 +14,6 @@ namespace CarSimulator
         private readonly BluetoothClient _cli;
         private IBluetoothClient _icli;
         private readonly List<BluetoothDeviceInfo> _deviceList;
-        private BluetoothComponent _bco;
         private volatile bool _searching;
         private ListViewItem _selectedItem;
         private bool _ignoreSelection;
@@ -42,112 +41,61 @@ namespace CarSimulator
 
         private bool StartDeviceSearch()
         {
-            UpdateDeviceList(null, true);
+            if (_searching)
+            {
+                return false;
+            }
+
             if (_cli == null)
             {
                 return false;
             }
 
-            if (_bco != null)
-            {
-                return false;
-            }
+            UpdateDeviceList(null, true);
 
             try
             {
                 _deviceList.Clear();
 
-                if (_icli == null)
+                IAsyncResult asyncResult = _icli.BeginDiscoverDevices(255, true, false, true, IsWinVistaOrHigher(), ar =>
                 {
-                    _bco = new BluetoothComponent(_cli);
-                    _bco.DiscoverDevicesProgress += (sender, args) =>
+                    if (ar.IsCompleted)
                     {
-                        if (args.Error == null && !args.Cancelled && args.Devices != null)
-                        {
-                            try
-                            {
-                                foreach (BluetoothDeviceInfo device in args.Devices)
-                                {
-                                    device.Refresh();
-                                }
-                            }
-                            catch (Exception)
-                            {
-                                // ignored
-                            }
-                            BeginInvoke((Action)(() =>
-                            {
-                                UpdateDeviceList(args.Devices, false);
-                            }));
-                        }
-                    };
-
-                    _bco.DiscoverDevicesComplete += (sender, args) =>
-                    {
-                        _bco?.Dispose();
-                        _bco = null;
                         _searching = false;
                         UpdateButtonStatus();
 
-                        BeginInvoke((Action)(() =>
+                        try
                         {
-                            if (args.Error == null && !args.Cancelled)
-                            {
-                                UpdateDeviceList(args.Devices, true);
-                                UpdateStatusText(listViewDevices.Items.Count > 0 ? "Devices found" : "No devices found");
-                            }
-                            else
-                            {
-                                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                                if (args.Error != null)
-                                {
-                                    UpdateStatusText(string.Format("Searching failed: {0}", args.Error.Message));
-                                }
-                                else
-                                {
-                                    UpdateStatusText("Searching failed");
-                                }
-                            }
-                        }));
-                    };
-                    _bco.DiscoverDevicesAsync(255, true, false, true, IsWinVistaOrHigher(), _bco);
-                }
-                else
-                {
-                    IAsyncResult asyncResult = _icli.BeginDiscoverDevices(255, true, false, true, IsWinVistaOrHigher(), ar =>
-                    {
-                        if (ar.IsCompleted)
-                        {
-                            _searching = false;
-                            UpdateButtonStatus();
-
                             BluetoothDeviceInfo[] devices = _cli.EndDiscoverDevices(ar);
-
                             BeginInvoke((Action)(() =>
                             {
                                 UpdateDeviceList(devices, true);
                                 UpdateStatusText(listViewDevices.Items.Count > 0 ? "Devices found" : "No devices found");
                             }));
                         }
-                    }, this, (p1, p2) =>
+                        catch (Exception ex)
+                        {
+                            UpdateStatusText(string.Format("Searching failed: {0}", ex.Message));
+                        }
+                    }
+                }, this, (p1, p2) =>
+                {
+                    BluetoothDeviceInfo deviceInfo = new BluetoothDeviceInfo(p1.DeviceAddress);
+                    try
                     {
-                        BluetoothDeviceInfo deviceInfo = new BluetoothDeviceInfo(p1.DeviceAddress);
-                        try
-                        {
-                            deviceInfo.Refresh();
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
+                        deviceInfo.Refresh();
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
 
-                        BeginInvoke((Action)(() =>
-                        {
-                            UpdateDeviceList(new[] { deviceInfo }, false);
-                        }));
+                    BeginInvoke((Action)(() =>
+                    {
+                        UpdateDeviceList(new[] { deviceInfo }, false);
+                    }));
 
-                    }, this);
-                }
+                }, this);
 
                 _searching = true;
                 UpdateStatusText("Searching ...");
@@ -284,7 +232,6 @@ namespace CarSimulator
 
         private void BluetoothSearch_FormClosed(object sender, FormClosedEventArgs e)
         {
-            _bco?.Dispose();
             _cli?.Dispose();
         }
 
