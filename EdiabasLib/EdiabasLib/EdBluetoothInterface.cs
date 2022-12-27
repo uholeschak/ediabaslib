@@ -110,6 +110,7 @@ namespace EdiabasLib
                             BtClient.Connect(ep);
                         }
                         BtStream = BtClient.GetStream();
+                        Thread.Sleep(500);
                         BtStream.ReadTimeout = 1;
                     }
 #endif
