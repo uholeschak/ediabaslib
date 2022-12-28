@@ -10,6 +10,7 @@ namespace EdiabasLib
     public class EdBluetoothInterface
     {
         public const string PortId = "BLUETOOTH";
+        public const int BtConnectDelay = 50;
         protected const int DisconnectWait = 2000;
         protected const int ReadTimeoutOffsetLong = 1000;
         protected const int ReadTimeoutOffsetShort = 100;
@@ -110,8 +111,8 @@ namespace EdiabasLib
                             BtClient.Connect(ep);
                         }
                         BtStream = BtClient.GetStream();
-                        Thread.Sleep(500);
                         BtStream.ReadTimeout = 1;
+                        Thread.Sleep(BtConnectDelay);
                     }
 #endif
                     else
