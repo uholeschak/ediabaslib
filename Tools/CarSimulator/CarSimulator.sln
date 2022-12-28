@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarSimulator", "CarSimulator.csproj", "{652D8621-4078-4437-A0BC-3B90C8114EE5}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InTheHand.Net.Personal", "..\..\EdiabasLib\InTheHand.Net.Personal\InTheHand.Net.Personal.csproj", "{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,24 +34,6 @@ Global
 		{652D8621-4078-4437-A0BC-3B90C8114EE5}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{652D8621-4078-4437-A0BC-3B90C8114EE5}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{652D8621-4078-4437-A0BC-3B90C8114EE5}.Release|Win32.ActiveCfg = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.CodeAnalysis|Any CPU.ActiveCfg = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.CodeAnalysis|Any CPU.Build.0 = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.CodeAnalysis|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.CodeAnalysis|Mixed Platforms.Build.0 = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.CodeAnalysis|Win32.ActiveCfg = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.CodeAnalysis|Win32.Build.0 = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Debug|Win32.Build.0 = Debug|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Release|Win32.ActiveCfg = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Release|Win32.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
