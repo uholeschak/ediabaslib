@@ -29,7 +29,8 @@ namespace CarSimulator
         private int _testCount;
         private bool _disposed;
 
-        public static readonly int RecTimeout = 2000;
+        public const int RecTimeout = 2000;
+        public const int BtConnectDelay = 50;
         public const string DefaultBtName = "Deep OBD";
         public const string DefaultBtNameStd = "OBDII";
         public const string DefaultBtPin = "1234";
@@ -158,7 +159,7 @@ namespace CarSimulator
                     _btClient.Connect(ep);
                 }
                 _dataStream = _btClient.GetStream();
-                Thread.Sleep(500);
+                Thread.Sleep(BtConnectDelay);
             }
             catch (Exception)
             {

@@ -9,6 +9,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using EdiabasLib;
 using InTheHand.Net;
 using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Sockets;
@@ -518,7 +519,7 @@ namespace EdiabasLibConfigTool
                     _btClient.Connect(ep);
                 }
                 _dataStream = _btClient.GetStream();
-                Thread.Sleep(500);
+                Thread.Sleep(EdBluetoothInterface.BtConnectDelay);
             }
             catch (Exception)
             {
