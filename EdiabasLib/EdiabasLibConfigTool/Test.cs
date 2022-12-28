@@ -504,10 +504,16 @@ namespace EdiabasLibConfigTool
         {
             try
             {
+#if BT3
                 BluetoothSecurity.SetPin(device.DeviceAddress, pin);
                 BluetoothEndPoint ep = new BluetoothEndPoint(device.DeviceAddress, BluetoothService.SerialPort);
                 _btClient = new BluetoothClient();
                 _btClient.SetPin(pin);
+#else
+                BluetoothSecurity.PairRequest(device.DeviceAddress, pin);
+                BluetoothEndPoint ep = new BluetoothEndPoint(device.DeviceAddress, BluetoothService.SerialPort);
+                _btClient = new BluetoothClient();
+#endif
                 try
                 {
                     _btClient.Connect(ep);
