@@ -113,7 +113,7 @@ namespace CarSimulator
                 {
                     try
                     {
-                        IReadOnlyCollection<BluetoothDeviceInfo> devices = _cli.DiscoverDevices(255);
+                        IReadOnlyCollection<BluetoothDeviceInfo> devices = _cli.DiscoverDevices();
                         _searching = false;
                         UpdateButtonStatus();
 
