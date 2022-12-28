@@ -99,7 +99,6 @@
             // 
             // buttonSearch
             // 
-            this.buttonSearch.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.buttonSearch.Location = new System.Drawing.Point(282, 290);
             this.buttonSearch.Name = "buttonSearch";
             this.buttonSearch.Size = new System.Drawing.Size(75, 23);
