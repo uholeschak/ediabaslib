@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using InTheHand.Net.Bluetooth.Factory;
 using InTheHand.Net.Sockets;
 
 namespace CarSimulator
@@ -11,7 +11,9 @@ namespace CarSimulator
     public partial class BluetoothSearch : Form
     {
         private readonly BluetoothClient _cli;
-        private IBluetoothClient _icli;
+#if BT3
+        private InTheHand.Net.Bluetooth.Factory.IBluetoothClient _icli;
+#endif
         private readonly List<BluetoothDeviceInfo> _deviceList;
         private volatile bool _searching;
         private ListViewItem _selectedItem;
@@ -24,11 +26,13 @@ namespace CarSimulator
             try
             {
                 _cli = new BluetoothClient();
+#if BT3
                 FieldInfo impField = typeof(BluetoothClient).GetField("m_impl", BindingFlags.NonPublic | BindingFlags.Instance);
                 if (impField != null)
                 {
-                    _icli = impField.GetValue(_cli) as IBluetoothClient;
+                    _icli = impField.GetValue(_cli) as InTheHand.Net.Bluetooth.Factory.IBluetoothClient;
                 }
+#endif
             }
             catch (Exception ex)
             {
@@ -45,17 +49,22 @@ namespace CarSimulator
                 return false;
             }
 
-            if (_cli == null || _icli == null)
+            if (_cli == null)
             {
                 return false;
             }
-
+#if BT3
+            if (_icli == null)
+            {
+                return false;
+            }
+#endif
             UpdateDeviceList(null, true);
 
             try
             {
                 _deviceList.Clear();
-
+#if BT3
                 IAsyncResult asyncResult = _icli.BeginDiscoverDevices(255, true, false, true, IsWinVistaOrHigher(), ar =>
                 {
                     if (ar.IsCompleted)
@@ -99,6 +108,32 @@ namespace CarSimulator
                 _searching = true;
                 UpdateStatusText("Searching ...");
                 UpdateButtonStatus();
+#else
+                Task searchTask = new Task(() =>
+                {
+                    try
+                    {
+                        IReadOnlyCollection<BluetoothDeviceInfo> devices = _cli.DiscoverDevices(255);
+                        _searching = false;
+                        UpdateButtonStatus();
+
+                        BeginInvoke((Action)(() =>
+                        {
+                            UpdateDeviceList(devices.ToArray(), true);
+                            UpdateStatusText(listViewDevices.Items.Count > 0 ? "Devices found" : "No devices found");
+                        }));
+                    }
+                    catch (Exception ex)
+                    {
+                        UpdateStatusText(string.Format("Searching failed: {0}", ex.Message));
+                    }
+                });
+
+                searchTask.Start();
+                _searching = true;
+                UpdateStatusText("Searching ...");
+                UpdateButtonStatus();
+#endif
             }
             catch (Exception)
             {

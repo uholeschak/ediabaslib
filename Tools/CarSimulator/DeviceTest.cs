@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -144,10 +145,16 @@ namespace CarSimulator
         {
             try
             {
+#if BT3
                 BluetoothSecurity.SetPin(device.DeviceAddress, DefaultBtPin);
                 BluetoothEndPoint ep = new BluetoothEndPoint(device.DeviceAddress, BluetoothService.SerialPort);
                 _btClient = new BluetoothClient();
                 _btClient.SetPin(DefaultBtPin);
+#else
+                BluetoothSecurity.PairRequest(device.DeviceAddress, DefaultBtPin);
+                BluetoothEndPoint ep = new BluetoothEndPoint(device.DeviceAddress, BluetoothService.SerialPort);
+                _btClient = new BluetoothClient();
+#endif
                 try
                 {
                     _btClient.Connect(ep);
@@ -175,7 +182,11 @@ namespace CarSimulator
                 int removedDevice = 0;
                 using (BluetoothClient btClient = new BluetoothClient())
                 {
+#if BT3
                     BluetoothDeviceInfo[] deviceArray = btClient.DiscoverDevices(1000, true, false, false, false);
+#else
+                    IEnumerable<BluetoothDeviceInfo> deviceArray = btClient.PairedDevices;
+#endif
                     if (deviceArray != null)
                     {
                         foreach (BluetoothDeviceInfo deviceInfo in deviceArray)
