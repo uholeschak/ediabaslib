@@ -65,6 +65,9 @@
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="InTheHand.Net.Bluetooth, Version=4.0.0.0, Culture=neutral, PublicKeyToken=ea38caa273134499, processorArchitecture=MSIL">
+      <HintPath>..\packages\InTheHand.Net.Bluetooth.4.0.32\lib\net461\InTheHand.Net.Bluetooth.dll</HintPath>
+    </Reference>
     <Reference Include="SimpleWifi, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SimpleWifi.1.0.0.0\lib\net40\SimpleWifi.dll</HintPath>
     </Reference>
@@ -147,10 +150,6 @@
     <ProjectReference Include="..\EdiabasLib\EdiabasLib.csproj">
       <Project>{3c2e9ae9-8252-451f-9b8f-92ebb56d245d}</Project>
       <Name>EdiabasLib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\InTheHand.Net.Personal\InTheHand.Net.Personal.csproj">
-      <Project>{5f3c6e84-0768-4a84-8aaf-24e3ffb8547c}</Project>
-      <Name>InTheHand.Net.Personal</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

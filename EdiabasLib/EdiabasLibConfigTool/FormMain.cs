@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using InTheHand.Net.Bluetooth.Factory;
 using InTheHand.Net.Sockets;
 using Microsoft.Win32;
 using SimpleWifi;
@@ -27,7 +26,9 @@ namespace EdiabasLibConfigTool
         private readonly WifiMod _wifi;
         private readonly WlanClient _wlanClient;
         private readonly Test _test;
-        private IBluetoothClient _icli;
+#if BT3
+        private InTheHand.Net.Bluetooth.Factory.IBluetoothClient _icli;
+#endif
         private bool _lastActiveProbing;
         private string _ediabasDirBmw;
         private string _ediabasDirVag;
@@ -105,11 +106,13 @@ namespace EdiabasLibConfigTool
             try
             {
                 _cli = new BluetoothClient();
+#if BT3
                 FieldInfo impField = typeof(BluetoothClient).GetField("m_impl", BindingFlags.NonPublic | BindingFlags.Instance);
                 if (impField != null)
                 {
-                    _icli = impField.GetValue(_cli) as IBluetoothClient;
+                    _icli = impField.GetValue(_cli) as InTheHand.Net.Bluetooth.Factory.IBluetoothClient;
                 }
+#endif
             }
             catch (Exception ex)
             {
@@ -439,17 +442,22 @@ namespace EdiabasLibConfigTool
             });
 
             UpdateDeviceList(null, true);
-            if (_cli == null || _icli == null)
+            if (_cli == null)
             {
                 return false;
             }
-
+#if BT3
+            if (_icli == null)
+            {
+                return false;
+            }
+#endif
             try
             {
                 _test.TestOk = false;
                 _test.ConfigPossible = false;
                 _deviceList.Clear();
-
+#if BT3
                 IAsyncResult asyncResult = _icli.BeginDiscoverDevices(255, true, false, true, IsWinVistaOrHigher(), ar =>
                 {
                     if (ar.IsCompleted)
@@ -497,7 +505,37 @@ namespace EdiabasLibConfigTool
                     }));
 
                 }, this);
+#else
+                Task searchTask = new Task(() =>
+                {
+                    try
+                    {
+                        IReadOnlyCollection<BluetoothDeviceInfo> devices = _cli.DiscoverDevices();
+                        _searching = false;
+                        UpdateButtonStatus();
 
+                        BeginInvoke((Action)(() =>
+                        {
+                            UpdateDeviceList(devices.ToArray(), true);
+                            ShowSearchEndMessage();
+                        }));
+                    }
+                    catch (Exception ex)
+                    {
+                        string message = ex.Message;
+                        if (string.IsNullOrEmpty(message))
+                        {
+                            UpdateStatusText(Resources.Strings.SearchingFailed);
+                        }
+                        else
+                        {
+                            UpdateStatusText(string.Format(Resources.Strings.SearchingFailedMessage, message));
+                        }
+                    }
+                });
+
+                searchTask.Start();
+#endif
                 _searching = true;
                 UpdateButtonStatus();
             }
