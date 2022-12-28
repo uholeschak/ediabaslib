@@ -54,7 +54,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{7B9636BF-0
 		..\docs\Deep_OBD_for_BMW_and_VAG_AppReadAllErrorsSmall.png = ..\docs\Deep_OBD_for_BMW_and_VAG_AppReadAllErrorsSmall.png
 		..\docs\Deep_OBD_for_BMW_and_VAG_AppSelectBluetoothSmall.png = ..\docs\Deep_OBD_for_BMW_and_VAG_AppSelectBluetoothSmall.png
 		..\docs\Documentation.md = ..\docs\Documentation.md
-		..\docs\EDIABAS_result_types_and_formats.md = ..\docs\EDIABAS_result_types_and_formats.md
 		..\docs\EdiabasLib.config_file.md = ..\docs\EdiabasLib.config_file.md
 		..\docs\EdiabasTest_parameters.md = ..\docs\EdiabasTest_parameters.md
 		..\docs\EdiabasTool.md = ..\docs\EdiabasTool.md
@@ -64,6 +63,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{7B9636BF-0
 		..\docs\EdiabasTool_AppToolSelectGrpSmall.png = ..\docs\EdiabasTool_AppToolSelectGrpSmall.png
 		..\docs\EdiabasTool_AppToolSelectJobSmall.png = ..\docs\EdiabasTool_AppToolSelectJobSmall.png
 		..\docs\EdiabasTool_AppToolSelectResultSmall.png = ..\docs\EdiabasTool_AppToolSelectResultSmall.png
+		..\docs\EDIABAS_result_types_and_formats.md = ..\docs\EDIABAS_result_types_and_formats.md
 		..\docs\elm327_BT_annotated_24c32_and_pic18f25k80_prog_connections_Big.png = ..\docs\elm327_BT_annotated_24c32_and_pic18f25k80_prog_connections_Big.png
 		..\docs\elm327_BT_annotated_24c32_and_pic18f25k80_prog_connections_Small.png = ..\docs\elm327_BT_annotated_24c32_and_pic18f25k80_prog_connections_Small.png
 		..\docs\elm327_wifi_annotated_esp8266x_and_pic18f25k80_prog_connections_Big.png = ..\docs\elm327_wifi_annotated_esp8266x_and_pic18f25k80_prog_connections_Big.png
@@ -88,21 +88,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{7B9636BF-0
 		..\docs\README_AppMotorSmall.png = ..\docs\README_AppMotorSmall.png
 		..\docs\README_BluetoothAdapterTopSmall.png = ..\docs\README_BluetoothAdapterTopSmall.png
 		..\docs\README_EnetAdapterClosedSmall.png = ..\docs\README_EnetAdapterClosedSmall.png
-		..\docs\Replace_Elm327_BT_Mini_Firmware.md = ..\docs\Replace_Elm327_BT_Mini_Firmware.md
-		..\docs\Replace_ELM327_HC04_Firmware.md = ..\docs\Replace_ELM327_HC04_Firmware.md
-		..\docs\Replace_Elm327_Wifi_Mini_Firmware.md = ..\docs\Replace_Elm327_Wifi_Mini_Firmware.md
 		..\docs\Replacement_firmware_for_ELM327.md = ..\docs\Replacement_firmware_for_ELM327.md
 		..\docs\Replacement_firmware_for_ELM327_BluetoothAdapterBottomSmall.png = ..\docs\Replacement_firmware_for_ELM327_BluetoothAdapterBottomSmall.png
 		..\docs\Replacement_firmware_for_ELM327_BluetoothAdapterTopSmall.png = ..\docs\Replacement_firmware_for_ELM327_BluetoothAdapterTopSmall.png
 		..\docs\Replacement_firmware_for_ELM327_ConfigToolBluetoothSmall.png = ..\docs\Replacement_firmware_for_ELM327_ConfigToolBluetoothSmall.png
+		..\docs\Replace_Elm327_BT_Mini_Firmware.md = ..\docs\Replace_Elm327_BT_Mini_Firmware.md
+		..\docs\Replace_ELM327_HC04_Firmware.md = ..\docs\Replace_ELM327_HC04_Firmware.md
+		..\docs\Replace_Elm327_Wifi_Mini_Firmware.md = ..\docs\Replace_Elm327_Wifi_Mini_Firmware.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{587F8C62-6BF6-407E-A597-E22748E115A8}"
 	ProjectSection(SolutionItems) = preProject
 		..\README.md = ..\README.md
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InTheHand.Net.Personal", "InTheHand.Net.Personal\InTheHand.Net.Personal.csproj", "{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -355,36 +353,6 @@ Global
 		{7D7FA80F-4C35-4AF4-8E6E-44C32E4DBD32}.Release|x64.Build.0 = Release|Any CPU
 		{7D7FA80F-4C35-4AF4-8E6E-44C32E4DBD32}.Release|x86.ActiveCfg = Release|Any CPU
 		{7D7FA80F-4C35-4AF4-8E6E-44C32E4DBD32}.Release|x86.Build.0 = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.CodeAnalysis|Any CPU.ActiveCfg = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.CodeAnalysis|Any CPU.Build.0 = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.CodeAnalysis|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.CodeAnalysis|Mixed Platforms.Build.0 = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.CodeAnalysis|Win32.ActiveCfg = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.CodeAnalysis|Win32.Build.0 = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.CodeAnalysis|x64.ActiveCfg = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.CodeAnalysis|x64.Build.0 = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.CodeAnalysis|x86.ActiveCfg = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.CodeAnalysis|x86.Build.0 = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Debug|Win32.Build.0 = Debug|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Debug|x64.Build.0 = Debug|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Debug|x86.Build.0 = Debug|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Release|Win32.ActiveCfg = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Release|Win32.Build.0 = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Release|x64.ActiveCfg = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Release|x64.Build.0 = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Release|x86.ActiveCfg = Release|Any CPU
-		{5F3C6E84-0768-4A84-8AAF-24E3FFB8547C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
