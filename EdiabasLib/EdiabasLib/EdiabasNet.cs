@@ -2739,6 +2739,58 @@ namespace EdiabasLib
             }
         }
 
+#if !Android && !WindowsCE
+        static EdiabasNet()
+        {
+            AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
+            {
+                string fullName = args.Name;
+                if (!string.IsNullOrEmpty(fullName))
+                {
+                    string[] names = fullName.Split(',');
+                    if (names.Length < 1)
+                    {
+                        return null;
+                    }
+
+                    string assemblyName = names[0];
+                    string assemblyDllName = assemblyName + ".dll";
+                    Assembly assembly = Assembly.GetExecutingAssembly();
+                    string[] fullNames = assembly.FullName.Split(',');
+                    string resourceName = assemblyDllName;
+
+                    if (fullNames.Length > 0)
+                    {
+                        resourceName = fullNames[0] + "." + resourceName;
+                    }
+
+                    using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+                    {
+                        if (stream != null)
+                        {
+                            using (var memoryStream = new MemoryStream())
+                            {
+                                stream.CopyTo(memoryStream);
+                                return Assembly.Load(memoryStream.ToArray());
+                            }
+                        }
+                    }
+
+                    string assemblyDir = AssemblyDirectory;
+                    string assemblyFileName = Path.Combine(assemblyDir, assemblyDllName);
+
+                    if (!File.Exists(assemblyFileName))
+                    {
+                        return null;
+                    }
+
+                    return Assembly.LoadFrom(assemblyFileName);
+                }
+                return null;
+            };
+        }
+#endif
+
         public EdiabasNet() : this(null)
         {
         }
