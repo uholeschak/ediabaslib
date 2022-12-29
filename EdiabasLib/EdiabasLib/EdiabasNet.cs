@@ -2742,6 +2742,7 @@ namespace EdiabasLib
 #if !Android && !WindowsCE
         static EdiabasNet()
         {
+            LoadAllResourceAssemblies();
             AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
             {
                 string fullName = args.Name;
@@ -3205,6 +3206,41 @@ namespace EdiabasLib
                 return Path.GetDirectoryName(path);
 #endif
             }
+        }
+
+        public static bool LoadAllResourceAssemblies()
+        {
+            try
+            {
+                Assembly assembly = Assembly.GetExecutingAssembly();
+                string[] resourceNames = assembly.GetManifestResourceNames();
+
+                foreach (string resourceName in resourceNames)
+                {
+                    if (!resourceName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+                    {
+                        if (stream != null)
+                        {
+                            using (var memoryStream = new MemoryStream())
+                            {
+                                stream.CopyTo(memoryStream);
+                                Assembly loadedAssembly = Assembly.Load(memoryStream.ToArray());
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public static string GetExceptionText(Exception ex)
