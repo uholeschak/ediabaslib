@@ -67,12 +67,30 @@ namespace EdiabasLib
                     return null;
                 }
 
-                string assemblyDir = EdiabasNet.AssemblyDirectory;
-                string assemblyFileName = Path.Combine(assemblyDir, assemblyName + ".dll");
-                if (!File.Exists(assemblyFileName))
+                string assemblyDllName = assemblyName + ".dll";
+                Assembly assembly = Assembly.GetExecutingAssembly();
+                string[] fullNames = assembly.FullName.Split(',');
+                string resourceName = assemblyDllName;
+
+                if (fullNames.Length > 0)
                 {
-                    assemblyFileName = Path.Combine(assemblyDir, "Assemblies", assemblyName + ".dll");
+                    resourceName = fullNames[0] + "." + resourceName;
                 }
+
+                using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+                {
+                    if (stream != null)
+                    {
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            stream.CopyTo(memoryStream);
+                            return Assembly.Load(memoryStream.ToArray());
+                        }
+                    }
+                }
+
+                string assemblyDir = EdiabasNet.AssemblyDirectory;
+                string assemblyFileName = Path.Combine(assemblyDir, assemblyDllName);
 
                 if (!File.Exists(assemblyFileName))
                 {
