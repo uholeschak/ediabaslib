@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Threading;
 // ReSharper disable UseNullPropagation
 
@@ -38,6 +40,66 @@ namespace EdiabasLib
             SerialPort = new System.IO.Ports.SerialPort();
             SerialPort.DataReceived += SerialDataReceived;
             CommReceiveEvent = new AutoResetEvent(false);
+            AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolveEvent;
+        }
+
+        private static Assembly AssemblyResolveEvent(object sender, ResolveEventArgs args)
+        {
+            string fullName = args.Name;
+            if (!string.IsNullOrEmpty(fullName))
+            {
+                string[] names = fullName.Split(',');
+                if (names.Length < 1)
+                {
+                    return null;
+                }
+
+                string assemblyName = names[0];
+                // ReSharper disable once ReplaceWithSingleAssignment.False
+                bool assemblyValid = false;
+                if (string.Compare(assemblyName, "InTheHand.Net.Bluetooth", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    assemblyValid = true;
+                }
+
+                if (!assemblyValid)
+                {
+                    return null;
+                }
+
+                string assemblyDllName = assemblyName + ".dll";
+                Assembly assembly = Assembly.GetExecutingAssembly();
+                string[] fullNames = assembly.FullName.Split(',');
+                string resourceName = assemblyDllName;
+
+                if (fullNames.Length > 0)
+                {
+                    resourceName = fullNames[0] + "." + resourceName;
+                }
+
+                using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+                {
+                    if (stream != null)
+                    {
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            stream.CopyTo(memoryStream);
+                            return Assembly.Load(memoryStream.ToArray());
+                        }
+                    }
+                }
+
+                string assemblyDir = EdiabasNet.AssemblyDirectory;
+                string assemblyFileName = Path.Combine(assemblyDir, assemblyDllName);
+
+                if (!File.Exists(assemblyFileName))
+                {
+                    return null;
+                }
+
+                return Assembly.LoadFrom(assemblyFileName);
+            }
+            return null;
         }
 
         public static bool InterfaceConnect(string port, object parameter)

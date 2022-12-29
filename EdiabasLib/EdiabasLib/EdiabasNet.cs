@@ -3140,6 +3140,17 @@ namespace EdiabasLib
             return null;
         }
 
+        public static string AssemblyDirectory
+        {
+            get
+            {
+                string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+                UriBuilder uri = new UriBuilder(codeBase);
+                string path = Uri.UnescapeDataString(uri.Path);
+                return Path.GetDirectoryName(path);
+            }
+        }
+
         public static string GetExceptionText(Exception ex)
         {
             string text = ex.Message;
