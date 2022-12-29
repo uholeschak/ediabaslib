@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using EdiabasLib;
@@ -434,6 +435,56 @@ namespace Ediabas
         public const int EDIABAS_RUN_LAST = 349;
         public const int EDIABAS_ERROR_LAST = 349;
 
+        static ApiInternal()
+        {
+            AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
+            {
+                string fullName = args.Name;
+                if (!string.IsNullOrEmpty(fullName))
+                {
+                    string[] names = fullName.Split(',');
+                    if (names.Length < 1)
+                    {
+                        return null;
+                    }
+
+                    string assemblyName = names[0];
+                    string assemblyDllName = assemblyName + ".dll";
+                    Assembly assembly = Assembly.GetExecutingAssembly();
+                    string[] fullNames = assembly.FullName.Split(',');
+                    string resourceName = assemblyDllName;
+
+                    if (fullNames.Length > 0)
+                    {
+                        resourceName = fullNames[0] + "." + resourceName;
+                    }
+
+                    using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+                    {
+                        if (stream != null)
+                        {
+                            using (var memoryStream = new MemoryStream())
+                            {
+                                stream.CopyTo(memoryStream);
+                                return Assembly.Load(memoryStream.ToArray());
+                            }
+                        }
+                    }
+
+                    string assemblyDir = AssemblyDirectory;
+                    string assemblyFileName = Path.Combine(assemblyDir, assemblyDllName);
+
+                    if (!File.Exists(assemblyFileName))
+                    {
+                        return null;
+                    }
+
+                    return Assembly.LoadFrom(assemblyFileName);
+                }
+                return null;
+            };
+        }
+
         public ApiInternal()
         {
             _ediabas = null;
@@ -445,6 +496,17 @@ namespace Ediabas
             _jobEcuName = string.Empty;
             _abortJob = false;
             _resultSets = null;
+        }
+
+        public static string AssemblyDirectory
+        {
+            get
+            {
+                string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+                UriBuilder uri = new UriBuilder(codeBase);
+                string path = Uri.UnescapeDataString(uri.Path);
+                return Path.GetDirectoryName(path);
+            }
         }
 
         public static bool apiCheckVersion(int versionCompatibility, out string versionInfo)
