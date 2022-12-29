@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Threading;
 // ReSharper disable UseNullPropagation
 
@@ -38,6 +40,48 @@ namespace EdiabasLib
             SerialPort = new System.IO.Ports.SerialPort();
             SerialPort.DataReceived += SerialDataReceived;
             CommReceiveEvent = new AutoResetEvent(false);
+            AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolveEvent;
+        }
+
+        private static Assembly AssemblyResolveEvent(object sender, ResolveEventArgs args)
+        {
+            string fullName = args.Name;
+            if (!string.IsNullOrEmpty(fullName))
+            {
+                string[] names = fullName.Split(',');
+                if (names.Length < 1)
+                {
+                    return null;
+                }
+
+                string assemblyName = names[0];
+                // ReSharper disable once ReplaceWithSingleAssignment.False
+                bool assemblyValid = false;
+                if (string.Compare(assemblyName, "InTheHand.Net.Bluetooth", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    assemblyValid = true;
+                }
+
+                if (!assemblyValid)
+                {
+                    return null;
+                }
+
+                string assemblyDir = EdiabasNet.AssemblyDirectory;
+                string assemblyFileName = Path.Combine(assemblyDir, assemblyName + ".dll");
+                if (!File.Exists(assemblyFileName))
+                {
+                    assemblyFileName = Path.Combine(assemblyDir, "Assemblies", assemblyName + ".dll");
+                }
+
+                if (!File.Exists(assemblyFileName))
+                {
+                    return null;
+                }
+
+                return Assembly.LoadFrom(assemblyFileName);
+            }
+            return null;
         }
 
         public static bool InterfaceConnect(string port, object parameter)
