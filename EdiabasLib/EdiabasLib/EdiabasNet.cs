@@ -2777,6 +2777,11 @@ namespace EdiabasLib
                     }
 
                     string assemblyDir = AssemblyDirectory;
+                    if (string.IsNullOrEmpty(assemblyDir))
+                    {
+                        return null;
+                    }
+
                     string assemblyFileName = Path.Combine(assemblyDir, assemblyDllName);
 
                     if (!File.Exists(assemblyFileName))
@@ -2865,12 +2870,7 @@ namespace EdiabasLib
             SetConfigProperty("TaskPriority", "0");
             SetConfigProperty("EdicApiHandle", "0");
 
-#if WindowsCE
-            string assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase);
-#else
-            string assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-#endif
-            assemblyPath = assemblyPath ?? string.Empty;
+            string assemblyPath = AssemblyDirectory ?? string.Empty;
             SetConfigProperty("EcuPath", assemblyPath);
 
             string tracePath = Path.Combine(assemblyPath, "Trace");
@@ -3196,10 +3196,14 @@ namespace EdiabasLib
         {
             get
             {
+#if WindowsCE
+                return Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase);
+#else
                 string codeBase = Assembly.GetExecutingAssembly().CodeBase;
                 UriBuilder uri = new UriBuilder(codeBase);
                 string path = Uri.UnescapeDataString(uri.Path);
                 return Path.GetDirectoryName(path);
+#endif
             }
         }
 

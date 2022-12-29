@@ -51,10 +51,6 @@
       <Project>{F125B68A-1FA7-4E2B-A055-C4F6D8F5F0CF}</Project>
       <Name>ApiInternal</Name>
     </ProjectReference>
-    <ProjectReference Include="..\EdiabasLib\EdiabasLib.csproj">
-      <Project>{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}</Project>
-      <Name>EdiabasLib</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
