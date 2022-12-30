@@ -69,4 +69,4 @@ Binariy files (complete `ELM327V15.X.production.unified.hex`) and (update `ELM32
 
 ## Firmware update failure
 If the firmware update or switching to the ELM327 firmware fails, all LEDs are active and the adapter stops in the bootloader mode.  
-In this state it's possible to retry the update in the adapter menu of _[Deep OBD app](Deep_OBD_for_BMW_and_VAG.md)_ after reconnecting the adapter and ignoring the error message.
+In this state it's possible to retry the update in the adapter menu of the _[Deep OBD app](Deep_OBD_for_BMW_and_VAG.md)_ after reconnecting the adapter and ignoring the error message.
