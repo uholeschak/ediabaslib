@@ -437,11 +437,21 @@ namespace Ediabas
 
         static ApiInternal()
         {
+            LoadAllResourceAssemblies();
             AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
             {
                 string fullName = args.Name;
                 if (!string.IsNullOrEmpty(fullName))
                 {
+                    Assembly[] currentAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+                    foreach (Assembly loadedAssembly in currentAssemblies)
+                    {
+                        if (string.Compare(loadedAssembly.FullName, fullName, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            return loadedAssembly;
+                        }
+                    }
+
                     string[] names = fullName.Split(',');
                     if (names.Length < 1)
                     {
@@ -450,27 +460,6 @@ namespace Ediabas
 
                     string assemblyName = names[0];
                     string assemblyDllName = assemblyName + ".dll";
-                    Assembly assembly = Assembly.GetExecutingAssembly();
-                    string[] fullNames = assembly.FullName.Split(',');
-                    string resourceName = assemblyDllName;
-
-                    if (fullNames.Length > 0)
-                    {
-                        resourceName = fullNames[0] + "." + resourceName;
-                    }
-
-                    using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-                    {
-                        if (stream != null)
-                        {
-                            using (var memoryStream = new MemoryStream())
-                            {
-                                stream.CopyTo(memoryStream);
-                                return Assembly.Load(memoryStream.ToArray());
-                            }
-                        }
-                    }
-
                     string assemblyDir = AssemblyDirectory;
                     if (string.IsNullOrEmpty(assemblyDir))
                     {
@@ -478,6 +467,7 @@ namespace Ediabas
                     }
 
                     string assemblyFileName = Path.Combine(assemblyDir, assemblyDllName);
+
                     if (!File.Exists(assemblyFileName))
                     {
                         return null;
@@ -511,6 +501,41 @@ namespace Ediabas
                 string path = Uri.UnescapeDataString(uri.Path);
                 return Path.GetDirectoryName(path);
             }
+        }
+
+        public static bool LoadAllResourceAssemblies()
+        {
+            try
+            {
+                Assembly assembly = Assembly.GetExecutingAssembly();
+                string[] resourceNames = assembly.GetManifestResourceNames();
+
+                foreach (string resourceName in resourceNames)
+                {
+                    if (!resourceName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+                    {
+                        if (stream != null)
+                        {
+                            using (var memoryStream = new MemoryStream())
+                            {
+                                stream.CopyTo(memoryStream);
+                                Assembly loadedAssembly = Assembly.Load(memoryStream.ToArray());
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public static bool apiCheckVersion(int versionCompatibility, out string versionInfo)
