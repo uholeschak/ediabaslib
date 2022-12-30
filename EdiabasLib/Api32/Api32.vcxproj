@@ -102,6 +102,7 @@
       <AdditionalDependencies>$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\ApiInternal.netmodule;$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\EdiabasLib.netmodule;$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\InTheHand.Net.Personal.netmodule</AdditionalDependencies>
       <AdditionalOptions>/LTCG %(AdditionalOptions)</AdditionalOptions>
       <SubSystem>Windows</SubSystem>
+      <EmbedManagedResourceFile>$(ProjectDir)..\ApiInternal\bin\$(Configuration)\ApiInternal.dll;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
     </Link>
     <PreBuildEvent />
     <PreBuildEvent />
@@ -135,6 +136,7 @@
       <AdditionalDependencies>$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\ApiInternal.netmodule;$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\EdiabasLib.netmodule;$(ProjectDir)..\ApiInternal\bin\$(Configuration)Module\InTheHand.Net.Personal.netmodule</AdditionalDependencies>
       <AdditionalOptions>/LTCG %(AdditionalOptions)</AdditionalOptions>
       <SubSystem>Windows</SubSystem>
+      <EmbedManagedResourceFile>$(ProjectDir)..\ApiInternal\bin\$(Configuration)\ApiInternal.dll;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
     </Link>
     <PreBuildEvent />
     <PreBuildEvent />
