@@ -446,7 +446,8 @@ namespace Ediabas
                     Assembly[] currentAssemblies = AppDomain.CurrentDomain.GetAssemblies();
                     foreach (Assembly loadedAssembly in currentAssemblies)
                     {
-                        if (string.Compare(loadedAssembly.FullName, fullName, StringComparison.OrdinalIgnoreCase) == 0)
+                        if (string.IsNullOrEmpty(loadedAssembly.Location) &&
+                            string.Compare(loadedAssembly.FullName, fullName, StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             return loadedAssembly;
                         }
