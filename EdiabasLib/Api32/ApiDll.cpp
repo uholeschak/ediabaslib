@@ -11,6 +11,71 @@ using namespace Ediabas;
 
 #define DLLEXPORT __declspec(dllexport)
 
+ref class GlobalInit
+{
+    static bool initialized = false;
+
+    static GlobalInit()
+    {
+        if (initialized)
+        {
+            return;
+        }
+
+        AppDomain::CurrentDomain->AssemblyResolve += gcnew ResolveEventHandler(&GlobalInit::OnAssemblyResolve);
+        initialized = true;
+    }
+
+    static Reflection::Assembly^ OnAssemblyResolve(Object^ Sender, ResolveEventArgs^ args)
+    {
+        String^ fullName = args->Name;
+        if (!String::IsNullOrEmpty(fullName))
+        {
+            array<Reflection::Assembly^>^ currentAssemblies = AppDomain::CurrentDomain->GetAssemblies();
+            for each (Reflection::Assembly ^ loadedAssembly in currentAssemblies)
+            {
+                if (String::IsNullOrEmpty(loadedAssembly->Location) &&
+                    String::Compare(loadedAssembly->FullName, fullName, StringComparison::OrdinalIgnoreCase) == 0)
+                {
+                    return loadedAssembly;
+                }
+            }
+
+            array<String^>^ names = fullName->Split(',');
+            if (names->Length < 1)
+            {
+                return nullptr;
+            }
+
+            String^ assemblyName = names[0];
+            String^ assemblyDllName = assemblyName + ".dll";
+            String^ assemblyDir = GetAssemblyDirectory();
+            if (String::IsNullOrEmpty(assemblyDir))
+            {
+                return nullptr;
+            }
+
+            String^ assemblyFileName = IO::Path::Combine(assemblyDir, assemblyDllName);
+            if (!IO::File::Exists(assemblyFileName))
+            {
+                return nullptr;
+            }
+
+            return Reflection::Assembly::LoadFrom(assemblyFileName);
+        }
+
+        return nullptr;
+    }
+
+    static String^ GetAssemblyDirectory()
+    {
+        String^ codeBase = Reflection::Assembly::GetExecutingAssembly()->CodeBase;
+        UriBuilder^ uri = gcnew UriBuilder(codeBase);
+        String^ path = Uri::UnescapeDataString(uri->Path);
+        return IO::Path::GetDirectoryName(path);
+    }
+};
+
 ref class GlobalObjects
 {
     public:
@@ -19,62 +84,7 @@ ref class GlobalObjects
 
         static GlobalObjects()
         {
-            GlobalInit();
             _onexit_m(OnExit);
-        }
-
-        static void GlobalInit()
-        {
-            AppDomain::CurrentDomain->AssemblyResolve += gcnew System::ResolveEventHandler(&GlobalObjects::OnAssemblyResolve);
-        }
-
-        static Reflection::Assembly^ OnAssemblyResolve(Object^ Sender, ResolveEventArgs^ args)
-        {
-            String^ fullName = args->Name;
-            if (!String::IsNullOrEmpty(fullName))
-            {
-                array<Reflection::Assembly^>^ currentAssemblies = AppDomain::CurrentDomain->GetAssemblies();
-                for each(Reflection::Assembly^ loadedAssembly in currentAssemblies)
-                {
-                    if (String::IsNullOrEmpty(loadedAssembly->Location) &&
-                        String::Compare(loadedAssembly->FullName, fullName, StringComparison::OrdinalIgnoreCase) == 0)
-                    {
-                        return loadedAssembly;
-                    }
-                }
-
-                array<String^>^ names = fullName->Split(',');
-                if (names->Length < 1)
-                {
-                    return nullptr;
-                }
-
-                String^ assemblyName = names[0];
-                String^ assemblyDllName = assemblyName + ".dll";
-                String^ assemblyDir = GetAssemblyDirectory();
-                if (String::IsNullOrEmpty(assemblyDir))
-                {
-                    return nullptr;
-                }
-
-                String^ assemblyFileName = IO::Path::Combine(assemblyDir, assemblyDllName);
-                if (!IO::File::Exists(assemblyFileName))
-                {
-                    return nullptr;
-                }
-
-                return Reflection::Assembly::LoadFrom(assemblyFileName);
-            }
-
-            return nullptr;
-        }
-
-        static String^ GetAssemblyDirectory()
-        {
-            String^ codeBase = Reflection::Assembly::GetExecutingAssembly()->CodeBase;
-            UriBuilder^ uri = gcnew UriBuilder(codeBase);
-            String^ path = Uri::UnescapeDataString(uri->Path);
-            return IO::Path::GetDirectoryName(path);
         }
 
         static int OnExit()
@@ -211,6 +221,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiCheckVersion(int versionCompatibility,char far
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiCheckVersion=___apiCheckVersion@8")
 #endif
+    GlobalInit();
     String ^ verInfo;
     if (!ApiInternal::apiCheckVersion(versionCompatibility, verInfo))
     {
@@ -225,6 +236,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiInit(unsigned int far *handle)
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiInit=___apiInit@4")
 #endif
+    GlobalInit();
     *handle = 0;
     unsigned int index = GlobalObjects::GetNewApiInstance();
     if (index == 0)
@@ -253,6 +265,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiInitExt(unsigned int far *handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiInitExt=___apiInitExt@20")
 #endif
+    GlobalInit();
     *handle = 0;
     int index = GlobalObjects::GetNewApiInstance();
     if (index < 0)
@@ -281,6 +294,7 @@ DLLEXPORT void FAR PASCAL __apiEnd(unsigned int handle)
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiEnd=___apiEnd@4")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal != nullptr)
     {
@@ -296,6 +310,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiSwitchDevice(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiSwitchDevice=___apiSwitchDevice@12")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -317,6 +332,7 @@ DLLEXPORT void FAR PASCAL __apiJob(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiJob=___apiJob@20")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -356,6 +372,7 @@ DLLEXPORT void FAR PASCAL __apiJobData(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiJobData=___apiJobData@24")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -384,6 +401,7 @@ DLLEXPORT void FAR PASCAL __apiJobExt(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiJobExt=___apiJobExt@36")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -416,6 +434,7 @@ DLLEXPORT int FAR PASCAL __apiJobInfo(unsigned int handle,char far *infoText)
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiJobInfo=___apiJobInfo@8")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -434,6 +453,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultChar(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultChar=___apiResultChar@16")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -459,6 +479,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultByte(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultByte=___apiResultByte@16")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -484,6 +505,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultInt(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultInt=___apiResultInt@16")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -509,6 +531,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultWord(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultWord=___apiResultWord@16")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -534,6 +557,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultLong(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultLong=___apiResultLong@16")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -559,6 +583,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultDWord(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultDWord=___apiResultDWord@16")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -584,6 +609,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultReal(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultReal=___apiResultReal@16")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -609,6 +635,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultText(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultText=___apiResultText@20")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -637,6 +664,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultBinary(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultBinary=___apiResultBinary@20")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -669,6 +697,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultBinaryExt(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultBinaryExt=___apiResultBinaryExt@24")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -702,6 +731,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultFormat(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultFormat=___apiResultFormat@16")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -726,6 +756,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultNumber(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultNumber=___apiResultNumber@12")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -749,6 +780,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultName(unsigned int handle,char far *buf,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultName=___apiResultName@16")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -772,6 +804,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultSets(unsigned int handle,APIWORD far *se
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultSets=___apiResultSets@8")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -793,6 +826,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultVar(unsigned int handle,APITEXT far *ecu
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultVar=___apiResultVar@8")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -813,6 +847,7 @@ DLLEXPORT APIRESULTFIELD FAR PASCAL __apiResultsNew(unsigned int handle)
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultsNew=___apiResultsNew@4")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -830,6 +865,7 @@ DLLEXPORT void FAR PASCAL __apiResultsScope(unsigned int handle,APIRESULTFIELD f
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultsScope=___apiResultsScope@8")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -850,6 +886,7 @@ DLLEXPORT void FAR PASCAL __apiResultsDelete(unsigned int handle,APIRESULTFIELD 
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultsDelete=___apiResultsDelete@8")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -871,6 +908,7 @@ DLLEXPORT int FAR PASCAL __apiState(unsigned int handle)
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiState=___apiState@4")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -884,6 +922,7 @@ DLLEXPORT int FAR PASCAL __apiStateExt(unsigned int handle,int suspendTime)
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiStateExt=___apiStateExt@8")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -897,6 +936,7 @@ DLLEXPORT void FAR PASCAL __apiBreak(unsigned int handle)
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiBreak=___apiBreak@4")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -910,6 +950,7 @@ DLLEXPORT int FAR PASCAL __apiErrorCode(unsigned int handle)
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiErrorCode=___apiErrorCode@4")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -924,6 +965,7 @@ DLLEXPORT void FAR PASCAL __apiErrorText(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiErrorText=___apiErrorText@12")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -941,6 +983,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiSetConfig(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiSetConfig=___apiSetConfig@12")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -962,6 +1005,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiGetConfig(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiGetConfig=___apiGetConfig@12")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -984,6 +1028,7 @@ DLLEXPORT void FAR PASCAL __apiTrace(unsigned int handle,const char far *msg)
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiTrace=___apiTrace@8")
 #endif
+    GlobalInit();
     ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -997,6 +1042,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiXSysSetConfig(const char far *cfgName, const c
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiXSysSetConfig=___apiXSysSetConfig@8")
 #endif
+    GlobalInit();
     if (!ApiInternal::apiXSysSetConfig(
         ConvertCString(cfgName),
         ConvertCString(cfgValue)))
@@ -1019,6 +1065,7 @@ DLLEXPORT APIBOOL FAR PASCAL enableServer(APIBOOL onOff)
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:enableServer=_enableServer@4")
 #endif
+    GlobalInit();
     if (!ApiInternal::enableServer(onOff ? true : false))
     {
         return APIFALSE;
@@ -1031,6 +1078,7 @@ DLLEXPORT APIBOOL FAR PASCAL enableMultiThreading(bool onOff)
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:enableMultiThreading=_enableMultiThreading@4")
 #endif
+    GlobalInit();
     if (!ApiInternal::enableMultiThreading(onOff ? true : false))
     {
         return APIFALSE;
