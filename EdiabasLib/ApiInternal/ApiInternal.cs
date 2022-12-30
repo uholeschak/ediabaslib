@@ -468,7 +468,6 @@ namespace Ediabas
                     }
 
                     string assemblyFileName = Path.Combine(assemblyDir, assemblyDllName);
-
                     if (!File.Exists(assemblyFileName))
                     {
                         return null;
