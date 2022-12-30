@@ -19,7 +19,62 @@ ref class GlobalObjects
 
         static GlobalObjects()
         {
+            GlobalInit();
             _onexit_m(OnExit);
+        }
+
+        static void GlobalInit()
+        {
+            AppDomain::CurrentDomain->AssemblyResolve += gcnew System::ResolveEventHandler(&GlobalObjects::OnAssemblyResolve);
+        }
+
+        static Reflection::Assembly^ OnAssemblyResolve(Object^ Sender, ResolveEventArgs^ args)
+        {
+            String^ fullName = args->Name;
+            if (!String::IsNullOrEmpty(fullName))
+            {
+                array<Reflection::Assembly^>^ currentAssemblies = AppDomain::CurrentDomain->GetAssemblies();
+                for each(Reflection::Assembly^ loadedAssembly in currentAssemblies)
+                {
+                    if (String::IsNullOrEmpty(loadedAssembly->Location) &&
+                        String::Compare(loadedAssembly->FullName, fullName, StringComparison::OrdinalIgnoreCase) == 0)
+                    {
+                        return loadedAssembly;
+                    }
+                }
+
+                array<String^>^ names = fullName->Split(',');
+                if (names->Length < 1)
+                {
+                    return nullptr;
+                }
+
+                String^ assemblyName = names[0];
+                String^ assemblyDllName = assemblyName + ".dll";
+                String^ assemblyDir = GetAssemblyDirectory();
+                if (String::IsNullOrEmpty(assemblyDir))
+                {
+                    return nullptr;
+                }
+
+                String^ assemblyFileName = IO::Path::Combine(assemblyDir, assemblyDllName);
+                if (!IO::File::Exists(assemblyFileName))
+                {
+                    return nullptr;
+                }
+
+                return Reflection::Assembly::LoadFrom(assemblyFileName);
+            }
+
+            return nullptr;
+        }
+
+        static String^ GetAssemblyDirectory()
+        {
+            String^ codeBase = Reflection::Assembly::GetExecutingAssembly()->CodeBase;
+            UriBuilder^ uri = gcnew UriBuilder(codeBase);
+            String^ path = Uri::UnescapeDataString(uri->Path);
+            return IO::Path::GetDirectoryName(path);
         }
 
         static int OnExit()
