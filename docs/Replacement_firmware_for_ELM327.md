@@ -4,7 +4,7 @@ There is now a replacement firmware available for ELM327L based Bluetooth and Wi
 * K-Line support (all protocols).
 * New: Support for the VAG protocols KWP2000, KWP1281, TP2.0 (cars until 4.2012).
 * Contains a bootstrap loader that allows firmware update without opening the device.
-* Firmware updates are possible with _[Deep OBD for BMW and VAG](Deep_OBD_for_BMW_and_VAG.md)_, if the repacement firmware [has already been programmed](#programming-of-the-processor).
+* Firmware updates are possible with _[Deep OBD app](Deep_OBD_for_BMW_and_VAG.md)_, if the repacement firmware [has already been programmed](#programming-of-the-processor).
 * Reduced power consumption due to use of sleep mode.
 * Flashing of a modified [ELM327 firmware](#elm327-v15-firmware) is possible.
 * Two firmware versions are available:
@@ -56,12 +56,16 @@ The source for the firmware could be found in the subdirectory `CanAdapterElm`. 
   * `spp_uart.xpv` and `spp_uart.xdv`: Firmware for Bluetooth module with BC417 chipset
   * `usbspi.dll`: This is a replacement library for _BlueSuite_ and _BlueLab_ for programming CSR BC03/BC04 Bluetooth chipsets via FT232R breakout boards. For more information see the [`ReadMe.txt`](../EdiabasLib/CanAdapterElm/Bluetooth/spp_uart/ReadMe.txt) file.
 
-There are two firmware files, the complete file (`CanAdapterElm.X.production.unified.hex`) and the update file (`CanAdapterElm.X.production.hex`) without bootloader, that is only needed by _[Deep OBD for BMW and VAG](Deep_OBD_for_BMW_and_VAG.md)_.  
-The latest firmware version will be always included in _[Deep OBD for BMW and VAG](Deep_OBD_for_BMW_and_VAG.md)_.  
+There are two firmware files, the complete file (`CanAdapterElm.X.production.unified.hex`) and the update file (`CanAdapterElm.X.production.hex`) without bootloader, that is only needed by _[Deep OBD app](Deep_OBD_for_BMW_and_VAG.md)_.  
+The latest firmware version will be always included in _[Deep OBD app](Deep_OBD_for_BMW_and_VAG.md)_.  
 Also you can get compiled firmware files from the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest) package.
 
 ## ELM327 V1.5 firmware
 There is improved ELM327 V1.5 (V1.4 with patched version number) firmware available. It switches adapter to a mode compatible with most ELM327 softwares. 
-Flashing can be done over bluetooth with _[Deep OBD for BMW and VAG](Deep_OBD_for_BMW_and_VAG.md)_ (at the moment this is only available for Bluetooth adapters).
+Flashing can be done over bluetooth with _[Deep OBD app](Deep_OBD_for_BMW_and_VAG.md)_ (at the moment this is only available for Bluetooth adapters).
 Afterwards you can flash the Deep OBD replacement firmware over Bluetooth firmware again.  
 Binariy files (complete `ELM327V15.X.production.unified.hex`) and (update `ELM327V15.X.production.hex`) could also found in the the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest) package.
+
+## Firmware update failure
+If the firmware update or swithing to the ELM327 firmware fails, all LEDs are active and the adapter stops in the bootloader mode.  
+In this state it's possible to retry the update in the adapter menu of _[Deep OBD app](Deep_OBD_for_BMW_and_VAG.md)_ after reconning the adapter and ignoring the error message.
