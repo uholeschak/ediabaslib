@@ -107,8 +107,7 @@ ref class GlobalObjects
                 Monitor::Exit(handleLock);
             }
 
-            EdiabasLib::EdBluetoothInterface::InterfaceDisconnect(true);
-            EdiabasLib::EdCustomWiFiInterface::InterfaceDisconnect(true);
+            ApiInternal::InterfaceDisconnect();
             return 0;
         }
 

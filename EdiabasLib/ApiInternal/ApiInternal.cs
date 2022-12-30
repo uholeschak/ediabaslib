@@ -538,6 +538,12 @@ namespace Ediabas
             return true;
         }
 
+        public static void InterfaceDisconnect()
+        {
+            EdBluetoothInterface.InterfaceDisconnect(true);
+            EdCustomWiFiInterface.InterfaceDisconnect(true);
+        }
+
         public static bool apiCheckVersion(int versionCompatibility, out string versionInfo)
         {
             versionInfo = string.Empty;
