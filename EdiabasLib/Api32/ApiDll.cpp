@@ -13,8 +13,10 @@ using namespace Ediabas;
 
 ref class GlobalInit
 {
+private:
     static bool initialized = false;
 
+public:
     static GlobalInit()
     {
         if (initialized)
@@ -22,6 +24,7 @@ ref class GlobalInit
             return;
         }
 
+        //LoadAllResourceAssemblies();
         AppDomain::CurrentDomain->AssemblyResolve += gcnew ResolveEventHandler(&GlobalInit::OnAssemblyResolve);
         initialized = true;
     }
@@ -74,6 +77,55 @@ ref class GlobalInit
         String^ path = Uri::UnescapeDataString(uri->Path);
         return IO::Path::GetDirectoryName(path);
     }
+
+    static bool LoadAllResourceAssemblies()
+    {
+        try
+        {
+            Reflection::Assembly^ assembly = Reflection::Assembly::GetExecutingAssembly();
+            array<String^>^ resourceNames = assembly->GetManifestResourceNames();
+
+            for each (String ^ resourceName in resourceNames)
+            {
+                if (!resourceName->EndsWith(".dll", StringComparison::OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                IO::Stream^ stream = nullptr;
+                IO::MemoryStream^ memoryStream = nullptr;
+                try
+                {
+                    stream = assembly->GetManifestResourceStream(resourceName);
+                    if (stream != nullptr)
+                    {
+                        memoryStream = gcnew IO::MemoryStream();
+                        stream->CopyTo(memoryStream);
+                        Reflection::Assembly^ loadedAssembly = Reflection::Assembly::Load(memoryStream->ToArray());
+                    }
+                }
+                finally
+                {
+                    if (memoryStream != nullptr)
+                    {
+                        delete memoryStream;
+                    }
+
+                    if (stream != nullptr)
+                    {
+                        delete stream;
+                    }
+                }
+            }
+        }
+        catch (...)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
 };
 
 ref class GlobalObjects
