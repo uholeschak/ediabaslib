@@ -1,32 +1,27 @@
 #include <Windows.h>
 #include <msclr\marshal.h>
 #include "Api.h"
+#ifdef _DEBUG
+#using "..\\apiInternal\\bin\\Debug\\ApiInternal.dll"
+#else
+#using "..\\apiInternal\\bin\\Release\\ApiInternal.dll"
+#endif
 
 using namespace System;
 using namespace System::Threading;
 using namespace System::Collections::Generic;
 using namespace System::Runtime::InteropServices;
 using namespace msclr::interop;
-using namespace Ediabas;
 
 #define DLLEXPORT __declspec(dllexport)
 
 ref class GlobalInit
 {
-private:
-    static bool initialized = false;
-
 public:
     static GlobalInit()
     {
-        if (initialized)
-        {
-            return;
-        }
-
         //LoadAllResourceAssemblies();
         AppDomain::CurrentDomain->AssemblyResolve += gcnew ResolveEventHandler(&GlobalInit::OnAssemblyResolve);
-        initialized = true;
     }
 
     static Reflection::Assembly^ OnAssemblyResolve(Object^ Sender, ResolveEventArgs^ args)
@@ -131,7 +126,7 @@ public:
 ref class GlobalObjects
 {
     public:
-        static List<ApiInternal ^>^ handles = gcnew List<ApiInternal ^>();
+        static List<Ediabas::ApiInternal ^>^ handles = gcnew List<Ediabas::ApiInternal ^>();
         static Object ^ handleLock = gcnew Object();
 
         static GlobalObjects()
@@ -146,7 +141,7 @@ ref class GlobalObjects
                 Monitor::Enter(handleLock);
                 for (int i = 0; i < handles->Count; i++)
                 {
-                    ApiInternal ^ apiInternal = handles[i];
+                    Ediabas::ApiInternal ^ apiInternal = handles[i];
                     if (apiInternal != nullptr)
                     {
                         handles[i]->apiEnd();
@@ -159,7 +154,7 @@ ref class GlobalObjects
                 Monitor::Exit(handleLock);
             }
 
-            ApiInternal::InterfaceDisconnect();
+            Ediabas::ApiInternal::InterfaceDisconnect();
             return 0;
         }
 
@@ -168,7 +163,7 @@ ref class GlobalObjects
             try
             {
                 Monitor::Enter( handleLock );
-                ApiInternal ^apiInternal = gcnew ApiInternal();
+                Ediabas::ApiInternal ^ apiInternal = gcnew Ediabas::ApiInternal();
                 for (int i = 0; i < handles->Count; i++)
                 {
                     if (handles[i] == nullptr)
@@ -205,7 +200,7 @@ ref class GlobalObjects
             }
         }
 
-        static ApiInternal ^ GetApiInstance(int handle)
+        static Ediabas::ApiInternal ^ GetApiInstance(int handle)
         {
             try
             {
@@ -238,7 +233,7 @@ static String ^ ConvertCString(const char far *string)
     array<byte>^ bytes = gcnew array<byte>(length);
     pin_ptr<byte> p = &bytes[0];
     memcpy(p, string, length);
-    return ApiInternal::Encoding->GetString(bytes);
+    return Ediabas::ApiInternal::Encoding->GetString(bytes);
 }
 
 static array<byte> ^ ConvertNetString(String ^string, char far *buf, int bufsize)
@@ -252,7 +247,7 @@ static array<byte> ^ ConvertNetString(String ^string, char far *buf, int bufsize
         buf[0] = 0;
         return nullptr;
     }
-    array<byte> ^ bytes = ApiInternal::Encoding->GetBytes(string);
+    array<byte> ^ bytes = Ediabas::ApiInternal::Encoding->GetBytes(string);
     int length = min(bytes->Length, bufsize);
     if (length > 0)
     {
@@ -274,7 +269,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiCheckVersion(int versionCompatibility,char far
 #endif
     GlobalInit();
     String ^ verInfo;
-    if (!ApiInternal::apiCheckVersion(versionCompatibility, verInfo))
+    if (!Ediabas::ApiInternal::apiCheckVersion(versionCompatibility, verInfo))
     {
         return APIFALSE;
     }
@@ -294,7 +289,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiInit(unsigned int far *handle)
     {
         return APIFALSE;
     }
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(index);
+    Ediabas::ApiInternal ^ apiInternal = GlobalObjects::GetApiInstance(index);
     if (apiInternal == nullptr)
     {
         return APIFALSE;
@@ -323,7 +318,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiInitExt(unsigned int far *handle,
     {
         return APIFALSE;
     }
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(index);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(index);
     if (apiInternal == nullptr)
     {
         return APIFALSE;
@@ -346,7 +341,7 @@ DLLEXPORT void FAR PASCAL __apiEnd(unsigned int handle)
 #pragma comment(linker, "/EXPORT:___apiEnd=___apiEnd@4")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal != nullptr)
     {
         apiInternal->apiEnd();
@@ -362,7 +357,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiSwitchDevice(unsigned int handle,
 #pragma comment(linker, "/EXPORT:___apiSwitchDevice=___apiSwitchDevice@12")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
         return APIFALSE;
@@ -384,7 +379,7 @@ DLLEXPORT void FAR PASCAL __apiJob(unsigned int handle,
 #pragma comment(linker, "/EXPORT:___apiJob=___apiJob@20")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
         return;
@@ -401,9 +396,9 @@ DLLEXPORT void FAR PASCAL __apiJob(unsigned int handle,
     {
         paraBuffer[i] = para[i];
     }
-    apiInternal->logFormat(ApiInternal::ApiLogLevel::Normal, "apiJob({0}, {1}, {2}={3}, {4})",
+    apiInternal->logFormat(Ediabas::ApiInternal::ApiLogLevel::Normal, "apiJob({0}, {1}, {2}={3}, {4})",
         ecuString, jobString,
-        ApiInternal::Encoding->GetString(paraBuffer),
+        Ediabas::ApiInternal::Encoding->GetString(paraBuffer),
         paraBuffer, resultString);
     apiInternal->executeJob(ecuString, jobString, nullptr, 0, paraBuffer, paraBuffer->Length, resultString);
 #else
@@ -424,7 +419,7 @@ DLLEXPORT void FAR PASCAL __apiJobData(unsigned int handle,
 #pragma comment(linker, "/EXPORT:___apiJobData=___apiJobData@24")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
         return;
@@ -453,7 +448,7 @@ DLLEXPORT void FAR PASCAL __apiJobExt(unsigned int handle,
 #pragma comment(linker, "/EXPORT:___apiJobExt=___apiJobExt@36")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
         return;
@@ -486,7 +481,7 @@ DLLEXPORT int FAR PASCAL __apiJobInfo(unsigned int handle,char far *infoText)
 #pragma comment(linker, "/EXPORT:___apiJobInfo=___apiJobInfo@8")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
         return 0;
@@ -505,7 +500,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultChar(unsigned int handle,
 #pragma comment(linker, "/EXPORT:___apiResultChar=___apiResultChar@16")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
         return APIFALSE;
@@ -531,7 +526,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultByte(unsigned int handle,
 #pragma comment(linker, "/EXPORT:___apiResultByte=___apiResultByte@16")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
         return APIFALSE;
@@ -557,7 +552,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultInt(unsigned int handle,
 #pragma comment(linker, "/EXPORT:___apiResultInt=___apiResultInt@16")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
         return APIFALSE;
@@ -583,7 +578,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultWord(unsigned int handle,
 #pragma comment(linker, "/EXPORT:___apiResultWord=___apiResultWord@16")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
         return APIFALSE;
@@ -609,7 +604,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultLong(unsigned int handle,
 #pragma comment(linker, "/EXPORT:___apiResultLong=___apiResultLong@16")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
         return APIFALSE;
@@ -635,7 +630,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultDWord(unsigned int handle,
 #pragma comment(linker, "/EXPORT:___apiResultDWord=___apiResultDWord@16")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
         return APIFALSE;
@@ -661,7 +656,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultReal(unsigned int handle,
 #pragma comment(linker, "/EXPORT:___apiResultReal=___apiResultReal@16")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
         return APIFALSE;
@@ -687,7 +682,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultText(unsigned int handle,
 #pragma comment(linker, "/EXPORT:___apiResultText=___apiResultText@20")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
         return APIFALSE;
@@ -704,7 +699,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultText(unsigned int handle,
     }
     array<byte> ^ bytes = ConvertNetString(buffer, buf, APIMAXTEXT);
 
-    apiInternal->logFormat(ApiInternal::ApiLogLevel::Normal, "=({0})", bytes);
+    apiInternal->logFormat(Ediabas::ApiInternal::ApiLogLevel::Normal, "=({0})", bytes);
     return APITRUE;
 }
 
@@ -716,7 +711,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultBinary(unsigned int handle,
 #pragma comment(linker, "/EXPORT:___apiResultBinary=___apiResultBinary@20")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
         return APIFALSE;
@@ -749,7 +744,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultBinaryExt(unsigned int handle,
 #pragma comment(linker, "/EXPORT:___apiResultBinaryExt=___apiResultBinaryExt@24")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
         return APIFALSE;
@@ -783,7 +778,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultFormat(unsigned int handle,
 #pragma comment(linker, "/EXPORT:___apiResultFormat=___apiResultFormat@16")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
         return APIFALSE;
@@ -808,7 +803,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultNumber(unsigned int handle,
 #pragma comment(linker, "/EXPORT:___apiResultNumber=___apiResultNumber@12")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
         return APIFALSE;
@@ -832,7 +827,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultName(unsigned int handle,char far *buf,
 #pragma comment(linker, "/EXPORT:___apiResultName=___apiResultName@16")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
         return APIFALSE;
@@ -856,7 +851,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultSets(unsigned int handle,APIWORD far *se
 #pragma comment(linker, "/EXPORT:___apiResultSets=___apiResultSets@8")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
         return APIFALSE;
@@ -878,7 +873,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultVar(unsigned int handle,APITEXT far *ecu
 #pragma comment(linker, "/EXPORT:___apiResultVar=___apiResultVar@8")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
         return APIFALSE;
@@ -899,13 +894,13 @@ DLLEXPORT APIRESULTFIELD FAR PASCAL __apiResultsNew(unsigned int handle)
 #pragma comment(linker, "/EXPORT:___apiResultsNew=___apiResultsNew@4")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
         return NULL;
     }
 
-    ApiInternal::APIRESULTFIELD ^ apiResultField = apiInternal->apiResultsNew();
+    Ediabas::ApiInternal::APIRESULTFIELD ^ apiResultField = apiInternal->apiResultsNew();
     GCHandle hResult = GCHandle::Alloc(apiResultField);
     IntPtr pointer = GCHandle::ToIntPtr(hResult);
     return pointer.ToPointer();
@@ -917,7 +912,7 @@ DLLEXPORT void FAR PASCAL __apiResultsScope(unsigned int handle,APIRESULTFIELD f
 #pragma comment(linker, "/EXPORT:___apiResultsScope=___apiResultsScope@8")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
         return;
@@ -925,7 +920,7 @@ DLLEXPORT void FAR PASCAL __apiResultsScope(unsigned int handle,APIRESULTFIELD f
 
     IntPtr pointer(field);
     GCHandle hResult = GCHandle::FromIntPtr(pointer);
-    ApiInternal::APIRESULTFIELD ^ apiResultField = dynamic_cast<ApiInternal::APIRESULTFIELD ^>(hResult.Target);
+    Ediabas::ApiInternal::APIRESULTFIELD ^ apiResultField = dynamic_cast<Ediabas::ApiInternal::APIRESULTFIELD ^>(hResult.Target);
     if (apiResultField != nullptr)
     {
         apiInternal->apiResultsScope(apiResultField);
@@ -938,7 +933,7 @@ DLLEXPORT void FAR PASCAL __apiResultsDelete(unsigned int handle,APIRESULTFIELD 
 #pragma comment(linker, "/EXPORT:___apiResultsDelete=___apiResultsDelete@8")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
         return;
@@ -946,7 +941,7 @@ DLLEXPORT void FAR PASCAL __apiResultsDelete(unsigned int handle,APIRESULTFIELD 
 
     IntPtr pointer(field);
     GCHandle hResult = GCHandle::FromIntPtr(pointer);
-    ApiInternal::APIRESULTFIELD ^ apiResultField = dynamic_cast<ApiInternal::APIRESULTFIELD ^>(hResult.Target);
+    Ediabas::ApiInternal::APIRESULTFIELD ^ apiResultField = dynamic_cast<Ediabas::ApiInternal::APIRESULTFIELD ^>(hResult.Target);
     if (apiResultField != nullptr)
     {
         apiInternal->apiResultsDelete(apiResultField);
@@ -960,7 +955,7 @@ DLLEXPORT int FAR PASCAL __apiState(unsigned int handle)
 #pragma comment(linker, "/EXPORT:___apiState=___apiState@4")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
         return APIERROR;
@@ -974,7 +969,7 @@ DLLEXPORT int FAR PASCAL __apiStateExt(unsigned int handle,int suspendTime)
 #pragma comment(linker, "/EXPORT:___apiStateExt=___apiStateExt@8")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
         return APIERROR;
@@ -988,7 +983,7 @@ DLLEXPORT void FAR PASCAL __apiBreak(unsigned int handle)
 #pragma comment(linker, "/EXPORT:___apiBreak=___apiBreak@4")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
         return;
@@ -1002,7 +997,7 @@ DLLEXPORT int FAR PASCAL __apiErrorCode(unsigned int handle)
 #pragma comment(linker, "/EXPORT:___apiErrorCode=___apiErrorCode@4")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
         return EDIABAS_API_0006;
@@ -1017,7 +1012,7 @@ DLLEXPORT void FAR PASCAL __apiErrorText(unsigned int handle,
 #pragma comment(linker, "/EXPORT:___apiErrorText=___apiErrorText@12")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
         buf[0] = 0;
@@ -1035,7 +1030,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiSetConfig(unsigned int handle,
 #pragma comment(linker, "/EXPORT:___apiSetConfig=___apiSetConfig@12")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
         return APIFALSE;
@@ -1057,7 +1052,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiGetConfig(unsigned int handle,
 #pragma comment(linker, "/EXPORT:___apiGetConfig=___apiGetConfig@12")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
         return APIFALSE;
@@ -1069,7 +1064,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiGetConfig(unsigned int handle,
     {
         return APIFALSE;
     }
-    array<byte> ^ bytes = ApiInternal::Encoding->GetBytes(buffer);
+    array<byte> ^ bytes = Ediabas::ApiInternal::Encoding->GetBytes(buffer);
     ConvertNetString(buffer, configValue, APIMAXRESULT);
     return APITRUE;
 }
@@ -1080,7 +1075,7 @@ DLLEXPORT void FAR PASCAL __apiTrace(unsigned int handle,const char far *msg)
 #pragma comment(linker, "/EXPORT:___apiTrace=___apiTrace@8")
 #endif
     GlobalInit();
-    ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
         return;
@@ -1094,7 +1089,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiXSysSetConfig(const char far *cfgName, const c
 #pragma comment(linker, "/EXPORT:___apiXSysSetConfig=___apiXSysSetConfig@8")
 #endif
     GlobalInit();
-    if (!ApiInternal::apiXSysSetConfig(
+    if (!Ediabas::ApiInternal::apiXSysSetConfig(
         ConvertCString(cfgName),
         ConvertCString(cfgValue)))
     {
@@ -1108,7 +1103,7 @@ DLLEXPORT void FAR PASCAL closeServer()
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:closeServer=_closeServer@0")
 #endif
-    ApiInternal::closeServer();
+    Ediabas::ApiInternal::closeServer();
 }
 
 DLLEXPORT APIBOOL FAR PASCAL enableServer(APIBOOL onOff)
@@ -1117,7 +1112,7 @@ DLLEXPORT APIBOOL FAR PASCAL enableServer(APIBOOL onOff)
 #pragma comment(linker, "/EXPORT:enableServer=_enableServer@4")
 #endif
     GlobalInit();
-    if (!ApiInternal::enableServer(onOff ? true : false))
+    if (!Ediabas::ApiInternal::enableServer(onOff ? true : false))
     {
         return APIFALSE;
     }
@@ -1130,7 +1125,7 @@ DLLEXPORT APIBOOL FAR PASCAL enableMultiThreading(bool onOff)
 #pragma comment(linker, "/EXPORT:enableMultiThreading=_enableMultiThreading@4")
 #endif
     GlobalInit();
-    if (!ApiInternal::enableMultiThreading(onOff ? true : false))
+    if (!Ediabas::ApiInternal::enableMultiThreading(onOff ? true : false))
     {
         return APIFALSE;
     }
