@@ -19,12 +19,9 @@ public:
 
     static GlobalInit()
     {
-        if (!_resourcesLoaded)
+        if (LoadAllResourceAssemblies())
         {
-            if (LoadAllResourceAssemblies())
-            {
-                _resourcesLoaded = true;
-            }
+            _resourcesLoaded = true;
         }
 
         AppDomain::CurrentDomain->AssemblyResolve += gcnew ResolveEventHandler(&GlobalInit::OnAssemblyResolve);
@@ -372,17 +369,24 @@ DLLEXPORT APIBOOL FAR PASCAL __apiInitExt(unsigned int far *handle,
     return ApiInitExt(handle, device, devConnection, devApplication, reserved);
 }
 
-DLLEXPORT void FAR PASCAL __apiEnd(unsigned int handle)
+__declspec(noinline)
+static  void ApiEnd(unsigned int handle)
 {
-#if defined(_M_IX86)
-#pragma comment(linker, "/EXPORT:___apiEnd=___apiEnd@4")
-#endif
-    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
+    Ediabas::ApiInternal^ apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal != nullptr)
     {
         apiInternal->apiEnd();
         GlobalObjects::DeleteApiInstance(handle);
     }
+}
+
+DLLEXPORT void FAR PASCAL __apiEnd(unsigned int handle)
+{
+#if defined(_M_IX86)
+#pragma comment(linker, "/EXPORT:___apiEnd=___apiEnd@4")
+#endif
+    GlobalInit();
+    return ApiEnd(handle);
 }
 
 DLLEXPORT APIBOOL FAR PASCAL __apiSwitchDevice(unsigned int handle,
