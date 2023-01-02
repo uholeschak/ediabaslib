@@ -12,10 +12,21 @@ using namespace msclr::interop;
 
 ref class GlobalInit
 {
+private:
+    static bool _resourcesLoaded = false;
+
 public:
+
     static GlobalInit()
     {
-        LoadAllResourceAssemblies();
+        if (!_resourcesLoaded)
+        {
+            if (LoadAllResourceAssemblies())
+            {
+                _resourcesLoaded = true;
+            }
+        }
+
         AppDomain::CurrentDomain->AssemblyResolve += gcnew ResolveEventHandler(&GlobalInit::OnAssemblyResolve);
     }
 
@@ -24,14 +35,19 @@ public:
         String^ fullName = args->Name;
         if (!String::IsNullOrEmpty(fullName))
         {
-            array<Reflection::Assembly^>^ currentAssemblies = AppDomain::CurrentDomain->GetAssemblies();
-            for each (Reflection::Assembly ^ loadedAssembly in currentAssemblies)
+            if (_resourcesLoaded)
             {
-                if (String::IsNullOrEmpty(loadedAssembly->Location) &&
-                    String::Compare(loadedAssembly->FullName, fullName, StringComparison::OrdinalIgnoreCase) == 0)
+                array<Reflection::Assembly^>^ currentAssemblies = AppDomain::CurrentDomain->GetAssemblies();
+                for each (Reflection::Assembly ^ loadedAssembly in currentAssemblies)
                 {
-                    return loadedAssembly;
+                    if (String::IsNullOrEmpty(loadedAssembly->Location) &&
+                        String::Compare(loadedAssembly->FullName, fullName, StringComparison::OrdinalIgnoreCase) == 0)
+                    {
+                        return loadedAssembly;
+                    }
                 }
+
+                return nullptr;
             }
 
             array<String^>^ names = fullName->Split(',');
@@ -70,6 +86,7 @@ public:
 
     static bool LoadAllResourceAssemblies()
     {
+        bool loaded = false;
         try
         {
             Reflection::Assembly^ assembly = Reflection::Assembly::GetExecutingAssembly();
@@ -92,6 +109,10 @@ public:
                         memoryStream = gcnew IO::MemoryStream();
                         stream->CopyTo(memoryStream);
                         Reflection::Assembly^ loadedAssembly = Reflection::Assembly::Load(memoryStream->ToArray());
+                        if (loadedAssembly != nullptr)
+                        {
+                            loaded = true;
+                        }
                     }
                 }
                 finally
@@ -113,7 +134,7 @@ public:
             return false;
         }
 
-        return true;
+        return loaded;
     }
 };
 
