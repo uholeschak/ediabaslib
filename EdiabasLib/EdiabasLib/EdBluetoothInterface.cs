@@ -115,6 +115,8 @@ namespace EdiabasLib
                             Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Connect failed, removing device");
                             InTheHand.Net.Bluetooth.BluetoothSecurity.RemoveDevice(btAddress);
                             Thread.Sleep(1000);
+                            InTheHand.Net.Bluetooth.BluetoothSecurity.PairRequest(btAddress, pin);
+
                             BtClient.Connect(ep);
                         }
                         BtStream = BtClient.GetStream();
