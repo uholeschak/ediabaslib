@@ -31,6 +31,7 @@ namespace Ediabas
         public static readonly Encoding Encoding = Encoding.GetEncoding(1252);
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
         protected static readonly long TickResolMs = Stopwatch.Frequency / 1000;
+        private static readonly bool _resourcesLoaded;
         private static bool _firstLog = true;
 
         private volatile EdiabasNet _ediabas;
@@ -437,20 +438,29 @@ namespace Ediabas
 
         static ApiInternal()
         {
-            LoadAllResourceAssemblies();
+            if (LoadAllResourceAssemblies())
+            {
+                _resourcesLoaded = true;
+            }
+
             AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
             {
                 string fullName = args.Name;
                 if (!string.IsNullOrEmpty(fullName))
                 {
-                    Assembly[] currentAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-                    foreach (Assembly loadedAssembly in currentAssemblies)
+                    if (_resourcesLoaded)
                     {
-                        if (string.IsNullOrEmpty(loadedAssembly.Location) &&
-                            string.Compare(loadedAssembly.FullName, fullName, StringComparison.OrdinalIgnoreCase) == 0)
+                        Assembly[] currentAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+                        foreach (Assembly loadedAssembly in currentAssemblies)
                         {
-                            return loadedAssembly;
+                            if (string.IsNullOrEmpty(loadedAssembly.Location) &&
+                                string.Compare(loadedAssembly.FullName, fullName, StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                return loadedAssembly;
+                            }
                         }
+
+                        return null;
                     }
 
                     string[] names = fullName.Split(',');
@@ -505,6 +515,7 @@ namespace Ediabas
 
         public static bool LoadAllResourceAssemblies()
         {
+            bool loaded = false;
             try
             {
                 Assembly assembly = Assembly.GetExecutingAssembly();
@@ -525,6 +536,11 @@ namespace Ediabas
                             {
                                 stream.CopyTo(memoryStream);
                                 Assembly loadedAssembly = Assembly.Load(memoryStream.ToArray());
+                                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                                if (loadedAssembly != null)
+                                {
+                                    loaded = true;
+                                }
                             }
                         }
                     }
@@ -535,7 +551,7 @@ namespace Ediabas
                 return false;
             }
 
-            return true;
+            return loaded;
         }
 
         public static void InterfaceDisconnect()

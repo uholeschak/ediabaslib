@@ -13,7 +13,7 @@ using namespace msclr::interop;
 ref class GlobalInit
 {
 private:
-    static bool _resourcesLoaded = false;
+    initonly static bool _resourcesLoaded = false;
 
 public:
 
