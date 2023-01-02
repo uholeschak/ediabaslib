@@ -115,7 +115,6 @@ public:
 
         return true;
     }
-
 };
 
 ref class GlobalObjects
