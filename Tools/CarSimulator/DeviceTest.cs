@@ -304,7 +304,6 @@ namespace CarSimulator
             if (_dataStream != null)
             {
                 _dataStream.Close();
-                _dataStream.Dispose();
                 _dataStream = null;
             }
 
@@ -457,10 +456,10 @@ namespace CarSimulator
                         }
 
                         DisconnectStream();
+                        Thread.Sleep(1000);
 #if BT3
                         BluetoothSecurity.RemoveDevice(device.DeviceAddress);
 #endif
-                        Thread.Sleep(1000);
                         retry = 0;
                     }
 

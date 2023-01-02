@@ -510,7 +510,11 @@ namespace EdiabasLibConfigTool
                 _btClient = new BluetoothClient();
                 _btClient.SetPin(pin);
 #else
-                BluetoothSecurity.PairRequest(device.DeviceAddress, pin);
+                device.Refresh();
+                if (!device.Authenticated)
+                {
+                    BluetoothSecurity.PairRequest(device.DeviceAddress, pin);
+                }
                 BluetoothEndPoint ep = new BluetoothEndPoint(device.DeviceAddress, BluetoothService.SerialPort);
                 _btClient = new BluetoothClient();
 #endif
@@ -522,6 +526,11 @@ namespace EdiabasLibConfigTool
                 {
                     BluetoothSecurity.RemoveDevice(device.DeviceAddress);
                     Thread.Sleep(1000);
+                    device.Refresh();
+                    if (!device.Authenticated)
+                    {
+                        BluetoothSecurity.PairRequest(device.DeviceAddress, pin);
+                    }
                     _btClient.Connect(ep);
                 }
                 _dataStream = _btClient.GetStream();
@@ -539,7 +548,6 @@ namespace EdiabasLibConfigTool
             if (_dataStream != null)
             {
                 _dataStream.Close();
-                _dataStream.Dispose();
                 _dataStream = null;
             }
 
