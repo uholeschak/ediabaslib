@@ -1,11 +1,6 @@
 #include <Windows.h>
 #include <msclr\marshal.h>
 #include "Api.h"
-#ifdef _DEBUG
-#using "..\\apiInternal\\bin\\Debug\\ApiInternal.dll"
-#else
-#using "..\\apiInternal\\bin\\Release\\ApiInternal.dll"
-#endif
 
 using namespace System;
 using namespace System::Threading;
@@ -20,7 +15,7 @@ ref class GlobalInit
 public:
     static GlobalInit()
     {
-        //LoadAllResourceAssemblies();
+        LoadAllResourceAssemblies();
         AppDomain::CurrentDomain->AssemblyResolve += gcnew ResolveEventHandler(&GlobalInit::OnAssemblyResolve);
     }
 
@@ -262,18 +257,46 @@ static array<byte> ^ ConvertNetString(String ^string, char far *buf, int bufsize
 extern "C" {
 #endif 
 
+__declspec(noinline)
+static APIBOOL ApiCheckVersion(int versionCompatibility, char far* versionInfo)
+{
+    String^ verInfo;
+    if (!Ediabas::ApiInternal::apiCheckVersion(versionCompatibility, verInfo))
+    {
+        return APIFALSE;
+    }
+    ConvertNetString(verInfo, versionInfo, APIMAXRESULT);
+    return APITRUE;
+}
+
 DLLEXPORT APIBOOL FAR PASCAL __apiCheckVersion(int versionCompatibility,char far *versionInfo)
 {
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiCheckVersion=___apiCheckVersion@8")
 #endif
     GlobalInit();
-    String ^ verInfo;
-    if (!Ediabas::ApiInternal::apiCheckVersion(versionCompatibility, verInfo))
+    return ApiCheckVersion(versionCompatibility, versionInfo);
+}
+
+__declspec(noinline)
+static APIBOOL ApiInit(unsigned int far* handle)
+{
+    *handle = 0;
+    unsigned int index = GlobalObjects::GetNewApiInstance();
+    if (index == 0)
     {
         return APIFALSE;
     }
-    ConvertNetString(verInfo, versionInfo, APIMAXRESULT);
+    Ediabas::ApiInternal^ apiInternal = GlobalObjects::GetApiInstance(index);
+    if (apiInternal == nullptr)
+    {
+        return APIFALSE;
+    }
+    if (!apiInternal->apiInit())
+    {
+        return APIFALSE;
+    }
+    *handle = index;
     return APITRUE;
 }
 
@@ -283,18 +306,32 @@ DLLEXPORT APIBOOL FAR PASCAL __apiInit(unsigned int far *handle)
 #pragma comment(linker, "/EXPORT:___apiInit=___apiInit@4")
 #endif
     GlobalInit();
+    return ApiInit(handle);
+}
+
+__declspec(noinline)
+static APIBOOL ApiInitExt(unsigned int far* handle,
+    const char far* device,
+    const char far* devConnection,
+    const char far* devApplication,
+    const char far* reserved)
+{
     *handle = 0;
-    unsigned int index = GlobalObjects::GetNewApiInstance();
-    if (index == 0)
+    int index = GlobalObjects::GetNewApiInstance();
+    if (index < 0)
     {
         return APIFALSE;
     }
-    Ediabas::ApiInternal ^ apiInternal = GlobalObjects::GetApiInstance(index);
+    Ediabas::ApiInternal^ apiInternal = GlobalObjects::GetApiInstance(index);
     if (apiInternal == nullptr)
     {
         return APIFALSE;
     }
-    if (!apiInternal->apiInit())
+    if (!apiInternal->apiInitExt(
+        ConvertCString(device),
+        ConvertCString(devConnection),
+        ConvertCString(devApplication),
+        ConvertCString(reserved)))
     {
         return APIFALSE;
     }
@@ -312,27 +349,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiInitExt(unsigned int far *handle,
 #pragma comment(linker, "/EXPORT:___apiInitExt=___apiInitExt@20")
 #endif
     GlobalInit();
-    *handle = 0;
-    int index = GlobalObjects::GetNewApiInstance();
-    if (index < 0)
-    {
-        return APIFALSE;
-    }
-    Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(index);
-    if (apiInternal == nullptr)
-    {
-        return APIFALSE;
-    }
-    if (!apiInternal->apiInitExt(
-        ConvertCString(device),
-        ConvertCString(devConnection),
-        ConvertCString(devApplication),
-        ConvertCString(reserved)))
-    {
-        return APIFALSE;
-    }
-    *handle = index;
-    return APITRUE;
+    return ApiInitExt(handle, device, devConnection, devApplication, reserved);
 }
 
 DLLEXPORT void FAR PASCAL __apiEnd(unsigned int handle)
@@ -340,7 +357,6 @@ DLLEXPORT void FAR PASCAL __apiEnd(unsigned int handle)
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiEnd=___apiEnd@4")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal != nullptr)
     {
@@ -356,7 +372,6 @@ DLLEXPORT APIBOOL FAR PASCAL __apiSwitchDevice(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiSwitchDevice=___apiSwitchDevice@12")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -378,7 +393,6 @@ DLLEXPORT void FAR PASCAL __apiJob(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiJob=___apiJob@20")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -418,7 +432,6 @@ DLLEXPORT void FAR PASCAL __apiJobData(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiJobData=___apiJobData@24")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -447,7 +460,6 @@ DLLEXPORT void FAR PASCAL __apiJobExt(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiJobExt=___apiJobExt@36")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -480,7 +492,6 @@ DLLEXPORT int FAR PASCAL __apiJobInfo(unsigned int handle,char far *infoText)
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiJobInfo=___apiJobInfo@8")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -499,7 +510,6 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultChar(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultChar=___apiResultChar@16")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -525,7 +535,6 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultByte(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultByte=___apiResultByte@16")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -551,7 +560,6 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultInt(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultInt=___apiResultInt@16")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -577,7 +585,6 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultWord(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultWord=___apiResultWord@16")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -603,7 +610,6 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultLong(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultLong=___apiResultLong@16")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -629,7 +635,6 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultDWord(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultDWord=___apiResultDWord@16")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -655,7 +660,6 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultReal(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultReal=___apiResultReal@16")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -681,7 +685,6 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultText(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultText=___apiResultText@20")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -710,7 +713,6 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultBinary(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultBinary=___apiResultBinary@20")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -743,7 +745,6 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultBinaryExt(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultBinaryExt=___apiResultBinaryExt@24")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -777,7 +778,6 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultFormat(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultFormat=___apiResultFormat@16")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -802,7 +802,6 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultNumber(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultNumber=___apiResultNumber@12")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -826,7 +825,6 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultName(unsigned int handle,char far *buf,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultName=___apiResultName@16")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -850,7 +848,6 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultSets(unsigned int handle,APIWORD far *se
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultSets=___apiResultSets@8")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -872,7 +869,6 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultVar(unsigned int handle,APITEXT far *ecu
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultVar=___apiResultVar@8")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -893,7 +889,6 @@ DLLEXPORT APIRESULTFIELD FAR PASCAL __apiResultsNew(unsigned int handle)
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultsNew=___apiResultsNew@4")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -911,7 +906,6 @@ DLLEXPORT void FAR PASCAL __apiResultsScope(unsigned int handle,APIRESULTFIELD f
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultsScope=___apiResultsScope@8")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -932,7 +926,6 @@ DLLEXPORT void FAR PASCAL __apiResultsDelete(unsigned int handle,APIRESULTFIELD 
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiResultsDelete=___apiResultsDelete@8")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -954,7 +947,6 @@ DLLEXPORT int FAR PASCAL __apiState(unsigned int handle)
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiState=___apiState@4")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -968,7 +960,6 @@ DLLEXPORT int FAR PASCAL __apiStateExt(unsigned int handle,int suspendTime)
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiStateExt=___apiStateExt@8")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -982,7 +973,6 @@ DLLEXPORT void FAR PASCAL __apiBreak(unsigned int handle)
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiBreak=___apiBreak@4")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -996,7 +986,6 @@ DLLEXPORT int FAR PASCAL __apiErrorCode(unsigned int handle)
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiErrorCode=___apiErrorCode@4")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -1011,7 +1000,6 @@ DLLEXPORT void FAR PASCAL __apiErrorText(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiErrorText=___apiErrorText@12")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -1029,7 +1017,6 @@ DLLEXPORT APIBOOL FAR PASCAL __apiSetConfig(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiSetConfig=___apiSetConfig@12")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -1051,7 +1038,6 @@ DLLEXPORT APIBOOL FAR PASCAL __apiGetConfig(unsigned int handle,
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiGetConfig=___apiGetConfig@12")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -1074,7 +1060,6 @@ DLLEXPORT void FAR PASCAL __apiTrace(unsigned int handle,const char far *msg)
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiTrace=___apiTrace@8")
 #endif
-    GlobalInit();
     Ediabas::ApiInternal ^apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal == nullptr)
     {
@@ -1083,12 +1068,12 @@ DLLEXPORT void FAR PASCAL __apiTrace(unsigned int handle,const char far *msg)
     apiInternal->apiTrace(ConvertCString(msg));
 }
 
-DLLEXPORT APIBOOL FAR PASCAL __apiXSysSetConfig(const char far *cfgName, const char far *cfgValue)
+__declspec(noinline)
+static APIBOOL ApiXSysSetConfig(const char far* cfgName, const char far* cfgValue)
 {
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:___apiXSysSetConfig=___apiXSysSetConfig@8")
 #endif
-    GlobalInit();
     if (!Ediabas::ApiInternal::apiXSysSetConfig(
         ConvertCString(cfgName),
         ConvertCString(cfgValue)))
@@ -1098,12 +1083,44 @@ DLLEXPORT APIBOOL FAR PASCAL __apiXSysSetConfig(const char far *cfgName, const c
     return APITRUE;
 }
 
-DLLEXPORT void FAR PASCAL closeServer()
+DLLEXPORT APIBOOL FAR PASCAL __apiXSysSetConfig(const char far *cfgName, const char far *cfgValue)
+{
+#if defined(_M_IX86)
+#pragma comment(linker, "/EXPORT:___apiXSysSetConfig=___apiXSysSetConfig@8")
+#endif
+    GlobalInit();
+    return ApiXSysSetConfig(cfgName, cfgValue);
+}
+
+__declspec(noinline)
+void CloseServer()
 {
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:closeServer=_closeServer@0")
 #endif
     Ediabas::ApiInternal::closeServer();
+}
+
+DLLEXPORT void FAR PASCAL closeServer()
+{
+#if defined(_M_IX86)
+#pragma comment(linker, "/EXPORT:closeServer=_closeServer@0")
+#endif
+    GlobalInit();
+    CloseServer();
+}
+
+__declspec(noinline)
+static APIBOOL EnableServer(APIBOOL onOff)
+{
+#if defined(_M_IX86)
+#pragma comment(linker, "/EXPORT:enableServer=_enableServer@4")
+#endif
+    if (!Ediabas::ApiInternal::enableServer(onOff ? true : false))
+    {
+        return APIFALSE;
+    }
+    return APITRUE;
 }
 
 DLLEXPORT APIBOOL FAR PASCAL enableServer(APIBOOL onOff)
@@ -1112,7 +1129,16 @@ DLLEXPORT APIBOOL FAR PASCAL enableServer(APIBOOL onOff)
 #pragma comment(linker, "/EXPORT:enableServer=_enableServer@4")
 #endif
     GlobalInit();
-    if (!Ediabas::ApiInternal::enableServer(onOff ? true : false))
+    return EnableServer(onOff);
+}
+
+__declspec(noinline)
+static APIBOOL EnableMultiThreading(bool onOff)
+{
+#if defined(_M_IX86)
+#pragma comment(linker, "/EXPORT:enableMultiThreading=_enableMultiThreading@4")
+#endif
+    if (!Ediabas::ApiInternal::enableMultiThreading(onOff ? true : false))
     {
         return APIFALSE;
     }
@@ -1125,11 +1151,7 @@ DLLEXPORT APIBOOL FAR PASCAL enableMultiThreading(bool onOff)
 #pragma comment(linker, "/EXPORT:enableMultiThreading=_enableMultiThreading@4")
 #endif
     GlobalInit();
-    if (!Ediabas::ApiInternal::enableMultiThreading(onOff ? true : false))
-    {
-        return APIFALSE;
-    }
-    return APITRUE;
+    return EnableMultiThreading(onOff);
 }
 
 #ifdef __cplusplus
