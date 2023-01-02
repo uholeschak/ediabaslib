@@ -5,10 +5,3 @@
 	fetchRecurseSubmodules = true
 	update = rebase
 	ignore = dirty
-[submodule "EdiabasLib/InTheHand.Net.Personal/32feet"]
-	path = EdiabasLib/InTheHand.Net.Personal/32feet
-	url = ../../inthehand/32feet.git
-	branch = master
-	fetchRecurseSubmodules = true
-	update = rebase
-	ignore = dirty
