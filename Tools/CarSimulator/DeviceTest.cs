@@ -151,7 +151,11 @@ namespace CarSimulator
                 _btClient = new BluetoothClient();
                 _btClient.SetPin(DefaultBtPin);
 #else
-                BluetoothSecurity.PairRequest(device.DeviceAddress, DefaultBtPin);
+                device.Refresh();
+                if (!device.Authenticated)
+                {
+                    BluetoothSecurity.PairRequest(device.DeviceAddress, DefaultBtPin);
+                }
                 BluetoothEndPoint ep = new BluetoothEndPoint(device.DeviceAddress, BluetoothService.SerialPort);
                 _btClient = new BluetoothClient();
 #endif
@@ -163,6 +167,11 @@ namespace CarSimulator
                 {
                     BluetoothSecurity.RemoveDevice(device.DeviceAddress);
                     Thread.Sleep(1000);
+                    device.Refresh();
+                    if (!device.Authenticated)
+                    {
+                        BluetoothSecurity.PairRequest(device.DeviceAddress, DefaultBtPin);
+                    }
                     _btClient.Connect(ep);
                 }
                 _dataStream = _btClient.GetStream();
@@ -448,7 +457,9 @@ namespace CarSimulator
                         }
 
                         DisconnectStream();
+#if BT3
                         BluetoothSecurity.RemoveDevice(device.DeviceAddress);
+#endif
                         Thread.Sleep(1000);
                         retry = 0;
                     }
