@@ -456,9 +456,7 @@ namespace CarSimulator
                         }
 
                         DisconnectStream();
-#if BT3
                         BluetoothSecurity.RemoveDevice(device.DeviceAddress);
-#endif
                         Thread.Sleep(1000);
                         retry = 0;
                     }
