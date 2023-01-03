@@ -101,7 +101,12 @@ namespace EdiabasLib
                         BtClient = new InTheHand.Net.Sockets.BluetoothClient();
                         BtClient.SetPin(pin);
 #else
-                        InTheHand.Net.Bluetooth.BluetoothSecurity.PairRequest(btAddress, pin);
+                        InTheHand.Net.Sockets.BluetoothDeviceInfo device = new InTheHand.Net.Sockets.BluetoothDeviceInfo(btAddress);
+                        device.Refresh();
+                        if (!device.Authenticated)
+                        {
+                            InTheHand.Net.Bluetooth.BluetoothSecurity.PairRequest(btAddress, pin);
+                        }
                         InTheHand.Net.BluetoothEndPoint ep =
                             new InTheHand.Net.BluetoothEndPoint(btAddress, InTheHand.Net.Bluetooth.BluetoothService.SerialPort);
                         BtClient = new InTheHand.Net.Sockets.BluetoothClient();
@@ -115,7 +120,11 @@ namespace EdiabasLib
                             Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Connect failed, removing device");
                             InTheHand.Net.Bluetooth.BluetoothSecurity.RemoveDevice(btAddress);
                             Thread.Sleep(1000);
-                            InTheHand.Net.Bluetooth.BluetoothSecurity.PairRequest(btAddress, pin);
+                            device.Refresh();
+                            if (!device.Authenticated)
+                            {
+                                InTheHand.Net.Bluetooth.BluetoothSecurity.PairRequest(btAddress, pin);
+                            }
 
                             BtClient.Connect(ep);
                         }
