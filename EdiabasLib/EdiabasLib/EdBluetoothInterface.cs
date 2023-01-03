@@ -199,7 +199,6 @@ namespace EdiabasLib
                 if (BtStream != null)
                 {
                     BtStream.Close();
-                    BtStream.Dispose();
                     BtStream = null;
                     LastDisconnectTime = Stopwatch.GetTimestamp();
                 }
