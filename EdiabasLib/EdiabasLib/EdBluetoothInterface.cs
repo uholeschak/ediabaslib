@@ -21,6 +21,7 @@ namespace EdiabasLib
         protected static System.IO.Ports.SerialPort SerialPort;
 #if BLUETOOTH
         protected static InTheHand.Net.Sockets.BluetoothClient BtClient;
+        protected static InTheHand.Net.Sockets.BluetoothDeviceInfo BtDevice;
 #endif
         protected static NetworkStream BtStream;
         protected static AutoResetEvent CommReceiveEvent;
@@ -130,6 +131,7 @@ namespace EdiabasLib
                         }
                         BtStream = BtClient.GetStream();
                         BtStream.ReadTimeout = 1;
+                        BtDevice = device;
                         Thread.Sleep(BtConnectDelay);
                     }
 #endif
@@ -222,6 +224,35 @@ namespace EdiabasLib
             catch (Exception)
             {
                 BtClient = null;
+                result = false;
+            }
+
+            try
+            {
+                if (BtDevice != null)
+                {
+                    long startTime = Stopwatch.GetTimestamp();
+                    for (; ; )
+                    {
+                        Thread.Sleep(10);
+                        BtDevice.Refresh();
+                        if (!BtDevice.Connected)
+                        {
+                            break;
+                        }
+
+                        if ((Stopwatch.GetTimestamp() - startTime) / EdCustomAdapterCommon.TickResolMs > BtDisconnectTimeout)
+                        {
+                            break;
+                        }
+                    }
+
+                    BtDevice = null;
+                }
+            }
+            catch (Exception)
+            {
+                BtDevice = null;
                 result = false;
             }
 #endif
