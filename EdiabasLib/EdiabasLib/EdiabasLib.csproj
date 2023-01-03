@@ -84,7 +84,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\packages\InTheHand.Net.Bluetooth.4.0.33.1\lib\net461\InTheHand.Net.Bluetooth.dll">
+    <EmbeddedResource Include="..\packages\InTheHand.Net.Bluetooth.*\lib\net461\InTheHand.Net.Bluetooth.dll">
       <Link>InTheHand.Net.Bluetooth.dll</Link>
     </EmbeddedResource>
   </ItemGroup>
