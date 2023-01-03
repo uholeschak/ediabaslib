@@ -102,7 +102,6 @@ namespace EdiabasLib
                         BtClient.SetPin(pin);
 #else
                         InTheHand.Net.Sockets.BluetoothDeviceInfo device = new InTheHand.Net.Sockets.BluetoothDeviceInfo(btAddress);
-                        device.Refresh();
                         if (!device.Authenticated)
                         {
                             InTheHand.Net.Bluetooth.BluetoothSecurity.PairRequest(btAddress, pin);
