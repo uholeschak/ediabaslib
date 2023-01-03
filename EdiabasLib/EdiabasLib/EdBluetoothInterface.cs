@@ -11,6 +11,7 @@ namespace EdiabasLib
     {
         public const string PortId = "BLUETOOTH";
         public const int BtConnectDelay = 50;
+        public const int BtDisconnectTimeout = 10000;
         protected const int DisconnectWait = 2000;
         protected const int ReadTimeoutOffsetLong = 1000;
         protected const int ReadTimeoutOffsetShort = 100;
@@ -102,7 +103,7 @@ namespace EdiabasLib
                         BtClient.SetPin(pin);
 #else
                         InTheHand.Net.Sockets.BluetoothDeviceInfo device = new InTheHand.Net.Sockets.BluetoothDeviceInfo(btAddress);
-                        if (!device.Authenticated)
+                        if (!device.Authenticated && !device.Connected)
                         {
                             InTheHand.Net.Bluetooth.BluetoothSecurity.PairRequest(btAddress, pin);
                         }
@@ -120,7 +121,7 @@ namespace EdiabasLib
                             InTheHand.Net.Bluetooth.BluetoothSecurity.RemoveDevice(btAddress);
                             Thread.Sleep(1000);
                             device.Refresh();
-                            if (!device.Authenticated)
+                            if (!device.Authenticated && !device.Connected)
                             {
                                 InTheHand.Net.Bluetooth.BluetoothSecurity.PairRequest(btAddress, pin);
                             }
@@ -205,6 +206,7 @@ namespace EdiabasLib
             }
             catch (Exception)
             {
+                BtStream = null;
                 result = false;
             }
 #if BLUETOOTH
@@ -219,6 +221,7 @@ namespace EdiabasLib
             }
             catch (Exception)
             {
+                BtClient = null;
                 result = false;
             }
 #endif

@@ -23,6 +23,7 @@ namespace CarSimulator
         private readonly WlanClient _wlanClient;
         private readonly MainForm _form;
         private BluetoothClient _btClient;
+        private BluetoothDeviceInfo _btDevice;
         private NetworkStream _dataStream;
         private Thread _workerThread;
         private bool _connectActive;
@@ -30,8 +31,10 @@ namespace CarSimulator
         private int _testCount;
         private bool _disposed;
 
+        public static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         public const int RecTimeout = 2000;
         public const int BtConnectDelay = 50;
+        public const int BtDisconnectTimeout = 10000;
         public const string DefaultBtName = "Deep OBD";
         public const string DefaultBtNameStd = "OBDII";
         public const string DefaultBtPin = "1234";
@@ -175,6 +178,7 @@ namespace CarSimulator
                     _btClient.Connect(ep);
                 }
                 _dataStream = _btClient.GetStream();
+                _btDevice = device;
                 Thread.Sleep(BtConnectDelay);
             }
             catch (Exception)
@@ -301,17 +305,59 @@ namespace CarSimulator
 
         private void DisconnectStream()
         {
-            if (_dataStream != null)
+            try
             {
-                _dataStream.Close();
+                if (_dataStream != null)
+                {
+                    _dataStream.Close();
+                    _dataStream = null;
+                }
+            }
+            catch (Exception)
+            {
                 _dataStream = null;
             }
 
-            if (_btClient != null)
+            try
             {
-                _btClient.Close();
-                _btClient.Dispose();
+                if (_btClient != null)
+                {
+                    _btClient.Close();
+                    _btClient.Dispose();
+                    _btClient = null;
+                }
+            }
+            catch (Exception)
+            {
                 _btClient = null;
+            }
+
+            try
+            {
+                if (_btDevice != null)
+                {
+                    long startTime = Stopwatch.GetTimestamp();
+                    for (; ; )
+                    {
+                        Thread.Sleep(10);
+                        _btDevice.Refresh();
+                        if (!_btDevice.Connected)
+                        {
+                            break;
+                        }
+
+                        if ((Stopwatch.GetTimestamp() - startTime) / TickResolMs > BtDisconnectTimeout)
+                        {
+                            break;
+                        }
+                    }
+
+                    _btDevice = null;
+                }
+            }
+            catch (Exception)
+            {
+                _btDevice = null;
             }
         }
 
@@ -456,8 +502,7 @@ namespace CarSimulator
                         }
 
                         DisconnectStream();
-                        BluetoothSecurity.RemoveDevice(device.DeviceAddress);
-                        Thread.Sleep(1000);
+                        //BluetoothSecurity.RemoveDevice(device.DeviceAddress);
                         retry = 0;
                     }
 

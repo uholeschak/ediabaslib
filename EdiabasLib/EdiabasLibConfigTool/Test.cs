@@ -21,12 +21,14 @@ namespace EdiabasLibConfigTool
 {
     public class Test : IDisposable
     {
+        public static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private const string ElmIp = @"192.168.0.10";
         private const int ElmPort = 35000;
         private const string EspLinkIp = @"192.168.4.1";
         private const int EspLinkPort = 23;
         private readonly FormMain _form;
         private BluetoothClient _btClient;
+        private BluetoothDeviceInfo _btDevice;
         private NetworkStream _dataStream;
         private volatile Thread _testThread;
         private bool _disposed;
@@ -511,7 +513,7 @@ namespace EdiabasLibConfigTool
                 _btClient.SetPin(pin);
 #else
                 device.Refresh();
-                if (!device.Authenticated)
+                if (!device.Authenticated && !device.Connected)
                 {
                     BluetoothSecurity.PairRequest(device.DeviceAddress, pin);
                 }
@@ -527,13 +529,14 @@ namespace EdiabasLibConfigTool
                     BluetoothSecurity.RemoveDevice(device.DeviceAddress);
                     Thread.Sleep(1000);
                     device.Refresh();
-                    if (!device.Authenticated)
+                    if (!device.Authenticated && !device.Connected)
                     {
                         BluetoothSecurity.PairRequest(device.DeviceAddress, pin);
                     }
                     _btClient.Connect(ep);
                 }
                 _dataStream = _btClient.GetStream();
+                _btDevice = device;
                 Thread.Sleep(EdBluetoothInterface.BtConnectDelay);
             }
             catch (Exception)
@@ -545,17 +548,59 @@ namespace EdiabasLibConfigTool
 
         private void DisconnectStream()
         {
-            if (_dataStream != null)
+            try
             {
-                _dataStream.Close();
+                if (_dataStream != null)
+                {
+                    _dataStream.Close();
+                    _dataStream = null;
+                }
+            }
+            catch (Exception)
+            {
                 _dataStream = null;
             }
 
-            if (_btClient != null)
+            try
             {
-                _btClient.Close();
-                _btClient.Dispose();
+                if (_btClient != null)
+                {
+                    _btClient.Close();
+                    _btClient.Dispose();
+                    _btClient = null;
+                }
+            }
+            catch (Exception)
+            {
                 _btClient = null;
+            }
+
+            try
+            {
+                if (_btDevice != null)
+                {
+                    long startTime = Stopwatch.GetTimestamp();
+                    for (; ; )
+                    {
+                        Thread.Sleep(10);
+                        _btDevice.Refresh();
+                        if (!_btDevice.Connected)
+                        {
+                            break;
+                        }
+
+                        if ((Stopwatch.GetTimestamp() - startTime) / TickResolMs > EdBluetoothInterface.BtDisconnectTimeout)
+                        {
+                            break;
+                        }
+                    }
+
+                    _btDevice = null;
+                }
+            }
+            catch (Exception)
+            {
+                _btDevice = null;
             }
         }
 
