@@ -118,7 +118,7 @@ namespace EdiabasLib
                         BtClient = new InTheHand.Net.Sockets.BluetoothClient();
                         BtClient.SetPin(pin);
 #else
-                        if (!device.Authenticated && !device.Connected)
+                        if (!device.Authenticated)
                         {
                             InTheHand.Net.Bluetooth.BluetoothSecurity.PairRequest(btAddress, pin);
                         }
@@ -136,7 +136,7 @@ namespace EdiabasLib
                             InTheHand.Net.Bluetooth.BluetoothSecurity.RemoveDevice(btAddress);
                             Thread.Sleep(1000);
                             device.Refresh();
-                            if (!device.Authenticated && !device.Connected)
+                            if (!device.Authenticated)
                             {
                                 InTheHand.Net.Bluetooth.BluetoothSecurity.PairRequest(btAddress, pin);
                             }
