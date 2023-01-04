@@ -505,7 +505,7 @@ namespace EdiabasLibConfigTool
         {
             try
             {
-                long startTime = Stopwatch.GetTimestamp();
+                long startTimeDisconnect = Stopwatch.GetTimestamp();
                 for (; ; )
                 {
                     device.Refresh();
@@ -514,7 +514,7 @@ namespace EdiabasLibConfigTool
                         break;
                     }
 
-                    if ((Stopwatch.GetTimestamp() - startTime) / TickResolMs > EdBluetoothInterface.BtDisconnectTimeout)
+                    if ((Stopwatch.GetTimestamp() - startTimeDisconnect) / TickResolMs > EdBluetoothInterface.BtDisconnectTimeout)
                     {
                         break;
                     }

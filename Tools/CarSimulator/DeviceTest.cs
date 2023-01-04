@@ -147,7 +147,7 @@ namespace CarSimulator
         {
             try
             {
-                long startTime = Stopwatch.GetTimestamp();
+                long startTimeDisconnect = Stopwatch.GetTimestamp();
                 for (; ; )
                 {
                     device.Refresh();
@@ -156,7 +156,7 @@ namespace CarSimulator
                         break;
                     }
 
-                    if ((Stopwatch.GetTimestamp() - startTime) / TickResolMs > BtDisconnectTimeout)
+                    if ((Stopwatch.GetTimestamp() - startTimeDisconnect) / TickResolMs > BtDisconnectTimeout)
                     {
                         break;
                     }
