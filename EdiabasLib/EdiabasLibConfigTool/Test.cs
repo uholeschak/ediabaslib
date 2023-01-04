@@ -527,7 +527,7 @@ namespace EdiabasLibConfigTool
                 _btClient.SetPin(pin);
 #else
                 device.Refresh();
-                if (!device.Authenticated && !device.Connected)
+                if (!device.Authenticated)
                 {
                     BluetoothSecurity.PairRequest(device.DeviceAddress, pin);
                 }
@@ -543,7 +543,7 @@ namespace EdiabasLibConfigTool
                     BluetoothSecurity.RemoveDevice(device.DeviceAddress);
                     Thread.Sleep(1000);
                     device.Refresh();
-                    if (!device.Authenticated && !device.Connected)
+                    if (!device.Authenticated)
                     {
                         BluetoothSecurity.PairRequest(device.DeviceAddress, pin);
                     }
