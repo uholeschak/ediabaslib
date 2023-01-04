@@ -169,7 +169,7 @@ namespace CarSimulator
                 _btClient.SetPin(DefaultBtPin);
 #else
                 device.Refresh();
-                if (!device.Authenticated && !device.Connected)
+                if (!device.Authenticated)
                 {
                     BluetoothSecurity.PairRequest(device.DeviceAddress, DefaultBtPin);
                 }
@@ -185,7 +185,7 @@ namespace CarSimulator
                     BluetoothSecurity.RemoveDevice(device.DeviceAddress);
                     Thread.Sleep(1000);
                     device.Refresh();
-                    if (!device.Authenticated && !device.Connected)
+                    if (!device.Authenticated)
                     {
                         BluetoothSecurity.PairRequest(device.DeviceAddress, DefaultBtPin);
                     }
