@@ -28,7 +28,6 @@ namespace EdiabasLibConfigTool
         private const int EspLinkPort = 23;
         private readonly FormMain _form;
         private BluetoothClient _btClient;
-        private BluetoothDeviceInfo _btDevice;
         private NetworkStream _dataStream;
         private volatile Thread _testThread;
         private bool _disposed;
@@ -506,6 +505,21 @@ namespace EdiabasLibConfigTool
         {
             try
             {
+                long startTime = Stopwatch.GetTimestamp();
+                for (; ; )
+                {
+                    device.Refresh();
+                    if (!device.Connected)
+                    {
+                        break;
+                    }
+
+                    if ((Stopwatch.GetTimestamp() - startTime) / TickResolMs > EdBluetoothInterface.BtDisconnectTimeout)
+                    {
+                        break;
+                    }
+                    Thread.Sleep(10);
+                }
 #if BT3
                 BluetoothSecurity.SetPin(device.DeviceAddress, pin);
                 BluetoothEndPoint ep = new BluetoothEndPoint(device.DeviceAddress, BluetoothService.SerialPort);
@@ -536,7 +550,6 @@ namespace EdiabasLibConfigTool
                     _btClient.Connect(ep);
                 }
                 _dataStream = _btClient.GetStream();
-                _btDevice = device;
                 Thread.Sleep(EdBluetoothInterface.BtConnectDelay);
             }
             catch (Exception)
@@ -573,34 +586,6 @@ namespace EdiabasLibConfigTool
             catch (Exception)
             {
                 _btClient = null;
-            }
-
-            try
-            {
-                if (_btDevice != null)
-                {
-                    long startTime = Stopwatch.GetTimestamp();
-                    for (; ; )
-                    {
-                        Thread.Sleep(10);
-                        _btDevice.Refresh();
-                        if (!_btDevice.Connected)
-                        {
-                            break;
-                        }
-
-                        if ((Stopwatch.GetTimestamp() - startTime) / TickResolMs > EdBluetoothInterface.BtDisconnectTimeout)
-                        {
-                            break;
-                        }
-                    }
-
-                    _btDevice = null;
-                }
-            }
-            catch (Exception)
-            {
-                _btDevice = null;
             }
         }
 
