@@ -2211,7 +2211,9 @@ namespace EdiabasLib
         private static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
         private static readonly byte[] ByteArray0 = new byte[0];
         private static Dictionary<ErrorCodes, UInt32> _trapBitDict;
+#if !Android && !WindowsCE
         private static readonly bool _resourcesLoaded;
+#endif
         private static bool _firstLog = true;
         private static readonly object SharedDataLock = new object();
         private static readonly Dictionary<string, byte[]> SharedDataDict = new Dictionary<string, byte[]>();
