@@ -23,7 +23,6 @@ namespace CarSimulator
         private readonly WlanClient _wlanClient;
         private readonly MainForm _form;
         private BluetoothClient _btClient;
-        private BluetoothDeviceInfo _btDevice;
         private NetworkStream _dataStream;
         private Thread _workerThread;
         private bool _connectActive;
@@ -148,6 +147,21 @@ namespace CarSimulator
         {
             try
             {
+                long startTime = Stopwatch.GetTimestamp();
+                for (; ; )
+                {
+                    device.Refresh();
+                    if (!device.Connected)
+                    {
+                        break;
+                    }
+
+                    if ((Stopwatch.GetTimestamp() - startTime) / TickResolMs > BtDisconnectTimeout)
+                    {
+                        break;
+                    }
+                    Thread.Sleep(10);
+                }
 #if BT3
                 BluetoothSecurity.SetPin(device.DeviceAddress, DefaultBtPin);
                 BluetoothEndPoint ep = new BluetoothEndPoint(device.DeviceAddress, BluetoothService.SerialPort);
@@ -178,7 +192,6 @@ namespace CarSimulator
                     _btClient.Connect(ep);
                 }
                 _dataStream = _btClient.GetStream();
-                _btDevice = device;
                 Thread.Sleep(BtConnectDelay);
             }
             catch (Exception)
@@ -330,34 +343,6 @@ namespace CarSimulator
             catch (Exception)
             {
                 _btClient = null;
-            }
-
-            try
-            {
-                if (_btDevice != null)
-                {
-                    long startTime = Stopwatch.GetTimestamp();
-                    for (; ; )
-                    {
-                        Thread.Sleep(10);
-                        _btDevice.Refresh();
-                        if (!_btDevice.Connected)
-                        {
-                            break;
-                        }
-
-                        if ((Stopwatch.GetTimestamp() - startTime) / TickResolMs > BtDisconnectTimeout)
-                        {
-                            break;
-                        }
-                    }
-
-                    _btDevice = null;
-                }
-            }
-            catch (Exception)
-            {
-                _btDevice = null;
             }
         }
 
