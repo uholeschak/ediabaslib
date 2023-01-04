@@ -21,7 +21,6 @@ namespace EdiabasLib
         protected static System.IO.Ports.SerialPort SerialPort;
 #if BLUETOOTH
         protected static InTheHand.Net.Sockets.BluetoothClient BtClient;
-        protected static InTheHand.Net.Sockets.BluetoothDeviceInfo BtDevice;
 #endif
         protected static NetworkStream BtStream;
         protected static AutoResetEvent CommReceiveEvent;
@@ -96,6 +95,22 @@ namespace EdiabasLib
                     {
                         InTheHand.Net.BluetoothAddress btAddress = InTheHand.Net.BluetoothAddress.Parse(stringList[0]);
                         string pin = stringList[1];
+                        InTheHand.Net.Sockets.BluetoothDeviceInfo device = new InTheHand.Net.Sockets.BluetoothDeviceInfo(btAddress);
+                        long startTimeDisconnect = Stopwatch.GetTimestamp();
+                        for (; ; )
+                        {
+                            device.Refresh();
+                            if (!device.Connected)
+                            {
+                                break;
+                            }
+
+                            if ((Stopwatch.GetTimestamp() - startTimeDisconnect) / EdCustomAdapterCommon.TickResolMs > BtDisconnectTimeout)
+                            {
+                                break;
+                            }
+                            Thread.Sleep(10);
+                        }
 #if BT3
                         InTheHand.Net.Bluetooth.BluetoothSecurity.SetPin(btAddress, pin);
                         InTheHand.Net.BluetoothEndPoint ep =
@@ -103,7 +118,6 @@ namespace EdiabasLib
                         BtClient = new InTheHand.Net.Sockets.BluetoothClient();
                         BtClient.SetPin(pin);
 #else
-                        InTheHand.Net.Sockets.BluetoothDeviceInfo device = new InTheHand.Net.Sockets.BluetoothDeviceInfo(btAddress);
                         if (!device.Authenticated && !device.Connected)
                         {
                             InTheHand.Net.Bluetooth.BluetoothSecurity.PairRequest(btAddress, pin);
@@ -131,7 +145,6 @@ namespace EdiabasLib
                         }
                         BtStream = BtClient.GetStream();
                         BtStream.ReadTimeout = 1;
-                        BtDevice = device;
                         Thread.Sleep(BtConnectDelay);
                     }
 #endif
@@ -224,35 +237,6 @@ namespace EdiabasLib
             catch (Exception)
             {
                 BtClient = null;
-                result = false;
-            }
-
-            try
-            {
-                if (BtDevice != null)
-                {
-                    long startTime = Stopwatch.GetTimestamp();
-                    for (; ; )
-                    {
-                        Thread.Sleep(10);
-                        BtDevice.Refresh();
-                        if (!BtDevice.Connected)
-                        {
-                            break;
-                        }
-
-                        if ((Stopwatch.GetTimestamp() - startTime) / EdCustomAdapterCommon.TickResolMs > BtDisconnectTimeout)
-                        {
-                            break;
-                        }
-                    }
-
-                    BtDevice = null;
-                }
-            }
-            catch (Exception)
-            {
-                BtDevice = null;
                 result = false;
             }
 #endif
