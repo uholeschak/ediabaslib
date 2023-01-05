@@ -160,7 +160,7 @@ namespace CarSimulator
                     {
                         break;
                     }
-                    Thread.Sleep(10);
+                    Thread.Sleep(100);
                 }
 #if BT3
                 BluetoothSecurity.SetPin(device.DeviceAddress, DefaultBtPin);
