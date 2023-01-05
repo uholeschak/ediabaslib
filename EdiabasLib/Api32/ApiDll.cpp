@@ -37,37 +37,51 @@ public:
                 array<Reflection::Assembly^>^ currentAssemblies = AppDomain::CurrentDomain->GetAssemblies();
                 for each (Reflection::Assembly ^ loadedAssembly in currentAssemblies)
                 {
-                    if (String::IsNullOrEmpty(loadedAssembly->Location) &&
-                        String::Compare(loadedAssembly->FullName, fullName, StringComparison::OrdinalIgnoreCase) == 0)
+                    try
                     {
-                        return loadedAssembly;
+                        if (!loadedAssembly->IsDynamic &&
+                            String::IsNullOrEmpty(loadedAssembly->Location) &&
+                            String::Compare(loadedAssembly->FullName, fullName, StringComparison::OrdinalIgnoreCase) == 0)
+                        {
+                            return loadedAssembly;
+                        }
+                    }
+                    catch (...)
+                    {
                     }
                 }
 
                 return nullptr;
             }
 
-            array<String^>^ names = fullName->Split(',');
-            if (names->Length < 1)
+            try
+            {
+                array<String^>^ names = fullName->Split(',');
+                if (names->Length < 1)
+                {
+                    return nullptr;
+                }
+
+                String^ assemblyName = names[0];
+                String^ assemblyDllName = assemblyName + ".dll";
+                String^ assemblyDir = GetAssemblyDirectory();
+                if (String::IsNullOrEmpty(assemblyDir))
+                {
+                    return nullptr;
+                }
+
+                String^ assemblyFileName = IO::Path::Combine(assemblyDir, assemblyDllName);
+                if (!IO::File::Exists(assemblyFileName))
+                {
+                    return nullptr;
+                }
+
+                return Reflection::Assembly::LoadFrom(assemblyFileName);
+            }
+            catch (...)
             {
                 return nullptr;
             }
-
-            String^ assemblyName = names[0];
-            String^ assemblyDllName = assemblyName + ".dll";
-            String^ assemblyDir = GetAssemblyDirectory();
-            if (String::IsNullOrEmpty(assemblyDir))
-            {
-                return nullptr;
-            }
-
-            String^ assemblyFileName = IO::Path::Combine(assemblyDir, assemblyDllName);
-            if (!IO::File::Exists(assemblyFileName))
-            {
-                return nullptr;
-            }
-
-            return Reflection::Assembly::LoadFrom(assemblyFileName);
         }
 
         return nullptr;
