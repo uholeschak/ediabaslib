@@ -453,37 +453,52 @@ namespace Ediabas
                         Assembly[] currentAssemblies = AppDomain.CurrentDomain.GetAssemblies();
                         foreach (Assembly loadedAssembly in currentAssemblies)
                         {
-                            if (string.IsNullOrEmpty(loadedAssembly.Location) &&
-                                string.Compare(loadedAssembly.FullName, fullName, StringComparison.OrdinalIgnoreCase) == 0)
+                            try
                             {
-                                return loadedAssembly;
+                                if (!loadedAssembly.IsDynamic &&
+                                    string.IsNullOrEmpty(loadedAssembly.Location) &&
+                                    string.Compare(loadedAssembly.FullName, fullName, StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    return loadedAssembly;
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
                             }
                         }
 
                         return null;
                     }
 
-                    string[] names = fullName.Split(',');
-                    if (names.Length < 1)
+                    try
+                    {
+                        string[] names = fullName.Split(',');
+                        if (names.Length < 1)
+                        {
+                            return null;
+                        }
+
+                        string assemblyName = names[0];
+                        string assemblyDllName = assemblyName + ".dll";
+                        string assemblyDir = AssemblyDirectory;
+                        if (string.IsNullOrEmpty(assemblyDir))
+                        {
+                            return null;
+                        }
+
+                        string assemblyFileName = Path.Combine(assemblyDir, assemblyDllName);
+                        if (!File.Exists(assemblyFileName))
+                        {
+                            return null;
+                        }
+
+                        return Assembly.LoadFrom(assemblyFileName);
+                    }
+                    catch (Exception)
                     {
                         return null;
                     }
-
-                    string assemblyName = names[0];
-                    string assemblyDllName = assemblyName + ".dll";
-                    string assemblyDir = AssemblyDirectory;
-                    if (string.IsNullOrEmpty(assemblyDir))
-                    {
-                        return null;
-                    }
-
-                    string assemblyFileName = Path.Combine(assemblyDir, assemblyDllName);
-                    if (!File.Exists(assemblyFileName))
-                    {
-                        return null;
-                    }
-
-                    return Assembly.LoadFrom(assemblyFileName);
                 }
                 return null;
             };
