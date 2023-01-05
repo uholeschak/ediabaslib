@@ -299,7 +299,7 @@ __declspec(noinline)
 static APIBOOL ApiInit(unsigned int far* handle)
 {
     *handle = 0;
-    unsigned int index = GlobalObjects::GetNewApiInstance();
+    const int index = GlobalObjects::GetNewApiInstance();
     if (index == 0)
     {
         return APIFALSE;
@@ -334,7 +334,7 @@ static APIBOOL ApiInitExt(unsigned int far* handle,
     const char far* reserved)
 {
     *handle = 0;
-    int index = GlobalObjects::GetNewApiInstance();
+    const int index = GlobalObjects::GetNewApiInstance();
     if (index < 0)
     {
         return APIFALSE;
