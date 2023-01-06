@@ -2762,7 +2762,7 @@ namespace EdiabasLib
                         {
                             try
                             {
-                                if (!loadedAssembly.IsDynamic &&
+                                if (!loadedAssembly.IsDynamic && loadedAssembly.IsFullyTrusted &&
                                     string.IsNullOrEmpty(loadedAssembly.Location) &&
                                     string.Compare(loadedAssembly.FullName, fullName, StringComparison.OrdinalIgnoreCase) == 0)
                                 {

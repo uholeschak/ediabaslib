@@ -39,7 +39,7 @@ public:
                 {
                     try
                     {
-                        if (!loadedAssembly->IsDynamic &&
+                        if (!loadedAssembly->IsDynamic && loadedAssembly->IsFullyTrusted &&
                             String::IsNullOrEmpty(loadedAssembly->Location) &&
                             String::Compare(loadedAssembly->FullName, fullName, StringComparison::OrdinalIgnoreCase) == 0)
                         {
