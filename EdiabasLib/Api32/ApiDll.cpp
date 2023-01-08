@@ -13,16 +13,13 @@ using namespace msclr::interop;
 ref class GlobalInit
 {
 private:
-    initonly static bool _resourcesLoaded = false;
+    static List<Reflection::Assembly^> _resourceAssemblies = gcnew List<Reflection::Assembly^>();
 
 public:
 
     static GlobalInit()
     {
-        if (LoadAllResourceAssemblies())
-        {
-            _resourcesLoaded = true;
-        }
+        LoadAllResourceAssemblies();
 
         AppDomain::CurrentDomain->AssemblyResolve += gcnew ResolveEventHandler(&GlobalInit::OnAssemblyResolve);
     }
@@ -32,18 +29,15 @@ public:
         String^ fullName = args->Name;
         if (!String::IsNullOrEmpty(fullName))
         {
-            if (_resourcesLoaded)
+            if (_resourceAssemblies.Count > 0)
             {
-                array<Reflection::Assembly^>^ currentAssemblies = AppDomain::CurrentDomain->GetAssemblies();
-                for each (Reflection::Assembly ^ loadedAssembly in currentAssemblies)
+                for each (Reflection::Assembly ^ resourceAssembly in _resourceAssemblies)
                 {
                     try
                     {
-                        if (!loadedAssembly->IsDynamic && loadedAssembly->IsFullyTrusted &&
-                            String::IsNullOrEmpty(loadedAssembly->Location) &&
-                            String::Compare(loadedAssembly->FullName, fullName, StringComparison::OrdinalIgnoreCase) == 0)
+                        if (String::Compare(resourceAssembly->FullName, fullName, StringComparison::OrdinalIgnoreCase) == 0)
                         {
-                            return loadedAssembly;
+                            return resourceAssembly;
                         }
                     }
                     catch (...)
@@ -97,7 +91,11 @@ public:
 
     static bool LoadAllResourceAssemblies()
     {
-        bool loaded = false;
+        if (_resourceAssemblies.Count > 0)
+        {
+            return true;
+        }
+
         try
         {
             Reflection::Assembly^ assembly = Reflection::Assembly::GetExecutingAssembly();
@@ -122,7 +120,7 @@ public:
                         Reflection::Assembly^ loadedAssembly = Reflection::Assembly::Load(memoryStream->ToArray());
                         if (loadedAssembly != nullptr)
                         {
-                            loaded = true;
+                            _resourceAssemblies.Add(loadedAssembly);
                         }
                     }
                 }
@@ -145,7 +143,7 @@ public:
             return false;
         }
 
-        return loaded;
+        return _resourceAssemblies.Count > 0;
     }
 };
 
