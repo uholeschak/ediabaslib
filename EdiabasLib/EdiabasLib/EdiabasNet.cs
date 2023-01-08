@@ -2212,7 +2212,7 @@ namespace EdiabasLib
         private static readonly byte[] ByteArray0 = new byte[0];
         private static Dictionary<ErrorCodes, UInt32> _trapBitDict;
 #if !Android && !WindowsCE
-        private static readonly bool _resourcesLoaded;
+        private static List<Assembly> _resourceAssemblies = new List<Assembly>();
 #endif
         private static bool _firstLog = true;
         private static readonly object SharedDataLock = new object();
@@ -2745,28 +2745,22 @@ namespace EdiabasLib
 #if !Android && !WindowsCE
         static EdiabasNet()
         {
-            if (LoadAllResourceAssemblies())
-            {
-                _resourcesLoaded = true;
-            }
+            LoadAllResourceAssemblies();
 
             AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
             {
                 string fullName = args.Name;
                 if (!string.IsNullOrEmpty(fullName))
                 {
-                    if (_resourcesLoaded)
+                    if (_resourceAssemblies.Count > 0)
                     {
-                        Assembly[] currentAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-                        foreach (Assembly loadedAssembly in currentAssemblies)
+                        foreach (Assembly resourceAssembly in _resourceAssemblies)
                         {
                             try
                             {
-                                if (!loadedAssembly.IsDynamic && loadedAssembly.IsFullyTrusted &&
-                                    string.IsNullOrEmpty(loadedAssembly.Location) &&
-                                    string.Compare(loadedAssembly.FullName, fullName, StringComparison.OrdinalIgnoreCase) == 0)
+                                if (string.Compare(resourceAssembly.FullName, fullName, StringComparison.OrdinalIgnoreCase) == 0)
                                 {
-                                    return loadedAssembly;
+                                    return resourceAssembly;
                                 }
                             }
                             catch (Exception)
@@ -3225,7 +3219,11 @@ namespace EdiabasLib
 
         public static bool LoadAllResourceAssemblies()
         {
-            bool loaded = false;
+            if (_resourceAssemblies.Count > 0)
+            {
+                return true;
+            }
+
             try
             {
                 Assembly assembly = Assembly.GetExecutingAssembly();
@@ -3249,7 +3247,7 @@ namespace EdiabasLib
                                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                                 if (loadedAssembly != null)
                                 {
-                                    loaded = true;
+                                    _resourceAssemblies.Add(loadedAssembly);
                                 }
                             }
                         }
@@ -3261,7 +3259,7 @@ namespace EdiabasLib
                 return false;
             }
 
-            return loaded;
+            return _resourceAssemblies.Count > 0;
         }
 
         public static string GetExceptionText(Exception ex)
