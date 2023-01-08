@@ -125,7 +125,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CRT_SECURE_NO_WARNINGS;WINVER=0x0601;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <EmbedManagedResourceFile>$(ProjectDir)..\ApiInternal\bin\$(Configuration)\ApiInternal.dll;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
     </Link>
@@ -139,7 +139,7 @@
       <PreprocessorDefinitions>WIN64;NDEBUG;_CRT_SECURE_NO_WARNINGS;WINVER=0x0601;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <EmbedManagedResourceFile>$(ProjectDir)..\ApiInternal\bin\$(Configuration)\ApiInternal.dll;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
     </Link>
