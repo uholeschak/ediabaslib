@@ -31,7 +31,7 @@ namespace Ediabas
         public static readonly Encoding Encoding = Encoding.GetEncoding(1252);
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
         protected static readonly long TickResolMs = Stopwatch.Frequency / 1000;
-        private static readonly bool _resourcesLoaded;
+        private static List<Assembly> _resourceAssemblies = new List<Assembly>();
         private static bool _firstLog = true;
 
         private volatile EdiabasNet _ediabas;
@@ -438,28 +438,22 @@ namespace Ediabas
 
         static ApiInternal()
         {
-            if (LoadAllResourceAssemblies())
-            {
-                _resourcesLoaded = true;
-            }
+            LoadAllResourceAssemblies();
 
             AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
             {
                 string fullName = args.Name;
                 if (!string.IsNullOrEmpty(fullName))
                 {
-                    if (_resourcesLoaded)
+                    if (_resourceAssemblies.Count > 0)
                     {
-                        Assembly[] currentAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-                        foreach (Assembly loadedAssembly in currentAssemblies)
+                        foreach (Assembly resourceAssembly in _resourceAssemblies)
                         {
                             try
                             {
-                                if (!loadedAssembly.IsDynamic && loadedAssembly.IsFullyTrusted &&
-                                    string.IsNullOrEmpty(loadedAssembly.Location) &&
-                                    string.Compare(loadedAssembly.FullName, fullName, StringComparison.OrdinalIgnoreCase) == 0)
+                                if (string.Compare(resourceAssembly.FullName, fullName, StringComparison.OrdinalIgnoreCase) == 0)
                                 {
-                                    return loadedAssembly;
+                                    return resourceAssembly;
                                 }
                             }
                             catch (Exception)
@@ -530,7 +524,11 @@ namespace Ediabas
 
         public static bool LoadAllResourceAssemblies()
         {
-            bool loaded = false;
+            if (_resourceAssemblies.Count > 0)
+            {
+                return true;
+            }
+
             try
             {
                 Assembly assembly = Assembly.GetExecutingAssembly();
@@ -554,7 +552,7 @@ namespace Ediabas
                                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                                 if (loadedAssembly != null)
                                 {
-                                    loaded = true;
+                                    _resourceAssemblies.Add(loadedAssembly);
                                 }
                             }
                         }
@@ -566,7 +564,7 @@ namespace Ediabas
                 return false;
             }
 
-            return loaded;
+            return _resourceAssemblies.Count > 0;
         }
 
         public static void InterfaceDisconnect()
