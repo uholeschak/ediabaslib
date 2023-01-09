@@ -3198,23 +3198,23 @@ namespace BmwDeepObd
             return false;
         }
 
-        public bool IsApEnabled()
+        public bool IsWifiApEnabled()
         {
             try
             {
-                if ((_maWifi == null) || !_maWifi.IsWifiEnabled)
+                if (_maWifi == null)
                 {
                     return false;
                 }
 
-                Java.Lang.Reflect.Method isWifiApEnabled = _maWifi.Class.GetDeclaredMethod(@"isWifiApEnabled");
+                Java.Lang.Reflect.Method methodIsWifiApEnabled = _maWifi.Class.GetDeclaredMethod(@"isWifiApEnabled");
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                if (isWifiApEnabled != null)
+                if (methodIsWifiApEnabled != null)
                 {
-                    isWifiApEnabled.Accessible = true;
-                    Java.Lang.Object apEnabledResult = isWifiApEnabled.Invoke(_maWifi);
-                    Java.Lang.Boolean resultBool = apEnabledResult.JavaCast<Java.Lang.Boolean>();
-                    return resultBool != Java.Lang.Boolean.False;
+                    methodIsWifiApEnabled.Accessible = true;
+                    Java.Lang.Object wifiApEnabledResult = methodIsWifiApEnabled.Invoke(_maWifi);
+                    Java.Lang.Boolean wifiApEnabled = wifiApEnabledResult.JavaCast<Java.Lang.Boolean>();
+                    return wifiApEnabled != Java.Lang.Boolean.False;
                 }
             }
             catch (Exception)
@@ -3231,6 +3231,11 @@ namespace BmwDeepObd
 
             try
             {
+                if (IsWifiApEnabled())
+                {
+                    return true;
+                }
+
                 if ((_maWifi == null) || !_maWifi.IsWifiEnabled)
                 {
                     return false;
