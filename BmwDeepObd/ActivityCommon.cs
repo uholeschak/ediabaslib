@@ -3058,6 +3058,11 @@ namespace BmwDeepObd
 
         public bool ElmWifiAdapterValid()
         {
+            if (IsWifiApMode())
+            {
+                return true;
+            }
+
             if ((_maWifi == null) || !_maWifi.IsWifiEnabled)
             {
                 return false;
@@ -3191,6 +3196,7 @@ namespace BmwDeepObd
             {
                 return true;
             }
+
             if (ElmWifiAdapterValid())
             {
                 return true;
@@ -3198,11 +3204,16 @@ namespace BmwDeepObd
             return false;
         }
 
-        public bool IsWifiApEnabled()
+        public bool IsWifiApMode()
         {
             try
             {
                 if (_maWifi == null)
+                {
+                    return false;
+                }
+
+                if (_maWifi.IsWifiEnabled)
                 {
                     return false;
                 }
@@ -3231,7 +3242,7 @@ namespace BmwDeepObd
 
             try
             {
-                if (IsWifiApEnabled())
+                if (IsWifiApMode())
                 {
                     return true;
                 }
@@ -3554,6 +3565,11 @@ namespace BmwDeepObd
             if (_selectedInterface == InterfaceType.Enet)
             {
                 if (IsEmulator())
+                {
+                    return false;
+                }
+
+                if (IsWifiApMode())
                 {
                     return false;
                 }
