@@ -3217,6 +3217,7 @@ namespace EdiabasLib
             }
         }
 
+#if !Android && !WindowsCE
         public static bool LoadAllResourceAssemblies()
         {
             if (_resourceAssemblies.Count > 0)
@@ -3261,6 +3262,7 @@ namespace EdiabasLib
 
             return _resourceAssemblies.Count > 0;
         }
+#endif
 
         public static string GetExceptionText(Exception ex)
         {
