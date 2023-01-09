@@ -3202,7 +3202,7 @@ namespace BmwDeepObd
         {
             try
             {
-                if (_maWifi == null)
+                if ((_maWifi == null) || !_maWifi.IsWifiEnabled)
                 {
                     return false;
                 }
