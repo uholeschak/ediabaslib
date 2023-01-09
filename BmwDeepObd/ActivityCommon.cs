@@ -37,6 +37,7 @@ using Android.Content.Res;
 using Android.Locations;
 using Android.OS.Storage;
 using Android.Provider;
+using Android.Runtime;
 using Android.Views;
 using AndroidX.Core.App;
 using BmwFileReader;
@@ -3193,6 +3194,32 @@ namespace BmwDeepObd
             if (ElmWifiAdapterValid())
             {
                 return true;
+            }
+            return false;
+        }
+
+        public bool IsApEnabled()
+        {
+            try
+            {
+                if (_maWifi == null)
+                {
+                    return false;
+                }
+
+                Java.Lang.Reflect.Method isWifiApEnabled = _maWifi.Class.GetDeclaredMethod(@"isWifiApEnabled");
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                if (isWifiApEnabled != null)
+                {
+                    isWifiApEnabled.Accessible = true;
+                    Java.Lang.Object apEnabledResult = isWifiApEnabled.Invoke(_maWifi);
+                    Java.Lang.Boolean resultBool = apEnabledResult.JavaCast<Java.Lang.Boolean>();
+                    return resultBool != Java.Lang.Boolean.False;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
             }
             return false;
         }
