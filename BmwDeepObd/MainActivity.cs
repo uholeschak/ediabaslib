@@ -1319,10 +1319,31 @@ namespace BmwDeepObd
             IMenuItem enetIpMenu = menu.FindItem(Resource.Id.menu_enet_ip);
             if (enetIpMenu != null)
             {
+                bool menuVisible = false;
+                string interfaceIp = _activityCommon.SelectedInterfaceIp;
+                switch (_activityCommon.SelectedInterface)
+                {
+                    case ActivityCommon.InterfaceType.Enet:
+                        if (string.IsNullOrEmpty(interfaceIp))
+                        {
+                            interfaceIp = GetString(Resource.String.select_enet_ip_auto);
+                        }
+                        menuVisible = true;
+                        break;
+
+                    case ActivityCommon.InterfaceType.ElmWifi:
+                    case ActivityCommon.InterfaceType.DeepObdWifi:
+                        if (_activityCommon.IsWifiApMode())
+                        {
+                            menuVisible = true;
+                        }
+                        break;
+                }
+
                 enetIpMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_enet_ip),
-                    string.IsNullOrEmpty(_activityCommon.SelectedEnetIp) ? GetString(Resource.String.select_enet_ip_auto) : _activityCommon.SelectedEnetIp));
+                    string.IsNullOrEmpty(interfaceIp) ? "-" : interfaceIp));
                 enetIpMenu.SetEnabled(interfaceAvailable && !commActive);
-                enetIpMenu.SetVisible(_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Enet);
+                enetIpMenu.SetVisible(menuVisible);
             }
 
             IMenuItem cfgSubmenu = menu.FindItem(Resource.Id.menu_cfg_submenu);

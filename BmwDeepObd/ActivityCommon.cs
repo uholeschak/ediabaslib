@@ -689,6 +689,8 @@ namespace BmwDeepObd
         private Receiver _bcReceiver;
         private InterfaceType _selectedInterface;
         private string _selectedEnetIp;
+        private string _selectedElmWifiIp;
+        private string _selectedDeepObdWifiIp;
         private AlertDialog _activateAlertDialog;
         private AlertDialog _selectMediaAlertDialog;
         private AlertDialog _selectInterfaceAlertDialog;
@@ -1111,10 +1113,59 @@ namespace BmwDeepObd
             }
         }
 
+        public string SelectedInterfaceIp
+        {
+            get
+            {
+                switch (SelectedInterface)
+                {
+                    case InterfaceType.Enet:
+                        return SelectedEnetIp;
+
+                    case InterfaceType.ElmWifi:
+                        return SelectedElmWifiIp;
+
+                    case InterfaceType.DeepObdWifi:
+                        return SelectedDeepObdWifiIp;
+                }
+                return null;
+            }
+
+            set
+            {
+                switch (SelectedInterface)
+                {
+                    case InterfaceType.Enet:
+                        SelectedEnetIp = value;
+                        break;
+
+                    case InterfaceType.ElmWifi:
+                        SelectedElmWifiIp = value;
+                        break;
+
+                    case InterfaceType.DeepObdWifi:
+                        SelectedDeepObdWifiIp = value;
+                        break;
+                }
+            }
+        }
+
         public string SelectedEnetIp
         {
             get => _selectedEnetIp;
             set => _selectedEnetIp = value;
+        }
+
+        public string SelectedElmWifiIp
+        {
+            get => _selectedElmWifiIp;
+            set => _selectedElmWifiIp = value;
+        }
+
+        public string SelectedDeepObdWifiIp
+        {
+            get => _selectedDeepObdWifiIp;
+            set => _selectedDeepObdWifiIp = value;
         }
 
         public bool AdapterCheckRequired => _selectedInterface == InterfaceType.ElmWifi || _selectedInterface == InterfaceType.DeepObdWifi;
