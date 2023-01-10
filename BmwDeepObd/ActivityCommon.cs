@@ -2353,27 +2353,37 @@ namespace BmwDeepObd
             return resultList;
         }
 
-        private static string ExecuteTop()
+        public static List<string> ExecuteCommand(string command)
         {
             Java.Lang.Process process = null;
             Java.IO.BufferedReader input = null;
             try
             {
-                string returnString = null;
-                process = Java.Lang.Runtime.GetRuntime().Exec("top -n 1");
+                List<string> resultList = new List<string>();
+                process = Java.Lang.Runtime.GetRuntime()?.Exec(command);
+                if (process == null)
+                {
+                    return null;
+                }
+
                 input = new Java.IO.BufferedReader(new Java.IO.InputStreamReader(process.InputStream));
                 if (process.WaitFor() == 0)
                 {
-                    for (;;)
+                    for (; ; )
                     {
-                        returnString = input.ReadLine();
-                        if ((returnString == null) || (returnString.Length > 0))
+                        string line = input.ReadLine();
+                        if (line == null)
                         {
                             break;
                         }
+
+                        if (line.Length > 0)
+                        {
+                            resultList.Add(line);
+                        }
                     }
                 }
-                return returnString;
+                return resultList;
             }
             catch (Exception)
             {
@@ -2391,6 +2401,17 @@ namespace BmwDeepObd
                     // ignored
                 }
             }
+        }
+
+        public static string ExecuteTop()
+        {
+            List<string> resultList = ExecuteCommand("top -n 1");
+            if (resultList != null && resultList.Count > 0)
+            {
+                return resultList[0];
+            }
+
+            return null;
         }
 
         public bool RegisterInternetCellularCallback()
