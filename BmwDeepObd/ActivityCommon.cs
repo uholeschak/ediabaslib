@@ -427,6 +427,7 @@ namespace BmwDeepObd
         public const string ContactMail = "ulrich@holeschak.de";
         public const string VagEndDate = "2017-08";
         public const string MimeTypeAppAny = @"application/*";
+        public const string ActionWifiApStateChange = "android.net.wifi.WIFI_AP_STATE_CHANGED";
         public const string ActionUsbPermission = AppNameSpace + ".USB_PERMISSION";
         public const string ActionPackageName = AppNameSpace + ".Action.PackageName";
         public const string BroadcastXmlEditorPackageName = "XmlEditorPackageName";
@@ -1250,6 +1251,7 @@ namespace BmwDeepObd
                     context.RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.ActionBroadcastCommand));
                     context.RegisterReceiver(_bcReceiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));
                     context.RegisterReceiver(_bcReceiver, new IntentFilter(GlobalBroadcastReceiver.NotificationBroadcastAction));
+                    context.RegisterReceiver(_bcReceiver, new IntentFilter(ActionWifiApStateChange));
                     if (UsbSupport)
                     {   // usb handling
                         context.RegisterReceiver(_bcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceDetached));
@@ -10835,6 +10837,10 @@ namespace BmwDeepObd
                                 }
                             }
                         }
+                        break;
+
+                    case ActionWifiApStateChange:
+                        _activityCommon.NetworkStateChanged();
                         break;
 
                     case UsbManager.ActionUsbDeviceAttached:
