@@ -427,9 +427,9 @@ namespace BmwDeepObd
         public const string ContactMail = "ulrich@holeschak.de";
         public const string VagEndDate = "2017-08";
         public const string MimeTypeAppAny = @"application/*";
-        public const string ActionWifiApStateChange = "android.net.wifi.WIFI_AP_STATE_CHANGED";
-        public const string ActionUsbPermission = AppNameSpace + ".USB_PERMISSION";
-        public const string ActionPackageName = AppNameSpace + ".Action.PackageName";
+        public const string WifiApStateChangedAction = "android.net.wifi.WIFI_AP_STATE_CHANGED";
+        public const string UsbPermissionAction = AppNameSpace + ".USB_PERMISSION";
+        public const string PackageNameAction = AppNameSpace + ".Action.PackageName";
         public const string BroadcastXmlEditorPackageName = "XmlEditorPackageName";
         public const string BroadcastXmlEditorClassName = "XmlEditorClassName";
         public const string SettingBluetoothHciLog = "bluetooth_hci_log";
@@ -1247,16 +1247,16 @@ namespace BmwDeepObd
 
                     _bcReceiver = new Receiver(this);
                     InternalBroadcastManager.InternalBroadcastManager.GetInstance(context).RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.NotificationBroadcastAction));
-                    InternalBroadcastManager.InternalBroadcastManager.GetInstance(context).RegisterReceiver(_bcReceiver, new IntentFilter(ActionPackageName));
+                    InternalBroadcastManager.InternalBroadcastManager.GetInstance(context).RegisterReceiver(_bcReceiver, new IntentFilter(PackageNameAction));
                     context.RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.ActionBroadcastCommand));
                     context.RegisterReceiver(_bcReceiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));
                     context.RegisterReceiver(_bcReceiver, new IntentFilter(GlobalBroadcastReceiver.NotificationBroadcastAction));
-                    context.RegisterReceiver(_bcReceiver, new IntentFilter(ActionWifiApStateChange));
+                    context.RegisterReceiver(_bcReceiver, new IntentFilter(WifiApStateChangedAction));
                     if (UsbSupport)
                     {   // usb handling
                         context.RegisterReceiver(_bcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceDetached));
                         context.RegisterReceiver(_bcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceAttached));
-                        context.RegisterReceiver(_bcReceiver, new IntentFilter(ActionUsbPermission));
+                        context.RegisterReceiver(_bcReceiver, new IntentFilter(UsbPermissionAction));
                         if (Build.VERSION.SdkInt < BuildVersionCodes.Kitkat)
                         {   // attached event fails
                             _usbCheckTimer = new Timer(UsbCheckEvent, null, 1000, 1000);
@@ -4705,7 +4705,7 @@ namespace BmwDeepObd
                         {
                             intentFlags |= Android.App.PendingIntentFlags.Mutable;
                         }
-                        Android.App.PendingIntent intent = Android.App.PendingIntent.GetBroadcast(_context, 0, new Intent(ActionUsbPermission), intentFlags);
+                        Android.App.PendingIntent intent = Android.App.PendingIntent.GetBroadcast(_context, 0, new Intent(UsbPermissionAction), intentFlags);
                         try
                         {
                             _usbManager.RequestPermission(usbDevice, intent);
@@ -10839,7 +10839,7 @@ namespace BmwDeepObd
                         }
                         break;
 
-                    case ActionWifiApStateChange:
+                    case WifiApStateChangedAction:
                         _activityCommon.NetworkStateChanged();
                         break;
 
@@ -10854,7 +10854,7 @@ namespace BmwDeepObd
                             break;
                         }
 
-                    case ActionUsbPermission:
+                    case UsbPermissionAction:
                         _activityCommon._usbPermissionRequested = false;
                         _activityCommon._usbPermissionRequestDisabled = true;
                         if (intent.GetBooleanExtra(UsbManager.ExtraPermissionGranted, false))
