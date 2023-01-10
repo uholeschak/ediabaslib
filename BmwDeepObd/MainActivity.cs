@@ -3773,7 +3773,7 @@ namespace BmwDeepObd
                     }
                     break;
 
-                case ActivityCommon.ActionPackageName:
+                case ActivityCommon.PackageNameAction:
                     string packageName = intent.GetStringExtra(ActivityCommon.BroadcastXmlEditorPackageName);
                     string className = intent.GetStringExtra(ActivityCommon.BroadcastXmlEditorClassName);
                     if (!string.IsNullOrEmpty(packageName) && !string.IsNullOrEmpty(className))
@@ -7914,7 +7914,7 @@ namespace BmwDeepObd
                         string className = clickedComponent.ClassName;
                         if (!string.IsNullOrEmpty(packageName) && !string.IsNullOrEmpty(className))
                         {
-                            Intent broadcastIntent = new Intent(ActivityCommon.ActionPackageName);
+                            Intent broadcastIntent = new Intent(ActivityCommon.PackageNameAction);
                             broadcastIntent.PutExtra(ActivityCommon.BroadcastXmlEditorPackageName, packageName);
                             broadcastIntent.PutExtra(ActivityCommon.BroadcastXmlEditorClassName, className);
                             InternalBroadcastManager.InternalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
