@@ -2359,7 +2359,6 @@ namespace BmwDeepObd
             Java.IO.BufferedReader input = null;
             try
             {
-                List<string> resultList = new List<string>();
                 process = Java.Lang.Runtime.GetRuntime()?.Exec(command);
                 if (process == null)
                 {
@@ -2367,20 +2366,23 @@ namespace BmwDeepObd
                 }
 
                 input = new Java.IO.BufferedReader(new Java.IO.InputStreamReader(process.InputStream));
-                if (process.WaitFor() == 0)
+                if (process.WaitFor() != 0)
                 {
-                    for (; ; )
-                    {
-                        string line = input.ReadLine();
-                        if (line == null)
-                        {
-                            break;
-                        }
+                    return null;
+                }
 
-                        if (line.Length > 0)
-                        {
-                            resultList.Add(line);
-                        }
+                List<string> resultList = new List<string>();
+                for (; ; )
+                {
+                    string line = input.ReadLine();
+                    if (line == null)
+                    {
+                        break;
+                    }
+
+                    if (line.Length > 0)
+                    {
+                        resultList.Add(line);
                     }
                 }
                 return resultList;
