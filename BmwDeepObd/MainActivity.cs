@@ -1341,7 +1341,7 @@ namespace BmwDeepObd
                 }
 
                 enetIpMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_enet_ip),
-                    string.IsNullOrEmpty(interfaceIp) ? "-" : interfaceIp));
+                    string.IsNullOrEmpty(interfaceIp) ? ActivityCommon.InvalidIp : interfaceIp));
                 enetIpMenu.SetEnabled(interfaceAvailable && !commActive);
                 enetIpMenu.SetVisible(menuVisible);
             }
