@@ -4623,6 +4623,15 @@ namespace BmwDeepObd
                             }
                         }
                     });
+                    numberInputDialog.SetNegativeButton(Resource.String.button_reset, (s, arg) =>
+                    {
+                        SelectedInterfaceIp = string.Empty;
+                        handler(s, arg);
+                    });
+                    numberInputDialog.SetNeutralButton(Resource.String.button_abort, (s, arg) =>
+                    {
+                    });
+                    numberInputDialog.Show();
                     break;
                 }
 

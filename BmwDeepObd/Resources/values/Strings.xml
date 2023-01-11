@@ -20,6 +20,7 @@
   <string name="button_donate">Donate</string>
   <string name="button_skip">Skip</string>
   <string name="button_hide">Hide</string>
+  <string name="button_reset">Reset</string>
   <string name="back_button_twice_for_exit">Press button twice in order to exit</string>
   <string name="no_ext_storage">No external storage available</string>
   <string name="access_denied_ext_storage">Access to the external storage is required to execute this app.\nDo you want to open the app settings?</string>
