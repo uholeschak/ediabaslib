@@ -21,6 +21,8 @@
   <string name="button_donate">Пожертвовать</string>
   <string name="button_skip">Пропустить</string>
   <string name="button_hide">Скрыть</string>
+  <!--Translate-->
+  <string name="button_reset">Сброс настроек</string>
   <string name="back_button_twice_for_exit">Дважды нажмите кнопку, чтобы выйти</string>
   <string name="no_ext_storage">Внешняя память недоступна</string>
   <string name="access_denied_ext_storage">Доступ к внешней памяти необходим для выполнения приложения.\nХотите открыть настройки приложения?</string>
