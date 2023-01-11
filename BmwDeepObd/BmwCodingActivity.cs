@@ -107,6 +107,8 @@ namespace BmwDeepObd
         public const string ExtraInterface = "interface";
         public const string ExtraDeviceAddress = "device_address";
         public const string ExtraEnetIp = "enet_ip";
+        public const string ExtraElmWifiIp = "elmwifi_ip";
+        public const string ExtraDeepObdWifiIp = "deepobdwifi_ip";
 
         private const string InfoCodingUrl = @"https://www.holeschak.de/BmwDeepObd/BmwCoding.php";
 #if DEBUG
@@ -178,6 +180,8 @@ namespace BmwDeepObd
                 Intent.GetIntExtra(ExtraInterface, (int)ActivityCommon.InterfaceType.None);
             _deviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
             _activityCommon.SelectedEnetIp = Intent.GetStringExtra(ExtraEnetIp);
+            _activityCommon.SelectedElmWifiIp = Intent.GetStringExtra(ExtraElmWifiIp);
+            _activityCommon.SelectedDeepObdWifiIp = Intent.GetStringExtra(ExtraDeepObdWifiIp);
 
             _activityCommon.SetPreferredNetworkInterface();
 
