@@ -60,6 +60,8 @@ namespace BmwDeepObd
         public const string ExtraInterface = "interface";
         public const string ExtraDeviceAddress = "device_address";
         public const string ExtraEnetIp = "enet_ip";
+        public const string ExtraElmWifiIp = "elmwifi_ip";
+        public const string ExtraDeepObdWifiIp = "deepobdwifi_ip";
 
         private const int MaxMeasValues = 4;
         private const int ResetChannelNumber = 0;
@@ -172,6 +174,8 @@ namespace BmwDeepObd
                 Intent.GetIntExtra(ExtraInterface, (int)ActivityCommon.InterfaceType.None);
             _deviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
             _activityCommon.SelectedEnetIp = Intent.GetStringExtra(ExtraEnetIp);
+            _activityCommon.SelectedElmWifiIp = Intent.GetStringExtra(ExtraElmWifiIp);
+            _activityCommon.SelectedDeepObdWifiIp = Intent.GetStringExtra(ExtraDeepObdWifiIp);
 
             _ecuInfo = IntentEcuInfo;
             UpdateInfoAdaptionList();

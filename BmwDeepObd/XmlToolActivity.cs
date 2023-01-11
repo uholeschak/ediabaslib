@@ -567,6 +567,8 @@ namespace BmwDeepObd
         public const string ExtraDeviceName = "device_name";
         public const string ExtraDeviceAddress = "device_address";
         public const string ExtraEnetIp = "enet_ip";
+        public const string ExtraElmWifiIp = "elmwifi_ip";
+        public const string ExtraDeepObdWifiIp = "deepobdwifi_ip";
         public const string ExtraFileName = "file_name";
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
 
@@ -709,6 +711,8 @@ namespace BmwDeepObd
                 _instanceData.DeviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
             }
             _activityCommon.SelectedEnetIp = Intent.GetStringExtra(ExtraEnetIp);
+            _activityCommon.SelectedElmWifiIp = Intent.GetStringExtra(ExtraElmWifiIp);
+            _activityCommon.SelectedDeepObdWifiIp = Intent.GetStringExtra(ExtraDeepObdWifiIp);
             _lastFileName = Intent.GetStringExtra(ExtraFileName);
             _datUkdDir = ActivityCommon.GetVagDatUkdDir(_ecuDir);
 
@@ -1821,6 +1825,8 @@ namespace BmwDeepObd
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraDeviceAddress, _instanceData.DeviceAddress);
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
+                serverIntent.PutExtra(XmlToolEcuActivity.ExtraElmWifiIp, _activityCommon.SelectedElmWifiIp);
+                serverIntent.PutExtra(XmlToolEcuActivity.ExtraDeepObdWifiIp, _activityCommon.SelectedDeepObdWifiIp);
                 if (_ecuFuncCall != EcuFunctionCallType.None)
                 {
                     serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuFuncCall, (int) _ecuFuncCall);
@@ -1867,6 +1873,8 @@ namespace BmwDeepObd
             serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceName, _instanceData.DeviceName);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceAddress, _instanceData.DeviceAddress);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
+            serverIntent.PutExtra(EdiabasToolActivity.ExtraElmWifiIp, _activityCommon.SelectedElmWifiIp);
+            serverIntent.PutExtra(EdiabasToolActivity.ExtraDeepObdWifiIp, _activityCommon.SelectedDeepObdWifiIp);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestEdiabasTool);
         }
 
@@ -7773,6 +7781,8 @@ namespace BmwDeepObd
             intent.PutExtra(ExtraDeviceName, _instanceData.DeviceName);
             intent.PutExtra(ExtraDeviceAddress, _instanceData.DeviceAddress);
             intent.PutExtra(ExtraEnetIp, _activityCommon.SelectedEnetIp);
+            intent.PutExtra(ExtraElmWifiIp, _activityCommon.SelectedElmWifiIp);
+            intent.PutExtra(ExtraDeepObdWifiIp, _activityCommon.SelectedDeepObdWifiIp);
             intent.PutExtra(ExtraFileName, xmlFileName);
 
             // Set result and finish this Activity
