@@ -4593,6 +4593,43 @@ namespace BmwDeepObd
 
         public bool SelectEnetIp(EventHandler<DialogClickEventArgs> handler)
         {
+            switch (SelectedInterface)
+            {
+                case InterfaceType.Enet:
+                    break;
+
+                case InterfaceType.ElmWifi:
+                case InterfaceType.DeepObdWifi:
+                {
+                    NumberInputDialog numberInputDialog = new NumberInputDialog(_activity);
+                    numberInputDialog.Message = _activity.GetString(Resource.String.select_enet_ip_enter);
+                    numberInputDialog.Digits = "0123456789.";
+                    numberInputDialog.Number = !string.IsNullOrEmpty(SelectedInterfaceIp) ? SelectedInterfaceIp : InvalidIp;
+                    numberInputDialog.SetPositiveButton(Resource.String.button_ok, (s, arg) =>
+                    {
+                        if (_disposed)
+                        {
+                            return;
+                        }
+
+                        string ipAddr = numberInputDialog.Number.Trim();
+                        if (Ipv4RegEx.IsMatch(ipAddr) && IPAddress.TryParse(ipAddr, out IPAddress ipAddress))
+                        {
+                            byte[] ipBytes = ipAddress.GetAddressBytes();
+                            if (ipBytes.Length == 4 && ipBytes.Any(x => x != 0))
+                            {
+                                SelectedInterfaceIp = ipAddress.ToString();
+                                handler(s, arg);
+                            }
+                        }
+                    });
+                    break;
+                }
+
+                default:
+                    return false;
+            }
+
             CustomProgressDialog progress = new CustomProgressDialog(_context);
             progress.SetMessage(_context.GetString(Resource.String.select_enet_ip_search));
             progress.ButtonAbort.Visibility = ViewStates.Gone;
@@ -4689,7 +4726,7 @@ namespace BmwDeepObd
                         NumberInputDialog numberInputDialog = new NumberInputDialog(_activity);
                         numberInputDialog.Message = _activity.GetString(Resource.String.select_enet_ip_enter);
                         numberInputDialog.Digits = "0123456789.";
-                        numberInputDialog.Number = !string.IsNullOrEmpty(_selectedEnetIp) ? _selectedEnetIp: "0.0.0.0";
+                        numberInputDialog.Number = !string.IsNullOrEmpty(_selectedEnetIp) ? _selectedEnetIp: InvalidIp;
                         numberInputDialog.SetPositiveButton(Resource.String.button_ok, (s, arg) =>
                         {
                             if (_disposed)
@@ -4704,7 +4741,7 @@ namespace BmwDeepObd
                                 if (ipBytes.Length == 4 && ipBytes.Any(x => x != 0))
                                 {
                                     _selectedEnetIp = ipAddress.ToString();
-                                    handler(sender, args);
+                                    handler(s, arg);
                                 }
                             }
                         });
