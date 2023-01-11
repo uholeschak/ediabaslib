@@ -227,6 +227,8 @@ namespace BmwDeepObd
         public const string ExtraInterface = "interface";
         public const string ExtraDeviceAddress = "device_address";
         public const string ExtraEnetIp = "enet_ip";
+        public const string ExtraElmWifiIp = "elmwifi_ip";
+        public const string ExtraDeepObdWifiIp = "deepobdwifi_ip";
         public const string ExtraEcuFuncCall = "ecu_func_call";
         // Intent results
         public const string ExtraCallEdiabasTool = "ediabas_tool";
@@ -356,6 +358,8 @@ namespace BmwDeepObd
                 Intent.GetIntExtra(ExtraInterface, (int) ActivityCommon.InterfaceType.None);
             _deviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
             _activityCommon.SelectedEnetIp = Intent.GetStringExtra(ExtraEnetIp);
+            _activityCommon.SelectedElmWifiIp = Intent.GetStringExtra(ExtraElmWifiIp);
+            _activityCommon.SelectedDeepObdWifiIp = Intent.GetStringExtra(ExtraDeepObdWifiIp);
             _ecuFuncCall = (XmlToolActivity.EcuFunctionCallType)Intent.GetIntExtra(ExtraEcuFuncCall, (int)XmlToolActivity.EcuFunctionCallType.None);
 
             _ecuInfo = IntentEcuInfo;
@@ -2426,6 +2430,8 @@ namespace BmwDeepObd
                 serverIntent.PutExtra(BmwActuatorActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
                 serverIntent.PutExtra(BmwActuatorActivity.ExtraDeviceAddress, _deviceAddress);
                 serverIntent.PutExtra(BmwActuatorActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
+                serverIntent.PutExtra(BmwActuatorActivity.ExtraElmWifiIp, _activityCommon.SelectedElmWifiIp);
+                serverIntent.PutExtra(BmwActuatorActivity.ExtraDeepObdWifiIp, _activityCommon.SelectedDeepObdWifiIp);
                 StartActivityForResult(serverIntent, (int)ActivityRequest.RequestBmwActuator);
                 return true;
             }
@@ -2448,6 +2454,8 @@ namespace BmwDeepObd
                 serverIntent.PutExtra(BmwCodingActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
                 serverIntent.PutExtra(BmwCodingActivity.ExtraDeviceAddress, _deviceAddress);
                 serverIntent.PutExtra(BmwCodingActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
+                serverIntent.PutExtra(BmwCodingActivity.ExtraElmWifiIp, _activityCommon.SelectedElmWifiIp);
+                serverIntent.PutExtra(BmwCodingActivity.ExtraDeepObdWifiIp, _activityCommon.SelectedDeepObdWifiIp);
                 StartActivityForResult(serverIntent, (int)ActivityRequest.RequestBmwCoding);
                 return true;
             }
@@ -2474,6 +2482,8 @@ namespace BmwDeepObd
                 serverIntent.PutExtra(VagCodingActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
                 serverIntent.PutExtra(VagCodingActivity.ExtraDeviceAddress, _deviceAddress);
                 serverIntent.PutExtra(VagCodingActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
+                serverIntent.PutExtra(VagCodingActivity.ExtraElmWifiIp, _activityCommon.SelectedElmWifiIp);
+                serverIntent.PutExtra(VagCodingActivity.ExtraDeepObdWifiIp, _activityCommon.SelectedDeepObdWifiIp);
                 StartActivityForResult(serverIntent, (int)ActivityRequest.RequestVagCoding);
                 return true;
             }
@@ -2499,6 +2509,8 @@ namespace BmwDeepObd
                 serverIntent.PutExtra(VagAdaptionActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
                 serverIntent.PutExtra(VagAdaptionActivity.ExtraDeviceAddress, _deviceAddress);
                 serverIntent.PutExtra(VagAdaptionActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
+                serverIntent.PutExtra(VagAdaptionActivity.ExtraElmWifiIp, _activityCommon.SelectedElmWifiIp);
+                serverIntent.PutExtra(VagAdaptionActivity.ExtraDeepObdWifiIp, _activityCommon.SelectedDeepObdWifiIp);
                 StartActivityForResult(serverIntent, (int)ActivityRequest.RequestVagAdaption);
                 return true;
             }

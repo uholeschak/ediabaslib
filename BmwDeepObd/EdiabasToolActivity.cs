@@ -139,6 +139,8 @@ namespace BmwDeepObd
         public const string ExtraDeviceName = "device_name";
         public const string ExtraDeviceAddress = "device_address";
         public const string ExtraEnetIp = "enet_ip";
+        public const string ExtraElmWifiIp = "elmwifi_ip";
+        public const string ExtraDeepObdWifiIp = "deepobdwifi_ip";
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
 
         public static ActivityCommon IntentTranslateActivty { get; set; }
@@ -293,6 +295,8 @@ namespace BmwDeepObd
                 _instanceData.DeviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
             }
             _activityCommon.SelectedEnetIp = Intent.GetStringExtra(ExtraEnetIp);
+            _activityCommon.SelectedElmWifiIp = Intent.GetStringExtra(ExtraElmWifiIp);
+            _activityCommon.SelectedDeepObdWifiIp = Intent.GetStringExtra(ExtraDeepObdWifiIp);
             _activityCommon.SetPreferredNetworkInterface();
 
             EdiabasClose(_instanceData.ForceAppend);
