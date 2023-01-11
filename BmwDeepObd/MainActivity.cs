@@ -309,6 +309,8 @@ namespace BmwDeepObd
                 SelectedLocale = ActivityCommon.SelectedLocale ?? string.Empty;
                 SelectedTheme = ActivityCommon.SelectedTheme ?? ActivityCommon.ThemeDefault;
                 SelectedEnetIp = activityCommon.SelectedEnetIp;
+                SelectedElmWifiIp = activityCommon.SelectedElmWifiIp;
+                SelectedDeepObdWifiIp = activityCommon.SelectedDeepObdWifiIp;
                 DeviceName = instanceData.DeviceName;
                 DeviceAddress = instanceData.DeviceAddress;
                 ConfigFileName = instanceData.ConfigFileName;
@@ -349,6 +351,8 @@ namespace BmwDeepObd
             [XmlElement("Locale")] public string SelectedLocale { get; set; }
             [XmlElement("Theme")] public ActivityCommon.ThemeType SelectedTheme { get; set; }
             [XmlElement("EnetIp")] public string SelectedEnetIp { get; set; }
+            [XmlElement("ElmWifiIp")] public string SelectedElmWifiIp { get; set; }
+            [XmlElement("DeepObdWifiIp")] public string SelectedDeepObdWifiIp { get; set; }
             [XmlElement("DeviceName")] public string DeviceName { get; set; }
             [XmlElement("DeviceAddress")] public string DeviceAddress { get; set; }
             [XmlElement("ConfigFile")] public string ConfigFileName { get; set; }
@@ -3055,6 +3059,8 @@ namespace BmwDeepObd
             if (settingsMode == SettingsMode.Public)
             {
                 storageClassAttributes.Add(storageType, nameof(storageData.SelectedEnetIp), ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, nameof(storageData.SelectedElmWifiIp), ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, nameof(storageData.SelectedDeepObdWifiIp), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.DeviceName), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.DeviceAddress), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.ConfigFileName), ignoreXmlAttributes);
@@ -3163,6 +3169,8 @@ namespace BmwDeepObd
                 {
                     _instanceData.LastAppState = storageData.LastAppState;
                     _activityCommon.SelectedEnetIp = storageData.SelectedEnetIp;
+                    _activityCommon.SelectedElmWifiIp = storageData.SelectedElmWifiIp;
+                    _activityCommon.SelectedDeepObdWifiIp = storageData.SelectedDeepObdWifiIp;
                     _instanceData.DeviceName = storageData.DeviceName;
                     _instanceData.DeviceAddress = storageData.DeviceAddress;
                     _instanceData.ConfigFileName = storageData.ConfigFileName;
