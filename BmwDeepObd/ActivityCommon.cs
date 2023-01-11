@@ -4600,40 +4600,8 @@ namespace BmwDeepObd
 
                 case InterfaceType.ElmWifi:
                 case InterfaceType.DeepObdWifi:
-                {
-                    NumberInputDialog numberInputDialog = new NumberInputDialog(_activity);
-                    numberInputDialog.Message = _activity.GetString(Resource.String.select_enet_ip_enter);
-                    numberInputDialog.Digits = "0123456789.";
-                    numberInputDialog.Number = !string.IsNullOrEmpty(SelectedInterfaceIp) ? SelectedInterfaceIp : InvalidIp;
-                    numberInputDialog.SetPositiveButton(Resource.String.button_ok, (s, arg) =>
-                    {
-                        if (_disposed)
-                        {
-                            return;
-                        }
-
-                        string ipAddr = numberInputDialog.Number.Trim();
-                        if (Ipv4RegEx.IsMatch(ipAddr) && IPAddress.TryParse(ipAddr, out IPAddress ipAddress))
-                        {
-                            byte[] ipBytes = ipAddress.GetAddressBytes();
-                            if (ipBytes.Length == 4 && ipBytes.Any(x => x != 0))
-                            {
-                                SelectedInterfaceIp = ipAddress.ToString();
-                                handler(s, arg);
-                            }
-                        }
-                    });
-                    numberInputDialog.SetNegativeButton(Resource.String.button_reset, (s, arg) =>
-                    {
-                        SelectedInterfaceIp = string.Empty;
-                        handler(s, arg);
-                    });
-                    numberInputDialog.SetNeutralButton(Resource.String.button_abort, (s, arg) =>
-                    {
-                    });
-                    numberInputDialog.Show();
+                    SelectAdapterIpManually(handler);
                     break;
-                }
 
                 default:
                     return false;
@@ -4732,37 +4700,56 @@ namespace BmwDeepObd
                             return;
                         }
 
-                        NumberInputDialog numberInputDialog = new NumberInputDialog(_activity);
-                        numberInputDialog.Message = _activity.GetString(Resource.String.select_enet_ip_enter);
-                        numberInputDialog.Digits = "0123456789.";
-                        numberInputDialog.Number = !string.IsNullOrEmpty(_selectedEnetIp) ? _selectedEnetIp: InvalidIp;
-                        numberInputDialog.SetPositiveButton(Resource.String.button_ok, (s, arg) =>
-                        {
-                            if (_disposed)
-                            {
-                                return;
-                            }
-
-                            string ipAddr = numberInputDialog.Number.Trim();
-                            if (Ipv4RegEx.IsMatch(ipAddr) && IPAddress.TryParse(ipAddr, out IPAddress ipAddress))
-                            {
-                                byte[] ipBytes = ipAddress.GetAddressBytes();
-                                if (ipBytes.Length == 4 && ipBytes.Any(x => x != 0))
-                                {
-                                    _selectedEnetIp = ipAddress.ToString();
-                                    handler(s, arg);
-                                }
-                            }
-                        });
-                        numberInputDialog.SetNegativeButton(Resource.String.button_abort, (s, arg) =>
-                        {
-                        });
-                        numberInputDialog.Show();
+                        SelectAdapterIpManually(handler);
                     });
                     builder.Show();
                 });
             });
             detectThread.Start();
+            return true;
+        }
+
+        public bool SelectAdapterIpManually(EventHandler<DialogClickEventArgs> handler)
+        {
+            try
+            {
+                NumberInputDialog numberInputDialog = new NumberInputDialog(_activity);
+                numberInputDialog.Message = _activity.GetString(Resource.String.select_enet_ip_enter);
+                numberInputDialog.Digits = "0123456789.";
+                numberInputDialog.Number = !string.IsNullOrEmpty(SelectedInterfaceIp) ? SelectedInterfaceIp : InvalidIp;
+                numberInputDialog.SetPositiveButton(Resource.String.button_ok, (s, arg) =>
+                {
+                    if (_disposed)
+                    {
+                        return;
+                    }
+
+                    string ipAddr = numberInputDialog.Number.Trim();
+                    if (Ipv4RegEx.IsMatch(ipAddr) && IPAddress.TryParse(ipAddr, out IPAddress ipAddress))
+                    {
+                        byte[] ipBytes = ipAddress.GetAddressBytes();
+                        if (ipBytes.Length == 4 && ipBytes.Any(x => x != 0))
+                        {
+                            SelectedInterfaceIp = ipAddress.ToString();
+                            handler(s, arg);
+                        }
+                    }
+                });
+                numberInputDialog.SetNegativeButton(Resource.String.button_reset, (s, arg) =>
+                {
+                    SelectedInterfaceIp = null;
+                    handler(s, arg);
+                });
+                numberInputDialog.SetNeutralButton(Resource.String.button_abort, (s, arg) =>
+                {
+                });
+                numberInputDialog.Show();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
             return true;
         }
 
