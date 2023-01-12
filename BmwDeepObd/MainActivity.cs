@@ -1653,7 +1653,7 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_enet_ip:
-                    EnetIpConfig();
+                    AdapterIpConfig();
                     return true;
 
                 case Resource.Id.menu_recent_cfg_clear:
@@ -7330,13 +7330,13 @@ namespace BmwDeepObd
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestAdapterConfig);
         }
 
-        private void EnetIpConfig()
+        private void AdapterIpConfig()
         {
             if (!CheckForEcuFiles())
             {
                 return;
             }
-            _activityCommon.SelectEnetIp((sender, args) =>
+            _activityCommon.SelectAdapterIp((sender, args) =>
             {
                 if (_activityCommon == null)
                 {

@@ -4591,7 +4591,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool SelectEnetIp(EventHandler<DialogClickEventArgs> handler)
+        public bool SelectAdapterIp(EventHandler<DialogClickEventArgs> handler)
         {
             switch (SelectedInterface)
             {
