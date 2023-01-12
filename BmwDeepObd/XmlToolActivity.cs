@@ -1229,7 +1229,7 @@ namespace BmwDeepObd
                     {
                         return true;
                     }
-                    EnetIpConfig();
+                    AdapterIpConfig();
                     return true;
 
                 case Resource.Id.menu_xml_tool_add_errors_page:
@@ -2259,13 +2259,13 @@ namespace BmwDeepObd
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestAdapterConfig);
         }
 
-        private void EnetIpConfig()
+        private void AdapterIpConfig()
         {
             if (!EdiabasClose())
             {
                 return;
             }
-            _activityCommon.SelectEnetIp((sender, args) =>
+            _activityCommon.SelectAdapterIp((sender, args) =>
             {
                 if (_activityCommon == null)
                 {

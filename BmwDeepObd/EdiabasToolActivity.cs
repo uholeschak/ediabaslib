@@ -750,7 +750,7 @@ namespace BmwDeepObd
                     {
                         return true;
                     }
-                    EnetIpConfig();
+                    AdapterIpConfig();
                     return true;
 
                 case Resource.Id.menu_submenu_log:
@@ -1314,13 +1314,13 @@ namespace BmwDeepObd
             }
         }
 
-        private void EnetIpConfig()
+        private void AdapterIpConfig()
         {
             if (!EdiabasClose())
             {
                 return;
             }
-            _activityCommon.SelectEnetIp((sender, args) =>
+            _activityCommon.SelectAdapterIp((sender, args) =>
             {
                 if (_activityCommon == null)
                 {
