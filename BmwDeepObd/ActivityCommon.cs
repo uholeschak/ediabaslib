@@ -1554,6 +1554,11 @@ namespace BmwDeepObd
 
         public string InterfaceName()
         {
+            if (_context == null)
+            {
+                return string.Empty;
+            }
+
             switch (_selectedInterface)
             {
                 case InterfaceType.Bluetooth:
@@ -1576,6 +1581,11 @@ namespace BmwDeepObd
 
         public string ManufacturerName()
         {
+            if (_context == null)
+            {
+                return string.Empty;
+            }
+
             switch (SelectedManufacturer)
             {
                 case ManufacturerType.Bmw:
@@ -1599,6 +1609,11 @@ namespace BmwDeepObd
 
         public string TranslatorName()
         {
+            if (_context == null)
+            {
+                return string.Empty;
+            }
+
             switch (SelectedTranslator)
             {
                 case TranslatorType.YandexTranslate:
@@ -1608,6 +1623,45 @@ namespace BmwDeepObd
                     return _context.GetString(Resource.String.select_translator_ibm);
             }
             return string.Empty;
+        }
+
+        public string GetAdapterIpName()
+        {
+            if (_context == null)
+            {
+                return string.Empty;
+            }
+
+            bool menuVisible = false;
+            string interfaceIp = SelectedInterfaceIp;
+            switch (SelectedInterface)
+            {
+                case InterfaceType.Enet:
+                    if (string.IsNullOrEmpty(interfaceIp))
+                    {
+                        interfaceIp = _context.GetString(Resource.String.select_enet_ip_auto);
+                    }
+                    menuVisible = true;
+                    break;
+
+                case InterfaceType.ElmWifi:
+                case InterfaceType.DeepObdWifi:
+                    if (IsWifiApMode())
+                    {
+                        menuVisible = true;
+                    }
+                    break;
+            }
+
+            if (!menuVisible)
+            {
+                return string.Empty;
+            }
+
+            string name = string.Format(CultureInfo.InvariantCulture, "{0}: {1}", _context.GetString(Resource.String.menu_enet_ip),
+                string.IsNullOrEmpty(interfaceIp) ? InvalidIp : interfaceIp);
+
+            return name;
         }
 
         public bool IsNetworkAdapter()
