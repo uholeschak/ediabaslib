@@ -5111,26 +5111,29 @@ namespace BmwDeepObd
                 edInterfaceObd.UdsEcuCanIdOverride = -1;
                 edInterfaceObd.UdsTesterCanIdOverride = -1;
                 edInterfaceObd.DisabledConceptsList = null;
-                if (SelectedInterface == InterfaceType.Ftdi)
+                switch (SelectedInterface)
                 {
-                    edInterfaceObd.ComPort = "FTDI0";
-                    connectParameter = new EdFtdiInterface.ConnectParameterType(_usbManager);
-                }
-                else if (SelectedInterface == InterfaceType.ElmWifi)
-                {
-                    edInterfaceObd.ComPort = "ELM327WIFI";
-                    connectParameter = new EdElmWifiInterface.ConnectParameterType(_networkData);
-                }
-                else if (SelectedInterface == InterfaceType.DeepObdWifi)
-                {
-                    edInterfaceObd.ComPort = "DEEPOBDWIFI";
-                    connectParameter = new EdCustomWiFiInterface.ConnectParameterType(_networkData, _maWifi);
-                }
-                else
-                {
-                    edInterfaceObd.ComPort = "BLUETOOTH:" + btDeviceAddress;
-                    connectParameter = new EdBluetoothInterface.ConnectParameterType(_networkData, MtcBtService, MtcBtEscapeMode, () => _context);
-                    ConnectMtcBtDevice(btDeviceAddress);
+                    case InterfaceType.Bluetooth:
+                    default:
+                        edInterfaceObd.ComPort = "BLUETOOTH:" + btDeviceAddress;
+                        connectParameter = new EdBluetoothInterface.ConnectParameterType(_networkData, MtcBtService, MtcBtEscapeMode, () => _context);
+                        ConnectMtcBtDevice(btDeviceAddress);
+                        break;
+
+                    case InterfaceType.ElmWifi:
+                        edInterfaceObd.ComPort = EdElmWifiInterface.PortId;
+                        connectParameter = new EdElmWifiInterface.ConnectParameterType(_networkData);
+                        break;
+
+                    case InterfaceType.DeepObdWifi:
+                        edInterfaceObd.ComPort = EdCustomWiFiInterface.PortId;
+                        connectParameter = new EdCustomWiFiInterface.ConnectParameterType(_networkData, _maWifi);
+                        break;
+
+                    case InterfaceType.Ftdi:
+                        edInterfaceObd.ComPort = EdFtdiInterface.PortId + "0";
+                        connectParameter = new EdFtdiInterface.ConnectParameterType(_usbManager);
+                        break;
                 }
             }
             else if (ediabas.EdInterfaceClass is EdInterfaceEnet edInterfaceEnet)

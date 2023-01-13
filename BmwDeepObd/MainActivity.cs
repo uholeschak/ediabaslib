@@ -2545,20 +2545,21 @@ namespace BmwDeepObd
                             break;
 
                         case ActivityCommon.InterfaceType.ElmWifi:
-                            portName = "ELM327WIFI";
+                            portName = EdElmWifiInterface.PortId;
                             connectParameter = new EdElmWifiInterface.ConnectParameterType(_activityCommon.NetworkData);
                             break;
 
                         case ActivityCommon.InterfaceType.DeepObdWifi:
-                            portName = "DEEPOBDWIFI";
+                            portName = EdCustomWiFiInterface.PortId;
                             connectParameter = new EdCustomWiFiInterface.ConnectParameterType(_activityCommon.NetworkData, _activityCommon.MaWifi);
                             break;
 
                         case ActivityCommon.InterfaceType.Ftdi:
-                            portName = "FTDI0";
+                            portName = EdFtdiInterface.PortId + "0";
                             connectParameter = new EdFtdiInterface.ConnectParameterType(_activityCommon.UsbManager);
                             break;
                     }
+
                     ActivityCommon.EdiabasThread.StartThread(portName, connectParameter, pageInfo, true,
                         _instanceData.VagPath, _instanceData.BmwPath, _instanceData.TraceDir, _instanceData.TraceAppend, _instanceData.DataLogDir, _instanceData.DataLogAppend);
                     if (UseCommService())
