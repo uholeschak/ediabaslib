@@ -5115,7 +5115,7 @@ namespace BmwDeepObd
                 {
                     case InterfaceType.Bluetooth:
                     default:
-                        edInterfaceObd.ComPort = "BLUETOOTH:" + btDeviceAddress;
+                        edInterfaceObd.ComPort = EdBluetoothInterface.PortId + ":" + btDeviceAddress;
                         connectParameter = new EdBluetoothInterface.ConnectParameterType(_networkData, MtcBtService, MtcBtEscapeMode, () => _context);
                         ConnectMtcBtDevice(btDeviceAddress);
                         break;
