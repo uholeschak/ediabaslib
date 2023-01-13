@@ -689,9 +689,6 @@ namespace BmwDeepObd
         private GlobalBroadcastReceiver _gbcReceiver;
         private Receiver _bcReceiver;
         private InterfaceType _selectedInterface;
-        private string _selectedEnetIp;
-        private string _selectedElmWifiIp;
-        private string _selectedDeepObdWifiIp;
         private AlertDialog _activateAlertDialog;
         private AlertDialog _selectMediaAlertDialog;
         private AlertDialog _selectInterfaceAlertDialog;
@@ -1151,23 +1148,11 @@ namespace BmwDeepObd
             }
         }
 
-        public string SelectedEnetIp
-        {
-            get => _selectedEnetIp;
-            set => _selectedEnetIp = value;
-        }
+        public string SelectedEnetIp { get; set; }
 
-        public string SelectedElmWifiIp
-        {
-            get => _selectedElmWifiIp;
-            set => _selectedElmWifiIp = value;
-        }
+        public string SelectedElmWifiIp { get; set; }
 
-        public string SelectedDeepObdWifiIp
-        {
-            get => _selectedDeepObdWifiIp;
-            set => _selectedDeepObdWifiIp = value;
-        }
+        public string SelectedDeepObdWifiIp { get; set; }
 
         public bool AdapterCheckRequired => _selectedInterface == InterfaceType.ElmWifi || _selectedInterface == InterfaceType.DeepObdWifi;
 
@@ -4702,8 +4687,8 @@ namespace BmwDeepObd
                     {
                         foreach (EdInterfaceEnet.EnetConnection enetConnection in detectedVehicles)
                         {
-                            if (!string.IsNullOrEmpty(_selectedEnetIp) &&
-                                string.Compare(_selectedEnetIp, enetConnection.ToString(), StringComparison.OrdinalIgnoreCase) == 0)
+                            if (!string.IsNullOrEmpty(SelectedEnetIp) &&
+                                string.Compare(SelectedEnetIp, enetConnection.ToString(), StringComparison.OrdinalIgnoreCase) == 0)
                             {
                                 selIndex = index + 1;
                             }
@@ -4729,7 +4714,7 @@ namespace BmwDeepObd
                         switch (listView.CheckedItemPosition)
                         {
                             case 0:
-                                _selectedEnetIp = null;
+                                SelectedEnetIp = null;
                                 handler(sender, args);
                                 break;
 
@@ -4738,7 +4723,7 @@ namespace BmwDeepObd
                                     listView.CheckedItemPosition - 1 < detectedVehicles.Count)
                                 {
                                     EdInterfaceEnet.EnetConnection enetConnection = detectedVehicles[listView.CheckedItemPosition - 1];
-                                    _selectedEnetIp = enetConnection.ToString();
+                                    SelectedEnetIp = enetConnection.ToString();
                                     handler(sender, args);
                                 }
                                 break;
@@ -5121,14 +5106,28 @@ namespace BmwDeepObd
                         break;
 
                     case InterfaceType.ElmWifi:
-                        edInterfaceObd.ComPort = EdElmWifiInterface.PortId;
+                    {
+                        string comPort = EdElmWifiInterface.PortId;
+                        if (IsWifiApMode() && !string.IsNullOrEmpty(SelectedElmWifiIp))
+                        {
+                            comPort += ":" + SelectedElmWifiIp;
+                        }
+                        edInterfaceObd.ComPort = comPort;
                         connectParameter = new EdElmWifiInterface.ConnectParameterType(_networkData);
                         break;
+                    }
 
                     case InterfaceType.DeepObdWifi:
-                        edInterfaceObd.ComPort = EdCustomWiFiInterface.PortId;
+                    {
+                        string comPort = EdCustomWiFiInterface.PortId;
+                        if (IsWifiApMode() && !string.IsNullOrEmpty(SelectedDeepObdWifiIp))
+                        {
+                            comPort += ":" + SelectedDeepObdWifiIp;
+                        }
+                        edInterfaceObd.ComPort = comPort;
                         connectParameter = new EdCustomWiFiInterface.ConnectParameterType(_networkData, _maWifi);
                         break;
+                    }
 
                     case InterfaceType.Ftdi:
                         edInterfaceObd.ComPort = EdFtdiInterface.PortId + "0";
@@ -5138,7 +5137,7 @@ namespace BmwDeepObd
             }
             else if (ediabas.EdInterfaceClass is EdInterfaceEnet edInterfaceEnet)
             {
-                string remoteHost = string.IsNullOrEmpty(_selectedEnetIp) ? "auto:all" : _selectedEnetIp;
+                string remoteHost = string.IsNullOrEmpty(SelectedEnetIp) ? "auto:all" : SelectedEnetIp;
                 if (Emulator && !string.IsNullOrEmpty(EmulatorEnetIp))
                 {   // broadcast is not working with emulator
                     remoteHost = EmulatorEnetIp;
