@@ -51,16 +51,47 @@ namespace EdiabasLib
                 ConnectPort = port;
                 ConnectParameter = parameter;
                 NetworkData = null;
+
+                if (!port.StartsWith(PortId, StringComparison.OrdinalIgnoreCase))
+                {
+                    InterfaceDisconnect();
+                    return false;
+                }
+
+                string adapterIp = ElmIp;
+                int adapterPort = ElmPort;
+                string portData = port.Remove(0, PortId.Length);
+                if ((portData.Length > 0) && (portData[0] == ':'))
+                {
+                    // special ip
+                    string addr = portData.Remove(0, 1);
+                    string[] stringList = addr.Split(':');
+                    if (stringList.Length == 0)
+                    {
+                        InterfaceDisconnect();
+                        return false;
+                    }
+
+                    adapterIp = stringList[0];
+                    if (stringList.Length > 1)
+                    {
+                        if (int.TryParse(stringList[1], out int portNum))
+                        {
+                            adapterPort = portNum;
+                        }
+                    }
+                }
 #if Android
                 if (ConnectParameter is ConnectParameterType connectParameter)
                 {
                     NetworkData = connectParameter.NetworkData;
                 }
 #endif
+                IPAddress hostIpAddress = IPAddress.Parse(adapterIp);
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
-                    TcpElmClient = new TcpClientWithTimeout(IPAddress.Parse(ElmIp), ElmPort, ConnectTimeout, true).Connect();
-                }, IPAddress.Parse(ElmIp), NetworkData);
+                    TcpElmClient = new TcpClientWithTimeout(hostIpAddress, adapterPort, ConnectTimeout, true).Connect();
+                }, hostIpAddress, NetworkData);
                 TcpElmStream = TcpElmClient.GetStream();
                 _edElmInterface = new EdElmInterface(Ediabas, TcpElmStream, TcpElmStream);
                 if (!_edElmInterface.Elm327Init())
