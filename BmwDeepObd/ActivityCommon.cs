@@ -4763,16 +4763,19 @@ namespace BmwDeepObd
                         return;
                     }
 
+                    string interfaceIp = null;
                     string ipAddr = numberInputDialog.Number.Trim();
                     if (Ipv4RegEx.IsMatch(ipAddr) && IPAddress.TryParse(ipAddr, out IPAddress ipAddress))
                     {
                         byte[] ipBytes = ipAddress.GetAddressBytes();
                         if (ipBytes.Length == 4 && ipBytes.Any(x => x != 0))
                         {
-                            SelectedInterfaceIp = ipAddress.ToString();
-                            handler(s, arg);
+                            interfaceIp = ipAddress.ToString();
                         }
                     }
+
+                    SelectedInterfaceIp = interfaceIp;
+                    handler(s, arg);
                 });
                 numberInputDialog.SetNegativeButton(Resource.String.button_reset, (s, arg) =>
                 {
