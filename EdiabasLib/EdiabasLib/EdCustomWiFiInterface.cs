@@ -65,11 +65,14 @@ namespace EdiabasLib
                 InterfaceDisconnect(true);
                 return true;
             }
+
             if (!port.StartsWith(PortId, StringComparison.OrdinalIgnoreCase))
             {
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting: Invalid port id: {0}", port);
                 InterfaceDisconnect(true);
                 return false;
             }
+
             CustomAdapter.Init();
             try
             {

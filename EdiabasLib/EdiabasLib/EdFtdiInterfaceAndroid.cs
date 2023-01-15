@@ -85,6 +85,7 @@ namespace EdiabasLib
 
                 if (!port.StartsWith(PortId, StringComparison.OrdinalIgnoreCase))
                 {
+                    Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting: Invalid port id: {0}", port);
                     InterfaceDisconnect();
                     return false;
                 }
@@ -92,6 +93,7 @@ namespace EdiabasLib
                 List<IUsbSerialDriver> availableDrivers = GetDriverList(connectParameter.UsbManager);
                 if (availableDrivers.Count <= 0)
                 {
+                    Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting: No USB device found");
                     InterfaceDisconnect();
                     return false;
                 }
@@ -122,18 +124,22 @@ namespace EdiabasLib
 
                 if ((portIndex < 0) || (portIndex >= availableDrivers.Count))
                 {
+                    Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting: Invalid USB port index: {0}", port);
                     InterfaceDisconnect();
                     return false;
                 }
+
                 IUsbSerialDriver driver = availableDrivers[portIndex];
                 UsbDeviceConnection connection = connectParameter.UsbManager.OpenDevice(driver.Device);
                 if (connection == null)
                 {
+                    Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting: USB connect failed");
                     InterfaceDisconnect();
                     return false;
                 }
                 if (driver.Ports.Count < 1)
                 {
+                    Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting: No USB ports found");
                     InterfaceDisconnect();
                     return false;
                 }
@@ -145,6 +151,7 @@ namespace EdiabasLib
                     ftdiPort.LatencyTimer = connectParameter.LatencyTime;
                     if (ftdiPort.LatencyTimer != connectParameter.LatencyTime)
                     {
+                        Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting: Setting latency timeout failed");
                         InterfaceDisconnect();
                         return false;
                     }
@@ -176,6 +183,7 @@ namespace EdiabasLib
                 {
                     if (InterfaceSetConfig(EdInterfaceObd.Protocol.Uart, _currentBaudRate, _currentWordLength, _currentParity, false) != EdInterfaceObd.InterfaceErrorResult.NoError)
                     {
+                        Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting: USB Interface configuration failed");
                         InterfaceDisconnect();
                         return false;
                     }

@@ -54,6 +54,7 @@ namespace EdiabasLib
 
                 if (!port.StartsWith(PortId, StringComparison.OrdinalIgnoreCase))
                 {
+                    Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting: Invalid port id: {0}", port);
                     InterfaceDisconnect();
                     return false;
                 }
@@ -68,6 +69,7 @@ namespace EdiabasLib
                     string[] stringList = addr.Split(':');
                     if (stringList.Length == 0)
                     {
+                        Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting: Missing port parameters: {0}", port);
                         InterfaceDisconnect();
                         return false;
                     }
@@ -75,9 +77,11 @@ namespace EdiabasLib
                     adapterIp = stringList[0];
                     if (stringList.Length > 1)
                     {
-                        if (int.TryParse(stringList[1], out int portNum))
+                        if (!int.TryParse(stringList[1], out adapterPort))
                         {
-                            adapterPort = portNum;
+                            Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting: Invalid port parameters: {0}", port);
+                            InterfaceDisconnect();
+                            return false;
                         }
                     }
                 }
@@ -96,12 +100,14 @@ namespace EdiabasLib
                 _edElmInterface = new EdElmInterface(Ediabas, TcpElmStream, TcpElmStream);
                 if (!_edElmInterface.Elm327Init())
                 {
+                    Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting: Elm327Init failed");
                     InterfaceDisconnect();
                     return false;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting: Exception: {0}", EdiabasNet.GetExceptionText(ex));
                 InterfaceDisconnect();
                 return false;
             }

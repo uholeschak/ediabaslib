@@ -85,6 +85,7 @@ namespace EdiabasLib
 
             if (!port.StartsWith(PortId, StringComparison.OrdinalIgnoreCase))
             {
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting: Invalid port id: {0}", port);
                 InterfaceDisconnect();
                 return false;
             }
@@ -130,6 +131,7 @@ namespace EdiabasLib
                     string[] stringList = addr.Split('#', ';');
                     if (stringList.Length == 0)
                     {
+                        CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting: Invalid port parameters: {0}", port);
                         InterfaceDisconnect();
                         return false;
                     }
@@ -149,11 +151,13 @@ namespace EdiabasLib
                 }
                 else
                 {
+                    CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting: Missing port parameters: {0}", port);
                     InterfaceDisconnect();
                     return false;
                 }
                 if (device == null)
                 {
+                    CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting: Invalid remote device: {0}", port);
                     InterfaceDisconnect();
                     return false;
                 }
