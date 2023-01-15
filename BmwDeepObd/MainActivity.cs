@@ -2546,7 +2546,7 @@ namespace BmwDeepObd
 
                         case ActivityCommon.InterfaceType.ElmWifi:
                             portName = EdElmWifiInterface.PortId;
-                            if (_activityCommon.IsWifiApMode() && !string.IsNullOrEmpty(_activityCommon.SelectedElmWifiIp))
+                            if (!string.IsNullOrEmpty(_activityCommon.SelectedElmWifiIp))
                             {
                                 portName += ":" + _activityCommon.SelectedElmWifiIp;
                             }
@@ -2555,7 +2555,7 @@ namespace BmwDeepObd
 
                         case ActivityCommon.InterfaceType.DeepObdWifi:
                             portName = EdCustomWiFiInterface.PortId;
-                            if (_activityCommon.IsWifiApMode() && !string.IsNullOrEmpty(_activityCommon.SelectedDeepObdWifiIp))
+                            if (!string.IsNullOrEmpty(_activityCommon.SelectedDeepObdWifiIp))
                             {
                                 portName += ":" + _activityCommon.SelectedDeepObdWifiIp;
                             }

@@ -1631,9 +1631,10 @@ namespace BmwDeepObd
 
                 case InterfaceType.ElmWifi:
                 case InterfaceType.DeepObdWifi:
-                    if (IsWifiApMode())
+                    menuVisible = true;
+                    if (string.IsNullOrEmpty(interfaceIp) && !IsWifiApMode())
                     {
-                        menuVisible = true;
+                        interfaceIp = _context.GetString(Resource.String.select_enet_ip_auto);
                     }
                     break;
             }
@@ -4639,8 +4640,7 @@ namespace BmwDeepObd
 
                 case InterfaceType.ElmWifi:
                 case InterfaceType.DeepObdWifi:
-                    SelectAdapterIpManually(handler);
-                    break;
+                    return SelectAdapterIpManually(handler);
 
                 default:
                     return false;
@@ -5111,7 +5111,7 @@ namespace BmwDeepObd
                     case InterfaceType.ElmWifi:
                     {
                         string comPort = EdElmWifiInterface.PortId;
-                        if (IsWifiApMode() && !string.IsNullOrEmpty(SelectedElmWifiIp))
+                        if (!string.IsNullOrEmpty(SelectedElmWifiIp))
                         {
                             comPort += ":" + SelectedElmWifiIp;
                         }
@@ -5123,7 +5123,7 @@ namespace BmwDeepObd
                     case InterfaceType.DeepObdWifi:
                     {
                         string comPort = EdCustomWiFiInterface.PortId;
-                        if (IsWifiApMode() && !string.IsNullOrEmpty(SelectedDeepObdWifiIp))
+                        if (!string.IsNullOrEmpty(SelectedDeepObdWifiIp))
                         {
                             comPort += ":" + SelectedDeepObdWifiIp;
                         }
