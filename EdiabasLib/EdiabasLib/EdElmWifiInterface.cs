@@ -59,6 +59,7 @@ namespace EdiabasLib
                     return false;
                 }
 
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "WiFi ELM connect: {0}", port);
                 string adapterIp = ElmIp;
                 int adapterPort = ElmPort;
                 string portData = port.Remove(0, PortId.Length);
@@ -91,6 +92,7 @@ namespace EdiabasLib
                     NetworkData = connectParameter.NetworkData;
                 }
 #endif
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting to: {0}:{1}", adapterIp, adapterPort);
                 IPAddress hostIpAddress = IPAddress.Parse(adapterIp);
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
