@@ -83,6 +83,31 @@ namespace EdiabasLib
                 int adapterPort = AdapterPort;
                 NetworkData = null;
                 WifiManager = null;
+
+                string portData = port.Remove(0, PortId.Length);
+                if ((portData.Length > 0) && (portData[0] == ':'))
+                {
+                    // special ip
+                    string addr = portData.Remove(0, 1);
+                    string[] stringList = addr.Split(':');
+                    if (stringList.Length == 0)
+                    {
+                        Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting: Missing port parameters: {0}", port);
+                        InterfaceDisconnect();
+                        return false;
+                    }
+
+                    adapterIp = stringList[0];
+                    if (stringList.Length > 1)
+                    {
+                        if (!int.TryParse(stringList[1], out adapterPort))
+                        {
+                            Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting: Invalid port parameters: {0}", port);
+                            InterfaceDisconnect();
+                            return false;
+                        }
+                    }
+                }
 #if Android
                 if (ConnectParameter is ConnectParameterType connectParameter)
                 {
@@ -173,10 +198,11 @@ namespace EdiabasLib
 
 #endif
                 Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting to: {0}:{1}", adapterIp, adapterPort);
+                IPAddress hostIpAddress = IPAddress.Parse(adapterIp);
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
-                    TcpClient = new TcpClientWithTimeout(IPAddress.Parse(adapterIp), adapterPort, ConnectTimeout, true).Connect();
-                }, IPAddress.Parse(adapterIp), NetworkData);
+                    TcpClient = new TcpClientWithTimeout(hostIpAddress, adapterPort, ConnectTimeout, true).Connect();
+                }, hostIpAddress, NetworkData);
                 TcpStream = TcpClient.GetStream();
             }
             catch (Exception ex)
