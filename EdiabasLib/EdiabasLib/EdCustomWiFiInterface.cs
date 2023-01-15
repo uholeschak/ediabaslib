@@ -84,6 +84,7 @@ namespace EdiabasLib
                 NetworkData = null;
                 WifiManager = null;
 
+                bool ipSpecified = false;
                 string portData = port.Remove(0, PortId.Length);
                 if ((portData.Length > 0) && (portData[0] == ':'))
                 {
@@ -97,6 +98,7 @@ namespace EdiabasLib
                         return false;
                     }
 
+                    ipSpecified = true;
                     adapterIp = stringList[0];
                     if (stringList.Length > 1)
                     {
@@ -115,38 +117,81 @@ namespace EdiabasLib
                     WifiManager = connectParameter.WifiManager;
                 }
 
-                if (WifiManager is Android.Net.Wifi.WifiManager wifiManager)
+                if (!ipSpecified)
                 {
-                    string serverIp = null;
-                    if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.S)
+                    if (WifiManager is Android.Net.Wifi.WifiManager wifiManager)
                     {
+                        string serverIp = null;
+                        if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.S)
+                        {
 #pragma warning disable 618
-                        if (wifiManager.ConnectionInfo != null && wifiManager.DhcpInfo != null)
-                        {
-                            serverIp = TcpClientWithTimeout.ConvertIpAddress(wifiManager.DhcpInfo.ServerAddress);
-                        }
-#pragma warning restore 618
-                    }
-                    else
-                    {
-                        if (NetworkData is TcpClientWithTimeout.NetworkData networkData)
-                        {
-                            Android.Net.ConnectivityManager connectivityManager = networkData.ConnectivityManager;
-                            lock (networkData.LockObject)
+                            if (wifiManager.ConnectionInfo != null && wifiManager.DhcpInfo != null)
                             {
-                                foreach (Android.Net.Network network in networkData.ActiveWifiNetworks)
+                                serverIp = TcpClientWithTimeout.ConvertIpAddress(wifiManager.DhcpInfo.ServerAddress);
+                            }
+#pragma warning restore 618
+                        }
+                        else
+                        {
+                            if (NetworkData is TcpClientWithTimeout.NetworkData networkData)
+                            {
+                                Android.Net.ConnectivityManager connectivityManager = networkData.ConnectivityManager;
+                                lock (networkData.LockObject)
                                 {
-                                    Android.Net.NetworkCapabilities networkCapabilities = connectivityManager.GetNetworkCapabilities(network);
-                                    Android.Net.LinkProperties linkProperties = connectivityManager.GetLinkProperties(network);
-                                    if (networkCapabilities != null && linkProperties != null && linkProperties.DhcpServerAddress != null)
+                                    foreach (Android.Net.Network network in networkData.ActiveWifiNetworks)
                                     {
-                                        if (networkCapabilities.TransportInfo is Android.Net.Wifi.WifiInfo)
+                                        Android.Net.NetworkCapabilities networkCapabilities = connectivityManager.GetNetworkCapabilities(network);
+                                        Android.Net.LinkProperties linkProperties = connectivityManager.GetLinkProperties(network);
+                                        if (networkCapabilities != null && linkProperties != null && linkProperties.DhcpServerAddress != null)
                                         {
-                                            string serverAddress = TcpClientWithTimeout.ConvertIpAddress(linkProperties.DhcpServerAddress);
-                                            if (!string.IsNullOrEmpty(serverAddress))
+                                            if (networkCapabilities.TransportInfo is Android.Net.Wifi.WifiInfo)
                                             {
-                                                serverIp = serverAddress;
-                                                break;
+                                                string serverAddress = TcpClientWithTimeout.ConvertIpAddress(linkProperties.DhcpServerAddress);
+                                                if (!string.IsNullOrEmpty(serverAddress))
+                                                {
+                                                    serverIp = serverAddress;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        if (!string.IsNullOrEmpty(serverIp))
+                        {
+                            Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "DHCP server IP: {0}", serverIp);
+                            if (string.Compare(serverIp, EdCustomWiFiInterface.AdapterIpEspLink, StringComparison.Ordinal) == 0)
+                            {
+                                Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "ESP-Link detected");
+                                adapterIp = AdapterIpEspLink;
+                                adapterPort = AdapterPortEspLink;
+                            }
+                        }
+                    }
+#else
+                    System.Net.NetworkInformation.NetworkInterface[] adapters = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces();
+                    foreach (System.Net.NetworkInformation.NetworkInterface adapter in adapters)
+                    {
+                        if (adapter.OperationalStatus == System.Net.NetworkInformation.OperationalStatus.Up)
+                        {
+                            if (adapter.NetworkInterfaceType == System.Net.NetworkInformation.NetworkInterfaceType.Wireless80211)
+                            {
+                                System.Net.NetworkInformation.IPInterfaceProperties properties = adapter.GetIPProperties();
+                                if (properties?.DhcpServerAddresses != null)
+                                {
+                                    foreach (IPAddress dhcpServerAddress in properties.DhcpServerAddresses)
+                                    {
+                                        if (dhcpServerAddress.AddressFamily == AddressFamily.InterNetwork)
+                                        {
+                                            string serverIp = dhcpServerAddress.ToString();
+                                            Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "DHCP server IP: {0}", serverIp);
+                                            if (string.Compare(serverIp, AdapterIpEspLink, StringComparison.OrdinalIgnoreCase) == 0)
+                                            {
+                                                Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "ESP-Link detected");
+                                                adapterIp = AdapterIpEspLink;
+                                                adapterPort = AdapterPortEspLink;
                                             }
                                         }
                                     }
@@ -154,49 +199,9 @@ namespace EdiabasLib
                             }
                         }
                     }
-
-                    if (!string.IsNullOrEmpty(serverIp))
-                    {
-                        Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "DHCP server IP: {0}", serverIp);
-                        if (string.Compare(serverIp, EdCustomWiFiInterface.AdapterIpEspLink, StringComparison.Ordinal) == 0)
-                        {
-                            Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "ESP-Link detected");
-                            adapterIp = AdapterIpEspLink;
-                            adapterPort = AdapterPortEspLink;
-                        }
-                    }
-                }
-#else
-                System.Net.NetworkInformation.NetworkInterface[] adapters = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces();
-                foreach (System.Net.NetworkInformation.NetworkInterface adapter in adapters)
-                {
-                    if (adapter.OperationalStatus == System.Net.NetworkInformation.OperationalStatus.Up)
-                    {
-                        if (adapter.NetworkInterfaceType == System.Net.NetworkInformation.NetworkInterfaceType.Wireless80211)
-                        {
-                            System.Net.NetworkInformation.IPInterfaceProperties properties = adapter.GetIPProperties();
-                            if (properties?.DhcpServerAddresses != null)
-                            {
-                                foreach (IPAddress dhcpServerAddress in properties.DhcpServerAddresses)
-                                {
-                                    if (dhcpServerAddress.AddressFamily == AddressFamily.InterNetwork)
-                                    {
-                                        string serverIp = dhcpServerAddress.ToString();
-                                        Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "DHCP server IP: {0}", serverIp);
-                                        if (string.Compare(serverIp, AdapterIpEspLink, StringComparison.OrdinalIgnoreCase) == 0)
-                                        {
-                                            Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "ESP-Link detected");
-                                            adapterIp = AdapterIpEspLink;
-                                            adapterPort = AdapterPortEspLink;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
 #endif
+                }
+
                 Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting to: {0}:{1}", adapterIp, adapterPort);
                 IPAddress hostIpAddress = IPAddress.Parse(adapterIp);
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
