@@ -160,7 +160,7 @@ namespace EdiabasLib
                     if (!string.IsNullOrEmpty(serverIp))
                     {
                         Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "DHCP server IP: {0}", serverIp);
-                        if (string.Compare(serverIp, EdCustomWiFiInterface.AdapterIpEspLink, StringComparison.Ordinal) == 0)
+                        if (string.Compare(serverIp, AdapterIpEspLink, StringComparison.Ordinal) == 0)
                         {
                             Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "ESP-Link detected");
                             adapterIp = AdapterIpEspLink;
