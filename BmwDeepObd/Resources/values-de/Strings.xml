@@ -308,6 +308,7 @@
   <string name="menu_adapter">Adapter</string>
   <string name="menu_adapter_config">Adapter Konfiguration</string>
   <string name="menu_enet_ip">ENET IP</string>
+  <string name="menu_adapter_ip">Adapter IP</string>
   <string name="menu_cfg_submenu">Konfiguration</string>
   <string name="menu_recent_cfg_submenu">Letzte Konfigurationen</string>
   <string name="menu_recent_cfg_clear">Löschen</string>

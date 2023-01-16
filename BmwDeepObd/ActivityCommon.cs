@@ -1618,20 +1618,24 @@ namespace BmwDeepObd
             }
 
             bool menuVisible = false;
+            string menuName = string.Empty;
             string interfaceIp = SelectedInterfaceIp;
+
             switch (SelectedInterface)
             {
                 case InterfaceType.Enet:
+                    menuVisible = true;
+                    menuName = _context.GetString(Resource.String.menu_enet_ip);
                     if (string.IsNullOrEmpty(interfaceIp))
                     {
                         interfaceIp = _context.GetString(Resource.String.select_enet_ip_auto);
                     }
-                    menuVisible = true;
                     break;
 
                 case InterfaceType.ElmWifi:
                 case InterfaceType.DeepObdWifi:
                     menuVisible = true;
+                    menuName = _context.GetString(Resource.String.menu_adapter_ip);
                     if (string.IsNullOrEmpty(interfaceIp) && !IsWifiApMode())
                     {
                         interfaceIp = _context.GetString(Resource.String.select_enet_ip_auto);
@@ -1644,10 +1648,12 @@ namespace BmwDeepObd
                 return string.Empty;
             }
 
-            string name = string.Format(CultureInfo.InvariantCulture, "{0}: {1}", _context.GetString(Resource.String.menu_enet_ip),
-                string.IsNullOrEmpty(interfaceIp) ? InvalidIp : interfaceIp);
+            if (string.IsNullOrEmpty(interfaceIp))
+            {
+                interfaceIp = InvalidIp;
+            }
 
-            return name;
+            return string.Format(CultureInfo.InvariantCulture, "{0}: {1}", menuName, interfaceIp);
         }
 
         public bool IsNetworkAdapter()
