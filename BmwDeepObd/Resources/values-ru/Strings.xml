@@ -306,6 +306,8 @@
   <string name="menu_manufacturer">Производитель</string>
   <string name="menu_adapter">Устройство</string>
   <string name="menu_adapter_config">Настройки устройства</string>
+  <!--Translate-->
+  <string name="menu_adapter_ip">IP адаптера</string>
   <string name="menu_enet_ip">ENET IP</string>
   <string name="menu_cfg_submenu">Конфигурация</string>
   <string name="menu_recent_cfg_submenu">Последние конфигурации</string>
