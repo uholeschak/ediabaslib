@@ -4758,10 +4758,43 @@ namespace BmwDeepObd
         {
             try
             {
+                string interfaceIp = SelectedInterfaceIp ?? string.Empty;
+                string[] ipParts = interfaceIp.Split(':');
+                string ipAddr = "0.0.0.0";
+                string ipPort = string.Empty;
+                if (ipParts.Length > 0)
+                {
+                    string ip = ipParts[0];
+                    if (!string.IsNullOrEmpty(ip))
+                    {
+                        try
+                        {
+                            IPAddress.Parse(ip);
+                            ipAddr = ip;
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    }
+                }
+
+                if (ipParts.Length > 1)
+                {
+                    string port = ipParts[1];
+                    if (!string.IsNullOrEmpty(port))
+                    {
+                        if (int.TryParse(port, out int _))
+                        {
+                            ipPort = port;
+                        }
+                    }
+                }
+
                 NumberInputDialog numberInputDialog = new NumberInputDialog(_activity);
                 numberInputDialog.Message = _activity.GetString(Resource.String.select_enet_ip_enter);
                 numberInputDialog.Digits = "0123456789.";
-                numberInputDialog.Number = !string.IsNullOrEmpty(SelectedInterfaceIp) ? SelectedInterfaceIp : InvalidIp;
+                numberInputDialog.Number = ipAddr;
                 numberInputDialog.SetPositiveButton(Resource.String.button_ok, (s, arg) =>
                 {
                     if (_disposed)
