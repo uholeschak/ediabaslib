@@ -4646,7 +4646,7 @@ namespace BmwDeepObd
 
                 case InterfaceType.ElmWifi:
                 case InterfaceType.DeepObdWifi:
-                    return SelectAdapterIpManually(handler);
+                    return SelectAdapterIpManually(handler, true);
 
                 default:
                     return false;
@@ -4754,7 +4754,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool SelectAdapterIpManually(EventHandler<DialogClickEventArgs> handler)
+        public bool SelectAdapterIpManually(EventHandler<DialogClickEventArgs> handler, bool withPort = false)
         {
             try
             {
@@ -4767,14 +4767,9 @@ namespace BmwDeepObd
                     string ip = ipParts[0];
                     if (!string.IsNullOrEmpty(ip))
                     {
-                        try
+                        if (Ipv4RegEx.IsMatch(ip))
                         {
-                            IPAddress.Parse(ip);
                             ipAddr = ip;
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
                         }
                     }
                 }
@@ -4795,10 +4790,12 @@ namespace BmwDeepObd
                 numberInputDialog.Message1 = _activity.GetString(Resource.String.select_enet_ip_enter);
                 numberInputDialog.Digits1 = "0123456789.";
                 numberInputDialog.Number1 = ipAddr;
+                numberInputDialog.Visible1 = true;
 
-                numberInputDialog.Message2 = "Port";
+                numberInputDialog.Message2 = _activity.GetString(Resource.String.select_enet_port_enter);
                 numberInputDialog.Digits2 = "0123456789";
                 numberInputDialog.Number2 = ipPort;
+                numberInputDialog.Visible2 = withPort;
                 numberInputDialog.SetPositiveButton(Resource.String.button_ok, (s, arg) =>
                 {
                     if (_disposed)
@@ -4806,18 +4803,33 @@ namespace BmwDeepObd
                         return;
                     }
 
-                    string interfaceIp = null;
-                    string ipAddr = numberInputDialog.Number1.Trim();
-                    if (Ipv4RegEx.IsMatch(ipAddr) && IPAddress.TryParse(ipAddr, out IPAddress ipAddress))
+                    string interfaceIpResult = null;
+                    string ipAddrResult = numberInputDialog.Number1.Trim();
+                    if (Ipv4RegEx.IsMatch(ipAddrResult) && IPAddress.TryParse(ipAddrResult, out IPAddress ipAddress))
                     {
                         byte[] ipBytes = ipAddress.GetAddressBytes();
                         if (ipBytes.Length == 4 && ipBytes.Any(x => x != 0))
                         {
-                            interfaceIp = ipAddress.ToString();
+                            interfaceIpResult = ipAddress.ToString();
                         }
                     }
 
-                    SelectedInterfaceIp = interfaceIp;
+                    if (withPort)
+                    {
+                        string ipPortResult = numberInputDialog.Number2.Trim();
+                        if (!string.IsNullOrEmpty(ipPortResult))
+                        {
+                            if (int.TryParse(ipPortResult, out int portValue))
+                            {
+                                if (portValue >= 1 && portValue <= 0xFFFF)
+                                {
+                                    interfaceIpResult += string.Format(CultureInfo.InvariantCulture, ":{0}", portValue);
+                                }
+                            }
+                        }
+                    }
+
+                    SelectedInterfaceIp = interfaceIpResult;
                     handler(s, arg);
                 });
                 numberInputDialog.SetNegativeButton(Resource.String.button_reset, (s, arg) =>
