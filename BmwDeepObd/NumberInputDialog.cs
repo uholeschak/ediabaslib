@@ -12,62 +12,165 @@ namespace BmwDeepObd
         private Android.App.Activity _activity;
         private AlertDialog _dialog;
         private View _view;
-        private TextView _textViewMessage;
-        private EditText _editTextNumber;
+        private TextView _textViewMessage1;
+        private EditText _editTextNumber1;
+        private bool _visible1;
+        private TextView _textViewMessage2;
+        private EditText _editTextNumber2;
+        private bool _visible2;
 
-        public string Message
+        public string Message1
         {
             get
             {
-                if (_textViewMessage != null)
+                if (_textViewMessage1 != null)
                 {
-                    return _textViewMessage.Text;
+                    return _textViewMessage1.Text;
                 }
                 return string.Empty;
             }
             set
             {
-                if (_textViewMessage != null)
+                if (_textViewMessage1 != null)
                 {
-                    _textViewMessage.Text = value;
+                    _textViewMessage1.Text = value;
                 }
             }
         }
 
-        public string Number
+        public string Message2
         {
             get
             {
-                if (_editTextNumber != null)
+                if (_textViewMessage2 != null)
                 {
-                    return _editTextNumber.Text;
+                    return _textViewMessage2.Text;
                 }
                 return string.Empty;
             }
             set
             {
-                if (_editTextNumber != null)
+                if (_textViewMessage2 != null)
                 {
-                    _editTextNumber.Text = value;
+                    _textViewMessage2.Text = value;
                 }
             }
         }
 
-        public string Digits
+        public string Number1
+        {
+            get
+            {
+                if (_editTextNumber1 != null)
+                {
+                    return _editTextNumber1.Text;
+                }
+                return string.Empty;
+            }
+            set
+            {
+                if (_editTextNumber1 != null)
+                {
+                    _editTextNumber1.Text = value;
+                }
+            }
+        }
+
+        public string Number2
+        {
+            get
+            {
+                if (_editTextNumber2 != null)
+                {
+                    return _editTextNumber2.Text;
+                }
+                return string.Empty;
+            }
+            set
+            {
+                if (_editTextNumber2 != null)
+                {
+                    _editTextNumber2.Text = value;
+                }
+            }
+        }
+
+        public string Digits1
         {
             set
             {
-                if (_editTextNumber != null)
+                if (_editTextNumber1 != null)
                 {
                     if (!string.IsNullOrEmpty(value))
                     {
-                        _editTextNumber.InputType = InputTypes.ClassNumber | InputTypes.NumberFlagDecimal;
-                        _editTextNumber.KeyListener = DigitsKeyListener.GetInstance(value);
+                        _editTextNumber1.InputType = InputTypes.ClassNumber | InputTypes.NumberFlagDecimal;
+                        _editTextNumber1.KeyListener = DigitsKeyListener.GetInstance(value);
                     }
                     else
                     {
-                        _editTextNumber.InputType = InputTypes.ClassNumber;
+                        _editTextNumber1.InputType = InputTypes.ClassNumber;
                     }
+                }
+            }
+        }
+
+        public string Digits2
+        {
+            set
+            {
+                if (_editTextNumber2 != null)
+                {
+                    if (!string.IsNullOrEmpty(value))
+                    {
+                        _editTextNumber2.InputType = InputTypes.ClassNumber | InputTypes.NumberFlagDecimal;
+                        _editTextNumber2.KeyListener = DigitsKeyListener.GetInstance(value);
+                    }
+                    else
+                    {
+                        _editTextNumber2.InputType = InputTypes.ClassNumber;
+                    }
+                }
+            }
+        }
+
+        public bool Visible1
+        {
+            get
+            {
+                return _visible1;
+            }
+            set
+            {
+                _visible1 = value;
+                ViewStates visibility = _visible1 ? ViewStates.Visible : ViewStates.Gone;
+                if (_textViewMessage1 != null)
+                {
+                    _textViewMessage1.Visibility = visibility;
+                }
+                if (_editTextNumber1 != null)
+                {
+                    _editTextNumber1.Visibility = visibility;
+                }
+            }
+        }
+
+        public bool Visible2
+        {
+            get
+            {
+                return _visible2;
+            }
+            set
+            {
+                _visible2 = value;
+                ViewStates visibility = _visible2 ? ViewStates.Visible : ViewStates.Gone;
+                if (_textViewMessage2 != null)
+                {
+                    _textViewMessage2.Visibility = visibility;
+                }
+                if (_editTextNumber2 != null)
+                {
+                    _editTextNumber2.Visibility = visibility;
                 }
             }
         }
@@ -91,9 +194,14 @@ namespace BmwDeepObd
                 _view = _activity.LayoutInflater.Inflate(Resource.Layout.number_input, null);
                 SetView(_view);
 
-                _textViewMessage = _view.FindViewById<TextView>(Resource.Id.textViewMessage);
-                _editTextNumber = _view.FindViewById<EditText>(Resource.Id.editTextNumber);
+                _textViewMessage1 = _view.FindViewById<TextView>(Resource.Id.textViewMessage1);
+                _editTextNumber1 = _view.FindViewById<EditText>(Resource.Id.editTextNumber1);
+                _textViewMessage2 = _view.FindViewById<TextView>(Resource.Id.textViewMessage2);
+                _editTextNumber2 = _view.FindViewById<EditText>(Resource.Id.editTextNumber2);
             }
+
+            Visible1 = true;
+            Visible2 = false;
         }
 
         public new void Show()
@@ -106,14 +214,14 @@ namespace BmwDeepObd
 
         public new void SetMessage(string message)
         {
-            Message = message;
+            Message1 = message;
         }
 
         public new void SetMessage(int messageId)
         {
             if (_activity != null)
             {
-                Message = _activity.GetString(messageId);
+                Message1 = _activity.GetString(messageId);
             }
         }
 

@@ -4792,9 +4792,13 @@ namespace BmwDeepObd
                 }
 
                 NumberInputDialog numberInputDialog = new NumberInputDialog(_activity);
-                numberInputDialog.Message = _activity.GetString(Resource.String.select_enet_ip_enter);
-                numberInputDialog.Digits = "0123456789.";
-                numberInputDialog.Number = ipAddr;
+                numberInputDialog.Message1 = _activity.GetString(Resource.String.select_enet_ip_enter);
+                numberInputDialog.Digits1 = "0123456789.";
+                numberInputDialog.Number1 = ipAddr;
+
+                numberInputDialog.Message2 = "Port";
+                numberInputDialog.Digits2 = "0123456789";
+                numberInputDialog.Number2 = ipPort;
                 numberInputDialog.SetPositiveButton(Resource.String.button_ok, (s, arg) =>
                 {
                     if (_disposed)
@@ -4803,7 +4807,7 @@ namespace BmwDeepObd
                     }
 
                     string interfaceIp = null;
-                    string ipAddr = numberInputDialog.Number.Trim();
+                    string ipAddr = numberInputDialog.Number1.Trim();
                     if (Ipv4RegEx.IsMatch(ipAddr) && IPAddress.TryParse(ipAddr, out IPAddress ipAddress))
                     {
                         byte[] ipBytes = ipAddress.GetAddressBytes();
