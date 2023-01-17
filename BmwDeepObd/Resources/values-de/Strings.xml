@@ -398,8 +398,8 @@
   <string name="select_enet_ip_search">Fahrzeuge suchen</string>
   <string name="select_enet_ip">ENET IP-Adresse wählen</string>
   <string name="select_enet_ip_auto">Automatisch</string>
-  <string name="select_enet_ip_enter">IP-Adresse eingeben</string>
-  <string name="select_enet_port_enter">Portnummer eingeben</string>
+  <string name="select_enet_ip_edit">IP-Address</string>
+  <string name="select_enet_ip_port_edit">Portnummer (optional)</string>
 
   <!-- ENET adapter config -->
   <string name="enet_adapter_web_info">Das Default-Password für das Adapter-Webinterface ist {0}.\nFalls der Adapter nach der Konfiguration nicht mehr erreichbar ist, müssen Sie den Adapter öffnen und die Resetaste drücken, nachdem der Adapter gebootet hat.</string>

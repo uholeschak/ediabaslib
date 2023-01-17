@@ -374,8 +374,8 @@
   <string name="select_enet_ip_search">Searching vehicles</string>
   <string name="select_enet_ip">Select ENET IP address</string>
   <string name="select_enet_ip_auto">Automatic</string>
-  <string name="select_enet_ip_enter">Enter IP address</string>
-  <string name="select_enet_port_enter">Enter port number</string>
+  <string name="select_enet_ip_edit">IP address</string>
+  <string name="select_enet_ip_port_edit">Port number (optional)</string>
 
   <!-- ENET adapter config -->
   <string name="enet_adapter_web_info">The default password for the adapter web interface is {0}.\nIf the adapter gets unreachable after configuration you have to open the adapter and press the reset button after the adapter has booted.</string>
