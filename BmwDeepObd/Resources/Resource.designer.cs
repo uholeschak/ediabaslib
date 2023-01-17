@@ -13297,13 +13297,13 @@ namespace BmwDeepObd
 			public const int select_enet_ip_auto = 2131755511;
 			
 			// aapt resource value: 0x7F1001F8
-			public const int select_enet_ip_enter = 2131755512;
+			public const int select_enet_ip_edit = 2131755512;
 			
 			// aapt resource value: 0x7F1001F9
-			public const int select_enet_ip_search = 2131755513;
+			public const int select_enet_ip_port_edit = 2131755513;
 			
 			// aapt resource value: 0x7F1001FA
-			public const int select_enet_port_enter = 2131755514;
+			public const int select_enet_ip_search = 2131755514;
 			
 			// aapt resource value: 0x7F1001FB
 			public const int select_file = 2131755515;

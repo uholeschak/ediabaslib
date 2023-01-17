@@ -398,9 +398,9 @@
   <string name="select_enet_ip_search">Поиск автомобиля</string>
   <string name="select_enet_ip">Выберите ENET IP-адрес</string>
   <string name="select_enet_ip_auto">Автоматически</string>
-  <string name="select_enet_ip_enter">Введите IP-адрес</string>
+  <string name="select_enet_ip_edit">IP-адрес</string>
   <!--Translate-->
-  <string name="select_enet_port_enter">Введите номер порта</string>
+  <string name="select_enet_ip_port_edit">Номер порта</string>
 
   <!-- ENET adapter config -->
   <string name="enet_adapter_web_info">Пароль для веб интерфейса устойства по умолчанию {0}.\nЕсли устройство после его конфигурирования больше не реагирует - необходимо открыть устройство, перезагрузить его и нажать кнопку сброса.</string>

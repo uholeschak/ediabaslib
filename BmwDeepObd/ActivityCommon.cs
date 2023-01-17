@@ -4779,20 +4779,23 @@ namespace BmwDeepObd
                     string port = ipParts[1];
                     if (!string.IsNullOrEmpty(port))
                     {
-                        if (int.TryParse(port, out int _))
+                        if (int.TryParse(port, out int portValue))
                         {
-                            ipPort = port;
+                            if (portValue >= 1 && portValue <= 0xFFFF)
+                            {
+                                ipPort = port;
+                            }
                         }
                     }
                 }
 
                 NumberInputDialog numberInputDialog = new NumberInputDialog(_activity);
-                numberInputDialog.Message1 = _activity.GetString(Resource.String.select_enet_ip_enter);
+                numberInputDialog.Message1 = _activity.GetString(Resource.String.select_enet_ip_edit);
                 numberInputDialog.Digits1 = "0123456789.";
                 numberInputDialog.Number1 = ipAddr;
                 numberInputDialog.Visible1 = true;
 
-                numberInputDialog.Message2 = _activity.GetString(Resource.String.select_enet_port_enter);
+                numberInputDialog.Message2 = _activity.GetString(Resource.String.select_enet_ip_port_edit);
                 numberInputDialog.Digits2 = "0123456789";
                 numberInputDialog.Number2 = ipPort;
                 numberInputDialog.Visible2 = withPort;
