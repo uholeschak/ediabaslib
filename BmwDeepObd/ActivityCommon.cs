@@ -4783,7 +4783,7 @@ namespace BmwDeepObd
                         {
                             if (portValue >= 1 && portValue <= 0xFFFF)
                             {
-                                ipPort = port;
+                                ipPort = string.Format(CultureInfo.InvariantCulture, "{0}", portValue);
                             }
                         }
                     }
@@ -4817,7 +4817,7 @@ namespace BmwDeepObd
                         }
                     }
 
-                    if (withPort)
+                    if (withPort && !string.IsNullOrEmpty(interfaceIpResult))
                     {
                         string ipPortResult = numberInputDialog.Number2.Trim();
                         if (!string.IsNullOrEmpty(ipPortResult))
