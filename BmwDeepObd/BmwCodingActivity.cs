@@ -121,13 +121,11 @@ namespace BmwDeepObd
         }
 
         private InstanceData _instanceData = new InstanceData();
-        private bool _updateOptionsMenu;
         private ActivityCommon _activityCommon;
         private string _ecuDir;
         private string _appDataDir;
         private string _deviceAddress;
         private Handler _updateHandler;
-        private Java.Lang.Runnable _updateMenuRunnable;
         private Java.Lang.Runnable _startRunnable;
         private EdiabasNet _ediabas;
         private volatile bool _ediabasJobAbort;
@@ -187,12 +185,6 @@ namespace BmwDeepObd
             _activityCommon.SetPreferredNetworkInterface();
 
             _updateHandler = new Handler(Looper.MainLooper);
-            _updateMenuRunnable = new Java.Lang.Runnable(() =>
-            {
-                InvalidateOptionsMenu();
-                _updateOptionsMenu = false;
-            });
-
             _startRunnable = new Java.Lang.Runnable(() =>
             {
                 if (_activityCommon == null)
@@ -533,16 +525,6 @@ namespace BmwDeepObd
             return true;
         }
 
-        public override bool OnMenuOpened(int featureId, IMenu menu)
-        {
-            if (_updateOptionsMenu)
-            {
-                OnPrepareOptionsMenu(menu);
-                _updateOptionsMenu = false;
-            }
-            return base.OnMenuOpened(featureId, menu);
-        }
-
         public override bool OnPrepareOptionsMenu(IMenu menu)
         {
             bool commActive = IsEdiabasConnected();
@@ -630,13 +612,6 @@ namespace BmwDeepObd
                     }
                 };
             }
-        }
-
-        private void UpdateOptionsMenu()
-        {
-            _updateOptionsMenu = true;
-            _updateHandler.RemoveCallbacks(_updateMenuRunnable);
-            _updateHandler.PostDelayed(_updateMenuRunnable, 500);
         }
 
         public bool GetConnectionInfoRequest()

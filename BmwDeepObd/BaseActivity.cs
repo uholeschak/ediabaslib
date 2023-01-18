@@ -68,12 +68,14 @@ namespace BmwDeepObd
         protected bool _touchShowTitle = false;
         protected bool _fullScreen;
         protected bool _hasFocus;
+        protected bool _updateOptionsMenu;
         protected bool _autoFullScreenStarted;
         protected long _autoFullScreenStartTime;
         protected Timer _autoFullScreenTimer;
         protected Timer _memoryCheckTimer;
-        protected Handler _longPressHandler;
+        protected Handler _baseUpdateHandler;
         protected Java.Lang.Runnable _longPressRunnable;
+        protected Java.Lang.Runnable _updateMenuRunnable;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -105,7 +107,7 @@ namespace BmwDeepObd
                 };
             }
 
-            _longPressHandler = new Handler(Looper.MainLooper);
+            _baseUpdateHandler = new Handler(Looper.MainLooper);
             _longPressRunnable = new Java.Lang.Runnable(() =>
                 {
                     if (_actvityDestroyed)
@@ -129,6 +131,17 @@ namespace BmwDeepObd
                         }
                     }
                 });
+
+            _updateMenuRunnable = new Java.Lang.Runnable(() =>
+            {
+                if (_actvityDestroyed)
+                {
+                    return;
+                }
+
+                InvalidateOptionsMenu();
+                _updateOptionsMenu = false;
+            });
 
             if (_instanceDataBase != null)
             {
@@ -163,18 +176,18 @@ namespace BmwDeepObd
                 _autoFullScreenTimer = null;
             }
 
-            if (_longPressHandler != null)
+            if (_baseUpdateHandler != null)
             {
                 try
                 {
-                    _longPressHandler.RemoveCallbacksAndMessages(null);
-                    _longPressHandler.Dispose();
+                    _baseUpdateHandler.RemoveCallbacksAndMessages(null);
+                    _baseUpdateHandler.Dispose();
                 }
                 catch (Exception)
                 {
                     // ignored
                 }
-                _longPressHandler = null;
+                _baseUpdateHandler = null;
             }
         }
 
@@ -310,10 +323,20 @@ namespace BmwDeepObd
                 _autoFullScreenTimer = null;
             }
 
-            if (_longPressHandler != null)
+            if (_baseUpdateHandler != null)
             {
-                _longPressHandler.RemoveCallbacksAndMessages(null);
+                _baseUpdateHandler.RemoveCallbacks(_longPressRunnable);
             }
+        }
+
+        public override bool OnMenuOpened(int featureId, IMenu menu)
+        {
+            if (_updateOptionsMenu)
+            {
+                InvalidateOptionsMenu();
+                _updateOptionsMenu = false;
+            }
+            return base.OnMenuOpened(featureId, menu);
         }
 
         public override void OnWindowFocusChanged(bool hasFocus)
@@ -348,24 +371,24 @@ namespace BmwDeepObd
             switch (ev.Action)
             {
                 case MotionEventActions.Up:
-                    if (_longPressHandler == null)
+                    if (_baseUpdateHandler == null)
                     {
                         break;
                     }
 
-                    _longPressHandler.RemoveCallbacks(_longPressRunnable);
+                    _baseUpdateHandler.RemoveCallbacks(_longPressRunnable);
                     break;
 
                 case MotionEventActions.Down:
-                    if (_longPressHandler == null)
+                    if (_baseUpdateHandler == null)
                     {
                         break;
                     }
 
-                    _longPressHandler.RemoveCallbacks(_longPressRunnable);
+                    _baseUpdateHandler.RemoveCallbacks(_longPressRunnable);
                     if (ActivityCommon.AutoHideTitleBar || ActivityCommon.SuppressTitleBar)
                     {
-                        _longPressHandler.PostDelayed(_longPressRunnable, LongPressTimeout);
+                        _baseUpdateHandler.PostDelayed(_longPressRunnable, LongPressTimeout);
                     }
                     break;
             }
@@ -423,6 +446,16 @@ namespace BmwDeepObd
             catch (Exception)
             {
                 // ignored
+            }
+        }
+
+        public void UpdateOptionsMenu()
+        {
+            _updateOptionsMenu = true;
+            if (_baseUpdateHandler != null)
+            {
+                _baseUpdateHandler.RemoveCallbacks(_updateMenuRunnable);
+                _baseUpdateHandler.PostDelayed(_updateMenuRunnable, 500);
             }
         }
 
