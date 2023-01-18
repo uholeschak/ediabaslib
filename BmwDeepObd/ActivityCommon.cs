@@ -1610,11 +1610,14 @@ namespace BmwDeepObd
             return string.Empty;
         }
 
-        public string GetAdapterIpName()
+        public bool GetAdapterIpName(out string prefix, out string ipText)
         {
+            prefix = string.Empty;
+            ipText = string.Empty;
+
             if (_context == null)
             {
-                return string.Empty;
+                return false;
             }
 
             bool menuVisible = false;
@@ -1645,7 +1648,7 @@ namespace BmwDeepObd
 
             if (!menuVisible)
             {
-                return string.Empty;
+                return false;
             }
 
             if (string.IsNullOrEmpty(interfaceIp))
@@ -1653,7 +1656,9 @@ namespace BmwDeepObd
                 interfaceIp = InvalidIp;
             }
 
-            return string.Format(CultureInfo.InvariantCulture, "{0}: {1}", menuName, interfaceIp);
+            prefix = menuName;
+            ipText = interfaceIp;
+            return true;
         }
 
         public bool IsNetworkAdapter()

@@ -598,10 +598,11 @@ namespace BmwDeepObd
             IMenuItem enetIpMenu = menu.FindItem(Resource.Id.menu_enet_ip);
             if (enetIpMenu != null)
             {
-                string ipName = _activityCommon.GetAdapterIpName();
-                bool menuVisible = !string.IsNullOrEmpty(ipName);
+                _activityCommon.GetAdapterIpName(out string prefix, out string ipText);
+                bool menuVisible = !string.IsNullOrEmpty(ipText);
 
-                enetIpMenu.SetTitle(ipName);
+                enetIpMenu.SetTitle(prefix + ": " + ipText);
+                enetIpMenu.SetTitleCondensed(ipText);
                 enetIpMenu.SetEnabled(interfaceAvailable && !commActive && !_instanceData.Offline && !fixedSgbd);
                 enetIpMenu.SetVisible(menuVisible);
             }
