@@ -443,7 +443,6 @@ namespace BmwDeepObd
         public static bool StoreXmlEditor = Build.VERSION.SdkInt >= BuildVersionCodes.LollipopMr1;
         private InstanceData _instanceData = new InstanceData();
         private bool _activityRecreated;
-        private bool _updateOptionsMenu;
         private ActivityCommon.AutoConnectType _connectTypeRequest;
         private bool _backPressed;
         private long _lastBackPressedTime;
@@ -470,7 +469,6 @@ namespace BmwDeepObd
         private IMenu _optionsMenu;
         private Timer _autoHideTimer;
         private Handler _updateHandler;
-        private Java.Lang.Runnable _updateMenuRunnable;
         private Java.Lang.Runnable _createActionBarRunnable;
         private Java.Lang.Runnable _compileCodeRunnable;
         private Java.Lang.Runnable _updateDisplayRunnable;
@@ -592,12 +590,6 @@ namespace BmwDeepObd
             _activityCommon.SetPreferredNetworkInterface();
 
             _updateHandler = new Handler(Looper.MainLooper);
-            _updateMenuRunnable = new Java.Lang.Runnable(() =>
-            {
-                InvalidateOptionsMenu();
-                _updateOptionsMenu = false;
-            });
-
             _createActionBarRunnable = new Java.Lang.Runnable(CreateActionBarTabs);
             _compileCodeRunnable = new Java.Lang.Runnable(CompileCode);
             _updateDisplayRunnable = new Java.Lang.Runnable(() =>
@@ -1286,16 +1278,6 @@ namespace BmwDeepObd
             inflater.Inflate(Resource.Menu.option_menu, menu);
             _optionsMenu = menu;
             return base.OnCreateOptionsMenu(menu);
-        }
-
-        public override bool OnMenuOpened(int featureId, IMenu menu)
-        {
-            if (_updateOptionsMenu)
-            {
-                OnPrepareOptionsMenu(menu);
-                _updateOptionsMenu = false;
-            }
-            return base.OnMenuOpened(featureId, menu);
         }
 
         public override bool OnPrepareOptionsMenu(IMenu menu)
@@ -2324,13 +2306,6 @@ namespace BmwDeepObd
                 }
                 _activityCommon.SetClipboardText(sr.ToString());
             }
-        }
-
-        private void UpdateOptionsMenu()
-        {
-            _updateOptionsMenu = true;
-            _updateHandler.RemoveCallbacks(_updateMenuRunnable);
-            _updateHandler.PostDelayed(_updateMenuRunnable, 500);
         }
 
         private void HandleStartDialogs(bool firstStart)

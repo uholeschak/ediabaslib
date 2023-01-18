@@ -147,7 +147,6 @@ namespace BmwDeepObd
 
         private InstanceData _instanceData = new InstanceData();
         private bool _activityRecreated;
-        private bool _updateOptionsMenu;
         private InputMethodManager _imm;
         private View _contentView;
         private View _barView;
@@ -518,16 +517,6 @@ namespace BmwDeepObd
             return true;
         }
 
-        public override bool OnMenuOpened(int featureId, IMenu menu)
-        {
-            if (_updateOptionsMenu)
-            {
-                _updateOptionsMenu = false;
-                OnPrepareOptionsMenu(menu);
-            }
-            return base.OnMenuOpened(featureId, menu);
-        }
-
         public override bool OnPrepareOptionsMenu(IMenu menu)
         {
             bool commActive = IsJobRunning();
@@ -855,11 +844,6 @@ namespace BmwDeepObd
                     break;
             }
             return false;
-        }
-
-        private void UpdateOptionsMenu()
-        {
-            _updateOptionsMenu = true;
         }
 
         private void HandleStartDialogs()
