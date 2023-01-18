@@ -1093,11 +1093,10 @@ namespace BmwDeepObd
             IMenuItem enetIpMenu = menu.FindItem(Resource.Id.menu_enet_ip);
             if (enetIpMenu != null)
             {
-                _activityCommon.GetAdapterIpName(out string prefix, out string ipText);
-                bool menuVisible = !string.IsNullOrEmpty(ipText);
+                bool menuVisible = _activityCommon.GetAdapterIpName(out string longName, out string shortName);
 
-                enetIpMenu.SetTitle(prefix + ": " + ipText);
-                enetIpMenu.SetTitleCondensed(ipText);
+                enetIpMenu.SetTitle(longName);
+                enetIpMenu.SetTitleCondensed(shortName);
                 enetIpMenu.SetEnabled(interfaceAvailable && !commActive);
                 enetIpMenu.SetVisible(menuVisible);
             }

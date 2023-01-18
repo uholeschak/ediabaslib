@@ -1610,10 +1610,10 @@ namespace BmwDeepObd
             return string.Empty;
         }
 
-        public bool GetAdapterIpName(out string prefix, out string ipText)
+        public bool GetAdapterIpName(out string longName, out string shortName)
         {
-            prefix = string.Empty;
-            ipText = string.Empty;
+            longName = string.Empty;
+            shortName = string.Empty;
 
             if (_context == null)
             {
@@ -1656,8 +1656,8 @@ namespace BmwDeepObd
                 interfaceIp = InvalidIp;
             }
 
-            prefix = menuName;
-            ipText = interfaceIp;
+            longName = string.Format(CultureInfo.InvariantCulture, "{0}: {1}", menuName, interfaceIp);
+            shortName = string.Format(CultureInfo.InvariantCulture, "IP: {0}", interfaceIp);
             return true;
         }
 
