@@ -470,6 +470,7 @@ namespace BmwDeepObd
         private IMenu _optionsMenu;
         private Timer _autoHideTimer;
         private Handler _updateHandler;
+        private Java.Lang.Runnable _updateMenuRunnable;
         private Java.Lang.Runnable _createActionBarRunnable;
         private Java.Lang.Runnable _compileCodeRunnable;
         private Java.Lang.Runnable _updateDisplayRunnable;
@@ -591,6 +592,12 @@ namespace BmwDeepObd
             _activityCommon.SetPreferredNetworkInterface();
 
             _updateHandler = new Handler(Looper.MainLooper);
+            _updateMenuRunnable = new Java.Lang.Runnable(() =>
+            {
+                InvalidateOptionsMenu();
+                _updateOptionsMenu = false;
+            });
+
             _createActionBarRunnable = new Java.Lang.Runnable(CreateActionBarTabs);
             _compileCodeRunnable = new Java.Lang.Runnable(CompileCode);
             _updateDisplayRunnable = new Java.Lang.Runnable(() =>
@@ -1285,8 +1292,8 @@ namespace BmwDeepObd
         {
             if (_updateOptionsMenu)
             {
-                _updateOptionsMenu = false;
                 OnPrepareOptionsMenu(menu);
+                _updateOptionsMenu = false;
             }
             return base.OnMenuOpened(featureId, menu);
         }
@@ -2322,6 +2329,8 @@ namespace BmwDeepObd
         private void UpdateOptionsMenu()
         {
             _updateOptionsMenu = true;
+            _updateHandler.RemoveCallbacks(_updateMenuRunnable);
+            _updateHandler.PostDelayed(_updateMenuRunnable, 500);
         }
 
         private void HandleStartDialogs(bool firstStart)
