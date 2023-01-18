@@ -1657,7 +1657,7 @@ namespace BmwDeepObd
             }
 
             longName = string.Format(CultureInfo.InvariantCulture, "{0}: {1}", menuName, interfaceIp);
-            shortName = string.Format(CultureInfo.InvariantCulture, "IP: {0}", interfaceIp);
+            shortName = interfaceIp;
             return true;
         }
 
