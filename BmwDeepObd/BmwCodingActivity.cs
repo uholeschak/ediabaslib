@@ -126,7 +126,8 @@ namespace BmwDeepObd
         private string _ecuDir;
         private string _appDataDir;
         private string _deviceAddress;
-        private Handler _startHandler;
+        private Handler _updateHandler;
+        private Java.Lang.Runnable _updateMenuRunnable;
         private Java.Lang.Runnable _startRunnable;
         private EdiabasNet _ediabas;
         private volatile bool _ediabasJobAbort;
@@ -185,7 +186,13 @@ namespace BmwDeepObd
 
             _activityCommon.SetPreferredNetworkInterface();
 
-            _startHandler = new Handler(Looper.MainLooper);
+            _updateHandler = new Handler(Looper.MainLooper);
+            _updateMenuRunnable = new Java.Lang.Runnable(() =>
+            {
+                InvalidateOptionsMenu();
+                _updateOptionsMenu = false;
+            });
+
             _startRunnable = new Java.Lang.Runnable(() =>
             {
                 if (_activityCommon == null)
@@ -356,18 +363,18 @@ namespace BmwDeepObd
         {
             base.OnDestroy();
 
-            if (_startHandler != null)
+            if (_updateHandler != null)
             {
                 try
                 {
-                    _startHandler.RemoveCallbacksAndMessages(null);
-                    _startHandler.Dispose();
+                    _updateHandler.RemoveCallbacksAndMessages(null);
+                    _updateHandler.Dispose();
                 }
                 catch (Exception)
                 {
                     // ignored
                 }
-                _startHandler = null;
+                _updateHandler = null;
             }
 
             StopEdiabasThread();
@@ -530,8 +537,8 @@ namespace BmwDeepObd
         {
             if (_updateOptionsMenu)
             {
-                _updateOptionsMenu = false;
                 OnPrepareOptionsMenu(menu);
+                _updateOptionsMenu = false;
             }
             return base.OnMenuOpened(featureId, menu);
         }
@@ -628,6 +635,8 @@ namespace BmwDeepObd
         private void UpdateOptionsMenu()
         {
             _updateOptionsMenu = true;
+            _updateHandler.RemoveCallbacks(_updateMenuRunnable);
+            _updateHandler.PostDelayed(_updateMenuRunnable, 500);
         }
 
         public bool GetConnectionInfoRequest()
@@ -1141,13 +1150,13 @@ namespace BmwDeepObd
                 _ediabasThreadWakeEvent.Set();
             }
 
-            if (_startHandler != null)
+            if (_updateHandler != null)
             {
                 if (!IsEdiabasThreadRunning())
                 {
-                    if (!_startHandler.HasCallbacks(_startRunnable))
+                    if (!_updateHandler.HasCallbacks(_startRunnable))
                     {
-                        _startHandler.Post(_startRunnable);
+                        _updateHandler.Post(_startRunnable);
                     }
                 }
             }
