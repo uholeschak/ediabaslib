@@ -333,7 +333,7 @@ namespace BmwDeepObd
         {
             if (_updateOptionsMenu)
             {
-                InvalidateOptionsMenu();
+                OnPrepareOptionsMenu(menu);
                 _updateOptionsMenu = false;
             }
             return base.OnMenuOpened(featureId, menu);
