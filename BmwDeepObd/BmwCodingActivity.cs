@@ -527,6 +527,12 @@ namespace BmwDeepObd
 
         public override bool OnPrepareOptionsMenu(IMenu menu)
         {
+            UpdateOptionsMenu(menu);
+            return base.OnPrepareOptionsMenu(menu);
+        }
+
+        public override void UpdateOptionsMenu(IMenu menu)
+        {
             bool commActive = IsEdiabasConnected();
             bool interfaceAvailable = _activityCommon.IsInterfaceAvailable();
 
@@ -542,8 +548,6 @@ namespace BmwDeepObd
 
             IMenuItem openTraceMenu = menu.FindItem(Resource.Id.menu_open_trace);
             openTraceMenu?.SetEnabled(interfaceAvailable && !commActive && _instanceData.TraceActive && tracePresent);
-
-            return base.OnPrepareOptionsMenu(menu);
         }
 
         private void ConnectionActiveWarn(AcceptDelegate handler)

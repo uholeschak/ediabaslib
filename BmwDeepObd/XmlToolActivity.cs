@@ -1054,6 +1054,12 @@ namespace BmwDeepObd
 
         public override bool OnPrepareOptionsMenu(IMenu menu)
         {
+            UpdateOptionsMenu(menu);
+            return base.OnPrepareOptionsMenu(menu);
+        }
+
+        public override void UpdateOptionsMenu(IMenu menu)
+        {
             bool commActive = IsJobRunning();
             bool interfaceAvailable = _activityCommon.IsInterfaceAvailable();
 
@@ -1147,8 +1153,6 @@ namespace BmwDeepObd
                 translationClearCacheMenu.SetEnabled(!_activityCommon.IsTranslationCacheEmpty());
                 translationClearCacheMenu.SetVisible(ActivityCommon.IsTranslationRequired());
             }
-
-            return base.OnPrepareOptionsMenu(menu);
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)
