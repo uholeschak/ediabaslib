@@ -333,7 +333,7 @@ namespace BmwDeepObd
         {
             if (_updateOptionsMenu)
             {
-                UpdateOptionsMenu(menu);
+                PrepareOptionsMenu(menu);
                 _updateOptionsMenu = false;
             }
             return base.OnMenuOpened(featureId, menu);
@@ -414,6 +414,12 @@ namespace BmwDeepObd
             base.Finish();
         }
 
+        public override bool OnPrepareOptionsMenu(IMenu menu)
+        {
+            PrepareOptionsMenu(menu);
+            return base.OnPrepareOptionsMenu(menu);
+        }
+
         public Android.App.ActivityManager.MemoryInfo GetMemoryInfo()
         {
             try
@@ -457,6 +463,10 @@ namespace BmwDeepObd
                 _baseUpdateHandler.RemoveCallbacks(_updateMenuRunnable);
                 _baseUpdateHandler.PostDelayed(_updateMenuRunnable, 500);
             }
+        }
+
+        public virtual void PrepareOptionsMenu(IMenu menu)
+        {
         }
 
         public static void ClearActivityStack()
@@ -532,10 +542,6 @@ namespace BmwDeepObd
         public virtual void OnBackPressedEvent()
         {
             Finish();
-        }
-
-        public virtual void UpdateOptionsMenu(IMenu menu)
-        {
         }
 
         public void EnableFullScreenMode(bool enable)
