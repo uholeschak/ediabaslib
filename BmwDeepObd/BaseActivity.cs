@@ -333,7 +333,7 @@ namespace BmwDeepObd
         {
             if (_updateOptionsMenu)
             {
-                OnPrepareOptionsMenu(menu);
+                UpdateOptionsMenu(menu);
                 _updateOptionsMenu = false;
             }
             return base.OnMenuOpened(featureId, menu);
@@ -532,6 +532,10 @@ namespace BmwDeepObd
         public virtual void OnBackPressedEvent()
         {
             Finish();
+        }
+
+        public virtual void UpdateOptionsMenu(IMenu menu)
+        {
         }
 
         public void EnableFullScreenMode(bool enable)

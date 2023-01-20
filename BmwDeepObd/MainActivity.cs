@@ -1282,6 +1282,12 @@ namespace BmwDeepObd
 
         public override bool OnPrepareOptionsMenu(IMenu menu)
         {
+            UpdateOptionsMenu(menu);
+            return base.OnPrepareOptionsMenu(menu);
+        }
+
+        public override void UpdateOptionsMenu(IMenu menu)
+        {
             bool commActive = IsCommActive();
             bool interfaceAvailable = _activityCommon.IsInterfaceAvailable();
             bool pageSgdb = !string.IsNullOrEmpty(GetSelectedPageSgdb());
@@ -1557,8 +1563,6 @@ namespace BmwDeepObd
 #endif
                 exitSubMenu.SetEnabled(!commActive);
             }
-
-            return base.OnPrepareOptionsMenu(menu);
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)
