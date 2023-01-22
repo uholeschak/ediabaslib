@@ -384,6 +384,12 @@ namespace BmwDeepObd
                     break;
 
                 case MotionEventActions.Down:
+                    if (_updateOptionsMenu)
+                    {
+                        InvalidateOptionsMenu();
+                        _updateOptionsMenu = false;
+                    }
+
                     if (_baseUpdateHandler == null)
                     {
                         break;
@@ -465,7 +471,7 @@ namespace BmwDeepObd
             if (_baseUpdateHandler != null)
             {
                 _baseUpdateHandler.RemoveCallbacks(_updateMenuRunnable);
-                _baseUpdateHandler.PostDelayed(_updateMenuRunnable, 500);
+                _baseUpdateHandler.PostDelayed(_updateMenuRunnable, 1000);
             }
         }
 
