@@ -1282,6 +1282,11 @@ namespace BmwDeepObd
 
         public override void PrepareOptionsMenu(IMenu menu)
         {
+            if (menu == null)
+            {
+                return;
+            }
+
             bool commActive = IsCommActive();
             bool interfaceAvailable = _activityCommon.IsInterfaceAvailable();
             bool pageSgdb = !string.IsNullOrEmpty(GetSelectedPageSgdb());

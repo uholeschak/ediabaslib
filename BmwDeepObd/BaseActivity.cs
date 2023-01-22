@@ -339,6 +339,7 @@ namespace BmwDeepObd
                 }
                 _updateOptionsMenu = false;
             }
+
             return base.OnMenuOpened(featureId, menu);
         }
 

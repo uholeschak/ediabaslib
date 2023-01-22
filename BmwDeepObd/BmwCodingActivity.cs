@@ -527,6 +527,11 @@ namespace BmwDeepObd
 
         public override void PrepareOptionsMenu(IMenu menu)
         {
+            if (menu == null)
+            {
+                return;
+            }
+
             bool commActive = IsEdiabasConnected();
             bool interfaceAvailable = _activityCommon.IsInterfaceAvailable();
 
