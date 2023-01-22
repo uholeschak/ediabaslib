@@ -1054,6 +1054,11 @@ namespace BmwDeepObd
 
         public override void PrepareOptionsMenu(IMenu menu)
         {
+            if (menu == null)
+            {
+                return;
+            }
+
             bool commActive = IsJobRunning();
             bool interfaceAvailable = _activityCommon.IsInterfaceAvailable();
 
