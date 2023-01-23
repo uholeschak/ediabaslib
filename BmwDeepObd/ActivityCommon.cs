@@ -4781,7 +4781,25 @@ namespace BmwDeepObd
                 }
                 else if (!string.IsNullOrEmpty(localAddress) && !string.IsNullOrEmpty(localMask))
                 {
-                    ipAddr = localAddress;
+                    try
+                    {
+                        byte[] addrBytes = IPAddress.Parse(localAddress).GetAddressBytes();
+                        byte[] maskBytes = IPAddress.Parse(localMask).GetAddressBytes();
+                        if (addrBytes.Length == 4 && maskBytes.Length == 4)
+                        {
+                            for (int i = 0; i < addrBytes.Length; i++)
+                            {
+                                addrBytes[i] &= maskBytes[i];
+                            }
+
+                            ipAddr = new IPAddress(addrBytes).ToString();
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                        throw;
+                    }
                 }
 
                 if (ipParts.Length > 0)
