@@ -4774,12 +4774,14 @@ namespace BmwDeepObd
                 string ipAddr = "0.0.0.0";
                 string ipPort = string.Empty;
 
-                if (IsValidWifiConnection(out string localAddress, out string localMask, out _, out _))
+                IsValidWifiConnection(out string localAddress, out string localMask, out string dhcpServerAddress, out _);
+                if (!string.IsNullOrEmpty(dhcpServerAddress))
                 {
-                    if (!string.IsNullOrEmpty(localAddress) && !string.IsNullOrEmpty(localMask))
-                    {
-                        ipAddr = localAddress;
-                    }
+                    ipAddr = dhcpServerAddress;
+                }
+                else if (!string.IsNullOrEmpty(localAddress) && !string.IsNullOrEmpty(localMask))
+                {
+                    ipAddr = localAddress;
                 }
 
                 if (ipParts.Length > 0)
