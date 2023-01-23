@@ -1732,7 +1732,7 @@ namespace BmwDeepObd
                             return true;
                         }
 
-                        if (IsValidWifiConnection(out _, out _, out _))
+                        if (IsValidWifiConnection(out _, out _, out _, out _))
                         {
                             return true;
                         }
@@ -3138,7 +3138,7 @@ namespace BmwDeepObd
                 return null;
             }
 
-            if (!IsValidWifiConnection(out _, out string dhcpServerAddress, out string ssid))
+            if (!IsValidWifiConnection(out _, out _, out string dhcpServerAddress, out string ssid))
             {
                 return null;
             }
@@ -3196,7 +3196,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (!IsValidWifiConnection(out _, out string dhcpServerAddress, out _))
+            if (!IsValidWifiConnection(out _, out _, out string dhcpServerAddress, out _))
             {
                 return false;
             }
@@ -3363,9 +3363,10 @@ namespace BmwDeepObd
             return false;
         }
 
-        public bool IsValidWifiConnection(out string localAddress, out string dhcpServerAddress, out string ssid)
+        public bool IsValidWifiConnection(out string localAddress, out string localMask, out string dhcpServerAddress, out string ssid)
         {
             localAddress = null;
+            localMask = null;
             dhcpServerAddress = null;
             ssid = null;
 
@@ -3388,6 +3389,7 @@ namespace BmwDeepObd
                     if (wifiInfo != null && _maWifi.DhcpInfo != null && wifiInfo.IpAddress != 0)
                     {
                         localAddress = TcpClientWithTimeout.ConvertIpAddress(_maWifi.DhcpInfo.IpAddress);
+                        localMask = TcpClientWithTimeout.ConvertIpAddress(_maWifi.DhcpInfo.Netmask);
                         dhcpServerAddress = TcpClientWithTimeout.ConvertIpAddress(_maWifi.DhcpInfo.ServerAddress);
                         ssid = GetWifiSsid(wifiInfo);
                         return !string.IsNullOrEmpty(dhcpServerAddress);
@@ -3416,6 +3418,7 @@ namespace BmwDeepObd
                                             if (inet4Address.IsSiteLocalAddress || inet4Address.IsLinkLocalAddress)
                                             {
                                                 localAddress = TcpClientWithTimeout.ConvertIpAddress(linkAddress.Address);
+                                                localMask = TcpClientWithTimeout.PrefixLenToMask(linkAddress.PrefixLength).ToString();
                                                 dhcpServerAddress = serverAddress;
                                                 ssid = GetWifiSsid(wifiInfo);
                                                 break;
@@ -3710,7 +3713,7 @@ namespace BmwDeepObd
                 bool validDeepObd = false;
                 bool validEnetLink = false;
                 bool validModBmw = false;
-                if (IsValidWifiConnection(out _, out string dhcpServerAddress, out string ssid))
+                if (IsValidWifiConnection(out _, out _, out string dhcpServerAddress, out string ssid))
                 {
                     if (!string.IsNullOrEmpty(dhcpServerAddress))
                     {
@@ -4771,9 +4774,9 @@ namespace BmwDeepObd
                 string ipAddr = "0.0.0.0";
                 string ipPort = string.Empty;
 
-                if (IsValidWifiConnection(out string localAddress, out _, out _))
+                if (IsValidWifiConnection(out string localAddress, out string localMask, out _, out _))
                 {
-                    if (!string.IsNullOrEmpty(localAddress))
+                    if (!string.IsNullOrEmpty(localAddress) && !string.IsNullOrEmpty(localMask))
                     {
                         ipAddr = localAddress;
                     }

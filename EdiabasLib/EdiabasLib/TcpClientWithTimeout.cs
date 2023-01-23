@@ -300,5 +300,17 @@ namespace EdiabasLib
             }
         }
 #endif
+
+        public static IPAddress PrefixLenToMask(int prefixLen)
+        {
+            int shift = 32 - prefixLen;
+            long mask = 0;
+            if (shift >= 0 && shift < 32)
+            {
+                mask = (0xFFFFFFFF << shift) >> shift;
+            }
+
+            return new IPAddress(mask);
+        }
     }
 }
