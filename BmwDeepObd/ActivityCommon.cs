@@ -4770,6 +4770,15 @@ namespace BmwDeepObd
                 string[] ipParts = interfaceIp.Split(':');
                 string ipAddr = "0.0.0.0";
                 string ipPort = string.Empty;
+
+                if (IsValidWifiConnection(out string localAddress, out _, out _))
+                {
+                    if (!string.IsNullOrEmpty(localAddress))
+                    {
+                        ipAddr = localAddress;
+                    }
+                }
+
                 if (ipParts.Length > 0)
                 {
                     string ip = ipParts[0];
