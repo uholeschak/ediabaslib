@@ -303,14 +303,21 @@ namespace EdiabasLib
 
         public static IPAddress PrefixLenToMask(int prefixLen)
         {
-            int shift = 32 - prefixLen;
-            long mask = 0;
-            if (shift >= 0 && shift < 32)
+            try
             {
-                mask = (0xFFFFFFFF << shift) >> shift;
-            }
+                int shift = 32 - prefixLen;
+                long mask = 0;
+                if (shift >= 0 && shift < 32)
+                {
+                    mask = (0xFFFFFFFF << shift) >> shift;
+                }
 
-            return new IPAddress(mask);
+                return new IPAddress(mask);
+            }
+            catch (Exception)
+            {
+                return IPAddress.Any;
+            }
         }
     }
 }
