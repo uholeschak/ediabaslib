@@ -12,12 +12,33 @@ namespace BmwDeepObd
         private Android.App.Activity _activity;
         private AlertDialog _dialog;
         private View _view;
+        private TextView _textViewInfo;
+        private bool _infoVisible;
         private TextView _textViewMessage1;
         private EditText _editTextNumber1;
         private bool _visible1;
         private TextView _textViewMessage2;
         private EditText _editTextNumber2;
         private bool _visible2;
+
+        public string Info
+        {
+            get
+            {
+                if (_textViewInfo != null)
+                {
+                    return _textViewInfo.Text;
+                }
+                return string.Empty;
+            }
+            set
+            {
+                if (_textViewInfo != null)
+                {
+                    _textViewInfo.Text = value;
+                }
+            }
+        }
 
         public string Message1
         {
@@ -133,6 +154,23 @@ namespace BmwDeepObd
             }
         }
 
+        public bool InfoVisible
+        {
+            get
+            {
+                return _infoVisible;
+            }
+            set
+            {
+                _infoVisible = value;
+                ViewStates visibility = _infoVisible ? ViewStates.Visible : ViewStates.Gone;
+                if (_textViewInfo != null)
+                {
+                    _textViewInfo.Visibility = visibility;
+                }
+            }
+        }
+
         public bool Visible1
         {
             get
@@ -194,12 +232,14 @@ namespace BmwDeepObd
                 _view = _activity.LayoutInflater.Inflate(Resource.Layout.number_input, null);
                 SetView(_view);
 
+                _textViewInfo = _view.FindViewById<TextView>(Resource.Id.textViewInfo);
                 _textViewMessage1 = _view.FindViewById<TextView>(Resource.Id.textViewMessage1);
                 _editTextNumber1 = _view.FindViewById<EditText>(Resource.Id.editTextNumber1);
                 _textViewMessage2 = _view.FindViewById<TextView>(Resource.Id.textViewMessage2);
                 _editTextNumber2 = _view.FindViewById<EditText>(Resource.Id.editTextNumber2);
             }
 
+            InfoVisible = false;
             Visible1 = true;
             Visible2 = false;
         }
