@@ -4808,7 +4808,7 @@ namespace BmwDeepObd
                     {
                         sbInfo.Append("\r\n");
                     }
-                    sbInfo.Append(string.Format("IP: {0}", localAddress));
+                    sbInfo.Append(string.Format("{0}: {1}", _activity.GetString(Resource.String.select_enet_info_ip), localAddress));
                 }
 
                 if (!string.IsNullOrEmpty(localMask))
@@ -4817,7 +4817,7 @@ namespace BmwDeepObd
                     {
                         sbInfo.Append("\r\n");
                     }
-                    sbInfo.Append(string.Format("Mask: {0}", localMask));
+                    sbInfo.Append(string.Format("{0}: {1}", _activity.GetString(Resource.String.select_enet_info_mask), localMask));
                 }
 
                 if (!string.IsNullOrEmpty(dhcpServerAddress))
@@ -4826,7 +4826,7 @@ namespace BmwDeepObd
                     {
                         sbInfo.Append("\r\n");
                     }
-                    sbInfo.Append(string.Format("DHCP Server: {0}", dhcpServerAddress));
+                    sbInfo.Append(string.Format("{0}: {1}", _activity.GetString(Resource.String.select_enet_info_dhcp_srv), dhcpServerAddress));
                 }
 
                 if (ipParts.Length > 0)

@@ -401,8 +401,11 @@
   <string name="select_enet_ip_edit">IP-адрес</string>
   <!--Translate-->
   <string name="select_enet_ip_port_edit">Номер порта</string>
+  <string name="select_enet_info_ip">Локальный IP</string>
+  <string name="select_enet_info_mask">Маска подсети</string>
+  <string name="select_enet_info_dhcp_srv">DHCP-сервер</string>
 
-  <!-- ENET adapter config -->
+    <!-- ENET adapter config -->
   <string name="enet_adapter_web_info">Пароль для веб интерфейса устойства по умолчанию {0}.\nЕсли устройство после его конфигурирования больше не реагирует - необходимо открыть устройство, перезагрузить его и нажать кнопку сброса.</string>
   <string name="enet_adapter_wifi_info">Если вы используете OBD BMW Wi-Fi устройство, выберите точку доступа с именем \'Deep OBD BMW\'. Пароль по умолчанию deepobdbmw.</string>
   <string name="enet_adapter_ssid_warn">Вы соединены не с Deep OBD BMW, Unichip ENET или modBMW Wi-Fi устройством.\nВыбрать другую точку доступа?</string>
