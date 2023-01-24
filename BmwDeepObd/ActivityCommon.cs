@@ -412,6 +412,8 @@ namespace BmwDeepObd
         public const string AdapterSsidUniCar = "UniCarScan";
         public const string EmulatorEnetIp = ""; // = "169.254.0.1";
         public const string InvalidIp = "0.0.0.0";
+        public const string AndroidApIp = "192.168.43.1";
+        public const string AndroidApMask = "255.255.255.0";
         public const string DeepObdAdapterIp = "192.168.100.1";
         public const string EnetLinkAdapterIp = "192.168.16.254";
         public const string ModBmwAdapterIp = "169.254.128.7";
@@ -3374,6 +3376,8 @@ namespace BmwDeepObd
             {
                 if (IsWifiApMode())
                 {
+                    localAddress = AndroidApIp;
+                    localMask = AndroidApMask;
                     return true;
                 }
 
