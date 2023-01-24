@@ -400,6 +400,9 @@
   <string name="select_enet_ip_auto">Automatisch</string>
   <string name="select_enet_ip_edit">IP-Addresse</string>
   <string name="select_enet_ip_port_edit">Portnummer (optional)</string>
+  <string name="select_enet_info_ip">Lokale IP</string>
+  <string name="select_enet_info_mask">Netzmaske</string>
+  <string name="select_enet_info_dhcp_srv">DHCP Server</string>
 
   <!-- ENET adapter config -->
   <string name="enet_adapter_web_info">Das Default-Password für das Adapter-Webinterface ist {0}.\nFalls der Adapter nach der Konfiguration nicht mehr erreichbar ist, müssen Sie den Adapter öffnen und die Resetaste drücken, nachdem der Adapter gebootet hat.</string>
