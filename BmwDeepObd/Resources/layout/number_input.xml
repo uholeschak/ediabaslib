@@ -5,6 +5,12 @@
     android:layout_height="fill_parent"
     android:padding="10dp">
     <TextView
+        android:id="@+id/textViewInfo"
+        android:text="Info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp" />
+    <TextView
         android:id="@+id/textViewMessage1"
         android:textAppearance="@android:style/TextAppearance.DialogWindowTitle"
         android:text="Message 1"

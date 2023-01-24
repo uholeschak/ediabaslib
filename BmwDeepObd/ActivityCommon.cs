@@ -4773,6 +4773,7 @@ namespace BmwDeepObd
                 string[] ipParts = interfaceIp.Split(':');
                 string ipAddr = "0.0.0.0";
                 string ipPort = string.Empty;
+                StringBuilder sbInfo = new StringBuilder();
 
                 IsValidWifiConnection(out string localAddress, out string localMask, out string dhcpServerAddress, out _);
                 if (!string.IsNullOrEmpty(dhcpServerAddress))
@@ -4795,11 +4796,37 @@ namespace BmwDeepObd
                             ipAddr = new IPAddress(addrBytes).ToString();
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
-                        Console.WriteLine(e);
-                        throw;
+                        // ignored
                     }
+                }
+
+                if (!string.IsNullOrEmpty(localAddress))
+                {
+                    if (sbInfo.Length > 0)
+                    {
+                        sbInfo.Append("\r\n");
+                    }
+                    sbInfo.Append(string.Format("IP: {0}", localAddress));
+                }
+
+                if (!string.IsNullOrEmpty(localMask))
+                {
+                    if (sbInfo.Length > 0)
+                    {
+                        sbInfo.Append("\r\n");
+                    }
+                    sbInfo.Append(string.Format("Mask: {0}", localMask));
+                }
+
+                if (!string.IsNullOrEmpty(dhcpServerAddress))
+                {
+                    if (sbInfo.Length > 0)
+                    {
+                        sbInfo.Append("\r\n");
+                    }
+                    sbInfo.Append(string.Format("DHCP Server: {0}", dhcpServerAddress));
                 }
 
                 if (ipParts.Length > 0)
@@ -4830,6 +4857,9 @@ namespace BmwDeepObd
                 }
 
                 NumberInputDialog numberInputDialog = new NumberInputDialog(_activity);
+                numberInputDialog.Info = sbInfo.ToString();
+                numberInputDialog.InfoVisible = sbInfo.Length > 0;
+
                 numberInputDialog.Message1 = _activity.GetString(Resource.String.select_enet_ip_edit);
                 numberInputDialog.Digits1 = "0123456789.";
                 numberInputDialog.Number1 = ipAddr;
