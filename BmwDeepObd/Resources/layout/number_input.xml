@@ -3,20 +3,19 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:padding="10dp">
+    android:padding="20dp">
     <TextView
         android:id="@+id/textViewInfo"
         android:text="Info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp" />
+        android:paddingBottom="10pt" />
     <TextView
         android:id="@+id/textViewMessage1"
         android:textAppearance="@android:style/TextAppearance.DialogWindowTitle"
         android:text="Message 1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp" />
+        android:layout_height="wrap_content" />
     <EditText
         android:id="@+id/editTextNumber1"
         android:layout_width="match_parent"
@@ -28,8 +27,7 @@
         android:textAppearance="@android:style/TextAppearance.DialogWindowTitle"
         android:text="Message 2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp" />
+        android:layout_height="wrap_content" />
     <EditText
         android:id="@+id/editTextNumber2"
         android:layout_width="match_parent"
