@@ -3378,6 +3378,36 @@ namespace BmwDeepObd
                 {
                     localAddress = AndroidApIp;
                     localMask = AndroidApMask;
+
+                    Java.Util.IEnumeration networkInterfaces = Java.Net.NetworkInterface.NetworkInterfaces;
+                    while (networkInterfaces != null && networkInterfaces.HasMoreElements)
+                    {
+                        Java.Net.NetworkInterface netInterface = (Java.Net.NetworkInterface)networkInterfaces.NextElement();
+                        if (netInterface == null)
+                        {
+                            continue;
+                        }
+
+                        if (netInterface.IsUp)
+                        {
+                            IList<Java.Net.InterfaceAddress> interfaceAdresses = netInterface.InterfaceAddresses;
+                            if (interfaceAdresses == null)
+                            {
+                                continue;
+                            }
+
+                            foreach (Java.Net.InterfaceAddress interfaceAddress in interfaceAdresses)
+                            {
+                                if (interfaceAddress.Broadcast != null && interfaceAddress.Address != null)
+                                {
+                                    localAddress = interfaceAddress.Address.HostAddress;
+                                    localMask = TcpClientWithTimeout.PrefixLenToMask(interfaceAddress.NetworkPrefixLength).ToString();
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
                     return true;
                 }
 
