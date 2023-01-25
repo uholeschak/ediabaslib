@@ -1139,12 +1139,22 @@ namespace EdiabasLib
 
 #if Android
                         Java.Util.IEnumeration networkInterfaces = Java.Net.NetworkInterface.NetworkInterfaces;
-                        while (networkInterfaces.HasMoreElements)
+                        while (networkInterfaces != null && networkInterfaces.HasMoreElements)
                         {
                             Java.Net.NetworkInterface netInterface = (Java.Net.NetworkInterface) networkInterfaces.NextElement();
+                            if (netInterface == null)
+                            {
+                                continue;
+                            }
+
                             if (netInterface.IsUp)
                             {
                                 IList<Java.Net.InterfaceAddress> interfaceAdresses = netInterface.InterfaceAddresses;
+                                if (interfaceAdresses == null)
+                                {
+                                    continue;
+                                }
+
                                 foreach (Java.Net.InterfaceAddress interfaceAddress in interfaceAdresses)
                                 {
                                     if (string.IsNullOrEmpty(adapterName) || (netInterface.Name.StartsWith(adapterName, StringComparison.OrdinalIgnoreCase)))
