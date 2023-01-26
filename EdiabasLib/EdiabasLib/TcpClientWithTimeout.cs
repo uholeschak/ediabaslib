@@ -179,7 +179,13 @@ namespace EdiabasLib
                                     if (networkInterface != null && networkInterface.IsUp &&
                                         (linkInet4Address.IsSiteLocalAddress || linkInet4Address.IsLinkLocalAddress))
                                     {
-                                        foreach (Java.Net.InterfaceAddress interfaceAddress in networkInterface.InterfaceAddresses)
+                                        System.Collections.Generic.IList<Java.Net.InterfaceAddress> interfaceAdresses = networkInterface.InterfaceAddresses;
+                                        if (interfaceAdresses == null)
+                                        {
+                                            continue;
+                                        }
+
+                                        foreach (Java.Net.InterfaceAddress interfaceAddress in interfaceAdresses)
                                         {
                                             if (interfaceAddress.Address is Java.Net.Inet4Address)
                                             {
