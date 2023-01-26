@@ -7301,6 +7301,8 @@ namespace BmwDeepObd
 
             Intent serverIntent = new Intent(this, typeof(CanAdapterActivity));
             serverIntent.PutExtra(CanAdapterActivity.ExtraDeviceAddress, _instanceData.DeviceAddress);
+            serverIntent.PutExtra(CanAdapterActivity.ExtraElmWifiIp, _activityCommon.SelectedElmWifiIp);
+            serverIntent.PutExtra(CanAdapterActivity.ExtraDeepObdWifiIp, _activityCommon.SelectedDeepObdWifiIp);
             serverIntent.PutExtra(CanAdapterActivity.ExtraInterfaceType, (int)_activityCommon.SelectedInterface);
             serverIntent.PutExtra(CanAdapterActivity.ExtraAppDataDir, _instanceData.AppDataPath);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestAdapterConfig);
