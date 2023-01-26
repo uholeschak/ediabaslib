@@ -3399,6 +3399,7 @@ namespace BmwDeepObd
                                 continue;
                             }
 
+                            int matchCount = 0;
                             foreach (Java.Net.InterfaceAddress interfaceAddress in interfaceAdresses)
                             {
                                 if (interfaceAddress.Broadcast != null && interfaceAddress.Address != null)
@@ -3406,13 +3407,12 @@ namespace BmwDeepObd
                                     bool addrFound = false;
                                     foreach (Network network in networkList)
                                     {
-                                        NetworkCapabilities networkCapabilities = _maConnectivity.GetNetworkCapabilities(network);
                                         LinkProperties linkProperties = _maConnectivity.GetLinkProperties(network);
-                                        if (networkCapabilities != null && linkProperties != null)
+                                        if (linkProperties != null)
                                         {
                                             foreach (LinkAddress linkAddress in linkProperties.LinkAddresses)
                                             {
-                                                if (linkAddress.Address != null && interfaceAddress.Address.HostAddress == linkAddress.Address.HostAddress)
+                                                if (linkAddress.Address != null && linkAddress.Address.Equals(interfaceAddress.Address))
                                                 {
                                                     addrFound = true;
                                                     break;
@@ -3423,9 +3423,16 @@ namespace BmwDeepObd
 
                                     if (!addrFound)
                                     {
+                                        if (matchCount >= 1)
+                                        {
+                                            localAddress = null;
+                                            localMask = null;
+                                            break;
+                                        }
+
                                         localAddress = interfaceAddress.Address.HostAddress;
                                         localMask = TcpClientWithTimeout.PrefixLenToMask(interfaceAddress.NetworkPrefixLength).ToString();
-                                        break;
+                                        matchCount++;
                                     }
                                 }
                             }
