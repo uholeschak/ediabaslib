@@ -412,8 +412,6 @@ namespace BmwDeepObd
         public const string AdapterSsidUniCar = "UniCarScan";
         public const string EmulatorEnetIp = ""; // = "169.254.0.1";
         public const string InvalidIp = "0.0.0.0";
-        public const string AndroidApIp = "192.168.43.1";
-        public const string AndroidApMask = "255.255.255.0";
         public const string DeepObdAdapterIp = "192.168.100.1";
         public const string EnetLinkAdapterIp = "192.168.16.254";
         public const string ModBmwAdapterIp = "169.254.128.7";
@@ -3376,8 +3374,13 @@ namespace BmwDeepObd
             {
                 if (IsWifiApMode())
                 {
-                    localAddress = AndroidApIp;
-                    localMask = AndroidApMask;
+                    List<Network> networkList = new List<Network>();
+                    lock (_networkData.LockObject)
+                    {
+                        networkList.AddRange(_networkData.ActiveCellularNetworks);
+                        networkList.AddRange(_networkData.ActiveWifiNetworks);
+                        networkList.AddRange(_networkData.ActiveEthernetNetworks);
+                    }
 
                     Java.Util.IEnumeration networkInterfaces = Java.Net.NetworkInterface.NetworkInterfaces;
                     while (networkInterfaces != null && networkInterfaces.HasMoreElements)
@@ -3400,9 +3403,30 @@ namespace BmwDeepObd
                             {
                                 if (interfaceAddress.Broadcast != null && interfaceAddress.Address != null)
                                 {
-                                    localAddress = interfaceAddress.Address.HostAddress;
-                                    localMask = TcpClientWithTimeout.PrefixLenToMask(interfaceAddress.NetworkPrefixLength).ToString();
-                                    break;
+                                    bool addrFound = false;
+                                    foreach (Network network in networkList)
+                                    {
+                                        NetworkCapabilities networkCapabilities = _maConnectivity.GetNetworkCapabilities(network);
+                                        LinkProperties linkProperties = _maConnectivity.GetLinkProperties(network);
+                                        if (networkCapabilities != null && linkProperties != null)
+                                        {
+                                            foreach (LinkAddress linkAddress in linkProperties.LinkAddresses)
+                                            {
+                                                if (linkAddress.Address != null && interfaceAddress.Address.HostAddress == linkAddress.Address.HostAddress)
+                                                {
+                                                    addrFound = true;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    if (!addrFound)
+                                    {
+                                        localAddress = interfaceAddress.Address.HostAddress;
+                                        localMask = TcpClientWithTimeout.PrefixLenToMask(interfaceAddress.NetworkPrefixLength).ToString();
+                                        break;
+                                    }
                                 }
                             }
                         }
