@@ -29,6 +29,8 @@ namespace BmwDeepObd
         // Intent extra
         public const string ExtraAppDataDir = "app_data_dir";
         public const string ExtraDeviceAddress = "device_address";
+        public const string ExtraElmWifiIp = "elmwifi_ip";
+        public const string ExtraDeepObdWifiIp = "deepobdwifi_ip";
         public const string ExtraInterfaceType = "interface_type";
         public const string ExtraInvalidateAdapter = "invalidate_adapter";
 
@@ -132,6 +134,7 @@ namespace BmwDeepObd
 
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
             _deviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
+
             _interfaceType = (ActivityCommon.InterfaceType) Intent.GetIntExtra(ExtraInterfaceType, (int) ActivityCommon.InterfaceType.Bluetooth);
             _bCustomAdapter = IsCustomAdapter(_interfaceType, _deviceAddress);
             _bCustomBtAdapter = IsCustomBtAdapter(_interfaceType, _deviceAddress);
@@ -299,6 +302,9 @@ namespace BmwDeepObd
             {
                 SelectedInterface = _interfaceType
             };
+
+            _activityCommon.SelectedElmWifiIp = Intent.GetStringExtra(ExtraElmWifiIp);
+            _activityCommon.SelectedDeepObdWifiIp = Intent.GetStringExtra(ExtraDeepObdWifiIp);
 
             UpdateDisplay();
             PerformRead();
