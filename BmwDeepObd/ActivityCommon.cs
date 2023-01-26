@@ -4856,12 +4856,19 @@ namespace BmwDeepObd
                         byte[] maskBytes = IPAddress.Parse(localMask).GetAddressBytes();
                         if (addrBytes.Length == 4 && maskBytes.Length == 4)
                         {
+                            byte[] ipBytes = new byte[addrBytes.Length];
+                            addrBytes.CopyTo(ipBytes, 0);
                             for (int i = 0; i < addrBytes.Length; i++)
                             {
-                                addrBytes[i] &= maskBytes[i];
+                                ipBytes[i] &= maskBytes[i];
                             }
 
-                            ipAddr = new IPAddress(addrBytes).ToString();
+                            if (ipBytes.SequenceEqual(addrBytes))
+                            {
+                                ipBytes[^1]++;
+                            }
+
+                            ipAddr = new IPAddress(ipBytes).ToString();
                         }
                     }
                     catch (Exception)
