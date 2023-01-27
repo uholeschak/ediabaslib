@@ -1250,6 +1250,7 @@ namespace BmwDeepObd
             serverIntent.PutExtra(CanAdapterActivity.ExtraElmWifiIp, _activityCommon.SelectedElmWifiIp);
             serverIntent.PutExtra(CanAdapterActivity.ExtraDeepObdWifiIp, _activityCommon.SelectedDeepObdWifiIp);
             serverIntent.PutExtra(CanAdapterActivity.ExtraInterfaceType, (int)_activityCommon.SelectedInterface);
+            serverIntent.PutExtra(CanAdapterActivity.ExtraAppDataDir, _appDataDir);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestAdapterConfig);
         }
 
