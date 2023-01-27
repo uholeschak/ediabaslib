@@ -29,6 +29,7 @@ namespace BmwDeepObd
         // Intent extra
         public const string ExtraAppDataDir = "app_data_dir";
         public const string ExtraDeviceAddress = "device_address";
+        public const string ExtraEnetIp = "enet_ip";
         public const string ExtraElmWifiIp = "elmwifi_ip";
         public const string ExtraDeepObdWifiIp = "deepobdwifi_ip";
         public const string ExtraInterfaceType = "interface_type";
@@ -260,7 +261,7 @@ namespace BmwDeepObd
             _textViewSerNumTitle.Visibility = ViewStates.Gone;
             _textViewSerNum.Visibility = ViewStates.Gone;
 #endif
-            ViewStates visibilityFwSel = usbAdapter ? ViewStates.Visible : ViewStates.Gone;
+            ViewStates visibilityFwSel = usbAdapter && !string.IsNullOrEmpty(_appDataDir) ? ViewStates.Visible : ViewStates.Gone;
             _buttonSelectFirmware = FindViewById<Button>(Resource.Id.buttonSelectFirmware);
             _buttonSelectFirmware.Visibility = visibilityFwSel;
             _buttonSelectFirmware.Click += (sender, args) =>
@@ -303,6 +304,7 @@ namespace BmwDeepObd
                 SelectedInterface = _interfaceType
             };
 
+            _activityCommon.SelectedEnetIp = Intent.GetStringExtra(ExtraEnetIp);
             _activityCommon.SelectedElmWifiIp = Intent.GetStringExtra(ExtraElmWifiIp);
             _activityCommon.SelectedDeepObdWifiIp = Intent.GetStringExtra(ExtraDeepObdWifiIp);
 
