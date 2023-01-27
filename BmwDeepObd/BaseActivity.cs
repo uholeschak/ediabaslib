@@ -471,7 +471,7 @@ namespace BmwDeepObd
             if (_baseUpdateHandler != null)
             {
                 _baseUpdateHandler.RemoveCallbacks(_updateMenuRunnable);
-                _baseUpdateHandler.PostDelayed(_updateMenuRunnable, 1000);
+                _baseUpdateHandler.PostDelayed(_updateMenuRunnable, 500);
             }
         }
 

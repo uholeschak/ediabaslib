@@ -3726,6 +3726,34 @@ namespace BmwDeepObd
             }
             if (_selectedInterface == InterfaceType.ElmWifi || _selectedInterface == InterfaceType.DeepObdWifi)
             {
+                if (IsWifiApMode())
+                {
+                    if (string.IsNullOrEmpty(SelectedInterfaceIp))
+                    {
+                        AlertDialog alertDialogAp = new AlertDialog.Builder(_context)
+                            .SetMessage(Resource.String.ap_mode_adapter_ip_error)
+                            .SetTitle(Resource.String.alert_title_error)
+                            .SetNeutralButton(Resource.String.button_ok, (s, e) =>
+                            {
+                            })
+                            .Show();
+                        if (alertDialogAp != null)
+                        {
+                            alertDialogAp.DismissEvent += (sender, args) =>
+                            {
+                                if (_disposed)
+                                {
+                                    return;
+                                }
+                                handler(false);
+                            };
+                        }
+
+                        return true;
+                    }
+                    return false;
+                }
+
                 if (ElmWifiAdapterValid())
                 {
                     return false;

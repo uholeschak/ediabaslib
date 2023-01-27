@@ -417,6 +417,10 @@
   <!-- Deep OBD Wi-Fi -->
   <string name="deepobdwifi_adapter_warn">Вы соединены не с Deep OBD Wi-Fi устройством.\nВыбрать другую точку доступа?</string>
 
+  <!-- AP mode -->
+  <!--Translate-->
+  <string name="ap_mode_adapter_ip_error">В режиме точки доступа вы должны указать назначенный IP-адрес адаптера вручную в меню приложения.</string>
+
   <!-- Battery voltage -->
   <string name="battery_voltage_warn">Очень высокое напряжение аккумулятора ({0}V),\nэто может привезти к  разрушению OBD-адаптера.\nПожалуйста, проверьте регулятор напряжения вашего автомобиля.</string>
 
