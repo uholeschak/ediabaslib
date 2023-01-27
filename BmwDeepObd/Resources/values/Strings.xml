@@ -392,6 +392,9 @@
   <!-- Deep OBD Wi-Fi -->
   <string name="deepobdwifi_adapter_warn">You are not connected with a Deep OBD Wi-Fi adapter.\nDo you want to select a different access point?</string>
 
+  <!-- AP mode -->
+  <string name="ap_mode_adapter_ip_error">In hotspot mode you have to specify the assigned adapter ip manually in the app menu.</string>
+
   <!-- Battery voltage -->
   <string name="battery_voltage_warn">The battery voltage is very high ({0}V),\nthis could destroy the OBD adapter.\nPlease check the vehicle voltage regulator.</string>
 
