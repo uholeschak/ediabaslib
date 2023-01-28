@@ -379,6 +379,13 @@ namespace BmwDeepObd
             [XmlEnum(Name = "IbmWatson")] IbmWatson,                // IBM Watson Translator
         }
 
+        public enum SsidWarnAction
+        {
+            None,
+            Continue,
+            EditIp,
+        }
+
         public delegate bool ProgressZipDelegate(int percent, bool decrypt = false);
         public delegate bool ProgressVerifyDelegate(int percent);
         public delegate bool ProgressDocumentCopyDelegate(string name);
@@ -387,7 +394,7 @@ namespace BmwDeepObd
         public delegate void TranslateDelegate(List<string> transList);
         public delegate void TranslateLoginDelegate(bool success);
         public delegate void UpdateCheckDelegate(bool success, bool updateAvailable, int? appVer, string message);
-        public delegate void EnetSsidWarnDelegate(bool retry);
+        public delegate void EnetSsidWarnDelegate(SsidWarnAction action);
         public delegate void WifiConnectedWarnDelegate();
         public delegate void InitThreadFinishDelegate(bool result);
         public delegate void CopyDocumentsThreadFinishDelegate(bool result, bool aborted);
@@ -3713,7 +3720,7 @@ namespace BmwDeepObd
                         }
                         if (!ignoreDismiss)
                         {
-                            handler(true);
+                            handler(SsidWarnAction.Continue);
                         }
                     };
                 }
@@ -3730,11 +3737,17 @@ namespace BmwDeepObd
                 {
                     if (string.IsNullOrEmpty(SelectedInterfaceIp))
                     {
+                        SsidWarnAction action = SsidWarnAction.None;
                         AlertDialog alertDialogAp = new AlertDialog.Builder(_context)
                             .SetMessage(Resource.String.ap_mode_adapter_ip_error)
                             .SetTitle(Resource.String.alert_title_error)
-                            .SetNeutralButton(Resource.String.button_ok, (s, e) =>
+                            .SetPositiveButton(Resource.String.button_yes, (s, e) =>
                             {
+                                action = SsidWarnAction.EditIp;
+                            })
+                            .SetNegativeButton(Resource.String.button_no, (s, e) =>
+                            {
+                                action = SsidWarnAction.None;
                             })
                             .Show();
                         if (alertDialogAp != null)
@@ -3745,7 +3758,8 @@ namespace BmwDeepObd
                                 {
                                     return;
                                 }
-                                handler(false);
+
+                                handler(action);
                             };
                         }
 
@@ -3770,7 +3784,7 @@ namespace BmwDeepObd
                     ignoreDismiss = true;
                     ShowWifiSettings((sender, args) =>
                     {
-                        handler(false);
+                        handler(SsidWarnAction.None);
                     });
                 })
                 .SetNegativeButton(Resource.String.button_no, (s, e) => { })
@@ -3785,7 +3799,7 @@ namespace BmwDeepObd
                         }
                         if (!ignoreDismiss)
                         {
-                            handler(false);
+                            handler(SsidWarnAction.None);
                         }
                     };
                 }
@@ -3867,7 +3881,7 @@ namespace BmwDeepObd
                                 {
                                     return;
                                 }
-                                handler(false);
+                                handler(SsidWarnAction.None);
                             });
                         })
                         .SetNegativeButton(Resource.String.button_no, (s, e) => { })
@@ -3882,7 +3896,7 @@ namespace BmwDeepObd
                                 }
                                 if (!ignoreDismiss)
                                 {
-                                    handler(true);
+                                    handler(SsidWarnAction.Continue);
                                 }
                             };
                         }

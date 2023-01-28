@@ -2021,15 +2021,22 @@ namespace BmwDeepObd
                     }
                 }
 
-                if (_activityCommon.ShowConnectWarning(retry =>
+                if (_activityCommon.ShowConnectWarning(action =>
                 {
                     if (_activityCommon == null)
                     {
                         return;
                     }
-                    if (retry)
+
+                    switch (action)
                     {
-                        ButtonConnectClick(sender, e);
+                        case ActivityCommon.SsidWarnAction.Continue:
+                            ButtonConnectClick(sender, e);
+                            break;
+
+                        case ActivityCommon.SsidWarnAction.EditIp:
+                            AdapterIpConfig();
+                            break;
                     }
                 }))
                 {
@@ -7278,15 +7285,22 @@ namespace BmwDeepObd
                 return;
             }
 
-            if (_activityCommon.ShowConnectWarning(retry =>
+            if (_activityCommon.ShowConnectWarning(action =>
             {
                 if (_activityCommon == null)
                 {
                     return;
                 }
-                if (retry)
+
+                switch (action)
                 {
-                    AdapterConfig();
+                    case ActivityCommon.SsidWarnAction.Continue:
+                        AdapterConfig();
+                        break;
+
+                    case ActivityCommon.SsidWarnAction.EditIp:
+                        AdapterIpConfig();
+                        break;
                 }
             }))
             {

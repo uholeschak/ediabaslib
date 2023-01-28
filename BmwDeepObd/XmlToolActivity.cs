@@ -2220,15 +2220,22 @@ namespace BmwDeepObd
                 return;
             }
 
-            if (_activityCommon.ShowConnectWarning(retry =>
+            if (_activityCommon.ShowConnectWarning(action =>
             {
                 if (_activityCommon == null)
                 {
                     return;
                 }
-                if (retry)
+
+                switch (action)
                 {
-                    AdapterConfig();
+                    case ActivityCommon.SsidWarnAction.Continue:
+                        AdapterConfig();
+                        break;
+
+                    case ActivityCommon.SsidWarnAction.EditIp:
+                        AdapterIpConfig();
+                        break;
                 }
             }))
             {
@@ -2289,15 +2296,22 @@ namespace BmwDeepObd
                     return;
                 }
             }
-            if (_activityCommon.ShowConnectWarning(retry =>
+            if (_activityCommon.ShowConnectWarning(action =>
             {
                 if (_activityCommon == null)
                 {
                     return;
                 }
-                if (retry)
+
+                switch (action)
                 {
-                    PerformAnalyze(searchStartIndex);
+                    case ActivityCommon.SsidWarnAction.Continue:
+                        PerformAnalyze(searchStartIndex);
+                        break;
+
+                    case ActivityCommon.SsidWarnAction.EditIp:
+                        AdapterIpConfig();
+                        break;
                 }
             }))
             {
@@ -3663,15 +3677,22 @@ namespace BmwDeepObd
                     return;
                 }
             }
-            if (_activityCommon.ShowConnectWarning(retry =>
+            if (_activityCommon.ShowConnectWarning(action =>
             {
                 if (_activityCommon == null)
                 {
                     return;
                 }
-                if (retry)
+
+                switch (action)
                 {
-                    PerformJobsRead(ecuInfo);
+                    case ActivityCommon.SsidWarnAction.Continue:
+                        PerformJobsRead(ecuInfo);
+                        break;
+
+                    case ActivityCommon.SsidWarnAction.EditIp:
+                        AdapterIpConfig();
+                        break;
                 }
             }))
             {
