@@ -75,7 +75,7 @@
 \nFeel free to contribute or to report problems.
 \nA detailed documentation could also be found on this web site.
 \n\nChanges in this version:\n</string>
-  <string name="version_last_changes">- Support for hotspot mode.\n- Adapter IP editable.\n- Fixed Bluetooth access rights.\n- Added ELM327 firmware.\n- Improved Bluetooth pairing.\n- Improved expansion file download.\n- Optimized Bluetooth timeout.\n- Fixed external storage access.\n- Android 13 support.\n- Read BMW info codes.\n- Option to show only relevant BMW errors.\n- Improved VAG error reset.\n- UniCarScan UCSI-2100 / UCSI-3000 and vLinker support.\n- Fixed minor problems</string>
+  <string name="version_last_changes">- Support for hotspot mode.\n- Adapter IP editable.\n- Fixed minor problems</string>
   <string name="app_info_message">Deep OBD for BMW and VAG\nVersion: {0}\nId: {1}</string>
   <string formatted="false" name="vag_mode_info">The VAG mode ist still experimental and only for vehicles until {0}.\nA &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;Deep OBD adapter&lt;/a&gt; with at least firmware version 0.11 is required.\nAt the moment only the protocols KWP2000, KWP1281, TP2.0 and UDS are supported.\nConfigurations have to regenerated for the new VAG mode\n.It\'s possible to select the old VAG mode again in the settings dialog.</string>
 
