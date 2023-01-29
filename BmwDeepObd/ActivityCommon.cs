@@ -3190,7 +3190,7 @@ namespace BmwDeepObd
             return null;
         }
 
-        public bool ElmWifiAdapterValid()
+        public bool IsWifiAdapterValid()
         {
             if (IsWifiApMode())
             {
@@ -3205,6 +3205,11 @@ namespace BmwDeepObd
             if (!IsValidWifiConnection(out _, out _, out string dhcpServerAddress, out _))
             {
                 return false;
+            }
+
+            if (!string.IsNullOrEmpty(SelectedInterfaceIp))
+            {
+                return true;
             }
 
             if (!string.IsNullOrEmpty(dhcpServerAddress))
@@ -3331,7 +3336,7 @@ namespace BmwDeepObd
                 return true;
             }
 
-            if (ElmWifiAdapterValid())
+            if (IsWifiAdapterValid())
             {
                 return true;
             }
@@ -3767,10 +3772,11 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                if (ElmWifiAdapterValid())
+                if (IsWifiAdapterValid())
                 {
                     return false;
                 }
+
                 bool ignoreDismiss = false;
                 int resourceId = _selectedInterface == InterfaceType.ElmWifi
                     ? Resource.String.elmwifi_adapter_warn
