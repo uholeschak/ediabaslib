@@ -6,7 +6,6 @@ using System.Text.RegularExpressions;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
-using Android.Runtime;
 
 namespace BmwDeepObd
 {
@@ -304,7 +303,7 @@ namespace BmwDeepObd
                 }
 
                 Java.Lang.Object paramResult = methodGetParameters.Invoke(_carManagerInst, new Java.Lang.String(args));
-                Java.Lang.String paramString = paramResult.JavaCast<Java.Lang.String>();
+                Java.Lang.String paramString = Android.Runtime.Extensions.JavaCast<Java.Lang.String>(paramResult);
 
                 return paramString.ToString();
             }
