@@ -83,7 +83,19 @@ namespace EdiabasLib
                 int adapterPort = AdapterPort;
                 NetworkData = null;
                 WifiManager = null;
+#if Android
+                if (ConnectParameter is ConnectParameterType connectParameter)
+                {
+                    NetworkData = connectParameter.NetworkData;
+                    WifiManager = connectParameter.WifiManager;
+                }
 
+                if (IsWifiApMode())
+                {
+                    Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "AP mode, using default ESP-Link port");
+                    adapterPort = AdapterPortEspLink;
+                }
+#endif
                 bool ipSpecified = false;
                 string portData = port.Remove(0, PortId.Length);
                 if ((portData.Length > 0) && (portData[0] == ':'))
@@ -111,12 +123,6 @@ namespace EdiabasLib
                     }
                 }
 #if Android
-                if (ConnectParameter is ConnectParameterType connectParameter)
-                {
-                    NetworkData = connectParameter.NetworkData;
-                    WifiManager = connectParameter.WifiManager;
-                }
-
                 if (!ipSpecified && WifiManager is Android.Net.Wifi.WifiManager wifiManager)
                 {
                     string serverIp = null;
@@ -537,5 +543,38 @@ namespace EdiabasLib
             }
             return responseList;
         }
+
+#if Android
+        private static bool IsWifiApMode()
+        {
+            try
+            {
+                if (!(WifiManager is Android.Net.Wifi.WifiManager wifiManager))
+                {
+                    return false;
+                }
+
+                if (wifiManager.IsWifiEnabled)
+                {
+                    return false;
+                }
+
+                Java.Lang.Reflect.Method methodIsWifiApEnabled = wifiManager.Class.GetDeclaredMethod(@"isWifiApEnabled");
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                if (methodIsWifiApEnabled != null)
+                {
+                    methodIsWifiApEnabled.Accessible = true;
+                    Java.Lang.Object wifiApEnabledResult = methodIsWifiApEnabled.Invoke(wifiManager);
+                    Java.Lang.Boolean wifiApEnabled = Android.Runtime.Extensions.JavaCast<Java.Lang.Boolean>(wifiApEnabledResult);
+                    return wifiApEnabled != Java.Lang.Boolean.False;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return false;
+        }
+#endif
     }
 }
