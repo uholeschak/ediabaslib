@@ -465,20 +465,20 @@ namespace BmwDeepObd
                 return -1;
             }
 
-            int status = -1;
+            int fileStatus = -1;
             try
             {
                 IntPtr statusFieldId = Android.Runtime.JNIEnv.GetFieldID(ex.Class.Handle, "mStatus", "I");
                 if (statusFieldId != IntPtr.Zero)
                 {
-                    status = Android.Runtime.JNIEnv.GetIntField(ex.Handle, statusFieldId);
+                    fileStatus = Android.Runtime.JNIEnv.GetIntField(ex.Handle, statusFieldId);
                 }
             }
             catch (Exception)
             {
-                status = -1;
+                fileStatus = -1;
             }
-            return status;
+            return fileStatus;
         }
 
         public static string GetSafeFileErrorMessage(DownloaderService.GenerateSaveFileError ex)
