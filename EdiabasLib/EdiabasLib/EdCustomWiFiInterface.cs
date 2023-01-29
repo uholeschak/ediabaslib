@@ -98,7 +98,7 @@ namespace EdiabasLib
 #endif
                 bool ipSpecified = false;
                 string portData = port.Remove(0, PortId.Length);
-                if ((portData.Length > 0) && (portData[0] == ':'))
+                if (portData.Length > 0 && portData[0] == ':')
                 {
                     // special ip
                     string addr = portData.Remove(0, 1);
@@ -111,10 +111,16 @@ namespace EdiabasLib
                     }
 
                     ipSpecified = true;
-                    adapterIp = stringList[0];
+                    adapterIp = stringList[0].Trim();
+                    if (string.Compare(adapterIp, AdapterIpEspLink, StringComparison.Ordinal) == 0)
+                    {
+                        Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Using ESP-Link port");
+                        adapterPort = AdapterPortEspLink;
+                    }
+
                     if (stringList.Length > 1)
                     {
-                        if (!int.TryParse(stringList[1], out adapterPort))
+                        if (!int.TryParse(stringList[1].Trim(), out adapterPort))
                         {
                             Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting: Invalid port parameters: {0}", port);
                             InterfaceDisconnect();
