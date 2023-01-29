@@ -1,6 +1,5 @@
 using System.IO;
 using Android.Content;
-using Android.Runtime;
 using Android.Views;
 
 namespace BmwDeepObd.FilePicker
@@ -14,7 +13,7 @@ namespace BmwDeepObd.FilePicker
         /// <returns> </returns>
         public static LayoutInflater GetLayoutInflater(this Context context)
         {
-            return context.GetSystemService(Context.LayoutInflaterService).JavaCast<LayoutInflater>();
+            return context.GetSystemService(Context.LayoutInflaterService) as LayoutInflater;
         }
 
         /// <summary>
