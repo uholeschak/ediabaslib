@@ -262,11 +262,14 @@ namespace EdiabasLib
 #if __ANDROID__
         public static string ConvertIpAddress(int ipAddress)
         {
-            if (Java.Nio.ByteOrder.NativeOrder().Equals(Java.Nio.ByteOrder.LittleEndian))
+            int ipValue = ipAddress;
+            Java.Nio.ByteOrder nativeOrder = Java.Nio.ByteOrder.NativeOrder();
+            if (nativeOrder != null && nativeOrder.Equals(Java.Nio.ByteOrder.LittleEndian))
             {
-                ipAddress = Java.Lang.Integer.ReverseBytes(ipAddress);
+                ipValue = Java.Lang.Integer.ReverseBytes(ipValue);
             }
-            byte[] ipByteArray = Java.Math.BigInteger.ValueOf(ipAddress).ToByteArray();
+
+            byte[] ipByteArray = Java.Math.BigInteger.ValueOf(ipValue).ToByteArray();
             try
             {
                 Java.Net.InetAddress inetAddress = Java.Net.InetAddress.GetByAddress(ipByteArray);
