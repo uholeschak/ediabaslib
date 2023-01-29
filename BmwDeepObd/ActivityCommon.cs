@@ -37,7 +37,6 @@ using Android.Content.Res;
 using Android.Locations;
 using Android.OS.Storage;
 using Android.Provider;
-using Android.Runtime;
 using Android.Views;
 using AndroidX.Core.App;
 using BmwFileReader;
@@ -3359,7 +3358,7 @@ namespace BmwDeepObd
                 {
                     methodIsWifiApEnabled.Accessible = true;
                     Java.Lang.Object wifiApEnabledResult = methodIsWifiApEnabled.Invoke(_maWifi);
-                    Java.Lang.Boolean wifiApEnabled = wifiApEnabledResult.JavaCast<Java.Lang.Boolean>();
+                    Java.Lang.Boolean wifiApEnabled = Android.Runtime.Extensions.JavaCast<Java.Lang.Boolean>(wifiApEnabledResult);
                     return wifiApEnabled != Java.Lang.Boolean.False;
                 }
             }
