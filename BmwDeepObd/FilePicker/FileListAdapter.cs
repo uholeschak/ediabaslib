@@ -103,13 +103,17 @@ namespace BmwDeepObd.FilePicker
                 row = convertView;
                 viewHolder = (FileListRowViewHolder)row.Tag;
             }
-            if (fileSystemEntry.RootDir != null)
+
+            if (fileSystemEntry != null && viewHolder != null)
             {
-                viewHolder.Update(fileSystemEntry.DisplayName, Resource.Drawable.folder);
-            }
-            else
-            {
-                viewHolder.Update(fileSystemEntry.DisplayName, fileSystemEntry.FileSysInfo.IsDirectory() ? Resource.Drawable.folder : Resource.Drawable.file);
+                if (fileSystemEntry.RootDir != null)
+                {
+                    viewHolder.Update(fileSystemEntry.DisplayName, Resource.Drawable.folder);
+                }
+                else
+                {
+                    viewHolder.Update(fileSystemEntry.DisplayName, fileSystemEntry.FileSysInfo.IsDirectory() ? Resource.Drawable.folder : Resource.Drawable.file);
+                }
             }
 
             return row;
