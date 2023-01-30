@@ -60,8 +60,10 @@ The application has a configuration menu with the following options:
 	* _Separation time_: Separation time between CAN telegrams. The default is 0, only change this value if there are communication problems.
 	* _Block size_: Size of CAN telegram blocks. The default is 0, only change this value if there are communication problems.
 	* _Firmware update_: If a new firmware is available for the adapter, the update could be initiated with this button.
-* _ENET IP_: This menu display the current manually assigned ENET IP and allow to search for vehicles and edit the IP manually.
-* _Adapter IP_: This menu display the current manually assigned WiFi adapter IP and allow to edit the IP and port.
+* _ENET IP_: This menu displays the current manually assigned ENET IP and allows to search for vehicles and edit the IP manually.
+* _Adapter IP_: This menu displays the current manually assigned WiFi adapter IP and allows to edit the IP and port.  
+If the Android device is in hotspot mode (Hotspot active and WiFi off), communication with the adapter is only possible if the IP is assigned manually.  
+This is especially useful for adapters with ESP8266 chip, because they could be configured to connect to the Android hotspot automatically.
 * _Configuration generator_: Simple [XML configuration files](Page_specification.md) could be generated automatically using the informations obtained from the vehicle. This menu opens the [configuration generator](Configuration_Generator.md) which allows to create new or modify existing XML files by simply selecting the ECU and job informations.
 * _Configuration_: This submenu contains configuration selection and editing functions.
 	* _Select_: This menu allows the selection of the [configuration file](Page_specification.md) _(*.cccfg file)_. When using the [configuration generator](Configuration_Generator.md) the configuration is selected automatically. After selection the file will be compiled.
