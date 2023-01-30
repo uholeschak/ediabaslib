@@ -417,7 +417,6 @@ namespace BmwDeepObd
         public const string AdapterSsidModBmw = "modBMW ENET";
         public const string AdapterSsidUniCar = "UniCarScan";
         public const string EmulatorEnetIp = ""; // = "169.254.0.1";
-        public const string InvalidIp = "0.0.0.0";
         public const string DeepObdAdapterIp = "192.168.100.1";
         public const string EnetLinkAdapterIp = "192.168.16.254";
         public const string ModBmwAdapterIp = "169.254.128.7";
@@ -1659,7 +1658,7 @@ namespace BmwDeepObd
 
             if (string.IsNullOrEmpty(interfaceIp))
             {
-                interfaceIp = InvalidIp;
+                interfaceIp = _context.GetString(Resource.String.select_enet_ip_none);
             }
 
             longName = string.Format(CultureInfo.InvariantCulture, "{0}: {1}", menuName, interfaceIp);
@@ -3865,7 +3864,8 @@ namespace BmwDeepObd
                     string.Compare(_lastEnetSsid, enetSsid, StringComparison.Ordinal) != 0)
                 {
                     _lastEnetSsid = enetSsid;
-                    if (!validSsid)
+
+                    if (!validSsid && string.IsNullOrEmpty(SelectedEnetIp))
                     {
                         string message = _context.GetString(Resource.String.enet_adapter_ssid_warn);
                         if (Build.VERSION.SdkInt >= MinEthernetSettingsVersion)

@@ -398,6 +398,8 @@
   <string name="select_enet_ip_search">Поиск автомобиля</string>
   <string name="select_enet_ip">Выберите ENET IP-адрес</string>
   <string name="select_enet_ip_auto">Автоматически</string>
+  <!--Translate-->
+  <string name="select_enet_ip_none">Не настроено</string>
   <string name="select_enet_ip_edit">IP-адрес</string>
   <!--Translate-->
   <string name="select_enet_ip_port_edit">Номер порта</string>

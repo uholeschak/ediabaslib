@@ -374,6 +374,7 @@
   <string name="select_enet_ip_search">Searching vehicles</string>
   <string name="select_enet_ip">Select ENET IP address</string>
   <string name="select_enet_ip_auto">Automatic</string>
+  <string name="select_enet_ip_none">Not configured</string>
   <string name="select_enet_ip_edit">IP address</string>
   <string name="select_enet_ip_port_edit">Port number (optional)</string>
   <string name="select_enet_info_ip">Local IP</string>
