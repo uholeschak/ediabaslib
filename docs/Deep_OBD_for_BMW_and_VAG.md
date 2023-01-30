@@ -60,7 +60,8 @@ The application has a configuration menu with the following options:
 	* _Separation time_: Separation time between CAN telegrams. The default is 0, only change this value if there are communication problems.
 	* _Block size_: Size of CAN telegram blocks. The default is 0, only change this value if there are communication problems.
 	* _Firmware update_: If a new firmware is available for the adapter, the update could be initiated with this button.
-* _ENET IP_: This menu displays the currently manually assigned ENET IP and allows to search for vehicles and edit the IP manually.
+* _ENET IP_: This menu displays the currently manually assigned ENET IP and allows to search for vehicles and edit the IP manually.  
+This could be also used in hotspot mode (Hotspot active and WiFi off) if the ENET network is connected to the Android hotspot.
 * _Adapter IP_: This menu displays the currently manually assigned WiFi adapter IP and allows to edit the IP and port.  
 If the Android device is in hotspot mode (Hotspot active and WiFi off), communication with the adapter is only possible if the IP is assigned manually.  
 This is especially useful for adapters with ESP8266 chip, because they could be configured to connect to the Android hotspot automatically.  
