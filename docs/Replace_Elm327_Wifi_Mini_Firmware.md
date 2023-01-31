@@ -49,4 +49,5 @@ Sending binary data with plink: `plink -raw 192.168.4.1 -P 23 < data.bin`
 
 ## Step3: Hotspot mode
 Basically the ESP8266 could be configured via the web interface to automatically connect to an Android hotspot.  
-If DeepOBD is working in hotspot mode (Hotspot active and WiFi off), the assigned adapter IP address could be specified the app menu.
+If _[Deep OBD app](Deep_OBD_for_BMW_and_VAG.md)_ is working in hotspot mode (Hotspot active and WiFi off), the adapter IP assigned by the Android hotspot must be specified the app menu.  
+Automatic detection of the adapter IP is not possible in this mode. You could see the devices connected to the Android hotspot in the Android hotspot menu.
