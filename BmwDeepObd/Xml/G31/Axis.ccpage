@@ -399,25 +399,28 @@
                             }
                         }
 
-                        if (statusCount >= 3)
+                        if (!ignoreError)
                         {
-                            if (channelState == 0x00)
+                            if (statusCount >= 3)
                             {
-                                channelsOffCount++;
+                                if (channelState == 0x00)
+                                {
+                                    channelsOffCount++;
+                                }
+                                else
+                                {
+                                    channelsOffCount = 0;
+                                }
                             }
-                            else
-                            {
-                                channelsOffCount = 0;
-                            }
-                        }
 
-                        if (channelsOffCount >= 6)
-                        {
-                            ecuReset = true;
-                        }
-                        else if (channelsOffCount == 3)
-                        {
-                            errorReset = true;
+                            if (channelsOffCount >= 6)
+                            {
+                                ecuReset = true;
+                            }
+                            else if (channelsOffCount == 3)
+                            {
+                                errorReset = true;
+                            }
                         }
 
                         // set channel state
