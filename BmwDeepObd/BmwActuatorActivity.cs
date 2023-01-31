@@ -446,7 +446,20 @@ namespace BmwDeepObd
             int index = 0;
             foreach (XmlToolEcuActivity.JobInfo jobInfo in _jobActuatorList)
             {
-                string displayText = jobInfo.EcuFixedFuncStruct.Title?.GetTitle(language) ?? string.Empty;
+                bool validFunction = true;
+                List<EcuFunctionStructs.EcuJob> ecuJobList = jobInfo.EcuFixedFuncStruct.EcuJobList;
+                if (ecuJobList == null || ecuJobList.Count == 0)
+                {
+                    validFunction = false;
+                }
+
+                string titleText = jobInfo.EcuFixedFuncStruct.Title?.GetTitle(language) ?? string.Empty;
+                string displayText = titleText.Trim();
+                if (!validFunction)
+                {
+                    displayText = "(" + displayText + ")";
+                }
+
                 _spinnerBmwActuatorFunctionAdapter.Items.Add(new StringObjType(displayText.Trim(), index));
 
                 if (index == selectedFunction)
