@@ -46,3 +46,7 @@ You could test reading the ignition pin with the following command (hex values):
 The response is (additionally to the echo):  
 `82 F1 F1 FE <state> <checksum>` with state bit 0 set to 1 if ignition is on.  
 Sending binary data with plink: `plink -raw 192.168.4.1 -P 23 < data.bin`  
+
+## Step3: Hotspot mode
+Basically the ESP8266 could be configured via the web interface to automatically connect to an Android hotspot.  
+If DeepOBD is working in hotspot mode (Hotspot active and WiFi off), the assigned adapter IP address could be specified the app menu.
