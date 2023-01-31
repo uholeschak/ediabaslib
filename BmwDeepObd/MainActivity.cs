@@ -812,6 +812,9 @@ namespace BmwDeepObd
         {
             base.OnResume();
 
+#if DEBUG
+            Log.Info(Tag, string.Format("OnResume: {0}", this));
+#endif
             bool firstStart = !_onResumeExecuted;
             if (!_onResumeExecuted)
             {
@@ -903,6 +906,9 @@ namespace BmwDeepObd
         {
             base.OnPause();
 
+#if DEBUG
+            Log.Info(Tag, string.Format("OnPause: {0}", this));
+#endif
             _activityActive = false;
             UpdateLockState();
             if (!UseCommService())
@@ -5622,7 +5628,16 @@ namespace BmwDeepObd
 
             if (!_updateHandler.HasCallbacks(_compileCodeRunnable))
             {
+#if DEBUG
+                Log.Info(Tag, string.Format("PostCompileCode accepted: {0}", this));
+#endif
                 _updateHandler.Post(_compileCodeRunnable);
+            }
+            else
+            {
+#if DEBUG
+                Log.Info(Tag, string.Format("PostCompileCode rejected: {0}", this));
+#endif
             }
         }
 
@@ -5630,9 +5645,16 @@ namespace BmwDeepObd
         {
             if (!_activityActive || _compileProgress != null)
             {
+#if DEBUG
+                Log.Info(Tag, string.Format("CompileCode rejected: {0}", this));
+#endif
                 _compileCodePending = true;
                 return;
             }
+
+#if DEBUG
+            Log.Info(Tag, string.Format("CompileCode accepted: {0}", this));
+#endif
             _compileCodePending = false;
             if (!ActivityCommon.IsCpuStatisticsSupported() || !ActivityCommon.CheckCpuUsage)
             {
