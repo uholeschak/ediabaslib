@@ -942,7 +942,11 @@ namespace BmwDeepObd
         {
             base.OnDestroy();
 
-            ActivityCommon.ActivityMainCurrent = null;
+            if (ActivityCommon.ActivityMainCurrent == this)
+            {
+                ActivityCommon.ActivityMainCurrent = null;
+            }
+
             if (!UseCommService())
             {
                 StopEdiabasThread(true);
