@@ -549,6 +549,27 @@ namespace BmwDeepObd
             }
         }
 
+        public static Android.App.Activity GetActivityFromStack(Type activityType)
+        {
+            lock (_activityStackLock)
+            {
+                foreach (Android.App.Activity activity in ActivityStack)
+                {
+                    if (activity.GetType() == activityType)
+                    {
+#if DEBUG
+                        Android.Util.Log.Debug(Tag, "GetActivityFromStack: Type found {0}", activityType);
+#endif
+                        return activity;
+                    }
+                }
+#if DEBUG
+                Android.Util.Log.Debug(Tag, "GetActivityFromStack: Type not found {0}", activityType);
+#endif
+                return null;
+            }
+        }
+
         public virtual void OnBackPressedEvent()
         {
             Finish();
