@@ -1254,7 +1254,7 @@ namespace BmwDeepObd
                             StoreSettings();
                             // update translations
                             _activityCommon.RegisterNotificationChannels();
-                            Finish();
+                            base.Finish();
                             StartActivity(Intent);
                             break;
                         }
