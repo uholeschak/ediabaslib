@@ -7803,7 +7803,7 @@ namespace BmwDeepObd
                 Log.Info(Tag, string.Format("TabContentFragment OnCreateView: {0}", _pageInfoIndex));
 #endif
                 View view = inflater.Inflate(_resourceId, null);
-                if (Activity is ActivityMain activityMain && activityMain == ActivityCommon.ActivityMainCurrent)
+                if (Activity is ActivityMain activityMain)
                 {
                     if (_pageInfoIndex >= 0 && _pageInfoIndex < ActivityCommon.JobReader.PageList.Count)
                     {
@@ -7849,8 +7849,7 @@ namespace BmwDeepObd
 #if DEBUG
                 Log.Info(Tag, string.Format("TabContentFragment OnDestroyView: {0}", _pageInfoIndex));
 #endif
-                if (Activity is ActivityMain activityMain && activityMain == ActivityCommon.ActivityMainCurrent &&
-                    _pageInfoIndex >= 0 && _pageInfoIndex < ActivityCommon.JobReader.PageList.Count)
+                if (_pageInfoIndex >= 0 && _pageInfoIndex < ActivityCommon.JobReader.PageList.Count)
                 {
                     JobReader.PageInfo pageInfo = ActivityCommon.JobReader.PageList[_pageInfoIndex];
                     if (pageInfo.ClassObject != null)
