@@ -21,7 +21,6 @@
   <string name="button_donate">Пожертвовать</string>
   <string name="button_skip">Пропустить</string>
   <string name="button_hide">Скрыть</string>
-  <!--Translate-->
   <string name="button_reset">Сброс настроек</string>
   <string name="back_button_twice_for_exit">Дважды нажмите кнопку, чтобы выйти</string>
   <string name="no_ext_storage">Внешняя память недоступна</string>
@@ -306,7 +305,6 @@
   <string name="menu_manufacturer">Производитель</string>
   <string name="menu_adapter">Устройство</string>
   <string name="menu_adapter_config">Настройки устройства</string>
-  <!--Translate-->
   <string name="menu_adapter_ip">IP адаптера</string>
   <string name="menu_enet_ip">ENET IP</string>
   <string name="menu_cfg_submenu">Конфигурация</string>
@@ -398,11 +396,9 @@
   <string name="select_enet_ip_search">Поиск автомобиля</string>
   <string name="select_enet_ip">Выберите ENET IP-адрес</string>
   <string name="select_enet_ip_auto">Автоматически</string>
-  <!--Translate-->
   <string name="select_enet_ip_none">Не настроено</string>
   <string name="select_enet_ip_edit">IP-адрес</string>
-  <!--Translate-->
-  <string name="select_enet_ip_port_edit">Номер порта</string>
+  <string name="select_enet_ip_port_edit">Номер порта (необязательно)</string>
   <string name="select_enet_info_ip">Локальный IP</string>
   <string name="select_enet_info_mask">Маска подсети</string>
   <string name="select_enet_info_dhcp_srv">DHCP-сервер</string>
@@ -420,8 +416,7 @@
   <string name="deepobdwifi_adapter_warn">Вы соединены не с Deep OBD Wi-Fi устройством.\nВыбрать другую точку доступа?</string>
 
   <!-- AP mode -->
-  <!--Translate-->
-  <string name="ap_mode_adapter_ip_error">В режиме точки доступа вы должны указать IP-адрес адаптера вручную в меню приложения.\nВы хотите сделать это сейчас?</string>
+  <string name="ap_mode_adapter_ip_error">В режиме точки доступа необходимо указать IP-адрес адаптера вручную в меню приложения.\nХотите сделать это сейчас?</string>
 
   <!-- Battery voltage -->
   <string name="battery_voltage_warn">Очень высокое напряжение аккумулятора ({0}V),\nэто может привезти к  разрушению OBD-адаптера.\nПожалуйста, проверьте регулятор напряжения вашего автомобиля.</string>
