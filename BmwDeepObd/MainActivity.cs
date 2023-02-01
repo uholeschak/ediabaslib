@@ -770,6 +770,9 @@ namespace BmwDeepObd
 
         protected override void OnStart()
         {
+#if DEBUG
+            Log.Info(Tag, string.Format("OnStart: {0}", this));
+#endif
             base.OnStart();
 
             ClearActivityStack();
@@ -788,6 +791,9 @@ namespace BmwDeepObd
 
         protected override void OnStop()
         {
+#if DEBUG
+            Log.Info(Tag, string.Format("OnStop: {0}", this));
+#endif
             base.OnStop();
 
             _activityCommon?.StopMtcService();
@@ -810,11 +816,11 @@ namespace BmwDeepObd
 
         protected override void OnResume()
         {
-            base.OnResume();
-
 #if DEBUG
             Log.Info(Tag, string.Format("OnResume: {0}", this));
 #endif
+            base.OnResume();
+
             bool firstStart = !_onResumeExecuted;
             if (!_onResumeExecuted)
             {
@@ -904,11 +910,11 @@ namespace BmwDeepObd
 
         protected override void OnPause()
         {
-            base.OnPause();
-
 #if DEBUG
             Log.Info(Tag, string.Format("OnPause: {0}", this));
 #endif
+            base.OnPause();
+
             _activityActive = false;
             UpdateLockState();
             if (!UseCommService())
