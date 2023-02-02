@@ -2695,6 +2695,12 @@ namespace BmwDeepObd
             {
                 if (ActivityCommon.SelectedLocale == null)
                 {
+                    ActivityMain activityMain = GetActivityFromStack(typeof(ActivityMain)) as ActivityMain;
+                    if (activityMain == null)
+                    {
+                        return string.Empty;
+                    }
+
                     string settingsFile = ActivityCommon.GetSettingsFileName();
                     if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
                     {
