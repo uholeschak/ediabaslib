@@ -530,22 +530,22 @@ namespace BmwDeepObd
             return false;
         }
 
-        public static bool IsActivityListEmpty()
+        public static bool IsActivityListEmpty(List<Type> excludeTypes = null)
         {
             lock (_activityStackLock)
             {
-                if (ActivityStack.Count == 0)
+                bool empty = true;
+                foreach (Android.App.Activity activity in ActivityStack)
                 {
-#if DEBUG
-                    Android.Util.Log.Debug(Tag, "IsActivityListEmpty: Empty");
-#endif
-                    return true;
+                    if (excludeTypes == null || !excludeTypes.Contains(activity.GetType()))
+                    {
+                        empty = false;
+                    }
                 }
-
 #if DEBUG
-                Android.Util.Log.Debug(Tag, "IsActivityListEmpty: Not empty");
+                Android.Util.Log.Debug(Tag, "IsActivityListEmpty: Empty {0}", empty);
 #endif
-                return false;
+                return empty;
             }
         }
 
