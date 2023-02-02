@@ -2,7 +2,7 @@
 <fragment xmlns="http://www.holeschak.de/BmwDeepObd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
   <page name="!PAGE_NAME">
     <strings>
-      <string name="!PAGE_NAME">Fehler</string>
+      <string name="!PAGE_NAME">Errors</string>
       <string name="!ECU#DME/DDE">DME/DDE</string>
       <string name="!ECU#GWS">GWS</string>
       <string name="!ECU#AIRBAG">AIRBAG</string>
@@ -27,6 +27,9 @@
       <string name="!ECU#VDC">VDC</string>
       <string name="!ECU#ZBE">ZBE</string>
       <string name="!ECU#ZGW">ZGW</string>
+    </strings>
+    <strings lang="de">
+      <string name="!PAGE_NAME">Fehler</string>
     </strings>
     <read_errors sgbd_functional="f01" vehicle_series="G31" >
       <ecu name="!ECU#DME/DDE" sgbd="D83BX7C0" />
