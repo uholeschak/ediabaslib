@@ -1073,8 +1073,6 @@ namespace BmwDeepObd
 
         public static string TraceInfo { get; set; }
 
-        public static ActivityMain ActivityMainCurrent { get; set; }
-
         public static ActivityMain ActivityMainSettings { get; set; }
 
         public static EdiabasThread EdiabasThread { get; set; }
