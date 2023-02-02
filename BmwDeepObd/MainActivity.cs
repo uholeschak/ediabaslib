@@ -534,9 +534,11 @@ namespace BmwDeepObd
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            AddActivityToStack(this);
             GetThemeSettings();
             SetTheme(ActivityCommon.SelectedThemeId);
             base.OnCreate(savedInstanceState);
+
             _allowTitleHiding = false;
             _touchShowTitle = true;
             if (savedInstanceState != null)
@@ -564,7 +566,6 @@ namespace BmwDeepObd
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.SetVmPolicy(builder.Build());
 
-            ActivityCommon.ActivityMainCurrent = this;
             _activityCommon = new ActivityCommon(this, () =>
             {
                 if (_activityCommon == null)
@@ -943,11 +944,6 @@ namespace BmwDeepObd
         protected override void OnDestroy()
         {
             base.OnDestroy();
-
-            if (ActivityCommon.ActivityMainCurrent == this)
-            {
-                ActivityCommon.ActivityMainCurrent = null;
-            }
 
             if (!UseCommService())
             {
@@ -3136,7 +3132,8 @@ namespace BmwDeepObd
 
         public static bool GetLocaleThemeSettings(string fileName, bool updateLocale, bool updateTheme)
         {
-            StorageData storageData = GetStorageData(fileName, ActivityCommon.ActivityMainCurrent);
+            ActivityMain activityMain = GetActivityFromStack(typeof(ActivityMain)) as ActivityMain;
+            StorageData storageData = GetStorageData(fileName, activityMain);
 
             if (updateLocale)
             {
