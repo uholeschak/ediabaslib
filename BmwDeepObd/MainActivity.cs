@@ -286,7 +286,8 @@ namespace BmwDeepObd
                 ScanAllEcus = ActivityCommon.ScanAllEcus;
                 CollectDebugInfo = ActivityCommon.CollectDebugInfo;
 
-                InitData(ActivityCommon.ActivityMainSettings);
+                ActivityMain activityMain = GetActivityFromStack(typeof(ActivityMain)) as ActivityMain;
+                InitData(activityMain);
             }
 
             public StorageData(ActivityMain activityMain, bool storage = false) : this()
@@ -3087,7 +3088,7 @@ namespace BmwDeepObd
             return storageClassAttributes;
         }
 
-        public static StorageData GetStorageData(string fileName, ActivityMain activityMain, SettingsMode settingsMode = SettingsMode.All)
+        public static StorageData GetStorageData(string fileName, SettingsMode settingsMode = SettingsMode.All)
         {
             StorageData storageData = null;
             try
@@ -3098,19 +3099,11 @@ namespace BmwDeepObd
                     {
                         lock (ActivityCommon.GlobalSettingLockObject)
                         {
-                            ActivityCommon.ActivityMainSettings = activityMain;
-                            try
+                            XmlAttributeOverrides storageClassAttributes = GetStoreXmlAttributeOverrides(settingsMode);
+                            XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData), storageClassAttributes);
+                            using (StreamReader sr = new StreamReader(fileName))
                             {
-                                XmlAttributeOverrides storageClassAttributes = GetStoreXmlAttributeOverrides(settingsMode);
-                                XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData), storageClassAttributes);
-                                using (StreamReader sr = new StreamReader(fileName))
-                                {
-                                    storageData = xmlSerializer.Deserialize(sr) as StorageData;
-                                }
-                            }
-                            finally
-                            {
-                                ActivityCommon.ActivityMainSettings = null;
+                                storageData = xmlSerializer.Deserialize(sr) as StorageData;
                             }
                         }
                     }
@@ -3132,8 +3125,7 @@ namespace BmwDeepObd
 
         public static bool GetLocaleThemeSettings(string fileName, bool updateLocale, bool updateTheme)
         {
-            ActivityMain activityMain = GetActivityFromStack(typeof(ActivityMain)) as ActivityMain;
-            StorageData storageData = GetStorageData(fileName, activityMain);
+            StorageData storageData = GetStorageData(fileName);
 
             if (updateLocale)
             {
@@ -3171,7 +3163,7 @@ namespace BmwDeepObd
                     _activityCommon.SetDefaultSettings();
                 }
 
-                StorageData storageData = GetStorageData(fileName, this, settingsMode);
+                StorageData storageData = GetStorageData(fileName, settingsMode);
                 hash = storageData.CalcualeHash();
 
                 if (init || import)
