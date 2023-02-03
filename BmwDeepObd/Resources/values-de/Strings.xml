@@ -303,6 +303,7 @@
 
   <!-- Options Menu -->
   <string name="menu_settings">Einstellungen</string>
+  <string name="menu_search">Suchen</string>
   <string name="menu_connect">Verbinden</string>
   <string name="menu_manufacturer">Hersteller</string>
   <string name="menu_adapter">Adapter</string>
@@ -670,9 +671,6 @@
   <string name="xml_tool_ecu_msg_no_selection">Sie haben keine Daten für die Anzeige ausgewählt.\nWählen Sie hierfür zunächst die gewünschen Jobs und Ergebnisse aus der Liste.\nWollen Sie trotzdem abbrechen?</string>
   <string name="xml_tool_ecu_msg_no_grid_selection">Sie haben die graphische Anzeige aktiviert, aber keine graphische Darstellung ausgewählt.\nEs wird keine graphische Darstellung angezeigt.\nWollen Sie trotzdem fortfahren?</string>
   <string name="xml_tool_ecu_msg_func_not_avail">The gewählte Funktion ist nicht verfügbar.</string>
-
-  <!-- XML ECU Tool Options Menu -->
-  <string name="menu_xml_ecu_tool_search">Suchen</string>
 
   <!-- VAG Coding Activity -->
   <string name="vag_coding_title_coding">ECU Kodieren: {0}</string>

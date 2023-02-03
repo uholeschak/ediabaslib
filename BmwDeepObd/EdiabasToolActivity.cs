@@ -147,6 +147,7 @@ namespace BmwDeepObd
 
         private InstanceData _instanceData = new InstanceData();
         private bool _activityRecreated;
+        private string _jobFilterText;
         private InputMethodManager _imm;
         private View _contentView;
         private View _barView;
@@ -317,6 +318,8 @@ namespace BmwDeepObd
         protected override void OnStart()
         {
             base.OnStart();
+
+            _jobFilterText = null;
             if (_activityCommon != null)
             {
                 if (_activityCommon.MtcBtService)
@@ -514,6 +517,26 @@ namespace BmwDeepObd
         {
             var inflater = MenuInflater;
             inflater.Inflate(Resource.Menu.ediabas_tool_menu, menu);
+
+            IMenuItem menuSearch = menu.FindItem(Resource.Id.action_search);
+            if (menuSearch != null)
+            {
+                menuSearch.SetActionView(new AndroidX.AppCompat.Widget.SearchView(this));
+
+                if (menuSearch.ActionView is AndroidX.AppCompat.Widget.SearchView searchViewV7)
+                {
+                    searchViewV7.QueryTextChange += (sender, e) =>
+                    {
+                        e.Handled = OnQueryTextChange(e.NewText, false);
+                    };
+
+                    searchViewV7.QueryTextSubmit += (sender, e) =>
+                    {
+                        e.Handled = OnQueryTextChange(e.NewText, true);
+                    };
+                }
+            }
+
             return true;
         }
 
@@ -853,6 +876,16 @@ namespace BmwDeepObd
                     break;
             }
             return false;
+        }
+
+        private bool OnQueryTextChange(string text, bool submit)
+        {
+            _jobFilterText = text;
+            if (submit)
+            {
+                HideKeyboard();
+            }
+            return true;
         }
 
         private void HandleStartDialogs()
