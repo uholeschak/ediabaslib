@@ -12937,49 +12937,49 @@ namespace BmwDeepObd
 			public const int menu_recent_cfg_submenu = 2131755391;
 			
 			// aapt resource value: 0x7F100180
-			public const int menu_send_last_trace = 2131755392;
+			public const int menu_search = 2131755392;
 			
 			// aapt resource value: 0x7F100181
-			public const int menu_send_trace = 2131755393;
+			public const int menu_send_last_trace = 2131755393;
 			
 			// aapt resource value: 0x7F100182
-			public const int menu_settings = 2131755394;
+			public const int menu_send_trace = 2131755394;
 			
 			// aapt resource value: 0x7F100183
-			public const int menu_submenu_help = 2131755395;
+			public const int menu_settings = 2131755395;
 			
 			// aapt resource value: 0x7F100184
-			public const int menu_submenu_log = 2131755396;
+			public const int menu_submenu_help = 2131755396;
 			
 			// aapt resource value: 0x7F100185
-			public const int menu_tool_offline = 2131755397;
+			public const int menu_submenu_log = 2131755397;
 			
 			// aapt resource value: 0x7F100186
-			public const int menu_tool_sel_interface = 2131755398;
+			public const int menu_tool_offline = 2131755398;
 			
 			// aapt resource value: 0x7F100187
-			public const int menu_tool_sel_sgbd_grp = 2131755399;
+			public const int menu_tool_sel_interface = 2131755399;
 			
 			// aapt resource value: 0x7F100188
-			public const int menu_tool_sel_sgbd_prg = 2131755400;
+			public const int menu_tool_sel_sgbd_grp = 2131755400;
 			
 			// aapt resource value: 0x7F100189
-			public const int menu_trace_submenu = 2131755401;
+			public const int menu_tool_sel_sgbd_prg = 2131755401;
 			
 			// aapt resource value: 0x7F10018A
-			public const int menu_translation_clear_cache = 2131755402;
+			public const int menu_trace_submenu = 2131755402;
 			
 			// aapt resource value: 0x7F10018B
-			public const int menu_translation_enable = 2131755403;
+			public const int menu_translation_clear_cache = 2131755403;
 			
 			// aapt resource value: 0x7F10018C
-			public const int menu_translation_submenu = 2131755404;
+			public const int menu_translation_enable = 2131755404;
 			
 			// aapt resource value: 0x7F10018D
-			public const int menu_translation_yandex_key = 2131755405;
+			public const int menu_translation_submenu = 2131755405;
 			
 			// aapt resource value: 0x7F10018E
-			public const int menu_xml_ecu_tool_search = 2131755406;
+			public const int menu_translation_yandex_key = 2131755406;
 			
 			// aapt resource value: 0x7F10018F
 			public const int menu_xml_tool = 2131755407;
