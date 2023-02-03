@@ -244,8 +244,8 @@ namespace BmwDeepObd
             public void InitCommonData()
             {
                 LastAppState = LastAppState.Init;
-                SelectedLocale = string.Empty;
-                SelectedTheme = ActivityCommon.ThemeDefault;
+                SelectedLocale = ActivityCommon.SelectedLocale ?? string.Empty;
+                SelectedTheme = ActivityCommon.SelectedTheme ?? ActivityCommon.ThemeDefault;
                 DeviceName = string.Empty;
                 DeviceAddress = string.Empty;
                 ConfigFileName = string.Empty;
@@ -319,8 +319,6 @@ namespace BmwDeepObd
                 }
 
                 LastAppState = instanceData.LastAppState;
-                SelectedLocale = ActivityCommon.SelectedLocale ?? string.Empty;
-                SelectedTheme = ActivityCommon.SelectedTheme ?? ActivityCommon.ThemeDefault;
                 SelectedEnetIp = activityCommon.SelectedEnetIp;
                 SelectedElmWifiIp = activityCommon.SelectedElmWifiIp;
                 SelectedDeepObdWifiIp = activityCommon.SelectedDeepObdWifiIp;
@@ -329,7 +327,6 @@ namespace BmwDeepObd
                 ConfigFileName = instanceData.ConfigFileName;
                 UpdateCheckTime = instanceData.UpdateCheckTime;
                 UpdateSkipVersion = instanceData.UpdateSkipVersion;
-                TransLoginTimeNext = DateTime.MinValue.Ticks;
                 LastVersionCode = activityMain._currentVersionCode;
                 StorageRequirementsAccepted = instanceData.StorageRequirementsAccepted;
                 XmlEditorPackageName = instanceData.XmlEditorPackageName ?? string.Empty;
@@ -2703,12 +2700,6 @@ namespace BmwDeepObd
             {
                 if (ActivityCommon.SelectedLocale == null)
                 {
-                    ActivityMain activityMain = GetActivityFromStack(typeof(ActivityMain)) as ActivityMain;
-                    if (activityMain == null)
-                    {
-                        return string.Empty;
-                    }
-
                     string settingsFile = ActivityCommon.GetSettingsFileName();
                     if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
                     {
