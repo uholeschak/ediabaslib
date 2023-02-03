@@ -227,6 +227,22 @@ namespace BmwDeepObd
         {
             public StorageData()
             {
+                InitCommonData();
+                ActivityMain activityMain = GetActivityFromStack(typeof(ActivityMain)) as ActivityMain;
+                if (activityMain != null)
+                {
+                    InitData(activityMain);
+                }
+            }
+
+            public StorageData(ActivityMain activityMain, bool storage = false)
+            {
+                InitCommonData();
+                InitData(activityMain, storage);
+            }
+
+            public void InitCommonData()
+            {
                 LastAppState = LastAppState.Init;
                 SelectedLocale = string.Empty;
                 SelectedTheme = ActivityCommon.ThemeDefault;
@@ -285,14 +301,6 @@ namespace BmwDeepObd
                 ShowOnlyRelevantErrors = ActivityCommon.ShowOnlyRelevantErrors;
                 ScanAllEcus = ActivityCommon.ScanAllEcus;
                 CollectDebugInfo = ActivityCommon.CollectDebugInfo;
-
-                ActivityMain activityMain = GetActivityFromStack(typeof(ActivityMain)) as ActivityMain;
-                InitData(activityMain);
-            }
-
-            public StorageData(ActivityMain activityMain, bool storage = false) : this()
-            {
-                InitData(activityMain, storage);
             }
 
             public void InitData(ActivityMain activityMain, bool storage = false)
