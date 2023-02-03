@@ -279,6 +279,7 @@
 
   <!-- Options Menu -->
   <string name="menu_settings">Settings</string>
+  <string name="menu_search">Search</string>
   <string name="menu_connect">Connect</string>
   <string name="menu_manufacturer">Manufacturer</string>
   <string name="menu_adapter">Adapter</string>
@@ -646,9 +647,6 @@
   <string name="xml_tool_ecu_msg_no_selection">You have selected no data to display.\nFor this select the desired jobs and results first from the list.\nDo you want to abort anyway?</string>
   <string name="xml_tool_ecu_msg_no_grid_selection">You have activated the graphical display, but not selected any graphical design.\nNo gauge will be displayed.\nDo you want continue anyway?</string>
   <string name="xml_tool_ecu_msg_func_not_avail">The selected function is not available.</string>
-
-  <!-- XML ECU Tool Options Menu -->
-  <string name="menu_xml_ecu_tool_search">Search</string>
 
   <!-- VAG Coding Activity -->
   <string name="vag_coding_title_coding">Coding ECU: {0}</string>
