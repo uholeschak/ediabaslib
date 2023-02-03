@@ -880,11 +880,13 @@ namespace BmwDeepObd
 
         private bool OnQueryTextChange(string text, bool submit)
         {
-            _jobFilterText = text;
+            _jobFilterText = text.Trim();
+            UpdateJobList();
             if (submit)
             {
                 HideKeyboard();
             }
+
             return true;
         }
 
@@ -2314,13 +2316,7 @@ namespace BmwDeepObd
                     }
                     _infoListAdapter.NotifyDataSetChanged();
 
-                    _jobListAdapter.Items.Clear();
-                    foreach (JobInfo job in _jobList.OrderBy(x => x.Name))
-                    {
-                        _jobListAdapter.Items.Add(job);
-                    }
-                    _jobListAdapter.NotifyDataSetChanged();
-
+                    UpdateJobList();
                     _jobListTranslated = false;
                     _translateEnabled = true;
                     UpdateOptionsMenu();
@@ -2328,6 +2324,24 @@ namespace BmwDeepObd
                 });
             });
             _jobThread.Start();
+        }
+
+        private void UpdateJobList()
+        {
+            _jobListAdapter.Items.Clear();
+            foreach (JobInfo job in _jobList.OrderBy(x => x.Name))
+            {
+                if (!string.IsNullOrEmpty(_jobFilterText))
+                {
+                    if (job.Name.IndexOf(_jobFilterText, StringComparison.OrdinalIgnoreCase) < 0)
+                    {
+                        continue;
+                    }
+                }
+
+                _jobListAdapter.Items.Add(job);
+            }
+            _jobListAdapter.NotifyDataSetChanged();
         }
 
         private void ExecuteSelectedJob(bool continuous)

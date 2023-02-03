@@ -1014,7 +1014,7 @@ namespace BmwDeepObd
 
         private bool OnQueryTextChange(string text, bool submit)
         {
-            _resultFilterText = text;
+            _resultFilterText = text.Trim();
             JobSelected(_selectedJob);
             if (submit)
             {

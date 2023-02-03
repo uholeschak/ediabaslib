@@ -211,7 +211,7 @@ namespace BmwDeepObd
 
         private bool OnQueryTextChange(string text, bool submit)
         {
-            _argFilterText = text;
+            _argFilterText = text.Trim();
             UpdateArgFilter();
             if (submit)
             {
