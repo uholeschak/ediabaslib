@@ -48,7 +48,7 @@ namespace BmwDeepObd.FilePicker
         private List<string> _extensionList;
         private Regex _fileNameRegex;
         private IList<FileInfoEx> _visibleFiles;
-        private string _fileNameFilter;
+        private string _fileNameFilter = string.Empty;
         private bool _allowDirChange;
         private bool _dirSelect;
         private bool _showCurrentDir;
@@ -221,7 +221,7 @@ namespace BmwDeepObd.FilePicker
         {
             base.OnStart();
 
-            _fileNameFilter = null;
+            _fileNameFilter = string.Empty;
             if (Activity is FilePickerActivity filePicker)
             {
                 filePicker.FilterEvent += NewFileFilter;
