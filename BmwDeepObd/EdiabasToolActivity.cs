@@ -2331,15 +2331,38 @@ namespace BmwDeepObd
             _jobListAdapter.Items.Clear();
             foreach (JobInfo job in _jobList.OrderBy(x => x.Name))
             {
+                bool jobValid = true;
                 if (!string.IsNullOrEmpty(_jobFilterText))
                 {
-                    if (job.Name.IndexOf(_jobFilterText, StringComparison.OrdinalIgnoreCase) < 0)
+                    jobValid = false;
+                    if (!string.IsNullOrEmpty(job.Name) && job.Name.IndexOf(_jobFilterText, StringComparison.OrdinalIgnoreCase) >= 0)
                     {
-                        continue;
+                        jobValid = true;
+                    }
+
+                    foreach (ExtraInfo extraInfo in job.Arguments)
+                    {
+                        if (string.IsNullOrEmpty(extraInfo.Name) && extraInfo.Name.IndexOf(_jobFilterText, StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            jobValid = true;
+                            break;
+                        }
+                    }
+
+                    foreach (ExtraInfo extraInfo in job.Results)
+                    {
+                        if (string.IsNullOrEmpty(extraInfo.Name) && extraInfo.Name.IndexOf(_jobFilterText, StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            jobValid = true;
+                            break;
+                        }
                     }
                 }
 
-                _jobListAdapter.Items.Add(job);
+                if (jobValid)
+                {
+                    _jobListAdapter.Items.Add(job);
+                }
             }
             _jobListAdapter.NotifyDataSetChanged();
         }
