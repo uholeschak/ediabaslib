@@ -570,6 +570,33 @@ namespace BmwDeepObd
             }
         }
 
+        public static bool IsSearchFilterMatching(string text, string filter)
+        {
+            if (string.IsNullOrWhiteSpace(filter))
+            {
+                return true;
+            }
+
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return false;
+            }
+
+            string[] filterParts = filter.Split(' ');
+            foreach (string part in filterParts)
+            {
+                if (!string.IsNullOrWhiteSpace(part))
+                {
+                    if (text.IndexOf(part.Trim(), StringComparison.OrdinalIgnoreCase) < 0)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
         public virtual void OnBackPressedEvent()
         {
             Finish();
