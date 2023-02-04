@@ -863,7 +863,7 @@ namespace BmwDeepObd
         protected override void OnStart()
         {
             base.OnStart();
-            _resultFilterText = null;
+            _resultFilterText = string.Empty;
             if (_activityCommon != null)
             {
                 if (_activityCommon.MtcBtService)

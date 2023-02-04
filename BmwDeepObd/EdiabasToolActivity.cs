@@ -147,7 +147,7 @@ namespace BmwDeepObd
 
         private InstanceData _instanceData = new InstanceData();
         private bool _activityRecreated;
-        private string _jobFilterText;
+        private string _jobFilterText = string.Empty;
         private InputMethodManager _imm;
         private View _contentView;
         private View _barView;
