@@ -319,7 +319,7 @@ namespace BmwDeepObd
         {
             base.OnStart();
 
-            _jobFilterText = null;
+            _jobFilterText = string.Empty;
             if (_activityCommon != null)
             {
                 if (_activityCommon.MtcBtService)
@@ -880,8 +880,14 @@ namespace BmwDeepObd
 
         private bool OnQueryTextChange(string text, bool submit)
         {
-            _jobFilterText = text.Trim();
-            UpdateJobList();
+            if (string.Compare(_jobFilterText, text, StringComparison.Ordinal) != 0)
+            {
+                _jobFilterText = text;
+                UpdateJobList();
+                NewJobSelected();
+                DisplayJobComments();
+            }
+
             if (submit)
             {
                 HideKeyboard();
