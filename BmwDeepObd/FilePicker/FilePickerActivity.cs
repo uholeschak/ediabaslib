@@ -20,7 +20,7 @@ namespace BmwDeepObd.FilePicker
         public const string ExtraShowFiles = "show_files";
         public const string ExtraShowExtension = "show_extension";
 
-        public delegate void FilterEventHandler(string fileNamefilter);
+        public delegate void FilterEventHandler(string fileNameFilter, bool submit);
         public event FilterEventHandler FilterEvent;
 
         protected override void OnCreate(Bundle bundle)
@@ -56,12 +56,12 @@ namespace BmwDeepObd.FilePicker
                 {
                     searchViewV7.QueryTextChange += (sender, e) =>
                     {
-                        e.Handled = OnQueryTextChange(e.NewText);
+                        e.Handled = OnQueryTextChange(e.NewText, false);
                     };
 
                     searchViewV7.QueryTextSubmit += (sender, e) =>
                     {
-                        e.Handled = OnQueryTextChange(e.NewText);
+                        e.Handled = OnQueryTextChange(e.NewText, true);
                     };
                 }
             }
@@ -80,16 +80,16 @@ namespace BmwDeepObd.FilePicker
             return base.OnOptionsItemSelected(item);
         }
 
-        private bool OnQueryTextChange(string text)
+        private bool OnQueryTextChange(string text, bool submit)
         {
-            OnFilterEvent(text);
+            OnFilterEvent(text, submit);
             return true;
         }
 
-        protected virtual void OnFilterEvent(string filter)
+        protected virtual void OnFilterEvent(string filter, bool submit)
         {
-            var handler = FilterEvent;
-            handler?.Invoke(filter);
+            FilterEventHandler handler = FilterEvent;
+            handler?.Invoke(filter.Trim(), submit);
         }
     }
 }

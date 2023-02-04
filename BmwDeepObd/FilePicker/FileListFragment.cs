@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using Android.Content;
 using Android.OS;
 using Android.Views;
+using Android.Views.InputMethods;
 using Android.Widget;
 using AndroidX.Fragment.App;
 
@@ -41,6 +42,8 @@ namespace BmwDeepObd.FilePicker
 
         private InstanceData _instanceData = new InstanceData();
         private bool _activityRecreated;
+        private InputMethodManager _imm;
+        private View _contentView;
         private FileListAdapter _adapter;
         private List<string> _extensionList;
         private Regex _fileNameRegex;
@@ -60,6 +63,9 @@ namespace BmwDeepObd.FilePicker
                 _activityRecreated = true;
                 _instanceData = BaseActivity.GetInstanceState(savedInstanceState, _instanceData) as InstanceData;
             }
+
+            _imm = (InputMethodManager)Context.GetSystemService(Context.InputMethodService);
+            _contentView = Activity.FindViewById<View>(Android.Resource.Id.Content);
 
             string initDir = Activity.Intent?.GetStringExtra(FilePickerActivity.ExtraInitDir) ?? string.Empty;
             if (Directory.Exists(initDir))
@@ -103,7 +109,7 @@ namespace BmwDeepObd.FilePicker
             _showFiles = Activity.Intent?.GetBooleanExtra(FilePickerActivity.ExtraShowFiles, true) ?? true;
             _showFileExtensions = Activity.Intent?.GetBooleanExtra(FilePickerActivity.ExtraShowExtension, true) ?? true;
 
-            _adapter = new FileListAdapter(Activity, new FileInfoEx[0]);
+            _adapter = new FileListAdapter(Activity, Array.Empty<FileInfoEx>());
             ListAdapter = _adapter;
         }
 
@@ -350,10 +356,14 @@ namespace BmwDeepObd.FilePicker
             RefreshFilterFileList();
         }
 
-        protected void NewFileFilter(string fileNamefilter)
+        protected void NewFileFilter(string fileNameFilter, bool submit)
         {
-            _fileNameFilter = fileNamefilter;
+            _fileNameFilter = fileNameFilter;
             RefreshFilterFileList();
+            if (submit)
+            {
+                HideKeyboard();
+            }
         }
 
         protected void RefreshFilterFileList()
@@ -367,6 +377,11 @@ namespace BmwDeepObd.FilePicker
             // If we don't do this, then the ListView will not update itself when then data set 
             // in the adapter changes. It will appear to the user that nothing has happened.
             ListView.RefreshDrawableState();
+        }
+
+        private void HideKeyboard()
+        {
+            _imm?.HideSoftInputFromWindow(_contentView.WindowToken, HideSoftInputFlags.None);
         }
     }
 }
