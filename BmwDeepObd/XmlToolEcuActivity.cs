@@ -1014,8 +1014,12 @@ namespace BmwDeepObd
 
         private bool OnQueryTextChange(string text, bool submit)
         {
-            _resultFilterText = text.Trim();
-            JobSelected(_selectedJob);
+            if (string.Compare(_resultFilterText, text, StringComparison.Ordinal) != 0)
+            {
+                _resultFilterText = text;
+                JobSelected(_selectedJob);
+            }
+
             if (submit)
             {
                 HideKeyboard();
@@ -1935,7 +1939,7 @@ namespace BmwDeepObd
 
                     if (!string.IsNullOrEmpty(_resultFilterText))
                     {
-                        if (result.DisplayName.IndexOf(_resultFilterText, StringComparison.OrdinalIgnoreCase) < 0)
+                        if (!IsSearchFilterMatching(result.DisplayName, _resultFilterText))
                         {
                             continue;   // filter is not matching
                         }
