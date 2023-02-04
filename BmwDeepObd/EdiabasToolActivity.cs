@@ -2335,14 +2335,14 @@ namespace BmwDeepObd
                 if (!string.IsNullOrEmpty(_jobFilterText))
                 {
                     jobValid = false;
-                    if (!string.IsNullOrEmpty(job.Name) && job.Name.IndexOf(_jobFilterText, StringComparison.OrdinalIgnoreCase) >= 0)
+                    if (IsSearchFilterMatching(job.Name, _jobFilterText))
                     {
                         jobValid = true;
                     }
 
                     foreach (ExtraInfo extraInfo in job.Arguments)
                     {
-                        if (string.IsNullOrEmpty(extraInfo.Name) && extraInfo.Name.IndexOf(_jobFilterText, StringComparison.OrdinalIgnoreCase) >= 0)
+                        if (IsSearchFilterMatching(extraInfo.Name, _jobFilterText))
                         {
                             jobValid = true;
                             break;
@@ -2351,7 +2351,7 @@ namespace BmwDeepObd
 
                     foreach (ExtraInfo extraInfo in job.Results)
                     {
-                        if (string.IsNullOrEmpty(extraInfo.Name) && extraInfo.Name.IndexOf(_jobFilterText, StringComparison.OrdinalIgnoreCase) >= 0)
+                        if (IsSearchFilterMatching(extraInfo.Name, _jobFilterText))
                         {
                             jobValid = true;
                             break;
@@ -2364,6 +2364,7 @@ namespace BmwDeepObd
                     _jobListAdapter.Items.Add(job);
                 }
             }
+
             _jobListAdapter.NotifyDataSetChanged();
         }
 
