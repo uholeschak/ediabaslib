@@ -358,8 +358,12 @@ namespace BmwDeepObd.FilePicker
 
         protected void NewFileFilter(string fileNameFilter, bool submit)
         {
-            _fileNameFilter = fileNameFilter;
-            RefreshFilterFileList();
+            if (string.Compare(_fileNameFilter, fileNameFilter, StringComparison.Ordinal) != 0)
+            {
+                _fileNameFilter = fileNameFilter;
+                RefreshFilterFileList();
+            }
+
             if (submit)
             {
                 HideKeyboard();

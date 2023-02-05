@@ -66,7 +66,7 @@ namespace BmwDeepObd.FilePicker
                         if (!string.IsNullOrEmpty(filter) && fsi.RootDir == null && !fsi.FileSysInfo.IsDirectory())
                         {
                             string baseName = Path.GetFileNameWithoutExtension(fsi.FileSysInfo.Name);
-                            if (baseName.IndexOf(filter, StringComparison.OrdinalIgnoreCase) < 0)
+                            if (!BaseActivity.IsSearchFilterMatching(baseName, filter))
                             {
                                 addFile = false;
                             }
