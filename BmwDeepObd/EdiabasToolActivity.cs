@@ -884,8 +884,6 @@ namespace BmwDeepObd
             {
                 _jobFilterText = text;
                 UpdateJobList(true);
-                NewJobSelected();
-                DisplayJobComments();
             }
 
             if (submit)
@@ -2319,8 +2317,6 @@ namespace BmwDeepObd
                     _jobListTranslated = false;
                     _translateEnabled = true;
                     UpdateJobList();
-                    NewJobSelected();
-                    DisplayJobComments();
 
                     UpdateOptionsMenu();
                     UpdateDisplay();
@@ -2381,6 +2377,7 @@ namespace BmwDeepObd
 
             _jobListAdapter.NotifyDataSetChanged();
 
+            bool selectionChanged = true;
             if (keepSelection && jobInfoSelected != null)
             {
                 int selectedIndex = _jobListAdapter.Items.IndexOf(jobInfoSelected);
@@ -2388,6 +2385,18 @@ namespace BmwDeepObd
                 {
                     _spinnerJobs.SetSelection(selectedIndex);
                 }
+
+                JobInfo jobInfoCurrent = GetSelectedJob();
+                if (jobInfoCurrent == jobInfoSelected)
+                {
+                    selectionChanged = false;
+                }
+            }
+
+            if (selectionChanged)
+            {
+                NewJobSelected();
+                DisplayJobComments();
             }
         }
 
