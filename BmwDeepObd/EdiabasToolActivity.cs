@@ -148,6 +148,7 @@ namespace BmwDeepObd
         private InstanceData _instanceData = new InstanceData();
         private bool _activityRecreated;
         private string _jobFilterText = string.Empty;
+        private JobInfo _lastSelectedJob;
         private InputMethodManager _imm;
         private View _contentView;
         private View _barView;
@@ -235,7 +236,10 @@ namespace BmwDeepObd
             _spinnerJobs.SetOnTouchListener(this);
             _spinnerJobs.ItemSelected += (sender, args) =>
             {
-                NewJobSelected();
+                JobInfo selectedJob = GetSelectedJob();
+                bool update = _lastSelectedJob != null && selectedJob == _lastSelectedJob;
+
+                NewJobSelected(update);
                 DisplayJobComments();
             };
 
@@ -941,6 +945,7 @@ namespace BmwDeepObd
             _jobList.Clear();
             _sgFuncInfoList.Clear();
             _sgFunctions?.ResetCache();
+            _lastSelectedJob = null;
         }
 
         private void CloseDataLog()
@@ -1429,6 +1434,7 @@ namespace BmwDeepObd
 
             _resultSelectListAdapter.NotifyDataSetChanged();
             _resultSelectLastItem = 0;
+            _lastSelectedJob = jobInfo;
             if (!update)
             {
                 _editTextArgs.Text = defaultArgs;
