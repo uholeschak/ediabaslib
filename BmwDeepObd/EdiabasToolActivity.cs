@@ -320,7 +320,7 @@ namespace BmwDeepObd
         {
             base.OnStart();
 
-            _jobFilterText = string.Empty;
+            CloseSearchView();
             if (_activityCommon != null)
             {
                 if (_activityCommon.MtcBtService)
@@ -336,7 +336,6 @@ namespace BmwDeepObd
             base.OnResume();
 
             _activityActive = true;
-            CloseSearchView();
             if (!_activityCommon.RequestEnableTranslate((sender, args) =>
             {
                 HandleStartDialogs();
@@ -350,7 +349,6 @@ namespace BmwDeepObd
         {
             base.OnPause();
 
-            CloseSearchView();
             _instanceData.ForceAppend = true;   // OnSaveInstanceState is called before OnStop
             _activityActive = false;
         }
@@ -358,6 +356,7 @@ namespace BmwDeepObd
         protected override void OnStop()
         {
             base.OnStop();
+            CloseSearchView();
             if (_activityCommon != null && _activityCommon.MtcBtService)
             {
                 _activityCommon.StopMtcService();
@@ -1000,6 +999,8 @@ namespace BmwDeepObd
             {
                 _searchView.OnActionViewCollapsed();
             }
+
+            _jobFilterText = string.Empty;
         }
 
         private bool SendTraceFile(EventHandler<EventArgs> handler)

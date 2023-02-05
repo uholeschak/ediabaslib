@@ -8,6 +8,7 @@ using Android.OS;
 using Android.Views;
 using Android.Widget;
 using AndroidX.AppCompat.App;
+using AndroidX.AppCompat.Widget;
 using BmwFileReader;
 using EdiabasLib;
 
@@ -32,6 +33,7 @@ namespace BmwDeepObd
         private bool _ignoreCheckChange;
         private string _argFilterText;
 
+        private AndroidX.AppCompat.Widget.SearchView _searchView;
         private LinearLayout _layoutArgType;
         private LinearLayout _layoutBlockNumber;
         private Spinner _spinnerBlockNumber;
@@ -141,7 +143,13 @@ namespace BmwDeepObd
         protected override void OnStart()
         {
             base.OnStart();
-            _argFilterText = null;
+            CloseSearchView();
+        }
+
+        protected override void OnStop()
+        {
+            base.OnStop();
+            CloseSearchView();
         }
 
         public override void OnBackPressedEvent()
@@ -171,6 +179,7 @@ namespace BmwDeepObd
 
                 if (menuSearch.ActionView is AndroidX.AppCompat.Widget.SearchView searchViewV7)
                 {
+                    _searchView = searchViewV7;
                     searchViewV7.QueryTextChange += (sender, e) =>
                     {
                         e.Handled = OnQueryTextChange(e.NewText, false);
@@ -222,6 +231,16 @@ namespace BmwDeepObd
                 HideKeyboard();
             }
             return true;
+        }
+
+        private void CloseSearchView()
+        {
+            if (_searchView != null && !_searchView.Iconified)
+            {
+                _searchView.OnActionViewCollapsed();
+            }
+
+            _argFilterText = string.Empty;
         }
 
         private void UpdateDisplay()
