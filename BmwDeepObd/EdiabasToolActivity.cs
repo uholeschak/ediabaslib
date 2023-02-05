@@ -151,6 +151,7 @@ namespace BmwDeepObd
         private InputMethodManager _imm;
         private View _contentView;
         private View _barView;
+        private AndroidX.AppCompat.Widget.SearchView _searchView;
         private CheckBox _checkBoxContinuous;
         private ToggleButton _buttonConnect;
         private Spinner _spinnerJobs;
@@ -335,6 +336,7 @@ namespace BmwDeepObd
             base.OnResume();
 
             _activityActive = true;
+            CloseSearchView();
             if (!_activityCommon.RequestEnableTranslate((sender, args) =>
             {
                 HandleStartDialogs();
@@ -348,6 +350,7 @@ namespace BmwDeepObd
         {
             base.OnPause();
 
+            CloseSearchView();
             _instanceData.ForceAppend = true;   // OnSaveInstanceState is called before OnStop
             _activityActive = false;
         }
@@ -525,6 +528,7 @@ namespace BmwDeepObd
 
                 if (menuSearch.ActionView is AndroidX.AppCompat.Widget.SearchView searchViewV7)
                 {
+                    _searchView = searchViewV7;
                     searchViewV7.QueryTextChange += (sender, e) =>
                     {
                         e.Handled = OnQueryTextChange(e.NewText, false);
@@ -988,6 +992,14 @@ namespace BmwDeepObd
         private void HideKeyboard()
         {
             _imm?.HideSoftInputFromWindow(_contentView.WindowToken, HideSoftInputFlags.None);
+        }
+
+        private void CloseSearchView()
+        {
+            if (_searchView != null && !_searchView.Iconified)
+            {
+                _searchView.OnActionViewCollapsed();
+            }
         }
 
         private bool SendTraceFile(EventHandler<EventArgs> handler)
