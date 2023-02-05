@@ -2322,9 +2322,12 @@ namespace BmwDeepObd
                     }
                     _infoListAdapter.NotifyDataSetChanged();
 
-                    UpdateJobList();
                     _jobListTranslated = false;
                     _translateEnabled = true;
+                    UpdateJobList();
+                    NewJobSelected();
+                    DisplayJobComments();
+
                     UpdateOptionsMenu();
                     UpdateDisplay();
                 });
