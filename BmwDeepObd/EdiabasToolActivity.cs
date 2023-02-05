@@ -883,7 +883,7 @@ namespace BmwDeepObd
             if (string.Compare(_jobFilterText, text, StringComparison.Ordinal) != 0)
             {
                 _jobFilterText = text;
-                UpdateJobList();
+                UpdateJobList(true);
                 NewJobSelected();
                 DisplayJobComments();
             }
@@ -2332,8 +2332,9 @@ namespace BmwDeepObd
             _jobThread.Start();
         }
 
-        private void UpdateJobList()
+        private void UpdateJobList(bool keepSelection = false)
         {
+            JobInfo jobInfoSelected = GetSelectedJob();
             _jobListAdapter.Items.Clear();
             foreach (JobInfo job in _jobList.OrderBy(x => x.Name))
             {
@@ -2372,6 +2373,15 @@ namespace BmwDeepObd
             }
 
             _jobListAdapter.NotifyDataSetChanged();
+
+            if (keepSelection && jobInfoSelected != null)
+            {
+                int selectedIndex = _jobListAdapter.Items.IndexOf(jobInfoSelected);
+                if (selectedIndex >= 0)
+                {
+                    _spinnerJobs.SetSelection(selectedIndex);
+                }
+            }
         }
 
         private void ExecuteSelectedJob(bool continuous)
