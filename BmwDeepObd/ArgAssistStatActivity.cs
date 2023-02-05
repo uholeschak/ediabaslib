@@ -211,8 +211,12 @@ namespace BmwDeepObd
 
         private bool OnQueryTextChange(string text, bool submit)
         {
-            _argFilterText = text.Trim();
-            UpdateArgFilter();
+            if (string.Compare(_argFilterText, text, StringComparison.Ordinal) != 0)
+            {
+                _argFilterText = text.Trim();
+                UpdateArgFilter();
+            }
+
             if (submit)
             {
                 HideKeyboard();
@@ -362,7 +366,7 @@ namespace BmwDeepObd
 
                             if (!string.IsNullOrEmpty(_argFilterText))
                             {
-                                if (name.IndexOf(_argFilterText, StringComparison.OrdinalIgnoreCase) < 0)
+                                if (!IsSearchFilterMatching(name, _argFilterText))
                                 {
                                     continue;   // filter is not matching
                                 }
