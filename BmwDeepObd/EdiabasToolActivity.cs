@@ -2315,12 +2315,6 @@ namespace BmwDeepObd
                     {
                         _jobThread.Join();
                     }
-                    _infoListAdapter.Items.Clear();
-                    foreach (string message in messageList)
-                    {
-                        _infoListAdapter.Items.Add(new TableResultItem(message, null));
-                    }
-                    _infoListAdapter.NotifyDataSetChanged();
 
                     _jobListTranslated = false;
                     _translateEnabled = true;
@@ -2330,6 +2324,16 @@ namespace BmwDeepObd
 
                     UpdateOptionsMenu();
                     UpdateDisplay();
+
+                    if (_jobList.Count == 0 && messageList.Count > 0)
+                    {
+                        _infoListAdapter.Items.Clear();
+                        foreach (string message in messageList)
+                        {
+                            _infoListAdapter.Items.Add(new TableResultItem(message, null));
+                        }
+                        _infoListAdapter.NotifyDataSetChanged();
+                    }
                 });
             });
             _jobThread.Start();
