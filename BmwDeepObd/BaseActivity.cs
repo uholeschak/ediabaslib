@@ -201,6 +201,7 @@ namespace BmwDeepObd
         {
             base.OnStart();
 
+            CloseSearchView();
             if (!_instanceDataBase.ActionBarVisibilitySet)
             {
                 _instanceDataBase.ActionBarVisible = true;
@@ -327,6 +328,13 @@ namespace BmwDeepObd
             {
                 _baseUpdateHandler.RemoveCallbacks(_longPressRunnable);
             }
+        }
+
+        protected override void OnStop()
+        {
+            base.OnStop();
+
+            CloseSearchView();
         }
 
         public override bool OnMenuOpened(int featureId, IMenu menu)
@@ -476,6 +484,10 @@ namespace BmwDeepObd
         }
 
         public virtual void PrepareOptionsMenu(IMenu menu)
+        {
+        }
+
+        public virtual void CloseSearchView()
         {
         }
 

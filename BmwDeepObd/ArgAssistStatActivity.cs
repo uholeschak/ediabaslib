@@ -140,18 +140,6 @@ namespace BmwDeepObd
             base.OnSaveInstanceState(outState);
         }
 
-        protected override void OnStart()
-        {
-            base.OnStart();
-            CloseSearchView();
-        }
-
-        protected override void OnStop()
-        {
-            base.OnStop();
-            CloseSearchView();
-        }
-
         public override void OnBackPressedEvent()
         {
             if (!StoreChangesRequest(accepted =>
@@ -218,6 +206,16 @@ namespace BmwDeepObd
             return base.OnOptionsItemSelected(item);
         }
 
+        public override void CloseSearchView()
+        {
+            if (_searchView != null && !_searchView.Iconified)
+            {
+                _searchView.OnActionViewCollapsed();
+            }
+
+            _argFilterText = string.Empty;
+        }
+
         private bool OnQueryTextChange(string text, bool submit)
         {
             if (string.Compare(_argFilterText, text, StringComparison.Ordinal) != 0)
@@ -231,16 +229,6 @@ namespace BmwDeepObd
                 HideKeyboard();
             }
             return true;
-        }
-
-        private void CloseSearchView()
-        {
-            if (_searchView != null && !_searchView.Iconified)
-            {
-                _searchView.OnActionViewCollapsed();
-            }
-
-            _argFilterText = string.Empty;
         }
 
         private void UpdateDisplay()

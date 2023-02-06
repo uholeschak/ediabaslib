@@ -324,7 +324,6 @@ namespace BmwDeepObd
         {
             base.OnStart();
 
-            CloseSearchView();
             if (_activityCommon != null)
             {
                 if (_activityCommon.MtcBtService)
@@ -360,7 +359,7 @@ namespace BmwDeepObd
         protected override void OnStop()
         {
             base.OnStop();
-            CloseSearchView();
+
             if (_activityCommon != null && _activityCommon.MtcBtService)
             {
                 _activityCommon.StopMtcService();
@@ -861,6 +860,16 @@ namespace BmwDeepObd
             return base.OnOptionsItemSelected(item);
         }
 
+        public override void CloseSearchView()
+        {
+            if (_searchView != null && !_searchView.Iconified)
+            {
+                _searchView.OnActionViewCollapsed();
+            }
+
+            _jobFilterText = string.Empty;
+        }
+
         public bool OnTouch(View v, MotionEvent e)
         {
             switch (e.Action)
@@ -996,16 +1005,6 @@ namespace BmwDeepObd
         private void HideKeyboard()
         {
             _imm?.HideSoftInputFromWindow(_contentView.WindowToken, HideSoftInputFlags.None);
-        }
-
-        private void CloseSearchView()
-        {
-            if (_searchView != null && !_searchView.Iconified)
-            {
-                _searchView.OnActionViewCollapsed();
-            }
-
-            _jobFilterText = string.Empty;
         }
 
         private bool SendTraceFile(EventHandler<EventArgs> handler)
