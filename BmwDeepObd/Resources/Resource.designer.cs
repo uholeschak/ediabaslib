@@ -11713,7 +11713,7 @@ namespace BmwDeepObd
 		{
 			
 			// aapt resource value: 0x7F0D0000
-			public const int arg_assist_stat_menu = 2131558400;
+			public const int arg_assist_menu = 2131558400;
 			
 			// aapt resource value: 0x7F0D0001
 			public const int bmw_coding_menu = 2131558401;

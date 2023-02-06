@@ -31,9 +31,7 @@ namespace BmwDeepObd
         private bool _dynamicId;
         private bool _mwBlock;
         private bool _ignoreCheckChange;
-        private string _argFilterText;
 
-        private AndroidX.AppCompat.Widget.SearchView _searchView;
         private LinearLayout _layoutArgType;
         private LinearLayout _layoutBlockNumber;
         private Spinner _spinnerBlockNumber;
@@ -156,33 +154,6 @@ namespace BmwDeepObd
             }
         }
 
-        public override bool OnCreateOptionsMenu(IMenu menu)
-        {
-            var inflater = MenuInflater;
-            inflater.Inflate(Resource.Menu.arg_assist_stat_menu, menu);
-            IMenuItem menuSearch = menu.FindItem(Resource.Id.action_search);
-            if (menuSearch != null)
-            {
-                menuSearch.SetActionView(new AndroidX.AppCompat.Widget.SearchView(this));
-
-                if (menuSearch.ActionView is AndroidX.AppCompat.Widget.SearchView searchViewV7)
-                {
-                    _searchView = searchViewV7;
-                    searchViewV7.QueryTextChange += (sender, e) =>
-                    {
-                        e.Handled = OnQueryTextChange(e.NewText, false);
-                    };
-
-                    searchViewV7.QueryTextSubmit += (sender, e) =>
-                    {
-                        e.Handled = OnQueryTextChange(e.NewText, true);
-                    };
-                }
-            }
-
-            return true;
-        }
-
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
             HideKeyboard();
@@ -204,31 +175,6 @@ namespace BmwDeepObd
                     return true;
             }
             return base.OnOptionsItemSelected(item);
-        }
-
-        public override void CloseSearchView()
-        {
-            if (_searchView != null && !_searchView.Iconified)
-            {
-                _searchView.OnActionViewCollapsed();
-            }
-
-            _argFilterText = string.Empty;
-        }
-
-        private bool OnQueryTextChange(string text, bool submit)
-        {
-            if (string.Compare(_argFilterText, text, StringComparison.Ordinal) != 0)
-            {
-                _argFilterText = text.Trim();
-                UpdateArgFilter();
-            }
-
-            if (submit)
-            {
-                HideKeyboard();
-            }
-            return true;
         }
 
         private void UpdateDisplay()
@@ -400,14 +346,14 @@ namespace BmwDeepObd
             }
         }
 
-        private void UpdateArgFilter()
+        public override void UpdateArgFilter()
         {
             foreach (EdiabasToolActivity.ExtraInfo extraInfo in _argsListAdapter.Items)
             {
                 bool itemVisible = true;
                 if (!string.IsNullOrEmpty(_argFilterText))
                 {
-                    if (extraInfo.Name.IndexOf(_argFilterText, StringComparison.OrdinalIgnoreCase) < 0)
+                    if (!IsSearchFilterMatching(extraInfo.Name, _argFilterText))
                     {
                         itemVisible = false;
                     }

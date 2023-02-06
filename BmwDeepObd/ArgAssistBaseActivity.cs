@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using Android.Content;
 using Android.OS;
 using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
 using AndroidX.AppCompat.App;
 using BmwFileReader;
-using EdiabasLib;
 
 namespace BmwDeepObd
 {
@@ -32,8 +27,10 @@ namespace BmwDeepObd
         protected InputMethodManager _imm;
         protected View _contentView;
         protected View _barView;
+        protected AndroidX.AppCompat.Widget.SearchView _searchView;
         protected ActivityCommon _activityCommon;
 
+        protected string _argFilterText;
         protected int _serviceId;
         protected bool _offline;
         protected Button _buttonApply;
@@ -101,6 +98,43 @@ namespace BmwDeepObd
             _activityCommon = null;
         }
 
+        public override bool OnCreateOptionsMenu(IMenu menu)
+        {
+            var inflater = MenuInflater;
+            inflater.Inflate(Resource.Menu.arg_assist_menu, menu);
+            IMenuItem menuSearch = menu.FindItem(Resource.Id.action_search);
+            if (menuSearch != null)
+            {
+                menuSearch.SetActionView(new AndroidX.AppCompat.Widget.SearchView(this));
+
+                if (menuSearch.ActionView is AndroidX.AppCompat.Widget.SearchView searchViewV7)
+                {
+                    _searchView = searchViewV7;
+                    searchViewV7.QueryTextChange += (sender, e) =>
+                    {
+                        e.Handled = OnQueryTextChange(e.NewText, false);
+                    };
+
+                    searchViewV7.QueryTextSubmit += (sender, e) =>
+                    {
+                        e.Handled = OnQueryTextChange(e.NewText, true);
+                    };
+                }
+            }
+
+            return true;
+        }
+
+        public override void CloseSearchView()
+        {
+            if (_searchView != null && !_searchView.Iconified)
+            {
+                _searchView.OnActionViewCollapsed();
+            }
+
+            _argFilterText = string.Empty;
+        }
+
         public bool OnTouch(View v, MotionEvent e)
         {
             switch (e.Action)
@@ -110,6 +144,25 @@ namespace BmwDeepObd
                     break;
             }
             return false;
+        }
+
+        public virtual bool OnQueryTextChange(string text, bool submit)
+        {
+            if (string.Compare(_argFilterText, text, StringComparison.Ordinal) != 0)
+            {
+                _argFilterText = text;
+                UpdateArgFilter();
+            }
+
+            if (submit)
+            {
+                HideKeyboard();
+            }
+            return true;
+        }
+
+        public virtual void UpdateArgFilter()
+        {
         }
 
         protected void HideKeyboard()
