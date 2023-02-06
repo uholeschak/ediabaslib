@@ -240,6 +240,25 @@ namespace BmwDeepObd
             return base.OnOptionsItemSelected(item);
         }
 
+        public override void UpdateArgFilter()
+        {
+            foreach (EdiabasToolActivity.ExtraInfo extraInfo in _spinnerArgumentAdapter.Items)
+            {
+                bool itemVisible = true;
+                if (!string.IsNullOrEmpty(_argFilterText))
+                {
+                    if (!IsSearchFilterMatching(extraInfo.Name, _argFilterText))
+                    {
+                        itemVisible = false;
+                    }
+                }
+
+                extraInfo.ItemVisible = itemVisible;
+            }
+
+            _spinnerArgumentAdapter.NotifyDataSetChanged();
+        }
+
         private void UpdateDisplay()
         {
             if (_activityCommon == null)
@@ -406,6 +425,8 @@ namespace BmwDeepObd
                 _spinnerArgumentAdapter.NotifyDataSetChanged();
                 _argumentSelectLastItem = selection;
                 _spinnerArgument.SetSelection(selection);
+
+                UpdateArgFilter();
             }
             catch (Exception)
             {
