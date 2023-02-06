@@ -240,6 +240,7 @@ namespace BmwDeepObd
         private InstanceData _instanceData = new InstanceData();
         private InputMethodManager _imm;
         private View _contentView;
+        private AndroidX.AppCompat.Widget.SearchView _searchView;
         private LinearLayout _layoutXmlToolEcu;
         private TextView _textViewPageNameTitle;
         private EditText _editTextPageName;
@@ -863,7 +864,7 @@ namespace BmwDeepObd
         protected override void OnStart()
         {
             base.OnStart();
-            _resultFilterText = string.Empty;
+
             if (_activityCommon != null)
             {
                 if (_activityCommon.MtcBtService)
@@ -955,6 +956,7 @@ namespace BmwDeepObd
 
                 if (menuSearch.ActionView is AndroidX.AppCompat.Widget.SearchView searchViewV7)
                 {
+                    _searchView = searchViewV7;
                     searchViewV7.QueryTextChange += (sender, e) =>
                     {
                         e.Handled = OnQueryTextChange(e.NewText, false);
@@ -992,6 +994,16 @@ namespace BmwDeepObd
                     return true;
             }
             return base.OnOptionsItemSelected(item);
+        }
+
+        public override void CloseSearchView()
+        {
+            if (_searchView != null && !_searchView.Iconified)
+            {
+                _searchView.OnActionViewCollapsed();
+            }
+
+            _resultFilterText = string.Empty;
         }
 
         public bool OnTouch(View v, MotionEvent e)
