@@ -317,14 +317,6 @@ namespace BmwDeepObd
                             string name = argType + " (" + argName + ")";
                             string info = funcInfo.InfoTrans ?? funcInfo.Info;
 
-                            if (!string.IsNullOrEmpty(_argFilterText))
-                            {
-                                if (!IsSearchFilterMatching(name, _argFilterText))
-                                {
-                                    continue;   // filter is not matching
-                                }
-                            }
-
                             EdiabasToolActivity.ExtraInfo extraInfo = new EdiabasToolActivity.ExtraInfo(name, argType, new List<string> {info});
                             if (selectList != null)
                             {
