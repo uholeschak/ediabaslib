@@ -22,6 +22,7 @@ namespace BmwDeepObd.FilePicker
 
         public delegate void FilterEventHandler(string fileNameFilter, bool submit);
         public event FilterEventHandler FilterEvent;
+        private AndroidX.AppCompat.Widget.SearchView _searchView;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -54,6 +55,7 @@ namespace BmwDeepObd.FilePicker
 
                 if (menuSearch.ActionView is AndroidX.AppCompat.Widget.SearchView searchViewV7)
                 {
+                    _searchView = searchViewV7;
                     searchViewV7.QueryTextChange += (sender, e) =>
                     {
                         e.Handled = OnQueryTextChange(e.NewText, false);
@@ -78,6 +80,17 @@ namespace BmwDeepObd.FilePicker
                     return true;
             }
             return base.OnOptionsItemSelected(item);
+        }
+
+        public override void CloseSearchView()
+        {
+            if (_searchView != null && !_searchView.Iconified)
+            {
+                _searchView.OnActionViewCollapsed();
+            }
+
+            FilterEventHandler handler = FilterEvent;
+            handler?.Invoke(string.Empty, false);
         }
 
         private bool OnQueryTextChange(string text, bool submit)
