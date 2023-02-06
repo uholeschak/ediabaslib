@@ -818,7 +818,7 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\menu\arg_assist_stat_menu.xml">
+    <AndroidResource Include="Resources\menu\arg_assist_menu.xml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
   </ItemGroup>
