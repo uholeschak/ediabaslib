@@ -112,7 +112,6 @@ namespace BmwDeepObd
                     UpdateArgParams();
                     UpdateButtonState();
                 }
-                _argumentSelectLastItem = null;
             };
             _argumentSelectLastItem = null;
 
@@ -243,6 +242,7 @@ namespace BmwDeepObd
 
         public override void UpdateArgFilter()
         {
+            EdiabasToolActivity.ExtraInfo selectedItem = GetSelectedArgsItem();
             foreach (EdiabasToolActivity.ExtraInfo extraInfo in _spinnerArgumentAdapter.Items)
             {
                 bool itemVisible = true;
@@ -258,6 +258,21 @@ namespace BmwDeepObd
             }
 
             _spinnerArgumentAdapter.NotifyDataSetChanged();
+            if (selectedItem != null)
+            {
+                int selectedIndex = _spinnerArgumentAdapter.ItemsVisible.IndexOf(selectedItem);
+                if (selectedIndex >= 0)
+                {
+                    _spinnerArgument.SetSelection(selectedIndex);
+                }
+            }
+
+            _argumentSelectLastItem = GetSelectedArgsItem();
+            if (selectedItem != _argumentSelectLastItem)
+            {
+                UpdateArgParams();
+                UpdateButtonState();
+            }
         }
 
         private void UpdateDisplay()
@@ -425,7 +440,6 @@ namespace BmwDeepObd
 
                 _spinnerArgumentAdapter.NotifyDataSetChanged();
                 _spinnerArgument.SetSelection(selection);
-                _argumentSelectLastItem = GetSelectedArgsItem();
 
                 UpdateArgFilter();
             }
