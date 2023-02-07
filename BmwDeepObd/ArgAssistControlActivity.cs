@@ -54,7 +54,7 @@ namespace BmwDeepObd
         private bool _controlRoutine;
         private bool _controlIo;
         private bool _ignoreCheckChange;
-        private int _argumentSelectLastItem;
+        private EdiabasToolActivity.ExtraInfo _argumentSelectLastItem;
 
         private ScrollView _scrollViewArgAssist;
         private LinearLayout _layoutArgAssist;
@@ -106,14 +106,15 @@ namespace BmwDeepObd
             _spinnerArgument.Adapter = _spinnerArgumentAdapter;
             _spinnerArgument.ItemSelected += (sender, args) =>
             {
-                if (_argumentSelectLastItem != _spinnerArgument.SelectedItemPosition)
+                EdiabasToolActivity.ExtraInfo item = GetSelectedArgsItem();
+                if (_argumentSelectLastItem != item)
                 {
                     UpdateArgParams();
                     UpdateButtonState();
                 }
-                _argumentSelectLastItem = -1;
+                _argumentSelectLastItem = null;
             };
-            _argumentSelectLastItem = -1;
+            _argumentSelectLastItem = null;
 
             _textViewControlParam = FindViewById<TextView>(Resource.Id.textViewControlParam);
             _textViewControlParam.Visibility = _controlRoutine || _controlIo ? ViewStates.Visible : ViewStates.Gone;
@@ -423,8 +424,8 @@ namespace BmwDeepObd
                 }
 
                 _spinnerArgumentAdapter.NotifyDataSetChanged();
-                _argumentSelectLastItem = selection;
                 _spinnerArgument.SetSelection(selection);
+                _argumentSelectLastItem = GetSelectedArgsItem();
 
                 UpdateArgFilter();
             }
@@ -449,6 +450,17 @@ namespace BmwDeepObd
             _layoutArgParams.Visibility = visible ? ViewStates.Visible : ViewStates.Gone;
         }
 
+        private EdiabasToolActivity.ExtraInfo GetSelectedArgsItem()
+        {
+            int position = _spinnerArgument.SelectedItemPosition;
+            if (position >= 0 && position < _spinnerArgumentAdapter.ItemsVisible.Count)
+            {
+                return _spinnerArgumentAdapter.ItemsVisible[position];
+            }
+
+            return null;
+        }
+
         private void UpdateArgParams(List<string> selectParams = null)
         {
             try
@@ -457,10 +469,10 @@ namespace BmwDeepObd
                 _parameterList.Clear();
                 Android.Content.Res.ColorStateList captionTextColors = _textViewArgTypeTitle.TextColors;
                 Drawable captionTextBackground = _textViewArgTypeTitle.Background;
-                int position = _spinnerArgument.SelectedItemPosition;
-                if (position >= 0 && position < _spinnerArgumentAdapter.ItemsVisible.Count)
+                EdiabasToolActivity.ExtraInfo item = GetSelectedArgsItem();
+
+                if (item != null)
                 {
-                    EdiabasToolActivity.ExtraInfo item = _spinnerArgumentAdapter.ItemsVisible[position];
                     if (item.Tag is SgFunctions.SgFuncInfo funcInfo)
                     {
                         if (funcInfo.ArgInfoList != null)
@@ -797,13 +809,8 @@ namespace BmwDeepObd
         {
             try
             {
-                int position = _spinnerArgument.SelectedItemPosition;
-                if (position < 0 || position >= _spinnerArgumentAdapter.ItemsVisible.Count)
-                {
-                    return true;
-                }
-
-                return true;
+                EdiabasToolActivity.ExtraInfo item = GetSelectedArgsItem();
+                return item != null;
             }
             catch (Exception)
             {
@@ -824,10 +831,9 @@ namespace BmwDeepObd
                 StringBuilder sb = new StringBuilder();
                 sb.Append(argType);
 
-                int position = _spinnerArgument.SelectedItemPosition;
-                if (position >= 0 && position < _spinnerArgumentAdapter.ItemsVisible.Count)
+                EdiabasToolActivity.ExtraInfo item = GetSelectedArgsItem();
+                if (item != null)
                 {
-                    EdiabasToolActivity.ExtraInfo item = _spinnerArgumentAdapter.ItemsVisible[position];
                     if (!string.IsNullOrEmpty(item.Name))
                     {
                         sb.Append(";");
