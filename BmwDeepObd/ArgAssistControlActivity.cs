@@ -242,6 +242,11 @@ namespace BmwDeepObd
 
         public override void UpdateArgFilter()
         {
+            UpdateArgFilter(false);
+        }
+
+        public void UpdateArgFilter(bool forceUpdate)
+        {
             EdiabasToolActivity.ExtraInfo selectedItem = GetSelectedArgsItem();
             foreach (EdiabasToolActivity.ExtraInfo extraInfo in _spinnerArgumentAdapter.Items)
             {
@@ -268,7 +273,7 @@ namespace BmwDeepObd
             }
 
             _argumentSelectLastItem = GetSelectedArgsItem();
-            if (selectedItem != _argumentSelectLastItem)
+            if (forceUpdate || selectedItem != _argumentSelectLastItem)
             {
                 UpdateArgParams();
                 UpdateButtonState();
@@ -441,7 +446,8 @@ namespace BmwDeepObd
                 _spinnerArgumentAdapter.NotifyDataSetChanged();
                 _spinnerArgument.SetSelection(selection);
 
-                UpdateArgFilter();
+                bool forceUpdate = selectArg == null;
+                UpdateArgFilter(forceUpdate);
             }
             catch (Exception)
             {
