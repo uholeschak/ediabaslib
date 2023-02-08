@@ -1029,7 +1029,23 @@ namespace BmwDeepObd
             if (string.Compare(_resultFilterText, text, StringComparison.Ordinal) != 0)
             {
                 _resultFilterText = text;
-                JobSelected(_selectedJob);
+                bool filterResult = false;
+                if (_selectedJob != null)
+                {
+                    if (IsBmwReadStatusTypeJob(_selectedJob))
+                    {
+                        filterResult = true;
+                    }
+                }
+
+                if (filterResult)
+                {
+                    JobSelected(_selectedJob);
+                }
+                else
+                {
+                    UpdateDisplay(true);
+                }
             }
 
             if (submit)
@@ -1095,6 +1111,11 @@ namespace BmwDeepObd
             return string.Compare(job.Name, XmlToolActivity.JobReadStatMwBlock, StringComparison.OrdinalIgnoreCase) == 0;
         }
 
+        public static bool IsBmwReadStatusTypeJob(JobInfo job)
+        {
+            return IsBmwReadStatusJob(job) || IsBmwReadStatusBlockJob(job) || IsBmwReadStatusMwBlockJob(job);
+        }
+
         public static bool IsValidJob(JobInfo job, XmlToolActivity.EcuInfo ecuInfo, RuleEvalBmw ruleEvalBmw = null)
         {
             if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
@@ -1139,18 +1160,11 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (IsBmwReadStatusMwBlockJob(job))
+            if (IsBmwReadStatusTypeJob(job))
             {
                 return true;
             }
-            if (IsBmwReadStatusBlockJob(job))
-            {
-                return true;
-            }
-            if (IsBmwReadStatusJob(job))
-            {
-                return true;
-            }
+
             if (string.Compare(job.Name, "FS_LESEN", StringComparison.OrdinalIgnoreCase) == 0 ||
                 string.Compare(job.Name, "IS_LESEN", StringComparison.OrdinalIgnoreCase) == 0 ||
                 string.Compare(job.Name, "AIF_LESEN", StringComparison.OrdinalIgnoreCase) == 0)
@@ -1360,7 +1374,7 @@ namespace BmwDeepObd
             }
         }
 
-        private void UpdateDisplay()
+        private void UpdateDisplay(bool filterJobs = false)
         {
             int selection = 0;
             RuleEvalBmw ruleEvalBmw = ActivityCommon.EcuFunctionsActive ? IntentRuleEvalBmw : null;
@@ -1381,6 +1395,14 @@ namespace BmwDeepObd
                             {
                                 addJob = false;
                             }
+                        }
+                    }
+
+                    if (filterJobs && !string.IsNullOrEmpty(_resultFilterText))
+                    {
+                        if (!IsSearchFilterMatching(job.DisplayName, _resultFilterText))
+                        {
+                            addJob = false;
                         }
                     }
 
@@ -1886,11 +1908,8 @@ namespace BmwDeepObd
             int selection = -1;
             if (jobInfo != null)
             {
-                bool statMbBlock = IsBmwReadStatusMwBlockJob(_selectedJob);
-                bool statBlock = IsBmwReadStatusBlockJob(_selectedJob);
-                bool statRead = IsBmwReadStatusJob(_selectedJob);
-
-                ViewStates limitVisibility = statMbBlock || statBlock || statRead ? ViewStates.Visible : ViewStates.Gone;
+                bool bmwStatJob = IsBmwReadStatusTypeJob(_selectedJob);
+                ViewStates limitVisibility = bmwStatJob ? ViewStates.Visible : ViewStates.Gone;
                 _textViewArgLimitTitle.Visibility = limitVisibility;
                 _spinnerArgLimit.Visibility = limitVisibility;
 
@@ -1949,7 +1968,7 @@ namespace BmwDeepObd
                         continue;
                     }
 
-                    if (!string.IsNullOrEmpty(_resultFilterText))
+                    if (bmwStatJob && !string.IsNullOrEmpty(_resultFilterText))
                     {
                         if (!IsSearchFilterMatching(result.DisplayName, _resultFilterText))
                         {
@@ -1977,7 +1996,7 @@ namespace BmwDeepObd
                 if (_spinnerJobResultsAdapter.Items.Count > 0 && selection < 0 && jobInfo.Selected)
                 {
                     // no selection
-                    if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw && !statMbBlock && !statBlock && !statRead)
+                    if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw && !bmwStatJob)
                     {
                         // auto select all value types
                         int index = 0;

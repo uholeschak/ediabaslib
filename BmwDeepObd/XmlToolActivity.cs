@@ -4274,11 +4274,8 @@ namespace BmwDeepObd
                     continue;
                 }
 
-                bool statMwBlock = XmlToolEcuActivity.IsBmwReadStatusMwBlockJob(job);
-                bool statBlock = XmlToolEcuActivity.IsBmwReadStatusBlockJob(job);
-                bool statRead = XmlToolEcuActivity.IsBmwReadStatusJob(job);
-
-                if (statMwBlock || statBlock || statRead)
+                bool bmwStatJob = XmlToolEcuActivity.IsBmwReadStatusTypeJob(job);
+                if (bmwStatJob)
                 {
                     AddSgFunctionResults(job);
                     continue;
