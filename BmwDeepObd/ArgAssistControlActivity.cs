@@ -273,7 +273,9 @@ namespace BmwDeepObd
             }
 
             _argumentSelectLastItem = GetSelectedArgsItem();
-            if (forceUpdate || selectedItem != _argumentSelectLastItem)
+            bool selectionChanged = selectedItem != null && selectedItem != _argumentSelectLastItem;
+
+            if (forceUpdate || selectionChanged)
             {
                 UpdateArgParams();
                 UpdateButtonState();
