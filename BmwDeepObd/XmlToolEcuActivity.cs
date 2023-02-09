@@ -441,6 +441,14 @@ namespace BmwDeepObd
                     jobInfo = _spinnerJobsAdapter.Items[pos];
                 }
 
+                if (jobInfo != null && jobInfo != _selectedJob)
+                {
+                    if (IsBmwReadStatusTypeJob(jobInfo))
+                    {
+                        CloseSearchView();
+                    }
+                }
+
                 JobSelected(jobInfo);
                 if (_displayEcuInfo)
                 {
@@ -1376,7 +1384,7 @@ namespace BmwDeepObd
 
         private void UpdateDisplay(bool filterJobs = false)
         {
-            int selection = 0;
+            int selection = -1;
             RuleEvalBmw ruleEvalBmw = ActivityCommon.EcuFunctionsActive ? IntentRuleEvalBmw : null;
 
             _spinnerJobsAdapter.Items.Clear();
@@ -1429,10 +1437,31 @@ namespace BmwDeepObd
             _instanceData.IgnoreItemSelection = false;
             if (_spinnerJobsAdapter.Items.Count > 0)
             {
-                _instanceData.IgnoreItemSelection = true;
-                _spinnerJobs.SetSelection(selection);
-                _instanceData.IgnoreItemSelection = false;
-                JobSelected(_spinnerJobsAdapter.Items[selection]);
+                if (selection >= 0)
+                {
+                    _instanceData.IgnoreItemSelection = true;
+                    _spinnerJobs.SetSelection(selection);
+                    _instanceData.IgnoreItemSelection = false;
+                }
+                else
+                {
+                    if (_selectedJob != null)
+                    {
+                        int selectedIndex = _spinnerJobsAdapter.Items.IndexOf(_selectedJob);
+                        if (selectedIndex >= 0)
+                        {
+                            _instanceData.IgnoreItemSelection = true;
+                            _spinnerJobs.SetSelection(selectedIndex);
+                            _instanceData.IgnoreItemSelection = false;
+                        }
+                    }
+                }
+
+                int selPos = _spinnerJobs.SelectedItemPosition;
+                if (selPos >= 0 && selPos < _spinnerJobsAdapter.Items.Count)
+                {
+                    JobSelected(_spinnerJobsAdapter.Items[selPos]);
+                }
             }
             else
             {
