@@ -442,6 +442,14 @@ namespace BmwDeepObd
                 }
 
                 JobSelected(jobInfo);
+                if (jobInfo != null)
+                {
+                    if (IsBmwReadStatusTypeJob(jobInfo))
+                    {
+                        CloseSearchView();
+                    }
+                }
+
                 if (_displayEcuInfo)
                 {
                     DisplayEcuInfo();
