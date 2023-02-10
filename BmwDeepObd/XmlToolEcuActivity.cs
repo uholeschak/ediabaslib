@@ -441,14 +441,6 @@ namespace BmwDeepObd
                     jobInfo = _spinnerJobsAdapter.Items[pos];
                 }
 
-                if (jobInfo != null && jobInfo != _selectedJob)
-                {
-                    if (IsBmwReadStatusTypeJob(jobInfo))
-                    {
-                        CloseSearchView();
-                    }
-                }
-
                 JobSelected(jobInfo);
                 if (_displayEcuInfo)
                 {
@@ -486,7 +478,8 @@ namespace BmwDeepObd
             _checkBoxShowAllJobs.Checked = showAllJobsChecked;
             _checkBoxShowAllJobs.Click += (sender, args) =>
             {
-                UpdateDisplay();
+                bool filterJobs = !string.IsNullOrWhiteSpace(_resultFilterText);
+                UpdateDisplay(filterJobs);
             };
 
             _layoutJobConfig = FindViewById<LinearLayout>(Resource.Id.layoutJobConfig);
@@ -1046,13 +1039,20 @@ namespace BmwDeepObd
                     }
                 }
 
-                if (filterResult)
+                if (string.IsNullOrWhiteSpace(_resultFilterText))
                 {
-                    JobSelected(_selectedJob);
+                    UpdateDisplay(true);
                 }
                 else
                 {
-                    UpdateDisplay(true);
+                    if (filterResult)
+                    {
+                        JobSelected(_selectedJob);
+                    }
+                    else
+                    {
+                        UpdateDisplay(true);
+                    }
                 }
             }
 
@@ -1384,7 +1384,7 @@ namespace BmwDeepObd
 
         private void UpdateDisplay(bool filterJobs = false)
         {
-            int selection = -1;
+            int selection = 0;
             RuleEvalBmw ruleEvalBmw = ActivityCommon.EcuFunctionsActive ? IntentRuleEvalBmw : null;
 
             _spinnerJobsAdapter.Items.Clear();
@@ -1437,13 +1437,7 @@ namespace BmwDeepObd
             _ignoreItemSelection = false;
             if (_spinnerJobsAdapter.Items.Count > 0)
             {
-                if (selection >= 0)
-                {
-                    _ignoreItemSelection = true;
-                    _spinnerJobs.SetSelection(selection);
-                    _ignoreItemSelection = false;
-                }
-                else
+                if (filterJobs)
                 {
                     if (_selectedJob != null)
                     {
@@ -1455,6 +1449,12 @@ namespace BmwDeepObd
                             _ignoreItemSelection = false;
                         }
                     }
+                }
+                else
+                {
+                    _ignoreItemSelection = true;
+                    _spinnerJobs.SetSelection(selection);
+                    _ignoreItemSelection = false;
                 }
 
                 int selPos = _spinnerJobs.SelectedItemPosition;
