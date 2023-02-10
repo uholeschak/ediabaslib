@@ -1058,7 +1058,7 @@ namespace BmwDeepObd
 
             if (submit)
             {
-                HideKeyboard();
+                HideKeyboard(true);
             }
             return true;
         }
@@ -2286,8 +2286,16 @@ namespace BmwDeepObd
             }
         }
 
-        private void HideKeyboard()
+        private void HideKeyboard(bool forceClose = false)
         {
+            if (!forceClose)
+            {
+                if (_searchView != null && !_searchView.Iconified)
+                {
+                    return;
+                }
+            }
+
             _imm?.HideSoftInputFromWindow(_contentView.WindowToken, HideSoftInputFlags.None);
         }
 
