@@ -203,7 +203,7 @@ public class AdapterTypeDetect
 
             // ELM327
             bool elmReports2X = false;
-            Regex elmVerRegEx = new Regex(@"ELM327\s+v(\d+)\.(\d+)", RegexOptions.IgnoreCase);
+            Regex elmVerRegEx = new Regex(@"\w+\s+v(\d+)\.(\d+)", RegexOptions.IgnoreCase);
             for (int retries = 0; retries < 2; retries++)
             {
                 adapterInStream.Flush();
