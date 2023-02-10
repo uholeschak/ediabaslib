@@ -211,8 +211,6 @@ namespace BmwDeepObd
 
         public class InstanceData
         {
-            public bool IgnoreItemSelection { get; set; }
-            public bool IgnoreFormatSelection { get; set; }
         }
 
         public delegate void AcceptDelegate(bool accepted);
@@ -316,6 +314,8 @@ namespace BmwDeepObd
         private XmlToolActivity.EcuFunctionCallType _ecuFuncCall = XmlToolActivity.EcuFunctionCallType.None;
         private string _resultFilterText;
         private bool _displayEcuInfo;
+        private bool _ignoreItemSelection;
+        private bool _ignoreFormatSelection;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -394,7 +394,7 @@ namespace BmwDeepObd
             _spinnerFontSize = FindViewById<Spinner>(Resource.Id.spinnerFontSize);
             _spinnerFontSizeAdapter = new StringObjAdapter(this);
             _spinnerFontSize.Adapter = _spinnerFontSizeAdapter;
-            _instanceData.IgnoreItemSelection = true;
+            _ignoreItemSelection = true;
             _spinnerFontSizeAdapter.Items.Add(new StringObjType(GetString(Resource.String.xml_tool_ecu_font_size_small), XmlToolActivity.DisplayFontSize.Small));
             _spinnerFontSizeAdapter.Items.Add(new StringObjType(GetString(Resource.String.xml_tool_ecu_font_size_medium), XmlToolActivity.DisplayFontSize.Medium));
             _spinnerFontSizeAdapter.Items.Add(new StringObjType(GetString(Resource.String.xml_tool_ecu_font_size_large), XmlToolActivity.DisplayFontSize.Large));
@@ -409,7 +409,7 @@ namespace BmwDeepObd
                 }
             }
             _spinnerFontSize.SetSelection(fontSelection);
-            _instanceData.IgnoreItemSelection = false;
+            _ignoreItemSelection = false;
             _spinnerFontSize.ItemSelected += FontItemSelected;
 
             _textViewGridCount = FindViewById<TextView>(Resource.Id.textViewGridCount);
@@ -428,7 +428,7 @@ namespace BmwDeepObd
             _spinnerJobs.SetOnTouchListener(this);
             _spinnerJobs.ItemSelected += (sender, args) =>
             {
-                if (_instanceData.IgnoreItemSelection)
+                if (_ignoreItemSelection)
                 {
                     return;
                 }
@@ -501,7 +501,7 @@ namespace BmwDeepObd
             _spinnerJobResults.Adapter = _spinnerJobResultsAdapter;
             _spinnerJobResults.ItemSelected += (sender, args) =>
             {
-                if (_instanceData.IgnoreItemSelection)
+                if (_ignoreItemSelection)
                 {
                     return;
                 }
@@ -543,7 +543,7 @@ namespace BmwDeepObd
             _spinnerArgLimitAdapter = new StringObjAdapter(this);
             _spinnerArgLimit.Adapter = _spinnerArgLimitAdapter;
 
-            _instanceData.IgnoreItemSelection = true;
+            _ignoreItemSelection = true;
             _spinnerArgLimitAdapter.Items.Clear();
             for (int i = 0; i < 20; i++)
             {
@@ -560,11 +560,11 @@ namespace BmwDeepObd
 
             _spinnerArgLimitAdapter.NotifyDataSetChanged();
             _spinnerArgLimit.SetSelection(0);
-            _instanceData.IgnoreItemSelection = false;
+            _ignoreItemSelection = false;
 
             _spinnerArgLimit.ItemSelected += (sender, args) =>
             {
-                if (_instanceData.IgnoreItemSelection)
+                if (_ignoreItemSelection)
                 {
                     return;
                 }
@@ -1432,16 +1432,16 @@ namespace BmwDeepObd
                 }
             }
 
-            _instanceData.IgnoreItemSelection = true;
+            _ignoreItemSelection = true;
             _spinnerJobsAdapter.NotifyDataSetChanged();
-            _instanceData.IgnoreItemSelection = false;
+            _ignoreItemSelection = false;
             if (_spinnerJobsAdapter.Items.Count > 0)
             {
                 if (selection >= 0)
                 {
-                    _instanceData.IgnoreItemSelection = true;
+                    _ignoreItemSelection = true;
                     _spinnerJobs.SetSelection(selection);
-                    _instanceData.IgnoreItemSelection = false;
+                    _ignoreItemSelection = false;
                 }
                 else
                 {
@@ -1450,9 +1450,9 @@ namespace BmwDeepObd
                         int selectedIndex = _spinnerJobsAdapter.Items.IndexOf(_selectedJob);
                         if (selectedIndex >= 0)
                         {
-                            _instanceData.IgnoreItemSelection = true;
+                            _ignoreItemSelection = true;
                             _spinnerJobs.SetSelection(selectedIndex);
-                            _instanceData.IgnoreItemSelection = false;
+                            _ignoreItemSelection = false;
                         }
                     }
                 }
@@ -1533,7 +1533,7 @@ namespace BmwDeepObd
                 }
             }
 
-            _instanceData.IgnoreFormatSelection = true;
+            _ignoreFormatSelection = true;
 
             bool resultBinary = IsResultBinary(resultInfo);
             bool resultString = IsResultString(resultInfo);
@@ -1639,7 +1639,7 @@ namespace BmwDeepObd
                 }
             }
             _editTextFormat.Text = format;
-            _instanceData.IgnoreFormatSelection = false;
+            _ignoreFormatSelection = false;
 
             ViewStates viewState;
             if (selection == 1)
@@ -1905,7 +1905,7 @@ namespace BmwDeepObd
 
         private void FontItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
         {
-            if (_instanceData.IgnoreItemSelection)
+            if (_ignoreItemSelection)
             {
                 return;
             }
@@ -1915,7 +1915,7 @@ namespace BmwDeepObd
 
         private void FormatItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
         {
-            if (_instanceData.IgnoreFormatSelection)
+            if (_ignoreFormatSelection)
             {
                 return;
             }
@@ -2114,10 +2114,10 @@ namespace BmwDeepObd
                 _layoutJobConfig.Visibility = ViewStates.Gone;
             }
 
-            _instanceData.IgnoreItemSelection = true;
+            _ignoreItemSelection = true;
             _spinnerJobResultsAdapter.NotifyDataSetChanged();
             _spinnerJobResults.SetSelection(selection);
-            _instanceData.IgnoreItemSelection = false;
+            _ignoreItemSelection = false;
             ResultSelected(selection);
         }
 
@@ -2224,7 +2224,7 @@ namespace BmwDeepObd
                 bool resultBinary = IsResultBinary(_selectedResult);
                 bool resultString = IsResultString(_selectedResult);
 
-                _instanceData.IgnoreItemSelection = true;
+                _ignoreItemSelection = true;
                 _spinnerGridTypeAdapter.Items.Clear();
                 _spinnerGridTypeAdapter.Items.Add(new StringObjType(GetString(Resource.String.xml_tool_ecu_grid_type_hidden), JobReader.DisplayInfo.GridModeType.Hidden));
                 _spinnerGridTypeAdapter.Items.Add(new StringObjType(GetString(Resource.String.xml_tool_ecu_grid_type_text), JobReader.DisplayInfo.GridModeType.Text));
@@ -2246,7 +2246,7 @@ namespace BmwDeepObd
                     }
                 }
                 _spinnerGridType.SetSelection(gridSelection);
-                _instanceData.IgnoreItemSelection = false;
+                _ignoreItemSelection = false;
 
                 _editTextMinValue.Text = _selectedResult.MinValue.ToString(CultureInfo.InvariantCulture);
                 _editTextMaxValue.Text = _selectedResult.MaxValue.ToString(CultureInfo.InvariantCulture);
