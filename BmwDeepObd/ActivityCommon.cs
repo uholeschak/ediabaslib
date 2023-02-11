@@ -6809,7 +6809,6 @@ namespace BmwDeepObd
                             progress = null;
                             SetLock(LockType.None);
                         }
-                        handler?.Invoke(this, new EventArgs());
 
                         bool cancelled = ex.InnerException is System.Threading.Tasks.TaskCanceledException;
                         if (!cancelled)
@@ -6853,11 +6852,16 @@ namespace BmwDeepObd
                                         {
                                             ShowAlert(_activity.GetString(Resource.String.send_trace_backup_info), Resource.String.alert_title_info);
                                         }
+
+                                        handler?.Invoke(this, new EventArgs());
                                     }
                                 };
 
+                                return;
                             }
                         }
+
+                        handler?.Invoke(this, new EventArgs());
                     });
                 }
             });
