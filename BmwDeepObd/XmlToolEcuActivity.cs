@@ -312,7 +312,8 @@ namespace BmwDeepObd
         private bool _traceAppend;
         private string _deviceAddress;
         private XmlToolActivity.EcuFunctionCallType _ecuFuncCall = XmlToolActivity.EcuFunctionCallType.None;
-        private string _resultFilterText;
+        private string _searchFilterText;
+        private bool _filterResultsActive;
         private bool _displayEcuInfo;
         private bool _ignoreItemSelection;
         private bool _ignoreFormatSelection;
@@ -478,7 +479,7 @@ namespace BmwDeepObd
             _checkBoxShowAllJobs.Checked = showAllJobsChecked;
             _checkBoxShowAllJobs.Click += (sender, args) =>
             {
-                bool filterJobs = !string.IsNullOrWhiteSpace(_resultFilterText);
+                bool filterJobs = !string.IsNullOrWhiteSpace(_searchFilterText);
                 UpdateDisplay(filterJobs);
             };
 
@@ -492,6 +493,7 @@ namespace BmwDeepObd
             _spinnerJobResultsAdapter = new ResultListAdapter(this);
             _spinnerJobResultsAdapter.CheckChanged += ResultCheckChanged;
             _spinnerJobResults.Adapter = _spinnerJobResultsAdapter;
+            _spinnerJobResults.SetOnTouchListener(this);
             _spinnerJobResults.ItemSelected += (sender, args) =>
             {
                 if (_ignoreItemSelection)
@@ -1004,7 +1006,8 @@ namespace BmwDeepObd
                 _searchView.OnActionViewCollapsed();
             }
 
-            _resultFilterText = string.Empty;
+            _filterResultsActive = false;
+            _searchFilterText = string.Empty;
         }
 
         public bool OnTouch(View v, MotionEvent e)
@@ -1018,6 +1021,27 @@ namespace BmwDeepObd
                         DisplayEcuInfo();
                         break;
                     }
+
+                    if (v == _spinnerJobs)
+                    {
+                        if (_filterResultsActive)
+                        {
+                            CloseSearchView();
+                        }
+
+                        _filterResultsActive = false;
+                    }
+
+                    if (v == _spinnerJobResults)
+                    {
+                        if (!_filterResultsActive)
+                        {
+                            CloseSearchView();
+                        }
+
+                        _filterResultsActive = true;
+                    }
+
                     UpdateResultSettings(_selectedResult);
                     HideKeyboard();
                     break;
@@ -1027,32 +1051,22 @@ namespace BmwDeepObd
 
         private bool OnQueryTextChange(string text, bool submit)
         {
-            if (string.Compare(_resultFilterText, text, StringComparison.Ordinal) != 0)
+            if (string.Compare(_searchFilterText, text, StringComparison.Ordinal) != 0)
             {
-                _resultFilterText = text;
-                bool filterResult = false;
-                if (_selectedJob != null)
+                _searchFilterText = text;
+
+                if (string.IsNullOrWhiteSpace(_searchFilterText))
                 {
-                    if (IsBmwReadStatusTypeJob(_selectedJob))
-                    {
-                        filterResult = true;
-                    }
+                    _filterResultsActive = false;
                 }
 
-                if (string.IsNullOrWhiteSpace(_resultFilterText))
+                if (_filterResultsActive)
                 {
-                    UpdateDisplay(true);
+                    JobSelected(_selectedJob);
                 }
                 else
                 {
-                    if (filterResult)
-                    {
-                        JobSelected(_selectedJob);
-                    }
-                    else
-                    {
-                        UpdateDisplay(true);
-                    }
+                    UpdateDisplay(true);
                 }
             }
 
@@ -1406,9 +1420,9 @@ namespace BmwDeepObd
                         }
                     }
 
-                    if (filterJobs && !string.IsNullOrEmpty(_resultFilterText))
+                    if (filterJobs && !string.IsNullOrEmpty(_searchFilterText))
                     {
-                        if (!IsSearchFilterMatching(job.DisplayName, _resultFilterText))
+                        if (!IsSearchFilterMatching(job.DisplayName, _searchFilterText))
                         {
                             addJob = false;
                         }
@@ -1997,9 +2011,9 @@ namespace BmwDeepObd
                         continue;
                     }
 
-                    if (bmwStatJob && !string.IsNullOrEmpty(_resultFilterText))
+                    if (bmwStatJob && !string.IsNullOrEmpty(_searchFilterText))
                     {
-                        if (!IsSearchFilterMatching(result.DisplayName, _resultFilterText))
+                        if (!IsSearchFilterMatching(result.DisplayName, _searchFilterText))
                         {
                             continue;   // filter is not matching
                         }
