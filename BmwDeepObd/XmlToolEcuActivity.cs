@@ -1055,11 +1055,6 @@ namespace BmwDeepObd
             {
                 _searchFilterText = text;
 
-                if (string.IsNullOrWhiteSpace(_searchFilterText))
-                {
-                    _filterResultsActive = false;
-                }
-
                 if (_filterResultsActive)
                 {
                     JobSelected(_selectedJob);
