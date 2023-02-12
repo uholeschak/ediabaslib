@@ -99,9 +99,8 @@
       <HintPath>packages\Microsoft.Bcl.AsyncInterfaces.7.0.0\lib\netstandard2.1\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.IO.RecyclableMemoryStream, Version=2.2.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.IO.RecyclableMemoryStream.2.2.1\lib\netstandard2.1\Microsoft.IO.RecyclableMemoryStream.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Microsoft.IO.RecyclableMemoryStream, Version=2.3.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.IO.RecyclableMemoryStream.2.3.1\lib\netstandard2.1\Microsoft.IO.RecyclableMemoryStream.dll</HintPath>
     </Reference>
     <Reference Include="Mono.CSharp" />
     <Reference Include="System" />
