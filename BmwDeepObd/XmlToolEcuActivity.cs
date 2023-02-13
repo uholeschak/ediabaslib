@@ -449,6 +449,13 @@ namespace BmwDeepObd
                     _displayEcuInfo = false;
                 }
             };
+            _spinnerJobs.FocusChange += (sender, args) =>
+            {
+                if (args.HasFocus)
+                {
+                    _filterResultsActive = false;
+                }
+            };
 
             _checkBoxShowAllJobs = FindViewById<CheckBox>(Resource.Id.checkBoxShowAllJobs);
             bool showAllJobsVisible = false;
@@ -503,6 +510,13 @@ namespace BmwDeepObd
 
                 //HideKeyboard();
                 ResultSelected(args.Position);
+            };
+            _spinnerJobResults.FocusChange += (sender, args) =>
+            {
+                if (args.HasFocus)
+                {
+                    _filterResultsActive = true;
+                }
             };
 
             _checkBoxShowAllResults = FindViewById<CheckBox>(Resource.Id.checkBoxShowAllResults);
