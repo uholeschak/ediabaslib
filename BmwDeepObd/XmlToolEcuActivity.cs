@@ -494,8 +494,7 @@ namespace BmwDeepObd
             _checkBoxShowAllJobs.Checked = showAllJobsChecked;
             _checkBoxShowAllJobs.Click += (sender, args) =>
             {
-                bool filterJobs = !string.IsNullOrWhiteSpace(_searchFilterText);
-                UpdateDisplay(filterJobs);
+                UpdateDisplay();
             };
 
             _layoutJobConfig = FindViewById<LinearLayout>(Resource.Id.layoutJobConfig);
@@ -1421,7 +1420,7 @@ namespace BmwDeepObd
                         }
                     }
 
-                    if (filterJobs && !string.IsNullOrEmpty(_searchFilterText))
+                    if (filterJobs && !FilterResultActive && !string.IsNullOrWhiteSpace(_searchFilterText))
                     {
                         if (!IsSearchFilterMatching(job.DisplayName, _searchFilterText))
                         {
@@ -2012,7 +2011,7 @@ namespace BmwDeepObd
                         continue;
                     }
 
-                    if (!string.IsNullOrEmpty(_searchFilterText))
+                    if (FilterResultActive && !string.IsNullOrWhiteSpace(_searchFilterText))
                     {
                         if (!IsSearchFilterMatching(result.DisplayName, _searchFilterText))
                         {
