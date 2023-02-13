@@ -318,6 +318,21 @@ namespace BmwDeepObd
         private bool _ignoreItemSelection;
         private bool _ignoreFormatSelection;
 
+        private bool FilterResultActive
+        {
+            get => _filterResultsActive;
+            set
+            {
+                if (value != _filterResultsActive)
+                {
+                    CloseSearchView();
+                }
+
+                _filterResultsActive = value;
+
+            }
+        }
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             SetTheme(ActivityCommon.SelectedThemeId);
@@ -449,13 +464,6 @@ namespace BmwDeepObd
                     _displayEcuInfo = false;
                 }
             };
-            _spinnerJobs.FocusChange += (sender, args) =>
-            {
-                if (args.HasFocus)
-                {
-                    _filterResultsActive = false;
-                }
-            };
 
             _checkBoxShowAllJobs = FindViewById<CheckBox>(Resource.Id.checkBoxShowAllJobs);
             bool showAllJobsVisible = false;
@@ -510,13 +518,6 @@ namespace BmwDeepObd
 
                 //HideKeyboard();
                 ResultSelected(args.Position);
-            };
-            _spinnerJobResults.FocusChange += (sender, args) =>
-            {
-                if (args.HasFocus)
-                {
-                    _filterResultsActive = true;
-                }
             };
 
             _checkBoxShowAllResults = FindViewById<CheckBox>(Resource.Id.checkBoxShowAllResults);
@@ -1038,22 +1039,12 @@ namespace BmwDeepObd
 
                     if (v == _spinnerJobs)
                     {
-                        if (_filterResultsActive)
-                        {
-                            CloseSearchView();
-                        }
-
-                        _filterResultsActive = false;
+                        FilterResultActive = false;
                     }
 
                     if (v == _spinnerJobResults)
                     {
-                        if (!_filterResultsActive)
-                        {
-                            CloseSearchView();
-                        }
-
-                        _filterResultsActive = true;
+                        FilterResultActive = true;
                     }
 
                     UpdateResultSettings(_selectedResult);
@@ -1069,7 +1060,7 @@ namespace BmwDeepObd
             {
                 _searchFilterText = text;
 
-                if (_filterResultsActive)
+                if (FilterResultActive)
                 {
                     JobSelected(_selectedJob);
                 }
