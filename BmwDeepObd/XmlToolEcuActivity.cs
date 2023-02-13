@@ -1018,7 +1018,8 @@ namespace BmwDeepObd
         {
             if (_searchView != null && !_searchView.Iconified)
             {
-                _searchView.OnActionViewCollapsed();
+                _searchView.Iconified = true;
+                _searchView.Iconified = true;
             }
 
             _filterResultsActive = false;
@@ -2011,7 +2012,7 @@ namespace BmwDeepObd
                         continue;
                     }
 
-                    if (bmwStatJob && !string.IsNullOrEmpty(_searchFilterText))
+                    if (!string.IsNullOrEmpty(_searchFilterText))
                     {
                         if (!IsSearchFilterMatching(result.DisplayName, _searchFilterText))
                         {
