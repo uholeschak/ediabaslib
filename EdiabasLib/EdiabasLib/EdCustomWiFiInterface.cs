@@ -23,7 +23,7 @@ namespace EdiabasLib
         }
 #endif
 
-#if DEBUG
+#if DEBUG && Android
         private static readonly string Tag = typeof(EdCustomWiFiInterface).FullName;
 #endif
         public const string PortId = "DEEPOBDWIFI";
@@ -468,7 +468,7 @@ namespace EdiabasLib
 
         private static void SendData(byte[] buffer, int length)
         {
-#if DEBUG
+#if DEBUG && Android
             List<byte> sendList = buffer.ToList().GetRange(0, length);
             Android.Util.Log.Info(Tag, string.Format("Send: {0}", BitConverter.ToString(sendList.ToArray()).Replace("-", " ")));
 #endif
@@ -517,7 +517,7 @@ namespace EdiabasLib
                 buffer[offset + recLen] = (byte)data;
                 recLen++;
             }
-#if DEBUG
+#if DEBUG && Android
             if (recLen > 0)
             {
                 List<byte> recList = buffer.ToList().GetRange(offset, recLen);
@@ -526,7 +526,7 @@ namespace EdiabasLib
 #endif
             if (recLen < length)
             {
-#if DEBUG
+#if DEBUG && Android
                 Android.Util.Log.Info(Tag, string.Format("Rec len={0}, expected={1}", recLen, length));
 #endif
                 ediabasLog?.LogData(EdiabasNet.EdLogLevel.Ifh, buffer, offset, recLen, "Rec ");
@@ -565,7 +565,7 @@ namespace EdiabasLib
                     responseList.Add((byte)data);
                 }
             }
-#if DEBUG
+#if DEBUG && Android
             if (responseList.Count > 0)
             {
                 Android.Util.Log.Info(Tag, string.Format("Rec: {0}", BitConverter.ToString(responseList.ToArray()).Replace("-", " ")));
