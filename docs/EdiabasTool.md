@@ -1,6 +1,8 @@
 # Ediabas tool
 Ediabas tool is a tool32 replacement for Android. It could be reached from the _Ediabas tool_ menu entry of the main menu. This tool allows selection and execution of all ECU file jobs. After opening the tools page a `.grp` or `.prg` file has to be selected from the menu.  
 The tool options menu has the following entries:
+* _Search field_: With the search field in the title bar it's possible to filter jobs that match the filter text.  
+All jobs are displayed that match the filter words in the job or the result name.
 * _Interface_: If a configuration has been loaded on the main page, the same communication interface is also used by the tools as default. With this menu entry a different communication interface could be selected.
 * _SGBD (grp)_: Opens a file explorer for selecting a group ECU file. Only files with `.grp` extension are displayed. After selection the group file the corresponding `.prg` file is automatically selected if possible. The selected `.prg` file is displayed in the _SGBD (prg)_ menu entry.
 * _SGBD (prg)_: Opens a file explorer for selecting a SGBD ECU file. Only files with `.prg` extension are displayed.
