@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 
@@ -22,6 +23,9 @@ namespace EdiabasLib
         }
 #endif
 
+#if DEBUG && Android
+        private static readonly string Tag = typeof(EdCustomWiFiInterface).FullName;
+#endif
         public const string PortId = "DEEPOBDWIFI";
         public static string AdapterIp = "192.168.0.10";
         public static string AdapterIpEspLink = "192.168.4.1";
@@ -464,6 +468,10 @@ namespace EdiabasLib
 
         private static void SendData(byte[] buffer, int length)
         {
+#if DEBUG && Android
+            List<byte> sendList = buffer.ToList().GetRange(0, length);
+            Android.Util.Log.Info(Tag, string.Format("Send: {0}", BitConverter.ToString(sendList.ToArray()).Replace("-", " ")));
+#endif
             TcpStream.Write(buffer, 0, length);
         }
 
@@ -509,8 +517,18 @@ namespace EdiabasLib
                 buffer[offset + recLen] = (byte)data;
                 recLen++;
             }
+#if DEBUG && Android
+            if (recLen > 0)
+            {
+                List<byte> recList = buffer.ToList().GetRange(offset, recLen);
+                Android.Util.Log.Info(Tag, string.Format("Rec: {0}", BitConverter.ToString(recList.ToArray()).Replace("-", " ")));
+            }
+#endif
             if (recLen < length)
             {
+#if DEBUG && Android
+                Android.Util.Log.Info(Tag, string.Format("Rec len={0}, expected={1}", recLen, length));
+#endif
                 ediabasLog?.LogData(EdiabasNet.EdLogLevel.Ifh, buffer, offset, recLen, "Rec ");
                 return false;
             }
@@ -547,6 +565,12 @@ namespace EdiabasLib
                     responseList.Add((byte)data);
                 }
             }
+#if DEBUG && Android
+            if (responseList.Count > 0)
+            {
+                Android.Util.Log.Info(Tag, string.Format("Rec: {0}", BitConverter.ToString(responseList.ToArray()).Replace("-", " ")));
+            }
+#endif
             return responseList;
         }
 
