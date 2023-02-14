@@ -518,8 +518,11 @@ namespace EdiabasLib
                 recLen++;
             }
 #if DEBUG
-            List<byte> recList = buffer.ToList().GetRange(offset, recLen);
-            Android.Util.Log.Info(Tag, string.Format("Rec: {0}", BitConverter.ToString(recList.ToArray()).Replace("-", " ")));
+            if (recLen > 0)
+            {
+                List<byte> recList = buffer.ToList().GetRange(offset, recLen);
+                Android.Util.Log.Info(Tag, string.Format("Rec: {0}", BitConverter.ToString(recList.ToArray()).Replace("-", " ")));
+            }
 #endif
             if (recLen < length)
             {
@@ -563,7 +566,10 @@ namespace EdiabasLib
                 }
             }
 #if DEBUG
-            Android.Util.Log.Info(Tag, string.Format("Rec: {0}", BitConverter.ToString(responseList.ToArray()).Replace("-", " ")));
+            if (responseList.Count > 0)
+            {
+                Android.Util.Log.Info(Tag, string.Format("Rec: {0}", BitConverter.ToString(responseList.ToArray()).Replace("-", " ")));
+            }
 #endif
             return responseList;
         }
