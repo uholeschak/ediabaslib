@@ -29,6 +29,9 @@ If the analysis is successful, the detected ECUs are listed and the VIN is displ
 If an ECU is completely silent (defective) it will not show up in the list!  
 After selecting an ECU list entry it's Job page will be displayed. This is the main configuration page for the jobs results that will be added to the configuration file.  
 The page has the following properties:
+* _Search field_: With the search field in the title bar it's possible to filter jobs and results that match the filter text.  
+It's either possible to filter the jobs or the results, depending from last selected item type (job or result).  
+When changing the item type, the search filter is cleared and closed.
 * _Page name_: This is the title (tab) name for the page in the configuration file.
 * _ECU name_: With this field the name of ECU on the _Errors_ page could be changed.
 * _Display type_: With his check box a graphical (gauge) display for the results could be enabled. The result will be only displayed if _Graphical design_ is set to value other than hidden.
