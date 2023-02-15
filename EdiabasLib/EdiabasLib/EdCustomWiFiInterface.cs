@@ -43,12 +43,14 @@ namespace EdiabasLib
         protected static Stopwatch StopWatch = new Stopwatch();
         protected static TcpClient TcpClient;
         protected static NetworkStream TcpStream;
+        protected static BtEscapeStreamWriter WriteStream;
         protected static string ConnectPort;
         protected static object ConnectParameter;
         protected static object NetworkData;
         protected static object WifiManager;
 
-        public static NetworkStream NetworkStream => TcpStream;
+        public static NetworkStream NetworkReadStream => TcpStream;
+        public static BtEscapeStreamWriter NetworkWriteStream => WriteStream;
 
         public static EdiabasNet Ediabas
         {
@@ -228,6 +230,7 @@ namespace EdiabasLib
                     TcpClient = new TcpClientWithTimeout(hostIpAddress, adapterPort, ConnectTimeout, true).Connect();
                 }, hostIpAddress, NetworkData);
                 TcpStream = TcpClient.GetStream();
+                WriteStream = new BtEscapeStreamWriter(TcpStream);
             }
             catch (Exception ex)
             {
@@ -265,6 +268,12 @@ namespace EdiabasLib
             bool result = true;
             try
             {
+                if (WriteStream != null)
+                {
+                    WriteStream.Close();
+                    WriteStream = null;
+                }
+
                 if (TcpStream != null)
                 {
                     TcpStream.Close();
@@ -475,7 +484,10 @@ namespace EdiabasLib
             List<byte> sendList = buffer.ToList().GetRange(0, length);
             Android.Util.Log.Info(Tag, string.Format("Send: {0}", BitConverter.ToString(sendList.ToArray()).Replace("-", " ")));
 #endif
-            TcpStream.Write(buffer, 0, length);
+            if (WriteStream != null)
+            {
+                WriteStream.Write(buffer, 0, length);
+            }
         }
 
         private static bool ReceiveData(byte[] buffer, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog = null)

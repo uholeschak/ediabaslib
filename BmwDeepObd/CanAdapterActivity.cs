@@ -1259,14 +1259,16 @@ namespace BmwDeepObd
 
                             case ActivityCommon.InterfaceType.DeepObdWifi:
                             {
-                                NetworkStream networkStream = EdCustomWiFiInterface.NetworkStream;
-                                if (networkStream == null)
+                                NetworkStream networkReadStream = EdCustomWiFiInterface.NetworkReadStream;
+                                BtEscapeStreamWriter networkWriteStream = EdCustomWiFiInterface.NetworkWriteStream;
+                                if (networkReadStream == null || networkWriteStream == null || networkWriteStream.EscapeMode)
                                 {
                                     connectOk = false;
                                     break;
                                 }
-                                inStream = networkStream;
-                                outStream = networkStream;
+
+                                inStream = networkReadStream;
+                                outStream = networkWriteStream;
                                 break;
                             }
                         }
