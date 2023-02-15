@@ -41,6 +41,8 @@ namespace EdiabasLib
         public const byte KWP1281_TIMEOUT = 60;
         // ReSharper restore InconsistentNaming
 
+        public const byte EscapeConfRead = 0x01;
+        public const byte EscapeConfWrite = 0x02;
         public const byte EscapeCodeDefault = 0xFF;
         public const byte EscapeMaskDefault = 0x80;
         public const byte EscapeXor = 0x55;
@@ -100,7 +102,9 @@ namespace EdiabasLib
 
         public int IgnitionStatus { get; set; }
 
-        public bool EscapeMode { get; set; }
+        public bool EscapeModeRead { get; set; }
+
+        public bool EscapeModeWrite { get; set; }
 
         public int AdapterType { get; set; }
 
@@ -176,7 +180,8 @@ namespace EdiabasLib
             CanRxId = -1;
             CanFlags = EdInterfaceObd.CanFlags.Empty;
             IgnitionStatus = -1;
-            EscapeMode = false;
+            EscapeModeRead = false;
+            EscapeModeWrite = false;
             AdapterType = -1;
             AdapterVersion = -1;
             AdapterSerial = null;
@@ -191,7 +196,8 @@ namespace EdiabasLib
             ConvertBaudResponse = false;
             AutoKeyByteResponse = false;
             IgnitionStatus = -1;
-            EscapeMode = false;
+            EscapeModeRead = false;
+            EscapeModeWrite = false;
             AdapterType = -1;
             AdapterVersion = -1;
             AdapterSerial = null;
@@ -651,10 +657,23 @@ namespace EdiabasLib
                             break;
 
                         case 1:
+                        {
                             // escape mode
                             respLen = 8;
-                            testTel = new byte[] { 0x84, 0xF1, 0xF1, 0x06, (byte)((EscapeMode ? 0x03 : 0x00) ^ EscapeXor), EscapeCodeDefault ^ EscapeXor, EscapeMaskDefault ^ EscapeXor, 0x00 };
+                            int modeValue = 0x00;
+                            if (EscapeModeRead)
+                            {
+                                modeValue |= EscapeConfRead;
+                            }
+
+                            if (EscapeModeWrite)
+                            {
+                                modeValue |= EscapeConfWrite;
+                            }
+
+                            testTel = new byte[] { 0x84, 0xF1, 0xF1, 0x06, (byte)(modeValue ^ EscapeXor), EscapeCodeDefault ^ EscapeXor, EscapeMaskDefault ^ EscapeXor, 0x00 };
                             break;
+                        }
 
                         case 2:
                             // read firmware version
@@ -738,8 +757,12 @@ namespace EdiabasLib
                                     break;
 
                                 case 1:
-                                    EscapeMode = (responseList[testTel.Length + 4] ^ EscapeXor) == 0x03;
+                                {
+                                    int modeValue = (responseList[testTel.Length + 4] ^ EscapeXor);
+                                    EscapeModeRead = (modeValue & EscapeConfRead) != 0x00;
+                                    EscapeModeWrite = (modeValue & EscapeConfWrite) != 0x00;
                                     break;
+                                }
 
                                 case 2:
                                     AdapterType = responseList[testTel.Length + 5] + (responseList[testTel.Length + 4] << 8);
@@ -777,7 +800,8 @@ namespace EdiabasLib
                                             break;
 
                                         case 1:
-                                            EscapeMode = false;
+                                            EscapeModeRead = false;
+                                            EscapeModeWrite = false;
                                             failure = false;
                                             break;
                                     }
@@ -808,7 +832,8 @@ namespace EdiabasLib
             if (Ediabas != null)
             {
                 Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "IgnitionStatus: {0:X02}", IgnitionStatus);
-                Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EscapeMode: {0}", EscapeMode);
+                Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EscapeModeRead: {0}", EscapeModeRead);
+                Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EscapeModeWrite: {0}", EscapeModeWrite);
                 Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "AdapterType: {0}", AdapterType);
                 Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "AdapterVersion: {0}.{1}", AdapterVersion >> 8, AdapterVersion & 0xFF);
                 if (AdapterSerial != null)
