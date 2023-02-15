@@ -335,7 +335,8 @@ namespace EdiabasLib
                 else
                 {   // not ELM327
                     CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Escape mode: {0}", mtcBtEscapeMode);
-                    CustomAdapter.EscapeMode = mtcBtEscapeMode;
+                    CustomAdapter.EscapeModeRead = mtcBtEscapeMode;
+                    CustomAdapter.EscapeModeWrite = mtcBtEscapeMode;
                     if (_bluetoothSocket != null)
                     {
                         _bluetoothInStream = new BtEscapeStreamReader(_bluetoothSocket.InputStream);
@@ -348,7 +349,8 @@ namespace EdiabasLib
                         for (int retry = 0; retry < ConnectRetries; retry++)
                         {
                             CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Test connection, Retry: {0}", retry);
-                            CustomAdapter.EscapeMode = mtcBtEscapeMode;
+                            CustomAdapter.EscapeModeRead = mtcBtEscapeMode;
+                            CustomAdapter.EscapeModeWrite = mtcBtEscapeMode;
                             if (retry > 0)
                             {
                                 _bluetoothSocket.Close();
@@ -715,9 +717,9 @@ namespace EdiabasLib
         {
             if (_bluetoothOutStream is BtEscapeStreamWriter outStream)
             {
-                if (outStream.EscapeMode != CustomAdapter.EscapeMode)
+                if (outStream.EscapeMode != CustomAdapter.EscapeModeWrite)
                 {
-                    outStream.SetEscapeMode(CustomAdapter.EscapeMode);
+                    outStream.SetEscapeMode(CustomAdapter.EscapeModeWrite);
                 }
                 outStream.Write(buffer, 0, length);
             }
@@ -776,9 +778,9 @@ namespace EdiabasLib
             List<byte> responseList = new List<byte>();
             if (_bluetoothInStream is BtEscapeStreamReader inStream)
             {
-                if (inStream.EscapeMode != CustomAdapter.EscapeMode)
+                if (inStream.EscapeMode != CustomAdapter.EscapeModeRead)
                 {
-                    inStream.SetEscapeMode(CustomAdapter.EscapeMode);
+                    inStream.SetEscapeMode(CustomAdapter.EscapeModeRead);
                 }
             }
 

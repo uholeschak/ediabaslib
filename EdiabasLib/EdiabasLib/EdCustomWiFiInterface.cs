@@ -222,7 +222,6 @@ namespace EdiabasLib
                     }
                 }
 #endif
-
                 Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting to: {0}:{1}", adapterIp, adapterPort);
                 IPAddress hostIpAddress = IPAddress.Parse(adapterIp);
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
@@ -231,6 +230,17 @@ namespace EdiabasLib
                 }, hostIpAddress, NetworkData);
                 TcpStream = TcpClient.GetStream();
                 WriteStream = new BtEscapeStreamWriter(TcpStream);
+#if false
+                CustomAdapter.EscapeModeWrite = true;
+                if (!CustomAdapter.UpdateAdapterInfo(true))
+                {
+                    Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Update adapter info failed");
+                    InterfaceDisconnect(true);
+                    return false;
+                }
+
+                WriteStream.SetEscapeMode(CustomAdapter.EscapeModeWrite);
+#endif
             }
             catch (Exception ex)
             {
@@ -486,6 +496,10 @@ namespace EdiabasLib
 #endif
             if (WriteStream != null)
             {
+                if (WriteStream.EscapeMode != CustomAdapter.EscapeModeWrite)
+                {
+                    WriteStream.SetEscapeMode(CustomAdapter.EscapeModeWrite);
+                }
                 WriteStream.Write(buffer, 0, length);
             }
         }
