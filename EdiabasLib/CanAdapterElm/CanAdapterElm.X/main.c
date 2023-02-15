@@ -3679,6 +3679,10 @@ void main(void)
     BIE0 = 0xFF;            // interrupt for all buffers
 
     TRISCbits.TRISC4 = 1;   // ignition state (input)
+#if (ADAPTER_TYPE == 0x02) || (ADAPTER_TYPE == 0x08)
+    LATCbits.LATC5 = 0;     // CAN STB normal mode
+    TRISCbits.TRISC5 = 0;   // CAN STB (output)
+#endif
 
     // analog input
     ADCON0bits.CHS = 0;     // input AN0
