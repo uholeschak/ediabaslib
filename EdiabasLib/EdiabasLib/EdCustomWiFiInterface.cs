@@ -48,6 +48,7 @@ namespace EdiabasLib
         protected static object ConnectParameter;
         protected static object NetworkData;
         protected static object WifiManager;
+        protected static bool WriteEscapeRequired;
 
         public static NetworkStream NetworkReadStream => TcpStream;
         public static EscapeStreamWriter NetworkWriteStream => WriteStream;
@@ -63,6 +64,11 @@ namespace EdiabasLib
         }
 
         public static bool InterfaceConnect(string port, object parameter)
+        {
+            return InterfaceConnect(port, parameter, false);
+        }
+
+        public static bool InterfaceConnect(string port, object parameter, bool reconnect)
         {
             if (TcpClient != null)
             {
@@ -92,6 +98,10 @@ namespace EdiabasLib
                 int adapterPort = AdapterPort;
                 NetworkData = null;
                 WifiManager = null;
+                if (!reconnect)
+                {
+                    WriteEscapeRequired = false;
+                }
 #if Android
                 if (ConnectParameter is ConnectParameterType connectParameter)
                 {
@@ -230,8 +240,18 @@ namespace EdiabasLib
                 }, hostIpAddress, NetworkData);
                 TcpStream = TcpClient.GetStream();
                 WriteStream = new EscapeStreamWriter(TcpStream);
-#if false
-                CustomAdapter.EscapeModeWrite = true;
+
+                if (!reconnect)
+                {
+                    if (!UpdateWriteEscapeRequired())
+                    {
+                        Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Update write escape failed");
+                        InterfaceDisconnect(true);
+                        return false;
+                    }
+                }
+
+                CustomAdapter.EscapeModeWrite = WriteEscapeRequired;
                 if (!CustomAdapter.UpdateAdapterInfo(true))
                 {
                     Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Update adapter info failed");
@@ -240,7 +260,6 @@ namespace EdiabasLib
                 }
 
                 WriteStream.SetEscapeMode(CustomAdapter.EscapeModeWrite);
-#endif
             }
             catch (Exception ex)
             {
@@ -434,7 +453,7 @@ namespace EdiabasLib
                 {
                     Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnecting");
                     InterfaceDisconnect(true);
-                    if (!InterfaceConnect(ConnectPort, null))
+                    if (!InterfaceConnect(ConnectPort, ConnectParameter, true))
                     {
                         CustomAdapter.ReconnectRequired = true;
                         return false;
@@ -477,7 +496,7 @@ namespace EdiabasLib
             {
                 Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnecting");
                 InterfaceDisconnect(true);
-                if (!InterfaceConnect(ConnectPort, null))
+                if (!InterfaceConnect(ConnectPort, ConnectParameter, true))
                 {
                     CustomAdapter.ReconnectRequired = true;
                     return false;
@@ -601,6 +620,123 @@ namespace EdiabasLib
             }
 #endif
             return responseList;
+        }
+
+        private static bool UpdateWriteEscapeRequired()
+        {
+            Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "UpdateWriteEscapeRequired");
+
+            WriteEscapeRequired = false;
+            try
+            {
+                for (int telType = 0; telType < 2; telType++)
+                {
+                    int respLen = 0;
+                    byte[] testTel = null;
+                    switch (telType)
+                    {
+                        case 0:
+                            // CAN mode (non zero request)
+                            respLen = 6;
+                            testTel = new byte[] { 0x82, 0xF1, 0xF1, 0x82, 0x01, 0x00 };
+                            break;
+
+                        case 1:
+                            // CAN mode (zero request)
+                            respLen = 9;
+                            testTel = new byte[] { 0x82, 0xF1, 0xF1, 0x82, 0x00, 0x00 };
+                            break;
+                    }
+
+                    if (testTel == null)
+                    {
+                        break;
+                    }
+
+                    testTel[testTel.Length - 1] = EdCustomAdapterCommon.CalcChecksumBmwFast(testTel, 0, testTel.Length - 1);
+                    if (Ediabas != null)
+                    {
+                        Ediabas.LogData(EdiabasNet.EdLogLevel.Ifh, testTel, 0, testTel.Length, "AdSend");
+                    }
+
+                    DiscardInBuffer();
+                    TcpStream.Write(testTel, 0, testTel.Length);
+                    CustomAdapter.LastCommTick = Stopwatch.GetTimestamp();
+
+                    List<byte> responseList = new List<byte>();
+                    long startTime = Stopwatch.GetTimestamp();
+                    for (; ; )
+                    {
+                        List<byte> newList = ReadInBuffer();
+                        if (newList.Count > 0)
+                        {
+                            responseList.AddRange(newList);
+                            startTime = Stopwatch.GetTimestamp();
+                        }
+                        if (responseList.Count >= testTel.Length + respLen)
+                        {
+                            if (Ediabas != null)
+                            {
+                                Ediabas.LogData(EdiabasNet.EdLogLevel.Ifh, responseList.ToArray(), 0, responseList.Count, "AdResp");
+                            }
+
+                            bool validEcho = !testTel.Where((t, i) => responseList[i] != t).Any();
+                            if (!validEcho)
+                            {
+                                if (Ediabas != null)
+                                {
+                                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "UpdateWriteEscapeRequired Type={0}: Echo invalid", telType);
+                                }
+
+                                return false;
+                            }
+
+                            if (EdCustomAdapterCommon.CalcChecksumBmwFast(responseList.ToArray(), testTel.Length, respLen - 1) !=
+                                responseList[testTel.Length + respLen - 1])
+                            {
+                                if (Ediabas != null)
+                                {
+                                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "UpdateWriteEscapeRequired Type={0}: Checksum invalid", telType);
+                                }
+                                return false;
+                            }
+                            break;
+                        }
+                        if (Stopwatch.GetTimestamp() - startTime > TcpReadTimeoutOffset * EdCustomAdapterCommon.TickResolMs)
+                        {
+                            if (Ediabas != null)
+                            {
+                                Ediabas.LogData(EdiabasNet.EdLogLevel.Ifh, responseList.ToArray(), 0, responseList.Count, "AdResp");
+                                Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "UpdateWriteEscapeRequired Type={0}: Response timeout", telType);
+                            }
+
+                            if (telType == 0)
+                            {
+                                return false;
+                            }
+
+                            WriteEscapeRequired = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Stream failure: {0}", EdiabasNet.GetExceptionText(ex));
+                CustomAdapter.ReconnectRequired = true;
+                return false;
+            }
+
+            if (Ediabas != null)
+            {
+                Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "UpdateWriteEscapeRequired: {0}", WriteEscapeRequired);
+            }
+
+#if DEBUG_ANDROID
+            Android.Util.Log.Info(Tag, string.Format("UpdateWriteEscapeRequired WriteEscape={0}", WriteEscapeRequired));
+#endif
+            return true;
         }
 
 #if Android
