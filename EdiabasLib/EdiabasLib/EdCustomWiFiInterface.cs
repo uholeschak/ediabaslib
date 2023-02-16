@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -50,8 +51,8 @@ namespace EdiabasLib
         protected static object WifiManager;
         protected static bool WriteEscapeRequired;
 
-        public static NetworkStream NetworkReadStream => TcpStream;
-        public static EscapeStreamWriter NetworkWriteStream => WriteStream;
+        public static Stream NetworkReadStream => TcpStream;
+        public static Stream NetworkWriteStream => WriteStream;
 
         public static EdiabasNet Ediabas
         {
