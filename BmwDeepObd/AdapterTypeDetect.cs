@@ -134,8 +134,8 @@ public class AdapterTypeDetect
                     }
 
                     bool escapeMode = _activityCommon.MtcBtEscapeMode;
-                    BtEscapeStreamReader inStream = new BtEscapeStreamReader(adapterInStream);
-                    BtEscapeStreamWriter outStream = new BtEscapeStreamWriter(adapterOutStream);
+                    EscapeStreamReader inStream = new EscapeStreamReader(adapterInStream);
+                    EscapeStreamWriter outStream = new EscapeStreamWriter(adapterOutStream);
                     if (!SetCustomEscapeMode(inStream, outStream, ref escapeMode, out bool noEscapeSupport))
                     {
                         LogString("*** Set escape mode failed");
@@ -370,7 +370,7 @@ public class AdapterTypeDetect
         return adapterType;
     }
 
-    private bool SetCustomEscapeMode(BtEscapeStreamReader inStream, BtEscapeStreamWriter outStream, ref bool escapeMode, out bool noEscapeSupport)
+    private bool SetCustomEscapeMode(EscapeStreamReader inStream, EscapeStreamWriter outStream, ref bool escapeMode, out bool noEscapeSupport)
     {
         const int escapeRespLen = 8;
         byte escapeModeValue = (byte)((escapeMode ? 0x03 : 0x00) ^ EdCustomAdapterCommon.EscapeXor);
@@ -467,7 +467,7 @@ public class AdapterTypeDetect
         return true;
     }
 
-    private bool ReadCustomFwVersion(BtEscapeStreamReader inStream, BtEscapeStreamWriter outStream, out int adapterTypeId, out int fwVersion)
+    private bool ReadCustomFwVersion(EscapeStreamReader inStream, EscapeStreamWriter outStream, out int adapterTypeId, out int fwVersion)
     {
         adapterTypeId = -1;
         fwVersion = -1;
@@ -526,7 +526,7 @@ public class AdapterTypeDetect
         return true;
     }
 
-    private bool ReadCustomSerial(BtEscapeStreamReader inStream, BtEscapeStreamWriter outStream, out byte[] adapterSerial)
+    private bool ReadCustomSerial(EscapeStreamReader inStream, EscapeStreamWriter outStream, out byte[] adapterSerial)
     {
         adapterSerial = null;
         const int idRespLen = 13;
