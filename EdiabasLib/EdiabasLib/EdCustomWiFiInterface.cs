@@ -43,14 +43,14 @@ namespace EdiabasLib
         protected static Stopwatch StopWatch = new Stopwatch();
         protected static TcpClient TcpClient;
         protected static NetworkStream TcpStream;
-        protected static BtEscapeStreamWriter WriteStream;
+        protected static EscapeStreamWriter WriteStream;
         protected static string ConnectPort;
         protected static object ConnectParameter;
         protected static object NetworkData;
         protected static object WifiManager;
 
         public static NetworkStream NetworkReadStream => TcpStream;
-        public static BtEscapeStreamWriter NetworkWriteStream => WriteStream;
+        public static EscapeStreamWriter NetworkWriteStream => WriteStream;
 
         public static EdiabasNet Ediabas
         {
@@ -229,7 +229,7 @@ namespace EdiabasLib
                     TcpClient = new TcpClientWithTimeout(hostIpAddress, adapterPort, ConnectTimeout, true).Connect();
                 }, hostIpAddress, NetworkData);
                 TcpStream = TcpClient.GetStream();
-                WriteStream = new BtEscapeStreamWriter(TcpStream);
+                WriteStream = new EscapeStreamWriter(TcpStream);
 #if false
                 CustomAdapter.EscapeModeWrite = true;
                 if (!CustomAdapter.UpdateAdapterInfo(true))

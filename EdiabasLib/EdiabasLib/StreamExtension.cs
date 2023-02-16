@@ -17,12 +17,12 @@ namespace EdiabasLib
             {
                 return memoryStream.IsDataAvailable();
             }
-#if Android
-            if (inStream is BtEscapeStreamReader escapeStream)
+
+            if (inStream is EscapeStreamReader escapeStream)
             {
                 return escapeStream.IsDataAvailable();
             }
-
+#if Android
             return inStream.IsDataAvailable();
 #else
             return inStream.Length > 0;
@@ -41,12 +41,11 @@ namespace EdiabasLib
                 return memoryStream.ReadByte();
             }
 
-#if Android
-            if (inStream is BtEscapeStreamReader escapeStream)
+            if (inStream is EscapeStreamReader escapeStream)
             {
                 return escapeStream.ReadByte();
             }
-#endif
+
             Semaphore waitSem = new Semaphore(0, 1);
             byte[] dataBuffer = new byte[1];
             int result = -1;
