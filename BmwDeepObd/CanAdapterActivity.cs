@@ -95,6 +95,7 @@ namespace BmwDeepObd
         private ActivityCommon.InterfaceType _interfaceType;
         private bool _bCustomAdapter;
         private bool _bCustomBtAdapter;
+        private bool _rejectFwUpdate = false;
         private int _blockSize = -1;
         private int _separationTime = -1;
         private int _canMode = -1;
@@ -698,6 +699,10 @@ namespace BmwDeepObd
                         versionText += "--";
                     }
                     fwUpdateEnabled = fwUpdateVersion >= 0 && ((_fwVersion != fwUpdateVersion) || ActivityCommon.CollectDebugInfo);
+                    if (_rejectFwUpdate)
+                    {
+                        fwUpdateEnabled = false;
+                    }
 
                     if (!elmMode && _interfaceType == ActivityCommon.InterfaceType.Bluetooth)
                     {
@@ -800,6 +805,33 @@ namespace BmwDeepObd
                 try
                 {
                     commFailed = !InterfacePrepare();
+                    if (!commFailed)
+                    {
+                        bool rejectFwUpdate = false;
+                        switch (_interfaceType)
+                        {
+                            case ActivityCommon.InterfaceType.DeepObdWifi:
+                            {
+                                Stream networkReadStream = EdCustomWiFiInterface.NetworkReadStream;
+                                Stream networkWriteStream = EdCustomWiFiInterface.NetworkWriteStream;
+                                if (networkReadStream == null || networkWriteStream == null)
+                                {
+                                    commFailed = true;
+                                    break;
+                                }
+
+                                if (networkWriteStream is EscapeStreamWriter escapeWriter && escapeWriter.EscapeMode)
+                                {
+                                    rejectFwUpdate = true;
+                                    break;
+                                }
+                                break;
+                            }
+                        }
+
+                        _rejectFwUpdate = rejectFwUpdate;
+                    }
+
                     // block size
                     if (!commFailed)
                     {
@@ -917,6 +949,7 @@ namespace BmwDeepObd
                 }
                 if (commFailed)
                 {
+                    _rejectFwUpdate = false;
                     _blockSize = -1;
                     _separationTime = -1;
                     _canMode = -1;
@@ -1259,9 +1292,15 @@ namespace BmwDeepObd
 
                             case ActivityCommon.InterfaceType.DeepObdWifi:
                             {
-                                NetworkStream networkReadStream = EdCustomWiFiInterface.NetworkReadStream;
-                                EscapeStreamWriter networkWriteStream = EdCustomWiFiInterface.NetworkWriteStream;
-                                if (networkReadStream == null || networkWriteStream == null || networkWriteStream.EscapeMode)
+                                Stream networkReadStream = EdCustomWiFiInterface.NetworkReadStream;
+                                Stream networkWriteStream = EdCustomWiFiInterface.NetworkWriteStream;
+                                if (networkReadStream == null || networkWriteStream == null)
+                                {
+                                    connectOk = false;
+                                    break;
+                                }
+
+                                if (networkWriteStream is EscapeStreamWriter escapeWriter && escapeWriter.EscapeMode)
                                 {
                                     connectOk = false;
                                     break;
