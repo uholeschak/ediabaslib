@@ -1260,7 +1260,7 @@ namespace BmwDeepObd
                             case ActivityCommon.InterfaceType.DeepObdWifi:
                             {
                                 NetworkStream networkReadStream = EdCustomWiFiInterface.NetworkReadStream;
-                                BtEscapeStreamWriter networkWriteStream = EdCustomWiFiInterface.NetworkWriteStream;
+                                EscapeStreamWriter networkWriteStream = EdCustomWiFiInterface.NetworkWriteStream;
                                 if (networkReadStream == null || networkWriteStream == null || networkWriteStream.EscapeMode)
                                 {
                                     connectOk = false;

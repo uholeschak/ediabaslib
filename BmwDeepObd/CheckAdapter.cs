@@ -101,7 +101,7 @@ public class CheckAdapter : IDisposable
                         case ActivityCommon.InterfaceType.DeepObdWifi:
                         {
                             NetworkStream networkReadStream = EdCustomWiFiInterface.NetworkReadStream;
-                            BtEscapeStreamWriter networkWriteStream = EdCustomWiFiInterface.NetworkWriteStream;
+                            EscapeStreamWriter networkWriteStream = EdCustomWiFiInterface.NetworkWriteStream;
                             if (networkReadStream == null || networkWriteStream == null)
                             {
                                 connectOk = false;

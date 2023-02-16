@@ -7,25 +7,30 @@ using System.Threading;
 
 namespace EdiabasLib
 {
-    public class BtEscapeStreamWriter : Stream
+    public class EscapeStreamReader : Stream
     {
-        private Stream _outStream;
-        private Mutex _writeMutex;
+        private Stream _inStream;
+        private Mutex _readMutex;
         private bool _escapeMode;
         private byte _escapeCode;
         private byte _escapeMask;
-        private List<byte> _writeDataList;
+        private bool _readEscape;
+        private List<byte> _readDataList;
 
-        public BtEscapeStreamWriter(Stream outStream, bool escapeMode = false, byte escapeCode = EdCustomAdapterCommon.EscapeCodeDefault, byte escapeMask = EdCustomAdapterCommon.EscapeMaskDefault)
+        public EscapeStreamReader(Stream inStream, bool escapeMode = false, byte escapeCode = EdCustomAdapterCommon.EscapeCodeDefault, byte escapeMask = EdCustomAdapterCommon.EscapeMaskDefault)
         {
-            _outStream = outStream;
-            _writeMutex = new Mutex(false);
+            _inStream = inStream;
+            _readMutex = new Mutex(false);
             SetEscapeMode(escapeMode, escapeCode, escapeMask);
-            _writeDataList = new List<byte>();
+            _readDataList = new List<byte>();
         }
 
         public void SetEscapeMode(bool escapeMode = false, byte escapeCode = EdCustomAdapterCommon.EscapeCodeDefault, byte escapeMask = EdCustomAdapterCommon.EscapeMaskDefault)
         {
+            if (_escapeMode != escapeMode)
+            {
+                _readEscape = false;
+            }
             _escapeMode = escapeMode;
             _escapeCode = escapeCode;
             _escapeMask = escapeMask;
@@ -43,7 +48,7 @@ namespace EdiabasLib
         {
             get
             {
-                return false;
+                return true;
             }
         }
 
@@ -59,7 +64,7 @@ namespace EdiabasLib
         {
             get
             {
-                return true;
+                return false;
             }
         }
 
@@ -67,7 +72,7 @@ namespace EdiabasLib
         {
             get
             {
-                return _writeDataList.Count;
+                return _readDataList.Count;
             }
         }
 
@@ -109,51 +114,103 @@ namespace EdiabasLib
 
         public override void Flush()
         {
-            if (!AcquireWriteMutex())
+            if (!AcquireReadMutex())
             {
                 return;
             }
 
             try
             {
-                _outStream?.Flush();
+                _inStream?.Flush();
             }
             finally
             {
-                ReleaseWriteMutex();
+                ReleaseReadMutex();
             }
         }
 
         public override void Close()
         {
-            if (!AcquireWriteMutex(-1))
+            if (!AcquireReadMutex(-1))
             {
                 return;
             }
 
             try
             {
-                if (_outStream != null)
+                if (_inStream != null)
                 {
-                    _outStream.Close();
-                    _outStream = null;
+                    _inStream.Close();
+                    _inStream = null;
                 }
-                _writeDataList.Clear();
+                _readDataList.Clear();
+                _readEscape = false;
             }
             finally
             {
-                ReleaseWriteMutex();
+                ReleaseReadMutex();
+            }
+        }
+
+        public bool IsDataAvailable()
+        {
+            if (!AcquireReadMutex())
+            {
+                return false;
+            }
+
+            try
+            {
+                ReadInStream();
+                return _readDataList.Count > 0;
+            }
+            finally
+            {
+                ReleaseReadMutex();
             }
         }
 
         public override int ReadByte()
         {
-            throw new NotSupportedException();
+            if (!AcquireReadMutex())
+            {
+                return -1;
+            }
+
+            try
+            {
+                ReadInStream();
+                if (_readDataList.Count < 1)
+                {
+                    return -1;
+                }
+
+                int data = _readDataList[0];
+                _readDataList.RemoveAt(0);
+                return data;
+            }
+            finally
+            {
+                ReleaseReadMutex();
+            }
         }
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            throw new NotSupportedException();
+            int length = 0;
+            for (int i = 0; i < count; i++)
+            {
+                int data = ReadByte();
+                if (data < 0)
+                {
+                    break;
+                }
+
+                buffer[length + offset] = (byte) data;
+                length++;
+            }
+
+            return length;
         }
 
         public override long Seek(long offset, SeekOrigin origin)
@@ -186,61 +243,16 @@ namespace EdiabasLib
             throw new NotSupportedException();
         }
 
-        public override void WriteByte(byte value)
-        {
-            if (!AcquireWriteMutex())
-            {
-                return;
-            }
-
-            try
-            {
-                if (_outStream == null)
-                {
-                    return;
-                }
-
-                _writeDataList.Add(value);
-                WriteOutStream();
-            }
-            finally
-            {
-                ReleaseWriteMutex();
-            }
-        }
-
         public override void Write(byte[] buffer, int offset, int count)
         {
-            if (!AcquireWriteMutex())
-            {
-                return;
-            }
-
-            try
-            {
-                if (_outStream == null)
-                {
-                    return;
-                }
-
-                for (int i = 0; i < count; i++)
-                {
-                    _writeDataList.Add(buffer[i + offset]);
-                }
-
-                WriteOutStream();
-            }
-            finally
-            {
-                ReleaseWriteMutex();
-            }
+            throw new NotSupportedException();
         }
 
-        private bool AcquireWriteMutex(int timeout = 10000)
+        private bool AcquireReadMutex(int timeout = 10000)
         {
             try
             {
-                if (!_writeMutex.WaitOne(timeout))
+                if (!_readMutex.WaitOne(timeout))
                 {
                     return false;
                 }
@@ -253,11 +265,11 @@ namespace EdiabasLib
             }
         }
 
-        private void ReleaseWriteMutex()
+        private void ReleaseReadMutex()
         {
             try
             {
-                _writeMutex.ReleaseMutex();
+                _readMutex.ReleaseMutex();
             }
             catch (Exception)
             {
@@ -265,39 +277,47 @@ namespace EdiabasLib
             }
         }
 
-        private void WriteOutStream()
+        private void ReadInStream()
         {
-            if (_outStream == null)
+            if (_inStream == null)
             {
                 return;
             }
 
-            if (!_escapeMode)
+#if Android
+            while (_inStream.IsDataAvailable())
+#else
+            while (_inStream.Length > 0)
+#endif
             {
-                _outStream.Write(_writeDataList.ToArray());
-                _writeDataList.Clear();
-            }
-            else
-            {
-                List<byte> writeData = new List<byte>();
-                while (_writeDataList.Count > 0)
+                int data = _inStream.ReadByteAsync();
+                //Android.Util.Log.Debug("InStream", "Main Data: {0}", data);
+                if (data >= 0)
                 {
-                    byte data = _writeDataList[0];
-                    if (data == 0 || data == _escapeCode)
+                    if (_escapeMode)
                     {
-                        writeData.Add(_escapeCode);
-                        writeData.Add((byte) (data ^ _escapeMask));
+                        if (_readEscape)
+                        {
+                            data ^= _escapeMask;
+                            _readEscape = false;
+                        }
+                        else
+                        {
+                            if (data == _escapeCode)
+                            {
+                                _readEscape = true;
+                            }
+                        }
                     }
                     else
                     {
-                        writeData.Add(data);
+                        _readEscape = false;
                     }
-                    _writeDataList.RemoveAt(0);
-                }
 
-                if (writeData.Count > 0)
-                {
-                    _outStream.Write(writeData.ToArray());
+                    if (!_readEscape)
+                    {
+                        _readDataList.Add((byte)data);
+                    }
                 }
             }
         }

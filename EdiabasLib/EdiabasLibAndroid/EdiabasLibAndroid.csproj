@@ -46,12 +46,6 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\EdiabasLib\BtEscapeStreamReader.cs">
-      <Link>BtEscapeStreamReader.cs</Link>
-    </Compile>
-    <Compile Include="..\EdiabasLib\BtEscapeStreamWriter.cs">
-      <Link>BtEscapeStreamWriter.cs</Link>
-    </Compile>
     <Compile Include="..\EdiabasLib\BtLeGattSpp.cs">
       <Link>BtLeGattSpp.cs</Link>
     </Compile>
@@ -75,6 +69,12 @@
     </Compile>
     <Compile Include="..\EdiabasLib\EdInterfaceEdic.cs">
       <Link>EdInterfaceEdic.cs</Link>
+    </Compile>
+    <Compile Include="..\EdiabasLib\EscapeStreamReader.cs">
+      <Link>EscapeStreamReader.cs</Link>
+    </Compile>
+    <Compile Include="..\EdiabasLib\EscapeStreamWriter.cs">
+      <Link>EscapeStreamWriter.cs</Link>
     </Compile>
     <Compile Include="..\EdiabasLib\IniFile.cs">
       <Link>IniFile.cs</Link>

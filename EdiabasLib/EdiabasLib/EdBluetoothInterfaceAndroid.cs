@@ -339,8 +339,8 @@ namespace EdiabasLib
                     CustomAdapter.EscapeModeWrite = mtcBtEscapeMode;
                     if (_bluetoothSocket != null)
                     {
-                        _bluetoothInStream = new BtEscapeStreamReader(_bluetoothSocket.InputStream);
-                        _bluetoothOutStream = new BtEscapeStreamWriter(_bluetoothSocket.OutputStream);
+                        _bluetoothInStream = new EscapeStreamReader(_bluetoothSocket.InputStream);
+                        _bluetoothOutStream = new EscapeStreamWriter(_bluetoothSocket.OutputStream);
                     }
 
                     if (!CustomAdapter.RawMode && mtcBtService && !reconnect && !usedRfCommSocket && _bluetoothSocket != null)
@@ -361,8 +361,8 @@ namespace EdiabasLib
                                 }
                                 CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device connected: {0}", _deviceConnected);
 
-                                _bluetoothInStream = new BtEscapeStreamReader(_bluetoothSocket.InputStream);
-                                _bluetoothOutStream = new BtEscapeStreamWriter(_bluetoothSocket.OutputStream);
+                                _bluetoothInStream = new EscapeStreamReader(_bluetoothSocket.InputStream);
+                                _bluetoothOutStream = new EscapeStreamWriter(_bluetoothSocket.OutputStream);
                             }
                             if (CustomAdapter.UpdateAdapterInfo(true))
                             {
@@ -715,7 +715,7 @@ namespace EdiabasLib
 
         private static void SendData(byte[] buffer, int length)
         {
-            if (_bluetoothOutStream is BtEscapeStreamWriter outStream)
+            if (_bluetoothOutStream is EscapeStreamWriter outStream)
             {
                 if (outStream.EscapeMode != CustomAdapter.EscapeModeWrite)
                 {
@@ -776,7 +776,7 @@ namespace EdiabasLib
         private static List<byte> ReadInBuffer()
         {
             List<byte> responseList = new List<byte>();
-            if (_bluetoothInStream is BtEscapeStreamReader inStream)
+            if (_bluetoothInStream is EscapeStreamReader inStream)
             {
                 if (inStream.EscapeMode != CustomAdapter.EscapeModeRead)
                 {
