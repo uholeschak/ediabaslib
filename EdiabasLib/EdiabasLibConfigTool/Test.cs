@@ -602,7 +602,7 @@ namespace EdiabasLibConfigTool
             request[3] = command;
             Array.Copy(data, 0, request, 4, data.Length);
 
-            if (!SendBmwfast(request))
+            if (!SendBmwFast(request))
             {
                 return null;
             }
@@ -623,7 +623,7 @@ namespace EdiabasLibConfigTool
             return result;
         }
 
-        private bool SendBmwfast(byte[] sendData)
+        private bool SendBmwFast(byte[] sendData)
         {
             if (_dataStream == null)
             {
