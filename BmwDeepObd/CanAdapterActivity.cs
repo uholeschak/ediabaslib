@@ -823,7 +823,6 @@ namespace BmwDeepObd
                                 if (networkWriteStream is EscapeStreamWriter escapeWriter && escapeWriter.EscapeMode)
                                 {
                                     rejectFwUpdate = true;
-                                    break;
                                 }
                                 break;
                             }
@@ -1225,6 +1224,13 @@ namespace BmwDeepObd
                     if (!ActivityCommon.IsBtReliable() || _activityCommon.MtcBtService)
                     {
                         _activityCommon.ShowAlert(GetString(Resource.String.can_adapter_bt_not_reliable), Resource.String.alert_title_error);
+                        return;
+                    }
+                    break;
+
+                case ActivityCommon.InterfaceType.DeepObdWifi:
+                    if (_rejectFwUpdate)
+                    {
                         return;
                     }
                     break;
