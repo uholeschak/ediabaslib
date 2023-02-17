@@ -5,6 +5,8 @@ VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarSimulator", "CarSimulator.csproj", "{652D8621-4078-4437-A0BC-3B90C8114EE5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdiabasLib", "..\..\EdiabasLib\EdiabasLib\EdiabasLib.csproj", "{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		CodeAnalysis|Any CPU = CodeAnalysis|Any CPU
@@ -34,6 +36,24 @@ Global
 		{652D8621-4078-4437-A0BC-3B90C8114EE5}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{652D8621-4078-4437-A0BC-3B90C8114EE5}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{652D8621-4078-4437-A0BC-3B90C8114EE5}.Release|Win32.ActiveCfg = Release|Any CPU
+		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.CodeAnalysis|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.CodeAnalysis|Any CPU.Build.0 = Debug|Any CPU
+		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.CodeAnalysis|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.CodeAnalysis|Mixed Platforms.Build.0 = Debug|Any CPU
+		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.CodeAnalysis|Win32.ActiveCfg = Debug|Any CPU
+		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.CodeAnalysis|Win32.Build.0 = Debug|Any CPU
+		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Debug|Win32.Build.0 = Debug|Any CPU
+		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Release|Win32.ActiveCfg = Release|Any CPU
+		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Release|Win32.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

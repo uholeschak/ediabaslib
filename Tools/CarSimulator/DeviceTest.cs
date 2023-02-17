@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using EdiabasLib;
 using InTheHand.Net;
 using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Sockets;
@@ -24,6 +25,7 @@ namespace CarSimulator
         private readonly MainForm _form;
         private BluetoothClient _btClient;
         private NetworkStream _dataStream;
+        private Stream _dataStreamWrite;
         private Thread _workerThread;
         private bool _connectActive;
         private bool _executeInnerTest;
@@ -193,6 +195,7 @@ namespace CarSimulator
                     _btClient.Connect(ep);
                 }
                 _dataStream = _btClient.GetStream();
+                _dataStreamWrite = null;
                 Thread.Sleep(BtConnectDelay);
             }
             catch (Exception)
@@ -326,6 +329,19 @@ namespace CarSimulator
         {
             try
             {
+                if (_dataStreamWrite != null)
+                {
+                    _dataStreamWrite.Close();
+                    _dataStreamWrite = null;
+                }
+            }
+            catch (Exception)
+            {
+                _dataStreamWrite = null;
+            }
+
+            try
+            {
                 if (_dataStream != null)
                 {
                     _dataStream.Close();
@@ -429,6 +445,7 @@ namespace CarSimulator
                             }
 
                             _dataStream = tcpClient.GetStream();
+                            _dataStreamWrite = new EscapeStreamWriter(_dataStream);
                             _testCount = 0;
                             for (; ; )
                             {
@@ -1001,7 +1018,14 @@ namespace CarSimulator
                 byte[] adapterTel = CreateAdapterTelegram(sendTel, sendTel.Length, 10400, KLINEF1_PARITY_NONE, true);
                 try
                 {
-                    _dataStream.Write(adapterTel, 0, adapterTel.Length);
+                    if (_dataStreamWrite != null)
+                    {
+                        _dataStreamWrite.Write(adapterTel, 0, adapterTel.Length);
+                    }
+                    else
+                    {
+                        _dataStream.Write(adapterTel, 0, adapterTel.Length);
+                    }
                 }
                 catch (Exception)
                 {
@@ -1056,7 +1080,14 @@ namespace CarSimulator
             sendLength++;
             try
             {
-                _dataStream.Write(telBuffer, 0, sendLength);
+                if (_dataStreamWrite != null)
+                {
+                    _dataStreamWrite.Write(telBuffer, 0, sendLength);
+                }
+                else
+                {
+                    _dataStream.Write(telBuffer, 0, sendLength);
+                }
             }
             catch (Exception ex)
             {
