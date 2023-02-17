@@ -557,5 +557,14 @@ namespace EdiabasLibConfigTool.Resources {
                 return ResourceManager.GetString("WifiUrlOk", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Write adapter mode failed ähnelt.
+        /// </summary>
+        internal static string WriteModeFailed {
+            get {
+                return ResourceManager.GetString("WriteModeFailed", resourceCulture);
+            }
+        }
     }
 }

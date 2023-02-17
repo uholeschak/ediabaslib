@@ -444,23 +444,39 @@ namespace EdiabasLibConfigTool
             }
             AdapterType = (firmware[0] << 8) + firmware[1];
 
-            if (_dataStreamWrite is EscapeStreamWriter streamWriter)
+            bool escapeModeWrite = false;
+            EscapeStreamWriter streamWriter = _dataStreamWrite as EscapeStreamWriter;
+            if (streamWriter != null)
             {
-                // set escape mode
-                byte[] escapeState = AdapterCommandCustom(0x06, new byte[] {
-                    EdCustomAdapterCommon.EscapeConfWrite ^ EdCustomAdapterCommon.EscapeXor,
-                    EdCustomAdapterCommon.EscapeCodeDefault ^ EdCustomAdapterCommon.EscapeXor,
-                    EdCustomAdapterCommon.EscapeMaskDefault ^ EdCustomAdapterCommon.EscapeXor });
-
-                if (escapeState == null || escapeState.Length < 1)
+                streamWriter.SetEscapeMode();
+                // check if escape mode is required
+                byte[] canModeTest = AdapterCommandCustom(0x82, new byte[] { 0x00 });
+                if (canModeTest == null)
                 {
-                    sr.Append("\r\n");
-                    sr.Append(Resources.Strings.ReadModeFailed);
-                    _form.UpdateStatusText(sr.ToString());
-                    return false;
+                    escapeModeWrite = true;
                 }
-                streamWriter.SetEscapeMode(true);
             }
+
+            int modeValue = 0x00;
+            if (escapeModeWrite)
+            {
+                modeValue |= EdCustomAdapterCommon.EscapeConfWrite;
+            }
+
+            byte[] escapeState = AdapterCommandCustom(0x06, new byte[] {
+                (byte) (modeValue ^ EdCustomAdapterCommon.EscapeXor),
+                EdCustomAdapterCommon.EscapeCodeDefault ^ EdCustomAdapterCommon.EscapeXor,
+                EdCustomAdapterCommon.EscapeMaskDefault ^ EdCustomAdapterCommon.EscapeXor });
+
+            if (escapeState == null || escapeState.Length < 1)
+            {
+                sr.Append("\r\n");
+                sr.Append(Resources.Strings.WriteModeFailed);
+                _form.UpdateStatusText(sr.ToString());
+                return false;
+            }
+
+            streamWriter?.SetEscapeMode(escapeModeWrite);
 
             byte[] canMode = AdapterCommandCustom(0x82, new byte[] { 0x00 });
             if ((canMode == null) || (canMode.Length < 1))

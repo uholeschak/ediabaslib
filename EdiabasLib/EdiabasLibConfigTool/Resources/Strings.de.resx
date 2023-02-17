@@ -276,4 +276,7 @@ mit EdiabasLib unterstützt.</value>
   <data name="FlashReplacementFirmware" xml:space="preserve">
     <value>Der Adapter verwendet die ELM327 Firmware, bitte flashen Sie zuerst mit der App die Ersatzfirmware.</value>
   </data>
+  <data name="WriteModeFailed" xml:space="preserve">
+    <value>Adapter-Modus schreiben fehlgeschlagen</value>
+  </data>
 </root>
