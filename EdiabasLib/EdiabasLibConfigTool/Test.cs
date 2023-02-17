@@ -29,6 +29,7 @@ namespace EdiabasLibConfigTool
         private readonly FormMain _form;
         private BluetoothClient _btClient;
         private NetworkStream _dataStream;
+        private Stream _dataStreamWrite;
         private volatile Thread _testThread;
         private bool _disposed;
         public bool TestOk { get; set; }
@@ -351,6 +352,7 @@ namespace EdiabasLibConfigTool
                     IPEndPoint ipTcp = new IPEndPoint(IPAddress.Parse(ipAddress), port);
                     tcpClient.Connect(ipTcp);
                     _dataStream = tcpClient.GetStream();
+                    _dataStreamWrite = new EscapeStreamWriter(_dataStream);
                     return RunBtTest(configure, out configRequired);
                 }
             }
@@ -550,6 +552,7 @@ namespace EdiabasLibConfigTool
                     _btClient.Connect(ep);
                 }
                 _dataStream = _btClient.GetStream();
+                _dataStreamWrite = null;
                 Thread.Sleep(EdBluetoothInterface.BtConnectDelay);
             }
             catch (Exception)
@@ -561,6 +564,19 @@ namespace EdiabasLibConfigTool
 
         private void DisconnectStream()
         {
+            try
+            {
+                if (_dataStreamWrite != null)
+                {
+                    _dataStreamWrite.Close();
+                    _dataStreamWrite = null;
+                }
+            }
+            catch (Exception)
+            {
+                _dataStreamWrite = null;
+            }
+
             try
             {
                 if (_dataStream != null)
@@ -645,7 +661,14 @@ namespace EdiabasLibConfigTool
             sendLength++;
             try
             {
-                _dataStream.Write(telBuffer, 0, sendLength);
+                if (_dataStreamWrite != null)
+                {
+                    _dataStreamWrite.Write(telBuffer, 0, sendLength);
+                }
+                else
+                {
+                    _dataStream.Write(telBuffer, 0, sendLength);
+                }
             }
             catch (Exception)
             {
