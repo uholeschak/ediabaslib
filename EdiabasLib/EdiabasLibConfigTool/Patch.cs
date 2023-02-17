@@ -17,7 +17,8 @@ namespace EdiabasLibConfigTool
     public static class Patch
     {
         public const string AdapterSsidEnet = @"Deep OBD BMW";
-        public const string AdapterSsidElm = @"WiFi_OBDII";
+        public const string AdapterSsidElm1 = @"WiFi_OBDII";
+        public const string AdapterSsidElm2 = @"WiFi-OBDII";
         public const string AdapterSsidEspLink = @"DeepOBD";
         public const string AdapterSsidEnetLink = @"ENET-LINK_";
         public const string PassordWifiEnetLink = @"12345678";

@@ -325,7 +325,8 @@ namespace EdiabasLibConfigTool
                         WlanConnectionAttributes conn = wlanIface.CurrentConnection;
                         string ssidString = Encoding.ASCII.GetString(conn.wlanAssociationAttributes.dot11Ssid.SSID).TrimEnd('\0');
                         if (string.Compare(ssidString, Patch.AdapterSsidEnet, StringComparison.OrdinalIgnoreCase) == 0 ||
-                            string.Compare(ssidString, Patch.AdapterSsidElm, StringComparison.OrdinalIgnoreCase) == 0 ||
+                            string.Compare(ssidString, Patch.AdapterSsidElm1, StringComparison.OrdinalIgnoreCase) == 0 ||
+                            string.Compare(ssidString, Patch.AdapterSsidElm2, StringComparison.OrdinalIgnoreCase) == 0 ||
                             string.Compare(ssidString, Patch.AdapterSsidEspLink, StringComparison.OrdinalIgnoreCase) == 0 ||
                             ssidString.StartsWith(Patch.AdapterSsidEnetLink, StringComparison.OrdinalIgnoreCase) ||
                             ssidString.StartsWith(Patch.AdapterSsidModBmw, StringComparison.OrdinalIgnoreCase) ||
@@ -354,7 +355,8 @@ namespace EdiabasLibConfigTool
                     if (!ap.IsConnected)
                     {
                         if (string.Compare(ap.Name, Patch.AdapterSsidEnet, StringComparison.OrdinalIgnoreCase) == 0 ||
-                            string.Compare(ap.Name, Patch.AdapterSsidElm, StringComparison.OrdinalIgnoreCase) == 0 || 
+                            string.Compare(ap.Name, Patch.AdapterSsidElm1, StringComparison.OrdinalIgnoreCase) == 0 ||
+                            string.Compare(ap.Name, Patch.AdapterSsidElm2, StringComparison.OrdinalIgnoreCase) == 0 ||
                             string.Compare(ap.Name, Patch.AdapterSsidEspLink, StringComparison.OrdinalIgnoreCase) == 0 ||
                             ap.Name.StartsWith(Patch.AdapterSsidEnetLink, StringComparison.OrdinalIgnoreCase) ||
                             ap.Name.StartsWith(Patch.AdapterSsidModBmw, StringComparison.OrdinalIgnoreCase) ||

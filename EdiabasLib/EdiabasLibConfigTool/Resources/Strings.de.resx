@@ -217,7 +217,7 @@
     <value>Firmware-Version lesen fehlgeschlagen</value>
   </data>
   <data name="ReadModeFailed" xml:space="preserve">
-    <value>Adapter-Modus lesen fehgeschlagen</value>
+    <value>Adapter-Modus lesen fehlgeschlagen</value>
   </data>
   <data name="RestoreApiDllFailed" xml:space="preserve">
     <value>Wiederherstellen der originalen {0} Datei fehlgeschlagen.</value>
