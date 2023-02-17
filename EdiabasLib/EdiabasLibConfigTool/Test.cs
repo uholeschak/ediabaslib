@@ -444,6 +444,24 @@ namespace EdiabasLibConfigTool
             }
             AdapterType = (firmware[0] << 8) + firmware[1];
 
+            if (_dataStreamWrite is EscapeStreamWriter streamWriter)
+            {
+                // set escape mode
+                byte[] escapeState = AdapterCommandCustom(0x06, new byte[] {
+                    EdCustomAdapterCommon.EscapeConfWrite ^ EdCustomAdapterCommon.EscapeXor,
+                    EdCustomAdapterCommon.EscapeCodeDefault ^ EdCustomAdapterCommon.EscapeXor,
+                    EdCustomAdapterCommon.EscapeMaskDefault ^ EdCustomAdapterCommon.EscapeXor });
+
+                if (escapeState == null || escapeState.Length < 1)
+                {
+                    sr.Append("\r\n");
+                    sr.Append(Resources.Strings.ReadModeFailed);
+                    _form.UpdateStatusText(sr.ToString());
+                    return false;
+                }
+                streamWriter.SetEscapeMode(true);
+            }
+
             byte[] canMode = AdapterCommandCustom(0x82, new byte[] { 0x00 });
             if ((canMode == null) || (canMode.Length < 1))
             {
