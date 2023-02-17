@@ -285,4 +285,7 @@ are supported with EdiabasLib.</value>
   <data name="FlashReplacementFirmware" xml:space="preserve">
     <value>The adapter is using the ELM327 firmware, please flash the replacement firmware with the app first.</value>
   </data>
+  <data name="WriteModeFailed" xml:space="preserve">
+    <value>Write adapter mode failed</value>
+  </data>
 </root>
