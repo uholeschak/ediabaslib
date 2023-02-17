@@ -37,7 +37,8 @@ namespace CarSimulator
         public const string DefaultBtName = "Deep OBD";
         public const string DefaultBtNameStd = "OBDII";
         public const string DefaultBtPin = "1234";
-        public const string AdapterSsidElm = @"WiFi_OBDII";
+        public const string AdapterSsidElm1 = @"WiFi_OBDII";
+        public const string AdapterSsidElm2 = @"WiFi-OBDII";
         private const string ElmIp = @"192.168.0.10";
         private const int ElmPort = 35000;
         public const string AdapterSsidEspLink = @"DeepOBD";
@@ -257,7 +258,11 @@ namespace CarSimulator
                     {
                         WlanConnectionAttributes conn = wlanIface.CurrentConnection;
                         string ssidString = Encoding.ASCII.GetString(conn.wlanAssociationAttributes.dot11Ssid.SSID).TrimEnd('\0');
-                        if (string.Compare(ssidString, AdapterSsidElm, StringComparison.OrdinalIgnoreCase) == 0)
+                        if (string.Compare(ssidString, AdapterSsidElm1, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            return true;
+                        }
+                        if (string.Compare(ssidString, AdapterSsidElm2, StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             return true;
                         }
@@ -280,7 +285,8 @@ namespace CarSimulator
                 {
                     if (!ap.IsConnected)
                     {
-                        if ((string.Compare(ap.Name, AdapterSsidElm, StringComparison.OrdinalIgnoreCase) == 0) ||
+                        if ((string.Compare(ap.Name, AdapterSsidElm1, StringComparison.OrdinalIgnoreCase) == 0) ||
+                            (string.Compare(ap.Name, AdapterSsidElm2, StringComparison.OrdinalIgnoreCase) == 0) ||
                             (string.Compare(ap.Name, AdapterSsidEspLink, StringComparison.OrdinalIgnoreCase) == 0))
                         {
                             AuthRequest authRequest = new AuthRequest(ap);
