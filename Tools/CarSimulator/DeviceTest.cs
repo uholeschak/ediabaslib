@@ -892,7 +892,7 @@ namespace CarSimulator
             request[3] = command;
             Array.Copy(data, 0, request, 4, data.Length);
 
-            if (!SendBmwfast(request))
+            if (!SendBmwFast(request))
             {
                 return null;
             }
@@ -1010,7 +1010,7 @@ namespace CarSimulator
             }
             else
             {
-                if (!SendBmwfast(identRequest))
+                if (!SendBmwFast(identRequest))
                 {
                     return false;
                 }
@@ -1034,7 +1034,7 @@ namespace CarSimulator
             return !identResponse.Where((t, i) => response[i] != t).Any();
         }
 
-        private bool SendBmwfast(byte[] sendData)
+        private bool SendBmwFast(byte[] sendData)
         {
             if (_dataStream == null)
             {
@@ -1060,7 +1060,7 @@ namespace CarSimulator
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("SendBmwfast Exception: {0}", ex.Message);
+                Debug.WriteLine("SendBmwFast Exception: {0}", ex.Message);
                 return false;
             }
             return true;
