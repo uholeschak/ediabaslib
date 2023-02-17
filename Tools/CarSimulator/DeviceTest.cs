@@ -610,6 +610,41 @@ namespace CarSimulator
                 return false;
             }
 
+            bool escapeModeWrite = false;
+            EscapeStreamWriter streamWriter = _dataStreamWrite as EscapeStreamWriter;
+            if (streamWriter != null)
+            {
+                streamWriter.SetEscapeMode();
+                // check if escape mode is required
+                byte[] canModeTest = AdapterCommandCustom(0x82, new byte[] { 0x00 });
+                if (canModeTest == null)
+                {
+                    escapeModeWrite = true;
+                }
+            }
+
+            int modeValue = 0x00;
+            if (escapeModeWrite)
+            {
+                modeValue |= EdCustomAdapterCommon.EscapeConfWrite;
+            }
+
+            byte[] escapeState = AdapterCommandCustom(0x06, new byte[] {
+                (byte) (modeValue ^ EdCustomAdapterCommon.EscapeXor),
+                EdCustomAdapterCommon.EscapeCodeDefault ^ EdCustomAdapterCommon.EscapeXor,
+                EdCustomAdapterCommon.EscapeMaskDefault ^ EdCustomAdapterCommon.EscapeXor });
+
+            if (escapeState == null || escapeState.Length < 1)
+            {
+                commError = true;
+                sr.Append("\r\n");
+                sr.Append("Set escape mode failed!");
+                _form.UpdateTestStatusText(sr.ToString());
+                return false;
+            }
+
+            streamWriter?.SetEscapeMode(escapeModeWrite);
+
             byte[] btName = AdapterCommandCustom(0x85, new byte[] { 0x85 });
             if (btName == null)
             {
