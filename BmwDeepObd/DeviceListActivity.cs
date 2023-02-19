@@ -1062,7 +1062,10 @@ namespace BmwDeepObd
                                     catch (Exception)
                                     {
                                         // sometimes the second connect is working
-                                        bluetoothSocket.Connect();
+                                        if (!aborted)
+                                        {
+                                            bluetoothSocket.Connect();
+                                        }
                                     }
 
                                     if (aborted)
