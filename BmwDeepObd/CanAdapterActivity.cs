@@ -698,6 +698,7 @@ namespace BmwDeepObd
                     {
                         versionText += "--";
                     }
+
                     fwUpdateEnabled = fwUpdateVersion >= 0 && ((_fwVersion != fwUpdateVersion) || ActivityCommon.CollectDebugInfo);
                     if (_rejectFwUpdate)
                     {
@@ -712,6 +713,11 @@ namespace BmwDeepObd
                             fwChangeEnabled = true;
                         }
                     }
+                }
+
+                if (!fwUpdateEnabled)
+                {
+                    requestFwUpdate = false;
                 }
 
                 _textViewFwVersion.Text = versionText;
