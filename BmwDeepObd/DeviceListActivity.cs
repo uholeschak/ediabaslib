@@ -75,7 +75,6 @@ namespace BmwDeepObd
         private static readonly Java.Util.UUID SppUuid = Java.Util.UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
         private static readonly Java.Util.UUID ZeroUuid = Java.Util.UUID.FromString("00000000-0000-0000-0000-000000000000");
         private const string DefaultModulePwd = "1234";
-        private const int ResponseTimeout = 1000;
 
         // Return Intent extra
 #if DEBUG
@@ -541,11 +540,17 @@ namespace BmwDeepObd
             List<Java.Util.UUID> uuidList = new List<Java.Util.UUID>();
             if (uuids != null)
             {
+#if DEBUG
+                Android.Util.Log.Info(Tag, "IsBtDeviceValid: Name: {0}", device.Name ?? string.Empty);
+#endif
                 foreach (ParcelUuid parcelUuid in uuids)
                 {
                     if (parcelUuid.Uuid != null && ZeroUuid.CompareTo(parcelUuid.Uuid) != 0)
                     {
                         uuidList.Add(parcelUuid.Uuid);
+#if DEBUG
+                        Android.Util.Log.Info(Tag, "IsBtDeviceValid: UUID: {0}", parcelUuid.Uuid.ToString());
+#endif
                     }
                 }
             }
