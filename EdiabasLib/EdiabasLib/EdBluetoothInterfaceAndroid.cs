@@ -229,18 +229,10 @@ namespace EdiabasLib
                             _bluetoothSocket = device.CreateInsecureRfcommSocketToServiceRecord(SppUuid);
                         }
 
-                        try
+                        if (!BluetoothConnect(_bluetoothSocket))
                         {
-                            _bluetoothSocket?.Connect();
-                        }
-                        catch (Exception)
-                        {
-                            try
-                            {
-                                // sometimes the second connect is working
-                                _bluetoothSocket.Connect();
-                            }
-                            catch (Exception)
+                            // sometimes the second connect is working
+                            if (!BluetoothConnect(_bluetoothSocket))
                             {
                                 _bluetoothSocket.Close();
                                 _bluetoothSocket = null;
@@ -263,7 +255,11 @@ namespace EdiabasLib
                                 throw new Exception("No rfCommSocket");
                             }
                             _bluetoothSocket = Java.Lang.Object.GetObject<BluetoothSocket>(rfCommSocket, Android.Runtime.JniHandleOwnership.TransferLocalRef);
-                            _bluetoothSocket.Connect();
+                            if (!BluetoothConnect(_bluetoothSocket))
+                            {
+                                throw new Exception("Bt connect failed");
+                            }
+
                             usedRfCommSocket = true;
                         }
 
@@ -354,7 +350,11 @@ namespace EdiabasLib
                             if (retry > 0)
                             {
                                 _bluetoothSocket.Close();
-                                _bluetoothSocket.Connect();
+                                if (!BluetoothConnect(_bluetoothSocket))
+                                {
+                                    throw new Exception("Bt connect failed");
+                                }
+
                                 if (ConnectedEvent.WaitOne(connectTimeout, false))
                                 {
                                     Thread.Sleep(BtConnectDelay);
@@ -794,6 +794,25 @@ namespace EdiabasLib
                 }
             }
             return responseList;
+        }
+
+        private static bool BluetoothConnect(BluetoothSocket bluetoothSocket, int timeout = 5000)
+        {
+            if (_bluetoothSocket == null)
+            {
+                return false;
+            }
+
+            try
+            {
+                bluetoothSocket.Connect();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private class Receiver : Android.Content.BroadcastReceiver
