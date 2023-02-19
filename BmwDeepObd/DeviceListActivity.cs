@@ -498,10 +498,7 @@ namespace BmwDeepObd
                         }
                         try
                         {
-                            if (IsBtDeviceValid(device))
-                            {
-                                _pairedDevicesArrayAdapter.Add(device.Name + "\n" + device.Address);
-                            }
+                            _pairedDevicesArrayAdapter.Add(device.Name + "\n" + device.Address);
                         }
                         catch (Exception)
                         {
@@ -555,7 +552,12 @@ namespace BmwDeepObd
                 }
             }
 
-            return uuidList.Count == 0 || uuidList.Any(uuid => SppUuid.CompareTo(uuid) == 0);
+            if (uuidList.Count == 0)
+            {
+                return true;
+            }
+
+            return uuidList.Any(uuid => SppUuid.CompareTo(uuid) == 0);
         }
 
         private void UpdateMtcDevices()
@@ -1606,8 +1608,11 @@ namespace BmwDeepObd
             List<string> itemList = new List<string>();
             if (paired)
             {
-                itemList.Add(GetString(Resource.String.bt_device_select));
-                operationList.Add(BtOperation.SelectAdapter);
+                if (IsBtDeviceValid(device))
+                {
+                    itemList.Add(GetString(Resource.String.bt_device_select));
+                    operationList.Add(BtOperation.SelectAdapter);
+                }
 
                 itemList.Add(GetString(Resource.String.bt_device_unpair));
                 operationList.Add(BtOperation.UnpairDevice);
