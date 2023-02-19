@@ -38,6 +38,7 @@ namespace EdiabasLib
         public const string RawTag = "RAW";
         public const int BtConnectDelay = 50;
         private static readonly UUID SppUuid = UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
+        private const int BluetoothConnectTimeout = 5000;
         private const int ReadTimeoutOffsetLong = 1000;
         private const int ReadTimeoutOffsetShort = 100;
         protected const int EchoTimeout = 500;
@@ -796,23 +797,50 @@ namespace EdiabasLib
             return responseList;
         }
 
-        private static bool BluetoothConnect(BluetoothSocket bluetoothSocket, int timeout = 5000)
+        private static bool BluetoothConnect(BluetoothSocket bluetoothSocket, int timeout = BluetoothConnectTimeout)
         {
-            if (_bluetoothSocket == null)
+            if (bluetoothSocket == null)
             {
                 return false;
             }
 
-            try
+            bool connectOk = false;
+            Thread connectThread = new Thread(() =>
             {
-                bluetoothSocket.Connect();
-            }
-            catch (Exception)
+                try
+                {
+                    bluetoothSocket.Connect();
+                    connectOk = true;
+                }
+                catch (Exception)
+                {
+                    connectOk = false;
+                }
+            })
             {
-                return false;
+                Priority = ThreadPriority.Highest
+            };
+            connectThread.Start();
+
+            if (!connectThread.Join(timeout))
+            {
+                CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "BluetoothConnect timeout aborting");
+                try
+                {
+                    bluetoothSocket.Close();
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+
+                connectThread.Join();
+                connectOk = false;
+                CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "BluetoothConnect thread finished");
             }
 
-            return true;
+            CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "BluetoothConnect Ok={0}", connectOk);
+            return connectOk;
         }
 
         private class Receiver : Android.Content.BroadcastReceiver
