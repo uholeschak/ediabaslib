@@ -434,14 +434,6 @@ namespace EdiabasLibConfigTool
             sr.Append("\r\n");
             sr.Append(Resources.Strings.FirmwareVersion);
             sr.Append(string.Format(" {0}.{1}", firmware[2], firmware[3]));
-            int version = (firmware[2] << 8) + firmware[3];
-            if (version < 15)
-            {
-                sr.Append("\r\n");
-                sr.Append(Resources.Strings.FirmwareTooOld);
-                _form.UpdateStatusText(sr.ToString());
-                return false;
-            }
             AdapterType = (firmware[0] << 8) + firmware[1];
 
             bool escapeModeWrite = false;
@@ -455,6 +447,15 @@ namespace EdiabasLibConfigTool
                 {
                     escapeModeWrite = true;
                 }
+            }
+
+            int fwVersion = (firmware[2] << 8) + firmware[3];
+            if (!escapeModeWrite && fwVersion < 15)
+            {
+                sr.Append("\r\n");
+                sr.Append(Resources.Strings.FirmwareTooOld);
+                _form.UpdateStatusText(sr.ToString());
+                return false;
             }
 
             int modeValue = 0x00;
