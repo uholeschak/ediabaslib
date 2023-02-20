@@ -776,6 +776,7 @@
   <string name="can_adapter_name_length">Die Länge des UTF-8 Bluetoothnamens ist ungültig</string>
   <string name="can_adapter_new_pin">Die neue Bluetooth Pin {0} wird aktiv, wenn der Adapter aus und eingeschaltet wird.</string>
   <string name="can_adapter_new_name">Der neue Bluetooth Name wird aktiv, wenn der Adapter aus und eingeschaltet wird.</string>
+  <string name="can_adapter_processing">Vorgang wird ausgeführt</string>
   <string name="can_adapter_fw_update_present">Es ist ein Firmwareupdate für den Adpter vorhanden.\nWollen Sie das Update jetzt installieren?</string>
   <string name="can_adapter_fw_update_info">Während des Updates darf die Kommunikation auf keinen Fall unterbrochen werden.\nWollen Sie fortfahren?</string>
   <string name="can_adapter_fw_update_info_ftdi">Für das Update ist es notwendig, dass der Bootloader einmalig in das Gerät geflasht wurde.\nWenn die Applikation nicht mehr startet, muss der Prozessor während des Verbindungsaufbaus zurückgesetzt werden, aber die USB Kommunikation darf nicht unterbrochen werden.\nWollen Sie fortfahren?</string>

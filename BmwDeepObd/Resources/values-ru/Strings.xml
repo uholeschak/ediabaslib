@@ -774,6 +774,7 @@
   <string name="can_adapter_name_length">Неправильная длина имени Bluetooth устройства в UTF-8</string>
   <string name="can_adapter_new_pin">Для активации нового Pin кода для Bluetooth {0} выключите, а затем включите адаптер.</string>
   <string name="can_adapter_new_name">Для активации нового имени для Bluetooth устройства выключите, а затем включите адаптер.</string>
+  <string name="can_adapter_processing">Выполнение операции</string>
   <string name="can_adapter_fw_update_present">Доступно обновление для этого адаптера.\nХотите установить обновление?</string>
   <string name="can_adapter_fw_update_info">Во время обновления связь не должна прерываться ни при каких обстоятельствах.\nПродолжить?</string>
   <string name="can_adapter_fw_update_info_ftdi">Для обновления требуется, чтобы загрузчик уже был прошит в устройство один раз.\nЕсли приложение больше не запускается, вам необходимо перезагрузить процессор на этапе подключения, но соединение USB не должно прерываться.\nПродолжить?</string>

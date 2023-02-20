@@ -752,6 +752,7 @@
   <string name="can_adapter_name_length">The UTF-8 Bluetooth name length invalid</string>
   <string name="can_adapter_new_pin">The new Bluetooth pin {0} will get active after power cycle of the adapter</string>
   <string name="can_adapter_new_name">The new Bluetooth name will get active after power cycle of the adapter</string>
+  <string name="can_adapter_processing">Processing</string>
   <string name="can_adapter_fw_update_present">A firmware update for the adapter is available.\nDo you want to install the update now?</string>
   <string name="can_adapter_fw_update_info">During the update the communication should be never interrupted.\nDo you want to continue?</string>
   <string name="can_adapter_fw_update_info_ftdi">For the update it\'s required that the bootloader is already flashed into the device once.\nIf the application is not starting any more, you have to reset the processor during the connection phase, but the USB communication should not be interrupted.\nDo you want to continue?</string>

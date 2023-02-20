@@ -10,7 +10,6 @@ using Android.Views.InputMethods;
 using Android.Widget;
 using EdiabasLib;
 using System.IO;
-using System.Net.Sockets;
 using Android.Content;
 using Android.Hardware.Usb;
 using AndroidX.AppCompat.App;
@@ -805,6 +804,12 @@ namespace BmwDeepObd
                 return;
             }
             EdiabasInit();
+
+            CustomProgressDialog progress = new CustomProgressDialog(this);
+            progress.SetMessage(GetString(Resource.String.can_adapter_processing));
+            progress.ButtonAbort.Visibility = ViewStates.Gone;
+            progress.Show();
+
             _adapterThread = new Thread(() =>
             {
                 bool commFailed;
@@ -974,10 +979,15 @@ namespace BmwDeepObd
                     {
                         return;
                     }
+
                     if (IsJobRunning())
                     {
                         _adapterThread.Join();
                     }
+
+                    progress.Dismiss();
+                    progress.Dispose();
+
                     UpdateDisplay();
                     if (commFailed)
                     {
@@ -1102,6 +1112,11 @@ namespace BmwDeepObd
                 }
             }
 
+            CustomProgressDialog progress = new CustomProgressDialog(this);
+            progress.SetMessage(GetString(Resource.String.can_adapter_processing));
+            progress.ButtonAbort.Visibility = ViewStates.Gone;
+            progress.Show();
+
             _adapterThread = new Thread(() =>
             {
                 bool commFailed;
@@ -1178,10 +1193,15 @@ namespace BmwDeepObd
                     {
                         return;
                     }
+
                     if (IsJobRunning())
                     {
                         _adapterThread.Join();
                     }
+
+                    progress.Dismiss();
+                    progress.Dispose();
+
                     if (commFailed)
                     {
                         int resId = _bCustomAdapter ? Resource.String.can_adapter_comm_error : Resource.String.can_adapter_comm_error_std;
@@ -1381,12 +1401,15 @@ namespace BmwDeepObd
                     {
                         return;
                     }
+
                     if (IsJobRunning())
                     {
                         _adapterThread.Join();
                     }
+
                     progress.Dismiss();
                     progress.Dispose();
+
                     string message;
                     if (updateOk)
                     {
