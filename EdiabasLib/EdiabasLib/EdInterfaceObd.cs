@@ -1883,6 +1883,11 @@ namespace EdiabasLib
             return true;
         }
 
+        public override bool TransmitCancel()
+        {
+            return true;
+        }
+
         public string ComPort
         {
             get

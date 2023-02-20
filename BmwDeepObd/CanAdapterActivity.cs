@@ -109,6 +109,7 @@ namespace BmwDeepObd
         private ActivityCommon _activityCommon;
         private EdiabasNet _ediabas;
         private Thread _adapterThread;
+        private bool _transmitCanceled;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -423,6 +424,7 @@ namespace BmwDeepObd
 
         private void EdiabasInit()
         {
+            _transmitCanceled = false;
             if (_ediabas == null)
             {
                 _ediabas = new EdiabasNet
@@ -435,6 +437,7 @@ namespace BmwDeepObd
 
         private bool InterfacePrepare()
         {
+            _transmitCanceled = false;
             if (!_ediabas.EdInterfaceClass.Connected)
             {
                 if (!_ediabas.EdInterfaceClass.InterfaceConnect())
@@ -446,6 +449,7 @@ namespace BmwDeepObd
                 _ediabas.EdInterfaceClass.CommAnswerLen =
                     new Int16[] {0x0000, 0x0000};
             }
+
             return true;
         }
 
@@ -807,7 +811,12 @@ namespace BmwDeepObd
 
             CustomProgressDialog progress = new CustomProgressDialog(this);
             progress.SetMessage(GetString(Resource.String.can_adapter_processing));
-            progress.ButtonAbort.Visibility = ViewStates.Gone;
+            progress.ButtonAbort.Visibility = ViewStates.Visible;
+            progress.AbortClick = sender =>
+            {
+                _transmitCanceled = true;
+                _ediabas.EdInterfaceClass.TransmitCancel();
+            };
             progress.Show();
 
             _adapterThread = new Thread(() =>
@@ -1114,7 +1123,12 @@ namespace BmwDeepObd
 
             CustomProgressDialog progress = new CustomProgressDialog(this);
             progress.SetMessage(GetString(Resource.String.can_adapter_processing));
-            progress.ButtonAbort.Visibility = ViewStates.Gone;
+            progress.ButtonAbort.Visibility = ViewStates.Visible;
+            progress.AbortClick = sender =>
+            {
+                _transmitCanceled = true;
+                _ediabas.EdInterfaceClass.TransmitCancel();
+            };
             progress.Show();
 
             _adapterThread = new Thread(() =>
@@ -1575,19 +1589,31 @@ namespace BmwDeepObd
 
         private int AdapterCommand(byte command, byte data = 0x00)
         {
+            if (_transmitCanceled)
+            {
+                return -1;
+            }
+
             if (!_ediabas.EdInterfaceClass.TransmitData(new byte[] { 0x82, 0xF1, 0xF1, command, data }, out byte[] response))
             {
                 return -1;
             }
+
             if ((response.Length != 6) || (response[3] != command))
             {
                 return -1;
             }
+
             return response[4];
         }
 
         private byte[] AdapterCommandCustom(byte command, byte[] data)
         {
+            if (_transmitCanceled)
+            {
+                return null;
+            }
+
             byte[] request = new byte[4 + data.Length];
             request[0] = (byte) (0x81 + data.Length);
             request[1] = 0xF1;
@@ -1599,10 +1625,12 @@ namespace BmwDeepObd
             {
                 return null;
             }
+
             if ((response.Length < 5) || (response[3] != command))
             {
                 return null;
             }
+
             byte[] result = new byte[response.Length - 5];
             Array.Copy(response, 4, result, 0, result.Length);
             return result;
@@ -1610,14 +1638,21 @@ namespace BmwDeepObd
 
         private bool AdapterCommandStd(byte command)
         {
+            if (_transmitCanceled)
+            {
+                return false;
+            }
+
             if (!_ediabas.EdInterfaceClass.TransmitData(new byte[] { 0x81, 0x00, 0x00, command }, out byte[] response))
             {
                 return false;
             }
+
             if ((response.Length != 5) || (response[3] != (byte)(~command)))
             {
                 return false;
             }
+
             return true;
         }
     }
