@@ -1057,14 +1057,20 @@ namespace BmwDeepObd
 
                                     try
                                     {
-                                        bluetoothSocket.Connect();
+                                        if (!bluetoothSocket.IsConnected)
+                                        {
+                                            bluetoothSocket.Connect();
+                                        }
                                     }
                                     catch (Exception)
                                     {
                                         // sometimes the second connect is working
                                         if (!aborted)
                                         {
-                                            bluetoothSocket.Connect();
+                                            if (!bluetoothSocket.IsConnected)
+                                            {
+                                                bluetoothSocket.Connect();
+                                            }
                                         }
                                     }
 
@@ -1107,7 +1113,10 @@ namespace BmwDeepObd
                                                 progressLocal.ButtonAbort.Enabled = true;
                                             });
 
-                                            bluetoothSocket.Connect();
+                                            if (!bluetoothSocket.IsConnected)
+                                            {
+                                                bluetoothSocket.Connect();
+                                            }
 
                                             RunOnUiThread(() =>
                                             {
@@ -1197,7 +1206,11 @@ namespace BmwDeepObd
                                         progressLocal.ButtonAbort.Enabled = true;
                                     });
 
-                                    bluetoothSocket.Connect();
+                                    if (!bluetoothSocket.IsConnected)
+                                    {
+                                        bluetoothSocket.Connect();
+                                    }
+
                                     if (aborted)
                                     {
                                         throw new Exception("Aborted");
