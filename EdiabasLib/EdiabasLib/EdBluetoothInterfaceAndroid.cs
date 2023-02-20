@@ -55,7 +55,6 @@ namespace EdiabasLib
         private static EdElmInterface _edElmInterface;
         private static readonly AutoResetEvent ConnectedEvent = new AutoResetEvent(false);
         private static string _connectDeviceAddress = string.Empty;
-        private static bool _deviceConnected;
 
         public static EdiabasNet Ediabas
         {
@@ -268,7 +267,7 @@ namespace EdiabasLib
                         {
                             Thread.Sleep(BtConnectDelay);
                         }
-                        CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device connected: {0}", _deviceConnected);
+                        CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device connected: {0}", _bluetoothSocket.IsConnected);
                     }
                 }
                 finally
@@ -302,12 +301,17 @@ namespace EdiabasLib
                             }
                             _edElmInterface.Dispose();
                             _bluetoothSocket.Close();
-                            _bluetoothSocket.Connect();
+                            if (!BluetoothConnect(_bluetoothSocket))
+                            {
+                                throw new Exception("Bt connect failed");
+                            }
+
                             if (ConnectedEvent.WaitOne(connectTimeout, false))
                             {
                                 Thread.Sleep(BtConnectDelay);
                             }
-                            CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device connected: {0}", _deviceConnected);
+
+                            CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device connected: {0}", _bluetoothSocket.IsConnected);
 
                             _bluetoothInStream = _bluetoothSocket.InputStream;
                             _bluetoothOutStream = _bluetoothSocket.OutputStream;
@@ -360,7 +364,7 @@ namespace EdiabasLib
                                 {
                                     Thread.Sleep(BtConnectDelay);
                                 }
-                                CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device connected: {0}", _deviceConnected);
+                                CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device connected: {0}", _bluetoothSocket.IsConnected);
 
                                 _bluetoothInStream = new EscapeStreamReader(_bluetoothSocket.InputStream);
                                 _bluetoothOutStream = new EscapeStreamWriter(_bluetoothSocket.OutputStream);
@@ -809,7 +813,10 @@ namespace EdiabasLib
             {
                 try
                 {
-                    bluetoothSocket.Connect();
+                    if (!bluetoothSocket.IsConnected)
+                    {
+                        bluetoothSocket.Connect();
+                    }
                     connectOk = true;
                 }
                 catch (Exception)
@@ -863,7 +870,6 @@ namespace EdiabasLib
                                             string.Compare(device.Address, _connectDeviceAddress, StringComparison.OrdinalIgnoreCase) == 0)
                                     {
                                         bool connected = action == BluetoothDevice.ActionAclConnected;
-                                        _deviceConnected = connected;
                                         if (connected)
                                         {
                                             ConnectedEvent.Set();

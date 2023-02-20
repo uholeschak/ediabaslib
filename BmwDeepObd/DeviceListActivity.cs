@@ -106,7 +106,6 @@ namespace BmwDeepObd
         private string _appDataDir;
         private readonly AutoResetEvent _connectedEvent = new AutoResetEvent(false);
         private volatile string _connectDeviceAddress = string.Empty;
-        private volatile bool _deviceConnected;
         private bool _btPermissionRequested;
         private bool _btPermissionGranted;
 
@@ -947,7 +946,6 @@ namespace BmwDeepObd
             progress.Show();
 
             _adapterTypeDetect.SbLog.Clear();
-            _deviceConnected = false;
 
             LogString("Device address: " + deviceAddress);
             LogString("Device name: " + deviceName);
@@ -1093,7 +1091,8 @@ namespace BmwDeepObd
                                     {
                                         Thread.Sleep(EdBluetoothInterface.BtConnectDelay);
                                     }
-                                    LogString(_deviceConnected ? "Bt device is connected" : "Bt device is not connected");
+
+                                    LogString(bluetoothSocket.IsConnected ? "Bt device is connected" : "Bt device is not connected");
                                     adapterType = _adapterTypeDetect.AdapterTypeDetection(bluetoothSocket.InputStream, bluetoothSocket.OutputStream);
                                     if (mtcBtService && adapterType == AdapterTypeDetect.AdapterType.Unknown)
                                     {
@@ -1138,7 +1137,7 @@ namespace BmwDeepObd
                                                 Thread.Sleep(EdBluetoothInterface.BtConnectDelay);
                                             }
 
-                                            LogString(_deviceConnected ? "Bt device is connected" : "Bt device is not connected");
+                                            LogString(bluetoothSocket.IsConnected ? "Bt device is connected" : "Bt device is not connected");
                                             adapterType = _adapterTypeDetect.AdapterTypeDetection(bluetoothSocket.InputStream, bluetoothSocket.OutputStream);
                                             if (adapterType != AdapterTypeDetect.AdapterType.Unknown &&
                                                 adapterType != AdapterTypeDetect.AdapterType.ConnectionFailed)
@@ -1231,7 +1230,7 @@ namespace BmwDeepObd
                                         Thread.Sleep(EdBluetoothInterface.BtConnectDelay);
                                     }
 
-                                    LogString(_deviceConnected ? "Bt device is connected" : "Bt device is not connected");
+                                    LogString(bluetoothSocket.IsConnected ? "Bt device is connected" : "Bt device is not connected");
                                     adapterType = _adapterTypeDetect.AdapterTypeDetection(bluetoothSocket.InputStream, bluetoothSocket.OutputStream);
                                 }
                             }
@@ -2024,7 +2023,6 @@ namespace BmwDeepObd
                                         string.Compare(device.Address, _chat._connectDeviceAddress, StringComparison.OrdinalIgnoreCase) == 0)
                                 {
                                     bool connected = action == BluetoothDevice.ActionAclConnected;
-                                    _chat._deviceConnected = connected;
                                     if (connected)
                                     {
                                         _chat._connectedEvent.Set();
