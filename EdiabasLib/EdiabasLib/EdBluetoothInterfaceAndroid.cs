@@ -49,6 +49,7 @@ namespace EdiabasLib
         private static BluetoothSocket _bluetoothSocket;
         private static Stream _bluetoothInStream;
         private static Stream _bluetoothOutStream;
+        private static bool _transmitCancel = false;
         private static bool _elm327Device;
         private static string _connectPort;
         private static ConnectParameterType _connectParameter;
@@ -90,6 +91,7 @@ namespace EdiabasLib
                 return false;
             }
 
+            _transmitCancel = false;
             _elm327Device = false;
             _connectPort = port;
             _connectParameter = parameter as ConnectParameterType;
@@ -445,7 +447,16 @@ namespace EdiabasLib
                 _btLeGattSpp.Dispose();
                 _btLeGattSpp = null;
             }
+
+            _transmitCancel = false;
             return result;
+        }
+
+        public static bool InterfaceTransmitCancel()
+        {
+            _transmitCancel = true;
+            CustomAdapter.ReconnectRequired = true;
+            return true;
         }
 
         public static EdInterfaceObd.InterfaceErrorResult InterfaceSetConfig(EdInterfaceObd.Protocol protocol, int baudRate, int dataBits, EdInterfaceObd.SerialParity parity, bool allowBitBang)
@@ -808,6 +819,11 @@ namespace EdiabasLib
                 return false;
             }
 
+            if (_transmitCancel)
+            {
+                return false;
+            }
+
             bool connectOk = false;
             Thread connectThread = new Thread(() =>
             {
@@ -829,9 +845,33 @@ namespace EdiabasLib
             };
             connectThread.Start();
 
-            if (!connectThread.Join(timeout))
+            long startTime = Stopwatch.GetTimestamp();
+            bool abort = false;
+            for (;;)
             {
-                CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "BluetoothConnect timeout aborting");
+                if (connectThread.Join(100))
+                {
+                    break;
+                }
+
+                if ((Stopwatch.GetTimestamp() - startTime) > timeout * EdCustomAdapterCommon.TickResolMs)
+                {
+                    abort = true;
+                    CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "BluetoothConnect timeout aborting");
+                    break;
+                }
+
+                if (_transmitCancel)
+                {
+                    abort = true;
+                    CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "BluetoothConnect transmit cancel");
+                    break;
+                }
+            }
+
+            if (abort)
+            {
+                connectOk = false;
                 try
                 {
                     bluetoothSocket.Close();
@@ -840,11 +880,9 @@ namespace EdiabasLib
                 {
                     // ignored
                 }
-
-                connectThread.Join();
-                connectOk = false;
-                CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "BluetoothConnect thread finished");
             }
+
+            connectThread.Join();
 
             CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "BluetoothConnect Ok={0}", connectOk);
             return connectOk;
