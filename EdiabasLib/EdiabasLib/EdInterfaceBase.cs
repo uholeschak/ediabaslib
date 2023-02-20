@@ -164,6 +164,8 @@ namespace EdiabasLib
 
         public abstract bool RawData(byte[] sendData, out byte[] receiveData);
 
+        public abstract bool TransmitCancel();
+
         public virtual EdiabasNet Ediabas
         {
             get { return EdiabasProtected; }

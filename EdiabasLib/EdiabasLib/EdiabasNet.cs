@@ -4963,6 +4963,11 @@ namespace EdiabasLib
                     {
                         if (abortFunc())
                         {
+                            EdInterfaceBase edInterface = EdInterfaceClass;
+                            if (edInterface != null)
+                            {
+                                edInterface.TransmitCancel();
+                            }
                             throw new Exception("executeJob aborted");
                         }
                     }
