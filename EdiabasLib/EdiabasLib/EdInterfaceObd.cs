@@ -74,6 +74,7 @@ namespace EdiabasLib
 
         public delegate bool InterfaceConnectDelegate(string port, object parameter);
         public delegate bool InterfaceDisconnectDelegate();
+        public delegate bool InterfaceTransmitCancelDelegate();
         public delegate InterfaceErrorResult InterfaceSetConfigDelegate(Protocol protocol, int baudRate, int dataBits, SerialParity parity, bool allowBitBang);
         public delegate bool InterfaceSetDtrDelegate(bool dtr);
         public delegate bool InterfaceSetRtsDelegate(bool rts);
@@ -146,6 +147,8 @@ namespace EdiabasLib
         protected InterfaceConnectDelegate InterfaceConnectFuncInt;
         protected InterfaceDisconnectDelegate InterfaceDisconnectFuncProtected;
         protected InterfaceDisconnectDelegate InterfaceDisconnectFuncInt;
+        protected InterfaceTransmitCancelDelegate InterfaceTransmitCancelFuncProtected;
+        protected InterfaceTransmitCancelDelegate InterfaceTransmitCancelFuncInt;
         protected InterfaceSetConfigDelegate InterfaceSetConfigFuncProtected;
         protected InterfaceSetConfigDelegate InterfaceSetConfigFuncInt;
         protected InterfaceSetDtrDelegate InterfaceSetDtrFuncProtected;
@@ -1232,6 +1235,7 @@ namespace EdiabasLib
                 EdFtdiInterface.Ediabas = Ediabas;
                 InterfaceConnectFuncInt = EdFtdiInterface.InterfaceConnect;
                 InterfaceDisconnectFuncInt = EdFtdiInterface.InterfaceDisconnect;
+                InterfaceTransmitCancelFuncInt = null;
                 InterfaceSetConfigFuncInt = EdFtdiInterface.InterfaceSetConfig;
                 InterfaceSetDtrFuncInt = EdFtdiInterface.InterfaceSetDtr;
                 InterfaceSetRtsFuncInt = EdFtdiInterface.InterfaceSetRts;
@@ -1258,6 +1262,7 @@ namespace EdiabasLib
                 EdBluetoothInterface.Ediabas = Ediabas;
                 InterfaceConnectFuncInt = EdBluetoothInterface.InterfaceConnect;
                 InterfaceDisconnectFuncInt = EdBluetoothInterface.InterfaceDisconnect;
+                InterfaceTransmitCancelFuncInt = EdBluetoothInterface.InterfaceTransmitCancel;
                 InterfaceSetConfigFuncInt = EdBluetoothInterface.InterfaceSetConfig;
                 InterfaceSetDtrFuncInt = EdBluetoothInterface.InterfaceSetDtr;
                 InterfaceSetRtsFuncInt = EdBluetoothInterface.InterfaceSetRts;
@@ -1283,6 +1288,7 @@ namespace EdiabasLib
                 EdElmWifiInterface.Ediabas = Ediabas;
                 InterfaceConnectFuncInt = EdElmWifiInterface.InterfaceConnect;
                 InterfaceDisconnectFuncInt = EdElmWifiInterface.InterfaceDisconnect;
+                InterfaceTransmitCancelFuncInt = null;
                 InterfaceSetConfigFuncInt = EdElmWifiInterface.InterfaceSetConfig;
                 InterfaceSetDtrFuncInt = EdElmWifiInterface.InterfaceSetDtr;
                 InterfaceSetRtsFuncInt = EdElmWifiInterface.InterfaceSetRts;
@@ -1308,6 +1314,7 @@ namespace EdiabasLib
                 EdCustomWiFiInterface.Ediabas = Ediabas;
                 InterfaceConnectFuncInt = EdCustomWiFiInterface.InterfaceConnect;
                 InterfaceDisconnectFuncInt = EdCustomWiFiInterface.InterfaceDisconnect;
+                InterfaceTransmitCancelFuncInt = null;
                 InterfaceSetConfigFuncInt = EdCustomWiFiInterface.InterfaceSetConfig;
                 InterfaceSetDtrFuncInt = EdCustomWiFiInterface.InterfaceSetDtr;
                 InterfaceSetRtsFuncInt = EdCustomWiFiInterface.InterfaceSetRts;
@@ -1333,6 +1340,7 @@ namespace EdiabasLib
             {
                 InterfaceConnectFuncInt = null;
                 InterfaceDisconnectFuncInt = null;
+                InterfaceTransmitCancelFuncInt = null;
                 InterfaceSetConfigFuncInt = null;
                 InterfaceSetDtrFuncInt = null;
                 InterfaceSetRtsFuncInt = null;
@@ -1885,6 +1893,12 @@ namespace EdiabasLib
 
         public override bool TransmitCancel()
         {
+            InterfaceTransmitCancelDelegate transmitCancelFunc = InterfaceTransmitCancelFuncUse;
+            if (transmitCancelFunc != null)
+            {
+                transmitCancelFunc();
+            }
+
             return true;
         }
 
@@ -1987,6 +2001,27 @@ namespace EdiabasLib
             get
             {
                 return InterfaceDisconnectFuncProtected ?? InterfaceDisconnectFuncInt;
+            }
+        }
+
+        public InterfaceTransmitCancelDelegate InterfaceTransmitCancelFunc
+        {
+            get
+            {
+                return InterfaceTransmitCancelFuncProtected;
+            }
+            set
+            {
+                InterfaceTransmitCancelFuncProtected = value;
+                UpdateUseExtInterfaceFunc();
+            }
+        }
+
+        protected InterfaceTransmitCancelDelegate InterfaceTransmitCancelFuncUse
+        {
+            get
+            {
+                return InterfaceTransmitCancelFuncProtected ?? InterfaceTransmitCancelFuncInt;
             }
         }
 
@@ -2434,6 +2469,7 @@ namespace EdiabasLib
         protected void UpdateUseExtInterfaceFunc()
         {
             // these funtions are optional:
+            // InterfaceTransmitCancelFuncUse
             // InterfaceSetInterByteTimeFuncUse, InterfaceSetCanIdsFuncUse,
             // InterfaceAdapterEchoFuncUse,
             // InterfaceHasPreciseTimeoutFuncUse, InterfaceHasAutoBaudRateFuncUse,
