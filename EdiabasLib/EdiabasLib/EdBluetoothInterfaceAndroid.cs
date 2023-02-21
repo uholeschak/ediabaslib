@@ -746,6 +746,11 @@ namespace EdiabasLib
 
         private static bool ReceiveData(byte[] buffer, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog = null)
         {
+            if (_transmitCancel)
+            {
+                return false;
+            }
+
             int recLen = 0;
             long startTime = Stopwatch.GetTimestamp();
             while (recLen < length)
@@ -767,6 +772,11 @@ namespace EdiabasLib
                 if (recLen >= length)
                 {
                     break;
+                }
+
+                if (_transmitCancel)
+                {
+                    return false;
                 }
 
                 if (!dataReceived && (Stopwatch.GetTimestamp() - startTime) > currTimeout * EdCustomAdapterCommon.TickResolMs)
