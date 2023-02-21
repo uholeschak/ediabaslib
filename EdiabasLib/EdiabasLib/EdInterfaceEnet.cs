@@ -219,6 +219,7 @@ namespace EdiabasLib
             public TcpClient TcpControlClient;
             public NetworkStream TcpControlStream;
             public Timer TcpControlTimer;
+            public volatile bool TransmitCancel;
             public bool TcpControlTimerEnabled;
             public object TcpDiagStreamSendLock;
             public object TcpDiagStreamRecLock;
@@ -826,7 +827,8 @@ namespace EdiabasLib
                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting to: {0}:{1}", SharedDataActive.EnetHostConn.IpAddress, diagPort);
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
-                    SharedDataActive.TcpDiagClient = new TcpClientWithTimeout(SharedDataActive.EnetHostConn.IpAddress, diagPort, ConnectTimeout, true).Connect();
+                    SharedDataActive.TcpDiagClient = new TcpClientWithTimeout(SharedDataActive.EnetHostConn.IpAddress, diagPort, ConnectTimeout, true).
+                        Connect(() => SharedDataActive.TransmitCancel);
                 }, SharedDataActive.EnetHostConn.IpAddress, SharedDataActive.NetworkData);
 
                 SharedDataActive.TcpDiagClient.SendBufferSize = TcpSendBufferSize;
@@ -1052,6 +1054,7 @@ namespace EdiabasLib
 
         public override bool TransmitCancel(bool cancel)
         {
+            SharedDataActive.TransmitCancel = cancel;
             return true;
         }
 
@@ -1836,7 +1839,8 @@ namespace EdiabasLib
                 }
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
-                    SharedDataActive.TcpControlClient = SharedDataActive.TcpDiagClient = new TcpClientWithTimeout(SharedDataActive.EnetHostConn.IpAddress, controlPort, ConnectTimeout, true).Connect();
+                    SharedDataActive.TcpControlClient = SharedDataActive.TcpDiagClient = new TcpClientWithTimeout(SharedDataActive.EnetHostConn.IpAddress, controlPort, ConnectTimeout, true).
+                        Connect(() => SharedDataActive.TransmitCancel);
                 }, SharedDataActive.EnetHostConn.IpAddress, SharedDataActive.NetworkData);
 
                 SharedDataActive.TcpControlClient.SendBufferSize = TcpSendBufferSize;
