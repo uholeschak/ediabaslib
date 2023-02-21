@@ -330,6 +330,11 @@ namespace EdiabasLib
             return result;
         }
 
+        public static bool InterfaceTransmitCancel(bool cancel)
+        {
+            return true;
+        }
+
         public static EdInterfaceObd.InterfaceErrorResult InterfaceSetConfig(EdInterfaceObd.Protocol protocol, int baudRate, int dataBits, EdInterfaceObd.SerialParity parity, bool allowBitBang)
         {
             if (TcpStream == null)
