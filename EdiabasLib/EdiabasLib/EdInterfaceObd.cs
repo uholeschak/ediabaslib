@@ -1235,7 +1235,7 @@ namespace EdiabasLib
                 EdFtdiInterface.Ediabas = Ediabas;
                 InterfaceConnectFuncInt = EdFtdiInterface.InterfaceConnect;
                 InterfaceDisconnectFuncInt = EdFtdiInterface.InterfaceDisconnect;
-                InterfaceTransmitCancelFuncInt = null;
+                InterfaceTransmitCancelFuncInt = EdFtdiInterface.InterfaceTransmitCancel;
                 InterfaceSetConfigFuncInt = EdFtdiInterface.InterfaceSetConfig;
                 InterfaceSetDtrFuncInt = EdFtdiInterface.InterfaceSetDtr;
                 InterfaceSetRtsFuncInt = EdFtdiInterface.InterfaceSetRts;
@@ -1288,7 +1288,7 @@ namespace EdiabasLib
                 EdElmWifiInterface.Ediabas = Ediabas;
                 InterfaceConnectFuncInt = EdElmWifiInterface.InterfaceConnect;
                 InterfaceDisconnectFuncInt = EdElmWifiInterface.InterfaceDisconnect;
-                InterfaceTransmitCancelFuncInt = null;
+                InterfaceTransmitCancelFuncInt = EdElmWifiInterface.InterfaceTransmitCancel;
                 InterfaceSetConfigFuncInt = EdElmWifiInterface.InterfaceSetConfig;
                 InterfaceSetDtrFuncInt = EdElmWifiInterface.InterfaceSetDtr;
                 InterfaceSetRtsFuncInt = EdElmWifiInterface.InterfaceSetRts;
@@ -1314,7 +1314,7 @@ namespace EdiabasLib
                 EdCustomWiFiInterface.Ediabas = Ediabas;
                 InterfaceConnectFuncInt = EdCustomWiFiInterface.InterfaceConnect;
                 InterfaceDisconnectFuncInt = EdCustomWiFiInterface.InterfaceDisconnect;
-                InterfaceTransmitCancelFuncInt = null;
+                InterfaceTransmitCancelFuncInt = EdCustomWiFiInterface.InterfaceTransmitCancel;
                 InterfaceSetConfigFuncInt = EdCustomWiFiInterface.InterfaceSetConfig;
                 InterfaceSetDtrFuncInt = EdCustomWiFiInterface.InterfaceSetDtr;
                 InterfaceSetRtsFuncInt = EdCustomWiFiInterface.InterfaceSetRts;
