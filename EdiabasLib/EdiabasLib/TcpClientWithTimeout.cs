@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
 
 namespace EdiabasLib
 {
@@ -15,6 +14,7 @@ namespace EdiabasLib
     public class TcpClientWithTimeout
     {
         public delegate void ExecuteNetworkDelegate();
+        public delegate bool ConnectAbortDelegate();
 
         private readonly IPAddress _host;
         private readonly int _port;
@@ -25,6 +25,8 @@ namespace EdiabasLib
 #if WindowsCE
         private bool _connected;
         private Exception _exception;
+#else
+        public static readonly long TickResolMs = System.Diagnostics.Stopwatch.Frequency / 1000;
 #endif
 
 #if __ANDROID__
@@ -65,7 +67,7 @@ namespace EdiabasLib
             _sendBufferSize = sendBufferSize;
         }
 
-        public TcpClient Connect()
+        public TcpClient Connect(ConnectAbortDelegate abortHandler = null)
         {
             _connection = new TcpClient();
             if (_noDelay.HasValue)
@@ -79,9 +81,33 @@ namespace EdiabasLib
 
 #if !WindowsCE
             System.Threading.Tasks.Task connectTask = _connection.ConnectAsync(_host, _port);
-            if (!connectTask.Wait(_timeoutMilliseconds))
+            if (abortHandler != null)
             {
-                throw new TimeoutException("Connect timeout");
+                long startTime = System.Diagnostics.Stopwatch.GetTimestamp();
+                for (; ; )
+                {
+                    if (connectTask.Wait(100))
+                    {
+                        break;
+                    }
+
+                    if (abortHandler())
+                    {
+                        throw new TimeoutException("Aborted");
+                    }
+
+                    if (System.Diagnostics.Stopwatch.GetTimestamp() - startTime > _timeoutMilliseconds * TickResolMs)
+                    {
+                        throw new TimeoutException("Connect timeout");
+                    }
+                }
+            }
+            else
+            {
+                if (!connectTask.Wait(_timeoutMilliseconds))
+                {
+                    throw new TimeoutException("Connect timeout");
+                }
             }
 
             return _connection;
