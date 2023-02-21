@@ -27,6 +27,7 @@ namespace EdiabasLib
         protected static TcpClient TcpElmClient;
         protected static NetworkStream TcpElmStream;
         protected static int ConnectTimeout = 5000;
+        protected static volatile bool TransmitCancel;
         protected static string ConnectPort;
         protected static object ConnectParameter;
         protected static object NetworkData;
@@ -48,6 +49,7 @@ namespace EdiabasLib
             }
             try
             {
+                TransmitCancel = false;
                 ConnectPort = port;
                 ConnectParameter = parameter;
                 NetworkData = null;
@@ -96,7 +98,7 @@ namespace EdiabasLib
                 IPAddress hostIpAddress = IPAddress.Parse(adapterIp);
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
-                    TcpElmClient = new TcpClientWithTimeout(hostIpAddress, adapterPort, ConnectTimeout, true).Connect();
+                    TcpElmClient = new TcpClientWithTimeout(hostIpAddress, adapterPort, ConnectTimeout, true).Connect(() => TransmitCancel);
                 }, hostIpAddress, NetworkData);
                 TcpElmStream = TcpElmClient.GetStream();
                 _edElmInterface = new EdElmInterface(Ediabas, TcpElmStream, TcpElmStream);
@@ -155,6 +157,7 @@ namespace EdiabasLib
 
         public static bool InterfaceTransmitCancel(bool cancel)
         {
+            TransmitCancel = cancel;
             return true;
         }
 
