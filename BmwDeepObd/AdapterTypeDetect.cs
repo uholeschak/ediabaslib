@@ -949,6 +949,9 @@ public class AdapterTypeDetect
         }
         if (response == null)
         {
+#if DEBUG
+            Android.Util.Log.Info(Tag, "No ELM prompt");
+#endif
             LogString("*** No ELM prompt");
         }
         else
