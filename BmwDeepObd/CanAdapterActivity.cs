@@ -424,7 +424,6 @@ namespace BmwDeepObd
 
         private void EdiabasInit()
         {
-            _transmitCanceled = false;
             if (_ediabas == null)
             {
                 _ediabas = new EdiabasNet
@@ -433,11 +432,13 @@ namespace BmwDeepObd
                 };
                 _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress);
             }
+
+            _transmitCanceled = false;
+            _ediabas.EdInterfaceClass.TransmitCancel(false);
         }
 
         private bool InterfacePrepare()
         {
-            _transmitCanceled = false;
             if (!_ediabas.EdInterfaceClass.Connected)
             {
                 if (!_ediabas.EdInterfaceClass.InterfaceConnect())
@@ -450,6 +451,8 @@ namespace BmwDeepObd
                     new Int16[] {0x0000, 0x0000};
             }
 
+            _transmitCanceled = false;
+            _ediabas.EdInterfaceClass.TransmitCancel(false);
             return true;
         }
 
@@ -815,7 +818,7 @@ namespace BmwDeepObd
             progress.AbortClick = sender =>
             {
                 _transmitCanceled = true;
-                _ediabas.EdInterfaceClass.TransmitCancel();
+                _ediabas.EdInterfaceClass.TransmitCancel(true);
             };
             progress.Show();
 
@@ -1127,7 +1130,7 @@ namespace BmwDeepObd
             progress.AbortClick = sender =>
             {
                 _transmitCanceled = true;
-                _ediabas.EdInterfaceClass.TransmitCancel();
+                _ediabas.EdInterfaceClass.TransmitCancel(true);
             };
             progress.Show();
 

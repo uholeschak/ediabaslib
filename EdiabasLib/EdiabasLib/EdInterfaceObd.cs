@@ -74,7 +74,7 @@ namespace EdiabasLib
 
         public delegate bool InterfaceConnectDelegate(string port, object parameter);
         public delegate bool InterfaceDisconnectDelegate();
-        public delegate bool InterfaceTransmitCancelDelegate();
+        public delegate bool InterfaceTransmitCancelDelegate(bool cancel);
         public delegate InterfaceErrorResult InterfaceSetConfigDelegate(Protocol protocol, int baudRate, int dataBits, SerialParity parity, bool allowBitBang);
         public delegate bool InterfaceSetDtrDelegate(bool dtr);
         public delegate bool InterfaceSetRtsDelegate(bool rts);
@@ -1891,12 +1891,12 @@ namespace EdiabasLib
             return true;
         }
 
-        public override bool TransmitCancel()
+        public override bool TransmitCancel(bool cancel)
         {
             InterfaceTransmitCancelDelegate transmitCancelFunc = InterfaceTransmitCancelFuncUse;
             if (transmitCancelFunc != null)
             {
-                transmitCancelFunc();
+                transmitCancelFunc(cancel);
             }
 
             return true;

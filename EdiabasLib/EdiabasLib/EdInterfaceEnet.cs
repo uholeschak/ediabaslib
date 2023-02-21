@@ -1050,7 +1050,7 @@ namespace EdiabasLib
             return true;
         }
 
-        public override bool TransmitCancel()
+        public override bool TransmitCancel(bool cancel)
         {
             return true;
         }

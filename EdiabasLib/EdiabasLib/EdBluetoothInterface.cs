@@ -243,7 +243,7 @@ namespace EdiabasLib
             return result;
         }
 
-        public static bool InterfaceTransmitCancel()
+        public static bool InterfaceTransmitCancel(bool cancel)
         {
             return true;
         }
