@@ -448,7 +448,6 @@ namespace EdiabasLib
                 _btLeGattSpp = null;
             }
 
-            _transmitCancel = false;
             return result;
         }
 
