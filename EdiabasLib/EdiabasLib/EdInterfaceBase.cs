@@ -164,7 +164,7 @@ namespace EdiabasLib
 
         public abstract bool RawData(byte[] sendData, out byte[] receiveData);
 
-        public abstract bool TransmitCancel();
+        public abstract bool TransmitCancel(bool cancel);
 
         public virtual EdiabasNet Ediabas
         {

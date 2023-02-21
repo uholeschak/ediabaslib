@@ -4896,6 +4896,12 @@ namespace EdiabasLib
                 ExecuteInitJob();
             }
 
+            EdInterfaceBase edInterface = EdInterfaceClass;
+            if (edInterface != null)
+            {
+                edInterface.TransmitCancel(false);
+            }
+
             byte[] buffer = new byte[2];
 
             _resultSetsTemp = new List<Dictionary<string, ResultData>>();
@@ -4963,10 +4969,9 @@ namespace EdiabasLib
                     {
                         if (abortFunc())
                         {
-                            EdInterfaceBase edInterface = EdInterfaceClass;
                             if (edInterface != null)
                             {
-                                edInterface.TransmitCancel();
+                                edInterface.TransmitCancel(true);
                             }
                             throw new Exception("executeJob aborted");
                         }

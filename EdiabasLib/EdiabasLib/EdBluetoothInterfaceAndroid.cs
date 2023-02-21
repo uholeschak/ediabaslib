@@ -49,7 +49,7 @@ namespace EdiabasLib
         private static BluetoothSocket _bluetoothSocket;
         private static Stream _bluetoothInStream;
         private static Stream _bluetoothOutStream;
-        private static bool _transmitCancel = false;
+        private static volatile bool _transmitCancel;
         private static bool _elm327Device;
         private static string _connectPort;
         private static ConnectParameterType _connectParameter;
@@ -452,10 +452,9 @@ namespace EdiabasLib
             return result;
         }
 
-        public static bool InterfaceTransmitCancel()
+        public static bool InterfaceTransmitCancel(bool cancel)
         {
-            _transmitCancel = true;
-            CustomAdapter.ReconnectRequired = true;
+            _transmitCancel = cancel;
             return true;
         }
 
