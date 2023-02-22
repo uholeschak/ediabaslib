@@ -841,16 +841,14 @@ namespace EdiabasLib
                     {
                         bluetoothSocket.Connect();
                     }
+
                     connectOk = true;
                 }
                 catch (Exception)
                 {
                     connectOk = false;
                 }
-            })
-            {
-                Priority = ThreadPriority.Highest
-            };
+            });
             connectThread.Start();
 
             long startTime = Stopwatch.GetTimestamp();
