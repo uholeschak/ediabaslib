@@ -436,7 +436,10 @@ namespace BmwDeepObd
                 _detectVehicleBmw = null;
                 InitProperties(null);
                 _ruleEvalBmw.SetEvalProperties(null, null);
-                _workerThread = new Thread(ThreadFunc);
+                _workerThread = new Thread(ThreadFunc)
+                {
+                    Priority = ThreadPriority.Normal
+                };
                 _threadRunning = true;
                 _workerThread.Start();
                 SendActionBroadcast("connect");
