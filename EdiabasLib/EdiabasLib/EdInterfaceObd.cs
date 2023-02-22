@@ -2548,7 +2548,7 @@ namespace EdiabasLib
                 CommThreadResCount = 0;
                 CommThread = new Thread(CommThreadFunc)
                 {
-                    Priority = ThreadPriority.Highest
+                    Priority = ThreadPriority.Normal
                 };
                 CommThread.Start();
             }
