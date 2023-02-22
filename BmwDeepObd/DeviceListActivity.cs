@@ -1595,7 +1595,7 @@ namespace BmwDeepObd
                 });
             })
             {
-                Priority = System.Threading.ThreadPriority.Highest
+                Priority = System.Threading.ThreadPriority.Normal
             };
             detectThread.Start();
         }

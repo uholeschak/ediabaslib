@@ -338,7 +338,7 @@ public class CheckAdapter : IDisposable
             });
         })
         {
-            Priority = System.Threading.ThreadPriority.Highest
+            Priority = ThreadPriority.Normal
         };
         _adapterThread.Start();
 
