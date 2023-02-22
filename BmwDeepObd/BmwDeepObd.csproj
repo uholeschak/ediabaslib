@@ -49,6 +49,8 @@
     <AndroidDexTool>d8</AndroidDexTool>
     <AndroidLinkTool>r8</AndroidLinkTool>
     <AndroidUseAapt2>true</AndroidUseAapt2>
+    <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
+    <AndroidTlsProvider>btls</AndroidTlsProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
@@ -74,9 +76,10 @@
     <AndroidEnableProfiledAot>true</AndroidEnableProfiledAot>
     <AndroidDexTool>d8</AndroidDexTool>
     <AndroidPackageFormat>apk</AndroidPackageFormat>
-    <AndroidHttpClientHandlerType>System.Net.Http.HttpClientHandler</AndroidHttpClientHandlerType>
+    <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
     <AndroidLinkTool>r8</AndroidLinkTool>
     <AndroidUseAapt2>true</AndroidUseAapt2>
+    <AndroidTlsProvider>btls</AndroidTlsProvider>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AndroidFlowLayout, Version=1.9.1.0, Culture=neutral, processorArchitecture=MSIL">
