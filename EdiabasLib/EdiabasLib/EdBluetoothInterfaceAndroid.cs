@@ -848,7 +848,10 @@ namespace EdiabasLib
                 {
                     connectOk = false;
                 }
-            });
+            })
+            {
+                Priority = ThreadPriority.Normal
+            };
             connectThread.Start();
 
             long startTime = Stopwatch.GetTimestamp();
