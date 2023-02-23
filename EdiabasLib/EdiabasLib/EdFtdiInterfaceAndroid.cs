@@ -43,6 +43,7 @@ namespace EdiabasLib
         private static bool _currentDtr;
         private static bool _currentRts;
         private static bool _reconnectRequired;
+        private static volatile bool _transmitCancel;
         private static string _connectPort;
         private static object _connectParameter;
 
@@ -75,6 +76,7 @@ namespace EdiabasLib
             }
             try
             {
+                _transmitCancel = false;
                 _connectPort = port;
                 _connectParameter = parameter;
 
@@ -231,6 +233,7 @@ namespace EdiabasLib
 
         public static bool InterfaceTransmitCancel(bool cancel)
         {
+            _transmitCancel = cancel;
             return true;
         }
 
@@ -502,22 +505,31 @@ namespace EdiabasLib
 
         private static bool ReadData(byte[] buffer, int offset, int length, int timeout)
         {
+            if (_transmitCancel)
+            {
+                return false;
+            }
+
             if (_usbPort == null)
             {
                 return false;
             }
+
             if ((_serialIoManager == null) || !_serialIoManager.IsStarted)
             {
                 return false;
             }
+
             if (buffer.Length < offset + length)
             {
                 return false;
             }
+
             if (length <= 0)
             {
                 return true;
             }
+
             try
             {
                 int recLen = 0;
@@ -536,7 +548,26 @@ namespace EdiabasLib
                         }
                         DataReceiveEvent.Reset();
                     }
-                    DataReceiveEvent.WaitOne(timeout, false);
+
+                    long startTime = Stopwatch.GetTimestamp();
+                    for (;;)
+                    {
+                        if (DataReceiveEvent.WaitOne(100, false))
+                        {
+                            break;
+                        }
+
+                        if (_transmitCancel)
+                        {
+                            return false;
+                        }
+
+                        if (Stopwatch.GetTimestamp() - startTime > timeout * EdCustomAdapterCommon.TickResolMs)
+                        {
+                            break;
+                        }
+                    }
+
                     lock (QueueLock)
                     {
                         if (ReadQueue.Count == 0)
