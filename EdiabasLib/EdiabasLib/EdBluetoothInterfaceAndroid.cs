@@ -265,10 +265,7 @@ namespace EdiabasLib
                             usedRfCommSocket = true;
                         }
 
-                        if (ConnectedEvent.WaitOne(connectTimeout, false))
-                        {
-                            Thread.Sleep(BtConnectDelay);
-                        }
+                        WaitForConnectEvent(connectTimeout);
                         CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device connected: {0}", _bluetoothSocket.IsConnected);
                     }
                 }
@@ -308,11 +305,7 @@ namespace EdiabasLib
                                 throw new Exception("Bt connect failed");
                             }
 
-                            if (ConnectedEvent.WaitOne(connectTimeout, false))
-                            {
-                                Thread.Sleep(BtConnectDelay);
-                            }
-
+                            WaitForConnectEvent(connectTimeout);
                             CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device connected: {0}", _bluetoothSocket.IsConnected);
 
                             _bluetoothInStream = _bluetoothSocket.InputStream;
@@ -362,10 +355,7 @@ namespace EdiabasLib
                                     throw new Exception("Bt connect failed");
                                 }
 
-                                if (ConnectedEvent.WaitOne(connectTimeout, false))
-                                {
-                                    Thread.Sleep(BtConnectDelay);
-                                }
+                                WaitForConnectEvent(connectTimeout);
                                 CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Device connected: {0}", _bluetoothSocket.IsConnected);
 
                                 _bluetoothInStream = new EscapeStreamReader(_bluetoothSocket.InputStream);
@@ -895,6 +885,36 @@ namespace EdiabasLib
 
             CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "BluetoothConnect Ok={0}", connectOk);
             return connectOk;
+        }
+
+        private static bool WaitForConnectEvent(int connectTimeout)
+        {
+            if (_transmitCancel)
+            {
+                throw new Exception("Canceled");
+            }
+
+            long startTime = Stopwatch.GetTimestamp();
+            for (;;)
+            {
+                if (!ConnectedEvent.WaitOne(100, false))
+                {
+                    break;
+                }
+
+                if (_transmitCancel)
+                {
+                    throw new Exception("Canceled");
+                }
+
+                if ((Stopwatch.GetTimestamp() - startTime) > connectTimeout * EdCustomAdapterCommon.TickResolMs)
+                {
+                    return false;
+                }
+            }
+
+            Thread.Sleep(BtConnectDelay);
+            return true;
         }
 
         private class Receiver : Android.Content.BroadcastReceiver
