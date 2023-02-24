@@ -2193,6 +2193,12 @@ namespace EdiabasLib
             {
                 return -1;
             }
+
+            if (SharedDataActive.TransmitCancel)
+            {
+                return -1;
+            }
+
             int recLen;
             try
             {
@@ -2205,13 +2211,29 @@ namespace EdiabasLib
                         SharedDataActive.TcpDiagStreamRecEvent.Reset();
                     }
                 }
+
                 if (recTels == 0)
                 {
-                    if (!SharedDataActive.TcpDiagStreamRecEvent.WaitOne(timeout, false))
+                    long startTime = Stopwatch.GetTimestamp();
+                    for (;;)
                     {
-                        return -1;
+                        if (SharedDataActive.TcpDiagStreamRecEvent.WaitOne(100, false))
+                        {
+                            break;
+                        }
+
+                        if (SharedDataActive.TransmitCancel)
+                        {
+                            return -1;
+                        }
+
+                        if (Stopwatch.GetTimestamp() - startTime > timeout * TickResolMs)
+                        {
+                            break;
+                        }
                     }
                 }
+
                 lock (SharedDataActive.TcpDiagStreamRecLock)
                 {
                     if (SharedDataActive.TcpDiagRecQueue.Count > 0)
