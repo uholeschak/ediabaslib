@@ -49,11 +49,11 @@ namespace EdiabasLib
         private static BluetoothSocket _bluetoothSocket;
         private static Stream _bluetoothInStream;
         private static Stream _bluetoothOutStream;
-        private static volatile bool _transmitCancel;
         private static bool _elm327Device;
         private static string _connectPort;
         private static ConnectParameterType _connectParameter;
         private static EdElmInterface _edElmInterface;
+        private static readonly ManualResetEvent TransmitCancelEvent = new ManualResetEvent(false);
         private static readonly AutoResetEvent ConnectedEvent = new AutoResetEvent(false);
         private static string _connectDeviceAddress = string.Empty;
 
@@ -91,7 +91,7 @@ namespace EdiabasLib
                 return false;
             }
 
-            _transmitCancel = false;
+            TransmitCancelEvent.Reset();
             _elm327Device = false;
             _connectPort = port;
             _connectParameter = parameter as ConnectParameterType;
@@ -443,7 +443,15 @@ namespace EdiabasLib
 
         public static bool InterfaceTransmitCancel(bool cancel)
         {
-            _transmitCancel = cancel;
+            if (cancel)
+            {
+                TransmitCancelEvent.Set();
+            }
+            else
+            {
+                TransmitCancelEvent.Reset();
+            }
+
             return true;
         }
 
@@ -735,7 +743,7 @@ namespace EdiabasLib
 
         private static bool ReceiveData(byte[] buffer, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog = null)
         {
-            if (_transmitCancel)
+            if (TransmitCancelEvent.WaitOne(0, false))
             {
                 return false;
             }
@@ -763,7 +771,7 @@ namespace EdiabasLib
                     break;
                 }
 
-                if (_transmitCancel)
+                if (TransmitCancelEvent.WaitOne(0, false))
                 {
                     return false;
                 }
@@ -817,7 +825,7 @@ namespace EdiabasLib
                 return false;
             }
 
-            if (_transmitCancel)
+            if (TransmitCancelEvent.WaitOne(0, false))
             {
                 return false;
             }
@@ -860,7 +868,7 @@ namespace EdiabasLib
                     break;
                 }
 
-                if (_transmitCancel)
+                if (TransmitCancelEvent.WaitOne(0, false))
                 {
                     abort = true;
                     CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "BluetoothConnect transmit cancel");
@@ -889,31 +897,23 @@ namespace EdiabasLib
 
         private static bool WaitForConnectEvent(int connectTimeout)
         {
-            if (_transmitCancel)
+            if (TransmitCancelEvent.WaitOne(0, false))
             {
                 throw new Exception("Canceled");
             }
 
-            long startTime = Stopwatch.GetTimestamp();
-            for (;;)
+            if (WaitHandle.WaitAny(new WaitHandle[] { ConnectedEvent, TransmitCancelEvent }, connectTimeout, false) == 0)
             {
-                if (!ConnectedEvent.WaitOne(100, false))
-                {
-                    break;
-                }
-
-                if (_transmitCancel)
+                Thread.Sleep(BtConnectDelay);
+            }
+            else
+            {
+                if (TransmitCancelEvent.WaitOne(0, false))
                 {
                     throw new Exception("Canceled");
                 }
-
-                if ((Stopwatch.GetTimestamp() - startTime) > connectTimeout * EdCustomAdapterCommon.TickResolMs)
-                {
-                    return false;
-                }
             }
 
-            Thread.Sleep(BtConnectDelay);
             return true;
         }
 
