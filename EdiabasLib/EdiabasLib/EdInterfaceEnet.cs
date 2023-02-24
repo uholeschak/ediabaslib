@@ -199,6 +199,7 @@ namespace EdiabasLib
             {
                 HttpAllocCancelToken = new CancellationTokenSource();
                 TcpDiagStreamRecEvent = new AutoResetEvent(false);
+                TransmitCancelEvent = new ManualResetEvent(false);
                 TcpDiagStreamSendLock = new object();
                 TcpDiagStreamRecLock = new object();
                 TcpControlTimer = new Timer(TcpControlTimeout, this, Timeout.Infinite, Timeout.Infinite);
@@ -216,10 +217,10 @@ namespace EdiabasLib
             public TcpClient TcpDiagClient;
             public NetworkStream TcpDiagStream;
             public AutoResetEvent TcpDiagStreamRecEvent;
+            public ManualResetEvent TransmitCancelEvent;
             public TcpClient TcpControlClient;
             public NetworkStream TcpControlStream;
             public Timer TcpControlTimer;
-            public volatile bool TransmitCancel;
             public bool TcpControlTimerEnabled;
             public object TcpDiagStreamSendLock;
             public object TcpDiagStreamRecLock;
@@ -824,11 +825,12 @@ namespace EdiabasLib
                     EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM finished");
                 }
 
+                SharedDataActive.TransmitCancelEvent.Reset();
                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting to: {0}:{1}", SharedDataActive.EnetHostConn.IpAddress, diagPort);
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
                     SharedDataActive.TcpDiagClient = new TcpClientWithTimeout(SharedDataActive.EnetHostConn.IpAddress, diagPort, ConnectTimeout, true).
-                        Connect(() => SharedDataActive.TransmitCancel);
+                        Connect(() => SharedDataActive.TransmitCancelEvent.WaitOne(0, false));
                 }, SharedDataActive.EnetHostConn.IpAddress, SharedDataActive.NetworkData);
 
                 SharedDataActive.TcpDiagClient.SendBufferSize = TcpSendBufferSize;
@@ -1054,7 +1056,14 @@ namespace EdiabasLib
 
         public override bool TransmitCancel(bool cancel)
         {
-            SharedDataActive.TransmitCancel = cancel;
+            if (cancel)
+            {
+                SharedDataActive.TransmitCancelEvent.Set();
+            }
+            else
+            {
+                SharedDataActive.TransmitCancelEvent.Reset();
+            }
             return true;
         }
 
@@ -1840,7 +1849,7 @@ namespace EdiabasLib
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
                     SharedDataActive.TcpControlClient = SharedDataActive.TcpDiagClient = new TcpClientWithTimeout(SharedDataActive.EnetHostConn.IpAddress, controlPort, ConnectTimeout, true).
-                        Connect(() => SharedDataActive.TransmitCancel);
+                        Connect(() => SharedDataActive.TransmitCancelEvent.WaitOne(0));
                 }, SharedDataActive.EnetHostConn.IpAddress, SharedDataActive.NetworkData);
 
                 SharedDataActive.TcpControlClient.SendBufferSize = TcpSendBufferSize;
@@ -2194,7 +2203,7 @@ namespace EdiabasLib
                 return -1;
             }
 
-            if (SharedDataActive.TransmitCancel)
+            if (SharedDataActive.TransmitCancelEvent.WaitOne(0, false))
             {
                 return -1;
             }
@@ -2214,23 +2223,9 @@ namespace EdiabasLib
 
                 if (recTels == 0)
                 {
-                    long startTime = Stopwatch.GetTimestamp();
-                    for (;;)
+                    if (WaitHandle.WaitAny(new WaitHandle[] { SharedDataActive.TcpDiagStreamRecEvent, SharedDataActive.TransmitCancelEvent }, timeout, false) != 0)
                     {
-                        if (SharedDataActive.TcpDiagStreamRecEvent.WaitOne(100, false))
-                        {
-                            break;
-                        }
-
-                        if (SharedDataActive.TransmitCancel)
-                        {
-                            return -1;
-                        }
-
-                        if (Stopwatch.GetTimestamp() - startTime > timeout * TickResolMs)
-                        {
-                            break;
-                        }
+                        return -1;
                     }
                 }
 
