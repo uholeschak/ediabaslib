@@ -249,7 +249,7 @@
   <string name="bt_not_enabled">Bluetooth ist nicht aktiviert</string>
   <string name="bt_mtc_service_error">Der Bluetooth Service ist verbunden, sendet aber keine Daten.\nEs wird ein eingeschränkter Modus verwendet, bitte koppeln Sie die Geräte über das Telefonmenü.</string>
   <string name="bt_mtc_antenna_info">Bei einigen Android Radios ist es zu empfehlen, das Antennenkabel des internen Bluetoothmoduls zu ersetzen und es aus dem Gehäuse herauszuführen.\nDas Antennenkabel sollte eine Länge von 15.5 cm haben. Bei Modulen ohne Kabel scheint eine Länge von 16.0 cm optimal zu sein.</string>
-  <string name="bt_mtc_module_error">Android Geräte mit Bluetooth Modul SD-GT936 scheinen Kommunikationsprobleme mit den OBD Adaptern zu haben.\nDie Verbindung wird warscheinlich nicht korrekt funtionieren.</string>
+  <string name="bt_mtc_module_error">Android Geräte mit Bluetooth Modul FSC-BW124 scheinen Kommunikationsprobleme mit den OBD Adaptern zu haben.\nDie Verbindung wird warscheinlich nicht korrekt funtionieren.</string>
   <string name="bt_mtc_module_escape_mode">Das Bluetooth Module {0} hat einen limitierten Kommunikationskanal und es muss ein besonderer Kommunikationsmodus verwendet werden.\nAus technischen Gründen werden nicht alle OBD Protokolle in diesem Modus unterstützt und es ist die aktuelle Adapter Firmware notwendig.</string>
   <string name="bt_mtc_module_pwd">Die aktuelle Bluetooth Pin {0} ist nicht der Defaultwert {1} für die Adapter.\nEntweder Sie ändern die Adapter Pin oder die aktuelle Bluetooth pin.\nWollen Sie aktuelle Pin auf {1} ändern?</string>
   <string name="bt_module_name">(Bluetooth Modul: {0})</string>

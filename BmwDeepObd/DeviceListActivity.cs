@@ -637,9 +637,9 @@ namespace BmwDeepObd
                     _activityCommon.ShowAlert(GetString(Resource.String.bt_mtc_antenna_info), Resource.String.alert_title_info);
                 }
 #endif
-#if false
+#if true
                 if (!_instanceData.MtcBtModuleErrorShown && !string.IsNullOrEmpty(_activityCommon.MtcBtModuleName) &&
-                    string.Compare(_activityCommon.MtcBtModuleName, "SD-GT936", StringComparison.OrdinalIgnoreCase) == 0)
+                    string.Compare(_activityCommon.MtcBtModuleName, "FSC-BW124", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     _instanceData.MtcBtModuleErrorShown = true;
                     _activityCommon.ShowAlert(GetString(Resource.String.bt_mtc_module_error), Resource.String.alert_title_warning);

@@ -248,7 +248,7 @@
   <string name="bt_not_enabled">Bluetooth не активирован</string>
   <string name="bt_mtc_service_error">Bluetooth подключён, но обмен данными отсутствует.\nИспользуется ограниченный режим. Пожалуйста, соедините устройства через меню телефона.</string>
   <string name="bt_mtc_antenna_info">Для некоторых Android-Радио рекомендуется заменить антенный кабель внутреннего модуля Bluetooth и вывести его из корпуса.\nАнтенный кабель должен иметь длину 15,5 см. Для модулей без кабелей - кажущаяся оптимальная длина составляет 16,0 см.</string>
-  <string name="bt_mtc_module_error">Устройства Android с модулем Bluetooth SD-GT936, похоже, имеют проблемы коммуникации с адаптерами OBD.\nСоединение, вероятно, не будет работать правильно.</string>  <string name="bt_module_name">(Модуль Bluetooth: {0})</string>
+  <string name="bt_mtc_module_error">Устройства Android с модулем Bluetooth FSC-BW124, похоже, имеют проблемы коммуникации с адаптерами OBD.\nСоединение, вероятно, не будет работать правильно.</string>  <string name="bt_module_name">(Модуль Bluetooth: {0})</string>
   <string name="bt_mtc_module_escape_mode">Bluetooth модуль {0} имеет ограниченный канал связи, поэтому необходимо использовать специальный режим связи.\nПо техническим причинам в этом режиме поддерживаются не все протоколы OBD, и требуется самая новая прошивка адаптера.</string>
   <string name="bt_mtc_module_pwd">Текущий пин для Bluetooth {0} не является значением для адаптера по умолчанию {1}.\nЛибо вы меняете пин адаптера, либо текущий пин для Bluetooth.\nВы хотите изменить текущий пин на {1}?</string>
   <string name="title_paired_devices">Авторизированные устройства</string>
