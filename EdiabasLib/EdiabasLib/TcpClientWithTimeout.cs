@@ -80,34 +80,50 @@ namespace EdiabasLib
             }
 
 #if !WindowsCE
-            System.Threading.Tasks.Task connectTask = _connection.ConnectAsync(_host, _port);
-            if (abortHandler != null)
+            System.Threading.CancellationTokenSource cts = new System.Threading.CancellationTokenSource();
+            System.Threading.Thread abortThread = new System.Threading.Thread(() =>
             {
-                long startTime = System.Diagnostics.Stopwatch.GetTimestamp();
-                for (; ; )
+                for (;;)
                 {
-                    if (connectTask.Wait(100))
+                    if (abortHandler != null && abortHandler.Invoke())
+                    {
+                        // ReSharper disable once AccessToDisposedClosure
+                        cts.Cancel();
+                        break;
+                    }
+
+                    // ReSharper disable once AccessToDisposedClosure
+                    if (cts.IsCancellationRequested)
                     {
                         break;
                     }
 
-                    if (abortHandler())
-                    {
-                        throw new TimeoutException("Aborted");
-                    }
+                    System.Threading.Thread.Sleep(100);
+                }
+            });
+            abortThread.Start();
 
-                    if (System.Diagnostics.Stopwatch.GetTimestamp() - startTime > _timeoutMilliseconds * TickResolMs)
+            try
+            {
+                System.Threading.Tasks.Task connectTask = _connection.ConnectAsync(_host, _port);
+                try
+                {
+                    if (!connectTask.Wait(_timeoutMilliseconds, cts.Token))
                     {
                         throw new TimeoutException("Connect timeout");
                     }
                 }
-            }
-            else
-            {
-                if (!connectTask.Wait(_timeoutMilliseconds))
+                catch (OperationCanceledException)
                 {
-                    throw new TimeoutException("Connect timeout");
+                    throw new TimeoutException("Cancelled");
                 }
+            }
+            finally
+            {
+                cts.Cancel();
+                abortThread.Join();
+
+                cts.Dispose();
             }
 
             return _connection;
