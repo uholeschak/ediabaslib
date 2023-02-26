@@ -130,7 +130,7 @@ namespace BmwDeepObd
         private EdiabasNet _ediabas;
         private volatile bool _ediabasJobAbort;
         private Thread _ediabasThread;
-        private AutoResetEvent _ediabasThreadWakeEvent = new AutoResetEvent(false);
+        private AutoResetEvent _ediabasThreadWakeEvent;
         private object _ediabasThreadLock = new object();
         private object _ediabasLock = new object();
         private object _requestLock = new object();
@@ -164,7 +164,8 @@ namespace BmwDeepObd
             SetContentView(Resource.Layout.bmw_coding);
 
             SetResult(Android.App.Result.Ok);
-
+            
+            _ediabasThreadWakeEvent = new AutoResetEvent(false);
             _activityCommon = new ActivityCommon(this, () =>
             {
                 if (_activityActive)
@@ -384,8 +385,17 @@ namespace BmwDeepObd
                 _infoHttpClient = null;
             }
 
-            _activityCommon?.Dispose();
-            _activityCommon = null;
+            if (_activityCommon != null)
+            {
+                _activityCommon.Dispose();
+                _activityCommon = null;
+            }
+
+            if (_ediabasThreadWakeEvent != null)
+            {
+                _ediabasThreadWakeEvent.Dispose();
+                _ediabasThreadWakeEvent = null;
+            }
         }
 
         public override void OnBackPressedEvent()
