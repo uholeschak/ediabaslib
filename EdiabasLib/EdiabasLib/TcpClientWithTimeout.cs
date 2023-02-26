@@ -81,6 +81,7 @@ namespace EdiabasLib
 
 #if !WindowsCE
             System.Threading.CancellationTokenSource cts = new System.Threading.CancellationTokenSource();
+            System.Threading.AutoResetEvent abortEvent = new System.Threading.AutoResetEvent(false);
             System.Threading.Thread abortThread = new System.Threading.Thread(() =>
             {
                 for (;;)
@@ -92,13 +93,10 @@ namespace EdiabasLib
                         break;
                     }
 
-                    // ReSharper disable once AccessToDisposedClosure
-                    if (cts.IsCancellationRequested)
+                    if (abortEvent.WaitOne(100))
                     {
                         break;
                     }
-
-                    System.Threading.Thread.Sleep(100);
                 }
             });
             abortThread.Start();
@@ -120,7 +118,7 @@ namespace EdiabasLib
             }
             finally
             {
-                cts.Cancel();
+                abortEvent.Set();
                 abortThread.Join();
 
                 cts.Dispose();
