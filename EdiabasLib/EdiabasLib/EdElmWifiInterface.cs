@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 // ReSharper disable UseNullPropagation
 
 namespace EdiabasLib
@@ -27,7 +28,7 @@ namespace EdiabasLib
         protected static TcpClient TcpElmClient;
         protected static NetworkStream TcpElmStream;
         protected static int ConnectTimeout = 5000;
-        protected static volatile bool TransmitCancel;
+        private static readonly ManualResetEvent TransmitCancelEvent = new ManualResetEvent(false);
         protected static string ConnectPort;
         protected static object ConnectParameter;
         protected static object NetworkData;
@@ -49,7 +50,7 @@ namespace EdiabasLib
             }
             try
             {
-                TransmitCancel = false;
+                TransmitCancelEvent.Reset();
                 ConnectPort = port;
                 ConnectParameter = parameter;
                 NetworkData = null;
@@ -98,7 +99,8 @@ namespace EdiabasLib
                 IPAddress hostIpAddress = IPAddress.Parse(adapterIp);
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
-                    TcpElmClient = new TcpClientWithTimeout(hostIpAddress, adapterPort, ConnectTimeout, true).Connect(() => TransmitCancel);
+                    TcpElmClient = new TcpClientWithTimeout(hostIpAddress, adapterPort, ConnectTimeout, true)
+                        .Connect(() => TransmitCancelEvent.WaitOne(0, false));
                 }, hostIpAddress, NetworkData);
                 TcpElmStream = TcpElmClient.GetStream();
                 _edElmInterface = new EdElmInterface(Ediabas, TcpElmStream, TcpElmStream);
@@ -157,7 +159,14 @@ namespace EdiabasLib
 
         public static bool InterfaceTransmitCancel(bool cancel)
         {
-            TransmitCancel = cancel;
+            if (cancel)
+            {
+                TransmitCancelEvent.Set();
+            }
+            else
+            {
+                TransmitCancelEvent.Reset();
+            }
             return true;
         }
 
