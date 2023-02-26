@@ -1849,7 +1849,7 @@ namespace EdiabasLib
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
                     SharedDataActive.TcpControlClient = SharedDataActive.TcpDiagClient = new TcpClientWithTimeout(SharedDataActive.EnetHostConn.IpAddress, controlPort, ConnectTimeout, true).
-                        Connect(() => SharedDataActive.TransmitCancelEvent.WaitOne(0));
+                        Connect(() => SharedDataActive.TransmitCancelEvent.WaitOne(0, false));
                 }, SharedDataActive.EnetHostConn.IpAddress, SharedDataActive.NetworkData);
 
                 SharedDataActive.TcpControlClient.SendBufferSize = TcpSendBufferSize;
