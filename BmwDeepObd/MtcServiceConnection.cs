@@ -84,17 +84,20 @@ namespace BmwDeepObd
         {
             "NO",
             "MD725",
-            "WQ_BC5",
+            "WQ_GT",
             "WQ_BC6",
             "WQ_BC8",
             "Parrot_FC6000T",
             "SD-968",
             "SD-BC6",
             "SD-GT936",
-            "IVT-i145",
-            "SD-8350",
+            "BARROT-i145",
+            "SD-916",
             "WQ_RF210",
-            "SD-816"
+            "SD-816",
+            "FSC-BW124",
+            "SDIO-AUTO",
+            "BARROT-i1107e",
         };
 
         public delegate void ServiceConnectedDelegate(bool connected);
