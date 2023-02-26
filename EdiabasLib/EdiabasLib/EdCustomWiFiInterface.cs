@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace EdiabasLib
 {
@@ -45,7 +46,7 @@ namespace EdiabasLib
         protected static TcpClient TcpClient;
         protected static NetworkStream TcpStream;
         protected static EscapeStreamWriter WriteStream;
-        protected static volatile bool TransmitCancel;
+        protected static readonly ManualResetEvent TransmitCancelEvent = new ManualResetEvent(false);
         protected static string ConnectPort;
         protected static object ConnectParameter;
         protected static object NetworkData;
@@ -93,7 +94,7 @@ namespace EdiabasLib
             CustomAdapter.Init();
             try
             {
-                TransmitCancel = false;
+                TransmitCancelEvent.Reset();
                 ConnectPort = port;
                 ConnectParameter = parameter;
                 Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "WiFi connect: {0}", port);
@@ -239,7 +240,7 @@ namespace EdiabasLib
                 IPAddress hostIpAddress = IPAddress.Parse(adapterIp);
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
-                    TcpClient = new TcpClientWithTimeout(hostIpAddress, adapterPort, ConnectTimeout, true).Connect(() => TransmitCancel);
+                    TcpClient = new TcpClientWithTimeout(hostIpAddress, adapterPort, ConnectTimeout, true).Connect(() => TransmitCancelEvent.WaitOne(0, false));
                 }, hostIpAddress, NetworkData);
                 TcpStream = TcpClient.GetStream();
                 WriteStream = new EscapeStreamWriter(TcpStream);
@@ -334,7 +335,14 @@ namespace EdiabasLib
 
         public static bool InterfaceTransmitCancel(bool cancel)
         {
-            TransmitCancel = cancel;
+            if (cancel)
+            {
+                TransmitCancelEvent.Set();
+            }
+            else
+            {
+                TransmitCancelEvent.Reset();
+            }
             return true;
         }
 
