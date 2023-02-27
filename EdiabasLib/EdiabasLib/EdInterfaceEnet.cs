@@ -258,7 +258,6 @@ namespace EdiabasLib
             private bool _disposed;
             public object NetworkData;
             public EnetConnection EnetHostConn;
-            public HttpClient IcomAllocateDeviceHttpClient;
             public CancellationTokenSource HttpAllocCancelToken;
             public TcpClient TcpDiagClient;
             public NetworkStream TcpDiagStream;
@@ -333,6 +332,7 @@ namespace EdiabasLib
         protected int AddRecTimeoutProtected = 1000;
         protected int AddRecTimeoutIcomProtected = 2000;
         protected bool IcomAllocateProtected = false;
+        protected HttpClient IcomAllocateDeviceHttpClient;
 
         protected byte[] RecBuffer = new byte[TransBufferSize];
         protected byte[] DataBuffer = new byte[TransBufferSize];
@@ -1631,9 +1631,9 @@ namespace EdiabasLib
                     return false;
                 }
 
-                if (SharedDataActive.IcomAllocateDeviceHttpClient == null)
+                if (IcomAllocateDeviceHttpClient == null)
                 {
-                    SharedDataActive.IcomAllocateDeviceHttpClient = new HttpClient(new HttpClientHandler());
+                    IcomAllocateDeviceHttpClient = new HttpClient(new HttpClientHandler());
                 }
 
                 MultipartFormDataContent formAllocate = new MultipartFormDataContent();
@@ -1667,7 +1667,7 @@ namespace EdiabasLib
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
                     string deviceUrl = "http://" + ipParts[0] + ":5302/nVm";
-                    System.Threading.Tasks.Task<HttpResponseMessage> taskAllocate = SharedDataActive.IcomAllocateDeviceHttpClient.PostAsync(deviceUrl, formAllocate, cts.Token);
+                    System.Threading.Tasks.Task<HttpResponseMessage> taskAllocate = IcomAllocateDeviceHttpClient.PostAsync(deviceUrl, formAllocate, cts.Token);
                     SharedDataActive.IcomAllocateActive = true;
                     taskAllocate.ContinueWith((task) =>
                     {
@@ -2567,24 +2567,25 @@ namespace EdiabasLib
             if (!_disposed)
             {
                 InterfaceDisconnect();
-                if (SharedDataActive.IcomAllocateDeviceHttpClient != null)
-                {
-                    try
-                    {
-                        SharedDataActive.IcomAllocateDeviceHttpClient.Dispose();
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
-                    SharedDataActive.IcomAllocateDeviceHttpClient = null;
-                }
 
                 // If disposing equals true, dispose all managed
                 // and unmanaged resources.
                 if (disposing)
                 {
                     // Dispose managed resources.
+                    if (IcomAllocateDeviceHttpClient != null)
+                    {
+                        try
+                        {
+                            IcomAllocateDeviceHttpClient.Dispose();
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                        IcomAllocateDeviceHttpClient = null;
+                    }
+
                     if (NonSharedData != null)
                     {
                         NonSharedData.Dispose();
