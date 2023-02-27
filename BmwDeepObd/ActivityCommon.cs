@@ -4783,7 +4783,7 @@ namespace BmwDeepObd
             Thread detectThread = new Thread(() =>
             {
                 List<EdInterfaceEnet.EnetConnection> detectedVehicles;
-                using (EdInterfaceEnet edInterface = new EdInterfaceEnet { ConnectParameter = new EdInterfaceEnet.ConnectParameterType(_networkData) })
+                using (EdInterfaceEnet edInterface = new EdInterfaceEnet(false) { ConnectParameter = new EdInterfaceEnet.ConnectParameterType(_networkData) })
                 {
                     detectedVehicles = edInterface.DetectedVehicles("auto:all");
                 }
