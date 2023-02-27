@@ -106,8 +106,8 @@ namespace EdiabasLib
         private int _elm327Timeout;
         private Thread _elm327Thread;
         private bool _elm327TerminateThread;
-        private readonly AutoResetEvent _elm327RequEvent = new AutoResetEvent(false);
-        private readonly AutoResetEvent _elm327RespEvent = new AutoResetEvent(false);
+        private AutoResetEvent _elm327RequEvent;
+        private AutoResetEvent _elm327RespEvent;
         private volatile byte[] _elm327RequBuffer;
         private readonly Queue<ElmRequQueueEntry> _elm327RequQueue = new Queue<ElmRequQueueEntry>();
         private readonly Queue<byte> _elm327RespQueue = new Queue<byte>();
@@ -122,6 +122,8 @@ namespace EdiabasLib
             Ediabas = ediabas;
             _inStream = inStream;
             _outStream = outStream;
+            _elm327RequEvent = new AutoResetEvent(false);
+            _elm327RespEvent = new AutoResetEvent(false);
         }
 
         public bool InterfaceDisconnect()
@@ -1565,12 +1567,23 @@ namespace EdiabasLib
             // Check to see if Dispose has already been called.
             if (!_disposed)
             {
-                InterfaceDisconnect();
                 // If disposing equals true, dispose all managed
                 // and unmanaged resources.
                 if (disposing)
                 {
                     // Dispose managed resources.
+                    InterfaceDisconnect();
+                    if (_elm327RequEvent != null)
+                    {
+                        _elm327RequEvent.Dispose();
+                        _elm327RequEvent = null;
+                    }
+
+                    if (_elm327RespEvent != null)
+                    {
+                        _elm327RespEvent.Dispose();
+                        _elm327RespEvent = null;
+                    }
                 }
 
                 // Note disposing has been done.
