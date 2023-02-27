@@ -197,7 +197,6 @@ namespace EdiabasLib
         {
             public SharedData()
             {
-                HttpAllocCancelToken = new CancellationTokenSource();
                 TcpDiagStreamRecEvent = new AutoResetEvent(false);
                 TransmitCancelEvent = new ManualResetEvent(false);
                 TcpDiagStreamSendLock = new object();
@@ -258,7 +257,6 @@ namespace EdiabasLib
             private bool _disposed;
             public object NetworkData;
             public EnetConnection EnetHostConn;
-            public CancellationTokenSource HttpAllocCancelToken;
             public TcpClient TcpDiagClient;
             public NetworkStream TcpDiagStream;
             public AutoResetEvent TcpDiagStreamRecEvent;

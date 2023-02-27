@@ -1166,6 +1166,7 @@ namespace EdiabasLib
         {
             get { return MutexName; }
         }
+
         static EdInterfaceObd()
         {
 #if WindowsCE || Android
@@ -5454,9 +5455,31 @@ namespace EdiabasLib
                 {
                     // Dispose managed resources.
 #if USE_SERIAL_PORT
-                    SerialPort.Dispose();
+                    if (SerialPort != null)
+                    {
+                        SerialPort.Dispose();
+                        SerialPort = null;
+                    }
+
+                    if (CommReceiveEvent != null)
+                    {
+                        CommReceiveEvent.Dispose();
+                        CommReceiveEvent = null;
+                    }
 #endif
+                    if (CommThreadReqEvent != null)
+                    {
+                        CommThreadReqEvent.Dispose();
+                        CommThreadReqEvent = null;
+                    }
+
+                    if (CommThreadResEvent != null)
+                    {
+                        CommThreadResEvent.Dispose();
+                        CommThreadResEvent = null;
+                    }
                 }
+
                 InterfaceUnlock();
 
                 // Note disposing has been done.
