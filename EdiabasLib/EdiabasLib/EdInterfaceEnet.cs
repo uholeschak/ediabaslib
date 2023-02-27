@@ -2585,7 +2585,7 @@ namespace EdiabasLib
                 if (disposing)
                 {
                     // Dispose managed resources.
-                    if (SharedDataActive != null)
+                    if (NonSharedData != null)
                     {
                         NonSharedData.Dispose();
                         NonSharedData = null;
