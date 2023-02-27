@@ -318,8 +318,8 @@ namespace EdiabasLib
         protected volatile List<EnetConnection> UdpRecIpListList = new List<EnetConnection>();
         protected object UdpRecListLock = new object();
         protected int UdpMaxResponses;
-        protected AutoResetEvent UdpEvent = new AutoResetEvent(false);
-        protected AutoResetEvent IcomEvent = new AutoResetEvent(false);
+        protected AutoResetEvent UdpEvent;
+        protected AutoResetEvent IcomEvent;
 
         protected string RemoteHostProtected = AutoIp;
         protected int TesterAddress = 0xF4;
@@ -747,6 +747,9 @@ namespace EdiabasLib
             {
                 NonSharedData = new SharedData();
             }
+
+            UdpEvent = new AutoResetEvent(false);
+            IcomEvent = new AutoResetEvent(false);
         }
 
         public override bool IsValidInterfaceName(string name)
@@ -2590,6 +2593,18 @@ namespace EdiabasLib
                     {
                         NonSharedData.Dispose();
                         NonSharedData = null;
+                    }
+
+                    if (UdpEvent != null)
+                    {
+                        UdpEvent.Dispose();
+                        UdpEvent = null;
+                    }
+
+                    if (IcomEvent != null)
+                    {
+                        IcomEvent.Dispose();
+                        IcomEvent = null;
                     }
                 }
 
