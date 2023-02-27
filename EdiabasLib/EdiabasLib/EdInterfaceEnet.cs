@@ -193,7 +193,7 @@ namespace EdiabasLib
 
         }
 
-        protected class SharedData
+        protected class SharedData : IDisposable
         {
             public SharedData()
             {
@@ -210,6 +210,52 @@ namespace EdiabasLib
                 TcpDiagRecQueue = new Queue<byte[]>();
             }
 
+            public void Dispose()
+            {
+                Dispose(true);
+                // This object will be cleaned up by the Dispose method.
+                // Therefore, you should call GC.SupressFinalize to
+                // take this object off the finalization queue
+                // and prevent finalization code for this object
+                // from executing a second time.
+                GC.SuppressFinalize(this);
+            }
+
+            protected virtual void Dispose(bool disposing)
+            {
+                // Check to see if Dispose has already been called.
+                if (!_disposed)
+                {
+                    // If disposing equals true, dispose all managed
+                    // and unmanaged resources.
+                    if (disposing)
+                    {
+                        // Dispose managed resources.
+                        if (TcpDiagStreamRecEvent != null)
+                        {
+                            TcpDiagStreamRecEvent.Dispose();
+                            TcpDiagStreamRecEvent = null;
+                        }
+
+                        if (TransmitCancelEvent != null)
+                        {
+                            TransmitCancelEvent.Dispose();
+                            TransmitCancelEvent = null;
+                        }
+
+                        if (TcpControlTimer != null)
+                        {
+                            TcpControlTimer.Dispose();
+                            TcpControlTimer = null;
+                        }
+                    }
+
+                    // Note disposing has been done.
+                    _disposed = true;
+                }
+            }
+
+            private bool _disposed;
             public object NetworkData;
             public EnetConnection EnetHostConn;
             public HttpClient IcomAllocateDeviceHttpClient;
@@ -2533,14 +2579,20 @@ namespace EdiabasLib
                     }
                     SharedDataActive.IcomAllocateDeviceHttpClient = null;
                 }
+
                 // If disposing equals true, dispose all managed
                 // and unmanaged resources.
                 if (disposing)
                 {
                     // Dispose managed resources.
+                    if (SharedDataActive != null)
+                    {
+                        NonSharedData.Dispose();
+                        NonSharedData = null;
+                    }
                 }
-                InterfaceUnlock();
 
+                InterfaceUnlock();
                 // Note disposing has been done.
                 _disposed = true;
             }
