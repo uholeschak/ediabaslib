@@ -47,10 +47,10 @@ namespace EdiabasLib
 
         private bool _disposed;
         private readonly LogStringDelegate _logStringHandler;
-        private readonly AutoResetEvent _btGattConnectEvent = new AutoResetEvent(false);
-        private readonly AutoResetEvent _btGattDiscoveredEvent = new AutoResetEvent(false);
-        private readonly AutoResetEvent _btGattReceivedEvent = new AutoResetEvent(false);
-        private readonly AutoResetEvent _btGattWriteEvent = new AutoResetEvent(false);
+        private AutoResetEvent _btGattConnectEvent;
+        private AutoResetEvent _btGattDiscoveredEvent;
+        private AutoResetEvent _btGattReceivedEvent;
+        private AutoResetEvent _btGattWriteEvent;
         private BluetoothGatt _bluetoothGatt;
         private BluetoothGattCharacteristic _gattCharacteristicSppRead;
         private BluetoothGattCharacteristic _gattCharacteristicSppWrite;
@@ -68,6 +68,10 @@ namespace EdiabasLib
         public BtLeGattSpp(LogStringDelegate logStringHandler = null)
         {
             _logStringHandler = logStringHandler;
+            _btGattConnectEvent = new AutoResetEvent(false);
+            _btGattDiscoveredEvent = new AutoResetEvent(false);
+            _btGattReceivedEvent = new AutoResetEvent(false);
+            _btGattWriteEvent = new AutoResetEvent(false);
         }
 
         public void Dispose()
@@ -91,6 +95,30 @@ namespace EdiabasLib
                 if (disposing)
                 {
                     BtGattDisconnect();
+
+                    if (_btGattConnectEvent != null)
+                    {
+                        _btGattConnectEvent.Dispose();
+                        _btGattConnectEvent = null;
+                    }
+
+                    if (_btGattDiscoveredEvent != null)
+                    {
+                        _btGattDiscoveredEvent.Dispose();
+                        _btGattDiscoveredEvent = null;
+                    }
+
+                    if (_btGattReceivedEvent != null)
+                    {
+                        _btGattReceivedEvent.Dispose();
+                        _btGattReceivedEvent = null;
+                    }
+
+                    if (_btGattWriteEvent != null)
+                    {
+                        _btGattWriteEvent.Dispose();
+                        _btGattWriteEvent = null;
+                    }
                 }
 
                 // Note disposing has been done.
