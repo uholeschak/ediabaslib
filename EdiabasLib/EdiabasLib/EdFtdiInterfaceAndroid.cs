@@ -43,7 +43,7 @@ namespace EdiabasLib
         private static bool _currentDtr;
         private static bool _currentRts;
         private static bool _reconnectRequired;
-        private static volatile bool _transmitCancel;
+        private static readonly ManualResetEvent TransmitCancelEvent = new ManualResetEvent(false);
         private static string _connectPort;
         private static object _connectParameter;
 
@@ -76,7 +76,7 @@ namespace EdiabasLib
             }
             try
             {
-                _transmitCancel = false;
+                TransmitCancelEvent.Reset();
                 _connectPort = port;
                 _connectParameter = parameter;
 
@@ -233,7 +233,14 @@ namespace EdiabasLib
 
         public static bool InterfaceTransmitCancel(bool cancel)
         {
-            _transmitCancel = cancel;
+            if (cancel)
+            {
+                TransmitCancelEvent.Set();
+            }
+            else
+            {
+                TransmitCancelEvent.Reset();
+            }
             return true;
         }
 
@@ -505,7 +512,7 @@ namespace EdiabasLib
 
         private static bool ReadData(byte[] buffer, int offset, int length, int timeout)
         {
-            if (_transmitCancel)
+            if (TransmitCancelEvent.WaitOne(0, false))
             {
                 return false;
             }
@@ -549,23 +556,9 @@ namespace EdiabasLib
                         DataReceiveEvent.Reset();
                     }
 
-                    long startTime = Stopwatch.GetTimestamp();
-                    for (;;)
+                    if (WaitHandle.WaitAny(new WaitHandle[] { DataReceiveEvent, TransmitCancelEvent }, timeout, false) == 1)
                     {
-                        if (DataReceiveEvent.WaitOne(100, false))
-                        {
-                            break;
-                        }
-
-                        if (_transmitCancel)
-                        {
-                            return false;
-                        }
-
-                        if (Stopwatch.GetTimestamp() - startTime > timeout * EdCustomAdapterCommon.TickResolMs)
-                        {
-                            break;
-                        }
+                        return false;
                     }
 
                     lock (QueueLock)
