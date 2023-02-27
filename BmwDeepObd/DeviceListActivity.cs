@@ -66,6 +66,7 @@ namespace BmwDeepObd
             public bool LocationProviderShown { get; set; }
             public bool MtcAntennaInfoShown { get; set; }
             public bool MtcBtModuleErrorShown { get; set; }
+            public bool MtcFirmwareErrorShown { get; set; }
             public bool MtcBtPwdMismatchShown { get; set; }
             public bool MtcBtEscapeModeShown { get; set; }
             public bool MtcErrorShown { get; set; }
@@ -645,6 +646,14 @@ namespace BmwDeepObd
                     _activityCommon.ShowAlert(GetString(Resource.String.bt_mtc_module_error), Resource.String.alert_title_warning);
                 }
 #endif
+                if (!_instanceData.MtcFirmwareErrorShown && !string.IsNullOrEmpty(Build.Fingerprint))
+                {
+                    if (Build.Fingerprint.Contains("hct2.20221115", StringComparison.OrdinalIgnoreCase))
+                    {
+                        _instanceData.MtcFirmwareErrorShown = true;
+                        _activityCommon.ShowAlert(GetString(Resource.String.bt_mtc_firmware_error), Resource.String.alert_title_warning);
+                    }
+                }
 
                 if (!_instanceData.MtcBtPwdMismatchShown &&
                     !string.IsNullOrEmpty(modulePwd) && string.Compare(modulePwd, DefaultModulePwd, StringComparison.OrdinalIgnoreCase) != 0)
