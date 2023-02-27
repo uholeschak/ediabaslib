@@ -164,7 +164,7 @@ namespace BmwDeepObd
             SetContentView(Resource.Layout.bmw_coding);
 
             SetResult(Android.App.Result.Ok);
-            
+
             _ediabasThreadWakeEvent = new AutoResetEvent(false);
             _activityCommon = new ActivityCommon(this, () =>
             {
