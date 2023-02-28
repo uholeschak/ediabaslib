@@ -76,6 +76,7 @@ namespace BmwDeepObd
         private static readonly Java.Util.UUID SppUuid = Java.Util.UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
         private static readonly Java.Util.UUID ZeroUuid = Java.Util.UUID.FromString("00000000-0000-0000-0000-000000000000");
         private const string DefaultModulePwd = "1234";
+        private const string InvalidHtcFwName = "hct2.20221115";
 
         // Return Intent extra
 #if DEBUG
@@ -654,10 +655,11 @@ namespace BmwDeepObd
 #endif
                 if (!_instanceData.MtcFirmwareErrorShown && !string.IsNullOrEmpty(Build.Fingerprint))
                 {
-                    if (Build.Fingerprint.Contains("hct2.20221115", StringComparison.OrdinalIgnoreCase))
+                    if (Build.Fingerprint.Contains(InvalidHtcFwName, StringComparison.OrdinalIgnoreCase))
                     {
                         _instanceData.MtcFirmwareErrorShown = true;
-                        _activityCommon.ShowAlert(GetString(Resource.String.bt_mtc_firmware_error), Resource.String.alert_title_warning);
+                        string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.bt_mtc_firmware_error), InvalidHtcFwName);
+                        _activityCommon.ShowAlert(message, Resource.String.alert_title_warning);
                     }
                 }
 
