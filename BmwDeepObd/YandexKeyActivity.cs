@@ -264,6 +264,7 @@ namespace BmwDeepObd
         {
             base.OnDestroy();
 
+            DisposeTimer();
             _activityCommon?.Dispose();
             _activityCommon = null;
         }
@@ -291,11 +292,7 @@ namespace BmwDeepObd
         protected override void OnPause()
         {
             base.OnPause();
-            if (_clipboardCheckTimer != null)
-            {
-                _clipboardCheckTimer.Dispose();
-                _clipboardCheckTimer = null;
-            }
+            DisposeTimer();
         }
 
         public override void OnBackPressedEvent()
@@ -344,6 +341,15 @@ namespace BmwDeepObd
                     break;
             }
             return false;
+        }
+
+        private void DisposeTimer()
+        {
+            if (_clipboardCheckTimer != null)
+            {
+                _clipboardCheckTimer.Dispose();
+                _clipboardCheckTimer = null;
+            }
         }
 
         private void UpdateDisplay()
