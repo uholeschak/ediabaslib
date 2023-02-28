@@ -164,18 +164,7 @@ namespace BmwDeepObd
             base.OnDestroy();
             _actvityDestroyed = true;
 
-            if (_memoryCheckTimer != null)
-            {
-                _memoryCheckTimer.Dispose();
-                _memoryCheckTimer = null;
-            }
-
-            if (_autoFullScreenTimer != null)
-            {
-                _autoFullScreenTimer.Dispose();
-                _autoFullScreenTimer = null;
-            }
-
+            DisposeTimer();
             if (_baseUpdateHandler != null)
             {
                 try
@@ -312,18 +301,7 @@ namespace BmwDeepObd
         {
             base.OnPause();
 
-            if (_memoryCheckTimer != null)
-            {
-                _memoryCheckTimer.Dispose();
-                _memoryCheckTimer = null;
-            }
-
-            if (_autoFullScreenTimer != null)
-            {
-                _autoFullScreenTimer.Dispose();
-                _autoFullScreenTimer = null;
-            }
-
+            DisposeTimer();
             if (_baseUpdateHandler != null)
             {
                 _baseUpdateHandler.RemoveCallbacks(_longPressRunnable);
@@ -770,6 +748,21 @@ namespace BmwDeepObd
                 // ignored
             }
             return false;
+        }
+
+        private void DisposeTimer()
+        {
+            if (_memoryCheckTimer != null)
+            {
+                _memoryCheckTimer.Dispose();
+                _memoryCheckTimer = null;
+            }
+
+            if (_autoFullScreenTimer != null)
+            {
+                _autoFullScreenTimer.Dispose();
+                _autoFullScreenTimer = null;
+            }
         }
 
         private class GestureListener : GestureDetector.SimpleOnGestureListener
