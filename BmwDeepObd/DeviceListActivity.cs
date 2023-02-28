@@ -303,11 +303,7 @@ namespace BmwDeepObd
         protected override void OnPause()
         {
             base.OnPause();
-            if (_deviceUpdateTimer != null)
-            {
-                _deviceUpdateTimer.Dispose();
-                _deviceUpdateTimer = null;
-            }
+            DisposeTimer();
         }
 
         protected override void OnStop()
@@ -339,6 +335,7 @@ namespace BmwDeepObd
 #endif
             }
 
+            DisposeTimer();
             if (_btLeGattSpp != null)
             {
                 _btLeGattSpp.Dispose();
@@ -528,6 +525,15 @@ namespace BmwDeepObd
 #if DEBUG
                 Android.Util.Log.Info(Tag, string.Format("UpdatePairedDevices exception: {0}", EdiabasNet.GetExceptionText(ex)));
 #endif
+            }
+        }
+
+        private void DisposeTimer()
+        {
+            if (_deviceUpdateTimer != null)
+            {
+                _deviceUpdateTimer.Dispose();
+                _deviceUpdateTimer = null;
             }
         }
 
