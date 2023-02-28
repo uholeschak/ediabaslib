@@ -2610,6 +2610,8 @@ namespace EdiabasLib
                 // Note disposing has been done.
                 _disposed = true;
             }
+
+            base.Dispose(disposing);
         }
     }
 }
