@@ -336,11 +336,7 @@ namespace BmwDeepObd
             base.OnPause();
             _activityActive = false;
 
-            if (_connectionCheckTimer != null)
-            {
-                _connectionCheckTimer.Dispose();
-                _connectionCheckTimer = null;
-            }
+            DisposeTimer();
         }
 
         protected override void OnStop()
@@ -385,6 +381,7 @@ namespace BmwDeepObd
                 _infoHttpClient = null;
             }
 
+            DisposeTimer();
             if (_activityCommon != null)
             {
                 _activityCommon.Dispose();
@@ -557,6 +554,15 @@ namespace BmwDeepObd
 
             IMenuItem openTraceMenu = menu.FindItem(Resource.Id.menu_open_trace);
             openTraceMenu?.SetEnabled(interfaceAvailable && !commActive && _instanceData.TraceActive && tracePresent);
+        }
+
+        private void DisposeTimer()
+        {
+            if (_connectionCheckTimer != null)
+            {
+                _connectionCheckTimer.Dispose();
+                _connectionCheckTimer = null;
+            }
         }
 
         private void ConnectionActiveWarn(AcceptDelegate handler)
