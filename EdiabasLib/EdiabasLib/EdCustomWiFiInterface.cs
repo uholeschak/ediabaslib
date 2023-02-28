@@ -240,8 +240,7 @@ namespace EdiabasLib
                 IPAddress hostIpAddress = IPAddress.Parse(adapterIp);
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
-                    TcpClient = new TcpClientWithTimeout(hostIpAddress, adapterPort, ConnectTimeout, true)
-                        .Connect(() => TransmitCancelEvent.WaitOne(0, false));
+                    TcpClient = new TcpClientWithTimeout(hostIpAddress, adapterPort, ConnectTimeout, true).Connect(TransmitCancelEvent);
                 }, hostIpAddress, NetworkData);
                 TcpStream = TcpClient.GetStream();
                 WriteStream = new EscapeStreamWriter(TcpStream);

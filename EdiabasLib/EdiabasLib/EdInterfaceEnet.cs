@@ -876,8 +876,8 @@ namespace EdiabasLib
                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting to: {0}:{1}", SharedDataActive.EnetHostConn.IpAddress, diagPort);
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
-                    SharedDataActive.TcpDiagClient = new TcpClientWithTimeout(SharedDataActive.EnetHostConn.IpAddress, diagPort, ConnectTimeout, true).
-                        Connect(() => SharedDataActive.TransmitCancelEvent.WaitOne(0, false));
+                    SharedDataActive.TcpDiagClient = new TcpClientWithTimeout(SharedDataActive.EnetHostConn.IpAddress, diagPort, ConnectTimeout, true)
+                        .Connect(SharedDataActive.TransmitCancelEvent);
                 }, SharedDataActive.EnetHostConn.IpAddress, SharedDataActive.NetworkData);
 
                 SharedDataActive.TcpDiagClient.SendBufferSize = TcpSendBufferSize;
@@ -1895,8 +1895,8 @@ namespace EdiabasLib
                 }
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
-                    SharedDataActive.TcpControlClient = SharedDataActive.TcpDiagClient = new TcpClientWithTimeout(SharedDataActive.EnetHostConn.IpAddress, controlPort, ConnectTimeout, true).
-                        Connect(() => SharedDataActive.TransmitCancelEvent.WaitOne(0, false));
+                    SharedDataActive.TcpControlClient = SharedDataActive.TcpDiagClient = new TcpClientWithTimeout(SharedDataActive.EnetHostConn.IpAddress, controlPort, ConnectTimeout, true)
+                        .Connect(SharedDataActive.TransmitCancelEvent);
                 }, SharedDataActive.EnetHostConn.IpAddress, SharedDataActive.NetworkData);
 
                 SharedDataActive.TcpControlClient.SendBufferSize = TcpSendBufferSize;

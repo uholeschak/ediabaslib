@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -67,7 +68,7 @@ namespace EdiabasLib
             _sendBufferSize = sendBufferSize;
         }
 
-        public TcpClient Connect(ConnectAbortDelegate abortHandler = null)
+        public TcpClient Connect(System.Threading.ManualResetEvent resetEvent = null)
         {
             _connection = new TcpClient();
             if (_noDelay.HasValue)
@@ -82,24 +83,20 @@ namespace EdiabasLib
 #if !WindowsCE
             using (System.Threading.CancellationTokenSource cts = new System.Threading.CancellationTokenSource())
             {
-                using (System.Threading.AutoResetEvent abortEvent = new System.Threading.AutoResetEvent(false))
+                using (System.Threading.AutoResetEvent threadFinishEvent = new System.Threading.AutoResetEvent(false))
                 {
+                    List<System.Threading.WaitHandle> waitHandles = new List<System.Threading.WaitHandle> { threadFinishEvent };
+                    if (resetEvent != null)
+                    {
+                        waitHandles.Add(resetEvent);
+                    }
+
                     System.Threading.Thread abortThread = new System.Threading.Thread(() =>
                     {
-                        for (;;)
+                        if (System.Threading.WaitHandle.WaitAny(waitHandles.ToArray(), _timeoutMilliseconds, false) == 1)
                         {
-                            if (abortHandler != null && abortHandler.Invoke())
-                            {
-                                // ReSharper disable once AccessToDisposedClosure
-                                cts.Cancel();
-                                break;
-                            }
-
                             // ReSharper disable once AccessToDisposedClosure
-                            if (abortEvent.WaitOne(100))
-                            {
-                                break;
-                            }
+                            cts.Cancel();
                         }
                     });
                     abortThread.Start();
@@ -121,7 +118,7 @@ namespace EdiabasLib
                     }
                     finally
                     {
-                        abortEvent.Set();
+                        threadFinishEvent.Set();
                         abortThread.Join();
                     }
                 }
