@@ -228,7 +228,7 @@
   <string name="bt_mtc_module_error">Android devices with Bluetooth module FSC-BW124 seem to have communication problems with the OBD adapters.\nConnection will probably not work correctly.</string>
   <string name="bt_mtc_module_escape_mode">The Bluetooth module {0} has a limited communication channel and a special communication mode has to be use.\nFor technical reasons not all OBD protocols are supported in this mode and the latest adapter firmware is required.</string>
   <string name="bt_mtc_module_pwd">The current Bluetooth pin {0} is not the default value {1} for the adapters.\nEither you change the adapter pin or the current Bluetooth pin.\nDo you want to change the current pin to {1}?</string>
-  <string formatted="false" name="bt_mtc_firmware_error">The current firmware version {0} is known to have Bluetooth communication problems.&lt;br&gt;Please downgrade or upgrade (if available) the firmware first.</string>
+  <string formatted="false" name="bt_mtc_firmware_error">The current firmware version {0} is known to have Bluetooth communication problems.&lt;br&gt;Please downgrade or upgrade (if available) the firmware first.&lt;br&gt;&lt;a href=\'{1}\'&gt;Firmware&lt;/a&gt; &lt;a href=\'{2}\'&gt;Instructions&lt;/a&gt;</string>
   <string name="bt_module_name">(Bluetooth module: {0})</string>
   <string name="title_paired_devices">Paired devices</string>
   <string name="title_other_devices">Other available devices</string>
