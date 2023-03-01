@@ -659,7 +659,20 @@ namespace BmwDeepObd
                     {
                         _instanceData.MtcFirmwareErrorShown = true;
                         string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.bt_mtc_firmware_error), InvalidHtcFwName);
-                        _activityCommon.ShowAlert(message, Resource.String.alert_title_warning);
+                        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                            .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
+                            .SetCancelable(true)
+                            .SetMessage(ActivityCommon.FromHtml(message))
+                            .SetTitle(Resource.String.alert_title_warning)
+                            .Show();
+                        if (alertDialog != null)
+                        {
+                            TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
+                            if (messageView != null)
+                            {
+                                messageView.MovementMethod = new LinkMovementMethod();
+                            }
+                        }
                     }
                 }
 
