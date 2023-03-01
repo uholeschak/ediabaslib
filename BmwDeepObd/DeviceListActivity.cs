@@ -77,6 +77,8 @@ namespace BmwDeepObd
         private static readonly Java.Util.UUID ZeroUuid = Java.Util.UUID.FromString("00000000-0000-0000-0000-000000000000");
         private const string DefaultModulePwd = "1234";
         private const string InvalidHtcFwName = "hct2.20221115";
+        private const string InvalidHtcFwUpdateLink = "https://xtrons.ibus-app.de/index.php?title=Aktuelle_Firmware#Xtrons_Android_12.0_Octacore_Xtrons_ROM_IQ-Serie_[Qualcomm_665]";
+        private const string InvalidHtcFwHowToLink = "https://xtrons.ibus-app.de/index.php?title=Firmwareupdate";
 
         // Return Intent extra
 #if DEBUG
@@ -658,8 +660,21 @@ namespace BmwDeepObd
                     if (Build.Fingerprint.Contains(InvalidHtcFwName, StringComparison.OrdinalIgnoreCase))
                     {
                         _instanceData.MtcFirmwareErrorShown = true;
-                        string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.bt_mtc_firmware_error), InvalidHtcFwName);
-                        _activityCommon.ShowAlert(message, Resource.String.alert_title_warning);
+                        string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.bt_mtc_firmware_error), InvalidHtcFwName, InvalidHtcFwUpdateLink, InvalidHtcFwHowToLink);
+                        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                            .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
+                            .SetCancelable(true)
+                            .SetMessage(ActivityCommon.FromHtml(message))
+                            .SetTitle(Resource.String.alert_title_warning)
+                            .Show();
+                        if (alertDialog != null)
+                        {
+                            TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
+                            if (messageView != null)
+                            {
+                                messageView.MovementMethod = new LinkMovementMethod();
+                            }
+                        }
                     }
                 }
 
