@@ -144,14 +144,14 @@ namespace EdiabasLib
                     return false;
                 }
 
-                _btGattConnectEvent.WaitOne(3000, false);
+                _btGattConnectEvent.WaitOne(3000);
                 if (_gattConnectionState != State.Connected)
                 {
                     LogString("*** GATT connection timeout");
                     return false;
                 }
 
-                _btGattDiscoveredEvent.WaitOne(2000, false);
+                _btGattDiscoveredEvent.WaitOne(2000);
                 if (!_gattServicesDiscovered)
                 {
                     LogString("*** GATT service discovery timeout");
@@ -338,7 +338,7 @@ namespace EdiabasLib
                 byte[] sendData = Encoding.UTF8.GetBytes("ATI\r");
                 _btGattSppOutStream.Write(sendData, 0, sendData.Length);
 
-                while (_btGattReceivedEvent.WaitOne(2000, false))
+                while (_btGattReceivedEvent.WaitOne(2000))
                 {
 #if DEBUG
                     Android.Util.Log.Info(Tag, "GATT SPP data received");

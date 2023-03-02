@@ -964,7 +964,7 @@ namespace EdiabasLib
                                 break;
                             }
                         }
-                        CommThreadResEvent.WaitOne(10, false);
+                        CommThreadResEvent.WaitOne(10);
                     }
                     if (RecErrorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                     {
@@ -1061,7 +1061,7 @@ namespace EdiabasLib
                             break;
                         }
                     }
-                    CommThreadResEvent.WaitOne(10, false);
+                    CommThreadResEvent.WaitOne(10);
                 }
 
                 if (RecErrorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
@@ -1692,7 +1692,7 @@ namespace EdiabasLib
                         break;
                     }
                 }
-                CommThreadResEvent.WaitOne(10, false);
+                CommThreadResEvent.WaitOne(10);
             }
 #endif
             if (RecErrorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
@@ -1755,7 +1755,7 @@ namespace EdiabasLib
                         break;
                     }
                 }
-                CommThreadResEvent.WaitOne(10, false);
+                CommThreadResEvent.WaitOne(10);
             }
             if (RecErrorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
             {
@@ -1804,7 +1804,7 @@ namespace EdiabasLib
                         break;
                     }
                 }
-                CommThreadResEvent.WaitOne(10, false);
+                CommThreadResEvent.WaitOne(10);
             }
 
             if (RecErrorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
@@ -1844,7 +1844,7 @@ namespace EdiabasLib
                             break;
                         }
                     }
-                    CommThreadResEvent.WaitOne(10, false);
+                    CommThreadResEvent.WaitOne(10);
                 }
                 if (RecErrorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                 {
@@ -2595,7 +2595,7 @@ namespace EdiabasLib
             bool bExitThread = false;
             for (; ; )
             {
-                CommThreadReqEvent.WaitOne(10, false);
+                CommThreadReqEvent.WaitOne(10);
 
                 uint reqCount;
                 CommThreadCommands command;
@@ -2919,7 +2919,7 @@ namespace EdiabasLib
                         StopWatch.Stop();
                         return false;
                     }
-                    CommReceiveEvent.WaitOne(1, false);
+                    CommReceiveEvent.WaitOne(1);
                 }
 
                 int recLen = 0;
@@ -2949,7 +2949,7 @@ namespace EdiabasLib
                             break;
                         }
                     }
-                    CommReceiveEvent.WaitOne(1, false);
+                    CommReceiveEvent.WaitOne(1);
                 }
                 StopWatch.Stop();
                 if (logResponse)

@@ -512,7 +512,7 @@ namespace EdiabasLib
 
         private static bool ReadData(byte[] buffer, int offset, int length, int timeout)
         {
-            if (TransmitCancelEvent.WaitOne(0, false))
+            if (TransmitCancelEvent.WaitOne(0))
             {
                 return false;
             }

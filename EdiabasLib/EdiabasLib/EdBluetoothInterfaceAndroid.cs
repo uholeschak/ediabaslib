@@ -743,7 +743,7 @@ namespace EdiabasLib
 
         private static bool ReceiveData(byte[] buffer, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog = null)
         {
-            if (TransmitCancelEvent.WaitOne(0, false))
+            if (TransmitCancelEvent.WaitOne(0))
             {
                 return false;
             }
@@ -771,7 +771,7 @@ namespace EdiabasLib
                     break;
                 }
 
-                if (TransmitCancelEvent.WaitOne(0, false))
+                if (TransmitCancelEvent.WaitOne(0))
                 {
                     return false;
                 }
@@ -791,7 +791,7 @@ namespace EdiabasLib
         {
             while (_bluetoothInStream.HasData())
             {
-                _bluetoothInStream.ReadByteAsync();
+                _bluetoothInStream.ReadByteAsync(TransmitCancelEvent);
             }
         }
 
@@ -808,7 +808,7 @@ namespace EdiabasLib
 
             while (_bluetoothInStream.HasData())
             {
-                int data = _bluetoothInStream.ReadByteAsync();
+                int data = _bluetoothInStream.ReadByteAsync(TransmitCancelEvent);
                 if (data >= 0)
                 {
                     CustomAdapter.LastCommTick = Stopwatch.GetTimestamp();
@@ -825,7 +825,7 @@ namespace EdiabasLib
                 return false;
             }
 
-            if (TransmitCancelEvent.WaitOne(0, false))
+            if (TransmitCancelEvent.WaitOne(0))
             {
                 return false;
             }
@@ -868,7 +868,7 @@ namespace EdiabasLib
                     break;
                 }
 
-                if (TransmitCancelEvent.WaitOne(0, false))
+                if (TransmitCancelEvent.WaitOne(0))
                 {
                     abort = true;
                     CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "BluetoothConnect transmit cancel");
@@ -897,7 +897,7 @@ namespace EdiabasLib
 
         private static bool WaitForConnectEvent(int connectTimeout)
         {
-            if (TransmitCancelEvent.WaitOne(0, false))
+            if (TransmitCancelEvent.WaitOne(0))
             {
                 throw new Exception("Canceled");
             }
@@ -908,7 +908,7 @@ namespace EdiabasLib
             }
             else
             {
-                if (TransmitCancelEvent.WaitOne(0, false))
+                if (TransmitCancelEvent.WaitOne(0))
                 {
                     throw new Exception("Canceled");
                 }

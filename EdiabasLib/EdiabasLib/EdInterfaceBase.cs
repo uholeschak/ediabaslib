@@ -82,7 +82,7 @@ namespace EdiabasLib
                 }
                 try
                 {
-                    if (!InterfaceMutex.WaitOne(0, false))
+                    if (!InterfaceMutex.WaitOne(0))
                     {
                         return false;
                     }

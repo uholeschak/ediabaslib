@@ -1119,7 +1119,7 @@ namespace BmwDeepObd
                                         progressLocal.ButtonAbort.Enabled = false;
                                     });
 
-                                    if (_connectedEvent.WaitOne(connectTimeout, false))
+                                    if (_connectedEvent.WaitOne(connectTimeout))
                                     {
                                         Thread.Sleep(EdBluetoothInterface.BtConnectDelay);
                                     }
@@ -1164,7 +1164,7 @@ namespace BmwDeepObd
                                                 throw new Exception("Aborted");
                                             }
 
-                                            if (_connectedEvent.WaitOne(connectTimeout, false))
+                                            if (_connectedEvent.WaitOne(connectTimeout))
                                             {
                                                 Thread.Sleep(EdBluetoothInterface.BtConnectDelay);
                                             }
@@ -1257,7 +1257,7 @@ namespace BmwDeepObd
                                         progressLocal.ButtonAbort.Enabled = false;
                                     });
 
-                                    if (_connectedEvent.WaitOne(connectTimeout, false))
+                                    if (_connectedEvent.WaitOne(connectTimeout))
                                     {
                                         Thread.Sleep(EdBluetoothInterface.BtConnectDelay);
                                     }
