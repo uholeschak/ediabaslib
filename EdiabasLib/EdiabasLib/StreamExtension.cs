@@ -29,7 +29,7 @@ namespace EdiabasLib
 #endif
         }
 
-        public static int ReadByteAsync(this Stream inStream, int timeout = 2000)
+        public static int ReadByteAsync(this Stream inStream, ManualResetEvent cancelEvent = null, int timeout = 2000)
         {
             if (inStream == null)
             {
@@ -75,9 +75,19 @@ namespace EdiabasLib
                 }
             }, null);
 
-            if (!waitSem.WaitOne(timeout))
+            if (cancelEvent != null)
             {
-                return -1;
+                if (WaitHandle.WaitAny(new WaitHandle[] { waitSem, cancelEvent }, timeout) != 0)
+                {
+                    return -1;
+                }
+            }
+            else
+            {
+                if (!waitSem.WaitOne(timeout))
+                {
+                    return -1;
+                }
             }
 
             if (!asyncResult.IsCompleted)

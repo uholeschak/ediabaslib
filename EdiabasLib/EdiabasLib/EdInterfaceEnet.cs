@@ -862,11 +862,11 @@ namespace EdiabasLib
                             EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM error");
                         }
 
-                        if (!IcomEvent.WaitOne(2000, false))
+                        if (!IcomEvent.WaitOne(2000))
                         {
                             EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM timeout");
                             cts.Cancel();
-                            IcomEvent.WaitOne(1000, false);
+                            IcomEvent.WaitOne(1000);
                         }
                     }
                     EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM finished");
@@ -995,14 +995,14 @@ namespace EdiabasLib
                         }
                     }
 
-                    if (!IcomEvent.WaitOne(2000, false))
+                    if (!IcomEvent.WaitOne(2000))
                     {
                         if (EdiabasProtected != null)
                         {
                             EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM timeout");
                         }
                         cts.Cancel();
-                        IcomEvent.WaitOne(1000, false);
+                        IcomEvent.WaitOne(1000);
                     }
                 }
 
@@ -1368,7 +1368,7 @@ namespace EdiabasLib
                         return null;
                     }
 
-                    UdpEvent.WaitOne(1000, false);
+                    UdpEvent.WaitOne(1000);
                     if (UdpRecIpListList.Count == 0)
                     {
                         if (EdiabasProtected != null)
@@ -2250,7 +2250,7 @@ namespace EdiabasLib
                 return -1;
             }
 
-            if (SharedDataActive.TransmitCancelEvent.WaitOne(0, false))
+            if (SharedDataActive.TransmitCancelEvent.WaitOne(0))
             {
                 return -1;
             }

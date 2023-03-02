@@ -191,7 +191,7 @@ namespace EdiabasLib
                     }
                 }
 
-                _elm327RespEvent.WaitOne(timeout, false);
+                _elm327RespEvent.WaitOne(timeout);
             }
             lock (_elm327BufferLock)
             {
@@ -392,7 +392,7 @@ namespace EdiabasLib
                 }
 
                 Elm327CanReceiver();
-                _elm327RequEvent.WaitOne(10, false);
+                _elm327RequEvent.WaitOne(10);
             }
         }
 
@@ -1167,7 +1167,7 @@ namespace EdiabasLib
                     {
                         return false;
                     }
-                    _elm327RequEvent.WaitOne(10, false);
+                    _elm327RequEvent.WaitOne(10);
                 }
                 else
                 {
@@ -1240,7 +1240,7 @@ namespace EdiabasLib
                     {
                         return string.Empty;
                     }
-                    _elm327RequEvent.WaitOne(10, false);
+                    _elm327RequEvent.WaitOne(10);
                 }
                 else
                 {
@@ -1465,7 +1465,7 @@ namespace EdiabasLib
                         {
                             return string.Empty;
                         }
-                        _elm327RequEvent.WaitOne(10, false);
+                        _elm327RequEvent.WaitOne(10);
                     }
                     else
                     {
