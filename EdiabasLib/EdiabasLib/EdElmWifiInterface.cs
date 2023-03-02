@@ -102,7 +102,7 @@ namespace EdiabasLib
                     TcpElmClient = new TcpClientWithTimeout(hostIpAddress, adapterPort, ConnectTimeout, true).Connect(TransmitCancelEvent);
                 }, hostIpAddress, NetworkData);
                 TcpElmStream = TcpElmClient.GetStream();
-                _edElmInterface = new EdElmInterface(Ediabas, TcpElmStream, TcpElmStream);
+                _edElmInterface = new EdElmInterface(Ediabas, TcpElmStream, TcpElmStream, TransmitCancelEvent);
                 if (!_edElmInterface.Elm327Init())
                 {
                     Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting: Elm327Init failed");
