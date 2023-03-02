@@ -902,7 +902,7 @@ namespace EdiabasLib
                 throw new Exception("Canceled");
             }
 
-            if (WaitHandle.WaitAny(new WaitHandle[] { ConnectedEvent, TransmitCancelEvent }, connectTimeout, false) == 0)
+            if (WaitHandle.WaitAny(new WaitHandle[] { ConnectedEvent, TransmitCancelEvent }, connectTimeout) == 0)
             {
                 Thread.Sleep(BtConnectDelay);
             }
