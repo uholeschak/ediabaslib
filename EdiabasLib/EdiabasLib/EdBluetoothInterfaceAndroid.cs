@@ -285,7 +285,7 @@ namespace EdiabasLib
                         _bluetoothOutStream = _bluetoothSocket.OutputStream;
                     }
 
-                    _edElmInterface = new EdElmInterface(CustomAdapter.Ediabas, _bluetoothInStream, _bluetoothOutStream);
+                    _edElmInterface = new EdElmInterface(CustomAdapter.Ediabas, _bluetoothInStream, _bluetoothOutStream, TransmitCancelEvent);
                     if (mtcBtService && !reconnect && !usedRfCommSocket && _bluetoothSocket != null)
                     {
                         bool connected = false;
@@ -310,7 +310,7 @@ namespace EdiabasLib
 
                             _bluetoothInStream = _bluetoothSocket.InputStream;
                             _bluetoothOutStream = _bluetoothSocket.OutputStream;
-                            _edElmInterface = new EdElmInterface(CustomAdapter.Ediabas, _bluetoothInStream, _bluetoothOutStream);
+                            _edElmInterface = new EdElmInterface(CustomAdapter.Ediabas, _bluetoothInStream, _bluetoothOutStream, TransmitCancelEvent);
                         }
                         if (!connected)
                         {

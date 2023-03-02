@@ -96,6 +96,7 @@ namespace EdiabasLib
         private bool _disposed;
         private readonly Stream _inStream;
         private readonly Stream _outStream;
+        private readonly ManualResetEvent _cancelEvent;
         private long _elm327ReceiveStartTime;
         private bool _elm327DataMode;
         private TransportType _elm327TransportType;
@@ -117,11 +118,12 @@ namespace EdiabasLib
         public bool StreamFailure { get; set; }
         public EdiabasNet Ediabas { get; set; }
 
-        public EdElmInterface(EdiabasNet ediabas, Stream inStream, Stream outStream)
+        public EdElmInterface(EdiabasNet ediabas, Stream inStream, Stream outStream, ManualResetEvent cancelEvent = null)
         {
             Ediabas = ediabas;
             _inStream = inStream;
             _outStream = outStream;
+            _cancelEvent = cancelEvent;
             _elm327RequEvent = new AutoResetEvent(false);
             _elm327RespEvent = new AutoResetEvent(false);
         }
@@ -1109,7 +1111,7 @@ namespace EdiabasLib
             StringBuilder stringBuilder = new StringBuilder();
             while (DataAvailable())
             {
-                int data = _inStream.ReadByteAsync();
+                int data = _inStream.ReadByteAsync(_cancelEvent);
                 if (data >= 0)
                 {
                     stringBuilder.Append(ConvertToChar(data));
@@ -1133,7 +1135,7 @@ namespace EdiabasLib
             {
                 while (DataAvailable())
                 {
-                    int data = _inStream.ReadByteAsync();
+                    int data = _inStream.ReadByteAsync(_cancelEvent);
                     if (data >= 0)
                     {
                         stringBuilder.Append(ConvertToChar(data));
@@ -1185,7 +1187,7 @@ namespace EdiabasLib
             {
                 while (DataAvailable())
                 {
-                    int data = _inStream.ReadByteAsync();
+                    int data = _inStream.ReadByteAsync(_cancelEvent);
                     if (data >= 0 && data != 0x00)
                     {   // remove 0x00
                         if (canData)
@@ -1484,7 +1486,7 @@ namespace EdiabasLib
             _inStream.Flush();
             while (DataAvailable())
             {
-                _inStream.ReadByteAsync();
+                _inStream.ReadByteAsync(_cancelEvent);
             }
         }
 
