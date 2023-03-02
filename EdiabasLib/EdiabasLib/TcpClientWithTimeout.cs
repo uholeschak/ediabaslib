@@ -91,7 +91,7 @@ namespace EdiabasLib
                     System.Threading.WaitHandle[] waitHandles = { threadFinishEvent, resetEvent };
                     abortThread = new System.Threading.Thread(() =>
                     {
-                        if (System.Threading.WaitHandle.WaitAny(waitHandles, _timeoutMilliseconds, false) == 1)
+                        if (System.Threading.WaitHandle.WaitAny(waitHandles, _timeoutMilliseconds) == 1)
                         {
                             // ReSharper disable once AccessToDisposedClosure
                             cts.Cancel();

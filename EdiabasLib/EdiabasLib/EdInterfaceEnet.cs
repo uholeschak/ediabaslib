@@ -2270,7 +2270,7 @@ namespace EdiabasLib
 
                 if (recTels == 0)
                 {
-                    if (WaitHandle.WaitAny(new WaitHandle[] { SharedDataActive.TcpDiagStreamRecEvent, SharedDataActive.TransmitCancelEvent }, timeout, false) != 0)
+                    if (WaitHandle.WaitAny(new WaitHandle[] { SharedDataActive.TcpDiagStreamRecEvent, SharedDataActive.TransmitCancelEvent }, timeout) != 0)
                     {
                         return -1;
                     }

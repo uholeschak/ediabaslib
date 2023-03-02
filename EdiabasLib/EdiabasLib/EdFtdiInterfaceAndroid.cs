@@ -556,7 +556,7 @@ namespace EdiabasLib
                         DataReceiveEvent.Reset();
                     }
 
-                    if (WaitHandle.WaitAny(new WaitHandle[] { DataReceiveEvent, TransmitCancelEvent }, timeout, false) == 1)
+                    if (WaitHandle.WaitAny(new WaitHandle[] { DataReceiveEvent, TransmitCancelEvent }, timeout) == 1)
                     {
                         return false;
                     }
