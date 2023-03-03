@@ -23,6 +23,7 @@ namespace EdiabasLib
         protected static InTheHand.Net.Sockets.BluetoothClient BtClient;
 #endif
         protected static NetworkStream BtStream;
+        protected static ManualResetEvent TransmitCancelEvent;
         protected static AutoResetEvent CommReceiveEvent;
         protected static long LastDisconnectTime = DateTime.MinValue.Ticks;
         protected static Stopwatch StopWatch = new Stopwatch();
@@ -38,6 +39,7 @@ namespace EdiabasLib
         {
             SerialPort = new System.IO.Ports.SerialPort();
             SerialPort.DataReceived += SerialDataReceived;
+            TransmitCancelEvent = new ManualResetEvent(false);
             CommReceiveEvent = new AutoResetEvent(false);
         }
 
@@ -59,6 +61,8 @@ namespace EdiabasLib
                 InterfaceDisconnect(true);
                 return false;
             }
+
+            TransmitCancelEvent.Reset();
             _connectPort = port;
             Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Bluetooth connect: {0}", port);
             long disconnectDiff = (Stopwatch.GetTimestamp() - LastDisconnectTime) / EdCustomAdapterCommon.TickResolMs;
@@ -245,6 +249,15 @@ namespace EdiabasLib
 
         public static bool InterfaceTransmitCancel(bool cancel)
         {
+            if (cancel)
+            {
+                TransmitCancelEvent.Set();
+            }
+            else
+            {
+                TransmitCancelEvent.Reset();
+            }
+
             return true;
         }
 
