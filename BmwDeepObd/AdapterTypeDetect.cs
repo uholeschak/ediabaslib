@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System;
 using System.IO;
 using System.Text;
+using System.Threading;
 
 namespace BmwDeepObd;
 
@@ -62,8 +63,9 @@ public class AdapterTypeDetect
     /// </summary>
     /// <param name="adapterInStream">Adapter input stream</param>
     /// <param name="adapterOutStream">Adapter output stream</param>
+    /// <param name="cancelEvent">Transmit cancel event</param>
     /// <returns>Adapter type</returns>
-    public AdapterType AdapterTypeDetection(Stream adapterInStream, Stream adapterOutStream)
+    public AdapterType AdapterTypeDetection(Stream adapterInStream, Stream adapterOutStream, ManualResetEvent cancelEvent = null)
     {
         AdapterType adapterType = AdapterType.Unknown;
         ElmVerH = -1;
@@ -78,7 +80,7 @@ public class AdapterTypeDetect
             adapterInStream.Flush();
             while (adapterInStream.HasData())
             {
-                adapterInStream.ReadByteAsync();
+                adapterInStream.ReadByteAsync(cancelEvent);
             }
 #if DEBUG
             Android.Util.Log.Info(Tag, string.Format("Send: {0}", BitConverter.ToString(customData).Replace("-", " ")));
@@ -93,7 +95,7 @@ public class AdapterTypeDetect
             {
                 while (adapterInStream.HasData())
                 {
-                    int data = adapterInStream.ReadByteAsync();
+                    int data = adapterInStream.ReadByteAsync(cancelEvent);
                     if (data >= 0)
                     {
 #if DEBUG
@@ -209,7 +211,7 @@ public class AdapterTypeDetect
                 adapterInStream.Flush();
                 while (adapterInStream.HasData())
                 {
-                    adapterInStream.ReadByteAsync();
+                    adapterInStream.ReadByteAsync(cancelEvent);
                 }
 
                 string command = "ATI\r";
@@ -221,7 +223,7 @@ public class AdapterTypeDetect
 #endif
                 LogString("ELM CMD send: " + command);
 
-                string response = GetElm327Reponse(adapterInStream);
+                string response = GetElm327Response(adapterInStream, cancelEvent);
                 if (response != null)
                 {
                     MatchCollection matchesVer = elmVerRegEx.Matches(response);
@@ -266,15 +268,15 @@ public class AdapterTypeDetect
                     adapterInStream.Flush();
                     while (adapterInStream.HasData())
                     {
-                        adapterInStream.ReadByteAsync();
+                        adapterInStream.ReadByteAsync(cancelEvent);
                     }
-                    if (!Elm327SendCommand(adapterInStream, adapterOutStream, elmInitEntry.Command, false))
+                    if (!Elm327SendCommand(adapterInStream, adapterOutStream, cancelEvent, elmInitEntry.Command, false))
                     {
                         adapterType = AdapterType.Elm327Invalid;
                         break;
                     }
 
-                    string response = GetElm327Reponse(adapterInStream);
+                    string response = GetElm327Response(adapterInStream, cancelEvent);
                     if (response == null)
                     {
                         LogString("*** No ELM response");
@@ -318,7 +320,7 @@ public class AdapterTypeDetect
                     case AdapterType.Elm327:
                     case AdapterType.Elm327FakeOpt:
                         {
-                            if (!Elm327CheckCustomFirmware(adapterInStream, adapterOutStream, out bool customFirmware))
+                            if (!Elm327CheckCustomFirmware(adapterInStream, adapterOutStream, cancelEvent, out bool customFirmware))
                             {
                                 LogString("*** ELM firmware detection failed");
                             }
@@ -328,7 +330,7 @@ public class AdapterTypeDetect
                                 break;
                             }
 
-                            if (!Elm327CheckCompatibility(adapterInStream, adapterOutStream, out bool restricted, out bool fwUpdate))
+                            if (!Elm327CheckCompatibility(adapterInStream, adapterOutStream, cancelEvent, out bool restricted, out bool fwUpdate))
                             {
                                 LogString("*** ELM not compatible");
                                 adapterType = AdapterType.Elm327Fake;
@@ -344,7 +346,7 @@ public class AdapterTypeDetect
                                 adapterType = AdapterType.StnFwUpdate;
                             }
 
-                            if (!Elm327CheckCan(adapterInStream, adapterOutStream, out bool canSupport))
+                            if (!Elm327CheckCan(adapterInStream, adapterOutStream, cancelEvent, out bool canSupport))
                             {
                                 LogString("*** ELM CAN detection failed");
                                 adapterType = AdapterType.Elm327Invalid;
@@ -588,25 +590,26 @@ public class AdapterTypeDetect
     /// </summary>
     /// <param name="adapterInStream"></param>
     /// <param name="adapterOutStream"></param>
+    /// <param name="cancelEvent">Transmit cancel event</param>
     /// <param name="canSupport">True: CAN supported</param>
     /// <returns></returns>
-    private bool Elm327CheckCan(Stream adapterInStream, Stream adapterOutStream, out bool canSupport)
+    private bool Elm327CheckCan(Stream adapterInStream, Stream adapterOutStream, ManualResetEvent cancelEvent, out bool canSupport)
     {
         canSupport = true;
-        Elm327SendCommand(adapterInStream, adapterOutStream, "ATCTM1");     // standard multiplier
+        Elm327SendCommand(adapterInStream, adapterOutStream, cancelEvent,"ATCTM1");     // standard multiplier
         int timeout = 1000 / 4; // 1sec
-        if (!Elm327SendCommand(adapterInStream, adapterOutStream, string.Format("ATST{0:X02}", timeout)))
+        if (!Elm327SendCommand(adapterInStream, adapterOutStream, cancelEvent, string.Format("ATST{0:X02}", timeout)))
         {
             LogString("*** ELM setting timeout failed");
             return false;
         }
 
-        if (!Elm327SendCommand(adapterInStream, adapterOutStream, "0000000000000000", false)) // dummy data
+        if (!Elm327SendCommand(adapterInStream, adapterOutStream, cancelEvent, "0000000000000000", false)) // dummy data
         {
             LogString("*** ELM sending data failed");
             return false;
         }
-        string answer = GetElm327Reponse(adapterInStream);
+        string answer = GetElm327Response(adapterInStream, cancelEvent);
         if (answer != null)
         {
             if (answer.Contains("CAN ERROR\r"))
@@ -622,12 +625,12 @@ public class AdapterTypeDetect
         if (canSupport)
         {
             // fake adapters are not able to send short telegrams
-            if (!Elm327SendCommand(adapterInStream, adapterOutStream, "00", false))
+            if (!Elm327SendCommand(adapterInStream, adapterOutStream, cancelEvent, "00", false))
             {
                 LogString("*** ELM sending data failed");
                 return false;
             }
-            answer = GetElm327Reponse(adapterInStream);
+            answer = GetElm327Response(adapterInStream, cancelEvent);
             if (answer != null)
             {
                 if (answer.Contains("CAN ERROR\r"))
@@ -644,22 +647,22 @@ public class AdapterTypeDetect
         return true;
     }
 
-    private bool Elm327CheckCustomFirmware(Stream adapterInStream, Stream adapterOutStream, out bool customFirmware)
+    private bool Elm327CheckCustomFirmware(Stream adapterInStream, Stream adapterOutStream, ManualResetEvent cancelEvent, out bool customFirmware)
     {
         customFirmware = false;
         adapterInStream.Flush();
         while (adapterInStream.HasData())
         {
-            adapterInStream.ReadByteAsync();
+            adapterInStream.ReadByteAsync(cancelEvent);
         }
 
-        if (!Elm327SendCommand(adapterInStream, adapterOutStream, @"AT@2", false))
+        if (!Elm327SendCommand(adapterInStream, adapterOutStream, cancelEvent, @"AT@2", false))
         {
             LogString("*** ELM read device identifier failed");
             return false;
         }
 
-        string answer = GetElm327Reponse(adapterInStream);
+        string answer = GetElm327Response(adapterInStream, cancelEvent);
         if (answer != null)
         {
             if (answer.StartsWith("DEEPOBD"))
@@ -681,23 +684,23 @@ public class AdapterTypeDetect
         return true;
     }
 
-    private bool Elm327CheckCompatibility(Stream adapterInStream, Stream adapterOutStream, out bool restricted, out bool fwUpdate)
+    private bool Elm327CheckCompatibility(Stream adapterInStream, Stream adapterOutStream, ManualResetEvent cancelEvent, out bool restricted, out bool fwUpdate)
     {
         restricted = false;
         fwUpdate = false;
         adapterInStream.Flush();
         while (adapterInStream.HasData())
         {
-            adapterInStream.ReadByteAsync();
+            adapterInStream.ReadByteAsync(cancelEvent);
         }
 
-        if (!Elm327SendCommand(adapterInStream, adapterOutStream, @"AT@1", false))
+        if (!Elm327SendCommand(adapterInStream, adapterOutStream, cancelEvent, @"AT@1", false))
         {
             LogString("*** ELM read device description failed");
             return false;
         }
 
-        string elmDevDesc = GetElm327Reponse(adapterInStream);
+        string elmDevDesc = GetElm327Response(adapterInStream, cancelEvent);
         if (elmDevDesc != null)
         {
             LogString(string.Format("ELM ID: {0}", elmDevDesc));
@@ -707,13 +710,13 @@ public class AdapterTypeDetect
             }
         }
 
-        if (!Elm327SendCommand(adapterInStream, adapterOutStream, @"AT#1", false))
+        if (!Elm327SendCommand(adapterInStream, adapterOutStream, cancelEvent, @"AT#1", false))
         {
             LogString("*** ELM read manufacturer failed");
             return false;
         }
 
-        string elmManufact = GetElm327Reponse(adapterInStream);
+        string elmManufact = GetElm327Response(adapterInStream, cancelEvent);
         if (elmManufact != null)
         {
             LogString(string.Format("ELM Manufacturer: {0}", elmManufact));
@@ -733,24 +736,24 @@ public class AdapterTypeDetect
             }
         }
 
-        if (!Elm327SendCommand(adapterInStream, adapterOutStream, @"STI", false))
+        if (!Elm327SendCommand(adapterInStream, adapterOutStream, cancelEvent, @"STI", false))
         {
             LogString("*** STN read firmware version failed");
             return false;
         }
 
-        string stnVers = GetElm327Reponse(adapterInStream, true);
+        string stnVers = GetElm327Response(adapterInStream, cancelEvent, true);
         string stnVersExt = null;
         if (stnVers != null)
         {
             LogString(string.Format("STN Version: {0}", stnVers));
-            if (!Elm327SendCommand(adapterInStream, adapterOutStream, @"STIX", false))
+            if (!Elm327SendCommand(adapterInStream, adapterOutStream, cancelEvent, @"STIX", false))
             {
                 LogString("*** STN read ext firmware version failed");
                 return false;
             }
 
-            stnVersExt = GetElm327Reponse(adapterInStream, true);
+            stnVersExt = GetElm327Response(adapterInStream, cancelEvent, true);
             if (stnVersExt != null)
             {
                 LogString(string.Format("STN Ext Version: {0}", stnVersExt));
@@ -829,7 +832,7 @@ public class AdapterTypeDetect
 
         if (!restricted)
         {
-            if (!Elm327SendCommand(adapterInStream, adapterOutStream, @"ATPP2COFF"))
+            if (!Elm327SendCommand(adapterInStream, adapterOutStream, cancelEvent, @"ATPP2COFF"))
             {
                 LogString("*** ELM ATPP2COFF failed, fake device");
                 return false;
@@ -866,9 +869,10 @@ public class AdapterTypeDetect
     /// <param name="adapterInStream">Adapter input stream</param>
     /// <param name="adapterOutStream">Adapter output stream</param>
     /// <param name="command">Command to send</param>
+    /// <param name="cancelEvent">Transmit cancel event</param>
     /// <param name="readAnswer">True: Check for valid answer</param>
     /// <returns>True: command ok</returns>
-    private bool Elm327SendCommand(Stream adapterInStream, Stream adapterOutStream, string command, bool readAnswer = true)
+    private bool Elm327SendCommand(Stream adapterInStream, Stream adapterOutStream, ManualResetEvent cancelEvent, string command, bool readAnswer = true)
     {
         byte[] sendData = Encoding.UTF8.GetBytes(command + "\r");
         LogData(sendData, 0, sendData.Length, "Send");
@@ -880,7 +884,7 @@ public class AdapterTypeDetect
 
         if (readAnswer)
         {
-            string answer = GetElm327Reponse(adapterInStream);
+            string answer = GetElm327Response(adapterInStream, cancelEvent);
             if (answer == null)
             {
                 LogString("*** No ELM response");
@@ -901,8 +905,9 @@ public class AdapterTypeDetect
     /// </summary>
     /// <param name="adapterInStream">Adapter input stream</param>
     /// <param name="checkValid">Check if resposne is valid</param>
+    /// <param name="cancelEvent">Transmit cancel event</param>
     /// <returns>Response string, null for no reponse</returns>
-    private string GetElm327Reponse(Stream adapterInStream, bool checkValid = false)
+    private string GetElm327Response(Stream adapterInStream, ManualResetEvent cancelEvent, bool checkValid = false)
     {
         LogData(null, 0, 0, "Resp");
         string response = null;
@@ -913,7 +918,7 @@ public class AdapterTypeDetect
         {
             while (adapterInStream.HasData())
             {
-                int data = adapterInStream.ReadByteAsync();
+                int data = adapterInStream.ReadByteAsync(cancelEvent);
                 if (data >= 0 && data != 0x00)
                 {
                     // remove 0x00
