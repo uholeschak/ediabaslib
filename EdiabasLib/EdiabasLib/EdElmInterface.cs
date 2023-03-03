@@ -1292,15 +1292,6 @@ namespace EdiabasLib
                 {
                     while (DataAvailable())
                     {
-                        if (_cancelEvent != null)
-                        {
-                            if (_cancelEvent.WaitOne(0))
-                            {
-                                Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM transmit cancelled");
-                                return string.Empty;
-                            }
-                        }
-
                         int length = _inStream.Read(buffer, 0, buffer.Length);
                         if (length > 0)
                         {
