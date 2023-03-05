@@ -615,7 +615,7 @@ namespace EdiabasLib
                 int data;
                 try
                 {
-                    data = TcpStream.ReadByteAsync(TransmitCancelEvent, 1);
+                    data = TcpStream.ReadByteAsync(TransmitCancelEvent, 100);
                 }
                 catch (Exception)
                 {
