@@ -610,13 +610,12 @@ namespace EdiabasLib
         private static List<byte> ReadInBuffer()
         {
             List<byte> responseList = new List<byte>();
-            TcpStream.ReadTimeout = 1;
             while (TcpStream.DataAvailable)
             {
                 int data;
                 try
                 {
-                    data = TcpStream.ReadByte();
+                    data = TcpStream.ReadByteAsync(TransmitCancelEvent, 1);
                 }
                 catch (Exception)
                 {
