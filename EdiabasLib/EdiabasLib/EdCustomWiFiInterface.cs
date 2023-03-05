@@ -567,7 +567,7 @@ namespace EdiabasLib
                 }
                 try
                 {
-                    data = TcpStream.ReadByteAsync(TransmitCancelEvent, timeout);
+                    data = TcpStream.ReadByteAsync(TransmitCancelEvent, timeoutTelEnd);
                 }
                 catch (Exception)
                 {
