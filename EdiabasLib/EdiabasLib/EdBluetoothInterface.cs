@@ -482,11 +482,10 @@ namespace EdiabasLib
             int recLen = 0;
             if (BtStream != null)
             {
-                BtStream.ReadTimeout = timeout;
                 int data;
                 try
                 {
-                    data = BtStream.ReadByte();
+                    data = BtStream.ReadByteAsync(TransmitCancelEvent, timeout);
                 }
                 catch (Exception)
                 {
@@ -499,7 +498,6 @@ namespace EdiabasLib
                 buffer[offset + recLen] = (byte)data;
                 recLen++;
 
-                BtStream.ReadTimeout = timeoutTelEnd;
                 for (; ; )
                 {
                     if (recLen >= length)
@@ -508,7 +506,7 @@ namespace EdiabasLib
                     }
                     try
                     {
-                        data = BtStream.ReadByte();
+                        data = BtStream.ReadByteAsync(TransmitCancelEvent, timeoutTelEnd);
                     }
                     catch (Exception)
                     {
@@ -590,12 +588,11 @@ namespace EdiabasLib
         {
             if (BtStream != null)
             {
-                BtStream.ReadTimeout = 1;
                 while (BtStream.DataAvailable)
                 {
                     try
                     {
-                        BtStream.ReadByte();
+                        BtStream.ReadByteAsync(TransmitCancelEvent, 100);
                     }
                     catch (Exception)
                     {
@@ -614,13 +611,12 @@ namespace EdiabasLib
             List<byte> responseList = new List<byte>();
             if (BtStream != null)
             {
-                BtStream.ReadTimeout = 1;
                 while (BtStream.DataAvailable)
                 {
                     int data;
                     try
                     {
-                        data = BtStream.ReadByte();
+                        data = BtStream.ReadByteAsync(TransmitCancelEvent, 100);
                     }
                     catch (Exception)
                     {
