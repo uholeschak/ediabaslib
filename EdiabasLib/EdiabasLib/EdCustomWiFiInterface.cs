@@ -263,6 +263,9 @@ namespace EdiabasLib
                     return false;
                 }
 
+#if DEBUG_ANDROID
+                Android.Util.Log.Info(Tag, string.Format("InterfaceConnect WriteEscape={0}", CustomAdapter.EscapeModeWrite));
+#endif
                 WriteStream.SetEscapeMode(CustomAdapter.EscapeModeWrite);
             }
             catch (Exception ex)
@@ -534,6 +537,9 @@ namespace EdiabasLib
             {
                 if (WriteStream.EscapeMode != CustomAdapter.EscapeModeWrite)
                 {
+#if DEBUG_ANDROID
+                    Android.Util.Log.Info(Tag, string.Format("SendData Update WriteEscape={0}", CustomAdapter.EscapeModeWrite));
+#endif
                     WriteStream.SetEscapeMode(CustomAdapter.EscapeModeWrite);
                 }
                 WriteStream.Write(buffer, 0, length);
