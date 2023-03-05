@@ -543,11 +543,10 @@ namespace EdiabasLib
         private static bool ReceiveData(byte[] buffer, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog = null)
         {
             int recLen = 0;
-            TcpStream.ReadTimeout = timeout;
             int data;
             try
             {
-                data = TcpStream.ReadByte();
+                data = TcpStream.ReadByteAsync(TransmitCancelEvent, timeout);
             }
             catch (Exception)
             {
@@ -560,7 +559,6 @@ namespace EdiabasLib
             buffer[offset + recLen] = (byte)data;
             recLen++;
 
-            TcpStream.ReadTimeout = timeoutTelEnd;
             for (; ; )
             {
                 if (recLen >= length)
@@ -569,7 +567,7 @@ namespace EdiabasLib
                 }
                 try
                 {
-                    data = TcpStream.ReadByte();
+                    data = TcpStream.ReadByteAsync(TransmitCancelEvent, timeout);
                 }
                 catch (Exception)
                 {
