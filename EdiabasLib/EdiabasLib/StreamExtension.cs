@@ -76,7 +76,7 @@ namespace EdiabasLib
                         cts.Cancel();
                     }
 
-                    if (readTask.IsCompletedSuccessfully && readTask.Result == dataBuffer.Length)
+                    if (readTask.Status == TaskStatus.RanToCompletion && readTask.Result == dataBuffer.Length && !cts.IsCancellationRequested)
                     {
                         result = dataBuffer[0];
                     }
