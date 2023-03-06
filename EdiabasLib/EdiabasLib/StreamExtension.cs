@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace EdiabasLib
 {
@@ -46,56 +47,51 @@ namespace EdiabasLib
                 return escapeStream.ReadByte();
             }
 
-            Semaphore waitSem = new Semaphore(0, 1);
             byte[] dataBuffer = new byte[1];
             int result = -1;
-            IAsyncResult asyncResult = inStream.BeginRead(dataBuffer, 0, dataBuffer.Length, ar =>
+            Thread abortThread = null;
+            AutoResetEvent threadFinishEvent = null;
+            try
             {
-                try
+                using (CancellationTokenSource cts = new CancellationTokenSource())
                 {
-                    int bytes = inStream.EndRead(ar);
-                    if (bytes > 0)
+                    threadFinishEvent = new AutoResetEvent(false);
+                    Task<int> readTask = inStream.ReadAsync(dataBuffer, 0, dataBuffer.Length, cts.Token);
+                    if (cancelEvent != null)
+                    {
+                        WaitHandle[] waitHandles = { threadFinishEvent, cancelEvent };
+                        abortThread = new Thread(() =>
+                        {
+                            if (WaitHandle.WaitAny(waitHandles, timeout) == 1)
+                            {
+                                // ReSharper disable once AccessToDisposedClosure
+                                cts.Cancel();
+                            }
+                        });
+                        abortThread.Start();
+                    }
+
+                    if (!readTask.Wait(timeout))
+                    {
+                        cts.Cancel();
+                    }
+
+                    if (readTask.Status == TaskStatus.RanToCompletion && readTask.Result == dataBuffer.Length && !cts.IsCancellationRequested)
                     {
                         result = dataBuffer[0];
                     }
                 }
-                catch (Exception)
-                {
-                    // ignored
-                }
-
-                try
-                {
-                    // ReSharper disable once AccessToDisposedClosure
-                    waitSem.Release();
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-            }, null);
-
-            if (cancelEvent != null)
-            {
-                if (WaitHandle.WaitAny(new WaitHandle[] { waitSem, cancelEvent }, timeout) != 0)
-                {
-                    return -1;
-                }
             }
-            else
+            finally
             {
-                if (!waitSem.WaitOne(timeout))
+                if (abortThread != null)
                 {
-                    return -1;
+                    threadFinishEvent.Set();
+                    abortThread.Join();
                 }
-            }
 
-            if (!asyncResult.IsCompleted)
-            {
-                return -1;
+                threadFinishEvent?.Dispose();
             }
-
-            waitSem.Dispose();
 
             return result;
         }
