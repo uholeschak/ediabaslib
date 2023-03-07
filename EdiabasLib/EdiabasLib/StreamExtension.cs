@@ -47,6 +47,14 @@ namespace EdiabasLib
                 return escapeStream.ReadByte();
             }
 
+            if (cancelEvent != null)
+            {
+                if (cancelEvent.WaitOne())
+                {
+                    return -1;
+                }
+            }
+
             byte[] dataBuffer = new byte[1];
             int result = -1;
             Thread abortThread = null;
@@ -76,7 +84,8 @@ namespace EdiabasLib
                         cts.Cancel();
                     }
 
-                    if (readTask.Status == TaskStatus.RanToCompletion && readTask.Result == dataBuffer.Length && !cts.IsCancellationRequested)
+                    if (readTask.Status == TaskStatus.RanToCompletion && readTask.Result == dataBuffer.Length &&
+                        !cts.IsCancellationRequested)
                     {
                         result = dataBuffer[0];
                     }
