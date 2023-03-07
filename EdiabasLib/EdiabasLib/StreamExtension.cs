@@ -37,6 +37,14 @@ namespace EdiabasLib
                 return -1;
             }
 
+            if (cancelEvent != null)
+            {
+                if (cancelEvent.WaitOne())
+                {
+                    return -1;
+                }
+            }
+
             if (inStream is MemoryQueueBufferStream memoryStream)
             {
                 return memoryStream.ReadByte();
@@ -45,14 +53,6 @@ namespace EdiabasLib
             if (inStream is EscapeStreamReader escapeStream)
             {
                 return escapeStream.ReadByte();
-            }
-
-            if (cancelEvent != null)
-            {
-                if (cancelEvent.WaitOne())
-                {
-                    return -1;
-                }
             }
 
             byte[] dataBuffer = new byte[1];
