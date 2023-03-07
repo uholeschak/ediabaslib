@@ -27,6 +27,7 @@ public class CheckAdapter : IDisposable
     private FinishDelegate _finishHandler;
     private string _appDataDir;
     private string _deviceAddress;
+    private ManualResetEvent _transmitCancelEvent;
     private AdapterTypeDetect _adapterTypeDetect;
     private EdiabasNet _ediabas;
     private Thread _adapterThread;
@@ -36,6 +37,7 @@ public class CheckAdapter : IDisposable
         _activityCommon = activityCommon;
         _context = _activityCommon.Context;
         _activity = _activityCommon.Activity;
+        _transmitCancelEvent = new ManualResetEvent(false);
         _adapterTypeDetect = new AdapterTypeDetect(_activityCommon);
     }
 
@@ -57,16 +59,35 @@ public class CheckAdapter : IDisposable
         progress.SetMessage(_context.GetString(Resource.String.detect_adapter));
         progress.ButtonAbort.Visibility = ViewStates.Visible;
         progress.ButtonAbort.Enabled = false;
+        progress.AbortClick += sender =>
+        {
+            if (_activityCommon == null)
+            {
+                return;
+            }
+
+            _transmitCancelEvent.Set();
+            _ediabas.EdInterfaceClass.TransmitCancel(true);
+        };
         progress.Show();
 
         _adapterTypeDetect.SbLog.Clear();
 
         _adapterThread = new Thread(() =>
         {
-            ManualResetEvent cancelEvent = new ManualResetEvent(false);
             AdapterTypeDetect.AdapterType adapterType = AdapterTypeDetect.AdapterType.Unknown;
             try
             {
+                _activity.RunOnUiThread(() =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    progress.ButtonAbort.Enabled = true;
+                });
+
                 bool connectOk = InterfacePrepare();
                 Stream inStream = null;
                 Stream outStream = null;
@@ -121,20 +142,7 @@ public class CheckAdapter : IDisposable
 
                 if (connectOk)
                 {
-                    _activity.RunOnUiThread(() =>
-                    {
-                        progress.ButtonAbort.Enabled = true;
-                        progress.AbortClick += sender =>
-                        {
-                            cancelEvent.Set();
-                        };
-                    });
-
-                    adapterType = _adapterTypeDetect.AdapterTypeDetection(inStream, outStream, cancelEvent);
-                    _activity.RunOnUiThread(() =>
-                    {
-                        progress.ButtonAbort.Enabled = false;
-                    });
+                    adapterType = _adapterTypeDetect.AdapterTypeDetection(inStream, outStream, _transmitCancelEvent);
                 }
                 else
                 {
@@ -145,13 +153,16 @@ public class CheckAdapter : IDisposable
             {
                 adapterType = AdapterTypeDetect.AdapterType.ConnectionFailed;
             }
-            finally
+
+            _activity.RunOnUiThread(() =>
             {
-                _activity.RunOnUiThread(() =>
+                if (_activityCommon == null)
                 {
-                    cancelEvent.Dispose();
-                });
-            }
+                    return;
+                }
+                progress.ButtonAbort.Enabled = false;
+            });
+
             EdiabasClose();
 
             if (_adapterTypeDetect.SbLog.Length == 0)
@@ -390,6 +401,9 @@ public class CheckAdapter : IDisposable
             };
             _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress);
         }
+
+        _transmitCancelEvent.Reset();
+        _ediabas.EdInterfaceClass.TransmitCancel(false);
     }
 
     private bool EdiabasClose()
@@ -429,6 +443,9 @@ public class CheckAdapter : IDisposable
             _ediabas.EdInterfaceClass.CommAnswerLen =
                 new Int16[] { 0x0000, 0x0000 };
         }
+
+        _transmitCancelEvent.Reset();
+        _ediabas.EdInterfaceClass.TransmitCancel(false);
         return true;
     }
 
@@ -459,6 +476,12 @@ public class CheckAdapter : IDisposable
                 }
 
                 EdiabasClose();
+
+                if (_transmitCancelEvent != null)
+                {
+                    _transmitCancelEvent.Dispose();
+                    _transmitCancelEvent = null;
+                }
             }
 
             // Note disposing has been done.
@@ -466,5 +489,4 @@ public class CheckAdapter : IDisposable
             _activityCommon = null;
         }
     }
-
 }

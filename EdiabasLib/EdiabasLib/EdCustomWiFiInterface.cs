@@ -621,16 +621,21 @@ namespace EdiabasLib
                 int data;
                 try
                 {
-                    data = TcpStream.ReadByteAsync(TransmitCancelEvent, 100);
+                    data = TcpStream.ReadByteAsync(TransmitCancelEvent);
                 }
                 catch (Exception)
                 {
                     data = -1;
                 }
+
                 if (data >= 0)
                 {
                     CustomAdapter.LastCommTick = Stopwatch.GetTimestamp();
                     responseList.Add((byte)data);
+                }
+                else
+                {
+                    break;
                 }
             }
 #if DEBUG_ANDROID

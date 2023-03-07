@@ -1913,7 +1913,10 @@ namespace BmwDeepObd
 
                     while (_inStream.IsDataAvailable())
                     {
-                        _inStream.ReadByteAsync();
+                        if (_inStream.ReadByteAsync() < 0)
+                        {
+                            break;
+                        }
                     }
                     return;
                 }
@@ -2207,7 +2210,10 @@ namespace BmwDeepObd
                 {
                     while (_inStream.IsDataAvailable())
                     {
-                        _inStream.ReadByteAsync();
+                        if (_inStream.ReadByteAsync() < 0)
+                        {
+                            break;
+                        }
                     }
                     _outStream.WriteByte(STX);
 

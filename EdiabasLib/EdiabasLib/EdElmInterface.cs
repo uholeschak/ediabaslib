@@ -1122,6 +1122,10 @@ namespace EdiabasLib
                         return true;
                     }
                 }
+                else
+                {
+                    break;
+                }
             }
 
             for (int i = 0; i < 4; i++)
@@ -1157,6 +1161,10 @@ namespace EdiabasLib
                             return true;
                         }
                     }
+                    else
+                    {
+                        break;
+                    }
                 }
                 if ((Stopwatch.GetTimestamp() - startTime) > timeout * TickResolMs)
                 {
@@ -1188,7 +1196,12 @@ namespace EdiabasLib
                 while (DataAvailable())
                 {
                     int data = _inStream.ReadByteAsync(_cancelEvent);
-                    if (data >= 0 && data != 0x00)
+                    if (data < 0)
+                    {
+                        break;
+                    }
+
+                    if (data != 0x00)
                     {   // remove 0x00
                         if (canData)
                         {
@@ -1495,7 +1508,10 @@ namespace EdiabasLib
             _inStream.Flush();
             while (DataAvailable())
             {
-                _inStream.ReadByteAsync(_cancelEvent);
+                if (_inStream.ReadByteAsync(_cancelEvent) < 0)
+                {
+                    break;
+                }
             }
         }
 

@@ -791,7 +791,10 @@ namespace EdiabasLib
         {
             while (_bluetoothInStream.HasData())
             {
-                _bluetoothInStream.ReadByteAsync(TransmitCancelEvent);
+                if (_bluetoothInStream.ReadByteAsync(TransmitCancelEvent) < 0)
+                {
+                    break;
+                }
             }
         }
 
@@ -813,6 +816,10 @@ namespace EdiabasLib
                 {
                     CustomAdapter.LastCommTick = Stopwatch.GetTimestamp();
                     responseList.Add((byte)data);
+                }
+                else
+                {
+                    break;
                 }
             }
             return responseList;
