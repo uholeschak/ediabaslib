@@ -2371,6 +2371,11 @@ namespace BmwDeepObd
             progress.Max = 100;
             progress.AbortClick = sender => 
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
                 _ediabasJobAbort = true;
                 progress.Indeterminate = true;
                 progress.ButtonAbort.Enabled = false;
@@ -3392,6 +3397,11 @@ namespace BmwDeepObd
             progress.Max = 100;
             progress.AbortClick = sender => 
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
                 _ediabasJobAbort = true;
                 progress.Indeterminate = true;
                 progress.ButtonAbort.Enabled = false;
@@ -3733,6 +3743,11 @@ namespace BmwDeepObd
             }
             progress.AbortClick = sender => 
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
                 _ediabasJobAbort = true;
                 progress.Indeterminate = true;
                 progress.ButtonAbort.Enabled = false;

@@ -319,6 +319,10 @@ namespace EdiabasLib
                         _readDataList.Add((byte)data);
                     }
                 }
+                else
+                {
+                    break;
+                }
             }
         }
     }
