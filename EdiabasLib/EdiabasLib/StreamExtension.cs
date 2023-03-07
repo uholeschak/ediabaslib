@@ -39,7 +39,7 @@ namespace EdiabasLib
 
             if (cancelEvent != null)
             {
-                if (cancelEvent.WaitOne())
+                if (cancelEvent.WaitOne(0))
                 {
                     return -1;
                 }
