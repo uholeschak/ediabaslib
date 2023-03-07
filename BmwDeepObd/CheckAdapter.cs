@@ -55,13 +55,15 @@ public class CheckAdapter : IDisposable
 
         CustomProgressDialog progress = new CustomProgressDialog(_context);
         progress.SetMessage(_context.GetString(Resource.String.detect_adapter));
-        progress.ButtonAbort.Visibility = ViewStates.Gone;
+        progress.ButtonAbort.Visibility = ViewStates.Visible;
+        progress.ButtonAbort.Enabled = false;
         progress.Show();
 
         _adapterTypeDetect.SbLog.Clear();
 
         _adapterThread = new Thread(() =>
         {
+            ManualResetEvent cancelEvent = new ManualResetEvent(false);
             AdapterTypeDetect.AdapterType adapterType = AdapterTypeDetect.AdapterType.Unknown;
             try
             {
@@ -80,6 +82,7 @@ public class CheckAdapter : IDisposable
                                 connectOk = false;
                                 break;
                             }
+
                             inStream = bluetoothSocket.InputStream;
                             outStream = bluetoothSocket.OutputStream;
                             break;
@@ -93,6 +96,7 @@ public class CheckAdapter : IDisposable
                                 connectOk = false;
                                 break;
                             }
+
                             inStream = networkStream;
                             outStream = networkStream;
                             break;
@@ -107,6 +111,7 @@ public class CheckAdapter : IDisposable
                                 connectOk = false;
                                 break;
                             }
+
                             inStream = networkReadStream;
                             outStream = networkWriteStream;
                             break;
@@ -116,7 +121,20 @@ public class CheckAdapter : IDisposable
 
                 if (connectOk)
                 {
-                    adapterType = _adapterTypeDetect.AdapterTypeDetection(inStream, outStream);
+                    _activity.RunOnUiThread(() =>
+                    {
+                        progress.ButtonAbort.Enabled = true;
+                        progress.AbortClick += sender =>
+                        {
+                            cancelEvent.Set();
+                        };
+                    });
+
+                    adapterType = _adapterTypeDetect.AdapterTypeDetection(inStream, outStream, cancelEvent);
+                    _activity.RunOnUiThread(() =>
+                    {
+                        progress.ButtonAbort.Enabled = false;
+                    });
                 }
                 else
                 {
@@ -126,6 +144,13 @@ public class CheckAdapter : IDisposable
             catch (Exception)
             {
                 adapterType = AdapterTypeDetect.AdapterType.ConnectionFailed;
+            }
+            finally
+            {
+                _activity.RunOnUiThread(() =>
+                {
+                    cancelEvent.Dispose();
+                });
             }
             EdiabasClose();
 
