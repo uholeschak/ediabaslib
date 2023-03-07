@@ -80,7 +80,10 @@ public class AdapterTypeDetect
             adapterInStream.Flush();
             while (adapterInStream.HasData())
             {
-                adapterInStream.ReadByteAsync(cancelEvent);
+                if (adapterInStream.ReadByteAsync(cancelEvent) < 0)
+                {
+                    break;
+                }
             }
 #if DEBUG
             Android.Util.Log.Info(Tag, string.Format("Send: {0}", BitConverter.ToString(customData).Replace("-", " ")));
@@ -104,6 +107,10 @@ public class AdapterTypeDetect
                         LogByte((byte)data);
                         responseList.Add((byte)data);
                         startTime = Stopwatch.GetTimestamp();
+                    }
+                    else
+                    {
+                        break;
                     }
                 }
 
@@ -211,7 +218,10 @@ public class AdapterTypeDetect
                 adapterInStream.Flush();
                 while (adapterInStream.HasData())
                 {
-                    adapterInStream.ReadByteAsync(cancelEvent);
+                    if (adapterInStream.ReadByteAsync(cancelEvent) < 0)
+                    {
+                        break;
+                    }
                 }
 
                 string command = "ATI\r";
@@ -268,7 +278,10 @@ public class AdapterTypeDetect
                     adapterInStream.Flush();
                     while (adapterInStream.HasData())
                     {
-                        adapterInStream.ReadByteAsync(cancelEvent);
+                        if (adapterInStream.ReadByteAsync(cancelEvent) < 0)
+                        {
+                            break;
+                        }
                     }
                     if (!Elm327SendCommand(adapterInStream, adapterOutStream, cancelEvent, elmInitEntry.Command, false))
                     {
@@ -653,7 +666,10 @@ public class AdapterTypeDetect
         adapterInStream.Flush();
         while (adapterInStream.HasData())
         {
-            adapterInStream.ReadByteAsync(cancelEvent);
+            if (adapterInStream.ReadByteAsync(cancelEvent) < 0)
+            {
+                break;
+            }
         }
 
         if (!Elm327SendCommand(adapterInStream, adapterOutStream, cancelEvent, @"AT@2", false))
@@ -691,7 +707,10 @@ public class AdapterTypeDetect
         adapterInStream.Flush();
         while (adapterInStream.HasData())
         {
-            adapterInStream.ReadByteAsync(cancelEvent);
+            if (adapterInStream.ReadByteAsync(cancelEvent) < 0)
+            {
+                break;
+            }
         }
 
         if (!Elm327SendCommand(adapterInStream, adapterOutStream, cancelEvent, @"AT@1", false))
@@ -919,7 +938,12 @@ public class AdapterTypeDetect
             while (adapterInStream.HasData())
             {
                 int data = adapterInStream.ReadByteAsync(cancelEvent);
-                if (data >= 0 && data != 0x00)
+                if (data < 0)
+                {
+                    break;
+                }
+
+                if (data != 0x00)
                 {
                     // remove 0x00
                     LogByte((byte)data);
