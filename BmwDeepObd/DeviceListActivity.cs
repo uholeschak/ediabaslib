@@ -108,7 +108,8 @@ namespace BmwDeepObd
         private Button _btSettingsButton;
         private ActivityCommon _activityCommon;
         private string _appDataDir;
-        private readonly AutoResetEvent _connectedEvent = new AutoResetEvent(false);
+        private ManualResetEvent _transmitCancelEvent;
+        private AutoResetEvent _connectedEvent;
         private volatile string _connectDeviceAddress = string.Empty;
         private bool _btPermissionRequested;
         private bool _btPermissionGranted;
@@ -139,6 +140,8 @@ namespace BmwDeepObd
             // Set result CANCELED incase the user backs out
             SetResult (Android.App.Result.Canceled);
 
+            _transmitCancelEvent = new ManualResetEvent(false);
+            _connectedEvent = new AutoResetEvent(false);
             // ReSharper disable once UseObjectOrCollectionInitializer
             _activityCommon = new ActivityCommon(this, () =>
             {
@@ -347,8 +350,23 @@ namespace BmwDeepObd
 
             // Unregister broadcast listeners
             UnregisterReceiver(_receiver);
-            _activityCommon?.Dispose();
-            _activityCommon = null;
+            if (_activityCommon != null)
+            {
+                _activityCommon.Dispose();
+                _activityCommon = null;
+            }
+
+            if (_connectedEvent != null)
+            {
+                _connectedEvent.Dispose();
+                _connectedEvent = null;
+            }
+
+            if (_transmitCancelEvent != null)
+            {
+                _transmitCancelEvent.Dispose();
+                _transmitCancelEvent = null;
+            }
         }
 
         public void OnClick(View v)
@@ -1034,7 +1052,7 @@ namespace BmwDeepObd
                                     else
                                     {
                                         LogString("Connect to LE GATT device success");
-                                        adapterType = _adapterTypeDetect.AdapterTypeDetection(_btLeGattSpp.BtGattSppInStream, _btLeGattSpp.BtGattSppOutStream);
+                                        adapterType = _adapterTypeDetect.AdapterTypeDetection(_btLeGattSpp.BtGattSppInStream, _btLeGattSpp.BtGattSppOutStream, _transmitCancelEvent);
                                     }
                                 }
                                 finally
@@ -1125,7 +1143,7 @@ namespace BmwDeepObd
                                     }
 
                                     LogString(bluetoothSocket.IsConnected ? "Bt device is connected" : "Bt device is not connected");
-                                    adapterType = _adapterTypeDetect.AdapterTypeDetection(bluetoothSocket.InputStream, bluetoothSocket.OutputStream);
+                                    adapterType = _adapterTypeDetect.AdapterTypeDetection(bluetoothSocket.InputStream, bluetoothSocket.OutputStream, _transmitCancelEvent);
                                     if (mtcBtService && adapterType == AdapterTypeDetect.AdapterType.Unknown)
                                     {
                                         for (int retry = 0; retry < 20; retry++)
@@ -1170,7 +1188,7 @@ namespace BmwDeepObd
                                             }
 
                                             LogString(bluetoothSocket.IsConnected ? "Bt device is connected" : "Bt device is not connected");
-                                            adapterType = _adapterTypeDetect.AdapterTypeDetection(bluetoothSocket.InputStream, bluetoothSocket.OutputStream);
+                                            adapterType = _adapterTypeDetect.AdapterTypeDetection(bluetoothSocket.InputStream, bluetoothSocket.OutputStream, _transmitCancelEvent);
                                             if (adapterType != AdapterTypeDetect.AdapterType.Unknown &&
                                                 adapterType != AdapterTypeDetect.AdapterType.ConnectionFailed)
                                             {
@@ -1263,7 +1281,7 @@ namespace BmwDeepObd
                                     }
 
                                     LogString(bluetoothSocket.IsConnected ? "Bt device is connected" : "Bt device is not connected");
-                                    adapterType = _adapterTypeDetect.AdapterTypeDetection(bluetoothSocket.InputStream, bluetoothSocket.OutputStream);
+                                    adapterType = _adapterTypeDetect.AdapterTypeDetection(bluetoothSocket.InputStream, bluetoothSocket.OutputStream, _transmitCancelEvent);
                                 }
                             }
                             catch (Exception ex)
