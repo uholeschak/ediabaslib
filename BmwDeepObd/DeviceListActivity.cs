@@ -989,10 +989,28 @@ namespace BmwDeepObd
                 return;
             }
 
+            _transmitCancelEvent.Reset();
+            BluetoothSocket bluetoothSocketConnect = null;
             CustomProgressDialog progress = new CustomProgressDialog(this);
             progress.SetMessage(GetString(Resource.String.detect_adapter));
             progress.ButtonAbort.Visibility = ViewStates.Visible;
             progress.ButtonAbort.Enabled = false;
+            progress.AbortClick = sender =>
+            {
+                try
+                {
+                    _transmitCancelEvent.Set();
+                    BluetoothSocket bluetoothSocketTemp = bluetoothSocketConnect;
+                    if (bluetoothSocketTemp != null)
+                    {
+                        bluetoothSocketTemp.Close();
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            };
             progress.Show();
 
             _adapterTypeDetect.SbLog.Clear();
@@ -1015,7 +1033,17 @@ namespace BmwDeepObd
                     BluetoothDevice device = _btAdapter.GetRemoteDevice(deviceAddress.ToUpperInvariant());
                     if (device != null)
                     {
-                        bool aborted = false;
+                        CustomProgressDialog progressLocal = progress;
+                        RunOnUiThread(() =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+
+                            progressLocal.ButtonAbort.Enabled = true;
+                        });
+
                         bool mtcBtService = _activityCommon.MtcBtService;
                         int connectTimeout = mtcBtService ? 1000 : 2000;
                         _connectDeviceAddress = device.Address;
@@ -1079,63 +1107,37 @@ namespace BmwDeepObd
 
                                 if (bluetoothSocket != null)
                                 {
-                                    CustomProgressDialog progressLocal = progress;
-                                    BluetoothSocket bluetoothSocketLocal = bluetoothSocket;
-                                    RunOnUiThread(() =>
-                                    {
-                                        if (_activityCommon == null)
-                                        {
-                                            return;
-                                        }
-
-                                        progressLocal.AbortClick = sender =>
-                                        {
-                                            try
-                                            {
-                                                aborted = true;
-                                                bluetoothSocketLocal.Close();
-                                            }
-                                            catch (Exception)
-                                            {
-                                                // ignored
-                                            }
-                                        };
-                                        progressLocal.ButtonAbort.Enabled = true;
-                                    });
-
                                     try
                                     {
-                                        if (!bluetoothSocket.IsConnected)
-                                        {
-                                            bluetoothSocket.Connect();
-                                        }
-                                    }
-                                    catch (Exception)
-                                    {
-                                        // sometimes the second connect is working
-                                        if (!aborted)
+                                        bluetoothSocketConnect = bluetoothSocket;
+                                        try
                                         {
                                             if (!bluetoothSocket.IsConnected)
                                             {
                                                 bluetoothSocket.Connect();
                                             }
                                         }
+                                        catch (Exception)
+                                        {
+                                            // sometimes the second connect is working
+                                            if (!_transmitCancelEvent.WaitOne(0))
+                                            {
+                                                if (!bluetoothSocket.IsConnected)
+                                                {
+                                                    bluetoothSocket.Connect();
+                                                }
+                                            }
+                                        }
+                                    }
+                                    finally
+                                    {
+                                        bluetoothSocketConnect = null;
                                     }
 
-                                    if (aborted)
+                                    if (_transmitCancelEvent.WaitOne(0))
                                     {
                                         throw new Exception("Aborted");
                                     }
-
-                                    RunOnUiThread(() =>
-                                    {
-                                        if (_activityCommon == null)
-                                        {
-                                            return;
-                                        }
-
-                                        progressLocal.ButtonAbort.Enabled = false;
-                                    });
 
                                     if (_connectedEvent.WaitOne(connectTimeout))
                                     {
@@ -1152,32 +1154,20 @@ namespace BmwDeepObd
 
                                             bluetoothSocket.Close();
 
-                                            RunOnUiThread(() =>
+                                            try
                                             {
-                                                if (_activityCommon == null)
+                                                bluetoothSocketConnect = bluetoothSocket;
+                                                if (!bluetoothSocket.IsConnected)
                                                 {
-                                                    return;
+                                                    bluetoothSocket.Connect();
                                                 }
-
-                                                progressLocal.ButtonAbort.Enabled = true;
-                                            });
-
-                                            if (!bluetoothSocket.IsConnected)
+                                            }
+                                            finally
                                             {
-                                                bluetoothSocket.Connect();
+                                                bluetoothSocketConnect = null;
                                             }
 
-                                            RunOnUiThread(() =>
-                                            {
-                                                if (_activityCommon == null)
-                                                {
-                                                    return;
-                                                }
-
-                                                progressLocal.ButtonAbort.Enabled = false;
-                                            });
-
-                                            if (aborted)
+                                            if (_transmitCancelEvent.WaitOne(0))
                                             {
                                                 throw new Exception("Aborted");
                                             }
@@ -1231,49 +1221,23 @@ namespace BmwDeepObd
                                     Android.Runtime.JniHandleOwnership.TransferLocalRef);
                                 if (bluetoothSocket != null)
                                 {
-                                    CustomProgressDialog progressLocal = progress;
-                                    BluetoothSocket bluetoothSocketLocal = bluetoothSocket;
-                                    RunOnUiThread(() =>
+                                    try
                                     {
-                                        if (_activityCommon == null)
+                                        bluetoothSocketConnect = bluetoothSocket;
+                                        if (!bluetoothSocket.IsConnected)
                                         {
-                                            return;
+                                            bluetoothSocket.Connect();
                                         }
-
-                                        progressLocal.AbortClick = sender =>
-                                        {
-                                            try
-                                            {
-                                                aborted = true;
-                                                bluetoothSocketLocal.Close();
-                                            }
-                                            catch (Exception)
-                                            {
-                                                // ignored
-                                            }
-                                        };
-                                        progressLocal.ButtonAbort.Enabled = true;
-                                    });
-
-                                    if (!bluetoothSocket.IsConnected)
+                                    }
+                                    finally
                                     {
-                                        bluetoothSocket.Connect();
+                                        bluetoothSocketConnect = null;
                                     }
 
-                                    if (aborted)
+                                    if (_transmitCancelEvent.WaitOne(0))
                                     {
                                         throw new Exception("Aborted");
                                     }
-
-                                    RunOnUiThread(() =>
-                                    {
-                                        if (_activityCommon == null)
-                                        {
-                                            return;
-                                        }
-
-                                        progressLocal.ButtonAbort.Enabled = false;
-                                    });
 
                                     if (_connectedEvent.WaitOne(connectTimeout))
                                     {
@@ -1317,6 +1281,7 @@ namespace BmwDeepObd
                     {
                         return;
                     }
+
                     progress.Dismiss();
                     progress.Dispose();
 
