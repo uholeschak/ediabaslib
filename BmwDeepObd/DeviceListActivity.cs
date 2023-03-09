@@ -990,7 +990,6 @@ namespace BmwDeepObd
             }
 
             _transmitCancelEvent.Reset();
-            BluetoothSocket bluetoothSocketConnect = null;
             CustomProgressDialog progress = new CustomProgressDialog(this);
             progress.SetMessage(GetString(Resource.String.detect_adapter));
             progress.ButtonAbort.Visibility = ViewStates.Visible;
@@ -1000,11 +999,6 @@ namespace BmwDeepObd
                 try
                 {
                     _transmitCancelEvent.Set();
-                    BluetoothSocket bluetoothSocketTemp = bluetoothSocketConnect;
-                    if (bluetoothSocketTemp != null)
-                    {
-                        bluetoothSocketTemp.Close();
-                    }
                 }
                 catch (Exception)
                 {
@@ -1107,31 +1101,13 @@ namespace BmwDeepObd
 
                                 if (bluetoothSocket != null)
                                 {
-                                    try
+                                    if (!BluetoothConnect(bluetoothSocket))
                                     {
-                                        bluetoothSocketConnect = bluetoothSocket;
-                                        try
+                                        // sometimes the second connect is working
+                                        if (!BluetoothConnect(bluetoothSocket))
                                         {
-                                            if (!bluetoothSocket.IsConnected)
-                                            {
-                                                bluetoothSocket.Connect();
-                                            }
+                                            throw new Exception("Bt connect failed");
                                         }
-                                        catch (Exception)
-                                        {
-                                            // sometimes the second connect is working
-                                            if (!_transmitCancelEvent.WaitOne(0))
-                                            {
-                                                if (!bluetoothSocket.IsConnected)
-                                                {
-                                                    bluetoothSocket.Connect();
-                                                }
-                                            }
-                                        }
-                                    }
-                                    finally
-                                    {
-                                        bluetoothSocketConnect = null;
                                     }
 
                                     if (_transmitCancelEvent.WaitOne(0))
@@ -1154,17 +1130,9 @@ namespace BmwDeepObd
 
                                             bluetoothSocket.Close();
 
-                                            try
+                                            if (!BluetoothConnect(bluetoothSocket))
                                             {
-                                                bluetoothSocketConnect = bluetoothSocket;
-                                                if (!bluetoothSocket.IsConnected)
-                                                {
-                                                    bluetoothSocket.Connect();
-                                                }
-                                            }
-                                            finally
-                                            {
-                                                bluetoothSocketConnect = null;
+                                                throw new Exception("Bt connect failed");
                                             }
 
                                             if (_transmitCancelEvent.WaitOne(0))
@@ -1221,17 +1189,9 @@ namespace BmwDeepObd
                                     Android.Runtime.JniHandleOwnership.TransferLocalRef);
                                 if (bluetoothSocket != null)
                                 {
-                                    try
+                                    if (!BluetoothConnect(bluetoothSocket))
                                     {
-                                        bluetoothSocketConnect = bluetoothSocket;
-                                        if (!bluetoothSocket.IsConnected)
-                                        {
-                                            bluetoothSocket.Connect();
-                                        }
-                                    }
-                                    finally
-                                    {
-                                        bluetoothSocketConnect = null;
+                                        throw new Exception("Bt connect failed");
                                     }
 
                                     if (_transmitCancelEvent.WaitOne(0))
@@ -1613,6 +1573,82 @@ namespace BmwDeepObd
                 Priority = System.Threading.ThreadPriority.Normal
             };
             detectThread.Start();
+        }
+
+        private bool BluetoothConnect(BluetoothSocket bluetoothSocket, int timeout = 0)
+        {
+            if (bluetoothSocket == null)
+            {
+                return false;
+            }
+
+            if (_transmitCancelEvent.WaitOne(0))
+            {
+                return false;
+            }
+
+            bool connectOk = false;
+            Thread connectThread = new Thread(() =>
+            {
+                try
+                {
+                    if (!bluetoothSocket.IsConnected)
+                    {
+                        bluetoothSocket.Connect();
+                    }
+
+                    connectOk = true;
+                }
+                catch (Exception)
+                {
+                    connectOk = false;
+                }
+            })
+            {
+                Priority = System.Threading.ThreadPriority.Normal
+            };
+            connectThread.Start();
+
+            long startTime = Stopwatch.GetTimestamp();
+            bool abort = false;
+            for (; ; )
+            {
+                if (connectThread.Join(100))
+                {
+                    break;
+                }
+
+                if (timeout > 0)
+                {
+                    if ((Stopwatch.GetTimestamp() - startTime) > timeout * EdCustomAdapterCommon.TickResolMs)
+                    {
+                        abort = true;
+                        break;
+                    }
+                }
+
+                if (_transmitCancelEvent.WaitOne(0))
+                {
+                    abort = true;
+                    break;
+                }
+            }
+
+            if (abort)
+            {
+                connectOk = false;
+                try
+                {
+                    bluetoothSocket.Close();
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+            connectThread.Join();
+
+            return connectOk;
         }
 
         private void ReturnDeviceTypeRawWarn(string deviceAddress, string deviceName)
