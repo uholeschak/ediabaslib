@@ -868,11 +868,14 @@ namespace EdiabasLib
                     break;
                 }
 
-                if ((Stopwatch.GetTimestamp() - startTime) > timeout * EdCustomAdapterCommon.TickResolMs)
+                if (timeout > 0)
                 {
-                    abort = true;
-                    CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "BluetoothConnect timeout aborting");
-                    break;
+                    if ((Stopwatch.GetTimestamp() - startTime) > timeout * EdCustomAdapterCommon.TickResolMs)
+                    {
+                        abort = true;
+                        CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "BluetoothConnect timeout aborting");
+                        break;
+                    }
                 }
 
                 if (TransmitCancelEvent.WaitOne(0))
