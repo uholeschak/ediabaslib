@@ -1044,6 +1044,8 @@ namespace BmwDeepObd
                         int connectTimeout = mtcBtService ? 1000 : 2000;
                         _connectDeviceAddress = device.Address;
                         BluetoothSocket bluetoothSocket = null;
+                        Stream bluetoothInStream = null;
+                        Stream bluetoothOutStream = null;
                         Bond bondState = Bond.None;
                         BluetoothDeviceType deviceType = BluetoothDeviceType.Unknown;
 
@@ -1123,14 +1125,21 @@ namespace BmwDeepObd
                                     }
 
                                     LogString(bluetoothSocket.IsConnected ? "Bt device is connected" : "Bt device is not connected");
-                                    adapterType = _adapterTypeDetect.AdapterTypeDetection(bluetoothSocket.InputStream, bluetoothSocket.OutputStream, _transmitCancelEvent);
+                                    bluetoothInStream = bluetoothSocket.InputStream;
+                                    bluetoothOutStream = bluetoothSocket.OutputStream;
+                                    adapterType = _adapterTypeDetect.AdapterTypeDetection(bluetoothInStream, bluetoothOutStream, _transmitCancelEvent);
                                     if (mtcBtService && adapterType == AdapterTypeDetect.AdapterType.Unknown)
                                     {
                                         for (int retry = 0; retry < 20; retry++)
                                         {
                                             LogString("Retry connect");
 
+                                            bluetoothInStream?.Close();
+                                            bluetoothOutStream?.Close();
                                             bluetoothSocket.Close();
+
+                                            bluetoothInStream = null;
+                                            bluetoothOutStream = null;
 
                                             if (!BluetoothConnect(bluetoothSocket))
                                             {
@@ -1148,7 +1157,9 @@ namespace BmwDeepObd
                                             }
 
                                             LogString(bluetoothSocket.IsConnected ? "Bt device is connected" : "Bt device is not connected");
-                                            adapterType = _adapterTypeDetect.AdapterTypeDetection(bluetoothSocket.InputStream, bluetoothSocket.OutputStream, _transmitCancelEvent);
+                                            bluetoothInStream = bluetoothSocket.InputStream;
+                                            bluetoothOutStream = bluetoothSocket.OutputStream;
+                                            adapterType = _adapterTypeDetect.AdapterTypeDetection(bluetoothInStream, bluetoothOutStream, _transmitCancelEvent);
                                             if (adapterType != AdapterTypeDetect.AdapterType.Unknown &&
                                                 adapterType != AdapterTypeDetect.AdapterType.ConnectionFailed)
                                             {
@@ -1165,7 +1176,12 @@ namespace BmwDeepObd
                             }
                             finally
                             {
+                                bluetoothInStream?.Close();
+                                bluetoothOutStream?.Close();
                                 bluetoothSocket?.Close();
+
+                                bluetoothInStream = null;
+                                bluetoothOutStream = null;
                             }
                         }
 
@@ -1207,7 +1223,9 @@ namespace BmwDeepObd
                                     }
 
                                     LogString(bluetoothSocket.IsConnected ? "Bt device is connected" : "Bt device is not connected");
-                                    adapterType = _adapterTypeDetect.AdapterTypeDetection(bluetoothSocket.InputStream, bluetoothSocket.OutputStream, _transmitCancelEvent);
+                                    bluetoothInStream = bluetoothSocket.InputStream;
+                                    bluetoothOutStream = bluetoothSocket.OutputStream;
+                                    adapterType = _adapterTypeDetect.AdapterTypeDetection(bluetoothInStream, bluetoothOutStream, _transmitCancelEvent);
                                 }
                             }
                             catch (Exception ex)
@@ -1217,7 +1235,12 @@ namespace BmwDeepObd
                             }
                             finally
                             {
+                                bluetoothInStream?.Close();
+                                bluetoothOutStream?.Close();
                                 bluetoothSocket?.Close();
+
+                                bluetoothInStream = null;
+                                bluetoothOutStream = null;
                             }
                         }
                     }
