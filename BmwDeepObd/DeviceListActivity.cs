@@ -269,6 +269,7 @@ namespace BmwDeepObd
             base.OnStart();
             _btPermissionRequested = false;
             _btPermissionGranted = false;
+            _transmitCancelEvent.Reset();
 
             if (_activityCommon != null)
             {

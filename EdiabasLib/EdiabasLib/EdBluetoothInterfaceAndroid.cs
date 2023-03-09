@@ -1,4 +1,7 @@
-﻿using System;
+﻿#if DEBUG && Android
+#define DEBUG_ANDROID
+#endif
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -31,6 +34,9 @@ namespace EdiabasLib
             public GetContextDelegate GetContextHandler { get; }
         }
 
+#if DEBUG_ANDROID
+        private static readonly string Tag = typeof(EdBluetoothInterface).FullName;
+#endif
         public static readonly EdElmInterface.ElmInitEntry[] Elm327InitCommands = EdElmInterface.Elm327InitCommands;
         public const string PortId = "BLUETOOTH";
         public const string Elm327Tag = "ELM327";
@@ -849,8 +855,11 @@ namespace EdiabasLib
 
                     connectOk = true;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+#if DEBUG_ANDROID
+                    Android.Util.Log.Info(Tag, string.Format("BluetoothConnect Exception={0}", EdiabasNet.GetExceptionText(ex)));
+#endif
                     connectOk = false;
                 }
             })
@@ -901,6 +910,9 @@ namespace EdiabasLib
 
             connectThread.Join();
 
+#if DEBUG_ANDROID
+            Android.Util.Log.Info(Tag, string.Format("BluetoothConnect Ok={0}", connectOk));
+#endif
             CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "BluetoothConnect Ok={0}", connectOk);
             return connectOk;
         }
