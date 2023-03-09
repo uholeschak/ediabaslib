@@ -79,6 +79,7 @@ namespace BmwDeepObd
         private const string InvalidHtcFwName = "hct2.20221115";
         private const string InvalidHtcFwUpdateLink = "https://xtrons.ibus-app.de/index.php?title=Aktuelle_Firmware#Xtrons_Android_12.0_Octacore_Xtrons_ROM_IQ-Serie_[Qualcomm_665]";
         private const string InvalidHtcFwHowToLink = "https://xtrons.ibus-app.de/index.php?title=Firmwareupdate";
+        private const int BluetoothConnectTimeoutLong = 10000;
 
         // Return Intent extra
 #if DEBUG
@@ -1575,7 +1576,7 @@ namespace BmwDeepObd
             detectThread.Start();
         }
 
-        private bool BluetoothConnect(BluetoothSocket bluetoothSocket, int timeout = 0)
+        private bool BluetoothConnect(BluetoothSocket bluetoothSocket, int timeout = BluetoothConnectTimeoutLong)
         {
             if (bluetoothSocket == null)
             {
