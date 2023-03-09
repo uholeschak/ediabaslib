@@ -305,7 +305,14 @@ namespace EdiabasLib
                                 break;
                             }
                             _edElmInterface.Dispose();
+                            _bluetoothInStream?.Close();
+                            _bluetoothOutStream?.Close();
                             _bluetoothSocket.Close();
+
+                            _edElmInterface = null;
+                            _bluetoothInStream = null;
+                            _bluetoothOutStream = null;
+
                             if (!BluetoothConnect(_bluetoothSocket))
                             {
                                 throw new Exception("Bt connect failed");
@@ -355,7 +362,13 @@ namespace EdiabasLib
                             CustomAdapter.EscapeModeWrite = mtcBtEscapeMode;
                             if (retry > 0)
                             {
+                                _bluetoothInStream?.Close();
+                                _bluetoothOutStream?.Close();
                                 _bluetoothSocket.Close();
+
+                                _bluetoothInStream = null;
+                                _bluetoothOutStream = null;
+
                                 if (!BluetoothConnect(_bluetoothSocket))
                                 {
                                     throw new Exception("Bt connect failed");
