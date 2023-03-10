@@ -3266,14 +3266,31 @@ namespace EdiabasLib
 
         public static string GetExceptionText(Exception ex)
         {
-            string text = ex.Message;
+            if (ex == null)
+            {
+                return string.Empty;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append(ex.GetType().Name);
+            sb.Append(":");
+            if (!string.IsNullOrEmpty(ex.Message))
+            {
+                sb.Append("\r\n");
+                sb.Append(ex.Message);
+            }
             Exception exIter = ex;
             while (exIter.InnerException != null)
             {
-                text += "\r\n" + exIter.InnerException.Message;
+                if (!string.IsNullOrEmpty(exIter.InnerException.Message))
+                {
+                    sb.Append("\r\n");
+                    sb.Append(exIter.InnerException.Message);
+                }
                 exIter = exIter.InnerException;
             }
-            return text;
+
+            return sb.ToString();
         }
 
         private bool OpenSgbdFs()
