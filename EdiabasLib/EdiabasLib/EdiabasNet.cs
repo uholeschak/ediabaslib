@@ -3263,8 +3263,12 @@ namespace EdiabasLib
             return _resourceAssemblies.Count > 0;
         }
 #endif
-
         public static string GetExceptionText(Exception ex)
+        {
+            return GetExceptionText(ex, false);
+        }
+
+        public static string GetExceptionText(Exception ex, bool includeTypes)
         {
             if (ex == null)
             {
@@ -3272,21 +3276,32 @@ namespace EdiabasLib
             }
 
             StringBuilder sb = new StringBuilder();
-            sb.Append(ex.GetType().Name);
-            sb.Append(":");
+            if (includeTypes)
+            {
+                sb.Append(ex.GetType().Name);
+                sb.Append(": ");
+            }
+
             if (!string.IsNullOrEmpty(ex.Message))
             {
-                sb.Append("\r\n");
                 sb.Append(ex.Message);
             }
+
             Exception exIter = ex;
             while (exIter.InnerException != null)
             {
+                sb.Append("\r\n");
+                if (includeTypes)
+                {
+                    sb.Append(exIter.InnerException.GetType().Name);
+                    sb.Append(": ");
+                }
+
                 if (!string.IsNullOrEmpty(exIter.InnerException.Message))
                 {
-                    sb.Append("\r\n");
                     sb.Append(exIter.InnerException.Message);
                 }
+
                 exIter = exIter.InnerException;
             }
 

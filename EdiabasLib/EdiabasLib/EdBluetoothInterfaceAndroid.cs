@@ -871,7 +871,7 @@ namespace EdiabasLib
                 catch (Exception ex)
                 {
 #if DEBUG_ANDROID
-                    Android.Util.Log.Info(Tag, string.Format("BluetoothConnect Exception={0}", EdiabasNet.GetExceptionText(ex)));
+                    Android.Util.Log.Info(Tag, string.Format("BluetoothConnect Exception={0}", EdiabasNet.GetExceptionText(ex, true)));
 #endif
                     connectOk = false;
                 }
