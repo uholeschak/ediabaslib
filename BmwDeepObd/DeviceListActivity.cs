@@ -1140,6 +1140,7 @@ namespace BmwDeepObd
                                             bluetoothInStream = null;
                                             bluetoothOutStream = null;
 
+                                            bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid);
                                             if (!BluetoothConnect(bluetoothSocket))
                                             {
                                                 throw new Exception("Bt connect failed");
