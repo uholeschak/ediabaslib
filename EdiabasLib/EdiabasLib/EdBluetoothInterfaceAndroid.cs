@@ -44,7 +44,6 @@ namespace EdiabasLib
         public const string RawTag = "RAW";
         public const int BtConnectDelay = 50;
         private static readonly UUID SppUuid = UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
-        private const int BluetoothConnectTimeout = 5000;
         private const int ReadTimeoutOffsetLong = 1000;
         private const int ReadTimeoutOffsetShort = 100;
         protected const int EchoTimeout = 500;
@@ -242,6 +241,9 @@ namespace EdiabasLib
                             // sometimes the second connect is working
                             if (!BluetoothConnect(_bluetoothSocket))
                             {
+#if DEBUG_ANDROID
+                                Android.Util.Log.Info(Tag, "Connecting: Closing socket");
+#endif
                                 _bluetoothSocket.Close();
                                 _bluetoothSocket = null;
                             }
@@ -304,6 +306,10 @@ namespace EdiabasLib
                                 connected = true;
                                 break;
                             }
+
+#if DEBUG_ANDROID
+                            Android.Util.Log.Info(Tag, "Connecting retry: Closing socket");
+#endif
                             _edElmInterface.Dispose();
                             _bluetoothInStream?.Close();
                             _bluetoothOutStream?.Close();
@@ -362,6 +368,9 @@ namespace EdiabasLib
                             CustomAdapter.EscapeModeWrite = mtcBtEscapeMode;
                             if (retry > 0)
                             {
+#if DEBUG_ANDROID
+                                Android.Util.Log.Info(Tag, "Connecting retry: Closing socket");
+#endif
                                 _bluetoothInStream?.Close();
                                 _bluetoothOutStream?.Close();
                                 _bluetoothSocket.Close();
@@ -844,7 +853,7 @@ namespace EdiabasLib
             return responseList;
         }
 
-        private static bool BluetoothConnect(BluetoothSocket bluetoothSocket, int timeout = BluetoothConnectTimeout)
+        private static bool BluetoothConnect(BluetoothSocket bluetoothSocket, int timeout = 0)
         {
             if (bluetoothSocket == null)
             {
@@ -895,6 +904,9 @@ namespace EdiabasLib
                     if ((Stopwatch.GetTimestamp() - startTime) > timeout * EdCustomAdapterCommon.TickResolMs)
                     {
                         abort = true;
+#if DEBUG_ANDROID
+                        Android.Util.Log.Info(Tag, "BluetoothConnect Timeout");
+#endif
                         CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "BluetoothConnect timeout aborting");
                         break;
                     }
@@ -903,6 +915,9 @@ namespace EdiabasLib
                 if (TransmitCancelEvent.WaitOne(0))
                 {
                     abort = true;
+#if DEBUG_ANDROID
+                    Android.Util.Log.Info(Tag, "BluetoothConnect Cancelled");
+#endif
                     CustomAdapter.Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "BluetoothConnect transmit cancel");
                     break;
                 }
@@ -913,6 +928,9 @@ namespace EdiabasLib
                 connectOk = false;
                 try
                 {
+#if DEBUG_ANDROID
+                    Android.Util.Log.Info(Tag, "BluetoothConnect Closing socket");
+#endif
                     bluetoothSocket.Close();
                 }
                 catch (Exception)
