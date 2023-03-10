@@ -310,14 +310,8 @@ namespace EdiabasLib
 #if DEBUG_ANDROID
                             Android.Util.Log.Info(Tag, "Connecting retry: Closing socket");
 #endif
-                            _edElmInterface.Dispose();
-                            _bluetoothInStream?.Close();
-                            _bluetoothOutStream?.Close();
-                            _bluetoothSocket.Close();
-
-                            _edElmInterface = null;
-                            _bluetoothInStream = null;
-                            _bluetoothOutStream = null;
+                            InterfaceDisconnect();
+                            _bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid);
 
                             if (!BluetoothConnect(_bluetoothSocket))
                             {
