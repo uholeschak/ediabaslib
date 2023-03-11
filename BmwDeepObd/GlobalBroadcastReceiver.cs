@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Android.Content;
+using EdiabasLib;
 
 namespace BmwDeepObd
 {
@@ -61,22 +62,31 @@ namespace BmwDeepObd
                 case MicBtReport:
                 {
 #if DEBUG
-                    Android.Util.Log.Info(Tag, "Bt report:");
-                    Android.OS.Bundle bundle = intent.Extras;
-                    if (bundle != null)
+                    try
                     {
-                        ICollection<string> keySet = bundle.KeySet();
-                        if (keySet != null)
+                        Android.Util.Log.Info(Tag, "Bt report:");
+                        Android.OS.Bundle bundle = intent.Extras;
+                        if (bundle != null)
                         {
-                            foreach (string key in keySet)
+                            ICollection<string> keySet = bundle.KeySet();
+                            if (keySet != null)
                             {
-                                string value = bundle.GetString(key);
-                                if (!string.IsNullOrEmpty(value))
+                                foreach (string key in keySet)
                                 {
-                                    Android.Util.Log.Info(Tag, string.Format("Key: {0}={1}", key, value));
+#pragma warning disable CS0618
+                                    Java.Lang.Object value = bundle.Get(key);
+#pragma warning restore CS0618
+                                    if (value != null)
+                                    {
+                                        Android.Util.Log.Info(Tag, string.Format("Key: {0}={1}", key, value));
+                                    }
                                 }
                             }
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        Android.Util.Log.Info(Tag, string.Format("Exception: {0}", EdiabasNet.GetExceptionText(ex)));
                     }
 #endif
                     if (intent.HasExtra("bt_state"))
