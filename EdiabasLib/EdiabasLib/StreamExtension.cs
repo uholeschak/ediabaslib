@@ -105,7 +105,7 @@ namespace EdiabasLib
             return result;
         }
 
-        static int ReadBytesAsync(this Stream inStream, byte[] buffer, int offset, int count, ManualResetEvent cancelEvent = null, int timeout = 2000)
+        public static int ReadBytesAsync(this Stream inStream, byte[] buffer, int offset, int count, ManualResetEvent cancelEvent = null, int timeout = 2000)
         {
             if (inStream == null)
             {
