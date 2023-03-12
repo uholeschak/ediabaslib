@@ -479,6 +479,11 @@ namespace EdiabasLib
 
         private static bool ReceiveData(byte[] buffer, int offset, int length, int timeout, int timeoutTelEnd, EdiabasNet ediabasLog = null)
         {
+            if (TransmitCancelEvent.WaitOne(0))
+            {
+                return false;
+            }
+
             int recLen = 0;
             if (BtStream != null)
             {
@@ -538,7 +543,7 @@ namespace EdiabasLib
                         StopWatch.Stop();
                         return false;
                     }
-                    CommReceiveEvent.WaitOne(1, false);
+                    CommReceiveEvent.WaitOne(1);
                 }
 
                 StopWatch.Reset();
@@ -572,7 +577,7 @@ namespace EdiabasLib
                             break;
                         }
                     }
-                    CommReceiveEvent.WaitOne(1, false);
+                    CommReceiveEvent.WaitOne(1);
                 }
                 StopWatch.Stop();
             }
