@@ -774,7 +774,7 @@ namespace EdiabasLib
                 int currTimeout = (recLen == 0) ? timeout : timeoutTelEnd;
                 if (_bluetoothInStream.HasData())
                 {
-                    int bytesRead = _bluetoothInStream.Read(buffer, offset + recLen, length - recLen);
+                    int bytesRead = _bluetoothInStream.ReadBytesAsync(buffer, offset + recLen, length - recLen);
                     if (bytesRead > 0)
                     {
                         dataReceived = true;
