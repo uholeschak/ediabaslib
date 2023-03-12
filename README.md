@@ -47,6 +47,5 @@ More details could be found here: [Supported adapter types](docs/AdapterTypes.md
 ![BMW deep OBD and VAG](docs/README_AppMotorSmall.png) ![BMW deep OBD and VAG](docs/README_AppMotorGraphSmall.png)
 
 # Hints
-At the moment most BEST/1 commands are implemented, but a few are still missing.  
+At the moment most BEST/1 commands are implemented, but a few are still missing, which seem to be not required in the current ECU files.  
 The implemented commands are automatically tested and compared with EDIABAS output.  
-Because I have no BEST/1 command specification some commands are only guessed. If someone could supply me with a BEST/1 specification I could improve the library.
