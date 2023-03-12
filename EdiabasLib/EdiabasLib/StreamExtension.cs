@@ -104,5 +104,78 @@ namespace EdiabasLib
 
             return result;
         }
+
+        static int ReadBytesAsync(this Stream inStream, byte[] buffer, int offset, int count, ManualResetEvent cancelEvent = null, int timeout = 2000)
+        {
+            if (inStream == null)
+            {
+                return 0;
+            }
+
+            if (cancelEvent != null)
+            {
+                if (cancelEvent.WaitOne(0))
+                {
+                    return 0;
+                }
+            }
+
+            if (inStream is MemoryQueueBufferStream memoryStream)
+            {
+                return memoryStream.Read(buffer, offset, count);
+            }
+
+            if (inStream is EscapeStreamReader escapeStream)
+            {
+                return escapeStream.Read(buffer, offset, count);
+            }
+
+            int result = 0;
+            Thread abortThread = null;
+            AutoResetEvent threadFinishEvent = null;
+            try
+            {
+                using (CancellationTokenSource cts = new CancellationTokenSource())
+                {
+                    threadFinishEvent = new AutoResetEvent(false);
+                    Task<int> readTask = inStream.ReadAsync(buffer, 0, count, cts.Token);
+                    if (cancelEvent != null)
+                    {
+                        WaitHandle[] waitHandles = { threadFinishEvent, cancelEvent };
+                        abortThread = new Thread(() =>
+                        {
+                            if (WaitHandle.WaitAny(waitHandles, timeout) == 1)
+                            {
+                                // ReSharper disable once AccessToDisposedClosure
+                                cts.Cancel();
+                            }
+                        });
+                        abortThread.Start();
+                    }
+
+                    if (!readTask.Wait(timeout))
+                    {
+                        cts.Cancel();
+                    }
+
+                    if (readTask.Status == TaskStatus.RanToCompletion && !cts.IsCancellationRequested)
+                    {
+                        result = readTask.Result;
+                    }
+                }
+            }
+            finally
+            {
+                if (abortThread != null)
+                {
+                    threadFinishEvent.Set();
+                    abortThread.Join();
+                }
+
+                threadFinishEvent?.Dispose();
+            }
+
+            return result;
+        }
     }
 }
