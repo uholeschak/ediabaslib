@@ -774,7 +774,13 @@ namespace EdiabasLib
                 int currTimeout = (recLen == 0) ? timeout : timeoutTelEnd;
                 if (_bluetoothInStream.HasData())
                 {
-                    int bytesRead = _bluetoothInStream.ReadBytesAsync(buffer, offset + recLen, length - recLen);
+                    int bytesRead = _bluetoothInStream.ReadBytesAsync(buffer, offset + recLen, length - recLen, TransmitCancelEvent);
+                    if (bytesRead < 0)
+                    {
+                        ediabasLog?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** ReceiveData Aborted");
+                        break;
+                    }
+
                     if (bytesRead > 0)
                     {
                         dataReceived = true;
@@ -798,6 +804,7 @@ namespace EdiabasLib
 
                 if (TransmitCancelEvent.WaitOne(10))
                 {
+                    ediabasLog?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** ReceiveData Cancelled");
                     return false;
                 }
             }
