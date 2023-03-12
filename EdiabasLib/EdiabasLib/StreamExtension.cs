@@ -109,14 +109,14 @@ namespace EdiabasLib
         {
             if (inStream == null)
             {
-                return 0;
+                return -1;
             }
 
             if (cancelEvent != null)
             {
                 if (cancelEvent.WaitOne(0))
                 {
-                    return 0;
+                    return -1;
                 }
             }
 
@@ -130,7 +130,7 @@ namespace EdiabasLib
                 return escapeStream.Read(buffer, offset, count);
             }
 
-            int result = 0;
+            int result = -1;
             Thread abortThread = null;
             AutoResetEvent threadFinishEvent = null;
             try
