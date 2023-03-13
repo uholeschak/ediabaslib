@@ -106,17 +106,23 @@ namespace EdiabasLib
                             cts.Cancel();
                         }
 
-                        if (readTask.Status == TaskStatus.RanToCompletion && !cts.IsCancellationRequested)
-                        {
-                            int recBytes = readTask.Result;
-                            if (recBytes > 0)
-                            {
-                                recLen += recBytes;
-                            }
-                        }
-                        else
+                        if (readTask.Status != TaskStatus.RanToCompletion || cts.IsCancellationRequested)
                         {
                             return -1;  // aborted
+                        }
+
+                        if (cancelEvent != null)
+                        {
+                            if (cancelEvent.WaitOne(0))
+                            {
+                                return -1;
+                            }
+                        }
+
+                        int recBytes = readTask.Result;
+                        if (recBytes > 0)
+                        {
+                            recLen += recBytes;
                         }
                     }
                 }
@@ -131,7 +137,12 @@ namespace EdiabasLib
                     threadFinishEvent?.Dispose();
                 }
 
-                if ((timeout <= 0) || (Stopwatch.GetTimestamp() - startTime > timeout * TickResolMs))
+                if (timeout <= 0)
+                {
+                    break;
+                }
+
+                if (Stopwatch.GetTimestamp() - startTime > timeout * TickResolMs)
                 {
                     break;
                 }
