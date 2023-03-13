@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,6 +8,8 @@ namespace EdiabasLib
 {
     public static class StreamExtension
     {
+        public static readonly long TickResolMs = Stopwatch.Frequency / 1000;
+
         public static bool HasData(this Stream inStream)
         {
             if (inStream == null)
@@ -67,52 +70,74 @@ namespace EdiabasLib
                 return escapeStream.Read(buffer, offset, count);
             }
 
-            int result = -1;
-            Thread abortThread = null;
-            AutoResetEvent threadFinishEvent = null;
-            try
+            long startTime = Stopwatch.GetTimestamp();
+            int recLen = 0;
+            for (;;)
             {
-                using (CancellationTokenSource cts = new CancellationTokenSource())
+                if (recLen >= count)
                 {
-                    threadFinishEvent = new AutoResetEvent(false);
-                    Task<int> readTask = inStream.ReadAsync(buffer, 0, count, cts.Token);
-                    if (cancelEvent != null)
+                    break;
+                }
+
+                Thread abortThread = null;
+                AutoResetEvent threadFinishEvent = null;
+                try
+                {
+                    using (CancellationTokenSource cts = new CancellationTokenSource())
                     {
-                        WaitHandle[] waitHandles = { threadFinishEvent, cancelEvent };
-                        abortThread = new Thread(() =>
+                        threadFinishEvent = new AutoResetEvent(false);
+                        Task<int> readTask = inStream.ReadAsync(buffer, recLen, count - recLen, cts.Token);
+                        if (cancelEvent != null)
                         {
-                            if (WaitHandle.WaitAny(waitHandles, timeout) == 1)
+                            WaitHandle[] waitHandles = { threadFinishEvent, cancelEvent };
+                            abortThread = new Thread(() =>
                             {
-                                // ReSharper disable once AccessToDisposedClosure
-                                cts.Cancel();
+                                if (WaitHandle.WaitAny(waitHandles, timeout) == 1)
+                                {
+                                    // ReSharper disable once AccessToDisposedClosure
+                                    cts.Cancel();
+                                }
+                            });
+                            abortThread.Start();
+                        }
+
+                        if (!readTask.Wait(timeout))
+                        {
+                            cts.Cancel();
+                        }
+
+                        if (readTask.Status == TaskStatus.RanToCompletion && !cts.IsCancellationRequested)
+                        {
+                            int recBytes = readTask.Result;
+                            if (recBytes > 0)
+                            {
+                                recLen += recBytes;
                             }
-                        });
-                        abortThread.Start();
-                    }
-
-                    if (!readTask.Wait(timeout))
-                    {
-                        cts.Cancel();
-                    }
-
-                    if (readTask.Status == TaskStatus.RanToCompletion && !cts.IsCancellationRequested)
-                    {
-                        result = readTask.Result;
+                        }
+                        else
+                        {
+                            return -1;  // aborted
+                        }
                     }
                 }
-            }
-            finally
-            {
-                if (abortThread != null)
+                finally
                 {
-                    threadFinishEvent.Set();
-                    abortThread.Join();
+                    if (abortThread != null)
+                    {
+                        threadFinishEvent.Set();
+                        abortThread.Join();
+                    }
+
+                    threadFinishEvent?.Dispose();
                 }
 
-                threadFinishEvent?.Dispose();
+                if ((timeout <= 0) || (Stopwatch.GetTimestamp() - startTime > timeout * TickResolMs))
+                {
+                    break;
+                }
             }
 
-            return result;
+            return recLen;
         }
     }
 }
