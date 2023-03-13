@@ -1305,7 +1305,12 @@ namespace EdiabasLib
                 {
                     while (DataAvailable())
                     {
-                        int length = _inStream.Read(buffer, 0, buffer.Length);
+                        int length = _inStream.ReadBytesAsync(buffer, 0, buffer.Length);
+                        if (length < 0)
+                        {
+                            break;
+                        }
+
                         if (length > 0)
                         {
                             startTime = Stopwatch.GetTimestamp();
