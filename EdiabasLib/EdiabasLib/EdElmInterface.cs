@@ -90,7 +90,7 @@ namespace EdiabasLib
         private const int Elm327DataTimeout = 2000;
         private const int Elm327DataFullTimeout = 500;
         private const int Elm327DataFullFuncTimeout = 200;
-        private const int Elm327CanBlockSize = 4;
+        private const int Elm327CanBlockSize = 3;
         private const int Elm327CanSepTime = 0;
         private const int Elm327TimeoutBaseMultiplier = 4;
         private bool _disposed;
