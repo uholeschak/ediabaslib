@@ -1570,6 +1570,7 @@ namespace EdiabasLib
         {
             if (_elm327TerminateThread)
             {
+                Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM thread terminate request");
                 return true;
             }
 
@@ -1577,6 +1578,7 @@ namespace EdiabasLib
             {
                 if (_cancelEvent.WaitOne(0))
                 {
+                    Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM transmit cancel request");
                     return true;
                 }
             }
