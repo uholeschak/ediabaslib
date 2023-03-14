@@ -639,7 +639,7 @@ namespace EdiabasLib
                                     _elm327ReceiveStartTime = Stopwatch.GetTimestamp();
                                     Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "BS={0} ST={1}", blockSize, sepTime);
                                 }
-                                if (_elm327TerminateThread)
+                                if (AbortTransmission())
                                 {
                                     return;
                                 }
@@ -684,7 +684,7 @@ namespace EdiabasLib
                         {   // we have to wait here, otherwise thread requires too much computation time
                             Thread.Sleep(sepTime < 50 ? 50 : sepTime);
                         }
-                        if (_elm327TerminateThread)
+                        if (AbortTransmission())
                         {
                             return;
                         }
@@ -863,7 +863,7 @@ namespace EdiabasLib
                         return;
                     }
                 }
-                if (_elm327TerminateThread)
+                if (AbortTransmission())
                 {
                     return;
                 }
@@ -1171,12 +1171,14 @@ namespace EdiabasLib
                     Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** ELM leave data mode timeout");
                     return false;
                 }
+
+                if (AbortTransmission())
+                {
+                    return false;
+                }
+
                 if (elmThread)
                 {
-                    if (_elm327TerminateThread)
-                    {
-                        return false;
-                    }
                     _elm327RequEvent.WaitOne(10);
                 }
                 else
@@ -1249,12 +1251,14 @@ namespace EdiabasLib
                     Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM rec timeout");
                     return string.Empty;
                 }
+
+                if (AbortTransmission())
+                {
+                    return string.Empty;
+                }
+
                 if (elmThread)
                 {
-                    if (_elm327TerminateThread)
-                    {
-                        return string.Empty;
-                    }
                     _elm327RequEvent.WaitOne(10);
                 }
                 else
@@ -1488,12 +1492,13 @@ namespace EdiabasLib
                         return string.Empty;
                     }
 
+                    if (AbortTransmission())
+                    {
+                        return string.Empty;
+                    }
+
                     if (elmThread)
                     {
-                        if (_elm327TerminateThread)
-                        {
-                            return string.Empty;
-                        }
                         _elm327RequEvent.WaitOne(10);
                     }
                     else
@@ -1556,6 +1561,24 @@ namespace EdiabasLib
                 }
 
                 return false;
+            }
+
+            return false;
+        }
+
+        bool AbortTransmission()
+        {
+            if (_elm327TerminateThread)
+            {
+                return true;
+            }
+
+            if (_cancelEvent != null)
+            {
+                if (_cancelEvent.WaitOne(0))
+                {
+                    return true;
+                }
             }
 
             return false;
