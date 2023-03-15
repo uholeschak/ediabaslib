@@ -646,8 +646,7 @@ namespace EdiabasLib
                         return Int64.MinValue;
                     }
                     WriteNetworkStream(SharedDataActive.TcpControlStream, TcpControlIgnitReq, 0, TcpControlIgnitReq.Length);
-                    SharedDataActive.TcpControlStream.ReadTimeout = 1000;
-                    int recLen = SharedDataActive.TcpControlStream.Read(RecBuffer, 0, 7);
+                    int recLen = SharedDataActive.TcpControlStream.ReadBytesAsync(RecBuffer, 0, 7, SharedDataActive.TransmitCancelEvent, 1000);
                     if (recLen < 7)
                     {
                         EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
