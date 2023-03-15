@@ -597,7 +597,10 @@ namespace EdiabasLib
                 {
                     try
                     {
-                        BtStream.ReadByteAsync(TransmitCancelEvent, 100);
+                        if (BtStream.ReadByteAsync(TransmitCancelEvent) < 0)
+                        {
+                            break;
+                        }
                     }
                     catch (Exception)
                     {
