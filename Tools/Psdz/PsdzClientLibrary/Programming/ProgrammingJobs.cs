@@ -2557,8 +2557,8 @@ namespace PsdzClient.Programming
                     log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage: LFP={0}, MinErr={1}, MinWarn={2}, MaxWarn={3}, MaxErr={4}",
                         lfpBattery, minVoltageError, minVoltageWarn, maxVoltageWarn, maxVoltageError);
 
-                    bool warn = voltage < minVoltageError || voltage > maxVoltageError;
-                    bool error = voltage < minVoltageWarn || voltage > maxVoltageWarn;
+                    bool error = voltage < minVoltageError || voltage > maxVoltageError;
+                    bool warn = voltage < minVoltageWarn || voltage > maxVoltageWarn;
                     if (!warn && !error)
                     {
                         if (ShowMessageEvent != null && showInfo)
