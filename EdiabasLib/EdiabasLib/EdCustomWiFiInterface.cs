@@ -609,7 +609,10 @@ namespace EdiabasLib
             TcpStream.Flush();
             while (TcpStream.DataAvailable)
             {
-                TcpStream.ReadByte();
+                if (TcpStream.ReadByteAsync(TransmitCancelEvent) < 0)
+                {
+                    break;
+                }
             }
         }
 
