@@ -363,67 +363,67 @@ namespace EdiabasLib
             {
                 base.Ediabas = value;
 
-                string prop = EdiabasProtected.GetConfigProperty("EnetRemoteHost");
+                string prop = EdiabasProtected?.GetConfigProperty("EnetRemoteHost");
                 if (prop != null)
                 {
                     RemoteHostProtected = prop;
                 }
 
-                prop = EdiabasProtected.GetConfigProperty("RemoteHost");
+                prop = EdiabasProtected?.GetConfigProperty("RemoteHost");
                 if (prop != null)
                 {
                     RemoteHostProtected = prop;
                 }
 
-                prop = EdiabasProtected.GetConfigProperty("EnetTesterAddress");
+                prop = EdiabasProtected?.GetConfigProperty("EnetTesterAddress");
                 if (prop != null)
                 {
                     TesterAddress = (int)EdiabasNet.StringToValue(prop);
                 }
 
-                prop = EdiabasProtected.GetConfigProperty("EnetControlPort");
+                prop = EdiabasProtected?.GetConfigProperty("EnetControlPort");
                 if (prop != null)
                 {
                     ControlPort = (int)EdiabasNet.StringToValue(prop);
                 }
 
-                prop = EdiabasProtected.GetConfigProperty("ControlPort");
+                prop = EdiabasProtected?.GetConfigProperty("ControlPort");
                 if (prop != null)
                 {
                     ControlPort = (int)EdiabasNet.StringToValue(prop);
                 }
 
-                prop = EdiabasProtected.GetConfigProperty("EnetDiagnosticPort");
+                prop = EdiabasProtected?.GetConfigProperty("EnetDiagnosticPort");
                 if (prop != null)
                 {
                     DiagnosticPort = (int)EdiabasNet.StringToValue(prop);
                 }
 
-                prop = EdiabasProtected.GetConfigProperty("DiagnosticPort");
+                prop = EdiabasProtected?.GetConfigProperty("DiagnosticPort");
                 if (prop != null)
                 {
                     DiagnosticPort = (int)EdiabasNet.StringToValue(prop);
                 }
 
-                prop = EdiabasProtected.GetConfigProperty("EnetTimeoutConnect");
+                prop = EdiabasProtected?.GetConfigProperty("EnetTimeoutConnect");
                 if (prop != null)
                 {
                     ConnectTimeout = (int)EdiabasNet.StringToValue(prop);
                 }
 
-                prop = EdiabasProtected.GetConfigProperty("TimeoutConnect");
+                prop = EdiabasProtected?.GetConfigProperty("TimeoutConnect");
                 if (prop != null)
                 {
                     ConnectTimeout = (int)EdiabasNet.StringToValue(prop);
                 }
 
-                prop = EdiabasProtected.GetConfigProperty("EnetAddRecTimeout");
+                prop = EdiabasProtected?.GetConfigProperty("EnetAddRecTimeout");
                 if (prop != null)
                 {
                     AddRecTimeout = (int)EdiabasNet.StringToValue(prop);
                 }
 
-                prop = EdiabasProtected.GetConfigProperty("EnetAddRecTimeoutIcom");
+                prop = EdiabasProtected?.GetConfigProperty("EnetAddRecTimeoutIcom");
                 if (prop != null)
                 {
                     AddRecTimeoutIcom = (int)EdiabasNet.StringToValue(prop);
@@ -433,7 +433,7 @@ namespace EdiabasLib
 #else
                 IcomAllocate = false;
 #endif
-                prop = EdiabasProtected.GetConfigProperty("EnetIcomAllocate");
+                prop = EdiabasProtected?.GetConfigProperty("EnetIcomAllocate");
                 if (prop != null)
                 {
                     IcomAllocate = EdiabasNet.StringToValue(prop) != 0;
@@ -441,10 +441,10 @@ namespace EdiabasLib
 
                 if (!IsIpv4Address(RemoteHostProtected))
                 {
-                    string iniFile = EdiabasProtected.IniFileName;
+                    string iniFile = EdiabasProtected?.IniFileName;
                     if (!string.IsNullOrEmpty(iniFile))
                     {
-                        EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using ENET ini file at: {0}", iniFile);
+                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using ENET ini file at: {0}", iniFile);
                         IniFile ediabasIni = new IniFile(iniFile);
                         string iniRemoteHost = ediabasIni.GetValue(IniFileSection, "RemoteHost", string.Empty);
                         bool hostValid = false;
@@ -452,7 +452,7 @@ namespace EdiabasLib
                         {
                             hostValid = true;
                             RemoteHostProtected = iniRemoteHost;
-                            EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using remote host from ini file: {0}", RemoteHostProtected);
+                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using remote host from ini file: {0}", RemoteHostProtected);
                         }
 
                         if (hostValid)
@@ -461,14 +461,14 @@ namespace EdiabasLib
                             if (!string.IsNullOrEmpty(iniControlPort))
                             {
                                 ControlPort = (int)EdiabasNet.StringToValue(iniControlPort);
-                                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using control port from ini file: {0}", ControlPort);
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using control port from ini file: {0}", ControlPort);
                             }
 
                             string iniDiagnosticPort = ediabasIni.GetValue(IniFileSection, "DiagnosticPort", string.Empty);
                             if (!string.IsNullOrEmpty(iniDiagnosticPort))
                             {
                                 DiagnosticPort = (int)EdiabasNet.StringToValue(iniDiagnosticPort);
-                                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using diagnostic port from ini file: {0}", DiagnosticPort);
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using diagnostic port from ini file: {0}", DiagnosticPort);
                             }
                         }
                     }
@@ -508,11 +508,11 @@ namespace EdiabasLib
                 }
                 if (CommParameterProtected.Length < 1)
                 {
-                    EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                    EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                     return;
                 }
 
-                EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, CommParameterProtected, 0, CommParameterProtected.Length,
+                EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, CommParameterProtected, 0, CommParameterProtected.Length,
                     string.Format(Culture, "{0} CommParameter Host={1}, Tester=0x{2:X02}, ControlPort={3}, DiagPort={4}",
                             InterfaceName, RemoteHostProtected, TesterAddress, ControlPort, DiagnosticPort));
 
@@ -522,7 +522,7 @@ namespace EdiabasLib
                     case 0x010F:    // BMW-FAST
                         if (CommParameterProtected.Length < 7)
                         {
-                            EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                            EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                             return;
                         }
                         ParTransmitFunc = TransBmwFast;
@@ -536,7 +536,7 @@ namespace EdiabasLib
                     case 0x0110:    // D-CAN
                         if (CommParameterProtected.Length < 30)
                         {
-                            EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                            EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                             return;
                         }
                         ParTransmitFunc = TransBmwFast;
@@ -548,7 +548,7 @@ namespace EdiabasLib
                         break;
 
                     default:
-                        EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0014);
+                        EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0014);
                         return;
                 }
             }
@@ -608,7 +608,7 @@ namespace EdiabasLib
             {
                 if (!Connected)
                 {
-                    EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
+                    EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
                     return Int64.MinValue;
                 }
                 return 12000;
@@ -625,13 +625,13 @@ namespace EdiabasLib
                     if (!InterfaceConnect(true))
                     {
                         SharedDataActive.ReconnectRequired = true;
-                        EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
+                        EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
                         return Int64.MinValue;
                     }
                 }
                 if (!Connected)
                 {
-                    EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
+                    EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
                     return Int64.MinValue;
                 }
                 try
@@ -642,19 +642,19 @@ namespace EdiabasLib
                     }
                     if (!TcpControlConnect())
                     {
-                        EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
+                        EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
                         return Int64.MinValue;
                     }
                     WriteNetworkStream(SharedDataActive.TcpControlStream, TcpControlIgnitReq, 0, TcpControlIgnitReq.Length);
                     int recLen = SharedDataActive.TcpControlStream.ReadBytesAsync(RecBuffer, 0, 7, SharedDataActive.TransmitCancelEvent, 1000);
                     if (recLen < 7)
                     {
-                        EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
+                        EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
                         return Int64.MinValue;
                     }
                     if (RecBuffer[5] != 0x10)
                     {   // no clamp state response
-                        EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
+                        EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
                         return Int64.MinValue;
                     }
                     if ((RecBuffer[6] & 0x0C) == 0x04)
@@ -664,7 +664,7 @@ namespace EdiabasLib
                 }
                 catch (Exception)
                 {
-                    EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
+                    EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
                     return Int64.MinValue;
                 }
                 finally
@@ -777,7 +777,7 @@ namespace EdiabasLib
             }
             try
             {
-                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connect to: {0}", RemoteHostProtected);
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connect to: {0}", RemoteHostProtected);
                 SharedDataActive.NetworkData = null;
                 SharedDataActive.TransmitCancelEvent.Reset();
 #if Android
@@ -795,14 +795,14 @@ namespace EdiabasLib
                         return false;
                     }
                     SharedDataActive.EnetHostConn = detectedVehicles[0];
-                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Received: IP={0}:{1}", SharedDataActive.EnetHostConn.IpAddress, SharedDataActive.EnetHostConn.DiagPort));
+                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Received: IP={0}:{1}", SharedDataActive.EnetHostConn.IpAddress, SharedDataActive.EnetHostConn.DiagPort));
                 }
                 else
                 {
                     string[] hostParts = RemoteHostProtected.Split(':');
                     if (hostParts.Length < 1)
                     {
-                        EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Host name invalid: {0}", RemoteHostProtected);
+                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Host name invalid: {0}", RemoteHostProtected);
                         return false;
                     }
 
@@ -841,7 +841,7 @@ namespace EdiabasLib
 
                 if (IcomAllocate && !reconnect && SharedDataActive.EnetHostConn.DiagPort >= 0)
                 {
-                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM at: {0}", SharedDataActive.EnetHostConn.IpAddress);
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM at: {0}", SharedDataActive.EnetHostConn.IpAddress);
                     IcomEvent.Reset();
                     using (CancellationTokenSource cts = new CancellationTokenSource())
                     {
@@ -849,17 +849,17 @@ namespace EdiabasLib
                         {
                             if (success && code == 0)
                             {
-                                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM ok: Code={0}", code);
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM ok: Code={0}", code);
                             }
                             else
                             {
-                                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM rejected: Code={0}", code);
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM rejected: Code={0}", code);
                             }
 
                             IcomEvent.Set();
                         }))
                         {
-                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM error");
+                            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM error");
                         }
 
                         int waitResult = WaitHandle.WaitAny(new WaitHandle[] { IcomEvent, SharedDataActive.TransmitCancelEvent }, 2000);
@@ -867,20 +867,20 @@ namespace EdiabasLib
                         {
                             if (waitResult == WaitHandle.WaitTimeout)
                             {
-                                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM timeout");
+                                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM timeout");
                             }
                             else
                             {
-                                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM cancelled");
+                                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM cancelled");
                             }
                             cts.Cancel();
                             IcomEvent.WaitOne(1000);
                         }
                     }
-                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM finished");
+                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM finished");
                 }
 
-                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting to: {0}:{1}", SharedDataActive.EnetHostConn.IpAddress, diagPort);
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting to: {0}:{1}", SharedDataActive.EnetHostConn.IpAddress, diagPort);
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
                     SharedDataActive.TcpDiagClient = new TcpClientWithTimeout(SharedDataActive.EnetHostConn.IpAddress, diagPort, ConnectTimeout, true)
@@ -897,12 +897,12 @@ namespace EdiabasLib
                     SharedDataActive.TcpDiagRecQueue.Clear();
                 }
                 StartReadTcpDiag(6);
-                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connected to: {0}:{1}", SharedDataActive.EnetHostConn.IpAddress.ToString(), diagPort);
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connected to: {0}:{1}", SharedDataActive.EnetHostConn.IpAddress.ToString(), diagPort);
                 SharedDataActive.ReconnectRequired = false;
             }
             catch (Exception ex)
             {
-                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "InterfaceConnect exception: " + EdiabasNet.GetExceptionText(ex));
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "InterfaceConnect exception: " + EdiabasNet.GetExceptionText(ex));
                 InterfaceDisconnect(reconnect);
                 return false;
             }
@@ -916,10 +916,7 @@ namespace EdiabasLib
 
         public bool InterfaceDisconnect(bool reconnect)
         {
-            if (EdiabasProtected != null)
-            {
-                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Disconnect");
-            }
+            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Disconnect");
             bool result = true;
 
             try
@@ -968,10 +965,7 @@ namespace EdiabasLib
 
             if (IcomAllocate && !reconnect && SharedDataActive.EnetHostConn != null && SharedDataActive.EnetHostConn.DiagPort >= 0)
             {
-                if (EdiabasProtected != null)
-                {
-                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM at: {0}", SharedDataActive.EnetHostConn.IpAddress);
-                }
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM at: {0}", SharedDataActive.EnetHostConn.IpAddress);
 
                 IcomEvent.Reset();
                 using (CancellationTokenSource cts = new CancellationTokenSource())
@@ -980,51 +974,37 @@ namespace EdiabasLib
                     {
                         if (success)
                         {
-                            if (EdiabasProtected != null)
-                            {
-                                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM ok: Code={0}", code);
-                            }
+                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM ok: Code={0}", code);
                         }
                         else
                         {
-                            if (EdiabasProtected != null)
-                            {
-                                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM rejected: Code={0}", code);
-                            }
+                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM rejected: Code={0}", code);
                         }
 
                         IcomEvent.Set();
                     }))
                     {
-                        if (EdiabasProtected != null)
-                        {
-                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM error");
-                        }
+                        EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM error");
                     }
 
                     int waitResult = WaitHandle.WaitAny(new WaitHandle[] { IcomEvent, SharedDataActive.TransmitCancelEvent }, 2000);
                     if (waitResult != 0)
                     {
-                        if (EdiabasProtected != null)
+                        if (waitResult == WaitHandle.WaitTimeout)
                         {
-                            if (waitResult == WaitHandle.WaitTimeout)
-                            {
-                                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM timeout");
-                            }
-                            else
-                            {
-                                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM cancelled");
-                            }
+                            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM timeout");
                         }
+                        else
+                        {
+                            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM cancelled");
+                        }
+
                         cts.Cancel();
                         IcomEvent.WaitOne(1000);
                     }
                 }
 
-                if (EdiabasProtected != null)
-                {
-                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM finished");
-                }
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM finished");
             }
 
             SharedDataActive.EnetHostConn = null;
@@ -1049,7 +1029,7 @@ namespace EdiabasLib
             receiveData = null;
             if (CommParameterProtected == null)
             {
-                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Info, "TransmitData with default CommParameter");
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Info, "TransmitData with default CommParameter");
                 SetDefaultCommParameter();
             }
 
@@ -1059,7 +1039,7 @@ namespace EdiabasLib
             {
                 if (cachedErrorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                 {
-                    EdiabasProtected.SetError(cachedErrorCode);
+                    EdiabasProtected?.SetError(cachedErrorCode);
                     return false;
                 }
                 receiveData = cachedResponse;
@@ -1071,7 +1051,7 @@ namespace EdiabasLib
                 if (!InterfaceConnect(true))
                 {
                     SharedDataActive.ReconnectRequired = true;
-                    EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
+                    EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
                     return false;
                 }
             }
@@ -1084,7 +1064,7 @@ namespace EdiabasLib
                     SharedDataActive.ReconnectRequired = true;
                 }
                 CacheTransmission(sendData, null, errorCode);
-                EdiabasProtected.SetError(errorCode);
+                EdiabasProtected?.SetError(errorCode);
                 return false;
             }
             receiveData = new byte[recLength];
@@ -1095,7 +1075,7 @@ namespace EdiabasLib
 
         public override bool TransmitFrequent(byte[] sendData)
         {
-            EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
+            EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
             return false;
         }
 
@@ -1346,19 +1326,13 @@ namespace EdiabasLib
                             IPEndPoint ipUdpIdent = new IPEndPoint(IPAddress.Parse(AutoIpBroadcastAddress), UdpIdentPort);
                             IPEndPoint ipUdpSvrLoc = new IPEndPoint(IPAddress.Parse(AutoIpBroadcastAddress), UdpSrvLocPort);
 #endif
-                            if (EdiabasProtected != null)
-                            {
-                                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending Ident broadcast to: {0}:{1}", ipUdpIdent.Address, UdpIdentPort));
-                            }
+                            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending Ident broadcast to: {0}:{1}", ipUdpIdent.Address, UdpIdentPort));
                             TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                             {
                                 UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
                             }, ipUdpIdent.Address, SharedDataActive.NetworkData);
 
-                            if (EdiabasProtected != null)
-                            {
-                                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending SvrLoc broadcast to: {0}:{1}", ipUdpSvrLoc.Address , UdpSrvLocPort));
-                            }
+                            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending SvrLoc broadcast to: {0}:{1}", ipUdpSvrLoc.Address , UdpSrvLocPort));
                             TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                             {
                                 UdpSocket.SendTo(UdpSvrLocReq, ipUdpSvrLoc);
@@ -1368,28 +1342,19 @@ namespace EdiabasLib
                         }
                         catch (Exception)
                         {
-                            if (EdiabasProtected != null)
-                            {
-                                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Broadcast failed");
-                            }
+                            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Broadcast failed");
                         }
                     }
                     if (!broadcastSend)
                     {
-                        if (EdiabasProtected != null)
-                        {
-                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "No broadcast send");
-                        }
+                        EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "No broadcast send");
                         return null;
                     }
 
                     UdpEvent.WaitOne(1000);
                     if (UdpRecIpListList.Count == 0)
                     {
-                        if (EdiabasProtected != null)
-                        {
-                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "No answer received");
-                        }
+                        EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "No answer received");
                         if (retryCount < maxRetries)
                         {
                             retryCount++;
@@ -1903,7 +1868,7 @@ namespace EdiabasLib
                     controlPort = SharedDataActive.EnetHostConn.ControlPort;
                 }
 
-                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "TcpControlConnect: {0}:{1}", SharedDataActive.EnetHostConn.IpAddress.ToString(), controlPort);
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "TcpControlConnect: {0}:{1}", SharedDataActive.EnetHostConn.IpAddress.ToString(), controlPort);
                 lock (SharedDataActive.TcpControlTimerLock)
                 {
                     TcpControlTimerStop(SharedDataActive);
@@ -1920,7 +1885,7 @@ namespace EdiabasLib
             }
             catch (Exception ex)
             {
-                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "TcpControlConnect exception: " + EdiabasNet.GetExceptionText(ex));
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "TcpControlConnect exception: " + EdiabasNet.GetExceptionText(ex));
                 TcpControlDisconnect(SharedDataActive);
                 return false;
             }
@@ -2039,7 +2004,7 @@ namespace EdiabasLib
                                 break;
 
                             default:
-                                EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, SharedDataActive.TcpDiagBuffer, 0, SharedDataActive.TcpDiagRecLen, "*** Ignoring unknown telegram type");
+                                EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, SharedDataActive.TcpDiagBuffer, 0, SharedDataActive.TcpDiagRecLen, "*** Ignoring unknown telegram type");
                                 break;
                         }
                         SharedDataActive.TcpDiagRecLen = 0;
@@ -2122,16 +2087,16 @@ namespace EdiabasLib
                 int recLen = ReceiveAck(AckBuffer, ConnectTimeout + TcpAckTimeout, enableLogging);
                 if (recLen < 0)
                 {
-                    if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No ack received");
+                    if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No ack received");
                     InterfaceDisconnect(true);
                     if (!InterfaceConnect(true))
                     {
-                        if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Reconnect failed");
+                        if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Reconnect failed");
                         SharedDataActive.ReconnectRequired = true;
                         return false;
                     }
 
-                    if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnected: resending");
+                    if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnected: resending");
                     lock (SharedDataActive.TcpDiagStreamSendLock)
                     {
                         WriteNetworkStream(SharedDataActive.TcpDiagStream, DataBuffer, 0, sendLength);
@@ -2139,14 +2104,14 @@ namespace EdiabasLib
                     recLen = ReceiveAck(AckBuffer, ConnectTimeout + TcpAckTimeout, enableLogging);
                     if (recLen < 0)
                     {
-                        if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No resend ack received");
+                        if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No resend ack received");
                         return false;
                     }
                 }
 
                 if ((recLen == 6) && (AckBuffer[5] == 0xFF))
                 {
-                    if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Nack received: resending");
+                    if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Nack received: resending");
                     lock (SharedDataActive.TcpDiagStreamSendLock)
                     {
                         WriteNetworkStream(SharedDataActive.TcpDiagStream, DataBuffer, 0, sendLength);
@@ -2154,14 +2119,14 @@ namespace EdiabasLib
                     recLen = ReceiveAck(AckBuffer, ConnectTimeout + TcpAckTimeout, enableLogging);
                     if (recLen < 0)
                     {
-                        if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No resend ack received");
+                        if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No resend ack received");
                         return false;
                     }
                 }
 
                 if ((recLen < 6) || (recLen > sendLength) || (AckBuffer[5] != 0x02))
                 {
-                    if (enableLogging) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, AckBuffer, 0, recLen, "*** Ack frame invalid");
+                    if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AckBuffer, 0, recLen, "*** Ack frame invalid");
                     return false;
                 }
                 AckBuffer[4] = DataBuffer[4];
@@ -2170,7 +2135,7 @@ namespace EdiabasLib
                 {
                     if (AckBuffer[i] != DataBuffer[i])
                     {
-                        if (enableLogging) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, AckBuffer, 0, recLen, "*** Ack data not matching");
+                        if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AckBuffer, 0, recLen, "*** Ack data not matching");
                         return false;
                     }
                 }
@@ -2198,10 +2163,7 @@ namespace EdiabasLib
                 }
                 if (DataBuffer[5] != 0x01)
                 {
-                    if (EdiabasProtected != null)
-                    {
-                        EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Invalid data telegram type: {0:X02}", DataBuffer[5]);
-                    }
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Invalid data telegram type: {0:X02}", DataBuffer[5]);
                     return false;
                 }
                 // ReSharper disable RedundantCast
@@ -2209,10 +2171,7 @@ namespace EdiabasLib
                 // ReSharper restore RedundantCast
                 if ((dataLen < 1) || ((dataLen + 8) > recLen) || (dataLen > 0xFFFF))
                 {
-                    if (EdiabasProtected != null)
-                    {
-                        EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Invalid data length: {0}", dataLen);
-                    }
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Invalid data length: {0}", dataLen);
                     return false;
                 }
                 // create BMW-FAST telegram
@@ -2327,10 +2286,10 @@ namespace EdiabasLib
                 {   // ACK or NACK received
                     return recLen;
                 }
-                if (enableLogging) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, recLen, "*** Ack or nack expected");
+                if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, recLen, "*** Ack or nack expected");
                 if ((Stopwatch.GetTimestamp() - startTick) > timeout * TickResolMs)
                 {
-                    if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Ack timeout");
+                    if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Ack timeout");
                     return -1;
                 }
             }
@@ -2351,7 +2310,7 @@ namespace EdiabasLib
 
             EdiabasNet.ErrorCodes errorCode = EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
             UInt32 retries = CommRepeatsProtected;
-            string retryComm = EdiabasProtected.GetConfigProperty("RetryComm");
+            string retryComm = EdiabasProtected?.GetConfigProperty("RetryComm");
             if (retryComm != null)
             {
                 if (EdiabasNet.StringToValue(retryComm) == 0)
@@ -2383,17 +2342,17 @@ namespace EdiabasLib
                 retries++;
                 if (retries <= ParRetryNr78)
                 {
-                    if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NR78({0:X02}) count={1}", deviceAddr, retries);
+                    if (enableLogging) EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NR78({0:X02}) count={1}", deviceAddr, retries);
                     Nr78Dict.Add(deviceAddr, retries);
                 }
                 else
                 {
-                    if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NR78({0:X02}) exceeded", deviceAddr);
+                    if (enableLogging) EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NR78({0:X02}) exceeded", deviceAddr);
                 }
             }
             else
             {
-                if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NR78({0:X02}) added", deviceAddr);
+                if (enableLogging) EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NR78({0:X02}) added", deviceAddr);
                 Nr78Dict.Add(deviceAddr, 0);
             }
         }
@@ -2402,7 +2361,7 @@ namespace EdiabasLib
         {
             if (Nr78Dict.ContainsKey(deviceAddr))
             {
-                if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NR78({0:X02}) removed", deviceAddr);
+                if (enableLogging) EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NR78({0:X02}) removed", deviceAddr);
                 Nr78Dict.Remove(deviceAddr);
             }
         }
@@ -2420,11 +2379,11 @@ namespace EdiabasLib
             {
                 Nr78Dict.Clear();
                 int sendLength = TelLengthBmwFast(sendData);
-                if (enableLogging) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendLength, "Send");
+                if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendLength, "Send");
 
                 if (!SendData(sendData, sendLength, enableLogging))
                 {
-                    if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending failed");
+                    if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending failed");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
                 }
             }
@@ -2432,7 +2391,7 @@ namespace EdiabasLib
             for (; ; )
             {
                 int timeout = (Nr78Dict.Count > 0) ? ParTimeoutNr78 : ParTimeoutStd;
-                //if (enableLogging) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Timeout: {0}", timeout);
+                //if (enableLogging) EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Timeout: {0}", timeout);
                 if (SharedDataActive.EnetHostConn.ConnectionType == EnetConnection.InterfaceType.Icom)
                 {
                     timeout += AddRecTimeoutIcom;
@@ -2444,12 +2403,12 @@ namespace EdiabasLib
 
                 if (!ReceiveData(receiveData, timeout))
                 {
-                    if (enableLogging) EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No data received");
+                    if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No data received");
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                 }
 
                 int recLength = TelLengthBmwFast(receiveData);
-                if (enableLogging) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, recLength + 1, "Resp");
+                if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, recLength + 1, "Resp");
 
                 int dataLen = receiveData[0] & 0x3F;
                 int dataStart = 3;
