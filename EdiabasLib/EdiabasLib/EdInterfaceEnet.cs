@@ -1351,7 +1351,13 @@ namespace EdiabasLib
                         return null;
                     }
 
-                    UdpEvent.WaitOne(1000);
+                    int waitResult = WaitHandle.WaitAny(new WaitHandle[] { UdpEvent, SharedDataActive.TransmitCancelEvent }, 1000);
+                    if (waitResult == 1)
+                    {
+                        EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "No broadcast cancelled");
+                        return null;
+                    }
+
                     if (UdpRecIpListList.Count == 0)
                     {
                         EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "No answer received");
