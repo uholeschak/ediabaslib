@@ -779,6 +779,7 @@ namespace EdiabasLib
             {
                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connect to: {0}", RemoteHostProtected);
                 SharedDataActive.NetworkData = null;
+                SharedDataActive.TransmitCancelEvent.Reset();
 #if Android
                 if (ConnectParameter is ConnectParameterType connectParameter)
                 {
@@ -861,9 +862,17 @@ namespace EdiabasLib
                             EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM error");
                         }
 
-                        if (!IcomEvent.WaitOne(2000))
+                        int waitResult = WaitHandle.WaitAny(new WaitHandle[] { IcomEvent, SharedDataActive.TransmitCancelEvent }, 2000);
+                        if (waitResult != 0)
                         {
-                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM timeout");
+                            if (waitResult == WaitHandle.WaitTimeout)
+                            {
+                                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM timeout");
+                            }
+                            else
+                            {
+                                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM cancelled");
+                            }
                             cts.Cancel();
                             IcomEvent.WaitOne(1000);
                         }
@@ -871,7 +880,6 @@ namespace EdiabasLib
                     EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM finished");
                 }
 
-                SharedDataActive.TransmitCancelEvent.Reset();
                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting to: {0}:{1}", SharedDataActive.EnetHostConn.IpAddress, diagPort);
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
