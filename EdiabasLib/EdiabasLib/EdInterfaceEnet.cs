@@ -1002,11 +1002,19 @@ namespace EdiabasLib
                         }
                     }
 
-                    if (!IcomEvent.WaitOne(2000))
+                    int waitResult = WaitHandle.WaitAny(new WaitHandle[] { IcomEvent, SharedDataActive.TransmitCancelEvent }, 2000);
+                    if (waitResult != 0)
                     {
                         if (EdiabasProtected != null)
                         {
-                            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM timeout");
+                            if (waitResult == WaitHandle.WaitTimeout)
+                            {
+                                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM timeout");
+                            }
+                            else
+                            {
+                                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM cancelled");
+                            }
                         }
                         cts.Cancel();
                         IcomEvent.WaitOne(1000);
