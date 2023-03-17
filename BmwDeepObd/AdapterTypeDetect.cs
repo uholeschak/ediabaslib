@@ -145,7 +145,7 @@ public class AdapterTypeDetect
                     bool escapeMode = _activityCommon.MtcBtEscapeMode;
                     EscapeStreamReader inStream = new EscapeStreamReader(adapterInStream);
                     EscapeStreamWriter outStream = new EscapeStreamWriter(adapterOutStream);
-                    if (!SetCustomEscapeMode(inStream, outStream, ref escapeMode, out bool noEscapeSupport))
+                    if (!SetCustomEscapeMode(inStream, outStream, cancelEvent, ref escapeMode, out bool noEscapeSupport))
                     {
                         LogString("*** Set escape mode failed");
                     }
@@ -153,7 +153,7 @@ public class AdapterTypeDetect
                     inStream.SetEscapeMode(escapeMode);
                     outStream.SetEscapeMode(escapeMode);
 
-                    if (!ReadCustomFwVersion(inStream, outStream, out int adapterTypeId, out int fwVersion))
+                    if (!ReadCustomFwVersion(inStream, outStream, cancelEvent, out int adapterTypeId, out int fwVersion))
                     {
                         LogString("*** Read firmware version failed");
                         if (noEscapeSupport && _activityCommon.MtcBtEscapeMode)
@@ -168,7 +168,7 @@ public class AdapterTypeDetect
 
                     if (adapterTypeId >= 0x0002)
                     {
-                        if (ReadCustomSerial(inStream, outStream, out byte[] adapterSerial))
+                        if (ReadCustomSerial(inStream, outStream, cancelEvent, out byte[] adapterSerial))
                         {
                             LogString("AdapterSerial: " + BitConverter.ToString(adapterSerial).Replace("-", ""));
                         }
@@ -385,7 +385,7 @@ public class AdapterTypeDetect
         return adapterType;
     }
 
-    private bool SetCustomEscapeMode(EscapeStreamReader inStream, EscapeStreamWriter outStream, ref bool escapeMode, out bool noEscapeSupport)
+    private bool SetCustomEscapeMode(EscapeStreamReader inStream, EscapeStreamWriter outStream, ManualResetEvent cancelEvent, ref bool escapeMode, out bool noEscapeSupport)
     {
         const int escapeRespLen = 8;
         byte escapeModeValue = (byte)((escapeMode ? 0x03 : 0x00) ^ EdCustomAdapterCommon.EscapeXor);
@@ -407,12 +407,17 @@ public class AdapterTypeDetect
         {
             while (inStream.HasData())
             {
-                int data = inStream.ReadByte();
+                int data = inStream.ReadByteAsync(cancelEvent);
                 if (data >= 0)
                 {
                     LogByte((byte)data);
                     responseList.Add((byte)data);
                     startTime = Stopwatch.GetTimestamp();
+                }
+                else
+                {
+                    LogString("*** Read byte failed");
+                    break;
                 }
             }
 
@@ -482,7 +487,7 @@ public class AdapterTypeDetect
         return true;
     }
 
-    private bool ReadCustomFwVersion(EscapeStreamReader inStream, EscapeStreamWriter outStream, out int adapterTypeId, out int fwVersion)
+    private bool ReadCustomFwVersion(EscapeStreamReader inStream, EscapeStreamWriter outStream, ManualResetEvent cancelEvent, out int adapterTypeId, out int fwVersion)
     {
         adapterTypeId = -1;
         fwVersion = -1;
@@ -502,12 +507,17 @@ public class AdapterTypeDetect
         {
             while (inStream.HasData())
             {
-                int data = inStream.ReadByte();
+                int data = inStream.ReadByteAsync(cancelEvent);
                 if (data >= 0)
                 {
                     LogByte((byte)data);
                     responseList.Add((byte)data);
                     startTime = Stopwatch.GetTimestamp();
+                }
+                else
+                {
+                    LogString("*** Read byte failed");
+                    break;
                 }
             }
 
@@ -541,7 +551,7 @@ public class AdapterTypeDetect
         return true;
     }
 
-    private bool ReadCustomSerial(EscapeStreamReader inStream, EscapeStreamWriter outStream, out byte[] adapterSerial)
+    private bool ReadCustomSerial(EscapeStreamReader inStream, EscapeStreamWriter outStream, ManualResetEvent cancelEvent, out byte[] adapterSerial)
     {
         adapterSerial = null;
         const int idRespLen = 13;
@@ -560,12 +570,17 @@ public class AdapterTypeDetect
         {
             while (inStream.HasData())
             {
-                int data = inStream.ReadByte();
+                int data = inStream.ReadByteAsync(cancelEvent);
                 if (data >= 0)
                 {
                     LogByte((byte)data);
                     responseList.Add((byte)data);
                     startTime = Stopwatch.GetTimestamp();
+                }
+                else
+                {
+                    LogString("*** Read byte failed");
+                    break;
                 }
             }
 
