@@ -884,10 +884,12 @@ namespace BmwDeepObd
                     {   // page change
                         break;
                     }
+
                     if (_ediabasJobAbort)
                     {
                         break;
                     }
+
                     try
                     {
                         ActivityCommon.ResolveSgbdFile(Ediabas, ecuInfo.Sgbd);
@@ -1165,6 +1167,16 @@ namespace BmwDeepObd
                 {
                     foreach (JobReader.JobInfo jobInfo in pageInfo.JobsInfo.JobList)
                     {
+                        if (_lastPageInfo != JobPageInfo)
+                        {   // page change
+                            break;
+                        }
+
+                        if (_ediabasJobAbort)
+                        {
+                            break;
+                        }
+
                         if (!string.IsNullOrEmpty(jobInfo.Name))
                         {
                             string sgbd = string.Empty;
