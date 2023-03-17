@@ -75,7 +75,7 @@
 \nFeel free to contribute or to report problems.
 \nA detailed documentation could also be found on this web site.
 \n\nChanges in this version:\n</string>
-  <string name="version_last_changes">- Support for BK7321QN WiFi chip.\n- Improved search function.\n- Support for hotspot mode.\n- Adapter IP editable.\n- Fixed minor problems</string>
+  <string name="version_last_changes">- Improved transmission cancel.\n- Support for BK7321QN WiFi chip.\n- Improved search function.\n- Support for hotspot mode.\n- Adapter IP editable.\n- Fixed minor problems</string>
   <string name="app_info_message">Deep OBD for BMW and VAG\nVersion: {0}\nId: {1}</string>
   <string formatted="false" name="vag_mode_info">The VAG mode ist still experimental and only for vehicles until {0}.\nA &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;Deep OBD adapter&lt;/a&gt; with at least firmware version 0.11 is required.\nAt the moment only the protocols KWP2000, KWP1281, TP2.0 and UDS are supported.\nConfigurations have to regenerated for the new VAG mode\n.It\'s possible to select the old VAG mode again in the settings dialog.</string>
 
