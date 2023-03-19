@@ -880,12 +880,7 @@ namespace BmwDeepObd
                 foreach (JobReader.EcuInfo ecuInfo in pageInfo.ErrorsInfo.EcuList)
                 {
                     index++;
-                    if (_lastPageInfo != JobPageInfo)
-                    {   // page change
-                        break;
-                    }
-
-                    if (_ediabasJobAbort)
+                    if (AbortEdiabasJob())
                     {
                         break;
                     }
@@ -1167,12 +1162,7 @@ namespace BmwDeepObd
                 {
                     foreach (JobReader.JobInfo jobInfo in pageInfo.JobsInfo.JobList)
                     {
-                        if (_lastPageInfo != JobPageInfo)
-                        {   // page change
-                            break;
-                        }
-
-                        if (_ediabasJobAbort)
+                        if (AbortEdiabasJob())
                         {
                             break;
                         }
@@ -1836,8 +1826,11 @@ namespace BmwDeepObd
                             if (responseList.Count > 0)
                             {
                                 string telName = string.Format(CultureInfo.InvariantCulture, "RAW_TELEGRAM_{0}", telIdx + 1);
-                                Dictionary<string, EdiabasNet.ResultData> resultDictTel = new Dictionary<string, EdiabasNet.ResultData>();
-                                resultDictTel.Add(telName, new EdiabasNet.ResultData(EdiabasNet.ResultType.TypeY, telName, responseList.ToArray()));
+                                Dictionary<string, EdiabasNet.ResultData> resultDictTel = new Dictionary<string, EdiabasNet.ResultData>
+                                {
+                                    { telName, new EdiabasNet.ResultData(EdiabasNet.ResultType.TypeY, telName, responseList.ToArray()) }
+                                };
+
                                 if (string.IsNullOrEmpty(jobInfo.Id))
                                 {
                                     MergeResultDictionarys(ref resultDict, resultDictTel, jobInfo.Name + "#");
@@ -2905,6 +2898,12 @@ namespace BmwDeepObd
             {
                 return true;
             }
+
+            if (_lastPageInfo != null && _lastPageInfo != JobPageInfo)
+            {
+                return true;
+            }
+
             return false;
         }
 
