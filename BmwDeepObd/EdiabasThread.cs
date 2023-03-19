@@ -286,6 +286,7 @@ namespace BmwDeepObd
         public static readonly Object DataLock = new Object();
         public const int UdsFuncAddr = 0x7DF;
         private const char DataLogSeparator = '\t';
+        public const int UpdateDataDelay = 100;
         public const string NotificationBroadcastInfo = ActivityCommon.AppNameSpace + ".Notification.Info";
         public static readonly Tuple<string, bool>[] ErrorFaultModeResultList =
         {
@@ -699,8 +700,9 @@ namespace BmwDeepObd
 
         private void ThreadFunc()
         {
-            DataUpdatedEvent();
             _lastPageInfo = null;
+            DataUpdatedEvent(true);
+
             while (!_stopThread)
             {
                 try
@@ -731,7 +733,7 @@ namespace BmwDeepObd
                 DataUpdatedEvent();
             }
             _threadRunning = false;
-            DataUpdatedEvent();
+            DataUpdatedEvent(true);
             CloseDataLog();
             ThreadTerminatedEvent();
         }
@@ -2935,18 +2937,19 @@ namespace BmwDeepObd
             }
         }
 
-        private void DataUpdatedEvent()
+        private void DataUpdatedEvent(bool forceUpdate = false)
         {
-            while (Stopwatch.GetTimestamp() - _lastUpdateTime < 100 * ActivityCommon.TickResolMs)
+            bool update = forceUpdate;
+            if (Stopwatch.GetTimestamp() - _lastUpdateTime >= UpdateDataDelay * ActivityCommon.TickResolMs)
             {
-                if (AbortEdiabasJob())
-                {
-                    break;
-                }
-                Thread.Sleep(100);
+                update = true;
             }
-            _lastUpdateTime = Stopwatch.GetTimestamp();
-            DataUpdated?.Invoke(this, EventArgs.Empty);
+
+            if (update)
+            {
+                _lastUpdateTime = Stopwatch.GetTimestamp();
+                DataUpdated?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         private void PageChangedEvent()
