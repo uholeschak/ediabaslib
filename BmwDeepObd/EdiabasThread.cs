@@ -2951,8 +2951,8 @@ namespace BmwDeepObd
 
             if (update)
             {
-                _lastUpdateTime = Stopwatch.GetTimestamp();
                 DataUpdated?.Invoke(this, EventArgs.Empty);
+                _lastUpdateTime = Stopwatch.GetTimestamp();
             }
             else
             {
