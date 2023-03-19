@@ -13,6 +13,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Android.Content;
+using Android.Util;
 using BmwFileReader;
 using EdiabasLib;
 // ReSharper disable StringLiteralTypo
@@ -283,6 +284,9 @@ namespace BmwDeepObd
 
         public EdiabasNet Ediabas { get; private set; }
 
+#if DEBUG
+        private static readonly string Tag = typeof(EdiabasThread).FullName;
+#endif
         public static readonly Object DataLock = new Object();
         public const int UdsFuncAddr = 0x7DF;
         private const char DataLogSeparator = '\t';
@@ -2949,6 +2953,12 @@ namespace BmwDeepObd
             {
                 _lastUpdateTime = Stopwatch.GetTimestamp();
                 DataUpdated?.Invoke(this, EventArgs.Empty);
+            }
+            else
+            {
+#if DEBUG
+                Log.Info(Tag, "DataUpdatedEvent: ignored");
+#endif
             }
         }
 
