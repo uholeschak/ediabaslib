@@ -3804,6 +3804,7 @@ namespace BmwDeepObd
                     if (ecuVariant != null)
                     {
                         string language = ActivityCommon.GetCurrentLanguage();
+                        int structIndex = 0;
                         List<EcuFunctionStructs.EcuFixedFuncStruct> fixedFuncStructList = ActivityCommon.EcuFunctionReader.GetFixedFuncStructList(ecuVariant);
                         foreach (EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct in fixedFuncStructList)
                         {
@@ -3823,6 +3824,7 @@ namespace BmwDeepObd
 
                                     jobInfo.Comments = new List<string>();
                                     jobInfo.EcuFixedFuncStruct = ecuFixedFuncStruct;
+                                    jobInfo.StructIndex = structIndex;
 
                                     foreach (EcuFunctionStructs.EcuJob ecuJob in ecuFixedFuncStruct.EcuJobList)
                                     {
@@ -3851,6 +3853,8 @@ namespace BmwDeepObd
                                     break;
                                 }
                             }
+
+                            structIndex++;
                         }
                     }
 
