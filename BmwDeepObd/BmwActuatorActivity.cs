@@ -454,13 +454,24 @@ namespace BmwDeepObd
                 }
 
                 string titleText = jobInfo.EcuFixedFuncStruct.Title?.GetTitle(language) ?? string.Empty;
+                if (titleText.StartsWith(" "))
+                {
+                    if (jobInfo.EcuFixedFuncStruct.EcuJobList.Count == 1)
+                    {
+                        if (string.Compare(jobInfo.EcuFixedFuncStruct.EcuJobList[0].Name, "DIAGNOSE_MODE", StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            validFunction = false;
+                        }
+                    }
+                }
+
                 string displayText = titleText.Trim();
                 if (!validFunction)
                 {
                     displayText = "(" + displayText + ")";
                 }
 
-                _spinnerBmwActuatorFunctionAdapter.Items.Add(new StringObjType(displayText.Trim(), index));
+                _spinnerBmwActuatorFunctionAdapter.Items.Add(new StringObjType(displayText, index));
 
                 if (index == selectedFunction)
                 {
