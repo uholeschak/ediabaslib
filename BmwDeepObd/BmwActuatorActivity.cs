@@ -418,7 +418,7 @@ namespace BmwDeepObd
             }
 
             string language = ActivityCommon.GetCurrentLanguage();
-            _jobActuatorList = new List<XmlToolEcuActivity.JobInfo>();
+            List<XmlToolEcuActivity.JobInfo> jobActuatorList = new List<XmlToolEcuActivity.JobInfo>();
             foreach (XmlToolEcuActivity.JobInfo jobInfo in _ecuInfo.JobList)
             {
                 if (jobInfo.EcuFixedFuncStruct != null &&
@@ -427,10 +427,12 @@ namespace BmwDeepObd
                     string displayText = jobInfo.EcuFixedFuncStruct.Title?.GetTitle(language);
                     if (!string.IsNullOrWhiteSpace(displayText))
                     {
-                        _jobActuatorList.Add(jobInfo);
+                        jobActuatorList.Add(jobInfo);
                     }
                 }
             }
+
+            _jobActuatorList = jobActuatorList.OrderBy(x => x.EcuFixedFuncStruct.SortOrder.ConvertToInt()).ToList();
         }
 
         private void UpdateActuatorFunctionList()
