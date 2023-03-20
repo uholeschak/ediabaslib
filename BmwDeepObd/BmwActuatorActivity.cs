@@ -432,7 +432,7 @@ namespace BmwDeepObd
                 }
             }
 
-            _jobActuatorList = jobActuatorList.OrderBy(x => x.EcuFixedFuncStruct.SortOrder.ConvertToInt()).ToList();
+            _jobActuatorList = jobActuatorList.OrderBy(x => x.StructIndex).ToList();
         }
 
         private void UpdateActuatorFunctionList()

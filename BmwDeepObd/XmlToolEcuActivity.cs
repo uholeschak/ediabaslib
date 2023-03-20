@@ -136,6 +136,7 @@ namespace BmwDeepObd
                 ArgLimit = -1;
                 Selected = false;
                 EcuFixedFuncStruct = null;
+                StructIndex = -1;
             }
 
             public string Name { get; }
@@ -157,6 +158,8 @@ namespace BmwDeepObd
             public bool Selected { get; set; }
 
             public EcuFunctionStructs.EcuFixedFuncStruct EcuFixedFuncStruct { get; set; }
+        
+            public int StructIndex { get; set; }
         }
 
         class JobInfoComparer : IComparer<JobInfo>
