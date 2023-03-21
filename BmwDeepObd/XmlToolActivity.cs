@@ -371,6 +371,9 @@ namespace BmwDeepObd
             public bool CommErrorsOccurred { get; set; }
         }
 
+#if DEBUG
+        private static readonly string Tag = typeof(XmlToolActivity).FullName;
+#endif
         private static readonly Encoding VagUdsEncoding = Encoding.GetEncoding(1252);
         private const string XmlDocumentFrame =
             @"<?xml version=""1.0"" encoding=""utf-8"" ?>
@@ -3804,10 +3807,11 @@ namespace BmwDeepObd
                     if (ecuVariant != null)
                     {
                         string language = ActivityCommon.GetCurrentLanguage();
-                        int structIndex = 0;
-                        List<EcuFunctionStructs.EcuFixedFuncStruct> fixedFuncStructList = ActivityCommon.EcuFunctionReader.GetFixedFuncStructList(ecuVariant);
-                        foreach (EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct in fixedFuncStructList)
+                        List<KeyValuePair<EcuFunctionStructs.EcuFixedFuncStruct, EcuFunctionStructs.EcuFuncStruct>> fixedFuncStructList = ActivityCommon.EcuFunctionReader.GetFixedFuncStructList(ecuVariant);
+                        foreach (var ecuFixedFuncStructPair in fixedFuncStructList)
                         {
+                            EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct = ecuFixedFuncStructPair.Key;
+                            EcuFunctionStructs.EcuFuncStruct ecuFuncStruct = ecuFixedFuncStructPair.Value;
                             EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType nodeClassType = ecuFixedFuncStruct.GetNodeClassType();
                             switch (nodeClassType)
                             {
@@ -3824,7 +3828,7 @@ namespace BmwDeepObd
 
                                     jobInfo.Comments = new List<string>();
                                     jobInfo.EcuFixedFuncStruct = ecuFixedFuncStruct;
-                                    jobInfo.StructIndex = structIndex;
+                                    jobInfo.EcuFuncStruct = ecuFuncStruct;
 
                                     foreach (EcuFunctionStructs.EcuJob ecuJob in ecuFixedFuncStruct.EcuJobList)
                                     {
@@ -3852,9 +3856,14 @@ namespace BmwDeepObd
                                     jobList.Add(jobInfo);
                                     break;
                                 }
-                            }
 
-                            structIndex++;
+                                default:
+#if DEBUG
+                                    Log.Info(Tag, string.Format("ExecuteJobsRead: Unknown node class={0}, name={1}",
+                                        ecuFixedFuncStruct.NodeClassName, ecuFixedFuncStruct.Title?.GetTitle(language)));
+#endif
+                                    break;
+                            }
                         }
                     }
 
