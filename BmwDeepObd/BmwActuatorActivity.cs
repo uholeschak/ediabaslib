@@ -434,37 +434,22 @@ namespace BmwDeepObd
 
             _jobActuatorList.Sort((info1, info2) =>
             {
-                long id1 = 0;
-                long id2 = 0;
+                string title1 = string.Empty;
+                string title2 = string.Empty;
 
-                if (info1.EcuFixedFuncStruct != null && info2.EcuFixedFuncStruct != null)
+                if (info1.EcuFuncStruct == info2.EcuFuncStruct)
                 {
-                    id1 = info1.EcuFixedFuncStruct.Id.ConvertToInt();
-                    id2 = info2.EcuFixedFuncStruct.Id.ConvertToInt();
+                    title1 = info1.EcuFixedFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
+                    title2 = info2.EcuFixedFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
                 }
 
-                if (info1.EcuFuncStruct != null && info2.EcuFuncStruct != null)
+                if (string.IsNullOrEmpty(title1) || string.IsNullOrEmpty(title2))
                 {
-                    long id1Group = info1.EcuFuncStruct.Id.ConvertToInt();
-                    long id2Group = info2.EcuFuncStruct.Id.ConvertToInt();
-                    if (id1Group != id2Group)
-                    {
-                        id1 = id1Group;
-                        id2 = id2Group;
-                    }
+                    title1 = info1.EcuFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
+                    title2 = info2.EcuFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
                 }
 
-                if (id1 < id2)
-                {
-                    return -1;
-                }
-
-                if (id1 > id2)
-                {
-                    return 1;
-                }
-
-                return 0;
+                return string.Compare(title1, title2, StringComparison.InvariantCulture);
             });
         }
 
