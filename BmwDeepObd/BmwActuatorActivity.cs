@@ -475,27 +475,10 @@ namespace BmwDeepObd
 
 
                 string titleText = jobInfo.EcuFixedFuncStruct.Title?.GetTitle(language) ?? string.Empty;
-                if (titleText.StartsWith(" "))
-                {
-                    if (jobInfo.EcuFixedFuncStruct.EcuJobList.Count == 1)
-                    {
-                        if (string.Compare(jobInfo.EcuFixedFuncStruct.EcuJobList[0].Name, "DIAGNOSE_MODE", StringComparison.OrdinalIgnoreCase) == 0)
-                        {
-                            validFunction = false;
-                        }
-                    }
-                }
-
                 string displayText = titleText.Trim();
                 if (!validFunction)
                 {
                     displayText = "(" + displayText + ")";
-                }
-
-                string titleTextGroup = jobInfo.EcuFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
-                if (!string.IsNullOrEmpty(titleTextGroup))
-                {
-                    displayText = titleTextGroup + ": " + displayText;
                 }
 
                 _spinnerBmwActuatorFunctionAdapter.Items.Add(new StringObjType(displayText, index));
