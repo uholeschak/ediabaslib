@@ -418,7 +418,7 @@ namespace BmwDeepObd
             }
 
             string language = ActivityCommon.GetCurrentLanguage();
-            List<XmlToolEcuActivity.JobInfo> jobActuatorList = new List<XmlToolEcuActivity.JobInfo>();
+            _jobActuatorList = new List<XmlToolEcuActivity.JobInfo>();
             foreach (XmlToolEcuActivity.JobInfo jobInfo in _ecuInfo.JobList)
             {
                 if (jobInfo.EcuFixedFuncStruct != null &&
@@ -427,12 +427,45 @@ namespace BmwDeepObd
                     string displayText = jobInfo.EcuFixedFuncStruct.Title?.GetTitle(language);
                     if (!string.IsNullOrWhiteSpace(displayText))
                     {
-                        jobActuatorList.Add(jobInfo);
+                        _jobActuatorList.Add(jobInfo);
                     }
                 }
             }
 
-            _jobActuatorList = jobActuatorList.OrderBy(x => x.StructIndex).ToList();
+            _jobActuatorList.Sort((info1, info2) =>
+            {
+                long id1 = 0;
+                long id2 = 0;
+
+                if (info1.EcuFixedFuncStruct != null && info2.EcuFixedFuncStruct != null)
+                {
+                    id1 = info1.EcuFixedFuncStruct.Id.ConvertToInt();
+                    id2 = info2.EcuFixedFuncStruct.Id.ConvertToInt();
+                }
+
+                if (info1.EcuFuncStruct != null && info2.EcuFuncStruct != null)
+                {
+                    long id1Group = info1.EcuFuncStruct.Id.ConvertToInt();
+                    long id2Group = info2.EcuFuncStruct.Id.ConvertToInt();
+                    if (id1Group != id2Group)
+                    {
+                        id1 = id1Group;
+                        id2 = id2Group;
+                    }
+                }
+
+                if (id1 < id2)
+                {
+                    return -1;
+                }
+
+                if (id1 > id2)
+                {
+                    return 1;
+                }
+
+                return 0;
+            });
         }
 
         private void UpdateActuatorFunctionList()
@@ -455,6 +488,7 @@ namespace BmwDeepObd
                     validFunction = false;
                 }
 
+
                 string titleText = jobInfo.EcuFixedFuncStruct.Title?.GetTitle(language) ?? string.Empty;
                 if (titleText.StartsWith(" "))
                 {
@@ -471,6 +505,12 @@ namespace BmwDeepObd
                 if (!validFunction)
                 {
                     displayText = "(" + displayText + ")";
+                }
+
+                string titleTextGroup = jobInfo.EcuFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
+                if (!string.IsNullOrEmpty(titleTextGroup))
+                {
+                    displayText = titleTextGroup + ": " + displayText;
                 }
 
                 _spinnerBmwActuatorFunctionAdapter.Items.Add(new StringObjType(displayText, index));

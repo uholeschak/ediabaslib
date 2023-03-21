@@ -86,9 +86,10 @@ namespace BmwFileReader
             _ecuVariantDict.Clear();
         }
 
-        public List<EcuFunctionStructs.EcuFixedFuncStruct> GetFixedFuncStructList(EcuFunctionStructs.EcuVariant ecuVariant)
+        public List<KeyValuePair<EcuFunctionStructs.EcuFixedFuncStruct, EcuFunctionStructs.EcuFuncStruct>> GetFixedFuncStructList(EcuFunctionStructs.EcuVariant ecuVariant)
         {
-            List<EcuFunctionStructs.EcuFixedFuncStruct> fixedFuncStructList = new List<EcuFunctionStructs.EcuFixedFuncStruct>();
+            List<KeyValuePair<EcuFunctionStructs.EcuFixedFuncStruct, EcuFunctionStructs.EcuFuncStruct>> fixedFuncStructList =
+                new List<KeyValuePair<EcuFunctionStructs.EcuFixedFuncStruct, EcuFunctionStructs.EcuFuncStruct>>();
 
             if (ecuVariant.RefEcuVariantList != null)
             {
@@ -96,7 +97,10 @@ namespace BmwFileReader
                 {
                     if (refEcuVariant.FixedFuncStructList != null)
                     {
-                        fixedFuncStructList.AddRange(refEcuVariant.FixedFuncStructList);
+                        foreach (EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct in refEcuVariant.FixedFuncStructList)
+                        {
+                            fixedFuncStructList.Add(new KeyValuePair<EcuFunctionStructs.EcuFixedFuncStruct, EcuFunctionStructs.EcuFuncStruct>(ecuFixedFuncStruct, null));
+                        }
                     }
                 }
             }
@@ -107,7 +111,10 @@ namespace BmwFileReader
                 {
                     if (ecuFuncStruct.FixedFuncStructList != null)
                     {
-                        fixedFuncStructList.AddRange(ecuFuncStruct.FixedFuncStructList);
+                        foreach (EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct in ecuFuncStruct.FixedFuncStructList)
+                        {
+                            fixedFuncStructList.Add(new KeyValuePair<EcuFunctionStructs.EcuFixedFuncStruct, EcuFunctionStructs.EcuFuncStruct>(ecuFixedFuncStruct, ecuFuncStruct));
+                        }
                     }
                 }
             }

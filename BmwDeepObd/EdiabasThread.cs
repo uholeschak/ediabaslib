@@ -1986,9 +1986,10 @@ namespace BmwDeepObd
                 return null;
             }
 
-            List<EcuFunctionStructs.EcuFixedFuncStruct> fixedFuncStructList = ActivityCommon.EcuFunctionReader.GetFixedFuncStructList(ecuVariant);
-            foreach (EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct in fixedFuncStructList)
+            List<KeyValuePair<EcuFunctionStructs.EcuFixedFuncStruct, EcuFunctionStructs.EcuFuncStruct>> fixedFuncStructList = ActivityCommon.EcuFunctionReader.GetFixedFuncStructList(ecuVariant);
+            foreach (var ecuFixedFuncStructPair in fixedFuncStructList)
             {
+                EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct = ecuFixedFuncStructPair.Key;
                 if (ecuFixedFuncStruct.IdPresent(jobInfo.FixedFuncStructId, jobInfo.UseCompatIds))
                 {
                     return ecuFixedFuncStruct;

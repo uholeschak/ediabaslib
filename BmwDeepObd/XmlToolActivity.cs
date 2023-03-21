@@ -3807,10 +3807,11 @@ namespace BmwDeepObd
                     if (ecuVariant != null)
                     {
                         string language = ActivityCommon.GetCurrentLanguage();
-                        int structIndex = 0;
-                        List<EcuFunctionStructs.EcuFixedFuncStruct> fixedFuncStructList = ActivityCommon.EcuFunctionReader.GetFixedFuncStructList(ecuVariant);
-                        foreach (EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct in fixedFuncStructList)
+                        List<KeyValuePair<EcuFunctionStructs.EcuFixedFuncStruct, EcuFunctionStructs.EcuFuncStruct>> fixedFuncStructList = ActivityCommon.EcuFunctionReader.GetFixedFuncStructList(ecuVariant);
+                        foreach (var ecuFixedFuncStructPair in fixedFuncStructList)
                         {
+                            EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct = ecuFixedFuncStructPair.Key;
+                            EcuFunctionStructs.EcuFuncStruct ecuFuncStruct = ecuFixedFuncStructPair.Value;
                             EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType nodeClassType = ecuFixedFuncStruct.GetNodeClassType();
                             switch (nodeClassType)
                             {
@@ -3827,7 +3828,7 @@ namespace BmwDeepObd
 
                                     jobInfo.Comments = new List<string>();
                                     jobInfo.EcuFixedFuncStruct = ecuFixedFuncStruct;
-                                    jobInfo.StructIndex = structIndex;
+                                    jobInfo.EcuFuncStruct = ecuFuncStruct;
 
                                     foreach (EcuFunctionStructs.EcuJob ecuJob in ecuFixedFuncStruct.EcuJobList)
                                     {
@@ -3863,8 +3864,6 @@ namespace BmwDeepObd
 #endif
                                     break;
                             }
-
-                            structIndex++;
                         }
                     }
 
