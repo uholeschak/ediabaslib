@@ -371,6 +371,9 @@ namespace BmwDeepObd
             public bool CommErrorsOccurred { get; set; }
         }
 
+#if DEBUG
+        private static readonly string Tag = typeof(XmlToolActivity).FullName;
+#endif
         private static readonly Encoding VagUdsEncoding = Encoding.GetEncoding(1252);
         private const string XmlDocumentFrame =
             @"<?xml version=""1.0"" encoding=""utf-8"" ?>
@@ -3852,6 +3855,13 @@ namespace BmwDeepObd
                                     jobList.Add(jobInfo);
                                     break;
                                 }
+
+                                default:
+#if DEBUG
+                                    Log.Info(Tag, string.Format("ExecuteJobsRead: Unknown node class={0}, name={1}",
+                                        ecuFixedFuncStruct.NodeClassName, ecuFixedFuncStruct.Title?.GetTitle(language)));
+#endif
+                                    break;
                             }
 
                             structIndex++;
