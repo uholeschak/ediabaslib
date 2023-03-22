@@ -113,7 +113,7 @@ namespace BmwFileReader
                     {
                         foreach (EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct in ecuFuncStruct.FixedFuncStructList)
                         {
-                            fixedFuncStructList.Add(new KeyValuePair<EcuFunctionStructs.EcuFixedFuncStruct, EcuFunctionStructs.EcuFuncStruct>(ecuFixedFuncStruct, ecuFuncStruct));
+                            fixedFuncStructList.Add(new Tuple<EcuFunctionStructs.EcuFixedFuncStruct, EcuFunctionStructs.EcuFuncStruct>(ecuFixedFuncStruct, ecuFuncStruct));
                         }
                     }
                 }
