@@ -3807,11 +3807,11 @@ namespace BmwDeepObd
                     if (ecuVariant != null)
                     {
                         string language = ActivityCommon.GetCurrentLanguage();
-                        List<KeyValuePair<EcuFunctionStructs.EcuFixedFuncStruct, EcuFunctionStructs.EcuFuncStruct>> fixedFuncStructList = ActivityCommon.EcuFunctionReader.GetFixedFuncStructList(ecuVariant);
+                        List<Tuple<EcuFunctionStructs.EcuFixedFuncStruct, EcuFunctionStructs.EcuFuncStruct>> fixedFuncStructList = ActivityCommon.EcuFunctionReader.GetFixedFuncStructList(ecuVariant);
                         foreach (var ecuFixedFuncStructPair in fixedFuncStructList)
                         {
-                            EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct = ecuFixedFuncStructPair.Key;
-                            EcuFunctionStructs.EcuFuncStruct ecuFuncStruct = ecuFixedFuncStructPair.Value;
+                            EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct = ecuFixedFuncStructPair.Item1;
+                            EcuFunctionStructs.EcuFuncStruct ecuFuncStruct = ecuFixedFuncStructPair.Item2;
                             EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType nodeClassType = ecuFixedFuncStruct.GetNodeClassType();
                             switch (nodeClassType)
                             {
