@@ -10,4 +10,10 @@
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:singleLine="true" />
+    <TextView
+        android:id="@+id/textStringDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="italic"
+        android:singleLine="true" />
 </LinearLayout>
