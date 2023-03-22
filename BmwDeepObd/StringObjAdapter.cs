@@ -40,8 +40,12 @@ namespace BmwDeepObd
             Android.Graphics.Color backgroundColor = item.BackgroundColor.HasValue ? item.BackgroundColor.Value : _backgroundColor;
             view.SetBackgroundColor(backgroundColor);
 
-            TextView textView = view.FindViewById<TextView>(Resource.Id.textStringEntry);
-            textView.Text = item.Text;
+            TextView textViewEntry = view.FindViewById<TextView>(Resource.Id.textStringEntry);
+            textViewEntry.Text = item.Text1;
+
+            TextView textViewDesc = view.FindViewById<TextView>(Resource.Id.textStringDesc);
+            textViewDesc.Text = item.Text2;
+            textViewDesc.Visibility = string.IsNullOrEmpty(item.Text2) ? ViewStates.Gone : ViewStates.Visible;
 
             return view;
         }
@@ -49,13 +53,20 @@ namespace BmwDeepObd
 
     public class StringObjType
     {
-        public StringObjType(string text, object data, Android.Graphics.Color? backgroundColor = null)
+        public StringObjType(string text1, object data, Android.Graphics.Color? backgroundColor = null) :
+            this(text1, string.Empty, data, backgroundColor)
         {
-            Text = text;
+        }
+
+        public StringObjType(string text1, string text2, object data, Android.Graphics.Color? backgroundColor = null)
+        {
+            Text1 = text1;
+            Text2 = text2;
             Data = data;
             BackgroundColor = backgroundColor;
         }
-        public string Text { get; set; }
+        public string Text1 { get; set; }
+        public string Text2 { get; set; }
         public object Data { get; set; }
         public Android.Graphics.Color? BackgroundColor { get; set; }
     }

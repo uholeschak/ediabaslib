@@ -716,7 +716,7 @@ namespace BmwDeepObd
                 if (channel >= 0 || isUdsEcu)
                 {
                     _instanceData.SelectedChannel = channel;
-                    _instanceData.SelectedChannelText = item.Text;
+                    _instanceData.SelectedChannelText = item.Text1;
                 }
             }
 
