@@ -473,16 +473,17 @@ namespace BmwDeepObd
                     validFunction = false;
                 }
 
-
-                string titleText = jobInfo.EcuFixedFuncStruct.Title?.GetTitle(language) ?? string.Empty;
-                string displayText = titleText.Trim();
+                string titleTextFunc = jobInfo.EcuFixedFuncStruct.Title?.GetTitle(language) ?? string.Empty;
+                string displayText1 = titleTextFunc.Trim();
                 if (!validFunction)
                 {
-                    displayText = "(" + displayText + ")";
+                    displayText1 = "(" + displayText1 + ")";
                 }
 
-                string descText = jobInfo.EcuFuncStruct.Title?.GetTitle(language) ?? string.Empty;
-                _spinnerBmwActuatorFunctionAdapter.Items.Add(new StringObjType(displayText, descText, index));
+                string titleTextGroup = jobInfo.EcuFuncStruct.Title?.GetTitle(language) ?? string.Empty;
+                string displayText2 = titleTextGroup.Trim();
+
+                _spinnerBmwActuatorFunctionAdapter.Items.Add(new StringObjType(displayText1, displayText2, index));
 
                 if (index == selectedFunction)
                 {
@@ -546,10 +547,17 @@ namespace BmwDeepObd
             string language = ActivityCommon.GetCurrentLanguage();
             StringBuilder stringBuilderComments = new StringBuilder();
             XmlToolEcuActivity.JobInfo selectedJob = GetSelectedJob();
-            string titleText = selectedJob?.EcuFixedFuncStruct?.Title?.GetTitle(language);
-            if (!string.IsNullOrWhiteSpace(titleText))
+
+            string titleTextGroup = selectedJob?.EcuFuncStruct?.Title?.GetTitle(language);
+            if (!string.IsNullOrWhiteSpace(titleTextGroup))
             {
-                AppendSbText(stringBuilderComments, titleText);
+                AppendSbText(stringBuilderComments, titleTextGroup);
+            }
+
+            string titleTextFunc = selectedJob?.EcuFixedFuncStruct?.Title?.GetTitle(language);
+            if (!string.IsNullOrWhiteSpace(titleTextFunc))
+            {
+                AppendSbText(stringBuilderComments, titleTextFunc);
             }
 
             List<EcuFunctionStructs.EcuJob> ecuJobList = selectedJob?.EcuFixedFuncStruct?.EcuJobList;
