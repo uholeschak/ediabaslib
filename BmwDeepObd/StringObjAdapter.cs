@@ -42,7 +42,7 @@ namespace BmwDeepObd
 
             TextView textViewCaption = view.FindViewById<TextView>(Resource.Id.textStringCaption);
             textViewCaption.Text = item.Caption;
-            textViewCaption.Visibility = string.IsNullOrWhiteSpace(item.Description) ? ViewStates.Gone : ViewStates.Visible;
+            textViewCaption.Visibility = string.IsNullOrWhiteSpace(item.Caption) ? ViewStates.Gone : ViewStates.Visible;
 
             TextView textViewContent = view.FindViewById<TextView>(Resource.Id.textStringContent);
             textViewContent.Text = item.Text;
