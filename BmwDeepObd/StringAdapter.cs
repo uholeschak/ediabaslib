@@ -39,8 +39,11 @@ namespace BmwDeepObd
             View view = convertView ?? _context.LayoutInflater.Inflate(Resource.Layout.string_list, null);
             view.SetBackgroundColor(_backgroundColor);
 
-            TextView textViewEntry = view.FindViewById<TextView>(Resource.Id.textStringEntry);
-            textViewEntry.Text = item;
+            TextView textViewCaption = view.FindViewById<TextView>(Resource.Id.textStringCaption);
+            textViewCaption.Visibility = ViewStates.Gone;
+
+            TextView textViewContent = view.FindViewById<TextView>(Resource.Id.textStringContent);
+            textViewContent.Text = item;
 
             TextView textViewDesc = view.FindViewById<TextView>(Resource.Id.textStringDesc);
             textViewDesc.Visibility = ViewStates.Gone;

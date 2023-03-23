@@ -40,12 +40,16 @@ namespace BmwDeepObd
             Android.Graphics.Color backgroundColor = item.BackgroundColor.HasValue ? item.BackgroundColor.Value : _backgroundColor;
             view.SetBackgroundColor(backgroundColor);
 
-            TextView textViewEntry = view.FindViewById<TextView>(Resource.Id.textStringEntry);
-            textViewEntry.Text = item.Text1;
+            TextView textViewCaption = view.FindViewById<TextView>(Resource.Id.textStringCaption);
+            textViewCaption.Text = item.Caption;
+            textViewCaption.Visibility = string.IsNullOrWhiteSpace(item.Caption) ? ViewStates.Gone : ViewStates.Visible;
+
+            TextView textViewContent = view.FindViewById<TextView>(Resource.Id.textStringContent);
+            textViewContent.Text = item.Text;
 
             TextView textViewDesc = view.FindViewById<TextView>(Resource.Id.textStringDesc);
-            textViewDesc.Text = item.Text2;
-            textViewDesc.Visibility = string.IsNullOrEmpty(item.Text2) ? ViewStates.Gone : ViewStates.Visible;
+            textViewDesc.Text = item.Description;
+            textViewDesc.Visibility = string.IsNullOrWhiteSpace(item.Description) ? ViewStates.Gone : ViewStates.Visible;
 
             return view;
         }
@@ -53,20 +57,22 @@ namespace BmwDeepObd
 
     public class StringObjType
     {
-        public StringObjType(string text1, object data, Android.Graphics.Color? backgroundColor = null) :
-            this(text1, string.Empty, data, backgroundColor)
+        public StringObjType(string text, object data, Android.Graphics.Color? backgroundColor = null) :
+            this(text, string.Empty, string.Empty, data, backgroundColor)
         {
         }
 
-        public StringObjType(string text1, string text2, object data, Android.Graphics.Color? backgroundColor = null)
+        public StringObjType(string text, string caption, string description, object data, Android.Graphics.Color? backgroundColor = null)
         {
-            Text1 = text1;
-            Text2 = text2;
+            Text = text;
+            Caption = caption;
+            Description = description;
             Data = data;
             BackgroundColor = backgroundColor;
         }
-        public string Text1 { get; set; }
-        public string Text2 { get; set; }
+        public string Text { get; set; }
+        public string Caption { get; set; }
+        public string Description { get; set; }
         public object Data { get; set; }
         public Android.Graphics.Color? BackgroundColor { get; set; }
     }
