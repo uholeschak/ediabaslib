@@ -483,7 +483,7 @@ namespace BmwDeepObd
                 string titleTextGroup = jobInfo.EcuFuncStruct.Title?.GetTitle(language) ?? string.Empty;
                 string displayText2 = titleTextGroup.Trim();
 
-                _spinnerBmwActuatorFunctionAdapter.Items.Add(new StringObjType(displayText1, displayText2, index));
+                _spinnerBmwActuatorFunctionAdapter.Items.Add(new StringObjType(displayText1, displayText2, string.Empty, index));
 
                 if (index == selectedFunction)
                 {
@@ -509,7 +509,7 @@ namespace BmwDeepObd
                 if (function >= 0)
                 {
                     _instanceData.SelectedFunction = function;
-                    _instanceData.SelectedFunctionText = item.Text1;
+                    _instanceData.SelectedFunctionText = item.Text;
                 }
             }
 
