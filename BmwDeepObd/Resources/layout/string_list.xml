@@ -5,7 +5,12 @@
     android:layout_height="fill_parent"
     android:padding="4dip">
     <TextView
-        android:id="@+id/textStringEntry"
+        android:id="@+id/textStringCaption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/TextViewInnerCaption" />
+    <TextView
+        android:id="@+id/textStringContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="20sp"
