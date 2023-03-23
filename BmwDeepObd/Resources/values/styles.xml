@@ -32,6 +32,9 @@
     <item name="android:background">?attr/captionBackgroundColor</item>
     <item name="android:textColor">?attr/captionTextColor</item>
   </style>
+  <style name="TextViewListCaption" parent="TextAppearance.AppCompat">
+    <item name="android:textColor">?attr/captionTextColor</item>
+  </style>
   <style name="Theme.Transparent" parent="Theme.AppCompat">
     <item name="android:windowIsTranslucent">true</item>
     <item name="android:windowBackground">@android:color/transparent</item>
