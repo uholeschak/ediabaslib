@@ -81,6 +81,7 @@ namespace BmwDeepObd
         private bool _traceAppend;
         private string _deviceAddress;
         private List<XmlToolEcuActivity.JobInfo> _jobActuatorList;
+        private bool _checkActuatorJobGroups;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -418,6 +419,7 @@ namespace BmwDeepObd
             }
 
             string language = ActivityCommon.GetCurrentLanguage();
+            bool multipleFuncStruct = false;
             _jobActuatorList = new List<XmlToolEcuActivity.JobInfo>();
             foreach (XmlToolEcuActivity.JobInfo jobInfo in _ecuInfo.JobList)
             {
@@ -427,26 +429,46 @@ namespace BmwDeepObd
                     string displayText = jobInfo.EcuFixedFuncStruct.Title?.GetTitle(language);
                     if (!string.IsNullOrWhiteSpace(displayText))
                     {
+                        if (!multipleFuncStruct && jobInfo.EcuFuncStruct != null)
+                        {
+                            foreach (XmlToolEcuActivity.JobInfo jobInfoCheck in _jobActuatorList)
+                            {
+                                if (jobInfoCheck.EcuFuncStruct == jobInfo.EcuFuncStruct)
+                                {
+                                    multipleFuncStruct = true;
+                                }
+                            }
+                        }
+
                         _jobActuatorList.Add(jobInfo);
                     }
                 }
             }
 
+            _checkActuatorJobGroups = multipleFuncStruct;
             _jobActuatorList.Sort((info1, info2) =>
             {
                 string title1 = string.Empty;
                 string title2 = string.Empty;
 
-                if (info1.EcuFuncStruct == info2.EcuFuncStruct)
+                if (_checkActuatorJobGroups)
+                {
+                    if (info1.EcuFuncStruct == info2.EcuFuncStruct)
+                    {
+                        title1 = info1.EcuFixedFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
+                        title2 = info2.EcuFixedFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
+                    }
+
+                    if (string.IsNullOrEmpty(title1) || string.IsNullOrEmpty(title2))
+                    {
+                        title1 = info1.EcuFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
+                        title2 = info2.EcuFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
+                    }
+                }
+                else
                 {
                     title1 = info1.EcuFixedFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
                     title2 = info2.EcuFixedFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
-                }
-
-                if (string.IsNullOrEmpty(title1) || string.IsNullOrEmpty(title2))
-                {
-                    title1 = info1.EcuFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
-                    title2 = info2.EcuFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
                 }
 
                 return string.Compare(title1, title2, StringComparison.InvariantCulture);
@@ -480,8 +502,12 @@ namespace BmwDeepObd
                     displayText1 = "(" + displayText1 + ")";
                 }
 
-                string titleTextGroup = jobInfo.EcuFuncStruct.Title?.GetTitle(language) ?? string.Empty;
-                string displayText2 = titleTextGroup.Trim();
+                string displayText2 = string.Empty;
+                if (_checkActuatorJobGroups)
+                {
+                    string titleTextGroup = jobInfo.EcuFuncStruct.Title?.GetTitle(language) ?? string.Empty;
+                    displayText2 = titleTextGroup.Trim();
+                }
 
                 _spinnerBmwActuatorFunctionAdapter.Items.Add(new StringObjType(displayText1, displayText2, string.Empty, index));
 
