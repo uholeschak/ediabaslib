@@ -448,22 +448,22 @@ namespace BmwDeepObd
             _checkActuatorJobGroups = multipleFuncStruct;
             _jobActuatorList.Sort((info1, info2) =>
             {
-                string title1 = string.Empty;
-                string title2 = string.Empty;
+                string title1;
+                string title2;
 
                 if (_checkActuatorJobGroups)
                 {
                     title1 = info1.EcuFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
                     title2 = info2.EcuFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
+                    int result = string.Compare(title1, title2, StringComparison.InvariantCultureIgnoreCase);
+                    if (result != 0)
+                    {
+                        return result;
+                    }
                 }
 
-                int result = string.Compare(title1, title2, StringComparison.InvariantCultureIgnoreCase);
-                if (result == 0)
-                {
-                    title1 = info1.EcuFixedFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
-                    title2 = info2.EcuFixedFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
-                }
-
+                title1 = info1.EcuFixedFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
+                title2 = info2.EcuFixedFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
                 return string.Compare(title1, title2, StringComparison.InvariantCultureIgnoreCase);
             });
         }
