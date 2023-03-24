@@ -570,13 +570,13 @@ namespace BmwDeepObd
             string titleTextGroup = selectedJob?.EcuFuncStruct?.Title?.GetTitle(language);
             if (!string.IsNullOrWhiteSpace(titleTextGroup))
             {
-                AppendSbText(stringBuilderComments, titleTextGroup);
+                AppendSbText(stringBuilderComments, titleTextGroup.Trim());
             }
 
             string titleTextFunc = selectedJob?.EcuFixedFuncStruct?.Title?.GetTitle(language);
             if (!string.IsNullOrWhiteSpace(titleTextFunc))
             {
-                AppendSbText(stringBuilderComments, titleTextFunc);
+                AppendSbText(stringBuilderComments, titleTextFunc.Trim());
             }
 
             List<EcuFunctionStructs.EcuJob> ecuJobList = selectedJob?.EcuFixedFuncStruct?.EcuJobList;
@@ -588,7 +588,7 @@ namespace BmwDeepObd
                     int presetCount = ecuJobList.Count(x => x.GetPhaseType() == EcuFunctionStructs.EcuJob.PhaseType.Preset);
                     if (presetCount > 0)
                     {
-                        AppendSbText(stringBuilderComments, preOpText);
+                        AppendSbText(stringBuilderComments, preOpText.Trim());
                     }
                     else
                     {
@@ -602,7 +602,7 @@ namespace BmwDeepObd
                     int mainCount = ecuJobList.Count(x => x.GetPhaseType() == EcuFunctionStructs.EcuJob.PhaseType.Main);
                     if (mainCount > 0)
                     {
-                        AppendSbText(stringBuilderComments, procOpText);
+                        AppendSbText(stringBuilderComments, procOpText.Trim());
                     }
                     else
                     {
@@ -616,7 +616,7 @@ namespace BmwDeepObd
                     int resetCount = ecuJobList.Count(x => x.GetPhaseType() == EcuFunctionStructs.EcuJob.PhaseType.Reset);
                     if (resetCount > 0)
                     {
-                        AppendSbText(stringBuilderComments, postOpText);
+                        AppendSbText(stringBuilderComments, postOpText.Trim());
                     }
                 }
             }
