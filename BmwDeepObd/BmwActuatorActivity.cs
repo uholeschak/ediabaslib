@@ -453,25 +453,18 @@ namespace BmwDeepObd
 
                 if (_checkActuatorJobGroups)
                 {
-                    if (info1.EcuFuncStruct == info2.EcuFuncStruct)
-                    {
-                        title1 = info1.EcuFixedFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
-                        title2 = info2.EcuFixedFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
-                    }
-
-                    if (string.IsNullOrEmpty(title1) || string.IsNullOrEmpty(title2))
-                    {
-                        title1 = info1.EcuFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
-                        title2 = info2.EcuFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
-                    }
+                    title1 = info1.EcuFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
+                    title2 = info2.EcuFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
                 }
-                else
+
+                int result = string.Compare(title1, title2, StringComparison.InvariantCultureIgnoreCase);
+                if (result == 0)
                 {
                     title1 = info1.EcuFixedFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
                     title2 = info2.EcuFixedFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
                 }
 
-                return string.Compare(title1, title2, StringComparison.InvariantCulture);
+                return string.Compare(title1, title2, StringComparison.InvariantCultureIgnoreCase);
             });
         }
 
