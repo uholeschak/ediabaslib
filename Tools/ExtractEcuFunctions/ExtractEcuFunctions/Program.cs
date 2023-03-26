@@ -1205,7 +1205,7 @@ namespace ExtractEcuFunctions
             foreach (EcuFunctionStructs.EcuVarFunc ecuVarFunc in ecuVarFunctionsList)
             {
                 // from: DatabaseProvider.SQLiteConnector.dll BMW.Rheingold.DatabaseProvider.SQLiteConnector.DatabaseProviderSQLite.GetEcuFunctionStructureById
-                string sql = string.Format(@"SELECT REFFUNCS.ECUFUNCSTRUCTID FUNCSTRUCTID, " + DatabaseFunctions.SqlTitleItems + ", MULTISELECTION " +
+                string sql = string.Format(@"SELECT REFFUNCS.ECUFUNCSTRUCTID FUNCSTRUCTID, NODECLASS, " + DatabaseFunctions.SqlTitleItems + ", MULTISELECTION " +
                         "FROM XEP_ECUFUNCSTRUCTURES FUNCS, XEP_REFECUFUNCSTRUCTS REFFUNCS WHERE FUNCS.ID = REFFUNCS.ECUFUNCSTRUCTID AND REFFUNCS.ID = {0}", ecuVarFunc.Id);
                 using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
                 {
@@ -1213,7 +1213,10 @@ namespace ExtractEcuFunctions
                     {
                         while (reader.Read())
                         {
+                            string nodeClass = reader["NODECLASS"].ToString();
                             ecuFuncStructList.Add(new EcuFunctionStructs.EcuFuncStruct(reader["FUNCSTRUCTID"].ToString().Trim(),
+                                nodeClass,
+                                GetNodeClassName(mDbConnection, nodeClass),
                                 GetTranslation(reader),
                                 reader["MULTISELECTION"].ToString()));
                         }
