@@ -423,24 +423,34 @@ namespace BmwDeepObd
             _jobActuatorList = new List<XmlToolEcuActivity.JobInfo>();
             foreach (XmlToolEcuActivity.JobInfo jobInfo in _ecuInfo.JobList)
             {
-                if (jobInfo.EcuFixedFuncStruct != null &&
-                    jobInfo.EcuFixedFuncStruct.GetNodeClassType() == EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator)
+                if (jobInfo.EcuFixedFuncStruct == null)
                 {
-                    string displayText = jobInfo.EcuFixedFuncStruct.Title?.GetTitle(language);
-                    if (!string.IsNullOrWhiteSpace(displayText))
+                    continue;
+                }
+
+                switch (jobInfo.EcuFixedFuncStruct.GetNodeClassType())
+                {
+                    case EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator:
+                    case EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuatorStructure:
                     {
-                        if (!multipleFuncStruct && jobInfo.EcuFuncStruct != null)
+                        string displayText = jobInfo.EcuFixedFuncStruct.Title?.GetTitle(language);
+                        if (!string.IsNullOrWhiteSpace(displayText))
                         {
-                            foreach (XmlToolEcuActivity.JobInfo jobInfoCheck in _jobActuatorList)
+                            if (!multipleFuncStruct && jobInfo.EcuFuncStruct != null)
                             {
-                                if (jobInfoCheck.EcuFuncStruct == jobInfo.EcuFuncStruct)
+                                foreach (XmlToolEcuActivity.JobInfo jobInfoCheck in _jobActuatorList)
                                 {
-                                    multipleFuncStruct = true;
+                                    if (jobInfoCheck.EcuFuncStruct == jobInfo.EcuFuncStruct)
+                                    {
+                                        multipleFuncStruct = true;
+                                    }
                                 }
                             }
+
+                            _jobActuatorList.Add(jobInfo);
                         }
 
-                        _jobActuatorList.Add(jobInfo);
+                        break;
                     }
                 }
             }
