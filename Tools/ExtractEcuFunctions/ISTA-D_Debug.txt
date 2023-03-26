@@ -209,6 +209,9 @@ BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionService.Retriev
 BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionsReadStatus.DoReadStatus()
 BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionsReadStatus.DoReadStatusSingleShot()
 BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionComponentTrigger.DoTriggerComponent()
+View:
+ISTAGUI.interaction/views/interactionecufunctions.baml
+BMW.Rheingold.ISTAGUI.Interaction.ViewModels.InteractionEcuFunctionsViewModel
 BMW.Rheingold.Programming.PsdzServiceStarter.ProgrammingService.StartPsdzServiceHost()
 BMW.Rheingold.Psdz.Client.PsdzServiceStarter.IsServerInstanceRunning()
 BMW.Rheingold.Psdz.Client.PsdzServiceClient()
