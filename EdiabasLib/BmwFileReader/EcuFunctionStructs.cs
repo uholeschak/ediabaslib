@@ -464,7 +464,9 @@ namespace BmwFileReader
                 Unknown,
                 Identification,
                 ReadState,
-                ControlActuator
+                ControlActuator,
+                ReadStateStructure,
+                ControlActuatorStructure
             }
 
             public EcuFixedFuncStruct()
@@ -557,6 +559,16 @@ namespace BmwFileReader
                 if (string.Compare(NodeClassName, "ECUFixedFunctionControlingActuator", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     return NodeClassType.ControlActuator;
+                }
+
+                if (string.Compare(NodeClassName, "ECUStateReadStructure", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return NodeClassType.ReadStateStructure;
+                }
+
+                if (string.Compare(NodeClassName, "ECUControllingActuatorStructure", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return NodeClassType.ControlActuatorStructure;
                 }
 
                 return NodeClassType.Unknown;
