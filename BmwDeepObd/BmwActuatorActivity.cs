@@ -431,7 +431,6 @@ namespace BmwDeepObd
                 switch (jobInfo.EcuFixedFuncStruct.GetNodeClassType())
                 {
                     case EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator:
-                    case EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuatorStructure:
                     {
                         string displayText = jobInfo.EcuFixedFuncStruct.Title?.GetTitle(language);
                         if (!string.IsNullOrWhiteSpace(displayText))
