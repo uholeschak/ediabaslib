@@ -212,6 +212,10 @@ BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionComponentTrigge
 View:
 ISTAGUI.interaction/views/interactionecufunctions.baml
 BMW.Rheingold.ISTAGUI.Interaction.ViewModels.InteractionEcuFunctionsViewModel
+Sort:
+1: SortOrderNullAtEnd (NULL == decimal.MaxValue)
+2: Title
+
 BMW.Rheingold.Programming.PsdzServiceStarter.ProgrammingService.StartPsdzServiceHost()
 BMW.Rheingold.Psdz.Client.PsdzServiceStarter.IsServerInstanceRunning()
 BMW.Rheingold.Psdz.Client.PsdzServiceClient()
