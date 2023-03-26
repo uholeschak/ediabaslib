@@ -732,13 +732,17 @@ namespace BmwFileReader
             public EcuFuncStruct()
             {
                 Id = string.Empty;
+                NodeClass = string.Empty;
+                NodeClassName = string.Empty;
                 Title = null;
                 MultiSelect = string.Empty;
             }
 
-            public EcuFuncStruct(string id, EcuTranslation title, string multiSelect)
+            public EcuFuncStruct(string id, string nodeClass, string nodeClassName, EcuTranslation title, string multiSelect)
             {
                 Id = id;
+                NodeClass = nodeClass;
+                NodeClassName = nodeClassName;
                 Title = title;
                 MultiSelect = multiSelect;
             }
@@ -782,6 +786,8 @@ namespace BmwFileReader
             }
 
             [XmlElement, DefaultValue("")] public string Id { get; set; }
+            [XmlElement("NC"), DefaultValue("")] public string NodeClass { get; set; }
+            [XmlElement("NCNam"), DefaultValue("")] public string NodeClassName { get; set; }
             [XmlElement("Tit"), DefaultValue(null)] public EcuTranslation Title { get; set; }
             [XmlElement("MSel"), DefaultValue("")] public string MultiSelect { get; set; }
             [XmlArray("FFSL"), DefaultValue(null)] public List<EcuFixedFuncStruct> FixedFuncStructList { get; set; }

@@ -3818,7 +3818,6 @@ namespace BmwDeepObd
                                 case EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.Identification:
                                 case EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ReadState:
                                 case EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator:
-                                case EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuatorStructure:
                                 {
                                     XmlToolEcuActivity.JobInfo jobInfo = new XmlToolEcuActivity.JobInfo(ecuFixedFuncStruct.Id);
                                     string displayName = ecuFixedFuncStruct.Title?.GetTitle(language);
