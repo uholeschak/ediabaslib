@@ -154,7 +154,7 @@ in IstaOperationStarter.Start() add at the end of the function:
 -------------------------------------------------------------------------------------
 File -> Save module
 
-Disable: ISTAGUI.App.CheckFreeDiskSpace()
+Disable (not required): ISTAGUI.App.CheckFreeDiskSpace()
 
 ISTA+ config settings:
 ======================
