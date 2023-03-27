@@ -613,8 +613,14 @@
   <string name="menu_xml_tool_move_down">Переместить вниз</string>
   <string name="menu_xml_tool_move_bottom">Переместить в конец</string>
   <string name="menu_xml_tool_ediabas_tool">Ediabas утилита</string>
+  <string name="menu_xml_tool_bmw_actuator">Функции актуатора</string>
+  <string name="menu_xml_tool_vag_coding">Кодировать</string>
+  <string name="menu_xml_tool_vag_coding2">Кодировать 2</string>
+  <string name="menu_xml_tool_vag_adaption">Адаптация</string>
+  <string name="menu_xml_tool_vag_login">Авторизация</string>
+  <string name="menu_xml_tool_vag_sec_access">Права доступа</string>
 
-  <!-- XML Tool Ecu Activity -->
+    <!-- XML Tool Ecu Activity -->
   <string name="xml_tool_ecu_title">Задания для ECU: {0}</string>
   <string name="xml_tool_ecu_job_comments">Комментарии для задания: {0}</string>
   <string name="xml_tool_ecu_job_comments_ecu_info">ECU информация:</string>

@@ -590,6 +590,12 @@
   <string name="menu_xml_tool_move_down">Move down</string>
   <string name="menu_xml_tool_move_bottom">Move to bottom</string>
   <string name="menu_xml_tool_ediabas_tool">Ediabas tool</string>
+  <string name="menu_xml_tool_bmw_actuator">Actuator functions</string>
+  <string name="menu_xml_tool_vag_coding">Coding</string>
+  <string name="menu_xml_tool_vag_coding2">Coding 2</string>
+  <string name="menu_xml_tool_vag_adaption">Adaption</string>
+  <string name="menu_xml_tool_vag_login">Login</string>
+  <string name="menu_xml_tool_vag_sec_access">Security access</string>
 
   <!-- XML Tool Ecu Activity -->
   <string name="xml_tool_ecu_title">Jobs for ECU: {0}</string>

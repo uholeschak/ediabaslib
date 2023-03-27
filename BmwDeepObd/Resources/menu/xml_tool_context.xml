@@ -10,4 +10,6 @@
         android:title="@string/menu_xml_tool_move_bottom" />
   <item android:id="@+id/menu_xml_tool_ediabas_tool"
         android:title="@string/menu_xml_tool_ediabas_tool" />
+  <item android:id="@+id/menu_xml_tool_bmw_actuator"
+        android:title="@string/menu_xml_tool_bmw_actuator" />
 </menu>
