@@ -35,8 +35,8 @@ To perform the factory reset you have to open the adapter and connect the unused
 If the firmware updated failed, use [firmware update failure](#firmware-update-failure) procedure.
 
 ## Use the adapter with INPA, Tool32 or ISTA-D
-You could use the Bluetooth adapter on a windows PC with INPA, Tool32 or ISTA-D as a replacement for an OBD or ADS adapter. The following steps are required to establish the connection:
-* Install [.NET framework 4.7.2](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net472) or higher and [VS2015 C++ runtime](https://www.microsoft.com/de-de/download/details.aspx?id=48145) (recommended, but not required)
+You could use the Bluetooth adapter on a windows (10 or higher) PC (with INPA, Tool32 or ISTA-D as a replacement for an OBD or ADS adapter. The following steps are required to establish the connection:
+* Install [.NET framework 4.7.2](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net472) or higher and [VS C++ runtime 64 bit](https://aka.ms/vs/17/release/vc_redist.x64.exe) or [VS C++ runtime 32 bit](https://aka.ms/vs/17/release/vc_redist.x86.exe) (recommended, but not required).
 * Download the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest) package and extract the .zip file. Start `Api32\EdiabasLibConfigTool.exe` and follow the instructions in the status window: Search the adapter, select it, click `Check Connection` and patch the required EDIABAS installations.
 * For ISTA-D: You have to select the `EDIABAS\bin` directory inside ISTA-D first.
 * For ISTA-D: In _Administration_ -> `VCI Config` select as `Interface type`: `Ediabas default settings (ediabas.ini)`
