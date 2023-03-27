@@ -459,21 +459,66 @@ namespace BmwDeepObd
             {
                 string title1;
                 string title2;
+                Int64 sort1;
+                Int64 sort2;
+                int result;
 
                 if (_checkActuatorJobGroups)
                 {
-                    title1 = info1.EcuFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
-                    title2 = info2.EcuFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
-                    int result = string.Compare(title1, title2, StringComparison.InvariantCultureIgnoreCase);
+                    sort1 = Int64.MaxValue;
+                    sort2 = Int64.MaxValue;
+                    title1 = string.Empty;
+                    title2 = string.Empty;
+
+                    if (info1.EcuFuncStruct != null)
+                    {
+                        sort1 = info1.EcuFuncStruct.SortOrder.ConvertToInt(Int64.MaxValue);
+                        title1 = info1.EcuFuncStruct.Title?.GetTitle(language) ?? string.Empty;
+                    }
+
+                    if (info2.EcuFuncStruct != null)
+                    {
+                        sort2 = info2.EcuFuncStruct.SortOrder.ConvertToInt(Int64.MaxValue);
+                        title2 = info2.EcuFuncStruct.Title?.GetTitle(language) ?? string.Empty;
+                    }
+
+                    result = sort1.CompareTo(sort2);
+                    if (result != 0)
+                    {
+                        return result;
+                    }
+
+                    result = string.Compare(title1, title2, StringComparison.InvariantCulture);
                     if (result != 0)
                     {
                         return result;
                     }
                 }
 
-                title1 = info1.EcuFixedFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
-                title2 = info2.EcuFixedFuncStruct?.Title?.GetTitle(language) ?? string.Empty;
-                return string.Compare(title1, title2, StringComparison.InvariantCultureIgnoreCase);
+                sort1 = Int64.MaxValue;
+                sort2 = Int64.MaxValue;
+                title1 = string.Empty;
+                title2 = string.Empty;
+
+                if (info1.EcuFixedFuncStruct != null)
+                {
+                    sort1 = info1.EcuFixedFuncStruct.SortOrder.ConvertToInt(Int64.MaxValue);
+                    title1 = info1.EcuFixedFuncStruct.Title?.GetTitle(language) ?? string.Empty;
+                }
+
+                if (info2.EcuFixedFuncStruct != null)
+                {
+                    sort2 = info2.EcuFixedFuncStruct.SortOrder.ConvertToInt(Int64.MaxValue);
+                    title2 = info2.EcuFixedFuncStruct.Title?.GetTitle(language) ?? string.Empty;
+                }
+
+                result = sort1.CompareTo(sort2);
+                if (result != 0)
+                {
+                    return result;
+                }
+
+                return string.Compare(title1, title2, StringComparison.InvariantCulture);
             });
         }
 
