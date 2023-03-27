@@ -1781,7 +1781,7 @@ namespace BmwDeepObd
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectSgbd);
         }
 
-        private void SelectJobs(EcuInfo ecuInfo)
+        private void SelectJobs(EcuInfo ecuInfo, EcuFunctionCallType callType = EcuFunctionCallType.None)
         {
             try
             {
@@ -1818,9 +1818,16 @@ namespace BmwDeepObd
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraEnetIp, _activityCommon.SelectedEnetIp);
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraElmWifiIp, _activityCommon.SelectedElmWifiIp);
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraDeepObdWifiIp, _activityCommon.SelectedDeepObdWifiIp);
-                if (_ecuFuncCall != EcuFunctionCallType.None)
+
+                EcuFunctionCallType ecuFuncCall = callType;
+                if (ecuFuncCall == EcuFunctionCallType.None)
                 {
-                    serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuFuncCall, (int) _ecuFuncCall);
+                    ecuFuncCall = _ecuFuncCall;
+                }
+
+                if (ecuFuncCall != EcuFunctionCallType.None)
+                {
+                    serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuFuncCall, (int)ecuFuncCall);
                 }
                 StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectJobs);
             }
@@ -2154,6 +2161,16 @@ namespace BmwDeepObd
             IMenuItem ediabasToolMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_ediabas_tool);
             ediabasToolMenu?.SetEnabled(itemPos >= 0 && itemPos < _ecuListAdapter.Items.Count && !IsJobRunning());
 
+            bool bmwVisible = ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw;
+            IMenuItem bmwActuatorMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_bmw_actuator);
+            if (bmwActuatorMenu != null)
+            {
+                bmwActuatorMenu.SetEnabled(itemPos >= 0 && itemPos < _ecuListAdapter.Items.Count && !IsJobRunning());
+                bmwActuatorMenu.SetVisible(bmwVisible);
+            }
+
+            //bool vagVisible = ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw;
+
             popupContext.MenuItemClick += (sender, args) =>
             {
                 if (_activityCommon == null)
@@ -2202,6 +2219,13 @@ namespace BmwDeepObd
                     {
                         EcuInfo ecuInfo = _ecuList[itemPos];
                         StartEdiabasTool(ecuInfo);
+                        break;
+                    }
+
+                    case Resource.Id.menu_xml_tool_bmw_actuator:
+                    {
+                        EcuInfo ecuInfo = _ecuList[itemPos];
+                        SelectJobs(ecuInfo, EcuFunctionCallType.BmwActuator);
                         break;
                     }
                 }

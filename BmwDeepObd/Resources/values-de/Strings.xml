@@ -614,8 +614,14 @@
   <string name="menu_xml_tool_move_down">Nach unten verschieben</string>
   <string name="menu_xml_tool_move_bottom">An das Ende verschieben</string>
   <string name="menu_xml_tool_ediabas_tool">Ediabas Tool</string>
+  <string name="menu_xml_tool_bmw_actuator">Aktuator Funktionen</string>
+  <string name="menu_xml_tool_vag_coding">Kodieren</string>
+  <string name="menu_xml_tool_vag_coding2">Kodieren 2</string>
+  <string name="menu_xml_tool_vag_adaption">Adaption</string>
+  <string name="menu_xml_tool_vag_login">Login</string>
+  <string name="menu_xml_tool_vag_sec_access">Zugriffsberechtigung</string>
 
-  <!-- XML Tool Ecu Activity -->
+    <!-- XML Tool Ecu Activity -->
   <string name="xml_tool_ecu_title">Jobs für ECU: {0}</string>
   <string name="xml_tool_ecu_job_comments">Kommentare für Job: {0}</string>
   <string name="xml_tool_ecu_job_comments_ecu_info">ECU Informationen:</string>
