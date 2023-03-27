@@ -1342,9 +1342,9 @@ namespace BmwFileReader
             }
         }
 
-        public static Int64 ConvertToInt(this string text)
+        public static Int64 ConvertToInt(this string text, Int64 defaultValue = 0)
         {
-            Int64 result = 0;
+            Int64 result = defaultValue;
             try
             {
                 if (!string.IsNullOrWhiteSpace(text))
