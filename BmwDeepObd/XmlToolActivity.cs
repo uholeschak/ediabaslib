@@ -2194,22 +2194,14 @@ namespace BmwDeepObd
                     }
 
                     case Resource.Id.menu_xml_tool_move_up:
-                    {
-                        EcuInfo oldItem = _ecuList[itemPos - 1];
-                        _ecuList[itemPos - 1] = _ecuList[itemPos];
-                        _ecuList[itemPos] = oldItem;
+                        (_ecuList[itemPos], _ecuList[itemPos - 1]) = (_ecuList[itemPos - 1], _ecuList[itemPos]);
                         UpdateDisplay();
                         break;
-                    }
 
                     case Resource.Id.menu_xml_tool_move_down:
-                    {
-                        EcuInfo oldItem = _ecuList[itemPos + 1];
-                        _ecuList[itemPos + 1] = _ecuList[itemPos];
-                        _ecuList[itemPos] = oldItem;
+                        (_ecuList[itemPos], _ecuList[itemPos + 1]) = (_ecuList[itemPos + 1], _ecuList[itemPos]);
                         UpdateDisplay();
                         break;
-                    }
 
                     case Resource.Id.menu_xml_tool_move_bottom:
                     {
@@ -2221,22 +2213,28 @@ namespace BmwDeepObd
                     }
 
                     case Resource.Id.menu_xml_tool_ediabas_tool:
-                    {
-                        EcuInfo ecuInfo = _ecuList[itemPos];
-                        StartEdiabasTool(ecuInfo);
+                        StartEdiabasTool(_ecuList[itemPos]);
                         break;
-                    }
 
                     case Resource.Id.menu_xml_tool_bmw_actuator:
-                    {
-                        EcuInfo ecuInfo = _ecuList[itemPos];
-                        _ecuFuncCallMenu = EcuFunctionCallType.BmwActuator;
-                        PerformJobsRead(ecuInfo);
+                        CallEcuFunction(_ecuList[itemPos], EcuFunctionCallType.BmwActuator);
                         break;
-                    }
                 }
             };
             popupContext.Show();
+        }
+
+        private bool CallEcuFunction(EcuInfo ecuInfo, EcuFunctionCallType callType)
+        {
+            if (ecuInfo == null)
+            {
+                return false;
+            }
+
+            _ecuFuncCallMenu = EcuFunctionCallType.BmwActuator;
+            PerformJobsRead(ecuInfo);
+
+            return true;
         }
 
         private bool SelectBluetoothDevice()
@@ -3746,8 +3744,13 @@ namespace BmwDeepObd
 
         private void ExecuteJobsRead(EcuInfo ecuInfo)
         {
+            if (ecuInfo == null)
+            {
+                return;
+            }
+
             EdiabasOpen();
-            if (ecuInfo?.JobList != null)
+            if (ecuInfo.JobList != null)
             {
                 SelectJobs(ecuInfo);
                 return;
