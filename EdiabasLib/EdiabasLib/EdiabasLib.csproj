@@ -40,9 +40,8 @@
     <AssemblyOriginatorKeyFile>EdiabasLib.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="InTheHand.Net.Bluetooth, Version=4.0.0.0, Culture=neutral, PublicKeyToken=9f6170a11fad28db, processorArchitecture=MSIL">
-      <HintPath>..\packages\InTheHand.Net.Bluetooth.4.0.33.2-issue256\lib\net461\InTheHand.Net.Bluetooth.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="InTheHand.Net.Bluetooth, Version=4.0.0.0, Culture=neutral, PublicKeyToken=ea38caa273134499, processorArchitecture=MSIL">
+      <HintPath>..\..\Tools\CarSimulator\packages\InTheHand.Net.Bluetooth.4.0.34.1\lib\net461\InTheHand.Net.Bluetooth.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
