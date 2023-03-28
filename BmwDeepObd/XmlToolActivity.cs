@@ -592,6 +592,7 @@ namespace BmwDeepObd
         private string _appDataDir;
         private string _pageFileName = string.Empty;
         private EcuFunctionCallType _ecuFuncCall = EcuFunctionCallType.None;
+        private EcuFunctionCallType _ecuFuncCallMenu = EcuFunctionCallType.None;
         private string _lastFileName = string.Empty;
         private string _datUkdDir = string.Empty;
         private bool _activityActive;
@@ -1819,11 +1820,17 @@ namespace BmwDeepObd
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraElmWifiIp, _activityCommon.SelectedElmWifiIp);
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraDeepObdWifiIp, _activityCommon.SelectedDeepObdWifiIp);
 
-                EcuFunctionCallType ecuFuncCall = _ecuFuncCall;
+                EcuFunctionCallType ecuFuncCall = _ecuFuncCallMenu;
+                if (ecuFuncCall == EcuFunctionCallType.None)
+                {
+                    ecuFuncCall = _ecuFuncCall;
+                }
+
                 if (ecuFuncCall != EcuFunctionCallType.None)
                 {
                     serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuFuncCall, (int)ecuFuncCall);
                 }
+
                 StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectJobs);
             }
             catch (Exception)
@@ -2220,7 +2227,7 @@ namespace BmwDeepObd
                     case Resource.Id.menu_xml_tool_bmw_actuator:
                     {
                         EcuInfo ecuInfo = _ecuList[itemPos];
-                        _ecuFuncCall = EcuFunctionCallType.BmwActuator;
+                        _ecuFuncCallMenu = EcuFunctionCallType.BmwActuator;
                         PerformJobsRead(ecuInfo);
                         break;
                     }
