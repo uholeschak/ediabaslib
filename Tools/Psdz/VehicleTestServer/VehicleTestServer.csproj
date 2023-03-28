@@ -45,8 +45,8 @@
     <Reference Include="ISimpleHttpListener.Rx, Version=6.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SimpleHttpListener.Rx.6.1.0\lib\netstandard2.0\ISimpleHttpListener.Rx.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.IO.RecyclableMemoryStream, Version=2.3.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.IO.RecyclableMemoryStream.2.3.1\lib\net462\Microsoft.IO.RecyclableMemoryStream.dll</HintPath>
+    <Reference Include="Microsoft.IO.RecyclableMemoryStream, Version=2.3.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IO.RecyclableMemoryStream.2.3.2\lib\net462\Microsoft.IO.RecyclableMemoryStream.dll</HintPath>
     </Reference>
     <Reference Include="SimpleHttpListener.Rx, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SimpleHttpListener.Rx.6.1.0\lib\netstandard2.0\SimpleHttpListener.Rx.dll</HintPath>
