@@ -979,6 +979,7 @@ namespace BmwDeepObd
                         Finish();
                     }
 
+                    _ecuFuncCallMenu = EcuFunctionCallType.None;
                     if (XmlToolEcuActivity.IntentEcuInfo?.JobList != null)
                     {
                         int selectCount = XmlToolEcuActivity.IntentEcuInfo.JobList.Count(job => job.Selected);
@@ -986,6 +987,7 @@ namespace BmwDeepObd
                         _ecuListAdapter.NotifyDataSetChanged();
                         UpdateDisplay();
                     }
+
                     if (data?.Extras != null && resultCode == Android.App.Result.Ok)
                     {
                         bool callEdiabasTool = data.Extras.GetBoolean(XmlToolEcuActivity.ExtraCallEdiabasTool, false);
