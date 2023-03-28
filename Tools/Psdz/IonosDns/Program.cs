@@ -9,7 +9,6 @@ using System.Net.Http.Headers;
 using System.Reflection;
 using System.Security.Authentication;
 using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
 namespace IonosDns
