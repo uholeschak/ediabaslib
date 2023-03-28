@@ -1788,10 +1788,11 @@ namespace BmwDeepObd
         {
             try
             {
-                if (ecuInfo.JobList == null)
+                if (ecuInfo?.JobList == null)
                 {
                     return;
                 }
+
                 if (!EdiabasClose(true))
                 {
                     return;
@@ -3746,7 +3747,7 @@ namespace BmwDeepObd
         private void ExecuteJobsRead(EcuInfo ecuInfo)
         {
             EdiabasOpen();
-            if (ecuInfo.JobList != null)
+            if (ecuInfo?.JobList != null)
             {
                 SelectJobs(ecuInfo);
                 return;
