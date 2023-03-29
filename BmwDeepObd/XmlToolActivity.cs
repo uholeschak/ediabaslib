@@ -2288,7 +2288,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            _ecuFuncCallMenu = EcuFunctionCallType.BmwActuator;
+            _ecuFuncCallMenu = callType;
             PerformJobsRead(ecuInfo);
 
             return true;
