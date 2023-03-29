@@ -3806,12 +3806,13 @@ namespace BmwDeepObd
                 return;
             }
 
-            EdiabasOpen();
             if (ecuInfo.JobList != null)
             {
                 SelectJobs(ecuInfo);
                 return;
             }
+
+            EdiabasOpen();
             _translateEnabled = false;
 
             UpdateDisplay();
