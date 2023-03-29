@@ -2151,6 +2151,7 @@ namespace BmwDeepObd
         {
             AndroidX.AppCompat.Widget.PopupMenu popupContext = new AndroidX.AppCompat.Widget.PopupMenu(this, anchor);
             popupContext.Inflate(Resource.Menu.xml_tool_context);
+
             IMenuItem moveTopMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_move_top);
             moveTopMenu?.SetEnabled(itemPos > 0);
 
@@ -2163,18 +2164,54 @@ namespace BmwDeepObd
             IMenuItem moveBottomMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_move_bottom);
             moveBottomMenu?.SetEnabled((itemPos + 1) < _ecuListAdapter.Items.Count);
 
-            IMenuItem ediabasToolMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_ediabas_tool);
-            ediabasToolMenu?.SetEnabled(itemPos >= 0 && itemPos < _ecuListAdapter.Items.Count && !IsJobRunning());
-
+            bool enableMenuAction = itemPos >= 0 && itemPos < _ecuListAdapter.Items.Count && !IsJobRunning();
             bool bmwVisible = ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw;
+            bool vagVisible = ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw;
+
+            IMenuItem ediabasToolMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_ediabas_tool);
+            ediabasToolMenu?.SetEnabled(enableMenuAction);
+
             IMenuItem bmwActuatorMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_bmw_actuator);
             if (bmwActuatorMenu != null)
             {
-                bmwActuatorMenu.SetEnabled(itemPos >= 0 && itemPos < _ecuListAdapter.Items.Count && !IsJobRunning());
+                bmwActuatorMenu.SetEnabled(enableMenuAction);
                 bmwActuatorMenu.SetVisible(bmwVisible);
             }
 
-            //bool vagVisible = ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw;
+            IMenuItem vagCodingMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_vag_coding);
+            if (vagCodingMenu != null)
+            {
+                vagCodingMenu.SetEnabled(enableMenuAction);
+                vagCodingMenu.SetVisible(vagVisible);
+            }
+
+            IMenuItem vagCoding2Menu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_vag_coding2);
+            if (vagCoding2Menu != null)
+            {
+                vagCoding2Menu.SetEnabled(enableMenuAction);
+                vagCoding2Menu.SetVisible(vagVisible);
+            }
+
+            IMenuItem vagAdaptionMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_vag_adaption);
+            if (vagAdaptionMenu != null)
+            {
+                vagAdaptionMenu.SetEnabled(enableMenuAction);
+                vagAdaptionMenu.SetVisible(vagVisible);
+            }
+
+            IMenuItem vagLoginMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_vag_login);
+            if (vagLoginMenu != null)
+            {
+                vagLoginMenu.SetEnabled(enableMenuAction);
+                vagLoginMenu.SetVisible(vagVisible);
+            }
+
+            IMenuItem vagSecAccessMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_vag_sec_access);
+            if (vagSecAccessMenu != null)
+            {
+                vagSecAccessMenu.SetEnabled(enableMenuAction);
+                vagSecAccessMenu.SetVisible(vagVisible);
+            }
 
             popupContext.MenuItemClick += (sender, args) =>
             {
