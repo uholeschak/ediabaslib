@@ -2256,6 +2256,26 @@ namespace BmwDeepObd
                     case Resource.Id.menu_xml_tool_bmw_actuator:
                         CallEcuFunction(_ecuList[itemPos], EcuFunctionCallType.BmwActuator);
                         break;
+
+                    case Resource.Id.menu_xml_tool_vag_coding:
+                        CallEcuFunction(_ecuList[itemPos], EcuFunctionCallType.VagCoding);
+                        break;
+
+                    case Resource.Id.menu_xml_tool_vag_coding2:
+                        CallEcuFunction(_ecuList[itemPos], EcuFunctionCallType.VagCoding2);
+                        break;
+
+                    case Resource.Id.menu_xml_tool_vag_adaption:
+                        CallEcuFunction(_ecuList[itemPos], EcuFunctionCallType.VagAdaption);
+                        break;
+
+                    case Resource.Id.menu_xml_tool_vag_login:
+                        CallEcuFunction(_ecuList[itemPos], EcuFunctionCallType.VagLogin);
+                        break;
+
+                    case Resource.Id.menu_xml_tool_vag_sec_access:
+                        CallEcuFunction(_ecuList[itemPos], EcuFunctionCallType.VagSecAccess);
+                        break;
                 }
             };
             popupContext.Show();
