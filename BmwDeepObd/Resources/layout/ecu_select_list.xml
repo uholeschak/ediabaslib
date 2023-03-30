@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:descendantFocusability="blocksDescendants"
     android:minWidth="25px"
     android:minHeight="25px">
@@ -10,12 +10,14 @@
         android:id="@+id/checkBoxEcuSelect"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:padding="4dip" />
+        android:padding="4dip"
+        android:layout_weight="0" />
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:padding="4dip">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="4dip"
+        android:layout_weight="1">
         <TextView
             android:id="@+id/textEcuName"
             android:layout_width="match_parent"
@@ -29,4 +31,10 @@
             android:textStyle="italic"
             android:singleLine="true" />
     </LinearLayout>
+    <Button
+        android:id="@+id/buttonEcuOptionMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:drawableLeft="@android:drawable/ic_menu_more"
+        android:layout_weight="0"/>
 </LinearLayout>
