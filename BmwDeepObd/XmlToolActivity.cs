@@ -6276,9 +6276,15 @@ namespace BmwDeepObd
             UpdateDisplay();
         }
 
-        private void MenuOptionsSelected(EcuInfo ecuInfo)
+        private void MenuOptionsSelected(EcuInfo ecuInfo, View view)
         {
-            //ShowContextMenu(args.View, args.Position);
+            int itemIndex = _ecuListAdapter.Items.IndexOf(ecuInfo);
+            if (itemIndex < 0)
+            {
+                return;
+            }
+
+            ShowContextMenu(view, itemIndex);
         }
 
         private bool SelectPageFile(string pageFileName)
@@ -8241,7 +8247,7 @@ namespace BmwDeepObd
         private class EcuListAdapter : BaseAdapter<EcuInfo>
         {
             public delegate void CheckChangedEventHandler(EcuInfo ecuInfo);
-            public delegate void MenuOptionsSelectedEventHandler(EcuInfo ecuInfo);
+            public delegate void MenuOptionsSelectedEventHandler(EcuInfo ecuInfo, View view);
             public event CheckChangedEventHandler CheckChanged;
             public event MenuOptionsSelectedEventHandler MenuOptionsSelected;
 
@@ -8347,7 +8353,7 @@ namespace BmwDeepObd
                 TagInfo tagInfo = button?.Tag as TagInfo;
                 if (tagInfo != null)
                 {
-                    MenuOptionsSelected?.Invoke(tagInfo.Info);
+                    MenuOptionsSelected?.Invoke(tagInfo.Info, button);
                 }
             }
 
