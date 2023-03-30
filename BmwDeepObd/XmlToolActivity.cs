@@ -670,6 +670,7 @@ namespace BmwDeepObd
             _listViewEcu = FindViewById<ListView>(Resource.Id.listEcu);
             _ecuListAdapter = new EcuListAdapter(this);
             _ecuListAdapter.CheckChanged += EcuCheckChanged;
+            _ecuListAdapter.MenuOptionsSelected += MenuOptionsSelected;
             _listViewEcu.Adapter = _ecuListAdapter;
             _listViewEcu.ItemClick += (sender, args) =>
             {
@@ -6275,6 +6276,11 @@ namespace BmwDeepObd
             UpdateDisplay();
         }
 
+        private void MenuOptionsSelected(EcuInfo ecuInfo)
+        {
+            //ShowContextMenu(args.View, args.Position);
+        }
+
         private bool SelectPageFile(string pageFileName)
         {
             try
@@ -8235,7 +8241,9 @@ namespace BmwDeepObd
         private class EcuListAdapter : BaseAdapter<EcuInfo>
         {
             public delegate void CheckChangedEventHandler(EcuInfo ecuInfo);
+            public delegate void MenuOptionsSelectedEventHandler(EcuInfo ecuInfo);
             public event CheckChangedEventHandler CheckChanged;
+            public event MenuOptionsSelectedEventHandler MenuOptionsSelected;
 
             private readonly List<EcuInfo> _items;
             public List<EcuInfo> Items => _items;
@@ -8263,7 +8271,7 @@ namespace BmwDeepObd
 
                 View view = convertView ?? _context.LayoutInflater.Inflate(Resource.Layout.ecu_select_list, null);
                 CheckBox checkBoxSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxEcuSelect);
-                Button buttonEcuOptionsMenu = view.FindViewById<Button>(Resource.Id.buttonEcuOptionsMenu);
+                LinearLayout buttonEcuOptionsMenu = view.FindViewById<LinearLayout>(Resource.Id.buttonEcuOptionsMenu);
 
                 _ignoreCheckEvent = true;
                 checkBoxSelect.Checked = item.Selected;
@@ -8322,9 +8330,9 @@ namespace BmwDeepObd
             {
                 if (!_ignoreCheckEvent)
                 {
-                    CheckBox checkBox = (CheckBox)sender;
-                    TagInfo tagInfo = (TagInfo)checkBox.Tag;
-                    if (tagInfo.Info.Selected != args.IsChecked)
+                    CheckBox checkBox = sender as CheckBox;
+                    TagInfo tagInfo = checkBox?.Tag as TagInfo;
+                    if (tagInfo != null && tagInfo.Info.Selected != args.IsChecked)
                     {
                         tagInfo.Info.Selected = args.IsChecked;
                         CheckChanged?.Invoke(tagInfo.Info);
@@ -8335,8 +8343,12 @@ namespace BmwDeepObd
 
             private void OnEcuOptionsClick(object sender, EventArgs args)
             {
-                Button button = (Button)sender;
-                TagInfo tagInfo = (TagInfo)button.Tag;
+                LinearLayout button = sender as LinearLayout;
+                TagInfo tagInfo = button?.Tag as TagInfo;
+                if (tagInfo != null)
+                {
+                    MenuOptionsSelected?.Invoke(tagInfo.Info);
+                }
             }
 
             private class TagInfo : Java.Lang.Object
