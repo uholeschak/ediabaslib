@@ -8263,6 +8263,8 @@ namespace BmwDeepObd
 
                 View view = convertView ?? _context.LayoutInflater.Inflate(Resource.Layout.ecu_select_list, null);
                 CheckBox checkBoxSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxEcuSelect);
+                Button buttonEcuOptionsMenu = view.FindViewById<Button>(Resource.Id.buttonEcuOptionsMenu);
+
                 _ignoreCheckEvent = true;
                 checkBoxSelect.Checked = item.Selected;
                 _ignoreCheckEvent = false;
@@ -8270,6 +8272,10 @@ namespace BmwDeepObd
                 checkBoxSelect.Tag = new TagInfo(item);
                 checkBoxSelect.CheckedChange -= OnCheckChanged;
                 checkBoxSelect.CheckedChange += OnCheckChanged;
+
+                buttonEcuOptionsMenu.Tag = new TagInfo(item);
+                buttonEcuOptionsMenu.Click -= OnEcuOptionsClick;
+                buttonEcuOptionsMenu.Click += OnEcuOptionsClick;
 
                 TextView textEcuName = view.FindViewById<TextView>(Resource.Id.textEcuName);
                 TextView textEcuDesc = view.FindViewById<TextView>(Resource.Id.textEcuDesc);
@@ -8325,6 +8331,12 @@ namespace BmwDeepObd
                         NotifyDataSetChanged();
                     }
                 }
+            }
+
+            private void OnEcuOptionsClick(object sender, EventArgs args)
+            {
+                Button button = (Button)sender;
+                TagInfo tagInfo = (TagInfo)button.Tag;
             }
 
             private class TagInfo : Java.Lang.Object
