@@ -3,19 +3,20 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center_vertical"
     android:descendantFocusability="blocksDescendants"
     android:minWidth="25px"
     android:minHeight="25px">
     <CheckBox
         android:id="@+id/checkBoxEcuSelect"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:padding="4dip"
         android:layout_weight="0" />
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:padding="4dip"
         android:layout_weight="1">
         <TextView
@@ -23,18 +24,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:layout_weight="0" />
         <TextView
             android:id="@+id/textEcuDesc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textStyle="italic"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:layout_weight="0" />
     </LinearLayout>
-    <Button
+    <LinearLayout
         android:id="@+id/buttonEcuOptionMenu"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:drawableLeft="@android:drawable/ic_menu_more"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/ic_menu_more"
+        android:clickable="true"
         android:layout_weight="0"/>
 </LinearLayout>
