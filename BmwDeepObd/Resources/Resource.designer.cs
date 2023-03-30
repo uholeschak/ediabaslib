@@ -8487,7 +8487,7 @@ namespace BmwDeepObd
 			public const int buttonDefaultSettings = 2131230848;
 			
 			// aapt resource value: 0x7F080081
-			public const int buttonEcuOptionMenu = 2131230849;
+			public const int buttonEcuOptionsMenu = 2131230849;
 			
 			// aapt resource value: 0x7F080082
 			public const int buttonEdiabasTool = 2131230850;
