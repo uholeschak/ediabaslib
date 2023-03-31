@@ -6243,7 +6243,7 @@ namespace BmwDeepObd
             return stringBuilder.ToString();
         }
 
-        private void EcuCheckChanged(EcuInfo ecuInfo)
+        private void EcuCheckChanged(EcuInfo ecuInfo, View view)
         {
             if (ecuInfo.Selected)
             {
@@ -8246,10 +8246,9 @@ namespace BmwDeepObd
 
         private class EcuListAdapter : BaseAdapter<EcuInfo>
         {
-            public delegate void CheckChangedEventHandler(EcuInfo ecuInfo);
-            public delegate void MenuOptionsSelectedEventHandler(EcuInfo ecuInfo, View view);
-            public event CheckChangedEventHandler CheckChanged;
-            public event MenuOptionsSelectedEventHandler MenuOptionsSelected;
+            public delegate void ActionEventHandler(EcuInfo ecuInfo, View view);
+            public event ActionEventHandler CheckChanged;
+            public event ActionEventHandler MenuOptionsSelected;
 
             private readonly List<EcuInfo> _items;
             public List<EcuInfo> Items => _items;
@@ -8341,7 +8340,7 @@ namespace BmwDeepObd
                     if (tagInfo != null && tagInfo.Info.Selected != args.IsChecked)
                     {
                         tagInfo.Info.Selected = args.IsChecked;
-                        CheckChanged?.Invoke(tagInfo.Info);
+                        CheckChanged?.Invoke(tagInfo.Info, checkBox);
                         NotifyDataSetChanged();
                     }
                 }
