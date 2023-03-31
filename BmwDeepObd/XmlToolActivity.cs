@@ -8271,7 +8271,7 @@ namespace BmwDeepObd
 
                 View view = convertView ?? _context.LayoutInflater.Inflate(Resource.Layout.ecu_select_list, null);
                 CheckBox checkBoxSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxEcuSelect);
-                LinearLayout buttonEcuOptionsMenu = view.FindViewById<LinearLayout>(Resource.Id.buttonEcuOptionsMenu);
+                ImageButton buttonEcuOptionsMenu = view.FindViewById<ImageButton>(Resource.Id.buttonEcuOptionsMenu);
 
                 _ignoreCheckEvent = true;
                 checkBoxSelect.Checked = item.Selected;
@@ -8343,7 +8343,7 @@ namespace BmwDeepObd
 
             private void OnEcuOptionsClick(object sender, EventArgs args)
             {
-                LinearLayout button = sender as LinearLayout;
+                ImageButton button = sender as ImageButton;
                 TagInfo tagInfo = button?.Tag as TagInfo;
                 if (tagInfo != null)
                 {

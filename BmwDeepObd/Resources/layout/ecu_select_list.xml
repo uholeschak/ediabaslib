@@ -34,12 +34,10 @@
             android:singleLine="true"
             android:layout_weight="0" />
     </LinearLayout>
-    <LinearLayout
+    <ImageButton
         android:id="@+id/buttonEcuOptionsMenu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@android:drawable/ic_menu_more"
-        android:clickable="true"
-        android:focusable="true"
+        android:src="@android:drawable/ic_menu_more"
         android:layout_weight="0"/>
 </LinearLayout>
