@@ -670,7 +670,17 @@ namespace BmwDeepObd
             _listViewEcu = FindViewById<ListView>(Resource.Id.listEcu);
             _ecuListAdapter = new EcuListAdapter(this);
             _ecuListAdapter.CheckChanged += EcuCheckChanged;
-            _ecuListAdapter.MenuOptionsSelected += MenuOptionsSelected;
+            _ecuListAdapter.MenuOptionsSelected += (ecuInfo, view) =>
+            {
+                int itemIndex = _ecuListAdapter.Items.IndexOf(ecuInfo);
+                if (itemIndex < 0)
+                {
+                    return;
+                }
+
+                ShowContextMenu(view, itemIndex);
+            };
+
             _listViewEcu.Adapter = _ecuListAdapter;
             _listViewEcu.ItemClick += (sender, args) =>
             {
@@ -679,10 +689,6 @@ namespace BmwDeepObd
                 {
                     PerformJobsRead(_ecuList[pos]);
                 }
-            };
-            _listViewEcu.ItemLongClick += (sender, args) =>
-            {
-                ShowContextMenu(args.View, args.Position);
             };
 
             _ruleEvalBmw = new RuleEvalBmw();
@@ -6274,17 +6280,6 @@ namespace BmwDeepObd
                 }
             }
             UpdateDisplay();
-        }
-
-        private void MenuOptionsSelected(EcuInfo ecuInfo, View view)
-        {
-            int itemIndex = _ecuListAdapter.Items.IndexOf(ecuInfo);
-            if (itemIndex < 0)
-            {
-                return;
-            }
-
-            ShowContextMenu(view, itemIndex);
         }
 
         private bool SelectPageFile(string pageFileName)
