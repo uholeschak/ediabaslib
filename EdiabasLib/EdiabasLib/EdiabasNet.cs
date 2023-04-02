@@ -4834,19 +4834,30 @@ namespace EdiabasLib
 
         private void ExecuteJobPrivate(string jobName, bool recursive)
         {
-            StringBuilder sbArgs = new StringBuilder();
-            List<string> argStrings = GetActiveArgStrings();
-            foreach (string argString in argStrings)
+            object logArgs;
+            byte[] argBin = GetActiveArgBinary();
+            if (argBin.Length > 0)
             {
-                if (sbArgs.Length > 0)
+                logArgs = argBin;
+            }
+            else
+            {
+                StringBuilder sbArgs = new StringBuilder();
+                List<string> argStrings = GetActiveArgStrings();
+                foreach (string argString in argStrings)
                 {
-                    sbArgs.Append(", ");
+                    if (sbArgs.Length > 0)
+                    {
+                        sbArgs.Append(", ");
+                    }
+
+                    sbArgs.Append(argString);
                 }
 
-                sbArgs.Append(argString);
+                logArgs = sbArgs.ToString();
             }
 
-            LogFormat(EdLogLevel.Ifh, "executeJob({0}): {1} {2}", SgbdFileName, jobName, sbArgs.ToString());
+            LogFormat(EdLogLevel.Ifh, "executeJob({0}): {1} {2}", SgbdFileName, jobName, logArgs);
 
             if (_closeSgbdFs)
             {
