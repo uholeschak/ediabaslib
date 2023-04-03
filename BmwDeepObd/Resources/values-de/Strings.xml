@@ -609,6 +609,7 @@
   <string name="menu_xml_tool_edit_del_all">Alle ECU-Informationen löschen</string>
 
   <!-- XML Tool context Menu -->
+  <string name="menu_xml_config_ecu">ECU Konfigurieren</string>
   <string name="menu_xml_tool_move_top">An den Anfang verschieben</string>
   <string name="menu_xml_tool_move_up">Nach oben verschieben</string>
   <string name="menu_xml_tool_move_down">Nach unten verschieben</string>
