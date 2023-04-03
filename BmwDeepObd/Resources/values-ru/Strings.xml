@@ -608,6 +608,8 @@
   <string name="menu_xml_tool_edit_del_all">Удалить всю ECU-информацию</string>
 
   <!-- XML Tool context Menu -->
+  <!--Translate-->
+  <string name="menu_xml_config_ecu">Настроить ECU</string>
   <string name="menu_xml_tool_move_top">Переместить в начало</string>
   <string name="menu_xml_tool_move_up">Переместить вверх</string>
   <string name="menu_xml_tool_move_down">Переместить вниз</string>

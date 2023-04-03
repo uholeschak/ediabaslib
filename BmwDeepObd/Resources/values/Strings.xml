@@ -585,6 +585,7 @@
   <string name="menu_xml_tool_edit_del_all">Delete all ECU information</string>
 
   <!-- XML Tool context Menu -->
+  <string name="menu_xml_config_ecu">Configure ECU</string>
   <string name="menu_xml_tool_move_top">Move to top</string>
   <string name="menu_xml_tool_move_up">Move up</string>
   <string name="menu_xml_tool_move_down">Move down</string>

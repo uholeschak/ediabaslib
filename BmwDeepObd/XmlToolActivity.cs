@@ -2159,6 +2159,13 @@ namespace BmwDeepObd
             AndroidX.AppCompat.Widget.PopupMenu popupContext = new AndroidX.AppCompat.Widget.PopupMenu(this, anchor);
             popupContext.Inflate(Resource.Menu.xml_tool_context);
 
+            bool enableMenuAction = itemPos >= 0 && itemPos < _ecuListAdapter.Items.Count && !IsJobRunning();
+            bool bmwVisible = ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw;
+            bool vagVisible = ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw;
+
+            IMenuItem configEcuMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_config_ecu);
+            configEcuMenu.SetEnabled(enableMenuAction);
+
             IMenuItem moveTopMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_move_top);
             moveTopMenu?.SetEnabled(itemPos > 0);
 
@@ -2170,10 +2177,6 @@ namespace BmwDeepObd
 
             IMenuItem moveBottomMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_move_bottom);
             moveBottomMenu?.SetEnabled((itemPos + 1) < _ecuListAdapter.Items.Count);
-
-            bool enableMenuAction = itemPos >= 0 && itemPos < _ecuListAdapter.Items.Count && !IsJobRunning();
-            bool bmwVisible = ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw;
-            bool vagVisible = ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw;
 
             IMenuItem ediabasToolMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_ediabas_tool);
             ediabasToolMenu?.SetEnabled(enableMenuAction);
@@ -2226,8 +2229,18 @@ namespace BmwDeepObd
                 {
                     return;
                 }
+
+                if (args?.Item == null)
+                {
+                    return;
+                }
+
                 switch (args.Item.ItemId)
                 {
+                    case Resource.Id.menu_xml_tool_config_ecu:
+                        PerformJobsRead(_ecuList[itemPos]);
+                        break;
+
                     case Resource.Id.menu_xml_tool_move_top:
                     {
                         EcuInfo oldItem = _ecuList[itemPos];
