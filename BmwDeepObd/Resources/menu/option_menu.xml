@@ -37,24 +37,24 @@
                 android:icon="@android:drawable/ic_menu_manage"
                 android:title="@string/menu_enet_ip" />
           <item android:id="@+id/menu_cfg_submenu"
-                android:icon="@android:drawable/ic_menu_manage"
+                android:icon="@android:drawable/ic_menu_more"
                 android:title="@string/menu_cfg_submenu">
             <menu>
               <item android:id="@+id/menu_cfg_sel"
                     android:icon="@android:drawable/ic_menu_search"
                     android:title="@string/menu_cfg_sel" />
               <item android:id="@+id/menu_recent_cfg_submenu"
-                    android:icon="@android:drawable/ic_menu_manage"
+                    android:icon="@android:drawable/ic_menu_more"
                     android:title="@string/menu_recent_cfg_submenu">
                 <menu>
                   <item android:id="@+id/menu_recent_cfg_clear"
-                        android:icon="@android:drawable/ic_menu_close_clear_cancel"
+                        android:icon="@android:drawable/ic_menu_delete"
                         android:title="@string/menu_recent_cfg_clear"
                         android:orderInCategory="2" />
                 </menu>
               </item>
               <item android:id="@+id/menu_cfg_page_functions"
-                    android:icon="@android:drawable/ic_menu_manage"
+                    android:icon="@android:drawable/ic_menu_more"
                     android:title="@string/menu_cfg_page_functions">
                 <menu>
                   <item android:id="@+id/menu_cfg_page_ediabas"
@@ -93,7 +93,7 @@
                     android:icon="@android:drawable/ic_menu_edit"
                     android:title="@string/menu_cfg_select_edit"/>
               <item android:id="@+id/menu_cfg_edit_reset"
-                    android:icon="@android:drawable/ic_menu_manage"
+                    android:icon="@android:drawable/ic_menu_delete"
                     android:title="@string/menu_cfg_edit_reset"/>
               <item android:id="@+id/menu_cfg_close"
                     android:icon="@android:drawable/ic_menu_close_clear_cancel"
@@ -116,7 +116,7 @@
                 android:icon="@android:drawable/ic_menu_save"
                 android:title="@string/menu_submenu_log" />
           <item android:id="@+id/menu_trace_submenu"
-                android:icon="@android:drawable/ic_menu_save"
+                android:icon="@android:drawable/ic_menu_more"
                 android:title="@string/menu_trace_submenu">
               <menu>
                   <item android:id="@+id/menu_send_trace"
@@ -134,7 +134,7 @@
               </menu>
           </item>
           <item android:id="@+id/menu_translation_submenu"
-            android:icon="@android:drawable/ic_menu_manage"
+            android:icon="@android:drawable/ic_menu_more"
             android:title="@string/menu_translation_submenu" >
             <menu>
               <item android:id="@+id/menu_translation_enable"
@@ -145,12 +145,12 @@
                     android:icon="@android:drawable/ic_menu_manage"
                     android:title="@string/menu_translation_yandex_key"/>
               <item android:id="@+id/menu_translation_clear_cache"
-                    android:icon="@android:drawable/ic_menu_manage"
+                    android:icon="@android:drawable/ic_menu_delete"
                     android:title="@string/menu_translation_clear_cache"/>
             </menu>
           </item>
           <item android:id="@+id/menu_global_settings"
-                android:icon="@android:drawable/ic_menu_manage"
+                android:icon="@android:drawable/ic_menu_preferences"
                 android:title="@string/menu_global_settings" />
           <item android:id="@+id/menu_submenu_help"
                 android:icon="@android:drawable/ic_menu_help"
