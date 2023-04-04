@@ -1,7 +1,21 @@
 diff --git a/CustomGauge/build.gradle b/CustomGauge/build.gradle
-index 43357d5..6be19cb 100644
+index 43357d5..5212350 100644
 --- a/CustomGauge/build.gradle
 +++ b/CustomGauge/build.gradle
+@@ -25,11 +25,11 @@ ext {
+ }
+ 
+ android {
+-    compileSdkVersion 28
++    compileSdkVersion 33
+ 
+     defaultConfig {
+         minSdkVersion 15
+-        targetSdkVersion 28
++        targetSdkVersion 33
+         versionCode 4
+         versionName "1.0.4"
+     }
 @@ -43,7 +43,7 @@ android {
  
  dependencies {
@@ -33,6 +47,32 @@ index 9913a85..e2718d6 100644
          //main Paint
          mPaint = new Paint();
          mPaint.setColor(mStrokeColor);
+diff --git a/CustomGaugeExample/build.gradle b/CustomGaugeExample/build.gradle
+index 12e72b7..c96e484 100644
+--- a/CustomGaugeExample/build.gradle
++++ b/CustomGaugeExample/build.gradle
+@@ -1,12 +1,12 @@
+ apply plugin: 'com.android.application'
+ 
+ android {
+-    compileSdkVersion 28
++    compileSdkVersion 33
+ 
+     defaultConfig {
+         applicationId "pl.pawelkleczkowskicustomgauge"
+         minSdkVersion 15
+-        targetSdkVersion 28
++        targetSdkVersion 33
+         versionCode 4
+         versionName "1.0.4"
+     }
+@@ -22,5 +22,5 @@ dependencies {
+     implementation project(':CustomGauge')
+     implementation fileTree(dir: 'libs', include: ['*.jar'])
+     testImplementation 'junit:junit:4.12'
+-    implementation 'com.android.support:appcompat-v7:28.0.0'
++    implementation 'androidx.appcompat:appcompat:1.0.2'
+ }
 diff --git a/CustomGaugeExample/src/main/java/pl/pawelkleczkowski/customgaugeexample/MainActivity.java b/CustomGaugeExample/src/main/java/pl/pawelkleczkowski/customgaugeexample/MainActivity.java
 index cce6a1e..428156d 100644
 --- a/CustomGaugeExample/src/main/java/pl/pawelkleczkowski/customgaugeexample/MainActivity.java
