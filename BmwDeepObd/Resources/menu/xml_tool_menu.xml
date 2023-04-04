@@ -29,7 +29,7 @@
             android:icon="@android:drawable/ic_menu_save"
             android:title="@string/menu_submenu_log" />
       <item android:id="@+id/menu_trace_submenu"
-            android:icon="@android:drawable/ic_menu_save"
+            android:icon="@android:drawable/ic_menu_more"
             android:title="@string/menu_trace_submenu">
           <menu>
               <item android:id="@+id/menu_send_trace"
@@ -41,7 +41,7 @@
           </menu>
       </item>
       <item android:id="@+id/menu_translation_submenu"
-            android:icon="@android:drawable/ic_menu_manage"
+            android:icon="@android:drawable/ic_menu_more"
             android:title="@string/menu_translation_submenu" >
         <menu>
           <item android:id="@+id/menu_translation_enable"
