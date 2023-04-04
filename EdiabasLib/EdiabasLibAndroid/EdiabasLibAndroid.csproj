@@ -37,6 +37,9 @@
     <DefineConstants>Android</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=1.4.2.13, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\..\BmwDeepObd\packages\SharpZipLib.1.4.2\lib\netstandard2.1\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
     <Reference Include="Mono.Android.Export" />
     <Reference Include="System" />
     <Reference Include="System.Net.Http" />
@@ -109,16 +112,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Resources\AboutResources.txt" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values\Strings.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SharpZipLibAndroid\SharpZipLibAndroid.csproj">
-      <Project>{82a3338b-1db5-4a95-ad9d-c5757e71418d}</Project>
-      <Name>SharpZipLibAndroid</Name>
-    </ProjectReference>
     <ProjectReference Include="UsbSerialBinding\UsbSerialBinding.csproj">
       <Project>{C70078EC-34D9-46A7-A04A-4412CFE27509}</Project>
       <Name>UsbSerialBinding</Name>

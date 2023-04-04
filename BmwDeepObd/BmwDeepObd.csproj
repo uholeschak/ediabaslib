@@ -97,6 +97,9 @@
     <Reference Include="Google.Android.Vending.Licensing, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Xamarin.Google.Android.Vending.Licensing.2.1.0\lib\monoandroid50\Google.Android.Vending.Licensing.dll</HintPath>
     </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=1.4.2.13, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>packages\SharpZipLib.1.4.2\lib\netstandard2.1\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
     <Reference Include="Java.Interop" />
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Bcl.AsyncInterfaces.7.0.0\lib\netstandard2.1\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
@@ -644,10 +647,6 @@
     <ProjectReference Include="..\EdiabasLib\EdiabasLibAndroid\UsbSerialBinding\UsbSerialBinding.csproj">
       <Project>{c70078ec-34d9-46a7-a04a-4412cfe27509}</Project>
       <Name>UsbSerialBinding</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EdiabasLib\SharpZipLibAndroid\SharpZipLibAndroid.csproj">
-      <Project>{82a3338b-1db5-4a95-ad9d-c5757e71418d}</Project>
-      <Name>SharpZipLibAndroid</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
