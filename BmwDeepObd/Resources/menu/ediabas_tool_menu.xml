@@ -59,7 +59,7 @@
                   android:icon="@android:drawable/ic_menu_manage"
                   android:title="@string/menu_translation_yandex_key"/>
             <item android:id="@+id/menu_translation_clear_cache"
-                  android:icon="@android:drawable/ic_menu_manage"
+                  android:icon="@android:drawable/ic_menu_delete"
                   android:title="@string/menu_translation_clear_cache"/>
           </menu>
         </item>
