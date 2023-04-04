@@ -6,7 +6,7 @@
           android:title="@string/menu_search"
           app:showAsAction="ifRoom" />
     <item android:id="@+id/action_menu_tool"
-          android:icon="@android:drawable/ic_menu_preferences"
+          android:icon="@android:drawable/ic_menu_more"
           android:title="@string/menu_settings"
           app:showAsAction="always">
       <menu>
