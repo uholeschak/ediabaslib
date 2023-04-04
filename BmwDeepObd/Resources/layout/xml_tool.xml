@@ -13,6 +13,5 @@
         android:id="@+id/listEcu"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:longClickable="true"
         android:layout_weight="1" />
 </LinearLayout>
