@@ -1,7 +1,0 @@
-[submodule "EdiabasLib/SharpZipLibAndroid/SharpZipLib"]
-	path = EdiabasLib/SharpZipLibAndroid/SharpZipLib
-	url = ../../icsharpcode/SharpZipLib.git
-	branch = master
-	fetchRecurseSubmodules = true
-	update = rebase
-	ignore = dirty
