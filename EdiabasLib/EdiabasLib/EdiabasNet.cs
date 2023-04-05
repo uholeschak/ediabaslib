@@ -4584,25 +4584,31 @@ namespace EdiabasLib
 
         private string GetTableEntry(Stream fs, Int32 tableIdx, Int32 rowIdx, string columnName)
         {
+            LogFormat(EdLogLevel.Info, "GetTableEntry: TabIdx={0}, RowIdx={1}, Col={2}", tableIdx, rowIdx, columnName);
             TableInfos tableInfosLocal = GetTableInfos(fs);
             TableInfo[] tableArray = tableInfosLocal.TableInfoArray;
             if ((tableIdx < 0) || (tableIdx >= tableArray.Length))
             {
+                LogString(EdLogLevel.Info, "GetTableEntry: Table invalid");
                 return null;
             }
             TableInfo table = tableArray[tableIdx];
 
             if ((rowIdx < 0) || rowIdx >= table.Rows)
             {
+                LogString(EdLogLevel.Info, "GetTableEntry: Row invalid");
                 return null;
             }
 
             int columnIndex = GetTableColumnIdx(fs, table, columnName);
             if (columnIndex < 0)
             {
+                LogString(EdLogLevel.Info, "GetTableEntry: Column invalid");
                 return null;
             }
-            return GetTableString(fs, table.TableEntries[rowIdx + 1][columnIndex]);
+            string entry = GetTableString(fs, table.TableEntries[rowIdx + 1][columnIndex]);
+            LogFormat(EdLogLevel.Info, "GetTableEntry: Entry={0}", entry);
+            return entry;
         }
 
         public void ResolveSgbdFile(string fileName)
