@@ -2406,11 +2406,6 @@ namespace EdiabasLib
                 ediabas.SetError(ErrorCodes.EDIABAS_BIP_0010);
                 return;
             }
-            if (ediabas._tableRowIndex < 0)
-            {   // EDIABAS failure, exception is not raised!
-                arg0.SetStringData(string.Empty);
-                return;
-            }
             string entry = ediabas.GetTableEntry(ediabas.GetTableFs(), ediabas._tableIndex, ediabas._tableRowIndex, arg1.GetStringData());
             if (entry == null)
             {
@@ -2493,6 +2488,9 @@ namespace EdiabasLib
         // BEST2: tabset
         private static void OpTabset(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
+            int tableIndexLast = ediabas._tableIndex;
+            int tableRowIndexLast = ediabas._tableRowIndex;
+
             ediabas.CloseTableFs();
             if (ediabas._sgbdBaseFs != null)
             {
@@ -2511,13 +2509,21 @@ namespace EdiabasLib
             {
                 ediabas.SetError(ErrorCodes.EDIABAS_BIP_0010);
             }
+
             ediabas._tableIndex = tableAddr;
             ediabas._tableRowIndex = -1;
+            if (ediabas._tableIndex == tableIndexLast)
+            {
+                ediabas._tableRowIndex = tableRowIndexLast;
+            }
         }
 
         // BEST2: tabsetext
         private static void OpTabsetex(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
+            int tableIndexLast = ediabas._tableIndex;
+            int tableRowIndexLast = ediabas._tableRowIndex;
+
             string baseFileName = arg1.GetStringData();
             if (baseFileName.Length > 0)
             {
@@ -2576,6 +2582,7 @@ namespace EdiabasLib
                     return;
                 }
             }
+
             bool found;
             Int32 tableAddr = ediabas.GetTableIndex(ediabas.GetTableFs(), arg0.GetStringData(), out found);
             if (!found)
@@ -2584,6 +2591,10 @@ namespace EdiabasLib
             }
             ediabas._tableIndex = tableAddr;
             ediabas._tableRowIndex = -1;
+            if (ediabas._tableIndex == tableIndexLast)
+            {
+                ediabas._tableRowIndex = tableRowIndexLast;
+            }
         }
 
         private static void OpTest(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
