@@ -4372,6 +4372,8 @@ job(  name      : TEST_TABLE_FLAGS;
 					ergl		"COLS_OK", L4
 #endasm
 
+
+
 #asm
 					enewset
 					clrc
@@ -4400,6 +4402,8 @@ job(  name      : TEST_TABLE_FLAGS;
 					ergs		"JUMPS", S2
 #endasm
 
+
+
 #asm
 					enewset
 					clear		S2
@@ -4413,6 +4417,8 @@ job(  name      : TEST_TABLE_FLAGS;
 					ergs		"JUMPS", S2
 #endasm
 
+
+
 #asm
 					enewset
 					clrc
@@ -4422,8 +4428,37 @@ job(  name      : TEST_TABLE_FLAGS;
 #asm
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
-					ergs		"TABGET2", S4
+					ergs		"TABGET_OK", S4
 #endasm
+
+
+
+#asm
+					enewset
+					clrc
+					tabset		"TEST_TABLE"
+#endasm
+	calc_flags();
+#asm
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+
+
+
+#asm
+					enewset
+					clrc
+					tabget		S4,"VALUE"
+#endasm
+	calc_flags();
+#asm
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergs		"TABGET_TAB_KEEP", S4
+#endasm
+
+
 
 #asm
 					enewset
