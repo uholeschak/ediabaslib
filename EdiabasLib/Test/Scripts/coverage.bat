@@ -1,6 +1,8 @@
 @echo off
 SETLOCAL EnableDelayedExpansion
 
+rem start CarSimulator with e61.txt config first
+
 set BATPATH=%~dp0
 set OPEN_COVER=%OPENCOVER_PATH%\OpenCover.Console.exe
 set REPORT_GENERATOR=%REPORTGENERATOR_PATH%\ReportGenerator.exe
@@ -48,6 +50,10 @@ goto argsok
 )
 
 echo invalid arguments
+echo examples:
+echo coverage lib ENET
+echo coverage apilib STD:OBD COM4
+echo coverage ediabas ENET
 goto done
 
 :argsok
