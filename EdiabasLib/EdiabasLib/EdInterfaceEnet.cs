@@ -2447,7 +2447,7 @@ namespace EdiabasLib
             }
 
             receiveLength = TelLengthBmwFast(receiveData) + 1;
-            //receiveData[receiveLength - 1] = 0;
+            // the simulated CRC is appended for EDIABAS compatibility
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         }
 
