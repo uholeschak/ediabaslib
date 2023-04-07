@@ -3305,6 +3305,12 @@ namespace EdiabasLib
                 exIter = exIter.InnerException;
             }
 
+            if (!string.IsNullOrEmpty(ex.StackTrace))
+            {
+                sb.Append("\r\n");
+                sb.Append(ex.StackTrace);
+            }
+
             return sb.ToString();
         }
 
@@ -4587,8 +4593,8 @@ namespace EdiabasLib
             columnInvalid = false;
             LogFormat(EdLogLevel.Info, "GetTableEntry: TabIdx={0}, RowIdx={1}, Col={2}", tableIdx, rowIdx, columnName);
             TableInfos tableInfosLocal = GetTableInfos(fs);
-            TableInfo[] tableArray = tableInfosLocal.TableInfoArray;
-            if ((tableIdx < 0) || (tableIdx >= tableArray.Length))
+            TableInfo[] tableArray = tableInfosLocal?.TableInfoArray;
+            if ((tableArray == null) || (tableIdx < 0) || (tableIdx >= tableArray.Length))
             {
                 LogString(EdLogLevel.Info, "GetTableEntry: Table invalid");
                 return null;
