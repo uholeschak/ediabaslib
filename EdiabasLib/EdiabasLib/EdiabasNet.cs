@@ -4582,8 +4582,9 @@ namespace EdiabasLib
             return -1;
         }
 
-        private string GetTableEntry(Stream fs, Int32 tableIdx, Int32 rowIdx, string columnName)
+        private string GetTableEntry(Stream fs, Int32 tableIdx, Int32 rowIdx, string columnName, out bool columnInvalid)
         {
+            columnInvalid = false;
             LogFormat(EdLogLevel.Info, "GetTableEntry: TabIdx={0}, RowIdx={1}, Col={2}", tableIdx, rowIdx, columnName);
             TableInfos tableInfosLocal = GetTableInfos(fs);
             TableInfo[] tableArray = tableInfosLocal.TableInfoArray;
@@ -4594,18 +4595,20 @@ namespace EdiabasLib
             }
             TableInfo table = tableArray[tableIdx];
 
+            int columnIndex = GetTableColumnIdx(fs, table, columnName);
+            if (columnIndex < 0)
+            {
+                columnInvalid = true;
+                LogString(EdLogLevel.Info, "GetTableEntry: Column invalid");
+                return null;
+            }
+
             if ((rowIdx < 0) || rowIdx >= table.Rows)
             {
                 LogString(EdLogLevel.Info, "GetTableEntry: Row invalid");
                 return null;
             }
 
-            int columnIndex = GetTableColumnIdx(fs, table, columnName);
-            if (columnIndex < 0)
-            {
-                LogString(EdLogLevel.Info, "GetTableEntry: Column invalid");
-                return null;
-            }
             string entry = GetTableString(fs, table.TableEntries[rowIdx + 1][columnIndex]);
             LogFormat(EdLogLevel.Info, "GetTableEntry: Entry={0}", entry);
             return entry;

@@ -2406,11 +2406,12 @@ namespace EdiabasLib
                 ediabas.SetError(ErrorCodes.EDIABAS_BIP_0010);
                 return;
             }
-            string entry = ediabas.GetTableEntry(ediabas.GetTableFs(), ediabas._tableIndex, ediabas._tableRowIndex, arg1.GetStringData());
+
+            string entry = ediabas.GetTableEntry(ediabas.GetTableFs(), ediabas._tableIndex, ediabas._tableRowIndex, arg1.GetStringData(), out bool columnInvalid);
             if (entry == null)
             {
-                if (ediabas._tableRowIndex < 0)
-                {   // EDIABAS returns garbage if the table has changed
+                if (ediabas._tableRowIndex < 0 && !columnInvalid)
+                {   // EDIABAS returns garbage if the table has changed, but no errors is raised
                     arg0.SetStringData(string.Empty);
                     return;
                 }
@@ -2418,6 +2419,7 @@ namespace EdiabasLib
                 ediabas.SetError(ErrorCodes.EDIABAS_BIP_0010);
                 return;
             }
+
             arg0.SetStringData(entry);
         }
 
