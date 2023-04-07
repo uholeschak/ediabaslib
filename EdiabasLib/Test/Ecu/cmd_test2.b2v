@@ -4396,11 +4396,13 @@ job(  name      : TEST_TABLE_FLAGS;
 					tabget		S4,"VALUE"
 #endasm
 	calc_flags();
-// don't print result, string contains garbage, but no exception is raised
 #asm
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
 #endasm
+// don't print result, string contains garbage, but no exception is raised
+//					ergs		"TABGET_INVAL_S", S4
+//					ergy		"TABGET_INVAL_Y", S4
 
 
 
@@ -4776,6 +4778,8 @@ job(  name      : TEST_TABLE_FLAGS;
 					ergs		"JUMPS", S2
 #endasm
 
+
+
 #asm
 					enewset
 					clrc
@@ -4785,7 +4789,34 @@ job(  name      : TEST_TABLE_FLAGS;
 #asm
 					ergs		"FLAGS", S1
 					ergs		"JUMPS", S2
-					ergs		"TABGET2", S4
+					ergs		"TABGETEX_OK", S4
+#endasm
+
+
+
+#asm
+					enewset
+					clrc
+					tabsetex	"TEST_TAB1", "base1"
+#endasm
+	calc_flags();
+#asm
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+
+
+
+#asm
+					enewset
+					clrc
+					tabget		S4,"VALUE"
+#endasm
+	calc_flags();
+#asm
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+					ergs		"TABGETEX_KEEP", S4
 #endasm
 
 
