@@ -4422,6 +4422,10 @@ namespace EdiabasLib
         {
             found = false;
             TableInfos tableInfosLocal = GetTableInfos(fs);
+            if (tableInfosLocal == null)
+            {
+                return 0;
+            }
 
             UInt32 tableIdx;
             if (tableInfosLocal.TableNameDict.TryGetValue(tableName.ToUpper(Culture), out tableIdx))
@@ -4437,8 +4441,8 @@ namespace EdiabasLib
         private UInt32 GetTableColumns(Stream fs, Int32 tableIdx)
         {
             TableInfos tableInfosLocal = GetTableInfos(fs);
-            TableInfo[] tableArray = tableInfosLocal.TableInfoArray;
-            if ((tableIdx < 0) || (tableIdx >= tableArray.Length))
+            TableInfo[] tableArray = tableInfosLocal?.TableInfoArray;
+            if ((tableArray == null) || (tableIdx < 0) || (tableIdx >= tableArray.Length))
             {
                 return 0;
             }
@@ -4448,8 +4452,8 @@ namespace EdiabasLib
         private UInt32 GetTableRows(Stream fs, Int32 tableIdx)
         {
             TableInfos tableInfosLocal = GetTableInfos(fs);
-            TableInfo[] tableArray = tableInfosLocal.TableInfoArray;
-            if ((tableIdx < 0) || (tableIdx >= tableArray.Length))
+            TableInfo[] tableArray = tableInfosLocal?.TableInfoArray;
+            if ((tableArray == null) || (tableIdx < 0) || (tableIdx >= tableArray.Length))
             {
                 return 0;
             }
@@ -4460,8 +4464,8 @@ namespace EdiabasLib
         {
             found = false;
             TableInfos tableInfosLocal = GetTableInfos(fs);
-            TableInfo[] tableArray = tableInfosLocal.TableInfoArray;
-            if ((tableIdx < 0) || (tableIdx >= tableArray.Length))
+            TableInfo[] tableArray = tableInfosLocal?.TableInfoArray;
+            if ((tableArray == null) || (tableIdx < 0) || (tableIdx >= tableArray.Length))
             {
                 return -1;
             }
@@ -4478,8 +4482,8 @@ namespace EdiabasLib
         {
             found = false;
             TableInfos tableInfosLocal = GetTableInfos(fs);
-            TableInfo[] tableArray = tableInfosLocal.TableInfoArray;
-            if ((tableIdx < 0) || (tableIdx >= tableArray.Length))
+            TableInfo[] tableArray = tableInfosLocal?.TableInfoArray;
+            if ((tableArray == null) || (tableIdx < 0) || (tableIdx >= tableArray.Length))
             {
                 return -1;
             }
@@ -4529,8 +4533,8 @@ namespace EdiabasLib
         {
             found = false;
             TableInfos tableInfosLocal = GetTableInfos(fs);
-            TableInfo[] tableArray = tableInfosLocal.TableInfoArray;
-            if ((tableIdx < 0) || (tableIdx >= tableArray.Length))
+            TableInfo[] tableArray = tableInfosLocal?.TableInfoArray;
+            if ((tableArray == null) || (tableIdx < 0) || (tableIdx >= tableArray.Length))
             {
                 return -1;
             }
@@ -4581,7 +4585,7 @@ namespace EdiabasLib
         private Int32 GetTableColumnIdx(Stream fs, TableInfo table, string columnName)
         {
             UInt32 column;
-            if (table.ColumnNameDict.TryGetValue(columnName.ToUpper(Culture), out column))
+            if (table?.ColumnNameDict != null && table.ColumnNameDict.TryGetValue(columnName.ToUpper(Culture), out column))
             {
                 return (Int32)column;
             }
