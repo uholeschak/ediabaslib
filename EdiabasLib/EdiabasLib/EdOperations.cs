@@ -2409,6 +2409,12 @@ namespace EdiabasLib
             string entry = ediabas.GetTableEntry(ediabas.GetTableFs(), ediabas._tableIndex, ediabas._tableRowIndex, arg1.GetStringData());
             if (entry == null)
             {
+                if (ediabas._tableRowIndex < 0)
+                {   // EDIABAS returns garbage if the table has changed
+                    arg0.SetStringData(string.Empty);
+                    return;
+                }
+
                 ediabas.SetError(ErrorCodes.EDIABAS_BIP_0010);
                 return;
             }
@@ -2511,9 +2517,9 @@ namespace EdiabasLib
             }
 
             ediabas._tableIndex = tableAddr;
-            ediabas._tableRowIndex = 0;
-            if (tableIndexLast >= 0)
-            {   // keep old table row
+            ediabas._tableRowIndex = -1;
+            if (ediabas._tableIndex == tableIndexLast)
+            {
                 ediabas._tableRowIndex = tableRowIndexLast;
             }
         }
@@ -2590,9 +2596,9 @@ namespace EdiabasLib
                 ediabas.SetError(ErrorCodes.EDIABAS_BIP_0010);
             }
             ediabas._tableIndex = tableAddr;
-            ediabas._tableRowIndex = 0;
-            if (tableIndexLast >= 0)
-            {   // keep old table row
+            ediabas._tableRowIndex = -1;
+            if (ediabas._tableIndex == tableIndexLast)
+            {
                 ediabas._tableRowIndex = tableRowIndexLast;
             }
         }
