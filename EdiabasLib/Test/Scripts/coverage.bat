@@ -2,6 +2,7 @@
 SETLOCAL EnableDelayedExpansion
 
 rem start CarSimulator with e61.txt config first
+rem for EDIABAS set the COM port in obd.ini (max COM9)
 
 set BATPATH=%~dp0
 set OPEN_COVER=%OPENCOVER_PATH%\OpenCover.Console.exe
