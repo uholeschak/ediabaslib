@@ -449,6 +449,10 @@ EcuFunctionService.RetrieveFunctionDefinition()
  - SQL GetFixedFunctionEcuJobsByNodeClass(), match nodeClass (e.g. nodeClass=7164418)
  - SQL XEP_ECUJOBS or XEP_REFECUJOBS: GetEcuJobsWithParameters(), match nodeClass and ecuFixedFunctionId (e.g. 2000001222439 -> id=2000001356499 name="LESEN_ANALOGWERTE")
 
+DPF Regeneration:
+=================
+ABL_DIT_AS1365_BX7_DPFREG.Regeneration()
+
 Log files:
 ==========
 ISTA creates a log file xxxIcomLogs*.tgz, this file is protected with the password: 3DkDxnKQZ1

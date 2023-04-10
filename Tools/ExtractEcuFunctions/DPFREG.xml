@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ConfigurationContainer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="Parametrization tree for EDIABAS" Compression="Zip" MajorVersion="1" MinorVersion="0">
+  <Header>
+    <Version Major="1" Minor="2" />
+    <Adapter Name="BMW-EDIABAS-Adapter">
+      <ClassReference FullClassName="Siemens.SidisEnterprise.BaseSystem.DiagnosticDevices.Vehicle.Ediabas.Adapter.BMW.EdiabasAdapter" Location="Siemens.SEP.Ediabas.Adapter.BMW" />
+      <SubDeviceCollection />
+    </Adapter>
+  </Header>
+  <Body>
+    <Configuration Name="EDIABAS_SpExtract">
+      <Run xsi:type="SingleChoice" Name="Run">
+        <Children>
+          <Node xsi:type="SingleChoice" Name="Group">
+            <Children>
+              <Node xsi:type="SingleChoice" Name="G_MOTOR">
+                <Children>
+                  <Node xsi:type="SingleChoice" Name="VirtualVariantJob">
+                    <Children>
+                      <Node xsi:type="Executable" Name="ABGLEICH_CSF_PROG">
+                        <Children>
+                          <Node xsi:type="All" Name="Argument">
+                            <Children>
+                              <Node xsi:type="Value" Name="ECUGroupOrVariant">
+                                <Literal>
+                                  <Text TranslationMode="All" />
+                                </Literal>
+                              </Node>
+                              <Node xsi:type="Value" Name="SERVICE">
+                                <Literal>
+                                  <Text TranslationMode="All">EEPROM</Text>
+                                </Literal>
+                              </Node>
+                              <Node xsi:type="Value" Name="LABEL">
+                                <Literal>
+                                  <Text TranslationMode="All">QFL</Text>
+                                </Literal>
+                              </Node>
+                              <Node xsi:type="Value" Name="VALUE">
+                                <Literal>
+                                  <Text TranslationMode="All">200</Text>
+                                </Literal>
+                              </Node>
+                            </Children>
+                          </Node>
+                        </Children>
+                        <Result xsi:type="All" Name="Result">
+                          <Children>
+                            <Node xsi:type="MultipleChoice" Name="Status">
+                              <Children>
+                                <Node xsi:type="Value" Name="JOB_STATUS">
+                                  <Literal>
+                                    <Text TranslationMode="All" />
+                                  </Literal>
+                                </Node>
+                              </Children>
+                            </Node>
+                          </Children>
+                        </Result>
+                      </Node>
+                    </Children>
+                  </Node>
+                </Children>
+              </Node>
+            </Children>
+          </Node>
+        </Children>
+      </Run>
+    </Configuration>
+  </Body>
+</ConfigurationContainer>
