@@ -454,6 +454,8 @@ DPF Regeneration:
 ABL_DIT_AS1365_BX7_DPFREG.Regeneration()
 DPFREG.xml:
 configurationContainer.AddRunOverride("/Run/Group/G_MOTOR/VirtualVariantJob/ABGLEICH_CSF_PROG/Argument/ECUGroupOrVariant");
+EDIABASAdapter.DoParameterization();
+ECUKom.apiJob("D83BX7C0", "ABGLEICH_CSF_PROG", "EEPROM;QFL;200")
 
 Log files:
 ==========
