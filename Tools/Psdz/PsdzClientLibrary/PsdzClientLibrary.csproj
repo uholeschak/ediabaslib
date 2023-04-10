@@ -127,19 +127,23 @@
     <Compile Include="Contracts\IFscType.cs" />
     <Compile Include="Contracts\INavFSCProvided.cs" />
     <Compile Include="Contracts\ITransmissionDataType.cs" />
+    <Compile Include="Core\Adapter.cs" />
     <Compile Include="Core\AIF.cs" />
     <Compile Include="Core\AndExpression.cs" />
     <Compile Include="Core\AuthorAPIAttribute.cs" />
     <Compile Include="Core\BaseEcuCharacteristics.cs" />
     <Compile Include="Core\BasicFeaturesVci.cs" />
+    <Compile Include="Core\Body.cs" />
     <Compile Include="Core\BusInterConnectionEntry.cs" />
     <Compile Include="Core\BusLogisticsEntry.cs" />
     <Compile Include="Core\BusNameEntry.cs" />
     <Compile Include="Core\CharacteristicExpression.cs" />
     <Compile Include="Core\CharacteristicSet.cs" />
+    <Compile Include="Core\ClassReference.cs" />
     <Compile Include="Core\ClientDefinition.cs" />
     <Compile Include="Core\CombinedEcuHousingEntry.cs" />
     <Compile Include="Core\CompareExpression.cs" />
+    <Compile Include="Core\ConfigurationContainer.cs" />
     <Compile Include="Core\CountryExpression.cs" />
     <Compile Include="Core\DateExpression.cs" />
     <Compile Include="Core\EbcdicVIN7Comparer.cs" />
@@ -164,6 +168,9 @@
     <Compile Include="Core\GearboxUtility.cs" />
     <Compile Include="Core\GenericEcuCharacteristics.cs" />
     <Compile Include="Core\GenericMotor.cs" />
+    <Compile Include="Core\HardenedStringObjectDictionary.cs" />
+    <Compile Include="Core\Header.cs" />
+    <Compile Include="Core\HeaderVersion.cs" />
     <Compile Include="Core\HeatMotor.cs" />
     <Compile Include="Core\IBusInterConnectionEntry.cs" />
     <Compile Include="Core\IBusLogisticsEntry.cs" />
@@ -175,6 +182,7 @@
     <Compile Include="Core\IEcuTreeConfiguration.cs" />
     <Compile Include="Core\IEcuVariantLocator.cs" />
     <Compile Include="Core\IFFMDynamicResolver.cs" />
+    <Compile Include="Core\IParameters.cs" />
     <Compile Include="Core\IRuleExpression.cs" />
     <Compile Include="Core\ISalapaLocalizedEntry.cs" />
     <Compile Include="Core\ISGBDBusLogisticsEntry.cs" />
@@ -186,6 +194,7 @@
     <Compile Include="Core\NotExpression.cs" />
     <Compile Include="Core\ObservableCollectionEx.cs" />
     <Compile Include="Core\OrExpression.cs" />
+    <Compile Include="Core\ParameterContainer.cs" />
     <Compile Include="Core\RuleExpression.cs" />
     <Compile Include="Core\SaLaPaExpression.cs" />
     <Compile Include="Core\SALAPALocalizedEntry.cs" />
@@ -193,6 +202,8 @@
     <Compile Include="Core\SiFaExpression.cs" />
     <Compile Include="Core\SingleAssignmentExpression.cs" />
     <Compile Include="Core\SpecialEcuCharacteristics.cs" />
+    <Compile Include="Core\SubDevice.cs" />
+    <Compile Include="Core\SubDeviceCollectionSubDevice.cs" />
     <Compile Include="Core\SVK.cs" />
     <Compile Include="Core\Symbol.cs" />
     <Compile Include="Core\TransmissionDataType.cs" />
@@ -216,6 +227,7 @@
     <Compile Include="Core\XGBMBusLogisticsEntry.cs" />
     <Compile Include="DetectVehicle.cs" />
     <Compile Include="Core\DiagnosticsBusinessData.cs" />
+    <Compile Include="HeaderAdapter.cs" />
     <Compile Include="PdszDatabase.cs" />
     <Compile Include="Programming\AsamJobInputDictionary.cs" />
     <Compile Include="Programming\BindingDetailsStatus.cs" />
