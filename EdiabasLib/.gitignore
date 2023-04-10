@@ -8,3 +8,4 @@ Package
 *.VC.db
 /packages/
 *.sln.DotSettings.user
+/x64/
