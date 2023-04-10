@@ -452,6 +452,8 @@ EcuFunctionService.RetrieveFunctionDefinition()
 DPF Regeneration:
 =================
 ABL_DIT_AS1365_BX7_DPFREG.Regeneration()
+DPFREG.xml:
+configurationContainer.AddRunOverride("/Run/Group/G_MOTOR/VirtualVariantJob/ABGLEICH_CSF_PROG/Argument/ECUGroupOrVariant");
 
 Log files:
 ==========
