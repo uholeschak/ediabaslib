@@ -201,12 +201,12 @@ namespace PsdzClient.Core
             }
             return false;
         }
-#if false
+
         public IDiagnosticDeviceResult Execute()
         {
             return Execute(null);
         }
-
+#if false
         private void MarkAsFastaRelevant(ECUJob job, IEnumerable<string> jobNames)
         {
             jobNames.ForEach(delegate (string fastaRelevantJobName)
@@ -233,9 +233,10 @@ namespace PsdzClient.Core
             while (!string.IsNullOrEmpty(text));
             return list;
         }
-#if false
+
         public IDiagnosticDeviceResult Execute(ParameterContainer inParameters)
         {
+#if false
             try
             {
                 if (ecuKom == null)
@@ -270,7 +271,9 @@ namespace PsdzClient.Core
                 //Log.WarningException("EDIABASAdapter.Execute()", exception);
             }
             return new EDIABASAdapterDeviceResult(new ECUJob(), inParameters);
-        }
+#else
+            return null;
 #endif
+        }
     }
 }
