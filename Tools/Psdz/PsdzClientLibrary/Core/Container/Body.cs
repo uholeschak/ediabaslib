@@ -6,7 +6,7 @@ using System.Data.Entity;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 
-namespace PsdzClient.Core
+namespace PsdzClient.Core.Container
 {
     [Serializable]
     [DataContract(Name = "Body")]

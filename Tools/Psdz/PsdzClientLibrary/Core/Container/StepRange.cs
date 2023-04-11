@@ -4,7 +4,7 @@ using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 
-namespace PsdzClient.Core
+namespace PsdzClient.Core.Container
 {
     [Serializable]
     [DataContract(Name = "StepRange")]

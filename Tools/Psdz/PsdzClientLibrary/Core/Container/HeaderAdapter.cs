@@ -3,7 +3,7 @@ using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
-namespace PsdzClient.Core
+namespace PsdzClient.Core.Container
 {
     [Serializable]
     [DesignerCategory("code")]

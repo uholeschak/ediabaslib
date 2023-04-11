@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using PsdzClient.Utility;
 
-namespace PsdzClient.Core
+namespace PsdzClient.Core.Container
 {
     public class EDIABASAdapter : BaseAdapter
     {

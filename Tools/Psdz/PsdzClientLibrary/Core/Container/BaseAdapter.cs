@@ -1,7 +1,7 @@
 ﻿// BMW.Rheingold.ISTA.CoreFramework.BaseAdapter
 using System;
 
-namespace PsdzClient.Core
+namespace PsdzClient.Core.Container
 {
     public class BaseAdapter
     {

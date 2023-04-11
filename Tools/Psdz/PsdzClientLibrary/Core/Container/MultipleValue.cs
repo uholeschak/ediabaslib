@@ -6,7 +6,7 @@ using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 
-namespace PsdzClient.Core
+namespace PsdzClient.Core.Container
 {
     [Serializable]
     [GeneratedCode("Xsd2Code", "3.4.0.32990")]

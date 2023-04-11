@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace PsdzClient.Core
+namespace PsdzClient.Core.Container
 {
     [Serializable]
     [DesignerCategory("code")]
