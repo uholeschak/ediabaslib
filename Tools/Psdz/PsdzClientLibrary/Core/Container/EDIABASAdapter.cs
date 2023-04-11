@@ -16,7 +16,7 @@ namespace PsdzClient.Core.Container
 
         private string ecuJob = string.Empty;
 
-        //private ECUKom ecuKom;
+        private ECUKom ecuKom;
 
         private string ecuParam = string.Empty;
 
@@ -24,10 +24,10 @@ namespace PsdzClient.Core.Container
 
         private bool parameterizationDone;
 
-        public EDIABASAdapter(bool StandardErrorHandling, ConfigurationContainer configContainer)
+        public EDIABASAdapter(bool StandardErrorHandling, ECUKom ecuKom, ConfigurationContainer configContainer)
             : base(StandardErrorHandling, configContainer)
         {
-            //this.ecuKom = ecuKom;
+            this.ecuKom = ecuKom;
         }
 
         public void DoParameterization()
@@ -206,7 +206,7 @@ namespace PsdzClient.Core.Container
         {
             return Execute(null);
         }
-#if false
+
         private void MarkAsFastaRelevant(ECUJob job, IEnumerable<string> jobNames)
         {
             jobNames.ForEach(delegate (string fastaRelevantJobName)
@@ -214,7 +214,7 @@ namespace PsdzClient.Core.Container
                 job.maskResultFASTARelevant(0, -1, fastaRelevantJobName);
             });
         }
-#endif
+
         private IEnumerable<string> RetrieveFastaRelevantJobNames(ParameterContainer inParam)
         {
             List<string> list = new List<string>();
