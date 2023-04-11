@@ -151,6 +151,8 @@
     <Compile Include="Core\CompareExpression.cs" />
     <Compile Include="Core\Container\Configuration.cs" />
     <Compile Include="Core\Container\ConfigurationContainer.cs" />
+    <Compile Include="Core\Container\IEcuKom.cs" />
+    <Compile Include="Core\Container\IEcuKomApi.cs" />
     <Compile Include="Core\CountryExpression.cs" />
     <Compile Include="Core\DateExpression.cs" />
     <Compile Include="Core\EbcdicVIN7Comparer.cs" />
