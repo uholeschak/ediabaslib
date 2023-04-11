@@ -236,7 +236,6 @@ namespace PsdzClient.Core.Container
 
         public IDiagnosticDeviceResult Execute(ParameterContainer inParameters)
         {
-#if false
             try
             {
                 if (ecuKom == null)
@@ -271,9 +270,6 @@ namespace PsdzClient.Core.Container
                 //Log.WarningException("EDIABASAdapter.Execute()", exception);
             }
             return new EDIABASAdapterDeviceResult(new ECUJob(), inParameters);
-#else
-            return null;
-#endif
         }
     }
 }

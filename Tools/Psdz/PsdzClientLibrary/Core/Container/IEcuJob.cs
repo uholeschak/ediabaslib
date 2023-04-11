@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace PsdzClient.Core
+namespace PsdzClient.Core.Container
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IEcuJob : INotifyPropertyChanged

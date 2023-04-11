@@ -402,7 +402,27 @@ namespace PsdzClient.Core.Container
             return null;
         }
 
+        public ECUJob apiJob(string variant, string job, string param, string resultFilter, int retries, string sgbd = "")
+        {
+            return null;
+        }
+
+        public ECUJob apiJob(string ecu, string job, string param, string resultFilter)
+        {
+            return null;
+        }
+
         public IEcuJob ApiJobData(string ecu, string job, byte[] param, int paramlen, string resultFilter = "", int retries = 0)
+        {
+            return null;
+        }
+
+        public ECUJob apiJobData(string ecu, string job, byte[] param, int paramlen, string resultFilter, int retries)
+        {
+            return null;
+        }
+
+        public ECUJob apiJobData(string ecu, string job, byte[] param, int paramlen, string resultFilter)
         {
             return null;
         }
