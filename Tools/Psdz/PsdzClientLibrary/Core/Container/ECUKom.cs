@@ -31,7 +31,6 @@ namespace PsdzClient.Core.Container
 
         private const int DEFAULT_EDIABAS_TRACE_SIZE = 32767;
 
-        //private API api;
         private ApiInternal api;
 
         private string _APP;
@@ -40,9 +39,9 @@ namespace PsdzClient.Core.Container
 
         private bool isProblemHandlingTraceRunning;
 
-        //private List<string> apiJobNamesToBeCached = CachedApiJobConfigParser.Parse();
+        private List<string> apiJobNamesToBeCached = new List<string>();
 
-        //private DateTime lastJobExecution;
+        private DateTime lastJobExecution;
 
         private VCIDevice vci;
 
@@ -131,12 +130,12 @@ namespace PsdzClient.Core.Container
 
         public IEcuJob DefaultApiJob(string ecu, string job, string param, string resultFilter)
         {
-            return null;
+            return apiJob(ecu, job, param, resultFilter);
         }
 
         public IEcuJob ApiJobWithRetries(string variant, string job, string param, string resultFilter, int retries)
         {
-            return null;
+            return apiJob(variant, job, param, resultFilter, retries, null);
         }
 
         public ECUKom()
@@ -156,6 +155,14 @@ namespace PsdzClient.Core.Container
 
         public void End()
         {
+            try
+            {
+                api.apiEnd();
+            }
+            catch (Exception)
+            {
+                //Log.WarningException("ECUKom.End()", exception);
+            }
         }
 
         public string GetEdiabasIniFilePath(string iniFilename)
@@ -190,22 +197,21 @@ namespace PsdzClient.Core.Container
 
         public int GetCacheListNumberOfJobsToBeRetrieved()
         {
-            return 0;
-            //return apiJobNamesToBeCached.Count;
+            return apiJobNamesToBeCached.Count;
         }
 
         public void SetLogLevelToNormal()
         {
-            //api.apiSetConfig("ApiTrace", 0.ToString(CultureInfo.InvariantCulture));
+            api.apiSetConfig("ApiTrace", 0.ToString(CultureInfo.InvariantCulture));
             isProblemHandlingTraceRunning = false;
         }
 
         public void SetLogLevelToMax()
         {
-            //int configint = ConfigSettings.getConfigint("BMW.Rheingold.Logging.Level.Trace.Ediabas", 5);
-            //int configint2 = ConfigSettings.getConfigint("BMW.Rheingold.Logging.Trace.Ediabas.Size", 32767);
-            //api.apiSetConfig("ApiTrace", configint.ToString(CultureInfo.InvariantCulture));
-            //api.apiSetConfig("TraceSize", configint2.ToString(CultureInfo.InvariantCulture));
+            int configint = 5;
+            int configint2 = 32767;
+            api.apiSetConfig("ApiTrace", configint.ToString(CultureInfo.InvariantCulture));
+            api.apiSetConfig("TraceSize", configint2.ToString(CultureInfo.InvariantCulture));
             isProblemHandlingTraceRunning = true;
         }
 
@@ -227,12 +233,44 @@ namespace PsdzClient.Core.Container
 
         public bool ApiInitExt(string ifh, string unit, string app, string reserved)
         {
-            //return api.apiInitExt(ifh, unit, app, reserved);
-            return true;
+            return api.apiInitExt(ifh, unit, app, reserved);
         }
 
         public void SetEcuPath(bool logging)
         {
+            try
+            {
+                string pathString = "..\\..\\..\\Ecu\\";
+                if (!string.IsNullOrEmpty(pathString))
+                {
+                    string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                    if (logging)
+                    {
+                        //Log.Info("ECUKom.SetEcuPath()", "found EcuPath config setting: {0} AppDomain.BaseDirectory: {1}", pathString, baseDirectory);
+                    }
+                    if (Path.IsPathRooted(pathString))
+                    {
+                        api.apiSetConfig("EcuPath", Path.GetFullPath(pathString));
+                    }
+                    else
+                    {
+                        api.apiSetConfig("EcuPath", Path.GetFullPath(Path.Combine(baseDirectory, pathString)));
+                    }
+                    api.apiGetConfig("EcuPath", out var cfgValue);
+                    if (logging)
+                    {
+                        //Log.Info("ECUKom.SetEcuPath()", "Used EcuPath: {0}", cfgValue);
+                    }
+                }
+                else if (logging)
+                {
+                    //Log.Info("ECUKom.SetEcuPath()", "no config for specific ecu path used; using default values from ediabas config");
+                }
+            }
+            catch (Exception)
+            {
+                //Log.ErrorException("ECUKom.SetEcuPath()", exception);
+            }
         }
 
         public static string APIFormatName(int resultFormat)
