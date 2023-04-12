@@ -409,6 +409,39 @@ namespace PsdzClient.Core.Container
 
         public ECUJob apiJob(string ecu, string job, string param, string resultFilter)
         {
+            try
+            {
+                ECUJob eCUJob = null;
+                if (string.Compare(ecu, "FA", StringComparison.OrdinalIgnoreCase) == 0 && string.Compare(job, "FA_STREAM2STRUCT", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    int len;
+                    byte[] param2 = FormatConverter.Ascii2ByteArray(param, out len);
+                    eCUJob = apiJobData("FA", "FA_STREAM2STRUCT", param2, len, string.Empty);
+                }
+                else
+                {
+                    eCUJob = apiJob(ecu, job, param, resultFilter, cacheAdding: true);
+                }
+                return eCUJob;
+            }
+            catch (Exception)
+            {
+                //Log.WarningException("ECUKom.apiJob()", exception);
+            }
+            ECUJob eCUJob2 = new ECUJob();
+            eCUJob2.EcuName = ecu;
+            eCUJob2.JobName = job;
+            eCUJob2.JobParam = param;
+            eCUJob2.ExecutionStartTime = DateTime.Now;
+            eCUJob2.ExecutionEndTime = eCUJob2.ExecutionStartTime;
+            eCUJob2.JobErrorCode = 91;
+            eCUJob2.JobErrorText = "SYS-0001: ILLEGAL FUNCTION";
+            eCUJob2.JobResult = new List<ECUResult>();
+            return eCUJob2;
+        }
+
+        public ECUJob apiJob(string ecu, string jobName, string param, string resultFilter, bool cacheAdding)
+        {
             return null;
         }
 
