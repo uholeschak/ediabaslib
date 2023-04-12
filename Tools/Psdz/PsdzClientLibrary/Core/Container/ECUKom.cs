@@ -41,7 +41,7 @@ namespace PsdzClient.Core.Container
 
         private List<string> apiJobNamesToBeCached = new List<string>();
 
-        private DateTime lastJobExecution;
+        //private DateTime lastJobExecution;
 
         private VCIDevice vci;
 
@@ -419,27 +419,128 @@ namespace PsdzClient.Core.Container
 
         public string GetLogPath()
         {
-            return null;
+            string result = null;
+            try
+            {
+                if (api.apiGetConfig("TracePath", out string value))
+                {
+                    result = value;
+                }
+            }
+            catch (Exception)
+            {
+                //Log.WarningException("ECUKom.getLogPath()", exception);
+            }
+            return result;
         }
 
         public bool InitVCI(IVciDevice device, bool logging)
         {
+            if (device == null)
+            {
+                //Log.Warning("ECUKom.InitVCI()", "failed because device was null");
+                return false;
+            }
+            try
+            {
+                bool flag;
+                switch (device.VCIType)
+                {
+                    case VCIDeviceType.ENET:
+                        flag = api.apiInitExt("ENET", string.Empty, string.Empty, "remotehost=" + device.IPAddress);
+                        break;
+                    case VCIDeviceType.ICOM:
+                        {
+                            int configint3 = 6801;
+                            if (!string.IsNullOrEmpty(device.VIN) && device.VIN.Length == 17 && !device.VIN.Contains("XXXX"))
+                            {
+                                flag = api.apiInitExt("ENET", "_", "Rheingold", "RemoteHost=" + device.IPAddress + ";DiagnosticPort=50160;ControlPort=50161");
+                                break;
+                            }
+                            flag = api.apiInitExt("REMOTE::remotehost=" + device.IPAddress + ";Port=" + configint3, "_", "Rheingold", string.Empty);
+                            break;
+                        }
+                    case VCIDeviceType.SIM:
+                        flag = true;
+                        break;
+                    case VCIDeviceType.OMITEC:
+                        flag = api.apiInitExt("STD:OMITEC", "_", "Rheingold", string.Empty);
+                        break;
+                    default:
+                        flag = api.apiInit();
+                        break;
+                    case VCIDeviceType.TELESERVICE:
+                        {
+                            flag = false;
+                            break;
+                        }
+                    case VCIDeviceType.IRAM:
+                        flag = false;
+                        break;
+                    case VCIDeviceType.PTT:
+                        flag = false;
+                        break;
+                }
+                if (api.apiErrorCode() != 0)
+                {
+                    //Log.Warning("ECUKom.InitVCI()", "failed when init IFH with : {0} / {1}", api.apiErrorCode(), api.apiErrorText());
+                }
+                string pathString = "..\\..\\..\\logs";
+                api.apiSetConfig("TracePath", Path.GetFullPath(pathString));
+                if (flag)
+                {
+                    vci = device as VCIDevice;
+                    if (logging)
+                    {
+                        api.apiGetConfig("TracePath", out var cfgValue);
+                        //Log.Info("ECUKom.InitVCI()", "Ediabas TracePath is loaded: {0}", cfgValue);
+                        api.apiGetConfig("EdiabasVersion", out var cfgValue2);
+                        //Log.Info("ECUKom.InitVCI()", "Ediabas version loaded: {0}", cfgValue2);
+                        api.apiGetConfig("IfhVersion", out var cfgValue3);
+                        //Log.Info("ECUKom.InitVCI()", "IfhVersion version loaded: {0}", cfgValue3);
+                        api.apiGetConfig("Session", out var cfgValue4);
+                        //Log.Info("ECUKom.InitVCI()", "Session name: {0}", cfgValue4);
+                        api.apiGetConfig("Interface", out var cfgValue5);
+                        //Log.Info("ECUKom.InitVCI()", "Interface type loaded: {0}", cfgValue5);
+                        if (device.VCIType == VCIDeviceType.ICOM || (!string.IsNullOrEmpty(cfgValue5) && cfgValue5.StartsWith("remote", StringComparison.OrdinalIgnoreCase)))
+                        {
+                            string cfgValue6 = null;
+                            api.apiGetConfig("DisconnectOnApiEnd", out var cfgValue7);
+                            //Log.Info("ECUKom.InitVCI()", "DisconnectOnApiEnd configured: {0}", cfgValue7);
+                            api.apiGetConfig("TimeoutReceive", out var cfgValue8);
+                            //Log.Info("ECUKom.InitVCI()", "TimeoutConnect configured: {0}", cfgValue6);
+                            api.apiGetConfig("TimeoutConnect", out cfgValue6);
+                            //Log.Info("ECUKom.InitVCI()", "TimeoutReceive configured: {0}", cfgValue8);
+                            api.apiGetConfig("TimeoutFunction", out var cfgValue9);
+                            //Log.Info("ECUKom.InitVCI()", "TimeoutFunction configured: {0}", cfgValue9);
+                            api.apiGetConfig("TimeResponsePending", out var cfgValue10);
+                            //Log.Info("ECUKom.InitVCI()", "TimeResponsePending configured: {0}", cfgValue10);
+                        }
+                    }
+                    SetEcuPath(logging);
+                }
+                return flag;
+            }
+            catch (Exception)
+            {
+                //Log.WarningException("ECUKom.InitVCI()", exception);
+            }
             return true;
         }
 
         public IEcuJob ApiJob(string ecu, string job, string param, string resultFilter, bool cacheAdding)
         {
-            return null;
+            return apiJob(ecu, job, param, resultFilter, cacheAdding);
         }
 
         public IEcuJob ApiJob(string ecu, string job, string param, string resultFilter, int retries, bool fastaActive)
         {
-            return null;
+            return (retries == 0) ? apiJob(ecu, job, param, resultFilter) : apiJob(ecu, job, param, resultFilter, retries, 0);
         }
 
         public IEcuJob ApiJob(string ecu, string job, string param, int retries, int millisecondsTimeout)
         {
-            return null;
+            return (retries == 0) ? apiJob(ecu, job, param, string.Empty) : apiJob(ecu, job, param, string.Empty, retries, millisecondsTimeout);
         }
 
         public ECUJob apiJob(string variant, string job, string param, string resultFilter, int retries, string sgbd = "")
@@ -479,7 +580,7 @@ namespace PsdzClient.Core.Container
                 eCUJob.JobErrorCode = 90;
                 eCUJob.JobErrorText = "SYS-0000: INTERNAL ERROR";
                 eCUJob.JobResult = new List<ECUResult>();
-                //AddJobInCache(eCUJob);
+                AddJobInCache(eCUJob);
                 return eCUJob;
             }
         }
@@ -540,6 +641,7 @@ namespace PsdzClient.Core.Container
             {
                 resultFilter = string.Empty;
             }
+
             int num2 = 0;
             ECUJob eCUJob5 = new ECUJob();
             eCUJob5.EcuName = ecu;
@@ -695,7 +797,7 @@ namespace PsdzClient.Core.Container
                 //Log.WarningException("ECUKom.apiJob()", exception);
             }
             eCUJob5.ExecutionEndTime = DateTime.Now;
-            //AddJobInCache(eCUJob5, cacheAdding);
+            AddJobInCache(eCUJob5, cacheAdding);
             return eCUJob5;
         }
 
@@ -716,7 +818,62 @@ namespace PsdzClient.Core.Container
 
         public IEcuJob ExecuteJobOverEnet(string icomAddress, string ecu, string job, string param, string resultFilter = "", int retries = 0)
         {
-            return null;
+            End();
+            string istaLogPath = GetIstaLogPath();
+            if (string.IsNullOrEmpty(istaLogPath))
+            {
+                //Log.Warning("EdiabasUtils.ExecuteJobOverEnet()", "Path to ista log cannot be found.");
+                return null;
+            }
+            string text = (IsProblemHandlingTraceRunning ? "5" : "0");
+            if (!ApiInitExt("ENET", "_", "Rheingold", "RemoteHost=" + icomAddress + ";DiagnosticPort=51560;ControlPort=51561;TracePath=" + istaLogPath + ";ApiTrace=" + text))
+            {
+                //Log.Warning("EdiabasUtils.ExecuteJobOverEnet()", "Failed switching to ENET. The Job will not be executed. The EDIABAS connection will be refreshed.");
+                RefreshEdiabasConnection();
+                return null;
+            }
+            SetEcuPath(logging: true);
+            IEcuJob result = ApiJob(ecu, job, param, resultFilter, retries, true);
+            RefreshEdiabasConnection();
+            return result;
         }
+
+        private void RefreshEdiabasConnection()
+        {
+            if (Refresh())
+            {
+                //Log.Info("EdiabasUtils.RefreshEdiabasConnection()", "Successfully connected to current VCI device.");
+            }
+            else
+            {
+                //Log.Error("EdiabasUtils.RefreshEdiabasConnection()", "Failed to connect to current VCI device!");
+            }
+        }
+
+        private static string GetIstaLogPath()
+        {
+            string result = string.Empty;
+            try
+            {
+                string pathString = "..\\..\\..\\logs";
+                result = Path.GetFullPath(pathString);
+            }
+            catch (Exception)
+            {
+                //Log.Warning("EdiabasUtils.GetIstaLogPath()", "Exception occurred: ", ex);
+            }
+            return result;
+        }
+
+        private void AddJobInCache(ECUJob job, bool cacheCondition = true)
+        {
+            if (jobList != null && cacheCondition)
+            {
+                string msg = "Store in Cache: EcuName:" + job.EcuName + ", JobName:" + job.JobName + ", JobParam:" + job.JobParam;
+                //Log.Info("ECUKom.AddJobInCache()", msg);
+                jobList.Add(job);
+            }
+        }
+
     }
 }
