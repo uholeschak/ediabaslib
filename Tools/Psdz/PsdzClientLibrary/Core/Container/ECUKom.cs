@@ -404,7 +404,44 @@ namespace PsdzClient.Core.Container
 
         public ECUJob apiJob(string variant, string job, string param, string resultFilter, int retries, string sgbd = "")
         {
-            return null;
+            return apiJob(variant, job, param, resultFilter, retries, 0);
+        }
+
+        public ECUJob apiJob(string ecu, string jobName, string param, string resultFilter, int retries, int millisecondsTimeout)
+        {
+            try
+            {
+                ECUJob eCUJob = apiJob(ecu, jobName, param, resultFilter);
+                if (eCUJob.JobErrorCode == 98)
+                {
+                    return eCUJob;
+                }
+                ushort num2 = 1;
+                while (num2 < retries && !eCUJob.IsDone())
+                {
+                    Thread.Sleep(millisecondsTimeout);
+                    //Log.Debug(VehicleCommunication.DebugLevel, "ECUKom.apiJob()", "(Sgbd: {0}, {1}) - is retrying {2} times", ecu, jobName, num2);
+                    eCUJob = apiJob(ecu, jobName, param, resultFilter);
+                    num2 = (ushort)(num2 + 1);
+                }
+                return eCUJob;
+            }
+            catch (Exception)
+            {
+                //Log.WarningException("ECUKom.apiJob()", exception);
+                ECUJob eCUJob = new ECUJob();
+                eCUJob.EcuName = ecu;
+                eCUJob.ExecutionStartTime = DateTime.Now;
+                eCUJob.ExecutionEndTime = eCUJob.ExecutionStartTime;
+                eCUJob.JobName = jobName;
+                eCUJob.JobParam = param;
+                eCUJob.JobResultFilter = resultFilter;
+                eCUJob.JobErrorCode = 90;
+                eCUJob.JobErrorText = "SYS-0000: INTERNAL ERROR";
+                eCUJob.JobResult = new List<ECUResult>();
+                //AddJobInCache(eCUJob);
+                return eCUJob;
+            }
         }
 
         public ECUJob apiJob(string ecu, string job, string param, string resultFilter)
