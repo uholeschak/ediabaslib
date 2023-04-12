@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnpatch", "dnpatch\dnpatch.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IonosDns", "IonosDns\IonosDns.csproj", "{F0536AF3-EA10-4B9C-ADFF-D45EA2FEF8EE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiInternal", "..\..\EdiabasLib\ApiInternal\ApiInternal.csproj", "{F125B68A-1FA7-4E2B-A055-C4F6D8F5F0CF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{F0536AF3-EA10-4B9C-ADFF-D45EA2FEF8EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F0536AF3-EA10-4B9C-ADFF-D45EA2FEF8EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F0536AF3-EA10-4B9C-ADFF-D45EA2FEF8EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F125B68A-1FA7-4E2B-A055-C4F6D8F5F0CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F125B68A-1FA7-4E2B-A055-C4F6D8F5F0CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F125B68A-1FA7-4E2B-A055-C4F6D8F5F0CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F125B68A-1FA7-4E2B-A055-C4F6D8F5F0CF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

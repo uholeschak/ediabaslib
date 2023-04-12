@@ -361,6 +361,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\EdiabasLib\ApiInternal\ApiInternal.csproj">
+      <Project>{f125b68a-1fa7-4e2b-a055-c4f6d8f5f0cf}</Project>
+      <Name>ApiInternal</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\EdiabasLib\EdiabasLib\EdiabasLib.csproj">
       <Project>{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}</Project>
       <Name>EdiabasLib</Name>
