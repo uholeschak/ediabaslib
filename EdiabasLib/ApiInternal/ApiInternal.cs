@@ -498,7 +498,11 @@ namespace Ediabas
             };
         }
 
-        public ApiInternal(EdiabasNet ediabas = null)
+        public ApiInternal() : this(null)
+        {
+        }
+
+        public ApiInternal(EdiabasNet ediabas)
         {
             _ediabas = ediabas;
             _busyCount = 0;
