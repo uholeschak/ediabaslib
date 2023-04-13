@@ -829,7 +829,7 @@ namespace PsdzClient.Core.Container
                 }
                 return eCUJob;
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 //Log.WarningException("ECUKom.apiJobData()", exception);
                 ECUJob eCUJob = new ECUJob();
@@ -1026,7 +1026,7 @@ namespace PsdzClient.Core.Container
             {
                 //Log.Warning("ECUKom.apiJobData()", "buggy sgbd ({0}, {1}, {2}, {3}) apiError: {4} found; wrong result set length was set", ecu, job, param, resultFilter, eCUJob4.JobErrorText);
             }
-            catch (Exception ex3)
+            catch (Exception)
             {
                 //Log.Warning("ECUKom.apiJobData()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - failed with exception: {4}", ecu, job, param, resultFilter, ex3.ToString());
             }
