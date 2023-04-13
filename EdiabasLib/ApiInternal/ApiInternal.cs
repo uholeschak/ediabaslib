@@ -498,9 +498,9 @@ namespace Ediabas
             };
         }
 
-        public ApiInternal()
+        public ApiInternal(EdiabasNet ediabas = null)
         {
-            _ediabas = null;
+            _ediabas = ediabas;
             _busyCount = 0;
             _apiStateValue = APIREADY;
             _localError = EDIABAS_ERR_NONE;
