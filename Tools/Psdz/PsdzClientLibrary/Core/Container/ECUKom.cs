@@ -1129,10 +1129,79 @@ namespace PsdzClient.Core.Container
         {
             if (jobList != null && cacheCondition)
             {
-                string msg = "Store in Cache: EcuName:" + job.EcuName + ", JobName:" + job.JobName + ", JobParam:" + job.JobParam;
+                //string msg = "Store in Cache: EcuName:" + job.EcuName + ", JobName:" + job.JobName + ", JobParam:" + job.JobParam;
                 //Log.Info("ECUKom.AddJobInCache()", msg);
                 jobList.Add(job);
             }
+        }
+
+        private static string GetStack()
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            try
+            {
+                int num2 = 1;
+                do
+                {
+                    MethodBase method = new StackFrame(num2).GetMethod();
+                    string name = method.DeclaringType.Name;
+                    stringBuilder.Append("-> " + name + "." + method.Name + " ");
+                    num2++;
+                }
+                while (num2 < 10);
+            }
+            catch (Exception)
+            {
+                //Log.WarningException(Log.CurrentMethod(), exception);
+            }
+            return stringBuilder.ToString();
+        }
+
+        public ECUJob apiJobWaitWhenPending(string ecu, string job, string param, string resultFilter, double timeout)
+        {
+            ECUJob eCUJob = null;
+            bool flag = false;
+            DateTime dateTime = DateTime.Now.AddMilliseconds(timeout);
+            try
+            {
+                do
+                {
+                    if (!flag && dateTime > DateTime.Now)
+                    {
+                        eCUJob = apiJob(ecu, job, param, resultFilter);
+                        continue;
+                    }
+                    return eCUJob;
+                }
+                while (!eCUJob.IsDone() || eCUJob.IsJobState("ERROR_ECU_REQUEST_CORRECTLY_RECEIVED__RESPONSE_PENDING"));
+                return eCUJob;
+            }
+            catch (Exception)
+            {
+                //Log.WarningException("ECUKom.apiJobWaitWhenPending()", exception);
+                eCUJob = new ECUJob();
+                eCUJob.EcuName = ecu;
+                eCUJob.ExecutionStartTime = DateTime.Now;
+                eCUJob.ExecutionEndTime = eCUJob.ExecutionStartTime;
+                eCUJob.JobName = job;
+                eCUJob.JobParam = param;
+                eCUJob.JobResultFilter = resultFilter;
+                eCUJob.JobErrorCode = 90;
+                eCUJob.JobErrorText = "SYS-0000: INTERNAL ERROR";
+                eCUJob.JobResult = new List<ECUResult>();
+                AddJobInCache(eCUJob);
+                return eCUJob;
+            }
+        }
+
+        public bool getConfig(string cfgName, out string cfgValue)
+        {
+            return api.apiGetConfig(cfgName, out cfgValue);
+        }
+
+        public int getState()
+        {
+            return api.apiState();
         }
     }
 }
