@@ -42,7 +42,7 @@ namespace PsdzClient.Core.Container
 
         private List<string> apiJobNamesToBeCached = new List<string>();
 
-        //private DateTime lastJobExecution;
+        private DateTime lastJobExecution;
 
         private VCIDevice vci;
 
@@ -1084,6 +1084,47 @@ namespace PsdzClient.Core.Container
             return result;
         }
 
+        private ECUJob RetrieveEcuJobNoExecTime(IEnumerable<ECUJob> query, string ecuName, string jobName)
+        {
+            foreach (ECUJob item in query)
+            {
+                if (!ecuJobDictionary[ecuName + "-" + jobName].Contains(item))
+                {
+                    if (item.ExecutionStartTime > lastJobExecution)
+                    {
+                        lastJobExecution = GetLastExecutionTime(item.ExecutionStartTime);
+                    }
+                    ecuJobDictionary[ecuName + "-" + jobName].Add(item);
+                    //Log.Debug(VehicleCommunication.DebugLevel, 2, "ECUKom.GetJobFromCache()", "4th try: found job {0}/{1}/{2}/{3}/{4} at {5}", item.EcuName, item.JobName, item.JobParam, item.JobErrorCode, item.JobErrorText, item.ExecutionStartTime);
+                    CacheHitCounter++;
+                    return item;
+                }
+            }
+            ecuJobDictionary[ecuName + "-" + jobName].Clear();
+            ecuJobDictionary[ecuName + "-" + jobName].Add(query.First());
+            if (query.First().ExecutionStartTime > lastJobExecution)
+            {
+                lastJobExecution = GetLastExecutionTime(query.First().ExecutionStartTime);
+            }
+            //Log.Debug(VehicleCommunication.DebugLevel, 2, "ECUKom.GetJobFromCache()", "1st try: found job {0}/{1}/{2}/{3}/{4} at {5}", query.First().EcuName, query.First().JobName, query.First().JobParam, query.First().JobErrorCode, query.First().JobErrorText, query.First().ExecutionStartTime);
+            CacheHitCounter++;
+            return query.First();
+        }
+
+        private DateTime GetLastExecutionTime(DateTime executionStartTime)
+        {
+            IOrderedEnumerable<ECUJob> source = from job in jobList
+                where job.ExecutionStartTime > lastJobExecution
+                orderby job.ExecutionStartTime
+                select job;
+            if (source.FirstOrDefault().ExecutionStartTime < executionStartTime)
+            {
+                return source.FirstOrDefault().ExecutionStartTime;
+            }
+            return executionStartTime;
+        }
+
+
         private void AddJobInCache(ECUJob job, bool cacheCondition = true)
         {
             if (jobList != null && cacheCondition)
@@ -1093,6 +1134,5 @@ namespace PsdzClient.Core.Container
                 jobList.Add(job);
             }
         }
-
     }
 }
