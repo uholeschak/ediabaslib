@@ -12,6 +12,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using Ediabas;
+using EdiabasLib;
 using PsdzClient.Utility;
 
 namespace PsdzClient.Core.Container
@@ -143,9 +144,9 @@ namespace PsdzClient.Core.Container
         {
         }
 
-        public ECUKom(string app)
+        public ECUKom(string app, EdiabasNet ediabas = null)
         {
-            api = new ApiInternal();
+            api = new ApiInternal(ediabas);
             communicationMode = CommMode.Normal;
             jobList = new List<ECUJob>();
             APP = app;
@@ -300,7 +301,7 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        public static ECUKom DeSerialize(string filename)
+        public static ECUKom DeSerialize(string filename, EdiabasNet ediabas = null)
         {
             ECUKom eCUKom;
             try
@@ -313,7 +314,7 @@ namespace PsdzClient.Core.Container
             catch (Exception)
             {
                 //Log.WarningException("ECUKom.DeSerialize()", exception);
-                eCUKom = new ECUKom("Rheingold");
+                eCUKom = new ECUKom("Rheingold", ediabas);
             }
             VCIDevice vCIDevice = new VCIDevice(VCIDeviceType.SIM, "SIM", filename);
             vCIDevice.Serial = filename;
