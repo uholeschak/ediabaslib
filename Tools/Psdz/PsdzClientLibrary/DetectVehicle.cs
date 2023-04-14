@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using BmwFileReader;
 using EdiabasLib;
 using log4net;
+using PsdzClient.Core;
 using PsdzClient.Core.Container;
 
 namespace PsdzClient
@@ -631,7 +632,7 @@ namespace PsdzClient
 
                 EDIABASAdapter ediabasAdapter = new EDIABASAdapter(true, new ECUKom("DetectVehicle", _ediabas), configContainer);
                 ediabasAdapter.DoParameterization();
-                IDiagnosticDeviceResult diagnosticDeviceResult = ediabasAdapter.Execute();
+                IDiagnosticDeviceResult diagnosticDeviceResult = ediabasAdapter.Execute(new ParameterContainer());
                 if (diagnosticDeviceResult == null)
                 {
                     return null;
