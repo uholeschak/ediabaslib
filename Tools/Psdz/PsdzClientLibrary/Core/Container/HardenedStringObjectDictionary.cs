@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using BMW.Rheingold.CoreFramework;
 
-namespace PsdzClient.Core
+namespace PsdzClient.Core.Container
 {
     public class HardenedStringObjectDictionary : Dictionary<string, object>
     {

@@ -189,7 +189,7 @@
     <Compile Include="Core\GearboxUtility.cs" />
     <Compile Include="Core\GenericEcuCharacteristics.cs" />
     <Compile Include="Core\GenericMotor.cs" />
-    <Compile Include="Core\HardenedStringObjectDictionary.cs" />
+    <Compile Include="Core\Container\HardenedStringObjectDictionary.cs" />
     <Compile Include="Core\Container\Header.cs" />
     <Compile Include="Core\Container\HeaderVersion.cs" />
     <Compile Include="Core\HeatMotor.cs" />
