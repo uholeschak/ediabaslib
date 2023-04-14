@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using BmwFileReader;
 using EdiabasLib;
 using log4net;
+using PsdzClient.Core.Container;
 
 namespace PsdzClient
 {
@@ -609,7 +610,7 @@ namespace PsdzClient
             return voltage;
         }
 
-        public string ExecuteContainerXml(AbortDelegate abortFunc, string containerFile)
+        public string ExecuteContainerXml(AbortDelegate abortFunc, string configurationContainerXml)
         {
             string result = null;
 
@@ -622,6 +623,13 @@ namespace PsdzClient
                     return null;
                 }
 
+                ConfigurationContainer configContainer = ConfigurationContainer.Deserialize(configurationContainerXml);
+                if (configContainer == null)
+                {
+                    return null;
+                }
+
+                EDIABASAdapter ediabasAdapter = new EDIABASAdapter(true, new ECUKom("DetectVehicle", _ediabas), configContainer);
                 result = "OK";
             }
             catch (Exception ex)

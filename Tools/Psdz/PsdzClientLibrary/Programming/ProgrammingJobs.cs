@@ -850,11 +850,16 @@ namespace PsdzClient.Programming
             }
         }
 
-        public string ExecuteContainerXml(CancellationTokenSource cts, string xmlFile)
+        public string ExecuteContainerXml(CancellationTokenSource cts, string configurationContainerXml)
         {
             string result;
             try
             {
+                if (string.IsNullOrEmpty(configurationContainerXml))
+                {
+                    return null;
+                }
+
                 if (PsdzContext.DetectVehicle == null)
                 {
                     return null;
@@ -867,7 +872,7 @@ namespace PsdzClient.Programming
                         return cts.Token.IsCancellationRequested;
                     }
                     return false;
-                }, xmlFile);
+                }, configurationContainerXml);
             }
             catch (Exception ex)
             {
