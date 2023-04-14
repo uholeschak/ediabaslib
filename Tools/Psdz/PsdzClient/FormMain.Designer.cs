@@ -331,7 +331,9 @@ namespace PsdzClient
             // 
             // openFileDialogTest
             // 
+            this.openFileDialogTest.DefaultExt = "*.xml";
             this.openFileDialogTest.Filter = "*.xml|*.xml|*.*|*.*";
+            this.openFileDialogTest.SupportMultiDottedExtensions = true;
             // 
             // FormMain
             // 
