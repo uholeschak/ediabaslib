@@ -57,6 +57,7 @@ namespace PsdzClient
             this.label1 = new System.Windows.Forms.Label();
             this.labelLanguage = new System.Windows.Forms.Label();
             this.comboBoxLanguage = new System.Windows.Forms.ComboBox();
+            this.buttonInternalTest = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // textBoxIstaFolder
@@ -317,6 +318,16 @@ namespace PsdzClient
             this.comboBoxLanguage.TabIndex = 6;
             this.comboBoxLanguage.SelectedIndexChanged += new System.EventHandler(this.comboBoxLanguage_SelectedIndexChanged);
             // 
+            // buttonInternalTest
+            // 
+            this.buttonInternalTest.Location = new System.Drawing.Point(336, 68);
+            this.buttonInternalTest.Name = "buttonInternalTest";
+            this.buttonInternalTest.Size = new System.Drawing.Size(75, 23);
+            this.buttonInternalTest.TabIndex = 25;
+            this.buttonInternalTest.Text = "Int. Test";
+            this.buttonInternalTest.UseVisualStyleBackColor = true;
+            this.buttonInternalTest.Click += new System.EventHandler(this.buttonInternalTest_Click);
+            // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
@@ -324,6 +335,7 @@ namespace PsdzClient
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonAbort;
             this.ClientSize = new System.Drawing.Size(784, 661);
+            this.Controls.Add(this.buttonInternalTest);
             this.Controls.Add(this.comboBoxLanguage);
             this.Controls.Add(this.labelLanguage);
             this.Controls.Add(this.label1);
@@ -389,6 +401,7 @@ namespace PsdzClient
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label labelLanguage;
         private System.Windows.Forms.ComboBox comboBoxLanguage;
+        private System.Windows.Forms.Button buttonInternalTest;
     }
 }
 

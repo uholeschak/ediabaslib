@@ -126,6 +126,7 @@ namespace PsdzClient
             ipAddressControlVehicleIp.Enabled = ipEnabled;
             checkBoxIcom.Enabled = ipEnabled;
             buttonVehicleSearch.Enabled = ipEnabled;
+            buttonInternalTest.Enabled = !active && vehicleConnected;
             buttonStopHost.Enabled = !active && hostRunning;
             buttonConnect.Enabled = !active && !vehicleConnected;
             buttonDisconnect.Enabled = !active && hostRunning && vehicleConnected;
@@ -876,6 +877,11 @@ namespace PsdzClient
 
             TaskActive = true;
             UpdateDisplay();
+        }
+
+        private void buttonInternalTest_Click(object sender, EventArgs e)
+        {
+
         }
 
         private void checkedListBoxOptions_ItemCheck(object sender, ItemCheckEventArgs e)
