@@ -642,6 +642,18 @@ namespace PsdzClient
                     return diagnosticDeviceResult.ECUJob.JobErrorText;
                 }
 
+                bool jobOk = false;
+                if (diagnosticDeviceResult.ECUJob != null && diagnosticDeviceResult.ECUJob.JobResultSets > 0)
+                {
+                    jobOk = diagnosticDeviceResult.ECUJob.IsOkay((ushort)diagnosticDeviceResult.ECUJob.JobResultSets);
+                }
+
+                if (!jobOk && diagnosticDeviceResult.ECUJob != null)
+                {
+                    string stringResult = diagnosticDeviceResult.ECUJob.getStringResult((ushort)diagnosticDeviceResult.ECUJob.JobResultSets, "JOB_STATUS");
+                    return stringResult;
+                }
+
                 result = string.Empty;
             }
             catch (Exception ex)
