@@ -637,7 +637,12 @@ namespace PsdzClient
                     return null;
                 }
 
-                result = "OK";
+                if (diagnosticDeviceResult.Error != null && diagnosticDeviceResult.ECUJob != null && diagnosticDeviceResult.ECUJob.JobErrorCode != 0)
+                {
+                    return diagnosticDeviceResult.ECUJob.JobErrorText;
+                }
+
+                result = string.Empty;
             }
             catch (Exception ex)
             {
