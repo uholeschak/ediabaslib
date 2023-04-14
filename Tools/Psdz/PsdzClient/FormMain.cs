@@ -574,6 +574,17 @@ namespace PsdzClient
             return detectedVehicles;
         }
 
+        private async Task<bool> InternalTestTask(string fileName)
+        {
+            // ReSharper disable once ConvertClosureToMethodGroup
+            return await Task.Run(() => InternalTest(fileName)).ConfigureAwait(false);
+        }
+
+        private bool InternalTest(string fileName)
+        {
+            return true;
+        }
+
         private async Task<bool> ConnectVehicleTask(string istaFolder, string remoteHost, bool useIcom)
         {
             // ReSharper disable once ConvertClosureToMethodGroup
@@ -881,7 +892,32 @@ namespace PsdzClient
 
         private void buttonInternalTest_Click(object sender, EventArgs e)
         {
+            if (TaskActive)
+            {
+                return;
+            }
 
+            if (openFileDialogTest.ShowDialog(this) != DialogResult.OK)
+            {
+                return;
+            }
+
+            string fileName = openFileDialogTest.FileName;
+            StringBuilder sb = new StringBuilder();
+            UpdateStatus(sb.ToString());
+
+            InternalTestTask(fileName).ContinueWith(task =>
+            {
+                TaskActive = false;
+                BeginInvoke((Action)(() =>
+                {
+                    sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "Result: {0}", task.Result));
+                    UpdateStatus(sb.ToString());
+                }));
+            });
+
+            TaskActive = true;
+            UpdateDisplay();
         }
 
         private void checkedListBoxOptions_ItemCheck(object sender, ItemCheckEventArgs e)

@@ -58,6 +58,7 @@ namespace PsdzClient
             this.labelLanguage = new System.Windows.Forms.Label();
             this.comboBoxLanguage = new System.Windows.Forms.ComboBox();
             this.buttonInternalTest = new System.Windows.Forms.Button();
+            this.openFileDialogTest = new System.Windows.Forms.OpenFileDialog();
             this.SuspendLayout();
             // 
             // textBoxIstaFolder
@@ -328,6 +329,10 @@ namespace PsdzClient
             this.buttonInternalTest.UseVisualStyleBackColor = true;
             this.buttonInternalTest.Click += new System.EventHandler(this.buttonInternalTest_Click);
             // 
+            // openFileDialogTest
+            // 
+            this.openFileDialogTest.Filter = "*.xml|*.xml|*.*|*.*";
+            // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
@@ -402,6 +407,7 @@ namespace PsdzClient
         private System.Windows.Forms.Label labelLanguage;
         private System.Windows.Forms.ComboBox comboBoxLanguage;
         private System.Windows.Forms.Button buttonInternalTest;
+        private System.Windows.Forms.OpenFileDialog openFileDialogTest;
     }
 }
 
