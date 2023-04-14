@@ -630,6 +630,12 @@ namespace PsdzClient
                 }
 
                 EDIABASAdapter ediabasAdapter = new EDIABASAdapter(true, new ECUKom("DetectVehicle", _ediabas), configContainer);
+                IDiagnosticDeviceResult diagnosticDeviceResult = ediabasAdapter.Execute();
+                if (diagnosticDeviceResult == null)
+                {
+                    return null;
+                }
+
                 result = "OK";
             }
             catch (Exception ex)
