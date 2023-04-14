@@ -208,7 +208,7 @@
     <Compile Include="Core\IEcuVariantLocator.cs" />
     <Compile Include="Core\IFFMDynamicResolver.cs" />
     <Compile Include="Core\INativeError.cs" />
-    <Compile Include="Core\IParameters.cs" />
+    <Compile Include="Core\Container\IParameters.cs" />
     <Compile Include="Core\IRuleExpression.cs" />
     <Compile Include="Core\ISalapaLocalizedEntry.cs" />
     <Compile Include="Core\ISGBDBusLogisticsEntry.cs" />
@@ -222,7 +222,7 @@
     <Compile Include="Core\NotExpression.cs" />
     <Compile Include="Core\ObservableCollectionEx.cs" />
     <Compile Include="Core\OrExpression.cs" />
-    <Compile Include="Core\ParameterContainer.cs" />
+    <Compile Include="Core\Container\ParameterContainer.cs" />
     <Compile Include="Core\Container\QuantityChoice.cs" />
     <Compile Include="Core\Container\Range.cs" />
     <Compile Include="Core\Container\RangeConstraint.cs" />

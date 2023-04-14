@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using BmwFileReader;
 using EdiabasLib;
 using log4net;
-using PsdzClient.Core;
 using PsdzClient.Core.Container;
 
 namespace PsdzClient

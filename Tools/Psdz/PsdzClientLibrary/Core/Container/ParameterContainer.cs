@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using BMW.Rheingold.CoreFramework;
 
-namespace PsdzClient.Core
+namespace PsdzClient.Core.Container
 {
     public class ParameterContainer : IParameters
     {
