@@ -574,15 +574,15 @@ namespace PsdzClient
             return detectedVehicles;
         }
 
-        private async Task<bool> InternalTestTask(string fileName)
+        private async Task<string> InternalTestTask(string fileName)
         {
             // ReSharper disable once ConvertClosureToMethodGroup
             return await Task.Run(() => InternalTest(fileName)).ConfigureAwait(false);
         }
 
-        private bool InternalTest(string fileName)
+        private string InternalTest(string fileName)
         {
-            return true;
+            return _programmingJobs.ExecuteContainerXml(_cts, fileName);
         }
 
         private async Task<bool> ConnectVehicleTask(string istaFolder, string remoteHost, bool useIcom)
@@ -906,12 +906,20 @@ namespace PsdzClient
             StringBuilder sb = new StringBuilder();
             UpdateStatus(sb.ToString());
 
+            _cts = new CancellationTokenSource();
             InternalTestTask(fileName).ContinueWith(task =>
             {
                 TaskActive = false;
+                _cts.Dispose();
+                _cts = null;
+
                 BeginInvoke((Action)(() =>
                 {
-                    sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "Result: {0}", task.Result));
+                    if (!string.IsNullOrEmpty(task.Result))
+                    {
+                        sb.AppendLine(task.Result);
+                    }
+
                     UpdateStatus(sb.ToString());
                 }));
             });

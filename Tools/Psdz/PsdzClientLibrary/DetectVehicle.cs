@@ -609,6 +609,34 @@ namespace PsdzClient
             return voltage;
         }
 
+        public string ExecuteContainerXml(AbortDelegate abortFunc, string containerFile)
+        {
+            string result = null;
+
+            try
+            {
+                _abortFunc = abortFunc;
+                if (!Connect())
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "ExecuteContainerXml Connect failed");
+                    return null;
+                }
+
+                result = "OK";
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "ExecuteContainerXml Exception: {0}", ex.Message);
+                return null;
+            }
+            finally
+            {
+                _abortFunc = null;
+            }
+
+            return result;
+        }
+
         public bool Connect()
         {
             try

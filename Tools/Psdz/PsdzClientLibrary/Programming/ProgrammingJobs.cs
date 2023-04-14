@@ -850,6 +850,33 @@ namespace PsdzClient.Programming
             }
         }
 
+        public string ExecuteContainerXml(CancellationTokenSource cts, string xmlFile)
+        {
+            string result;
+            try
+            {
+                if (PsdzContext.DetectVehicle == null)
+                {
+                    return null;
+                }
+
+                result = PsdzContext.DetectVehicle.ExecuteContainerXml(() =>
+                {
+                    if (cts != null)
+                    {
+                        return cts.Token.IsCancellationRequested;
+                    }
+                    return false;
+                }, xmlFile);
+            }
+            catch (Exception ex)
+            {
+                result = ex.Message;
+            }
+
+            return result;
+        }
+
         public bool VehicleFunctions(CancellationTokenSource cts, OperationType operationType)
         {
             log.InfoFormat(CultureInfo.InvariantCulture, "VehicleFunctions Start - Type: {0}", operationType);
