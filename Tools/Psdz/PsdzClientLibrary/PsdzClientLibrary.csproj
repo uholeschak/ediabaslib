@@ -152,6 +152,7 @@
     <Compile Include="Core\CompareExpression.cs" />
     <Compile Include="Core\Container\Configuration.cs" />
     <Compile Include="Core\Container\ConfigurationContainer.cs" />
+    <Compile Include="Core\Container\Database.cs" />
     <Compile Include="Core\Container\ECUJob.cs" />
     <Compile Include="Core\Container\ECUJobAbstract.cs" />
     <Compile Include="Core\Container\ECUKom.cs" />
