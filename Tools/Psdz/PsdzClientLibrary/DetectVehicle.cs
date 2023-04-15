@@ -626,6 +626,7 @@ namespace PsdzClient
                 ConfigurationContainer configContainer = ConfigurationContainer.Deserialize(configurationContainerXml);
                 if (configContainer == null)
                 {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "ExecuteContainerXml Deserialize failed");
                     return null;
                 }
 
@@ -634,12 +635,15 @@ namespace PsdzClient
                 IDiagnosticDeviceResult diagnosticDeviceResult = ediabasAdapter.Execute(new ParameterContainer());
                 if (diagnosticDeviceResult == null)
                 {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "ExecuteContainerXml Execute failed");
                     return null;
                 }
 
                 if (diagnosticDeviceResult.Error != null && diagnosticDeviceResult.ECUJob != null && diagnosticDeviceResult.ECUJob.JobErrorCode != 0)
                 {
-                    return diagnosticDeviceResult.ECUJob.JobErrorText;
+                    string jobErrorText = diagnosticDeviceResult.ECUJob.JobErrorText;
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "ExecuteContainerXml Job error: {0}", jobErrorText);
+                    return jobErrorText;
                 }
 
                 bool jobOk = false;
@@ -651,9 +655,11 @@ namespace PsdzClient
                 if (!jobOk && diagnosticDeviceResult.ECUJob != null)
                 {
                     string stringResult = diagnosticDeviceResult.ECUJob.getStringResult((ushort)diagnosticDeviceResult.ECUJob.JobResultSets, "JOB_STATUS");
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "ExecuteContainerXml Job status: {0}", stringResult);
                     return stringResult;
                 }
 
+                log.InfoFormat(CultureInfo.InvariantCulture, "ExecuteContainerXml Job OK: {0}", jobOk);
                 result = string.Empty;
             }
             catch (Exception ex)
