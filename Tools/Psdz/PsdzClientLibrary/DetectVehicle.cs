@@ -612,7 +612,7 @@ namespace PsdzClient
 
         public string ExecuteContainerXml(AbortDelegate abortFunc, string configurationContainerXml, Dictionary<string,string> runOverrideDict)
         {
-            string result = null;
+            string result = string.Empty;
 
             try
             {
@@ -672,15 +672,11 @@ namespace PsdzClient
                 if (jobStatus != null)
                 {
                     result = jobStatus;
-                }
-                else
-                {
-                    result = "OKAY";
-                }
-
-                if (result != "OKAY")
-                {
-                    log.ErrorFormat(CultureInfo.InvariantCulture, "ExecuteContainerXml Job status: {0}", jobStatus);
+                    if (jobStatus != "OKAY")
+                    {
+                        log.ErrorFormat(CultureInfo.InvariantCulture, "ExecuteContainerXml Job status: {0}", jobStatus);
+                        return jobStatus;
+                    }
                 }
             }
             catch (Exception ex)
