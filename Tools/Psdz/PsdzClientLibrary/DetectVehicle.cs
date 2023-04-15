@@ -610,7 +610,7 @@ namespace PsdzClient
             return voltage;
         }
 
-        public string ExecuteContainerXml(AbortDelegate abortFunc, string configurationContainerXml)
+        public string ExecuteContainerXml(AbortDelegate abortFunc, string configurationContainerXml, Dictionary<string,string> runOverrideDict)
         {
             string result = null;
 
@@ -623,14 +623,22 @@ namespace PsdzClient
                     return null;
                 }
 
-                ConfigurationContainer configContainer = ConfigurationContainer.Deserialize(configurationContainerXml);
-                if (configContainer == null)
+                ConfigurationContainer configurationContainer = ConfigurationContainer.Deserialize(configurationContainerXml);
+                if (configurationContainer == null)
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "ExecuteContainerXml Deserialize failed");
                     return null;
                 }
 
-                EDIABASAdapter ediabasAdapter = new EDIABASAdapter(true, new ECUKom("DetectVehicle", _ediabas), configContainer);
+                if (runOverrideDict != null)
+                {
+                    foreach (KeyValuePair<string, string> runOverride in runOverrideDict)
+                    {
+                        configurationContainer.AddRunOverride(runOverride.Key, runOverride.Value);
+                    }
+                }
+
+                EDIABASAdapter ediabasAdapter = new EDIABASAdapter(true, new ECUKom("DetectVehicle", _ediabas), configurationContainer);
                 ediabasAdapter.DoParameterization();
                 IDiagnosticDeviceResult diagnosticDeviceResult = ediabasAdapter.Execute(new ParameterContainer());
                 if (diagnosticDeviceResult == null)
@@ -660,7 +668,20 @@ namespace PsdzClient
                 }
 
                 log.InfoFormat(CultureInfo.InvariantCulture, "ExecuteContainerXml Job OK: {0}", jobOk);
-                result = string.Empty;
+                string jobStatus = diagnosticDeviceResult.getISTAResultAsType("/Result/Status/JOB_STATUS", typeof(string)) as string;
+                if (jobStatus != null)
+                {
+                    result = jobStatus;
+                }
+                else
+                {
+                    result = "OKAY";
+                }
+
+                if (result != "OKAY")
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "ExecuteContainerXml Job status: {0}", jobStatus);
+                }
             }
             catch (Exception ex)
             {

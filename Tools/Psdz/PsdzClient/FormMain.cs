@@ -574,15 +574,15 @@ namespace PsdzClient
             return detectedVehicles;
         }
 
-        private async Task<string> InternalTestTask(string configurationContainerXml)
+        private async Task<string> InternalTestTask(string configurationContainerXml, Dictionary<string, string> runOverrideDict)
         {
             // ReSharper disable once ConvertClosureToMethodGroup
-            return await Task.Run(() => InternalTest(configurationContainerXml)).ConfigureAwait(false);
+            return await Task.Run(() => InternalTest(configurationContainerXml, runOverrideDict)).ConfigureAwait(false);
         }
 
-        private string InternalTest(string configurationContainerXml)
+        private string InternalTest(string configurationContainerXml, Dictionary<string, string> runOverrideDict)
         {
-            return _programmingJobs.ExecuteContainerXml(_cts, configurationContainerXml);
+            return _programmingJobs.ExecuteContainerXml(_cts, configurationContainerXml, runOverrideDict);
         }
 
         private async Task<bool> ConnectVehicleTask(string istaFolder, string remoteHost, bool useIcom)
@@ -913,11 +913,13 @@ namespace PsdzClient
                 return;
             }
 
+            Dictionary<string, string> runOverrideDict = new Dictionary<string, string>();
+            runOverrideDict.Add("/Run/Group/G_MOTOR/VirtualVariantJob/ABGLEICH_CSF_PROG/Argument/ECUGroupOrVariant", "G_MOTOR");
             StringBuilder sb = new StringBuilder();
             UpdateStatus(sb.ToString());
 
             _cts = new CancellationTokenSource();
-            InternalTestTask(configurationContainerXml).ContinueWith(task =>
+            InternalTestTask(configurationContainerXml, runOverrideDict).ContinueWith(task =>
             {
                 TaskActive = false;
                 _cts.Dispose();

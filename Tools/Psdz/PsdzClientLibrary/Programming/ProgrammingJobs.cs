@@ -850,7 +850,7 @@ namespace PsdzClient.Programming
             }
         }
 
-        public string ExecuteContainerXml(CancellationTokenSource cts, string configurationContainerXml)
+        public string ExecuteContainerXml(CancellationTokenSource cts, string configurationContainerXml, Dictionary<string, string> runOverrideDict)
         {
             string result;
             try
@@ -872,7 +872,7 @@ namespace PsdzClient.Programming
                         return cts.Token.IsCancellationRequested;
                     }
                     return false;
-                }, configurationContainerXml);
+                }, configurationContainerXml, runOverrideDict);
             }
             catch (Exception ex)
             {
