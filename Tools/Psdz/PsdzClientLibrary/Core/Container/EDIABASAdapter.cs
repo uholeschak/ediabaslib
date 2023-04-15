@@ -24,6 +24,20 @@ namespace PsdzClient.Core.Container
 
         private bool parameterizationDone;
 
+        public bool BinModeReq => binModeReq;
+
+        public byte[] EcuData => ecuData;
+
+        public string EcuGroup => ecuGroup;
+
+        public string EcuJob => ecuJob;
+
+        public string EcuParam => ecuParam;
+
+        public string EcuResultFilter => ecuResultFilter;
+
+        public bool ParameterizationDone => parameterizationDone;
+
         public EDIABASAdapter(bool StandardErrorHandling, ECUKom ecuKom, ConfigurationContainer configContainer)
             : base(StandardErrorHandling, configContainer)
         {
