@@ -692,6 +692,73 @@ namespace PsdzClient
             return result;
         }
 
+        public string ConvertContainerXml(string configurationContainerXml, Dictionary<string, string> runOverrideDict)
+        {
+            string result = string.Empty;
+
+            try
+            {
+                ConfigurationContainer configurationContainer = ConfigurationContainer.Deserialize(configurationContainerXml);
+                if (configurationContainer == null)
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "ConvertContainerXml Deserialize failed");
+                    return null;
+                }
+
+                if (runOverrideDict != null)
+                {
+                    foreach (KeyValuePair<string, string> runOverride in runOverrideDict)
+                    {
+                        configurationContainer.AddRunOverride(runOverride.Key, runOverride.Value);
+                    }
+                }
+
+                EDIABASAdapter ediabasAdapter = new EDIABASAdapter(true, null, configurationContainer);
+                ediabasAdapter.DoParameterization();
+                if (string.IsNullOrEmpty(ediabasAdapter.EcuGroup))
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "ConvertContainerXml Empty EcuGroup");
+                    return null;
+                }
+
+                if (string.IsNullOrEmpty(ediabasAdapter.EcuJob))
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "ConvertContainerXml Empty EcuJob");
+                    return null;
+                }
+
+                if (string.IsNullOrEmpty(ediabasAdapter.EcuJob))
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "ConvertContainerXml Empty EcuJob");
+                    return null;
+                }
+
+                StringBuilder sb = new StringBuilder();
+                sb.Append(ediabasAdapter.EcuGroup);
+                sb.Append("#");
+                sb.Append(ediabasAdapter.EcuJob);
+
+                sb.Append("#");
+                if (!string.IsNullOrEmpty(ediabasAdapter.EcuParam))
+                {
+                    sb.Append(ediabasAdapter.EcuParam);
+                }
+
+                sb.Append("#");
+                if (!string.IsNullOrEmpty(ediabasAdapter.EcuResultFilter))
+                {
+                    sb.Append(ediabasAdapter.EcuResultFilter);
+                }
+
+                return sb.ToString();
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "ExecuteContainerXml Exception: {0}", ex.Message);
+                return null;
+            }
+        }
+
         public bool Connect()
         {
             try
