@@ -610,7 +610,7 @@ namespace PsdzClient
             return voltage;
         }
 
-        public string ExecuteContainerXml(AbortDelegate abortFunc, string configurationContainerXml, Dictionary<string,string> runOverrideDict)
+        public string ExecuteContainerXml(AbortDelegate abortFunc, string configurationContainerXml, Dictionary<string,string> runOverrideDict = null)
         {
             string result = string.Empty;
 
@@ -692,10 +692,8 @@ namespace PsdzClient
             return result;
         }
 
-        public string ConvertContainerXml(string configurationContainerXml, Dictionary<string, string> runOverrideDict)
+        public static string ConvertContainerXml(string configurationContainerXml, Dictionary<string, string> runOverrideDict = null)
         {
-            string result = string.Empty;
-
             try
             {
                 ConfigurationContainer configurationContainer = ConfigurationContainer.Deserialize(configurationContainerXml);
@@ -733,15 +731,30 @@ namespace PsdzClient
                     return null;
                 }
 
+                bool binMode = ediabasAdapter.IsBinModeRequired;
+                if (binMode && ediabasAdapter.EcuData == null)
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "ConvertContainerXml Binary data missing");
+                    return null;
+                }
+
                 StringBuilder sb = new StringBuilder();
                 sb.Append(ediabasAdapter.EcuGroup);
                 sb.Append("#");
                 sb.Append(ediabasAdapter.EcuJob);
 
                 sb.Append("#");
-                if (!string.IsNullOrEmpty(ediabasAdapter.EcuParam))
+                if (binMode)
                 {
-                    sb.Append(ediabasAdapter.EcuParam);
+                    sb.Append("|");
+                    sb.Append(BitConverter.ToString(ediabasAdapter.EcuData).Replace("-", ""));
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(ediabasAdapter.EcuParam))
+                    {
+                        sb.Append(ediabasAdapter.EcuParam);
+                    }
                 }
 
                 sb.Append("#");

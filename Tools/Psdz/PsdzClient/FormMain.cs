@@ -126,7 +126,7 @@ namespace PsdzClient
             ipAddressControlVehicleIp.Enabled = ipEnabled;
             checkBoxIcom.Enabled = ipEnabled;
             buttonVehicleSearch.Enabled = ipEnabled;
-            buttonInternalTest.Enabled = !active && vehicleConnected;
+            buttonInternalTest.Enabled = !active;
             buttonStopHost.Enabled = !active && hostRunning;
             buttonConnect.Enabled = !active && !vehicleConnected;
             buttonDisconnect.Enabled = !active && hostRunning && vehicleConnected;
@@ -913,11 +913,17 @@ namespace PsdzClient
                 return;
             }
 
+            if (_programmingJobs.PsdzContext?.Connection == null)
+            {
+                string convertResult = DetectVehicle.ConvertContainerXml(configurationContainerXml);
+                UpdateStatus(convertResult);
+                return;
+            }
+
             Dictionary<string, string> runOverrideDict = new Dictionary<string, string>();
             runOverrideDict.Add("/Run/Group/G_MOTOR/VirtualVariantJob/ABGLEICH_CSF_PROG/Argument/ECUGroupOrVariant", "G_MOTOR");
             StringBuilder sb = new StringBuilder();
             UpdateStatus(sb.ToString());
-
             _cts = new CancellationTokenSource();
             InternalTestTask(configurationContainerXml, runOverrideDict).ContinueWith(task =>
             {

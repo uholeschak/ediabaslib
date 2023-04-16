@@ -38,6 +38,8 @@ namespace PsdzClient.Core.Container
 
         public bool ParameterizationDone => parameterizationDone;
 
+        public bool IsBinModeRequired => CheckForBinModeRequired();
+
         public EDIABASAdapter(bool StandardErrorHandling, ECUKom ecuKom, ConfigurationContainer configContainer)
             : base(StandardErrorHandling, configContainer)
         {
