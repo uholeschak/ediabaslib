@@ -754,7 +754,6 @@ namespace PsdzClient
                 }
 
                 string resultFilterString = ediabasAdapter.EcuResultFilter;
-
                 if (!string.IsNullOrEmpty(paramString) || !string.IsNullOrEmpty(resultFilterString))
                 {
                     sb.Append("#");
@@ -774,7 +773,7 @@ namespace PsdzClient
             }
             catch (Exception ex)
             {
-                log.ErrorFormat(CultureInfo.InvariantCulture, "ExecuteContainerXml Exception: {0}", ex.Message);
+                log.ErrorFormat(CultureInfo.InvariantCulture, "ConvertContainerXml Exception: {0}", ex.Message);
                 return null;
             }
         }

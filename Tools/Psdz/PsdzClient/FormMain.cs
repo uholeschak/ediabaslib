@@ -913,14 +913,14 @@ namespace PsdzClient
                 return;
             }
 
+            Dictionary<string, string> runOverrideDict = new Dictionary<string, string>();
             if (_programmingJobs.PsdzContext?.Connection == null)
             {
-                string convertResult = DetectVehicle.ConvertContainerXml(configurationContainerXml);
+                string convertResult = DetectVehicle.ConvertContainerXml(configurationContainerXml, runOverrideDict);
                 UpdateStatus(convertResult);
                 return;
             }
 
-            Dictionary<string, string> runOverrideDict = new Dictionary<string, string>();
             runOverrideDict.Add("/Run/Group/G_MOTOR/VirtualVariantJob/ABGLEICH_CSF_PROG/Argument/ECUGroupOrVariant", "G_MOTOR");
             StringBuilder sb = new StringBuilder();
             UpdateStatus(sb.ToString());
