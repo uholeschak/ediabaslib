@@ -456,6 +456,8 @@ DPFREG.xml:
 configurationContainer.AddRunOverride("/Run/Group/G_MOTOR/VirtualVariantJob/ABGLEICH_CSF_PROG/Argument/ECUGroupOrVariant");
 EDIABASAdapter.DoParameterization();
 ECUKom.apiJob("D83BX7C0", "ABGLEICH_CSF_PROG", "EEPROM;QFL;200")
+ServiceFilter: BMW.Rheingold.ISTAGUI.Interaction.ViewModels.InteractionFilterSettingsViewModel, SetAll(), ExecuteSetDefaultSettings(), OnCommit()
+Filter: BMW.Rheingold.CoreFramework.DatabaseProvider.InfoObjFilter CompareDefaultWithCurrent()
 
 Log files:
 ==========
