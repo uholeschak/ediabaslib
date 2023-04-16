@@ -743,24 +743,31 @@ namespace PsdzClient
                 sb.Append("#");
                 sb.Append(ediabasAdapter.EcuJob);
 
-                sb.Append("#");
+                string paramString;
                 if (binMode)
                 {
-                    sb.Append("|");
-                    sb.Append(BitConverter.ToString(ediabasAdapter.EcuData).Replace("-", ""));
+                    paramString = "|" + BitConverter.ToString(ediabasAdapter.EcuData).Replace("-", "");
                 }
                 else
                 {
-                    if (!string.IsNullOrEmpty(ediabasAdapter.EcuParam))
-                    {
-                        sb.Append(ediabasAdapter.EcuParam);
-                    }
+                    paramString = ediabasAdapter.EcuParam;
                 }
 
-                sb.Append("#");
-                if (!string.IsNullOrEmpty(ediabasAdapter.EcuResultFilter))
+                string resultFilterString = ediabasAdapter.EcuResultFilter;
+
+                if (!string.IsNullOrEmpty(paramString) || !string.IsNullOrEmpty(resultFilterString))
                 {
-                    sb.Append(ediabasAdapter.EcuResultFilter);
+                    sb.Append("#");
+                    if (!string.IsNullOrEmpty(paramString))
+                    {
+                        sb.Append(paramString);
+                    }
+
+                    if (!string.IsNullOrEmpty(resultFilterString))
+                    {
+                        sb.Append("#");
+                        sb.Append(resultFilterString);
+                    }
                 }
 
                 return sb.ToString();
