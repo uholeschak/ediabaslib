@@ -458,8 +458,9 @@ EDIABASAdapter.DoParameterization();
 ECUKom.apiJob("D83BX7C0", "ABGLEICH_CSF_PROG", "EEPROM;QFL;200")
 ServiceFilter: BMW.Rheingold.ISTAGUI.Interaction.ViewModels.InteractionFilterSettingsViewModel, SetAll(), ExecuteSetDefaultSettings(), OnCommit()
 Filter: BMW.Rheingold.CoreFramework.DatabaseProvider.InfoObjFilter CompareDefaultWithCurrent()
-BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.DiagnosisObjectsTreeNode
-BMW.Rheingold.CoreFramework.DatabaseProvider.InfoBrowserTree.InfoBrowserTreeDiagnosisObjectsTreeAdapter
+BMW.Rheingold.CoreFramework.DatabaseProvider.InfoBrowserTree.InfoBrowserTreeDiagnosisObjectsTreeAdapter.GetDiagnosisObjectChildren(), FindSearchStartNode()
+BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.DiagnosisObjectsTreeNode.IsNodeValid()
+BMW.Rheingold.DatabaseProvider.SQLiteConnector.GetInfoObjectsByDiagObjectControlId(), IsInfoObjectValid(), GetInfoObjectObjectId()
 
 Log files:
 ==========
