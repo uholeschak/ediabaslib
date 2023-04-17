@@ -4409,6 +4409,204 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             return swiInfoObjs;
         }
 
+        public List<SwiInfoObj> GetInfoObjectsByDiagObjectControlId(string diagnosisObjectControlId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, bool getHidden)
+        {
+            if (string.IsNullOrEmpty(diagnosisObjectControlId))
+            {
+                return null;
+            }
+
+            List<SwiInfoObj> swiInfoObjs = new List<SwiInfoObj>();
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture,
+                    @"SELECT ID, INFOOBJECTID FROM XEP_REFINFOOBJECTS WHERE ID = {0}", diagnosisObjectControlId);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string infoObjId = reader["INFOOBJECTID"].ToString().Trim();
+                            if (IsInfoObjectValid(infoObjId, vehicle, ffmDynamicResolver))
+                            {
+                                List<SwiInfoObj> infoObjs = SelectXepInfoObjects(infoObjId, vehicle, ffmDynamicResolver);
+                                if (infoObjs != null)
+                                {
+                                    swiInfoObjs.AddRange(infoObjs);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetInfoObjectsByDiagObjectControlId Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            return swiInfoObjs;
+        }
+
+        public List<SwiInfoObj> SelectXepInfoObjects(string infoObjectId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
+        {
+            if (string.IsNullOrEmpty(infoObjectId))
+            {
+                return null;
+            }
+
+            List<SwiInfoObj> swiInfoObjs = new List<SwiInfoObj>();
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture,
+                    @"SELECT ID, NODECLASS, ASSEMBLY, VERSIONNUMBER, PROGRAMTYPE, SICHERHEITSRELEVANT, TITLEID, " +
+                    DatabaseFunctions.SqlTitleItems + ", GENERELL, TELESERVICEKENNUNG, FAHRZEUGKOMMUNIKATION, MESSTECHNIK, VERSTECKT, NAME, INFORMATIONSTYP, " +
+                    @"IDENTIFIKATOR, INFORMATIONSFORMAT, SINUMMER, ZIELISTUFE, CONTROLID, INFOTYPE, INFOFORMAT, DOCNUMBER, PRIORITY, IDENTIFIER, FLOWXML FROM XEP_INFOOBJECTS WHERE XEP_INFOOBJECTS.ID = {0} AND XEP_INFOOBJECTS.GENERELL = 0",
+                    infoObjectId);
+                //sql = EnrichQueryForServicePrograms(sql);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            SwiInfoObj swiInfoObj = ReadXepSwiInfoObj(reader);
+                            if (swiInfoObj != null)
+                            {
+                                if (IsInfoObjectValid(swiInfoObj.Id, vehicle, ffmDynamicResolver))
+                                {
+                                    swiInfoObjs.Add(swiInfoObj);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("SelectXepInfoObjects Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            return swiInfoObjs;
+        }
+
+        public bool IsInfoObjectValid(string infoObjectId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
+        {
+            log.InfoFormat("IsInfoObjectValid Id: {0}", infoObjectId);
+
+            string infoObjectObjectId = GetInfoObjectObjectId(infoObjectId);
+            if (!EvaluateXepRulesById(infoObjectId, vehicle, ffmDynamicResolver, infoObjectObjectId))
+            {
+                log.ErrorFormat("IsInfoObjectValid EvaluateXepRulesById Valid: '{0}'", false);
+                return false;
+            }
+
+            List<SwiDiagObj> diagObjectsList = GetDiagObjectsForInfoObject(infoObjectId, null, null, getHidden: true);
+            if (diagObjectsList == null)
+            {
+                log.ErrorFormat("IsInfoObjectValid GetDiagObjectsForInfoObject Valid: '{0}'", false);
+                return false;
+            }
+
+            if (diagObjectsList.Count == 0)
+            {
+                log.InfoFormat("IsInfoObjectValid Valid: '{0}'", true);
+                return true;
+            }
+
+            foreach (SwiDiagObj swiDiagObj in diagObjectsList)
+            {
+                if (IsDiagObjectValid(swiDiagObj.Id, vehicle, ffmDynamicResolver))
+                {
+                    log.InfoFormat("IsInfoObjectValid IsDiagObjectValid Valid: '{0}'", true);
+                    return true;
+                }
+            }
+
+            log.ErrorFormat("IsInfoObjectValid Valid: '{0}'", false);
+            return false;
+        }
+
+        public string GetInfoObjectObjectId(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return null;
+            }
+
+            string controlId = string.Empty;
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT CONTROLID FROM XEP_INFOOBJECTS WHERE ID = {0}", id);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            controlId = reader["CONTROLID"].ToString().Trim();
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetInfoObjectObjectId Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            return controlId;
+        }
+
+        public List<SwiDiagObj> GetDiagObjectsForInfoObject(string infoObjectId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, bool getHidden)
+        {
+            if (string.IsNullOrEmpty(infoObjectId))
+            {
+                return null;
+            }
+
+            List<SwiDiagObj> diagObjectsList = new List<SwiDiagObj>();
+            try
+            {
+                List<string> idList = new List<string>();
+                string sql = string.Format(CultureInfo.InvariantCulture,
+                    @"SELECT ID FROM XEP_REFINFOOBJECTS WHERE INFOOBJECTID = {0} AND (LINK_TYPE_ID = 'DiagobjDocumentLink' OR LINK_TYPE_ID = 'DiagobjServiceprogramLink')", infoObjectId);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string item = reader["ID"].ToString().Trim();
+                            if (!string.IsNullOrEmpty(item))
+                            {
+                                idList.AddIfNotContains(item);
+                            }
+                        }
+                    }
+                }
+
+                foreach (string item in idList)
+                {
+                    List<SwiDiagObj> diagObjectsByControlId = GetDiagObjectsByControlId(item, vehicle, ffmDynamicResolver);
+                    if (diagObjectsByControlId != null)
+                    {
+                        diagObjectsList.AddRangeIfNotContains(diagObjectsByControlId);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetDiagObjectsForInfoObject Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            return diagObjectsList;
+        }
+
         public SwiInfoObj GetInfoObjectByControlId(string controlId, SwiInfoObj.SwiActionDatabaseLinkType? linkType)
         {
             if (string.IsNullOrEmpty(controlId))
@@ -5284,7 +5482,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             return new SwiRegister(id, nodeClass, name, parentId, remark, sort, versionNum, identifer, GetTranslation(reader));
         }
 
-        private static SwiInfoObj ReadXepSwiInfoObj(SQLiteDataReader reader, SwiInfoObj.SwiActionDatabaseLinkType? linkType)
+        private static SwiInfoObj ReadXepSwiInfoObj(SQLiteDataReader reader, SwiInfoObj.SwiActionDatabaseLinkType? linkType = null)
         {
             string id = reader["ID"].ToString().Trim();
             string nodeClass = reader["NODECLASS"].ToString().Trim();
