@@ -4301,7 +4301,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
                         while (reader.Read())
                         {
                             string controlId = reader["DIAGNOSISOBJECTCONTROLID"].ToString().Trim();
-                            List<SwiDiagObj> swiDiagObjs = GetDiagObjectsByControlId(controlId, vehicle, ffmDynamicResolver);
+                            List<SwiDiagObj> swiDiagObjs = GetDiagObjectsByControlId(controlId, vehicle, ffmDynamicResolver, getHidden: true);
                             if (swiDiagObjs != null)
                             {
                                 foreach (SwiDiagObj swiDiagObj in swiDiagObjs)
@@ -4591,7 +4591,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
 
                 foreach (string item in idList)
                 {
-                    List<SwiDiagObj> diagObjectsByControlId = GetDiagObjectsByControlId(item, vehicle, ffmDynamicResolver);
+                    List<SwiDiagObj> diagObjectsByControlId = GetDiagObjectsByControlId(item, vehicle, ffmDynamicResolver, getHidden);
                     if (diagObjectsByControlId != null)
                     {
                         diagObjectsList.AddRangeIfNotContains(diagObjectsByControlId);
@@ -4643,21 +4643,28 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             return swiInfoObj;
         }
 
-        public List<SwiDiagObj> GetDiagObjectsByControlId(string controlId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
+        public List<SwiDiagObj> GetDiagObjectsByControlId(string controlId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, bool getHidden)
         {
             if (string.IsNullOrEmpty(controlId))
             {
                 return null;
             }
 
+            log.InfoFormat("GetDiagObjectsByControlId Id: {0}, Hidden: {1}", controlId, getHidden);
             List<SwiDiagObj> swiDiagObjs = new List<SwiDiagObj>();
             try
             {
+                string hiddenRule = string.Empty;
+                if (!getHidden)
+                {
+                    hiddenRule = " AND VERSTECKT = 0";
+                }
+
                 string sql = string.Format(CultureInfo.InvariantCulture,
                     @"SELECT ID, NODECLASS, TITLEID, " + DatabaseFunctions.SqlTitleItems +
                     @", VERSIONNUMBER, NAME, FAILUREWEIGHT, VERSTECKT, SICHERHEITSRELEVANT, " +
-                    @"CONTROLID, SORT_ORDER FROM XEP_DIAGNOSISOBJECTS WHERE (CONTROLID = {0})",
-                    controlId);
+                    @"CONTROLID, SORT_ORDER FROM XEP_DIAGNOSISOBJECTS WHERE (CONTROLID = {0}{1})",
+                    controlId, hiddenRule);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
@@ -4741,7 +4748,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
                     return true;
                 }
 
-                SwiDiagObj swiDiagObj = GetDiagObjectsByControlId(parentId, null, null).FirstOrDefault();
+                SwiDiagObj swiDiagObj = GetDiagObjectsByControlId(parentId, null, null, getHidden: true).FirstOrDefault();
                 if (swiDiagObj == null)
                 {
                     log.InfoFormat("AreAllParentDiagObjectsValid No diag control id, Valid: {0}", true);
