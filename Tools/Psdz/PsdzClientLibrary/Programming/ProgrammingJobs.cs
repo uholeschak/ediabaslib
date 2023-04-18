@@ -417,6 +417,15 @@ namespace PsdzClient.Programming
                         }
                     }
 
+                    List<PdszDatabase.SwiDiagObj> diagObjsRoot = ProgrammingService.PdszDatabase.GetDiagObjectsByNodeclassName("DiagnosticObjectServicefunctionRoot");
+                    if (diagObjsRoot != null)
+                    {
+                        foreach (PdszDatabase.SwiDiagObj swiDiagObj in diagObjsRoot)
+                        {
+                            log.Info(swiDiagObj.ToString());
+                        }
+                    }
+
                     int failCount = -1;
                     bool result = ProgrammingService.PdszDatabase.GenerateTestModuleData((startConvert, progress, failures) =>
                     {
