@@ -461,6 +461,7 @@ Filter: BMW.Rheingold.CoreFramework.DatabaseProvider.InfoObjFilter CompareDefaul
 BMW.Rheingold.CoreFramework.DatabaseProvider.InfoBrowserTree.InfoBrowserTreeDiagnosisObjectsTreeAdapter.GetDiagnosisObjectChildren(), FindSearchStartNode()
 BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.DiagnosisObjectsTreeNode.IsNodeValid()
 BMW.Rheingold.DatabaseProvider.SQLiteConnector.GetInfoObjectsByDiagObjectControlId(), IsInfoObjectValid(), GetInfoObjectObjectId()
+BMW.Rheingold.DatabaseProvider.SQLiteConnector.GetDiagObjectsByNodeclassName("DiagnosticObjectServicefunctionRoot");
 
 Log files:
 ==========

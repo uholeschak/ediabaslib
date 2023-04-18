@@ -4654,6 +4654,46 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             return swiInfoObj;
         }
 
+        public List<SwiDiagObj> GetDiagObjectsByNodeclassName(string nodeclassName)
+        {
+            if (string.IsNullOrEmpty(nodeclassName))
+            {
+                return null;
+            }
+
+            log.InfoFormat("GetDiagObjectsByNodeclassName NodeClass: {0}", nodeclassName);
+            List<SwiDiagObj> swiDiagObjs = new List<SwiDiagObj>();
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture,
+                    @"SELECT ID, NODECLASS, TITLEID, " + DatabaseFunctions.SqlTitleItems +
+                    @", VERSIONNUMBER, NAME, FAILUREWEIGHT, VERSTECKT, SICHERHEITSRELEVANT, " +
+                    @"CONTROLID, SORT_ORDER FROM XEP_DIAGNOSISOBJECTS WHERE (NODECLASS IN (SELECT ID FROM XEP_NODECLASSES WHERE (NAME = '{0}')))",
+                    nodeclassName);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            SwiDiagObj swiDiagObj = ReadXepSwiDiagObj(reader);
+                            if (swiDiagObj != null)
+                            {
+                                swiDiagObjs.Add(swiDiagObj);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetDiagObjectsByNodeclassName Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            return swiDiagObjs;
+        }
+
         public List<SwiDiagObj> GetDiagObjectsByControlId(string controlId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, bool getHidden)
         {
             if (string.IsNullOrEmpty(controlId))
