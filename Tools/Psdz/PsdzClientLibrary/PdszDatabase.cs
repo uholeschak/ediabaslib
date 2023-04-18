@@ -4409,7 +4409,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             return swiInfoObjs;
         }
 
-        public List<SwiInfoObj> GetInfoObjectsByDiagObjectControlId(string diagnosisObjectControlId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, bool getHidden)
+        public List<SwiInfoObj> GetInfoObjectsByDiagObjectControlId(string diagnosisObjectControlId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, bool getHidden, List<string> typeFilter = null)
         {
             if (string.IsNullOrEmpty(diagnosisObjectControlId))
             {
@@ -4430,7 +4430,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
                             string infoObjId = reader["INFOOBJECTID"].ToString().Trim();
                             if (IsInfoObjectValid(infoObjId, vehicle, ffmDynamicResolver))
                             {
-                                List<SwiInfoObj> infoObjs = SelectXepInfoObjects(infoObjId, vehicle, ffmDynamicResolver);
+                                List<SwiInfoObj> infoObjs = SelectXepInfoObjects(infoObjId, vehicle, ffmDynamicResolver, typeFilter);
                                 if (infoObjs != null)
                                 {
                                     swiInfoObjs.AddRange(infoObjs);
@@ -4449,7 +4449,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             return swiInfoObjs;
         }
 
-        public List<SwiInfoObj> SelectXepInfoObjects(string infoObjectId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
+        public List<SwiInfoObj> SelectXepInfoObjects(string infoObjectId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, List<string> typeFilter = null)
         {
             if (string.IsNullOrEmpty(infoObjectId))
             {
@@ -4474,10 +4474,21 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
                             SwiInfoObj swiInfoObj = ReadXepSwiInfoObj(reader);
                             if (swiInfoObj != null)
                             {
-                                if (IsInfoObjectValid(swiInfoObj.Id, vehicle, ffmDynamicResolver))
+                                if (typeFilter != null && typeFilter.Count > 0)
                                 {
-                                    swiInfoObjs.Add(swiInfoObj);
+                                    string match = typeFilter.FirstOrDefault(x => string.Compare(x, swiInfoObj.InfoType, StringComparison.OrdinalIgnoreCase) == 0);
+                                    if (match == null)
+                                    {
+                                        continue;
+                                    }
                                 }
+
+                                if (!IsInfoObjectValid(swiInfoObj.Id, vehicle, ffmDynamicResolver))
+                                {
+                                    continue;
+                                }
+
+                                swiInfoObjs.Add(swiInfoObj);
                             }
                         }
                     }
