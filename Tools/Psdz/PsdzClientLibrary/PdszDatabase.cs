@@ -4694,6 +4694,52 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             return swiDiagObjs;
         }
 
+        public List<SwiDiagObj> GetChildDiagObjects(SwiDiagObj parentDiagnosisObject)
+        {
+            if (parentDiagnosisObject == null)
+            {
+                return null;
+            }
+
+            log.InfoFormat("GetChildDiagObjects Id: {0}, ControlId: {1}", parentDiagnosisObject.Id, parentDiagnosisObject.ControlId);
+            string controlId = parentDiagnosisObject.ControlId;
+            if (string.IsNullOrEmpty(controlId) || controlId.ConvertToInt() == 0)
+            {
+                controlId = parentDiagnosisObject.Id;
+            }
+
+            List<SwiDiagObj> swiDiagObjs = new List<SwiDiagObj>();
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture,
+                    @"SELECT ID, NODECLASS, TITLEID, " + DatabaseFunctions.SqlTitleItems +
+                    @", VERSIONNUMBER, NAME, FAILUREWEIGHT, VERSTECKT, SICHERHEITSRELEVANT, " +
+                    @"CONTROLID, SORT_ORDER FROM XEP_DIAGNOSISOBJECTS WHERE XEP_DIAGNOSISOBJECTS.CONTROLID IN (SELECT DIAGNOSISOBJECTCONTROLID FROM XEP_REFDIAGNOSISTREE WHERE ID = {0})",
+                    controlId);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            SwiDiagObj swiDiagObj = ReadXepSwiDiagObj(reader);
+                            if (swiDiagObj != null)
+                            {
+                                swiDiagObjs.Add(swiDiagObj);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetChildDiagObjects Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            return swiDiagObjs;
+        }
+
         public List<SwiDiagObj> GetDiagObjectsByControlId(string controlId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, bool getHidden)
         {
             if (string.IsNullOrEmpty(controlId))
