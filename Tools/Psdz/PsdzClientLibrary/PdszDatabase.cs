@@ -1027,6 +1027,8 @@ namespace PsdzClient
 
             public EcuTranslation EcuTranslation { get; set; }
 
+            public List<SwiDiagObj> Children { get; set; }
+
             public string ToString(string language, string prefix = "")
             {
                 StringBuilder sb = new StringBuilder();
@@ -4663,6 +4665,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
                 if (swiInfoObjs != null)
                 {
                     List<SwiDiagObj> swiDiagObjsChild = GetChildDiagObjects(diagObject, vehicle, ffmDynamicResolver, true);
+                    diagObject.Children = swiDiagObjsChild;
                     foreach (SwiDiagObj swiDiagObjChild in swiDiagObjsChild)
                     {
                         List<SwiInfoObj> infoObjsChild = CollectInfoObjectsForDiagObject(swiDiagObjChild, vehicle, ffmDynamicResolver, typeFilter);
