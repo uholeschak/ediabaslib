@@ -4654,18 +4654,18 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             return swiInfoObj;
         }
 
-        public List<SwiInfoObj> CollectInfoObjectsForDiagObject(SwiDiagObj diagObject, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
+        public List<SwiInfoObj> CollectInfoObjectsForDiagObject(SwiDiagObj diagObject, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, List<string> typeFilter = null)
         {
             List<SwiInfoObj> swiInfoObjs;
             if (diagObject.ControlId != null)
             {
-                swiInfoObjs = GetInfoObjectsByDiagObjectControlId(diagObject.ControlId, null, null, getHidden: true);
+                swiInfoObjs = GetInfoObjectsByDiagObjectControlId(diagObject.ControlId, null, null, getHidden: true, typeFilter);
                 if (swiInfoObjs != null)
                 {
                     List<SwiDiagObj> swiDiagObjsChild = GetChildDiagObjects(diagObject, vehicle, ffmDynamicResolver, true);
                     foreach (SwiDiagObj swiDiagObjChild in swiDiagObjsChild)
                     {
-                        List<SwiInfoObj> infoObjsChild = CollectInfoObjectsForDiagObject(swiDiagObjChild, vehicle, ffmDynamicResolver);
+                        List<SwiInfoObj> infoObjsChild = CollectInfoObjectsForDiagObject(swiDiagObjChild, vehicle, ffmDynamicResolver, typeFilter);
                         if (infoObjsChild != null)
                         {
                             swiInfoObjs.AddRange(infoObjsChild);

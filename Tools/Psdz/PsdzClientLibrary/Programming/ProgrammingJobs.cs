@@ -420,21 +420,22 @@ namespace PsdzClient.Programming
                     List<PdszDatabase.SwiDiagObj> diagObjsRoot = ProgrammingService.PdszDatabase.GetDiagObjectsByNodeclassName("DiagnosticObjectServicefunctionRoot");
                     if (diagObjsRoot != null)
                     {
+                        List<string> typeFilter = new List<string> {"ABL"};
                         foreach (PdszDatabase.SwiDiagObj swiDiagObj in diagObjsRoot)
                         {
-                            log.Info(swiDiagObj.ToString());
+                            log.Info(swiDiagObj.ToString(ClientContext.Language));
                             List<PdszDatabase.SwiDiagObj> diagObjsChild = ProgrammingService.PdszDatabase.GetChildDiagObjects(swiDiagObj);
                             if (diagObjsChild != null)
                             {
                                 foreach (PdszDatabase.SwiDiagObj swiDiagObjChild in diagObjsChild)
                                 {
-                                    log.Info(swiDiagObjChild.ToString());
-                                    List<PdszDatabase.SwiInfoObj> swiInfoObjs = ProgrammingService.PdszDatabase.CollectInfoObjectsForDiagObject(swiDiagObjChild, null, null);
+                                    log.Info(swiDiagObjChild.ToString(ClientContext.Language));
+                                    List<PdszDatabase.SwiInfoObj> swiInfoObjs = ProgrammingService.PdszDatabase.CollectInfoObjectsForDiagObject(swiDiagObjChild, null, null, typeFilter);
                                     if (swiInfoObjs != null)
                                     {
                                         foreach (PdszDatabase.SwiInfoObj swiInfoObj in swiInfoObjs)
                                         {
-                                            log.Info(swiInfoObj.ToString());
+                                            log.Info(swiInfoObj.ToString(ClientContext.Language));
                                         }
                                     }
                                 }
