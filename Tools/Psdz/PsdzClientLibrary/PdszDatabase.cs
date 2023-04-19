@@ -4428,7 +4428,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
                         while (reader.Read())
                         {
                             string infoObjId = reader["INFOOBJECTID"].ToString().Trim();
-                            if (IsInfoObjectValid(infoObjId, vehicle, ffmDynamicResolver))
+                            if (vehicle == null || IsInfoObjectValid(infoObjId, vehicle, ffmDynamicResolver))
                             {
                                 List<SwiInfoObj> infoObjs = SelectXepInfoObjects(infoObjId, vehicle, ffmDynamicResolver, typeFilter);
                                 if (infoObjs != null)
@@ -4652,6 +4652,33 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             }
 
             return swiInfoObj;
+        }
+
+        public List<SwiInfoObj> CollectInfoObjectsForDiagObject(SwiDiagObj diagObject, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
+        {
+            List<SwiInfoObj> swiInfoObjs;
+            if (diagObject.ControlId != null)
+            {
+                swiInfoObjs = GetInfoObjectsByDiagObjectControlId(diagObject.ControlId, null, null, getHidden: true);
+                if (swiInfoObjs != null)
+                {
+                    List<SwiDiagObj> swiDiagObjsChild = GetChildDiagObjects(diagObject, vehicle, ffmDynamicResolver, true);
+                    foreach (SwiDiagObj swiDiagObjChild in swiDiagObjsChild)
+                    {
+                        List<SwiInfoObj> infoObjsChild = CollectInfoObjectsForDiagObject(swiDiagObjChild, vehicle, ffmDynamicResolver);
+                        if (infoObjsChild != null)
+                        {
+                            swiInfoObjs.AddRange(infoObjsChild);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                swiInfoObjs = new List<SwiInfoObj>();
+            }
+
+            return swiInfoObjs;
         }
 
         public List<SwiDiagObj> GetDiagObjectsByNodeclassName(string nodeclassName)

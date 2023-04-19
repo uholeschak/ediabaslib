@@ -429,6 +429,14 @@ namespace PsdzClient.Programming
                                 foreach (PdszDatabase.SwiDiagObj swiDiagObjChild in diagObjsChild)
                                 {
                                     log.Info(swiDiagObjChild.ToString());
+                                    List<PdszDatabase.SwiInfoObj> swiInfoObjs = ProgrammingService.PdszDatabase.CollectInfoObjectsForDiagObject(swiDiagObjChild, null, null);
+                                    if (swiInfoObjs != null)
+                                    {
+                                        foreach (PdszDatabase.SwiInfoObj swiInfoObj in swiInfoObjs)
+                                        {
+                                            log.Info(swiInfoObj.ToString());
+                                        }
+                                    }
                                 }
                             }
                         }
