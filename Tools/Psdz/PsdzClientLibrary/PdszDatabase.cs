@@ -1029,6 +1029,8 @@ namespace PsdzClient
 
             public List<SwiDiagObj> Children { get; set; }
 
+            public List<SwiInfoObj> InfoObjects { get; set; }
+
             public string ToString(string language, string prefix = "")
             {
                 StringBuilder sb = new StringBuilder();
@@ -4658,30 +4660,29 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
 
         public List<SwiInfoObj> CollectInfoObjectsForDiagObject(SwiDiagObj diagObject, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, List<string> typeFilter = null)
         {
-            List<SwiInfoObj> swiInfoObjs;
+            List<SwiInfoObj> swiInfoObjList = new List<SwiInfoObj>();
             if (diagObject.ControlId != null)
             {
-                swiInfoObjs = GetInfoObjectsByDiagObjectControlId(diagObject.ControlId, null, null, getHidden: true, typeFilter);
-                if (swiInfoObjs != null)
+                List<SwiInfoObj> infoObjs = GetInfoObjectsByDiagObjectControlId(diagObject.ControlId, null, null, getHidden: true, typeFilter);
+                diagObject.InfoObjects = infoObjs;
+                if (infoObjs != null)
                 {
-                    List<SwiDiagObj> swiDiagObjsChild = GetChildDiagObjects(diagObject, vehicle, ffmDynamicResolver, true);
-                    diagObject.Children = swiDiagObjsChild;
-                    foreach (SwiDiagObj swiDiagObjChild in swiDiagObjsChild)
+                    swiInfoObjList.AddRange(infoObjs);
+                }
+
+                List<SwiDiagObj> diagObjsChild = GetChildDiagObjects(diagObject, vehicle, ffmDynamicResolver, true);
+                diagObject.Children = diagObjsChild;
+                foreach (SwiDiagObj diagObjChild in diagObjsChild)
+                {
+                    List<SwiInfoObj> infoObjsChild = CollectInfoObjectsForDiagObject(diagObjChild, vehicle, ffmDynamicResolver, typeFilter);
+                    if (infoObjsChild != null)
                     {
-                        List<SwiInfoObj> infoObjsChild = CollectInfoObjectsForDiagObject(swiDiagObjChild, vehicle, ffmDynamicResolver, typeFilter);
-                        if (infoObjsChild != null)
-                        {
-                            swiInfoObjs.AddRange(infoObjsChild);
-                        }
+                        swiInfoObjList.AddRange(infoObjsChild);
                     }
                 }
             }
-            else
-            {
-                swiInfoObjs = new List<SwiInfoObj>();
-            }
 
-            return swiInfoObjs;
+            return swiInfoObjList;
         }
 
         public List<SwiDiagObj> GetDiagObjectsByNodeclassName(string nodeclassName)
