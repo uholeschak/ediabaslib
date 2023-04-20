@@ -421,18 +421,20 @@ namespace PsdzClient.Programming
                     if (diagObjsRoot != null)
                     {
                         List<string> typeFilter = new List<string> {"ABL"};
+                        log.Info("DiagnosticObjectServicefunctionRoot objects:");
                         foreach (PdszDatabase.SwiDiagObj swiDiagObj in diagObjsRoot)
                         {
                             log.Info(swiDiagObj.ToString(ClientContext.Language));
                             List<PdszDatabase.SwiDiagObj> diagObjsChild = ProgrammingService.PdszDatabase.GetChildDiagObjects(swiDiagObj);
                             if (diagObjsChild != null)
                             {
+                                log.InfoFormat("DiagnosticObjectServicefunctionRoot child objects: {0}", diagObjsChild.Count);
                                 foreach (PdszDatabase.SwiDiagObj swiDiagObjChild in diagObjsChild)
                                 {
-                                    log.Info(swiDiagObjChild.ToString(ClientContext.Language));
                                     List<PdszDatabase.SwiInfoObj> swiInfoObjs = ProgrammingService.PdszDatabase.CollectInfoObjectsForDiagObject(swiDiagObjChild, null, null, typeFilter);
                                     if (swiInfoObjs != null)
                                     {
+                                        log.InfoFormat("DiagnosticObjectServicefunctionRoot info objects: {0}", swiInfoObjs.Count);
                                         foreach (PdszDatabase.SwiInfoObj swiInfoObj in swiInfoObjs)
                                         {
                                             log.Info(swiInfoObj.ToString(ClientContext.Language));

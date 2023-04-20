@@ -710,10 +710,7 @@ namespace PsdzClient
 
             public List<SwiInfoObj> SwiInfoObjs { get; set; }
 
-            public bool HasInfoObjects
-            {
-                get { return SwiInfoObjs != null && SwiInfoObjs.Count > 0; }
-            }
+            public bool HasInfoObjects => SwiInfoObjs != null && SwiInfoObjs.Count > 0;
 
             public string ToString(string language, string prefix = "")
             {
@@ -1027,9 +1024,11 @@ namespace PsdzClient
 
             public EcuTranslation EcuTranslation { get; set; }
 
+            public List<SwiInfoObj> InfoObjects { get; set; }
+
             public List<SwiDiagObj> Children { get; set; }
 
-            public List<SwiInfoObj> InfoObjects { get; set; }
+            public bool HasInfoObjects => InfoObjects != null && InfoObjects.Count > 0;
 
             public string ToString(string language, string prefix = "")
             {
@@ -1038,6 +1037,25 @@ namespace PsdzClient
                 sb.Append(string.Format(CultureInfo.InvariantCulture,
                     "SwiInfoObj: Id={0}, Class={1}, TitleId={2}, Name={3}, Identification={4}, ControlId={5}, Title='{6}'",
                     Id, NodeClass, TitleId, Name, Identifier, ControlId, EcuTranslation.GetTitle(language)));
+
+                string prefixChild = prefix + " ";
+                if (HasInfoObjects)
+                {
+                    foreach (SwiInfoObj infoObj in InfoObjects)
+                    {
+                        sb.AppendLine();
+                        infoObj.ToString(language, prefixChild);
+                    }
+                }
+
+                if (Children != null)
+                {
+                    foreach (SwiDiagObj childObj in Children)
+                    {
+                        sb.AppendLine();
+                        childObj.ToString(language, prefixChild);
+                    }
+                }
                 return sb.ToString();
             }
         }
@@ -4675,6 +4693,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
                 foreach (SwiDiagObj diagObjChild in diagObjsChild)
                 {
                     List<SwiInfoObj> infoObjsChild = CollectInfoObjectsForDiagObject(diagObjChild, vehicle, ffmDynamicResolver, typeFilter);
+                    diagObject.InfoObjects = infoObjsChild;
                     if (infoObjsChild != null)
                     {
                         swiInfoObjList.AddRange(infoObjsChild);
