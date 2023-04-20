@@ -1035,7 +1035,7 @@ namespace PsdzClient
                 StringBuilder sb = new StringBuilder();
                 sb.Append(prefix);
                 sb.Append(string.Format(CultureInfo.InvariantCulture,
-                    "SwiInfoObj: Id={0}, Class={1}, TitleId={2}, Name={3}, Identification={4}, ControlId={5}, Title='{6}'",
+                    "SwiDiagObj: Id={0}, Class={1}, TitleId={2}, Name={3}, Identification={4}, ControlId={5}, Title='{6}'",
                     Id, NodeClass, TitleId, Name, Identifier, ControlId, EcuTranslation.GetTitle(language)));
 
                 string prefixChild = prefix + " ";
@@ -1044,7 +1044,7 @@ namespace PsdzClient
                     foreach (SwiInfoObj infoObj in InfoObjects)
                     {
                         sb.AppendLine();
-                        infoObj.ToString(language, prefixChild);
+                        sb.Append(infoObj.ToString(language, prefixChild));
                     }
                 }
 
@@ -1053,7 +1053,7 @@ namespace PsdzClient
                     foreach (SwiDiagObj childObj in Children)
                     {
                         sb.AppendLine();
-                        childObj.ToString(language, prefixChild);
+                        sb.Append(childObj.ToString(language, prefixChild));
                     }
                 }
                 return sb.ToString();
@@ -4787,6 +4787,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
                 return null;
             }
 
+            parentDiagnosisObject.Children = swiDiagObjs;
             return swiDiagObjs;
         }
 
