@@ -1028,7 +1028,23 @@ namespace PsdzClient
 
             public List<SwiDiagObj> Children { get; set; }
 
-            public bool HasInfoObjects => InfoObjects != null && InfoObjects.Count > 0;
+            public bool HasInfoObjects
+            {
+                get
+                {
+                    if (Children != null && Children.Any(x => x.HasInfoObjects))
+                    {
+                        return true;
+                    }
+
+                    if (InfoObjects != null && InfoObjects.Count > 0)
+                    {
+                        return true;
+                    }
+
+                    return false;
+                }
+            }
 
             public string ToString(string language, string prefix = "")
             {
@@ -1039,7 +1055,7 @@ namespace PsdzClient
                     Id, NodeClass, TitleId, Name, Identifier, ControlId, EcuTranslation.GetTitle(language)));
 
                 string prefixChild = prefix + " ";
-                if (HasInfoObjects)
+                if (InfoObjects != null)
                 {
                     foreach (SwiInfoObj infoObj in InfoObjects)
                     {
@@ -1048,7 +1064,7 @@ namespace PsdzClient
                     }
                 }
 
-                if (Children != null)
+                if (Children != null && HasInfoObjects)
                 {
                     foreach (SwiDiagObj childObj in Children)
                     {
