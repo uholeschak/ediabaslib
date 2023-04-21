@@ -4703,6 +4703,33 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             return swiInfoObjList;
         }
 
+        public List<SwiDiagObj> GetInfoObjectsTreeForNodeclassName(string nodeclassName, Vehicle vehicle = null, List<string> typeFilter = null)
+        {
+            log.InfoFormat("GetInfoObjectsTreeForNodeclassName NodeClass: {0}", nodeclassName);
+
+            List<SwiDiagObj> diagObjsRoot = GetDiagObjectsByNodeclassName(nodeclassName);
+            if (diagObjsRoot != null)
+            {
+                foreach (SwiDiagObj swiDiagObj in diagObjsRoot)
+                {
+                    List<SwiDiagObj> diagObjsChild = GetChildDiagObjects(swiDiagObj);
+                    if (diagObjsChild != null)
+                    {
+                        foreach (SwiDiagObj swiDiagObjChild in diagObjsChild)
+                        {
+                            List<SwiInfoObj> swiInfoObjs = CollectInfoObjectsForDiagObject(swiDiagObjChild, vehicle, null, typeFilter);
+                            if (swiInfoObjs == null)
+                            {
+                                log.InfoFormat("GetInfoObjectsTreeForNodeclassName get info objects failed: {0}", nodeclassName);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return diagObjsRoot;
+        }
+
         public List<SwiDiagObj> GetDiagObjectsByNodeclassName(string nodeclassName)
         {
             if (string.IsNullOrEmpty(nodeclassName))

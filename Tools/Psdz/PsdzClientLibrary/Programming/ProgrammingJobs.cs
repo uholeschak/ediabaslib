@@ -417,24 +417,12 @@ namespace PsdzClient.Programming
                         }
                     }
 
-                    List<PdszDatabase.SwiDiagObj> diagObjsRoot = ProgrammingService.PdszDatabase.GetDiagObjectsByNodeclassName("DiagnosticObjectServicefunctionRoot");
-                    if (diagObjsRoot != null)
+                    List<PdszDatabase.SwiDiagObj> diagObjsNodeClass = ProgrammingService.PdszDatabase.GetInfoObjectsTreeForNodeclassName(
+                        "DiagnosticObjectServicefunctionRoot", null, new List<string> { "ABL" });
+                    if (diagObjsNodeClass != null)
                     {
-                        List<string> typeFilter = new List<string> {"ABL"};
-                        foreach (PdszDatabase.SwiDiagObj swiDiagObj in diagObjsRoot)
-                        {
-                            List<PdszDatabase.SwiDiagObj> diagObjsChild = ProgrammingService.PdszDatabase.GetChildDiagObjects(swiDiagObj);
-                            if (diagObjsChild != null)
-                            {
-                                foreach (PdszDatabase.SwiDiagObj swiDiagObjChild in diagObjsChild)
-                                {
-                                    List<PdszDatabase.SwiInfoObj> swiInfoObjs = ProgrammingService.PdszDatabase.CollectInfoObjectsForDiagObject(swiDiagObjChild, null, null, typeFilter);
-                                }
-                            }
-                        }
-
-                        log.InfoFormat("DiagnosticObjectServicefunctionRoot objects: {0}", diagObjsRoot.Count);
-                        foreach (PdszDatabase.SwiDiagObj swiDiagObj in diagObjsRoot)
+                        log.InfoFormat("GetInfoObjectsTreeForNodeclassName objects: {0}", diagObjsNodeClass.Count);
+                        foreach (PdszDatabase.SwiDiagObj swiDiagObj in diagObjsNodeClass)
                         {
                             log.Info(swiDiagObj.ToString(ClientContext.Language));
                         }
