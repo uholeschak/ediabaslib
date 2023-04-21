@@ -4693,7 +4693,6 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
                 foreach (SwiDiagObj diagObjChild in diagObjsChild)
                 {
                     List<SwiInfoObj> infoObjsChild = CollectInfoObjectsForDiagObject(diagObjChild, vehicle, ffmDynamicResolver, typeFilter);
-                    diagObject.InfoObjects = infoObjsChild;
                     if (infoObjsChild != null)
                     {
                         swiInfoObjList.AddRange(infoObjsChild);
