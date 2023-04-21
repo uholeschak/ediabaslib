@@ -27,6 +27,7 @@ namespace PsdzClient
 {
     public class PdszDatabase : IDisposable
     {
+        public const string DiagObjServiceRoot = "DiagnosticObjectServicefunctionRoot";
         public const string SqlTitleItemsC =
             "C.TITLE_DEDE, C.TITLE_ENGB, C.TITLE_ENUS, " +
             "C.TITLE_FR, C.TITLE_TH, C.TITLE_SV, " +
@@ -4979,19 +4980,25 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
         public bool AreAllParentDiagObjectsValid(string diagObjectControlId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
         {
             log.InfoFormat("AreAllParentDiagObjectsValid Id: {0}", diagObjectControlId);
-            List<string> idList = GetParentDiagObjectControlIdsForControlId(diagObjectControlId);
-            if (idList == null || idList.Count == 0)
+            if (diagObjectControlId != null && diagObjectControlId.ConvertToInt() == 0)
+            {
+                log.InfoFormat("AreAllParentDiagObjectsValid Id zero, Valid: {0}", true);
+                return true;
+            }
+
+            List<string> idListParent = GetParentDiagObjectControlIdsForControlId(diagObjectControlId);
+            if (idListParent == null || idListParent.Count == 0)
             {
                 log.InfoFormat("AreAllParentDiagObjectsValid No parent diag objects, Valid: {0}", true);
                 return true;
             }
 
             HashSet<SwiDiagObj> swiDiagObjHash = new HashSet<SwiDiagObj>();
-            foreach (string parentId in idList)
+            foreach (string parentId in idListParent)
             {
-                if (string.IsNullOrEmpty(parentId))
+                if (parentId != null && parentId.ConvertToInt() == 0)
                 {
-                    log.InfoFormat("AreAllParentDiagObjectsValid No parent id, Valid: {0}", true);
+                    log.InfoFormat("AreAllParentDiagObjectsValid Parent id zero, Valid: {0}", true);
                     return true;
                 }
 
@@ -5002,9 +5009,12 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
                     return true;
                 }
 
-                if (string.IsNullOrEmpty(swiDiagObj.ControlId) && EvaluateXepRulesById(swiDiagObj.Id, vehicle, ffmDynamicResolver))
+                if (!IsRootDiagnosisObject(swiDiagObj))
                 {
-                    swiDiagObjHash.AddIfNotContains(swiDiagObj);
+                    if (!string.IsNullOrEmpty(swiDiagObj.ControlId) && EvaluateXepRulesById(swiDiagObj.Id, vehicle, ffmDynamicResolver))
+                    {
+                        swiDiagObjHash.AddIfNotContains(swiDiagObj);
+                    }
                 }
             }
 
@@ -5021,6 +5031,20 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             }
 
             log.InfoFormat("AreAllParentDiagObjectsValid Valid: {0}", false);
+            return false;
+        }
+
+        private bool IsRootDiagnosisObject(SwiDiagObj diagObject)
+        {
+#if false
+            foreach (XEP_DIAGNOSISOBJECTSEX allDiagObjectRootNode in GetAllDiagObjectRootNodes())
+            {
+                if (allDiagObjectRootNode.Id == diagObject.Id)
+                {
+                    return true;
+                }
+            }
+#endif
             return false;
         }
 
@@ -5054,7 +5078,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
                 return null;
             }
 
-            log.InfoFormat("GetParentDiagObjectControlIdsForControlId IdList: {0}", idList);
+            log.InfoFormat("GetParentDiagObjectControlIdsForControlId IdList: {0}", idList.Count);
             return idList;
         }
 

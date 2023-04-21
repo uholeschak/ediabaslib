@@ -418,10 +418,10 @@ namespace PsdzClient.Programming
                     }
 
                     List<PdszDatabase.SwiDiagObj> diagObjsNodeClass = ProgrammingService.PdszDatabase.GetInfoObjectsTreeForNodeclassName(
-                        "DiagnosticObjectServicefunctionRoot", null, new List<string> { "ABL" });
+                        PdszDatabase.DiagObjServiceRoot, null, new List<string> { "ABL" });
                     if (diagObjsNodeClass != null)
                     {
-                        log.InfoFormat("GetInfoObjectsTreeForNodeclassName objects: {0}", diagObjsNodeClass.Count);
+                        log.InfoFormat("GetInfoObjectsTreeForNodeclassName all: {0}", diagObjsNodeClass.Count);
                         foreach (PdszDatabase.SwiDiagObj swiDiagObj in diagObjsNodeClass)
                         {
                             log.Info(swiDiagObj.ToString(ClientContext.Language));
@@ -767,6 +767,17 @@ namespace PsdzClient.Programming
                     sbResult.AppendLine(Strings.UpdateVehicleDataFailed);
                     UpdateStatus(sbResult.ToString());
                     return false;
+                }
+
+                List<PdszDatabase.SwiDiagObj> diagObjsNodeClass = ProgrammingService.PdszDatabase.GetInfoObjectsTreeForNodeclassName(
+                    PdszDatabase.DiagObjServiceRoot, vehicle, new List<string> { "ABL" });
+                if (diagObjsNodeClass != null)
+                {
+                    log.InfoFormat("GetInfoObjectsTreeForNodeclassName for vehicle: {0}", diagObjsNodeClass.Count);
+                    foreach (PdszDatabase.SwiDiagObj swiDiagObj in diagObjsNodeClass)
+                    {
+                        log.Info(swiDiagObj.ToString(ClientContext.Language));
+                    }
                 }
 
                 if (!CheckVoltage(cts, sbResult, true))
