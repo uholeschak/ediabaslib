@@ -5011,12 +5011,15 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
                     return true;
                 }
 
-                if (!IsRootDiagnosisObject(swiDiagObj))
+                if (IsRootDiagnosisObject(swiDiagObj))
                 {
-                    if (!string.IsNullOrEmpty(swiDiagObj.ControlId) && EvaluateXepRulesById(swiDiagObj.Id, vehicle, ffmDynamicResolver))
-                    {
-                        swiDiagObjHash.AddIfNotContains(swiDiagObj);
-                    }
+                    log.InfoFormat("AreAllParentDiagObjectsValid Root diag object, Valid: {0}", true);
+                    return true;
+                }
+
+                if (!string.IsNullOrEmpty(swiDiagObj.ControlId) && EvaluateXepRulesById(swiDiagObj.Id, vehicle, ffmDynamicResolver))
+                {
+                    swiDiagObjHash.AddIfNotContains(swiDiagObj);
                 }
             }
 
@@ -5085,6 +5088,13 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
                 return false;
             }
 
+            Int64 diagId = diagObject.Id.ConvertToInt(-1);
+            if (diagId == -1)
+            {
+                log.Error("IsRootDiagnosisObject, Diag id invalid");
+                return false;
+            }
+
             List<SwiDiagObj> diagObjRootNodes = GetAllDiagObjectRootNodes();
             if (diagObjRootNodes == null)
             {
@@ -5094,7 +5104,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
 
             foreach (SwiDiagObj allDiagObjectRootNode in diagObjRootNodes)
             {
-                if (allDiagObjectRootNode.Id == diagObject.Id)
+                if (allDiagObjectRootNode.Id.ConvertToInt(-1) == diagId)
                 {
                     log.InfoFormat("IsRootDiagnosisObject, Root object: {0}", diagObject.Id);
                     return true;
