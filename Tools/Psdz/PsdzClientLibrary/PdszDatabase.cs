@@ -4961,9 +4961,9 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             }
 
             string diagObjectControlId = GetDiagObjectControlIdForDiagObjectId(diagObjectId);
-            if (string.IsNullOrEmpty(diagObjectControlId))
+            if (diagObjectControlId != null && diagObjectControlId.ConvertToInt() == 0)
             {
-                log.InfoFormat("IsDiagObjectValid No control id, Valid: {0}", true);
+                log.InfoFormat("IsDiagObjectValid Control id zero, Valid: {0}", true);
                 return true;
             }
 
