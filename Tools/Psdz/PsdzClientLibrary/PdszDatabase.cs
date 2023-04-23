@@ -28,6 +28,7 @@ namespace PsdzClient
     public class PdszDatabase : IDisposable
     {
         public const string DiagObjServiceRoot = "DiagnosticObjectServicefunctionRoot";
+
         public const string SqlTitleItemsC =
             "C.TITLE_DEDE, C.TITLE_ENGB, C.TITLE_ENUS, " +
             "C.TITLE_FR, C.TITLE_TH, C.TITLE_SV, " +
@@ -36,6 +37,9 @@ namespace PsdzClient
             "C.TITLE_ZHCN, C.TITLE_RU, C.TITLE_NL, " +
             "C.TITLE_PT, C.TITLE_ZHTW, C.TITLE_JA, " +
             "C.TITLE_CSCZ, C.TITLE_PLPL";
+
+        public const string DiagObjectItems =
+            "ID, NODECLASS, TITLEID, " + DatabaseFunctions.SqlTitleItems + ", VERSIONNUMBER, NAME, FAILUREWEIGHT, VERSTECKT, SICHERHEITSRELEVANT, CONTROLID, SORT_ORDER";
 
         public enum SwiRegisterEnum
         {
@@ -4761,9 +4765,8 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture,
-                    @"SELECT ID, NODECLASS, TITLEID, " + DatabaseFunctions.SqlTitleItems +
-                    @", VERSIONNUMBER, NAME, FAILUREWEIGHT, VERSTECKT, SICHERHEITSRELEVANT, " +
-                    @"CONTROLID, SORT_ORDER FROM XEP_DIAGNOSISOBJECTS WHERE (NODECLASS IN (SELECT ID FROM XEP_NODECLASSES WHERE (NAME = '{0}')))",
+                    @"SELECT " + DiagObjectItems + 
+                    @" FROM XEP_DIAGNOSISOBJECTS WHERE (NODECLASS IN (SELECT ID FROM XEP_NODECLASSES WHERE (NAME = '{0}')))",
                     nodeclassName);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
@@ -4807,9 +4810,8 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture,
-                    @"SELECT ID, NODECLASS, TITLEID, " + DatabaseFunctions.SqlTitleItems +
-                    @", VERSIONNUMBER, NAME, FAILUREWEIGHT, VERSTECKT, SICHERHEITSRELEVANT, " +
-                    @"CONTROLID, SORT_ORDER FROM XEP_DIAGNOSISOBJECTS WHERE XEP_DIAGNOSISOBJECTS.CONTROLID IN (SELECT DIAGNOSISOBJECTCONTROLID FROM XEP_REFDIAGNOSISTREE WHERE ID = {0})",
+                    @"SELECT " + DiagObjectItems +
+                    @" FROM XEP_DIAGNOSISOBJECTS WHERE XEP_DIAGNOSISOBJECTS.CONTROLID IN (SELECT DIAGNOSISOBJECTCONTROLID FROM XEP_REFDIAGNOSISTREE WHERE ID = {0})",
                     controlId);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
@@ -4855,9 +4857,8 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
                 }
 
                 string sql = string.Format(CultureInfo.InvariantCulture,
-                    @"SELECT ID, NODECLASS, TITLEID, " + DatabaseFunctions.SqlTitleItems +
-                    @", VERSIONNUMBER, NAME, FAILUREWEIGHT, VERSTECKT, SICHERHEITSRELEVANT, " +
-                    @"CONTROLID, SORT_ORDER FROM XEP_DIAGNOSISOBJECTS WHERE XEP_DIAGNOSISOBJECTS.CONTROLID IN (SELECT DIAGNOSISOBJECTCONTROLID FROM XEP_REFDIAGNOSISTREE WHERE ID = {0}{1})",
+                    @"SELECT " + DiagObjectItems +
+                    @" FROM XEP_DIAGNOSISOBJECTS WHERE XEP_DIAGNOSISOBJECTS.CONTROLID IN (SELECT DIAGNOSISOBJECTCONTROLID FROM XEP_REFDIAGNOSISTREE WHERE ID = {0}{1})",
                     controlId, hiddenRule);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
@@ -4911,9 +4912,8 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
                 }
 
                 string sql = string.Format(CultureInfo.InvariantCulture,
-                    @"SELECT ID, NODECLASS, TITLEID, " + DatabaseFunctions.SqlTitleItems +
-                    @", VERSIONNUMBER, NAME, FAILUREWEIGHT, VERSTECKT, SICHERHEITSRELEVANT, " +
-                    @"CONTROLID, SORT_ORDER FROM XEP_DIAGNOSISOBJECTS WHERE (CONTROLID = {0}{1})",
+                    @"SELECT " + DiagObjectItems +
+                    @" FROM XEP_DIAGNOSISOBJECTS WHERE (CONTROLID = {0}{1})",
                     controlId, hiddenRule);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
@@ -5051,9 +5051,8 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture,
-                    @"SELECT ID, NODECLASS, TITLEID, " + DatabaseFunctions.SqlTitleItems +
-                    @", VERSIONNUMBER, NAME, FAILUREWEIGHT, VERSTECKT, SICHERHEITSRELEVANT, " +
-                    @"CONTROLID, SORT_ORDER FROM XEP_DIAGNOSISOBJECTS WHERE (CONTROLID == 0)");
+                    @"SELECT " + DiagObjectItems +
+                    @" FROM XEP_DIAGNOSISOBJECTS WHERE (CONTROLID == 0)");
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
