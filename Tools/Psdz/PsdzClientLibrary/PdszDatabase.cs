@@ -1371,6 +1371,7 @@ namespace PsdzClient
         private string _typeKeyClassId;
         private Harmony _harmony;
         private Dictionary<string, XepRule> _xepRuleDict;
+        private List<SwiDiagObj> _diagObjRootNodes;
         public Dictionary<string, XepRule> XepRuleDict => _xepRuleDict;
         public SwiRegister SwiRegisterTree { get; private set; }
         public TestModules TestModuleStorage { get; private set; }
@@ -1497,6 +1498,7 @@ namespace PsdzClient
             _typeKeyClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"Typschluessel");
             _harmony = new Harmony("de.holeschak.PsdzClient");
             _xepRuleDict = null;
+            _diagObjRootNodes = null;
             SwiRegisterTree = null;
 
             AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
@@ -4796,7 +4798,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
 
             log.InfoFormat("GetChildDiagObjects Id: {0}, ControlId: {1}", parentDiagnosisObject.Id, parentDiagnosisObject.ControlId);
             string controlId = parentDiagnosisObject.ControlId;
-            if (string.IsNullOrEmpty(controlId) || controlId.ConvertToInt() == 0)
+            if (string.IsNullOrEmpty(controlId) || controlId.ConvertToInt(-1) == 0)
             {
                 controlId = parentDiagnosisObject.Id;
             }
@@ -4961,7 +4963,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             }
 
             string diagObjectControlId = GetDiagObjectControlIdForDiagObjectId(diagObjectId);
-            if (diagObjectControlId != null && diagObjectControlId.ConvertToInt() == 0)
+            if (diagObjectControlId != null && diagObjectControlId.ConvertToInt(-1) == 0)
             {
                 log.InfoFormat("IsDiagObjectValid Control id zero, Valid: {0}", true);
                 return true;
@@ -4980,7 +4982,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
         public bool AreAllParentDiagObjectsValid(string diagObjectControlId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
         {
             log.InfoFormat("AreAllParentDiagObjectsValid Id: {0}", diagObjectControlId);
-            if (diagObjectControlId != null && diagObjectControlId.ConvertToInt() == 0)
+            if (diagObjectControlId != null && diagObjectControlId.ConvertToInt(-1) == 0)
             {
                 log.InfoFormat("AreAllParentDiagObjectsValid Id zero, Valid: {0}", true);
                 return true;
@@ -4996,7 +4998,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             HashSet<SwiDiagObj> swiDiagObjHash = new HashSet<SwiDiagObj>();
             foreach (string parentId in idListParent)
             {
-                if (parentId != null && parentId.ConvertToInt() == 0)
+                if (parentId != null && parentId.ConvertToInt(-1) == 0)
                 {
                     log.InfoFormat("AreAllParentDiagObjectsValid Parent id zero, Valid: {0}", true);
                     return true;
@@ -5034,17 +5036,72 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             return false;
         }
 
+        private List<SwiDiagObj> GetAllDiagObjectRootNodes()
+        {
+            if (_diagObjRootNodes != null)
+            {
+                return _diagObjRootNodes;
+            }
+
+            log.InfoFormat("GetAllDiagObjectRootNodes");
+            List<SwiDiagObj> diagObjRootNodes = new List<SwiDiagObj>();
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture,
+                    @"SELECT ID, NODECLASS, TITLEID, " + DatabaseFunctions.SqlTitleItems +
+                    @", VERSIONNUMBER, NAME, FAILUREWEIGHT, VERSTECKT, SICHERHEITSRELEVANT, " +
+                    @"CONTROLID, SORT_ORDER FROM XEP_DIAGNOSISOBJECTS WHERE (CONTROLID == 0)");
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            SwiDiagObj swiDiagObj = ReadXepSwiDiagObj(reader);
+                            if (swiDiagObj != null)
+                            {
+                                diagObjRootNodes.Add(swiDiagObj);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("LoadXepRules Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            log.InfoFormat("GetAllDiagObjectRootNodes Count: {0}", diagObjRootNodes.Count);
+            _diagObjRootNodes = diagObjRootNodes;
+            return _diagObjRootNodes;
+        }
+
         private bool IsRootDiagnosisObject(SwiDiagObj diagObject)
         {
-#if false
-            foreach (XEP_DIAGNOSISOBJECTSEX allDiagObjectRootNode in GetAllDiagObjectRootNodes())
+            if (diagObject == null || string.IsNullOrEmpty(diagObject.Id))
+            {
+                log.Error("IsRootDiagnosisObject, No diag object");
+                return false;
+            }
+
+            List<SwiDiagObj> diagObjRootNodes = GetAllDiagObjectRootNodes();
+            if (diagObjRootNodes == null)
+            {
+                log.Error("IsRootDiagnosisObject, No root nodes");
+                return false;
+            }
+
+            foreach (SwiDiagObj allDiagObjectRootNode in diagObjRootNodes)
             {
                 if (allDiagObjectRootNode.Id == diagObject.Id)
                 {
+                    log.InfoFormat("IsRootDiagnosisObject, Root object: {0}", diagObject.Id);
                     return true;
                 }
             }
-#endif
+
+            log.InfoFormat("IsRootDiagnosisObject, No root object: {0}", diagObject.Id);
             return false;
         }
 
