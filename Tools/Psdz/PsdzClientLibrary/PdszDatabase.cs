@@ -1376,6 +1376,7 @@ namespace PsdzClient
         private Harmony _harmony;
         private Dictionary<string, XepRule> _xepRuleDict;
         private List<SwiDiagObj> _diagObjRootNodes;
+        private HashSet<Int64> _diagObjRootNodeIdSet;
         public Dictionary<string, XepRule> XepRuleDict => _xepRuleDict;
         public SwiRegister SwiRegisterTree { get; private set; }
         public TestModules TestModuleStorage { get; private set; }
@@ -1503,6 +1504,7 @@ namespace PsdzClient
             _harmony = new Harmony("de.holeschak.PsdzClient");
             _xepRuleDict = null;
             _diagObjRootNodes = null;
+            _diagObjRootNodeIdSet = null;
             SwiRegisterTree = null;
 
             AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
@@ -5048,6 +5050,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
 
             log.InfoFormat("GetAllDiagObjectRootNodes");
             List<SwiDiagObj> diagObjRootNodes = new List<SwiDiagObj>();
+            HashSet<Int64> diagObjRootNodeIdSet = new HashSet<Int64>();
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture,
@@ -5063,6 +5066,11 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
                             if (swiDiagObj != null)
                             {
                                 diagObjRootNodes.Add(swiDiagObj);
+                                Int64 objectId = swiDiagObj.Id.ConvertToInt(-1);
+                                if (objectId != -1)
+                                {
+                                    diagObjRootNodeIdSet.Add(objectId);
+                                }
                             }
                         }
                     }
@@ -5076,6 +5084,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
 
             log.InfoFormat("GetAllDiagObjectRootNodes Count: {0}", diagObjRootNodes.Count);
             _diagObjRootNodes = diagObjRootNodes;
+            _diagObjRootNodeIdSet = diagObjRootNodeIdSet;
             return _diagObjRootNodes;
         }
 
@@ -5092,6 +5101,18 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             {
                 log.Error("IsRootDiagnosisObject, Diag id invalid");
                 return false;
+            }
+
+            if (_diagObjRootNodeIdSet == null)
+            {
+                GetAllDiagObjectRootNodes();
+            }
+
+            if (_diagObjRootNodeIdSet != null)
+            {
+                bool result = _diagObjRootNodeIdSet.Contains(diagId);
+                log.InfoFormat("IsRootDiagnosisObject, Is root object: {0}", result);
+                return result;
             }
 
             List<SwiDiagObj> diagObjRootNodes = GetAllDiagObjectRootNodes();
