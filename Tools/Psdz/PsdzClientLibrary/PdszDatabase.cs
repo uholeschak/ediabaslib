@@ -5041,14 +5041,14 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             return false;
         }
 
-        private List<SwiDiagObj> GetAllDiagObjectRootNodes()
+        private bool UpdateDiagObjectRootNodes()
         {
-            if (_diagObjRootNodes != null)
+            if (_diagObjRootNodes != null && _diagObjRootNodeIdSet != null)
             {
-                return _diagObjRootNodes;
+                return true;
             }
 
-            log.InfoFormat("GetAllDiagObjectRootNodes");
+            log.InfoFormat("UpdateDiagObjectRootNodes");
             List<SwiDiagObj> diagObjRootNodes = new List<SwiDiagObj>();
             HashSet<Int64> diagObjRootNodeIdSet = new HashSet<Int64>();
             try
@@ -5078,13 +5078,20 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             }
             catch (Exception e)
             {
-                log.ErrorFormat("LoadXepRules Exception: '{0}'", e.Message);
-                return null;
+                log.ErrorFormat("UpdateDiagObjectRootNodes Exception: '{0}'", e.Message);
+                return false;
             }
 
-            log.InfoFormat("GetAllDiagObjectRootNodes Count: {0}", diagObjRootNodes.Count);
+            log.InfoFormat("UpdateDiagObjectRootNodes Count: {0}", diagObjRootNodes.Count);
             _diagObjRootNodes = diagObjRootNodes;
             _diagObjRootNodeIdSet = diagObjRootNodeIdSet;
+
+            return true;
+        }
+
+        private List<SwiDiagObj> GetAllDiagObjectRootNodes()
+        {
+            UpdateDiagObjectRootNodes();
             return _diagObjRootNodes;
         }
 
@@ -5103,11 +5110,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
                 return false;
             }
 
-            if (_diagObjRootNodeIdSet == null)
-            {
-                GetAllDiagObjectRootNodes();
-            }
-
+            UpdateDiagObjectRootNodes();
             if (_diagObjRootNodeIdSet != null)
             {
                 bool result = _diagObjRootNodeIdSet.Contains(diagId);
