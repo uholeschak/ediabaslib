@@ -117,6 +117,7 @@ namespace CarSimulator
             {
 #if true
                 BluetoothSearch dlgSearch = new BluetoothSearch();
+                dlgSearch.EnableAutoClose = true;
                 DialogResult result = dlgSearch.ShowDialog();
                 if (result != DialogResult.OK)
                 {

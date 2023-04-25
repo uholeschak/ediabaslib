@@ -20,6 +20,8 @@ namespace CarSimulator
         private bool _ignoreSelection;
         private bool _autoClose;
 
+        public bool EnableAutoClose { get; set; }
+
         public BluetoothSearch()
         {
             InitializeComponent();
@@ -122,7 +124,7 @@ namespace CarSimulator
                         {
                             UpdateDeviceList(devices.ToArray(), true);
                             UpdateStatusText(listViewDevices.Items.Count > 0 ? "Devices found" : "No devices found");
-                            if (_autoClose)
+                            if (EnableAutoClose && _autoClose)
                             {
                                 DialogResult = DialogResult.OK;
                                 Close();
