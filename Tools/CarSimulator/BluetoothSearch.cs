@@ -207,9 +207,14 @@ namespace CarSimulator
                 {
                     if (listViewItem.SubItems.Count > 1)
                     {
-                        if (listViewItem.SubItems[1].Text.StartsWith("OBD"))
+                        string deviceName = listViewItem.SubItems[1].Text;
+                        if (!string.IsNullOrEmpty(deviceName))
                         {
-                            listViewItem.Selected = true;
+                            deviceName = deviceName.ToUpperInvariant();
+                            if (deviceName.Contains("OBDII") || deviceName.Contains("DEEP OBD"))
+                            {
+                                listViewItem.Selected = true;
+                            }
                             break;
                         }
                     }
