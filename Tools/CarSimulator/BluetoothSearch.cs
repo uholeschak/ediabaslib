@@ -221,6 +221,14 @@ namespace CarSimulator
                 }
             }
 
+            if (listViewDevices.SelectedItems.Count == 0)
+            {
+                if (listViewDevices.Items.Count > 0)
+                {
+                    listViewDevices.Items[0].Selected = true;
+                }
+            }
+
             listViewDevices.EndUpdate();
             _ignoreSelection = false;
             UpdateButtonStatus();
