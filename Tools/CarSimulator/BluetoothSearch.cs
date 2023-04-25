@@ -182,10 +182,6 @@ namespace CarSimulator
                 }
             }
             // select last selected item
-            if (_selectedItem == null && listViewDevices.Items.Count > 0)
-            {
-                _selectedItem = listViewDevices.Items[0];
-            }
             if (_selectedItem != null)
             {
                 foreach (ListViewItem listViewItem in listViewDevices.Items)
@@ -194,13 +190,32 @@ namespace CarSimulator
                     {
                         continue;
                     }
-                    if (string.Compare(listViewItem.SubItems[0].Text, _selectedItem.SubItems[0].Text, StringComparison.Ordinal) == 0)
+
+                    if (listViewItem.SubItems.Count > 0)
                     {
-                        listViewItem.Selected = true;
-                        break;
+                        if (string.Compare(listViewItem.SubItems[0].Text, _selectedItem.SubItems[0].Text, StringComparison.Ordinal) == 0)
+                        {
+                            listViewItem.Selected = true;
+                            break;
+                        }
                     }
                 }
             }
+            else
+            {
+                foreach (ListViewItem listViewItem in listViewDevices.Items)
+                {
+                    if (listViewItem.SubItems.Count > 1)
+                    {
+                        if (listViewItem.SubItems[1].Text.StartsWith("OBD"))
+                        {
+                            listViewItem.Selected = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
             listViewDevices.EndUpdate();
             _ignoreSelection = false;
             UpdateButtonStatus();
