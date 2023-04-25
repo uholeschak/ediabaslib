@@ -5095,6 +5095,12 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             return _diagObjRootNodes;
         }
 
+        private HashSet<Int64> GetDiagObjectRootNodeIds()
+        {
+            UpdateDiagObjectRootNodes();
+            return _diagObjRootNodeIdSet;
+        }
+
         private bool IsRootDiagnosisObject(SwiDiagObj diagObject)
         {
             if (diagObject == null || string.IsNullOrEmpty(diagObject.Id))
@@ -5110,10 +5116,10 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
                 return false;
             }
 
-            UpdateDiagObjectRootNodes();
-            if (_diagObjRootNodeIdSet != null)
+            HashSet<Int64> diagObjRootNodeIdSet = GetDiagObjectRootNodeIds();
+            if (diagObjRootNodeIdSet != null)
             {
-                bool result = _diagObjRootNodeIdSet.Contains(diagId);
+                bool result = diagObjRootNodeIdSet.Contains(diagId);
                 log.InfoFormat("IsRootDiagnosisObject, Is root object: {0}", result);
                 return result;
             }
