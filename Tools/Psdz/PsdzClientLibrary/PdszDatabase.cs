@@ -4732,6 +4732,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
         {
             log.InfoFormat("GetInfoObjectsTreeForNodeclassName NodeClass: {0}", nodeclassName);
 
+            DateTime startTime = DateTime.Now;
             List<SwiDiagObj> diagObjsRoot = GetDiagObjectsByNodeclassName(nodeclassName);
             if (diagObjsRoot != null)
             {
@@ -4752,6 +4753,8 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
                 }
             }
 
+            DateTime endTime = DateTime.Now;
+            log.InfoFormat("GetInfoObjectsTreeForNodeclassName Update time: {0}s", (endTime - startTime).Seconds);
             return diagObjsRoot;
         }
 
