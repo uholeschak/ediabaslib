@@ -18,6 +18,7 @@ namespace CarSimulator
         private volatile bool _searching;
         private ListViewItem _selectedItem;
         private bool _ignoreSelection;
+        private bool _autoClose;
 
         public BluetoothSearch()
         {
@@ -121,6 +122,11 @@ namespace CarSimulator
                         {
                             UpdateDeviceList(devices.ToArray(), true);
                             UpdateStatusText(listViewDevices.Items.Count > 0 ? "Devices found" : "No devices found");
+                            if (_autoClose)
+                            {
+                                DialogResult = DialogResult.OK;
+                                Close();
+                            }
                         }));
                     }
                     catch (Exception ex)
@@ -214,6 +220,7 @@ namespace CarSimulator
                             if (deviceName.Contains("OBDII") || deviceName.Contains("DEEP OBD"))
                             {
                                 listViewItem.Selected = true;
+                                _autoClose = true;
                             }
                             break;
                         }
