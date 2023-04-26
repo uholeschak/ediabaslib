@@ -116,8 +116,7 @@ namespace CarSimulator
             try
             {
 #if true
-                BluetoothSearch dlgSearch = new BluetoothSearch();
-                dlgSearch.EnableAutoClose = true;
+                BluetoothSearch dlgSearch = new BluetoothSearch(new List<string> {"OBD"});
                 DialogResult result = dlgSearch.ShowDialog();
                 if (result != DialogResult.OK)
                 {

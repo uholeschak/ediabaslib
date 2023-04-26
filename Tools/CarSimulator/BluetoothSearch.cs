@@ -18,13 +18,13 @@ namespace CarSimulator
         private volatile bool _searching;
         private ListViewItem _selectedItem;
         private bool _ignoreSelection;
-        private bool _autoClose;
+        private bool _autoSelect;
+        private List<string> _autoSelectNames;
 
-        public bool EnableAutoClose { get; set; }
-
-        public BluetoothSearch()
+        public BluetoothSearch(List<string> autoSelectNames = null)
         {
             InitializeComponent();
+            _autoSelectNames = autoSelectNames;
             ActiveControl = buttonOk;
             try
             {
@@ -124,7 +124,7 @@ namespace CarSimulator
                         {
                             UpdateDeviceList(devices.ToArray(), true);
                             UpdateStatusText(listViewDevices.Items.Count > 0 ? "Devices found" : "No devices found");
-                            if (EnableAutoClose && _autoClose)
+                            if (_autoSelect)
                             {
                                 DialogResult = DialogResult.OK;
                                 Close();
@@ -219,10 +219,17 @@ namespace CarSimulator
                         if (!string.IsNullOrEmpty(deviceName))
                         {
                             deviceName = deviceName.ToUpperInvariant();
-                            if (deviceName.Contains("OBDII") || deviceName.Contains("DEEP OBD"))
+                            if (_autoSelectNames != null)
                             {
-                                listViewItem.Selected = true;
-                                _autoClose = true;
+                                foreach (string selectName in _autoSelectNames)
+                                {
+                                    if (deviceName.Contains(selectName))
+                                    {
+                                        listViewItem.Selected = true;
+                                        _autoSelect = true;
+                                        break;
+                                    }
+                                }
                             }
                             break;
                         }
