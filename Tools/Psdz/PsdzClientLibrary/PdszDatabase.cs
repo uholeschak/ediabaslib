@@ -4984,16 +4984,37 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             return false;
         }
 
-        public bool AreAllParentDiagObjectsValid(string diagObjectControlId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
+        public bool IsAtLeastOnePathToRootValid(string currentDiagObjectControlId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
         {
-            log.InfoFormat("AreAllParentDiagObjectsValid Id: {0}", diagObjectControlId);
-            if (diagObjectControlId != null && diagObjectControlId.ConvertToInt(-1) == 0)
+            log.InfoFormat("IsAtLeastOnePathToRootValid Id: {0}", currentDiagObjectControlId);
+            List<string> idListParent = GetParentDiagObjectControlIdsForControlId(currentDiagObjectControlId);
+            if (idListParent == null)
+            {
+                log.InfoFormat("IsAtLeastOnePathToRootValid No parent diag objects, Valid: {0}", false);
+                return false;
+            }
+
+            foreach (string parentId in idListParent)
+            {
+                if (IsRootDiagnosisObject(parentId))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool AreAllParentDiagObjectsValid(string currentDiagObjectControlId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
+        {
+            log.InfoFormat("AreAllParentDiagObjectsValid Id: {0}", currentDiagObjectControlId);
+            if (currentDiagObjectControlId != null && currentDiagObjectControlId.ConvertToInt(-1) == 0)
             {
                 log.InfoFormat("AreAllParentDiagObjectsValid Id zero, Valid: {0}", true);
                 return true;
             }
 
-            List<string> idListParent = GetParentDiagObjectControlIdsForControlId(diagObjectControlId);
+            List<string> idListParent = GetParentDiagObjectControlIdsForControlId(currentDiagObjectControlId);
             if (idListParent == null || idListParent.Count == 0)
             {
                 log.InfoFormat("AreAllParentDiagObjectsValid No parent diag objects, Valid: {0}", true);
@@ -5112,17 +5133,22 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
                 return false;
             }
 
-            Int64 diagId = diagObject.Id.ConvertToInt(-1);
-            if (diagId == -1)
+            return IsRootDiagnosisObject(diagObject.Id);
+        }
+
+        private bool IsRootDiagnosisObject(string objId)
+        {
+            Int64 objectIdNum = objId.ConvertToInt(-1);
+            if (objectIdNum == -1)
             {
-                log.Error("IsRootDiagnosisObject, Diag id invalid");
+                log.Error("IsRootDiagnosisObject, Object ID invalid");
                 return false;
             }
 
             HashSet<Int64> diagObjRootNodeIdSet = GetDiagObjectRootNodeIds();
             if (diagObjRootNodeIdSet != null)
             {
-                bool result = diagObjRootNodeIdSet.Contains(diagId);
+                bool result = diagObjRootNodeIdSet.Contains(objectIdNum);
                 log.InfoFormat("IsRootDiagnosisObject, Is root object: {0}", result);
                 return result;
             }
@@ -5136,14 +5162,14 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
 
             foreach (SwiDiagObj allDiagObjectRootNode in diagObjRootNodes)
             {
-                if (allDiagObjectRootNode.Id.ConvertToInt(-1) == diagId)
+                if (allDiagObjectRootNode.Id.ConvertToInt(-1) == objectIdNum)
                 {
-                    log.InfoFormat("IsRootDiagnosisObject, Root object: {0}", diagObject.Id);
+                    log.InfoFormat("IsRootDiagnosisObject, Root object: {0}", objId);
                     return true;
                 }
             }
 
-            log.InfoFormat("IsRootDiagnosisObject, No root object: {0}", diagObject.Id);
+            log.InfoFormat("IsRootDiagnosisObject, No root object: {0}", objId);
             return false;
         }
 
