@@ -4554,7 +4554,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
 
         public bool IsInfoObjectValid(string infoObjectId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
         {
-            log.InfoFormat("IsInfoObjectValid Id: {0}", infoObjectId);
+            log.InfoFormat("IsInfoObjectValid Id: {0}, Vehicle: {1}", infoObjectId, vehicle != null);
 
             string infoObjectObjectId = GetInfoObjectObjectId(infoObjectId);
             if (!EvaluateXepRulesById(infoObjectId, vehicle, ffmDynamicResolver, infoObjectObjectId))
@@ -4708,7 +4708,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             List<SwiInfoObj> swiInfoObjList = new List<SwiInfoObj>();
             if (diagObject.ControlId != null)
             {
-                List<SwiInfoObj> infoObjs = GetInfoObjectsByDiagObjectControlId(diagObject.ControlId, null, null, getHidden: true, typeFilter);
+                List<SwiInfoObj> infoObjs = GetInfoObjectsByDiagObjectControlId(diagObject.ControlId, typeFilter != null ? vehicle : null, null, getHidden: true, typeFilter);
                 diagObject.InfoObjects = infoObjs;
                 if (infoObjs != null)
                 {
@@ -5756,7 +5756,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
 
         public bool EvaluateXepRulesById(string id, Vehicle vehicle, IFFMDynamicResolver ffmResolver, string objectId = null)
         {
-            // objectId is onyl required for patch rules
+            // objectId is only required for patch rules
             log.InfoFormat("EvaluateXepRulesById Id: {0}, ObjectId: {1}", id, objectId ?? "-");
             if (vehicle == null)
             {
