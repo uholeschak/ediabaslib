@@ -1376,7 +1376,7 @@ namespace PsdzClient
         private Harmony _harmony;
         private Dictionary<string, XepRule> _xepRuleDict;
         private List<SwiDiagObj> _diagObjRootNodes;
-        private HashSet<Int64> _diagObjRootNodeIdSet;
+        private HashSet<string> _diagObjRootNodeIdSet;
         public Dictionary<string, XepRule> XepRuleDict => _xepRuleDict;
         public SwiRegister SwiRegisterTree { get; private set; }
         public TestModules TestModuleStorage { get; private set; }
@@ -5105,7 +5105,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
 
             log.InfoFormat("UpdateDiagObjectRootNodes");
             List<SwiDiagObj> diagObjRootNodes = new List<SwiDiagObj>();
-            HashSet<Int64> diagObjRootNodeIdSet = new HashSet<Int64>();
+            HashSet<string> diagObjRootNodeIdSet = new HashSet<string>();
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture,
@@ -5121,10 +5121,9 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
                             if (swiDiagObj != null)
                             {
                                 diagObjRootNodes.Add(swiDiagObj);
-                                Int64 objectId = swiDiagObj.Id.ConvertToInt(-1);
-                                if (objectId != -1)
+                                if (!string.IsNullOrEmpty(swiDiagObj.Id))
                                 {
-                                    diagObjRootNodeIdSet.Add(objectId);
+                                    diagObjRootNodeIdSet.Add(swiDiagObj.Id);
                                 }
                             }
                         }
@@ -5150,7 +5149,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             return _diagObjRootNodes;
         }
 
-        private HashSet<Int64> GetDiagObjectRootNodeIds()
+        private HashSet<string> GetDiagObjectRootNodeIds()
         {
             UpdateDiagObjectRootNodes();
             return _diagObjRootNodeIdSet;
@@ -5169,17 +5168,16 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
 
         private bool IsRootDiagnosisObject(string objId)
         {
-            Int64 objectIdNum = objId.ConvertToInt(-1);
-            if (objectIdNum == -1)
+            if (string.IsNullOrEmpty(objId))
             {
                 log.Error("IsRootDiagnosisObject, Object ID invalid");
                 return false;
             }
 
-            HashSet<Int64> diagObjRootNodeIdSet = GetDiagObjectRootNodeIds();
+            HashSet<string> diagObjRootNodeIdSet = GetDiagObjectRootNodeIds();
             if (diagObjRootNodeIdSet != null)
             {
-                bool result = diagObjRootNodeIdSet.Contains(objectIdNum);
+                bool result = diagObjRootNodeIdSet.Contains(objId);
                 log.InfoFormat("IsRootDiagnosisObject, Is root object: {0}", result);
                 return result;
             }
@@ -5193,7 +5191,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
 
             foreach (SwiDiagObj allDiagObjectRootNode in diagObjRootNodes)
             {
-                if (allDiagObjectRootNode.Id.ConvertToInt(-1) == objectIdNum)
+                if (allDiagObjectRootNode.Id == objId)
                 {
                     log.InfoFormat("IsRootDiagnosisObject, Root object: {0}", objId);
                     return true;
@@ -5758,6 +5756,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
 
         public bool EvaluateXepRulesById(string id, Vehicle vehicle, IFFMDynamicResolver ffmResolver, string objectId = null)
         {
+            // objectId is onyl required for patch rules
             log.InfoFormat("EvaluateXepRulesById Id: {0}, ObjectId: {1}", id, objectId ?? "-");
             if (vehicle == null)
             {
