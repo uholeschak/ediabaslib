@@ -5000,8 +5000,26 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
                 {
                     return true;
                 }
+
+                SwiDiagObj swiDiagObj = GetDiagObjectsByControlId(parentId, null, null, getHidden: true).FirstOrDefault();
+                if (swiDiagObj == null)
+                {
+                    log.InfoFormat("AreAllParentDiagObjectsValid No diag control id");
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(swiDiagObj.ControlId) && EvaluateXepRulesById(swiDiagObj.Id, vehicle, ffmDynamicResolver, parentId))
+                    {
+                        if (IsAtLeastOnePathToRootValid(swiDiagObj.ControlId, vehicle, ffmDynamicResolver))
+                        {
+                            log.InfoFormat("IsAtLeastOnePathToRootValid -> IsAtLeastOnePathToRootValid, Valid: {0}", true);
+                            return true;
+                        }
+                    }
+                }
             }
 
+            log.InfoFormat("IsAtLeastOnePathToRootValid Valid: {0}", false);
             return false;
         }
 
