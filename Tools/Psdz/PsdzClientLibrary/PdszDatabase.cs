@@ -1381,6 +1381,7 @@ namespace PsdzClient
         public SwiRegister SwiRegisterTree { get; private set; }
         public TestModules TestModuleStorage { get; private set; }
         public EcuCharacteristicsData EcuCharacteristicsStorage { get; private set; }
+        public bool UseIsAtLeastOnePathToRootValid { get; set; }
 
         private static string _moduleRefPath;
         private static SerializableDictionary<string, List<string>> _moduleRefDict;
@@ -1506,6 +1507,7 @@ namespace PsdzClient
             _diagObjRootNodes = null;
             _diagObjRootNodeIdSet = null;
             SwiRegisterTree = null;
+            UseIsAtLeastOnePathToRootValid = true;
 
             AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
             {
@@ -4967,17 +4969,28 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
                 return false;
             }
 
-            string diagObjectControlId = GetDiagObjectControlIdForDiagObjectId(diagObjectId);
-            if (diagObjectControlId != null && diagObjectControlId.ConvertToInt(-1) == 0)
+            string diagObjectControlIdForDiagObjectId = GetDiagObjectControlIdForDiagObjectId(diagObjectId);
+            if (diagObjectControlIdForDiagObjectId != null && diagObjectControlIdForDiagObjectId.ConvertToInt(-1) == 0)
             {
                 log.InfoFormat("IsDiagObjectValid Control id zero, Valid: {0}", true);
                 return true;
             }
 
-            if (AreAllParentDiagObjectsValid(diagObjectControlId, vehicle, ffmDynamicResolver))
+            if (UseIsAtLeastOnePathToRootValid)
             {
-                log.InfoFormat("IsDiagObjectValid All parents valid, Valid: {0}", true);
-                return true;
+                if (this.IsAtLeastOnePathToRootValid(diagObjectControlIdForDiagObjectId, vehicle, ffmDynamicResolver))
+                {
+                    log.InfoFormat("IsDiagObjectValid One parent root valid, Valid: {0}", true);
+                    return true;
+                }
+            }
+            else
+            {
+                if (AreAllParentDiagObjectsValid(diagObjectControlIdForDiagObjectId, vehicle, ffmDynamicResolver))
+                {
+                    log.InfoFormat("IsDiagObjectValid All parents valid, Valid: {0}", true);
+                    return true;
+                }
             }
 
             log.InfoFormat("IsDiagObjectValid Valid: {0}", false);
