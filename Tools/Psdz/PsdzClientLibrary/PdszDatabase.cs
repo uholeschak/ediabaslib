@@ -1073,8 +1073,11 @@ namespace PsdzClient
                 {
                     foreach (SwiDiagObj childObj in Children)
                     {
-                        sb.AppendLine();
-                        sb.Append(childObj.ToString(language, prefixChild));
+                        if (childObj.HasInfoObjects)
+                        {
+                            sb.AppendLine();
+                            sb.Append(childObj.ToString(language, prefixChild));
+                        }
                     }
                 }
                 return sb.ToString();
@@ -4703,12 +4706,12 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             return swiInfoObj;
         }
 
-        public List<SwiInfoObj> CollectInfoObjectsForDiagObject(SwiDiagObj diagObject, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, List<string> typeFilter = null)
+        public List<SwiInfoObj> CollectInfoObjectsForDiagObject(SwiDiagObj diagObject, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, List<string> typeFilter = null, bool validateInfoObject = false)
         {
             List<SwiInfoObj> swiInfoObjList = new List<SwiInfoObj>();
             if (diagObject.ControlId != null)
             {
-                List<SwiInfoObj> infoObjs = GetInfoObjectsByDiagObjectControlId(diagObject.ControlId, typeFilter != null ? vehicle : null, null, getHidden: true, typeFilter);
+                List<SwiInfoObj> infoObjs = GetInfoObjectsByDiagObjectControlId(diagObject.ControlId, validateInfoObject ? vehicle : null, null, getHidden: true, typeFilter);
                 diagObject.InfoObjects = infoObjs;
                 if (infoObjs != null)
                 {
@@ -4719,7 +4722,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
                 diagObject.Children = diagObjsChild;
                 foreach (SwiDiagObj diagObjChild in diagObjsChild)
                 {
-                    List<SwiInfoObj> infoObjsChild = CollectInfoObjectsForDiagObject(diagObjChild, vehicle, ffmDynamicResolver, typeFilter);
+                    List<SwiInfoObj> infoObjsChild = CollectInfoObjectsForDiagObject(diagObjChild, vehicle, ffmDynamicResolver, typeFilter, validateInfoObject);
                     if (infoObjsChild != null)
                     {
                         swiInfoObjList.AddRange(infoObjsChild);
@@ -4730,7 +4733,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             return swiInfoObjList;
         }
 
-        public List<SwiDiagObj> GetInfoObjectsTreeForNodeclassName(string nodeclassName, Vehicle vehicle = null, List<string> typeFilter = null)
+        public List<SwiDiagObj> GetInfoObjectsTreeForNodeclassName(string nodeclassName, Vehicle vehicle = null, List<string> typeFilter = null, bool validateInfoObject = false)
         {
             log.InfoFormat("GetInfoObjectsTreeForNodeclassName NodeClass: {0}", nodeclassName);
 
@@ -4745,7 +4748,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
                     {
                         foreach (SwiDiagObj swiDiagObjChild in diagObjsChild)
                         {
-                            List<SwiInfoObj> swiInfoObjs = CollectInfoObjectsForDiagObject(swiDiagObjChild, vehicle, null, typeFilter);
+                            List<SwiInfoObj> swiInfoObjs = CollectInfoObjectsForDiagObject(swiDiagObjChild, vehicle, null, typeFilter, validateInfoObject);
                             if (swiInfoObjs == null)
                             {
                                 log.InfoFormat("GetInfoObjectsTreeForNodeclassName get info objects failed: {0}", nodeclassName);

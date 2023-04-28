@@ -770,7 +770,7 @@ namespace PsdzClient.Programming
                 }
 
                 List<PdszDatabase.SwiDiagObj> diagObjsNodeClass = ProgrammingService.PdszDatabase.GetInfoObjectsTreeForNodeclassName(
-                    PdszDatabase.DiagObjServiceRoot, vehicle, new List<string> { "ABL" });
+                    PdszDatabase.DiagObjServiceRoot, vehicle, new List<string> { "ABL" }, true);
                 if (diagObjsNodeClass != null)
                 {
                     log.InfoFormat("GetInfoObjectsTreeForNodeclassName for vehicle: {0}", diagObjsNodeClass.Count);
