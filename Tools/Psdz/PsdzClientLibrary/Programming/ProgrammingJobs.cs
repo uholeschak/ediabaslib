@@ -769,16 +769,23 @@ namespace PsdzClient.Programming
                     return false;
                 }
 
-                List<PdszDatabase.SwiDiagObj> diagObjsNodeClass = ProgrammingService.PdszDatabase.GetInfoObjectsTreeForNodeclassName(
-                    PdszDatabase.DiagObjServiceRoot, vehicle, new List<string> { "ABL" }, true);
-                if (diagObjsNodeClass != null)
+                for (int type = 0; type < 1; type++)
                 {
-                    foreach (PdszDatabase.SwiDiagObj swiDiagObj in diagObjsNodeClass)
+                    ProgrammingService.PdszDatabase.UseIsAtLeastOnePathToRootValid = type == 0;
+                    List<PdszDatabase.SwiDiagObj> diagObjsNodeClass = ProgrammingService.PdszDatabase.GetInfoObjectsTreeForNodeclassName(
+                        PdszDatabase.DiagObjServiceRoot, vehicle, new List<string> { "ABL" }, true);
+                    if (diagObjsNodeClass != null)
                     {
-                        log.InfoFormat("GetInfoObjectsTreeForNodeclassName for vehicle InfoObject: {0}", swiDiagObj.InfoObjectsCount);
-                        log.Info(swiDiagObj.ToString(ClientContext.Language));
+                        foreach (PdszDatabase.SwiDiagObj swiDiagObj in diagObjsNodeClass)
+                        {
+                            log.InfoFormat("GetInfoObjectsTreeForNodeclassName for vehicle InfoObject: {0}, OneRoot={1}",
+                                swiDiagObj.InfoObjectsCount, ProgrammingService.PdszDatabase.UseIsAtLeastOnePathToRootValid);
+                            log.Info(swiDiagObj.ToString(ClientContext.Language));
+                        }
                     }
                 }
+
+                ProgrammingService.PdszDatabase.UseIsAtLeastOnePathToRootValid = true;
 
                 if (!CheckVoltage(cts, sbResult, true))
                 {
