@@ -1359,6 +1359,8 @@ namespace PsdzClient
 
         private const string TestModulesXmlFile = "TestModules.xml";
         private const string TestModulesZipFile = "TestModules.zip";
+        private const string ServiceModulesXmlFile = "ServiceModules.xml";
+        private const string ServiceModulesZipFile = "ServiceModules.zip";
         private const string EcuCharacteristicsXmFile = "EcuCharacteristics.xml";
         private const string EcuCharacteristicsZipFile = "EcuCharacteristics.zip";
         private static readonly ILog log = LogManager.GetLogger(typeof(PdszDatabase));
@@ -2289,14 +2291,138 @@ namespace PsdzClient
             }
         }
 
-        public TestModules ConvertAllServiceAblModules(ProgressDelegate progressHandler)
+        public bool GenerateServiceModuleData(ProgressDelegate progressHandler)
+        {
+            try
+            {
+                TestModules testModules = null;
+                XmlSerializer serializer = new XmlSerializer(typeof(TestModules));
+                string serviceModulesZipFile = Path.Combine(_databaseExtractPath, ServiceModulesZipFile);
+                if (File.Exists(serviceModulesZipFile))
+                {
+                    try
+                    {
+                        ZipFile zf = null;
+                        try
+                        {
+                            FileStream fs = File.OpenRead(serviceModulesZipFile);
+                            zf = new ZipFile(fs);
+                            foreach (ZipEntry zipEntry in zf)
+                            {
+                                if (!zipEntry.IsFile)
+                                {
+                                    continue; // Ignore directories
+                                }
+
+                                if (string.Compare(zipEntry.Name, ServiceModulesXmlFile, StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    Stream zipStream = zf.GetInputStream(zipEntry);
+                                    using (TextReader reader = new StreamReader(zipStream))
+                                    {
+                                        testModules = serializer.Deserialize(reader) as TestModules;
+                                    }
+                                }
+                            }
+                        }
+                        finally
+                        {
+                            if (zf != null)
+                            {
+                                zf.IsStreamOwner = true; // Makes close also shut the underlying stream
+                                zf.Close(); // Ensure we release resources
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        log.ErrorFormat("GenerateServiceModuleData Deserialize Exception: '{0}'", e.Message);
+                    }
+                }
+
+                bool dataValid = true;
+                if (testModules != null)
+                {
+                    DbInfo dbInfo = GetDbInfo();
+                    if (testModules.Version == null || !testModules.Version.IsIdentical(dbInfo?.Version, dbInfo?.DateTime))
+                    {
+                        log.ErrorFormat("GenerateServiceModuleData Version mismatch");
+                        dataValid = false;
+                    }
+                }
+
+                if (testModules == null || !dataValid)
+                {
+                    log.InfoFormat("GenerateServiceModuleData Converting modules");
+                    if (!IsExecutable())
+                    {
+                        log.ErrorFormat("GenerateServiceModuleData Started from DLL");
+                        return false;
+                    }
+
+                    if (progressHandler != null)
+                    {
+                        if (progressHandler.Invoke(true, 0, 0))
+                        {
+                            log.ErrorFormat("GenerateServiceModuleData Aborted");
+                            return false;
+                        }
+                    }
+
+                    testModules = ConvertAllServiceModules(progressHandler);
+                    if (testModules == null)
+                    {
+                        log.ErrorFormat("GenerateServiceModuleData ConvertAllServiceModules failed");
+                        return false;
+                    }
+
+                    using (MemoryStream memStream = new MemoryStream())
+                    {
+                        serializer.Serialize(memStream, testModules);
+                        memStream.Seek(0, SeekOrigin.Begin);
+
+                        FileStream fsOut = File.Create(serviceModulesZipFile);
+                        ZipOutputStream zipStream = new ZipOutputStream(fsOut);
+                        zipStream.SetLevel(3);
+
+                        try
+                        {
+                            ZipEntry newEntry = new ZipEntry(TestModulesXmlFile)
+                            {
+                                DateTime = DateTime.Now,
+                                Size = memStream.Length
+                            };
+                            zipStream.PutNextEntry(newEntry);
+
+                            byte[] buffer = new byte[4096];
+                            StreamUtils.Copy(memStream, zipStream, buffer);
+                            zipStream.CloseEntry();
+                        }
+                        finally
+                        {
+                            zipStream.IsStreamOwner = true;
+                            zipStream.Close();
+                        }
+                    }
+                }
+
+                TestModuleStorage = testModules;
+                return true;
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GenerateServiceModuleData Exception: '{0}'", e.Message);
+                return false;
+            }
+        }
+
+        public TestModules ConvertAllServiceModules(ProgressDelegate progressHandler)
         {
             try
             {
                 List<SwiDiagObj> diagObjsNodeClass = GetInfoObjectsTreeForNodeclassName(DiagObjServiceRoot, null, new List<string> { "ABL" });
                 if (diagObjsNodeClass == null)
                 {
-                    log.ErrorFormat("ConvertAllServiceAblModules GetInfoObjectsTreeForNodeclassName failed");
+                    log.ErrorFormat("ConvertAllServiceModules GetInfoObjectsTreeForNodeclassName failed");
                     return null;
                 }
 
@@ -2316,7 +2442,7 @@ namespace PsdzClient
                         int percent = index * 100 / completeInfoObjects.Count;
                         if (progressHandler.Invoke(false, percent, failCount))
                         {
-                            log.ErrorFormat("ConvertAllServiceAblModules Aborted at {0}%", percent);
+                            log.ErrorFormat("ConvertAllServiceModules Aborted at {0}%", percent);
                             return null;
                         }
 
@@ -2327,10 +2453,10 @@ namespace PsdzClient
                             TestModuleData moduleData = ReadTestModule(moduleName, out bool failure);
                             if (moduleData == null)
                             {
-                                log.ErrorFormat("ConvertAllServiceAblModules ReadTestModule failed for: {0}", moduleName);
+                                log.ErrorFormat("ConvertAllServiceModules ReadTestModule failed for: {0}", moduleName);
                                 if (failure)
                                 {
-                                    log.ErrorFormat("ConvertAllServiceAblModules ReadTestModule generation failure for: {0}", moduleName);
+                                    log.ErrorFormat("ConvertAllServiceModules ReadTestModule generation failure for: {0}", moduleName);
                                     failCount++;
                                 }
                             }
@@ -2346,10 +2472,10 @@ namespace PsdzClient
 
                 progressHandler?.Invoke(false, 100, failCount);
 
-                log.InfoFormat("ConvertAllServiceAblModules Count: {0}, Failures: {1}", moduleDataDict.Count, failCount);
+                log.InfoFormat("ConvertAllServiceModules Count: {0}, Failures: {1}", moduleDataDict.Count, failCount);
                 if (moduleDataDict.Count == 0)
                 {
-                    log.ErrorFormat("ConvertAllServiceAblModules No test modules generated");
+                    log.ErrorFormat("ConvertAllServiceModules No test modules generated");
                     return null;
                 }
 
@@ -2359,7 +2485,7 @@ namespace PsdzClient
             }
             catch (Exception e)
             {
-                log.ErrorFormat("ConvertAllServiceAblModules Exception: '{0}'", e.Message);
+                log.ErrorFormat("ConvertAllServiceModules Exception: '{0}'", e.Message);
                 return null;
             }
         }
