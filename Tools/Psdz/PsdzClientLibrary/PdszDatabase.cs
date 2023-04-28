@@ -1033,21 +1033,25 @@ namespace PsdzClient
 
             public List<SwiDiagObj> Children { get; set; }
 
-            public bool HasInfoObjects
+            public int InfoObjectsCount
             {
                 get
                 {
-                    if (Children != null && Children.Any(x => x.HasInfoObjects))
+                    int infoObjectCount = 0;
+                    if (Children != null)
                     {
-                        return true;
+                        foreach (SwiDiagObj swiDiagObj in Children)
+                        {
+                            infoObjectCount += swiDiagObj.InfoObjectsCount;
+                        }
                     }
 
-                    if (InfoObjects != null && InfoObjects.Count > 0)
+                    if (InfoObjects != null)
                     {
-                        return true;
+                        infoObjectCount += InfoObjects.Count;
                     }
 
-                    return false;
+                    return infoObjectCount;
                 }
             }
 
@@ -1069,11 +1073,11 @@ namespace PsdzClient
                     }
                 }
 
-                if (Children != null && HasInfoObjects)
+                if (Children != null && InfoObjectsCount > 0)
                 {
                     foreach (SwiDiagObj childObj in Children)
                     {
-                        if (childObj.HasInfoObjects)
+                        if (childObj.InfoObjectsCount > 0)
                         {
                             sb.AppendLine();
                             sb.Append(childObj.ToString(language, prefixChild));

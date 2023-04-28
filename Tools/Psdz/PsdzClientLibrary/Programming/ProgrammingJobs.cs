@@ -421,9 +421,9 @@ namespace PsdzClient.Programming
                         PdszDatabase.DiagObjServiceRoot, null, new List<string> { "ABL" });
                     if (diagObjsNodeClass != null)
                     {
-                        log.InfoFormat("GetInfoObjectsTreeForNodeclassName all: {0}", diagObjsNodeClass.Count);
                         foreach (PdszDatabase.SwiDiagObj swiDiagObj in diagObjsNodeClass)
                         {
+                            log.InfoFormat("GetInfoObjectsTreeForNodeclassName all InfoObject: {0}", swiDiagObj.InfoObjectsCount);
                             log.Info(swiDiagObj.ToString(ClientContext.Language));
                         }
                     }
@@ -773,9 +773,9 @@ namespace PsdzClient.Programming
                     PdszDatabase.DiagObjServiceRoot, vehicle, new List<string> { "ABL" }, true);
                 if (diagObjsNodeClass != null)
                 {
-                    log.InfoFormat("GetInfoObjectsTreeForNodeclassName for vehicle: {0}", diagObjsNodeClass.Count);
                     foreach (PdszDatabase.SwiDiagObj swiDiagObj in diagObjsNodeClass)
                     {
+                        log.InfoFormat("GetInfoObjectsTreeForNodeclassName for vehicle InfoObject: {0}", swiDiagObj.InfoObjectsCount);
                         log.Info(swiDiagObj.ToString(ClientContext.Language));
                     }
                 }
