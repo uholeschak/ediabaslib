@@ -416,7 +416,7 @@ namespace PsdzClient.Programming
                             return false;
                         }
                     }
-
+#if false
                     List<PdszDatabase.SwiDiagObj> diagObjsNodeClass = ProgrammingService.PdszDatabase.GetInfoObjectsTreeForNodeclassName(
                         PdszDatabase.DiagObjServiceRoot, null, new List<string> { "ABL" });
                     if (diagObjsNodeClass != null)
@@ -427,9 +427,9 @@ namespace PsdzClient.Programming
                             log.Info(swiDiagObj.ToString(ClientContext.Language));
                         }
                     }
-
-                    int failCount = -1;
-                    bool result = ProgrammingService.PdszDatabase.GenerateTestModuleData((startConvert, progress, failures) =>
+#endif
+                    int failCountTest = -1;
+                    bool resultTest = ProgrammingService.PdszDatabase.GenerateTestModuleData((startConvert, progress, failures) =>
                     {
                         if (startConvert)
                         {
@@ -438,7 +438,7 @@ namespace PsdzClient.Programming
                         }
                         else
                         {
-                            failCount = failures;
+                            failCountTest = failures;
                             string message = string.Format(CultureInfo.InvariantCulture, Strings.TestModuleProgress, progress, failures);
                             ProgressEvent?.Invoke(progress, false, message);
                         }
@@ -450,27 +450,55 @@ namespace PsdzClient.Programming
                         return false;
                     });
 
-                    if (!result)
+                    if (!resultTest)
                     {
                         log.ErrorFormat("GenerateTestModuleData failed");
                     }
 
+                    int failCountService = -1;
+                    bool resultService = ProgrammingService.PdszDatabase.GenerateServiceModuleData((startConvert, progress, failures) =>
+                    {
+                        if (startConvert)
+                        {
+                            sbResult.AppendLine(Strings.GeneratingInfoFiles);
+                            UpdateStatus(sbResult.ToString());
+                        }
+                        else
+                        {
+                            failCountService = failures;
+                            string message = string.Format(CultureInfo.InvariantCulture, Strings.TestModuleProgress, progress, failures);
+                            ProgressEvent?.Invoke(progress, false, message);
+                        }
+
+                        if (cts != null)
+                        {
+                            return cts.Token.IsCancellationRequested;
+                        }
+                        return false;
+                    });
+
+                    if (!resultService)
+                    {
+                        log.ErrorFormat("GenerateServiceModuleData failed");
+                    }
+
+                    bool resultEcuCharacteristics = true;
                     if (!ProgrammingService.PdszDatabase.GenerateEcuCharacteristicsData())
                     {
                         log.ErrorFormat("GenerateEcuCharacteristicsData failed");
-                        result = false;
+                        resultEcuCharacteristics = false;
                     }
 
                     ProgressEvent?.Invoke(0, true);
 
-                    if (failCount >= 0)
+                    if (failCountTest + failCountService >= 0)
                     {
-                        log.InfoFormat("Test module generation failures: {0}", failCount);
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleFailures, failCount));
+                        log.InfoFormat("Test module generation failures: {0}, {1}", failCountTest, failCountService);
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleFailures, failCountTest + failCountService));
                         UpdateStatus(sbResult.ToString());
                     }
 
-                    if (!result)
+                    if (!resultTest || !resultService || !resultEcuCharacteristics)
                     {
                         if (!ProgrammingService.PdszDatabase.IsExecutable())
                         {
@@ -768,7 +796,7 @@ namespace PsdzClient.Programming
                     UpdateStatus(sbResult.ToString());
                     return false;
                 }
-
+#if false
                 for (int type = 0; type < 1; type++)
                 {
                     ProgrammingService.PdszDatabase.UseIsAtLeastOnePathToRootValid = type == 0;
@@ -786,7 +814,7 @@ namespace PsdzClient.Programming
                 }
 
                 ProgrammingService.PdszDatabase.UseIsAtLeastOnePathToRootValid = true;
-
+#endif
                 if (!CheckVoltage(cts, sbResult, true))
                 {
                     return false;

@@ -1411,6 +1411,7 @@ namespace PsdzClient
         public Dictionary<string, XepRule> XepRuleDict => _xepRuleDict;
         public SwiRegister SwiRegisterTree { get; private set; }
         public TestModules TestModuleStorage { get; private set; }
+        public TestModules ServiceModuleStorage { get; private set; }
         public EcuCharacteristicsData EcuCharacteristicsStorage { get; private set; }
         public bool UseIsAtLeastOnePathToRootValid { get; set; }
 
@@ -2295,7 +2296,7 @@ namespace PsdzClient
         {
             try
             {
-                TestModules testModules = null;
+                TestModules serviceModules = null;
                 XmlSerializer serializer = new XmlSerializer(typeof(TestModules));
                 string serviceModulesZipFile = Path.Combine(_databaseExtractPath, ServiceModulesZipFile);
                 if (File.Exists(serviceModulesZipFile))
@@ -2319,7 +2320,7 @@ namespace PsdzClient
                                     Stream zipStream = zf.GetInputStream(zipEntry);
                                     using (TextReader reader = new StreamReader(zipStream))
                                     {
-                                        testModules = serializer.Deserialize(reader) as TestModules;
+                                        serviceModules = serializer.Deserialize(reader) as TestModules;
                                     }
                                 }
                             }
@@ -2340,17 +2341,17 @@ namespace PsdzClient
                 }
 
                 bool dataValid = true;
-                if (testModules != null)
+                if (serviceModules != null)
                 {
                     DbInfo dbInfo = GetDbInfo();
-                    if (testModules.Version == null || !testModules.Version.IsIdentical(dbInfo?.Version, dbInfo?.DateTime))
+                    if (serviceModules.Version == null || !serviceModules.Version.IsIdentical(dbInfo?.Version, dbInfo?.DateTime))
                     {
                         log.ErrorFormat("GenerateServiceModuleData Version mismatch");
                         dataValid = false;
                     }
                 }
 
-                if (testModules == null || !dataValid)
+                if (serviceModules == null || !dataValid)
                 {
                     log.InfoFormat("GenerateServiceModuleData Converting modules");
                     if (!IsExecutable())
@@ -2368,8 +2369,8 @@ namespace PsdzClient
                         }
                     }
 
-                    testModules = ConvertAllServiceModules(progressHandler);
-                    if (testModules == null)
+                    serviceModules = ConvertAllServiceModules(progressHandler);
+                    if (serviceModules == null)
                     {
                         log.ErrorFormat("GenerateServiceModuleData ConvertAllServiceModules failed");
                         return false;
@@ -2377,7 +2378,7 @@ namespace PsdzClient
 
                     using (MemoryStream memStream = new MemoryStream())
                     {
-                        serializer.Serialize(memStream, testModules);
+                        serializer.Serialize(memStream, serviceModules);
                         memStream.Seek(0, SeekOrigin.Begin);
 
                         FileStream fsOut = File.Create(serviceModulesZipFile);
@@ -2386,7 +2387,7 @@ namespace PsdzClient
 
                         try
                         {
-                            ZipEntry newEntry = new ZipEntry(TestModulesXmlFile)
+                            ZipEntry newEntry = new ZipEntry(ServiceModulesXmlFile)
                             {
                                 DateTime = DateTime.Now,
                                 Size = memStream.Length
@@ -2405,7 +2406,7 @@ namespace PsdzClient
                     }
                 }
 
-                TestModuleStorage = testModules;
+                ServiceModuleStorage = serviceModules;
                 return true;
             }
             catch (Exception e)
@@ -2450,13 +2451,13 @@ namespace PsdzClient
                         string key = moduleName.ToUpperInvariant();
                         if (!moduleDataDict.ContainsKey(key))
                         {
-                            TestModuleData moduleData = ReadTestModule(moduleName, out bool failure);
+                            TestModuleData moduleData = ReadServiceModule(moduleName, out bool failure);
                             if (moduleData == null)
                             {
-                                log.ErrorFormat("ConvertAllServiceModules ReadTestModule failed for: {0}", moduleName);
+                                log.ErrorFormat("ConvertAllServiceModules ReadServiceModule failed for: {0}", moduleName);
                                 if (failure)
                                 {
-                                    log.ErrorFormat("ConvertAllServiceModules ReadTestModule generation failure for: {0}", moduleName);
+                                    log.ErrorFormat("ConvertAllServiceModules ReadServiceModule generation failure for: {0}", moduleName);
                                     failCount++;
                                 }
                             }
@@ -2486,6 +2487,121 @@ namespace PsdzClient
             catch (Exception e)
             {
                 log.ErrorFormat("ConvertAllServiceModules Exception: '{0}'", e.Message);
+                return null;
+            }
+        }
+
+        public TestModuleData ReadServiceModule(string moduleName, out bool failure)
+        {
+            log.InfoFormat("ReadServiceModule Name: {0}", moduleName);
+            failure = false;
+            try
+            {
+                if (string.IsNullOrEmpty(moduleName))
+                {
+                    return null;
+                }
+
+                string fileName = moduleName + ".dll";
+                string moduleFile = Path.Combine(_testModulePath, fileName);
+                if (!File.Exists(moduleFile))
+                {
+                    log.ErrorFormat("ReadServiceModule File not found: {0}", moduleFile);
+                    return null;
+                }
+
+                string coreFrameworkFile = Path.Combine(_frameworkPath, "RheingoldCoreFramework.dll");
+                if (!File.Exists(coreFrameworkFile))
+                {
+                    log.ErrorFormat("ReadServiceModule Core framework not found: {0}", coreFrameworkFile);
+                    return null;
+                }
+                Assembly coreFrameworkAssembly = Assembly.LoadFrom(coreFrameworkFile);
+
+                Type databaseProviderType = coreFrameworkAssembly.GetType("BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseProviderFactory");
+                if (databaseProviderType == null)
+                {
+                    log.ErrorFormat("ReadServiceModule GetDatabaseProviderSQLite not found");
+                    return null;
+                }
+
+                MethodInfo methodGetDatabaseProviderSQLite = databaseProviderType.GetMethod("GetDatabaseProviderSQLite", BindingFlags.Public | BindingFlags.Static);
+                if (methodGetDatabaseProviderSQLite == null)
+                {
+                    log.ErrorFormat("ReadServiceModule GetDatabaseProviderSQLite not found");
+                    return null;
+                }
+
+                string istaCoreFrameworkFile = Path.Combine(_frameworkPath, "RheingoldISTACoreFramework.dll");
+                if (!File.Exists(istaCoreFrameworkFile))
+                {
+                    log.ErrorFormat("ReadServiceModule ISTA core framework not found: {0}", istaCoreFrameworkFile);
+                    return null;
+                }
+                Assembly istaCoreFrameworkAssembly = Assembly.LoadFrom(istaCoreFrameworkFile);
+
+                Type istaModuleType = istaCoreFrameworkAssembly.GetType("BMW.Rheingold.Module.ISTA.ISTAModule");
+                if (istaModuleType == null)
+                {
+                    log.ErrorFormat("ReadServiceModule ISTAModule not found");
+                    return null;
+                }
+
+                MethodInfo methodGetDatabasePrefix = typeof(PdszDatabase).GetMethod("CallGetDatabaseProviderSQLitePrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                if (methodGetDatabasePrefix == null)
+                {
+                    log.ErrorFormat("ReadServiceModule CallGetDatabaseProviderSQLitePrefix not found");
+                    return null;
+                }
+
+                bool patchedGetDatabase = false;
+                foreach (MethodBase methodBase in _harmony.GetPatchedMethods())
+                {
+                    log.InfoFormat("ReadServiceModule Patched: {0}", methodBase.Name);
+                    if (methodBase == methodGetDatabaseProviderSQLite)
+                    {
+                        patchedGetDatabase = true;
+                    }
+                }
+
+                if (!patchedGetDatabase)
+                {
+                    log.InfoFormat("ReadServiceModule Patching: {0}", methodGetDatabaseProviderSQLite.Name);
+                    _harmony.Patch(methodGetDatabaseProviderSQLite, new HarmonyMethod(methodGetDatabasePrefix));
+                }
+
+                Assembly moduleAssembly = Assembly.LoadFrom(moduleFile);
+                Type[] exportedTypes = moduleAssembly.GetExportedTypes();
+                Type moduleType = null;
+                foreach (Type type in exportedTypes)
+                {
+                    log.InfoFormat("ReadTestModule Exported type: {0}", type.FullName);
+                    if (moduleType == null)
+                    {
+                        if (!string.IsNullOrEmpty(type.FullName) &&
+                            type.FullName.StartsWith("BMW.Rheingold.Module.", StringComparison.OrdinalIgnoreCase))
+                        {
+                            moduleType = type;
+                        }
+                    }
+                }
+
+                if (moduleType == null)
+                {
+                    log.ErrorFormat("ReadServiceModule No module type found");
+                    return null;
+                }
+
+                log.InfoFormat("ReadServiceModule Using module type: {0}", moduleType.FullName);
+
+                log.InfoFormat("ReadServiceModule Finished: {0}", fileName);
+
+                return new TestModuleData();
+            }
+            catch (Exception e)
+            {
+                failure = true;
+                log.ErrorFormat("ReadServiceModule Exception: '{0}'", e.Message);
                 return null;
             }
         }
