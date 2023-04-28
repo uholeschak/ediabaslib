@@ -1055,6 +1055,28 @@ namespace PsdzClient
                 }
             }
 
+            public List<SwiInfoObj> CompleteInfoObjects
+            {
+                get
+                {
+                    List<SwiInfoObj> completeInfoObjects = new List<SwiInfoObj>();
+                    if (InfoObjects != null)
+                    {
+                        completeInfoObjects.AddRange(InfoObjects);
+                    }
+
+                    if (Children != null)
+                    {
+                        foreach (SwiDiagObj swiDiagObj in Children)
+                        {
+                            completeInfoObjects.AddRange(swiDiagObj.CompleteInfoObjects);
+                        }
+                    }
+
+                    return completeInfoObjects;
+                }
+            }
+
             public string ToString(string language, string prefix = "")
             {
                 StringBuilder sb = new StringBuilder();
@@ -2263,6 +2285,81 @@ namespace PsdzClient
             {
                 failure = true;
                 log.ErrorFormat("ReadTestModule Exception: '{0}'", e.Message);
+                return null;
+            }
+        }
+
+        public TestModules ConvertAllServiceAblModules(ProgressDelegate progressHandler)
+        {
+            try
+            {
+                List<SwiDiagObj> diagObjsNodeClass = GetInfoObjectsTreeForNodeclassName(DiagObjServiceRoot, null, new List<string> { "ABL" });
+                if (diagObjsNodeClass == null)
+                {
+                    log.ErrorFormat("ConvertAllServiceAblModules GetInfoObjectsTreeForNodeclassName failed");
+                    return null;
+                }
+
+                List<SwiInfoObj> completeInfoObjects = new List<SwiInfoObj>();
+                foreach (SwiDiagObj swiDiagObj in diagObjsNodeClass)
+                {
+                    completeInfoObjects.AddRange(swiDiagObj.CompleteInfoObjects);
+                }
+
+                SerializableDictionary<string, TestModuleData> moduleDataDict = new SerializableDictionary<string, TestModuleData>();
+                int failCount = 0;
+                int index = 0;
+                foreach (SwiInfoObj swiInfoObj in completeInfoObjects)
+                {
+                    if (progressHandler != null)
+                    {
+                        int percent = index * 100 / completeInfoObjects.Count;
+                        if (progressHandler.Invoke(false, percent, failCount))
+                        {
+                            log.ErrorFormat("ConvertAllServiceAblModules Aborted at {0}%", percent);
+                            return null;
+                        }
+
+                        string moduleName = swiInfoObj.ModuleName;
+                        string key = moduleName.ToUpperInvariant();
+                        if (!moduleDataDict.ContainsKey(key))
+                        {
+                            TestModuleData moduleData = ReadTestModule(moduleName, out bool failure);
+                            if (moduleData == null)
+                            {
+                                log.ErrorFormat("ConvertAllServiceAblModules ReadTestModule failed for: {0}", moduleName);
+                                if (failure)
+                                {
+                                    log.ErrorFormat("ConvertAllServiceAblModules ReadTestModule generation failure for: {0}", moduleName);
+                                    failCount++;
+                                }
+                            }
+                            else
+                            {
+                                moduleDataDict.Add(key, moduleData);
+                            }
+                        }
+                    }
+
+                    index++;
+                }
+
+                progressHandler?.Invoke(false, 100, failCount);
+
+                log.InfoFormat("ConvertAllServiceAblModules Count: {0}, Failures: {1}", moduleDataDict.Count, failCount);
+                if (moduleDataDict.Count == 0)
+                {
+                    log.ErrorFormat("ConvertAllServiceAblModules No test modules generated");
+                    return null;
+                }
+
+                DbInfo dbInfo = GetDbInfo();
+                VehicleStructsBmw.VersionInfo versionInfo = new VehicleStructsBmw.VersionInfo(dbInfo?.Version, dbInfo?.DateTime);
+                return new TestModules(versionInfo, moduleDataDict);
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("ConvertAllServiceAblModules Exception: '{0}'", e.Message);
                 return null;
             }
         }
