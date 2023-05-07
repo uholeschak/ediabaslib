@@ -2598,25 +2598,35 @@ namespace PsdzClient
                 MethodInfo[] privateMethods = moduleType.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance);
                 foreach (MethodInfo privateMethod in privateMethods)
                 {
+                    if (privateMethod.Name.StartsWith("__"))
+                    {
+                        continue;
+                    }
+
                     ParameterInfo[] parameters = privateMethod.GetParameters();
-                    if (!parameters.Any())
+                    if (parameters.Any())
                     {
-                        simpleMethods.Add(privateMethod);
+                        continue;
                     }
+
+                    simpleMethods.Add(privateMethod);
                 }
 
-                StringBuilder sbSimpleMethods = new StringBuilder();
-                foreach (MethodInfo simpleMethod in simpleMethods)
+                if (simpleMethods.Count > 0)
                 {
-                    if (sbSimpleMethods.Length > 0)
+                    StringBuilder sbSimpleMethods = new StringBuilder();
+                    foreach (MethodInfo simpleMethod in simpleMethods)
                     {
-                        sbSimpleMethods.Append(", ");
+                        if (sbSimpleMethods.Length > 0)
+                        {
+                            sbSimpleMethods.Append(", ");
+                        }
+
+                        sbSimpleMethods.Append(simpleMethod.Name);
                     }
 
-                    sbSimpleMethods.Append(simpleMethod.Name);
+                    log.InfoFormat("ReadServiceModule Simple methods: {0}", sbSimpleMethods);
                 }
-
-                log.InfoFormat("ReadServiceModule Simple methods: {0}", sbSimpleMethods);
 
                 log.InfoFormat("ReadServiceModule Finished: {0}", fileName);
 
