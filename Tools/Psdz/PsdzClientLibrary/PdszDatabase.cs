@@ -2048,14 +2048,6 @@ namespace PsdzClient
                     return null;
                 }
 
-                string sessionControllerFile = Path.Combine(_frameworkPath, "RheingoldSessionController.dll");
-                if (!File.Exists(sessionControllerFile))
-                {
-                    log.ErrorFormat("ReadTestModule Session controller not found: {0}", sessionControllerFile);
-                    return null;
-                }
-                Assembly sessionControllerAssembly = Assembly.LoadFrom(sessionControllerFile);
-
                 string istaCoreFrameworkFile = Path.Combine(_frameworkPath, "RheingoldISTACoreFramework.dll");
                 if (!File.Exists(istaCoreFrameworkFile))
                 {
@@ -2144,59 +2136,10 @@ namespace PsdzClient
                 }
 
                 log.InfoFormat("ReadTestModule Using module type: {0}", moduleType.FullName);
-                Type moduleParamContainerType = coreFrameworkAssembly.GetType("BMW.Rheingold.CoreFramework.ParameterContainer");
-                if (moduleParamContainerType == null)
+                object moduleParamContainerInst = CreateModuleParamContainerInst(coreFrameworkAssembly, out Type moduleParamContainerType);
+                if (moduleParamContainerInst == null)
                 {
-                    log.ErrorFormat("ReadTestModule ParameterContainer not found");
-                    return null;
-                }
-                object moduleParamContainerInst = Activator.CreateInstance(moduleParamContainerType);
-
-                Type moduleParamType = coreFrameworkAssembly.GetType("BMW.Rheingold.CoreFramework.ModuleParameter");
-                if (moduleParamType == null)
-                {
-                    log.ErrorFormat("ReadTestModule ModuleParameter not found");
-                    return null;
-                }
-
-                Type paramNameType = moduleParamType.GetNestedType("ParameterName", BindingFlags.Public | BindingFlags.DeclaredOnly);
-                if (paramNameType == null)
-                {
-                    log.ErrorFormat("ReadTestModule ParameterName type not found");
-                    return null;
-                }
-                object parameterNameLogic = Enum.Parse(paramNameType, "Logic", true);
-                object parameterNameVehicle = Enum.Parse(paramNameType, "Vehicle", true);
-
-                object moduleParamInst = Activator.CreateInstance(moduleParamType);
-                Type logicType = sessionControllerAssembly.GetType("BMW.Rheingold.RheingoldSessionController.Logic");
-                if (logicType == null)
-                {
-                    log.ErrorFormat("ReadTestModule Logic not found");
-                    return null;
-                }
-                object logicInst = Activator.CreateInstance(logicType);
-
-                Type vehicleType = coreFrameworkAssembly.GetType("BMW.Rheingold.CoreFramework.DatabaseProvider.Vehicle");
-                if (vehicleType == null)
-                {
-                    log.ErrorFormat("ReadTestModule Vehicle not found");
-                    return null;
-                }
-                object vehicleInst = Activator.CreateInstance(vehicleType);
-
-                MethodInfo methodContainerSetParameter = moduleParamContainerType.GetMethod("setParameter");
-                if (methodContainerSetParameter == null)
-                {
-                    log.ErrorFormat("ReadTestModule ParameterContainer setParameter not found");
-                    return null;
-                }
-
-                MethodInfo methodSetParameter = moduleParamType.GetMethod("setParameter");
-                if (methodSetParameter == null)
-                {
-                    log.ErrorFormat("ReadTestModule ModuleParameter setParameter not found");
-                    return null;
+                    log.ErrorFormat("ReadTestModule CreateModuleParamContainerInst failed");
                 }
 
                 if (!patchedModuleRef)
@@ -2204,10 +2147,6 @@ namespace PsdzClient
                     log.InfoFormat("ReadTestModule Patching: {0}", methodIstaModuleModuleRef.Name);
                     _harmony.Patch(methodIstaModuleModuleRef, new HarmonyMethod(methodModuleRefPrefix));
                 }
-
-                methodSetParameter.Invoke(moduleParamInst, new object[] {parameterNameLogic, logicInst});
-                methodSetParameter.Invoke(moduleParamInst, new object[] { parameterNameVehicle, vehicleInst });
-                methodContainerSetParameter.Invoke(moduleParamContainerInst, new object[] { "__RheinGoldCoreModuleParameters__", moduleParamInst });
 
                 MethodInfo methodeTestModuleStartType = moduleType.GetMethod("Start");
                 if (methodeTestModuleStartType == null)
@@ -2288,6 +2227,87 @@ namespace PsdzClient
             {
                 failure = true;
                 log.ErrorFormat("ReadTestModule Exception: '{0}'", e.Message);
+                return null;
+            }
+        }
+
+        private object CreateModuleParamContainerInst(Assembly coreFrameworkAssembly, out Type moduleParamContainerType)
+        {
+            moduleParamContainerType = null;
+            try
+            {
+                string sessionControllerFile = Path.Combine(_frameworkPath, "RheingoldSessionController.dll");
+                if (!File.Exists(sessionControllerFile))
+                {
+                    log.ErrorFormat("CreateModuleParamContainerInst Session controller not found: {0}", sessionControllerFile);
+                    return null;
+                }
+                Assembly sessionControllerAssembly = Assembly.LoadFrom(sessionControllerFile);
+
+                moduleParamContainerType = coreFrameworkAssembly.GetType("BMW.Rheingold.CoreFramework.ParameterContainer");
+                if (moduleParamContainerType == null)
+                {
+                    log.ErrorFormat("CreateModuleParamContainerInst ParameterContainer not found");
+                    return null;
+                }
+                object moduleParamContainerInst = Activator.CreateInstance(moduleParamContainerType);
+
+                Type moduleParamType = coreFrameworkAssembly.GetType("BMW.Rheingold.CoreFramework.ModuleParameter");
+                if (moduleParamType == null)
+                {
+                    log.ErrorFormat("CreateModuleParamContainerInst ModuleParameter not found");
+                    return null;
+                }
+
+                Type paramNameType = moduleParamType.GetNestedType("ParameterName", BindingFlags.Public | BindingFlags.DeclaredOnly);
+                if (paramNameType == null)
+                {
+                    log.ErrorFormat("CreateModuleParamContainerInst ParameterName type not found");
+                    return null;
+                }
+                object parameterNameLogic = Enum.Parse(paramNameType, "Logic", true);
+                object parameterNameVehicle = Enum.Parse(paramNameType, "Vehicle", true);
+
+                object moduleParamInst = Activator.CreateInstance(moduleParamType);
+                Type logicType = sessionControllerAssembly.GetType("BMW.Rheingold.RheingoldSessionController.Logic");
+                if (logicType == null)
+                {
+                    log.ErrorFormat("CreateModuleParamContainerInst Logic not found");
+                    return null;
+                }
+                object logicInst = Activator.CreateInstance(logicType);
+
+                Type vehicleType = coreFrameworkAssembly.GetType("BMW.Rheingold.CoreFramework.DatabaseProvider.Vehicle");
+                if (vehicleType == null)
+                {
+                    log.ErrorFormat("CreateModuleParamContainerInst Vehicle not found");
+                    return null;
+                }
+                object vehicleInst = Activator.CreateInstance(vehicleType);
+
+                MethodInfo methodContainerSetParameter = moduleParamContainerType.GetMethod("setParameter");
+                if (methodContainerSetParameter == null)
+                {
+                    log.ErrorFormat("CreateModuleParamContainerInst ParameterContainer setParameter not found");
+                    return null;
+                }
+
+                MethodInfo methodSetParameter = moduleParamType.GetMethod("setParameter");
+                if (methodSetParameter == null)
+                {
+                    log.ErrorFormat("CreateModuleParamContainerInst ModuleParameter setParameter not found");
+                    return null;
+                }
+
+                methodSetParameter.Invoke(moduleParamInst, new object[] { parameterNameLogic, logicInst });
+                methodSetParameter.Invoke(moduleParamInst, new object[] { parameterNameVehicle, vehicleInst });
+                methodContainerSetParameter.Invoke(moduleParamContainerInst, new object[] { "__RheinGoldCoreModuleParameters__", moduleParamInst });
+
+                return moduleParamContainerInst;
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("CreateModuleParamContainerInst Exception: '{0}'", e.Message);
                 return null;
             }
         }
@@ -2626,6 +2646,27 @@ namespace PsdzClient
                     }
 
                     log.InfoFormat("ReadServiceModule Simple methods: {0}", sbSimpleMethods);
+
+                    object moduleParamContainerInst = CreateModuleParamContainerInst(coreFrameworkAssembly, out _);
+                    if (moduleParamContainerInst == null)
+                    {
+                        log.ErrorFormat("ReadServiceModule CreateModuleParamContainerInst failed");
+                    }
+
+                    object testModule = Activator.CreateInstance(moduleType, moduleParamContainerInst);
+                    log.InfoFormat("ReadTestModule Module loaded: {0}, Type: {1}", fileName, moduleType.FullName);
+
+                    foreach (MethodInfo simpleMethod in simpleMethods)
+                    {
+                        try
+                        {
+                            simpleMethod.Invoke(testModule, null);
+                        }
+                        catch (Exception e)
+                        {
+                            log.ErrorFormat("ReadServiceModule Method: {0}, Exception: '{1}'", simpleMethod.Name, e.Message);
+                        }
+                    }
                 }
 
                 log.InfoFormat("ReadServiceModule Finished: {0}", fileName);
