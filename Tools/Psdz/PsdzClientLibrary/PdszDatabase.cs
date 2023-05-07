@@ -2567,6 +2567,13 @@ namespace PsdzClient
                     return null;
                 }
 
+                PropertyInfo propertyIstaModuleFactory = istaModuleType.GetProperty("Factory", BindingFlags.Instance | BindingFlags.Public);
+                if (propertyIstaModuleFactory == null)
+                {
+                    log.ErrorFormat("ReadServiceModule ISTAModule Factory not found");
+                    return null;
+                }
+
                 MethodInfo methodGetDatabasePrefix = typeof(PdszDatabase).GetMethod("CallGetDatabaseProviderSQLitePrefix", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodGetDatabasePrefix == null)
                 {
@@ -2655,6 +2662,12 @@ namespace PsdzClient
 
                     object testModule = Activator.CreateInstance(moduleType, moduleParamContainerInst);
                     log.InfoFormat("ReadTestModule Module loaded: {0}, Type: {1}", fileName, moduleType.FullName);
+
+                    object serviceDialogFactory = propertyIstaModuleFactory.GetValue(testModule, null);
+                    if (serviceDialogFactory == null)
+                    {
+                        log.ErrorFormat("ReadServiceModule No ServiceDialogFactory");
+                    }
 
                     foreach (MethodInfo simpleMethod in simpleMethods)
                     {
