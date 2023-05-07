@@ -2595,7 +2595,7 @@ namespace PsdzClient
                 log.InfoFormat("ReadServiceModule Using module type: {0}", moduleType.FullName);
 
                 List<MethodInfo> simpleMethods = new List<MethodInfo>();
-                MethodInfo[] privateMethods = moduleType.GetMethods(BindingFlags.NonPublic);
+                MethodInfo[] privateMethods = moduleType.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance);
                 foreach (MethodInfo privateMethod in privateMethods)
                 {
                     ParameterInfo[] parameters = privateMethod.GetParameters();
