@@ -1476,6 +1476,14 @@ namespace PsdzClient
             return false;
         }
 
+        // ReSharper disable once UnusedMember.Local
+        private static bool CreateServiceDialogPrefix(ref object __result, object callingModule, string methodName, string path, object globalTabModuleISTA, int elementNo, object inParameters, ref object inoutParameters)
+        {
+            log.InfoFormat("CreateServiceDialogPrefix");
+            __result = null;
+            return false;
+        }
+
         public PdszDatabase(string istaFolder)
         {
             if (!Directory.Exists(istaFolder))
@@ -2567,10 +2575,24 @@ namespace PsdzClient
                     return null;
                 }
 
-                PropertyInfo propertyIstaModuleFactory = istaModuleType.GetProperty("Factory", BindingFlags.Instance | BindingFlags.Public);
-                if (propertyIstaModuleFactory == null)
+                Type istaServiceDialogFactoryType = istaCoreFrameworkAssembly.GetType("BMW.Rheingold.Module.ISTA.ServiceDialogFactory");
+                if (istaServiceDialogFactoryType == null)
                 {
-                    log.ErrorFormat("ReadServiceModule ISTAModule Factory not found");
+                    log.ErrorFormat("ReadServiceModule ServiceDialogFactory not found");
+                    return null;
+                }
+
+                MethodInfo methodCreateServiceDialog = istaServiceDialogFactoryType.GetMethod("CreateServiceDialog", BindingFlags.Public | BindingFlags.Instance);
+                if (methodCreateServiceDialog == null)
+                {
+                    log.ErrorFormat("ReadServiceModule CreateServiceDialog not found");
+                    return null;
+                }
+
+                MethodInfo methodCreateServiceDialogPrefix = typeof(PdszDatabase).GetMethod("CreateServiceDialogPrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                if (methodCreateServiceDialogPrefix == null)
+                {
+                    log.ErrorFormat("ReadServiceModule CreateServiceDialogPrefix not found");
                     return null;
                 }
 
@@ -2581,14 +2603,27 @@ namespace PsdzClient
                     return null;
                 }
 
+                bool patchedCreateServiceDialog = false;
                 bool patchedGetDatabase = false;
                 foreach (MethodBase methodBase in _harmony.GetPatchedMethods())
                 {
                     log.InfoFormat("ReadServiceModule Patched: {0}", methodBase.Name);
+
+                    if (methodBase == methodCreateServiceDialog)
+                    {
+                        patchedCreateServiceDialog = true;
+                    }
+
                     if (methodBase == methodGetDatabaseProviderSQLite)
                     {
                         patchedGetDatabase = true;
                     }
+                }
+
+                if (!patchedCreateServiceDialog)
+                {
+                    log.InfoFormat("ReadServiceModule Patching: {0}", methodCreateServiceDialog.Name);
+                    _harmony.Patch(methodCreateServiceDialog, new HarmonyMethod(methodCreateServiceDialogPrefix));
                 }
 
                 if (!patchedGetDatabase)
@@ -2662,12 +2697,6 @@ namespace PsdzClient
 
                     object testModule = Activator.CreateInstance(moduleType, moduleParamContainerInst);
                     log.InfoFormat("ReadTestModule Module loaded: {0}, Type: {1}", fileName, moduleType.FullName);
-
-                    object serviceDialogFactory = propertyIstaModuleFactory.GetValue(testModule, null);
-                    if (serviceDialogFactory == null)
-                    {
-                        log.ErrorFormat("ReadServiceModule No ServiceDialogFactory");
-                    }
 
                     foreach (MethodInfo simpleMethod in simpleMethods)
                     {
