@@ -1407,7 +1407,6 @@ namespace PsdzClient
         private Dictionary<string, XepRule> _xepRuleDict;
         private List<SwiDiagObj> _diagObjRootNodes;
         private HashSet<string> _diagObjRootNodeIdSet;
-        private ConstructorInfo _istaServiceDialogDlgCmdBaseConstructor;
         public Dictionary<string, XepRule> XepRuleDict => _xepRuleDict;
         public SwiRegister SwiRegisterTree { get; private set; }
         public TestModules TestModuleStorage { get; private set; }
@@ -1417,6 +1416,7 @@ namespace PsdzClient
 
         private static string _moduleRefPath;
         private static SerializableDictionary<string, List<string>> _moduleRefDict;
+        private static ConstructorInfo _istaServiceDialogDlgCmdBaseConstructor;
         // ReSharper disable once UnusedMember.Local
         private static bool CallModuleRefPrefix(string refPath, object inParameters, ref object outParameters, ref object inAndOutParameters)
         {
@@ -1480,7 +1480,25 @@ namespace PsdzClient
         private static bool CreateServiceDialogPrefix(ref object __result, object callingModule, string methodName, string path, object globalTabModuleISTA, int elementNo, object inParameters, ref object inoutParameters)
         {
             log.InfoFormat("CreateServiceDialogPrefix");
-            __result = null;
+            object serviceDialog = null;
+            if (_istaServiceDialogDlgCmdBaseConstructor != null)
+            {
+                object[] args = new object[] { callingModule, methodName, path, globalTabModuleISTA, elementNo };
+                try
+                {
+                    serviceDialog = _istaServiceDialogDlgCmdBaseConstructor.Invoke(args);
+                }
+                catch (Exception e)
+                {
+                    log.ErrorFormat("CreateServiceDialogPrefix Exception: '{0}'", e.Message);
+                }
+            }
+            else
+            {
+                log.ErrorFormat("CreateServiceDialogPrefix No service dialog construtor");
+            }
+
+            __result = serviceDialog;
             return false;
         }
 
@@ -2730,6 +2748,7 @@ namespace PsdzClient
                         try
                         {
                             simpleMethod.Invoke(testModule, null);
+                            log.InfoFormat("ReadServiceModule Method executed: {0}", simpleMethod.Name);
                         }
                         catch (Exception e)
                         {
