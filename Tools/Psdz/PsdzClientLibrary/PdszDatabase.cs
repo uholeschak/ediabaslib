@@ -2765,7 +2765,28 @@ namespace PsdzClient
                 MethodInfo[] privateMethods = moduleType.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance);
                 foreach (MethodInfo privateMethod in privateMethods)
                 {
-                    if (privateMethod.Name.StartsWith("__"))
+                    string methodName = privateMethod.Name;
+                    if (methodName.StartsWith("__"))
+                    {
+                        continue;
+                    }
+
+                    if (methodName.StartsWith("get_"))
+                    {
+                        continue;
+                    }
+
+                    if (methodName.StartsWith("Get"))
+                    {
+                        continue;
+                    }
+
+                    if (methodName == "Finalize")
+                    {
+                        continue;
+                    }
+
+                    if (methodName == "MemberwiseClone")
                     {
                         continue;
                     }
