@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data.SQLite;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -2510,6 +2511,17 @@ namespace PsdzClient
                             else
                             {
                                 moduleDataDict.Add(key, moduleData);
+                            }
+
+                            GC.Collect();
+                            Process currentProcess = Process.GetCurrentProcess();
+                            long usedMemory = currentProcess.PrivateMemorySize64;
+                            long usedMemoryMB = usedMemory / (1024 * 1024);
+                            log.InfoFormat("ConvertAllServiceModules Memory: {0}MB", usedMemoryMB);
+                            if (usedMemoryMB > 200)
+                            {
+                                log.InfoFormat("ConvertAllServiceModules Memory exhausted");
+                                break;
                             }
                         }
                     }
