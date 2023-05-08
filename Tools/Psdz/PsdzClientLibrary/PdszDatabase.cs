@@ -1419,6 +1419,7 @@ namespace PsdzClient
         private static SerializableDictionary<string, List<string>> _moduleRefDict;
         private static int _serviceDialogCreateCalls;
         private static int _serviceDialogInvokeCalls;
+        private static List<string> _configurationContainerXmlList;
         private static ConstructorInfo _istaServiceDialogDlgCmdBaseConstructor;
         // ReSharper disable once UnusedMember.Local
         private static bool CallModuleRefPrefix(string refPath, object inParameters, ref object outParameters, ref object inAndOutParameters)
@@ -1523,6 +1524,25 @@ namespace PsdzClient
                 throw new Exception("ServiceDialogCmdBaseInvokePrefix call overflow");
             }
             return false;
+        }
+
+        // ReSharper disable once UnusedMember.Local
+        private static bool ConfigurationContainerDeserializePrefix(string configurationContainer)
+        {
+            log.InfoFormat("ConfigurationContainerDeserializePrefix");
+            if (!string.IsNullOrWhiteSpace(configurationContainer))
+            {
+                if (_configurationContainerXmlList == null)
+                {
+                    _configurationContainerXmlList = new List<string>();
+                }
+
+                if (!_configurationContainerXmlList.Contains(configurationContainer))
+                {
+                    _configurationContainerXmlList.Add(configurationContainer);
+                }
+            }
+            return true;
         }
 
         public PdszDatabase(string istaFolder)
@@ -2251,6 +2271,7 @@ namespace PsdzClient
                 }
 
                 SerializableDictionary<string, List<string>> moduleRefDict = _moduleRefDict;
+                _moduleRefDict = null;
                 log.ErrorFormat("ReadTestModule Test module items: {0}", moduleRefDict.Count);
                 foreach (KeyValuePair<string, List<string>> keyValuePair in moduleRefDict)
                 {
@@ -2669,6 +2690,27 @@ namespace PsdzClient
                     return null;
                 }
 
+                Type istaConfigurationContainerType = istaCoreFrameworkAssembly.GetType("BMW.Rheingold.Module.ISTA.ConfigurationContainer");
+                if (istaConfigurationContainerType == null)
+                {
+                    log.ErrorFormat("ReadServiceModule ConfigurationContainer not found");
+                    return null;
+                }
+
+                MethodInfo methodConfigurationContainerDeserialize = istaConfigurationContainerType.GetMethod("Deserialize", BindingFlags.Public | BindingFlags.Static);
+                if (methodConfigurationContainerDeserialize == null)
+                {
+                    log.ErrorFormat("ReadServiceModule ConfigurationContainer Deserialize not found");
+                    return null;
+                }
+
+                MethodInfo methodConfigurationContainerDeserializePrefix = typeof(PdszDatabase).GetMethod("ConfigurationContainerDeserializePrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                if (methodConfigurationContainerDeserializePrefix == null)
+                {
+                    log.ErrorFormat("ReadServiceModule ConfigurationContainerDeserializePrefix not found");
+                    return null;
+                }
+
                 if (_istaServiceDialogDlgCmdBaseConstructor == null)
                 {
                     ConstructorInfo[] istaServiceDialogDlgCmdBaseConstructors = istaServiceDialogDlgCmdBaseType.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
@@ -2698,6 +2740,7 @@ namespace PsdzClient
 
                 bool patchedCreateServiceDialog = false;
                 bool patchedServiceDialogCmdBaseInvoke = false;
+                bool patchedConfigurationContainerDeserialize = false;
                 bool patchedGetDatabase = false;
                 foreach (MethodBase methodBase in _harmony.GetPatchedMethods())
                 {
@@ -2711,6 +2754,11 @@ namespace PsdzClient
                     if (methodBase == methodIstaServiceDialogDlgCmdBaseInvoke)
                     {
                         patchedServiceDialogCmdBaseInvoke = true;
+                    }
+
+                    if (methodBase == methodConfigurationContainerDeserialize)
+                    {
+                        patchedConfigurationContainerDeserialize = true;
                     }
 
                     if (methodBase == methodGetDatabaseProviderSQLite)
@@ -2729,6 +2777,12 @@ namespace PsdzClient
                 {
                     log.InfoFormat("ServiceDialogCmdBase Patching: {0}", methodIstaServiceDialogDlgCmdBaseInvoke.Name);
                     _harmony.Patch(methodIstaServiceDialogDlgCmdBaseInvoke, new HarmonyMethod(methodServiceDialogCmdBaseInvokePrefix));
+                }
+
+                if (!patchedConfigurationContainerDeserialize)
+                {
+                    log.InfoFormat("ConfigurationContainer Patching: {0}", methodConfigurationContainerDeserializePrefix.Name);
+                    _harmony.Patch(methodConfigurationContainerDeserialize, new HarmonyMethod(methodConfigurationContainerDeserializePrefix));
                 }
 
                 if (!patchedGetDatabase)
@@ -2824,6 +2878,7 @@ namespace PsdzClient
                     object testModule = Activator.CreateInstance(moduleType, moduleParamContainerInst);
                     log.InfoFormat("ReadTestModule Module loaded: {0}, Type: {1}", fileName, moduleType.FullName);
 
+                    _configurationContainerXmlList = null;
                     foreach (MethodInfo simpleMethod in simpleMethods)
                     {
                         try
@@ -2840,9 +2895,20 @@ namespace PsdzClient
                     }
                 }
 
+                if (_configurationContainerXmlList == null || _configurationContainerXmlList.Count == 0)
+                {
+                    log.ErrorFormat("ReadServiceModule No data for: {0}", fileName);
+                    return null;
+                }
+
+                log.InfoFormat("ReadServiceModule XML items: {0}", _configurationContainerXmlList.Count);
+
+                SerializableDictionary<string, List<string>> containerXmlDict = new SerializableDictionary<string, List<string>> { { "XML", _configurationContainerXmlList } };
+                _configurationContainerXmlList = null;
+
                 log.InfoFormat("ReadServiceModule Finished: {0}", fileName);
 
-                return new TestModuleData();
+                return new TestModuleData(containerXmlDict, string.Empty);
             }
             catch (Exception e)
             {
