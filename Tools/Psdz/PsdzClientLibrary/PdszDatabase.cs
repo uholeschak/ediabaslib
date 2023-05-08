@@ -1417,6 +1417,8 @@ namespace PsdzClient
 
         private static string _moduleRefPath;
         private static SerializableDictionary<string, List<string>> _moduleRefDict;
+        private static int _serviceDialogCreateCalls;
+        private static int _serviceDialogInvokeCalls;
         private static ConstructorInfo _istaServiceDialogDlgCmdBaseConstructor;
         // ReSharper disable once UnusedMember.Local
         private static bool CallModuleRefPrefix(string refPath, object inParameters, ref object outParameters, ref object inAndOutParameters)
@@ -1478,9 +1480,16 @@ namespace PsdzClient
         }
 
         // ReSharper disable once UnusedMember.Local
+        [DebuggerNonUserCode]
         private static bool CreateServiceDialogPrefix(ref object __result, object callingModule, string methodName, string path, object globalTabModuleISTA, int elementNo, object inParameters, ref object inoutParameters)
         {
-            log.InfoFormat("CreateServiceDialogPrefix");
+            log.InfoFormat("CreateServiceDialogPrefix, Method: {0}, Calls: {1}", methodName, _serviceDialogCreateCalls);
+            _serviceDialogCreateCalls++;
+            if (_serviceDialogCreateCalls > 20)
+            {
+                throw new Exception("CreateServiceDialogPrefix call overflow");
+            }
+
             object serviceDialog = null;
             if (_istaServiceDialogDlgCmdBaseConstructor != null)
             {
@@ -1500,6 +1509,19 @@ namespace PsdzClient
             }
 
             __result = serviceDialog;
+            return false;
+        }
+
+        // ReSharper disable once UnusedMember.Local
+        [DebuggerNonUserCode]
+        private static bool ServiceDialogCmdBaseInvokePrefix(string method, object inParam, ref object outParam, ref object inoutParam)
+        {
+            log.InfoFormat("ServiceDialogCmdBaseInvokePrefix, Method: {0}, Calls: {1}", method, _serviceDialogInvokeCalls);
+            _serviceDialogInvokeCalls++;
+            if (_serviceDialogInvokeCalls > 20)
+            {
+                throw new Exception("ServiceDialogCmdBaseInvokePrefix call overflow");
+            }
             return false;
         }
 
@@ -2626,15 +2648,29 @@ namespace PsdzClient
                     return null;
                 }
 
+                Type istaServiceDialogDlgCmdBaseType = istaCoreFrameworkAssembly.GetType("BMW.Rheingold.Module.ISTA.ServiceDialogCmdBase");
+                if (istaServiceDialogDlgCmdBaseType == null)
+                {
+                    log.ErrorFormat("ReadServiceModule ServiceDialogCmdBase not found");
+                    return null;
+                }
+
+                MethodInfo methodIstaServiceDialogDlgCmdBaseInvoke = istaServiceDialogDlgCmdBaseType.GetMethod("Invoke", BindingFlags.Public | BindingFlags.Instance);
+                if (methodIstaServiceDialogDlgCmdBaseInvoke == null)
+                {
+                    log.ErrorFormat("ReadServiceModule ServiceDialogDlgCmd Invoke not found");
+                    return null;
+                }
+
+                MethodInfo methodServiceDialogCmdBaseInvokePrefix = typeof(PdszDatabase).GetMethod("ServiceDialogCmdBaseInvokePrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                if (methodServiceDialogCmdBaseInvokePrefix == null)
+                {
+                    log.ErrorFormat("ReadServiceModule ServiceDialogCmdBaseInvokePrefix not found");
+                    return null;
+                }
+
                 if (_istaServiceDialogDlgCmdBaseConstructor == null)
                 {
-                    Type istaServiceDialogDlgCmdBaseType = istaCoreFrameworkAssembly.GetType("BMW.Rheingold.Module.ISTA.ServiceDialogCmdBase");
-                    if (istaServiceDialogDlgCmdBaseType == null)
-                    {
-                        log.ErrorFormat("ReadServiceModule ServiceDialogCmdBase not found");
-                        return null;
-                    }
-
                     ConstructorInfo[] istaServiceDialogDlgCmdBaseConstructors = istaServiceDialogDlgCmdBaseType.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
                     if (istaServiceDialogDlgCmdBaseConstructors.Length != 1)
                     {
@@ -2661,6 +2697,7 @@ namespace PsdzClient
                 }
 
                 bool patchedCreateServiceDialog = false;
+                bool patchedServiceDialogCmdBaseInvoke = false;
                 bool patchedGetDatabase = false;
                 foreach (MethodBase methodBase in _harmony.GetPatchedMethods())
                 {
@@ -2669,6 +2706,11 @@ namespace PsdzClient
                     if (methodBase == methodCreateServiceDialog)
                     {
                         patchedCreateServiceDialog = true;
+                    }
+
+                    if (methodBase == methodIstaServiceDialogDlgCmdBaseInvoke)
+                    {
+                        patchedServiceDialogCmdBaseInvoke = true;
                     }
 
                     if (methodBase == methodGetDatabaseProviderSQLite)
@@ -2681,6 +2723,12 @@ namespace PsdzClient
                 {
                     log.InfoFormat("ReadServiceModule Patching: {0}", methodCreateServiceDialog.Name);
                     _harmony.Patch(methodCreateServiceDialog, new HarmonyMethod(methodCreateServiceDialogPrefix));
+                }
+
+                if (!patchedServiceDialogCmdBaseInvoke)
+                {
+                    log.InfoFormat("ServiceDialogCmdBase Patching: {0}", methodIstaServiceDialogDlgCmdBaseInvoke.Name);
+                    _harmony.Patch(methodIstaServiceDialogDlgCmdBaseInvoke, new HarmonyMethod(methodServiceDialogCmdBaseInvokePrefix));
                 }
 
                 if (!patchedGetDatabase)
@@ -2759,6 +2807,8 @@ namespace PsdzClient
                     {
                         try
                         {
+                            _serviceDialogCreateCalls = 0;
+                            _serviceDialogInvokeCalls = 0;
                             simpleMethod.Invoke(testModule, null);
                             log.InfoFormat("ReadServiceModule Method executed: {0}", simpleMethod.Name);
                         }
