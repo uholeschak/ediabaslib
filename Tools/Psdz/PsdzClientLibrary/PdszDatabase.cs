@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Data.SQLite;
 using System.Globalization;
 using System.IO;
@@ -1408,6 +1407,7 @@ namespace PsdzClient
         private Dictionary<string, XepRule> _xepRuleDict;
         private List<SwiDiagObj> _diagObjRootNodes;
         private HashSet<string> _diagObjRootNodeIdSet;
+        private ConstructorInfo _istaServiceDialogDlgCmdBaseConstructor;
         public Dictionary<string, XepRule> XepRuleDict => _xepRuleDict;
         public SwiRegister SwiRegisterTree { get; private set; }
         public TestModules TestModuleStorage { get; private set; }
@@ -2594,6 +2594,33 @@ namespace PsdzClient
                 {
                     log.ErrorFormat("ReadServiceModule CreateServiceDialogPrefix not found");
                     return null;
+                }
+
+                if (_istaServiceDialogDlgCmdBaseConstructor == null)
+                {
+                    Type istaServiceDialogDlgCmdBaseType = istaCoreFrameworkAssembly.GetType("BMW.Rheingold.Module.ISTA.ServiceDialogCmdBase");
+                    if (istaServiceDialogDlgCmdBaseType == null)
+                    {
+                        log.ErrorFormat("ReadServiceModule ServiceDialogCmdBase not found");
+                        return null;
+                    }
+
+                    ConstructorInfo[] istaServiceDialogDlgCmdBaseConstructors = istaServiceDialogDlgCmdBaseType.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
+                    if (istaServiceDialogDlgCmdBaseConstructors.Length != 1)
+                    {
+                        log.ErrorFormat("ReadServiceModule ServiceDialogCmdBase constructor not found");
+                        return null;
+                    }
+
+                    ConstructorInfo istaServiceDialogDlgCmdBaseConstructor = istaServiceDialogDlgCmdBaseConstructors[0];
+                    ParameterInfo[] istaServiceDialogDlgCmdBaseConstructorParameters = istaServiceDialogDlgCmdBaseConstructor.GetParameters();
+                    if (istaServiceDialogDlgCmdBaseConstructorParameters.Length != 5)
+                    {
+                        log.ErrorFormat("ReadServiceModule ServiceDialogCmdBase parameter count invalid: {0}", istaServiceDialogDlgCmdBaseConstructorParameters.Length);
+                        return null;
+                    }
+
+                    _istaServiceDialogDlgCmdBaseConstructor = istaServiceDialogDlgCmdBaseConstructor;
                 }
 
                 MethodInfo methodGetDatabasePrefix = typeof(PdszDatabase).GetMethod("CallGetDatabaseProviderSQLitePrefix", BindingFlags.NonPublic | BindingFlags.Static);
