@@ -1417,7 +1417,6 @@ namespace PsdzClient
 
         private static string _moduleRefPath;
         private static SerializableDictionary<string, List<string>> _moduleRefDict;
-        private static int _serviceDialogCreateCalls;
         private static int _serviceDialogInvokeCalls;
         private static string _configurationContainerXml;
         private static SerializableDictionary<string, List<string>> _serviceDialogDict;
@@ -1485,10 +1484,9 @@ namespace PsdzClient
         }
 
         // ReSharper disable once UnusedMember.Local
-        [DebuggerNonUserCode]
         private static bool CreateServiceDialogPrefix(ref object __result, object callingModule, string methodName, string path, object globalTabModuleISTA, int elementNo, object inParameters, ref object inoutParameters)
         {
-            log.InfoFormat("CreateServiceDialogPrefix, Method: {0}, Path: {1}, Element: {2}, Calls: {3}", methodName, path, elementNo, _serviceDialogCreateCalls);
+            log.InfoFormat("CreateServiceDialogPrefix, Method: {0}, Path: {1}, Element: {2}", methodName, path, elementNo);
 
             if (!string.IsNullOrWhiteSpace(_configurationContainerXml))
             {
@@ -1511,12 +1509,6 @@ namespace PsdzClient
                 }
 
                 _configurationContainerXml = null;
-            }
-
-            _serviceDialogCreateCalls++;
-            if (_serviceDialogCreateCalls > 20)
-            {
-                throw new Exception("CreateServiceDialogPrefix call overflow");
             }
 
             object serviceDialog = null;
@@ -1566,7 +1558,7 @@ namespace PsdzClient
             }
 
             _serviceDialogInvokeCalls++;
-            if (_serviceDialogInvokeCalls > 20)
+            if (_serviceDialogInvokeCalls > 50)
             {
                 throw new Exception("ServiceDialogCmdBaseInvokePrefix call overflow");
             }
@@ -2780,6 +2772,27 @@ namespace PsdzClient
                     _istaEdiabasAdapterDeviceResultConstructor = istaEdiabasAdapterDeviceResultConstructor;
                 }
 
+                Type istaModuleType = istaCoreFrameworkAssembly.GetType("BMW.Rheingold.Module.ISTA.ISTAModule");
+                if (istaModuleType == null)
+                {
+                    log.ErrorFormat("ReadTestModule ISTAModule not found");
+                    return null;
+                }
+
+                MethodInfo methodIstaModuleModuleRef = istaModuleType.GetMethod("callModuleRef", BindingFlags.Instance | BindingFlags.NonPublic);
+                if (methodIstaModuleModuleRef == null)
+                {
+                    log.ErrorFormat("ReadTestModule ISTAModule callModuleRef not found");
+                    return null;
+                }
+
+                MethodInfo methodModuleRefPrefix = typeof(PdszDatabase).GetMethod("CallModuleRefPrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                if (methodModuleRefPrefix == null)
+                {
+                    log.ErrorFormat("ReadTestModule CallModuleRefPrefix not found");
+                    return null;
+                }
+
                 MethodInfo methodGetDatabasePrefix = typeof(PdszDatabase).GetMethod("CallGetDatabaseProviderSQLitePrefix", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodGetDatabasePrefix == null)
                 {
@@ -2790,6 +2803,7 @@ namespace PsdzClient
                 bool patchedCreateServiceDialog = false;
                 bool patchedServiceDialogCmdBaseInvoke = false;
                 bool patchedConfigurationContainerDeserialize = false;
+                bool patchedModuleRef = false;
                 bool patchedGetDatabase = false;
                 foreach (MethodBase methodBase in _harmony.GetPatchedMethods())
                 {
@@ -2808,6 +2822,11 @@ namespace PsdzClient
                     if (methodBase == methodConfigurationContainerDeserialize)
                     {
                         patchedConfigurationContainerDeserialize = true;
+                    }
+
+                    if (methodBase == methodIstaModuleModuleRef)
+                    {
+                        patchedModuleRef = true;
                     }
 
                     if (methodBase == methodGetDatabaseProviderSQLite)
@@ -2832,6 +2851,12 @@ namespace PsdzClient
                 {
                     log.InfoFormat("ConfigurationContainer Patching: {0}", methodConfigurationContainerDeserializePrefix.Name);
                     _harmony.Patch(methodConfigurationContainerDeserialize, new HarmonyMethod(methodConfigurationContainerDeserializePrefix));
+                }
+
+                if (!patchedModuleRef)
+                {
+                    log.InfoFormat("ReadServiceModule Patching: {0}", methodIstaModuleModuleRef.Name);
+                    _harmony.Patch(methodIstaModuleModuleRef, new HarmonyMethod(methodModuleRefPrefix));
                 }
 
                 if (!patchedGetDatabase)
@@ -2933,9 +2958,10 @@ namespace PsdzClient
                     {
                         try
                         {
-                            _serviceDialogCreateCalls = 0;
                             _serviceDialogInvokeCalls = 0;
                             _configurationContainerXml = null;
+                            _moduleRefPath = null;
+                            _moduleRefDict = null;
                             simpleMethod.Invoke(testModule, null);
                             log.InfoFormat("ReadServiceModule Method executed: {0}", simpleMethod.Name);
                         }
@@ -2946,17 +2972,20 @@ namespace PsdzClient
                     }
                 }
 
-                if (_serviceDialogDict == null || _serviceDialogDict.Count == 0)
+                SerializableDictionary<string, List<string>> serviceDialogDict = _serviceDialogDict;
+                _serviceDialogDict = null;
+                _moduleRefDict = null;
+                if (serviceDialogDict == null || serviceDialogDict.Count == 0)
                 {
                     log.ErrorFormat("ReadServiceModule No data for: {0}", fileName);
                     return null;
                 }
 
-                log.InfoFormat("ReadServiceModule Items: {0}", _serviceDialogDict.Count);
+                log.InfoFormat("ReadServiceModule Items: {0}", serviceDialogDict.Count);
 
                 log.InfoFormat("ReadServiceModule Finished: {0}", fileName);
 
-                return new TestModuleData(_serviceDialogDict, string.Empty);
+                return new TestModuleData(serviceDialogDict, string.Empty);
             }
             catch (Exception e)
             {
