@@ -1423,6 +1423,7 @@ namespace PsdzClient
         private static SerializableDictionary<string, List<string>> _serviceDialogDict;
         private static ConstructorInfo _istaServiceDialogDlgCmdBaseConstructor;
         private static ConstructorInfo _istaEdiabasAdapterDeviceResultConstructor;
+        private static MethodInfo _methodContainerSetParameter;
 
         // ReSharper disable once UnusedMember.Local
         private static bool CallModuleRefPrefix(string refPath, object inParameters, ref object outParameters, ref object inAndOutParameters)
@@ -1545,7 +1546,23 @@ namespace PsdzClient
         private static bool ServiceDialogCmdBaseInvokePrefix(string method, object inParam, ref object outParam, ref object inoutParam)
         {
             log.InfoFormat("ServiceDialogCmdBaseInvokePrefix, Method: {0}, Calls: {1}", method, _serviceDialogInvokeCalls);
-            object ediabasAdapterDeviceResult = _istaEdiabasAdapterDeviceResultConstructor.Invoke(null);
+
+            if (_methodContainerSetParameter != null)
+            {
+                object ediabasAdapterDeviceResult = _istaEdiabasAdapterDeviceResultConstructor.Invoke(null);
+                if (ediabasAdapterDeviceResult != null)
+                {
+                    _methodContainerSetParameter.Invoke(outParam, new object[] { "/WurzelOut/DSCResult", ediabasAdapterDeviceResult });
+                }
+                else
+                {
+                    log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix EdiabasAdapterDeviceResult empty");
+                }
+            }
+            else
+            {
+                log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix No container setParameter");
+            }
 
             _serviceDialogInvokeCalls++;
             if (_serviceDialogInvokeCalls > 20)
@@ -2223,7 +2240,7 @@ namespace PsdzClient
                 }
 
                 log.InfoFormat("ReadTestModule Using module type: {0}", moduleType.FullName);
-                object moduleParamContainerInst = CreateModuleParamContainerInst(coreFrameworkAssembly, out Type moduleParamContainerType);
+                object moduleParamContainerInst = CreateModuleParamContainerInst(coreFrameworkAssembly, out Type moduleParamContainerType, out _);
                 if (moduleParamContainerInst == null)
                 {
                     log.ErrorFormat("ReadTestModule CreateModuleParamContainerInst failed");
@@ -2319,9 +2336,10 @@ namespace PsdzClient
             }
         }
 
-        private object CreateModuleParamContainerInst(Assembly coreFrameworkAssembly, out Type moduleParamContainerType)
+        private object CreateModuleParamContainerInst(Assembly coreFrameworkAssembly, out Type moduleParamContainerType, out MethodInfo methodContainerSetParameter)
         {
             moduleParamContainerType = null;
+            methodContainerSetParameter = null;
             try
             {
                 string sessionControllerFile = Path.Combine(_frameworkPath, "RheingoldSessionController.dll");
@@ -2373,7 +2391,7 @@ namespace PsdzClient
                 }
                 object vehicleInst = Activator.CreateInstance(vehicleType);
 
-                MethodInfo methodContainerSetParameter = moduleParamContainerType.GetMethod("setParameter");
+                methodContainerSetParameter = moduleParamContainerType.GetMethod("setParameter");
                 if (methodContainerSetParameter == null)
                 {
                     log.ErrorFormat("CreateModuleParamContainerInst ParameterContainer setParameter not found");
@@ -2899,12 +2917,13 @@ namespace PsdzClient
 
                     log.InfoFormat("ReadServiceModule Simple methods: {0}", sbSimpleMethods);
 
-                    object moduleParamContainerInst = CreateModuleParamContainerInst(coreFrameworkAssembly, out _);
+                    object moduleParamContainerInst = CreateModuleParamContainerInst(coreFrameworkAssembly, out _, out MethodInfo methodContainerSetParameter);
                     if (moduleParamContainerInst == null)
                     {
                         log.ErrorFormat("ReadServiceModule CreateModuleParamContainerInst failed");
                     }
 
+                    _methodContainerSetParameter = methodContainerSetParameter;
                     object testModule = Activator.CreateInstance(moduleType, moduleParamContainerInst);
                     log.InfoFormat("ReadTestModule Module loaded: {0}, Type: {1}", fileName, moduleType.FullName);
 
