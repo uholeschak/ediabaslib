@@ -1549,6 +1549,7 @@ namespace PsdzClient
 
             if (_methodContainerSetParameter != null)
             {
+                _methodContainerSetParameter.Invoke(outParam, new object[] { "Quit", true });
                 object ediabasAdapterDeviceResult = _istaEdiabasAdapterDeviceResultConstructor.Invoke(null);
                 if (ediabasAdapterDeviceResult != null)
                 {
