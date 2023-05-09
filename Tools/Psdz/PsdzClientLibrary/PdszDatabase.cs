@@ -1422,6 +1422,8 @@ namespace PsdzClient
         private static string _configurationContainerXml;
         private static SerializableDictionary<string, List<string>> _serviceDialogDict;
         private static ConstructorInfo _istaServiceDialogDlgCmdBaseConstructor;
+        private static ConstructorInfo _istaEdiabasAdapterDeviceResultConstructor;
+
         // ReSharper disable once UnusedMember.Local
         private static bool CallModuleRefPrefix(string refPath, object inParameters, ref object outParameters, ref object inAndOutParameters)
         {
@@ -1499,9 +1501,14 @@ namespace PsdzClient
                 string key = methodName + ";" + elementNoString;
                 if (!_serviceDialogDict.ContainsKey(key))
                 {
-                    log.InfoFormat("CreateServiceDialogPrefix, Adding XML");
+                    log.InfoFormat("CreateServiceDialogPrefix Adding Key: {0}", key);
                     _serviceDialogDict.Add(key, serviceDialogArgsList);
                 }
+                else
+                {
+                    log.InfoFormat("CreateServiceDialogPrefix Key present: {0}", key);
+                }
+
                 _configurationContainerXml = null;
             }
 
@@ -1538,6 +1545,8 @@ namespace PsdzClient
         private static bool ServiceDialogCmdBaseInvokePrefix(string method, object inParam, ref object outParam, ref object inoutParam)
         {
             log.InfoFormat("ServiceDialogCmdBaseInvokePrefix, Method: {0}, Calls: {1}", method, _serviceDialogInvokeCalls);
+            object ediabasAdapterDeviceResult = _istaEdiabasAdapterDeviceResultConstructor.Invoke(null);
+
             _serviceDialogInvokeCalls++;
             if (_serviceDialogInvokeCalls > 20)
             {
@@ -2650,13 +2659,6 @@ namespace PsdzClient
                 }
                 Assembly istaCoreFrameworkAssembly = Assembly.LoadFrom(istaCoreFrameworkFile);
 
-                Type istaModuleType = istaCoreFrameworkAssembly.GetType("BMW.Rheingold.Module.ISTA.ISTAModule");
-                if (istaModuleType == null)
-                {
-                    log.ErrorFormat("ReadServiceModule ISTAModule not found");
-                    return null;
-                }
-
                 Type istaServiceDialogFactoryType = istaCoreFrameworkAssembly.GetType("BMW.Rheingold.Module.ISTA.ServiceDialogFactory");
                 if (istaServiceDialogFactoryType == null)
                 {
@@ -2738,6 +2740,25 @@ namespace PsdzClient
                     }
 
                     _istaServiceDialogDlgCmdBaseConstructor = istaServiceDialogDlgCmdBaseConstructor;
+                }
+
+                if (_istaEdiabasAdapterDeviceResultConstructor == null)
+                {
+                    Type istaEdiabasAdapterDeviceResultType = istaCoreFrameworkAssembly.GetType("BMW.Rheingold.ISTA.CoreFramework.EDIABASAdapterDeviceResult");
+                    if (istaEdiabasAdapterDeviceResultType == null)
+                    {
+                        log.ErrorFormat("ReadServiceModule EDIABASAdapterDeviceResult not found");
+                        return null;
+                    }
+
+                    ConstructorInfo istaEdiabasAdapterDeviceResultConstructor = istaEdiabasAdapterDeviceResultType.GetConstructor(Type.EmptyTypes);
+                    if (istaEdiabasAdapterDeviceResultConstructor == null)
+                    {
+                        log.ErrorFormat("ReadServiceModule EDIABASAdapterDeviceResult constructor not found");
+                        return null;
+                    }
+
+                    _istaEdiabasAdapterDeviceResultConstructor = istaEdiabasAdapterDeviceResultConstructor;
                 }
 
                 MethodInfo methodGetDatabasePrefix = typeof(PdszDatabase).GetMethod("CallGetDatabaseProviderSQLitePrefix", BindingFlags.NonPublic | BindingFlags.Static);
