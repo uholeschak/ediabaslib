@@ -1484,7 +1484,7 @@ namespace PsdzClient
         [DebuggerNonUserCode]
         private static bool CreateServiceDialogPrefix(ref object __result, object callingModule, string methodName, string path, object globalTabModuleISTA, int elementNo, object inParameters, ref object inoutParameters)
         {
-            log.InfoFormat("CreateServiceDialogPrefix, Method: {0}, Calls: {1}", methodName, _serviceDialogCreateCalls);
+            log.InfoFormat("CreateServiceDialogPrefix, Module: {0}, Method: {1}, Path: {2}, Element: {3}, Calls: {4}", callingModule, methodName, path, elementNo, _serviceDialogCreateCalls);
             _serviceDialogCreateCalls++;
             if (_serviceDialogCreateCalls > 20)
             {
