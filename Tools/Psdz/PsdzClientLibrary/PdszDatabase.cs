@@ -1504,6 +1504,7 @@ namespace PsdzClient
                 {
                     log.InfoFormat("CreateServiceDialogPrefix Adding Key: {0}", key);
                     _serviceDialogDict.Add(key, serviceDialogArgsList);
+                    //log.Info(_configurationContainerXml);
                 }
                 else
                 {
