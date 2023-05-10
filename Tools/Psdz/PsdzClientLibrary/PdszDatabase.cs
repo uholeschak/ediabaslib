@@ -1591,6 +1591,19 @@ namespace PsdzClient
             return true;
         }
 
+        // ReSharper disable once UnusedMember.Local
+        private static void ConfigurationContainerDeserializePostfix(ref object __result, string configurationContainer)
+        {
+            string resultType = __result != null ? __result.GetType().FullName : string.Empty;
+            log.InfoFormat("ConfigurationContainerDeserializePostfix Result: {0}", resultType);
+#if false
+            if (_methodContainerSetParameter != null)
+            {
+                _methodContainerSetParameter.Invoke(__result, new object[] { "ConfigurationContainer", configurationContainer });
+            }
+#endif
+        }
+
         public PdszDatabase(string istaFolder)
         {
             if (!Directory.Exists(istaFolder))
@@ -2751,6 +2764,13 @@ namespace PsdzClient
                     return null;
                 }
 
+                MethodInfo methodConfigurationContainerDeserializePostfix = typeof(PdszDatabase).GetMethod("ConfigurationContainerDeserializePostfix", BindingFlags.NonPublic | BindingFlags.Static);
+                if (methodConfigurationContainerDeserializePostfix == null)
+                {
+                    log.ErrorFormat("ReadServiceModule methodConfigurationContainerDeserializePostfix not found");
+                    return null;
+                }
+
                 if (_istaServiceDialogDlgCmdBaseConstructor == null)
                 {
                     ConstructorInfo[] istaServiceDialogDlgCmdBaseConstructors = istaServiceDialogDlgCmdBaseType.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
@@ -2868,7 +2888,8 @@ namespace PsdzClient
                 if (!patchedConfigurationContainerDeserialize)
                 {
                     log.InfoFormat("ConfigurationContainer Patching: {0}", methodConfigurationContainerDeserializePrefix.Name);
-                    _harmony.Patch(methodConfigurationContainerDeserialize, new HarmonyMethod(methodConfigurationContainerDeserializePrefix));
+                    _harmony.Patch(methodConfigurationContainerDeserialize,
+                        new HarmonyMethod(methodConfigurationContainerDeserializePrefix), new HarmonyMethod(methodConfigurationContainerDeserializePostfix));
                 }
 
                 if (!patchedModuleRef)
