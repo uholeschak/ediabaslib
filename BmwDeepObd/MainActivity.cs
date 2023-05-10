@@ -5689,13 +5689,12 @@ namespace BmwDeepObd
 
             Thread compileThreadWrapper = new Thread(() =>
             {
-                int cpuUsage = -1;
-                long startTime = Stopwatch.GetTimestamp();
-                if (_instanceData.CheckCpuUsage)
+                string exceptionMessage = string.Empty;
+                try
                 {
-                    string exceptionMessage = string.Empty;
-
-                    try
+                    int cpuUsage = -1;
+                    long startTime = Stopwatch.GetTimestamp();
+                    if (_instanceData.CheckCpuUsage)
                     {
                         // check CPU idle usage
                         _instanceData.CheckCpuUsage = false;
@@ -5736,76 +5735,71 @@ namespace BmwDeepObd
                                 }
                             }
                         }
-                    }
-                    catch (Exception e)
-                    {
-                        exceptionMessage = EdiabasNet.GetExceptionText(e);
-                    }
 
-                    RunOnUiThread(() =>
-                    {
-                        if (_activityCommon == null)
-                        {
-                            return;
-                        }
-
-                        if (_compileProgress != null)
-                        {
-                            _compileProgress.Progress = 100;
-                        }
-
-                        if (!string.IsNullOrEmpty(exceptionMessage))
-                        {
-                            _activityCommon.ShowAlert(exceptionMessage, Resource.String.alert_title_error);
-                        }
-                    });
-                }
-
-                string ecuBaseDir = Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir);
-                if (_instanceData.VerifyEcuFiles || _instanceData.VerifyEcuMd5)
-                {
-                    bool checkMd5 = _instanceData.VerifyEcuMd5;
-                    _instanceData.VerifyEcuFiles = false;
-                    _instanceData.VerifyEcuMd5 = false;
-                    if (ValidEcuPackage(ecuBaseDir))
-                    {
-                        int lastPercent = -1;
-                        if (!ActivityCommon.VerifyContent(Path.Combine(ecuBaseDir, ContentFileName), checkMd5, percent =>
+                        RunOnUiThread(() =>
                         {
                             if (_activityCommon == null)
                             {
-                                return true;
+                                return;
                             }
-                            if (lastPercent != percent)
+
+                            if (_compileProgress != null)
                             {
-                                lastPercent = percent;
-                                RunOnUiThread(() =>
-                                {
-                                    if (_activityCommon == null)
-                                    {
-                                        return;
-                                    }
-                                    if (_compileProgress != null)
-                                    {
-                                        _compileProgress.SetMessage(GetString(Resource.String.verify_files));
-                                        _compileProgress.Indeterminate = false;
-                                        _compileProgress.Progress = percent;
-                                    }
-                                });
+                                _compileProgress.Progress = 100;
                             }
-                            return false;
-                        }))
+                        });
+                    }
+
+                    if (_instanceData.VerifyEcuFiles || _instanceData.VerifyEcuMd5)
+                    {
+                        bool checkMd5 = _instanceData.VerifyEcuMd5;
+                        _instanceData.VerifyEcuFiles = false;
+                        _instanceData.VerifyEcuMd5 = false;
+                        string ecuBaseDir = Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir);
+                        if (ValidEcuPackage(ecuBaseDir))
                         {
-                            try
+                            int lastPercent = -1;
+                            if (!ActivityCommon.VerifyContent(Path.Combine(ecuBaseDir, ContentFileName), checkMd5, percent =>
                             {
-                                File.Delete(Path.Combine(ecuBaseDir, InfoXmlName));
-                            }
-                            catch (Exception)
+                                if (_activityCommon == null)
+                                {
+                                    return true;
+                                }
+                                if (lastPercent != percent)
+                                {
+                                    lastPercent = percent;
+                                    RunOnUiThread(() =>
+                                    {
+                                        if (_activityCommon == null)
+                                        {
+                                            return;
+                                        }
+                                        if (_compileProgress != null)
+                                        {
+                                            _compileProgress.SetMessage(GetString(Resource.String.verify_files));
+                                            _compileProgress.Indeterminate = false;
+                                            _compileProgress.Progress = percent;
+                                        }
+                                    });
+                                }
+                                return false;
+                            }))
                             {
-                                // ignored
+                                try
+                                {
+                                    File.Delete(Path.Combine(ecuBaseDir, InfoXmlName));
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
                             }
                         }
                     }
+                }
+                catch (Exception e)
+                {
+                    exceptionMessage = EdiabasNet.GetExceptionText(e);
                 }
 
                 RunOnUiThread(() =>
@@ -5814,12 +5808,19 @@ namespace BmwDeepObd
                     {
                         return;
                     }
+
                     if (_compileProgress != null)
                     {
                         _compileProgress.SetMessage(GetString(Resource.String.compile_start));
                         _compileProgress.Indeterminate = false;
                         _compileProgress.Progress = 0;
                     }
+
+                    if (!string.IsNullOrEmpty(exceptionMessage))
+                    {
+                        _activityCommon.ShowAlert(exceptionMessage, Resource.String.alert_title_error);
+                    }
+
                     StoreLastAppState(LastAppState.Compile);
                 });
 
