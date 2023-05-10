@@ -5796,184 +5796,187 @@ namespace BmwDeepObd
                             }
                         }
                     }
+
+                    RunOnUiThread(() =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
+                        if (_compileProgress != null)
+                        {
+                            _compileProgress.SetMessage(GetString(Resource.String.compile_start));
+                            _compileProgress.Indeterminate = false;
+                            _compileProgress.Progress = 0;
+                        }
+
+                        StoreLastAppState(LastAppState.Compile);
+                    });
+
+                    bool progressUpdated = false;
+                    List<string> compileResultList = new List<string>();
+                    List<Thread> threadList = new List<Thread>();
+                    foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
+                    {
+                        if (pageInfo.ClassCode == null) continue;
+                        // limit number of active tasks
+                        for (; ; )
+                        {
+                            int activeThreads = threadList.Count(thread => thread.IsAlive);
+                            if (activeThreads < 3)
+                            {
+                                break;
+                            }
+                            Thread.Sleep(200);
+                        }
+
+                        RunOnUiThread(() =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+                            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                            if (_compileProgress != null)
+                            {
+                                if (cpuUsage >= 0 && Stopwatch.GetTimestamp() - startTime > 1000 * ActivityCommon.TickResolMs)
+                                {
+                                    progressUpdated = true;
+                                    _compileProgress.SetMessage(GetString(Resource.String.compile_start));
+                                    _compileProgress.Indeterminate = true;
+                                }
+                            }
+                        });
+
+                        JobReader.PageInfo infoLocal = pageInfo;
+                        Thread compileThread = new Thread(() =>
+                        {
+                            string result = string.Empty;
+                            StringWriter reportWriter = new StringWriter();
+                            try
+                            {
+                                Evaluator evaluator = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter(reportWriter)));
+                                evaluator.ReferenceAssembly(Assembly.GetExecutingAssembly());
+                                evaluator.ReferenceAssembly(typeof(EdiabasNet).Assembly);
+                                evaluator.ReferenceAssembly(typeof(View).Assembly);
+                                string classCode = @"
+                                    using Android.Views;
+                                    using Android.Widget;
+                                    using Android.Content;
+                                    using EdiabasLib;
+                                    using BmwDeepObd;
+                                    using System;
+                                    using System.Collections.Generic;
+                                    using System.Diagnostics;
+                                    using System.Threading;"
+                                    + infoLocal.ClassCode;
+                                evaluator.Compile(classCode);
+                                object classObject = evaluator.Evaluate("new PageClass()");
+                                if (((infoLocal.JobsInfo == null) || (infoLocal.JobsInfo.JobList.Count == 0)) &&
+                                    ((infoLocal.ErrorsInfo == null) || (infoLocal.ErrorsInfo.EcuList.Count == 0)))
+                                {
+                                    if (classObject == null)
+                                    {
+                                        throw new Exception("Compiling PageClass failed");
+                                    }
+                                    Type pageType = classObject.GetType();
+                                    if (pageType.GetMethod("ExecuteJob") == null)
+                                    {
+                                        throw new Exception("No ExecuteJob method");
+                                    }
+                                }
+                                infoLocal.ClassObject = classObject;
+                            }
+                            catch (Exception ex)
+                            {
+                                infoLocal.ClassObject = null;
+                                result = reportWriter.ToString();
+                                if (string.IsNullOrEmpty(result))
+                                {
+                                    result = EdiabasNet.GetExceptionText(ex);
+                                }
+                                result = GetPageString(infoLocal, infoLocal.Name) + ":\r\n" + result;
+                            }
+                            if (infoLocal.CodeShowWarnings && string.IsNullOrEmpty(result))
+                            {
+                                result = reportWriter.ToString();
+                            }
+
+                            if (!string.IsNullOrEmpty(result))
+                            {
+                                lock (compileResultList)
+                                {
+                                    compileResultList.Add(result);
+                                }
+                            }
+                        });
+                        compileThread.Start();
+                        threadList.Add(compileThread);
+                    }
+
+                    foreach (Thread compileThread in threadList)
+                    {
+                        compileThread.Join();
+                    }
+
+                    if (cpuUsage >= 0 && !progressUpdated)
+                    {
+                        Thread.Sleep(1000);
+                    }
+
+                    foreach (string compileResult in compileResultList)
+                    {
+                        string result = compileResult;
+                        RunOnUiThread(() =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+                            _activityCommon.ShowAlert(result, Resource.String.alert_title_error);
+                        });
+                    }
+
+                    RunOnUiThread(() =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
+                        StoreLastAppState(LastAppState.Compiled);
+                        PostCreateActionBarTabs();
+
+                        _compileProgress.Dismiss();
+                        _compileProgress.Dispose();
+                        _compileProgress = null;
+                        UpdateLockState();
+                        if (cpuUsage >= CpuLoadCritical)
+                        {
+                            _activityCommon.ShowAlert(string.Format(GetString(Resource.String.compile_cpu_usage_high), cpuUsage), Resource.String.alert_title_warning);
+                        }
+                        else
+                        {
+                            if (ActivityCommon.JobReader.CompatIdsUsed)
+                            {
+                                _activityCommon.ShowAlert(GetString(Resource.String.compile_compat_id_warn), Resource.String.alert_title_warning);
+                            }
+                        }
+                    });
                 }
                 catch (Exception e)
                 {
                     exceptionMessage = EdiabasNet.GetExceptionText(e);
                 }
 
-                RunOnUiThread(() =>
+                if (!string.IsNullOrEmpty(exceptionMessage))
                 {
-                    if (_activityCommon == null)
-                    {
-                        return;
-                    }
-
-                    if (_compileProgress != null)
-                    {
-                        _compileProgress.SetMessage(GetString(Resource.String.compile_start));
-                        _compileProgress.Indeterminate = false;
-                        _compileProgress.Progress = 0;
-                    }
-
-                    if (!string.IsNullOrEmpty(exceptionMessage))
+                    RunOnUiThread(() =>
                     {
                         _activityCommon.ShowAlert(exceptionMessage, Resource.String.alert_title_error);
-                    }
-
-                    StoreLastAppState(LastAppState.Compile);
-                });
-
-                bool progressUpdated = false;
-                List<string> compileResultList = new List<string>();
-                List<Thread> threadList = new List<Thread>();
-                foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
-                {
-                    if (pageInfo.ClassCode == null) continue;
-                    // limit number of active tasks
-                    for (; ; )
-                    {
-                        int activeThreads = threadList.Count(thread => thread.IsAlive);
-                        if (activeThreads < 3)
-                        {
-                            break;
-                        }
-                        Thread.Sleep(200);
-                    }
-
-                    RunOnUiThread(() =>
-                    {
-                        if (_activityCommon == null)
-                        {
-                            return;
-                        }
-                        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                        if (_compileProgress != null)
-                        {
-                            if (cpuUsage >= 0 && Stopwatch.GetTimestamp() - startTime > 1000 * ActivityCommon.TickResolMs)
-                            {
-                                progressUpdated = true;
-                                _compileProgress.SetMessage(GetString(Resource.String.compile_start));
-                                _compileProgress.Indeterminate = true;
-                            }
-                        }
-                    });
-
-                    JobReader.PageInfo infoLocal = pageInfo;
-                    Thread compileThread = new Thread(() =>
-                    {
-                        string result = string.Empty;
-                        StringWriter reportWriter = new StringWriter();
-                        try
-                        {
-                            Evaluator evaluator = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter(reportWriter)));
-                            evaluator.ReferenceAssembly(Assembly.GetExecutingAssembly());
-                            evaluator.ReferenceAssembly(typeof(EdiabasNet).Assembly);
-                            evaluator.ReferenceAssembly(typeof(View).Assembly);
-                            string classCode = @"
-                                using Android.Views;
-                                using Android.Widget;
-                                using Android.Content;
-                                using EdiabasLib;
-                                using BmwDeepObd;
-                                using System;
-                                using System.Collections.Generic;
-                                using System.Diagnostics;
-                                using System.Threading;"
-                                + infoLocal.ClassCode;
-                            evaluator.Compile(classCode);
-                            object classObject = evaluator.Evaluate("new PageClass()");
-                            if (((infoLocal.JobsInfo == null) || (infoLocal.JobsInfo.JobList.Count == 0)) &&
-                                ((infoLocal.ErrorsInfo == null) || (infoLocal.ErrorsInfo.EcuList.Count == 0)))
-                            {
-                                if (classObject == null)
-                                {
-                                    throw new Exception("Compiling PageClass failed");
-                                }
-                                Type pageType = classObject.GetType();
-                                if (pageType.GetMethod("ExecuteJob") == null)
-                                {
-                                    throw new Exception("No ExecuteJob method");
-                                }
-                            }
-                            infoLocal.ClassObject = classObject;
-                        }
-                        catch (Exception ex)
-                        {
-                            infoLocal.ClassObject = null;
-                            result = reportWriter.ToString();
-                            if (string.IsNullOrEmpty(result))
-                            {
-                                result = EdiabasNet.GetExceptionText(ex);
-                            }
-                            result = GetPageString(infoLocal, infoLocal.Name) + ":\r\n" + result;
-                        }
-                        if (infoLocal.CodeShowWarnings && string.IsNullOrEmpty(result))
-                        {
-                            result = reportWriter.ToString();
-                        }
-
-                        if (!string.IsNullOrEmpty(result))
-                        {
-                            lock (compileResultList)
-                            {
-                                compileResultList.Add(result);
-                            }
-                        }
-                    });
-                    compileThread.Start();
-                    threadList.Add(compileThread);
-                }
-
-                foreach (Thread compileThread in threadList)
-                {
-                    compileThread.Join();
-                }
-
-                if (cpuUsage >= 0 && !progressUpdated)
-                {
-                    Thread.Sleep(1000);
-                }
-
-                foreach (string compileResult in compileResultList)
-                {
-                    string result = compileResult;
-                    RunOnUiThread(() =>
-                    {
-                        if (_activityCommon == null)
-                        {
-                            return;
-                        }
-                        _activityCommon.ShowAlert(result, Resource.String.alert_title_error);
                     });
                 }
-
-                RunOnUiThread(() =>
-                {
-                    if (_activityCommon == null)
-                    {
-                        return;
-                    }
-
-                    StoreLastAppState(LastAppState.Compiled);
-                    PostCreateActionBarTabs();
-
-                    _compileProgress.Dismiss();
-                    _compileProgress.Dispose();
-                    _compileProgress = null;
-                    UpdateLockState();
-                    if (cpuUsage >= CpuLoadCritical)
-                    {
-                        _activityCommon.ShowAlert(string.Format(GetString(Resource.String.compile_cpu_usage_high), cpuUsage), Resource.String.alert_title_warning);
-                    }
-                    else
-                    {
-                        if (ActivityCommon.JobReader.CompatIdsUsed)
-                        {
-                            _activityCommon.ShowAlert(GetString(Resource.String.compile_compat_id_warn), Resource.String.alert_title_warning);
-                        }
-                    }
-                });
             });
             compileThreadWrapper.Start();
         }
