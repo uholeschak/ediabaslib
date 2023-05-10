@@ -1417,9 +1417,9 @@ namespace PsdzClient
 
         private static string _moduleRefPath;
         private static SerializableDictionary<string, List<string>> _moduleRefDict;
-        private static int _serviceDialogInvokeCalls;
         private static string _configurationContainerXml;
         private static SerializableDictionary<string, List<string>> _serviceDialogDict;
+        private static Dictionary<string, int> _serviceDialogCallsDict;
         private static ConstructorInfo _istaServiceDialogDlgCmdBaseConstructor;
         private static ConstructorInfo _istaEdiabasAdapterDeviceResultConstructor;
         private static MethodInfo _methodContainerSetParameter;
@@ -1484,9 +1484,14 @@ namespace PsdzClient
         }
 
         // ReSharper disable once UnusedMember.Local
+        [DebuggerNonUserCode]
         private static bool CreateServiceDialogPrefix(ref object __result, object callingModule, string methodName, string path, object globalTabModuleISTA, int elementNo, object inParameters, ref object inoutParameters)
         {
             log.InfoFormat("CreateServiceDialogPrefix, Method: {0}, Path: {1}, Element: {2}", methodName, path, elementNo);
+
+            string elementNoString = elementNo.ToString(CultureInfo.InvariantCulture);
+            List<string> serviceDialogArgsList = new List<string> { methodName, path, elementNoString, _configurationContainerXml };
+            string key = methodName + ";" + path + ";" + elementNoString;
 
             if (!string.IsNullOrWhiteSpace(_configurationContainerXml))
             {
@@ -1495,9 +1500,6 @@ namespace PsdzClient
                     _serviceDialogDict = new SerializableDictionary<string, List<string>>();
                 }
 
-                string elementNoString = elementNo.ToString(CultureInfo.InvariantCulture);
-                List<string> serviceDialogArgsList = new List<string> { methodName, path, elementNoString, _configurationContainerXml };
-                string key = methodName + ";" + elementNoString;
                 if (!_serviceDialogDict.ContainsKey(key))
                 {
                     log.InfoFormat("CreateServiceDialogPrefix Adding Key: {0}", key);
@@ -1509,6 +1511,27 @@ namespace PsdzClient
                 }
 
                 _configurationContainerXml = null;
+            }
+
+            if (_serviceDialogCallsDict == null)
+            {
+                _serviceDialogCallsDict = new Dictionary<string, int>();
+            }
+
+            if (!_serviceDialogCallsDict.ContainsKey(key))
+            {
+                _serviceDialogCallsDict.Add(key, 1);
+            }
+            else
+            {
+                _serviceDialogCallsDict[key]++;
+            }
+
+            int calls = _serviceDialogCallsDict[key];
+            log.InfoFormat("CreateServiceDialogPrefix Calls: {0}", calls);
+            if (calls > 2)
+            {
+                throw new Exception("CreateServiceDialogPrefix calls overflow");
             }
 
             object serviceDialog = null;
@@ -1534,10 +1557,9 @@ namespace PsdzClient
         }
 
         // ReSharper disable once UnusedMember.Local
-        [DebuggerNonUserCode]
         private static bool ServiceDialogCmdBaseInvokePrefix(string method, object inParam, ref object outParam, ref object inoutParam)
         {
-            log.InfoFormat("ServiceDialogCmdBaseInvokePrefix, Method: {0}, Calls: {1}", method, _serviceDialogInvokeCalls);
+            log.InfoFormat("ServiceDialogCmdBaseInvokePrefix, Method: {0}", method);
 
             if (_methodContainerSetParameter != null)
             {
@@ -1557,11 +1579,6 @@ namespace PsdzClient
                 log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix No container setParameter");
             }
 
-            _serviceDialogInvokeCalls++;
-            if (_serviceDialogInvokeCalls > 50)
-            {
-                throw new Exception("ServiceDialogCmdBaseInvokePrefix call overflow");
-            }
             return false;
         }
 
@@ -2958,7 +2975,7 @@ namespace PsdzClient
                     {
                         try
                         {
-                            _serviceDialogInvokeCalls = 0;
+                            _serviceDialogCallsDict = null;
                             _configurationContainerXml = null;
                             _moduleRefPath = null;
                             _moduleRefDict = null;
@@ -2967,13 +2984,14 @@ namespace PsdzClient
                         }
                         catch (Exception e)
                         {
-                            log.ErrorFormat("ReadServiceModule Method: {0}, Exception: '{1}'", simpleMethod.Name, e.Message);
+                            log.ErrorFormat("ReadServiceModule Method: {0}, Exception: '{1}'", simpleMethod.Name, EdiabasLib.EdiabasNet.GetExceptionText(e));
                         }
                     }
                 }
 
                 SerializableDictionary<string, List<string>> serviceDialogDict = _serviceDialogDict;
                 _serviceDialogDict = null;
+                _serviceDialogCallsDict = null;
                 _moduleRefDict = null;
                 if (serviceDialogDict == null || serviceDialogDict.Count == 0)
                 {
