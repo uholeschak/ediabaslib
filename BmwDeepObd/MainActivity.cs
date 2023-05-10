@@ -5693,54 +5693,70 @@ namespace BmwDeepObd
                 long startTime = Stopwatch.GetTimestamp();
                 if (_instanceData.CheckCpuUsage)
                 {
-                    // check CPU idle usage
-                    _instanceData.CheckCpuUsage = false;
-                    GC.Collect();
-                    int count = 0;
-                    int maxCount = 5;
-                    for (int i = 0; i < maxCount; i++)
+                    string exceptionMessage = string.Empty;
+
+                    try
                     {
-                        List<int> cpuUsageList = ActivityCommon.GetCpuUsageStatistic();
-                        if (cpuUsageList == null || !_activityActive)
+                        // check CPU idle usage
+                        _instanceData.CheckCpuUsage = false;
+                        GC.Collect();
+                        int count = 0;
+                        int maxCount = 5;
+                        for (int i = 0; i < maxCount; i++)
                         {
-                            cpuUsage = -1;
-                            break;
-                        }
-                        if (cpuUsageList.Count == 4)
-                        {
-                            count++;
-                            int usage = cpuUsageList[0] + cpuUsageList[1];
-                            cpuUsage = usage;
-                            int localCount = count;
-                            RunOnUiThread(() =>
+                            List<int> cpuUsageList = ActivityCommon.GetCpuUsageStatistic();
+                            if (cpuUsageList == null || !_activityActive)
                             {
-                                if (_activityCommon == null)
-                                {
-                                    return;
-                                }
-                                if (_compileProgress != null)
-                                {
-                                    string message = string.Format(GetString(Resource.String.compile_cpu_usage_value), usage);
-                                    _compileProgress.SetMessage(message);
-                                    _compileProgress.Progress = 100 * localCount / maxCount;
-                                    startTime = Stopwatch.GetTimestamp();
-                                }
-                            });
-                            if (usage < CpuLoadCritical && count >= 2)
-                            {
+                                cpuUsage = -1;
                                 break;
+                            }
+                            if (cpuUsageList.Count == 4)
+                            {
+                                count++;
+                                int usage = cpuUsageList[0] + cpuUsageList[1];
+                                cpuUsage = usage;
+                                int localCount = count;
+                                RunOnUiThread(() =>
+                                {
+                                    if (_activityCommon == null)
+                                    {
+                                        return;
+                                    }
+                                    if (_compileProgress != null)
+                                    {
+                                        string message = string.Format(GetString(Resource.String.compile_cpu_usage_value), usage);
+                                        _compileProgress.SetMessage(message);
+                                        _compileProgress.Progress = 100 * localCount / maxCount;
+                                        startTime = Stopwatch.GetTimestamp();
+                                    }
+                                });
+                                if (usage < CpuLoadCritical && count >= 2)
+                                {
+                                    break;
+                                }
                             }
                         }
                     }
+                    catch (Exception e)
+                    {
+                        exceptionMessage = EdiabasNet.GetExceptionText(e);
+                    }
+
                     RunOnUiThread(() =>
                     {
                         if (_activityCommon == null)
                         {
                             return;
                         }
+
                         if (_compileProgress != null)
                         {
                             _compileProgress.Progress = 100;
+                        }
+
+                        if (!string.IsNullOrEmpty(exceptionMessage))
+                        {
+                            _activityCommon.ShowAlert(exceptionMessage, Resource.String.alert_title_error);
                         }
                     });
                 }

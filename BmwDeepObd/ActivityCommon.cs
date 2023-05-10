@@ -2431,30 +2431,38 @@ namespace BmwDeepObd
             {
                 return null;
             }
-            string tempString = ExecuteTop();
-            if (tempString == null)
+
+            try
             {
-                return null;
-            }
-            MatchCollection matches = Regex.Matches(tempString, "User +(\\d+)%, +System +(\\d+)%, +IOW +(\\d+)%, +IRQ +(\\d+)%", RegexOptions.IgnoreCase);
-            if ((matches.Count != 1) || (matches[0].Groups.Count != 5))
-            {
-                return null;
-            }
-            List<int> resultList = new List<int>();
-            int index = 0;
-            foreach (Group group in matches[0].Groups)
-            {
-                if (index > 0)
+                string tempString = ExecuteTop();
+                if (tempString == null)
                 {
-                    if (Int32.TryParse(group.Value, out int value))
-                    {
-                        resultList.Add(value);
-                    }
+                    return null;
                 }
-                index++;
+                MatchCollection matches = Regex.Matches(tempString, "User +(\\d+)%, +System +(\\d+)%, +IOW +(\\d+)%, +IRQ +(\\d+)%", RegexOptions.IgnoreCase);
+                if ((matches.Count != 1) || (matches[0].Groups.Count != 5))
+                {
+                    return null;
+                }
+                List<int> resultList = new List<int>();
+                int index = 0;
+                foreach (Group group in matches[0].Groups)
+                {
+                    if (index > 0)
+                    {
+                        if (Int32.TryParse(group.Value, out int value))
+                        {
+                            resultList.Add(value);
+                        }
+                    }
+                    index++;
+                }
+                return resultList;
             }
-            return resultList;
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public static List<string> ExecuteCommand(string command)
