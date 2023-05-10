@@ -94,6 +94,7 @@ namespace BmwDeepObd
         {
             [XmlEnum(Name = "Init")] Init,
             [XmlEnum(Name = "Compile")] Compile,
+            [XmlEnum(Name = "Compiled")] Compiled,
             [XmlEnum(Name = "TabsCreated")] TabsCreated,
             [XmlEnum(Name = "Stopped")] Stopped,
         }
@@ -5677,7 +5678,6 @@ namespace BmwDeepObd
                 return;
             }
 
-            StoreLastAppState(LastAppState.Compile);
             _compileProgress = new CustomProgressDialog(this);
             _compileProgress.SetMessage(GetString(_instanceData.CheckCpuUsage ? Resource.String.compile_cpu_usage : Resource.String.compile_start));
             _compileProgress.Indeterminate = false;
@@ -5804,6 +5804,7 @@ namespace BmwDeepObd
                         _compileProgress.Indeterminate = false;
                         _compileProgress.Progress = 0;
                     }
+                    StoreLastAppState(LastAppState.Compile);
                 });
 
                 bool progressUpdated = false;
@@ -5937,6 +5938,7 @@ namespace BmwDeepObd
                         return;
                     }
 
+                    StoreLastAppState(LastAppState.Compiled);
                     PostCreateActionBarTabs();
 
                     _compileProgress.Dismiss();
