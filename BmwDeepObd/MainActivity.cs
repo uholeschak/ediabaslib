@@ -94,6 +94,7 @@ namespace BmwDeepObd
         {
             [XmlEnum(Name = "Init")] Init,
             [XmlEnum(Name = "Compile")] Compile,
+            [XmlEnum(Name = "Compiled")] Compiled,
             [XmlEnum(Name = "TabsCreated")] TabsCreated,
             [XmlEnum(Name = "Stopped")] Stopped,
         }
@@ -5677,7 +5678,6 @@ namespace BmwDeepObd
                 return;
             }
 
-            StoreLastAppState(LastAppState.Compile);
             _compileProgress = new CustomProgressDialog(this);
             _compileProgress.SetMessage(GetString(_instanceData.CheckCpuUsage ? Resource.String.compile_cpu_usage : Resource.String.compile_start));
             _compileProgress.Indeterminate = false;
@@ -5689,80 +5689,32 @@ namespace BmwDeepObd
 
             Thread compileThreadWrapper = new Thread(() =>
             {
-                int cpuUsage = -1;
-                long startTime = Stopwatch.GetTimestamp();
-                if (_instanceData.CheckCpuUsage)
+                string exceptionMessage = string.Empty;
+                try
                 {
-                    // check CPU idle usage
-                    _instanceData.CheckCpuUsage = false;
-                    GC.Collect();
-                    int count = 0;
-                    int maxCount = 5;
-                    for (int i = 0; i < maxCount; i++)
+                    int cpuUsage = -1;
+                    long startTime = Stopwatch.GetTimestamp();
+                    if (_instanceData.CheckCpuUsage)
                     {
-                        List<int> cpuUsageList = ActivityCommon.GetCpuUsageStatistic();
-                        if (cpuUsageList == null || !_activityActive)
+                        // check CPU idle usage
+                        _instanceData.CheckCpuUsage = false;
+                        GC.Collect();
+                        int count = 0;
+                        int maxCount = 5;
+                        for (int i = 0; i < maxCount; i++)
                         {
-                            cpuUsage = -1;
-                            break;
-                        }
-                        if (cpuUsageList.Count == 4)
-                        {
-                            count++;
-                            int usage = cpuUsageList[0] + cpuUsageList[1];
-                            cpuUsage = usage;
-                            int localCount = count;
-                            RunOnUiThread(() =>
+                            List<int> cpuUsageList = ActivityCommon.GetCpuUsageStatistic();
+                            if (cpuUsageList == null || !_activityActive)
                             {
-                                if (_activityCommon == null)
-                                {
-                                    return;
-                                }
-                                if (_compileProgress != null)
-                                {
-                                    string message = string.Format(GetString(Resource.String.compile_cpu_usage_value), usage);
-                                    _compileProgress.SetMessage(message);
-                                    _compileProgress.Progress = 100 * localCount / maxCount;
-                                    startTime = Stopwatch.GetTimestamp();
-                                }
-                            });
-                            if (usage < CpuLoadCritical && count >= 2)
-                            {
+                                cpuUsage = -1;
                                 break;
                             }
-                        }
-                    }
-                    RunOnUiThread(() =>
-                    {
-                        if (_activityCommon == null)
-                        {
-                            return;
-                        }
-                        if (_compileProgress != null)
-                        {
-                            _compileProgress.Progress = 100;
-                        }
-                    });
-                }
-
-                string ecuBaseDir = Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir);
-                if (_instanceData.VerifyEcuFiles || _instanceData.VerifyEcuMd5)
-                {
-                    bool checkMd5 = _instanceData.VerifyEcuMd5;
-                    _instanceData.VerifyEcuFiles = false;
-                    _instanceData.VerifyEcuMd5 = false;
-                    if (ValidEcuPackage(ecuBaseDir))
-                    {
-                        int lastPercent = -1;
-                        if (!ActivityCommon.VerifyContent(Path.Combine(ecuBaseDir, ContentFileName), checkMd5, percent =>
-                        {
-                            if (_activityCommon == null)
+                            if (cpuUsageList.Count == 4)
                             {
-                                return true;
-                            }
-                            if (lastPercent != percent)
-                            {
-                                lastPercent = percent;
+                                count++;
+                                int usage = cpuUsageList[0] + cpuUsageList[1];
+                                cpuUsage = usage;
+                                int localCount = count;
                                 RunOnUiThread(() =>
                                 {
                                     if (_activityCommon == null)
@@ -5771,25 +5723,83 @@ namespace BmwDeepObd
                                     }
                                     if (_compileProgress != null)
                                     {
-                                        _compileProgress.SetMessage(GetString(Resource.String.verify_files));
-                                        _compileProgress.Indeterminate = false;
-                                        _compileProgress.Progress = percent;
+                                        string message = string.Format(GetString(Resource.String.compile_cpu_usage_value), usage);
+                                        _compileProgress.SetMessage(message);
+                                        _compileProgress.Progress = 100 * localCount / maxCount;
+                                        startTime = Stopwatch.GetTimestamp();
                                     }
                                 });
+                                if (usage < CpuLoadCritical && count >= 2)
+                                {
+                                    break;
+                                }
                             }
-                            return false;
-                        }))
+                        }
+
+                        RunOnUiThread(() =>
                         {
-                            try
+                            if (_activityCommon == null)
                             {
-                                File.Delete(Path.Combine(ecuBaseDir, InfoXmlName));
+                                return;
                             }
-                            catch (Exception)
+
+                            if (_compileProgress != null)
                             {
-                                // ignored
+                                _compileProgress.Progress = 100;
+                            }
+                        });
+                    }
+
+                    if (_instanceData.VerifyEcuFiles || _instanceData.VerifyEcuMd5)
+                    {
+                        bool checkMd5 = _instanceData.VerifyEcuMd5;
+                        _instanceData.VerifyEcuFiles = false;
+                        _instanceData.VerifyEcuMd5 = false;
+                        string ecuBaseDir = Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir);
+                        if (ValidEcuPackage(ecuBaseDir))
+                        {
+                            int lastPercent = -1;
+                            if (!ActivityCommon.VerifyContent(Path.Combine(ecuBaseDir, ContentFileName), checkMd5, percent =>
+                            {
+                                if (_activityCommon == null)
+                                {
+                                    return true;
+                                }
+                                if (lastPercent != percent)
+                                {
+                                    lastPercent = percent;
+                                    RunOnUiThread(() =>
+                                    {
+                                        if (_activityCommon == null)
+                                        {
+                                            return;
+                                        }
+                                        if (_compileProgress != null)
+                                        {
+                                            _compileProgress.SetMessage(GetString(Resource.String.verify_files));
+                                            _compileProgress.Indeterminate = false;
+                                            _compileProgress.Progress = percent;
+                                        }
+                                    });
+                                }
+                                return false;
+                            }))
+                            {
+                                try
+                                {
+                                    File.Delete(Path.Combine(ecuBaseDir, InfoXmlName));
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
                             }
                         }
                     }
+                }
+                catch (Exception e)
+                {
+                    exceptionMessage = EdiabasNet.GetExceptionText(e);
                 }
 
                 RunOnUiThread(() =>
@@ -5798,12 +5808,20 @@ namespace BmwDeepObd
                     {
                         return;
                     }
+
                     if (_compileProgress != null)
                     {
                         _compileProgress.SetMessage(GetString(Resource.String.compile_start));
                         _compileProgress.Indeterminate = false;
                         _compileProgress.Progress = 0;
                     }
+
+                    if (!string.IsNullOrEmpty(exceptionMessage))
+                    {
+                        _activityCommon.ShowAlert(exceptionMessage, Resource.String.alert_title_error);
+                    }
+
+                    StoreLastAppState(LastAppState.Compile);
                 });
 
                 bool progressUpdated = false;
@@ -5937,6 +5955,7 @@ namespace BmwDeepObd
                         return;
                     }
 
+                    StoreLastAppState(LastAppState.Compiled);
                     PostCreateActionBarTabs();
 
                     _compileProgress.Dismiss();
