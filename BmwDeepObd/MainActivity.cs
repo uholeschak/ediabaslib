@@ -450,6 +450,7 @@ namespace BmwDeepObd
         public static bool StoreXmlEditor = Build.VERSION.SdkInt >= BuildVersionCodes.LollipopMr1;
         private InstanceData _instanceData = new InstanceData();
         private bool _activityRecreated;
+        private bool _lastCompileCrash;
         private ActivityCommon.AutoConnectType _connectTypeRequest;
         private bool _backPressed;
         private long _lastBackPressedTime;
@@ -595,6 +596,18 @@ namespace BmwDeepObd
             }
 
             GetSettings();
+            _lastCompileCrash = false;
+            if (!_activityRecreated && _instanceData != null)
+            {
+                if (_instanceData.LastAppState == LastAppState.Compile)
+                {
+                    _lastCompileCrash = true;
+                    _instanceData.LastAppState = LastAppState.Init;
+                    _instanceData.ConfigFileName = string.Empty;
+                    StoreSettings();
+                }
+            }
+
             _activityCommon.SetPreferredNetworkInterface();
 
             _updateHandler = new Handler(Looper.MainLooper);
@@ -7121,11 +7134,9 @@ namespace BmwDeepObd
             {
                 return;
             }
-            if (_instanceData.LastAppState == LastAppState.Compile)
+            if (_lastCompileCrash)
             {
-                _instanceData.LastAppState = LastAppState.Init;
-                _instanceData.ConfigFileName = string.Empty;
-                StoreSettings();
+                _lastCompileCrash = false;
                 _configSelectAlertDialog = new AlertDialog.Builder(this)
                     .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
                     .SetCancelable(true)
