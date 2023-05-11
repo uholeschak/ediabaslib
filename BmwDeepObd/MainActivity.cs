@@ -596,11 +596,15 @@ namespace BmwDeepObd
             }
 
             GetSettings();
+            _lastCompileCrash = false;
             if (!_activityRecreated && _instanceData != null)
             {
                 if (_instanceData.LastAppState == LastAppState.Compile)
                 {
                     _lastCompileCrash = true;
+                    _instanceData.LastAppState = LastAppState.Init;
+                    _instanceData.ConfigFileName = string.Empty;
+                    StoreSettings();
                 }
             }
 
@@ -7133,8 +7137,6 @@ namespace BmwDeepObd
             if (_lastCompileCrash)
             {
                 _lastCompileCrash = false;
-                _instanceData.ConfigFileName = string.Empty;
-                StoreSettings();
                 _configSelectAlertDialog = new AlertDialog.Builder(this)
                     .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
                     .SetCancelable(true)
