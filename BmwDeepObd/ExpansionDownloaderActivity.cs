@@ -369,7 +369,7 @@ namespace BmwDeepObd
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
         {
-            if (_actvityDestroyed)
+            if (_activityDestroyed)
             {
                 return;
             }
@@ -409,7 +409,7 @@ namespace BmwDeepObd
                     {
                         alertDialog.DismissEvent += (sender, args) =>
                         {
-                            if (_actvityDestroyed)
+                            if (_activityDestroyed)
                             {
                                 return;
                             }
@@ -1006,7 +1006,7 @@ namespace BmwDeepObd
 
         private void RequestStoragePermissions(bool finish = false)
         {
-            if (_actvityDestroyed)
+            if (_activityDestroyed)
             {
                 return;
             }
@@ -1053,7 +1053,7 @@ namespace BmwDeepObd
 
         private void RequestNotificationsPermissions()
         {
-            if (_actvityDestroyed)
+            if (_activityDestroyed)
             {
                 return;
             }
