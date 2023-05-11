@@ -3587,7 +3587,7 @@ namespace BmwDeepObd
 
         private void RequestNotificationsPermissions()
         {
-            if (_actvityDestroyed)
+            if (_activityDestroyed)
             {
                 return;
             }
