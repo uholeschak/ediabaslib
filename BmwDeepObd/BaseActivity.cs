@@ -58,7 +58,7 @@ namespace BmwDeepObd
         public const string InstanceDataKeyDefault = "InstanceData";
         public const string InstanceDataKeyBase = "InstanceDataBase";
         protected InstanceDataBase _instanceDataBase = new InstanceDataBase();
-        protected bool _actvityDestroyed;
+        protected bool _activityDestroyed;
         private GestureDetectorCompat _gestureDetector;
         protected Configuration _currentConfiguration;
         private Android.App.ActivityManager _activityManager;
@@ -110,7 +110,7 @@ namespace BmwDeepObd
             _baseUpdateHandler = new Handler(Looper.MainLooper);
             _longPressRunnable = new Java.Lang.Runnable(() =>
                 {
-                    if (_actvityDestroyed)
+                    if (_activityDestroyed)
                     {
                         return;
                     }
@@ -134,7 +134,7 @@ namespace BmwDeepObd
 
             _updateMenuRunnable = new Java.Lang.Runnable(() =>
             {
-                if (_actvityDestroyed)
+                if (_activityDestroyed)
                 {
                     return;
                 }
@@ -162,7 +162,7 @@ namespace BmwDeepObd
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            _actvityDestroyed = true;
+            _activityDestroyed = true;
 
             DisposeTimer();
             if (_baseUpdateHandler != null)
@@ -218,14 +218,14 @@ namespace BmwDeepObd
             {
                 _memoryCheckTimer = new Timer(state =>
                 {
-                    if (_actvityDestroyed)
+                    if (_activityDestroyed)
                     {
                         return;
                     }
 
                     RunOnUiThread(() =>
                     {
-                        if (_actvityDestroyed)
+                        if (_activityDestroyed)
                         {
                             return;
                         }
@@ -249,14 +249,14 @@ namespace BmwDeepObd
                 {
                     _autoFullScreenTimer = new Timer(state =>
                     {
-                        if (_actvityDestroyed)
+                        if (_activityDestroyed)
                         {
                             return;
                         }
 
                         RunOnUiThread(() =>
                         {
-                            if (_actvityDestroyed)
+                            if (_activityDestroyed)
                             {
                                 return;
                             }
@@ -349,9 +349,9 @@ namespace BmwDeepObd
 
         public override bool DispatchTouchEvent(MotionEvent ev)
         {
-            if (_actvityDestroyed)
+            if (_activityDestroyed)
             {
-                return base.DispatchTouchEvent(ev);
+                return true;
             }
 
             _gestureDetector.OnTouchEvent(ev);
@@ -787,7 +787,7 @@ namespace BmwDeepObd
 
             public override bool OnFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
             {
-                if (_activity._actvityDestroyed)
+                if (_activity._activityDestroyed)
                 {
                     return true;
                 }
