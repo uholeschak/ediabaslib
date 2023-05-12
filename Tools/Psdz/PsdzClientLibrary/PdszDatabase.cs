@@ -1363,6 +1363,7 @@ namespace PsdzClient
         private const string ServiceModulesZipFile = "ServiceModules.zip";
         private const string EcuCharacteristicsXmFile = "EcuCharacteristics.xml";
         private const string EcuCharacteristicsZipFile = "EcuCharacteristics.zip";
+        private const string ConfigurationContainerXMLPar = "ConfigurationContainerXML";
         private static readonly ILog log = LogManager.GetLogger(typeof(PdszDatabase));
 
         // ToDo: Check on update
@@ -1502,7 +1503,7 @@ namespace PsdzClient
                         dynamic paramOverrides = dscConfig.ParametrizationOverrides;
                         if (paramOverrides != null)
                         {
-                            configurationContainerXml = paramOverrides.getParameter("ConfigurationContainerXML", string.Empty) as string;
+                            configurationContainerXml = paramOverrides.getParameter(ConfigurationContainerXMLPar, string.Empty) as string;
                         }
                     }
                     else
@@ -1534,6 +1535,10 @@ namespace PsdzClient
                 {
                     log.InfoFormat("CreateServiceDialogPrefix Key present: {0}", key);
                 }
+            }
+            else
+            {
+                log.InfoFormat("CreateServiceDialogPrefix No container XML");
             }
 
             if (_serviceDialogCallsDict == null)
@@ -1631,7 +1636,7 @@ namespace PsdzClient
             {
                 try
                 {
-                    resultDyn.AddParametrizationOverride("ConfigurationContainerXML", configurationContainer);
+                    resultDyn.AddParametrizationOverride(ConfigurationContainerXMLPar, configurationContainer);
                 }
                 catch (Exception e)
                 {
