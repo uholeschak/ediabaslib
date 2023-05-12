@@ -1417,7 +1417,6 @@ namespace PsdzClient
 
         private static string _moduleRefPath;
         private static SerializableDictionary<string, List<string>> _moduleRefDict;
-        private static string _configurationContainerXml;
         private static SerializableDictionary<string, List<string>> _serviceDialogDict;
         private static Dictionary<string, int> _serviceDialogCallsDict;
         private static ConstructorInfo _istaServiceDialogDlgCmdBaseConstructor;
@@ -1489,10 +1488,36 @@ namespace PsdzClient
             log.InfoFormat("CreateServiceDialogPrefix, Method: {0}, Path: {1}, Element: {2}", methodName, path, elementNo);
 
             string elementNoString = elementNo.ToString(CultureInfo.InvariantCulture);
-            List<string> serviceDialogArgsList = new List<string> { methodName, path, elementNoString, _configurationContainerXml };
             string key = methodName + ";" + path + ";" + elementNoString;
 
-            if (!string.IsNullOrWhiteSpace(_configurationContainerXml))
+            string configurationContainerXml = string.Empty;
+            dynamic inParametersDyn = inParameters;
+            if (inParametersDyn != null)
+            {
+                try
+                {
+                    dynamic dscConfig = inParametersDyn.getParameter("/WurzelIn/DSCConfig", null);
+                    if (dscConfig != null)
+                    {
+                        dynamic paramOverrides = dscConfig.ParametrizationOverrides;
+                        if (paramOverrides != null)
+                        {
+                            configurationContainerXml = paramOverrides.getParameter("ConfigurationContainerXML", string.Empty) as string;
+                        }
+                    }
+                    else
+                    {
+                        log.ErrorFormat("CreateServiceDialogPrefix No DSCConfig");
+                    }
+                }
+                catch (Exception e)
+                {
+                    log.ErrorFormat("CreateServiceDialogPrefix DSCConfig Exception: {0}", e.Message);
+                }
+            }
+
+            List<string> serviceDialogArgsList = new List<string> { methodName, path, elementNoString, configurationContainerXml };
+            if (!string.IsNullOrWhiteSpace(configurationContainerXml))
             {
                 if (_serviceDialogDict == null)
                 {
@@ -1509,8 +1534,6 @@ namespace PsdzClient
                 {
                     log.InfoFormat("CreateServiceDialogPrefix Key present: {0}", key);
                 }
-
-                _configurationContainerXml = null;
             }
 
             if (_serviceDialogCallsDict == null)
@@ -1595,7 +1618,6 @@ namespace PsdzClient
         private static bool ConfigurationContainerDeserializePrefix(string configurationContainer)
         {
             log.InfoFormat("ConfigurationContainerDeserializePrefix");
-            _configurationContainerXml = configurationContainer;
             return true;
         }
 
@@ -1613,7 +1635,7 @@ namespace PsdzClient
                 }
                 catch (Exception e)
                 {
-                    log.InfoFormat("ConfigurationContainerDeserializePostfix AddParametrizationOverride Exception: {0}", e.Message);
+                    log.ErrorFormat("ConfigurationContainerDeserializePostfix AddParametrizationOverride Exception: {0}", e.Message);
                 }
             }
         }
@@ -3010,7 +3032,6 @@ namespace PsdzClient
                         try
                         {
                             _serviceDialogCallsDict = null;
-                            _configurationContainerXml = null;
                             _moduleRefPath = null;
                             _moduleRefDict = null;
                             simpleMethod.Invoke(testModule, null);
