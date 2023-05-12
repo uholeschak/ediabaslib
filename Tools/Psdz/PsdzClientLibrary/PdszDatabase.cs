@@ -1596,12 +1596,18 @@ namespace PsdzClient
         {
             string resultType = __result != null ? __result.GetType().FullName : string.Empty;
             log.InfoFormat("ConfigurationContainerDeserializePostfix Result: {0}", resultType);
-#if false
-            if (_methodContainerSetParameter != null)
+            dynamic result = __result;
+            if (result != null)
             {
-                _methodContainerSetParameter.Invoke(__result, new object[] { "ConfigurationContainer", configurationContainer });
+                try
+                {
+                    result.AddParametrizationOverride("ConfigurationContainerXML", configurationContainer);
+                }
+                catch (Exception e)
+                {
+                    log.InfoFormat("ConfigurationContainerDeserializePostfix AddParametrizationOverride Exception: {0}", e.Message);
+                }
             }
-#endif
         }
 
         public PdszDatabase(string istaFolder)
