@@ -21,6 +21,7 @@ using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 using log4net;
 using PsdzClient.Core;
+using PsdzClient.Core.Container;
 using PsdzClientLibrary;
 
 namespace PsdzClient
@@ -1553,7 +1554,7 @@ namespace PsdzClient
                 {
                     log.InfoFormat("CreateServiceDialogPrefix Adding Key: {0}", key);
                     _serviceDialogDict.Add(key, serviceDialogArgsList);
-                    //log.Info(_configurationContainerXml);
+                    //log.Info(configurationContainerXml);
                 }
                 else
                 {
@@ -3188,6 +3189,77 @@ namespace PsdzClient
                 }
 
                 log.InfoFormat("ReadServiceModule Items: {0}", serviceDialogDict.Count);
+
+                foreach (KeyValuePair<string, List<string>> dictEntry in serviceDialogDict)
+                {
+                    List<string> dictList = dictEntry.Value;
+                    if (dictList.Count >= 4)
+                    {
+                        try
+                        {
+                            ConfigurationContainer configurationContainer = ConfigurationContainer.Deserialize(dictList[3]);
+                            EDIABASAdapter ediabasAdapter = new EDIABASAdapter(true, null, configurationContainer);
+                            ediabasAdapter.DoParameterization();
+                            if (string.IsNullOrEmpty(ediabasAdapter.EcuGroup))
+                            {
+                                log.ErrorFormat("ReadServiceModule No EcuGroup");
+                                continue;
+                            }
+
+                            if (string.IsNullOrEmpty(ediabasAdapter.EcuJob))
+                            {
+                                log.ErrorFormat("ReadServiceModule No EcuJob");
+                                continue;
+                            }
+
+                            bool binMode = ediabasAdapter.IsBinModeRequired;
+                            if (binMode && ediabasAdapter.EcuData == null)
+                            {
+                                log.ErrorFormat("ReadServiceModule No EcuData");
+                                continue;
+                            }
+
+                            StringBuilder sb = new StringBuilder();
+                            sb.Append(ediabasAdapter.EcuGroup);
+                            sb.Append("#");
+                            sb.Append(ediabasAdapter.EcuJob);
+
+                            string paramString;
+                            if (binMode)
+                            {
+                                paramString = "|" + BitConverter.ToString(ediabasAdapter.EcuData).Replace("-", "");
+                            }
+                            else
+                            {
+                                paramString = ediabasAdapter.EcuParam;
+                            }
+
+                            string resultFilterString = ediabasAdapter.EcuResultFilter;
+                            if (!string.IsNullOrEmpty(paramString) || !string.IsNullOrEmpty(resultFilterString))
+                            {
+                                sb.Append("#");
+                                if (!string.IsNullOrEmpty(paramString))
+                                {
+                                    sb.Append(paramString);
+                                }
+
+                                if (!string.IsNullOrEmpty(resultFilterString))
+                                {
+                                    sb.Append("#");
+                                    sb.Append(resultFilterString);
+                                }
+                            }
+
+                            string ediabasJob = sb.ToString();
+                            dictList[3] = ediabasJob;
+                            log.InfoFormat("ReadServiceModule EdiabasJob: '{0}'", ediabasJob);
+                        }
+                        catch (Exception e)
+                        {
+                            log.ErrorFormat("ReadServiceModule EDIABASAdapter exception: {0}", e.Message);
+                        }
+                    }
+                }
 
                 log.InfoFormat("ReadServiceModule Finished: {0}", fileName);
 

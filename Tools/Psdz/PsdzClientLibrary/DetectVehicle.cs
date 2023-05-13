@@ -725,12 +725,6 @@ namespace PsdzClient
                     return null;
                 }
 
-                if (string.IsNullOrEmpty(ediabasAdapter.EcuJob))
-                {
-                    log.ErrorFormat(CultureInfo.InvariantCulture, "ConvertContainerXml Empty EcuJob");
-                    return null;
-                }
-
                 bool binMode = ediabasAdapter.IsBinModeRequired;
                 if (binMode && ediabasAdapter.EcuData == null)
                 {
