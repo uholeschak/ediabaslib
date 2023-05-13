@@ -1493,6 +1493,7 @@ namespace PsdzClient
             string key = methodName + ";" + path + ";" + elementNoString;
 
             string configurationContainerXml = string.Empty;
+            List<string> runOverridesList = new List<string>();
             dynamic inParametersDyn = inParameters;
             if (inParametersDyn != null)
             {
@@ -1505,6 +1506,23 @@ namespace PsdzClient
                         if (paramOverrides != null)
                         {
                             configurationContainerXml = paramOverrides.getParameter(ConfigurationContainerXMLPar, string.Empty) as string;
+                        }
+
+                        dynamic runOverrides = dscConfig.RunOverrides;
+                        if (runOverrides != null)
+                        {
+                            object runParameter = runOverrides.Parameter;
+                            if (runParameter is Dictionary<string, object> paramDictionary)
+                            {
+                                foreach (KeyValuePair<string, object> keyValuePair in paramDictionary)
+                                {
+                                    if (keyValuePair.Value is string valueString)
+                                    {
+                                        log.InfoFormat("CreateServiceDialogPrefix, Override: '{0}', '{1}'", keyValuePair.Key, valueString);
+                                        runOverridesList.Add(keyValuePair.Key);
+                                    }
+                                }
+                            }
                         }
                     }
                     else
@@ -1519,6 +1537,11 @@ namespace PsdzClient
             }
 
             List<string> serviceDialogArgsList = new List<string> { methodName, path, elementNoString, configurationContainerXml };
+            if (runOverridesList.Count > 0)
+            {
+                serviceDialogArgsList.AddRange(runOverridesList);
+            }
+
             if (!string.IsNullOrWhiteSpace(configurationContainerXml))
             {
                 if (_serviceDialogDict == null)
