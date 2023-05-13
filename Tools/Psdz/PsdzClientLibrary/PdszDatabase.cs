@@ -1422,6 +1422,7 @@ namespace PsdzClient
         private static Dictionary<string, int> _serviceDialogCallsDict;
         private static ConstructorInfo _istaServiceDialogDlgCmdBaseConstructor;
         private static ConstructorInfo _istaEdiabasAdapterDeviceResultConstructor;
+        private static Type _coreContractsDocumentLocatorType;
 
         // ReSharper disable once UnusedMember.Local
         private static bool CallModuleRefPrefix(string refPath, object inParameters, ref object outParameters, ref object inAndOutParameters)
@@ -1646,17 +1647,42 @@ namespace PsdzClient
         }
 
         // ReSharper disable once UnusedMember.Local
-        private static void IndirectDocumentPrefix2(ref object __result, string title, string heading)
+        private static bool IndirectDocumentPrefix2(ref object __result, string title, string heading)
         {
-            log.InfoFormat("IndirectDocumentPrefix2 Title: {0}, Heading: {1}", title, heading);
-            __result = null;
+            log.InfoFormat("IndirectDocumentPrefix2 Title: {0}, Heading: {1}", title ?? string.Empty, heading ?? string.Empty);
+            object documentList = null;
+            try
+            {
+                Type listType = typeof(List<>).MakeGenericType(new[] { _coreContractsDocumentLocatorType });
+                documentList = Activator.CreateInstance(listType);
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("IndirectDocumentPrefix2 new List<IDocumentLocator>() Exception: {0}", e.Message);
+            }
+
+            __result = documentList;
+            return false;
         }
 
         // ReSharper disable once UnusedMember.Local
-        private static void IndirectDocumentPrefix3(ref object __result, string title, string heading, string informationsTyp)
+        private static bool IndirectDocumentPrefix3(ref object __result, string title, string heading, string informationsTyp)
         {
-            log.InfoFormat("IndirectDocumentPrefix3 Title: {0}, Heading: {1}, Info: {2}", title, heading, informationsTyp);
-            __result = null;
+            log.InfoFormat("IndirectDocumentPrefix3 Title: {0}, Heading: {1}, Info: {2}", title ?? string.Empty, heading ?? string.Empty, informationsTyp ?? string.Empty);
+
+            object documentList = null;
+            try
+            {
+                Type listType = typeof(List<>).MakeGenericType(new[] { _coreContractsDocumentLocatorType });
+                documentList = Activator.CreateInstance(listType);
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("IndirectDocumentPrefix3 new List<IDocumentLocator>() Exception: {0}", e.Message);
+            }
+
+            __result = documentList;
+            return false;
         }
 
         public PdszDatabase(string istaFolder)
@@ -2745,6 +2771,26 @@ namespace PsdzClient
                 {
                     log.ErrorFormat("ReadServiceModule GetDatabaseProviderSQLite not found");
                     return null;
+                }
+
+                string coreContractsFile = Path.Combine(_frameworkPath, "RheingoldCoreContracts.dll");
+                if (!File.Exists(coreContractsFile))
+                {
+                    log.ErrorFormat("ReadServiceModule Core contracts not found: {0}", coreContractsFile);
+                    return null;
+                }
+                Assembly coreContractsAssembly = Assembly.LoadFrom(coreContractsFile);
+
+                if (_coreContractsDocumentLocatorType == null)
+                {
+                    Type coreContractsDocumentLocatorType = coreContractsAssembly.GetType("BMW.Rheingold.CoreFramework.Contracts.IDocumentLocator");
+                    if (coreContractsDocumentLocatorType == null)
+                    {
+                        log.ErrorFormat("ReadServiceModule IDocumentLocator not found");
+                        return null;
+                    }
+
+                    _coreContractsDocumentLocatorType = coreContractsDocumentLocatorType;
                 }
 
                 string istaCoreFrameworkFile = Path.Combine(_frameworkPath, "RheingoldISTACoreFramework.dll");
