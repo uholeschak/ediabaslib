@@ -1646,9 +1646,16 @@ namespace PsdzClient
         }
 
         // ReSharper disable once UnusedMember.Local
-        private static void IndirectDocumentPrefix(ref object __result, string title, string heading, string informationsTyp)
+        private static void IndirectDocumentPrefix2(ref object __result, string title, string heading)
         {
-            log.InfoFormat("IndirectDocumentPrefix Title: {0}, Heading: {1}, Info: {2} ", title, heading, informationsTyp);
+            log.InfoFormat("IndirectDocumentPrefix2 Title: {0}, Heading: {1}", title, heading);
+            __result = null;
+        }
+
+        // ReSharper disable once UnusedMember.Local
+        private static void IndirectDocumentPrefix3(ref object __result, string title, string heading, string informationsTyp)
+        {
+            log.InfoFormat("IndirectDocumentPrefix3 Title: {0}, Heading: {1}, Info: {2}", title, heading, informationsTyp);
             __result = null;
         }
 
@@ -2878,18 +2885,33 @@ namespace PsdzClient
                     return null;
                 }
 
-                MethodInfo methodIstaModuleIndirectDocument = istaModuleType.GetMethod("__IndirectDocument", BindingFlags.Instance | BindingFlags.NonPublic,
-                    null, new Type[] {typeof(string), typeof(string), typeof(string)}, null);
-                if (methodIstaModuleIndirectDocument == null)
+                MethodInfo methodIstaModuleIndirectDocument2 = istaModuleType.GetMethod("__IndirectDocument", BindingFlags.Instance | BindingFlags.NonPublic,
+                    null, new Type[] { typeof(string), typeof(string)}, null);
+                if (methodIstaModuleIndirectDocument2 == null)
                 {
-                    log.ErrorFormat("ReadTestModule ISTAModule __IndirectDocument not found");
+                    log.ErrorFormat("ReadTestModule ISTAModule __IndirectDocument 2 not found");
                     return null;
                 }
 
-                MethodInfo methodIndirectDocumentPrefix = typeof(PdszDatabase).GetMethod("IndirectDocumentPrefix", BindingFlags.NonPublic | BindingFlags.Static);
-                if (methodIndirectDocumentPrefix == null)
+                MethodInfo methodIstaModuleIndirectDocument3 = istaModuleType.GetMethod("__IndirectDocument", BindingFlags.Instance | BindingFlags.NonPublic,
+                    null, new Type[] {typeof(string), typeof(string), typeof(string)}, null);
+                if (methodIstaModuleIndirectDocument3 == null)
                 {
-                    log.ErrorFormat("ReadServiceModule IndirectDocumentPrefix not found");
+                    log.ErrorFormat("ReadTestModule ISTAModule __IndirectDocument 3 not found");
+                    return null;
+                }
+
+                MethodInfo methodIndirectDocumentPrefix2 = typeof(PdszDatabase).GetMethod("IndirectDocumentPrefix2", BindingFlags.NonPublic | BindingFlags.Static);
+                if (methodIndirectDocumentPrefix2 == null)
+                {
+                    log.ErrorFormat("ReadServiceModule IndirectDocumentPrefix2 not found");
+                    return null;
+                }
+
+                MethodInfo methodIndirectDocumentPrefix3 = typeof(PdszDatabase).GetMethod("IndirectDocumentPrefix3", BindingFlags.NonPublic | BindingFlags.Static);
+                if (methodIndirectDocumentPrefix3 == null)
+                {
+                    log.ErrorFormat("ReadServiceModule IndirectDocumentPrefix3 not found");
                     return null;
                 }
 
@@ -2930,7 +2952,7 @@ namespace PsdzClient
                         patchedModuleRef = true;
                     }
 
-                    if (methodBase == methodIstaModuleIndirectDocument)
+                    if (methodBase == methodIstaModuleIndirectDocument2)
                     {
                         patchedIndirectDocumentPrefix = true;
                     }
@@ -2968,8 +2990,11 @@ namespace PsdzClient
 
                 if (!patchedIndirectDocumentPrefix)
                 {
-                    log.InfoFormat("ReadServiceModule Patching: {0}", methodIstaModuleIndirectDocument.Name);
-                    _harmony.Patch(methodIstaModuleIndirectDocument, new HarmonyMethod(methodIndirectDocumentPrefix));
+                    log.InfoFormat("ReadServiceModule Patching: {0}", methodIstaModuleIndirectDocument2.Name);
+                    _harmony.Patch(methodIstaModuleIndirectDocument2, new HarmonyMethod(methodIndirectDocumentPrefix2));
+
+                    log.InfoFormat("ReadServiceModule Patching: {0}", methodIstaModuleIndirectDocument3.Name);
+                    _harmony.Patch(methodIstaModuleIndirectDocument3, new HarmonyMethod(methodIndirectDocumentPrefix3));
                 }
 
                 if (!patchedGetDatabase)
