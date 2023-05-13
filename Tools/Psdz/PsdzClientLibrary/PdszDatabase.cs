@@ -1645,6 +1645,13 @@ namespace PsdzClient
             }
         }
 
+        // ReSharper disable once UnusedMember.Local
+        private static void IndirectDocumentPrefix(ref object __result, string title, string heading, string informationsTyp)
+        {
+            log.InfoFormat("IndirectDocumentPrefix Title: {0}, Heading: {1}, Info: {2} ", title, heading, informationsTyp);
+            __result = null;
+        }
+
         public PdszDatabase(string istaFolder)
         {
             if (!Directory.Exists(istaFolder))
@@ -2871,6 +2878,21 @@ namespace PsdzClient
                     return null;
                 }
 
+                MethodInfo methodIstaModuleIndirectDocument = istaModuleType.GetMethod("__IndirectDocument", BindingFlags.Instance | BindingFlags.NonPublic,
+                    null, new Type[] {typeof(string), typeof(string), typeof(string)}, null);
+                if (methodIstaModuleIndirectDocument == null)
+                {
+                    log.ErrorFormat("ReadTestModule ISTAModule __IndirectDocument not found");
+                    return null;
+                }
+
+                MethodInfo methodIndirectDocumentPrefix = typeof(PdszDatabase).GetMethod("IndirectDocumentPrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                if (methodIndirectDocumentPrefix == null)
+                {
+                    log.ErrorFormat("ReadServiceModule IndirectDocumentPrefix not found");
+                    return null;
+                }
+
                 MethodInfo methodGetDatabasePrefix = typeof(PdszDatabase).GetMethod("CallGetDatabaseProviderSQLitePrefix", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodGetDatabasePrefix == null)
                 {
@@ -2882,6 +2904,7 @@ namespace PsdzClient
                 bool patchedServiceDialogCmdBaseInvoke = false;
                 bool patchedConfigurationContainerDeserialize = false;
                 bool patchedModuleRef = false;
+                bool patchedIndirectDocumentPrefix = false;
                 bool patchedGetDatabase = false;
                 foreach (MethodBase methodBase in _harmony.GetPatchedMethods())
                 {
@@ -2905,6 +2928,11 @@ namespace PsdzClient
                     if (methodBase == methodIstaModuleModuleRef)
                     {
                         patchedModuleRef = true;
+                    }
+
+                    if (methodBase == methodIstaModuleIndirectDocument)
+                    {
+                        patchedIndirectDocumentPrefix = true;
                     }
 
                     if (methodBase == methodGetDatabaseProviderSQLite)
@@ -2936,6 +2964,12 @@ namespace PsdzClient
                 {
                     log.InfoFormat("ReadServiceModule Patching: {0}", methodIstaModuleModuleRef.Name);
                     _harmony.Patch(methodIstaModuleModuleRef, new HarmonyMethod(methodModuleRefPrefix));
+                }
+
+                if (!patchedIndirectDocumentPrefix)
+                {
+                    log.InfoFormat("ReadServiceModule Patching: {0}", methodIstaModuleIndirectDocument.Name);
+                    _harmony.Patch(methodIstaModuleIndirectDocument, new HarmonyMethod(methodIndirectDocumentPrefix));
                 }
 
                 if (!patchedGetDatabase)
