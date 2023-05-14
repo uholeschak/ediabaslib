@@ -1320,6 +1320,73 @@ namespace PsdzClient
             [XmlElement("ModuleRef"), DefaultValue(null)] public string ModuleRef { get; set;  }
         }
 
+        [XmlInclude(typeof(ServiceModuleData))]
+        [XmlType("ServiceModules")]
+        public class ServiceModules
+        {
+            public ServiceModules() : this(null, null)
+            {
+            }
+
+            public ServiceModules(VehicleStructsBmw.VersionInfo versionInfo, SerializableDictionary<string, ServiceModuleData> moduleDataDict)
+            {
+                Version = versionInfo;
+                ModuleDataDict = moduleDataDict;
+            }
+
+            [XmlElement("Version"), DefaultValue(null)] public VehicleStructsBmw.VersionInfo Version { get; set; }
+            [XmlElement("ModuleDataDict"), DefaultValue(null)] public SerializableDictionary<string, ServiceModuleData> ModuleDataDict { get; set; }
+        }
+
+        [XmlInclude(typeof(ServiceModuleDataItem))]
+        [XmlType("ServiceModuleData")]
+        public class ServiceModuleData
+        {
+            public ServiceModuleData() : this(null)
+            {
+            }
+
+            public ServiceModuleData(SerializableDictionary<string, ServiceModuleDataItem> dataDict)
+            {
+                DataDict = dataDict;
+            }
+
+            [XmlElement("DataDict"), DefaultValue(null)] public SerializableDictionary<string, ServiceModuleDataItem> DataDict { get; set; }
+        }
+
+        [XmlType("ServiceModuleDataItem")]
+        public class ServiceModuleDataItem
+        {
+            public ServiceModuleDataItem() : this(null, null, null, null, null)
+            {
+            }
+
+            public ServiceModuleDataItem(string methodName, string path, string elementNo, string containerXml, SerializableDictionary<string, string> runOverrides = null)
+            {
+                MethodName = methodName;
+                Path = path;
+                ElementNo = elementNo;
+                ContainerXml = containerXml;
+                RunOverrides = runOverrides;
+                EdiabasJobBare = null;
+                EdiabasJobOverride = null;
+            }
+
+            [XmlElement("MethodName"), DefaultValue(null)] public string MethodName { get; set; }
+
+            [XmlElement("Path"), DefaultValue(null)] public string Path { get; set; }
+
+            [XmlElement("ElementNo"), DefaultValue(null)] public string ElementNo { get; set; }
+
+            [XmlIgnore, DefaultValue(null)] public string ContainerXml { get; set; }
+
+            [XmlElement("RunOverrides"), DefaultValue(null)] public SerializableDictionary<string, string> RunOverrides { get; set; }
+
+            [XmlElement("EdiabasJobBare"), DefaultValue(null)] public string EdiabasJobBare { get; set; }
+
+            [XmlElement("EdiabasJobOverride"), DefaultValue(null)] public string EdiabasJobOverride { get; set; }
+        }
+
         [XmlInclude(typeof(VehicleStructsBmw.VersionInfo))]
         [XmlType("EcuCharacteristicsXml")]
         public class EcuCharacteristicsData
@@ -1413,13 +1480,13 @@ namespace PsdzClient
         public Dictionary<string, XepRule> XepRuleDict => _xepRuleDict;
         public SwiRegister SwiRegisterTree { get; private set; }
         public TestModules TestModuleStorage { get; private set; }
-        public TestModules ServiceModuleStorage { get; private set; }
+        public ServiceModules ServiceModuleStorage { get; private set; }
         public EcuCharacteristicsData EcuCharacteristicsStorage { get; private set; }
         public bool UseIsAtLeastOnePathToRootValid { get; set; }
 
         private static string _moduleRefPath;
         private static SerializableDictionary<string, List<string>> _moduleRefDict;
-        private static SerializableDictionary<string, List<string>> _serviceDialogDict;
+        private static SerializableDictionary<string, ServiceModuleDataItem> _serviceDialogDict;
         private static Dictionary<string, int> _serviceDialogCallsDict;
         private static ConstructorInfo _istaServiceDialogDlgCmdBaseConstructor;
         private static ConstructorInfo _istaEdiabasAdapterDeviceResultConstructor;
@@ -1494,7 +1561,7 @@ namespace PsdzClient
             string key = methodName + ";" + path + ";" + elementNoString;
 
             string configurationContainerXml = string.Empty;
-            List<string> runOverridesList = new List<string>();
+            SerializableDictionary<string, string> runOverridesDict = new SerializableDictionary<string, string>();
             dynamic inParametersDyn = inParameters;
             if (inParametersDyn != null)
             {
@@ -1520,7 +1587,7 @@ namespace PsdzClient
                                     if (keyValuePair.Value is string valueString)
                                     {
                                         log.InfoFormat("CreateServiceDialogPrefix, Override: '{0}', '{1}'", keyValuePair.Key, valueString);
-                                        runOverridesList.Add(keyValuePair.Key);
+                                        runOverridesDict.Add(keyValuePair.Key, valueString);
                                     }
                                 }
                             }
@@ -1537,23 +1604,18 @@ namespace PsdzClient
                 }
             }
 
-            List<string> serviceDialogArgsList = new List<string> { methodName, path, elementNoString, configurationContainerXml };
-            if (runOverridesList.Count > 0)
-            {
-                serviceDialogArgsList.AddRange(runOverridesList);
-            }
-
             if (!string.IsNullOrWhiteSpace(configurationContainerXml))
             {
                 if (_serviceDialogDict == null)
                 {
-                    _serviceDialogDict = new SerializableDictionary<string, List<string>>();
+                    _serviceDialogDict = new SerializableDictionary<string, ServiceModuleDataItem>();
                 }
 
                 if (!_serviceDialogDict.ContainsKey(key))
                 {
                     log.InfoFormat("CreateServiceDialogPrefix Adding Key: {0}", key);
-                    _serviceDialogDict.Add(key, serviceDialogArgsList);
+                    ServiceModuleDataItem serviceModuleDataItem = new ServiceModuleDataItem(methodName, path, elementNoString, configurationContainerXml, runOverridesDict);
+                    _serviceDialogDict.Add(key, serviceModuleDataItem);
                     //log.Info(configurationContainerXml);
                 }
                 else
@@ -2550,8 +2612,8 @@ namespace PsdzClient
         {
             try
             {
-                TestModules serviceModules = null;
-                XmlSerializer serializer = new XmlSerializer(typeof(TestModules));
+                ServiceModules serviceModules = null;
+                XmlSerializer serializer = new XmlSerializer(typeof(ServiceModules));
                 string serviceModulesZipFile = Path.Combine(_databaseExtractPath, ServiceModulesZipFile);
                 if (File.Exists(serviceModulesZipFile))
                 {
@@ -2574,7 +2636,7 @@ namespace PsdzClient
                                     Stream zipStream = zf.GetInputStream(zipEntry);
                                     using (TextReader reader = new StreamReader(zipStream))
                                     {
-                                        serviceModules = serializer.Deserialize(reader) as TestModules;
+                                        serviceModules = serializer.Deserialize(reader) as ServiceModules;
                                     }
                                 }
                             }
@@ -2670,7 +2732,7 @@ namespace PsdzClient
             }
         }
 
-        public TestModules ConvertAllServiceModules(ProgressDelegate progressHandler)
+        public ServiceModules ConvertAllServiceModules(ProgressDelegate progressHandler)
         {
             try
             {
@@ -2687,7 +2749,7 @@ namespace PsdzClient
                     completeInfoObjects.AddRange(swiDiagObj.CompleteInfoObjects);
                 }
 
-                SerializableDictionary<string, TestModuleData> moduleDataDict = new SerializableDictionary<string, TestModuleData>();
+                SerializableDictionary<string, ServiceModuleData> moduleDataDict = new SerializableDictionary<string, ServiceModuleData>();
                 int failCount = 0;
                 int index = 0;
                 foreach (SwiInfoObj swiInfoObj in completeInfoObjects)
@@ -2705,7 +2767,7 @@ namespace PsdzClient
                         string key = moduleName.ToUpperInvariant();
                         if (!moduleDataDict.ContainsKey(key))
                         {
-                            TestModuleData moduleData = ReadServiceModule(moduleName, out bool failure);
+                            ServiceModuleData moduleData = ReadServiceModule(moduleName, out bool failure);
                             if (moduleData == null)
                             {
                                 log.ErrorFormat("ConvertAllServiceModules ReadServiceModule failed for: {0}", moduleName);
@@ -2747,7 +2809,7 @@ namespace PsdzClient
 
                 DbInfo dbInfo = GetDbInfo();
                 VehicleStructsBmw.VersionInfo versionInfo = new VehicleStructsBmw.VersionInfo(dbInfo?.Version, dbInfo?.DateTime);
-                return new TestModules(versionInfo, moduleDataDict);
+                return new ServiceModules(versionInfo, moduleDataDict);
             }
             catch (Exception e)
             {
@@ -2756,7 +2818,7 @@ namespace PsdzClient
             }
         }
 
-        public TestModuleData ReadServiceModule(string moduleName, out bool failure)
+        public ServiceModuleData ReadServiceModule(string moduleName, out bool failure)
         {
             log.InfoFormat("ReadServiceModule Name: {0}", moduleName);
             failure = false;
@@ -3178,7 +3240,7 @@ namespace PsdzClient
                     }
                 }
 
-                SerializableDictionary<string, List<string>> serviceDialogDict = _serviceDialogDict;
+                SerializableDictionary<string, ServiceModuleDataItem> serviceDialogDict = _serviceDialogDict;
                 _serviceDialogDict = null;
                 _serviceDialogCallsDict = null;
                 _moduleRefDict = null;
@@ -3190,80 +3252,38 @@ namespace PsdzClient
 
                 log.InfoFormat("ReadServiceModule Items: {0}", serviceDialogDict.Count);
 
-                foreach (KeyValuePair<string, List<string>> dictEntry in serviceDialogDict)
+                foreach (KeyValuePair<string, ServiceModuleDataItem> dictEntry in serviceDialogDict)
                 {
-                    List<string> dictList = dictEntry.Value;
-                    if (dictList.Count >= 4)
+                    ServiceModuleDataItem dataItem = dictEntry.Value;
+                    string ediabasJobBare = DetectVehicle.ConvertContainerXml(dataItem.ContainerXml);
+                    if (!string.IsNullOrEmpty(ediabasJobBare))
                     {
-                        try
+                        log.InfoFormat("ReadServiceModule EdiabasJob bare: '{0}'", ediabasJobBare);
+                        dataItem.EdiabasJobBare = ediabasJobBare;
+                    }
+                    else
+                    {
+                        log.ErrorFormat("ReadServiceModule ConvertContainerXml failed: '{0}'", dataItem.MethodName);
+                    }
+
+                    if (dataItem.RunOverrides != null && dataItem.RunOverrides.Count > 0)
+                    {
+                        string ediabasJobOverride = DetectVehicle.ConvertContainerXml(dataItem.ContainerXml, dataItem.RunOverrides);
+                        if (!string.IsNullOrEmpty(ediabasJobOverride))
                         {
-                            ConfigurationContainer configurationContainer = ConfigurationContainer.Deserialize(dictList[3]);
-                            EDIABASAdapter ediabasAdapter = new EDIABASAdapter(true, null, configurationContainer);
-                            ediabasAdapter.DoParameterization();
-                            if (string.IsNullOrEmpty(ediabasAdapter.EcuGroup))
-                            {
-                                log.ErrorFormat("ReadServiceModule No EcuGroup");
-                                continue;
-                            }
-
-                            if (string.IsNullOrEmpty(ediabasAdapter.EcuJob))
-                            {
-                                log.ErrorFormat("ReadServiceModule No EcuJob");
-                                continue;
-                            }
-
-                            bool binMode = ediabasAdapter.IsBinModeRequired;
-                            if (binMode && ediabasAdapter.EcuData == null)
-                            {
-                                log.ErrorFormat("ReadServiceModule No EcuData");
-                                continue;
-                            }
-
-                            StringBuilder sb = new StringBuilder();
-                            sb.Append(ediabasAdapter.EcuGroup);
-                            sb.Append("#");
-                            sb.Append(ediabasAdapter.EcuJob);
-
-                            string paramString;
-                            if (binMode)
-                            {
-                                paramString = "|" + BitConverter.ToString(ediabasAdapter.EcuData).Replace("-", "");
-                            }
-                            else
-                            {
-                                paramString = ediabasAdapter.EcuParam;
-                            }
-
-                            string resultFilterString = ediabasAdapter.EcuResultFilter;
-                            if (!string.IsNullOrEmpty(paramString) || !string.IsNullOrEmpty(resultFilterString))
-                            {
-                                sb.Append("#");
-                                if (!string.IsNullOrEmpty(paramString))
-                                {
-                                    sb.Append(paramString);
-                                }
-
-                                if (!string.IsNullOrEmpty(resultFilterString))
-                                {
-                                    sb.Append("#");
-                                    sb.Append(resultFilterString);
-                                }
-                            }
-
-                            string ediabasJob = sb.ToString();
-                            dictList[3] = ediabasJob;
-                            log.InfoFormat("ReadServiceModule EdiabasJob: '{0}'", ediabasJob);
+                            log.InfoFormat("ReadServiceModule EdiabasJob override: '{0}'", ediabasJobOverride);
+                            dataItem.EdiabasJobOverride = ediabasJobOverride;
                         }
-                        catch (Exception e)
+                        else
                         {
-                            log.ErrorFormat("ReadServiceModule EDIABASAdapter exception: {0}", e.Message);
+                            log.ErrorFormat("ReadServiceModule ConvertContainerXml failed: '{0}'", dataItem.MethodName);
                         }
                     }
                 }
 
                 log.InfoFormat("ReadServiceModule Finished: {0}", fileName);
 
-                return new TestModuleData(serviceDialogDict, string.Empty);
+                return new ServiceModuleData(serviceDialogDict);
             }
             catch (Exception e)
             {
