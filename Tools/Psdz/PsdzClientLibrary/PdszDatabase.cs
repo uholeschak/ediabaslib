@@ -1328,14 +1328,18 @@ namespace PsdzClient
             {
             }
 
-            public ServiceModules(VehicleStructsBmw.VersionInfo versionInfo, SerializableDictionary<string, ServiceModuleData> moduleDataDict)
+            public ServiceModules(VehicleStructsBmw.VersionInfo versionInfo, SerializableDictionary<string, ServiceModuleData> moduleDataDict, bool completed = false)
             {
                 Version = versionInfo;
                 ModuleDataDict = moduleDataDict;
+                Completed = completed;
             }
 
             [XmlElement("Version"), DefaultValue(null)] public VehicleStructsBmw.VersionInfo Version { get; set; }
+
             [XmlElement("ModuleDataDict"), DefaultValue(null)] public SerializableDictionary<string, ServiceModuleData> ModuleDataDict { get; set; }
+
+            [XmlElement("Completed"), DefaultValue(null)] public bool Completed { get; set; }
         }
 
         [XmlInclude(typeof(ServiceModuleDataItem))]
