@@ -3312,7 +3312,18 @@ namespace PsdzClient
 
                     if (dataItem.RunOverrides != null && dataItem.RunOverrides.Count > 0)
                     {
-                        string ediabasJobOverride = DetectVehicle.ConvertContainerXml(dataItem.ContainerXml, dataItem.RunOverrides);
+                        Dictionary<string, string> runOverrides = new Dictionary<string, string>();
+                        foreach (KeyValuePair<string, string> runOverride in dataItem.RunOverrides)
+                        {
+                            string value = runOverride.Value;
+                            if (string.IsNullOrWhiteSpace(value))
+                            {
+                                value = "[OVERRIDE]";
+                            }
+                            runOverrides.Add(runOverride.Key, value);
+                        }
+
+                        string ediabasJobOverride = DetectVehicle.ConvertContainerXml(dataItem.ContainerXml, runOverrides);
                         if (!string.IsNullOrEmpty(ediabasJobOverride))
                         {
                             log.InfoFormat("ReadServiceModule EdiabasJob override: '{0}'", ediabasJobOverride);
