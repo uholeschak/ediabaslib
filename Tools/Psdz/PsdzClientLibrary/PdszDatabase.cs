@@ -1619,7 +1619,11 @@ namespace PsdzClient
                 if (!_serviceDialogDict.ContainsKey(key))
                 {
                     log.InfoFormat("CreateServiceDialogPrefix Adding Key: {0}", key);
-                    ServiceModuleDataItem serviceModuleDataItem = new ServiceModuleDataItem(methodName, path, elementNoString, configurationContainerXml, runOverridesDict);
+                    ServiceModuleDataItem serviceModuleDataItem = new ServiceModuleDataItem(methodName, path, elementNoString, configurationContainerXml);
+                    if (runOverridesDict.Count > 0)
+                    {
+                        serviceModuleDataItem.RunOverrides = runOverridesDict;
+                    }
                     _serviceDialogDict.Add(key, serviceModuleDataItem);
                     //log.Info(configurationContainerXml);
                 }
@@ -2775,6 +2779,7 @@ namespace PsdzClient
                     moduleDataDict = new SerializableDictionary<string, ServiceModuleData>();
                 }
 
+                bool completed = true;
                 int failCount = 0;
                 int index = 0;
                 foreach (SwiInfoObj swiInfoObj in completeInfoObjects)
@@ -2802,10 +2807,8 @@ namespace PsdzClient
                                     failCount++;
                                 }
                             }
-                            else
-                            {
-                                moduleDataDict.Add(key, moduleData);
-                            }
+
+                            moduleDataDict.Add(key, moduleData);
 
                             GC.Collect();
                             Process currentProcess = Process.GetCurrentProcess();
@@ -2815,6 +2818,7 @@ namespace PsdzClient
                             if (usedMemoryMB > 200)
                             {
                                 log.InfoFormat("ConvertAllServiceModules Memory exhausted");
+                                completed = false;
                                 break;
                             }
                         }
@@ -2838,7 +2842,7 @@ namespace PsdzClient
 
                 DbInfo dbInfo = GetDbInfo();
                 VehicleStructsBmw.VersionInfo versionInfo = new VehicleStructsBmw.VersionInfo(dbInfo?.Version, dbInfo?.DateTime);
-                return new ServiceModules(versionInfo, moduleDataDict);
+                return new ServiceModules(versionInfo, moduleDataDict, completed);
             }
             catch (Exception e)
             {
