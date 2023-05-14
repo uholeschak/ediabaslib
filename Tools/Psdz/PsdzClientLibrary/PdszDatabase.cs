@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
@@ -3229,17 +3230,28 @@ namespace PsdzClient
                     _serviceDialogDict = null;
                     foreach (MethodInfo simpleMethod in simpleMethods)
                     {
-                        try
+                        Thread moduleThread = new Thread(() =>
                         {
-                            _serviceDialogCallsDict = null;
-                            _moduleRefPath = null;
-                            _moduleRefDict = null;
-                            simpleMethod.Invoke(testModule, null);
-                            log.InfoFormat("ReadServiceModule Method executed: {0}", simpleMethod.Name);
-                        }
-                        catch (Exception e)
+                            try
+                            {
+                                _serviceDialogCallsDict = null;
+                                _moduleRefPath = null;
+                                _moduleRefDict = null;
+                                simpleMethod.Invoke(testModule, null);
+                                log.InfoFormat("ReadServiceModule Method executed: {0}", simpleMethod.Name);
+                            }
+                            catch (Exception e)
+                            {
+                                log.ErrorFormat("ReadServiceModule Method: {0}, Exception: '{1}'", simpleMethod.Name,
+                                    EdiabasLib.EdiabasNet.GetExceptionText(e));
+                            }
+                        });
+
+                        moduleThread.Start();
+                        if (!moduleThread.Join(3000))
                         {
-                            log.ErrorFormat("ReadServiceModule Method: {0}, Exception: '{1}'", simpleMethod.Name, EdiabasLib.EdiabasNet.GetExceptionText(e));
+                            log.ErrorFormat("ReadServiceModule Thread timeout");
+                            moduleThread.Abort();
                         }
                     }
                 }
