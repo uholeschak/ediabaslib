@@ -1329,7 +1329,7 @@ namespace PsdzClient
             {
             }
 
-            public ServiceModules(VehicleStructsBmw.VersionInfo versionInfo, SerializableDictionary<string, ServiceModuleData> moduleDataDict, bool completed = false)
+            public ServiceModules(VehicleStructsBmw.VersionInfo versionInfo, SerializableDictionary<string, ServiceModuleData> moduleDataDict = null, bool completed = false)
             {
                 Version = versionInfo;
                 ModuleDataDict = moduleDataDict;
@@ -1340,7 +1340,7 @@ namespace PsdzClient
 
             [XmlElement("ModuleDataDict"), DefaultValue(null)] public SerializableDictionary<string, ServiceModuleData> ModuleDataDict { get; set; }
 
-            [XmlElement("Completed"), DefaultValue(null)] public bool Completed { get; set; }
+            [XmlElement("Completed")] public bool Completed { get; set; }
         }
 
         [XmlInclude(typeof(ServiceModuleDataItem))]
@@ -2662,6 +2662,7 @@ namespace PsdzClient
                 }
 
                 bool dataValid = true;
+                bool completed = false;
                 if (serviceModules != null)
                 {
                     DbInfo dbInfo = GetDbInfo();
@@ -2670,9 +2671,14 @@ namespace PsdzClient
                         log.ErrorFormat("GenerateServiceModuleData Version mismatch");
                         dataValid = false;
                     }
+
+                    if (dataValid)
+                    {
+                        completed = serviceModules.Completed;
+                    }
                 }
 
-                if (serviceModules == null || !dataValid)
+                if (serviceModules == null || !dataValid || !completed)
                 {
                     log.InfoFormat("GenerateServiceModuleData Converting modules");
                     if (!IsExecutable())
@@ -2690,7 +2696,15 @@ namespace PsdzClient
                         }
                     }
 
-                    serviceModules = ConvertAllServiceModules(progressHandler);
+                    if (serviceModules != null && dataValid)
+                    {
+                        serviceModules = ConvertAllServiceModules(progressHandler, serviceModules);
+                    }
+                    else
+                    {
+                        serviceModules = ConvertAllServiceModules(progressHandler, serviceModules);
+                    }
+
                     if (serviceModules == null)
                     {
                         log.ErrorFormat("GenerateServiceModuleData ConvertAllServiceModules failed");
@@ -2737,7 +2751,7 @@ namespace PsdzClient
             }
         }
 
-        public ServiceModules ConvertAllServiceModules(ProgressDelegate progressHandler)
+        public ServiceModules ConvertAllServiceModules(ProgressDelegate progressHandler, ServiceModules lastServiceModules = null)
         {
             try
             {
@@ -2754,7 +2768,13 @@ namespace PsdzClient
                     completeInfoObjects.AddRange(swiDiagObj.CompleteInfoObjects);
                 }
 
-                SerializableDictionary<string, ServiceModuleData> moduleDataDict = new SerializableDictionary<string, ServiceModuleData>();
+                SerializableDictionary<string, ServiceModuleData> moduleDataDict = lastServiceModules?.ModuleDataDict;
+                // ReSharper disable once ConvertIfStatementToNullCoalescingExpression
+                if (moduleDataDict == null)
+                {
+                    moduleDataDict = new SerializableDictionary<string, ServiceModuleData>();
+                }
+
                 int failCount = 0;
                 int index = 0;
                 foreach (SwiInfoObj swiInfoObj in completeInfoObjects)
@@ -2797,6 +2817,10 @@ namespace PsdzClient
                                 log.InfoFormat("ConvertAllServiceModules Memory exhausted");
                                 break;
                             }
+                        }
+                        else
+                        {
+                            log.ErrorFormat("ConvertAllServiceModules ReadServiceModule Module present: {0}", moduleName);
                         }
                     }
 
