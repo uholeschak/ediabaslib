@@ -1362,36 +1362,33 @@ namespace PsdzClient
         [XmlType("ServiceModuleDataItem")]
         public class ServiceModuleDataItem
         {
-            public ServiceModuleDataItem() : this(null, null, null, null, null, null, null)
+            public ServiceModuleDataItem() : this(null, null, null, null, null, null)
             {
             }
 
-            public ServiceModuleDataItem(string methodName, string path, string elementNo, string containerXml, string controlId, string serviceDialogName, SerializableDictionary<string, string> runOverrides = null)
+            public ServiceModuleDataItem(string methodName, string elementNo, string controlId, string serviceDialogName, string containerXml, SerializableDictionary<string, string> runOverrides = null)
             {
                 MethodName = methodName;
-                Path = path;
                 ElementNo = elementNo;
-                ContainerXml = containerXml;
-                RunOverrides = runOverrides;
                 ControlId = controlId;
                 ServiceDialogName = serviceDialogName;
+                ContainerXml = containerXml;
+                RunOverrides = runOverrides;
                 EdiabasJobBare = null;
                 EdiabasJobOverride = null;
             }
 
             [XmlElement("MethodName"), DefaultValue(null)] public string MethodName { get; set; }
 
-            [XmlElement("Path"), DefaultValue(null)] public string Path { get; set; }
-
             [XmlElement("ElementNo"), DefaultValue(null)] public string ElementNo { get; set; }
-
-            [XmlIgnore, DefaultValue(null)] public string ContainerXml { get; set; }
-
-            [XmlElement("RunOverrides"), DefaultValue(null)] public SerializableDictionary<string, string> RunOverrides { get; set; }
 
             [XmlElement("ControlId"), DefaultValue(null)] public string ControlId { get; set; }
 
             [XmlElement("ServiceDialogName"), DefaultValue(null)] public string ServiceDialogName { get; set; }
+
+            [XmlIgnore, DefaultValue(null)] public string ContainerXml { get; set; }
+
+            [XmlElement("RunOverrides"), DefaultValue(null)] public SerializableDictionary<string, string> RunOverrides { get; set; }
 
             [XmlElement("EdiabasJobBare"), DefaultValue(null)] public string EdiabasJobBare { get; set; }
 
@@ -1565,7 +1562,6 @@ namespace PsdzClient
         }
 
         // ReSharper disable once UnusedMember.Local
-        //[DebuggerNonUserCode]
         private static bool CreateServiceDialogPrefix(ref object __result, object callingModule, string methodName, string path, object globalTabModuleISTA, int elementNo, object inParameters, ref object inoutParameters)
         {
             log.InfoFormat("CreateServiceDialogPrefix, Method: {0}, Path: {1}, Element: {2}", methodName, path, elementNo);
@@ -1685,8 +1681,7 @@ namespace PsdzClient
                 if (!_serviceDialogDict.ContainsKey(key))
                 {
                     log.InfoFormat("CreateServiceDialogPrefix Adding Key: {0}", key);
-                    ServiceModuleDataItem serviceModuleDataItem = new ServiceModuleDataItem(methodName, path, elementNoString, configurationContainerXml,
-                        controlIdString, serviceDialogConfigName);
+                    ServiceModuleDataItem serviceModuleDataItem = new ServiceModuleDataItem(methodName, elementNoString, controlIdString, serviceDialogConfigName, configurationContainerXml);
                     if (runOverridesDict.Count > 0)
                     {
                         serviceModuleDataItem.RunOverrides = runOverridesDict;
@@ -1718,14 +1713,13 @@ namespace PsdzClient
                 _serviceDialogCallsDict[key]++;
             }
 
-#if false
             int calls = _serviceDialogCallsDict[key];
             log.InfoFormat("CreateServiceDialogPrefix Calls: {0}", calls);
             if (calls > 2)
             {
-                throw new Exception("CreateServiceDialogPrefix calls overflow");
+                Thread.CurrentThread.Abort();
             }
-#endif
+
             object serviceDialog = null;
             if (_istaServiceDialogDlgCmdBaseConstructor != null)
             {
