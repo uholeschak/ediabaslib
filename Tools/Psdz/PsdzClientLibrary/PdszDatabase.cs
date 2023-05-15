@@ -3407,6 +3407,15 @@ namespace PsdzClient
                             log.ErrorFormat("ReadServiceModule ConvertContainerXml failed: '{0}'", dataItem.MethodName);
                         }
                     }
+
+                    if (!string.IsNullOrEmpty(dataItem.ControlId))
+                    {
+                        SwiInfoObj infoObject = GetInfoObjectByControlId(dataItem.ControlId);
+                        if (infoObject != null)
+                        {
+                            log.InfoFormat("ReadServiceModule InfoObject Id: {0}, Identifer: {1}", infoObject.Id, infoObject.Identifier);
+                        }
+                    }
                 }
 
                 log.InfoFormat("ReadServiceModule Finished: {0}", fileName);
@@ -5828,7 +5837,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             return diagObjectsList;
         }
 
-        public SwiInfoObj GetInfoObjectByControlId(string controlId, SwiInfoObj.SwiActionDatabaseLinkType? linkType)
+        public SwiInfoObj GetInfoObjectByControlId(string controlId, SwiInfoObj.SwiActionDatabaseLinkType? linkType = null)
         {
             if (string.IsNullOrEmpty(controlId))
             {
