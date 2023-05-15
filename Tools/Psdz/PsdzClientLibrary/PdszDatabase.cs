@@ -1362,17 +1362,19 @@ namespace PsdzClient
         [XmlType("ServiceModuleDataItem")]
         public class ServiceModuleDataItem
         {
-            public ServiceModuleDataItem() : this(null, null, null, null, null)
+            public ServiceModuleDataItem() : this(null, null, null, null, null, null, null)
             {
             }
 
-            public ServiceModuleDataItem(string methodName, string path, string elementNo, string containerXml, SerializableDictionary<string, string> runOverrides = null)
+            public ServiceModuleDataItem(string methodName, string path, string elementNo, string containerXml, string controlId, string serviceDialogName, SerializableDictionary<string, string> runOverrides = null)
             {
                 MethodName = methodName;
                 Path = path;
                 ElementNo = elementNo;
                 ContainerXml = containerXml;
                 RunOverrides = runOverrides;
+                ControlId = controlId;
+                ServiceDialogName = serviceDialogName;
                 EdiabasJobBare = null;
                 EdiabasJobOverride = null;
             }
@@ -1386,6 +1388,10 @@ namespace PsdzClient
             [XmlIgnore, DefaultValue(null)] public string ContainerXml { get; set; }
 
             [XmlElement("RunOverrides"), DefaultValue(null)] public SerializableDictionary<string, string> RunOverrides { get; set; }
+
+            [XmlElement("ControlId"), DefaultValue(null)] public string ControlId { get; set; }
+
+            [XmlElement("ServiceDialogName"), DefaultValue(null)] public string ServiceDialogName { get; set; }
 
             [XmlElement("EdiabasJobBare"), DefaultValue(null)] public string EdiabasJobBare { get; set; }
 
@@ -1559,15 +1565,12 @@ namespace PsdzClient
         }
 
         // ReSharper disable once UnusedMember.Local
-        [DebuggerNonUserCode]
+        //[DebuggerNonUserCode]
         private static bool CreateServiceDialogPrefix(ref object __result, object callingModule, string methodName, string path, object globalTabModuleISTA, int elementNo, object inParameters, ref object inoutParameters)
         {
             log.InfoFormat("CreateServiceDialogPrefix, Method: {0}, Path: {1}, Element: {2}", methodName, path, elementNo);
 
-            string elementNoString = elementNo.ToString(CultureInfo.InvariantCulture);
-            string key = methodName + ";" + path + ";" + elementNoString;
-
-            string dialogRef = string.Empty;
+            string dialogRef = null;
             if (_istaServiceDialogFactoryType != null)
             {
                 try
@@ -1590,7 +1593,8 @@ namespace PsdzClient
 
             log.InfoFormat("CreateServiceDialogPrefix, DialogRef: '{0}'", dialogRef ?? string.Empty);
 
-            decimal controlId = 0;
+            string controlIdString = null;
+            string serviceDialogConfigName = null;
             if (_istaServiceDialogConfigurationType != null && !string.IsNullOrEmpty(dialogRef))
             {
                 try
@@ -1609,7 +1613,9 @@ namespace PsdzClient
                         }
                         else
                         {
-                            controlId = serviceDialogConfiguration.ControlId;
+                            decimal controlId = serviceDialogConfiguration.ControlId;
+                            controlIdString = controlId.ToString(CultureInfo.InvariantCulture);
+                            serviceDialogConfigName = serviceDialogConfiguration.Name;
                         }
                     }
                 }
@@ -1619,7 +1625,8 @@ namespace PsdzClient
                 }
             }
 
-            log.InfoFormat("CreateServiceDialogPrefix, ControlId: {0}", controlId);
+            log.InfoFormat("CreateServiceDialogPrefix, ControlId: {0}, ServiceDialogName: {1}",
+                controlIdString ?? string.Empty, serviceDialogConfigName ?? string.Empty);
 
             string configurationContainerXml = string.Empty;
             SerializableDictionary<string, string> runOverridesDict = new SerializableDictionary<string, string>();
@@ -1665,6 +1672,9 @@ namespace PsdzClient
                 }
             }
 
+            string elementNoString = elementNo.ToString(CultureInfo.InvariantCulture);
+            string key = methodName + ";" + path + ";" + elementNoString;
+
             if (!string.IsNullOrWhiteSpace(configurationContainerXml))
             {
                 if (_serviceDialogDict == null)
@@ -1675,7 +1685,8 @@ namespace PsdzClient
                 if (!_serviceDialogDict.ContainsKey(key))
                 {
                     log.InfoFormat("CreateServiceDialogPrefix Adding Key: {0}", key);
-                    ServiceModuleDataItem serviceModuleDataItem = new ServiceModuleDataItem(methodName, path, elementNoString, configurationContainerXml);
+                    ServiceModuleDataItem serviceModuleDataItem = new ServiceModuleDataItem(methodName, path, elementNoString, configurationContainerXml,
+                        controlIdString, serviceDialogConfigName);
                     if (runOverridesDict.Count > 0)
                     {
                         serviceModuleDataItem.RunOverrides = runOverridesDict;
@@ -1707,13 +1718,14 @@ namespace PsdzClient
                 _serviceDialogCallsDict[key]++;
             }
 
+#if false
             int calls = _serviceDialogCallsDict[key];
             log.InfoFormat("CreateServiceDialogPrefix Calls: {0}", calls);
             if (calls > 2)
             {
                 throw new Exception("CreateServiceDialogPrefix calls overflow");
             }
-
+#endif
             object serviceDialog = null;
             if (_istaServiceDialogDlgCmdBaseConstructor != null)
             {
