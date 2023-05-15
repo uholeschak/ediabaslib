@@ -1496,6 +1496,7 @@ namespace PsdzClient
         private static ConstructorInfo _istaServiceDialogDlgCmdBaseConstructor;
         private static ConstructorInfo _istaEdiabasAdapterDeviceResultConstructor;
         private static Type _istaServiceDialogFactoryType;
+        private static Type _istaServiceDialogConfigurationType;
         private static Type _coreContractsDocumentLocatorType;
 
         // ReSharper disable once UnusedMember.Local
@@ -1588,6 +1589,37 @@ namespace PsdzClient
             }
 
             log.InfoFormat("CreateServiceDialogPrefix, DialogRef: '{0}'", dialogRef ?? string.Empty);
+
+            decimal controlId = 0;
+            if (_istaServiceDialogConfigurationType != null && !string.IsNullOrEmpty(dialogRef))
+            {
+                try
+                {
+                    MethodInfo methodGetRegisteredConfiguration = _istaServiceDialogConfigurationType.GetMethod("GetRegisteredConfiguration", BindingFlags.Public | BindingFlags.Static);
+                    if (methodGetRegisteredConfiguration == null)
+                    {
+                        log.ErrorFormat("CreateServiceDialogPrefix GetRegisteredConfiguration not found");
+                    }
+                    else
+                    {
+                        dynamic serviceDialogConfiguration = methodGetRegisteredConfiguration.Invoke(null, new object[] { dialogRef });
+                        if (serviceDialogConfiguration == null)
+                        {
+                            log.ErrorFormat("CreateServiceDialogPrefix ServiceDialogConfiguration not found");
+                        }
+                        else
+                        {
+                            controlId = serviceDialogConfiguration.ControlId;
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    log.ErrorFormat("CreateServiceDialogPrefix ResolveDialogRef Exception: {0}", e.Message);
+                }
+            }
+
+            log.InfoFormat("CreateServiceDialogPrefix, ControlId: {0}", controlId);
 
             string configurationContainerXml = string.Empty;
             SerializableDictionary<string, string> runOverridesDict = new SerializableDictionary<string, string>();
@@ -2952,6 +2984,15 @@ namespace PsdzClient
                 }
 
                 _istaServiceDialogFactoryType = istaServiceDialogFactoryType;
+
+                Type istaServiceDialogConfigurationType = istaCoreFrameworkAssembly.GetType("BMW.Rheingold.Module.ISTA.ServiceDialogConfiguration");
+                if (istaServiceDialogConfigurationType == null)
+                {
+                    log.ErrorFormat("ReadServiceModule ServiceDialogConfiguration not found");
+                    return null;
+                }
+
+                _istaServiceDialogConfigurationType = istaServiceDialogConfigurationType;
 
                 MethodInfo methodCreateServiceDialog = istaServiceDialogFactoryType.GetMethod("CreateServiceDialog", BindingFlags.Public | BindingFlags.Instance);
                 if (methodCreateServiceDialog == null)
