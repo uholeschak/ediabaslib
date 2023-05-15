@@ -1495,6 +1495,7 @@ namespace PsdzClient
         private static Dictionary<string, int> _serviceDialogCallsDict;
         private static ConstructorInfo _istaServiceDialogDlgCmdBaseConstructor;
         private static ConstructorInfo _istaEdiabasAdapterDeviceResultConstructor;
+        private static Type _istaServiceDialogFactoryType;
         private static Type _coreContractsDocumentLocatorType;
 
         // ReSharper disable once UnusedMember.Local
@@ -1564,6 +1565,29 @@ namespace PsdzClient
 
             string elementNoString = elementNo.ToString(CultureInfo.InvariantCulture);
             string key = methodName + ";" + path + ";" + elementNoString;
+
+            string dialogRef = string.Empty;
+            if (_istaServiceDialogFactoryType != null)
+            {
+                try
+                {
+                    MethodInfo methodResolveDialogRef = _istaServiceDialogFactoryType.GetMethod("ResolveDialogRef", BindingFlags.Public | BindingFlags.Static);
+                    if (methodResolveDialogRef == null)
+                    {
+                        log.ErrorFormat("CreateServiceDialogPrefix ResolveDialogRef not found");
+                    }
+                    else
+                    {
+                        dialogRef = methodResolveDialogRef.Invoke(null, new object[] { path, true }) as string;
+                    }
+                }
+                catch (Exception e)
+                {
+                    log.ErrorFormat("CreateServiceDialogPrefix ResolveDialogRef Exception: {0}", e.Message);
+                }
+            }
+
+            log.InfoFormat("CreateServiceDialogPrefix, DialogRef: '{0}'", dialogRef ?? string.Empty);
 
             string configurationContainerXml = string.Empty;
             SerializableDictionary<string, string> runOverridesDict = new SerializableDictionary<string, string>();
@@ -2926,6 +2950,8 @@ namespace PsdzClient
                     log.ErrorFormat("ReadServiceModule ServiceDialogFactory not found");
                     return null;
                 }
+
+                _istaServiceDialogFactoryType = istaServiceDialogFactoryType;
 
                 MethodInfo methodCreateServiceDialog = istaServiceDialogFactoryType.GetMethod("CreateServiceDialog", BindingFlags.Public | BindingFlags.Instance);
                 if (methodCreateServiceDialog == null)
