@@ -2125,7 +2125,7 @@ namespace PsdzClient
             log.InfoFormat("GetXmlValuePrimitivesById Id: {0}, Lang: {1}", id, languageExtension);
 
             string data = GetXmlValuePrimitivesByIdSingle(id, languageExtension);
-            if (string.IsNullOrEmpty(data))
+            if (string.IsNullOrEmpty(data) && string.Compare(languageExtension, "ENGB", StringComparison.OrdinalIgnoreCase) != 0)
             {
                 data = GetXmlValuePrimitivesByIdSingle(id, "ENGB");
             }
@@ -2147,6 +2147,11 @@ namespace PsdzClient
         public string GetXmlValuePrimitivesByIdSingle(string id, string languageExtension)
         {
             log.InfoFormat("GetXmlValuePrimitivesByIdSingle Id: {0}, Lang: {1}", id, languageExtension);
+            if (!string.IsNullOrWhiteSpace(languageExtension))
+            {
+                log.ErrorFormat("GetXmlValuePrimitivesByIdSingle Language missing");
+                return null;
+            }
 
             string data = null;
             try
@@ -2155,7 +2160,7 @@ namespace PsdzClient
                 string databaseFile = Path.Combine(_databasePath, databaseName);
                 if (!File.Exists(databaseFile))
                 {
-                    log.InfoFormat("GetXmlValuePrimitivesByIdSingle File not found: {0}", databaseFile);
+                    log.ErrorFormat("GetXmlValuePrimitivesByIdSingle File not found: {0}", databaseFile);
                     return null;
                 }
 
