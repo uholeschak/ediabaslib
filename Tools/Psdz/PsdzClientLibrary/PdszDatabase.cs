@@ -40,6 +40,15 @@ namespace PsdzClient
             "C.TITLE_PT, C.TITLE_ZHTW, C.TITLE_JA, " +
             "C.TITLE_CSCZ, C.TITLE_PLPL";
 
+        public const string SqlXmlItems =
+            "XML_DEDE, XML_ENGB, XML_ENUS, " +
+            "XML_FR, XML_TH, XML_SV, " +
+            "XML_IT, XML_ES, XML_ID, " +
+            "XML_KO, XML_EL, XML_TR, " +
+            "XML_ZHCN, XML_RU, XML_NL, " +
+            "XML_PT, XML_ZHTW, XML_JA, " +
+            "XML_CSCZ, XML_PLPL";
+
         public const string DiagObjectItems =
             "ID, NODECLASS, TITLEID, " + DatabaseFunctions.SqlTitleItems + ", VERSIONNUMBER, NAME, FAILUREWEIGHT, VERSTECKT, SICHERHEITSRELEVANT, CONTROLID, SORT_ORDER";
 
@@ -2050,6 +2059,51 @@ namespace PsdzClient
             }
 
             return true;
+        }
+
+        public Dictionary<string, string> GetTextCollectionById(string id)
+        {
+            log.InfoFormat("GetTextCollectionById Id: {0}", id);
+
+            if (string.IsNullOrEmpty(id))
+            {
+                log.ErrorFormat("GetTextCollectionById No ID");
+                return null;
+            }
+
+            Dictionary<string, string> textCollection = new Dictionary<string, string>();
+            try
+            {
+                EcuTranslation xmlTranslation = null;
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, INFOOBJECT_ID, " + SqlXmlItems + ", FROM XEP_REFSPTEXTCOLL WHERE (INFOOBJECT_ID = {0})", id);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            xmlTranslation = GetTranslation(reader, "XML");
+                            if (xmlTranslation != null)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (xmlTranslation == null)
+                {
+                    log.ErrorFormat("GetTextCollectionById No translations");
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetTextCollectionById Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            return textCollection;
         }
 
         public string GetXmlValuePrimitivesById(string id, string languageExtension)
