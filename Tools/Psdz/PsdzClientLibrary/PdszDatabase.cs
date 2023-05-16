@@ -195,6 +195,30 @@ namespace PsdzClient
                 return langList;
             }
 
+            public static string GetDbLanguage(string language)
+            {
+                string dbLanguage = language.ToUpperInvariant();
+                switch (dbLanguage)
+                {
+                    case "ZH":
+                        return "ZHCN";
+
+                    case "DE":
+                        return "DEDE";
+
+                    case "CS":
+                        return "CSCZ";
+
+                    case "EN":
+                        return "ENGB";
+
+                    case "PL":
+                        return "PLPL";
+                }
+
+                return dbLanguage;
+            }
+
             public string TextDe { get; set; }
             public string TextEn { get; set; }
             public string TextFr { get; set; }
@@ -2103,7 +2127,7 @@ namespace PsdzClient
                     string xmlId = xmlTranslation.GetTitle(language);
                     if (!string.IsNullOrEmpty(xmlId))
                     {
-                        string xmlData = GetXmlValuePrimitivesById(xmlId, "DEDE");
+                        string xmlData = GetXmlValuePrimitivesById(xmlId, EcuTranslation.GetDbLanguage(language));
                         if (!string.IsNullOrEmpty(xmlData))
                         {
                             textCollection.Add(language, xmlData);
@@ -2147,7 +2171,7 @@ namespace PsdzClient
         public string GetXmlValuePrimitivesByIdSingle(string id, string languageExtension)
         {
             log.InfoFormat("GetXmlValuePrimitivesByIdSingle Id: {0}, Lang: {1}", id, languageExtension);
-            if (!string.IsNullOrWhiteSpace(languageExtension))
+            if (string.IsNullOrWhiteSpace(languageExtension))
             {
                 log.ErrorFormat("GetXmlValuePrimitivesByIdSingle Language missing");
                 return null;
