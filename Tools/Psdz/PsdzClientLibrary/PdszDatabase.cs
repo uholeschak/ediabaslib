@@ -3512,6 +3512,10 @@ namespace PsdzClient
                         {
                             log.InfoFormat("ReadServiceModule InfoObject Id: {0}, Identifer: {1}", infoObject.Id, infoObject.Identifier);
                             Dictionary<string, string> textCollection = GetTextCollectionById(infoObject.Id);
+                            if (textCollection != null)
+                            {
+                                log.InfoFormat("ReadServiceModule InfoObject langs: {0}", textCollection.Keys.ToStringItems());
+                            }
                         }
                     }
                 }
