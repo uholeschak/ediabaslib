@@ -456,30 +456,34 @@ namespace PsdzClient.Programming
                     }
 
                     int failCountService = -1;
-                    bool resultService = ProgrammingService.PdszDatabase.GenerateServiceModuleData((startConvert, progress, failures) =>
+                    bool resultService = true;
+                    if (ProgrammingService.PdszDatabase.IsExecutable())
                     {
-                        if (startConvert)
+                        resultService = ProgrammingService.PdszDatabase.GenerateServiceModuleData((startConvert, progress, failures) =>
                         {
-                            sbResult.AppendLine(Strings.GeneratingInfoFiles);
-                            UpdateStatus(sbResult.ToString());
-                        }
-                        else
-                        {
-                            failCountService = failures;
-                            string message = string.Format(CultureInfo.InvariantCulture, Strings.TestModuleProgress, progress, failures);
-                            ProgressEvent?.Invoke(progress, false, message);
-                        }
+                            if (startConvert)
+                            {
+                                sbResult.AppendLine(Strings.GeneratingInfoFiles);
+                                UpdateStatus(sbResult.ToString());
+                            }
+                            else
+                            {
+                                failCountService = failures;
+                                string message = string.Format(CultureInfo.InvariantCulture, Strings.TestModuleProgress, progress, failures);
+                                ProgressEvent?.Invoke(progress, false, message);
+                            }
 
-                        if (cts != null)
-                        {
-                            return cts.Token.IsCancellationRequested;
-                        }
-                        return false;
-                    });
+                            if (cts != null)
+                            {
+                                return cts.Token.IsCancellationRequested;
+                            }
+                            return false;
+                        });
 
-                    if (!resultService)
-                    {
-                        log.ErrorFormat("GenerateServiceModuleData failed");
+                        if (!resultService)
+                        {
+                            log.ErrorFormat("GenerateServiceModuleData failed");
+                        }
                     }
 
                     bool resultEcuCharacteristics = true;
@@ -513,6 +517,13 @@ namespace PsdzClient.Programming
                         UpdateStatus(sbResult.ToString());
                         return false;
                     }
+                }
+
+                if (ProgrammingService.PdszDatabase.RestartRequired)
+                {
+                    sbResult.AppendLine(Strings.AppRestartRequired);
+                    UpdateStatus(sbResult.ToString());
+                    return false;
                 }
 
                 if (!PsdzServiceStarter.IsServerInstanceRunning())

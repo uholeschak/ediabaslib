@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AppRestartRequired" xml:space="preserve">
+    <value>Die Applikation muss neu gestartet werden.</value>
+  </data>
   <data name="BackupDataRestored" xml:space="preserve">
     <value>Backupdaten wiederhergestellt.</value>
   </data>

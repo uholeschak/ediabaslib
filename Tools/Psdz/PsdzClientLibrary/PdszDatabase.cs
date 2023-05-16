@@ -1519,6 +1519,7 @@ namespace PsdzClient
         private List<SwiDiagObj> _diagObjRootNodes;
         private HashSet<string> _diagObjRootNodeIdSet;
         public Dictionary<string, XepRule> XepRuleDict => _xepRuleDict;
+        public bool RestartRequired { get; private set; }
         public SwiRegister SwiRegisterTree { get; private set; }
         public TestModules TestModuleStorage { get; private set; }
         public ServiceModules ServiceModuleStorage { get; private set; }
@@ -2380,6 +2381,8 @@ namespace PsdzClient
         {
             try
             {
+                RestartRequired = true;
+
                 ReadSwiRegister(null, null);
                 List<SwiAction> swiActions = CollectSwiActionsForNode(SwiRegisterTree, true);
                 if (swiActions == null)
@@ -2918,6 +2921,8 @@ namespace PsdzClient
         {
             try
             {
+                RestartRequired = true;
+
                 List<SwiDiagObj> diagObjsNodeClass = GetInfoObjectsTreeForNodeclassName(DiagObjServiceRoot, null, new List<string> { "ABL" });
                 if (diagObjsNodeClass == null)
                 {

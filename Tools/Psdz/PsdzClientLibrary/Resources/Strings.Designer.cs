@@ -61,6 +61,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Application restart required. ähnelt.
+        /// </summary>
+        internal static string AppRestartRequired {
+            get {
+                return ResourceManager.GetString("AppRestartRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Backup data restored. ähnelt.
         /// </summary>
         internal static string BackupDataRestored {
