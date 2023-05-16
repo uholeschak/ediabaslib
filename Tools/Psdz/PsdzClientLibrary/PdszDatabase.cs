@@ -2075,7 +2075,7 @@ namespace PsdzClient
             try
             {
                 EcuTranslation xmlTranslation = null;
-                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, INFOOBJECT_ID, " + SqlXmlItems + " FROM XEP_REFSPTEXTCOLL WHERE (INFOOBJECT_ID = {0})", idInfoObject);
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, INFOOBJECT_ID, " + SqlXmlItems + " FROM XEP_REFSPTEXTCOLL WHERE (INFOOBJECT_ID = '{0}')", idInfoObject);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
