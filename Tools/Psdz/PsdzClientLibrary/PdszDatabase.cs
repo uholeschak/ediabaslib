@@ -2096,6 +2096,20 @@ namespace PsdzClient
                     log.ErrorFormat("GetTextCollectionById No translations");
                     return null;
                 }
+
+                List<string> languages = EcuTranslation.GetLanguages();
+                foreach (string language in languages)
+                {
+                    string xmlId = xmlTranslation.GetTitle(language);
+                    if (!string.IsNullOrEmpty(xmlId))
+                    {
+                        string xmlData = GetXmlValuePrimitivesById(xmlId, "DEDE");
+                        if (!string.IsNullOrEmpty(xmlData))
+                        {
+                            textCollection.Add(language, xmlData);
+                        }
+                    }
+                }
             }
             catch (Exception e)
             {
