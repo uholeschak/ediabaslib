@@ -2061,13 +2061,13 @@ namespace PsdzClient
             return true;
         }
 
-        public Dictionary<string, string> GetTextCollectionById(string id)
+        public Dictionary<string, string> GetTextCollectionById(string idInfoObject)
         {
-            log.InfoFormat("GetTextCollectionById Id: {0}", id);
+            log.InfoFormat("GetTextCollectionById Id: {0}", idInfoObject);
 
-            if (string.IsNullOrEmpty(id))
+            if (string.IsNullOrEmpty(idInfoObject))
             {
-                log.ErrorFormat("GetTextCollectionById No ID");
+                log.ErrorFormat("GetTextCollectionById No Info Object ID");
                 return null;
             }
 
@@ -2075,7 +2075,7 @@ namespace PsdzClient
             try
             {
                 EcuTranslation xmlTranslation = null;
-                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, INFOOBJECT_ID, " + SqlXmlItems + ", FROM XEP_REFSPTEXTCOLL WHERE (INFOOBJECT_ID = {0})", id);
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, INFOOBJECT_ID, " + SqlXmlItems + " FROM XEP_REFSPTEXTCOLL WHERE (INFOOBJECT_ID = {0})", idInfoObject);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
@@ -3468,6 +3468,7 @@ namespace PsdzClient
                         if (infoObject != null)
                         {
                             log.InfoFormat("ReadServiceModule InfoObject Id: {0}, Identifer: {1}", infoObject.Id, infoObject.Identifier);
+                            Dictionary<string, string> textCollection = GetTextCollectionById(infoObject.Id);
                         }
                     }
                 }
