@@ -398,6 +398,15 @@ namespace PsdzClient.Programming
                         }
                     };
 
+                    if (PdszDatabase.RestartRequired)
+                    {
+                        sbResult.AppendLine(Strings.AppRestartRequired);
+                        UpdateStatus(sbResult.ToString());
+                        return false;
+                    }
+
+                    int failCountService = -1;
+                    bool resultService = true;
                     if (ProgrammingService.PdszDatabase.IsExecutable())
                     {
                         if (!ProgrammingService.PdszDatabase.SaveVehicleSeriesInfo(ClientContext))
@@ -414,6 +423,32 @@ namespace PsdzClient.Programming
                             sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
                             UpdateStatus(sbResult.ToString());
                             return false;
+                        }
+
+                        resultService = ProgrammingService.PdszDatabase.GenerateServiceModuleData((startConvert, progress, failures) =>
+                        {
+                            if (startConvert)
+                            {
+                                sbResult.AppendLine(Strings.GeneratingInfoFiles);
+                                UpdateStatus(sbResult.ToString());
+                            }
+                            else
+                            {
+                                failCountService = failures;
+                                string message = string.Format(CultureInfo.InvariantCulture, Strings.TestModuleProgress, progress, failures);
+                                ProgressEvent?.Invoke(progress, false, message);
+                            }
+
+                            if (cts != null)
+                            {
+                                return cts.Token.IsCancellationRequested;
+                            }
+                            return false;
+                        });
+
+                        if (!resultService)
+                        {
+                            log.ErrorFormat("GenerateServiceModuleData failed");
                         }
                     }
 #if false
@@ -455,37 +490,6 @@ namespace PsdzClient.Programming
                         log.ErrorFormat("GenerateTestModuleData failed");
                     }
 
-                    int failCountService = -1;
-                    bool resultService = true;
-                    if (ProgrammingService.PdszDatabase.IsExecutable())
-                    {
-                        resultService = ProgrammingService.PdszDatabase.GenerateServiceModuleData((startConvert, progress, failures) =>
-                        {
-                            if (startConvert)
-                            {
-                                sbResult.AppendLine(Strings.GeneratingInfoFiles);
-                                UpdateStatus(sbResult.ToString());
-                            }
-                            else
-                            {
-                                failCountService = failures;
-                                string message = string.Format(CultureInfo.InvariantCulture, Strings.TestModuleProgress, progress, failures);
-                                ProgressEvent?.Invoke(progress, false, message);
-                            }
-
-                            if (cts != null)
-                            {
-                                return cts.Token.IsCancellationRequested;
-                            }
-                            return false;
-                        });
-
-                        if (!resultService)
-                        {
-                            log.ErrorFormat("GenerateServiceModuleData failed");
-                        }
-                    }
-
                     bool resultEcuCharacteristics = true;
                     if (!ProgrammingService.PdszDatabase.GenerateEcuCharacteristicsData())
                     {
@@ -519,7 +523,7 @@ namespace PsdzClient.Programming
                     }
                 }
 
-                if (ProgrammingService.PdszDatabase.RestartRequired)
+                if (PdszDatabase.RestartRequired)
                 {
                     sbResult.AppendLine(Strings.AppRestartRequired);
                     UpdateStatus(sbResult.ToString());

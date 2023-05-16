@@ -1519,12 +1519,12 @@ namespace PsdzClient
         private List<SwiDiagObj> _diagObjRootNodes;
         private HashSet<string> _diagObjRootNodeIdSet;
         public Dictionary<string, XepRule> XepRuleDict => _xepRuleDict;
-        public bool RestartRequired { get; private set; }
         public SwiRegister SwiRegisterTree { get; private set; }
         public TestModules TestModuleStorage { get; private set; }
         public ServiceModules ServiceModuleStorage { get; private set; }
         public EcuCharacteristicsData EcuCharacteristicsStorage { get; private set; }
         public bool UseIsAtLeastOnePathToRootValid { get; set; }
+        public static bool RestartRequired { get; private set; }
 
         private static string _moduleRefPath;
         private static SerializableDictionary<string, List<string>> _moduleRefDict;
