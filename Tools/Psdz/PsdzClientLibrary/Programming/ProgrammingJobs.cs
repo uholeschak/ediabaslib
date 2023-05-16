@@ -561,8 +561,11 @@ namespace PsdzClient.Programming
             {
                 if (!PsdzServiceStarter.IsServerInstanceRunning())
                 {
-                    ProgrammingService.Dispose();
-                    ProgrammingService = null;
+                    if (ProgrammingService != null)
+                    {
+                        ProgrammingService.Dispose();
+                        ProgrammingService = null;
+                    }
                 }
             }
         }
