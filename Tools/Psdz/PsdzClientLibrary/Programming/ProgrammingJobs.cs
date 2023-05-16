@@ -368,6 +368,13 @@ namespace PsdzClient.Programming
                 sbResult.AppendLine(Strings.HostStarting);
                 UpdateStatus(sbResult.ToString());
 
+                if (PdszDatabase.RestartRequired)
+                {
+                    sbResult.AppendLine(Strings.AppRestartRequired);
+                    UpdateStatus(sbResult.ToString());
+                    return false;
+                }
+
                 if (ProgrammingService != null)
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "Programming service already existing");
@@ -397,13 +404,6 @@ namespace PsdzClient.Programming
                             }
                         }
                     };
-
-                    if (PdszDatabase.RestartRequired)
-                    {
-                        sbResult.AppendLine(Strings.AppRestartRequired);
-                        UpdateStatus(sbResult.ToString());
-                        return false;
-                    }
 
                     int failCountService = -1;
                     bool resultService = true;
@@ -556,6 +556,14 @@ namespace PsdzClient.Programming
                 sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.ExceptionMsg, ex.Message));
                 UpdateStatus(sbResult.ToString());
                 return false;
+            }
+            finally
+            {
+                if (!PsdzServiceStarter.IsServerInstanceRunning())
+                {
+                    ProgrammingService.Dispose();
+                    ProgrammingService = null;
+                }
             }
         }
 
