@@ -99,8 +99,8 @@ namespace PsdzClient
             public EcuTranslation()
             {
                 TextDe = string.Empty;
-                TextGb = string.Empty;
                 TextEn = string.Empty;
+                TextUs = string.Empty;
                 TextFr = string.Empty;
                 TextTh = string.Empty;
                 TextSv = string.Empty;
@@ -124,8 +124,8 @@ namespace PsdzClient
                 string textRu, string textNl, string textPt, string textJa, string textCs, string textPl)
             {
                 TextDe = textDe;
-                TextGb = textEnGb;
-                TextEn = textEnUs;
+                TextEn = textEnGb;
+                TextUs = textEnUs;
                 TextFr = textFr;
                 TextTh = textTh;
                 TextSv = textSv;
@@ -211,10 +211,10 @@ namespace PsdzClient
                     case "CS":
                         return "CSCZ";
 
-                    case "GB":
+                    case "EN":
                         return "ENGB";
 
-                    case "EN":
+                    case "US":
                         return "ENUS";
 
                     case "PL":
@@ -225,8 +225,8 @@ namespace PsdzClient
             }
 
             public string TextDe { get; set; }
-            public string TextGb { get; set; }
             public string TextEn { get; set; }
+            public string TextUs { get; set; }
             public string TextFr { get; set; }
             public string TextTh { get; set; }
             public string TextSv { get; set; }
