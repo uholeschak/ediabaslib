@@ -2092,7 +2092,7 @@ namespace PsdzClient
             return true;
         }
 
-        public Dictionary<string, string> GetTextCollectionById(string idInfoObject)
+        public List<LocalizedText> GetTextCollectionById(string idInfoObject)
         {
             log.InfoFormat("GetTextCollectionById Id: {0}", idInfoObject);
 
@@ -2102,7 +2102,7 @@ namespace PsdzClient
                 return null;
             }
 
-            Dictionary<string, string> textCollection = new Dictionary<string, string>();
+            List<LocalizedText> textList = new List<LocalizedText>();
             try
             {
                 EcuTranslation xmlTranslation = null;
@@ -2137,7 +2137,7 @@ namespace PsdzClient
                         string xmlData = GetXmlValuePrimitivesById(xmlId, EcuTranslation.GetDbLanguage(language));
                         if (!string.IsNullOrEmpty(xmlData))
                         {
-                            textCollection.Add(language, xmlData);
+                            textList.Add(new LocalizedText(xmlData, language));
                         }
                     }
                 }
@@ -2148,7 +2148,7 @@ namespace PsdzClient
                 return null;
             }
 
-            return textCollection;
+            return textList;
         }
 
         public string GetXmlValuePrimitivesById(string id, string languageExtension)
@@ -3522,10 +3522,10 @@ namespace PsdzClient
                         if (infoObject != null)
                         {
                             log.InfoFormat("ReadServiceModule InfoObject Id: {0}, Identifer: {1}", infoObject.Id, infoObject.Identifier);
-                            Dictionary<string, string> textCollection = GetTextCollectionById(infoObject.Id);
-                            if (textCollection != null)
+                            List<LocalizedText> textList = GetTextCollectionById(infoObject.Id);
+                            if (textList != null)
                             {
-                                log.InfoFormat("ReadServiceModule InfoObject langs: {0}", textCollection.Keys.ToStringItems());
+                                log.InfoFormat("ReadServiceModule InfoObject languages: {0}", textList.Count);
                             }
                         }
                     }

@@ -216,6 +216,7 @@
     <Compile Include="Core\IStufeExpression.cs" />
     <Compile Include="Core\IStufeXExpression.cs" />
     <Compile Include="Core\IXGBMBusLogisticsEntry.cs" />
+    <Compile Include="Core\LocalizedText.cs" />
     <Compile Include="Core\ManufactoringDateExpression.cs" />
     <Compile Include="Core\Container\MultipleChoice.cs" />
     <Compile Include="Core\Container\MultipleValue.cs" />
