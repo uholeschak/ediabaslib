@@ -5970,9 +5970,9 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             return controlId;
         }
 
-        public string GetInfoObjectIdByIdentifier(string id)
+        public string GetInfoObjectIdByIdentifier(string identifier)
         {
-            if (string.IsNullOrEmpty(id))
+            if (string.IsNullOrEmpty(identifier))
             {
                 return null;
             }
@@ -5980,7 +5980,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             string controlId = string.Empty;
             try
             {
-                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID FROM XEP_INFOOBJECTS WHERE IDENTIFIER = {0}", id);
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID FROM XEP_INFOOBJECTS WHERE IDENTIFIER = {0}", identifier);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
