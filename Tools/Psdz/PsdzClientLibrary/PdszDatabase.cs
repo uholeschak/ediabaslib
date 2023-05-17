@@ -2173,6 +2173,87 @@ namespace PsdzClient
             return textList;
         }
 
+        public List<LocalizedText> GetTextById(string id, IList<string> lang = null)
+        {
+            log.InfoFormat("GetTextById Id: {0}", id);
+
+            if (string.IsNullOrEmpty(id))
+            {
+                log.ErrorFormat("GetTextById No ID");
+                return null;
+            }
+
+            List<LocalizedText> textList = new List<LocalizedText>();
+            try
+            {
+                EcuTranslation xmlTranslation = null;
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, XMLID, " + SqlXmlItems + " FROM XEP_SPINTTEXTITEMS WHERE (ID = {0})", id);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            xmlTranslation = GetTranslation(reader, "XML");
+                            if (xmlTranslation != null)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (xmlTranslation == null)
+                {
+                    log.ErrorFormat("GetTextById No translations");
+                    return null;
+                }
+
+                List<string> languages = EcuTranslation.GetLanguages();
+                foreach (string language in languages)
+                {
+                    string langName = string.Empty;
+                    if (lang != null)
+                    {
+                        foreach (string requestLang in lang)
+                        {
+                            if (language.StartsWith(requestLang, StringComparison.OrdinalIgnoreCase))
+                            {
+                                langName = requestLang;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        langName = language.ToUpperInvariant();
+                    }
+
+                    if (string.IsNullOrEmpty(langName))
+                    {
+                        continue;
+                    }
+
+                    string xmlId = xmlTranslation.GetTitle(language);
+                    if (!string.IsNullOrEmpty(xmlId))
+                    {
+                        string xmlData = GetXmlValuePrimitivesById(xmlId, EcuTranslation.GetDbLanguage(language));
+                        if (!string.IsNullOrEmpty(xmlData))
+                        {
+                            textList.Add(new LocalizedText(xmlData, langName));
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetTextById Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            return textList;
+        }
+
         public EcuTranslation GetSpTextItemsByControlId(string controlId)
         {
             log.InfoFormat("GetSpTextItemsByControlId Id: {0}", controlId);
@@ -2186,7 +2267,7 @@ namespace PsdzClient
             EcuTranslation xmlTranslation = null;
             try
             {
-                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, XMLID, " + SqlXmlItems + " FROM XEP_SPTEXTITEMS WHERE (CONTROLID = '{0}')", controlId);
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, XMLID, " + SqlXmlItems + " FROM XEP_SPTEXTITEMS WHERE (CONTROLID = {0})", controlId);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
@@ -5980,7 +6061,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             string controlId = string.Empty;
             try
             {
-                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID FROM XEP_INFOOBJECTS WHERE IDENTIFIER = {0}", identifier);
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID FROM XEP_INFOOBJECTS WHERE IDENTIFIER = '{0}'", identifier);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())

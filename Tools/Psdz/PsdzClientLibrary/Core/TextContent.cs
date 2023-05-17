@@ -358,7 +358,7 @@ namespace PsdzClient.Core
                         //Log.Info("TextContentOld.ReplaceTextReferences()", "found native text!? no replacement required for: {0}", xmlText);
                         return string.Format(CultureInfo.InvariantCulture, "<TextItem SchemaVersion=\"1.0.0\">{0}</TextItem>", xmlText);
                     }
-                    string textItem = database.GetTextById(Convert.ToDecimal(xmlText, CultureInfo.InvariantCulture), new string[1] { language })[0].TextItem;
+                    string textItem = database.GetTextById(xmlText, new string[1] { language })[0].TextItem;
                     if (!string.IsNullOrEmpty(textItem))
                     {
                         result = ReplaceTextReferences(textItem, database, language);

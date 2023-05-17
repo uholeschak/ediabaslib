@@ -493,7 +493,7 @@ namespace PsdzClient.Core
                     Extensions.AddRange(list, lang.Select((string x) => new LocalizedText(tmp, x)));
                     return new TextLocator(list);
                 }
-                IList<LocalizedText> textById = db.GetTextById(Convert.ToDecimal(xmlText, CultureInfo.InvariantCulture), lang);
+                IList<LocalizedText> textById = db.GetTextById(xmlText, lang);
                 return ReplaceTextReferencesAndHandleParameter(textById, paramArray);
             }
             if (Regex.IsMatch(xmlText.Trim(), "^\\d+$"))
