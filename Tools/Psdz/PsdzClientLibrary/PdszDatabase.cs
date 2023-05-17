@@ -99,6 +99,7 @@ namespace PsdzClient
             public EcuTranslation()
             {
                 TextDe = string.Empty;
+                TextGb = string.Empty;
                 TextEn = string.Empty;
                 TextFr = string.Empty;
                 TextTh = string.Empty;
@@ -118,12 +119,13 @@ namespace PsdzClient
                 TextPl = string.Empty;
             }
 
-            public EcuTranslation(string textDe, string textEn, string textFr, string textTh, string textSv, string textIt,
+            public EcuTranslation(string textDe, string textEnGb, string textEnUs, string textFr, string textTh, string textSv, string textIt,
                 string textEs, string textId, string textKo, string textEl, string textTr, string textZh,
                 string textRu, string textNl, string textPt, string textJa, string textCs, string textPl)
             {
                 TextDe = textDe;
-                TextEn = textEn;
+                TextGb = textEnGb;
+                TextEn = textEnUs;
                 TextFr = textFr;
                 TextTh = textTh;
                 TextSv = textSv;
@@ -209,8 +211,11 @@ namespace PsdzClient
                     case "CS":
                         return "CSCZ";
 
-                    case "EN":
+                    case "GB":
                         return "ENGB";
+
+                    case "EN":
+                        return "ENUS";
 
                     case "PL":
                         return "PLPL";
@@ -220,6 +225,7 @@ namespace PsdzClient
             }
 
             public string TextDe { get; set; }
+            public string TextGb { get; set; }
             public string TextEn { get; set; }
             public string TextFr { get; set; }
             public string TextTh { get; set; }
@@ -7243,6 +7249,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
         {
             return new EcuTranslation(
                 language == null || language.ToLowerInvariant() == "de" ? reader[prefix + "_DEDE"].ToString() : string.Empty,
+                language == null || language.ToLowerInvariant() == "en" ? reader[prefix + "_ENGB"].ToString() : string.Empty,
                 language == null || language.ToLowerInvariant() == "en" ? reader[prefix + "_ENUS"].ToString() : string.Empty,
                 language == null || language.ToLowerInvariant() == "fr" ? reader[prefix + "_FR"].ToString() : string.Empty,
                 language == null || language.ToLowerInvariant() == "th" ? reader[prefix + "_TH"].ToString() : string.Empty,
