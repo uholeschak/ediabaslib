@@ -215,6 +215,7 @@
     <Compile Include="Core\ISPELocator.cs" />
     <Compile Include="Core\IStufeExpression.cs" />
     <Compile Include="Core\IStufeXExpression.cs" />
+    <Compile Include="Core\ITextLocator.cs" />
     <Compile Include="Core\IXGBMBusLogisticsEntry.cs" />
     <Compile Include="Core\LocalizedText.cs" />
     <Compile Include="Core\ManufactoringDateExpression.cs" />
