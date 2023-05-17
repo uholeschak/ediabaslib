@@ -378,9 +378,14 @@ namespace PsdzClient.Core
                         {
                             string value = xAttribute.Value;
                             //Log.Info("TextContentOld.ReplaceTextReferences()", "Found referenced text: {0} Path: {1}", xElement, xAttribute.Value);
-                            string localizedXmlValue = database.GetSpTextItemsByControlId(Convert.ToDecimal(value, CultureInfo.InvariantCulture)).GetLocalizedXmlValue(language);
+                            PdszDatabase.EcuTranslation ecuTranslation = database.GetSpTextItemsByControlId(value);
+                            string localizedXmlValue = null;
+                            if (ecuTranslation != null)
+                            {
+                                localizedXmlValue = ecuTranslation.GetTitle(language);
+                            }
                             XElement content;
-                            if (localizedXmlValue.Length == 0)
+                            if (string.IsNullOrEmpty(localizedXmlValue))
                             {
                                 //Log.Error("TextContentOld.ReplaceTextReferences()", "Failed to get the localized text for ID {0}.", value);
                                 content = XElement.Parse("<TextItem>###" + value + "###</TextItem>");

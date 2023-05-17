@@ -125,13 +125,16 @@ namespace PsdzClient.Core
             old = true;
         }
 
-        public ITextLocator __StandardText(decimal value, __TextParameter[] paramArray)
+        public ITextLocator __StandardText(string value, __TextParameter[] paramArray)
         {
             IList<LocalizedText> list = new List<LocalizedText>();
             try
             {
-                XEP_SPTEXTITEMS o = db.GetSpTextItemsByControlId(value);
-                list.AddRange(lang.Select((string x) => new LocalizedText(o.GetLocalizedXmlValue(x), x)));
+                PdszDatabase.EcuTranslation o = db.GetSpTextItemsByControlId(value);
+                if (o != null)
+                {
+                    list.AddRange(lang.Select((string x) => new LocalizedText(o.GetTitle(x), x)));
+                }
             }
             catch (Exception)
             {
@@ -434,7 +437,18 @@ namespace PsdzClient.Core
                 foreach (XElement item in enumerable)
                 {
                     string value = item.Attribute(XName.Get("ID")).Value;
-                    string localizedXmlValue = db.GetSpTextItemsByControlId(Convert.ToDecimal(value, CultureInfo.InvariantCulture)).GetLocalizedXmlValue(language);
+                    PdszDatabase.EcuTranslation ecuTranslation = db.GetSpTextItemsByControlId(value);
+                    string localizedXmlValue = null;
+                    if (ecuTranslation != null)
+                    {
+                        localizedXmlValue = ecuTranslation.GetTitle(language);
+                    }
+
+                    if (string.IsNullOrEmpty(localizedXmlValue))
+                    {
+                        continue;
+                    }
+
                     XElement xElement = new XElement(XName.Get("CONTENT", "http://bmw.com/2014/Spe_Text_2.0"));
                     xElement.Add(ParseStandardTextItem(localizedXmlValue));
                     item.Add(xElement);

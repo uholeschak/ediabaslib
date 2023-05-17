@@ -2173,6 +2173,50 @@ namespace PsdzClient
             return textList;
         }
 
+        public EcuTranslation GetSpTextItemsByControlId(string controlId)
+        {
+            log.InfoFormat("GetSpTextItemsByControlId Id: {0}", controlId);
+
+            if (string.IsNullOrEmpty(controlId))
+            {
+                log.ErrorFormat("GetSpTextItemsByControlId No control ID");
+                return null;
+            }
+
+            EcuTranslation xmlTranslation = null;
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, XMLID, " + SqlXmlItems + " FROM XEP_SPTEXTITEMS WHERE (CONTROLID = '{0}')", controlId);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            xmlTranslation = GetTranslation(reader, "XML");
+                            if (xmlTranslation != null)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (xmlTranslation == null)
+                {
+                    log.ErrorFormat("GetSpTextItemsByControlId No translations");
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetTextCollectionById Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            return xmlTranslation;
+        }
+
         public string GetXmlValuePrimitivesById(string id, string languageExtension)
         {
             log.InfoFormat("GetXmlValuePrimitivesById Id: {0}, Lang: {1}", id, languageExtension);
