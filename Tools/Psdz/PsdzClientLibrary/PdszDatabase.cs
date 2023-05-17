@@ -2092,7 +2092,7 @@ namespace PsdzClient
             return true;
         }
 
-        public List<LocalizedText> GetTextCollectionById(string idInfoObject)
+        public List<LocalizedText> GetTextCollectionById(string idInfoObject, IList<string> lang = null)
         {
             log.InfoFormat("GetTextCollectionById Id: {0}", idInfoObject);
 
@@ -2131,13 +2131,35 @@ namespace PsdzClient
                 List<string> languages = EcuTranslation.GetLanguages();
                 foreach (string language in languages)
                 {
+                    string langName = string.Empty;
+                    if (lang != null)
+                    {
+                        foreach (string requestLang in lang)
+                        {
+                            if (language.StartsWith(requestLang, StringComparison.OrdinalIgnoreCase))
+                            {
+                                langName = requestLang;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        langName = language.ToUpperInvariant();
+                    }
+
+                    if (string.IsNullOrEmpty(langName))
+                    {
+                        continue;
+                    }
+
                     string xmlId = xmlTranslation.GetTitle(language);
                     if (!string.IsNullOrEmpty(xmlId))
                     {
                         string xmlData = GetXmlValuePrimitivesById(xmlId, EcuTranslation.GetDbLanguage(language));
                         if (!string.IsNullOrEmpty(xmlData))
                         {
-                            textList.Add(new LocalizedText(xmlData, language));
+                            textList.Add(new LocalizedText(xmlData, langName));
                         }
                     }
                 }
