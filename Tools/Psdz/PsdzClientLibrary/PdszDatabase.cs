@@ -5970,6 +5970,38 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
             return controlId;
         }
 
+        public string GetInfoObjectIdByIdentifier(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return null;
+            }
+
+            string controlId = string.Empty;
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID FROM XEP_INFOOBJECTS WHERE IDENTIFIER = {0}", id);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            controlId = reader["ID"].ToString().Trim();
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetInfoObjectIdByIdentifier Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            return controlId;
+        }
+
         public List<SwiDiagObj> GetDiagObjectsForInfoObject(string infoObjectId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, bool getHidden)
         {
             if (string.IsNullOrEmpty(infoObjectId))
