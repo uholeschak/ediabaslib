@@ -2295,6 +2295,7 @@ namespace PsdzClient
                 return null;
             }
 
+            log.InfoFormat("GetSpTextItemsByControlId OK");
             return xmlTranslation;
         }
 
@@ -3669,10 +3670,10 @@ namespace PsdzClient
                         if (infoObject != null)
                         {
                             log.InfoFormat("ReadServiceModule InfoObject Id: {0}, Identifer: {1}", infoObject.Id, infoObject.Identifier);
-                            List<LocalizedText> textList = GetTextCollectionById(infoObject.Id);
-                            if (textList != null)
+                            ITextContentManager textCollection = TextContentManager.Create(this, new List<string> {"EN"}, infoObject, dataItem.ServiceDialogName);
+                            if (textCollection != null)
                             {
-                                log.InfoFormat("ReadServiceModule InfoObject languages: {0}", textList.Count);
+                                log.InfoFormat("ReadServiceModule Text collection: '{0}'", textCollection.__Text());
                             }
                         }
                     }

@@ -51,7 +51,7 @@ namespace PsdzClient.Core
             {
                 throw new ArgumentNullException("lang");
             }
-            if (xepInfoObj != null && !(xepInfoObj.Id.ConvertToInt() == -1))
+            if (xepInfoObj != null && !(xepInfoObj.Id.ConvertToInt(-1) == -1))
             {
                 return new TextContentManager(databaseProvider, lang, xepInfoObj, serviceDialogName);
             }
@@ -70,7 +70,7 @@ namespace PsdzClient.Core
                 throw new ArgumentNullException("lang");
             }
             string num2 = xepInfoObj.Id;
-            if (num2.ConvertToInt() == 0m)
+            if (num2.ConvertToInt(-1) == 0m)
             {
                 string text = xepInfoObj.Identifier;
                 if (text.StartsWith("ABL_"))

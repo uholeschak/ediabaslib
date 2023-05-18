@@ -28,7 +28,7 @@ namespace PsdzClient.Core
         {
             get
             {
-                if (id.ConvertToInt() == -1)
+                if (id.ConvertToInt(-1) == -1)
                 {
                     return null;
                 }
