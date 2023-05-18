@@ -1787,6 +1787,27 @@ namespace PsdzClient
         {
             log.InfoFormat("ServiceDialogCmdBaseInvokePrefix, Method: {0}", method);
 
+            dynamic inParamDyn = inParam;
+            if (inParamDyn != null)
+            {
+                try
+                {
+                    string txtParam = inParamDyn.getParameter("txtParam", null) as string;
+                    if (!string.IsNullOrEmpty(txtParam))
+                    {
+                        log.InfoFormat("ServiceDialogCmdBaseInvokePrefix Param ID: {0}", txtParam);
+                    }
+                }
+                catch (Exception e)
+                {
+                    log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix SetParameter Exception: '{0}'", e.Message);
+                }
+            }
+            else
+            {
+                log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix No container setParameter");
+            }
+
             dynamic outParmDyn = outParam;
             if (outParmDyn != null)
             {
@@ -1867,7 +1888,7 @@ namespace PsdzClient
         {
             log.InfoFormat("ModuleTextPrefix2 Value: {0}", value ?? string.Empty);
 
-            __result = null;
+            __result = value;
             return false;
         }
 
