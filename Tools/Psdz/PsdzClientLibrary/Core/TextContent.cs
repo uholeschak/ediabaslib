@@ -280,7 +280,24 @@ namespace PsdzClient.Core
         internal static XslCompiledTransform CreateTransformer()
         {
             XslCompiledTransform xslCompiledTransform = new XslCompiledTransform();
-            using (Stream input = Assembly.GetExecutingAssembly().GetManifestResourceStream("BMW.Rheingold.CoreFramework.DatabaseProvider.Text.Spe_Text_2.0.xsl"))
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            string[] resourceNames = assembly.GetManifestResourceNames();
+            string speResource = null;
+            foreach (string ressourceName in resourceNames)
+            {
+                if (ressourceName.EndsWith("Spe_Text_2.0.xsl"))
+                {
+                    speResource = ressourceName;
+                    break;
+                }
+            }
+
+            if (string.IsNullOrEmpty(speResource))
+            {
+                return xslCompiledTransform;
+            }
+
+            using (Stream input = Assembly.GetExecutingAssembly().GetManifestResourceStream(speResource))
             {
                 using (XmlReader stylesheet = XmlReader.Create(input))
                 {

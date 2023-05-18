@@ -3683,7 +3683,11 @@ namespace PsdzClient
                                         {
                                             foreach (LocalizedText textItem in textItems)
                                             {
-                                                log.InfoFormat("ReadServiceModule Text Lang: {0}, Text: '{1}'", textItem.Language, textItem.TextItem);
+                                                string html = TextContent.TransformSpeTextItem2Html(textItem.TextItem, textItem.Language, false);
+                                                if (!string.IsNullOrEmpty(html))
+                                                {
+                                                    log.InfoFormat("ReadServiceModule Text Lang: {0}, HTML: '{1}'", textItem.Language, html);
+                                                }
                                             }
                                         }
                                     }

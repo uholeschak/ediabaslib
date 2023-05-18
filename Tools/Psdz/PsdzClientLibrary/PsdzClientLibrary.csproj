@@ -739,7 +739,9 @@
       <Link>Resources\VehicleSeries.xml</Link>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\BMW.Rheingold.CoreFramework.DatabaseProvider.Text.Spe_Text_2.0.xsl" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
