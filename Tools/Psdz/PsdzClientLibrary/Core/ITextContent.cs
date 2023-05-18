@@ -1,6 +1,6 @@
 ﻿// BMW.Rheingold.CoreFramework.Contracts.ITextContent
 
-namespace PsdzClient.Core.Container
+namespace PsdzClient.Core
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface ITextContent : ISPELocator

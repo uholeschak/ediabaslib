@@ -161,8 +161,7 @@
     <Compile Include="Core\Container\EDIABASAdapterDeviceResult.cs" />
     <Compile Include="Core\Container\IEcuKom.cs" />
     <Compile Include="Core\Container\IEcuKomApi.cs" />
-    <Compile Include="Core\Container\ITextContent.cs" />
-    <Compile Include="Core\Container\ITextLocator.cs" />
+    <Compile Include="Core\ITextContent.cs" />
     <Compile Include="Core\Container\NativeError.cs" />
     <Compile Include="Core\CountryExpression.cs" />
     <Compile Include="Core\DateExpression.cs" />

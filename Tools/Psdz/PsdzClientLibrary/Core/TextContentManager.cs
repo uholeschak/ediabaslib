@@ -29,6 +29,8 @@ namespace PsdzClient.Core
 
         private const string DefaultParameterValue = "";
 
+        public IList<string> Langs => lang;
+
         private ITextLocator ServiceProgramCollection
         {
             get
@@ -157,6 +159,16 @@ namespace PsdzClient.Core
         public ITextLocator __Text(string value, __TextParameter[] paramArray)
         {
             return CreateText(value, paramArray);
+        }
+
+        public IList<string> CreateTextItemIdList()
+        {
+            List<string> list = new List<string>();
+            foreach (XElement item in ParseTextCollection(ServiceProgramCollection.Text).XPathSelectElements("spe:TEXTITEMS/spe:TEXTITEM", namespaceManager))
+            {
+                list.Add(item.Attribute(XName.Get("ID")).Value);
+            }
+            return list;
         }
 
         public IList<string> CreateTextIdList()

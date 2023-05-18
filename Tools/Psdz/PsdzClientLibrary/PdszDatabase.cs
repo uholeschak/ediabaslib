@@ -3673,20 +3673,22 @@ namespace PsdzClient
                             TextContentManager textCollection = TextContentManager.Create(this, EcuTranslation.GetLanguages(), infoObject, dataItem.ServiceDialogName) as TextContentManager;
                             if (textCollection != null)
                             {
-                                IList<string> textIds = textCollection.CreateTextIdList();
+                                IList<string> textIds = textCollection.CreateTextItemIdList();
                                 if (textIds != null)
                                 {
                                     foreach (string textId in textIds)
                                     {
-                                        IList<LocalizedText> textItems = textCollection.GetTextItem(textId, new __TextParameter[] { });
+                                        log.InfoFormat("ReadServiceModule Text Id: {0}", textId);
+                                        ITextLocator textLocator = textCollection.__Text(textId);
+                                        TextContent textContent = textLocator?.TextContent as TextContent;
+                                        IList<LocalizedText> textItems = textContent?.CreatePlainText(textCollection.Langs);
                                         if (textItems != null)
                                         {
                                             foreach (LocalizedText textItem in textItems)
                                             {
-                                                string html = TextContent.TransformSpeTextItem2Html(textItem.TextItem, textItem.Language, false);
-                                                if (!string.IsNullOrEmpty(html))
+                                                if (!string.IsNullOrWhiteSpace(textItem.TextItem))
                                                 {
-                                                    log.InfoFormat("ReadServiceModule Text Lang: {0}, HTML: '{1}'", textItem.Language, html);
+                                                    log.InfoFormat("ReadServiceModule Text Lang: {0}, Text: '{1}'", textItem.Language, textItem.TextItem);
                                                 }
                                             }
                                         }
