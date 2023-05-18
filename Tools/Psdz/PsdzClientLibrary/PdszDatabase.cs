@@ -1844,25 +1844,6 @@ namespace PsdzClient
         }
 
         // ReSharper disable once UnusedMember.Local
-        private static bool IndirectDocumentPrefix2(ref object __result, string title, string heading)
-        {
-            log.InfoFormat("IndirectDocumentPrefix2 Title: {0}, Heading: {1}", title ?? string.Empty, heading ?? string.Empty);
-            object documentList = null;
-            try
-            {
-                Type listType = typeof(List<>).MakeGenericType(new[] { _coreContractsDocumentLocatorType });
-                documentList = Activator.CreateInstance(listType);
-            }
-            catch (Exception e)
-            {
-                log.ErrorFormat("IndirectDocumentPrefix2 new List<IDocumentLocator>() Exception: {0}", e.Message);
-            }
-
-            __result = documentList;
-            return false;
-        }
-
-        // ReSharper disable once UnusedMember.Local
         private static bool IndirectDocumentPrefix3(ref object __result, string title, string heading, string informationsTyp)
         {
             log.InfoFormat("IndirectDocumentPrefix3 Title: {0}, Heading: {1}, Info: {2}", title ?? string.Empty, heading ?? string.Empty, informationsTyp ?? string.Empty);
@@ -1879,6 +1860,14 @@ namespace PsdzClient
             }
 
             __result = documentList;
+            return false;
+        }
+
+        private static bool ModuleTextPrefix2(ref object __result, string value, object paramArray)
+        {
+            log.InfoFormat("ModuleTextPrefix2 Value: {0}", value ?? string.Empty);
+
+            __result = null;
             return false;
         }
 
@@ -2668,6 +2657,13 @@ namespace PsdzClient
                     return null;
                 }
 
+                MethodInfo methodGetDatabasePrefix = typeof(PdszDatabase).GetMethod("CallGetDatabaseProviderSQLitePrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                if (methodGetDatabasePrefix == null)
+                {
+                    log.ErrorFormat("ReadTestModule CallGetDatabaseProviderSQLitePrefix not found");
+                    return null;
+                }
+
                 string istaCoreFrameworkFile = Path.Combine(_frameworkPath, "RheingoldISTACoreFramework.dll");
                 if (!File.Exists(istaCoreFrameworkFile))
                 {
@@ -2701,13 +2697,6 @@ namespace PsdzClient
                 if (methodWriteFaPrefix == null)
                 {
                     log.ErrorFormat("ReadTestModule CallWriteFaPrefix not found");
-                    return null;
-                }
-
-                MethodInfo methodGetDatabasePrefix = typeof(PdszDatabase).GetMethod("CallGetDatabaseProviderSQLitePrefix", BindingFlags.NonPublic | BindingFlags.Static);
-                if (methodGetDatabasePrefix == null)
-                {
-                    log.ErrorFormat("ReadTestModule CallGetDatabaseProviderSQLitePrefix not found");
                     return null;
                 }
 
@@ -3210,6 +3199,13 @@ namespace PsdzClient
                     return null;
                 }
 
+                MethodInfo methodGetDatabasePrefix = typeof(PdszDatabase).GetMethod("CallGetDatabaseProviderSQLitePrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                if (methodGetDatabasePrefix == null)
+                {
+                    log.ErrorFormat("ReadServiceModule CallGetDatabaseProviderSQLitePrefix not found");
+                    return null;
+                }
+
                 string coreContractsFile = Path.Combine(_frameworkPath, "RheingoldCoreContracts.dll");
                 if (!File.Exists(coreContractsFile))
                 {
@@ -3379,26 +3375,12 @@ namespace PsdzClient
                     return null;
                 }
 
-                MethodInfo methodIstaModuleIndirectDocument2 = istaModuleType.GetMethod("__IndirectDocument", BindingFlags.Instance | BindingFlags.NonPublic,
-                    null, new Type[] { typeof(string), typeof(string)}, null);
-                if (methodIstaModuleIndirectDocument2 == null)
-                {
-                    log.ErrorFormat("ReadTestModule ISTAModule __IndirectDocument 2 not found");
-                    return null;
-                }
-
+                // __IndirectDocument with 2 arguments calls __IndirectDocument with 3 arguments
                 MethodInfo methodIstaModuleIndirectDocument3 = istaModuleType.GetMethod("__IndirectDocument", BindingFlags.Instance | BindingFlags.NonPublic,
                     null, new Type[] {typeof(string), typeof(string), typeof(string)}, null);
                 if (methodIstaModuleIndirectDocument3 == null)
                 {
                     log.ErrorFormat("ReadTestModule ISTAModule __IndirectDocument 3 not found");
-                    return null;
-                }
-
-                MethodInfo methodIndirectDocumentPrefix2 = typeof(PdszDatabase).GetMethod("IndirectDocumentPrefix2", BindingFlags.NonPublic | BindingFlags.Static);
-                if (methodIndirectDocumentPrefix2 == null)
-                {
-                    log.ErrorFormat("ReadServiceModule IndirectDocumentPrefix2 not found");
                     return null;
                 }
 
@@ -3409,10 +3391,26 @@ namespace PsdzClient
                     return null;
                 }
 
-                MethodInfo methodGetDatabasePrefix = typeof(PdszDatabase).GetMethod("CallGetDatabaseProviderSQLitePrefix", BindingFlags.NonPublic | BindingFlags.Static);
-                if (methodGetDatabasePrefix == null)
+                Type textParameterType = coreFrameworkAssembly.GetType("BMW.Rheingold.CoreFramework.__TextParameter");
+                if (textParameterType == null)
                 {
-                    log.ErrorFormat("ReadServiceModule CallGetDatabaseProviderSQLitePrefix not found");
+                    log.ErrorFormat("ReadServiceModule __TextParameter type not found");
+                    return null;
+                }
+
+                // __Text with 1 argument calls __Text with 2 arguments
+                MethodInfo methodIstaModuleText2 = istaModuleType.GetMethod("__Text", BindingFlags.Instance | BindingFlags.Public,
+                    null, new Type[] { typeof(string), textParameterType.MakeArrayType() }, null);
+                if (methodIstaModuleText2 == null)
+                {
+                    log.ErrorFormat("ReadTestModule ISTAModule methodIstaModuleText2 not found");
+                    return null;
+                }
+
+                MethodInfo methodModuleTextPrefix2 = typeof(PdszDatabase).GetMethod("ModuleTextPrefix2", BindingFlags.NonPublic | BindingFlags.Static);
+                if (methodModuleTextPrefix2 == null)
+                {
+                    log.ErrorFormat("ReadServiceModule ModuleTextPrefix2 not found");
                     return null;
                 }
 
@@ -3421,6 +3419,7 @@ namespace PsdzClient
                 bool patchedConfigurationContainerDeserialize = false;
                 bool patchedModuleRef = false;
                 bool patchedIndirectDocumentPrefix = false;
+                bool patchedModuleTextPrefix = false;
                 bool patchedGetDatabase = false;
                 foreach (MethodBase methodBase in _harmony.GetPatchedMethods())
                 {
@@ -3446,9 +3445,14 @@ namespace PsdzClient
                         patchedModuleRef = true;
                     }
 
-                    if (methodBase == methodIstaModuleIndirectDocument2)
+                    if (methodBase == methodIstaModuleIndirectDocument3)
                     {
                         patchedIndirectDocumentPrefix = true;
+                    }
+
+                    if (methodBase == methodIstaModuleText2)
+                    {
+                        patchedModuleTextPrefix = true;
                     }
 
                     if (methodBase == methodGetDatabaseProviderSQLite)
@@ -3484,11 +3488,14 @@ namespace PsdzClient
 
                 if (!patchedIndirectDocumentPrefix)
                 {
-                    log.InfoFormat("ReadServiceModule Patching: {0}", methodIstaModuleIndirectDocument2.Name);
-                    _harmony.Patch(methodIstaModuleIndirectDocument2, new HarmonyMethod(methodIndirectDocumentPrefix2));
-
                     log.InfoFormat("ReadServiceModule Patching: {0}", methodIstaModuleIndirectDocument3.Name);
                     _harmony.Patch(methodIstaModuleIndirectDocument3, new HarmonyMethod(methodIndirectDocumentPrefix3));
+                }
+
+                if (!patchedModuleTextPrefix)
+                {
+                    log.InfoFormat("ReadServiceModule Patching: {0}", methodIstaModuleText2.Name);
+                    _harmony.Patch(methodIstaModuleText2, new HarmonyMethod(methodModuleTextPrefix2));
                 }
 
                 if (!patchedGetDatabase)
