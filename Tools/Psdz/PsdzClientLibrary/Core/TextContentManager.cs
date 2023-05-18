@@ -13,7 +13,7 @@ namespace PsdzClient.Core
 {
     public class TextContentManager : ITextContentManager
     {
-        private readonly IList<string> lang;
+        private IList<string> lang;
 
         private readonly PdszDatabase db;
 
@@ -238,12 +238,17 @@ namespace PsdzClient.Core
             {
                 return null;
             }
+            IList<string> langList = new List<string>();
             IList<LocalizedText> list = new List<LocalizedText>();
             foreach (LocalizedText item in textCollectionById)
             {
                 XElement node = ParseSpeXml(item.TextItem, item.Language, db);
                 list.Add(new LocalizedText(node.Print(removeWhiteSpace: false), item.Language));
+                langList.Add(item.Language);
             }
+
+            // [UH] update lang list
+            lang = langList;
             return new TextLocator(list);
         }
 

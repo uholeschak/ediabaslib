@@ -3670,10 +3670,24 @@ namespace PsdzClient
                         if (infoObject != null)
                         {
                             log.InfoFormat("ReadServiceModule InfoObject Id: {0}, Identifer: {1}", infoObject.Id, infoObject.Identifier);
-                            ITextContentManager textCollection = TextContentManager.Create(this, new List<string> {"EN"}, infoObject, dataItem.ServiceDialogName);
+                            TextContentManager textCollection = TextContentManager.Create(this, EcuTranslation.GetLanguages(), infoObject, dataItem.ServiceDialogName) as TextContentManager;
                             if (textCollection != null)
                             {
-                                log.InfoFormat("ReadServiceModule Text collection: '{0}'", textCollection.__Text());
+                                IList<string> textIds = textCollection.CreateTextIdList();
+                                if (textIds != null)
+                                {
+                                    foreach (string textId in textIds)
+                                    {
+                                        IList<LocalizedText> textItems = textCollection.GetTextItem(textId, new __TextParameter[] { });
+                                        if (textItems != null)
+                                        {
+                                            foreach (LocalizedText textItem in textItems)
+                                            {
+                                                log.InfoFormat("ReadServiceModule Text Lang: {0}, Text: '{1}'", textItem.Language, textItem.TextItem);
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
