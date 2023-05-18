@@ -422,10 +422,13 @@ namespace PsdzClient.Core
             foreach (XElement item in enumerable)
             {
                 string value = item.Attribute(XName.Get("ID")).Value;
-                string diagnosisCode = this.db.GetDiagnosisCode(Convert.ToDecimal(value, CultureInfo.InvariantCulture));
-                XElement xElement = new XElement(XName.Get("CONTENT", "http://bmw.com/2014/Spe_Text_2.0"));
-                xElement.Add(diagnosisCode);
-                item.Add(xElement);
+                string diagnosisCode = this.db.GetDiagnosisCode(value);
+                if (!string.IsNullOrEmpty(diagnosisCode))
+                {
+                    XElement xElement = new XElement(XName.Get("CONTENT", "http://bmw.com/2014/Spe_Text_2.0"));
+                    xElement.Add(diagnosisCode);
+                    item.Add(xElement);
+                }
             }
         }
 

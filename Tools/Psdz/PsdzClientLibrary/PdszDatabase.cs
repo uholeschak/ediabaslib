@@ -6728,6 +6728,7 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
                         while (reader.Read())
                         {
                             controlId = reader["CONTROLID"].ToString().Trim();
+                            break;
                         }
                     }
                 }
@@ -6740,6 +6741,40 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
 
             log.InfoFormat("GetDiagObjectControlIdForDiagObjectId ControlId: {0}", controlId);
             return controlId;
+        }
+
+        public string GetDiagnosisCode(string diagnosisCodeId)
+        {
+            log.InfoFormat("GetDiagnosisCode Id: {0}", diagnosisCodeId);
+            if (string.IsNullOrEmpty(diagnosisCodeId))
+            {
+                return null;
+            }
+
+            string diagnosisCode = null;
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NAME FROM XEP_DIAGCODE WHERE (ID = {0})", diagnosisCodeId);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            diagnosisCode = reader["NAME"].ToString().Trim();
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetDiagnosisCode Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            log.InfoFormat("GetDiagnosisCode DiagCode: {0}", diagnosisCode);
+            return diagnosisCode;
         }
 
         public Dictionary<string, XepRule> LoadXepRules()

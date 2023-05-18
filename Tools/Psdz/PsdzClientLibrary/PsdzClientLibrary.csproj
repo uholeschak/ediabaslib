@@ -127,6 +127,7 @@
     <Compile Include="Contracts\IFscType.cs" />
     <Compile Include="Contracts\INavFSCProvided.cs" />
     <Compile Include="Contracts\ITransmissionDataType.cs" />
+    <Compile Include="Core\BaseFormatedData.cs" />
     <Compile Include="Core\Container\ABranch.cs" />
     <Compile Include="Core\Container\AChoice.cs" />
     <Compile Include="Core\Container\AConstraint.cs" />
@@ -186,6 +187,7 @@
     <Compile Include="Core\FA.cs" />
     <Compile Include="Core\FaultClassRuleParser.cs" />
     <Compile Include="Core\FFMResult.cs" />
+    <Compile Include="Core\FormatedData.cs" />
     <Compile Include="Core\GearboxUtility.cs" />
     <Compile Include="Core\GenericEcuCharacteristics.cs" />
     <Compile Include="Core\GenericMotor.cs" />
@@ -215,8 +217,10 @@
     <Compile Include="Core\ISPELocator.cs" />
     <Compile Include="Core\IStufeExpression.cs" />
     <Compile Include="Core\IStufeXExpression.cs" />
+    <Compile Include="Core\ITextContentManager.cs" />
     <Compile Include="Core\ITextLocator.cs" />
     <Compile Include="Core\IXGBMBusLogisticsEntry.cs" />
+    <Compile Include="Core\Localization.cs" />
     <Compile Include="Core\LocalizedText.cs" />
     <Compile Include="Core\ManufactoringDateExpression.cs" />
     <Compile Include="Core\Container\MultipleChoice.cs" />
@@ -242,9 +246,15 @@
     <Compile Include="Core\Container\StepRange.cs" />
     <Compile Include="Core\Container\SubDevice.cs" />
     <Compile Include="Core\Container\SubDeviceCollectionSubDevice.cs" />
+    <Compile Include="Core\SPELocator.cs" />
     <Compile Include="Core\SVK.cs" />
     <Compile Include="Core\Symbol.cs" />
     <Compile Include="Core\Container\Text.cs" />
+    <Compile Include="Core\TextContent.cs" />
+    <Compile Include="Core\TextContentManager.cs" />
+    <Compile Include="Core\TextContentManagerDummy.cs" />
+    <Compile Include="Core\TextLocator.cs" />
+    <Compile Include="Core\Translator.cs" />
     <Compile Include="Core\TransmissionDataType.cs" />
     <Compile Include="Core\typeBasicFeatures.cs" />
     <Compile Include="Core\typeECU_Transaction.cs" />
@@ -268,6 +278,7 @@
     <Compile Include="Core\VehicleCharacteristicVCIDeviceHelper.cs" />
     <Compile Include="Core\VehicleCharacteristicVehicleHelper.cs" />
     <Compile Include="Core\XGBMBusLogisticsEntry.cs" />
+    <Compile Include="Core\XNodeExtension.cs" />
     <Compile Include="DetectVehicle.cs" />
     <Compile Include="Core\DiagnosticsBusinessData.cs" />
     <Compile Include="Core\Container\HeaderAdapter.cs" />
