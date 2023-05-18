@@ -1784,9 +1784,14 @@ namespace PsdzClient
         }
 
         // ReSharper disable once UnusedMember.Local
-        private static bool ServiceDialogCmdBaseInvokePrefix(string method, object inParam, ref object outParam, ref object inoutParam)
+        private static bool ServiceDialogCmdBaseInvokePrefix(object __instance, string method, object inParam, ref object outParam, ref object inoutParam)
         {
             log.InfoFormat("ServiceDialogCmdBaseInvokePrefix, Method: {0}", method);
+
+            if (__instance != null)
+            {
+                log.InfoFormat("ServiceDialogCmdBaseInvokePrefix, Instance: {0}", __instance.GetType().FullName);
+            }
 
             dynamic inParamDyn = inParam;
             if (inParamDyn != null)
