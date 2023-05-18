@@ -3132,7 +3132,7 @@ namespace PsdzClient
                         string key = moduleName.ToUpperInvariant();
                         if (!moduleDataDict.ContainsKey(key))
                         {
-                            ServiceModuleData moduleData = ReadServiceModule(moduleName, out bool failure);
+                            ServiceModuleData moduleData = ReadServiceModule(moduleName, swiInfoObj, out bool failure);
                             if (moduleData == null)
                             {
                                 log.ErrorFormat("ConvertAllServiceModules ReadServiceModule failed for: {0}", moduleName);
@@ -3186,7 +3186,7 @@ namespace PsdzClient
             }
         }
 
-        public ServiceModuleData ReadServiceModule(string moduleName, out bool failure)
+        public ServiceModuleData ReadServiceModule(string moduleName, SwiInfoObj swiInfoObj, out bool failure)
         {
             log.InfoFormat("ReadServiceModule Name: {0}", moduleName);
             failure = false;
@@ -3556,6 +3556,13 @@ namespace PsdzClient
 
                 log.InfoFormat("ReadServiceModule Using module type: {0}", moduleType.FullName);
 
+                TextContentManager textContentManager = TextContentManager.Create(this, EcuTranslation.GetLanguages(), swiInfoObj) as TextContentManager;
+                if (textContentManager == null)
+                {
+                    log.ErrorFormat("ReadServiceModule No TextContentManager");
+                    return null;
+                }
+
                 List<MethodInfo> simpleMethods = new List<MethodInfo>();
                 MethodInfo[] privateMethods = moduleType.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance);
                 foreach (MethodInfo privateMethod in privateMethods)
@@ -3741,7 +3748,26 @@ namespace PsdzClient
                 {
                     foreach (string textId in serviceDialogTextHashes)
                     {
-                        log.InfoFormat("ReadServiceModule Text ID: {0}", textId);
+                        try
+                        {
+                            ITextLocator textLocator = textContentManager.__Text(textId);
+                            TextContent textContent = textLocator?.TextContent as TextContent;
+                            IList<LocalizedText> textItems = textContent?.CreatePlainText(textContentManager.Langs);
+                            if (textItems != null)
+                            {
+                                foreach (LocalizedText textItem in textItems)
+                                {
+                                    if (!string.IsNullOrWhiteSpace(textItem.TextItem))
+                                    {
+                                        log.InfoFormat("ReadServiceModule SingleText Lang: {0}, Text: '{1}'", textItem.Language, textItem.TextItem);
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            log.ErrorFormat("ReadServiceModule Text ID: {0}, Exception: '{1}'", textId, e.Message);
+                        }
                     }
                 }
 
