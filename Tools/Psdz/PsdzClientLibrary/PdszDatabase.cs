@@ -1536,6 +1536,7 @@ namespace PsdzClient
         private static SerializableDictionary<string, List<string>> _moduleRefDict;
         private static SerializableDictionary<string, ServiceModuleDataItem> _serviceDialogDict;
         private static Dictionary<string, int> _serviceDialogCallsDict;
+        private static HashSet<string> _serviceDialogTextHashes;
         private static ConstructorInfo _istaServiceDialogDlgCmdBaseConstructor;
         private static ConstructorInfo _istaEdiabasAdapterDeviceResultConstructor;
         private static Type _istaServiceDialogFactoryType;
@@ -1888,6 +1889,12 @@ namespace PsdzClient
         {
             log.InfoFormat("ModuleTextPrefix2 Value: {0}", value ?? string.Empty);
 
+            if (_serviceDialogTextHashes == null)
+            {
+                _serviceDialogTextHashes = new HashSet<string>();
+            }
+
+            _serviceDialogTextHashes.Add(value);
             __result = value;
             return false;
         }
@@ -3613,6 +3620,7 @@ namespace PsdzClient
                     log.InfoFormat("ReadTestModule Module loaded: {0}, Type: {1}", fileName, moduleType.FullName);
 
                     _serviceDialogDict = null;
+                    _serviceDialogTextHashes = null;
                     foreach (MethodInfo simpleMethod in simpleMethods)
                     {
                         Thread moduleThread = new Thread(() =>
@@ -3642,8 +3650,10 @@ namespace PsdzClient
                 }
 
                 SerializableDictionary<string, ServiceModuleDataItem> serviceDialogDict = _serviceDialogDict;
+                HashSet<string> serviceDialogTextHashes = _serviceDialogTextHashes;
                 _serviceDialogDict = null;
                 _serviceDialogCallsDict = null;
+                _serviceDialogTextHashes = null;
                 _moduleRefDict = null;
                 if (serviceDialogDict == null || serviceDialogDict.Count == 0)
                 {
@@ -3724,6 +3734,14 @@ namespace PsdzClient
                                 }
                             }
                         }
+                    }
+                }
+
+                if (serviceDialogTextHashes != null)
+                {
+                    foreach (string textId in serviceDialogTextHashes)
+                    {
+                        log.InfoFormat("ReadServiceModule Text ID: {0}", textId);
                     }
                 }
 
