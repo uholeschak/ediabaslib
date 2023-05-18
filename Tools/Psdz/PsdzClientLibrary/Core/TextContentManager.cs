@@ -437,6 +437,7 @@ namespace PsdzClient.Core
             IEnumerable<XElement> enumerable = textCollectionRoot.XPathSelectElements("//spe:STANDARDTEXT[not(spe:CONTENT)]", namespaceManager);
             if (enumerable != null)
             {
+                int items = 0;
                 foreach (XElement item in enumerable)
                 {
                     string value = item.Attribute(XName.Get("ID")).Value;
@@ -455,18 +456,21 @@ namespace PsdzClient.Core
                     XElement xElement = new XElement(XName.Get("CONTENT", "http://bmw.com/2014/Spe_Text_2.0"));
                     xElement.Add(ParseStandardTextItem(localizedXmlValue));
                     item.Add(xElement);
+                    items++;
                 }
-            }
-            if (enumerable != null && enumerable.Any())
-            {
-                if (repeat == 10)
+
+                // enumerable.Any is not working after enumeration!
+                if (items > 0)
                 {
-                    //Log.Error("TextContentManager.AppendStandardText()", "Abort recursive replacement of spe:STANDARDTEXT (elementsToBeReplaced.Count={0}).", enumerable.Count());
-                }
-                else
-                {
-                    repeat++;
-                    AppendStandardText(textCollectionRoot, namespaceManager, db, language, repeat);
+                    if (repeat == 10)
+                    {
+                        //Log.Error("TextContentManager.AppendStandardText()", "Abort recursive replacement of spe:STANDARDTEXT (elementsToBeReplaced.Count={0}).", enumerable.Count());
+                    }
+                    else
+                    {
+                        repeat++;
+                        AppendStandardText(textCollectionRoot, namespaceManager, db, language, repeat);
+                    }
                 }
             }
         }
