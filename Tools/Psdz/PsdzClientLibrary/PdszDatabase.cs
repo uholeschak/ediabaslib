@@ -1433,6 +1433,8 @@ namespace PsdzClient
 
             [XmlElement("EdiabasJobOverride"), DefaultValue(null)] public string EdiabasJobOverride { get; set; }
 
+            [XmlElement("TextItems"), DefaultValue(null)] public SerializableDictionary<string, string> TextItems { get; set; }
+
             [XmlIgnore, DefaultValue(null)] public string ContainerXml { get; set; }
 
             [XmlIgnore, DefaultValue(null)] public HashSet<object> ServiceDialogs { get; set; }
@@ -3730,44 +3732,42 @@ namespace PsdzClient
                 foreach (KeyValuePair<string, ServiceModuleDataItem> dictEntry in serviceDialogDict)
                 {
                     ServiceModuleDataItem dataItem = dictEntry.Value;
-                    if (string.IsNullOrEmpty(dataItem.ContainerXml))
+                    if (!string.IsNullOrEmpty(dataItem.ContainerXml))
                     {
-                        continue;
-                    }
-
-                    string ediabasJobBare = DetectVehicle.ConvertContainerXml(dataItem.ContainerXml);
-                    if (!string.IsNullOrEmpty(ediabasJobBare))
-                    {
-                        log.InfoFormat("ReadServiceModule EdiabasJob bare: '{0}'", ediabasJobBare);
-                        dataItem.EdiabasJobBare = ediabasJobBare;
-                    }
-                    else
-                    {
-                        log.ErrorFormat("ReadServiceModule ConvertContainerXml failed: '{0}'", dataItem.MethodName);
-                    }
-
-                    if (dataItem.RunOverrides != null && dataItem.RunOverrides.Count > 0)
-                    {
-                        Dictionary<string, string> runOverrides = new Dictionary<string, string>();
-                        foreach (KeyValuePair<string, string> runOverride in dataItem.RunOverrides)
+                        string ediabasJobBare = DetectVehicle.ConvertContainerXml(dataItem.ContainerXml);
+                        if (!string.IsNullOrEmpty(ediabasJobBare))
                         {
-                            string value = runOverride.Value;
-                            if (string.IsNullOrWhiteSpace(value))
-                            {
-                                value = "[OVERRIDE]";
-                            }
-                            runOverrides.Add(runOverride.Key, value);
-                        }
-
-                        string ediabasJobOverride = DetectVehicle.ConvertContainerXml(dataItem.ContainerXml, runOverrides);
-                        if (!string.IsNullOrEmpty(ediabasJobOverride))
-                        {
-                            log.InfoFormat("ReadServiceModule EdiabasJob override: '{0}'", ediabasJobOverride);
-                            dataItem.EdiabasJobOverride = ediabasJobOverride;
+                            log.InfoFormat("ReadServiceModule EdiabasJob bare: '{0}'", ediabasJobBare);
+                            dataItem.EdiabasJobBare = ediabasJobBare;
                         }
                         else
                         {
                             log.ErrorFormat("ReadServiceModule ConvertContainerXml failed: '{0}'", dataItem.MethodName);
+                        }
+
+                        if (dataItem.RunOverrides != null && dataItem.RunOverrides.Count > 0)
+                        {
+                            Dictionary<string, string> runOverrides = new Dictionary<string, string>();
+                            foreach (KeyValuePair<string, string> runOverride in dataItem.RunOverrides)
+                            {
+                                string value = runOverride.Value;
+                                if (string.IsNullOrWhiteSpace(value))
+                                {
+                                    value = "[OVERRIDE]";
+                                }
+                                runOverrides.Add(runOverride.Key, value);
+                            }
+
+                            string ediabasJobOverride = DetectVehicle.ConvertContainerXml(dataItem.ContainerXml, runOverrides);
+                            if (!string.IsNullOrEmpty(ediabasJobOverride))
+                            {
+                                log.InfoFormat("ReadServiceModule EdiabasJob override: '{0}'", ediabasJobOverride);
+                                dataItem.EdiabasJobOverride = ediabasJobOverride;
+                            }
+                            else
+                            {
+                                log.ErrorFormat("ReadServiceModule ConvertContainerXml failed: '{0}'", dataItem.MethodName);
+                            }
                         }
                     }
 
@@ -3777,8 +3777,7 @@ namespace PsdzClient
                         if (infoObject != null)
                         {
                             log.InfoFormat("ReadServiceModule InfoObject Id: {0}, Identifer: {1}", infoObject.Id, infoObject.Identifier);
-                            TextContentManager textCollection = TextContentManager.Create(this, EcuTranslation.GetLanguages(), infoObject, dataItem.ServiceDialogName) as TextContentManager;
-                            if (textCollection != null)
+                            if (TextContentManager.Create(this, EcuTranslation.GetLanguages(), infoObject, dataItem.ServiceDialogName) is TextContentManager textCollection)
                             {
                                 IList<string> textIds = textCollection.CreateTextItemIdList();
                                 if (textIds != null)
@@ -3812,6 +3811,7 @@ namespace PsdzClient
                         }
                     }
 
+                    SerializableDictionary<string, string> textItemsDict = new SerializableDictionary<string, string>();
                     foreach (KeyValuePair<string, string> textIdPair in dataItem.TextIds)
                     {
                         string textId = textIdPair.Key;
@@ -3830,6 +3830,13 @@ namespace PsdzClient
                                     if (!string.IsNullOrWhiteSpace(textItem.TextItem))
                                     {
                                         log.InfoFormat("ReadServiceModule SingleText Lang: {0}, Text: '{1}'", textItem.Language, textItem.TextItem);
+                                        string key = textId + ";" + textItem.Language;
+                                        if (!string.IsNullOrEmpty(methodName))
+                                        {
+                                            key += ";" + methodName;
+                                        }
+
+                                        textItemsDict.Add(key, textItem.TextItem);
                                     }
                                 }
                             }
@@ -3838,6 +3845,11 @@ namespace PsdzClient
                         {
                             log.ErrorFormat("ReadServiceModule Text ID: {0}, Exception: '{1}'", textId, e.Message);
                         }
+                    }
+
+                    if (textItemsDict.Count > 0)
+                    {
+                        dataItem.TextIds = textItemsDict;
                     }
                 }
 
