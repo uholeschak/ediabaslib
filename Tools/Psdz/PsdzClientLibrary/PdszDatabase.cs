@@ -1386,14 +1386,17 @@ namespace PsdzClient
         [XmlType("ServiceModuleData")]
         public class ServiceModuleData
         {
-            public ServiceModuleData() : this(null)
+            public ServiceModuleData() : this(null, null)
             {
             }
 
-            public ServiceModuleData(SerializableDictionary<string, ServiceModuleDataItem> dataDict)
+            public ServiceModuleData(string infoObjId, SerializableDictionary<string, ServiceModuleDataItem> dataDict)
             {
+                InfoObjId = infoObjId;
                 DataDict = dataDict;
             }
+
+            [XmlElement("InfoObjId"), DefaultValue(null)] public string InfoObjId { get; set; }
 
             [XmlElement("DataDict"), DefaultValue(null)] public SerializableDictionary<string, ServiceModuleDataItem> DataDict { get; set; }
         }
@@ -3864,7 +3867,7 @@ namespace PsdzClient
 
                 log.InfoFormat("ReadServiceModule Finished: {0}", fileName);
 
-                return new ServiceModuleData(serviceDialogDict);
+                return new ServiceModuleData(swiInfoObj.Id, serviceDialogDict);
             }
             catch (Exception e)
             {
