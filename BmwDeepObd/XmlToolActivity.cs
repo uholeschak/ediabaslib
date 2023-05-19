@@ -3454,8 +3454,8 @@ namespace BmwDeepObd
                     {
                         foreach (EcuInfoSubSys subSystem in ecuInfo.SubSystems)
                         {
-                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Resolving sub sys: {0}, VAG part number: {1}",
-                                subSystem.SubSysIndex, subSystem.VagPartNumber ?? string.Empty);
+                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Resolving sub sys: {0}, VAG part number: {1}, Address: {2:X02}",
+                                subSystem.SubSysIndex, subSystem.VagPartNumber ?? string.Empty, ecuInfo.Address);
                             UdsFileReader.DataReader.FileNameResolver dataResolverSubSys =
                                 new UdsFileReader.DataReader.FileNameResolver(udsReader.DataReader, ecuInfo.VagPartNumber, ecuInfo.VagHwPartNumber,
                                     subSystem.VagPartNumber, (int)ecuInfo.Address, subSystem.SubSysIndex);
