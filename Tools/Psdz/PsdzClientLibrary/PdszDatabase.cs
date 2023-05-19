@@ -1440,6 +1440,13 @@ namespace PsdzClient
             [XmlIgnore, DefaultValue(null)] public HashSet<object> ServiceDialogs { get; set; }
 
             [XmlIgnore, DefaultValue(null)] public SerializableDictionary<string, string> TextIds { get; set; }
+
+            public void CleanupInternal()
+            {
+                ContainerXml = null;
+                ServiceDialogs.Clear();
+                TextIds.Clear();
+            }
         }
 
         [XmlInclude(typeof(VehicleStructsBmw.VersionInfo))]
@@ -3851,6 +3858,8 @@ namespace PsdzClient
                     {
                         dataItem.TextItems = textItemsDict;
                     }
+
+                    dataItem.CleanupInternal();
                 }
 
                 log.InfoFormat("ReadServiceModule Finished: {0}", fileName);
