@@ -1818,13 +1818,25 @@ namespace PsdzClient
             {
                 try
                 {
-                    string txtParam = inParamDyn.getParameter("txtParam", null) as string;
-                    if (!string.IsNullOrEmpty(txtParam))
+                    dynamic txtParam = inParamDyn.getParameter("txtParam", null);
+                    if (txtParam != null)
                     {
-                        log.InfoFormat("ServiceDialogCmdBaseInvokePrefix Param ID: {0}", txtParam);
-                        if (serviceModuleDataItem != null)
+                        try
                         {
-                            serviceModuleDataItem.TextIds.Add(txtParam, method);
+                            string txtParamText = txtParam.ToString();
+                            if (!string.IsNullOrEmpty(txtParamText))
+                            {
+                                string textId = txtParamText.Trim(' ', '#');
+                                log.InfoFormat("ServiceDialogCmdBaseInvokePrefix Param ID: {0}", textId);
+                                if (serviceModuleDataItem != null)
+                                {
+                                    serviceModuleDataItem.TextIds.Add(textId, method);
+                                }
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix txtParam Exception: '{0}'", e.Message);
                         }
                     }
                 }
@@ -1924,8 +1936,8 @@ namespace PsdzClient
             }
 
             _serviceDialogTextHashes.Add(value);
-            __result = value;
-            return false;
+            __result = null;
+            return true;
         }
 
         public PdszDatabase(string istaFolder)
