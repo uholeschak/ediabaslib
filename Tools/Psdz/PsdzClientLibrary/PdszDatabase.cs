@@ -3849,7 +3849,7 @@ namespace PsdzClient
 
                     if (textItemsDict.Count > 0)
                     {
-                        dataItem.TextIds = textItemsDict;
+                        dataItem.TextItems = textItemsDict;
                     }
                 }
 
