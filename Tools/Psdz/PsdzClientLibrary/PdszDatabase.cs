@@ -1401,7 +1401,7 @@ namespace PsdzClient
         [XmlType("ServiceModuleDataItem")]
         public class ServiceModuleDataItem
         {
-            public ServiceModuleDataItem() : this(null, null, null, null, null, null)
+            public ServiceModuleDataItem() : this(null, null, null, null, null)
             {
             }
 
@@ -1411,10 +1411,12 @@ namespace PsdzClient
                 ElementNo = elementNo;
                 ControlId = controlId;
                 ServiceDialogName = serviceDialogName;
-                ContainerXml = containerXml;
                 RunOverrides = runOverrides;
                 EdiabasJobBare = null;
                 EdiabasJobOverride = null;
+                ContainerXml = containerXml;
+                ServiceDialogs = new HashSet<object>();
+                TextIds = new SerializableDictionary<string, string>();
             }
 
             [XmlElement("MethodName"), DefaultValue(null)] public string MethodName { get; set; }
@@ -1425,13 +1427,17 @@ namespace PsdzClient
 
             [XmlElement("ServiceDialogName"), DefaultValue(null)] public string ServiceDialogName { get; set; }
 
-            [XmlIgnore, DefaultValue(null)] public string ContainerXml { get; set; }
-
             [XmlElement("RunOverrides"), DefaultValue(null)] public SerializableDictionary<string, string> RunOverrides { get; set; }
 
             [XmlElement("EdiabasJobBare"), DefaultValue(null)] public string EdiabasJobBare { get; set; }
 
             [XmlElement("EdiabasJobOverride"), DefaultValue(null)] public string EdiabasJobOverride { get; set; }
+
+            [XmlIgnore, DefaultValue(null)] public string ContainerXml { get; set; }
+
+            [XmlIgnore, DefaultValue(null)] public HashSet<object> ServiceDialogs { get; set; }
+
+            [XmlIgnore, DefaultValue(null)] public SerializableDictionary<string, string> TextIds { get; set; }
         }
 
         [XmlInclude(typeof(VehicleStructsBmw.VersionInfo))]
@@ -1712,33 +1718,52 @@ namespace PsdzClient
             string elementNoString = elementNo.ToString(CultureInfo.InvariantCulture);
             string key = methodName + ";" + path + ";" + elementNoString;
 
-            if (!string.IsNullOrWhiteSpace(configurationContainerXml))
+            object serviceDialog = null;
+            if (_istaServiceDialogDlgCmdBaseConstructor != null)
             {
-                if (_serviceDialogDict == null)
+                object[] args = new object[] { callingModule, methodName, path, globalTabModuleISTA, elementNo };
+                try
                 {
-                    _serviceDialogDict = new SerializableDictionary<string, ServiceModuleDataItem>();
+                    serviceDialog = _istaServiceDialogDlgCmdBaseConstructor.Invoke(args);
                 }
-
-                if (!_serviceDialogDict.ContainsKey(key))
+                catch (Exception e)
                 {
-                    log.InfoFormat("CreateServiceDialogPrefix Adding Key: {0}", key);
-                    ServiceModuleDataItem serviceModuleDataItem = new ServiceModuleDataItem(methodName, elementNoString, controlIdString, serviceDialogConfigName, configurationContainerXml);
-                    if (runOverridesDict.Count > 0)
-                    {
-                        serviceModuleDataItem.RunOverrides = runOverridesDict;
-                    }
-                    _serviceDialogDict.Add(key, serviceModuleDataItem);
-                    //log.Info(configurationContainerXml);
-                }
-                else
-                {
-                    log.InfoFormat("CreateServiceDialogPrefix Key present: {0}", key);
+                    log.ErrorFormat("CreateServiceDialogPrefix Exception: '{0}'", e.Message);
                 }
             }
             else
             {
+                log.ErrorFormat("CreateServiceDialogPrefix No service dialog construtor");
+            }
+
+            if (_serviceDialogDict == null)
+            {
+                _serviceDialogDict = new SerializableDictionary<string, ServiceModuleDataItem>();
+            }
+
+            if (string.IsNullOrWhiteSpace(configurationContainerXml))
+            {
                 log.InfoFormat("CreateServiceDialogPrefix No container XML");
             }
+
+            _serviceDialogDict.TryGetValue(key, out ServiceModuleDataItem serviceModuleDataItem);
+            if (serviceModuleDataItem == null)
+            {
+                log.InfoFormat("CreateServiceDialogPrefix Adding Key: {0}", key);
+                serviceModuleDataItem = new ServiceModuleDataItem(methodName, elementNoString, controlIdString, serviceDialogConfigName, configurationContainerXml);
+                if (runOverridesDict.Count > 0)
+                {
+                    serviceModuleDataItem.RunOverrides = runOverridesDict;
+                }
+                _serviceDialogDict.Add(key, serviceModuleDataItem);
+                //log.Info(configurationContainerXml);
+            }
+            else
+            {
+                log.InfoFormat("CreateServiceDialogPrefix Key present: {0}", key);
+            }
+
+            serviceModuleDataItem.ServiceDialogs.Add(serviceDialog);
 
             if (_serviceDialogCallsDict == null)
             {
@@ -1761,24 +1786,6 @@ namespace PsdzClient
                 Thread.CurrentThread.Abort();
             }
 
-            object serviceDialog = null;
-            if (_istaServiceDialogDlgCmdBaseConstructor != null)
-            {
-                object[] args = new object[] { callingModule, methodName, path, globalTabModuleISTA, elementNo };
-                try
-                {
-                    serviceDialog = _istaServiceDialogDlgCmdBaseConstructor.Invoke(args);
-                }
-                catch (Exception e)
-                {
-                    log.ErrorFormat("CreateServiceDialogPrefix Exception: '{0}'", e.Message);
-                }
-            }
-            else
-            {
-                log.ErrorFormat("CreateServiceDialogPrefix No service dialog construtor");
-            }
-
             __result = serviceDialog;
             return false;
         }
@@ -1788,9 +1795,22 @@ namespace PsdzClient
         {
             log.InfoFormat("ServiceDialogCmdBaseInvokePrefix, Method: {0}", method);
 
-            if (__instance != null)
+            ServiceModuleDataItem serviceModuleDataItem = null;
+            if (__instance != null && _serviceDialogDict != null)
             {
-                log.InfoFormat("ServiceDialogCmdBaseInvokePrefix, Instance: {0}", __instance.GetType().FullName);
+                foreach (KeyValuePair<string, ServiceModuleDataItem> serviceKeyValuePair in _serviceDialogDict)
+                {
+                    if (serviceKeyValuePair.Value.ServiceDialogs.Contains(__instance))
+                    {
+                        serviceModuleDataItem = serviceKeyValuePair.Value;
+                        break;
+                    }
+                }
+            }
+
+            if (serviceModuleDataItem == null)
+            {
+                log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix, Service module data not found");
             }
 
             dynamic inParamDyn = inParam;
@@ -1802,6 +1822,10 @@ namespace PsdzClient
                     if (!string.IsNullOrEmpty(txtParam))
                     {
                         log.InfoFormat("ServiceDialogCmdBaseInvokePrefix Param ID: {0}", txtParam);
+                        if (serviceModuleDataItem != null)
+                        {
+                            serviceModuleDataItem.TextIds.Add(txtParam, method);
+                        }
                     }
                 }
                 catch (Exception e)
@@ -3678,6 +3702,11 @@ namespace PsdzClient
                 foreach (KeyValuePair<string, ServiceModuleDataItem> dictEntry in serviceDialogDict)
                 {
                     ServiceModuleDataItem dataItem = dictEntry.Value;
+                    if (string.IsNullOrEmpty(dataItem.ContainerXml))
+                    {
+                        continue;
+                    }
+
                     string ediabasJobBare = DetectVehicle.ConvertContainerXml(dataItem.ContainerXml);
                     if (!string.IsNullOrEmpty(ediabasJobBare))
                     {
@@ -3729,18 +3758,25 @@ namespace PsdzClient
                                     foreach (string textId in textIds)
                                     {
                                         log.InfoFormat("ReadServiceModule Text Id: {0}", textId);
-                                        ITextLocator textLocator = textCollection.__Text(textId);
-                                        TextContent textContent = textLocator?.TextContent as TextContent;
-                                        IList<LocalizedText> textItems = textContent?.CreatePlainText(textCollection.Langs);
-                                        if (textItems != null)
+                                        try
                                         {
-                                            foreach (LocalizedText textItem in textItems)
+                                            ITextLocator textLocator = textCollection.__Text(textId);
+                                            TextContent textContent = textLocator?.TextContent as TextContent;
+                                            IList<LocalizedText> textItems = textContent?.CreatePlainText(textCollection.Langs);
+                                            if (textItems != null)
                                             {
-                                                if (!string.IsNullOrWhiteSpace(textItem.TextItem))
+                                                foreach (LocalizedText textItem in textItems)
                                                 {
-                                                    log.InfoFormat("ReadServiceModule Text Lang: {0}, Text: '{1}'", textItem.Language, textItem.TextItem);
+                                                    if (!string.IsNullOrWhiteSpace(textItem.TextItem))
+                                                    {
+                                                        log.InfoFormat("ReadServiceModule Text Lang: {0}, Text: '{1}'", textItem.Language, textItem.TextItem);
+                                                    }
                                                 }
                                             }
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            log.ErrorFormat("ReadServiceModule Text ID: {0}, Exception: '{1}'", textId, e.Message);
                                         }
                                     }
                                 }
