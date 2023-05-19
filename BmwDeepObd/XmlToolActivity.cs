@@ -3423,8 +3423,8 @@ namespace BmwDeepObd
                     return false;
                 }
                 string vagDirLang = Path.Combine(_vagDir, udsReader.LanguageDir);
-                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Resolving VAG part number: {0}, HW part number: {1}",
-                    ecuInfo.VagPartNumber ?? string.Empty, ecuInfo.VagHwPartNumber ?? string.Empty);
+                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Resolving VAG part number: {0}, HW part number: {1}, Address: {2:X02}",
+                    ecuInfo.VagPartNumber ?? string.Empty, ecuInfo.VagHwPartNumber ?? string.Empty, ecuInfo.Address);
                 UdsFileReader.DataReader.FileNameResolver dataResolver = new UdsFileReader.DataReader.FileNameResolver(udsReader.DataReader, ecuInfo.VagPartNumber, ecuInfo.VagHwPartNumber, (int)ecuInfo.Address);
                 string dataFileName = dataResolver.GetFileName(vagDirLang);
                 ecuInfo.VagDataFileName = dataFileName ?? string.Empty;
