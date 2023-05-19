@@ -1827,10 +1827,13 @@ namespace PsdzClient
                             if (!string.IsNullOrEmpty(txtParamText))
                             {
                                 string textId = txtParamText.Trim(' ', '#');
-                                log.InfoFormat("ServiceDialogCmdBaseInvokePrefix Param ID: {0}", textId);
+                                log.InfoFormat("ServiceDialogCmdBaseInvokePrefix Param Text ID: {0}", textId);
                                 if (serviceModuleDataItem != null)
                                 {
-                                    serviceModuleDataItem.TextIds.Add(textId, method);
+                                    if (!serviceModuleDataItem.TextIds.ContainsKey(textId))
+                                    {
+                                        serviceModuleDataItem.TextIds.Add(textId, method);
+                                    }
                                 }
                             }
                         }
@@ -1848,6 +1851,20 @@ namespace PsdzClient
             else
             {
                 log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix No container setParameter");
+            }
+
+            if (serviceModuleDataItem != null && _serviceDialogTextHashes != null)
+            {
+                foreach (string textId in _serviceDialogTextHashes)
+                {
+                    log.InfoFormat("ServiceDialogCmdBaseInvokePrefix Text ID: {0}", textId);
+                    if (!serviceModuleDataItem.TextIds.ContainsKey(textId))
+                    {
+                        serviceModuleDataItem.TextIds.Add(textId, string.Empty);
+                    }
+                }
+
+                _serviceDialogTextHashes = null;
             }
 
             dynamic outParmDyn = outParam;
@@ -3668,7 +3685,6 @@ namespace PsdzClient
                     log.InfoFormat("ReadTestModule Module loaded: {0}, Type: {1}", fileName, moduleType.FullName);
 
                     _serviceDialogDict = null;
-                    _serviceDialogTextHashes = null;
                     foreach (MethodInfo simpleMethod in simpleMethods)
                     {
                         Thread moduleThread = new Thread(() =>
@@ -3676,6 +3692,7 @@ namespace PsdzClient
                             try
                             {
                                 _serviceDialogCallsDict = null;
+                                _serviceDialogTextHashes = null;
                                 _moduleRefPath = null;
                                 _moduleRefDict = null;
                                 simpleMethod.Invoke(testModule, null);
@@ -3698,7 +3715,6 @@ namespace PsdzClient
                 }
 
                 SerializableDictionary<string, ServiceModuleDataItem> serviceDialogDict = _serviceDialogDict;
-                HashSet<string> serviceDialogTextHashes = _serviceDialogTextHashes;
                 _serviceDialogDict = null;
                 _serviceDialogCallsDict = null;
                 _serviceDialogTextHashes = null;
@@ -3795,14 +3811,15 @@ namespace PsdzClient
                             }
                         }
                     }
-                }
 
-                if (serviceDialogTextHashes != null)
-                {
-                    foreach (string textId in serviceDialogTextHashes)
+                    foreach (KeyValuePair<string, string> textIdPair in dataItem.TextIds)
                     {
+                        string textId = textIdPair.Key;
+                        string methodName = textIdPair.Value;
                         try
                         {
+                            log.InfoFormat("ReadServiceModule SingleText Method: {0}", methodName);
+
                             ITextLocator textLocator = textContentManager.__Text(textId);
                             TextContent textContent = textLocator?.TextContent as TextContent;
                             IList<LocalizedText> textItems = textContent?.CreatePlainText(textContentManager.Langs);
