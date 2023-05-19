@@ -818,6 +818,7 @@ namespace UdsFileReader
             string regExTrim = regEx.TrimEnd('.');     // ? at the end is optional
             if (regEx != regExTrim)
             {
+                regExTrim = regExTrim.TrimEnd('-');    // remove also optional - at the end
                 regEx = regExTrim + ".*";
             }
             regEx += "$";
