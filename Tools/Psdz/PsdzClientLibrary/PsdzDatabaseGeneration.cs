@@ -191,6 +191,7 @@ namespace PsdzClient
         private static Type _istaServiceDialogFactoryType;
         private static Type _istaServiceDialogConfigurationType;
         private static Type _coreContractsDocumentLocatorType;
+        private static Type _ecuResultType;
 
         // ReSharper disable once UnusedMember.Local
         private static bool CallModuleRefPrefix(string refPath, object inParameters, ref object outParameters, ref object inAndOutParameters)
@@ -526,7 +527,9 @@ namespace PsdzClient
                             dynamic ecuJob = propertyEcuJob.GetValue(ediabasAdapterDeviceResult);
                             if (ecuJob != null)
                             {
-                                ecuJob.JobResult = null;
+                                Type listType = typeof(List<>).MakeGenericType(new[] { _ecuResultType });
+                                object ecuResultList = Activator.CreateInstance(listType);
+                                ecuJob.JobResult = ecuResultList;
                             }
                         }
                         outParmDyn.setParameter("/WurzelOut/DSCResult", ediabasAdapterDeviceResult);
@@ -1224,6 +1227,14 @@ namespace PsdzClient
                 }
                 Assembly coreContractsAssembly = Assembly.LoadFrom(coreContractsFile);
 
+                string vehicleCommunicationFile = Path.Combine(_frameworkPath, "RheingoldVehicleCommunication.dll");
+                if (!File.Exists(vehicleCommunicationFile))
+                {
+                    log.ErrorFormat("ReadServiceModule RheingoldVehicleCommunication not found: {0}", vehicleCommunicationFile);
+                    return null;
+                }
+                Assembly vehicleCommunicationAssembly = Assembly.LoadFrom(vehicleCommunicationFile);
+
                 if (_coreContractsDocumentLocatorType == null)
                 {
                     Type coreContractsDocumentLocatorType = coreContractsAssembly.GetType("BMW.Rheingold.CoreFramework.Contracts.IDocumentLocator");
@@ -1234,6 +1245,18 @@ namespace PsdzClient
                     }
 
                     _coreContractsDocumentLocatorType = coreContractsDocumentLocatorType;
+                }
+
+                if (_ecuResultType == null)
+                {
+                    Type ecuResultType = vehicleCommunicationAssembly.GetType("BMW.Rheingold.VehicleCommunication.ECUResult");
+                    if (ecuResultType == null)
+                    {
+                        log.ErrorFormat("ReadServiceModule ECUResult not found");
+                        return null;
+                    }
+
+                    _ecuResultType = ecuResultType;
                 }
 
                 string istaCoreFrameworkFile = Path.Combine(_frameworkPath, "RheingoldISTACoreFramework.dll");
