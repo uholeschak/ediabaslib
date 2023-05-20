@@ -387,6 +387,7 @@
     <Compile Include="Programming\VehicleProfileCriterion.cs" />
     <Compile Include="Programming\VehicleProgrammingEventHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PsdzDatabaseGeneration.cs" />
     <Compile Include="Psdz\CbbTlsConfiguratorServiceClient.cs" />
     <Compile Include="Psdz\CertificateManagementServiceClient.cs" />
     <Compile Include="Psdz\ClientConfigArgs.cs" />
