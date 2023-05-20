@@ -534,7 +534,7 @@ namespace PsdzClient
             }
             else
             {
-                log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix No container setParameter");
+                log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix No out param");
             }
 
             return false;
@@ -645,27 +645,6 @@ namespace PsdzClient
                 }
                 Assembly coreFrameworkAssembly = Assembly.LoadFrom(coreFrameworkFile);
 
-                Type databaseProviderType = coreFrameworkAssembly.GetType("BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseProviderFactory");
-                if (databaseProviderType == null)
-                {
-                    log.ErrorFormat("ReadTestModule GetDatabaseProviderSQLite not found");
-                    return null;
-                }
-
-                MethodInfo methodGetDatabaseProviderSQLite = databaseProviderType.GetMethod("GetDatabaseProviderSQLite", BindingFlags.Public | BindingFlags.Static);
-                if (methodGetDatabaseProviderSQLite == null)
-                {
-                    log.ErrorFormat("ReadTestModule GetDatabaseProviderSQLite not found");
-                    return null;
-                }
-
-                MethodInfo methodGetDatabasePrefix = typeof(PdszDatabase).GetMethod("CallGetDatabaseProviderSQLitePrefix", BindingFlags.NonPublic | BindingFlags.Static);
-                if (methodGetDatabasePrefix == null)
-                {
-                    log.ErrorFormat("ReadTestModule CallGetDatabaseProviderSQLitePrefix not found");
-                    return null;
-                }
-
                 string istaCoreFrameworkFile = Path.Combine(_frameworkPath, "RheingoldISTACoreFramework.dll");
                 if (!File.Exists(istaCoreFrameworkFile))
                 {
@@ -702,8 +681,13 @@ namespace PsdzClient
                     return null;
                 }
 
+                if (!PatchCommonMethods(coreFrameworkAssembly))
+                {
+                    log.ErrorFormat("ReadTestModule PatchCommonMethods failed");
+                    return null;
+                }
+
                 bool patchedModuleRef = false;
-                bool patchedGetDatabase = false;
                 foreach (MethodBase methodBase in _harmony.GetPatchedMethods())
                 {
                     log.InfoFormat("ReadTestModule Patched: {0}", methodBase.Name);
@@ -711,17 +695,6 @@ namespace PsdzClient
                     {
                         patchedModuleRef = true;
                     }
-
-                    if (methodBase == methodGetDatabaseProviderSQLite)
-                    {
-                        patchedGetDatabase = true;
-                    }
-                }
-
-                if (!patchedGetDatabase)
-                {
-                    log.InfoFormat("ReadTestModule Patching: {0}", methodGetDatabaseProviderSQLite.Name);
-                    _harmony.Patch(methodGetDatabaseProviderSQLite, new HarmonyMethod(methodGetDatabasePrefix));
                 }
 
                 Assembly moduleAssembly = Assembly.LoadFrom(moduleFile);
@@ -840,6 +813,57 @@ namespace PsdzClient
                 failure = true;
                 log.ErrorFormat("ReadTestModule Exception: '{0}'", e.Message);
                 return null;
+            }
+        }
+
+        private bool PatchCommonMethods(Assembly coreFrameworkAssembly)
+        {
+            try
+            {
+                Type databaseProviderType = coreFrameworkAssembly.GetType("BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseProviderFactory");
+                if (databaseProviderType == null)
+                {
+                    log.ErrorFormat("PatchCommonMethods GetDatabaseProviderSQLite not found");
+                    return false;
+                }
+
+                MethodInfo methodGetDatabaseProviderSQLite = databaseProviderType.GetMethod("GetDatabaseProviderSQLite", BindingFlags.Public | BindingFlags.Static);
+                if (methodGetDatabaseProviderSQLite == null)
+                {
+                    log.ErrorFormat("PatchCommonMethods GetDatabaseProviderSQLite not found");
+                    return false;
+                }
+
+                MethodInfo methodGetDatabasePrefix = typeof(PdszDatabase).GetMethod("CallGetDatabaseProviderSQLitePrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                if (methodGetDatabasePrefix == null)
+                {
+                    log.ErrorFormat("PatchCommonMethods CallGetDatabaseProviderSQLitePrefix not found");
+                    return false;
+                }
+
+                bool patchedGetDatabase = false;
+                foreach (MethodBase methodBase in _harmony.GetPatchedMethods())
+                {
+                    log.InfoFormat("PatchCommonMethods Patched: {0}", methodBase.Name);
+
+                    if (methodBase == methodGetDatabaseProviderSQLite)
+                    {
+                        patchedGetDatabase = true;
+                    }
+                }
+
+                if (!patchedGetDatabase)
+                {
+                    log.InfoFormat("PatchCommonMethods Patching: {0}", methodGetDatabaseProviderSQLite.Name);
+                    _harmony.Patch(methodGetDatabaseProviderSQLite, new HarmonyMethod(methodGetDatabasePrefix));
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("PatchCommonMethods Exception: '{0}'", e.Message);
+                return false;
             }
         }
 
@@ -1187,27 +1211,6 @@ namespace PsdzClient
                 }
                 Assembly coreFrameworkAssembly = Assembly.LoadFrom(coreFrameworkFile);
 
-                Type databaseProviderType = coreFrameworkAssembly.GetType("BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseProviderFactory");
-                if (databaseProviderType == null)
-                {
-                    log.ErrorFormat("ReadServiceModule GetDatabaseProviderSQLite not found");
-                    return null;
-                }
-
-                MethodInfo methodGetDatabaseProviderSQLite = databaseProviderType.GetMethod("GetDatabaseProviderSQLite", BindingFlags.Public | BindingFlags.Static);
-                if (methodGetDatabaseProviderSQLite == null)
-                {
-                    log.ErrorFormat("ReadServiceModule GetDatabaseProviderSQLite not found");
-                    return null;
-                }
-
-                MethodInfo methodGetDatabasePrefix = typeof(PdszDatabase).GetMethod("CallGetDatabaseProviderSQLitePrefix", BindingFlags.NonPublic | BindingFlags.Static);
-                if (methodGetDatabasePrefix == null)
-                {
-                    log.ErrorFormat("ReadServiceModule CallGetDatabaseProviderSQLitePrefix not found");
-                    return null;
-                }
-
                 string coreContractsFile = Path.Combine(_frameworkPath, "RheingoldCoreContracts.dll");
                 if (!File.Exists(coreContractsFile))
                 {
@@ -1416,13 +1419,18 @@ namespace PsdzClient
                     return null;
                 }
 
+                if (!PatchCommonMethods(coreFrameworkAssembly))
+                {
+                    log.ErrorFormat("ReadServiceModule PatchCommonMethods failed");
+                    return null;
+                }
+
                 bool patchedCreateServiceDialog = false;
                 bool patchedServiceDialogCmdBaseInvoke = false;
                 bool patchedConfigurationContainerDeserialize = false;
                 bool patchedModuleRef = false;
                 bool patchedIndirectDocumentPrefix = false;
                 bool patchedModuleTextPrefix = false;
-                bool patchedGetDatabase = false;
                 foreach (MethodBase methodBase in _harmony.GetPatchedMethods())
                 {
                     log.InfoFormat("ReadServiceModule Patched: {0}", methodBase.Name);
@@ -1455,11 +1463,6 @@ namespace PsdzClient
                     if (methodBase == methodIstaModuleText2)
                     {
                         patchedModuleTextPrefix = true;
-                    }
-
-                    if (methodBase == methodGetDatabaseProviderSQLite)
-                    {
-                        patchedGetDatabase = true;
                     }
                 }
 
@@ -1498,12 +1501,6 @@ namespace PsdzClient
                 {
                     log.InfoFormat("ReadServiceModule Patching: {0}", methodIstaModuleText2.Name);
                     _harmony.Patch(methodIstaModuleText2, new HarmonyMethod(methodModuleTextPrefix2));
-                }
-
-                if (!patchedGetDatabase)
-                {
-                    log.InfoFormat("ReadServiceModule Patching: {0}", methodGetDatabaseProviderSQLite.Name);
-                    _harmony.Patch(methodGetDatabaseProviderSQLite, new HarmonyMethod(methodGetDatabasePrefix));
                 }
 
                 Assembly moduleAssembly = Assembly.LoadFrom(moduleFile);
