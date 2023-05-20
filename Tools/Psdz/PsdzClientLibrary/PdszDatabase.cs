@@ -918,6 +918,7 @@ namespace PsdzClient
                 Identifier = identifier;
                 FlowXml = flowXml;
                 EcuTranslation = ecuTranslation;
+                DiagObjectPath = null;
             }
 
             public enum SwiActionDatabaseLinkType
@@ -993,6 +994,8 @@ namespace PsdzClient
             public string FlowXml { get; set; }
 
             public EcuTranslation EcuTranslation { get; set; }
+
+            public List<SwiDiagObj> DiagObjectPath { get; set; }
 
             public string ModuleName => Identifier.Replace("-", "_");
 
@@ -1103,14 +1106,27 @@ namespace PsdzClient
                     List<SwiInfoObj> completeInfoObjects = new List<SwiInfoObj>();
                     if (InfoObjects != null)
                     {
-                        completeInfoObjects.AddRange(InfoObjects);
+                        foreach (SwiInfoObj infoObject in InfoObjects)
+                        {
+                            infoObject.DiagObjectPath = new List<SwiDiagObj> { this };
+                            completeInfoObjects.Add(infoObject);
+                        }
                     }
 
                     if (Children != null)
                     {
                         foreach (SwiDiagObj swiDiagObj in Children)
                         {
-                            completeInfoObjects.AddRange(swiDiagObj.CompleteInfoObjects);
+                            List<SwiInfoObj> infoObjectChildren = swiDiagObj.CompleteInfoObjects;
+                            foreach (SwiInfoObj infoObject in infoObjectChildren)
+                            {
+                                if (infoObject.DiagObjectPath != null)
+                                {
+                                    infoObject.DiagObjectPath.Insert(0, this);
+                                }
+
+                                completeInfoObjects.Add(infoObject);
+                            }
                         }
                     }
 
@@ -1386,17 +1402,20 @@ namespace PsdzClient
         [XmlType("ServiceModuleData")]
         public class ServiceModuleData
         {
-            public ServiceModuleData() : this(null, null)
+            public ServiceModuleData() : this(null, null, null)
             {
             }
 
-            public ServiceModuleData(string infoObjId, SerializableDictionary<string, ServiceModuleDataItem> dataDict)
+            public ServiceModuleData(string infoObjId, List<string> diagObjIds, SerializableDictionary<string, ServiceModuleDataItem> dataDict)
             {
                 InfoObjId = infoObjId;
+                DiagObjIds = diagObjIds;
                 DataDict = dataDict;
             }
 
             [XmlElement("InfoObjId"), DefaultValue(null)] public string InfoObjId { get; set; }
+
+            [XmlElement("DiagObjIds"), DefaultValue(null)] public List<string> DiagObjIds { get; set; }
 
             [XmlElement("DataDict"), DefaultValue(null)] public SerializableDictionary<string, ServiceModuleDataItem> DataDict { get; set; }
         }
@@ -2454,7 +2473,7 @@ namespace PsdzClient
                 return null;
             }
 
-            log.InfoFormat("GetXmlValuePrimitivesByIdSingle Data: {0}", data);
+            log.InfoFormat("GetXmlValuePrimitivesByIdSingle OK");
             return data;
         }
 
@@ -3867,7 +3886,13 @@ namespace PsdzClient
 
                 log.InfoFormat("ReadServiceModule Finished: {0}", fileName);
 
-                return new ServiceModuleData(swiInfoObj.Id, serviceDialogDict);
+                List<string> diagObjIds = new List<string>();
+                foreach (SwiDiagObj diagObj in swiInfoObj.DiagObjectPath)
+                {
+                    diagObjIds.Add(diagObj.Id);
+                }
+
+                return new ServiceModuleData(swiInfoObj.Id, diagObjIds, serviceDialogDict);
             }
             catch (Exception e)
             {
