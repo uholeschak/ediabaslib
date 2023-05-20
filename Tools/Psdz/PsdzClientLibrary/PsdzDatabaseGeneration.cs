@@ -660,20 +660,6 @@ namespace PsdzClient
                     return null;
                 }
 
-                MethodInfo methodIstaModuleModuleRef = istaModuleType.GetMethod("callModuleRef", BindingFlags.Instance | BindingFlags.NonPublic);
-                if (methodIstaModuleModuleRef == null)
-                {
-                    log.ErrorFormat("ReadTestModule ISTAModule callModuleRef not found");
-                    return null;
-                }
-
-                MethodInfo methodModuleRefPrefix = typeof(PdszDatabase).GetMethod("CallModuleRefPrefix", BindingFlags.NonPublic | BindingFlags.Static);
-                if (methodModuleRefPrefix == null)
-                {
-                    log.ErrorFormat("ReadTestModule CallModuleRefPrefix not found");
-                    return null;
-                }
-
                 MethodInfo methodWriteFaPrefix = typeof(PdszDatabase).GetMethod("CallWriteFaPrefix", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodWriteFaPrefix == null)
                 {
@@ -681,20 +667,10 @@ namespace PsdzClient
                     return null;
                 }
 
-                if (!PatchCommonMethods(coreFrameworkAssembly))
+                if (!PatchCommonMethods(coreFrameworkAssembly, istaModuleType))
                 {
                     log.ErrorFormat("ReadTestModule PatchCommonMethods failed");
                     return null;
-                }
-
-                bool patchedModuleRef = false;
-                foreach (MethodBase methodBase in _harmony.GetPatchedMethods())
-                {
-                    log.InfoFormat("ReadTestModule Patched: {0}", methodBase.Name);
-                    if (methodBase == methodIstaModuleModuleRef)
-                    {
-                        patchedModuleRef = true;
-                    }
                 }
 
                 Assembly moduleAssembly = Assembly.LoadFrom(moduleFile);
@@ -724,12 +700,6 @@ namespace PsdzClient
                 if (moduleParamContainerInst == null)
                 {
                     log.ErrorFormat("ReadTestModule CreateModuleParamContainerInst failed");
-                }
-
-                if (!patchedModuleRef)
-                {
-                    log.InfoFormat("ReadTestModule Patching: {0}", methodIstaModuleModuleRef.Name);
-                    _harmony.Patch(methodIstaModuleModuleRef, new HarmonyMethod(methodModuleRefPrefix));
                 }
 
                 MethodInfo methodeTestModuleStartType = moduleType.GetMethod("Start");
@@ -816,7 +786,7 @@ namespace PsdzClient
             }
         }
 
-        private bool PatchCommonMethods(Assembly coreFrameworkAssembly)
+        private bool PatchCommonMethods(Assembly coreFrameworkAssembly, Type istaModuleType)
         {
             try
             {
@@ -841,7 +811,22 @@ namespace PsdzClient
                     return false;
                 }
 
+                MethodInfo methodIstaModuleModuleRef = istaModuleType.GetMethod("callModuleRef", BindingFlags.Instance | BindingFlags.NonPublic);
+                if (methodIstaModuleModuleRef == null)
+                {
+                    log.ErrorFormat("PatchCommonMethods ISTAModule callModuleRef not found");
+                    return false;
+                }
+
+                MethodInfo methodModuleRefPrefix = typeof(PdszDatabase).GetMethod("CallModuleRefPrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                if (methodModuleRefPrefix == null)
+                {
+                    log.ErrorFormat("PatchCommonMethods CallModuleRefPrefix not found");
+                    return false;
+                }
+
                 bool patchedGetDatabase = false;
+                bool patchedModuleRef = false;
                 foreach (MethodBase methodBase in _harmony.GetPatchedMethods())
                 {
                     log.InfoFormat("PatchCommonMethods Patched: {0}", methodBase.Name);
@@ -850,12 +835,23 @@ namespace PsdzClient
                     {
                         patchedGetDatabase = true;
                     }
+
+                    if (methodBase == methodIstaModuleModuleRef)
+                    {
+                        patchedModuleRef = true;
+                    }
                 }
 
                 if (!patchedGetDatabase)
                 {
                     log.InfoFormat("PatchCommonMethods Patching: {0}", methodGetDatabaseProviderSQLite.Name);
                     _harmony.Patch(methodGetDatabaseProviderSQLite, new HarmonyMethod(methodGetDatabasePrefix));
+                }
+
+                if (!patchedModuleRef)
+                {
+                    log.InfoFormat("ReadTestModule Patching: {0}", methodIstaModuleModuleRef.Name);
+                    _harmony.Patch(methodIstaModuleModuleRef, new HarmonyMethod(methodModuleRefPrefix));
                 }
 
                 return true;
@@ -1366,20 +1362,6 @@ namespace PsdzClient
                     return null;
                 }
 
-                MethodInfo methodIstaModuleModuleRef = istaModuleType.GetMethod("callModuleRef", BindingFlags.Instance | BindingFlags.NonPublic);
-                if (methodIstaModuleModuleRef == null)
-                {
-                    log.ErrorFormat("ReadTestModule ISTAModule callModuleRef not found");
-                    return null;
-                }
-
-                MethodInfo methodModuleRefPrefix = typeof(PdszDatabase).GetMethod("CallModuleRefPrefix", BindingFlags.NonPublic | BindingFlags.Static);
-                if (methodModuleRefPrefix == null)
-                {
-                    log.ErrorFormat("ReadTestModule CallModuleRefPrefix not found");
-                    return null;
-                }
-
                 // __IndirectDocument with 2 arguments calls __IndirectDocument with 3 arguments
                 MethodInfo methodIstaModuleIndirectDocument3 = istaModuleType.GetMethod("__IndirectDocument", BindingFlags.Instance | BindingFlags.NonPublic,
                     null, new Type[] { typeof(string), typeof(string), typeof(string) }, null);
@@ -1419,7 +1401,7 @@ namespace PsdzClient
                     return null;
                 }
 
-                if (!PatchCommonMethods(coreFrameworkAssembly))
+                if (!PatchCommonMethods(coreFrameworkAssembly, istaModuleType))
                 {
                     log.ErrorFormat("ReadServiceModule PatchCommonMethods failed");
                     return null;
@@ -1428,7 +1410,6 @@ namespace PsdzClient
                 bool patchedCreateServiceDialog = false;
                 bool patchedServiceDialogCmdBaseInvoke = false;
                 bool patchedConfigurationContainerDeserialize = false;
-                bool patchedModuleRef = false;
                 bool patchedIndirectDocumentPrefix = false;
                 bool patchedModuleTextPrefix = false;
                 foreach (MethodBase methodBase in _harmony.GetPatchedMethods())
@@ -1448,11 +1429,6 @@ namespace PsdzClient
                     if (methodBase == methodConfigurationContainerDeserialize)
                     {
                         patchedConfigurationContainerDeserialize = true;
-                    }
-
-                    if (methodBase == methodIstaModuleModuleRef)
-                    {
-                        patchedModuleRef = true;
                     }
 
                     if (methodBase == methodIstaModuleIndirectDocument3)
@@ -1483,12 +1459,6 @@ namespace PsdzClient
                     log.InfoFormat("ConfigurationContainer Patching: {0}", methodConfigurationContainerDeserializePrefix.Name);
                     _harmony.Patch(methodConfigurationContainerDeserialize,
                         new HarmonyMethod(methodConfigurationContainerDeserializePrefix), new HarmonyMethod(methodConfigurationContainerDeserializePostfix));
-                }
-
-                if (!patchedModuleRef)
-                {
-                    log.InfoFormat("ReadServiceModule Patching: {0}", methodIstaModuleModuleRef.Name);
-                    _harmony.Patch(methodIstaModuleModuleRef, new HarmonyMethod(methodModuleRefPrefix));
                 }
 
                 if (!patchedIndirectDocumentPrefix)
