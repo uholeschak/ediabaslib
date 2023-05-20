@@ -2425,7 +2425,7 @@ namespace PsdzClient
                 data = string.Empty;
             }
 
-            log.InfoFormat("GetXmlValuePrimitivesById Data: {0}", data);
+            log.InfoFormat("GetXmlValuePrimitivesById OK");
             return data;
         }
 
