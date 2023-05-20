@@ -520,6 +520,15 @@ namespace PsdzClient
                     object ediabasAdapterDeviceResult = _istaEdiabasAdapterDeviceResultConstructor.Invoke(null);
                     if (ediabasAdapterDeviceResult != null)
                     {
+                        PropertyInfo propertyEcuJob = ediabasAdapterDeviceResult.GetType().GetProperty("ECUJob");
+                        if (propertyEcuJob != null)
+                        {
+                            dynamic ecuJob = propertyEcuJob.GetValue(ediabasAdapterDeviceResult);
+                            if (ecuJob != null)
+                            {
+                                ecuJob.JobResult = null;
+                            }
+                        }
                         outParmDyn.setParameter("/WurzelOut/DSCResult", ediabasAdapterDeviceResult);
                     }
                     else
