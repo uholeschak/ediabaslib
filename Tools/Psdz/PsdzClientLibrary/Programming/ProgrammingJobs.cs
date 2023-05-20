@@ -405,8 +405,6 @@ namespace PsdzClient.Programming
                         }
                     };
 
-                    int failCountService = -1;
-                    bool resultService = true;
                     if (ProgrammingService.PdszDatabase.IsExecutable())
                     {
                         if (!ProgrammingService.PdszDatabase.SaveVehicleSeriesInfo(ClientContext))
@@ -425,7 +423,8 @@ namespace PsdzClient.Programming
                             return false;
                         }
 
-                        resultService = ProgrammingService.PdszDatabase.GenerateServiceModuleData((startConvert, progress, failures) =>
+                        int failCountService = -1;
+                        bool resultService = ProgrammingService.PdszDatabase.GenerateServiceModuleData((startConvert, progress, failures) =>
                         {
                             if (startConvert)
                             {
@@ -449,7 +448,24 @@ namespace PsdzClient.Programming
                         if (!resultService)
                         {
                             log.ErrorFormat("GenerateServiceModuleData failed");
+                            sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
+                            UpdateStatus(sbResult.ToString());
+                            return false;
                         }
+
+                        if (failCountService >= 0)
+                        {
+                            log.InfoFormat("Test module generation failures: {0}", failCountService);
+                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleFailures, failCountService));
+                            UpdateStatus(sbResult.ToString());
+                        }
+                    }
+
+                    if (PdszDatabase.RestartRequired)
+                    {
+                        sbResult.AppendLine(Strings.AppRestartRequired);
+                        UpdateStatus(sbResult.ToString());
+                        return false;
                     }
 #if false
                     List<PdszDatabase.SwiDiagObj> diagObjsNodeClass = ProgrammingService.PdszDatabase.GetInfoObjectsTreeForNodeclassName(
@@ -499,14 +515,14 @@ namespace PsdzClient.Programming
 
                     ProgressEvent?.Invoke(0, true);
 
-                    if (failCountTest + failCountService >= 0)
+                    if (failCountTest > 0)
                     {
-                        log.InfoFormat("Test module generation failures: {0}, {1}", failCountTest, failCountService);
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleFailures, failCountTest + failCountService));
+                        log.InfoFormat("Test module generation failures: {0}", failCountTest);
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleFailures, failCountTest));
                         UpdateStatus(sbResult.ToString());
                     }
 
-                    if (!resultTest || !resultService || !resultEcuCharacteristics)
+                    if (!resultTest || !resultEcuCharacteristics)
                     {
                         if (!ProgrammingService.PdszDatabase.IsExecutable())
                         {
