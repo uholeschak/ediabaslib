@@ -385,34 +385,37 @@ namespace PsdzClient
                 log.ErrorFormat("CreateServiceDialogPrefix No service dialog construtor");
             }
 
-            if (_serviceDialogDict == null)
+            lock (_moduleThreadLock)
             {
-                _serviceDialogDict = new SerializableDictionary<string, ServiceModuleDataItem>();
-            }
-
-            if (string.IsNullOrWhiteSpace(configurationContainerXml))
-            {
-                log.InfoFormat("CreateServiceDialogPrefix No container XML");
-            }
-
-            _serviceDialogDict.TryGetValue(key, out ServiceModuleDataItem serviceModuleDataItem);
-            if (serviceModuleDataItem == null)
-            {
-                log.InfoFormat("CreateServiceDialogPrefix Adding Key: {0}", key);
-                serviceModuleDataItem = new ServiceModuleDataItem(methodName, elementNoString, controlIdString, serviceDialogConfigName, configurationContainerXml);
-                if (runOverridesDict.Count > 0)
+                if (_serviceDialogDict == null)
                 {
-                    serviceModuleDataItem.RunOverrides = runOverridesDict;
+                    _serviceDialogDict = new SerializableDictionary<string, ServiceModuleDataItem>();
                 }
-                _serviceDialogDict.Add(key, serviceModuleDataItem);
-                //log.Info(configurationContainerXml);
-            }
-            else
-            {
-                log.InfoFormat("CreateServiceDialogPrefix Key present: {0}", key);
-            }
 
-            serviceModuleDataItem.ServiceDialogs.Add(serviceDialog);
+                if (string.IsNullOrWhiteSpace(configurationContainerXml))
+                {
+                    log.InfoFormat("CreateServiceDialogPrefix No container XML");
+                }
+
+                _serviceDialogDict.TryGetValue(key, out ServiceModuleDataItem serviceModuleDataItem);
+                if (serviceModuleDataItem == null)
+                {
+                    log.InfoFormat("CreateServiceDialogPrefix Adding Key: {0}", key);
+                    serviceModuleDataItem = new ServiceModuleDataItem(methodName, elementNoString, controlIdString, serviceDialogConfigName, configurationContainerXml);
+                    if (runOverridesDict.Count > 0)
+                    {
+                        serviceModuleDataItem.RunOverrides = runOverridesDict;
+                    }
+                    _serviceDialogDict.Add(key, serviceModuleDataItem);
+                    //log.Info(configurationContainerXml);
+                }
+                else
+                {
+                    log.InfoFormat("CreateServiceDialogPrefix Key present: {0}", key);
+                }
+
+                serviceModuleDataItem.ServiceDialogs.Add(serviceDialog);
+            }
 
             lock (_moduleThreadLock)
             {
@@ -497,12 +500,36 @@ namespace PsdzClient
                 }
                 catch (Exception e)
                 {
-                    log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix SetParameter Exception: '{0}'", e.Message);
+                    log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix GetParameter txtParam Exception: '{0}'", e.Message);
                 }
             }
             else
             {
-                log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix No container setParameter");
+                log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix No inParam");
+            }
+
+            dynamic inoutParamDyn =  inoutParam;
+            if (inoutParamDyn != null)
+            {
+                try
+                {
+                    string[] istaSysVar = new string[20];
+                    istaSysVar[0] = "DE"; // country
+                    istaSysVar[1] = DateTime.Now.ToString("dd.MM.yyyy");
+                    istaSysVar[2] = DateTime.Now.ToString("HH:mm:ss");
+                    inoutParamDyn.setParameter("ISTA_Systemvariable", istaSysVar);
+
+                    string[] specialFeatures = new[] { "606", "609", "6UM", "6UN", "6UP" };
+                    inoutParamDyn.setParameter("Sonderausstattungen", specialFeatures);
+                }
+                catch (Exception e)
+                {
+                    log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix SetParameter ISTA_Systemvariable Exception: '{0}'", e.Message);
+                }
+            }
+            else
+            {
+                log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix No inoutParam");
             }
 
             lock (_moduleThreadLock)
@@ -1644,7 +1671,10 @@ namespace PsdzClient
                     object testModule = Activator.CreateInstance(moduleType, moduleParamContainerInst);
                     log.InfoFormat("ReadTestModule Module loaded: {0}, Type: {1}", fileName, moduleType.FullName);
 
-                    _serviceDialogDict = null;
+                    lock (_moduleThreadLock)
+                    {
+                        _serviceDialogDict = null;
+                    }
                     foreach (MethodInfo simpleMethod in simpleMethods)
                     {
                         Thread moduleThread = new Thread(() =>
