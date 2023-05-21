@@ -275,6 +275,34 @@ namespace CarSimulator
                             return true;
                         }
                     }
+                    else
+                    {
+                        WlanProfileInfo[] wlanProfiles = wlanIface.GetProfiles();
+                        if (wlanProfiles != null)
+                        {
+                            foreach (WlanProfileInfo wlanProfile in wlanProfiles)
+                            {
+                                string profileName = wlanProfile.profileName;
+                                // ReSharper disable once ReplaceWithSingleAssignment.False
+                                bool deleteProfile = false;
+                                if (string.Compare(profileName, AdapterSsidElm1, StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    deleteProfile = true;
+                                }
+
+                                if (string.Compare(profileName, AdapterSsidElm2, StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    deleteProfile = true;
+                                }
+
+                                if (deleteProfile)
+                                {
+                                    wlanIface.DeleteProfile(profileName);
+                                }
+                            }
+                        }
+
+                    }
                 }
             }
             catch (Exception)
