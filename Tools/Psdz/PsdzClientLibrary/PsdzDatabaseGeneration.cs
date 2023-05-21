@@ -188,6 +188,7 @@ namespace PsdzClient
         private static HashSet<string> _serviceDialogTextHashes;
         private static ConstructorInfo _istaServiceDialogDlgCmdBaseConstructor;
         private static ConstructorInfo _istaEdiabasAdapterDeviceResultConstructor;
+        private static ConstructorInfo _vehicleEcuResultConstructor;
         private static Type _istaServiceDialogFactoryType;
         private static Type _istaServiceDialogConfigurationType;
         private static Type _coreContractsDocumentLocatorType;
@@ -528,7 +529,14 @@ namespace PsdzClient
                             if (ecuJob != null)
                             {
                                 Type listType = typeof(List<>).MakeGenericType(new[] { _ecuResultType });
-                                object ecuResultList = Activator.CreateInstance(listType);
+                                dynamic ecuResultList = Activator.CreateInstance(listType);
+                                if (ecuResultList != null)
+                                {
+                                    dynamic ecuResult = _vehicleEcuResultConstructor.Invoke(null);
+                                    ecuResult.Name = "/Result/Status/VARIANTE";
+                                    ecuResult.Value = "[VARIANTE]";
+                                    ecuResultList.Add(ecuResult);
+                                }
                                 ecuJob.JobResult = ecuResultList;
                             }
                         }
@@ -1247,7 +1255,7 @@ namespace PsdzClient
                     _coreContractsDocumentLocatorType = coreContractsDocumentLocatorType;
                 }
 
-                if (_ecuResultType == null)
+                if (_vehicleEcuResultConstructor == null)
                 {
                     Type ecuResultType = vehicleCommunicationAssembly.GetType("BMW.Rheingold.VehicleCommunication.ECUResult");
                     if (ecuResultType == null)
@@ -1257,6 +1265,14 @@ namespace PsdzClient
                     }
 
                     _ecuResultType = ecuResultType;
+                    ConstructorInfo vehicleEcuResultConstructor = ecuResultType.GetConstructor(Type.EmptyTypes);
+                    if (vehicleEcuResultConstructor == null)
+                    {
+                        log.ErrorFormat("ReadServiceModule ECUResult constructor not found");
+                        return null;
+                    }
+
+                    _vehicleEcuResultConstructor = vehicleEcuResultConstructor;
                 }
 
                 string istaCoreFrameworkFile = Path.Combine(_frameworkPath, "RheingoldISTACoreFramework.dll");
