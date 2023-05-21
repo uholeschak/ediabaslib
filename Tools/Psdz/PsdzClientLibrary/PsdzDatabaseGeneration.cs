@@ -184,6 +184,7 @@ namespace PsdzClient
         private static string _moduleRefPath;
         private static SerializableDictionary<string, List<string>> _moduleRefDict;
         private static SerializableDictionary<string, ServiceModuleDataItem> _serviceDialogDict;
+        private static object _moduleThreadLock = new object();
         private static Dictionary<string, int> _serviceDialogCallsDict;
         private static HashSet<string> _serviceDialogTextHashes;
         private static ConstructorInfo _istaServiceDialogDlgCmdBaseConstructor;
@@ -219,12 +220,15 @@ namespace PsdzClient
                         else
                         {
                             log.InfoFormat("CallModuleRefPrefix Parameter Dict items: {0}", paramDictionary.Count);
-                            _moduleRefDict = new SerializableDictionary<string, List<string>>();
-                            foreach (KeyValuePair<string, object> keyValuePair in paramDictionary)
+                            lock (_moduleThreadLock)
                             {
-                                if (keyValuePair.Value is List<string> elements)
+                                _moduleRefDict = new SerializableDictionary<string, List<string>>();
+                                foreach (KeyValuePair<string, object> keyValuePair in paramDictionary)
                                 {
-                                    _moduleRefDict.Add(keyValuePair.Key, elements);
+                                    if (keyValuePair.Value is List<string> elements)
+                                    {
+                                        _moduleRefDict.Add(keyValuePair.Key, elements);
+                                    }
                                 }
                             }
                         }
@@ -410,25 +414,28 @@ namespace PsdzClient
 
             serviceModuleDataItem.ServiceDialogs.Add(serviceDialog);
 
-            if (_serviceDialogCallsDict == null)
+            lock (_moduleThreadLock)
             {
-                _serviceDialogCallsDict = new Dictionary<string, int>();
-            }
+                if (_serviceDialogCallsDict == null)
+                {
+                    _serviceDialogCallsDict = new Dictionary<string, int>();
+                }
 
-            if (!_serviceDialogCallsDict.ContainsKey(key))
-            {
-                _serviceDialogCallsDict.Add(key, 1);
-            }
-            else
-            {
-                _serviceDialogCallsDict[key]++;
-            }
+                if (!_serviceDialogCallsDict.ContainsKey(key))
+                {
+                    _serviceDialogCallsDict.Add(key, 1);
+                }
+                else
+                {
+                    _serviceDialogCallsDict[key]++;
+                }
 
-            int calls = _serviceDialogCallsDict[key];
-            log.InfoFormat("CreateServiceDialogPrefix Calls: {0}", calls);
-            if (calls > 2)
-            {
-                Thread.CurrentThread.Abort();
+                int calls = _serviceDialogCallsDict[key];
+                log.InfoFormat("CreateServiceDialogPrefix Calls: {0}", calls);
+                if (calls > 2)
+                {
+                    Thread.CurrentThread.Abort();
+                }
             }
 
             __result = serviceDialog;
@@ -498,18 +505,21 @@ namespace PsdzClient
                 log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix No container setParameter");
             }
 
-            if (serviceModuleDataItem != null && _serviceDialogTextHashes != null)
+            lock (_moduleThreadLock)
             {
-                foreach (string textId in _serviceDialogTextHashes)
+                if (serviceModuleDataItem != null && _serviceDialogTextHashes != null)
                 {
-                    log.InfoFormat("ServiceDialogCmdBaseInvokePrefix Text ID: {0}", textId);
-                    if (!serviceModuleDataItem.TextIds.ContainsKey(textId))
+                    foreach (string textId in _serviceDialogTextHashes)
                     {
-                        serviceModuleDataItem.TextIds.Add(textId, string.Empty);
+                        log.InfoFormat("ServiceDialogCmdBaseInvokePrefix Text ID: {0}", textId);
+                        if (!serviceModuleDataItem.TextIds.ContainsKey(textId))
+                        {
+                            serviceModuleDataItem.TextIds.Add(textId, string.Empty);
+                        }
                     }
-                }
 
-                _serviceDialogTextHashes = null;
+                    _serviceDialogTextHashes = null;
+                }
             }
 
             dynamic outParmDyn = outParam;
@@ -533,14 +543,24 @@ namespace PsdzClient
                                 if (ecuResultList != null)
                                 {
                                     dynamic ecuResultVariant = _vehicleEcuResultConstructor.Invoke(null);
-                                    ecuResultVariant.Name = "/Result/Status/VARIANTE";
+                                    ecuResultVariant.Name = "VARIANTE";
                                     ecuResultVariant.Value = "[VARIANTE]";
                                     ecuResultList.Add(ecuResultVariant);
 
-                                    dynamic ecuResultJobStatus = _vehicleEcuResultConstructor.Invoke(null);
-                                    ecuResultVariant.Name = "/Result/Status/JOB_STATUS";
-                                    ecuResultVariant.Value = "OKAY";
-                                    ecuResultList.Add(ecuResultJobStatus);
+                                    dynamic ecuResultJobStatus1 = _vehicleEcuResultConstructor.Invoke(null);
+                                    ecuResultJobStatus1.Name = "JOBSTATUS";
+                                    ecuResultJobStatus1.Value = "OKAY";
+                                    ecuResultList.Add(ecuResultJobStatus1);
+
+                                    dynamic ecuResultJobStatus2 = _vehicleEcuResultConstructor.Invoke(null);
+                                    ecuResultJobStatus2.Name = "JOB_STATUS";
+                                    ecuResultJobStatus2.Value = "OKAY";
+                                    ecuResultList.Add(ecuResultJobStatus2);
+
+                                    dynamic ecuResultJobSets = _vehicleEcuResultConstructor.Invoke(null);
+                                    ecuResultJobSets.Name = "SAETZE";
+                                    ecuResultJobSets.Value = (ushort)1;
+                                    ecuResultList.Add(ecuResultJobSets);
                                 }
                                 ecuJob.JobResult = ecuResultList;
                             }
@@ -615,12 +635,16 @@ namespace PsdzClient
         {
             log.InfoFormat("ModuleTextPrefix2 Value: {0}", value ?? string.Empty);
 
-            if (_serviceDialogTextHashes == null)
+            lock (_moduleThreadLock)
             {
-                _serviceDialogTextHashes = new HashSet<string>();
+                if (_serviceDialogTextHashes == null)
+                {
+                    _serviceDialogTextHashes = new HashSet<string>();
+                }
+
+                _serviceDialogTextHashes.Add(value);
             }
 
-            _serviceDialogTextHashes.Add(value);
             __result = null;
             return true;
         }
@@ -1627,10 +1651,13 @@ namespace PsdzClient
                         {
                             try
                             {
-                                _serviceDialogCallsDict = null;
-                                _serviceDialogTextHashes = null;
-                                _moduleRefPath = null;
-                                _moduleRefDict = null;
+                                lock (_moduleThreadLock)
+                                {
+                                    _serviceDialogCallsDict = null;
+                                    _serviceDialogTextHashes = null;
+                                    _moduleRefPath = null;
+                                    _moduleRefDict = null;
+                                }
                                 simpleMethod.Invoke(testModule, null);
                                 log.InfoFormat("ReadServiceModule Method executed: {0}", simpleMethod.Name);
                             }
@@ -1651,10 +1678,14 @@ namespace PsdzClient
                 }
 
                 SerializableDictionary<string, ServiceModuleDataItem> serviceDialogDict = _serviceDialogDict;
-                _serviceDialogDict = null;
-                _serviceDialogCallsDict = null;
-                _serviceDialogTextHashes = null;
-                _moduleRefDict = null;
+                lock (_moduleThreadLock)
+                {
+                    _serviceDialogDict = null;
+                    _serviceDialogCallsDict = null;
+                    _serviceDialogTextHashes = null;
+                    _moduleRefDict = null;
+                }
+
                 if (serviceDialogDict == null || serviceDialogDict.Count == 0)
                 {
                     log.ErrorFormat("ReadServiceModule No data for: {0}", fileName);
