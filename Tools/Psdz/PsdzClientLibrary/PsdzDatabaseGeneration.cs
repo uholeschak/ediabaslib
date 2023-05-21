@@ -532,10 +532,15 @@ namespace PsdzClient
                                 dynamic ecuResultList = Activator.CreateInstance(listType);
                                 if (ecuResultList != null)
                                 {
-                                    dynamic ecuResult = _vehicleEcuResultConstructor.Invoke(null);
-                                    ecuResult.Name = "/Result/Status/VARIANTE";
-                                    ecuResult.Value = "[VARIANTE]";
-                                    ecuResultList.Add(ecuResult);
+                                    dynamic ecuResultVariant = _vehicleEcuResultConstructor.Invoke(null);
+                                    ecuResultVariant.Name = "/Result/Status/VARIANTE";
+                                    ecuResultVariant.Value = "[VARIANTE]";
+                                    ecuResultList.Add(ecuResultVariant);
+
+                                    dynamic ecuResultJobStatus = _vehicleEcuResultConstructor.Invoke(null);
+                                    ecuResultVariant.Name = "/Result/Status/JOB_STATUS";
+                                    ecuResultVariant.Value = "OKAY";
+                                    ecuResultList.Add(ecuResultJobStatus);
                                 }
                                 ecuJob.JobResult = ecuResultList;
                             }
