@@ -983,7 +983,7 @@ namespace PsdzClient
                     log.ErrorFormat("CreateModuleParamContainerInst Logic not found");
                     return null;
                 }
-                object logicInst = Activator.CreateInstance(logicType);
+                dynamic logicInst = Activator.CreateInstance(logicType);
 
                 Type vehicleType = coreFrameworkAssembly.GetType("BMW.Rheingold.CoreFramework.DatabaseProvider.Vehicle");
                 if (vehicleType == null)
@@ -991,7 +991,8 @@ namespace PsdzClient
                     log.ErrorFormat("CreateModuleParamContainerInst Vehicle not found");
                     return null;
                 }
-                object vehicleInst = Activator.CreateInstance(vehicleType);
+                dynamic vehicleInst = Activator.CreateInstance(vehicleType);
+                logicInst.VecInfo = vehicleInst;
 
                 MethodInfo methodContainerSetParameter = moduleParamContainerType.GetMethod("setParameter");
                 if (methodContainerSetParameter == null)
