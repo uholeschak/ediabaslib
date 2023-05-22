@@ -435,7 +435,7 @@ namespace PsdzClient
 
                 int calls = _serviceDialogCallsDict[key];
                 log.InfoFormat("CreateServiceDialogPrefix Calls: {0}", calls);
-                if (calls > 2)
+                if (calls > 10)
                 {
                     Thread.CurrentThread.Abort();
                 }
@@ -593,6 +593,7 @@ namespace PsdzClient
                             }
                         }
                         outParmDyn.setParameter("/WurzelOut/DSCResult", ediabasAdapterDeviceResult);
+                        outParmDyn.setParameter("Result", 1);
                     }
                     else
                     {
