@@ -607,6 +607,11 @@ namespace PsdzClient
                         {
                             outParmDyn.setParameter("Result", 1);
                         }
+
+                        if (dialogName == "DatumeingabeDlg")
+                        {
+                            outParmDyn.setParameter("Datum", DateTime.Now);
+                        }
                     }
                     else
                     {
