@@ -612,6 +612,33 @@ namespace PsdzClient
                         {
                             outParmDyn.setParameter("Datum", DateTime.Now);
                         }
+
+                        if (dialogName == "Identifikationstyp")
+                        {
+                            outParmDyn.setParameter("Typ", 1);
+                        }
+
+                        if (dialogName == "SYS_VAR_ISTA")
+                        {
+                            outParmDyn.setParameter("PLandTester", "DE");
+                        }
+
+                        if (dialogName == "ISTA_Kontext_FZG_Daten")
+                        {
+                            outParmDyn.setParameter("Produktionsdatum_Jahr", 2000);
+                            outParmDyn.setParameter("Produktionsdatum_Monat", 01);
+                        }
+
+                        if (dialogName == "ISTA_Zeit")
+                        {
+                            outParmDyn.setParameter("Datum_Jahr", 2000);
+                            outParmDyn.setParameter("Datum_Monat", 01);
+                        }
+
+                        if (dialogName == "ISTA_Kontext_FZG_Daten")
+                        {
+                            outParmDyn.setParameter("IStufeHO_JJMMIII", 2001345);
+                        }
                     }
                     else
                     {
