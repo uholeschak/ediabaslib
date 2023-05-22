@@ -463,9 +463,14 @@ namespace PsdzClient
                 }
             }
 
+            string dialogName = string.Empty;
             if (serviceModuleDataItem == null)
             {
                 log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix, Service module data not found");
+            }
+            else
+            {
+                dialogName = serviceModuleDataItem.ServiceDialogName ?? string.Empty;
             }
 
             dynamic inParamDyn = inParam;
@@ -593,7 +598,15 @@ namespace PsdzClient
                             }
                         }
                         outParmDyn.setParameter("/WurzelOut/DSCResult", ediabasAdapterDeviceResult);
-                        outParmDyn.setParameter("Result", 1);
+
+                        if (dialogName == "EnterServiceDlg")
+                        {
+                            outParmDyn.setParameter("Result", "1");
+                        }
+                        else
+                        {
+                            outParmDyn.setParameter("Result", 1);
+                        }
                     }
                     else
                     {
