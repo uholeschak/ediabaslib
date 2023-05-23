@@ -724,7 +724,7 @@ namespace PsdzClient
 
         private static bool GetIstaResultAsTypePrefix(object __instance, ref object __result, string resultName, Type targetType)
         {
-            log.InfoFormat("GetIstaResultAsTypePrefix Value: {0}, Type: {1}", resultName ?? string.Empty, targetType);
+            log.InfoFormat("GetIstaResultAsTypePrefix Value: '{0}', Type: {1}", resultName ?? string.Empty, targetType);
 
             __result = null;
             return true;
@@ -732,11 +732,8 @@ namespace PsdzClient
 
         private static void GetIstaResultAsTypePostfix(object __instance, ref object __result, string resultName, Type targetType)
         {
-            log.InfoFormat("GetIstaResultAsTypePostfix Value: {0}, Type: {1}", resultName ?? string.Empty, targetType);
-            if (__result != null)
-            {
-                log.InfoFormat("GetIstaResultAsTypePostfix Data: '{0}', Type: {1}", __result, __result.GetType());
-            }
+            string resultData = __result != null ? __result.ToString() : string.Empty;
+            log.InfoFormat("GetIstaResultAsTypePostfix Data: '{0}', Value: '{1}', Type: {2}", resultData, resultName ?? string.Empty, targetType);
         }
 
         public TestModuleData GetTestModuleData(string moduleName)
