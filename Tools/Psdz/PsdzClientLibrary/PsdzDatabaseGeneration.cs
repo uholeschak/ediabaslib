@@ -110,6 +110,50 @@ namespace PsdzClient
             [XmlElement("DataDict"), DefaultValue(null)] public SerializableDictionary<string, ServiceModuleDataItem> DataDict { get; set; }
         }
 
+        [XmlType("ServiceModuleResultItem")]
+        public class ServiceModuleResultItem
+        {
+            public ServiceModuleResultItem() : this(null, null, null)
+            {
+            }
+
+            public ServiceModuleResultItem(string dataName, string data, string dataType)
+            {
+                DataName = dataName;
+                Data = data;
+                DataType = dataType;
+            }
+
+            [XmlElement("DataName"), DefaultValue(null)] public string DataName { get; set; }
+
+            [XmlElement("Data"), DefaultValue(null)] public string Data { get; set; }
+
+            [XmlElement("DataType"), DefaultValue(null)] public string DataType { get; set; }
+        }
+
+        [XmlInclude(typeof(ServiceModuleResultItem))]
+        [XmlType("ServiceModuleInvokeItem")]
+        public class ServiceModuleInvokeItem
+        {
+            public ServiceModuleInvokeItem() : this(null, null)
+            {
+            }
+
+            public ServiceModuleInvokeItem(string method, object dscResult)
+            {
+                Method = method;
+                DscResult = dscResult;
+                ResultItems = new List<ServiceModuleResultItem>();
+            }
+
+            [XmlElement("Method"), DefaultValue(null)] public string Method { get; set; }
+
+            [XmlElement("ResultItems"), DefaultValue(null)] public List<ServiceModuleResultItem> ResultItems { get; set; }
+
+            [XmlIgnore, DefaultValue(null)] public object DscResult { get; set; }
+        }
+
+        [XmlInclude(typeof(ServiceModuleInvokeItem))]
         [XmlType("ServiceModuleDataItem")]
         public class ServiceModuleDataItem
         {
@@ -126,6 +170,8 @@ namespace PsdzClient
                 RunOverrides = runOverrides;
                 EdiabasJobBare = null;
                 EdiabasJobOverride = null;
+                TextItems = null;
+                InvokeItems = new List<ServiceModuleInvokeItem>();
                 ContainerXml = containerXml;
                 ServiceDialogs = new HashSet<object>();
                 TextIds = new SerializableDictionary<string, string>();
@@ -146,6 +192,8 @@ namespace PsdzClient
             [XmlElement("EdiabasJobOverride"), DefaultValue(null)] public string EdiabasJobOverride { get; set; }
 
             [XmlElement("TextItems"), DefaultValue(null)] public SerializableDictionary<string, string> TextItems { get; set; }
+
+            [XmlElement("InvokeItems"), DefaultValue(null)] public List<ServiceModuleInvokeItem> InvokeItems { get; set; }
 
             [XmlIgnore, DefaultValue(null)] public string ContainerXml { get; set; }
 
@@ -639,6 +687,14 @@ namespace PsdzClient
                         {
                             outParmDyn.setParameter("IStufeHO_JJMMIII", 2001345);
                         }
+
+                        lock (_moduleThreadLock)
+                        {
+                            if (serviceModuleDataItem != null)
+                            {
+                                serviceModuleDataItem.InvokeItems.Add(new ServiceModuleInvokeItem(method, ediabasAdapterDeviceResult));
+                            }
+                        }
                     }
                     else
                     {
@@ -734,6 +790,31 @@ namespace PsdzClient
         {
             string resultData = __result != null ? __result.ToString() : string.Empty;
             log.InfoFormat("GetIstaResultAsTypePostfix Data: '{0}', Value: '{1}', Type: {2}", resultData, resultName ?? string.Empty, targetType);
+
+            ServiceModuleInvokeItem serviceModuleInvokeItem = null;
+            if (__instance != null && _serviceDialogDict != null)
+            {
+                foreach (KeyValuePair<string, ServiceModuleDataItem> serviceKeyValuePair in _serviceDialogDict)
+                {
+                    foreach (ServiceModuleInvokeItem invokeItem in serviceKeyValuePair.Value.InvokeItems)
+                    {
+                        if (invokeItem.DscResult == __instance)
+                        {
+                            serviceModuleInvokeItem = invokeItem;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (serviceModuleInvokeItem != null)
+            {
+                serviceModuleInvokeItem.ResultItems.Add(new ServiceModuleResultItem(resultName, resultData, targetType.ToString()));
+            }
+            else
+            {
+                log.InfoFormat("GetIstaResultAsTypePostfix ReslutItem not found, Value: '{0}' ", resultName ?? string.Empty);
+            }
         }
 
         public TestModuleData GetTestModuleData(string moduleName)
