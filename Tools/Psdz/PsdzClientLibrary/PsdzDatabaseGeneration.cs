@@ -1487,15 +1487,22 @@ namespace PsdzClient
                     _istaServiceDialogDlgCmdBaseConstructor = istaServiceDialogDlgCmdBaseConstructor;
                 }
 
+                Type istaEdiabasAdapterDeviceResultType = istaCoreFrameworkAssembly.GetType("BMW.Rheingold.ISTA.CoreFramework.EDIABASAdapterDeviceResult");
+                if (istaEdiabasAdapterDeviceResultType == null)
+                {
+                    log.ErrorFormat("ReadServiceModule EDIABASAdapterDeviceResult not found");
+                    return null;
+                }
+
+                MethodInfo methodIstaResultAsType = istaEdiabasAdapterDeviceResultType.GetMethod("getISTAResultAsType", BindingFlags.Instance | BindingFlags.Public);
+                if (methodIstaResultAsType == null)
+                {
+                    log.ErrorFormat("ReadServiceModule getISTAResultAsType not found");
+                    return null;
+                }
+
                 if (_istaEdiabasAdapterDeviceResultConstructor == null)
                 {
-                    Type istaEdiabasAdapterDeviceResultType = istaCoreFrameworkAssembly.GetType("BMW.Rheingold.ISTA.CoreFramework.EDIABASAdapterDeviceResult");
-                    if (istaEdiabasAdapterDeviceResultType == null)
-                    {
-                        log.ErrorFormat("ReadServiceModule EDIABASAdapterDeviceResult not found");
-                        return null;
-                    }
-
                     ConstructorInfo istaEdiabasAdapterDeviceResultConstructor = istaEdiabasAdapterDeviceResultType.GetConstructor(Type.EmptyTypes);
                     if (istaEdiabasAdapterDeviceResultConstructor == null)
                     {
@@ -1561,8 +1568,9 @@ namespace PsdzClient
                 bool patchedCreateServiceDialog = false;
                 bool patchedServiceDialogCmdBaseInvoke = false;
                 bool patchedConfigurationContainerDeserialize = false;
-                bool patchedIndirectDocumentPrefix = false;
-                bool patchedModuleTextPrefix = false;
+                bool patchedIstaResultAsType = false;
+                bool patchedIndirectDocument = false;
+                bool patchedModuleText = false;
                 foreach (MethodBase methodBase in _harmony.GetPatchedMethods())
                 {
                     log.InfoFormat("ReadServiceModule Patched: {0}", methodBase.Name);
@@ -1582,14 +1590,19 @@ namespace PsdzClient
                         patchedConfigurationContainerDeserialize = true;
                     }
 
+                    if (methodBase == methodIstaResultAsType)
+                    {
+                        patchedIstaResultAsType = true;
+                    }
+
                     if (methodBase == methodIstaModuleIndirectDocument3)
                     {
-                        patchedIndirectDocumentPrefix = true;
+                        patchedIndirectDocument = true;
                     }
 
                     if (methodBase == methodIstaModuleText2)
                     {
-                        patchedModuleTextPrefix = true;
+                        patchedModuleText = true;
                     }
                 }
 
@@ -1612,13 +1625,13 @@ namespace PsdzClient
                         new HarmonyMethod(methodConfigurationContainerDeserializePrefix), new HarmonyMethod(methodConfigurationContainerDeserializePostfix));
                 }
 
-                if (!patchedIndirectDocumentPrefix)
+                if (!patchedIndirectDocument)
                 {
                     log.InfoFormat("ReadServiceModule Patching: {0}", methodIstaModuleIndirectDocument3.Name);
                     _harmony.Patch(methodIstaModuleIndirectDocument3, new HarmonyMethod(methodIndirectDocumentPrefix3));
                 }
 
-                if (!patchedModuleTextPrefix)
+                if (!patchedModuleText)
                 {
                     log.InfoFormat("ReadServiceModule Patching: {0}", methodIstaModuleText2.Name);
                     _harmony.Patch(methodIstaModuleText2, new HarmonyMethod(methodModuleTextPrefix2));
