@@ -722,6 +722,14 @@ namespace PsdzClient
             return true;
         }
 
+        private static bool GetIstaResultAsTypePrefix(ref object __result, string resultName, Type targetType)
+        {
+            log.InfoFormat("GetIstaResultAsTypePrefix Value: {0}, Type: {1}", resultName ?? string.Empty, targetType);
+
+            __result = null;
+            return true;
+        }
+
         public TestModuleData GetTestModuleData(string moduleName)
         {
             log.InfoFormat("GetTestModuleData Name: {0}", moduleName);
@@ -1501,6 +1509,13 @@ namespace PsdzClient
                     return null;
                 }
 
+                MethodInfo methodIstaResultAsTypePrefix = typeof(PdszDatabase).GetMethod("GetIstaResultAsTypePrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                if (methodIstaResultAsTypePrefix == null)
+                {
+                    log.ErrorFormat("ReadServiceModule GetIstaResultAsTypePrefix not found");
+                    return null;
+                }
+
                 if (_istaEdiabasAdapterDeviceResultConstructor == null)
                 {
                     ConstructorInfo istaEdiabasAdapterDeviceResultConstructor = istaEdiabasAdapterDeviceResultType.GetConstructor(Type.EmptyTypes);
@@ -1623,6 +1638,12 @@ namespace PsdzClient
                     log.InfoFormat("ConfigurationContainer Patching: {0}", methodConfigurationContainerDeserializePrefix.Name);
                     _harmony.Patch(methodConfigurationContainerDeserialize,
                         new HarmonyMethod(methodConfigurationContainerDeserializePrefix), new HarmonyMethod(methodConfigurationContainerDeserializePostfix));
+                }
+
+                if (!patchedIstaResultAsType)
+                {
+                    log.InfoFormat("ReadServiceModule Patching: {0}", methodIstaResultAsType.Name);
+                    _harmony.Patch(methodIstaResultAsType, new HarmonyMethod(methodIstaResultAsTypePrefix));
                 }
 
                 if (!patchedIndirectDocument)
