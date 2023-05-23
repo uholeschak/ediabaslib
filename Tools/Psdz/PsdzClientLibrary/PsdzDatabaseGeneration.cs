@@ -135,14 +135,15 @@ namespace PsdzClient
         [XmlType("ServiceModuleInvokeItem")]
         public class ServiceModuleInvokeItem
         {
-            public ServiceModuleInvokeItem() : this(null, null)
+            public ServiceModuleInvokeItem() : this(null, null, null)
             {
             }
 
-            public ServiceModuleInvokeItem(string method, object dscResult)
+            public ServiceModuleInvokeItem(string method, object dscResult, SerializableDictionary<string, string> textIds)
             {
                 Method = method;
                 DscResult = dscResult;
+                TextIds = textIds;
                 ResultItems = new List<ServiceModuleResultItem>();
             }
 
@@ -150,7 +151,15 @@ namespace PsdzClient
 
             [XmlElement("ResultItems"), DefaultValue(null)] public List<ServiceModuleResultItem> ResultItems { get; set; }
 
+            [XmlIgnore, DefaultValue(null)] public SerializableDictionary<string, string> TextIds { get; set; }
+
             [XmlIgnore, DefaultValue(null)] public object DscResult { get; set; }
+
+            public void CleanupInternal()
+            {
+                DscResult = null;
+                TextIds.Clear();
+            }
         }
 
         [XmlInclude(typeof(ServiceModuleInvokeItem))]
@@ -206,6 +215,11 @@ namespace PsdzClient
                 ContainerXml = null;
                 ServiceDialogs.Clear();
                 TextIds.Clear();
+
+                foreach (ServiceModuleInvokeItem invokeItem in InvokeItems)
+                {
+                    invokeItem.CleanupInternal();
+                }
             }
         }
 
@@ -521,6 +535,7 @@ namespace PsdzClient
                 dialogName = serviceModuleDataItem.ServiceDialogName ?? string.Empty;
             }
 
+            SerializableDictionary<string, string> textIds = new SerializableDictionary<string, string>();
             dynamic inParamDyn = inParam;
             if (inParamDyn != null)
             {
@@ -536,6 +551,11 @@ namespace PsdzClient
                             {
                                 string textId = txtParamText.Trim(' ', '#');
                                 log.InfoFormat("ServiceDialogCmdBaseInvokePrefix Param Text ID: {0}", textId);
+                                if (!textIds.ContainsKey(textId))
+                                {
+                                    textIds.Add(textId, method);
+                                }
+
                                 if (serviceModuleDataItem != null)
                                 {
                                     if (!serviceModuleDataItem.TextIds.ContainsKey(textId))
@@ -592,6 +612,11 @@ namespace PsdzClient
                     foreach (string textId in _serviceDialogTextHashes)
                     {
                         log.InfoFormat("ServiceDialogCmdBaseInvokePrefix Text ID: {0}", textId);
+                        if (!textIds.ContainsKey(textId))
+                        {
+                            textIds.Add(textId, method);
+                        }
+
                         if (!serviceModuleDataItem.TextIds.ContainsKey(textId))
                         {
                             serviceModuleDataItem.TextIds.Add(textId, string.Empty);
@@ -692,7 +717,7 @@ namespace PsdzClient
                         {
                             if (serviceModuleDataItem != null)
                             {
-                                serviceModuleDataItem.InvokeItems.Add(new ServiceModuleInvokeItem(method, ediabasAdapterDeviceResult));
+                                serviceModuleDataItem.InvokeItems.Add(new ServiceModuleInvokeItem(method, ediabasAdapterDeviceResult, textIds));
                             }
                         }
                     }
