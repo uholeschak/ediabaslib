@@ -722,12 +722,21 @@ namespace PsdzClient
             return true;
         }
 
-        private static bool GetIstaResultAsTypePrefix(ref object __result, string resultName, Type targetType)
+        private static bool GetIstaResultAsTypePrefix(object __instance, ref object __result, string resultName, Type targetType)
         {
             log.InfoFormat("GetIstaResultAsTypePrefix Value: {0}, Type: {1}", resultName ?? string.Empty, targetType);
 
             __result = null;
             return true;
+        }
+
+        private static void GetIstaResultAsTypePostfix(object __instance, ref object __result, string resultName, Type targetType)
+        {
+            log.InfoFormat("GetIstaResultAsTypePostfix Value: {0}, Type: {1}", resultName ?? string.Empty, targetType);
+            if (__result != null)
+            {
+                log.InfoFormat("GetIstaResultAsTypePostfix Data: '{0}', Type: {1}", __result, __result.GetType());
+            }
         }
 
         public TestModuleData GetTestModuleData(string moduleName)
@@ -1516,6 +1525,13 @@ namespace PsdzClient
                     return null;
                 }
 
+                MethodInfo methodIstaResultAsTypePostfix = typeof(PdszDatabase).GetMethod("GetIstaResultAsTypePostfix", BindingFlags.NonPublic | BindingFlags.Static);
+                if (methodIstaResultAsTypePostfix == null)
+                {
+                    log.ErrorFormat("ReadServiceModule GetIstaResultAsTypePostfix not found");
+                    return null;
+                }
+
                 if (_istaEdiabasAdapterDeviceResultConstructor == null)
                 {
                     ConstructorInfo istaEdiabasAdapterDeviceResultConstructor = istaEdiabasAdapterDeviceResultType.GetConstructor(Type.EmptyTypes);
@@ -1643,7 +1659,7 @@ namespace PsdzClient
                 if (!patchedIstaResultAsType)
                 {
                     log.InfoFormat("ReadServiceModule Patching: {0}", methodIstaResultAsType.Name);
-                    _harmony.Patch(methodIstaResultAsType, new HarmonyMethod(methodIstaResultAsTypePrefix));
+                    _harmony.Patch(methodIstaResultAsType, new HarmonyMethod(methodIstaResultAsTypePrefix), new HarmonyMethod(methodIstaResultAsTypePostfix));
                 }
 
                 if (!patchedIndirectDocument)
