@@ -143,6 +143,7 @@ namespace PsdzClient
             {
                 Method = method;
                 DscResult = dscResult;
+                TextItems = null;
                 TextIds = textIds;
                 ResultItems = new List<ServiceModuleResultItem>();
             }
@@ -150,6 +151,8 @@ namespace PsdzClient
             [XmlElement("Method"), DefaultValue(null)] public string Method { get; set; }
 
             [XmlElement("ResultItems"), DefaultValue(null)] public List<ServiceModuleResultItem> ResultItems { get; set; }
+
+            [XmlElement("TextItems"), DefaultValue(null)] public SerializableDictionary<string, string> TextItems { get; set; }
 
             [XmlIgnore, DefaultValue(null)] public SerializableDictionary<string, string> TextIds { get; set; }
 
@@ -179,11 +182,9 @@ namespace PsdzClient
                 RunOverrides = runOverrides;
                 EdiabasJobBare = null;
                 EdiabasJobOverride = null;
-                TextItems = null;
                 InvokeItems = new List<ServiceModuleInvokeItem>();
                 ContainerXml = containerXml;
                 ServiceDialogs = new HashSet<object>();
-                TextIds = new SerializableDictionary<string, string>();
             }
 
             [XmlElement("MethodName"), DefaultValue(null)] public string MethodName { get; set; }
@@ -200,21 +201,16 @@ namespace PsdzClient
 
             [XmlElement("EdiabasJobOverride"), DefaultValue(null)] public string EdiabasJobOverride { get; set; }
 
-            [XmlElement("TextItems"), DefaultValue(null)] public SerializableDictionary<string, string> TextItems { get; set; }
-
             [XmlElement("InvokeItems"), DefaultValue(null)] public List<ServiceModuleInvokeItem> InvokeItems { get; set; }
 
             [XmlIgnore, DefaultValue(null)] public string ContainerXml { get; set; }
 
             [XmlIgnore, DefaultValue(null)] public HashSet<object> ServiceDialogs { get; set; }
 
-            [XmlIgnore, DefaultValue(null)] public SerializableDictionary<string, string> TextIds { get; set; }
-
             public void CleanupInternal()
             {
                 ContainerXml = null;
                 ServiceDialogs.Clear();
-                TextIds.Clear();
 
                 foreach (ServiceModuleInvokeItem invokeItem in InvokeItems)
                 {
@@ -555,14 +551,6 @@ namespace PsdzClient
                                 {
                                     textIds.Add(textId, method);
                                 }
-
-                                if (serviceModuleDataItem != null)
-                                {
-                                    if (!serviceModuleDataItem.TextIds.ContainsKey(textId))
-                                    {
-                                        serviceModuleDataItem.TextIds.Add(textId, method);
-                                    }
-                                }
                             }
                         }
                         catch (Exception e)
@@ -615,11 +603,6 @@ namespace PsdzClient
                         if (!textIds.ContainsKey(textId))
                         {
                             textIds.Add(textId, method);
-                        }
-
-                        if (!serviceModuleDataItem.TextIds.ContainsKey(textId))
-                        {
-                            serviceModuleDataItem.TextIds.Add(textId, string.Empty);
                         }
                     }
 
@@ -2006,45 +1989,48 @@ namespace PsdzClient
                         }
                     }
 
-                    SerializableDictionary<string, string> textItemsDict = new SerializableDictionary<string, string>();
-                    foreach (KeyValuePair<string, string> textIdPair in dataItem.TextIds)
+                    foreach (ServiceModuleInvokeItem invokeItem in dataItem.InvokeItems)
                     {
-                        string textId = textIdPair.Key;
-                        string methodName = textIdPair.Value;
-                        try
+                        SerializableDictionary<string, string> textItemsDict = new SerializableDictionary<string, string>();
+                        foreach (KeyValuePair<string, string> textIdPair in invokeItem.TextIds)
                         {
-                            log.InfoFormat("ReadServiceModule SingleText Method: {0}", methodName);
-
-                            ITextLocator textLocator = textContentManager.__Text(textId);
-                            TextContent textContent = textLocator?.TextContent as TextContent;
-                            IList<LocalizedText> textItems = textContent?.CreatePlainText(textContentManager.Langs);
-                            if (textItems != null)
+                            string textId = textIdPair.Key;
+                            string methodName = textIdPair.Value;
+                            try
                             {
-                                foreach (LocalizedText textItem in textItems)
-                                {
-                                    if (!string.IsNullOrWhiteSpace(textItem.TextItem))
-                                    {
-                                        log.InfoFormat("ReadServiceModule SingleText Lang: {0}, Text: '{1}'", textItem.Language, textItem.TextItem);
-                                        string key = textId + ";" + textItem.Language;
-                                        if (!string.IsNullOrEmpty(methodName))
-                                        {
-                                            key += ";" + methodName;
-                                        }
+                                log.InfoFormat("ReadServiceModule SingleText Method: {0}", methodName);
 
-                                        textItemsDict.Add(key, textItem.TextItem);
+                                ITextLocator textLocator = textContentManager.__Text(textId);
+                                TextContent textContent = textLocator?.TextContent as TextContent;
+                                IList<LocalizedText> textItems = textContent?.CreatePlainText(textContentManager.Langs);
+                                if (textItems != null)
+                                {
+                                    foreach (LocalizedText textItem in textItems)
+                                    {
+                                        if (!string.IsNullOrWhiteSpace(textItem.TextItem))
+                                        {
+                                            log.InfoFormat("ReadServiceModule SingleText Lang: {0}, Text: '{1}'", textItem.Language, textItem.TextItem);
+                                            string key = textId + ";" + textItem.Language;
+                                            if (!string.IsNullOrEmpty(methodName))
+                                            {
+                                                key += ";" + methodName;
+                                            }
+
+                                            textItemsDict.Add(key, textItem.TextItem);
+                                        }
                                     }
                                 }
                             }
+                            catch (Exception e)
+                            {
+                                log.ErrorFormat("ReadServiceModule Text ID: {0}, Exception: '{1}'", textId, e.Message);
+                            }
                         }
-                        catch (Exception e)
-                        {
-                            log.ErrorFormat("ReadServiceModule Text ID: {0}, Exception: '{1}'", textId, e.Message);
-                        }
-                    }
 
-                    if (textItemsDict.Count > 0)
-                    {
-                        dataItem.TextItems = textItemsDict;
+                        if (textItemsDict.Count > 0)
+                        {
+                            invokeItem.TextItems = textItemsDict;
+                        }
                     }
 
                     dataItem.CleanupInternal();
