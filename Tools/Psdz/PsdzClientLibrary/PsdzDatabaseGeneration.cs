@@ -925,6 +925,7 @@ namespace PsdzClient
                 if (moduleParamContainerInst == null)
                 {
                     log.ErrorFormat("ReadTestModule CreateModuleParamContainerInst failed");
+                    return null;
                 }
 
                 MethodInfo methodeTestModuleStartType = moduleType.GetMethod("Start");
@@ -1107,6 +1108,7 @@ namespace PsdzClient
                     log.ErrorFormat("CreateModuleParamContainerInst ParameterContainer not found");
                     return null;
                 }
+
                 object moduleParamContainerInst = Activator.CreateInstance(moduleParamContainerType);
 
                 Type moduleParamType = coreFrameworkAssembly.GetType("BMW.Rheingold.CoreFramework.ModuleParameter");
@@ -1660,6 +1662,29 @@ namespace PsdzClient
                     return null;
                 }
 
+                Type moduleParamContainerType = coreFrameworkAssembly.GetType("BMW.Rheingold.CoreFramework.ParameterContainer");
+                if (moduleParamContainerType == null)
+                {
+                    log.ErrorFormat("ReadServiceModule ParameterContainer not found");
+                    return null;
+                }
+
+                MethodInfo methodParamContainerGetParameter1 = moduleParamContainerType.GetMethod("getParameter", BindingFlags.Instance | BindingFlags.Public,
+                    null, new Type[] { typeof(string) }, null);
+                if (methodParamContainerGetParameter1 == null)
+                {
+                    log.ErrorFormat("ReadTestModule ISTAModule getParameter1 not found");
+                    return null;
+                }
+
+                MethodInfo methodParamContainerGetParameter2 = moduleParamContainerType.GetMethod("getParameter", BindingFlags.Instance | BindingFlags.Public,
+                    null, new Type[] { typeof(string), typeof(object) }, null);
+                if (methodParamContainerGetParameter2 == null)
+                {
+                    log.ErrorFormat("ReadTestModule ISTAModule getParameter2 not found");
+                    return null;
+                }
+
                 // __Text with 1 argument calls __Text with 2 arguments
                 MethodInfo methodIstaModuleText2 = istaModuleType.GetMethod("__Text", BindingFlags.Instance | BindingFlags.Public,
                     null, new Type[] { typeof(string), textParameterType.MakeArrayType() }, null);
@@ -1849,6 +1874,7 @@ namespace PsdzClient
                     if (moduleParamContainerInst == null)
                     {
                         log.ErrorFormat("ReadServiceModule CreateModuleParamContainerInst failed");
+                        return null;
                     }
 
                     object testModule = Activator.CreateInstance(moduleType, moduleParamContainerInst);
