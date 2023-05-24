@@ -825,6 +825,36 @@ namespace PsdzClient
             }
         }
 
+        private static bool GetModuleParameterPrefix1(object __instance, ref object __result, string name)
+        {
+            log.InfoFormat("GetModuleParameterPrefix1 Name: '{0}'", name ?? string.Empty);
+
+            __result = null;
+            return true;
+        }
+
+        private static void GetModuleParameterPostfix1(object __instance, ref object __result, string name)
+        {
+            string resultData = __result != null ? __result.ToString() : string.Empty;
+            log.InfoFormat("GetModuleParameterPostfix1 Name: '{0}', Data: '{1}'", name ?? string.Empty, resultData);
+        }
+
+        private static bool GetModuleParameterPrefix2(object __instance, ref object __result, string name, object defaultValue)
+        {
+            string defaultData = defaultValue != null ? defaultValue.ToString() : string.Empty;
+            log.InfoFormat("GetModuleParameterPrefix2 Name: '{0}', Default: '{1}'", name ?? string.Empty, defaultData);
+
+            __result = null;
+            return true;
+        }
+
+        private static void GetModuleParameterPostfix2(object __instance, ref object __result, string name, object defaultValue)
+        {
+            string defaultData = defaultValue != null ? defaultValue.ToString() : string.Empty;
+            string resultData = __result != null ? __result.ToString() : string.Empty;
+            log.InfoFormat("GetModuleParameterPostfix2 Name: '{0}', Default: '{1}', Data: '{2}'", name ?? string.Empty, defaultData, resultData);
+        }
+
         public TestModuleData GetTestModuleData(string moduleName)
         {
             log.InfoFormat("GetTestModuleData Name: {0}", moduleName);
@@ -1685,6 +1715,34 @@ namespace PsdzClient
                     return null;
                 }
 
+                MethodInfo methodModuleParameterPrefix1 = typeof(PdszDatabase).GetMethod("GetModuleParameterPrefix1", BindingFlags.NonPublic | BindingFlags.Static);
+                if (methodModuleParameterPrefix1 == null)
+                {
+                    log.ErrorFormat("ReadServiceModule GetModuleParameterPrefix1 not found");
+                    return null;
+                }
+
+                MethodInfo methodModuleParameterPostfix1 = typeof(PdszDatabase).GetMethod("GetModuleParameterPostfix1", BindingFlags.NonPublic | BindingFlags.Static);
+                if (methodModuleParameterPostfix1 == null)
+                {
+                    log.ErrorFormat("ReadServiceModule GetModuleParameterPostfix1 not found");
+                    return null;
+                }
+
+                MethodInfo methodModuleParameterPrefix2 = typeof(PdszDatabase).GetMethod("GetModuleParameterPrefix2", BindingFlags.NonPublic | BindingFlags.Static);
+                if (methodModuleParameterPrefix2 == null)
+                {
+                    log.ErrorFormat("ReadServiceModule GetModuleParameterPrefix2 not found");
+                    return null;
+                }
+
+                MethodInfo methodModuleParameterPostfix2 = typeof(PdszDatabase).GetMethod("GetModuleParameterPostfix2", BindingFlags.NonPublic | BindingFlags.Static);
+                if (methodModuleParameterPostfix2 == null)
+                {
+                    log.ErrorFormat("ReadServiceModule GetModuleParameterPostfix2 not found");
+                    return null;
+                }
+
                 // __Text with 1 argument calls __Text with 2 arguments
                 MethodInfo methodIstaModuleText2 = istaModuleType.GetMethod("__Text", BindingFlags.Instance | BindingFlags.Public,
                     null, new Type[] { typeof(string), textParameterType.MakeArrayType() }, null);
@@ -1712,6 +1770,7 @@ namespace PsdzClient
                 bool patchedConfigurationContainerDeserialize = false;
                 bool patchedIstaResultAsType = false;
                 bool patchedIndirectDocument = false;
+                bool patchedParamContainerGetParameter = false;
                 bool patchedModuleText = false;
                 foreach (MethodBase methodBase in _harmony.GetPatchedMethods())
                 {
@@ -1740,6 +1799,11 @@ namespace PsdzClient
                     if (methodBase == methodIstaModuleIndirectDocument3)
                     {
                         patchedIndirectDocument = true;
+                    }
+
+                    if (methodBase == methodParamContainerGetParameter1)
+                    {
+                        patchedParamContainerGetParameter = true;
                     }
 
                     if (methodBase == methodIstaModuleText2)
@@ -1777,6 +1841,15 @@ namespace PsdzClient
                 {
                     log.InfoFormat("ReadServiceModule Patching: {0}", methodIstaModuleIndirectDocument3.Name);
                     _harmony.Patch(methodIstaModuleIndirectDocument3, new HarmonyMethod(methodIndirectDocumentPrefix3));
+                }
+
+                if (!patchedParamContainerGetParameter)
+                {
+                    log.InfoFormat("ReadServiceModule Patching: {0}", methodParamContainerGetParameter1.Name);
+                    _harmony.Patch(methodParamContainerGetParameter1, new HarmonyMethod(methodModuleParameterPrefix1), new HarmonyMethod(methodModuleParameterPostfix1));
+
+                    log.InfoFormat("ReadServiceModule Patching: {0}", methodParamContainerGetParameter2.Name);
+                    _harmony.Patch(methodParamContainerGetParameter2, new HarmonyMethod(methodModuleParameterPrefix2), new HarmonyMethod(methodModuleParameterPostfix2));
                 }
 
                 if (!patchedModuleText)
