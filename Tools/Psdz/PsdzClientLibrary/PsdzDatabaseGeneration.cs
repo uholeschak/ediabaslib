@@ -135,13 +135,14 @@ namespace PsdzClient
         [XmlType("ServiceModuleInvokeItem")]
         public class ServiceModuleInvokeItem
         {
-            public ServiceModuleInvokeItem() : this(null, null, null, null, null)
+            public ServiceModuleInvokeItem() : this(null, null, null, null, null, null)
             {
             }
 
-            public ServiceModuleInvokeItem(string method, object outParam, object inoutParam, object dscResult, SerializableDictionary<string, string> textIds)
+            public ServiceModuleInvokeItem(string method, object inParam, object outParam, object inoutParam, object dscResult, SerializableDictionary<string, string> textIds)
             {
                 Method = method;
+                InParam = inParam;
                 OutParam = outParam;
                 InoutParam = inoutParam;
                 DscResult = dscResult;
@@ -158,6 +159,8 @@ namespace PsdzClient
 
             [XmlIgnore, DefaultValue(null)] public SerializableDictionary<string, string> TextIds { get; set; }
 
+            [XmlIgnore, DefaultValue(null)] public object InParam { get; set; }
+
             [XmlIgnore, DefaultValue(null)] public object OutParam { get; set; }
 
             [XmlIgnore, DefaultValue(null)] public object InoutParam { get; set; }
@@ -166,6 +169,7 @@ namespace PsdzClient
 
             public void CleanupInternal()
             {
+                InParam = null;
                 OutParam = null;
                 InoutParam = null;
                 DscResult = null;
@@ -177,11 +181,11 @@ namespace PsdzClient
         [XmlType("ServiceModuleDataItem")]
         public class ServiceModuleDataItem
         {
-            public ServiceModuleDataItem() : this(null, null, null, null, null, null)
+            public ServiceModuleDataItem() : this(null, null, null, null, null, null, null)
             {
             }
 
-            public ServiceModuleDataItem(string methodName, string elementNo, string controlId, string serviceDialogName, object inoutParams, string containerXml, SerializableDictionary<string, string> runOverrides = null)
+            public ServiceModuleDataItem(string methodName, string elementNo, string controlId, string serviceDialogName, object inParams, object inoutParams, string containerXml, SerializableDictionary<string, string> runOverrides = null)
             {
                 MethodName = methodName;
                 ElementNo = elementNo;
@@ -191,6 +195,7 @@ namespace PsdzClient
                 EdiabasJobBare = null;
                 EdiabasJobOverride = null;
                 InvokeItems = new List<ServiceModuleInvokeItem>();
+                InParams = inParams;
                 InoutParams = inoutParams;
                 ContainerXml = containerXml;
                 ServiceDialogs = new HashSet<object>();
@@ -212,6 +217,8 @@ namespace PsdzClient
 
             [XmlElement("InvokeItems"), DefaultValue(null)] public List<ServiceModuleInvokeItem> InvokeItems { get; set; }
 
+            [XmlIgnore, DefaultValue(null)] public object InParams { get; set; }
+
             [XmlIgnore, DefaultValue(null)] public object InoutParams { get; set; }
 
             [XmlIgnore, DefaultValue(null)] public string ContainerXml { get; set; }
@@ -220,6 +227,7 @@ namespace PsdzClient
 
             public void CleanupInternal()
             {
+                InParams = null;
                 InoutParams = null;
                 ContainerXml = null;
                 ServiceDialogs.Clear();
@@ -476,7 +484,7 @@ namespace PsdzClient
                 if (serviceModuleDataItem == null)
                 {
                     log.InfoFormat("CreateServiceDialogPrefix Adding Key: {0}", key);
-                    serviceModuleDataItem = new ServiceModuleDataItem(methodName, elementNoString, controlIdString, serviceDialogConfigName, inoutParameters, configurationContainerXml);
+                    serviceModuleDataItem = new ServiceModuleDataItem(methodName, elementNoString, controlIdString, serviceDialogConfigName, inParameters, inoutParameters, configurationContainerXml);
                     if (runOverridesDict.Count > 0)
                     {
                         serviceModuleDataItem.RunOverrides = runOverridesDict;
@@ -720,7 +728,7 @@ namespace PsdzClient
                         {
                             if (serviceModuleDataItem != null)
                             {
-                                serviceModuleDataItem.InvokeItems.Add(new ServiceModuleInvokeItem(method, outParam, inoutParam, ediabasAdapterDeviceResult, textIds));
+                                serviceModuleDataItem.InvokeItems.Add(new ServiceModuleInvokeItem(method, inParam, outParam, inoutParam, ediabasAdapterDeviceResult, textIds));
                             }
                         }
                     }
@@ -908,7 +916,7 @@ namespace PsdzClient
                         ServiceModuleDataItem dataItem = serviceKeyValuePair.Value;
                         foreach (ServiceModuleInvokeItem invokeItem in dataItem.InvokeItems)
                         {
-                            if (invokeItem.InoutParam == parameterInst || invokeItem.OutParam == parameterInst)
+                            if (invokeItem.InParam == parameterInst || invokeItem.OutParam == parameterInst || invokeItem.InoutParam == parameterInst)
                             {
                                 serviceModuleDataItem = dataItem;
                                 serviceModuleInvokeItem = invokeItem;
@@ -916,7 +924,7 @@ namespace PsdzClient
                             }
                         }
 
-                        if (dataItem.InoutParams == parameterInst)
+                        if (dataItem.InParams == parameterInst || dataItem.InoutParams == parameterInst)
                         {
                             serviceModuleDataItem = dataItem;
                             break;
