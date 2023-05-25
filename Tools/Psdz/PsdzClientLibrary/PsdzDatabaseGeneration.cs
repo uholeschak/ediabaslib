@@ -521,14 +521,17 @@ namespace PsdzClient
             log.InfoFormat("ServiceDialogCmdBaseInvokePrefix, Method: {0}", method);
 
             ServiceModuleDataItem serviceModuleDataItem = null;
-            if (__instance != null && _serviceDialogDict != null)
+            lock (_moduleThreadLock)
             {
-                foreach (KeyValuePair<string, ServiceModuleDataItem> serviceKeyValuePair in _serviceDialogDict)
+                if (__instance != null && _serviceDialogDict != null)
                 {
-                    if (serviceKeyValuePair.Value.ServiceDialogs.Contains(__instance))
+                    foreach (KeyValuePair<string, ServiceModuleDataItem> serviceKeyValuePair in _serviceDialogDict)
                     {
-                        serviceModuleDataItem = serviceKeyValuePair.Value;
-                        break;
+                        if (serviceKeyValuePair.Value.ServiceDialogs.Contains(__instance))
+                        {
+                            serviceModuleDataItem = serviceKeyValuePair.Value;
+                            break;
+                        }
                     }
                 }
             }
@@ -812,16 +815,19 @@ namespace PsdzClient
             log.InfoFormat("GetIstaResultAsTypePostfix Data: '{0}', Value: '{1}', Type: {2}", resultData, resultName ?? string.Empty, targetType);
 
             ServiceModuleInvokeItem serviceModuleInvokeItem = null;
-            if (__instance != null && _serviceDialogDict != null)
+            lock (_moduleThreadLock)
             {
-                foreach (KeyValuePair<string, ServiceModuleDataItem> serviceKeyValuePair in _serviceDialogDict)
+                if (__instance != null && _serviceDialogDict != null)
                 {
-                    foreach (ServiceModuleInvokeItem invokeItem in serviceKeyValuePair.Value.InvokeItems)
+                    foreach (KeyValuePair<string, ServiceModuleDataItem> serviceKeyValuePair in _serviceDialogDict)
                     {
-                        if (invokeItem.DscResult == __instance)
+                        foreach (ServiceModuleInvokeItem invokeItem in serviceKeyValuePair.Value.InvokeItems)
                         {
-                            serviceModuleInvokeItem = invokeItem;
-                            break;
+                            if (invokeItem.DscResult == __instance)
+                            {
+                                serviceModuleInvokeItem = invokeItem;
+                                break;
+                            }
                         }
                     }
                 }
@@ -849,6 +855,11 @@ namespace PsdzClient
         {
             string resultData = __result != null ? __result.ToString() : string.Empty;
             log.InfoFormat("GetModuleParameterPostfix1 Name: '{0}', Data: '{1}'", name ?? string.Empty, resultData);
+            ServiceModuleDataItem serviceModuleDataItem = GetServiceModuleItemForParameter(__instance, out _);
+            if (serviceModuleDataItem == null)
+            {
+                log.ErrorFormat("GetModuleParameterPostfix1 Service module item not found Name: '{0}'", name ?? string.Empty);
+            }
         }
 
         private static bool GetModuleParameterPrefix2(object __instance, ref object __result, string name, object defaultValue)
@@ -865,6 +876,45 @@ namespace PsdzClient
             string defaultData = defaultValue != null ? defaultValue.ToString() : string.Empty;
             string resultData = __result != null ? __result.ToString() : string.Empty;
             log.InfoFormat("GetModuleParameterPostfix2 Name: '{0}', Default: '{1}', Data: '{2}'", name ?? string.Empty, defaultData, resultData);
+
+            ServiceModuleDataItem serviceModuleDataItem = GetServiceModuleItemForParameter(__instance, out _);
+            if (serviceModuleDataItem == null)
+            {
+                log.ErrorFormat("GetModuleParameterPostfix1 Service module item not found Name: '{0}'", name ?? string.Empty);
+            }
+        }
+
+        private static ServiceModuleDataItem GetServiceModuleItemForParameter(object parameterInst, out ServiceModuleInvokeItem serviceModuleInvokeItem)
+        {
+            ServiceModuleDataItem serviceModuleDataItem = null;
+            serviceModuleInvokeItem = null;
+            lock (_moduleThreadLock)
+            {
+                if (parameterInst != null && _serviceDialogDict != null)
+                {
+                    foreach (KeyValuePair<string, ServiceModuleDataItem> serviceKeyValuePair in _serviceDialogDict)
+                    {
+                        ServiceModuleDataItem dataItem = serviceKeyValuePair.Value;
+                        foreach (ServiceModuleInvokeItem invokeItem in dataItem.InvokeItems)
+                        {
+                            if (invokeItem.InoutParam == parameterInst || invokeItem.OutParam == parameterInst)
+                            {
+                                serviceModuleDataItem = dataItem;
+                                serviceModuleInvokeItem = invokeItem;
+                                break;
+                            }
+                        }
+
+                        if (dataItem.InoutParams == parameterInst)
+                        {
+                            serviceModuleDataItem = dataItem;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return serviceModuleDataItem;
         }
 
         public TestModuleData GetTestModuleData(string moduleName)
