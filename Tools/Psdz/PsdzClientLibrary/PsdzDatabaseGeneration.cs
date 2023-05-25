@@ -255,6 +255,7 @@ namespace PsdzClient
         private static SerializableDictionary<string, List<string>> _moduleRefDict;
         private static SerializableDictionary<string, ServiceModuleDataItem> _serviceDialogDict;
         private static object _moduleThreadLock = new object();
+        private static object _defaultObject = new object();
         private static Dictionary<string, int> _serviceDialogCallsDict;
         private static HashSet<string> _serviceDialogTextHashes;
         private static ConstructorInfo _istaServiceDialogDlgCmdBaseConstructor;
@@ -397,13 +398,17 @@ namespace PsdzClient
             {
                 try
                 {
-                    dynamic dscConfig = inParametersDyn.getParameter("/WurzelIn/DSCConfig", null);
-                    if (dscConfig != null)
+                    dynamic dscConfig = inParametersDyn.getParameter("/WurzelIn/DSCConfig", _defaultObject);
+                    if (dscConfig != null && dscConfig != _defaultObject)
                     {
                         dynamic paramOverrides = dscConfig.ParametrizationOverrides;
                         if (paramOverrides != null)
                         {
-                            configurationContainerXml = paramOverrides.getParameter(ConfigurationContainerXMLPar, string.Empty) as string;
+                            object containerXml = paramOverrides.getParameter(ConfigurationContainerXMLPar, _defaultObject);
+                            if (containerXml != null && containerXml != _defaultObject)
+                            {
+                                configurationContainerXml = containerXml as string;
+                            }
                         }
 
                         dynamic runOverrides = dscConfig.RunOverrides;
@@ -552,8 +557,8 @@ namespace PsdzClient
             {
                 try
                 {
-                    dynamic txtParam = inParamDyn.getParameter("txtParam", null);
-                    if (txtParam != null)
+                    dynamic txtParam = inParamDyn.getParameter("txtParam", _defaultObject);
+                    if (txtParam != null && txtParam != _defaultObject)
                     {
                         try
                         {
@@ -864,8 +869,11 @@ namespace PsdzClient
 
         private static bool GetModuleParameterPrefix2(object __instance, ref object __result, string name, object defaultValue)
         {
-            string defaultData = defaultValue != null ? defaultValue.ToString() : string.Empty;
-            log.InfoFormat("GetModuleParameterPrefix2 Name: '{0}', Default: '{1}'", name ?? string.Empty, defaultData);
+            if (defaultValue != _defaultObject)
+            {
+                string defaultData = defaultValue != null ? defaultValue.ToString() : string.Empty;
+                log.InfoFormat("GetModuleParameterPrefix2 Name: '{0}', Default: '{1}'", name ?? string.Empty, defaultData);
+            }
 
             __result = null;
             return true;
@@ -873,14 +881,17 @@ namespace PsdzClient
 
         private static void GetModuleParameterPostfix2(object __instance, ref object __result, string name, object defaultValue)
         {
-            string defaultData = defaultValue != null ? defaultValue.ToString() : string.Empty;
-            string resultData = __result != null ? __result.ToString() : string.Empty;
-            log.InfoFormat("GetModuleParameterPostfix2 Name: '{0}', Default: '{1}', Data: '{2}'", name ?? string.Empty, defaultData, resultData);
-
-            ServiceModuleDataItem serviceModuleDataItem = GetServiceModuleItemForParameter(__instance, out _);
-            if (serviceModuleDataItem == null)
+            if (defaultValue != _defaultObject)
             {
-                log.ErrorFormat("GetModuleParameterPostfix1 Service module item not found Name: '{0}'", name ?? string.Empty);
+                string defaultData = defaultValue != null ? defaultValue.ToString() : string.Empty;
+                string resultData = __result != null ? __result.ToString() : string.Empty;
+                log.InfoFormat("GetModuleParameterPostfix2 Name: '{0}', Default: '{1}', Data: '{2}'", name ?? string.Empty, defaultData, resultData);
+
+                ServiceModuleDataItem serviceModuleDataItem = GetServiceModuleItemForParameter(__instance, out _);
+                if (serviceModuleDataItem == null)
+                {
+                    log.ErrorFormat("GetModuleParameterPostfix1 Service module item not found Name: '{0}'", name ?? string.Empty);
+                }
             }
         }
 
