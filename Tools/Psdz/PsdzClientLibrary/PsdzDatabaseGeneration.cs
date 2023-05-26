@@ -147,6 +147,7 @@ namespace PsdzClient
                 InoutParam = inoutParam;
                 DscResult = dscResult;
                 TextItems = null;
+                OutParamValues = new SerializableDictionary<string, string>();
                 TextIds = textIds;
                 ResultItems = new List<ServiceModuleResultItem>();
             }
@@ -156,6 +157,8 @@ namespace PsdzClient
             [XmlElement("ResultItems"), DefaultValue(null)] public List<ServiceModuleResultItem> ResultItems { get; set; }
 
             [XmlElement("TextItems"), DefaultValue(null)] public SerializableDictionary<string, string> TextItems { get; set; }
+
+            [XmlElement("OutParamValues"), DefaultValue(null)] public SerializableDictionary<string, string> OutParamValues { get; set; }
 
             [XmlIgnore, DefaultValue(null)] public SerializableDictionary<string, string> TextIds { get; set; }
 
@@ -195,6 +198,7 @@ namespace PsdzClient
                 EdiabasJobBare = null;
                 EdiabasJobOverride = null;
                 InvokeItems = new List<ServiceModuleInvokeItem>();
+                OutParamValues = new SerializableDictionary<string, string>();
                 InParams = inParams;
                 InoutParams = inoutParams;
                 ContainerXml = containerXml;
@@ -216,6 +220,8 @@ namespace PsdzClient
             [XmlElement("EdiabasJobOverride"), DefaultValue(null)] public string EdiabasJobOverride { get; set; }
 
             [XmlElement("InvokeItems"), DefaultValue(null)] public List<ServiceModuleInvokeItem> InvokeItems { get; set; }
+
+            [XmlElement("OutParamValues"), DefaultValue(null)] public SerializableDictionary<string, string> OutParamValues { get; set; }
 
             [XmlIgnore, DefaultValue(null)] public object InParams { get; set; }
 
@@ -877,6 +883,23 @@ namespace PsdzClient
             {
                 log.InfoFormat("GetModuleParameterPostfix1 Service module found, Method: '{0}', IsInParam: '{1}', InvokeItem: {2}",
                     serviceModuleDataItem.MethodName ?? string.Empty, isInParam, serviceModuleInvokeItem != null);
+                if (!isInParam && !string.IsNullOrEmpty(name))
+                {
+                    if (serviceModuleInvokeItem != null)
+                    {
+                        if (!serviceModuleInvokeItem.OutParamValues.ContainsKey(name))
+                        {
+                            serviceModuleInvokeItem.OutParamValues.Add(name, resultData);
+                        }
+                    }
+                    else
+                    {
+                        if (!serviceModuleDataItem.OutParamValues.ContainsKey(name))
+                        {
+                            serviceModuleDataItem.OutParamValues.Add(name, resultData);
+                        }
+                    }
+                }
             }
         }
 
@@ -909,6 +932,23 @@ namespace PsdzClient
                 {
                     log.InfoFormat("GetModuleParameterPostfix2 Service module found, Method: '{0}', IsInParam: '{1}', InvokeItem: {2}",
                         serviceModuleDataItem.MethodName ?? string.Empty, isInParam, serviceModuleInvokeItem != null);
+                    if (!isInParam && !string.IsNullOrEmpty(name))
+                    {
+                        if (serviceModuleInvokeItem != null)
+                        {
+                            if (!serviceModuleInvokeItem.OutParamValues.ContainsKey(name))
+                            {
+                                serviceModuleInvokeItem.OutParamValues.Add(name, resultData);
+                            }
+                        }
+                        else
+                        {
+                            if (!serviceModuleDataItem.OutParamValues.ContainsKey(name))
+                            {
+                                serviceModuleDataItem.OutParamValues.Add(name, resultData);
+                            }
+                        }
+                    }
                 }
             }
         }
