@@ -868,10 +868,15 @@ namespace PsdzClient
         {
             string resultData = __result != null ? __result.ToString() : string.Empty;
             log.InfoFormat("GetModuleParameterPostfix1 Name: '{0}', Data: '{1}'", name ?? string.Empty, resultData);
-            ServiceModuleDataItem serviceModuleDataItem = GetServiceModuleItemForParameter(__instance, out _);
+            ServiceModuleDataItem serviceModuleDataItem = GetServiceModuleItemForParameter(__instance, out bool isInParam, out ServiceModuleInvokeItem serviceModuleInvokeItem);
             if (serviceModuleDataItem == null)
             {
                 log.ErrorFormat("GetModuleParameterPostfix1 Service module item not found Name: '{0}'", name ?? string.Empty);
+            }
+            else
+            {
+                log.InfoFormat("GetModuleParameterPostfix1 Service module found, Method: '{0}', IsInParam: '{1}', InvokeItem: {2}",
+                    serviceModuleDataItem.MethodName ?? string.Empty, isInParam, serviceModuleInvokeItem != null);
             }
         }
 
@@ -895,17 +900,23 @@ namespace PsdzClient
                 string resultData = __result != null ? __result.ToString() : string.Empty;
                 log.InfoFormat("GetModuleParameterPostfix2 Name: '{0}', Default: '{1}', Data: '{2}'", name ?? string.Empty, defaultData, resultData);
 
-                ServiceModuleDataItem serviceModuleDataItem = GetServiceModuleItemForParameter(__instance, out _);
+                ServiceModuleDataItem serviceModuleDataItem = GetServiceModuleItemForParameter(__instance, out bool isInParam, out ServiceModuleInvokeItem serviceModuleInvokeItem);
                 if (serviceModuleDataItem == null)
                 {
-                    log.ErrorFormat("GetModuleParameterPostfix1 Service module item not found Name: '{0}'", name ?? string.Empty);
+                    log.ErrorFormat("GetModuleParameterPostfix2 Service module not found Name: '{0}'", name ?? string.Empty);
+                }
+                else
+                {
+                    log.InfoFormat("GetModuleParameterPostfix2 Service module found, Method: '{0}', IsInParam: '{1}', InvokeItem: {2}",
+                        serviceModuleDataItem.MethodName ?? string.Empty, isInParam, serviceModuleInvokeItem != null);
                 }
             }
         }
 
-        private static ServiceModuleDataItem GetServiceModuleItemForParameter(object parameterInst, out ServiceModuleInvokeItem serviceModuleInvokeItem)
+        private static ServiceModuleDataItem GetServiceModuleItemForParameter(object parameterInst, out bool isInParam, out ServiceModuleInvokeItem serviceModuleInvokeItem)
         {
             ServiceModuleDataItem serviceModuleDataItem = null;
+            isInParam = false;
             serviceModuleInvokeItem = null;
             lock (_moduleThreadLock)
             {
@@ -918,6 +929,7 @@ namespace PsdzClient
                         {
                             if (invokeItem.InParam == parameterInst || invokeItem.OutParam == parameterInst || invokeItem.InoutParam == parameterInst)
                             {
+                                isInParam = invokeItem.InParam == parameterInst;
                                 serviceModuleDataItem = dataItem;
                                 serviceModuleInvokeItem = invokeItem;
                                 break;
@@ -926,6 +938,7 @@ namespace PsdzClient
 
                         if (dataItem.InParams == parameterInst || dataItem.InoutParams == parameterInst)
                         {
+                            isInParam = dataItem.InParams == parameterInst;
                             serviceModuleDataItem = dataItem;
                             break;
                         }
