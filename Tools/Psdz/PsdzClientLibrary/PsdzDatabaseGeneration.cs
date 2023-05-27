@@ -199,6 +199,7 @@ namespace PsdzClient
                 EdiabasJobOverride = null;
                 InvokeItems = new List<ServiceModuleInvokeItem>();
                 OutParamValues = new SerializableDictionary<string, string>();
+                CallsCount = 1;
                 InParams = inParams;
                 InoutParams = inoutParams;
                 ContainerXml = containerXml;
@@ -222,6 +223,8 @@ namespace PsdzClient
             [XmlElement("InvokeItems"), DefaultValue(null)] public List<ServiceModuleInvokeItem> InvokeItems { get; set; }
 
             [XmlElement("OutParamValues"), DefaultValue(null)] public SerializableDictionary<string, string> OutParamValues { get; set; }
+
+            [XmlElement("CallsCount"), DefaultValue(null)] public int CallsCount { get; set; }
 
             [XmlIgnore, DefaultValue(null)] public object InParams { get; set; }
 
@@ -270,7 +273,6 @@ namespace PsdzClient
         private static SerializableDictionary<string, ServiceModuleDataItem> _serviceDialogDict;
         private static object _moduleThreadLock = new object();
         private static object _defaultObject = new object();
-        private static Dictionary<string, int> _serviceDialogCallsDict;
         private static HashSet<string> _serviceDialogTextHashes;
         private static ConstructorInfo _istaServiceDialogDlgCmdBaseConstructor;
         private static ConstructorInfo _istaEdiabasAdapterDeviceResultConstructor;
@@ -474,6 +476,7 @@ namespace PsdzClient
                 log.ErrorFormat("CreateServiceDialogPrefix No service dialog construtor");
             }
 
+            int callsCount = 0;
             lock (_moduleThreadLock)
             {
                 if (_serviceDialogDict == null)
@@ -501,33 +504,17 @@ namespace PsdzClient
                 else
                 {
                     log.InfoFormat("CreateServiceDialogPrefix Key present: {0}", key);
+                    serviceModuleDataItem.CallsCount++;
                 }
 
                 serviceModuleDataItem.ServiceDialogs.Add(serviceDialog);
+                callsCount = serviceModuleDataItem.CallsCount;
             }
 
-            lock (_moduleThreadLock)
+            log.InfoFormat("CreateServiceDialogPrefix Calls: {0}", callsCount);
+            if (callsCount > 10)
             {
-                if (_serviceDialogCallsDict == null)
-                {
-                    _serviceDialogCallsDict = new Dictionary<string, int>();
-                }
-
-                if (!_serviceDialogCallsDict.ContainsKey(key))
-                {
-                    _serviceDialogCallsDict.Add(key, 1);
-                }
-                else
-                {
-                    _serviceDialogCallsDict[key]++;
-                }
-
-                int calls = _serviceDialogCallsDict[key];
-                log.InfoFormat("CreateServiceDialogPrefix Calls: {0}", calls);
-                if (calls > 10)
-                {
-                    Thread.CurrentThread.Abort();
-                }
+                Thread.CurrentThread.Abort();
             }
 
             __result = serviceDialog;
@@ -959,37 +946,49 @@ namespace PsdzClient
 
         private static bool StoreParamResult(string paramName, object result, ServiceModuleDataItem serviceModuleDataItem, ServiceModuleInvokeItem serviceModuleInvokeItem, bool isInParam)
         {
-            if (!isInParam && !string.IsNullOrEmpty(paramName))
+            if (isInParam || string.IsNullOrEmpty(paramName) || serviceModuleDataItem == null)
             {
-                string resultData = string.Empty;
-                if (result != null)
-                {
-                    Type dataType = result.GetType();
-                    if (dataType.IsPrimitive || dataType == typeof(string))
-                    {
-                        resultData = result.ToString();
-                    }
-                    else
-                    {
-                        resultData = dataType.Name;
-                    }
-                }
+                return false;
+            }
 
-                if (serviceModuleInvokeItem != null)
+            if (serviceModuleDataItem.CallsCount > 2)
+            {
+                return false;
+            }
+            string resultData = string.Empty;
+            if (result != null)
+            {
+                Type dataType = result.GetType();
+                if (dataType.IsPrimitive || dataType == typeof(string))
                 {
-                    if (!serviceModuleInvokeItem.OutParamValues.ContainsKey(paramName))
-                    {
-                        serviceModuleInvokeItem.OutParamValues.Add(paramName, resultData);
-                        return true;
-                    }
+                    resultData = result.ToString();
                 }
                 else
                 {
-                    if (!serviceModuleDataItem.OutParamValues.ContainsKey(paramName))
-                    {
-                        serviceModuleDataItem.OutParamValues.Add(paramName, resultData);
-                        return true;
-                    }
+                    resultData = dataType.Name;
+                }
+
+                const int maxLen = 20;
+                if (resultData.Length > maxLen)
+                {
+                    resultData = resultData.Substring(0, maxLen);
+                }
+            }
+
+            if (serviceModuleInvokeItem != null)
+            {
+                if (!serviceModuleInvokeItem.OutParamValues.ContainsKey(paramName))
+                {
+                    serviceModuleInvokeItem.OutParamValues.Add(paramName, resultData);
+                    return true;
+                }
+            }
+            else
+            {
+                if (!serviceModuleDataItem.OutParamValues.ContainsKey(paramName))
+                {
+                    serviceModuleDataItem.OutParamValues.Add(paramName, resultData);
+                    return true;
                 }
             }
 
@@ -2106,7 +2105,6 @@ namespace PsdzClient
                             {
                                 lock (_moduleThreadLock)
                                 {
-                                    _serviceDialogCallsDict = null;
                                     _serviceDialogTextHashes = null;
                                     _moduleRefPath = null;
                                     _moduleRefDict = null;
@@ -2134,7 +2132,6 @@ namespace PsdzClient
                 lock (_moduleThreadLock)
                 {
                     _serviceDialogDict = null;
-                    _serviceDialogCallsDict = null;
                     _serviceDialogTextHashes = null;
                     _moduleRefDict = null;
                 }
