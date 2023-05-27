@@ -142,14 +142,14 @@ namespace PsdzClient
             public ServiceModuleInvokeItem(string method, object inParam, object outParam, object inoutParam, object dscResult, SerializableDictionary<string, string> textIds)
             {
                 Method = method;
+                ResultItems = new List<ServiceModuleResultItem>();
+                TextItems = null;
+                OutParamValues = new SerializableDictionary<string, string>();
+                TextIds = textIds;
                 InParam = inParam;
                 OutParam = outParam;
                 InoutParam = inoutParam;
                 DscResult = dscResult;
-                TextItems = null;
-                OutParamValues = new SerializableDictionary<string, string>();
-                TextIds = textIds;
-                ResultItems = new List<ServiceModuleResultItem>();
             }
 
             [XmlElement("Method"), DefaultValue(null)] public string Method { get; set; }
@@ -883,23 +883,7 @@ namespace PsdzClient
             {
                 log.InfoFormat("GetModuleParameterPostfix1 Service module found, Method: '{0}', IsInParam: '{1}', InvokeItem: {2}",
                     serviceModuleDataItem.MethodName ?? string.Empty, isInParam, serviceModuleInvokeItem != null);
-                if (!isInParam && !string.IsNullOrEmpty(name))
-                {
-                    if (serviceModuleInvokeItem != null)
-                    {
-                        if (!serviceModuleInvokeItem.OutParamValues.ContainsKey(name))
-                        {
-                            serviceModuleInvokeItem.OutParamValues.Add(name, resultData);
-                        }
-                    }
-                    else
-                    {
-                        if (!serviceModuleDataItem.OutParamValues.ContainsKey(name))
-                        {
-                            serviceModuleDataItem.OutParamValues.Add(name, resultData);
-                        }
-                    }
-                }
+                StoreParamResult(name, __result, serviceModuleDataItem, serviceModuleInvokeItem, isInParam);
             }
         }
 
@@ -932,23 +916,7 @@ namespace PsdzClient
                 {
                     log.InfoFormat("GetModuleParameterPostfix2 Service module found, Method: '{0}', IsInParam: '{1}', InvokeItem: {2}",
                         serviceModuleDataItem.MethodName ?? string.Empty, isInParam, serviceModuleInvokeItem != null);
-                    if (!isInParam && !string.IsNullOrEmpty(name))
-                    {
-                        if (serviceModuleInvokeItem != null)
-                        {
-                            if (!serviceModuleInvokeItem.OutParamValues.ContainsKey(name))
-                            {
-                                serviceModuleInvokeItem.OutParamValues.Add(name, resultData);
-                            }
-                        }
-                        else
-                        {
-                            if (!serviceModuleDataItem.OutParamValues.ContainsKey(name))
-                            {
-                                serviceModuleDataItem.OutParamValues.Add(name, resultData);
-                            }
-                        }
-                    }
+                    StoreParamResult(name, __result, serviceModuleDataItem, serviceModuleInvokeItem, isInParam);
                 }
             }
         }
@@ -987,6 +955,45 @@ namespace PsdzClient
             }
 
             return serviceModuleDataItem;
+        }
+
+        private static bool StoreParamResult(string paramName, object result, ServiceModuleDataItem serviceModuleDataItem, ServiceModuleInvokeItem serviceModuleInvokeItem, bool isInParam)
+        {
+            if (!isInParam && !string.IsNullOrEmpty(paramName))
+            {
+                string resultData = string.Empty;
+                if (result != null)
+                {
+                    Type dataType = result.GetType();
+                    if (dataType.IsPrimitive || dataType == typeof(string))
+                    {
+                        resultData = result.ToString();
+                    }
+                    else
+                    {
+                        resultData = dataType.Name;
+                    }
+                }
+
+                if (serviceModuleInvokeItem != null)
+                {
+                    if (!serviceModuleInvokeItem.OutParamValues.ContainsKey(paramName))
+                    {
+                        serviceModuleInvokeItem.OutParamValues.Add(paramName, resultData);
+                        return true;
+                    }
+                }
+                else
+                {
+                    if (!serviceModuleDataItem.OutParamValues.ContainsKey(paramName))
+                    {
+                        serviceModuleDataItem.OutParamValues.Add(paramName, resultData);
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         public TestModuleData GetTestModuleData(string moduleName)
