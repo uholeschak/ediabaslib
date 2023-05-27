@@ -285,7 +285,7 @@
       <HintPath>packages\Xamarin.Google.Android.Play.Core.1.10.2.2\lib\monoandroid90\Xamarin.Google.Android.Play.Core.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Google.Guava.ListenableFuture, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.12\lib\monoandroid12.0\Xamarin.Google.Guava.ListenableFuture.dll</HintPath>
+      <HintPath>packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.13\lib\monoandroid12.0\Xamarin.Google.Guava.ListenableFuture.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Jetbrains.Annotations, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Xamarin.Jetbrains.Annotations.24.0.1.2\lib\monoandroid12.0\Xamarin.Jetbrains.Annotations.dll</HintPath>
@@ -303,10 +303,10 @@
       <HintPath>packages\Xamarin.Kotlin.StdLib.Jdk8.1.8.21.1\lib\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk8.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.KotlinX.Coroutines.Android, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Xamarin.KotlinX.Coroutines.Android.1.6.4.3\lib\monoandroid12.0\Xamarin.KotlinX.Coroutines.Android.dll</HintPath>
+      <HintPath>packages\Xamarin.KotlinX.Coroutines.Android.1.7.1.1\lib\monoandroid12.0\Xamarin.KotlinX.Coroutines.Android.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.KotlinX.Coroutines.Core.Jvm, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Xamarin.KotlinX.Coroutines.Core.Jvm.1.6.4.3\lib\monoandroid12.0\Xamarin.KotlinX.Coroutines.Core.Jvm.dll</HintPath>
+      <HintPath>packages\Xamarin.KotlinX.Coroutines.Core.Jvm.1.7.1.1\lib\monoandroid12.0\Xamarin.KotlinX.Coroutines.Core.Jvm.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -904,9 +904,6 @@
     <Error Condition="!Exists('packages\Xamarin.Google.Android.Material.1.7.0.1\build\monoandroid12.0\Xamarin.Google.Android.Material.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Google.Android.Material.1.7.0.1\build\monoandroid12.0\Xamarin.Google.Android.Material.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.AppCompat.AppCompatResources.1.5.1.1\build\monoandroid12.0\Xamarin.AndroidX.AppCompat.AppCompatResources.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.AppCompat.AppCompatResources.1.5.1.1\build\monoandroid12.0\Xamarin.AndroidX.AppCompat.AppCompatResources.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.WebKit.1.6.0\build\monoandroid12.0\Xamarin.AndroidX.WebKit.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.WebKit.1.6.0\build\monoandroid12.0\Xamarin.AndroidX.WebKit.targets'))" />
-    <Error Condition="!Exists('packages\Xamarin.KotlinX.Coroutines.Core.Jvm.1.6.4.3\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Core.Jvm.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.KotlinX.Coroutines.Core.Jvm.1.6.4.3\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Core.Jvm.targets'))" />
-    <Error Condition="!Exists('packages\Xamarin.KotlinX.Coroutines.Android.1.6.4.3\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Android.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.KotlinX.Coroutines.Android.1.6.4.3\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Android.targets'))" />
-    <Error Condition="!Exists('packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.12\build\monoandroid12.0\Xamarin.Google.Guava.ListenableFuture.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.12\build\monoandroid12.0\Xamarin.Google.Guava.ListenableFuture.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.MultiDex.2.0.1.17\build\monoandroid12.0\Xamarin.AndroidX.MultiDex.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.MultiDex.2.0.1.17\build\monoandroid12.0\Xamarin.AndroidX.MultiDex.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.Annotation.Experimental.1.3.0.3\build\monoandroid12.0\Xamarin.AndroidX.Annotation.Experimental.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.Annotation.Experimental.1.3.0.3\build\monoandroid12.0\Xamarin.AndroidX.Annotation.Experimental.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.Jetbrains.Annotations.24.0.1.2\build\monoandroid12.0\Xamarin.Jetbrains.Annotations.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Jetbrains.Annotations.24.0.1.2\build\monoandroid12.0\Xamarin.Jetbrains.Annotations.targets'))" />
@@ -914,6 +911,9 @@
     <Error Condition="!Exists('packages\Xamarin.Kotlin.StdLib.1.8.21.1\build\monoandroid12.0\Xamarin.Kotlin.StdLib.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Kotlin.StdLib.1.8.21.1\build\monoandroid12.0\Xamarin.Kotlin.StdLib.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.Kotlin.StdLib.Jdk7.1.8.21.1\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk7.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Kotlin.StdLib.Jdk7.1.8.21.1\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk7.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.Kotlin.StdLib.Jdk8.1.8.21.1\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk8.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Kotlin.StdLib.Jdk8.1.8.21.1\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk8.targets'))" />
+    <Error Condition="!Exists('packages\Xamarin.KotlinX.Coroutines.Core.Jvm.1.7.1.1\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Core.Jvm.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.KotlinX.Coroutines.Core.Jvm.1.7.1.1\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Core.Jvm.targets'))" />
+    <Error Condition="!Exists('packages\Xamarin.KotlinX.Coroutines.Android.1.7.1.1\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Android.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.KotlinX.Coroutines.Android.1.7.1.1\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Android.targets'))" />
+    <Error Condition="!Exists('packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.13\build\monoandroid12.0\Xamarin.Google.Guava.ListenableFuture.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.13\build\monoandroid12.0\Xamarin.Google.Guava.ListenableFuture.targets'))" />
   </Target>
   <PropertyGroup>
     <PostBuildEvent>SETLOCAL EnableDelayedExpansion
@@ -974,9 +974,6 @@ if EXIST "!cache_dir!" (
   <Import Project="packages\Xamarin.Google.Android.Material.1.7.0.1\build\monoandroid12.0\Xamarin.Google.Android.Material.targets" Condition="Exists('packages\Xamarin.Google.Android.Material.1.7.0.1\build\monoandroid12.0\Xamarin.Google.Android.Material.targets')" />
   <Import Project="packages\Xamarin.AndroidX.AppCompat.AppCompatResources.1.5.1.1\build\monoandroid12.0\Xamarin.AndroidX.AppCompat.AppCompatResources.targets" Condition="Exists('packages\Xamarin.AndroidX.AppCompat.AppCompatResources.1.5.1.1\build\monoandroid12.0\Xamarin.AndroidX.AppCompat.AppCompatResources.targets')" />
   <Import Project="packages\Xamarin.AndroidX.WebKit.1.6.0\build\monoandroid12.0\Xamarin.AndroidX.WebKit.targets" Condition="Exists('packages\Xamarin.AndroidX.WebKit.1.6.0\build\monoandroid12.0\Xamarin.AndroidX.WebKit.targets')" />
-  <Import Project="packages\Xamarin.KotlinX.Coroutines.Core.Jvm.1.6.4.3\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Core.Jvm.targets" Condition="Exists('packages\Xamarin.KotlinX.Coroutines.Core.Jvm.1.6.4.3\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Core.Jvm.targets')" />
-  <Import Project="packages\Xamarin.KotlinX.Coroutines.Android.1.6.4.3\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Android.targets" Condition="Exists('packages\Xamarin.KotlinX.Coroutines.Android.1.6.4.3\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Android.targets')" />
-  <Import Project="packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.12\build\monoandroid12.0\Xamarin.Google.Guava.ListenableFuture.targets" Condition="Exists('packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.12\build\monoandroid12.0\Xamarin.Google.Guava.ListenableFuture.targets')" />
   <Import Project="packages\Xamarin.AndroidX.MultiDex.2.0.1.17\build\monoandroid12.0\Xamarin.AndroidX.MultiDex.targets" Condition="Exists('packages\Xamarin.AndroidX.MultiDex.2.0.1.17\build\monoandroid12.0\Xamarin.AndroidX.MultiDex.targets')" />
   <Import Project="packages\Xamarin.AndroidX.Annotation.Experimental.1.3.0.3\build\monoandroid12.0\Xamarin.AndroidX.Annotation.Experimental.targets" Condition="Exists('packages\Xamarin.AndroidX.Annotation.Experimental.1.3.0.3\build\monoandroid12.0\Xamarin.AndroidX.Annotation.Experimental.targets')" />
   <Import Project="packages\Xamarin.Jetbrains.Annotations.24.0.1.2\build\monoandroid12.0\Xamarin.Jetbrains.Annotations.targets" Condition="Exists('packages\Xamarin.Jetbrains.Annotations.24.0.1.2\build\monoandroid12.0\Xamarin.Jetbrains.Annotations.targets')" />
@@ -984,4 +981,7 @@ if EXIST "!cache_dir!" (
   <Import Project="packages\Xamarin.Kotlin.StdLib.1.8.21.1\build\monoandroid12.0\Xamarin.Kotlin.StdLib.targets" Condition="Exists('packages\Xamarin.Kotlin.StdLib.1.8.21.1\build\monoandroid12.0\Xamarin.Kotlin.StdLib.targets')" />
   <Import Project="packages\Xamarin.Kotlin.StdLib.Jdk7.1.8.21.1\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk7.targets" Condition="Exists('packages\Xamarin.Kotlin.StdLib.Jdk7.1.8.21.1\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk7.targets')" />
   <Import Project="packages\Xamarin.Kotlin.StdLib.Jdk8.1.8.21.1\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk8.targets" Condition="Exists('packages\Xamarin.Kotlin.StdLib.Jdk8.1.8.21.1\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk8.targets')" />
+  <Import Project="packages\Xamarin.KotlinX.Coroutines.Core.Jvm.1.7.1.1\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Core.Jvm.targets" Condition="Exists('packages\Xamarin.KotlinX.Coroutines.Core.Jvm.1.7.1.1\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Core.Jvm.targets')" />
+  <Import Project="packages\Xamarin.KotlinX.Coroutines.Android.1.7.1.1\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Android.targets" Condition="Exists('packages\Xamarin.KotlinX.Coroutines.Android.1.7.1.1\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Android.targets')" />
+  <Import Project="packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.13\build\monoandroid12.0\Xamarin.Google.Guava.ListenableFuture.targets" Condition="Exists('packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.13\build\monoandroid12.0\Xamarin.Google.Guava.ListenableFuture.targets')" />
 </Project>
