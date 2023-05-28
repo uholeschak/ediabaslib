@@ -1079,9 +1079,6 @@ namespace BmwDeepObd
             string adaptionValueStart = string.Empty;
             string adaptionValueNew = string.Empty;
             string adaptionValueTest = string.Empty;
-            string codingTextWorkshop = string.Empty;
-            string codingTextImporter = string.Empty;
-            string codingTextEquipment = string.Empty;
             string workshopNumberTitle = string.Empty;
             string importerNumberTitle = string.Empty;
             string equipmentNumberTitle = string.Empty;
@@ -1095,6 +1092,13 @@ namespace BmwDeepObd
             bool operationActive = _instanceData.TestAdaption || _instanceData.StoreAdaption || _instanceData.StoreAdaption;
             InputTypes inputType = InputTypes.ClassNumber;
             bool validData = false;
+
+            string codingTextWorkshop = string.Empty;
+            string codingTextImporter = string.Empty;
+            string codingTextEquipment = string.Empty;
+            bool editTextWorkshop = isUdsEcu;
+            bool editTextImporter = isUdsEcu;
+            bool editTextEquipment = isUdsEcu;
 
             try
             {
@@ -1224,15 +1228,38 @@ namespace BmwDeepObd
 
                 if (_instanceData.CurrentWorkshopNumber.HasValue)
                 {
-                    codingTextWorkshop = string.Format(CultureInfo.InvariantCulture, "{0}", _instanceData.CurrentWorkshopNumber);
+                    ulong currentWorkshopNumber = _instanceData.CurrentWorkshopNumber.Value;
+                    if (_ecuInfo.VagWorkshopNumber.HasValue && _ecuInfo.VagWorkshopNumber > VagCodingActivity.WorkshopNumberMax)
+                    {
+                        editTextWorkshop = true;
+                        currentWorkshopNumber = VagCodingActivity.WorkshopNumberMax;
+                    }
+
+                    codingTextWorkshop = string.Format(CultureInfo.InvariantCulture, "{0}", currentWorkshopNumber);
                 }
+
                 if (_instanceData.CurrentImporterNumber.HasValue)
                 {
-                    codingTextImporter = string.Format(CultureInfo.InvariantCulture, "{0}", _instanceData.CurrentImporterNumber);
+                    ulong currentImporterNumber = _instanceData.CurrentImporterNumber.Value;
+                    if (_ecuInfo.VagImporterNumber.HasValue && _ecuInfo.VagImporterNumber > VagCodingActivity.ImporterNumberMax)
+                    {
+                        editTextImporter = true;
+                        currentImporterNumber = VagCodingActivity.ImporterNumberMax;
+                    }
+
+                    codingTextImporter = string.Format(CultureInfo.InvariantCulture, "{0}", currentImporterNumber);
                 }
+
                 if (_instanceData.CurrentEquipmentNumber.HasValue)
                 {
-                    codingTextEquipment = string.Format(CultureInfo.InvariantCulture, "{0}", _instanceData.CurrentEquipmentNumber);
+                    ulong currentEquipmentNumber = _instanceData.CurrentEquipmentNumber.Value;
+                    if (_ecuInfo.VagEquipmentNumber.HasValue && _ecuInfo.VagEquipmentNumber > VagCodingActivity.EquipmentNumberMax)
+                    {
+                        editTextEquipment = true;
+                        currentEquipmentNumber = VagCodingActivity.EquipmentNumberMax;
+                    }
+
+                    codingTextEquipment = string.Format(CultureInfo.InvariantCulture, "{0}", currentEquipmentNumber);
                 }
 
                 workshopNumberTitle = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.vag_adaption_workshop_number_title), 0, VagCodingActivity.WorkshopNumberMax);
@@ -1301,15 +1328,15 @@ namespace BmwDeepObd
             if (!cyclicUpdate)
             {
                 _textViewVagWorkshopNumberTitle.Text = workshopNumberTitle;
-                _editTextVagWorkshopNumber.Enabled = isUdsEcu;
+                _editTextVagWorkshopNumber.Enabled = editTextWorkshop;
                 _editTextVagWorkshopNumber.Text = codingTextWorkshop;
 
                 _textViewVagImporterNumberTitle.Text = importerNumberTitle;
-                _editTextVagImporterNumber.Enabled = isUdsEcu;
+                _editTextVagImporterNumber.Enabled = editTextImporter;
                 _editTextVagImporterNumber.Text = codingTextImporter;
 
                 _textViewVagEquipmentNumberTitle.Text = equipmentNumberTitle;
-                _editTextVagEquipmentNumber.Enabled = isUdsEcu;
+                _editTextVagEquipmentNumber.Enabled = editTextEquipment;
                 _editTextVagEquipmentNumber.Text = codingTextEquipment;
             }
 
