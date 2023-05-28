@@ -472,6 +472,16 @@ namespace LogfileConverter
                                     }
                                     else
                                     {
+                                        if (_edicCanMode)
+                                        {
+                                            string cfgLine = $"CFG: {_edicCanAddr:X02} {_edicCanEcuAddr:X02}";
+                                            if (string.Compare(lastCfgLine, cfgLine, StringComparison.Ordinal) != 0)
+                                            {
+                                                lastCfgLine = cfgLine;
+                                                cfgLineWrite = cfgLine;
+                                            }
+                                        }
+
                                         List<byte> lineConv = ConvertBmwTelegram(lineValues);
                                         if (lineConv != null)
                                         {
