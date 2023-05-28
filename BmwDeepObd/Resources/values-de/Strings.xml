@@ -698,7 +698,7 @@
   <string name="vag_coding_execute_title">Vorgang ausführen</string>
   <string name="vag_coding_button_execute">Ausführen</string>
   <string name="vag_coding_processing">Vorgang wird ausgeführt</string>
-  <string name="vag_coding_write_values_invalid">Wenn die Betriebsnummer, Importeursnummer oder Gerätenummer 0 oder zu groß sind kann es sein, dass die ECU die Werte ablehnt.\nWollen Sie trotzdem fortfahren?</string>
+  <string name="vag_coding_write_values_invalid">Wenn die Betriebsnummer, Importeursnummer oder Gerätenummer 0 oder zu groß sind, kann es sein, dass die ECU die Werte ablehnt.\nWollen Sie trotzdem fortfahren?</string>
   <string name="vag_coding_write_coding_illegal_arguments">Die Job Argumente sind außerhalb des gültigen Bereichs</string>
   <string name="vag_coding_write_coding_failed">Der Vorgang ist fehlgeschlagen</string>
   <string name="vag_coding_write_coding_access_denied">Zugriff verweigert, Sie müssen sich zuerst authentifizieren</string>

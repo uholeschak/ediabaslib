@@ -1327,17 +1327,18 @@ namespace BmwDeepObd
             if (!cyclicUpdate)
             {
                 _textViewVagWorkshopNumberTitle.Text = workshopNumberTitle;
-                _editTextVagWorkshopNumber.Enabled = editTextWorkshop;
                 _editTextVagWorkshopNumber.Text = codingTextWorkshop;
 
                 _textViewVagImporterNumberTitle.Text = importerNumberTitle;
-                _editTextVagImporterNumber.Enabled = editTextImporter;
                 _editTextVagImporterNumber.Text = codingTextImporter;
 
                 _textViewVagEquipmentNumberTitle.Text = equipmentNumberTitle;
-                _editTextVagEquipmentNumber.Enabled = editTextEquipment;
                 _editTextVagEquipmentNumber.Text = codingTextEquipment;
             }
+
+            _editTextVagWorkshopNumber.Enabled = editTextWorkshop && !cyclicUpdate;
+            _editTextVagImporterNumber.Enabled = editTextImporter && !cyclicUpdate;
+            _editTextVagEquipmentNumber.Enabled = editTextEquipment && !cyclicUpdate;
 
             if (isUdsEcu)
             {
