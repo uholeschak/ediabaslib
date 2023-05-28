@@ -1228,11 +1228,15 @@ namespace BmwDeepObd
 
                 if (_instanceData.CurrentWorkshopNumber.HasValue)
                 {
-                    ulong currentWorkshopNumber = _instanceData.CurrentWorkshopNumber.Value;
+                    ulong currentWorkshopNumber = _instanceData.CurrentWorkshopNumber.Value & VagCodingActivity.WorkshopNumberMask;
+                    if (currentWorkshopNumber > VagCodingActivity.WorkshopNumberMax)
+                    {
+                        currentWorkshopNumber = VagCodingActivity.WorkshopNumberMax;
+                    }
+
                     if (_ecuInfo.VagWorkshopNumber.HasValue && _ecuInfo.VagWorkshopNumber > VagCodingActivity.WorkshopNumberMax)
                     {
                         editTextWorkshop = true;
-                        currentWorkshopNumber = VagCodingActivity.WorkshopNumberMax;
                     }
 
                     codingTextWorkshop = string.Format(CultureInfo.InvariantCulture, "{0}", currentWorkshopNumber);
@@ -1240,11 +1244,15 @@ namespace BmwDeepObd
 
                 if (_instanceData.CurrentImporterNumber.HasValue)
                 {
-                    ulong currentImporterNumber = _instanceData.CurrentImporterNumber.Value;
+                    ulong currentImporterNumber = _instanceData.CurrentImporterNumber.Value & VagCodingActivity.ImporterNumberMask;
+                    if (currentImporterNumber > VagCodingActivity.ImporterNumberMax)
+                    {
+                        currentImporterNumber = VagCodingActivity.ImporterNumberMax;
+                    }
+
                     if (_ecuInfo.VagImporterNumber.HasValue && _ecuInfo.VagImporterNumber > VagCodingActivity.ImporterNumberMax)
                     {
                         editTextImporter = true;
-                        currentImporterNumber = VagCodingActivity.ImporterNumberMax;
                     }
 
                     codingTextImporter = string.Format(CultureInfo.InvariantCulture, "{0}", currentImporterNumber);
@@ -1252,11 +1260,15 @@ namespace BmwDeepObd
 
                 if (_instanceData.CurrentEquipmentNumber.HasValue)
                 {
-                    ulong currentEquipmentNumber = _instanceData.CurrentEquipmentNumber.Value;
+                    ulong currentEquipmentNumber = _instanceData.CurrentEquipmentNumber.Value & VagCodingActivity.EquipmentNumberMask;
+                    if (currentEquipmentNumber > VagCodingActivity.EquipmentNumberMax)
+                    {
+                        currentEquipmentNumber = VagCodingActivity.EquipmentNumberMax;
+                    }
+
                     if (_ecuInfo.VagEquipmentNumber.HasValue && _ecuInfo.VagEquipmentNumber > VagCodingActivity.EquipmentNumberMax)
                     {
                         editTextEquipment = true;
-                        currentEquipmentNumber = VagCodingActivity.EquipmentNumberMax;
                     }
 
                     codingTextEquipment = string.Format(CultureInfo.InvariantCulture, "{0}", currentEquipmentNumber);
@@ -1410,19 +1422,19 @@ namespace BmwDeepObd
         private byte[] GetRepairShopCodeData()
         {
             byte[] repairShopCodeData = new byte[6];
-            byte[] workShopData = BitConverter.GetBytes(_instanceData.CurrentWorkshopNumber ?? 0 & 0x01FFFF);    // 17 bit
+            byte[] workShopData = BitConverter.GetBytes(_instanceData.CurrentWorkshopNumber ?? 0 & VagCodingActivity.WorkshopNumberMask);
             if (BitConverter.IsLittleEndian)
             {
                 Array.Reverse(workShopData);
             }
 
-            byte[] importerNumberData = BitConverter.GetBytes((_instanceData.CurrentImporterNumber ?? 0 & 0x0003FF) << 1);  // 10 bit
+            byte[] importerNumberData = BitConverter.GetBytes((_instanceData.CurrentImporterNumber ?? 0 & VagCodingActivity.ImporterNumberMask) << 1);
             if (BitConverter.IsLittleEndian)
             {
                 Array.Reverse(importerNumberData);
             }
 
-            byte[] equipmentNumberData = BitConverter.GetBytes((_instanceData.CurrentEquipmentNumber ?? 0 & 0x1FFFFF) << 3);  // 21 bit
+            byte[] equipmentNumberData = BitConverter.GetBytes((_instanceData.CurrentEquipmentNumber ?? 0 & VagCodingActivity.EquipmentNumberMask) << 3);
             if (BitConverter.IsLittleEndian)
             {
                 Array.Reverse(equipmentNumberData);
