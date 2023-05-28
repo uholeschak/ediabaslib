@@ -47,8 +47,11 @@ namespace BmwDeepObd
         public const string ExtraDeepObdWifiIp = "deepobdwifi_ip";
 
         public const UInt64 WorkshopNumberMax = 99999;
+        public const UInt64 WorkshopNumberMask = 0x01FFFF;      // 17 bit
         public const UInt64 ImporterNumberMax = 999;
+        public const UInt64 ImporterNumberMask = 0x0003FF;      // 10 bit;
         public const UInt64 EquipmentNumberMax = 999999;
+        public const UInt64 EquipmentNumberMask = 0x1FFFFF;     // 21 bit
 
         public enum CodingMode
         {
@@ -1300,19 +1303,19 @@ namespace BmwDeepObd
         private byte[] GetRepairShopCodeData()
         {
             byte[] repairShopCodeData = new byte[6];
-            byte[] workShopData = BitConverter.GetBytes(_instanceData.CurrentWorkshopNumber ?? 0 & 0x01FFFF);    // 17 bit
+            byte[] workShopData = BitConverter.GetBytes(_instanceData.CurrentWorkshopNumber ?? 0 & WorkshopNumberMask);
             if (BitConverter.IsLittleEndian)
             {
                 Array.Reverse(workShopData);
             }
 
-            byte[] importerNumberData = BitConverter.GetBytes((_instanceData.CurrentImporterNumber ?? 0 & 0x0003FF) << 1);  // 10 bit
+            byte[] importerNumberData = BitConverter.GetBytes((_instanceData.CurrentImporterNumber ?? 0 & ImporterNumberMask) << 1);
             if (BitConverter.IsLittleEndian)
             {
                 Array.Reverse(importerNumberData);
             }
 
-            byte[] equipmentNumberData = BitConverter.GetBytes((_instanceData.CurrentEquipmentNumber ?? 0 & 0x1FFFFF) << 3);  // 21 bit
+            byte[] equipmentNumberData = BitConverter.GetBytes((_instanceData.CurrentEquipmentNumber ?? 0 & EquipmentNumberMask) << 3);
             if (BitConverter.IsLittleEndian)
             {
                 Array.Reverse(equipmentNumberData);
