@@ -1234,7 +1234,8 @@ namespace BmwDeepObd
                         currentWorkshopNumber = VagCodingActivity.WorkshopNumberMax;
                     }
 
-                    if (_ecuInfo.VagWorkshopNumber.HasValue && _ecuInfo.VagWorkshopNumber > VagCodingActivity.WorkshopNumberMax)
+                    if (_ecuInfo.VagWorkshopNumber.HasValue &&
+                        (_ecuInfo.VagWorkshopNumber < 1 || _ecuInfo.VagWorkshopNumber > VagCodingActivity.WorkshopNumberMax))
                     {
                         editTextWorkshop = true;
                     }
@@ -1250,7 +1251,7 @@ namespace BmwDeepObd
                         currentImporterNumber = VagCodingActivity.ImporterNumberMax;
                     }
 
-                    if (_ecuInfo.VagImporterNumber.HasValue && _ecuInfo.VagImporterNumber > VagCodingActivity.ImporterNumberMax)
+                    if (_ecuInfo.VagImporterNumber.HasValue && (_ecuInfo.VagImporterNumber < 1 || _ecuInfo.VagImporterNumber > VagCodingActivity.ImporterNumberMax))
                     {
                         editTextImporter = true;
                     }
@@ -1266,7 +1267,8 @@ namespace BmwDeepObd
                         currentEquipmentNumber = VagCodingActivity.EquipmentNumberMax;
                     }
 
-                    if (_ecuInfo.VagEquipmentNumber.HasValue && _ecuInfo.VagEquipmentNumber > VagCodingActivity.EquipmentNumberMax)
+                    if (_ecuInfo.VagEquipmentNumber.HasValue &&
+                        (_ecuInfo.VagEquipmentNumber < 1 || _ecuInfo.VagEquipmentNumber > VagCodingActivity.EquipmentNumberMax))
                     {
                         editTextEquipment = true;
                     }
