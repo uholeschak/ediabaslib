@@ -1340,11 +1340,11 @@ namespace BmwDeepObd
         private void ExecuteCodingRequest()
         {
             bool valuesValid = true;
-            if (_instanceData.CurrentWorkshopNumber != null && _instanceData.CurrentImporterNumber != null && _instanceData.CurrentImporterNumber != null)
+            if (_instanceData.CurrentWorkshopNumber != null && _instanceData.CurrentImporterNumber != null && _instanceData.CurrentEquipmentNumber != null)
             {
                 valuesValid = _instanceData.CurrentWorkshopNumber.Value != 0 &&
                               _instanceData.CurrentImporterNumber.Value != 0 &&
-                              _instanceData.CurrentImporterNumber.Value != 0;
+                              _instanceData.CurrentEquipmentNumber.Value != 0;
             }
 
             if (!valuesValid)
