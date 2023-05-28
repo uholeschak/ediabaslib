@@ -1229,11 +1229,6 @@ namespace BmwDeepObd
                 if (_instanceData.CurrentWorkshopNumber.HasValue)
                 {
                     ulong currentWorkshopNumber = _instanceData.CurrentWorkshopNumber.Value & VagCodingActivity.WorkshopNumberMask;
-                    if (currentWorkshopNumber > VagCodingActivity.WorkshopNumberMax)
-                    {
-                        currentWorkshopNumber = VagCodingActivity.WorkshopNumberMax;
-                    }
-
                     if (_ecuInfo.VagWorkshopNumber.HasValue &&
                         (_ecuInfo.VagWorkshopNumber < 1 || _ecuInfo.VagWorkshopNumber > VagCodingActivity.WorkshopNumberMax))
                     {
@@ -1246,11 +1241,6 @@ namespace BmwDeepObd
                 if (_instanceData.CurrentImporterNumber.HasValue)
                 {
                     ulong currentImporterNumber = _instanceData.CurrentImporterNumber.Value & VagCodingActivity.ImporterNumberMask;
-                    if (currentImporterNumber > VagCodingActivity.ImporterNumberMax)
-                    {
-                        currentImporterNumber = VagCodingActivity.ImporterNumberMax;
-                    }
-
                     if (_ecuInfo.VagImporterNumber.HasValue && (_ecuInfo.VagImporterNumber < 1 || _ecuInfo.VagImporterNumber > VagCodingActivity.ImporterNumberMax))
                     {
                         editTextImporter = true;
@@ -1262,11 +1252,6 @@ namespace BmwDeepObd
                 if (_instanceData.CurrentEquipmentNumber.HasValue)
                 {
                     ulong currentEquipmentNumber = _instanceData.CurrentEquipmentNumber.Value & VagCodingActivity.EquipmentNumberMask;
-                    if (currentEquipmentNumber > VagCodingActivity.EquipmentNumberMax)
-                    {
-                        currentEquipmentNumber = VagCodingActivity.EquipmentNumberMax;
-                    }
-
                     if (_ecuInfo.VagEquipmentNumber.HasValue &&
                         (_ecuInfo.VagEquipmentNumber < 1 || _ecuInfo.VagEquipmentNumber > VagCodingActivity.EquipmentNumberMax))
                     {
@@ -1463,9 +1448,9 @@ namespace BmwDeepObd
             bool valuesValid = true;
             if (_instanceData.CurrentWorkshopNumber != null && _instanceData.CurrentImporterNumber != null && _instanceData.CurrentEquipmentNumber != null)
             {
-                valuesValid = _instanceData.CurrentWorkshopNumber.Value != 0 &&
-                              _instanceData.CurrentImporterNumber.Value != 0 &&
-                              _instanceData.CurrentEquipmentNumber.Value != 0;
+                valuesValid = _instanceData.CurrentWorkshopNumber.Value > 0 && _instanceData.CurrentWorkshopNumber.Value <= VagCodingActivity.WorkshopNumberMax &&
+                              _instanceData.CurrentImporterNumber.Value > 0 && _instanceData.CurrentImporterNumber.Value <= VagCodingActivity.ImporterNumberMax &&
+                              _instanceData.CurrentEquipmentNumber.Value > 0 && _instanceData.CurrentEquipmentNumber.Value <= VagCodingActivity.EquipmentNumberMax;
             }
 
             if (!valuesValid)
