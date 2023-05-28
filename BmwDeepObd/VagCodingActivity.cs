@@ -1342,9 +1342,9 @@ namespace BmwDeepObd
             bool valuesValid = true;
             if (_instanceData.CurrentWorkshopNumber != null && _instanceData.CurrentImporterNumber != null && _instanceData.CurrentEquipmentNumber != null)
             {
-                valuesValid = _instanceData.CurrentWorkshopNumber.Value != 0 &&
-                              _instanceData.CurrentImporterNumber.Value != 0 &&
-                              _instanceData.CurrentEquipmentNumber.Value != 0;
+                valuesValid = _instanceData.CurrentWorkshopNumber.Value > 0 && _instanceData.CurrentWorkshopNumber.Value <= WorkshopNumberMax &&
+                              _instanceData.CurrentImporterNumber.Value > 0 && _instanceData.CurrentImporterNumber.Value <= ImporterNumberMax &&
+                              _instanceData.CurrentEquipmentNumber.Value > 0 && _instanceData.CurrentEquipmentNumber.Value <= EquipmentNumberMax;
             }
 
             if (!valuesValid)

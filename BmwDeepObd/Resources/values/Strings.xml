@@ -674,7 +674,7 @@
   <string name="vag_coding_execute_title">Execute operation</string>
   <string name="vag_coding_button_execute">Execute</string>
   <string name="vag_coding_processing">Processing</string>
-  <string name="vag_coding_write_values_invalid">If the workshop code, importer number or equipment number is 0 the ECU may reject the values.\nDo you want to continue anyway?</string>
+  <string name="vag_coding_write_values_invalid">If the workshop code, importer number or equipment number is 0 or too large the ECU may reject the values.\nDo you want to continue anyway?</string>
   <string name="vag_coding_write_coding_illegal_arguments">The job arguments are out of range</string>
   <string name="vag_coding_write_coding_failed">The operation failed</string>
   <string name="vag_coding_write_coding_access_denied">Access denied, you have to use security access first</string>
