@@ -692,7 +692,13 @@ namespace PsdzClient
                         }
                         else
                         {
-                            outParmDyn.setParameter("Result", 1);
+                            int resultValue = 1;
+                            if (dialogName == "QuestionSelectServiceDlg_20")
+                            {
+                                resultValue = dialogState + 1;
+                            }
+
+                            outParmDyn.setParameter("Result", resultValue);
                         }
 
                         if (dialogName == "DatumeingabeDlg")
