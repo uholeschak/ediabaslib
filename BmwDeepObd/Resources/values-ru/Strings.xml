@@ -734,7 +734,7 @@
   <string name="vag_adaption_button_stop">Остановить</string>
   <string name="vag_adaption_ecu_reset">Выполнить ECU сброс</string>
   <!--Translate-->
-  <string name="vag_adaption_change_coding_first">Рекомендуется сначала изменить неверную кодировку в ЭБУ.</string>
+  <string name="vag_adaption_change_coding_first">Рекомендуется сначала исправить кодировку в ECU.</string>
 
   <!-- BMW Actuator Activity -->
   <string name="bmw_actuator_title">Актуатор ECU: {0}</string>

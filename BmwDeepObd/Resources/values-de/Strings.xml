@@ -732,7 +732,7 @@
   <string name="vag_adaption_button_store">Speichern</string>
   <string name="vag_adaption_button_stop">Stop</string>
   <string name="vag_adaption_ecu_reset">ECU Reset durchführen</string>
-  <string name="vag_adaption_change_coding_first">Es wird empfohlen, zunächst die ungültige Kondidierung in der ECU zu ändern.</string>
+  <string name="vag_adaption_change_coding_first">Es wird empfohlen, zunächst die Kodierung in der ECU zu korrigieren.</string>
 
   <!-- BMW Actuator Activity -->
   <string name="bmw_actuator_title">Aktuator ECU: {0}</string>
