@@ -204,6 +204,7 @@ namespace PsdzClient
                 InoutParams = inoutParams;
                 ContainerXml = containerXml;
                 ServiceDialogs = new HashSet<object>();
+                DialogStateDict = new SerializableDictionary<string, int>();
             }
 
             [XmlElement("MethodName"), DefaultValue(null)] public string MethodName { get; set; }
@@ -234,12 +235,15 @@ namespace PsdzClient
 
             [XmlIgnore, DefaultValue(null)] public HashSet<object> ServiceDialogs { get; set; }
 
+            [XmlIgnore, DefaultValue(null)] public SerializableDictionary<string, int> DialogStateDict { get; set; }
+
             public void CleanupInternal()
             {
                 InParams = null;
                 InoutParams = null;
                 ContainerXml = null;
                 ServiceDialogs.Clear();
+                DialogStateDict.Clear();
 
                 foreach (ServiceModuleInvokeItem invokeItem in InvokeItems)
                 {
@@ -542,6 +546,7 @@ namespace PsdzClient
                 }
             }
 
+            int dialogState = 0;
             string dialogName = string.Empty;
             if (serviceModuleDataItem == null)
             {
@@ -550,6 +555,17 @@ namespace PsdzClient
             else
             {
                 dialogName = serviceModuleDataItem.ServiceDialogName ?? string.Empty;
+                string stateKey = method;
+                if (!serviceModuleDataItem.DialogStateDict.ContainsKey(stateKey))
+                {
+                    serviceModuleDataItem.DialogStateDict.Add(stateKey, dialogState);
+                }
+                else
+                {
+                    dialogState = serviceModuleDataItem.DialogStateDict[stateKey];
+                    dialogState++;
+                    serviceModuleDataItem.DialogStateDict[stateKey] = dialogState;
+                }
             }
 
             SerializableDictionary<string, string> textIds = new SerializableDictionary<string, string>();
