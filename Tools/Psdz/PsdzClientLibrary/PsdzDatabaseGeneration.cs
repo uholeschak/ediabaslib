@@ -546,8 +546,9 @@ namespace PsdzClient
                 }
             }
 
-            int dialogState = 0;
             string dialogName = string.Empty;
+            string stateKey = method ?? string.Empty;
+            int dialogState = 0;
             if (serviceModuleDataItem == null)
             {
                 log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix, Service module data not found");
@@ -555,15 +556,8 @@ namespace PsdzClient
             else
             {
                 dialogName = serviceModuleDataItem.ServiceDialogName ?? string.Empty;
-                string stateKey = method;
-                if (!serviceModuleDataItem.DialogStateDict.ContainsKey(stateKey))
+                if (!serviceModuleDataItem.DialogStateDict.TryGetValue(stateKey, out dialogState))
                 {
-                    serviceModuleDataItem.DialogStateDict.Add(stateKey, dialogState);
-                }
-                else
-                {
-                    dialogState = serviceModuleDataItem.DialogStateDict[stateKey];
-                    dialogState++;
                     serviceModuleDataItem.DialogStateDict[stateKey] = dialogState;
                 }
             }
@@ -733,6 +727,8 @@ namespace PsdzClient
                             outParmDyn.setParameter("IStufeHO_JJMMIII", 2001345);
                         }
 
+                        dialogState++;
+
                         lock (_moduleThreadLock)
                         {
                             if (serviceModuleDataItem != null)
@@ -754,6 +750,11 @@ namespace PsdzClient
             else
             {
                 log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix No out param");
+            }
+
+            if (serviceModuleDataItem != null)
+            {
+                serviceModuleDataItem.DialogStateDict[stateKey] = dialogState;
             }
 
             return false;
