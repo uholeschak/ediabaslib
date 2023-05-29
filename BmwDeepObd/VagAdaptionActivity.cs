@@ -1456,6 +1456,15 @@ namespace BmwDeepObd
 
             if (!valuesValid)
             {
+                StringBuilder sbMessage = new StringBuilder();
+                sbMessage.Append(GetString(Resource.String.vag_coding_write_values_invalid));
+                bool isUdsEcu = XmlToolActivity.IsUdsEcu(_ecuInfo);
+                if (!isUdsEcu)
+                {
+                    sbMessage.Append("\r\n");
+                    sbMessage.Append(GetString(Resource.String.vag_adaption_change_coding_first));
+                }
+
                 new AlertDialog.Builder(this)
                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                     {
@@ -1465,7 +1474,7 @@ namespace BmwDeepObd
                     {
                     })
                     .SetCancelable(true)
-                    .SetMessage(Resource.String.vag_coding_write_values_invalid)
+                    .SetMessage(sbMessage.ToString())
                     .SetTitle(Resource.String.alert_title_warning)
                     .Show();
                 return;

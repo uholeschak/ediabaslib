@@ -708,6 +708,7 @@
   <string name="vag_adaption_button_store">Store</string>
   <string name="vag_adaption_button_stop">Stop</string>
   <string name="vag_adaption_ecu_reset">Perform ECU reset</string>
+  <string name="vag_adaption_change_coding_first">It\'s recommended to change the invalid coding in the ECU first.</string>
 
   <!-- BMW Actuator Activity -->
   <string name="bmw_actuator_title">Actuator ECU: {0}</string>
