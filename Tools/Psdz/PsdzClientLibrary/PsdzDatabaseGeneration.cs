@@ -688,7 +688,7 @@ namespace PsdzClient
 
                         if (dialogName == "EnterServiceDlg")
                         {
-                            outParmDyn.setParameter("Result", "1");
+                            outParmDyn.setParameter("Result", "1234");
                         }
                         else
                         {
