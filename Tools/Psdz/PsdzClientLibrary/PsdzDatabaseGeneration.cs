@@ -696,10 +696,12 @@ namespace PsdzClient
                             if (dialogName == "QuestionServiceDlg")
                             {
                                 resultValue = (dialogState + 1) % 2;
+                                dialogState++;
                             }
                             else if (dialogName == "QuestionSelectServiceDlg_20")
                             {
                                 resultValue = (dialogState + 1) % 10;
+                                dialogState++;
                             }
 
                             outParmDyn.setParameter("Result", resultValue);
@@ -736,8 +738,6 @@ namespace PsdzClient
                         {
                             outParmDyn.setParameter("IStufeHO_JJMMIII", 2001345);
                         }
-
-                        dialogState++;
 
                         lock (_moduleThreadLock)
                         {
