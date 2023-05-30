@@ -693,9 +693,13 @@ namespace PsdzClient
                         else
                         {
                             int resultValue = 1;
-                            if (dialogName == "QuestionSelectServiceDlg_20")
+                            if (dialogName == "QuestionServiceDlg")
                             {
-                                resultValue = dialogState + 1;
+                                resultValue = (dialogState + 1) % 2;
+                            }
+                            else if (dialogName == "QuestionSelectServiceDlg_20")
+                            {
+                                resultValue = (dialogState + 1) % 10;
                             }
 
                             outParmDyn.setParameter("Result", resultValue);
