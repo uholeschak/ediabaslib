@@ -935,6 +935,12 @@ namespace PsdzClient
             }
         }
 
+        private static bool ModuleSleepPrefix(object __instance, int millisecondsTimeout)
+        {
+            log.InfoFormat("ModuleSleepPrefix Time: {0}", millisecondsTimeout);
+            return false;
+        }
+
         private static ServiceModuleDataItem GetServiceModuleItemForParameter(object parameterInst, out bool isInParam, out ServiceModuleInvokeItem serviceModuleInvokeItem)
         {
             ServiceModuleDataItem serviceModuleDataItem = null;
@@ -1926,6 +1932,20 @@ namespace PsdzClient
                     return null;
                 }
 
+                MethodInfo methodIstaModuleSleep = istaModuleType.GetMethod("Sleep", BindingFlags.Instance | BindingFlags.Public);
+                if (methodIstaModuleSleep == null)
+                {
+                    log.ErrorFormat("ReadTestModule ISTAModule Sleep not found");
+                    return null;
+                }
+
+                MethodInfo methodModuleSleepPrefix = typeof(PdszDatabase).GetMethod("ModuleSleepPrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                if (methodModuleSleepPrefix == null)
+                {
+                    log.ErrorFormat("ReadServiceModule ModuleSleepPrefix not found");
+                    return null;
+                }
+
                 if (!PatchCommonMethods(coreFrameworkAssembly, istaModuleType))
                 {
                     log.ErrorFormat("ReadServiceModule PatchCommonMethods failed");
@@ -1939,6 +1959,7 @@ namespace PsdzClient
                 bool patchedIndirectDocument = false;
                 bool patchedParamContainerGetParameter = false;
                 bool patchedModuleText = false;
+                bool patchedModuleSleep = false;
                 foreach (MethodBase methodBase in _harmony.GetPatchedMethods())
                 {
                     log.InfoFormat("ReadServiceModule Patched: {0}", methodBase.Name);
@@ -1976,6 +1997,11 @@ namespace PsdzClient
                     if (methodBase == methodIstaModuleText2)
                     {
                         patchedModuleText = true;
+                    }
+
+                    if (methodBase == methodIstaModuleSleep)
+                    {
+                        patchedModuleSleep = true;
                     }
                 }
 
@@ -2023,6 +2049,12 @@ namespace PsdzClient
                 {
                     log.InfoFormat("ReadServiceModule Patching: {0}", methodIstaModuleText2.Name);
                     _harmony.Patch(methodIstaModuleText2, new HarmonyMethod(methodModuleTextPrefix2));
+                }
+
+                if (!patchedModuleSleep)
+                {
+                    log.InfoFormat("ReadServiceModule Patching: {0}", methodIstaModuleSleep.Name);
+                    _harmony.Patch(methodIstaModuleSleep, new HarmonyMethod(methodModuleSleepPrefix));
                 }
 
                 Assembly moduleAssembly = Assembly.LoadFrom(moduleFile);
