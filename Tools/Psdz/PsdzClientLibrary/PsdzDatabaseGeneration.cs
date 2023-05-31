@@ -1370,7 +1370,15 @@ namespace PsdzClient
                     return null;
                 }
 
+                FieldInfo fieldVecIdent = logicType.GetField("vecIdent", BindingFlags.Instance | BindingFlags.NonPublic);
+                if (fieldVecIdent == null)
+                {
+                    log.ErrorFormat("CreateModuleParamContainerInst Field vecIdent not found");
+                    return null;
+                }
+
                 dynamic vehicleIdent = vehicleIdentConstructor.Invoke(new object[] { vehicleInst });
+                fieldVecIdent.SetValue(logicInst, vehicleIdent);
 
                 MethodInfo methodContainerSetParameter = moduleParamContainerType.GetMethod("setParameter");
                 if (methodContainerSetParameter == null)
