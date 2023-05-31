@@ -688,7 +688,7 @@ namespace PsdzClient
 
                         if (dialogName == "EnterServiceDlg")
                         {
-                            outParmDyn.setParameter("Result", "1234");
+                            outParmDyn.setParameter("Result", "0123");
                         }
                         else
                         {
@@ -2167,6 +2167,13 @@ namespace PsdzClient
                                     _serviceDialogTextHashes = null;
                                     _moduleRefPath = null;
                                     _moduleRefDict = null;
+                                    if (_serviceDialogDict != null)
+                                    {
+                                        foreach (KeyValuePair<string, ServiceModuleDataItem> keyValuePair in _serviceDialogDict)
+                                        {
+                                            keyValuePair.Value.CallsCount = 0;
+                                        }
+                                    }
                                 }
                                 simpleMethod.Invoke(testModule, null);
                                 log.InfoFormat("ReadServiceModule Method executed: {0}", simpleMethod.Name);
