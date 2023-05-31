@@ -1305,6 +1305,14 @@ namespace PsdzClient
                 }
                 Assembly sessionControllerAssembly = Assembly.LoadFrom(sessionControllerFile);
 
+                string diagnosticsFile = Path.Combine(_frameworkPath, "RheingoldDiagnostics.dll");
+                if (!File.Exists(diagnosticsFile))
+                {
+                    log.ErrorFormat("CreateModuleParamContainerInst Diagnostics file not found: {0}", diagnosticsFile);
+                    return null;
+                }
+                Assembly diagnosticsAssembly = Assembly.LoadFrom(diagnosticsFile);
+
                 moduleParamContainerType = coreFrameworkAssembly.GetType("BMW.Rheingold.CoreFramework.ParameterContainer");
                 if (moduleParamContainerType == null)
                 {
@@ -1347,6 +1355,22 @@ namespace PsdzClient
                 }
                 dynamic vehicleInst = Activator.CreateInstance(vehicleType);
                 logicInst.VecInfo = vehicleInst;
+
+                Type vehicleIdentType = diagnosticsAssembly.GetType("BMW.Rheingold.Diagnostics.VehicleIdent");
+                if (vehicleIdentType == null)
+                {
+                    log.ErrorFormat("CreateModuleParamContainerInst VehicleIdent not found");
+                    return null;
+                }
+
+                ConstructorInfo vehicleIdentConstructor = vehicleIdentType.GetConstructor(new Type[] { vehicleType });
+                if (vehicleIdentConstructor == null)
+                {
+                    log.ErrorFormat("CreateModuleParamContainerInst VehicleIdent constructor not found");
+                    return null;
+                }
+
+                dynamic vehicleIdent = vehicleIdentConstructor.Invoke(new object[] { vehicleInst });
 
                 MethodInfo methodContainerSetParameter = moduleParamContainerType.GetMethod("setParameter");
                 if (methodContainerSetParameter == null)
@@ -2189,7 +2213,7 @@ namespace PsdzClient
                         if (!moduleThread.Join(3000))
                         {
                             log.ErrorFormat("ReadServiceModule Thread timeout");
-                            moduleThread.Abort();
+                            //moduleThread.Abort();
                         }
                     }
                 }
