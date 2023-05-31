@@ -2221,7 +2221,7 @@ namespace PsdzClient
                         if (!moduleThread.Join(3000))
                         {
                             log.ErrorFormat("ReadServiceModule Thread timeout");
-                            //moduleThread.Abort();
+                            moduleThread.Abort();
                         }
                     }
                 }
