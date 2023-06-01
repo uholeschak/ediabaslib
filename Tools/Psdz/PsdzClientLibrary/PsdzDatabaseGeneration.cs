@@ -947,6 +947,12 @@ namespace PsdzClient
             return false;
         }
 
+        private static bool ModuleReadErrorInfoMemoryPrefix(object __instance)
+        {
+            log.InfoFormat("ModuleReadErrorInfoMemoryPrefix");
+            return false;
+        }
+
         private static ServiceModuleDataItem GetServiceModuleItemForParameter(object parameterInst, out bool isInParam, out ServiceModuleInvokeItem serviceModuleInvokeItem)
         {
             ServiceModuleDataItem serviceModuleDataItem = null;
@@ -1998,6 +2004,20 @@ namespace PsdzClient
                     return null;
                 }
 
+                MethodInfo methodIstaModuleReadErrorInfoMemory = istaModuleType.GetMethod("ReadErrorInfoMemory", BindingFlags.Instance | BindingFlags.NonPublic);
+                if (methodIstaModuleReadErrorInfoMemory == null)
+                {
+                    log.ErrorFormat("ReadTestModule ISTAModule ReadErrorInfoMemory not found");
+                    return null;
+                }
+
+                MethodInfo methodModuleReadErrorInfoMemoryPrefix = typeof(PdszDatabase).GetMethod("ModuleReadErrorInfoMemoryPrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                if (methodModuleReadErrorInfoMemoryPrefix == null)
+                {
+                    log.ErrorFormat("ReadServiceModule ModuleReadErrorInfoMemoryPrefix not found");
+                    return null;
+                }
+
                 if (!PatchCommonMethods(coreFrameworkAssembly, istaModuleType))
                 {
                     log.ErrorFormat("ReadServiceModule PatchCommonMethods failed");
@@ -2013,6 +2033,7 @@ namespace PsdzClient
                 bool patchedModuleText = false;
                 bool patchedModuleSleep = false;
                 bool patchedModuleClearErrorInfoMemory = false;
+                bool patchedModuleReadErrorInfoMemory = false;
                 foreach (MethodBase methodBase in _harmony.GetPatchedMethods())
                 {
                     log.InfoFormat("ReadServiceModule Patched: {0}", methodBase.Name);
@@ -2060,6 +2081,11 @@ namespace PsdzClient
                     if (methodBase == methodIstaModuleClearErrorInfoMemory)
                     {
                         patchedModuleClearErrorInfoMemory = true;
+                    }
+
+                    if (methodBase == methodIstaModuleReadErrorInfoMemory)
+                    {
+                        patchedModuleReadErrorInfoMemory = true;
                     }
                 }
 
@@ -2119,6 +2145,12 @@ namespace PsdzClient
                 {
                     log.InfoFormat("ReadServiceModule Patching: {0}", methodIstaModuleClearErrorInfoMemory.Name);
                     _harmony.Patch(methodIstaModuleClearErrorInfoMemory, new HarmonyMethod(methodModuleClearErrorInfoMemoryPrefix));
+                }
+
+                if (!patchedModuleReadErrorInfoMemory)
+                {
+                    log.InfoFormat("ReadServiceModule Patching: {0}", methodIstaModuleReadErrorInfoMemory.Name);
+                    _harmony.Patch(methodIstaModuleReadErrorInfoMemory, new HarmonyMethod(methodModuleReadErrorInfoMemoryPrefix));
                 }
 
                 Assembly moduleAssembly = Assembly.LoadFrom(moduleFile);
