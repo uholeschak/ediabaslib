@@ -866,6 +866,25 @@ namespace PsdzClient
                 }
             }
 
+            switch (resultName)
+            {
+                case "/Result/Rows/$Count":
+                    if (targetType == typeof(int))
+                    {
+                        __result = 1;
+                        log.InfoFormat("GetIstaResultAsTypePostfix Overriding value with: '{0}'", __result);
+                    }
+                    break;
+
+                case "/Result/Rows/Row[0]/CBS_VERSION_TEXT":
+                    if (targetType == typeof(string))
+                    {
+                        __result = "CBS 4";
+                        log.InfoFormat("GetIstaResultAsTypePostfix Overriding value with: '{0}'", __result);
+                    }
+                    break;
+            }
+
             if (serviceModuleInvokeItem != null)
             {
                 serviceModuleInvokeItem.ResultItems.Add(new ServiceModuleResultItem(resultName, resultData, targetType.ToString()));
