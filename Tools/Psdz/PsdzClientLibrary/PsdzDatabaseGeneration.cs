@@ -516,7 +516,7 @@ namespace PsdzClient
             }
 
             log.InfoFormat("CreateServiceDialogPrefix Calls: {0}", callsCount);
-            if (callsCount > 10)
+            if (callsCount > 20)
             {
                 Thread.CurrentThread.Abort();
             }
@@ -562,6 +562,7 @@ namespace PsdzClient
                 }
             }
 
+            int dialogStateOld = dialogState;
             SerializableDictionary<string, string> textIds = new SerializableDictionary<string, string>();
             dynamic inParamDyn = inParam;
             if (inParamDyn != null)
@@ -700,7 +701,7 @@ namespace PsdzClient
                             }
                             else if (dialogName == "QuestionSelectServiceDlg_20")
                             {
-                                resultValue = (dialogState + 1) % 10;
+                                resultValue = (dialogState + 1) % 20;
                                 dialogState++;
                             }
 
@@ -764,6 +765,10 @@ namespace PsdzClient
 
             if (serviceModuleDataItem != null)
             {
+                if (dialogStateOld != dialogState)
+                {
+                    log.InfoFormat("ServiceDialogCmdBaseInvokePrefix, State: {0} -> {1}", dialogStateOld, dialogState);
+                }
                 serviceModuleDataItem.DialogStateDict[stateKey] = dialogState;
             }
 
@@ -2301,11 +2306,15 @@ namespace PsdzClient
                         });
 
                         moduleThread.Start();
+#if true
+                        moduleThread.Join();
+#else
                         if (!moduleThread.Join(3000))
                         {
                             log.ErrorFormat("ReadServiceModule Thread timeout");
                             moduleThread.Abort();
                         }
+#endif
                     }
                 }
 
