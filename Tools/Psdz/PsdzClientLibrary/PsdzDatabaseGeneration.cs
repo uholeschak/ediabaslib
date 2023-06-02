@@ -701,10 +701,18 @@ namespace PsdzClient
                             }
                             else if (dialogName == "QuestionSelectServiceDlg_20")
                             {
-                                resultValue = (dialogState + 1) % 20;
-                                dialogState++;
+                                if (DetectRecursion())
+                                {
+                                    resultValue = 0;
+                                }
+                                else
+                                {
+                                    resultValue = (dialogState + 1) % 20;
+                                    dialogState++;
+                                }
                             }
 
+                            log.InfoFormat("ServiceDialogCmdBaseInvokePrefix, Setting result: {0}", resultValue);
                             outParmDyn.setParameter("Result", resultValue);
                         }
 
@@ -1062,6 +1070,50 @@ namespace PsdzClient
             }
 
             return false;
+        }
+
+        private static bool DetectRecursion(int level = 2)
+        {
+            try
+            {
+                Dictionary<string, int> methodsDict = new Dictionary<string, int>();
+                StackTrace stackTrace = new StackTrace();
+                StackFrame[] stackFrames = stackTrace.GetFrames();
+                if (stackFrames != null)
+                {
+                    foreach (StackFrame stackFrame in stackFrames)
+                    {
+                        string methodName = stackFrame.GetMethod().Name;
+                        if (!string.IsNullOrEmpty(methodName))
+                        {
+                            if (!methodsDict.ContainsKey(methodName))
+                            {
+                                methodsDict.Add(methodName, 1);
+                            }
+                            else
+                            {
+                                methodsDict[methodName]++;
+                            }
+                        }
+                    }
+                }
+
+                foreach (KeyValuePair<string, int> keyValue in methodsDict)
+                {
+                    if (keyValue.Value > level)
+                    {
+                        log.ErrorFormat("DetectRecursion Method: {0}", keyValue.Key);
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("DetectRecursion Exception: {0}", ex.Message);
+                return false;
+            }
         }
 
         public TestModuleData GetTestModuleData(string moduleName)
