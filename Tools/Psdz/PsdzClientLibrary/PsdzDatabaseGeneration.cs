@@ -703,7 +703,7 @@ namespace PsdzClient
                             {
                                 if (DetectRecursion())
                                 {
-                                    resultValue = 0;
+                                    resultValue = 11;
                                 }
                                 else
                                 {
