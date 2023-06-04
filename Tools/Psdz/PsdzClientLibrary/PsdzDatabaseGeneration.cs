@@ -697,7 +697,7 @@ namespace PsdzClient
                             switch (dialogMethodName)
                             {
                                 case "Reset_AU_HU":
-                                    resultText = "1";
+                                    resultText = "12";
                                     break;
                             }
 
