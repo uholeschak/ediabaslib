@@ -701,15 +701,8 @@ namespace PsdzClient
                             }
                             else if (dialogName == "QuestionSelectServiceDlg_20")
                             {
-                                if (DetectRecursion())
-                                {
-                                    resultValue = 11;
-                                }
-                                else
-                                {
-                                    resultValue = (dialogState + 1) % 20;
-                                    dialogState++;
-                                }
+                                resultValue = (dialogState + 1) % 20;
+                                dialogState++;
                             }
 
                             log.InfoFormat("ServiceDialogCmdBaseInvokePrefix, Setting result: {0}", resultValue);
@@ -983,6 +976,16 @@ namespace PsdzClient
         {
             log.InfoFormat("ModuleReadErrorInfoMemoryPrefix");
             return false;
+        }
+
+        private static bool ModulePrivateMethodPrefix(object __instance)
+        {
+            if (DetectRecursion())
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private static ServiceModuleDataItem GetServiceModuleItemForParameter(object parameterInst, out bool isInParam, out ServiceModuleInvokeItem serviceModuleInvokeItem)
@@ -1346,7 +1349,7 @@ namespace PsdzClient
                 bool patchedModuleRef = false;
                 foreach (MethodBase methodBase in _harmony.GetPatchedMethods())
                 {
-                    log.InfoFormat("PatchCommonMethods Patched: {0}", methodBase.Name);
+                    //log.InfoFormat("PatchCommonMethods Patched: {0}", methodBase.Name);
 
                     if (methodBase == methodGetDatabaseProviderSQLite)
                     {
@@ -2112,7 +2115,7 @@ namespace PsdzClient
                 bool patchedModuleReadErrorInfoMemory = false;
                 foreach (MethodBase methodBase in _harmony.GetPatchedMethods())
                 {
-                    log.InfoFormat("ReadServiceModule Patched: {0}", methodBase.Name);
+                    //log.InfoFormat("ReadServiceModule Patched: {0}", methodBase.Name);
 
                     if (methodBase == methodCreateServiceDialog)
                     {
@@ -2260,6 +2263,13 @@ namespace PsdzClient
                     return null;
                 }
 
+                MethodInfo methodModulePrivateMethodPrefix = typeof(PdszDatabase).GetMethod("ModulePrivateMethodPrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                if (methodModulePrivateMethodPrefix == null)
+                {
+                    log.ErrorFormat("ReadServiceModule ModulePrivateMethodPrefix not found");
+                    return null;
+                }
+
                 List<MethodInfo> simpleMethods = new List<MethodInfo>();
                 MethodInfo[] privateMethods = moduleType.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance);
                 foreach (MethodInfo privateMethod in privateMethods)
@@ -2297,6 +2307,19 @@ namespace PsdzClient
                     }
 
                     simpleMethods.Add(privateMethod);
+
+                    try
+                    {
+                        if (privateMethod.ReturnType == typeof(void))
+                        {
+                            log.InfoFormat("ReadServiceModule Patching Module Method: {0}", privateMethod.Name);
+                            _harmony.Patch(privateMethod, new HarmonyMethod(methodModulePrivateMethodPrefix));
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        log.ErrorFormat("ReadServiceModule Patching Module Method: {0}, Exception: '{1}'", privateMethod.Name, ex.Message);
+                    }
                 }
 
                 if (simpleMethods.Count > 0)
@@ -2321,7 +2344,7 @@ namespace PsdzClient
                         return null;
                     }
 
-                    object testModule = Activator.CreateInstance(moduleType, moduleParamContainerInst);
+                    dynamic testModule = Activator.CreateInstance(moduleType, moduleParamContainerInst);
                     log.InfoFormat("ReadTestModule Module loaded: {0}, Type: {1}", fileName, moduleType.FullName);
 
                     lock (_moduleThreadLock)
