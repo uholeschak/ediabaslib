@@ -518,18 +518,22 @@ namespace PsdzClient
             log.InfoFormat("CreateServiceDialogPrefix Calls: {0}", callsCount);
             if (callsCount > 20)
             {
-                string callStack;
+                string callStack = string.Empty;
                 try
                 {
                     StackTrace stackTrace = new StackTrace();
                     callStack = stackTrace.ToString();
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    callStack = string.Format(CultureInfo.InvariantCulture, "StackTrace Exception: {0}", e.Message);
+                    log.ErrorFormat("CreateServiceDialogPrefix StackTrace Exception: {0}", ex.Message);
                 }
 
-                log.ErrorFormat("CreateServiceDialogPrefix Aborting thread, CallStack: {0}", callStack);
+                log.ErrorFormat("CreateServiceDialogPrefix Aborting Method: {0}", methodName);
+                if (!string.IsNullOrEmpty(callStack))
+                {
+                    log.Error(callStack);
+                }
                 Thread.CurrentThread.Abort();
             }
 
