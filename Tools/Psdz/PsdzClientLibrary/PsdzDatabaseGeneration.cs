@@ -2275,6 +2275,11 @@ namespace PsdzClient
                 foreach (MethodInfo privateMethod in privateMethods)
                 {
                     string methodName = privateMethod.Name;
+                    if (privateMethod.DeclaringType != moduleType)
+                    {
+                        continue;
+                    }
+
                     if (methodName.StartsWith("__"))
                     {
                         continue;
@@ -2310,11 +2315,8 @@ namespace PsdzClient
 
                     try
                     {
-                        if (privateMethod.ReturnType == typeof(void))
-                        {
-                            log.InfoFormat("ReadServiceModule Patching Module Method: {0}", privateMethod.Name);
-                            _harmony.Patch(privateMethod, new HarmonyMethod(methodModulePrivateMethodPrefix));
-                        }
+                        log.InfoFormat("ReadServiceModule Patching Module Method: {0}", privateMethod.Name);
+                        _harmony.Patch(privateMethod, new HarmonyMethod(methodModulePrivateMethodPrefix));
                     }
                     catch (Exception ex)
                     {
