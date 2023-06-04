@@ -547,6 +547,7 @@ namespace PsdzClient
             }
 
             string dialogName = string.Empty;
+            string dialogMethodName = string.Empty;
             string stateKey = method ?? string.Empty;
             int dialogState = 0;
             if (serviceModuleDataItem == null)
@@ -556,6 +557,9 @@ namespace PsdzClient
             else
             {
                 dialogName = serviceModuleDataItem.ServiceDialogName ?? string.Empty;
+                dialogMethodName = serviceModuleDataItem.MethodName ?? string.Empty;
+                log.InfoFormat("ServiceDialogCmdBaseInvokePrefix, DialogName: {0}, DialogMethodName: {1}", dialogName, dialogMethodName);
+
                 if (!serviceModuleDataItem.DialogStateDict.TryGetValue(stateKey, out dialogState))
                 {
                     serviceModuleDataItem.DialogStateDict[stateKey] = dialogState;
@@ -689,7 +693,15 @@ namespace PsdzClient
 
                         if (dialogName == "EnterServiceDlg")
                         {
-                            outParmDyn.setParameter("Result", "0123");
+                            string resultText = "0123";
+                            switch (dialogMethodName)
+                            {
+                                case "Reset_AU_HU":
+                                    resultText = "1";
+                                    break;
+                            }
+
+                            outParmDyn.setParameter("Result", resultText);
                         }
                         else
                         {
@@ -2372,6 +2384,8 @@ namespace PsdzClient
                                         }
                                     }
                                 }
+
+                                log.InfoFormat("ReadServiceModule Method executing: {0}", simpleMethod.Name);
                                 simpleMethod.Invoke(testModule, null);
                                 log.InfoFormat("ReadServiceModule Method executed: {0}", simpleMethod.Name);
                             }
