@@ -518,6 +518,18 @@ namespace PsdzClient
             log.InfoFormat("CreateServiceDialogPrefix Calls: {0}", callsCount);
             if (callsCount > 20)
             {
+                string callStack;
+                try
+                {
+                    StackTrace stackTrace = new StackTrace();
+                    callStack = stackTrace.ToString();
+                }
+                catch (Exception e)
+                {
+                    callStack = string.Format(CultureInfo.InvariantCulture, "StackTrace Exception: {0}", e.Message);
+                }
+
+                log.ErrorFormat("CreateServiceDialogPrefix Aborting thread, CallStack: {0}", callStack);
                 Thread.CurrentThread.Abort();
             }
 
@@ -909,7 +921,7 @@ namespace PsdzClient
             }
             else
             {
-                log.InfoFormat("GetIstaResultAsTypePostfix ReslutItem not found, Value: '{0}' ", resultName ?? string.Empty);
+                log.InfoFormat("GetIstaResultAsTypePostfix ResultItem not found, Value: '{0}' ", resultName ?? string.Empty);
             }
         }
 
