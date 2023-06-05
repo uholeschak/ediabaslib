@@ -67,23 +67,28 @@ namespace PsdzClient
         }
 
         [XmlInclude(typeof(ServiceModuleData))]
+        [XmlInclude(typeof(ServiceModuleTextData))]
         [XmlType("ServiceModules")]
         public class ServiceModules
         {
-            public ServiceModules() : this(null, null)
+            public ServiceModules() : this(null)
             {
             }
 
-            public ServiceModules(VehicleStructsBmw.VersionInfo versionInfo, SerializableDictionary<string, ServiceModuleData> moduleDataDict = null, bool completed = false)
+            public ServiceModules(VehicleStructsBmw.VersionInfo versionInfo, SerializableDictionary<string, ServiceModuleData> moduleDataDict = null,
+                SerializableDictionary<string, ServiceModuleTextData> moduleTextDict = null, bool completed = false)
             {
                 Version = versionInfo;
                 ModuleDataDict = moduleDataDict;
+                ModuleTextDict = moduleTextDict;
                 Completed = completed;
             }
 
             [XmlElement("Version"), DefaultValue(null)] public VehicleStructsBmw.VersionInfo Version { get; set; }
 
             [XmlElement("ModuleDataDict"), DefaultValue(null)] public SerializableDictionary<string, ServiceModuleData> ModuleDataDict { get; set; }
+
+            [XmlElement("ModuleTextDict"), DefaultValue(null)] public SerializableDictionary<string, ServiceModuleTextData> ModuleTextDict { get; set; }
 
             [XmlElement("Completed")] public bool Completed { get; set; }
         }
@@ -252,13 +257,13 @@ namespace PsdzClient
             }
         }
 
-        public class ServiceModuleTextItem
+        public class ServiceModuleTextData
         {
-            public ServiceModuleTextItem() : this(null)
+            public ServiceModuleTextData() : this(null)
             {
             }
 
-            public ServiceModuleTextItem(EcuFunctionStructs.EcuTranslation translation)
+            public ServiceModuleTextData(EcuFunctionStructs.EcuTranslation translation)
             {
                 Translation = translation;
                 Hash = CalculateHash();
@@ -1711,10 +1716,16 @@ namespace PsdzClient
                 }
 
                 SerializableDictionary<string, ServiceModuleData> moduleDataDict = lastServiceModules?.ModuleDataDict;
+                SerializableDictionary<string, ServiceModuleTextData> moduleTextDict = lastServiceModules?.ModuleTextDict;
                 // ReSharper disable once ConvertIfStatementToNullCoalescingExpression
                 if (moduleDataDict == null)
                 {
                     moduleDataDict = new SerializableDictionary<string, ServiceModuleData>();
+                }
+
+                if (moduleTextDict == null)
+                {
+                    moduleTextDict = new SerializableDictionary<string, ServiceModuleTextData>();
                 }
 
                 bool completed = true;
@@ -1735,7 +1746,7 @@ namespace PsdzClient
                         string key = moduleName.ToUpperInvariant();
                         if (!moduleDataDict.ContainsKey(key))
                         {
-                            ServiceModuleData moduleData = ReadServiceModule(moduleName, swiInfoObj, out bool failure);
+                            ServiceModuleData moduleData = ReadServiceModule(moduleName, swiInfoObj, moduleTextDict, out bool failure);
                             if (moduleData == null)
                             {
                                 log.ErrorFormat("ConvertAllServiceModules ReadServiceModule failed for: {0}", moduleName);
@@ -1780,7 +1791,7 @@ namespace PsdzClient
 
                 DbInfo dbInfo = GetDbInfo();
                 VehicleStructsBmw.VersionInfo versionInfo = new VehicleStructsBmw.VersionInfo(dbInfo?.Version, dbInfo?.DateTime);
-                return new ServiceModules(versionInfo, moduleDataDict, completed);
+                return new ServiceModules(versionInfo, moduleDataDict, moduleTextDict, completed);
             }
             catch (Exception e)
             {
@@ -1789,7 +1800,7 @@ namespace PsdzClient
             }
         }
 
-        public ServiceModuleData ReadServiceModule(string moduleName, SwiInfoObj swiInfoObj, out bool failure)
+        public ServiceModuleData ReadServiceModule(string moduleName, SwiInfoObj swiInfoObj, SerializableDictionary<string, ServiceModuleTextData> moduleTextDict, out bool failure)
         {
             log.InfoFormat("ReadServiceModule Name: {0}", moduleName);
             failure = false;
