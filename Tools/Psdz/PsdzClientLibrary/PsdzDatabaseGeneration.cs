@@ -2597,9 +2597,12 @@ namespace PsdzClient
                                     if (ecuTranslation.TranslationCount() > 0)
                                     {
                                         ServiceModuleTextData moduleTextData = new ServiceModuleTextData(ecuTranslation);
-                                        if (!moduleTextDict.ContainsKey(moduleTextData.Hash))
+                                        if (!string.IsNullOrEmpty(moduleTextData.Hash))
                                         {
-                                            moduleTextDict.Add(moduleTextData.Hash, moduleTextData);
+                                            if (!moduleTextDict.ContainsKey(moduleTextData.Hash))
+                                            {
+                                                moduleTextDict.Add(moduleTextData.Hash, moduleTextData);
+                                            }
                                         }
                                     }
                                 }
