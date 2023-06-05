@@ -1333,12 +1333,23 @@ namespace BmwFileReader
                     string result = propertyTitle.GetValue(obj) as string;
                     return result ?? string.Empty;
                 }
-                
+
                 return string.Empty;
             }
             catch (Exception)
             {
                 return string.Empty;
+            }
+        }
+
+        public static string MD5Hash(this string input)
+        {
+            using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
+            {
+                byte[] inputBytes = Encoding.ASCII.GetBytes(input);
+                byte[] hashBytes = md5.ComputeHash(inputBytes);
+
+                return BitConverter.ToString(hashBytes).Replace("-", "");
             }
         }
 

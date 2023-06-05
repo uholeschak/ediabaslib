@@ -252,6 +252,33 @@ namespace PsdzClient
             }
         }
 
+        public class ServiceModuleTextItem
+        {
+            public ServiceModuleTextItem() : this(null)
+            {
+            }
+
+            public ServiceModuleTextItem(EcuFunctionStructs.EcuTranslation translation)
+            {
+                Translation = translation;
+                Hash = CalculateHash();
+            }
+
+            [XmlElement("Translation"), DefaultValue(null)] public EcuFunctionStructs.EcuTranslation Translation { get; set; }
+
+            [XmlIgnore, DefaultValue(null)] public string Hash { get; set; }
+
+            public string CalculateHash()
+            {
+                if (Translation == null)
+                {
+                    return string.Empty;
+                }
+
+                return Translation.PropertyList().MD5Hash();
+            }
+        }
+
         [XmlInclude(typeof(VehicleStructsBmw.VersionInfo))]
         [XmlType("EcuCharacteristicsXml")]
         public class EcuCharacteristicsData
