@@ -2577,6 +2577,7 @@ namespace PsdzClient
                                 IList<LocalizedText> textItems = textContent?.CreatePlainText(textContentManager.Langs);
                                 if (textItems != null)
                                 {
+                                    EcuFunctionStructs.EcuTranslation ecuTranslation = new EcuFunctionStructs.EcuTranslation();
                                     foreach (LocalizedText textItem in textItems)
                                     {
                                         if (!string.IsNullOrWhiteSpace(textItem.TextItem))
@@ -2589,6 +2590,16 @@ namespace PsdzClient
                                             }
 
                                             textItemsDict.Add(key, textItem.TextItem);
+                                            ecuTranslation.SetTranslation(textItem.Language, textItem.TextItem);
+                                        }
+                                    }
+
+                                    if (ecuTranslation.TranslationCount() > 0)
+                                    {
+                                        ServiceModuleTextData moduleTextData = new ServiceModuleTextData(ecuTranslation);
+                                        if (!moduleTextDict.ContainsKey(moduleTextData.Hash))
+                                        {
+                                            moduleTextDict.Add(moduleTextData.Hash, moduleTextData);
                                         }
                                     }
                                 }

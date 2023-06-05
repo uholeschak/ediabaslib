@@ -1310,6 +1310,24 @@ namespace BmwFileReader
             return obj.PropertyList("");
         }
 
+        public static int TranslationCount(this object obj)
+        {
+            int count = 0;
+            PropertyInfo[] props = obj.GetType().GetProperties();
+            foreach (PropertyInfo p in props)
+            {
+                if (p.PropertyType == typeof(string))
+                {
+                    string value = p.GetValue(obj, null).ToString();
+                    if (!string.IsNullOrEmpty(value))
+                    {
+                        count++;
+                    }
+                }
+            }
+            return count;
+        }
+
         public static string GetTitleTranslated(this object obj, string language, string prefix = "Text")
         {
             try
@@ -1342,14 +1360,58 @@ namespace BmwFileReader
             }
         }
 
+        public static bool SetTranslation(this object obj, string language, string text, string prefix = "Text")
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(language) || language.Length < 2)
+                {
+                    return false;
+                }
+
+                string titlePropertyName = prefix + language.ToUpperInvariant()[0] + language.ToLowerInvariant()[1];
+                Type objType = obj.GetType();
+                PropertyInfo propertyTitle = objType.GetProperty(titlePropertyName);
+                if (propertyTitle == null)
+                {
+                    titlePropertyName = prefix + "En";
+                    propertyTitle = objType.GetProperty(titlePropertyName);
+                }
+
+                if (propertyTitle != null)
+                {
+                    propertyTitle.SetValue(obj, text);
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public static string MD5Hash(this string input)
         {
-            using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
+            if (string.IsNullOrWhiteSpace(input))
             {
-                byte[] inputBytes = Encoding.ASCII.GetBytes(input);
-                byte[] hashBytes = md5.ComputeHash(inputBytes);
+                return string.Empty;
+            }
 
-                return BitConverter.ToString(hashBytes).Replace("-", "");
+            try
+            {
+                using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
+                {
+                    byte[] inputBytes = Encoding.ASCII.GetBytes(input);
+                    byte[] hashBytes = md5.ComputeHash(inputBytes);
+
+                    return BitConverter.ToString(hashBytes).Replace("-", "");
+                }
+            }
+            catch (Exception)
+            {
+                return string.Empty;
             }
         }
 
