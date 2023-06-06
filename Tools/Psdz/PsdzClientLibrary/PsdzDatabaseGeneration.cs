@@ -148,7 +148,7 @@ namespace PsdzClient
             {
                 Method = method;
                 ResultItems = new List<ServiceModuleResultItem>();
-                TextItems = null;
+                TextHash = null;
                 OutParamValues = new SerializableDictionary<string, string>();
                 TextIds = textIds;
                 InParam = inParam;
@@ -161,7 +161,7 @@ namespace PsdzClient
 
             [XmlElement("ResultItems"), DefaultValue(null)] public List<ServiceModuleResultItem> ResultItems { get; set; }
 
-            [XmlElement("TextItems"), DefaultValue(null)] public SerializableDictionary<string, string> TextItems { get; set; }
+            [XmlElement("TextHash"), DefaultValue(null)] public string TextHash { get; set; }
 
             [XmlElement("OutParamValues"), DefaultValue(null)] public SerializableDictionary<string, string> OutParamValues { get; set; }
 
@@ -2563,7 +2563,6 @@ namespace PsdzClient
 
                     foreach (ServiceModuleInvokeItem invokeItem in dataItem.InvokeItems)
                     {
-                        SerializableDictionary<string, string> textItemsDict = new SerializableDictionary<string, string>();
                         foreach (KeyValuePair<string, string> textIdPair in invokeItem.TextIds)
                         {
                             string textId = textIdPair.Key;
@@ -2583,27 +2582,27 @@ namespace PsdzClient
                                         if (!string.IsNullOrWhiteSpace(textItem.TextItem))
                                         {
                                             log.InfoFormat("ReadServiceModule SingleText Lang: {0}, Text: '{1}'", textItem.Language, textItem.TextItem);
-                                            string key = textId + ";" + textItem.Language;
-                                            if (!string.IsNullOrEmpty(methodName))
-                                            {
-                                                key += ";" + methodName;
-                                            }
-
-                                            textItemsDict.Add(key, textItem.TextItem);
                                             ecuTranslation.SetTranslation(textItem.Language, textItem.TextItem);
                                         }
                                     }
 
+                                    string textHash = string.Empty;
                                     if (ecuTranslation.TranslationCount() > 0)
                                     {
                                         ServiceModuleTextData moduleTextData = new ServiceModuleTextData(ecuTranslation);
-                                        if (!string.IsNullOrEmpty(moduleTextData.Hash))
+                                        textHash = moduleTextData.Hash;
+                                        if (!string.IsNullOrEmpty(textHash))
                                         {
-                                            if (!moduleTextDict.ContainsKey(moduleTextData.Hash))
+                                            if (!moduleTextDict.ContainsKey(textHash))
                                             {
-                                                moduleTextDict.Add(moduleTextData.Hash, moduleTextData);
+                                                moduleTextDict.Add(textHash, moduleTextData);
                                             }
                                         }
+                                    }
+
+                                    if (!string.IsNullOrEmpty(textHash))
+                                    {
+                                        invokeItem.TextHash = textHash;
                                     }
                                 }
                             }
@@ -2611,11 +2610,6 @@ namespace PsdzClient
                             {
                                 log.ErrorFormat("ReadServiceModule Text ID: {0}, Exception: '{1}'", textId, e.Message);
                             }
-                        }
-
-                        if (textItemsDict.Count > 0)
-                        {
-                            invokeItem.TextItems = textItemsDict;
                         }
                     }
 
