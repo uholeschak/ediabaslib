@@ -134,6 +134,26 @@ namespace PsdzClient
             [XmlElement("Data"), DefaultValue(null)] public string Data { get; set; }
 
             [XmlElement("DataType"), DefaultValue(null)] public string DataType { get; set; }
+
+            public bool Equals(ServiceModuleResultItem other)
+            {
+                if (DataName != other.DataName)
+                {
+                    return false;
+                }
+
+                if (Data != other.Data)
+                {
+                    return false;
+                }
+
+                if (Data != other.DataType)
+                {
+                    return false;
+                }
+
+                return true;
+            }
         }
 
         [XmlInclude(typeof(ServiceModuleResultItem))]
@@ -174,6 +194,39 @@ namespace PsdzClient
             [XmlIgnore, DefaultValue(null)] public object InoutParam { get; set; }
 
             [XmlIgnore, DefaultValue(null)] public object DscResult { get; set; }
+
+            public bool Equals(ServiceModuleInvokeItem other)
+            {
+                if (Method != other.Method)
+                {
+                    return false;
+                }
+
+                if (OutParamValues.Count != other.OutParamValues.Count)
+                {
+                    return false;
+                }
+
+                if (!OutParamValues.Keys.All(other.OutParamValues.ContainsKey))
+                {
+                    return false;
+                }
+
+                if (ResultItems.Count != other.ResultItems.Count)
+                {
+                    return false;
+                }
+
+                for (int i = 0; i < ResultItems.Count; i++)
+                {
+                    if (!ResultItems[i].Equals(other.ResultItems[i]))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
 
             public void CleanupInternal()
             {
@@ -805,7 +858,25 @@ namespace PsdzClient
                         {
                             if (serviceModuleDataItem != null)
                             {
-                                serviceModuleDataItem.InvokeItems.Add(new ServiceModuleInvokeItem(method, inParam, outParam, inoutParam, ediabasAdapterDeviceResult, textIds));
+                                ServiceModuleInvokeItem newItem = new ServiceModuleInvokeItem(method, inParam, outParam, inoutParam, ediabasAdapterDeviceResult, textIds);
+                                bool itemFound = false;
+                                foreach (ServiceModuleInvokeItem currentItem in serviceModuleDataItem.InvokeItems)
+                                {
+                                    if (newItem.Equals(currentItem))
+                                    {
+                                        itemFound = true;
+                                        break;
+                                    }
+                                }
+
+                                if (!itemFound)
+                                {
+                                    serviceModuleDataItem.InvokeItems.Add(newItem);
+                                }
+                                else
+                                {
+                                    log.InfoFormat("ServiceDialogCmdBaseInvokePrefix Invoke item existing");
+                                }
                             }
                         }
                     }
