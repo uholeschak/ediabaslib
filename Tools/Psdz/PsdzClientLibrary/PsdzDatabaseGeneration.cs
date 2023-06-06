@@ -116,7 +116,7 @@ namespace PsdzClient
         }
 
         [XmlType("ServiceModuleResultItem")]
-        public class ServiceModuleResultItem
+        public class ServiceModuleResultItem : IEquatable<ServiceModuleResultItem>
         {
             public ServiceModuleResultItem() : this(null, null, null)
             {
@@ -139,6 +139,11 @@ namespace PsdzClient
             {
                 try
                 {
+                    if (other == null)
+                    {
+                        return false;
+                    }
+
                     if (DataName != other.DataName)
                     {
                         return false;
@@ -165,7 +170,7 @@ namespace PsdzClient
 
         [XmlInclude(typeof(ServiceModuleResultItem))]
         [XmlType("ServiceModuleInvokeItem")]
-        public class ServiceModuleInvokeItem
+        public class ServiceModuleInvokeItem : IEquatable<ServiceModuleInvokeItem>
         {
             public ServiceModuleInvokeItem() : this(null, null, null, null, null, null)
             {
@@ -206,6 +211,11 @@ namespace PsdzClient
             {
                 try
                 {
+                    if (other == null)
+                    {
+                        return false;
+                    }
+
                     if (Method != other.Method)
                     {
                         return false;
