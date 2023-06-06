@@ -148,7 +148,7 @@ namespace PsdzClient
             {
                 Method = method;
                 ResultItems = new List<ServiceModuleResultItem>();
-                TextHash = null;
+                TextHashes = null;
                 OutParamValues = new SerializableDictionary<string, string>();
                 TextIds = textIds;
                 InParam = inParam;
@@ -161,7 +161,7 @@ namespace PsdzClient
 
             [XmlElement("ResultItems"), DefaultValue(null)] public List<ServiceModuleResultItem> ResultItems { get; set; }
 
-            [XmlElement("TextHash"), DefaultValue(null)] public string TextHash { get; set; }
+            [XmlElement("TextHashes"), DefaultValue(null)] public List<string> TextHashes { get; set; }
 
             [XmlElement("OutParamValues"), DefaultValue(null)] public SerializableDictionary<string, string> OutParamValues { get; set; }
 
@@ -2563,6 +2563,7 @@ namespace PsdzClient
 
                     foreach (ServiceModuleInvokeItem invokeItem in dataItem.InvokeItems)
                     {
+                        List<string> textHashes = new List<string>();
                         foreach (KeyValuePair<string, string> textIdPair in invokeItem.TextIds)
                         {
                             string textId = textIdPair.Key;
@@ -2602,7 +2603,10 @@ namespace PsdzClient
 
                                     if (!string.IsNullOrEmpty(textHash))
                                     {
-                                        invokeItem.TextHash = textHash;
+                                        if (!textHashes.Contains(textHash))
+                                        {
+                                            textHashes.Add(textHash);
+                                        }
                                     }
                                 }
                             }
@@ -2611,6 +2615,8 @@ namespace PsdzClient
                                 log.ErrorFormat("ReadServiceModule Text ID: {0}, Exception: '{1}'", textId, e.Message);
                             }
                         }
+
+                        invokeItem.TextHashes = textHashes;
                     }
 
                     dataItem.CleanupInternal();
