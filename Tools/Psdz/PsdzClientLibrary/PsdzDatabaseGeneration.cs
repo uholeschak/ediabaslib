@@ -137,22 +137,29 @@ namespace PsdzClient
 
             public bool Equals(ServiceModuleResultItem other)
             {
-                if (DataName != other.DataName)
+                try
+                {
+                    if (DataName != other.DataName)
+                    {
+                        return false;
+                    }
+
+                    if (Data != other.Data)
+                    {
+                        return false;
+                    }
+
+                    if (Data != other.DataType)
+                    {
+                        return false;
+                    }
+
+                    return true;
+                }
+                catch (Exception)
                 {
                     return false;
                 }
-
-                if (Data != other.Data)
-                {
-                    return false;
-                }
-
-                if (Data != other.DataType)
-                {
-                    return false;
-                }
-
-                return true;
             }
         }
 
@@ -197,35 +204,52 @@ namespace PsdzClient
 
             public bool Equals(ServiceModuleInvokeItem other)
             {
-                if (Method != other.Method)
+                try
                 {
-                    return false;
-                }
-
-                if (OutParamValues.Count != other.OutParamValues.Count)
-                {
-                    return false;
-                }
-
-                if (!OutParamValues.Keys.All(other.OutParamValues.ContainsKey))
-                {
-                    return false;
-                }
-
-                if (ResultItems.Count != other.ResultItems.Count)
-                {
-                    return false;
-                }
-
-                for (int i = 0; i < ResultItems.Count; i++)
-                {
-                    if (!ResultItems[i].Equals(other.ResultItems[i]))
+                    if (Method != other.Method)
                     {
                         return false;
                     }
-                }
 
-                return true;
+                    if (ResultItems.Count != other.ResultItems.Count)
+                    {
+                        return false;
+                    }
+
+                    for (int i = 0; i < ResultItems.Count; i++)
+                    {
+                        if (!ResultItems[i].Equals(other.ResultItems[i]))
+                        {
+                            return false;
+                        }
+                    }
+
+                    if (OutParamValues.Count != other.OutParamValues.Count)
+                    {
+                        return false;
+                    }
+
+                    if (!OutParamValues.Keys.All(other.OutParamValues.ContainsKey))
+                    {
+                        return false;
+                    }
+
+                    if (TextIds.Count != other.TextIds.Count)
+                    {
+                        return false;
+                    }
+
+                    if (!TextIds.Keys.All(other.TextIds.ContainsKey))
+                    {
+                        return false;
+                    }
+
+                    return true;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
             }
 
             public void CleanupInternal()
