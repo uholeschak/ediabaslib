@@ -127,6 +127,7 @@ namespace PsdzClient
                 DataName = dataName;
                 Data = data;
                 DataType = dataType;
+                hashCode = new Random().Next();
             }
 
             [XmlElement("DataName"), DefaultValue(null)] public string DataName { get; set; }
@@ -134,6 +135,8 @@ namespace PsdzClient
             [XmlElement("Data"), DefaultValue(null)] public string Data { get; set; }
 
             [XmlElement("DataType"), DefaultValue(null)] public string DataType { get; set; }
+
+            private readonly int hashCode;
 
             public bool Equals(ServiceModuleResultItem other)
             {
@@ -175,6 +178,11 @@ namespace PsdzClient
             public override bool Equals(object obj)
             {
                 return Equals(obj as ServiceModuleResultItem);
+            }
+
+            public override int GetHashCode()
+            {
+                return hashCode;
             }
 
             public static bool operator ==(ServiceModuleResultItem item1, ServiceModuleResultItem item2)
@@ -222,6 +230,7 @@ namespace PsdzClient
                 OutParam = outParam;
                 InoutParam = inoutParam;
                 DscResult = dscResult;
+                hashCode = new Random().Next();
             }
 
             [XmlElement("Method"), DefaultValue(null)] public string Method { get; set; }
@@ -241,6 +250,8 @@ namespace PsdzClient
             [XmlIgnore, DefaultValue(null)] public object InoutParam { get; set; }
 
             [XmlIgnore, DefaultValue(null)] public object DscResult { get; set; }
+
+            private readonly int hashCode;
 
             public bool Equals(ServiceModuleInvokeItem other)
             {
@@ -305,6 +316,11 @@ namespace PsdzClient
             public override bool Equals(object obj)
             {
                 return Equals(obj as ServiceModuleInvokeItem);
+            }
+
+            public override int GetHashCode()
+            {
+                return hashCode;
             }
 
             public static bool operator ==(ServiceModuleInvokeItem item1, ServiceModuleInvokeItem item2)
