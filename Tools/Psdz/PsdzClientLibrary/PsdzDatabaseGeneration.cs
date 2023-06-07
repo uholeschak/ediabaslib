@@ -166,6 +166,11 @@ namespace PsdzClient
                     return false;
                 }
             }
+
+            public override bool Equals(object obj)
+            {
+                return Equals(obj as ServiceModuleResultItem);
+            }
         }
 
         [XmlInclude(typeof(ServiceModuleResultItem))]
@@ -260,6 +265,11 @@ namespace PsdzClient
                 {
                     return false;
                 }
+            }
+
+            public override bool Equals(object obj)
+            {
+                return Equals(obj as ServiceModuleInvokeItem);
             }
 
             public void CleanupInternal()
