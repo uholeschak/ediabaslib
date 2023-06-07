@@ -144,6 +144,11 @@ namespace PsdzClient
                         return false;
                     }
 
+                    if (ReferenceEquals(this, other))
+                    {
+                        return true;
+                    }
+
                     if (DataName != other.DataName)
                     {
                         return false;
@@ -170,6 +175,31 @@ namespace PsdzClient
             public override bool Equals(object obj)
             {
                 return Equals(obj as ServiceModuleResultItem);
+            }
+
+            public static bool operator ==(ServiceModuleResultItem item1, ServiceModuleResultItem item2)
+            {
+                if (ReferenceEquals(item1, item2))
+                {
+                    return true;
+                }
+
+                if (ReferenceEquals(item1, null))
+                {
+                    return false;
+                }
+
+                if (ReferenceEquals(item2, null))
+                {
+                    return false;
+                }
+
+                return item1.Equals(item2);
+            }
+
+            public static bool operator !=(ServiceModuleResultItem item1, ServiceModuleResultItem item2)
+            {
+                return !(item1 == item2);
             }
         }
 
@@ -221,6 +251,11 @@ namespace PsdzClient
                         return false;
                     }
 
+                    if (ReferenceEquals(this, other))
+                    {
+                        return true;
+                    }
+
                     if (Method != other.Method)
                     {
                         return false;
@@ -233,7 +268,7 @@ namespace PsdzClient
 
                     for (int i = 0; i < ResultItems.Count; i++)
                     {
-                        if (!ResultItems[i].Equals(other.ResultItems[i]))
+                        if (ResultItems[i] != other.ResultItems[i])
                         {
                             return false;
                         }
@@ -270,6 +305,31 @@ namespace PsdzClient
             public override bool Equals(object obj)
             {
                 return Equals(obj as ServiceModuleInvokeItem);
+            }
+
+            public static bool operator ==(ServiceModuleInvokeItem item1, ServiceModuleInvokeItem item2)
+            {
+                if (ReferenceEquals(item1, item2))
+                {
+                    return true;
+                }
+
+                if (ReferenceEquals(item1, null))
+                {
+                    return false;
+                }
+
+                if (ReferenceEquals(item2, null))
+                {
+                    return false;
+                }
+
+                return item1.Equals(item2);
+            }
+
+            public static bool operator !=(ServiceModuleInvokeItem item1, ServiceModuleInvokeItem item2)
+            {
+                return !(item1 == item2);
             }
 
             public void CleanupInternal()
@@ -906,7 +966,7 @@ namespace PsdzClient
                                 bool itemFound = false;
                                 foreach (ServiceModuleInvokeItem currentItem in serviceModuleDataItem.InvokeItems)
                                 {
-                                    if (newItem.Equals(currentItem))
+                                    if (newItem != currentItem)
                                     {
                                         itemFound = true;
                                         break;
