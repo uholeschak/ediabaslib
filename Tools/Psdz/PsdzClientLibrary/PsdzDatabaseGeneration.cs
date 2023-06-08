@@ -2686,15 +2686,10 @@ namespace PsdzClient
                         });
 
                         moduleThread.Start();
-#if true
-                        moduleThread.Join();
-#else
-                        if (!moduleThread.Join(3000))
+                        while (!moduleThread.Join(5000))
                         {
-                            log.ErrorFormat("ReadServiceModule Thread timeout");
-                            moduleThread.Abort();
+                            log.ErrorFormat("ReadServiceModule Method processing slow: {0}, Module: {1}", simpleMethod.Name, moduleName);
                         }
-#endif
                     }
                 }
 
