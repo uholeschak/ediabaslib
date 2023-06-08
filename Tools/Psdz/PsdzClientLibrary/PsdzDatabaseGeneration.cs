@@ -443,6 +443,39 @@ namespace PsdzClient
                     invokeItem.CleanupInternal();
                 }
             }
+
+            public void RemoveDuplicates()
+            {
+                int itemsCountOld = InvokeItems.Count;
+                int itemIndex = 0;
+                while (itemIndex < InvokeItems.Count)
+                {
+                    ServiceModuleInvokeItem invokeItem = InvokeItems[itemIndex];
+                    bool duplicate = false;
+                    for (int i = 0; i < itemIndex; i++)
+                    {
+                        if (invokeItem == InvokeItems[i])
+                        {
+                            duplicate = true;
+                            break;
+                        }
+                    }
+
+                    if (duplicate)
+                    {
+                        InvokeItems.RemoveAt(itemIndex);
+                    }
+                    else
+                    {
+                        itemIndex++;
+                    }
+                }
+
+                if (itemsCountOld != InvokeItems.Count)
+                {
+                    log.InfoFormat("RemoveDuplicates OldItems: {0}, NewItems: {1}", itemsCountOld, InvokeItems.Count);
+                }
+            }
         }
 
         public class ServiceModuleTextData
@@ -994,24 +1027,7 @@ namespace PsdzClient
                             if (serviceModuleDataItem != null)
                             {
                                 ServiceModuleInvokeItem newItem = new ServiceModuleInvokeItem(method, inParam, outParam, inoutParam, ediabasAdapterDeviceResult, textIds);
-                                bool itemFound = false;
-                                foreach (ServiceModuleInvokeItem currentItem in serviceModuleDataItem.InvokeItems)
-                                {
-                                    if (newItem != currentItem)
-                                    {
-                                        itemFound = true;
-                                        break;
-                                    }
-                                }
-
-                                if (!itemFound)
-                                {
-                                    serviceModuleDataItem.InvokeItems.Add(newItem);
-                                }
-                                else
-                                {
-                                    log.InfoFormat("ServiceDialogCmdBaseInvokePrefix Invoke item existing");
-                                }
+                                serviceModuleDataItem.InvokeItems.Add(newItem);
                             }
                         }
                     }
@@ -2825,6 +2841,7 @@ namespace PsdzClient
                         invokeItem.TextHashes = textHashes;
                     }
 
+                    dataItem.RemoveDuplicates();
                     dataItem.CleanupInternal();
                 }
 
