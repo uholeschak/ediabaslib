@@ -272,6 +272,11 @@ namespace PsdzClient
                         return false;
                     }
 
+                    if (ResultItems == null || other.ResultItems == null)
+                    {
+                        return false;
+                    }
+
                     if (ResultItems.Count != other.ResultItems.Count)
                     {
                         return false;
@@ -285,12 +290,22 @@ namespace PsdzClient
                         }
                     }
 
+                    if (OutParamValues == null || other.OutParamValues == null)
+                    {
+                        return false;
+                    }
+
                     if (OutParamValues.Count != other.OutParamValues.Count)
                     {
                         return false;
                     }
 
                     if (!OutParamValues.Keys.All(other.OutParamValues.ContainsKey))
+                    {
+                        return false;
+                    }
+
+                    if (TextIds == null || other.TextIds == null)
                     {
                         return false;
                     }
