@@ -2686,10 +2686,14 @@ namespace PsdzClient
                         });
 
                         moduleThread.Start();
+                        DateTime startTime = DateTime.Now;
                         while (!moduleThread.Join(5000))
                         {
                             log.ErrorFormat("ReadServiceModule Method processing slow: {0}, Module: {1}", simpleMethod.Name, moduleName);
                         }
+
+                        TimeSpan diffTime = DateTime.Now - startTime;
+                        log.InfoFormat("ReadServiceModule Method {0}, Time: {1}s", simpleMethod.Name, diffTime.Seconds);
                     }
                 }
 
