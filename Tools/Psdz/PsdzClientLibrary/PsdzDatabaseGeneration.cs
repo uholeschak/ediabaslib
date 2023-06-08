@@ -272,52 +272,65 @@ namespace PsdzClient
                         return false;
                     }
 
-                    if (ResultItems == null || other.ResultItems == null)
+                    if (ResultItems != null && other.ResultItems != null)
                     {
-                        return false;
+                        if (ResultItems.Count != other.ResultItems.Count)
+                        {
+                            return false;
+                        }
+
+                        for (int i = 0; i < ResultItems.Count; i++)
+                        {
+                            if (ResultItems[i] != other.ResultItems[i])
+                            {
+                                return false;
+                            }
+                        }
                     }
 
-                    if (ResultItems.Count != other.ResultItems.Count)
+                    if (TextHashes != null && other.TextHashes != null)
                     {
-                        return false;
+                        if (TextHashes.Count != other.TextHashes.Count)
+                        {
+                            return false;
+                        }
+
+                        for (int i = 0; i < TextHashes.Count; i++)
+                        {
+                            if (TextHashes[i] != other.TextHashes[i])
+                            {
+                                return false;
+                            }
+                        }
                     }
 
-                    for (int i = 0; i < ResultItems.Count; i++)
+                    if (OutParamValues != null && other.OutParamValues != null)
                     {
-                        if (ResultItems[i] != other.ResultItems[i])
+                        if (OutParamValues.Count != other.OutParamValues.Count)
+                        {
+                            return false;
+                        }
+
+                        if (!OutParamValues.Keys.All(other.OutParamValues.ContainsKey))
                         {
                             return false;
                         }
                     }
 
-                    if (OutParamValues == null || other.OutParamValues == null)
+                    if (TextIds != null && other.TextIds != null)
                     {
-                        return false;
-                    }
+                        if (TextIds.Count != other.TextIds.Count)
+                        {
+                            return false;
+                        }
 
-                    if (OutParamValues.Count != other.OutParamValues.Count)
-                    {
-                        return false;
-                    }
-
-                    if (!OutParamValues.Keys.All(other.OutParamValues.ContainsKey))
-                    {
-                        return false;
-                    }
-
-                    if (TextIds == null || other.TextIds == null)
-                    {
-                        return false;
-                    }
-
-                    if (TextIds.Count != other.TextIds.Count)
-                    {
-                        return false;
-                    }
-
-                    if (!TextIds.Keys.All(other.TextIds.ContainsKey))
-                    {
-                        return false;
+                        if (TextIds.Count > 0)
+                        {
+                            if (!TextIds.Keys.All(other.TextIds.ContainsKey))
+                            {
+                                return false;
+                            }
+                        }
                     }
 
                     return true;
@@ -2841,8 +2854,8 @@ namespace PsdzClient
                         invokeItem.TextHashes = textHashes;
                     }
 
-                    dataItem.RemoveDuplicates();
                     dataItem.CleanupInternal();
+                    dataItem.RemoveDuplicates();
                 }
 
                 log.InfoFormat("ReadServiceModule Finished: {0}", fileName);
