@@ -845,7 +845,8 @@ namespace PsdzClient
                     }
                     else
                     {
-                        invokeCalls = _serviceDialogInvokeCallsDict[stateKey]++;
+                        invokeCalls = _serviceDialogInvokeCallsDict[stateKey];
+                        invokeCalls++;
                         _serviceDialogInvokeCallsDict[stateKey] = invokeCalls;
                     }
                 }
@@ -1434,7 +1435,9 @@ namespace PsdzClient
                             }
                             else
                             {
-                                methodsDict[methodName]++;
+                                int count = methodsDict[methodName];
+                                count++;
+                                methodsDict[methodName] = count;
                             }
                         }
                     }
