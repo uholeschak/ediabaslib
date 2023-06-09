@@ -543,6 +543,7 @@ namespace PsdzClient
         private static SerializableDictionary<string, ServiceModuleDataItem> _serviceDialogDict;
         private static object _moduleThreadLock = new object();
         private static object _defaultObject = new object();
+        private static SerializableDictionary<string, int> _serviceDialogInvokeCallsDict;
         private static HashSet<string> _serviceDialogTextHashes;
         private static ConstructorInfo _istaServiceDialogDlgCmdBaseConstructor;
         private static ConstructorInfo _istaEdiabasAdapterDeviceResultConstructor;
@@ -800,6 +801,7 @@ namespace PsdzClient
                 {
                     log.Error(callStack);
                 }
+
                 Thread.CurrentThread.Abort();
             }
 
@@ -812,7 +814,9 @@ namespace PsdzClient
         {
             log.InfoFormat("ServiceDialogCmdBaseInvokePrefix, Method: {0}", method);
 
+            string stateKey = method ?? string.Empty;
             ServiceModuleDataItem serviceModuleDataItem = null;
+            int invokeCalls = 0;
             lock (_moduleThreadLock)
             {
                 if (__instance != null && _serviceDialogDict != null)
@@ -826,15 +830,33 @@ namespace PsdzClient
                         }
                     }
                 }
+
+                if (serviceModuleDataItem == null)
+                {
+                    if (_serviceDialogInvokeCallsDict == null)
+                    {
+                        _serviceDialogInvokeCallsDict = new SerializableDictionary<string, int>();
+                    }
+
+                    if (!_serviceDialogInvokeCallsDict.ContainsKey(stateKey))
+                    {
+                        invokeCalls = 1;
+                        _serviceDialogInvokeCallsDict.Add(stateKey, invokeCalls);
+                    }
+                    else
+                    {
+                        invokeCalls = _serviceDialogInvokeCallsDict[stateKey]++;
+                        _serviceDialogInvokeCallsDict[stateKey] = invokeCalls;
+                    }
+                }
             }
 
             string dialogName = string.Empty;
             string dialogMethodName = string.Empty;
-            string stateKey = method ?? string.Empty;
             int dialogState = 0;
             if (serviceModuleDataItem == null)
             {
-                log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix, Service module data not found");
+                log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix, Service module data not found, Invokes: {0}", invokeCalls);
             }
             else
             {
@@ -1066,6 +1088,28 @@ namespace PsdzClient
                     log.InfoFormat("ServiceDialogCmdBaseInvokePrefix, State: {0} -> {1}", dialogStateOld, dialogState);
                 }
                 serviceModuleDataItem.DialogStateDict[stateKey] = dialogState;
+            }
+
+            if (invokeCalls > 10)
+            {
+                string callStack = string.Empty;
+                try
+                {
+                    StackTrace stackTrace = new StackTrace();
+                    callStack = stackTrace.ToString();
+                }
+                catch (Exception ex)
+                {
+                    log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix StackTrace Exception: {0}", ex.Message);
+                }
+
+                log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix Aborting Method: {0}", method);
+                if (!string.IsNullOrEmpty(callStack))
+                {
+                    log.Error(callStack);
+                }
+
+                Thread.CurrentThread.Abort();
             }
 
             return false;
@@ -2654,6 +2698,7 @@ namespace PsdzClient
                     {
                         _serviceDialogDict = null;
                     }
+
                     foreach (MethodInfo simpleMethod in simpleMethods)
                     {
                         Thread moduleThread = new Thread(() =>
@@ -2663,6 +2708,7 @@ namespace PsdzClient
                                 lock (_moduleThreadLock)
                                 {
                                     _serviceDialogTextHashes = null;
+                                    _serviceDialogInvokeCallsDict = null;
                                     _moduleRefPath = null;
                                     _moduleRefDict = null;
                                     if (_serviceDialogDict != null)
