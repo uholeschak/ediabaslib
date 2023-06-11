@@ -536,6 +536,10 @@ namespace PsdzClient
             [XmlElement("EcuXmlDict"), DefaultValue(null)] public SerializableDictionary<string, string> EcuXmlDict { get; set; }
         }
 
+        private const int MaxCallsLimit = 10;
+        private const int MaxCallsStorage = 2;
+        private const int MaxResultDataLen = 20;
+
         public delegate bool ProgressDelegate(bool startConvert, int progress = -1, int failures = -1);
 
         private static string _moduleRefPath;
@@ -747,7 +751,7 @@ namespace PsdzClient
                 log.ErrorFormat("CreateServiceDialogPrefix No service dialog construtor");
             }
 
-            int callsCount = 0;
+            int callsCount;
             lock (_moduleThreadLock)
             {
                 if (_serviceDialogDict == null)
@@ -783,7 +787,7 @@ namespace PsdzClient
             }
 
             log.InfoFormat("CreateServiceDialogPrefix Calls: {0}", callsCount);
-            if (callsCount > 20)
+            if (callsCount > MaxCallsLimit)
             {
                 string callStack = string.Empty;
                 try
@@ -816,7 +820,7 @@ namespace PsdzClient
 
             string stateKey = method ?? string.Empty;
             ServiceModuleDataItem serviceModuleDataItem = null;
-            int invokeCalls = 0;
+            int invokeCalls = 1;
             lock (_moduleThreadLock)
             {
                 if (__instance != null && _serviceDialogDict != null)
@@ -840,7 +844,6 @@ namespace PsdzClient
 
                     if (!_serviceDialogInvokeCallsDict.ContainsKey(stateKey))
                     {
-                        invokeCalls = 1;
                         _serviceDialogInvokeCallsDict.Add(stateKey, invokeCalls);
                     }
                     else
@@ -1091,7 +1094,7 @@ namespace PsdzClient
                 serviceModuleDataItem.DialogStateDict[stateKey] = dialogState;
             }
 
-            if (invokeCalls > 10)
+            if (invokeCalls > MaxCallsLimit)
             {
                 string callStack = string.Empty;
                 try
@@ -1371,7 +1374,7 @@ namespace PsdzClient
                 return false;
             }
 
-            if (serviceModuleDataItem.CallsCount > 2)
+            if (serviceModuleDataItem.CallsCount > MaxCallsStorage)
             {
                 return false;
             }
@@ -1388,10 +1391,9 @@ namespace PsdzClient
                     resultData = dataType.Name;
                 }
 
-                const int maxLen = 20;
-                if (resultData.Length > maxLen)
+                if (resultData.Length > MaxResultDataLen)
                 {
-                    resultData = resultData.Substring(0, maxLen);
+                    resultData = resultData.Substring(0, MaxResultDataLen);
                 }
             }
 
