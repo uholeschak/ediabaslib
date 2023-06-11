@@ -1240,6 +1240,14 @@ namespace PsdzClient
                         log.InfoFormat("GetIstaResultAsTypePostfix Overriding value with: '{0}'", __result);
                     }
                     break;
+
+                case "/Result/Rows/Row[0]/STAT_GETRIEBEVORADA_ZUSTAND":
+                    if (targetType == typeof(byte))
+                    {
+                        __result = 0;
+                        log.InfoFormat("GetIstaResultAsTypePostfix Overriding value with: '{0}'", __result);
+                    }
+                    break;
             }
 
             if (serviceModuleInvokeItem != null)
@@ -2710,7 +2718,7 @@ namespace PsdzClient
                     try
                     {
                         log.InfoFormat("ReadServiceModule Patching Module Method: {0}", privateMethod.Name);
-                        _harmony.Patch(privateMethod, new HarmonyMethod(methodModulePrivateMethodPrefix));
+                        //_harmony.Patch(privateMethod, new HarmonyMethod(methodModulePrivateMethodPrefix));
                     }
                     catch (Exception ex)
                     {
