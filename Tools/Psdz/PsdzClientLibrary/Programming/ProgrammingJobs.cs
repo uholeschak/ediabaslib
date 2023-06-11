@@ -455,6 +455,11 @@ namespace PsdzClient.Programming
                             return false;
                         }
 
+                        if (lastProgressService < 100)
+                        {
+                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleNotCompleted, lastProgressService));
+                        }
+
                         if (failCountService >= 0)
                         {
                             log.InfoFormat("Test module generation failures: {0}", failCountService);

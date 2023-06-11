@@ -351,7 +351,10 @@ Possibly the software is not consistent in all ECUs.</value>
     <value>Test module data not present.</value>
   </data>
   <data name="TestModuleFailures" xml:space="preserve">
-    <value>Test module data generation failures: {0}</value>
+    <value>Test module generation failures: {0}</value>
+  </data>
+  <data name="TestModuleNotCompleted" xml:space="preserve">
+    <value>Test module generation not completed: {0}%</value>
   </data>
   <data name="TestModuleProgress" xml:space="preserve">
     <value>{0}%, Failures: {1}</value>

@@ -353,6 +353,9 @@ Möglicherweise ist die Sofware in den Steuergeräten nicht konsitent.</value>
   <data name="TestModuleFailures" xml:space="preserve">
     <value>Fehler bei Testmodul Generierung: {0}</value>
   </data>
+  <data name="TestModuleNotCompleted" xml:space="preserve">
+    <value>Testmodul Generierung nicht abgeschlossen: {0}%</value>
+  </data>
   <data name="TestModuleProgress" xml:space="preserve">
     <value>{0}%, Fehler: {1}</value>
   </data>

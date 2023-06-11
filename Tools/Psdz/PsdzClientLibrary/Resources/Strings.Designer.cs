@@ -720,11 +720,20 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Test module data generation failures: {0} ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Test module generation failures: {0} ähnelt.
         /// </summary>
         internal static string TestModuleFailures {
             get {
                 return ResourceManager.GetString("TestModuleFailures", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Test module generation not completed: {0}% ähnelt.
+        /// </summary>
+        internal static string TestModuleNotCompleted {
+            get {
+                return ResourceManager.GetString("TestModuleNotCompleted", resourceCulture);
             }
         }
         
