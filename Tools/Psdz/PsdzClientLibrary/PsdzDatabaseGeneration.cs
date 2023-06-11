@@ -548,6 +548,7 @@ namespace PsdzClient
         private static object _moduleThreadLock = new object();
         private static object _defaultObject = new object();
         private static SerializableDictionary<string, int> _serviceDialogInvokeCallsDict;
+        private static SerializableDictionary<string, int> _characteristicCallsDict;
         private static HashSet<string> _serviceDialogTextHashes;
         private static ConstructorInfo _istaServiceDialogDlgCmdBaseConstructor;
         private static ConstructorInfo _istaEdiabasAdapterDeviceResultConstructor;
@@ -1169,6 +1170,50 @@ namespace PsdzClient
         private static bool CharacteristicsPrefix(ref object __result, string controlId)
         {
             log.InfoFormat("CharacteristicsPrefix ControlId: {0}", controlId ?? string.Empty);
+
+            string stateKey = controlId ?? string.Empty;
+            int invokeCalls = 1;
+            lock (_moduleThreadLock)
+            {
+                if (_characteristicCallsDict == null)
+                {
+                    _characteristicCallsDict = new SerializableDictionary<string, int>();
+                }
+
+                if (!_characteristicCallsDict.ContainsKey(stateKey))
+                {
+                    _characteristicCallsDict.Add(stateKey, invokeCalls);
+                }
+                else
+                {
+                    invokeCalls = _characteristicCallsDict[stateKey];
+                    invokeCalls++;
+                    _characteristicCallsDict[stateKey] = invokeCalls;
+                }
+            }
+
+            if (invokeCalls > MaxCallsLimit)
+            {
+                string callStack = string.Empty;
+                try
+                {
+                    StackTrace stackTrace = new StackTrace();
+                    callStack = stackTrace.ToString();
+                }
+                catch (Exception ex)
+                {
+                    log.ErrorFormat("CharacteristicsPrefix StackTrace Exception: {0}", ex.Message);
+                }
+
+                log.ErrorFormat("CharacteristicsPrefix Aborting ControlId: {0}", controlId);
+                if (!string.IsNullOrEmpty(callStack))
+                {
+                    log.Error(callStack);
+                }
+
+                Thread.CurrentThread.Abort();
+            }
+
             __result = null;
             return false;
         }
@@ -2718,7 +2763,7 @@ namespace PsdzClient
                     try
                     {
                         log.InfoFormat("ReadServiceModule Patching Module Method: {0}", privateMethod.Name);
-                        //_harmony.Patch(privateMethod, new HarmonyMethod(methodModulePrivateMethodPrefix));
+                        _harmony.Patch(privateMethod, new HarmonyMethod(methodModulePrivateMethodPrefix));
                     }
                     catch (Exception ex)
                     {
@@ -2766,6 +2811,7 @@ namespace PsdzClient
                                 {
                                     _serviceDialogTextHashes = null;
                                     _serviceDialogInvokeCallsDict = null;
+                                    _characteristicCallsDict = null;
                                     _moduleRefPath = null;
                                     _moduleRefDict = null;
                                     if (_serviceDialogDict != null)
