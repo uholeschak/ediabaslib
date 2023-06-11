@@ -85,21 +85,22 @@ namespace PsdzClient
         private bool _ignoreCheck = false;
         private bool _ignoreChange = false;
         private CancellationTokenSource _cts;
+        private ProgrammingJobs.ExecutionMode _executionMode;
 
         public FormMain(string[] args = null)
         {
             InitializeComponent();
 
-            ProgrammingJobs.ExecutionMode executionMode = ProgrammingJobs.ExecutionMode.Normal;
+            _executionMode = ProgrammingJobs.ExecutionMode.Normal;
             if (args != null && args.Length > 0)
             {
                 if (string.Compare(args[0], "GenerateModules", StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    executionMode = ProgrammingJobs.ExecutionMode.GenerateModules;
+                    _executionMode = ProgrammingJobs.ExecutionMode.GenerateModules;
                 }
             }
 
-            _programmingJobs = new ProgrammingJobs(DealerId, executionMode);
+            _programmingJobs = new ProgrammingJobs(DealerId, _executionMode);
             _programmingJobs.UpdateStatusEvent += UpdateStatus;
             _programmingJobs.ProgressEvent += UpdateProgress;
             _programmingJobs.UpdateOptionsEvent += UpdateOptions;
