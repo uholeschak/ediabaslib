@@ -2064,8 +2064,17 @@ namespace PsdzClient
                     index++;
                 }
 
-                progressHandler?.Invoke(false, 100, failCount);
+                int percentFinish = 100;
+                if (!completed)
+                {
+                    percentFinish = index * 100 / completeInfoObjects.Count;
+                    if (percentFinish >= 100)
+                    {
+                        percentFinish = 99;
+                    }
+                }
 
+                progressHandler?.Invoke(false, percentFinish, failCount);
                 log.InfoFormat("ConvertAllServiceModules Count: {0}, Failures: {1}", moduleDataDict.Count, failCount);
                 if (moduleDataDict.Count == 0)
                 {

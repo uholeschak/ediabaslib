@@ -424,6 +424,7 @@ namespace PsdzClient.Programming
                         }
 
                         int failCountService = -1;
+                        int lastProgressService = 0;
                         bool resultService = ProgrammingService.PdszDatabase.GenerateServiceModuleData((startConvert, progress, failures) =>
                         {
                             if (startConvert)
@@ -434,6 +435,7 @@ namespace PsdzClient.Programming
                             else
                             {
                                 failCountService = failures;
+                                lastProgressService = progress;
                                 string message = string.Format(CultureInfo.InvariantCulture, Strings.TestModuleProgress, progress, failures);
                                 ProgressEvent?.Invoke(progress, false, message);
                             }
