@@ -36,6 +36,12 @@ namespace PsdzClient.Programming
 {
     public class ProgrammingJobs : IDisposable
     {
+        public enum ExecutionMode
+        {
+            Normal,
+            GenerateModules,
+        }
+
         public enum OperationType
         {
             CreateOptions,
@@ -223,6 +229,7 @@ namespace PsdzClient.Programming
         private bool _disposed;
         public ClientContext ClientContext { get; private set; }
         private string _dealerId;
+        private ExecutionMode _executionMode;
         private object _contextLock = new object();
         private object _cacheLock = new object();
         private object _operationLock = new object();
@@ -352,10 +359,11 @@ namespace PsdzClient.Programming
             }
         }
 
-        public ProgrammingJobs(string dealerId)
+        public ProgrammingJobs(string dealerId, ExecutionMode executionMode = ExecutionMode.Normal)
         {
             ClientContext = new ClientContext();
             _dealerId = dealerId;
+            _executionMode = executionMode;
             ProgrammingService = null;
         }
 

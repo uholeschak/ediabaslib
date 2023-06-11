@@ -15,17 +15,17 @@ namespace PsdzClient
         /// Der Haupteinstiegspunkt für die Anwendung.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-            Application.ThreadException += (sender, args) =>
+            Application.ThreadException += (sender, exArgs) =>
             {
-                log.ErrorFormat("ThreadException: {0}", args.Exception.Message);
+                log.ErrorFormat("ThreadException: {0}", exArgs.Exception.Message);
             };
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FormMain());
+            Application.Run(new FormMain(args));
         }
     }
 }
