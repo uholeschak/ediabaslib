@@ -1165,6 +1165,14 @@ namespace PsdzClient
             return false;
         }
 
+        // ReSharper disable once UnusedMember.Local
+        private static bool CharacteristicsPrefix(ref object __result, string controlId)
+        {
+            log.InfoFormat("CharacteristicsPrefix ControlId: {0}", controlId ?? string.Empty);
+            __result = null;
+            return false;
+        }
+
         private static bool ModuleTextPrefix2(ref object __result, string value, object paramArray)
         {
             log.InfoFormat("ModuleTextPrefix2 Value: {0}", value ?? string.Empty);
@@ -2340,6 +2348,21 @@ namespace PsdzClient
                     return null;
                 }
 
+                MethodInfo methodIstaModuleCharacteristics = istaModuleType.GetMethod("__Characteristics", BindingFlags.Instance | BindingFlags.Public,
+                    null, new Type[] { typeof(string) }, null);
+                if (methodIstaModuleCharacteristics == null)
+                {
+                    log.ErrorFormat("ReadTestModule ISTAModule __Characteristics not found");
+                    return null;
+                }
+
+                MethodInfo methodCharacteristicsPrefix = typeof(PdszDatabase).GetMethod("CharacteristicsPrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                if (methodCharacteristicsPrefix == null)
+                {
+                    log.ErrorFormat("ReadServiceModule CharacteristicsPrefix not found");
+                    return null;
+                }
+
                 Type textParameterType = coreFrameworkAssembly.GetType("BMW.Rheingold.CoreFramework.__TextParameter");
                 if (textParameterType == null)
                 {
@@ -2467,6 +2490,7 @@ namespace PsdzClient
                 bool patchedConfigurationContainerDeserialize = false;
                 bool patchedIstaResultAsType = false;
                 bool patchedIndirectDocument = false;
+                bool patchedCharacteristics = false;
                 bool patchedParamContainerGetParameter = false;
                 bool patchedModuleText = false;
                 bool patchedModuleSleep = false;
@@ -2499,6 +2523,11 @@ namespace PsdzClient
                     if (methodBase == methodIstaModuleIndirectDocument3)
                     {
                         patchedIndirectDocument = true;
+                    }
+
+                    if (methodBase == methodIstaModuleCharacteristics)
+                    {
+                        patchedCharacteristics = true;
                     }
 
                     if (methodBase == methodParamContainerGetParameter1)
@@ -2556,6 +2585,12 @@ namespace PsdzClient
                 {
                     log.InfoFormat("ReadServiceModule Patching: {0}", methodIstaModuleIndirectDocument3.Name);
                     _harmony.Patch(methodIstaModuleIndirectDocument3, new HarmonyMethod(methodIndirectDocumentPrefix3));
+                }
+
+                if (!patchedCharacteristics)
+                {
+                    log.InfoFormat("ReadServiceModule Patching: {0}", methodIstaModuleCharacteristics.Name);
+                    _harmony.Patch(methodIstaModuleCharacteristics, new HarmonyMethod(methodCharacteristicsPrefix));
                 }
 
                 if (!patchedParamContainerGetParameter)
