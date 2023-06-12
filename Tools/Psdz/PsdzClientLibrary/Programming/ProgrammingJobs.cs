@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -432,48 +434,66 @@ namespace PsdzClient.Programming
                         }
 
                         bool checkOnly = _executionMode == ExecutionMode.Normal;
-                        int failCountService = -1;
-                        int lastProgressService = 100;
-                        bool resultService = ProgrammingService.PdszDatabase.GenerateServiceModuleData((startConvert, progress, failures) =>
+                        for (;;)
                         {
-                            if (startConvert)
+                            int failCountService = -1;
+                            int lastProgressService = 100;
+                            bool resultService = ProgrammingService.PdszDatabase.GenerateServiceModuleData((startConvert, progress, failures) =>
                             {
-                                sbResult.AppendLine(Strings.GeneratingInfoFiles);
+                                if (startConvert)
+                                {
+                                    sbResult.AppendLine(Strings.GeneratingInfoFiles);
+                                    UpdateStatus(sbResult.ToString());
+                                }
+                                else
+                                {
+                                    failCountService = failures;
+                                    lastProgressService = progress;
+                                    string message = string.Format(CultureInfo.InvariantCulture, Strings.TestModuleProgress, progress, failures);
+                                    ProgressEvent?.Invoke(progress, false, message);
+                                }
+
+                                if (cts != null)
+                                {
+                                    return cts.Token.IsCancellationRequested;
+                                }
+                                return false;
+                            }, checkOnly);
+
+                            if (!resultService && checkOnly)
+                            {
+                                if (!ExecuteSubProcess(cts, "GenerateModules"))
+                                {
+                                    log.ErrorFormat("GenerateServiceModuleData failed");
+                                    sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
+                                    UpdateStatus(sbResult.ToString());
+                                    return false;
+                                }
+
+                                continue;
+                            }
+
+                            if (!resultService)
+                            {
+                                log.ErrorFormat("GenerateServiceModuleData failed");
+                                sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
+                                UpdateStatus(sbResult.ToString());
+                                return false;
+                            }
+
+                            if (lastProgressService < 100)
+                            {
+                                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleNotCompleted, lastProgressService));
+                            }
+
+                            if (failCountService >= 0)
+                            {
+                                log.InfoFormat("Test module generation failures: {0}", failCountService);
+                                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleFailures, failCountService));
                                 UpdateStatus(sbResult.ToString());
                             }
-                            else
-                            {
-                                failCountService = failures;
-                                lastProgressService = progress;
-                                string message = string.Format(CultureInfo.InvariantCulture, Strings.TestModuleProgress, progress, failures);
-                                ProgressEvent?.Invoke(progress, false, message);
-                            }
 
-                            if (cts != null)
-                            {
-                                return cts.Token.IsCancellationRequested;
-                            }
-                            return false;
-                        }, checkOnly);
-
-                        if (!resultService)
-                        {
-                            log.ErrorFormat("GenerateServiceModuleData failed");
-                            sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
-                            UpdateStatus(sbResult.ToString());
-                            return false;
-                        }
-
-                        if (lastProgressService < 100)
-                        {
-                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleNotCompleted, lastProgressService));
-                        }
-
-                        if (failCountService >= 0)
-                        {
-                            log.InfoFormat("Test module generation failures: {0}", failCountService);
-                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleFailures, failCountService));
-                            UpdateStatus(sbResult.ToString());
+                            break;
                         }
                     }
 
@@ -3058,6 +3078,68 @@ namespace PsdzClient.Programming
             catch (Exception)
             {
                 // ignored
+            }
+        }
+
+        private bool ExecuteSubProcess(CancellationTokenSource cts, string arguments = null)
+        {
+            try
+            {
+                Assembly entryAssembly = Assembly.GetEntryAssembly();
+                if (entryAssembly == null)
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "ExecuteSubProcess No EntryAssembly");
+                    return false;
+                }
+
+                string fileName = entryAssembly.Location;
+                if (string.IsNullOrEmpty(fileName))
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "ExecuteSubProcess No Location");
+                    return false;
+                }
+
+                ProcessStartInfo processStartInfo = new ProcessStartInfo();
+                processStartInfo.FileName = fileName;
+                processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
+                processStartInfo.UseShellExecute = false;
+                processStartInfo.RedirectStandardInput = false;
+                processStartInfo.RedirectStandardOutput = false;
+                processStartInfo.RedirectStandardError = false;
+                processStartInfo.CreateNoWindow = true;
+                processStartInfo.Arguments = arguments ?? string.Empty;
+                Process process = Process.Start(processStartInfo);
+                if (process == null)
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "ExecuteSubProcess Process start failed: '{0}'", fileName);
+                    return false;
+                }
+
+                while (!process.WaitForExit(1000))
+                {
+                    if (cts != null)
+                    {
+                        if (cts.IsCancellationRequested)
+                        {
+                            log.ErrorFormat(CultureInfo.InvariantCulture, "ExecuteSubProcess Cancelled");
+                            return false;
+                        }
+                    }
+                }
+
+                int exitCode = process.ExitCode;
+                log.InfoFormat(CultureInfo.InvariantCulture, "ExecuteSubProcess Process exit code: {0}", exitCode);
+                if (exitCode != 0)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "ExecuteSubProcess Exception: {0}", ex.Message);
+                return false;
             }
         }
 
