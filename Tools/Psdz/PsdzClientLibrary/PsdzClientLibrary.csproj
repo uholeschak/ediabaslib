@@ -678,6 +678,7 @@
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
     <Compile Include="Utility\FormatConverter.cs" />
+    <Compile Include="Utility\ParentProcess.cs" />
     <Compile Include="Utility\SgbmIdParser.cs" />
     <Compile Include="VehicleCharacteristicsUtility.cs" />
     <Compile Include="Vehicle\DealerSessionProperty.cs" />

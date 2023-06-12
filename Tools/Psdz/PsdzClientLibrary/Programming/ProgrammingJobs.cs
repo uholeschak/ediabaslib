@@ -31,6 +31,7 @@ using EdiabasLib;
 using log4net;
 using log4net.Config;
 using PsdzClient.Core;
+using PsdzClient.Utility.ParentProcess;
 using PsdzClientLibrary.Resources;
 using VCIDeviceType = BMW.Rheingold.CoreFramework.Contracts.Vehicle.VCIDeviceType;
 
@@ -434,6 +435,12 @@ namespace PsdzClient.Programming
                         }
 
                         bool checkOnly = _executionMode == ExecutionMode.Normal;
+                        Process parentProcess = null;
+                        if (!checkOnly)
+                        {
+                            parentProcess = ParentProcess.ParentProcessObject;
+                        }
+
                         for (;;)
                         {
                             int failCountService = -1;
@@ -453,27 +460,17 @@ namespace PsdzClient.Programming
                                     ProgressEvent?.Invoke(progress, false, message);
                                 }
 
+                                if (parentProcess != null && parentProcess.HasExited)
+                                {
+                                    return true;
+                                }
+
                                 if (cts != null)
                                 {
                                     return cts.Token.IsCancellationRequested;
                                 }
                                 return false;
                             }, checkOnly);
-
-                            if (resultService)
-                            {
-                                if (lastProgressService < 100)
-                                {
-                                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleNotCompleted, lastProgressService));
-                                }
-
-                                if (failCountService >= 0)
-                                {
-                                    log.InfoFormat("Test module generation failures: {0}", failCountService);
-                                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleFailures, failCountService));
-                                    UpdateStatus(sbResult.ToString());
-                                }
-                            }
 
                             if (checkOnly)
                             {
@@ -499,6 +496,18 @@ namespace PsdzClient.Programming
                                     sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
                                     UpdateStatus(sbResult.ToString());
                                     return false;
+                                }
+
+                                if (lastProgressService < 100)
+                                {
+                                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleNotCompleted, lastProgressService));
+                                }
+
+                                if (failCountService >= 0)
+                                {
+                                    log.InfoFormat("Test module generation failures: {0}", failCountService);
+                                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleFailures, failCountService));
+                                    UpdateStatus(sbResult.ToString());
                                 }
 
                                 return true;
