@@ -85,7 +85,7 @@ namespace PsdzClient
         private bool _ignoreCheck = false;
         private bool _ignoreChange = false;
         private CancellationTokenSource _cts;
-        private ProgrammingJobs.ExecutionMode _executionMode;
+        private readonly ProgrammingJobs.ExecutionMode _executionMode;
 
         public FormMain(string[] args = null)
         {
