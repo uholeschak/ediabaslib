@@ -431,6 +431,7 @@ namespace PsdzClient.Programming
                             return false;
                         }
 
+                        bool checkOnly = _executionMode == ExecutionMode.Normal;
                         int failCountService = -1;
                         int lastProgressService = 100;
                         bool resultService = ProgrammingService.PdszDatabase.GenerateServiceModuleData((startConvert, progress, failures) =>
@@ -453,7 +454,7 @@ namespace PsdzClient.Programming
                                 return cts.Token.IsCancellationRequested;
                             }
                             return false;
-                        });
+                        }, checkOnly);
 
                         if (!resultService)
                         {
