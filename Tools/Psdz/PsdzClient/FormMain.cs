@@ -663,6 +663,11 @@ namespace PsdzClient
             UpdateStatus();
             timerUpdate.Enabled = true;
             labelProgressEvent.Text = string.Empty;
+
+            if (_executionMode == ProgrammingJobs.ExecutionMode.GenerateModules)
+            {
+                buttonConnect_Click(null, null);
+            }
         }
 
         private void timerUpdate_Tick(object sender, EventArgs e)

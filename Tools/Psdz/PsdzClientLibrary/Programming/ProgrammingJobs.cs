@@ -460,9 +460,22 @@ namespace PsdzClient.Programming
                                 return false;
                             }, checkOnly);
 
-                            if (!resultService && checkOnly)
+                            if (checkOnly)
                             {
-                                if (!ExecuteSubProcess(cts, "GenerateModules"))
+                                if (!resultService)
+                                {
+                                    if (!ExecuteSubProcess(cts, "GenerateModules"))
+                                    {
+                                        log.ErrorFormat("GenerateServiceModuleData failed");
+                                        sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
+                                        UpdateStatus(sbResult.ToString());
+                                        return false;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (!resultService)
                                 {
                                     log.ErrorFormat("GenerateServiceModuleData failed");
                                     sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
@@ -470,30 +483,20 @@ namespace PsdzClient.Programming
                                     return false;
                                 }
 
-                                continue;
-                            }
+                                if (lastProgressService < 100)
+                                {
+                                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleNotCompleted, lastProgressService));
+                                }
 
-                            if (!resultService)
-                            {
-                                log.ErrorFormat("GenerateServiceModuleData failed");
-                                sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
-                                UpdateStatus(sbResult.ToString());
-                                return false;
-                            }
+                                if (failCountService >= 0)
+                                {
+                                    log.InfoFormat("Test module generation failures: {0}", failCountService);
+                                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleFailures, failCountService));
+                                    UpdateStatus(sbResult.ToString());
+                                }
 
-                            if (lastProgressService < 100)
-                            {
-                                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleNotCompleted, lastProgressService));
+                                return true;
                             }
-
-                            if (failCountService >= 0)
-                            {
-                                log.InfoFormat("Test module generation failures: {0}", failCountService);
-                                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleFailures, failCountService));
-                                UpdateStatus(sbResult.ToString());
-                            }
-
-                            break;
                         }
                     }
 
@@ -669,6 +672,11 @@ namespace PsdzClient.Programming
                 if (!StartProgrammingService(cts, istaFolder))
                 {
                     return false;
+                }
+
+                if (_executionMode != ExecutionMode.Normal)
+                {
+                    return true;
                 }
             }
 
