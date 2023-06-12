@@ -732,6 +732,14 @@ namespace PsdzClient
                 TaskActive = false;
                 _cts.Dispose();
                 _cts = null;
+                if (_executionMode != ProgrammingJobs.ExecutionMode.Normal)
+                {
+                    BeginInvoke((Action)(() =>
+                    {
+                        Environment.ExitCode = task.Result ? 0 : 1;
+                        Close();
+                    }));
+                }
             });
 
             TaskActive = true;
