@@ -2037,7 +2037,6 @@ namespace PsdzClient
                     }
                 }
 
-                ServiceModuleStorage = serviceModules;
                 return true;
             }
             catch (Exception e)

@@ -487,6 +487,8 @@ namespace PsdzClient.Programming
                                         return false;
                                     }
                                 }
+
+                                break;
                             }
                             else
                             {
