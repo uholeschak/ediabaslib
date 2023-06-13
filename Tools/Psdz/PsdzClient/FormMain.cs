@@ -101,6 +101,7 @@ namespace PsdzClient
             }
 
             _programmingJobs = new ProgrammingJobs(DealerId, _executionMode);
+            _programmingJobs.ParentWindowHandle = Handle;
             _programmingJobs.UpdateStatusEvent += UpdateStatus;
             _programmingJobs.ProgressEvent += UpdateProgress;
             _programmingJobs.UpdateOptionsEvent += UpdateOptions;

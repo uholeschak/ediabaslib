@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -39,6 +40,9 @@ namespace PsdzClient.Programming
 {
     public class ProgrammingJobs : IDisposable
     {
+        [DllImport("user32.dll", EntryPoint = "SetWindowLong")]
+        private static extern int SetWindowLong32(IntPtr hWnd, int nIndex, int dwNewLong);
+
         public enum ExecutionMode
         {
             Normal,
@@ -241,6 +245,7 @@ namespace PsdzClient.Programming
         public List<OptionsItem> SelectedOptions { get; set; }
         public bool DisableTalFlash { get; set; }
         public PdszDatabase.SwiRegisterGroup RegisterGroup { get; set; }
+        public IntPtr ParentWindowHandle { get; set; }
 
         private PsdzContext _psdzContext;
         public PsdzContext PsdzContext
@@ -3140,8 +3145,19 @@ namespace PsdzClient.Programming
                     return false;
                 }
 
+                bool parentSet = false;
                 while (!process.WaitForExit(1000))
                 {
+                    if (!parentSet && ParentWindowHandle != IntPtr.Zero)
+                    {
+                        IntPtr mainWindowHandle = process.MainWindowHandle;
+                        if (mainWindowHandle != IntPtr.Zero)
+                        {
+                            SetWindowLong32(mainWindowHandle, -8, ParentWindowHandle.ToInt32());
+                            parentSet = true;
+                        }
+                    }
+
                     if (cts != null)
                     {
                         if (cts.IsCancellationRequested)
