@@ -76,13 +76,14 @@ namespace PsdzClient
             }
 
             public ServiceModules(VehicleStructsBmw.VersionInfo versionInfo, SerializableDictionary<string, ServiceModuleData> moduleDataDict = null,
-                SerializableDictionary<string, ServiceModuleTextData> moduleTextDict = null, bool completed = false, int lastProgress = 0)
+                SerializableDictionary<string, ServiceModuleTextData> moduleTextDict = null, bool completed = false, int lastProgress = 0, int convertFailures = 0)
             {
                 Version = versionInfo;
                 ModuleDataDict = moduleDataDict;
                 ModuleTextDict = moduleTextDict;
                 Completed = completed;
                 LastProgress = lastProgress;
+                ConvertFailures = convertFailures;
             }
 
             [XmlElement("Version"), DefaultValue(null)] public VehicleStructsBmw.VersionInfo Version { get; set; }
@@ -94,6 +95,8 @@ namespace PsdzClient
             [XmlElement("Completed")] public bool Completed { get; set; }
 
             [XmlElement("LastProgress")] public int LastProgress { get; set; }
+
+            [XmlElement("ConvertFailures")] public int ConvertFailures { get; set; }
         }
 
         [XmlInclude(typeof(ServiceModuleDataItem))]
@@ -1957,6 +1960,7 @@ namespace PsdzClient
                 bool dataValid = true;
                 bool completed = false;
                 int lastProgress = 0;
+                int convertFailures = 0;
                 if (serviceModules != null)
                 {
                     DbInfo dbInfo = GetDbInfo();
@@ -1970,6 +1974,7 @@ namespace PsdzClient
                     {
                         completed = serviceModules.Completed;
                         lastProgress = serviceModules.LastProgress;
+                        convertFailures = serviceModules.ConvertFailures;
                     }
                 }
 
@@ -1977,7 +1982,13 @@ namespace PsdzClient
                 {
                     if (checkOnly)
                     {
-                        log.InfoFormat("GenerateServiceModuleData Data not valid, Valid: {0}, Complete: {1}, Progress: {2}%", dataValid, completed, lastProgress);
+                        log.InfoFormat("GenerateServiceModuleData Data not valid, Valid: {0}, Complete: {1}, Progress: {2}%, Failures: {3}",
+                            dataValid, completed, lastProgress, convertFailures);
+                        if (progressHandler != null)
+                        {
+                            progressHandler.Invoke(false, lastProgress, convertFailures);
+                        }
+
                         return false;
                     }
 
@@ -2072,6 +2083,12 @@ namespace PsdzClient
 
                 SerializableDictionary<string, ServiceModuleData> moduleDataDict = lastServiceModules?.ModuleDataDict;
                 SerializableDictionary<string, ServiceModuleTextData> moduleTextDict = lastServiceModules?.ModuleTextDict;
+                int lastFailCount = 0;
+                if (lastServiceModules != null)
+                {
+                    lastFailCount = lastServiceModules.ConvertFailures;
+                }
+
                 // ReSharper disable once ConvertIfStatementToNullCoalescingExpression
                 if (moduleDataDict == null)
                 {
@@ -2155,7 +2172,7 @@ namespace PsdzClient
 
                 DbInfo dbInfo = GetDbInfo();
                 VehicleStructsBmw.VersionInfo versionInfo = new VehicleStructsBmw.VersionInfo(dbInfo?.Version, dbInfo?.DateTime);
-                return new ServiceModules(versionInfo, moduleDataDict, moduleTextDict, completed, percentFinish);
+                return new ServiceModules(versionInfo, moduleDataDict, moduleTextDict, completed, percentFinish, failCount + lastFailCount);
             }
             catch (Exception e)
             {
