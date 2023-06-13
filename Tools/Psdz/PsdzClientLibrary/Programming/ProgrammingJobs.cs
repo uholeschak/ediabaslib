@@ -40,8 +40,19 @@ namespace PsdzClient.Programming
 {
     public class ProgrammingJobs : IDisposable
     {
+        public static IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong)
+        {
+            if (IntPtr.Size == 8)
+                return SetWindowLongPtr64(hWnd, nIndex, dwNewLong);
+            else
+                return new IntPtr(SetWindowLong32(hWnd, nIndex, dwNewLong.ToInt32()));
+        }
+
         [DllImport("user32.dll", EntryPoint = "SetWindowLong")]
         private static extern int SetWindowLong32(IntPtr hWnd, int nIndex, int dwNewLong);
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr")]
+        private static extern IntPtr SetWindowLongPtr64(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
 
         public enum ExecutionMode
         {
@@ -3153,7 +3164,7 @@ namespace PsdzClient.Programming
                         IntPtr mainWindowHandle = process.MainWindowHandle;
                         if (mainWindowHandle != IntPtr.Zero)
                         {
-                            SetWindowLong32(mainWindowHandle, -8, ParentWindowHandle.ToInt32());
+                            SetWindowLongPtr(mainWindowHandle, -8, ParentWindowHandle);
                             parentSet = true;
                         }
                     }
