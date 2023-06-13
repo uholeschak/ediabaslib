@@ -3140,6 +3140,23 @@ namespace PsdzClient.Programming
                     return false;
                 }
 
+                Process currentProcess = Process.GetCurrentProcess();
+                Process[] sameProcesses = Process.GetProcessesByName(currentProcess.ProcessName);
+                int otherProcessesCount = 0;
+                foreach (Process otherProcess in sameProcesses)
+                {
+                    if (otherProcess.Id != currentProcess.Id)
+                    {
+                        otherProcessesCount++;
+                    }
+                }
+
+                if (otherProcessesCount != 0)
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "ExecuteSubProcess Other processes running: {0}", otherProcessesCount);
+                    return false;
+                }
+
                 ProcessStartInfo processStartInfo = new ProcessStartInfo();
                 processStartInfo.FileName = fileName;
                 processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
