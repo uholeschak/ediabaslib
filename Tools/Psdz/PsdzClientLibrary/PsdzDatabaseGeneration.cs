@@ -76,12 +76,13 @@ namespace PsdzClient
             }
 
             public ServiceModules(VehicleStructsBmw.VersionInfo versionInfo, SerializableDictionary<string, ServiceModuleData> moduleDataDict = null,
-                SerializableDictionary<string, ServiceModuleTextData> moduleTextDict = null, bool completed = false)
+                SerializableDictionary<string, ServiceModuleTextData> moduleTextDict = null, bool completed = false, int lastProgress = 0)
             {
                 Version = versionInfo;
                 ModuleDataDict = moduleDataDict;
                 ModuleTextDict = moduleTextDict;
                 Completed = completed;
+                LastProgress = lastProgress;
             }
 
             [XmlElement("Version"), DefaultValue(null)] public VehicleStructsBmw.VersionInfo Version { get; set; }
@@ -91,6 +92,8 @@ namespace PsdzClient
             [XmlElement("ModuleTextDict"), DefaultValue(null)] public SerializableDictionary<string, ServiceModuleTextData> ModuleTextDict { get; set; }
 
             [XmlElement("Completed")] public bool Completed { get; set; }
+
+            [XmlElement("LastProgress")] public int LastProgress { get; set; }
         }
 
         [XmlInclude(typeof(ServiceModuleDataItem))]
@@ -1953,6 +1956,7 @@ namespace PsdzClient
 
                 bool dataValid = true;
                 bool completed = false;
+                int lastProgress = 0;
                 if (serviceModules != null)
                 {
                     DbInfo dbInfo = GetDbInfo();
@@ -1965,6 +1969,7 @@ namespace PsdzClient
                     if (dataValid)
                     {
                         completed = serviceModules.Completed;
+                        lastProgress = serviceModules.LastProgress;
                     }
                 }
 
@@ -1972,7 +1977,7 @@ namespace PsdzClient
                 {
                     if (checkOnly)
                     {
-                        log.InfoFormat("GenerateServiceModuleData Data not valid, Valid: {0}, Complete: {1}", dataValid, completed);
+                        log.InfoFormat("GenerateServiceModuleData Data not valid, Valid: {0}, Complete: {1}, Progress: {2}%", dataValid, completed, lastProgress);
                         return false;
                     }
 
@@ -2150,7 +2155,7 @@ namespace PsdzClient
 
                 DbInfo dbInfo = GetDbInfo();
                 VehicleStructsBmw.VersionInfo versionInfo = new VehicleStructsBmw.VersionInfo(dbInfo?.Version, dbInfo?.DateTime);
-                return new ServiceModules(versionInfo, moduleDataDict, moduleTextDict, completed);
+                return new ServiceModules(versionInfo, moduleDataDict, moduleTextDict, completed, percentFinish);
             }
             catch (Exception e)
             {
