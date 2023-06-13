@@ -489,21 +489,21 @@ namespace PsdzClient.Programming
 
                             if (checkOnly)
                             {
-                                if (!resultService)
+                                if (resultService)
                                 {
-                                    sbResult.AppendLine(Strings.GeneratingInfoFiles);
-                                    UpdateStatus(sbResult.ToString());
-
-                                    if (!ExecuteSubProcess(cts, "GenerateModules"))
-                                    {
-                                        log.ErrorFormat("GenerateServiceModuleData failed");
-                                        sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
-                                        UpdateStatus(sbResult.ToString());
-                                        return false;
-                                    }
+                                    break;
                                 }
 
-                                break;
+                                sbResult.AppendLine(Strings.GeneratingInfoFiles);
+                                UpdateStatus(sbResult.ToString());
+
+                                if (!ExecuteSubProcess(cts, "GenerateModules"))
+                                {
+                                    log.ErrorFormat("GenerateServiceModuleData failed");
+                                    sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
+                                    UpdateStatus(sbResult.ToString());
+                                    return false;
+                                }
                             }
                             else
                             {
