@@ -1986,6 +1986,7 @@ namespace PsdzClient
                             dataValid, completed, lastProgress, convertFailures);
                         if (progressHandler != null)
                         {
+                            progressHandler.Invoke(true, lastProgress, convertFailures);
                             progressHandler.Invoke(false, lastProgress, convertFailures);
                         }
 

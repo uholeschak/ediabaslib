@@ -472,30 +472,12 @@ namespace PsdzClient.Programming
                                 return false;
                             }, checkOnly);
 
-                            if (resultService)
-                            {
-                                if (lastProgressService < 100)
-                                {
-                                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleNotCompleted, lastProgressService));
-                                }
-
-                                if (failCountService >= 0)
-                                {
-                                    log.InfoFormat("Test module generation failures: {0}", failCountService);
-                                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleFailures, failCountService));
-                                    UpdateStatus(sbResult.ToString());
-                                }
-                            }
-
                             if (checkOnly)
                             {
                                 if (resultService)
                                 {
                                     break;
                                 }
-
-                                sbResult.AppendLine(Strings.GeneratingInfoFiles);
-                                UpdateStatus(sbResult.ToString());
 
                                 if (!ExecuteSubProcess(cts, "GenerateModules"))
                                 {
@@ -514,7 +496,22 @@ namespace PsdzClient.Programming
                                     UpdateStatus(sbResult.ToString());
                                     return false;
                                 }
+                            }
 
+                            if (lastProgressService < 100)
+                            {
+                                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleNotCompleted, lastProgressService));
+                            }
+
+                            if (failCountService >= 0)
+                            {
+                                log.InfoFormat("Test module generation failures: {0}", failCountService);
+                                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleFailures, failCountService));
+                                UpdateStatus(sbResult.ToString());
+                            }
+
+                            if (!checkOnly)
+                            {
                                 return true;
                             }
                         }
