@@ -472,6 +472,21 @@ namespace PsdzClient.Programming
                                 return false;
                             }, checkOnly);
 
+                            if (resultService)
+                            {
+                                if (lastProgressService < 100)
+                                {
+                                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleNotCompleted, lastProgressService));
+                                }
+
+                                if (failCountService >= 0)
+                                {
+                                    log.InfoFormat("Test module generation failures: {0}", failCountService);
+                                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleFailures, failCountService));
+                                    UpdateStatus(sbResult.ToString());
+                                }
+                            }
+
                             if (checkOnly)
                             {
                                 if (!resultService)
@@ -498,18 +513,6 @@ namespace PsdzClient.Programming
                                     sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
                                     UpdateStatus(sbResult.ToString());
                                     return false;
-                                }
-
-                                if (lastProgressService < 100)
-                                {
-                                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleNotCompleted, lastProgressService));
-                                }
-
-                                if (failCountService >= 0)
-                                {
-                                    log.InfoFormat("Test module generation failures: {0}", failCountService);
-                                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleFailures, failCountService));
-                                    UpdateStatus(sbResult.ToString());
                                 }
 
                                 return true;
