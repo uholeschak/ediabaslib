@@ -32,7 +32,6 @@ using EdiabasLib;
 using log4net;
 using log4net.Config;
 using PsdzClient.Core;
-using PsdzClient.Utility.ParentProcess;
 using PsdzClientLibrary.Resources;
 using VCIDeviceType = BMW.Rheingold.CoreFramework.Contracts.Vehicle.VCIDeviceType;
 
@@ -55,6 +54,7 @@ namespace PsdzClient.Programming
         private static extern IntPtr SetWindowLongPtr64(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
 
         public const string ArgumentGenerateModules = "GenerateModules";
+        public const string GlobalMutexGenerateModules = "PsdzClient_GenerateModules";
 
         public enum ExecutionMode
         {
@@ -453,10 +453,16 @@ namespace PsdzClient.Programming
                         }
 
                         bool checkOnly = _executionMode == ExecutionMode.Normal;
-                        Process parentProcess = null;
+                        Mutex processMutex = null;
                         if (!checkOnly)
                         {
-                            parentProcess = ParentProcess.ParentProcessObject;
+                            if (!Mutex.TryOpenExisting(GlobalMutexGenerateModules, out processMutex))
+                            {
+                                log.ErrorFormat("Open gloabl mutex failed: {0}", GlobalMutexGenerateModules);
+                                sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
+                                UpdateStatus(sbResult.ToString());
+                                return false;
+                            }
                         }
 
                         for (;;)
@@ -478,7 +484,7 @@ namespace PsdzClient.Programming
                                     ProgressEvent?.Invoke(progress, false, message);
                                 }
 
-                                if (parentProcess != null && parentProcess.HasExited)
+                                if (processMutex != null && processMutex.WaitOne(0))
                                 {
                                     return true;
                                 }
@@ -497,7 +503,7 @@ namespace PsdzClient.Programming
                                     break;
                                 }
 
-                                if (!ExecuteSubProcess(cts, ArgumentGenerateModules))
+                                if (!ExecuteSubProcess(cts, ArgumentGenerateModules, GlobalMutexGenerateModules))
                                 {
                                     log.ErrorFormat("GenerateServiceModuleData failed");
                                     sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
@@ -3124,7 +3130,7 @@ namespace PsdzClient.Programming
             }
         }
 
-        private bool ExecuteSubProcess(CancellationTokenSource cts, string arguments = null)
+        private bool ExecuteSubProcess(CancellationTokenSource cts, string arguments, string mutexName)
         {
             try
             {
@@ -3155,54 +3161,66 @@ namespace PsdzClient.Programming
 
                 if (otherProcessesCount != 0)
                 {
-                    log.ErrorFormat(CultureInfo.InvariantCulture, "ExecuteSubProcess Other processes running: {0}", otherProcessesCount);
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "ExecuteSubProcess Other processes running: {0}",
+                        otherProcessesCount);
                     return false;
                 }
 
-                ProcessStartInfo processStartInfo = new ProcessStartInfo();
-                processStartInfo.FileName = fileName;
-                processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
-                processStartInfo.UseShellExecute = false;
-                processStartInfo.RedirectStandardInput = false;
-                processStartInfo.RedirectStandardOutput = false;
-                processStartInfo.RedirectStandardError = false;
-                processStartInfo.CreateNoWindow = true;
-                processStartInfo.Arguments = arguments ?? string.Empty;
-                Process process = Process.Start(processStartInfo);
-                if (process == null)
+                Mutex processMutex = new Mutex(true, mutexName);
+                try
                 {
-                    log.ErrorFormat(CultureInfo.InvariantCulture, "ExecuteSubProcess Process start failed: '{0}'", fileName);
-                    return false;
-                }
+                    ProcessStartInfo processStartInfo = new ProcessStartInfo();
+                    processStartInfo.FileName = fileName;
+                    processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
+                    processStartInfo.UseShellExecute = false;
+                    processStartInfo.RedirectStandardInput = false;
+                    processStartInfo.RedirectStandardOutput = false;
+                    processStartInfo.RedirectStandardError = false;
+                    processStartInfo.CreateNoWindow = true;
+                    processStartInfo.Arguments = arguments;
 
-                bool parentSet = false;
-                while (!process.WaitForExit(1000))
-                {
-                    if (!parentSet && ParentWindowHandle != IntPtr.Zero)
+                    Process process = Process.Start(processStartInfo);
+                    if (process == null)
                     {
-                        IntPtr mainWindowHandle = process.MainWindowHandle;
-                        if (mainWindowHandle != IntPtr.Zero)
+                        log.ErrorFormat(CultureInfo.InvariantCulture, "ExecuteSubProcess Process start failed: '{0}'",
+                            fileName);
+                        return false;
+                    }
+
+                    bool parentSet = false;
+                    while (!process.WaitForExit(1000))
+                    {
+                        if (!parentSet && ParentWindowHandle != IntPtr.Zero)
                         {
-                            SetWindowLongPtr(mainWindowHandle, -8, ParentWindowHandle);
-                            parentSet = true;
+                            IntPtr mainWindowHandle = process.MainWindowHandle;
+                            if (mainWindowHandle != IntPtr.Zero)
+                            {
+                                SetWindowLongPtr(mainWindowHandle, -8, ParentWindowHandle);
+                                parentSet = true;
+                            }
+                        }
+
+                        if (cts != null)
+                        {
+                            if (cts.IsCancellationRequested)
+                            {
+                                log.ErrorFormat(CultureInfo.InvariantCulture, "ExecuteSubProcess Cancelled");
+                                return false;
+                            }
                         }
                     }
 
-                    if (cts != null)
+                    int exitCode = process.ExitCode;
+                    log.InfoFormat(CultureInfo.InvariantCulture, "ExecuteSubProcess Process exit code: {0}", exitCode);
+                    if (exitCode != 0)
                     {
-                        if (cts.IsCancellationRequested)
-                        {
-                            log.ErrorFormat(CultureInfo.InvariantCulture, "ExecuteSubProcess Cancelled");
-                            return false;
-                        }
+                        return false;
                     }
                 }
-
-                int exitCode = process.ExitCode;
-                log.InfoFormat(CultureInfo.InvariantCulture, "ExecuteSubProcess Process exit code: {0}", exitCode);
-                if (exitCode != 0)
+                finally
                 {
-                    return false;
+                    processMutex.ReleaseMutex();
+                    processMutex.Dispose();
                 }
 
                 return true;
