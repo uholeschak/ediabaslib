@@ -266,7 +266,13 @@ namespace PsdzClient
 
         private void ServiceInitialized(ProgrammingService programmingService)
         {
-            string logFile = Path.Combine(programmingService.GetPsdzServiceHostLogDir(), "PsdzClient.log");
+            string logFileName = "PsdzClient.log";
+            if (_executionMode != ProgrammingJobs.ExecutionMode.Normal)
+            {
+                logFileName = "PsdzClientGenerate.log";
+            }
+
+            string logFile = Path.Combine(programmingService.GetPsdzServiceHostLogDir(), logFileName);
             ProgrammingJobs.SetupLog4Net(logFile);
         }
 
