@@ -453,18 +453,6 @@ namespace PsdzClient.Programming
                         }
 
                         bool checkOnly = _executionMode == ExecutionMode.Normal;
-                        Mutex processMutex = null;
-                        if (!checkOnly)
-                        {
-                            if (!Mutex.TryOpenExisting(GlobalMutexGenerateModules, out processMutex))
-                            {
-                                log.ErrorFormat("Open gloabl mutex failed: {0}", GlobalMutexGenerateModules);
-                                sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
-                                UpdateStatus(sbResult.ToString());
-                                return false;
-                            }
-                        }
-
                         for (;;)
                         {
                             int failCountService = -1;
@@ -484,9 +472,22 @@ namespace PsdzClient.Programming
                                     ProgressEvent?.Invoke(progress, false, message);
                                 }
 
-                                if (processMutex != null && processMutex.WaitOne(0))
+                                if (!checkOnly)
                                 {
-                                    return true;
+                                    try
+                                    {
+                                        if (!Mutex.TryOpenExisting(GlobalMutexGenerateModules, out Mutex processMutex))
+                                        {
+                                            log.ErrorFormat("Open mutex failed: {0}", GlobalMutexGenerateModules);
+                                            return true;
+                                        }
+                                        processMutex.Dispose();
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        log.ErrorFormat("Open mutex Exception: {0}", ex.Message);
+                                        return true;
+                                    }
                                 }
 
                                 if (cts != null)
