@@ -3161,14 +3161,23 @@ namespace PsdzClient.Programming
 
                 if (otherProcessesCount != 0)
                 {
-                    log.ErrorFormat(CultureInfo.InvariantCulture, "ExecuteSubProcess Other processes running: {0}",
-                        otherProcessesCount);
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "ExecuteSubProcess Other processes running: {0}", otherProcessesCount);
                     return false;
                 }
 
-                Mutex processMutex = new Mutex(true, mutexName);
+                Mutex processMutex = null;
                 try
                 {
+                    try
+                    {
+                        processMutex = new Mutex(true, mutexName);
+                    }
+                    catch (Exception ex)
+                    {
+                        log.ErrorFormat(CultureInfo.InvariantCulture, "ExecuteSubProcess Unable to open mutex Exception: {0}", ex.Message);
+                        return false;
+                    }
+
                     ProcessStartInfo processStartInfo = new ProcessStartInfo();
                     processStartInfo.FileName = fileName;
                     processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
@@ -3219,8 +3228,11 @@ namespace PsdzClient.Programming
                 }
                 finally
                 {
-                    processMutex.ReleaseMutex();
-                    processMutex.Dispose();
+                    if (processMutex != null)
+                    {
+                        processMutex.ReleaseMutex();
+                        processMutex.Dispose();
+                    }
                 }
 
                 return true;
