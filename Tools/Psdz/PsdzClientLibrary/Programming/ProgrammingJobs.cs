@@ -455,6 +455,15 @@ namespace PsdzClient.Programming
                         bool checkOnly = _executionMode == ExecutionMode.Normal;
                         for (;;)
                         {
+                            if (!checkOnly)
+                            {
+                                if (!IsMasterProcessMutexValid(GlobalMutexGenerateModules))
+                                {
+                                    log.ErrorFormat("IsMasterProcessMutexValid: Mutex invalid: {0}", GlobalMutexGenerateModules);
+                                    return false;
+                                }
+                            }
+
                             int failCountService = -1;
                             int lastProgressService = 100;
                             bool resultService = ProgrammingService.PdszDatabase.GenerateServiceModuleData((startConvert, progress, failures) =>
@@ -474,18 +483,9 @@ namespace PsdzClient.Programming
 
                                 if (!checkOnly)
                                 {
-                                    try
+                                    if (!IsMasterProcessMutexValid(GlobalMutexGenerateModules))
                                     {
-                                        if (!Mutex.TryOpenExisting(GlobalMutexGenerateModules, out Mutex processMutex))
-                                        {
-                                            log.ErrorFormat("Open mutex failed: {0}", GlobalMutexGenerateModules);
-                                            return true;
-                                        }
-                                        processMutex.Dispose();
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        log.ErrorFormat("Open mutex Exception: {0}", ex.Message);
+                                        log.ErrorFormat("Aborting IsMasterProcessMutexValid: Mutex invalid: {0}", GlobalMutexGenerateModules);
                                         return true;
                                     }
                                 }
@@ -3243,6 +3243,26 @@ namespace PsdzClient.Programming
                 log.ErrorFormat(CultureInfo.InvariantCulture, "ExecuteSubProcess Exception: {0}", ex.Message);
                 return false;
             }
+        }
+
+        private bool IsMasterProcessMutexValid(string mutexName)
+        {
+            try
+            {
+                if (!Mutex.TryOpenExisting(mutexName, out Mutex processMutex))
+                {
+                    log.ErrorFormat("IsMasterProcessMutexValid Open mutex failed: {0}", GlobalMutexGenerateModules);
+                    return false;
+                }
+                processMutex.Dispose();
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("IsMasterProcessMutexValid Open mutex Exception: {0}", ex.Message);
+                return false;
+            }
+
+            return true;
         }
 
         public void Dispose()
