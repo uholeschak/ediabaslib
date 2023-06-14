@@ -94,7 +94,7 @@ namespace PsdzClient
             _executionMode = ProgrammingJobs.ExecutionMode.Normal;
             if (args != null && args.Length > 0)
             {
-                if (string.Compare(args[0], "GenerateModules", StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare(args[0], ProgrammingJobs.ArgumentGenerateModules, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     _executionMode = ProgrammingJobs.ExecutionMode.GenerateModules;
                 }

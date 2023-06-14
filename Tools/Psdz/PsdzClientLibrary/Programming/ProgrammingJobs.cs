@@ -54,6 +54,8 @@ namespace PsdzClient.Programming
         [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr")]
         private static extern IntPtr SetWindowLongPtr64(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
 
+        public const string ArgumentGenerateModules = "GenerateModules";
+
         public enum ExecutionMode
         {
             Normal,
@@ -495,7 +497,7 @@ namespace PsdzClient.Programming
                                     break;
                                 }
 
-                                if (!ExecuteSubProcess(cts, "GenerateModules"))
+                                if (!ExecuteSubProcess(cts, ArgumentGenerateModules))
                                 {
                                     log.ErrorFormat("GenerateServiceModuleData failed");
                                     sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
