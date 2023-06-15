@@ -515,7 +515,7 @@ namespace PsdzClient.Programming
                                     break;
                                 }
 
-                                if (!ExecuteSubProcess(cts, ArgumentGenerateServiceModules, GlobalMutexGenerateTestModules))
+                                if (!ExecuteSubProcess(cts, ArgumentGenerateServiceModules, GlobalMutexGenerateServiceModules))
                                 {
                                     log.ErrorFormat("GenerateServiceModuleData failed");
                                     sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
