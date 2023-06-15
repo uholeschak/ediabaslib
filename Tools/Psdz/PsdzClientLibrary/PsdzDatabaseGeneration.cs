@@ -41,15 +41,15 @@ namespace PsdzClient
             public TestModules(VehicleStructsBmw.VersionInfo versionInfo, SerializableDictionary<string, TestModuleData> moduleDataDict, int convertFailures = 0)
             {
                 Version = versionInfo;
-                ModuleDataDict = moduleDataDict;
                 ConvertFailures = convertFailures;
+                ModuleDataDict = moduleDataDict;
             }
 
             [XmlElement("Version"), DefaultValue(null)] public VehicleStructsBmw.VersionInfo Version { get; set; }
 
-            [XmlElement("ModuleDataDict"), DefaultValue(null)] public SerializableDictionary<string, TestModuleData> ModuleDataDict { get; set; }
-
             [XmlElement("ConvertFailures")] public int ConvertFailures { get; set; }
+
+            [XmlElement("ModuleDataDict"), DefaultValue(null)] public SerializableDictionary<string, TestModuleData> ModuleDataDict { get; set; }
         }
 
         [XmlType("TestModuleData")]
@@ -83,24 +83,24 @@ namespace PsdzClient
                 SerializableDictionary<string, ServiceModuleTextData> moduleTextDict = null, bool completed = false, int lastProgress = 0, int convertFailures = 0)
             {
                 Version = versionInfo;
-                ModuleDataDict = moduleDataDict;
-                ModuleTextDict = moduleTextDict;
                 Completed = completed;
                 LastProgress = lastProgress;
                 ConvertFailures = convertFailures;
+                ModuleDataDict = moduleDataDict;
+                ModuleTextDict = moduleTextDict;
             }
 
             [XmlElement("Version"), DefaultValue(null)] public VehicleStructsBmw.VersionInfo Version { get; set; }
-
-            [XmlElement("ModuleDataDict"), DefaultValue(null)] public SerializableDictionary<string, ServiceModuleData> ModuleDataDict { get; set; }
-
-            [XmlElement("ModuleTextDict"), DefaultValue(null)] public SerializableDictionary<string, ServiceModuleTextData> ModuleTextDict { get; set; }
 
             [XmlElement("Completed")] public bool Completed { get; set; }
 
             [XmlElement("LastProgress")] public int LastProgress { get; set; }
 
             [XmlElement("ConvertFailures")] public int ConvertFailures { get; set; }
+
+            [XmlElement("ModuleDataDict"), DefaultValue(null)] public SerializableDictionary<string, ServiceModuleData> ModuleDataDict { get; set; }
+
+            [XmlElement("ModuleTextDict"), DefaultValue(null)] public SerializableDictionary<string, ServiceModuleTextData> ModuleTextDict { get; set; }
         }
 
         [XmlInclude(typeof(ServiceModuleDataItem))]

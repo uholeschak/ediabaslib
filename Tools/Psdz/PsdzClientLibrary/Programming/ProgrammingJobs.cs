@@ -572,7 +572,7 @@ namespace PsdzClient.Programming
                     }
 #endif
                     bool checkOnlyTest = _executionMode != ExecutionMode.GenerateTestModules;
-                    for (;;)
+                    for (int loop = 0;; loop++)
                     {
                         if (_executionMode != ExecutionMode.Normal &&
                             _executionMode != ExecutionMode.GenerateTestModules)
@@ -634,6 +634,14 @@ namespace PsdzClient.Programming
                             if (resultTest)
                             {
                                 break;
+                            }
+
+                            if (loop > 1)
+                            {
+                                log.ErrorFormat("GenerateTestModuleData loop exceeded");
+                                sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
+                                UpdateStatus(sbResult.ToString());
+                                return false;
                             }
 
                             if (!ExecuteSubProcess(cts, ArgumentGenerateTestModules, GlobalMutexGenerateTestModules))
