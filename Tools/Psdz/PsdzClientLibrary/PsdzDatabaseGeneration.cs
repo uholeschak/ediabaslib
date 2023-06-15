@@ -38,14 +38,18 @@ namespace PsdzClient
             {
             }
 
-            public TestModules(VehicleStructsBmw.VersionInfo versionInfo, SerializableDictionary<string, TestModuleData> moduleDataDict)
+            public TestModules(VehicleStructsBmw.VersionInfo versionInfo, SerializableDictionary<string, TestModuleData> moduleDataDict, int convertFailures = 0)
             {
                 Version = versionInfo;
                 ModuleDataDict = moduleDataDict;
+                ConvertFailures = convertFailures;
             }
 
             [XmlElement("Version"), DefaultValue(null)] public VehicleStructsBmw.VersionInfo Version { get; set; }
+
             [XmlElement("ModuleDataDict"), DefaultValue(null)] public SerializableDictionary<string, TestModuleData> ModuleDataDict { get; set; }
+
+            [XmlElement("ConvertFailures")] public int ConvertFailures { get; set; }
         }
 
         [XmlType("TestModuleData")]
@@ -3101,6 +3105,7 @@ namespace PsdzClient
                 }
 
                 bool dataValid = true;
+                int convertFailures = 0;
                 if (testModules != null)
                 {
                     DbInfo dbInfo = GetDbInfo();
@@ -3108,6 +3113,11 @@ namespace PsdzClient
                     {
                         log.ErrorFormat("GenerateTestModuleData Version mismatch");
                         dataValid = false;
+                    }
+
+                    if (dataValid)
+                    {
+                        convertFailures = testModules.ConvertFailures;
                     }
                 }
 
@@ -3118,8 +3128,8 @@ namespace PsdzClient
                         log.InfoFormat("GenerateServiceModuleData Data not valid, Valid: {0}", dataValid);
                         if (progressHandler != null)
                         {
-                            progressHandler.Invoke(true, 100, 0);
-                            progressHandler.Invoke(false, 100, 0);
+                            progressHandler.Invoke(true, 100, convertFailures);
+                            progressHandler.Invoke(false, 100, convertFailures);
                         }
 
                         return false;
@@ -3257,7 +3267,7 @@ namespace PsdzClient
 
                 DbInfo dbInfo = GetDbInfo();
                 VehicleStructsBmw.VersionInfo versionInfo = new VehicleStructsBmw.VersionInfo(dbInfo?.Version, dbInfo?.DateTime);
-                return new TestModules(versionInfo, moduleDataDict);
+                return new TestModules(versionInfo, moduleDataDict, failCount);
             }
             catch (Exception e)
             {
