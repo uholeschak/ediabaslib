@@ -94,9 +94,13 @@ namespace PsdzClient
             _executionMode = ProgrammingJobs.ExecutionMode.Normal;
             if (args != null && args.Length > 0)
             {
-                if (string.Compare(args[0], ProgrammingJobs.ArgumentGenerateModules, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare(args[0], ProgrammingJobs.ArgumentGenerateServiceModules, StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    _executionMode = ProgrammingJobs.ExecutionMode.GenerateModules;
+                    _executionMode = ProgrammingJobs.ExecutionMode.GenerateServiceModules;
+                }
+                else if (string.Compare(args[0], ProgrammingJobs.ArgumentGenerateTestModules, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    _executionMode = ProgrammingJobs.ExecutionMode.GenerateTestModules;
                 }
             }
 
@@ -671,7 +675,7 @@ namespace PsdzClient
             timerUpdate.Enabled = true;
             labelProgressEvent.Text = string.Empty;
 
-            if (_executionMode == ProgrammingJobs.ExecutionMode.GenerateModules)
+            if (_executionMode != ProgrammingJobs.ExecutionMode.Normal)
             {
                 buttonConnect_Click(null, null);
             }

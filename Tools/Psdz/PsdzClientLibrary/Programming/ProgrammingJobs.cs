@@ -53,13 +53,16 @@ namespace PsdzClient.Programming
         [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr")]
         private static extern IntPtr SetWindowLongPtr64(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
 
-        public const string ArgumentGenerateModules = "GenerateModules";
-        public const string GlobalMutexGenerateModules = "PsdzClient_GenerateModules";
+        public const string ArgumentGenerateServiceModules = "GenerateServiceModules";
+        public const string ArgumentGenerateTestModules = "GenerateTestModules";
+        public const string GlobalMutexGenerateServiceModules = "PsdzClient_GenerateServiceModules";
+        public const string GlobalMutexGenerateTestModules = "PsdzClient_GenerateTestModules";
 
         public enum ExecutionMode
         {
             Normal,
-            GenerateModules,
+            GenerateServiceModules,
+            GenerateTestModules,
         }
 
         public enum OperationType
@@ -452,14 +455,22 @@ namespace PsdzClient.Programming
                             return false;
                         }
 
-                        bool checkOnly = _executionMode == ExecutionMode.Normal;
+                        bool checkOnlyService = _executionMode != ExecutionMode.GenerateServiceModules;
                         for (;;)
                         {
-                            if (!checkOnly)
+                            if (_executionMode != ExecutionMode.Normal &&
+                                _executionMode != ExecutionMode.GenerateServiceModules)
                             {
-                                if (!IsMasterProcessMutexValid(GlobalMutexGenerateModules))
+                                break;
+                            }
+
+                            if (!checkOnlyService)
+                            {
+                                if (!IsMasterProcessMutexValid(GlobalMutexGenerateServiceModules))
                                 {
-                                    log.ErrorFormat("IsMasterProcessMutexValid: Mutex invalid: {0}", GlobalMutexGenerateModules);
+                                    log.ErrorFormat("IsMasterProcessMutexValid: Mutex invalid: {0}", GlobalMutexGenerateServiceModules);
+                                    sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
+                                    UpdateStatus(sbResult.ToString());
                                     return false;
                                 }
                             }
@@ -481,11 +492,11 @@ namespace PsdzClient.Programming
                                     ProgressEvent?.Invoke(progress, false, message);
                                 }
 
-                                if (!checkOnly)
+                                if (!checkOnlyService)
                                 {
-                                    if (!IsMasterProcessMutexValid(GlobalMutexGenerateModules))
+                                    if (!IsMasterProcessMutexValid(GlobalMutexGenerateServiceModules))
                                     {
-                                        log.ErrorFormat("Aborting IsMasterProcessMutexValid: Mutex invalid: {0}", GlobalMutexGenerateModules);
+                                        log.ErrorFormat("Aborting IsMasterProcessMutexValid: Mutex invalid: {0}", GlobalMutexGenerateServiceModules);
                                         return true;
                                     }
                                 }
@@ -495,16 +506,16 @@ namespace PsdzClient.Programming
                                     return cts.Token.IsCancellationRequested;
                                 }
                                 return false;
-                            }, checkOnly);
+                            }, checkOnlyService);
 
-                            if (checkOnly)
+                            if (checkOnlyService)
                             {
                                 if (resultService)
                                 {
                                     break;
                                 }
 
-                                if (!ExecuteSubProcess(cts, ArgumentGenerateModules, GlobalMutexGenerateModules))
+                                if (!ExecuteSubProcess(cts, ArgumentGenerateServiceModules, GlobalMutexGenerateTestModules))
                                 {
                                     log.ErrorFormat("GenerateServiceModuleData failed");
                                     sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
@@ -535,7 +546,7 @@ namespace PsdzClient.Programming
                                 UpdateStatus(sbResult.ToString());
                             }
 
-                            if (!checkOnly)
+                            if (!checkOnlyService)
                             {
                                 return true;
                             }
@@ -560,31 +571,101 @@ namespace PsdzClient.Programming
                         }
                     }
 #endif
-                    int failCountTest = -1;
-                    bool resultTest = ProgrammingService.PdszDatabase.GenerateTestModuleData((startConvert, progress, failures) =>
+                    bool checkOnlyTest = _executionMode != ExecutionMode.GenerateTestModules;
+                    for (;;)
                     {
-                        if (startConvert)
+                        if (_executionMode != ExecutionMode.Normal &&
+                            _executionMode != ExecutionMode.GenerateTestModules)
                         {
-                            sbResult.AppendLine(Strings.GeneratingInfoFiles);
-                            UpdateStatus(sbResult.ToString());
+                            break;
+                        }
+
+                        if (!checkOnlyTest)
+                        {
+                            if (!IsMasterProcessMutexValid(GlobalMutexGenerateTestModules))
+                            {
+                                log.ErrorFormat("IsMasterProcessMutexValid: Mutex invalid: {0}", GlobalMutexGenerateTestModules);
+                                sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
+                                UpdateStatus(sbResult.ToString());
+                                return false;
+                            }
+                        }
+
+                        int failCountTest = -1;
+                        bool resultTest = ProgrammingService.PdszDatabase.GenerateTestModuleData((startConvert, progress, failures) =>
+                        {
+                            if (startConvert)
+                            {
+                                sbResult.AppendLine(Strings.GeneratingInfoFiles);
+                                UpdateStatus(sbResult.ToString());
+                            }
+                            else
+                            {
+                                failCountTest = failures;
+                                string message = string.Format(CultureInfo.InvariantCulture, Strings.TestModuleProgress, progress, failures);
+                                ProgressEvent?.Invoke(progress, false, message);
+                            }
+
+                            if (!checkOnlyTest)
+                            {
+                                if (!IsMasterProcessMutexValid(GlobalMutexGenerateTestModules))
+                                {
+                                    log.ErrorFormat("Aborting IsMasterProcessMutexValid: Mutex invalid: {0}", GlobalMutexGenerateTestModules);
+                                    return true;
+                                }
+                            }
+
+                            if (cts != null)
+                            {
+                                return cts.Token.IsCancellationRequested;
+                            }
+                            return false;
+                        }, checkOnlyTest);
+
+                        if (!resultTest && !ProgrammingService.PdszDatabase.IsExecutable())
+                        {
+                            log.ErrorFormat("No test module data present");
+                            sbResult.AppendLine(Strings.TestModuleDataMissing);
+                            return false;
+                        }
+
+                        if (checkOnlyTest)
+                        {
+                            if (resultTest)
+                            {
+                                break;
+                            }
+
+                            if (!ExecuteSubProcess(cts, ArgumentGenerateTestModules, GlobalMutexGenerateTestModules))
+                            {
+                                log.ErrorFormat("GenerateTestModuleData failed");
+                                sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
+                                UpdateStatus(sbResult.ToString());
+                                return false;
+                            }
                         }
                         else
                         {
-                            failCountTest = failures;
-                            string message = string.Format(CultureInfo.InvariantCulture, Strings.TestModuleProgress, progress, failures);
-                            ProgressEvent?.Invoke(progress, false, message);
+                            if (!resultTest)
+                            {
+                                log.ErrorFormat("GenerateTestModuleData failed");
+                                sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
+                                UpdateStatus(sbResult.ToString());
+                                return false;
+                            }
                         }
 
-                        if (cts != null)
+                        if (failCountTest > 0)
                         {
-                            return cts.Token.IsCancellationRequested;
+                            log.InfoFormat("Test module generation failures: {0}", failCountTest);
+                            sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleFailures, failCountTest));
+                            UpdateStatus(sbResult.ToString());
                         }
-                        return false;
-                    });
 
-                    if (!resultTest)
-                    {
-                        log.ErrorFormat("GenerateTestModuleData failed");
+                        if (!checkOnlyTest)
+                        {
+                            return true;
+                        }
                     }
 
                     bool resultEcuCharacteristics = true;
@@ -596,14 +677,7 @@ namespace PsdzClient.Programming
 
                     ProgressEvent?.Invoke(0, true);
 
-                    if (failCountTest > 0)
-                    {
-                        log.InfoFormat("Test module generation failures: {0}", failCountTest);
-                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleFailures, failCountTest));
-                        UpdateStatus(sbResult.ToString());
-                    }
-
-                    if (!resultTest || !resultEcuCharacteristics)
+                    if (!resultEcuCharacteristics)
                     {
                         if (!ProgrammingService.PdszDatabase.IsExecutable())
                         {
@@ -3251,7 +3325,7 @@ namespace PsdzClient.Programming
             {
                 if (!Mutex.TryOpenExisting(mutexName, out Mutex processMutex))
                 {
-                    log.ErrorFormat("IsMasterProcessMutexValid Open mutex failed: {0}", GlobalMutexGenerateModules);
+                    log.ErrorFormat("IsMasterProcessMutexValid Open mutex failed: {0}", mutexName);
                     return false;
                 }
                 processMutex.Dispose();

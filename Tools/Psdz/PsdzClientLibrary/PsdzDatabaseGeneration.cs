@@ -3052,7 +3052,7 @@ namespace PsdzClient
             }
         }
 
-        public bool GenerateTestModuleData(ProgressDelegate progressHandler)
+        public bool GenerateTestModuleData(ProgressDelegate progressHandler, bool checkOnly)
         {
             try
             {
@@ -3113,6 +3113,18 @@ namespace PsdzClient
 
                 if (testModules == null || !dataValid)
                 {
+                    if (checkOnly)
+                    {
+                        log.InfoFormat("GenerateServiceModuleData Data not valid, Valid: {0}", dataValid);
+                        if (progressHandler != null)
+                        {
+                            progressHandler.Invoke(true, 100, 0);
+                            progressHandler.Invoke(false, 100, 0);
+                        }
+
+                        return false;
+                    }
+
                     log.InfoFormat("GenerateTestModuleData Converting test modules");
                     if (!IsExecutable())
                     {
