@@ -53,9 +53,9 @@ namespace PsdzClient.Programming
         [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr")]
         private static extern IntPtr SetWindowLongPtr64(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
 
-        public const string ArgumentGenerateModulesDirect = "GenerateModulesDirect";
-        public const string ArgumentGenerateServiceModules = "GenerateServiceModules";
-        public const string ArgumentGenerateTestModules = "GenerateTestModules";
+        public const string ArgumentGenerateModulesDirect = "-GenerateModulesDirect";
+        public const string ArgumentGenerateServiceModules = "-GenerateServiceModules";
+        public const string ArgumentGenerateTestModules = "-GenerateTestModules";
         public const string GlobalMutexGenerateServiceModules = "PsdzClient_GenerateServiceModules";
         public const string GlobalMutexGenerateTestModules = "PsdzClient_GenerateTestModules";
 
@@ -393,6 +393,18 @@ namespace PsdzClient.Programming
             ProgrammingService = null;
         }
 
+        public bool IsModuleGenerationMode()
+        {
+            switch (_executionMode)
+            {
+                case ExecutionMode.Normal:
+                case ExecutionMode.GenerateModulesDirect:
+                    return false;
+            }
+
+            return true;
+        }
+
         public bool StartProgrammingService(CancellationTokenSource cts, string istaFolder)
         {
             StringBuilder sbResult = new StringBuilder();
@@ -439,6 +451,7 @@ namespace PsdzClient.Programming
                         }
                     };
 
+                    bool executeDirect = _executionMode == ExecutionMode.GenerateModulesDirect;
                     if (ProgrammingService.PdszDatabase.IsExecutable())
                     {
                         if (!ProgrammingService.PdszDatabase.SaveVehicleSeriesInfo(ClientContext))
@@ -460,20 +473,22 @@ namespace PsdzClient.Programming
                         bool checkOnlyService = _executionMode != ExecutionMode.GenerateServiceModules;
                         for (;;)
                         {
-                            if (_executionMode != ExecutionMode.Normal &&
-                                _executionMode != ExecutionMode.GenerateServiceModules)
+                            if (!executeDirect)
                             {
-                                break;
-                            }
-
-                            if (!checkOnlyService)
-                            {
-                                if (!IsMasterProcessMutexValid(GlobalMutexGenerateServiceModules))
+                                if (_executionMode != ExecutionMode.Normal && _executionMode != ExecutionMode.GenerateServiceModules)
                                 {
-                                    log.ErrorFormat("IsMasterProcessMutexValid: Mutex invalid: {0}", GlobalMutexGenerateServiceModules);
-                                    sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
-                                    UpdateStatus(sbResult.ToString());
-                                    return false;
+                                    break;
+                                }
+
+                                if (!checkOnlyService)
+                                {
+                                    if (!IsMasterProcessMutexValid(GlobalMutexGenerateServiceModules))
+                                    {
+                                        log.ErrorFormat("IsMasterProcessMutexValid: Mutex invalid: {0}", GlobalMutexGenerateServiceModules);
+                                        sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
+                                        UpdateStatus(sbResult.ToString());
+                                        return false;
+                                    }
                                 }
                             }
 
@@ -494,7 +509,7 @@ namespace PsdzClient.Programming
                                     ProgressEvent?.Invoke(progress, false, message);
                                 }
 
-                                if (!checkOnlyService)
+                                if (!checkOnlyService && !executeDirect)
                                 {
                                     if (!IsMasterProcessMutexValid(GlobalMutexGenerateServiceModules))
                                     {
@@ -508,7 +523,7 @@ namespace PsdzClient.Programming
                                     return cts.Token.IsCancellationRequested;
                                 }
                                 return false;
-                            }, checkOnlyService);
+                            }, checkOnlyService && !executeDirect);
 
                             if (checkOnlyService)
                             {
@@ -548,6 +563,11 @@ namespace PsdzClient.Programming
                                 UpdateStatus(sbResult.ToString());
                             }
 
+                            if (executeDirect)
+                            {
+                                break;
+                            }
+
                             if (!checkOnlyService)
                             {
                                 return true;
@@ -576,20 +596,22 @@ namespace PsdzClient.Programming
                     bool checkOnlyTest = _executionMode != ExecutionMode.GenerateTestModules;
                     for (int loop = 0;; loop++)
                     {
-                        if (_executionMode != ExecutionMode.Normal &&
-                            _executionMode != ExecutionMode.GenerateTestModules)
+                        if (!executeDirect)
                         {
-                            break;
-                        }
-
-                        if (!checkOnlyTest)
-                        {
-                            if (!IsMasterProcessMutexValid(GlobalMutexGenerateTestModules))
+                            if (_executionMode != ExecutionMode.Normal && _executionMode != ExecutionMode.GenerateTestModules)
                             {
-                                log.ErrorFormat("IsMasterProcessMutexValid: Mutex invalid: {0}", GlobalMutexGenerateTestModules);
-                                sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
-                                UpdateStatus(sbResult.ToString());
-                                return false;
+                                break;
+                            }
+
+                            if (!checkOnlyTest)
+                            {
+                                if (!IsMasterProcessMutexValid(GlobalMutexGenerateTestModules))
+                                {
+                                    log.ErrorFormat("IsMasterProcessMutexValid: Mutex invalid: {0}", GlobalMutexGenerateTestModules);
+                                    sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
+                                    UpdateStatus(sbResult.ToString());
+                                    return false;
+                                }
                             }
                         }
 
@@ -608,7 +630,7 @@ namespace PsdzClient.Programming
                                 ProgressEvent?.Invoke(progress, false, message);
                             }
 
-                            if (!checkOnlyTest)
+                            if (!checkOnlyTest && !executeDirect)
                             {
                                 if (!IsMasterProcessMutexValid(GlobalMutexGenerateTestModules))
                                 {
@@ -622,7 +644,7 @@ namespace PsdzClient.Programming
                                 return cts.Token.IsCancellationRequested;
                             }
                             return false;
-                        }, checkOnlyTest);
+                        }, checkOnlyTest && !executeDirect);
 
                         if (!resultTest && !ProgrammingService.PdszDatabase.IsExecutable())
                         {
@@ -670,6 +692,11 @@ namespace PsdzClient.Programming
                             log.InfoFormat("Test module generation failures: {0}", failCountTest);
                             sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleFailures, failCountTest));
                             UpdateStatus(sbResult.ToString());
+                        }
+
+                        if (executeDirect)
+                        {
+                            break;
                         }
 
                         if (!checkOnlyTest)
@@ -800,7 +827,7 @@ namespace PsdzClient.Programming
                     return false;
                 }
 
-                if (_executionMode != ExecutionMode.Normal)
+                if (IsModuleGenerationMode())
                 {
                     return true;
                 }

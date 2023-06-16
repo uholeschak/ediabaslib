@@ -230,18 +230,6 @@ namespace PsdzClient
             }
         }
 
-        private bool IsModuleGenerationMode()
-        {
-            switch (_executionMode)
-            {
-                case ProgrammingJobs.ExecutionMode.Normal:
-                case ProgrammingJobs.ExecutionMode.GenerateModulesDirect:
-                    return false;
-            }
-
-            return true;
-        }
-
         private void UpdateStatus(string message = null)
         {
             if (InvokeRequired)
@@ -287,7 +275,7 @@ namespace PsdzClient
         private void ServiceInitialized(ProgrammingService programmingService)
         {
             string logFileName = "PsdzClient.log";
-            if (IsModuleGenerationMode())
+            if (_programmingJobs.IsModuleGenerationMode())
             {
                 logFileName = "PsdzClientGenerate.log";
             }
@@ -691,7 +679,7 @@ namespace PsdzClient
             timerUpdate.Enabled = true;
             labelProgressEvent.Text = string.Empty;
 
-            if (IsModuleGenerationMode())
+            if (_programmingJobs.IsModuleGenerationMode())
             {
                 buttonConnect_Click(null, null);
             }
@@ -759,7 +747,7 @@ namespace PsdzClient
                 TaskActive = false;
                 _cts.Dispose();
                 _cts = null;
-                if (IsModuleGenerationMode())
+                if (_programmingJobs.IsModuleGenerationMode())
                 {
                     BeginInvoke((Action)(() =>
                     {
