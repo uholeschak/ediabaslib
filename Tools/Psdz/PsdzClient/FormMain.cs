@@ -94,7 +94,11 @@ namespace PsdzClient
             _executionMode = ProgrammingJobs.ExecutionMode.Normal;
             if (args != null && args.Length > 0)
             {
-                if (string.Compare(args[0], ProgrammingJobs.ArgumentGenerateServiceModules, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare(args[0], ProgrammingJobs.ArgumentGenerateModulesDirect, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    _executionMode = ProgrammingJobs.ExecutionMode.GenerateModulesDirect;
+                }
+                else if (string.Compare(args[0], ProgrammingJobs.ArgumentGenerateServiceModules, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     _executionMode = ProgrammingJobs.ExecutionMode.GenerateServiceModules;
                 }
@@ -226,6 +230,18 @@ namespace PsdzClient
             }
         }
 
+        private bool IsModuleGenerationMode()
+        {
+            switch (_executionMode)
+            {
+                case ProgrammingJobs.ExecutionMode.Normal:
+                case ProgrammingJobs.ExecutionMode.GenerateModulesDirect:
+                    return false;
+            }
+
+            return true;
+        }
+
         private void UpdateStatus(string message = null)
         {
             if (InvokeRequired)
@@ -271,7 +287,7 @@ namespace PsdzClient
         private void ServiceInitialized(ProgrammingService programmingService)
         {
             string logFileName = "PsdzClient.log";
-            if (_executionMode != ProgrammingJobs.ExecutionMode.Normal)
+            if (IsModuleGenerationMode())
             {
                 logFileName = "PsdzClientGenerate.log";
             }
@@ -675,7 +691,7 @@ namespace PsdzClient
             timerUpdate.Enabled = true;
             labelProgressEvent.Text = string.Empty;
 
-            if (_executionMode != ProgrammingJobs.ExecutionMode.Normal)
+            if (IsModuleGenerationMode())
             {
                 buttonConnect_Click(null, null);
             }
@@ -743,7 +759,7 @@ namespace PsdzClient
                 TaskActive = false;
                 _cts.Dispose();
                 _cts = null;
-                if (_executionMode != ProgrammingJobs.ExecutionMode.Normal)
+                if (IsModuleGenerationMode())
                 {
                     BeginInvoke((Action)(() =>
                     {

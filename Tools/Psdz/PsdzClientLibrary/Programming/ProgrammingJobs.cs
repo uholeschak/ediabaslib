@@ -53,6 +53,7 @@ namespace PsdzClient.Programming
         [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr")]
         private static extern IntPtr SetWindowLongPtr64(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
 
+        public const string ArgumentGenerateModulesDirect = "GenerateModulesDirect";
         public const string ArgumentGenerateServiceModules = "GenerateServiceModules";
         public const string ArgumentGenerateTestModules = "GenerateTestModules";
         public const string GlobalMutexGenerateServiceModules = "PsdzClient_GenerateServiceModules";
@@ -61,6 +62,7 @@ namespace PsdzClient.Programming
         public enum ExecutionMode
         {
             Normal,
+            GenerateModulesDirect,
             GenerateServiceModules,
             GenerateTestModules,
         }
