@@ -244,5 +244,26 @@ namespace BmwFileReader
             [XmlElement("FaultRuleDict"), DefaultValue(null)] public SerializableDictionary<string, RuleInfo> FaultRuleDict { get; set; }
             [XmlElement("EcuFuncRuleDict"), DefaultValue(null)] public SerializableDictionary<string, RuleInfo> EcuFuncRuleDict { get; set; }
         }
+
+        [XmlType("SID")]
+        public class ServiceInfoData
+        {
+            public ServiceInfoData()
+            {
+            }
+
+            public ServiceInfoData(string methodName, string controlId, string ediabasJobBare, string ediabasJobOverride)
+            {
+                MethodName = methodName;
+                ControlId = controlId;
+                EdiabasJobBare = ediabasJobBare;
+                EdiabasJobOverride = ediabasJobOverride;
+            }
+
+            [XmlElement("MN"), DefaultValue(null)] public string MethodName { get; set; }
+            [XmlElement("CI"), DefaultValue(null)] public string ControlId { get; set; }
+            [XmlElement("EJB"), DefaultValue(null)] public string EdiabasJobBare { get; set; }
+            [XmlElement("EJO"), DefaultValue(null)] public string EdiabasJobOverride { get; set; }
+        }
     }
 }
