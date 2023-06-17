@@ -411,8 +411,11 @@ namespace PsdzClient.Programming
             try
             {
                 log.InfoFormat(CultureInfo.InvariantCulture, "Start programming service DealerId={0}", _dealerId);
-                sbResult.AppendLine(Strings.HostStarting);
-                UpdateStatus(sbResult.ToString());
+                if (!IsModuleGenerationMode())
+                {
+                    sbResult.AppendLine(Strings.HostStarting);
+                    UpdateStatus(sbResult.ToString());
+                }
 
                 if (PdszDatabase.RestartRequired)
                 {
