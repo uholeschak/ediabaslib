@@ -245,6 +245,26 @@ namespace BmwFileReader
             [XmlElement("EcuFuncRuleDict"), DefaultValue(null)] public SerializableDictionary<string, RuleInfo> EcuFuncRuleDict { get; set; }
         }
 
+        [XmlInclude(typeof(ServiceInfoData))]
+        [XmlType("SD")]
+        public class ServiceData
+        {
+            public ServiceData() : this(null, null, null)
+            {
+            }
+
+            public ServiceData(string infoObjId, List<string> diagObjIds, SerializableDictionary<string, ServiceInfoData> dataDict)
+            {
+                InfoObjId = infoObjId;
+                DiagObjIds = diagObjIds;
+                DataDict = dataDict;
+            }
+
+            [XmlElement("IOI"), DefaultValue(null)] public string InfoObjId { get; set; }
+            [XmlElement("DOI"), DefaultValue(null)] public List<string> DiagObjIds { get; set; }
+            [XmlElement("DD"), DefaultValue(null)] public SerializableDictionary<string, ServiceInfoData> DataDict { get; set; }
+        }
+
         [XmlType("SID")]
         public class ServiceInfoData
         {
