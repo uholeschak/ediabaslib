@@ -3056,6 +3056,34 @@ namespace PsdzClient
             }
         }
 
+        public VehicleStructsBmw.ServiceData ConvertServiceModulesToVehicleData(ServiceModules serviceModules)
+        {
+            log.InfoFormat("ConvertServiceModulesToVehicleData Start");
+            try
+            {
+                List<VehicleStructsBmw.ServiceDataItem> serviceDataList = new List<VehicleStructsBmw.ServiceDataItem>();
+                SerializableDictionary<string, VehicleStructsBmw.ServiceTextData> textDict = new SerializableDictionary<string, VehicleStructsBmw.ServiceTextData>();
+                foreach (KeyValuePair<string, ServiceModuleData> keyValueModuleData in serviceModules.ModuleDataDict)
+                {
+                    ServiceModuleData serviceModuleData = keyValueModuleData.Value;
+                    List<string> diagObjTextHashes = new List<string>();
+                    SerializableDictionary<string, VehicleStructsBmw.ServiceInfoData> dataDict = new SerializableDictionary<string, VehicleStructsBmw.ServiceInfoData>();
+                    string infoObjectTextHash = string.Empty;
+
+                    VehicleStructsBmw.ServiceDataItem serviceDataItem = new VehicleStructsBmw.ServiceDataItem(serviceModuleData.InfoObjId, infoObjectTextHash, serviceModuleData.DiagObjIds, diagObjTextHashes, dataDict);
+                    serviceDataList.Add(serviceDataItem);
+                }
+
+                VehicleStructsBmw.ServiceData serviceData = new VehicleStructsBmw.ServiceData(serviceDataList, textDict);
+                return serviceData;
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("ConvertServiceModulesToVehicleData Exception: '{0}'", e.Message);
+                return null;
+            }
+        }
+
         public bool GenerateTestModuleData(ProgressDelegate progressHandler, bool checkOnly)
         {
             try

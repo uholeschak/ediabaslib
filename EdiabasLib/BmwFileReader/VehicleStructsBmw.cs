@@ -254,13 +254,13 @@ namespace BmwFileReader
             {
             }
 
-            public ServiceData(SerializableDictionary<string, ServiceDataItem> dataDict, SerializableDictionary<string, ServiceTextData> textDict)
+            public ServiceData(List<ServiceDataItem> serviceDataList, SerializableDictionary<string, ServiceTextData> textDict)
             {
-                DataDict = dataDict;
+                ServiceDataList = serviceDataList;
                 TextDict = textDict;
             }
 
-            [XmlElement("SD"), DefaultValue(null)] public SerializableDictionary<string, ServiceDataItem> DataDict { get; set; }
+            [XmlElement("SD"), DefaultValue(null)] public List<ServiceDataItem> ServiceDataList { get; set; }
             [XmlElement("TD"), DefaultValue(null)] public SerializableDictionary<string, ServiceTextData> TextDict { get; set; }
         }
 
