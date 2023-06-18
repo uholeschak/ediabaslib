@@ -3068,16 +3068,34 @@ namespace PsdzClient
                     ServiceModuleData serviceModuleData = keyValueModuleData.Value;
                     List<string> diagObjTextHashes = new List<string>();
                     SerializableDictionary<string, VehicleStructsBmw.ServiceInfoData> dataDict = new SerializableDictionary<string, VehicleStructsBmw.ServiceInfoData>();
+
                     string infoObjectTextHash = string.Empty;
                     SwiInfoObj swiInfoObj = GetInfoObjectById(serviceModuleData.InfoObjId, SwiInfoObj.SwiActionDatabaseLinkType.SwiActionActionSelectionLink.ToString());
                     if (swiInfoObj != null)
                     {
                         VehicleStructsBmw.ServiceTextData infoObjTextData = new VehicleStructsBmw.ServiceTextData(ConvertEcuTranslation(swiInfoObj.EcuTranslation));
                         infoObjectTextHash = infoObjTextData.Hash;
-                        if (!textDict.ContainsKey(infoObjTextData.Hash))
+                        if (!textDict.ContainsKey(infoObjectTextHash))
                         {
-                            textDict.Add(infoObjTextData.Hash, infoObjTextData);
+                            textDict.Add(infoObjectTextHash, infoObjTextData);
                         }
+                    }
+
+                    foreach (string diagObjId in serviceModuleData.DiagObjIds)
+                    {
+                        string diagObjectTextHash = string.Empty;
+                        SwiDiagObj swiDiagObj = GetDiagObjectById(diagObjId);
+                        if (swiDiagObj != null)
+                        {
+                            VehicleStructsBmw.ServiceTextData diagObjTextData = new VehicleStructsBmw.ServiceTextData(ConvertEcuTranslation(swiDiagObj.EcuTranslation));
+                            diagObjectTextHash = diagObjTextData.Hash;
+                            if (!textDict.ContainsKey(diagObjectTextHash))
+                            {
+                                textDict.Add(diagObjectTextHash, diagObjTextData);
+                            }
+                        }
+
+                        diagObjTextHashes.Add(diagObjectTextHash);
                     }
 
                     VehicleStructsBmw.ServiceDataItem serviceDataItem = new VehicleStructsBmw.ServiceDataItem(serviceModuleData.InfoObjId, infoObjectTextHash, serviceModuleData.DiagObjIds, diagObjTextHashes, dataDict);

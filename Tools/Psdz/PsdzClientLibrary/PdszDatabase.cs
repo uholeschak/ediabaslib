@@ -3874,6 +3874,42 @@ namespace PsdzClient
             return swiDiagObjs;
         }
 
+        public SwiDiagObj GetDiagObjectById(string diagObjectId)
+        {
+            if (string.IsNullOrEmpty(diagObjectId))
+            {
+                return null;
+            }
+
+            log.InfoFormat("GetDiagObjectById Id: {0}", diagObjectId);
+            SwiDiagObj swiDiagObj = null;
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture,
+                    @"SELECT " + DiagObjectItems +
+                    @" FROM XEP_DIAGNOSISOBJECTS WHERE (ID = {0})",
+                    diagObjectId);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            swiDiagObj = ReadXepSwiDiagObj(reader);
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetDiagObjectById Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            return swiDiagObj;
+        }
+
         public List<SwiDiagObj> GetDiagObjectsByControlId(string controlId, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, bool getHidden)
         {
             if (string.IsNullOrEmpty(controlId))
