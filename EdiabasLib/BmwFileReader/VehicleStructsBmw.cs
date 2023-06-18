@@ -254,13 +254,13 @@ namespace BmwFileReader
             {
             }
 
-            public ServiceData(SerializableDictionary<string, ServiceDataItem> dataDict, SerializableDictionary<string, ServiceTextData> textDict)
+            public ServiceData(List<ServiceDataItem> serviceDataList, SerializableDictionary<string, ServiceTextData> textDict)
             {
-                DataDict = dataDict;
+                ServiceDataList = serviceDataList;
                 TextDict = textDict;
             }
 
-            [XmlElement("SD"), DefaultValue(null)] public SerializableDictionary<string, ServiceDataItem> DataDict { get; set; }
+            [XmlElement("SD"), DefaultValue(null)] public List<ServiceDataItem> ServiceDataList { get; set; }
             [XmlElement("TD"), DefaultValue(null)] public SerializableDictionary<string, ServiceTextData> TextDict { get; set; }
         }
 
@@ -269,20 +269,23 @@ namespace BmwFileReader
         [XmlType("SDI")]
         public class ServiceDataItem
         {
-            public ServiceDataItem() : this(null, null, null)
+            public ServiceDataItem() : this(null, null, null, null, null)
             {
             }
 
-            public ServiceDataItem(string infoObjId, List<string> diagObjIds, SerializableDictionary<string, ServiceInfoData> dataDict)
+            public ServiceDataItem(string infoObjId, string infoObjTextHash, List<string> diagObjIds, List<string> diagObjTextHashes, SerializableDictionary<string, ServiceInfoData> dataDict)
             {
                 InfoObjId = infoObjId;
+                InfoObjTextHash = infoObjTextHash;
                 DiagObjIds = diagObjIds;
+                DiagObjTextHashes = diagObjTextHashes;
                 DataDict = dataDict;
             }
 
             [XmlElement("IOI"), DefaultValue(null)] public string InfoObjId { get; set; }
             [XmlElement("IOTH"), DefaultValue(null)] public string InfoObjTextHash { get; set; }
             [XmlElement("DOI"), DefaultValue(null)] public List<string> DiagObjIds { get; set; }
+            [XmlElement("DOTH"), DefaultValue(null)] public List<string> DiagObjTextHashes { get; set; }
             [XmlElement("DD"), DefaultValue(null)] public SerializableDictionary<string, ServiceInfoData> DataDict { get; set; }
         }
 
