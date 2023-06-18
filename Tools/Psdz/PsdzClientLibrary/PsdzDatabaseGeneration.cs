@@ -3072,7 +3072,7 @@ namespace PsdzClient
                     SwiInfoObj swiInfoObj = GetInfoObjectById(serviceModuleData.InfoObjId, SwiInfoObj.SwiActionDatabaseLinkType.SwiActionActionSelectionLink.ToString());
                     if (swiInfoObj != null)
                     {
-                        VehicleStructsBmw.ServiceTextData infoObjTextData = new VehicleStructsBmw.ServiceTextData(/*swiInfoObj.EcuTranslation*/);
+                        VehicleStructsBmw.ServiceTextData infoObjTextData = new VehicleStructsBmw.ServiceTextData(ConvertEcuTranslation(swiInfoObj.EcuTranslation));
                         infoObjectTextHash = infoObjTextData.Hash;
                         if (!textDict.ContainsKey(infoObjTextData.Hash))
                         {
@@ -3092,6 +3092,22 @@ namespace PsdzClient
                 log.ErrorFormat("ConvertServiceModulesToVehicleData Exception: '{0}'", e.Message);
                 return null;
             }
+        }
+
+        EcuFunctionStructs.EcuTranslation ConvertEcuTranslation(EcuTranslation ecuTranslation)
+        {
+            EcuFunctionStructs.EcuTranslation ecuTranslationVehicle = new EcuFunctionStructs.EcuTranslation();
+            List<string> languages = EcuTranslation.GetLanguages();
+            foreach (string language in languages)
+            {
+                string translation = ecuTranslation.GetTitleTranslated(language);
+                if (!string.IsNullOrEmpty(translation))
+                {
+                    ecuTranslationVehicle.SetTranslation(language, translation);
+                }
+            }
+
+            return ecuTranslationVehicle;
         }
 
         public bool GenerateTestModuleData(ProgressDelegate progressHandler, bool checkOnly)
