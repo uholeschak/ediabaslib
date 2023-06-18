@@ -795,7 +795,8 @@
   <string name="can_adapter_fw_update_connect">При подключении к устройству может потребоваться перезагрузка процессора.</string>
   <string name="can_adapter_fw_update_active">Обновление прошивки.\nПожалуйста не прерывайте связь.</string>
   <string name="can_adapter_fw_update_conn_failed">Не удалось подключиться к адаптеру</string>
-  <string name="can_adapter_fw_update_failed">Не удалось обновление прошивки</string>
+  <!--Translate-->
+  <string name="can_adapter_fw_update_failed">Не удалось обновление прошивки.\nЕсли все светодиоды адаптера активны, адаптер находится в режиме загрузчика, и для нормального использования его необходимо снова прошить.</string>
   <string name="can_adapter_fw_update_ok">Обновление прошивки успешно завершено</string>
   <string name="can_adapter_fw_invalid">Файл прошивки неисправен.</string>
   <string name="can_adapter_fw_update_ok_detect">Обновление программного обеспечения прошло успешно.\nНеобходимо перезагрузить и заново идентифицировать адаптер.</string>
