@@ -769,7 +769,7 @@
   <string name="can_adapter_fw_update_connect">Connecting to device, a processor reset may be required.</string>
   <string name="can_adapter_fw_update_active">Firmware update in progress.\nDo not interrupt communication.</string>
   <string name="can_adapter_fw_update_conn_failed">Unable to connect to adapter</string>
-  <string name="can_adapter_fw_update_failed">Firmware update failed</string>
+  <string name="can_adapter_fw_update_failed">Firmware update failed.\nIf all adapter LEDs are active, the adapter is in bootloader mode and has to be flashed again for normal usage.</string>
   <string name="can_adapter_fw_update_ok">Firmware update successful</string>
   <string name="can_adapter_fw_update_ok_detect">The firmware update was successful.\nYou should restart the adapter, afterwards you have to detect it again.</string>
   <string name="can_adapter_fw_invalid">The firmware file is faulty.</string>
