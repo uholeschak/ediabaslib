@@ -246,23 +246,26 @@ namespace BmwFileReader
         }
 
         [XmlInclude(typeof(ServiceInfoData))]
+        [XmlInclude(typeof(ServiceTextData))]
         [XmlType("SD")]
         public class ServiceData
         {
-            public ServiceData() : this(null, null, null)
+            public ServiceData() : this(null, null, null, null)
             {
             }
 
-            public ServiceData(string infoObjId, List<string> diagObjIds, SerializableDictionary<string, ServiceInfoData> dataDict)
+            public ServiceData(string infoObjId, List<string> diagObjIds, SerializableDictionary<string, ServiceInfoData> dataDict, SerializableDictionary<string, ServiceTextData> textDict)
             {
                 InfoObjId = infoObjId;
                 DiagObjIds = diagObjIds;
                 DataDict = dataDict;
+                TextDict = textDict;
             }
 
             [XmlElement("IOI"), DefaultValue(null)] public string InfoObjId { get; set; }
             [XmlElement("DOI"), DefaultValue(null)] public List<string> DiagObjIds { get; set; }
             [XmlElement("DD"), DefaultValue(null)] public SerializableDictionary<string, ServiceInfoData> DataDict { get; set; }
+            [XmlElement("TD"), DefaultValue(null)] public SerializableDictionary<string, ServiceTextData> TextDict { get; set; }
         }
 
         [XmlType("SID")]
@@ -284,6 +287,33 @@ namespace BmwFileReader
             [XmlElement("CI"), DefaultValue(null)] public string ControlId { get; set; }
             [XmlElement("EJB"), DefaultValue(null)] public string EdiabasJobBare { get; set; }
             [XmlElement("EJO"), DefaultValue(null)] public string EdiabasJobOverride { get; set; }
+        }
+
+        [XmlType("STD")]
+        public class ServiceTextData
+        {
+            public ServiceTextData() : this(null)
+            {
+            }
+
+            public ServiceTextData(EcuFunctionStructs.EcuTranslation translation)
+            {
+                Translation = translation;
+                Hash = CalculateHash();
+            }
+
+            [XmlElement("TR"), DefaultValue(null)] public EcuFunctionStructs.EcuTranslation Translation { get; set; }
+            [XmlIgnore, DefaultValue(null)] public string Hash { get; set; }
+
+            public string CalculateHash()
+            {
+                if (Translation == null)
+                {
+                    return string.Empty;
+                }
+
+                return Translation.PropertyList().MD5Hash();
+            }
         }
     }
 }
