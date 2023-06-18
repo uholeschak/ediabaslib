@@ -244,5 +244,96 @@ namespace BmwFileReader
             [XmlElement("FaultRuleDict"), DefaultValue(null)] public SerializableDictionary<string, RuleInfo> FaultRuleDict { get; set; }
             [XmlElement("EcuFuncRuleDict"), DefaultValue(null)] public SerializableDictionary<string, RuleInfo> EcuFuncRuleDict { get; set; }
         }
+
+        [XmlInclude(typeof(ServiceDataItem))]
+        [XmlInclude(typeof(ServiceTextData))]
+        [XmlType("SD")]
+        public class ServiceData
+        {
+            public ServiceData() : this(null, null)
+            {
+            }
+
+            public ServiceData(SerializableDictionary<string, ServiceDataItem> dataDict, SerializableDictionary<string, ServiceTextData> textDict)
+            {
+                DataDict = dataDict;
+                TextDict = textDict;
+            }
+
+            [XmlElement("SD"), DefaultValue(null)] public SerializableDictionary<string, ServiceDataItem> DataDict { get; set; }
+            [XmlElement("TD"), DefaultValue(null)] public SerializableDictionary<string, ServiceTextData> TextDict { get; set; }
+        }
+
+        [XmlInclude(typeof(ServiceInfoData))]
+        [XmlInclude(typeof(ServiceTextData))]
+        [XmlType("SDI")]
+        public class ServiceDataItem
+        {
+            public ServiceDataItem() : this(null, null, null)
+            {
+            }
+
+            public ServiceDataItem(string infoObjId, List<string> diagObjIds, SerializableDictionary<string, ServiceInfoData> dataDict)
+            {
+                InfoObjId = infoObjId;
+                DiagObjIds = diagObjIds;
+                DataDict = dataDict;
+            }
+
+            [XmlElement("IOI"), DefaultValue(null)] public string InfoObjId { get; set; }
+            [XmlElement("IOTH"), DefaultValue(null)] public string InfoObjTextHash { get; set; }
+            [XmlElement("DOI"), DefaultValue(null)] public List<string> DiagObjIds { get; set; }
+            [XmlElement("DD"), DefaultValue(null)] public SerializableDictionary<string, ServiceInfoData> DataDict { get; set; }
+        }
+
+        [XmlType("SID")]
+        public class ServiceInfoData
+        {
+            public ServiceInfoData()
+            {
+            }
+
+            public ServiceInfoData(string methodName, string controlId, string ediabasJobBare, string ediabasJobOverride, List<string> textHashes)
+            {
+                MethodName = methodName;
+                ControlId = controlId;
+                EdiabasJobBare = ediabasJobBare;
+                EdiabasJobOverride = ediabasJobOverride;
+                TextHashes = textHashes;
+            }
+
+            [XmlElement("MN"), DefaultValue(null)] public string MethodName { get; set; }
+            [XmlElement("CI"), DefaultValue(null)] public string ControlId { get; set; }
+            [XmlElement("EJB"), DefaultValue(null)] public string EdiabasJobBare { get; set; }
+            [XmlElement("EJO"), DefaultValue(null)] public string EdiabasJobOverride { get; set; }
+            [XmlElement("TH"), DefaultValue(null)] public List<string> TextHashes { get; set; }
+        }
+
+        [XmlType("STD")]
+        public class ServiceTextData
+        {
+            public ServiceTextData() : this(null)
+            {
+            }
+
+            public ServiceTextData(EcuFunctionStructs.EcuTranslation translation)
+            {
+                Translation = translation;
+                Hash = CalculateHash();
+            }
+
+            [XmlElement("TR"), DefaultValue(null)] public EcuFunctionStructs.EcuTranslation Translation { get; set; }
+            [XmlIgnore, DefaultValue(null)] public string Hash { get; set; }
+
+            public string CalculateHash()
+            {
+                if (Translation == null)
+                {
+                    return string.Empty;
+                }
+
+                return Translation.PropertyList().MD5Hash();
+            }
+        }
     }
 }
