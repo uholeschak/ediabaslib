@@ -3243,7 +3243,10 @@ namespace PsdzClient
                                         textDict.Add(hashKey, serviceTextData);
                                     }
 
-                                    textHashes.Add(hashKey);
+                                    if (!textHashes.Contains(hashKey))
+                                    {
+                                        textHashes.Add(hashKey);
+                                    }
                                 }
                                 else
                                 {
