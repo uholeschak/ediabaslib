@@ -3063,6 +3063,7 @@ namespace PsdzClient
             {
                 List<VehicleStructsBmw.ServiceDataItem> serviceDataList = new List<VehicleStructsBmw.ServiceDataItem>();
                 SerializableDictionary<string, VehicleStructsBmw.ServiceTextData> textDict = new SerializableDictionary<string, VehicleStructsBmw.ServiceTextData>();
+                SerializableDictionary<string, ServiceModuleTextData> moduleTextDict = serviceModules.ModuleTextDict;
                 foreach (KeyValuePair<string, ServiceModuleData> keyValueModuleData in serviceModules.ModuleDataDict)
                 {
                     ServiceModuleData serviceModuleData = keyValueModuleData.Value;
@@ -3099,8 +3100,25 @@ namespace PsdzClient
                     foreach (KeyValuePair<string, ServiceModuleDataItem> keyValueDataItem in serviceModuleData.DataDict)
                     {
                         List<string> textHashes = new List<string>();
-                        string key = keyValueDataItem.Key;
                         ServiceModuleDataItem serviceModuleDataItem = keyValueDataItem.Value;
+                        foreach (ServiceModuleInvokeItem invokeItem in serviceModuleDataItem.InvokeItems)
+                        {
+                            foreach (string textHash in invokeItem.TextHashes)
+                            {
+                                if (moduleTextDict.TryGetValue(textHash, out ServiceModuleTextData serviceModuleTextData))
+                                {
+                                    VehicleStructsBmw.ServiceTextData serviceTextData = new VehicleStructsBmw.ServiceTextData(serviceModuleTextData.Translation);
+                                    string hashKey = VehicleStructsBmw.HashPrefix + serviceTextData.Hash;
+                                    if (!textDict.ContainsKey(hashKey))
+                                    {
+                                        textDict.Add(hashKey, serviceTextData);
+                                    }
+
+                                    textHashes.Add(hashKey);
+                                }
+                            }
+                        }
+
                         VehicleStructsBmw.ServiceInfoData serviceInfoData = new VehicleStructsBmw.ServiceInfoData(serviceModuleDataItem.MethodName, serviceModuleDataItem.ControlId,
                             serviceModuleDataItem.EdiabasJobBare, serviceModuleDataItem.EdiabasJobOverride, textHashes);
                         infoDataList.Add(serviceInfoData);
