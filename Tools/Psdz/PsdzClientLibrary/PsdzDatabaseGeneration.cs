@@ -25,7 +25,6 @@ using PsdzClient;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using PsdzClientLibrary;
-using static PsdzClient.PdszDatabase;
 
 namespace PsdzClient
 {
@@ -1911,6 +1910,114 @@ namespace PsdzClient
             {
                 log.ErrorFormat("CreateModuleParamContainerInst Exception: '{0}'", e.Message);
                 return null;
+            }
+        }
+
+        public bool GenerateVehicleServiceData(ServiceModules serviceModules)
+        {
+            try
+            {
+                VehicleStructsBmw.ServiceData serviceData = null;
+                XmlSerializer serializer = new XmlSerializer(typeof(VehicleStructsBmw.ServiceData));
+                string serviceDataZipFile = Path.Combine(_databaseExtractPath, VehicleStructsBmw.ServiceDataZipFile);
+                if (File.Exists(serviceDataZipFile))
+                {
+                    try
+                    {
+                        ZipFile zf = null;
+                        try
+                        {
+                            FileStream fs = File.OpenRead(serviceDataZipFile);
+                            zf = new ZipFile(fs);
+                            foreach (ZipEntry zipEntry in zf)
+                            {
+                                if (!zipEntry.IsFile)
+                                {
+                                    continue; // Ignore directories
+                                }
+
+                                if (string.Compare(zipEntry.Name, VehicleStructsBmw.ServiceDataXmlFile, StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    Stream zipStream = zf.GetInputStream(zipEntry);
+                                    using (TextReader reader = new StreamReader(zipStream))
+                                    {
+                                        serviceData = serializer.Deserialize(reader) as VehicleStructsBmw.ServiceData;
+                                    }
+                                }
+                            }
+                        }
+                        finally
+                        {
+                            if (zf != null)
+                            {
+                                zf.IsStreamOwner = true; // Makes close also shut the underlying stream
+                                zf.Close(); // Ensure we release resources
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        log.ErrorFormat("GenerateVehicleServiceData Deserialize Exception: '{0}'", e.Message);
+                    }
+                }
+
+                bool dataValid = true;
+                if (serviceData != null)
+                {
+                    DbInfo dbInfo = GetDbInfo();
+                    if (serviceData.Version == null || !serviceData.Version.IsIdentical(dbInfo?.Version, dbInfo?.DateTime))
+                    {
+                        log.ErrorFormat("GenerateVehicleServiceData Version mismatch");
+                        dataValid = false;
+                    }
+                }
+
+                if (serviceData == null || !dataValid)
+                {
+                    log.InfoFormat("GenerateVehicleServiceData Converting test modules");
+                    serviceData = ConvertServiceModulesToVehicleData(serviceModules);
+                    if (serviceData == null)
+                    {
+                        log.ErrorFormat("GenerateVehicleServiceData ConvertAllTestModules failed");
+                        return false;
+                    }
+
+                    using (MemoryStream memStream = new MemoryStream())
+                    {
+                        serializer.Serialize(memStream, serviceData);
+                        memStream.Seek(0, SeekOrigin.Begin);
+
+                        FileStream fsOut = File.Create(serviceDataZipFile);
+                        ZipOutputStream zipStream = new ZipOutputStream(fsOut);
+                        zipStream.SetLevel(3);
+
+                        try
+                        {
+                            ZipEntry newEntry = new ZipEntry(VehicleStructsBmw.ServiceDataXmlFile)
+                            {
+                                DateTime = DateTime.Now,
+                                Size = memStream.Length
+                            };
+                            zipStream.PutNextEntry(newEntry);
+
+                            byte[] buffer = new byte[4096];
+                            StreamUtils.Copy(memStream, zipStream, buffer);
+                            zipStream.CloseEntry();
+                        }
+                        finally
+                        {
+                            zipStream.IsStreamOwner = true;
+                            zipStream.Close();
+                        }
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GenerateVehicleServiceData Exception: '{0}'", e.Message);
+                return false;
             }
         }
 
