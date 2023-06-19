@@ -12,6 +12,7 @@ namespace BmwFileReader
         public const string RulesZipFile = "RulesInfo.zip";
         public const string RulesXmlFile = "RulesInfo.xml";
         public const string RulesCsFile = "RulesInfo.cs";
+        public const string HashPrefix = "HASH_";
 
         [XmlType("VEI")]
         public class VehicleEcuInfo
@@ -273,20 +274,20 @@ namespace BmwFileReader
             {
             }
 
-            public ServiceDataItem(string infoObjId, string infoObjTextHash, List<string> diagObjIds, List<string> diagObjTextHashes, SerializableDictionary<string, ServiceInfoData> dataDict)
+            public ServiceDataItem(string infoObjId, string infoObjTextHash, List<string> diagObjIds, List<string> diagObjTextHashes, List<ServiceInfoData> infoDataList)
             {
                 InfoObjId = infoObjId;
                 InfoObjTextHash = infoObjTextHash;
                 DiagObjIds = diagObjIds;
                 DiagObjTextHashes = diagObjTextHashes;
-                DataDict = dataDict;
+                InfoDataList = infoDataList;
             }
 
             [XmlElement("IOI"), DefaultValue(null)] public string InfoObjId { get; set; }
             [XmlElement("IOTH"), DefaultValue(null)] public string InfoObjTextHash { get; set; }
             [XmlElement("DOI"), DefaultValue(null)] public List<string> DiagObjIds { get; set; }
             [XmlElement("DOTH"), DefaultValue(null)] public List<string> DiagObjTextHashes { get; set; }
-            [XmlElement("DD"), DefaultValue(null)] public SerializableDictionary<string, ServiceInfoData> DataDict { get; set; }
+            [XmlElement("IDL"), DefaultValue(null)] public List<ServiceInfoData> InfoDataList { get; set; }
         }
 
         [XmlType("SID")]
