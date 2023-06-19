@@ -3070,6 +3070,7 @@ namespace PsdzClient
                     SerializableDictionary<string, VehicleStructsBmw.ServiceInfoData> dataDict = new SerializableDictionary<string, VehicleStructsBmw.ServiceInfoData>();
 
                     string infoObjId = serviceModuleData.InfoObjId;
+                    string infoObjTextHash = infoObjId;
                     SwiInfoObj swiInfoObj = GetInfoObjectById(infoObjId, SwiInfoObj.SwiActionDatabaseLinkType.SwiActionActionSelectionLink.ToString());
                     if (swiInfoObj != null)
                     {
@@ -3095,7 +3096,7 @@ namespace PsdzClient
                         diagObjTextHashes.Add(diagObjId);
                     }
 
-                    VehicleStructsBmw.ServiceDataItem serviceDataItem = new VehicleStructsBmw.ServiceDataItem(serviceModuleData.InfoObjId, infoObjId, serviceModuleData.DiagObjIds, diagObjTextHashes, dataDict);
+                    VehicleStructsBmw.ServiceDataItem serviceDataItem = new VehicleStructsBmw.ServiceDataItem(infoObjId, infoObjTextHash, serviceModuleData.DiagObjIds, diagObjTextHashes, dataDict);
                     serviceDataList.Add(serviceDataItem);
                 }
 
