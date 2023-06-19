@@ -25,6 +25,7 @@ using PsdzClient;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using PsdzClientLibrary;
+using static PsdzClient.PdszDatabase;
 
 namespace PsdzClient
 {
@@ -3116,6 +3117,10 @@ namespace PsdzClient
 
                                     textHashes.Add(hashKey);
                                 }
+                                else
+                                {
+                                    log.ErrorFormat("ConvertServiceModulesToVehicleData Text hash not found: {0}", textHash);
+                                }
                             }
                         }
 
@@ -3128,7 +3133,9 @@ namespace PsdzClient
                     serviceDataList.Add(serviceDataItem);
                 }
 
-                VehicleStructsBmw.ServiceData serviceData = new VehicleStructsBmw.ServiceData(serviceDataList, textDict);
+                DbInfo dbInfo = GetDbInfo();
+                VehicleStructsBmw.VersionInfo versionInfo = new VehicleStructsBmw.VersionInfo(dbInfo?.Version, dbInfo?.DateTime);
+                VehicleStructsBmw.ServiceData serviceData = new VehicleStructsBmw.ServiceData(versionInfo, serviceDataList, textDict);
                 return serviceData;
             }
             catch (Exception e)

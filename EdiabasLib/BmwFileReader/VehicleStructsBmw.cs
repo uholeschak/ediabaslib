@@ -251,16 +251,18 @@ namespace BmwFileReader
         [XmlType("SD")]
         public class ServiceData
         {
-            public ServiceData() : this(null, null)
+            public ServiceData() : this(null, null, null)
             {
             }
 
-            public ServiceData(List<ServiceDataItem> serviceDataList, SerializableDictionary<string, ServiceTextData> textDict)
+            public ServiceData(VersionInfo versionInfo, List<ServiceDataItem> serviceDataList, SerializableDictionary<string, ServiceTextData> textDict)
             {
+                Version = versionInfo;
                 ServiceDataList = serviceDataList;
                 TextDict = textDict;
             }
 
+            [XmlElement("Version"), DefaultValue(null)] public VersionInfo Version { get; set; }
             [XmlElement("SD"), DefaultValue(null)] public List<ServiceDataItem> ServiceDataList { get; set; }
             [XmlElement("TD"), DefaultValue(null)] public SerializableDictionary<string, ServiceTextData> TextDict { get; set; }
         }
