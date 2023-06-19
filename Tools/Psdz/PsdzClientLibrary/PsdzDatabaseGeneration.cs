@@ -3069,36 +3069,33 @@ namespace PsdzClient
                     List<string> diagObjTextHashes = new List<string>();
                     SerializableDictionary<string, VehicleStructsBmw.ServiceInfoData> dataDict = new SerializableDictionary<string, VehicleStructsBmw.ServiceInfoData>();
 
-                    string infoObjectTextHash = string.Empty;
-                    SwiInfoObj swiInfoObj = GetInfoObjectById(serviceModuleData.InfoObjId, SwiInfoObj.SwiActionDatabaseLinkType.SwiActionActionSelectionLink.ToString());
+                    string infoObjId = serviceModuleData.InfoObjId;
+                    SwiInfoObj swiInfoObj = GetInfoObjectById(infoObjId, SwiInfoObj.SwiActionDatabaseLinkType.SwiActionActionSelectionLink.ToString());
                     if (swiInfoObj != null)
                     {
                         VehicleStructsBmw.ServiceTextData infoObjTextData = new VehicleStructsBmw.ServiceTextData(ConvertEcuTranslation(swiInfoObj.EcuTranslation));
-                        infoObjectTextHash = infoObjTextData.Hash;
-                        if (!textDict.ContainsKey(infoObjectTextHash))
+                        if (!textDict.ContainsKey(infoObjId))
                         {
-                            textDict.Add(infoObjectTextHash, infoObjTextData);
+                            textDict.Add(infoObjId, infoObjTextData);
                         }
                     }
 
                     foreach (string diagObjId in serviceModuleData.DiagObjIds)
                     {
-                        string diagObjectTextHash = string.Empty;
                         SwiDiagObj swiDiagObj = GetDiagObjectById(diagObjId);
                         if (swiDiagObj != null)
                         {
                             VehicleStructsBmw.ServiceTextData diagObjTextData = new VehicleStructsBmw.ServiceTextData(ConvertEcuTranslation(swiDiagObj.EcuTranslation));
-                            diagObjectTextHash = diagObjTextData.Hash;
-                            if (!textDict.ContainsKey(diagObjectTextHash))
+                            if (!textDict.ContainsKey(diagObjId))
                             {
-                                textDict.Add(diagObjectTextHash, diagObjTextData);
+                                textDict.Add(diagObjId, diagObjTextData);
                             }
                         }
 
-                        diagObjTextHashes.Add(diagObjectTextHash);
+                        diagObjTextHashes.Add(diagObjId);
                     }
 
-                    VehicleStructsBmw.ServiceDataItem serviceDataItem = new VehicleStructsBmw.ServiceDataItem(serviceModuleData.InfoObjId, infoObjectTextHash, serviceModuleData.DiagObjIds, diagObjTextHashes, dataDict);
+                    VehicleStructsBmw.ServiceDataItem serviceDataItem = new VehicleStructsBmw.ServiceDataItem(serviceModuleData.InfoObjId, infoObjId, serviceModuleData.DiagObjIds, diagObjTextHashes, dataDict);
                     serviceDataList.Add(serviceDataItem);
                 }
 

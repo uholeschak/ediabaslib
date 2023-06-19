@@ -12,6 +12,7 @@ namespace BmwFileReader
         public const string RulesZipFile = "RulesInfo.zip";
         public const string RulesXmlFile = "RulesInfo.xml";
         public const string RulesCsFile = "RulesInfo.cs";
+        public const string HashPrefix = "HASH_";
 
         [XmlType("VEI")]
         public class VehicleEcuInfo
