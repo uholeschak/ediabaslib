@@ -3220,6 +3220,16 @@ namespace PsdzClient
                     {
                         List<string> textHashes = new List<string>();
                         ServiceModuleDataItem serviceModuleDataItem = keyValueDataItem.Value;
+                        if (serviceModuleDataItem == null)
+                        {
+                            continue;
+                        }
+
+                        if (string.IsNullOrEmpty(serviceModuleDataItem.EdiabasJobBare))
+                        {
+                            continue;
+                        }
+
                         foreach (ServiceModuleInvokeItem invokeItem in serviceModuleDataItem.InvokeItems)
                         {
                             foreach (string textHash in invokeItem.TextHashes)
