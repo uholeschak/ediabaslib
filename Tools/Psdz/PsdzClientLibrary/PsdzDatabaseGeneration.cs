@@ -3067,7 +3067,7 @@ namespace PsdzClient
                 {
                     ServiceModuleData serviceModuleData = keyValueModuleData.Value;
                     List<string> diagObjTextHashes = new List<string>();
-                    SerializableDictionary<string, VehicleStructsBmw.ServiceInfoData> serviceInfoDataDict = new SerializableDictionary<string, VehicleStructsBmw.ServiceInfoData>();
+                    List<VehicleStructsBmw.ServiceInfoData> infoDataList = new List<VehicleStructsBmw.ServiceInfoData>();
 
                     string infoObjId = serviceModuleData.InfoObjId;
                     string infoObjTextHash = infoObjId;
@@ -3099,13 +3099,14 @@ namespace PsdzClient
                     foreach (KeyValuePair<string, ServiceModuleDataItem> keyValueDataItem in serviceModuleData.DataDict)
                     {
                         List<string> textHashes = new List<string>();
+                        string key = keyValueDataItem.Key;
                         ServiceModuleDataItem serviceModuleDataItem = keyValueDataItem.Value;
                         VehicleStructsBmw.ServiceInfoData serviceInfoData = new VehicleStructsBmw.ServiceInfoData(serviceModuleDataItem.MethodName, serviceModuleDataItem.ControlId,
                             serviceModuleDataItem.EdiabasJobBare, serviceModuleDataItem.EdiabasJobOverride, textHashes);
-                        serviceInfoDataDict.Add(serviceModuleDataItem.MethodName, serviceInfoData);
+                        infoDataList.Add(serviceInfoData);
                     }
 
-                    VehicleStructsBmw.ServiceDataItem serviceDataItem = new VehicleStructsBmw.ServiceDataItem(infoObjId, infoObjTextHash, serviceModuleData.DiagObjIds, diagObjTextHashes, serviceInfoDataDict);
+                    VehicleStructsBmw.ServiceDataItem serviceDataItem = new VehicleStructsBmw.ServiceDataItem(infoObjId, infoObjTextHash, serviceModuleData.DiagObjIds, diagObjTextHashes, infoDataList);
                     serviceDataList.Add(serviceDataItem);
                 }
 
