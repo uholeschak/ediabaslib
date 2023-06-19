@@ -1978,7 +1978,7 @@ namespace PsdzClient
                     serviceData = ConvertServiceModulesToVehicleData(serviceModules);
                     if (serviceData == null)
                     {
-                        log.ErrorFormat("GenerateVehicleServiceData ConvertAllTestModules failed");
+                        log.ErrorFormat("GenerateVehicleServiceData ConvertServiceModulesToVehicleData failed");
                         return false;
                     }
 
@@ -2164,6 +2164,12 @@ namespace PsdzClient
                             zipStream.Close();
                         }
                     }
+                }
+
+                if (!GenerateVehicleServiceData(serviceModules))
+                {
+                    log.ErrorFormat("GenerateVehicleServiceData failed");
+                    return false;
                 }
 
                 return true;
@@ -3175,6 +3181,11 @@ namespace PsdzClient
                 foreach (KeyValuePair<string, ServiceModuleData> keyValueModuleData in serviceModules.ModuleDataDict)
                 {
                     ServiceModuleData serviceModuleData = keyValueModuleData.Value;
+                    if (serviceModuleData == null)
+                    {
+                        continue;
+                    }
+
                     List<string> diagObjTextHashes = new List<string>();
                     List<VehicleStructsBmw.ServiceInfoData> infoDataList = new List<VehicleStructsBmw.ServiceInfoData>();
 
