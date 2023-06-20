@@ -3232,6 +3232,11 @@ namespace PsdzClient
 
                         foreach (ServiceModuleInvokeItem invokeItem in serviceModuleDataItem.InvokeItems)
                         {
+                            if (invokeItem == null)
+                            {
+                                continue;
+                            }
+
                             foreach (string textHash in invokeItem.TextHashes)
                             {
                                 if (moduleTextDict.TryGetValue(textHash, out ServiceModuleTextData serviceModuleTextData))
