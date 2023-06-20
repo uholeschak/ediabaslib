@@ -216,7 +216,7 @@ namespace BmwFileReader
             }
         }
 
-        public static VehicleStructsBmw.ServiceData ReadServiceDataFromFile(string databaseDir)
+        public static VehicleStructsBmw.ServiceData ReadServiceData(string databaseDir)
         {
             if (_serviceData != null)
             {
@@ -710,6 +710,26 @@ namespace BmwFileReader
                 }
             }
             return null;
+        }
+
+        public static VehicleStructsBmw.ServiceTextData GetServiceTextDataForHash(string hashCode)
+        {
+            if (_serviceData == null)
+            {
+                return null;
+            }
+
+            if (string.IsNullOrEmpty(hashCode))
+            {
+                return null;
+            }
+
+            if (!_serviceData.TextDict.TryGetValue(hashCode, out VehicleStructsBmw.ServiceTextData textData))
+            {
+                return null;
+            }
+
+            return textData;
         }
     }
 }
