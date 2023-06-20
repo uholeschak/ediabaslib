@@ -3264,7 +3264,7 @@ namespace PsdzClient
                                         continue;
                                     }
 
-                                    string resultEntry = dataName + ";" + dataType;
+                                    string resultEntry = dataName + "#" + dataType;
                                     if (!resultList.Contains(resultEntry))
                                     {
                                         resultList.Add(resultEntry);
