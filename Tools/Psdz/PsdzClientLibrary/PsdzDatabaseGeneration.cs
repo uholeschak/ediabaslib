@@ -3249,17 +3249,20 @@ namespace PsdzClient
                                         continue;
                                     }
 
-                                    if (string.Compare(dataName, "/Result/Status/JOB_STATUS", StringComparison.OrdinalIgnoreCase) == 0)
+                                    dataName = Regex.Replace(dataName, "^/Result/Status/", string.Empty);
+                                    dataName = Regex.Replace(dataName, "^/Result/Rows/", string.Empty);
+
+                                    if (string.Compare(dataName, "JOB_STATUS", StringComparison.OrdinalIgnoreCase) == 0)
                                     {
                                         continue;
                                     }
 
-                                    if (string.Compare(dataName, "/Result/Rows/$Count", StringComparison.OrdinalIgnoreCase) == 0)
+                                    if (string.Compare(dataName, "SAETZE", StringComparison.OrdinalIgnoreCase) == 0)
                                     {
                                         continue;
                                     }
 
-                                    if (string.Compare(dataName, "/Result/Status/SAETZE", StringComparison.OrdinalIgnoreCase) == 0)
+                                    if (string.Compare(dataName, "$Count", StringComparison.OrdinalIgnoreCase) == 0)
                                     {
                                         continue;
                                     }
