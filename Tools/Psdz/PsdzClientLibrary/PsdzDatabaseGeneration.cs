@@ -3230,6 +3230,7 @@ namespace PsdzClient
                             continue;
                         }
 
+                        List<string> resultList = new List<string>();
                         foreach (ServiceModuleInvokeItem invokeItem in serviceModuleDataItem.InvokeItems)
                         {
                             if (invokeItem == null)
@@ -3239,6 +3240,37 @@ namespace PsdzClient
 
                             foreach (string textHash in invokeItem.TextHashes)
                             {
+                                foreach (ServiceModuleResultItem resultItem in invokeItem.ResultItems)
+                                {
+                                    string dataName = resultItem.DataName;
+                                    string dataType = resultItem.DataType;
+                                    if (string.IsNullOrEmpty(dataName) || string.IsNullOrEmpty(dataType))
+                                    {
+                                        continue;
+                                    }
+
+                                    if (string.Compare(dataName, "/Result/Status/JOB_STATUS", StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        continue;
+                                    }
+
+                                    if (string.Compare(dataName, "/Result/Rows/$Count", StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        continue;
+                                    }
+
+                                    if (string.Compare(dataName, "/Result/Status/SAETZE", StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        continue;
+                                    }
+
+                                    string resultEntry = dataName + ";" + dataType;
+                                    if (!resultList.Contains(resultEntry))
+                                    {
+                                        resultList.Add(resultEntry);
+                                    }
+                                }
+
                                 if (moduleTextDict.TryGetValue(textHash, out ServiceModuleTextData serviceModuleTextData))
                                 {
                                     VehicleStructsBmw.ServiceTextData serviceTextData = new VehicleStructsBmw.ServiceTextData(serviceModuleTextData.Translation);
@@ -3261,7 +3293,7 @@ namespace PsdzClient
                         }
 
                         VehicleStructsBmw.ServiceInfoData serviceInfoData = new VehicleStructsBmw.ServiceInfoData(serviceModuleDataItem.MethodName, serviceModuleDataItem.ControlId,
-                            serviceModuleDataItem.EdiabasJobBare, serviceModuleDataItem.EdiabasJobOverride, textHashes);
+                            serviceModuleDataItem.EdiabasJobBare, serviceModuleDataItem.EdiabasJobOverride, resultList, textHashes);
                         infoDataList.Add(serviceInfoData);
                     }
 

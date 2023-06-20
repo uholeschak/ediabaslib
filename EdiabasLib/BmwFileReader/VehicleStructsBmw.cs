@@ -301,12 +301,13 @@ namespace BmwFileReader
             {
             }
 
-            public ServiceInfoData(string methodName, string controlId, string ediabasJobBare, string ediabasJobOverride, List<string> textHashes)
+            public ServiceInfoData(string methodName, string controlId, string ediabasJobBare, string ediabasJobOverride, List<string> resultList, List<string> textHashes)
             {
                 MethodName = methodName;
                 ControlId = controlId;
                 EdiabasJobBare = ediabasJobBare;
                 EdiabasJobOverride = ediabasJobOverride;
+                ResultList = resultList;
                 TextHashes = textHashes;
             }
 
@@ -314,6 +315,7 @@ namespace BmwFileReader
             [XmlElement("CI"), DefaultValue(null)] public string ControlId { get; set; }
             [XmlElement("EJB"), DefaultValue(null)] public string EdiabasJobBare { get; set; }
             [XmlElement("EJO"), DefaultValue(null)] public string EdiabasJobOverride { get; set; }
+            [XmlElement("RL"), DefaultValue(null)] public List<string> ResultList { get; set; }
             [XmlElement("TH"), DefaultValue(null)] public List<string> TextHashes { get; set; }
         }
 
