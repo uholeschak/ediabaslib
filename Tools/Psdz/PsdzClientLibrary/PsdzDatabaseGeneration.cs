@@ -3251,7 +3251,7 @@ namespace PsdzClient
 
                                     dataName = Regex.Replace(dataName, @"^/Result/Status/", string.Empty);
                                     dataName = Regex.Replace(dataName, @"^/Result/Rows/", string.Empty);
-                                    dataName = Regex.Replace(dataName, @"^Row\[(\d+)\]/", @"$1:");
+                                    dataName = Regex.Replace(dataName, @"^Row\[(\d+)\]/", @"$$$1#");
 
                                     if (string.Compare(dataName, "JOB_STATUS", StringComparison.OrdinalIgnoreCase) == 0)
                                     {
