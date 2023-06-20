@@ -33,6 +33,7 @@ namespace BmwFileReader
 #endif
         private static VehicleStructsBmw.VehicleSeriesInfoData _vehicleSeriesInfoData;
         private static VehicleStructsBmw.RulesInfoData _rulesInfoData;
+        private static VehicleStructsBmw.ServiceData _serviceData;
 
         public static FailureSource ResourceFailure { get; private set; }
 
@@ -198,6 +199,59 @@ namespace BmwFileReader
                     }
 
                     return _rulesInfoData;
+                }
+                finally
+                {
+                    if (zf != null)
+                    {
+                        zf.IsStreamOwner = true; // Makes close also shut the underlying stream
+                        zf.Close(); // Ensure we release resources
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                ResourceFailure = FailureSource.File;
+                return null;
+            }
+        }
+
+        public static VehicleStructsBmw.ServiceData ReadServiceData(string databaseDir)
+        {
+            if (_serviceData != null)
+            {
+                return _serviceData;
+            }
+
+            try
+            {
+                ZipFile zf = null;
+                try
+                {
+                    using (FileStream fs = File.OpenRead(Path.Combine(databaseDir, VehicleStructsBmw.ServiceDataZipFile)))
+                    {
+                        zf = new ZipFile(fs);
+                        foreach (ZipEntry zipEntry in zf)
+                        {
+                            if (!zipEntry.IsFile)
+                            {
+                                continue; // Ignore directories
+                            }
+                            if (string.Compare(zipEntry.Name, VehicleStructsBmw.ServiceDataXmlFile, StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                Stream zipStream = zf.GetInputStream(zipEntry);
+                                using (StreamReader sr = new StreamReader(zipStream))
+                                {
+                                    XmlSerializer serializer = new XmlSerializer(typeof(VehicleStructsBmw.ServiceData));
+                                    _serviceData = serializer.Deserialize(sr) as VehicleStructsBmw.ServiceData;
+                                }
+
+                                break;
+                            }
+                        }
+                    }
+
+                    return _serviceData;
                 }
                 finally
                 {
@@ -656,6 +710,26 @@ namespace BmwFileReader
                 }
             }
             return null;
+        }
+
+        public static VehicleStructsBmw.ServiceTextData GetServiceTextDataForHash(string hashCode)
+        {
+            if (_serviceData == null)
+            {
+                return null;
+            }
+
+            if (string.IsNullOrEmpty(hashCode))
+            {
+                return null;
+            }
+
+            if (!_serviceData.TextDict.TryGetValue(hashCode, out VehicleStructsBmw.ServiceTextData textData))
+            {
+                return null;
+            }
+
+            return textData;
         }
     }
 }
