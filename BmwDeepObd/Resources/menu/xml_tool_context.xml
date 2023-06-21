@@ -14,6 +14,8 @@
         android:title="@string/menu_xml_tool_ediabas_tool" />
   <item android:id="@+id/menu_xml_tool_bmw_actuator"
         android:title="@string/menu_xml_tool_bmw_actuator" />
+  <item android:id="@+id/menu_xml_tool_bmw_service"
+        android:title="@string/menu_xml_tool_bmw_service" />
   <item android:id="@+id/menu_xml_tool_vag_coding"
         android:title="@string/menu_xml_tool_vag_coding"/>
   <item android:id="@+id/menu_xml_tool_vag_coding2"

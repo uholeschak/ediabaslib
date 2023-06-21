@@ -616,6 +616,7 @@
   <string name="menu_xml_tool_move_bottom">An das Ende verschieben</string>
   <string name="menu_xml_tool_ediabas_tool">Ediabas Tool</string>
   <string name="menu_xml_tool_bmw_actuator">Aktuator Funktionen</string>
+  <string name="menu_xml_tool_bmw_service">Service Funktionen</string>
   <string name="menu_xml_tool_vag_coding">Kodieren</string>
   <string name="menu_xml_tool_vag_coding2">Kodieren 2</string>
   <string name="menu_xml_tool_vag_adaption">Adaption</string>

@@ -616,6 +616,8 @@
   <string name="menu_xml_tool_move_bottom">Переместить в конец</string>
   <string name="menu_xml_tool_ediabas_tool">Ediabas утилита</string>
   <string name="menu_xml_tool_bmw_actuator">Функции актуатора</string>
+  <!--Translate-->
+  <string name="menu_xml_tool_bmw_service">Сервисные функции</string>
   <string name="menu_xml_tool_vag_coding">Кодировать</string>
   <string name="menu_xml_tool_vag_coding2">Кодировать 2</string>
   <string name="menu_xml_tool_vag_adaption">Адаптация</string>
