@@ -80,6 +80,7 @@ namespace BmwDeepObd
         {
             None,
             BmwActuator,
+            BmwService,
             VagCoding,
             VagCoding2,
             VagAdaption,
@@ -599,6 +600,7 @@ namespace BmwDeepObd
         private volatile bool _ediabasJobAbort;
         private ActivityCommon _activityCommon;
         private RuleEvalBmw _ruleEvalBmw;
+        private List<VehicleStructsBmw.ServiceDataItem> _bmwServiceDataItems;
         private CheckAdapter _checkAdapter;
         private EdiabasNet _ediabas;
         private SgFunctions _sgFunctions;
@@ -1404,6 +1406,7 @@ namespace BmwDeepObd
             _instanceData.Vin = string.Empty;
             _instanceData.VehicleType = string.Empty;
             _instanceData.CDate = string.Empty;
+            _bmwServiceDataItems = null;
         }
 
         private void ClearEcuList()
@@ -2188,6 +2191,14 @@ namespace BmwDeepObd
                 bmwActuatorMenu.SetVisible(bmwVisible);
             }
 
+            IMenuItem bmwServiceMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_bmw_service);
+            if (bmwServiceMenu != null)
+            {
+                bool enableBmwService = _bmwServiceDataItems != null && _bmwServiceDataItems.Count > 0;
+                bmwServiceMenu.SetEnabled(enableMenuAction && enableBmwService);
+                bmwServiceMenu.SetVisible(bmwVisible);
+            }
+
             IMenuItem vagCodingMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_vag_coding);
             if (vagCodingMenu != null)
             {
@@ -2275,6 +2286,10 @@ namespace BmwDeepObd
 
                     case Resource.Id.menu_xml_tool_bmw_actuator:
                         CallEcuFunction(_ecuList[itemPos], EcuFunctionCallType.BmwActuator);
+                        break;
+
+                    case Resource.Id.menu_xml_tool_bmw_service:
+                        CallEcuFunction(_ecuList[itemPos], EcuFunctionCallType.BmwService);
                         break;
 
                     case Resource.Id.menu_xml_tool_vag_coding:
@@ -2893,7 +2908,11 @@ namespace BmwDeepObd
 
                     if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
                     {
-                        _ruleEvalBmw?.SetEvalProperties(detectVehicleBmw, null);
+                        if (_ruleEvalBmw != null)
+                        {
+                            _ruleEvalBmw.SetEvalProperties(detectVehicleBmw, null);
+                            _bmwServiceDataItems = VehicleInfoBmw.GetServiceDataItems(_bmwDir, _ruleEvalBmw);
+                        }
                     }
 
                     ReadAllXml();
@@ -2937,7 +2956,11 @@ namespace BmwDeepObd
 
                         if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
                         {
-                            _ruleEvalBmw?.SetEvalProperties(detectVehicleBmw, null);
+                            if (_ruleEvalBmw != null)
+                            {
+                                _ruleEvalBmw.SetEvalProperties(detectVehicleBmw, null);
+                                _bmwServiceDataItems = VehicleInfoBmw.GetServiceDataItems(_bmwDir, _ruleEvalBmw);
+                            }
                         }
 
                         ReadAllXml();
