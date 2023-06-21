@@ -712,20 +712,21 @@ namespace BmwFileReader
             return null;
         }
 
-        public static List<VehicleStructsBmw.ServiceDataItem> GetServiceDataItems(RuleEvalBmw ruleEvalBmw = null)
+        public static List<VehicleStructsBmw.ServiceDataItem> GetServiceDataItems(string databaseDir, RuleEvalBmw ruleEvalBmw = null)
         {
-            if (_serviceData == null)
+            VehicleStructsBmw.ServiceData serviceData = ReadServiceData(databaseDir);
+            if (serviceData == null)
             {
                 return null;
             }
 
             if (ruleEvalBmw == null)
             {
-                return _serviceData.ServiceDataList;
+                return serviceData.ServiceDataList;
             }
 
             List<VehicleStructsBmw.ServiceDataItem> serviceDataItems = new List<VehicleStructsBmw.ServiceDataItem>();
-            foreach (VehicleStructsBmw.ServiceDataItem serviceDataItem in _serviceData.ServiceDataList)
+            foreach (VehicleStructsBmw.ServiceDataItem serviceDataItem in serviceData.ServiceDataList)
             {
                 bool valid = ruleEvalBmw.EvaluateRule(serviceDataItem.InfoObjId);
                 if (valid)
