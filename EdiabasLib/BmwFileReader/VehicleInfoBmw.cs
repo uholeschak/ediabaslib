@@ -712,6 +712,43 @@ namespace BmwFileReader
             return null;
         }
 
+        public static List<VehicleStructsBmw.ServiceDataItem> GetServiceDataItems(RuleEvalBmw ruleEvalBmw = null)
+        {
+            if (_serviceData == null)
+            {
+                return null;
+            }
+
+            if (ruleEvalBmw == null)
+            {
+                return _serviceData.ServiceDataList;
+            }
+
+            List<VehicleStructsBmw.ServiceDataItem> serviceDataItems = new List<VehicleStructsBmw.ServiceDataItem>();
+            foreach (VehicleStructsBmw.ServiceDataItem serviceDataItem in _serviceData.ServiceDataList)
+            {
+                bool valid = ruleEvalBmw.EvaluateRule(serviceDataItem.InfoObjId);
+                if (valid)
+                {
+                    foreach (string diagObjId in serviceDataItem.DiagObjIds)
+                    {
+                        if (!ruleEvalBmw.EvaluateRule(diagObjId))
+                        {
+                            valid = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (valid)
+                {
+                    serviceDataItems.Add(serviceDataItem);
+                }
+            }
+
+            return serviceDataItems;
+        }
+
         public static VehicleStructsBmw.ServiceTextData GetServiceTextDataForHash(string hashCode)
         {
             if (_serviceData == null)
