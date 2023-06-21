@@ -2289,8 +2289,33 @@ namespace BmwDeepObd
                         break;
 
                     case Resource.Id.menu_xml_tool_bmw_service:
-                        CallEcuFunction(_ecuList[itemPos], EcuFunctionCallType.BmwService);
+                    {
+                        if (_bmwServiceDataItems == null)
+                        {
+                            break;
+                        }
+
+                        AndroidX.AppCompat.Widget.PopupMenu popupMenu = new AndroidX.AppCompat.Widget.PopupMenu(this, anchor);
+                        string language = ActivityCommon.GetCurrentLanguage();
+                        foreach (VehicleStructsBmw.ServiceDataItem serviceDataItem in _bmwServiceDataItems)
+                        {
+                            VehicleStructsBmw.ServiceTextData serviceTextData = VehicleInfoBmw.GetServiceTextDataForHash(serviceDataItem.InfoObjTextHash);
+                            if (serviceTextData != null)
+                            {
+                                string infoObjText = serviceTextData.Translation.GetTitle(language);
+                                if (!string.IsNullOrEmpty(infoObjText))
+                                {
+                                    popupMenu.Menu.Add(infoObjText);
+                                }
+                            }
+                        }
+
+                        if (popupMenu.Menu.HasVisibleItems)
+                        {
+                            popupMenu.Show();
+                        }
                         break;
+                    }
 
                     case Resource.Id.menu_xml_tool_vag_coding:
                         CallEcuFunction(_ecuList[itemPos], EcuFunctionCallType.VagCoding);
