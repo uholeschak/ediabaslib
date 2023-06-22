@@ -30,6 +30,7 @@ namespace PsdzClient
     public partial class PdszDatabase : IDisposable
     {
         public const string DiagObjServiceRoot = "DiagnosticObjectServicefunctionRoot";
+        public const string AblFilter = "ABL";
 
         public const string SqlTitleItemsC =
             "C.TITLE_DEDE, C.TITLE_ENGB, C.TITLE_ENUS, " +

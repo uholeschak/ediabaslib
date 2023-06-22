@@ -2187,7 +2187,7 @@ namespace PsdzClient
             {
                 RestartRequired = true;
 
-                List<SwiDiagObj> diagObjsNodeClass = GetInfoObjectsTreeForNodeclassName(DiagObjServiceRoot, null, new List<string> { "ABL" });
+                List<SwiDiagObj> diagObjsNodeClass = GetInfoObjectsTreeForNodeclassName(DiagObjServiceRoot, null, new List<string> { AblFilter });
                 if (diagObjsNodeClass == null)
                 {
                     log.ErrorFormat("ConvertAllServiceModules GetInfoObjectsTreeForNodeclassName failed");
@@ -4018,7 +4018,7 @@ namespace PsdzClient
                     return false;
                 }
 
-                List<SwiDiagObj> diagObjsNodeClass = GetInfoObjectsTreeForNodeclassName(DiagObjServiceRoot, null, new List<string> { "ABL" });
+                List<SwiDiagObj> diagObjsNodeClass = GetInfoObjectsTreeForNodeclassName(DiagObjServiceRoot, null, new List<string> { AblFilter });
                 if (diagObjsNodeClass == null)
                 {
                     log.ErrorFormat("SaveFaultRulesInfo GetInfoObjectsTreeForNodeclassName failed");

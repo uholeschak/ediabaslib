@@ -586,7 +586,7 @@ namespace PsdzClient.Programming
                     }
 #if false
                     List<PdszDatabase.SwiDiagObj> diagObjsNodeClass = ProgrammingService.PdszDatabase.GetInfoObjectsTreeForNodeclassName(
-                        PdszDatabase.DiagObjServiceRoot, null, new List<string> { "ABL" });
+                        PdszDatabase.DiagObjServiceRoot, null, new List<string> { AblFilter });
                     if (diagObjsNodeClass != null)
                     {
                         foreach (PdszDatabase.SwiDiagObj swiDiagObj in diagObjsNodeClass)
@@ -1043,7 +1043,7 @@ namespace PsdzClient.Programming
                 {
                     ProgrammingService.PdszDatabase.UseIsAtLeastOnePathToRootValid = type == 0;
                     List<PdszDatabase.SwiDiagObj> diagObjsNodeClass = ProgrammingService.PdszDatabase.GetInfoObjectsTreeForNodeclassName(
-                        PdszDatabase.DiagObjServiceRoot, vehicle, new List<string> { "ABL" }, true);
+                        PdszDatabase.DiagObjServiceRoot, vehicle, new List<string> { AblFilter }, true);
                     if (diagObjsNodeClass != null)
                     {
                         foreach (PdszDatabase.SwiDiagObj swiDiagObj in diagObjsNodeClass)
