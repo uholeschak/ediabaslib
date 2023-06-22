@@ -4018,6 +4018,59 @@ namespace PsdzClient
                     return false;
                 }
 
+                List<SwiDiagObj> diagObjsNodeClass = GetInfoObjectsTreeForNodeclassName(DiagObjServiceRoot, null, new List<string> { "ABL" });
+                if (diagObjsNodeClass == null)
+                {
+                    log.ErrorFormat("SaveFaultRulesInfo GetInfoObjectsTreeForNodeclassName failed");
+                    return false;
+                }
+
+                List<SwiInfoObj> completeInfoObjects = new List<SwiInfoObj>();
+                foreach (SwiDiagObj swiDiagObj in diagObjsNodeClass)
+                {
+                    completeInfoObjects.AddRange(swiDiagObj.CompleteInfoObjects);
+                }
+
+                foreach (SwiInfoObj infoObject in completeInfoObjects)
+                {
+                    string infoObjId = infoObject.Id;
+                    if (infoObjId.ConvertToInt() > 0)
+                    {
+                        if (!ecuFuncRulesDict.ContainsKey(infoObjId))
+                        {
+                            XepRule xepRule = GetRuleById(infoObjId);
+                            if (xepRule != null)
+                            {
+                                string ruleFormula = xepRule.GetRuleFormula(null);
+                                if (!string.IsNullOrEmpty(ruleFormula))
+                                {
+                                    ecuFuncRulesDict.Add(infoObjId, new VehicleStructsBmw.RuleInfo(infoObjId, ruleFormula));
+                                }
+                            }
+                        }
+                    }
+
+                    foreach (SwiDiagObj diagObj in infoObject.DiagObjectPath)
+                    {
+                        string diagObjId = diagObj.Id;
+                        if (diagObjId.ConvertToInt() > 0)
+                        {
+                            if (!ecuFuncRulesDict.ContainsKey(diagObjId))
+                            {
+                                XepRule xepRule = GetRuleById(diagObjId);
+                                if (xepRule != null)
+                                {
+                                    string ruleFormula = xepRule.GetRuleFormula(null);
+                                    if (!string.IsNullOrEmpty(ruleFormula))
+                                    {
+                                        ecuFuncRulesDict.Add(diagObjId, new VehicleStructsBmw.RuleInfo(diagObjId, ruleFormula));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
                 VehicleStructsBmw.VersionInfo versionInfo = new VehicleStructsBmw.VersionInfo(dbInfo?.Version, dbInfo?.DateTime);
                 rulesInfoData = new VehicleStructsBmw.RulesInfoData(versionInfo, faultRulesDict, ecuFuncRulesDict);
                 if (!SaveFaultRulesClass(rulesInfoData, rulesCsFile))
@@ -4273,13 +4326,16 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
                 {
                     if (ecuFixedFuncId.ConvertToInt() > 0)
                     {
-                        XepRule xepRule = GetRuleById(ecuFixedFuncId);
-                        if (xepRule != null)
+                        if (!ruleDict.ContainsKey(ecuFixedFuncId))
                         {
-                            string ruleFormula = xepRule.GetRuleFormula(vehicle);
-                            if (!string.IsNullOrEmpty(ruleFormula))
+                            XepRule xepRule = GetRuleById(ecuFixedFuncId);
+                            if (xepRule != null)
                             {
-                                ruleDict.Add(ecuFixedFuncId, new VehicleStructsBmw.RuleInfo(ecuFixedFuncId, ruleFormula));
+                                string ruleFormula = xepRule.GetRuleFormula(vehicle);
+                                if (!string.IsNullOrEmpty(ruleFormula))
+                                {
+                                    ruleDict.Add(ecuFixedFuncId, new VehicleStructsBmw.RuleInfo(ecuFixedFuncId, ruleFormula));
+                                }
                             }
                         }
                     }
