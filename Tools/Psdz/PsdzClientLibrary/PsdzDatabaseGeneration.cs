@@ -4018,7 +4018,7 @@ namespace PsdzClient
                     return false;
                 }
 
-                if (!AddDiagObjRulesInfo(ecuFuncRulesDict))
+                if (!AddDiagObjRulesInfo(clientContext, ecuFuncRulesDict))
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo AddDiagObjRulesInfo failed");
                     return false;
@@ -4073,7 +4073,7 @@ namespace PsdzClient
             return true;
         }
 
-        private bool AddDiagObjRulesInfo(SerializableDictionary<string, VehicleStructsBmw.RuleInfo> ecuFuncRulesDict)
+        private bool AddDiagObjRulesInfo(ClientContext clientContext, SerializableDictionary<string, VehicleStructsBmw.RuleInfo> ecuFuncRulesDict)
         {
             try
             {
@@ -4090,6 +4090,7 @@ namespace PsdzClient
                     completeInfoObjects.AddRange(swiDiagObj.CompleteInfoObjects);
                 }
 
+                Vehicle vehicle = new Vehicle(clientContext);
                 foreach (SwiInfoObj infoObject in completeInfoObjects)
                 {
                     string infoObjId = infoObject.Id;
@@ -4100,7 +4101,7 @@ namespace PsdzClient
                             XepRule xepRule = GetRuleById(infoObjId);
                             if (xepRule != null)
                             {
-                                string ruleFormula = xepRule.GetRuleFormula(null);
+                                string ruleFormula = xepRule.GetRuleFormula(vehicle);
                                 if (!string.IsNullOrEmpty(ruleFormula))
                                 {
                                     ecuFuncRulesDict.Add(infoObjId, new VehicleStructsBmw.RuleInfo(infoObjId, ruleFormula));
@@ -4119,7 +4120,7 @@ namespace PsdzClient
                                 XepRule xepRule = GetRuleById(diagObjId);
                                 if (xepRule != null)
                                 {
-                                    string ruleFormula = xepRule.GetRuleFormula(null);
+                                    string ruleFormula = xepRule.GetRuleFormula(vehicle);
                                     if (!string.IsNullOrEmpty(ruleFormula))
                                     {
                                         ecuFuncRulesDict.Add(diagObjId, new VehicleStructsBmw.RuleInfo(diagObjId, ruleFormula));
