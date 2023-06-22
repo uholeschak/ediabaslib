@@ -712,6 +712,7 @@ namespace BmwFileReader
             return null;
         }
 
+#if Android
         public static List<VehicleStructsBmw.ServiceDataItem> GetServiceDataItems(string databaseDir, RuleEvalBmw ruleEvalBmw = null)
         {
             VehicleStructsBmw.ServiceData serviceData = ReadServiceData(databaseDir);
@@ -769,5 +770,6 @@ namespace BmwFileReader
 
             return textData;
         }
+#endif
     }
 }
