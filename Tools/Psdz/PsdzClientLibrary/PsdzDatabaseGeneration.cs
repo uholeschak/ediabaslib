@@ -4018,14 +4018,15 @@ namespace PsdzClient
                     return false;
                 }
 
-                if (!AddDiagObjRulesInfo(clientContext, ecuFuncRulesDict))
+                SerializableDictionary<string, VehicleStructsBmw.RuleInfo> diagObjectRulesDict = ExtractDiagObjRulesInfo(clientContext);
+                if (diagObjectRulesDict == null)
                 {
-                    log.ErrorFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo AddDiagObjRulesInfo failed");
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo ExtractDiagObjRulesInfo failed");
                     return false;
                 }
 
                 VehicleStructsBmw.VersionInfo versionInfo = new VehicleStructsBmw.VersionInfo(dbInfo?.Version, dbInfo?.DateTime);
-                rulesInfoData = new VehicleStructsBmw.RulesInfoData(versionInfo, faultRulesDict, ecuFuncRulesDict);
+                rulesInfoData = new VehicleStructsBmw.RulesInfoData(versionInfo, faultRulesDict, ecuFuncRulesDict, diagObjectRulesDict);
                 if (!SaveFaultRulesClass(rulesInfoData, rulesCsFile))
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo SaveFaultRulesFunction failed");
@@ -4073,15 +4074,15 @@ namespace PsdzClient
             return true;
         }
 
-        private bool AddDiagObjRulesInfo(ClientContext clientContext, SerializableDictionary<string, VehicleStructsBmw.RuleInfo> ecuFuncRulesDict)
+        private SerializableDictionary<string, VehicleStructsBmw.RuleInfo> ExtractDiagObjRulesInfo(ClientContext clientContext)
         {
             try
             {
                 List<SwiDiagObj> diagObjsNodeClass = GetInfoObjectsTreeForNodeclassName(DiagObjServiceRoot, null, new List<string> { AblFilter });
                 if (diagObjsNodeClass == null)
                 {
-                    log.ErrorFormat("AddDiagObjRulesInfo GetInfoObjectsTreeForNodeclassName failed");
-                    return false;
+                    log.ErrorFormat("ExtractDiagObjRulesInfo GetInfoObjectsTreeForNodeclassName failed");
+                    return null;
                 }
 
                 List<SwiInfoObj> completeInfoObjects = new List<SwiInfoObj>();
@@ -4090,13 +4091,14 @@ namespace PsdzClient
                     completeInfoObjects.AddRange(swiDiagObj.CompleteInfoObjects);
                 }
 
+                SerializableDictionary<string, VehicleStructsBmw.RuleInfo> diagObjectRulesDict = new SerializableDictionary<string, VehicleStructsBmw.RuleInfo>();
                 Vehicle vehicle = new Vehicle(clientContext);
                 foreach (SwiInfoObj infoObject in completeInfoObjects)
                 {
                     string infoObjId = infoObject.Id;
                     if (infoObjId.ConvertToInt() > 0)
                     {
-                        if (!ecuFuncRulesDict.ContainsKey(infoObjId))
+                        if (!diagObjectRulesDict.ContainsKey(infoObjId))
                         {
                             XepRule xepRule = GetRuleById(infoObjId);
                             if (xepRule != null)
@@ -4104,7 +4106,7 @@ namespace PsdzClient
                                 string ruleFormula = xepRule.GetRuleFormula(vehicle);
                                 if (!string.IsNullOrEmpty(ruleFormula))
                                 {
-                                    ecuFuncRulesDict.Add(infoObjId, new VehicleStructsBmw.RuleInfo(infoObjId, ruleFormula));
+                                    diagObjectRulesDict.Add(infoObjId, new VehicleStructsBmw.RuleInfo(infoObjId, ruleFormula));
                                 }
                             }
                         }
@@ -4115,7 +4117,7 @@ namespace PsdzClient
                         string diagObjId = diagObj.Id;
                         if (diagObjId.ConvertToInt() > 0)
                         {
-                            if (!ecuFuncRulesDict.ContainsKey(diagObjId))
+                            if (!diagObjectRulesDict.ContainsKey(diagObjId))
                             {
                                 XepRule xepRule = GetRuleById(diagObjId);
                                 if (xepRule != null)
@@ -4123,7 +4125,7 @@ namespace PsdzClient
                                     string ruleFormula = xepRule.GetRuleFormula(vehicle);
                                     if (!string.IsNullOrEmpty(ruleFormula))
                                     {
-                                        ecuFuncRulesDict.Add(diagObjId, new VehicleStructsBmw.RuleInfo(diagObjId, ruleFormula));
+                                        diagObjectRulesDict.Add(diagObjId, new VehicleStructsBmw.RuleInfo(diagObjId, ruleFormula));
                                     }
                                 }
                             }
@@ -4131,12 +4133,12 @@ namespace PsdzClient
                     }
                 }
 
-                return true;
+                return diagObjectRulesDict;
             }
             catch (Exception e)
             {
-                log.ErrorFormat("AddDiagObjRulesInfo Exception: '{0}'", e.Message);
-                return false;
+                log.ErrorFormat("ExtractDiagObjRulesInfo Exception: '{0}'", e.Message);
+                return null;
             }
         }
 
@@ -4203,6 +4205,27 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
         {
 ");
                 foreach (KeyValuePair<string, VehicleStructsBmw.RuleInfo> ruleInfo in rulesInfoData.EcuFuncRuleDict)
+                {
+                    sb.Append(
+$@"            case ""{ruleInfo.Value.Id.Trim()}"":
+                return {ruleInfo.Value.RuleFormula};
+"
+                    );
+                }
+                sb.Append(
+                    @"
+        }
+
+        RuleNotFound(id.Trim());
+        return true;
+    }
+
+    public bool IsDiagObjectRuleValid(string id)
+    {
+        switch (id.Trim())
+        {
+");
+                foreach (KeyValuePair<string, VehicleStructsBmw.RuleInfo> ruleInfo in rulesInfoData.DiagObjectRuleDict)
                 {
                     sb.Append(
 $@"            case ""{ruleInfo.Value.Id.Trim()}"":

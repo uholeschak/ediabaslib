@@ -232,20 +232,23 @@ namespace BmwFileReader
         [XmlType("RulesInfoData")]
         public class RulesInfoData
         {
-            public RulesInfoData() : this(null, null, null)
+            public RulesInfoData() : this(null, null, null, null)
             {
             }
 
-            public RulesInfoData(VersionInfo versionInfo, SerializableDictionary<string, RuleInfo> faultRuleDict, SerializableDictionary<string, RuleInfo> ecuFuncRuleDict)
+            public RulesInfoData(VersionInfo versionInfo, SerializableDictionary<string, RuleInfo> faultRuleDict, SerializableDictionary<string, RuleInfo> ecuFuncRuleDict,
+                SerializableDictionary<string, RuleInfo> diagObjectRuleDict)
             {
                 Version = versionInfo;
                 FaultRuleDict = faultRuleDict;
                 EcuFuncRuleDict = ecuFuncRuleDict;
+                DiagObjectRuleDict = diagObjectRuleDict;
             }
 
             [XmlElement("Version"), DefaultValue(null)] public VersionInfo Version { get; set; }
             [XmlElement("FaultRuleDict"), DefaultValue(null)] public SerializableDictionary<string, RuleInfo> FaultRuleDict { get; set; }
             [XmlElement("EcuFuncRuleDict"), DefaultValue(null)] public SerializableDictionary<string, RuleInfo> EcuFuncRuleDict { get; set; }
+            [XmlElement("DiagObjectRuleDict"), DefaultValue(null)] public SerializableDictionary<string, RuleInfo> DiagObjectRuleDict { get; set; }
         }
 
         [XmlInclude(typeof(ServiceDataItem))]
