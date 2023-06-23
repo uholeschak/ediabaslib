@@ -4161,6 +4161,15 @@ namespace PsdzClient
                     return false;
                 }
 
+                List<VehicleStructsBmw.RuleInfo> faultRuleList = rulesInfoData.FaultRuleDict.Values.ToList();
+                List<VehicleStructsBmw.RuleInfo> faultRuleListOrder =  faultRuleList.OrderBy(x => x.RuleFormula).ToList();
+
+                List<VehicleStructsBmw.RuleInfo> ecuFuncRuleList = rulesInfoData.EcuFuncRuleDict.Values.ToList();
+                List<VehicleStructsBmw.RuleInfo> ecuFuncRuleListOrder = ecuFuncRuleList.OrderBy(x => x.RuleFormula).ToList();
+
+                List<VehicleStructsBmw.RuleInfo> diagObjectRuleList = rulesInfoData.DiagObjectRuleDict.Values.ToList();
+                List<VehicleStructsBmw.RuleInfo> diagObjectRuleListOrder = diagObjectRuleList.OrderBy(x => x.RuleFormula).ToList();
+
                 StringBuilder sb = new StringBuilder();
                 sb.Append(
 $@"using BmwFileReader;
@@ -4183,13 +4192,27 @@ public class RulesInfo
         switch (id.Trim())
         {{
 ");
-                foreach (KeyValuePair<string, VehicleStructsBmw.RuleInfo> ruleInfo in rulesInfoData.FaultRuleDict)
                 {
-                    sb.Append(
-$@"            case ""{ruleInfo.Value.Id.Trim()}"":
-                return {ruleInfo.Value.RuleFormula};
+                    VehicleStructsBmw.RuleInfo ruleInfoLast = null;
+                    VehicleStructsBmw.RuleInfo ruleInfoEnd = faultRuleListOrder.Last();
+                    foreach (VehicleStructsBmw.RuleInfo ruleInfo in faultRuleListOrder)
+                    {
+                        sb.Append(
+$@"            case ""{ruleInfo.Id.Trim()}"":
 "
-                    );
+                        );
+
+                        if (ruleInfoEnd == ruleInfo ||
+                            (ruleInfoLast != null && string.Compare(ruleInfo.RuleFormula, ruleInfoLast.RuleFormula, StringComparison.Ordinal) != 0))
+                        {
+                            sb.Append(
+$@"                return {ruleInfo.RuleFormula};
+"
+                            );
+                        }
+
+                        ruleInfoLast = ruleInfo;
+                    }
                 }
                 sb.Append(
 @"
@@ -4204,16 +4227,30 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
         switch (id.Trim())
         {
 ");
-                foreach (KeyValuePair<string, VehicleStructsBmw.RuleInfo> ruleInfo in rulesInfoData.EcuFuncRuleDict)
                 {
-                    sb.Append(
-$@"            case ""{ruleInfo.Value.Id.Trim()}"":
-                return {ruleInfo.Value.RuleFormula};
+                    VehicleStructsBmw.RuleInfo ruleInfoLast = null;
+                    VehicleStructsBmw.RuleInfo ruleInfoEnd = ecuFuncRuleListOrder.Last();
+                    foreach (VehicleStructsBmw.RuleInfo ruleInfo in ecuFuncRuleListOrder)
+                    {
+                        sb.Append(
+$@"            case ""{ruleInfo.Id.Trim()}"":
 "
-                    );
+                        );
+
+                        if (ruleInfoEnd == ruleInfo ||
+                            (ruleInfoLast != null && string.Compare(ruleInfo.RuleFormula, ruleInfoLast.RuleFormula, StringComparison.Ordinal) != 0))
+                        {
+                            sb.Append(
+$@"                return {ruleInfo.RuleFormula};
+"
+                            );
+                        }
+
+                        ruleInfoLast = ruleInfo;
+                    }
                 }
                 sb.Append(
-                    @"
+@"
         }
 
         RuleNotFound(id.Trim());
@@ -4225,16 +4262,30 @@ $@"            case ""{ruleInfo.Value.Id.Trim()}"":
         switch (id.Trim())
         {
 ");
-                foreach (KeyValuePair<string, VehicleStructsBmw.RuleInfo> ruleInfo in rulesInfoData.DiagObjectRuleDict)
                 {
-                    sb.Append(
-$@"            case ""{ruleInfo.Value.Id.Trim()}"":
-                return {ruleInfo.Value.RuleFormula};
+                    VehicleStructsBmw.RuleInfo ruleInfoLast = null;
+                    VehicleStructsBmw.RuleInfo ruleInfoEnd = diagObjectRuleListOrder.Last();
+                    foreach (VehicleStructsBmw.RuleInfo ruleInfo in diagObjectRuleListOrder)
+                    {
+                        sb.Append(
+$@"            case ""{ruleInfo.Id.Trim()}"":
 "
-                    );
+                        );
+
+                        if (ruleInfoEnd == ruleInfo ||
+                            (ruleInfoLast != null && string.Compare(ruleInfo.RuleFormula, ruleInfoLast.RuleFormula, StringComparison.Ordinal) != 0))
+                        {
+                            sb.Append(
+$@"                return {ruleInfo.RuleFormula};
+"
+                            );
+                        }
+
+                        ruleInfoLast = ruleInfo;
+                    }
                 }
                 sb.Append(
-                    @"
+@"
         }
 
         RuleNotFound(id.Trim());
