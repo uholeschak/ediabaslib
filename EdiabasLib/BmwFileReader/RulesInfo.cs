@@ -17010,6 +17010,17 @@ public class RulesInfo
                 return (((IsValidRuleString("Typschlüssel", "0J01") || IsValidRuleString("Typschlüssel", "0J03") || IsValidRuleString("Typschlüssel", "0J11") || IsValidRuleString("Typschlüssel", "0J13") || IsValidRuleString("Typschlüssel", "0J21") || IsValidRuleString("Typschlüssel", "0J23") || IsValidRuleString("Typschlüssel", "0J31") || IsValidRuleString("Typschlüssel", "0J33") || IsValidRuleString("Typschlüssel", "0J41") || IsValidRuleString("Typschlüssel", "0J43")) && IsValidRuleString("Marke", "BMW MOTORRAD") && (IsValidRuleString("E-Bezeichnung", "K22") || IsValidRuleString("E-Bezeichnung", "K32") || IsValidRuleString("E-Bezeichnung", "K21") || IsValidRuleString("E-Bezeichnung", "K23") || IsValidRuleString("E-Bezeichnung", "K33"))) || (!(IsValidRuleString("Typschlüssel", "0M71")) && !(IsValidRuleString("Typschlüssel", "0M73")) && IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K53") && !(IsValidRuleString("SALAPA", "202"))) || (IsValidRuleString("Marke", "BMW MOTORRAD") && (IsValidRuleString("E-Bezeichnung", "K50") || IsValidRuleString("E-Bezeichnung", "K51")) && !(IsValidRuleString("SALAPA", "192")) && (RuleNum("Baustand") <= 202006)) || ((IsValidRuleString("Typschlüssel", "0A13") || IsValidRuleString("Typschlüssel", "0A03") || IsValidRuleString("Typschlüssel", "0J61") || IsValidRuleString("Typschlüssel", "0J63")) && IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K52") && !(IsValidRuleString("SALAPA", "219"))) || (IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K54") && (RuleNum("Baustand") <= 201810)) || (IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K49")));
             case "20000823932701":
                 return ((IsValidRuleString("Marke", "BMW MOTORRAD") && (IsValidRuleString("E-Bezeichnung", "K50") || IsValidRuleString("E-Bezeichnung", "K51")) && !(IsValidRuleString("SALAPA", "19Z")) && (RuleNum("Baustand") >= 202007)) || (IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K35")) || (IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K52") && (RuleNum("Baustand") >= 202011)));
+
+        }
+
+        RuleNotFound(id.Trim());
+        return true;
+    }
+
+    public bool IsDiagObjectRuleValid(string id)
+    {
+        switch (id.Trim())
+        {
             case "2000008809345":
                 return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Produktlinie", "PL6-alt")) || (IsValidRuleString("Marke", "MINI PKW") && IsValidRuleString("Produktlinie", "PL3")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Produktlinie", "PL2")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Produktlinie", "PL4")));
             case "20000170691631":
