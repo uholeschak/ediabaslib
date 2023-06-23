@@ -4207,6 +4207,7 @@ $@"            case ""{ruleInfo.Id.Trim()}"":
                         {
                             sb.Append(
 $@"                return {ruleInfo.RuleFormula};
+
 "
                             );
                         }
@@ -4215,8 +4216,7 @@ $@"                return {ruleInfo.RuleFormula};
                     }
                 }
                 sb.Append(
-@"
-        }
+@"        }
 
         RuleNotFound(id.Trim());
         return true;
@@ -4242,6 +4242,7 @@ $@"            case ""{ruleInfo.Id.Trim()}"":
                         {
                             sb.Append(
 $@"                return {ruleInfo.RuleFormula};
+
 "
                             );
                         }
@@ -4250,8 +4251,7 @@ $@"                return {ruleInfo.RuleFormula};
                     }
                 }
                 sb.Append(
-@"
-        }
+@"        }
 
         RuleNotFound(id.Trim());
         return true;
@@ -4277,6 +4277,7 @@ $@"            case ""{ruleInfo.Id.Trim()}"":
                         {
                             sb.Append(
 $@"                return {ruleInfo.RuleFormula};
+
 "
                             );
                         }
@@ -4285,8 +4286,7 @@ $@"                return {ruleInfo.RuleFormula};
                     }
                 }
                 sb.Append(
-@"
-        }
+@"        }
 
         RuleNotFound(id.Trim());
         return true;
