@@ -80,7 +80,6 @@ namespace BmwDeepObd
         {
             None,
             BmwActuator,
-            BmwService,
             VagCoding,
             VagCoding2,
             VagAdaption,
@@ -2289,33 +2288,8 @@ namespace BmwDeepObd
                         break;
 
                     case Resource.Id.menu_xml_tool_bmw_service:
-                    {
-                        if (_bmwServiceDataItems == null)
-                        {
-                            break;
-                        }
-
-                        AndroidX.AppCompat.Widget.PopupMenu popupMenu = new AndroidX.AppCompat.Widget.PopupMenu(this, anchor);
-                        string language = ActivityCommon.GetCurrentLanguage();
-                        foreach (VehicleStructsBmw.ServiceDataItem serviceDataItem in _bmwServiceDataItems)
-                        {
-                            VehicleStructsBmw.ServiceTextData serviceTextData = VehicleInfoBmw.GetServiceTextDataForHash(serviceDataItem.InfoObjTextHash);
-                            if (serviceTextData != null)
-                            {
-                                string infoObjText = serviceTextData.Translation.GetTitle(language);
-                                if (!string.IsNullOrEmpty(infoObjText))
-                                {
-                                    popupMenu.Menu.Add(infoObjText);
-                                }
-                            }
-                        }
-
-                        if (popupMenu.Menu.HasVisibleItems)
-                        {
-                            popupMenu.Show();
-                        }
+                        ShowBwmServiceMenu(anchor);
                         break;
-                    }
 
                     case Resource.Id.menu_xml_tool_vag_coding:
                         CallEcuFunction(_ecuList[itemPos], EcuFunctionCallType.VagCoding);
@@ -2352,6 +2326,77 @@ namespace BmwDeepObd
             PerformJobsRead(ecuInfo);
 
             return true;
+        }
+
+        private bool ShowBwmServiceMenu(View anchor)
+        {
+            if (_bmwServiceDataItems == null)
+            {
+                return false;
+            }
+
+            try
+            {
+                AndroidX.AppCompat.Widget.PopupMenu popupMenu = new AndroidX.AppCompat.Widget.PopupMenu(this, anchor);
+                string language = ActivityCommon.GetCurrentLanguage();
+                foreach (VehicleStructsBmw.ServiceDataItem serviceDataItem in _bmwServiceDataItems)
+                {
+                    List<string> textList = new List<string>();
+                    int index = 0;
+                    foreach (string diagObjTextHash in serviceDataItem.DiagObjTextHashes)
+                    {
+                        if (index > 1)
+                        {
+                            VehicleStructsBmw.ServiceTextData diagObjTextData = VehicleInfoBmw.GetServiceTextDataForHash(diagObjTextHash);
+                            if (diagObjTextData != null)
+                            {
+                                string diagObjText = diagObjTextData.Translation.GetTitle(language);
+                                if (!string.IsNullOrEmpty(diagObjText))
+                                {
+                                    textList.Add(diagObjText);
+                                }
+                            }
+                        }
+
+                        index++;
+                    }
+
+                    VehicleStructsBmw.ServiceTextData serviceTextData = VehicleInfoBmw.GetServiceTextDataForHash(serviceDataItem.InfoObjTextHash);
+                    if (serviceTextData != null)
+                    {
+                        string infoObjText = serviceTextData.Translation.GetTitle(language);
+                        if (!string.IsNullOrEmpty(infoObjText))
+                        {
+                            textList.Add(infoObjText);
+                        }
+                    }
+
+                    StringBuilder sb = new StringBuilder();
+                    foreach (string textItem in textList)
+                    {
+                        if (sb.Length > 0)
+                        {
+                            sb.Append("; ");
+                        }
+
+                        sb.Append(textItem);
+                    }
+
+                    popupMenu.Menu.Add(sb.ToString());
+                }
+
+                if (!popupMenu.Menu.HasVisibleItems)
+                {
+                    return false;
+                }
+
+                popupMenu.Show();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         private bool SelectBluetoothDevice()
