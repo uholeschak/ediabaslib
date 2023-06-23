@@ -1166,7 +1166,7 @@ namespace BmwDeepObd
                 EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType nodeClassType = job.EcuFixedFuncStruct.GetNodeClassType();
                 if (nodeClassType != EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator)
                 {
-                    bool validId = ruleEvalBmw == null || ruleEvalBmw.EvaluateRule(job.EcuFixedFuncStruct.Id, true);
+                    bool validId = ruleEvalBmw == null || ruleEvalBmw.EvaluateRule(job.EcuFixedFuncStruct.Id, RuleEvalBmw.RuleType.EcuFunc);
                     if (validId)
                     {
                         foreach (EcuFunctionStructs.EcuJob ecuJob in job.EcuFixedFuncStruct.EcuJobList)

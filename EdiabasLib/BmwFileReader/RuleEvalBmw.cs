@@ -11,6 +11,13 @@ namespace BmwFileReader
 {
     public class RuleEvalBmw
     {
+        public enum RuleType
+        {
+            Fault,
+            EcuFunc,
+            DiagObj
+        }
+
         private RulesInfo _rulesInfo { get; }
         private readonly Dictionary<string, List<string>> _propertiesDict = new Dictionary<string, List<string>>();
         private readonly HashSet<string> _unknownNamesHash = new HashSet<string>();
@@ -22,7 +29,7 @@ namespace BmwFileReader
             _rulesInfo = new RulesInfo(this);
         }
 
-        public bool EvaluateRule(string id, bool ecuFuncRule = false)
+        public bool EvaluateRule(string id, RuleType ruleType)
         {
             lock (_lockObject)
             {
@@ -36,7 +43,22 @@ namespace BmwFileReader
                     _unknownNamesHash.Clear();
                     _unknownId = null;
 
-                    bool valid = ecuFuncRule ? _rulesInfo.IsEcuFuncRuleValid(id) : _rulesInfo.IsFaultRuleValid(id);
+                    bool valid = false;
+                    switch (ruleType)
+                    {
+                        case RuleType.Fault:
+                            valid = _rulesInfo.IsFaultRuleValid(id);
+                            break;
+
+                        case RuleType.EcuFunc:
+                            valid = _rulesInfo.IsEcuFuncRuleValid(id);
+                            break;
+
+                        case RuleType.DiagObj:
+                            valid = _rulesInfo.IsDiagObjectRuleValid(id);
+                            break;
+                    }
+
                     if (_unknownId != null)
                     {
                         return true;

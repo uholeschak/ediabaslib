@@ -729,12 +729,12 @@ namespace BmwFileReader
             List<VehicleStructsBmw.ServiceDataItem> serviceDataItems = new List<VehicleStructsBmw.ServiceDataItem>();
             foreach (VehicleStructsBmw.ServiceDataItem serviceDataItem in serviceData.ServiceDataList)
             {
-                bool valid = ruleEvalBmw.EvaluateRule(serviceDataItem.InfoObjId);
+                bool valid = ruleEvalBmw.EvaluateRule(serviceDataItem.InfoObjId, RuleEvalBmw.RuleType.DiagObj);
                 if (valid)
                 {
                     foreach (string diagObjId in serviceDataItem.DiagObjIds)
                     {
-                        if (!ruleEvalBmw.EvaluateRule(diagObjId))
+                        if (!ruleEvalBmw.EvaluateRule(diagObjId, RuleEvalBmw.RuleType.DiagObj))
                         {
                             valid = false;
                             break;
