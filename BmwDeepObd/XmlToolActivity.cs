@@ -2376,25 +2376,89 @@ namespace BmwDeepObd
 
                 foreach (VehicleInfoBmw.ServiceTreeItem childItem in serviceTreeItem.ChildItems)
                 {
+                    List<VehicleStructsBmw.ServiceInfoData> serviceInfoList = new List<VehicleStructsBmw.ServiceInfoData>();
                     if (childItem.ServiceDataItem != null)
                     {
-                        VehicleStructsBmw.ServiceTextData infoObjTextData = VehicleInfoBmw.GetServiceTextDataForHash(childItem.ServiceDataItem.InfoObjId);
-                        if (infoObjTextData != null)
+                        foreach (VehicleStructsBmw.ServiceInfoData serviceInfoData in childItem.ServiceDataItem.InfoDataList)
                         {
-                            string infoObjText = infoObjTextData.Translation.GetTitle(language);
-                            if (!string.IsNullOrEmpty(infoObjText))
+                            if (serviceInfoData.TextHashes == null || serviceInfoData.TextHashes.Count < 1)
                             {
-                                IMenuItem menuItem;
-                                if (subMenu != null)
-                                {
-                                    menuItem = subMenu.Add(infoObjText);
-                                }
-                                else
-                                {
-                                    menuItem = menu.Add(infoObjText);
-                                }
+                                continue;
+                            }
 
-                                childItem.MenuObject = menuItem;
+                            string jobBare = serviceInfoData.EdiabasJobBare;
+                            if (string.IsNullOrEmpty(jobBare))
+                            {
+                                continue;
+                            }
+
+                            string[] jobBareItems = jobBare.Split('#');
+                            if (jobBareItems.Length < 2)
+                            {
+                                continue;
+                            }
+
+                            if (jobBareItems[1].StartsWith("IDENT", StringComparison.OrdinalIgnoreCase))
+                            {
+                                continue;
+                            }
+
+                            if (jobBareItems[1].StartsWith("STATUS", StringComparison.OrdinalIgnoreCase))
+                            {
+                                continue;
+                            }
+
+                            if (jobBareItems[1].Contains("LESEN", StringComparison.OrdinalIgnoreCase))
+                            {
+                                continue;
+                            }
+
+                            serviceInfoList.Add(serviceInfoData);
+                        }
+
+                        if (serviceInfoList.Count > 0)
+                        {
+                            VehicleStructsBmw.ServiceTextData infoObjTextData = VehicleInfoBmw.GetServiceTextDataForHash(childItem.ServiceDataItem.InfoObjId);
+                            if (infoObjTextData != null)
+                            {
+                                string infoObjText = infoObjTextData.Translation.GetTitle(language);
+                                if (!string.IsNullOrEmpty(infoObjText))
+                                {
+                                    ISubMenu subMenuInfoObj;
+                                    if (subMenu != null)
+                                    {
+                                        subMenuInfoObj = subMenu.AddSubMenu(infoObjText);
+                                    }
+                                    else
+                                    {
+                                        subMenuInfoObj = menu.AddSubMenu(infoObjText);
+                                    }
+
+                                    childItem.MenuObject = subMenuInfoObj;
+                                    StringBuilder sb = new StringBuilder();
+                                    foreach (VehicleStructsBmw.ServiceInfoData serviceInfoData in serviceInfoList)
+                                    {
+                                        foreach (string textHash in serviceInfoData.TextHashes)
+                                        {
+                                            VehicleStructsBmw.ServiceTextData serviceInfoTextData = VehicleInfoBmw.GetServiceTextDataForHash(textHash);
+                                            if (serviceInfoTextData != null)
+                                            {
+                                                string serviceInfoText = serviceInfoTextData.Translation.GetTitle(language);
+                                                if (!string.IsNullOrEmpty(serviceInfoText))
+                                                {
+                                                    if (sb.Length > 0)
+                                                    {
+                                                        sb.Append("; ");
+                                                    }
+
+                                                    sb.Append(serviceInfoText);
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    IMenuItem menuItem = subMenuInfoObj.Add(sb.ToString());
+                                }
                             }
                         }
 
