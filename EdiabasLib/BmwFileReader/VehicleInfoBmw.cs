@@ -40,6 +40,27 @@ namespace BmwFileReader
             public List<ServiceTreeItem> ChildItems { get; set; }
 
             public VehicleStructsBmw.ServiceDataItem ServiceDataItem { get; set; }
+
+            public bool HasTree
+            {
+                get
+                {
+                    int count = 0;
+                    foreach (ServiceTreeItem childItem in ChildItems)
+                    {
+                        if (childItem.ServiceDataItem == null)
+                        {
+                            count++;
+                            if (childItem.HasTree)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+
+                    return count > 1;
+                }
+            }
         }
 
         public const string ResultUnknown = "UNBEK";
