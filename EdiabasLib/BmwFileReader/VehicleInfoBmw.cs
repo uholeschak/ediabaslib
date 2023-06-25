@@ -26,6 +26,22 @@ namespace BmwFileReader
             File
         }
 
+        public class ServiceTreeItem
+        {
+            public ServiceTreeItem(string id)
+            {
+                Id = id;
+                ChildItems = new List<ServiceTreeItem>();
+                ServiceDataItem = null;
+            }
+
+            public string Id { get; set; }
+
+            public List<ServiceTreeItem> ChildItems { get; set; }
+
+            public VehicleStructsBmw.ServiceDataItem ServiceDataItem { get; set; }
+        }
+
         public const string ResultUnknown = "UNBEK";
 
 #if Android
@@ -749,6 +765,60 @@ namespace BmwFileReader
             }
 
             return serviceDataItems;
+        }
+
+        public static ServiceTreeItem GetServiceItemTree(List<VehicleStructsBmw.ServiceDataItem> serviceDataItems)
+        {
+            if (serviceDataItems == null)
+            {
+                return null;
+            }
+
+            ServiceTreeItem serviceTreeItemRoot = new ServiceTreeItem(null);
+            foreach (VehicleStructsBmw.ServiceDataItem serviceDataItem in serviceDataItems)
+            {
+                ServiceTreeItem serviceTreeItemCurrent = serviceTreeItemRoot;
+                foreach (string diagObjId in serviceDataItem.DiagObjIds)
+                {
+                    ServiceTreeItem childItemDiagMatch = null;
+                    foreach (ServiceTreeItem childItem in serviceTreeItemCurrent.ChildItems)
+                    {
+                        if (childItem.Id == diagObjId)
+                        {
+                            childItemDiagMatch = childItem;
+                            break;
+                        }
+                    }
+
+                    if (childItemDiagMatch == null)
+                    {
+                        childItemDiagMatch = new ServiceTreeItem(diagObjId);
+                        serviceTreeItemCurrent.ChildItems.Add(childItemDiagMatch);
+                    }
+
+                    serviceTreeItemCurrent = childItemDiagMatch;
+                }
+
+                ServiceTreeItem childItemInfoMatch = null;
+                foreach (ServiceTreeItem childItem in serviceTreeItemCurrent.ChildItems)
+                {
+                    if (childItem.Id == serviceDataItem.InfoObjId)
+                    {
+                        childItemInfoMatch = childItem;
+                        break;
+                    }
+                }
+
+                if (childItemInfoMatch == null)
+                {
+                    childItemInfoMatch = new ServiceTreeItem(serviceDataItem.InfoObjId);
+                    serviceTreeItemCurrent.ChildItems.Add(childItemInfoMatch);
+                }
+
+                childItemInfoMatch.ServiceDataItem = serviceDataItem;
+            }
+
+            return serviceTreeItemRoot;
         }
 
         public static VehicleStructsBmw.ServiceTextData GetServiceTextDataForHash(string hashCode)
