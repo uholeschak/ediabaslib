@@ -2395,7 +2395,7 @@ namespace BmwDeepObd
                     }
 
                     ISubMenu subMenuChild = subMenu;
-                    if (level > 1)
+                    if (level > 1 && childItem.HasTree)
                     {
                         VehicleStructsBmw.ServiceTextData diagObjTextData = VehicleInfoBmw.GetServiceTextDataForHash(childItem.Id);
                         if (diagObjTextData != null)
