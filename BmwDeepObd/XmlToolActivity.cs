@@ -2337,60 +2337,77 @@ namespace BmwDeepObd
 
             try
             {
+                VehicleInfoBmw.ServiceTreeItem serviceTreeItem = VehicleInfoBmw.GetServiceItemTree(_bmwServiceDataItems);
                 AndroidX.AppCompat.Widget.PopupMenu popupMenu = new AndroidX.AppCompat.Widget.PopupMenu(this, anchor);
                 string language = ActivityCommon.GetCurrentLanguage();
-                foreach (VehicleStructsBmw.ServiceDataItem serviceDataItem in _bmwServiceDataItems)
-                {
-                    List<string> textList = new List<string>();
-                    int index = 0;
-                    foreach (string diagObjTextHash in serviceDataItem.DiagObjTextHashes)
-                    {
-                        if (index > 1)
-                        {
-                            VehicleStructsBmw.ServiceTextData diagObjTextData = VehicleInfoBmw.GetServiceTextDataForHash(diagObjTextHash);
-                            if (diagObjTextData != null)
-                            {
-                                string diagObjText = diagObjTextData.Translation.GetTitle(language);
-                                if (!string.IsNullOrEmpty(diagObjText))
-                                {
-                                    textList.Add(diagObjText);
-                                }
-                            }
-                        }
-
-                        index++;
-                    }
-
-                    VehicleStructsBmw.ServiceTextData serviceTextData = VehicleInfoBmw.GetServiceTextDataForHash(serviceDataItem.InfoObjTextHash);
-                    if (serviceTextData != null)
-                    {
-                        string infoObjText = serviceTextData.Translation.GetTitle(language);
-                        if (!string.IsNullOrEmpty(infoObjText))
-                        {
-                            textList.Add(infoObjText);
-                        }
-                    }
-
-                    StringBuilder sb = new StringBuilder();
-                    foreach (string textItem in textList)
-                    {
-                        if (sb.Length > 0)
-                        {
-                            sb.Append("; ");
-                        }
-
-                        sb.Append(textItem);
-                    }
-
-                    popupMenu.Menu.Add(sb.ToString());
-                }
-
+                AddBwmServiceMenuChilds(popupMenu.Menu, null, serviceTreeItem, language, 0);
                 if (!popupMenu.Menu.HasVisibleItems)
                 {
                     return false;
                 }
 
                 popupMenu.Show();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private bool AddBwmServiceMenuChilds(IMenu menu, ISubMenu subMenu, VehicleInfoBmw.ServiceTreeItem serviceTreeItem, string language, int level)
+        {
+            try
+            {
+                foreach (VehicleInfoBmw.ServiceTreeItem childItem in serviceTreeItem.ChildItems)
+                {
+                    if (childItem.ServiceDataItem != null)
+                    {
+                        VehicleStructsBmw.ServiceTextData infoObjTextData = VehicleInfoBmw.GetServiceTextDataForHash(childItem.ServiceDataItem.InfoObjId);
+                        if (infoObjTextData != null)
+                        {
+                            string infoObjText = infoObjTextData.Translation.GetTitle(language);
+                            if (!string.IsNullOrEmpty(infoObjText))
+                            {
+                                IMenuItem menuItem;
+                                if (subMenu != null)
+                                {
+                                    menuItem = subMenu.Add(infoObjText);
+                                }
+                                else
+                                {
+                                    menuItem = menu.Add(infoObjText);
+                                }
+                            }
+                        }
+
+                        continue;
+                    }
+
+                    ISubMenu subMenuChild = subMenu;
+                    if (level > 1)
+                    {
+                        VehicleStructsBmw.ServiceTextData diagObjTextData = VehicleInfoBmw.GetServiceTextDataForHash(childItem.Id);
+                        if (diagObjTextData != null)
+                        {
+                            string diagObjText = diagObjTextData.Translation.GetTitle(language);
+                            if (!string.IsNullOrEmpty(diagObjText))
+                            {
+                                if (subMenu != null)
+                                {
+                                    subMenuChild = subMenu.AddSubMenu(diagObjText);
+                                }
+                                else
+                                {
+                                    subMenuChild = menu.AddSubMenu(diagObjText);
+                                }
+                            }
+                        }
+                    }
+
+                    AddBwmServiceMenuChilds(menu, subMenuChild, serviceTreeItem, language, level++);
+                }
+
                 return true;
             }
             catch (Exception)
