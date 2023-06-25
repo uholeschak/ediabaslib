@@ -41,24 +41,24 @@ namespace BmwFileReader
 
             public VehicleStructsBmw.ServiceDataItem ServiceDataItem { get; set; }
 
-            public bool HasTree
+            public bool HasInfoObjects
             {
                 get
                 {
-                    int count = 0;
+                    if (ServiceDataItem == null)
+                    {
+                        return true;
+                    }
+
                     foreach (ServiceTreeItem childItem in ChildItems)
                     {
-                        if (childItem.ServiceDataItem == null)
+                        if (childItem.HasInfoObjects)
                         {
-                            count++;
-                            if (childItem.HasTree)
-                            {
-                                return true;
-                            }
+                            return true;
                         }
                     }
 
-                    return count > 1;
+                    return false;
                 }
             }
         }
