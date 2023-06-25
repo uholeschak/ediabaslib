@@ -2405,7 +2405,7 @@ namespace BmwDeepObd
                         }
                     }
 
-                    AddBwmServiceMenuChilds(menu, subMenuChild, serviceTreeItem, language, level++);
+                    AddBwmServiceMenuChilds(menu, subMenuChild, childItem, language, level++);
                 }
 
                 return true;
