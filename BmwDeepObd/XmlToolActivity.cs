@@ -2359,6 +2359,16 @@ namespace BmwDeepObd
         {
             try
             {
+                if (serviceTreeItem.ChildItems.Count == 1)
+                {
+                    VehicleInfoBmw.ServiceTreeItem childItem = serviceTreeItem.ChildItems[0];
+                    if (childItem.ServiceDataItem == null)
+                    {
+                        AddBwmServiceMenuChilds(menu, subMenu, childItem, language, level + 1);
+                        return true;
+                    }
+                }
+
                 foreach (VehicleInfoBmw.ServiceTreeItem childItem in serviceTreeItem.ChildItems)
                 {
                     if (childItem.ServiceDataItem != null)
@@ -2405,7 +2415,7 @@ namespace BmwDeepObd
                         }
                     }
 
-                    AddBwmServiceMenuChilds(menu, subMenuChild, childItem, language, level++);
+                    AddBwmServiceMenuChilds(menu, subMenuChild, childItem, language, level + 1);
                 }
 
                 return true;
