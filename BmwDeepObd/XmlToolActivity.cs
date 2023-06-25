@@ -2359,6 +2359,11 @@ namespace BmwDeepObd
         {
             try
             {
+                if (!serviceTreeItem.HasInfoObjects)
+                {
+                    return false;
+                }
+
                 if (serviceTreeItem.ChildItems.Count == 1)
                 {
                     VehicleInfoBmw.ServiceTreeItem childItem = serviceTreeItem.ChildItems[0];
@@ -2395,7 +2400,7 @@ namespace BmwDeepObd
                     }
 
                     ISubMenu subMenuChild = subMenu;
-                    if (level > 1 && childItem.HasTree)
+                    if (level > 1)
                     {
                         VehicleStructsBmw.ServiceTextData diagObjTextData = VehicleInfoBmw.GetServiceTextDataForHash(childItem.Id);
                         if (diagObjTextData != null)
