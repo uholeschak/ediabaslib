@@ -793,6 +793,7 @@ namespace BmwFileReader
                     if (childItemDiagMatch == null)
                     {
                         childItemDiagMatch = new ServiceTreeItem(diagObjId);
+                        serviceTreeItemCurrent.ChildItems.Add(childItemDiagMatch);
                     }
 
                     serviceTreeItemCurrent = childItemDiagMatch;
@@ -811,6 +812,7 @@ namespace BmwFileReader
                 if (childItemInfoMatch == null)
                 {
                     childItemInfoMatch = new ServiceTreeItem(serviceDataItem.InfoObjId);
+                    serviceTreeItemCurrent.ChildItems.Add(childItemInfoMatch);
                 }
 
                 childItemInfoMatch.ServiceDataItem = serviceDataItem;
