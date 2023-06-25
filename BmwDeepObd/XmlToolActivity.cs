@@ -2393,6 +2393,8 @@ namespace BmwDeepObd
                                 {
                                     menuItem = menu.Add(infoObjText);
                                 }
+
+                                childItem.MenuObject = menuItem;
                             }
                         }
 
@@ -2416,6 +2418,8 @@ namespace BmwDeepObd
                                 {
                                     subMenuChild = menu.AddSubMenu(diagObjText);
                                 }
+
+                                childItem.MenuObject = subMenuChild;
                             }
                         }
                     }
