@@ -791,6 +791,48 @@ namespace BmwFileReader
             return serviceDataItems;
         }
 
+        public static bool IsValidServiceInfoData(VehicleStructsBmw.ServiceInfoData serviceInfoData)
+        {
+            if (serviceInfoData == null)
+            {
+                return false;
+            }
+
+            if (serviceInfoData.TextHashes == null || serviceInfoData.TextHashes.Count < 1)
+            {
+                return false;
+            }
+
+            string jobBare = serviceInfoData.EdiabasJobBare;
+            if (string.IsNullOrEmpty(jobBare))
+            {
+                return false;
+            }
+
+            string[] jobBareItems = jobBare.Split('#');
+            if (jobBareItems.Length < 2)
+            {
+                return false;
+            }
+
+            if (jobBareItems[1].StartsWith("IDENT", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            if (jobBareItems[1].StartsWith("STATUS", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            if (jobBareItems[1].Contains("LESEN", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public static ServiceTreeItem GetServiceItemTree(List<VehicleStructsBmw.ServiceDataItem> serviceDataItems)
         {
             if (serviceDataItems == null)

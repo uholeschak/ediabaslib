@@ -2380,34 +2380,7 @@ namespace BmwDeepObd
                     List<VehicleStructsBmw.ServiceInfoData> serviceInfoList = new List<VehicleStructsBmw.ServiceInfoData>();
                     foreach (VehicleStructsBmw.ServiceInfoData serviceInfoData in serviceDataItem.InfoDataList)
                     {
-                        if (serviceInfoData.TextHashes == null || serviceInfoData.TextHashes.Count < 1)
-                        {
-                            continue;
-                        }
-
-                        string jobBare = serviceInfoData.EdiabasJobBare;
-                        if (string.IsNullOrEmpty(jobBare))
-                        {
-                            continue;
-                        }
-
-                        string[] jobBareItems = jobBare.Split('#');
-                        if (jobBareItems.Length < 2)
-                        {
-                            continue;
-                        }
-
-                        if (jobBareItems[1].StartsWith("IDENT", StringComparison.OrdinalIgnoreCase))
-                        {
-                            continue;
-                        }
-
-                        if (jobBareItems[1].StartsWith("STATUS", StringComparison.OrdinalIgnoreCase))
-                        {
-                            continue;
-                        }
-
-                        if (jobBareItems[1].Contains("LESEN", StringComparison.OrdinalIgnoreCase))
+                        if (!VehicleInfoBmw.IsValidServiceInfoData(serviceInfoData))
                         {
                             continue;
                         }
