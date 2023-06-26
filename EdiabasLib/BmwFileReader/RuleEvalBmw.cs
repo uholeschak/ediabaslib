@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using Android.Util;
 using EdiabasLib;
 using Mono.CSharp;
 
@@ -18,6 +19,9 @@ namespace BmwFileReader
             DiagObj
         }
 
+#if DEBUG
+        private static readonly string Tag = typeof(RuleEvalBmw).FullName;
+#endif
         private RulesInfo _rulesInfo { get; }
         private readonly Dictionary<string, List<string>> _propertiesDict = new Dictionary<string, List<string>>();
         private readonly HashSet<string> _unknownNamesHash = new HashSet<string>();
@@ -66,6 +70,19 @@ namespace BmwFileReader
 
                     if (_unknownNamesHash.Count > 0)
                     {
+#if DEBUG
+                        StringBuilder sbDebug = new StringBuilder();
+                        foreach (string unknownHash in _unknownNamesHash)
+                        {
+                            if (sbDebug.Length > 0)
+                            {
+                                sbDebug.Append(", ");
+                            }
+                            sbDebug.Append(unknownHash);
+                        }
+
+                        Log.Info(Tag, string.Format("EvaluateRule Unknown rules: '{0}'", sbDebug));
+#endif
                         return true;
                     }
 
