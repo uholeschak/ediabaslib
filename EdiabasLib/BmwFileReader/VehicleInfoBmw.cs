@@ -34,6 +34,7 @@ namespace BmwFileReader
                 ChildItems = new List<ServiceTreeItem>();
                 ServiceDataItem = null;
                 ServiceInfoList = null;
+                ServiceInfoMenus = null;
                 MenuObject = null;
             }
 
@@ -44,6 +45,8 @@ namespace BmwFileReader
             public VehicleStructsBmw.ServiceDataItem ServiceDataItem { get; set; }
 
             public List<VehicleStructsBmw.ServiceInfoData> ServiceInfoList { get; set; }
+
+            public List<object> ServiceInfoMenus { get; set; }
 
             public object MenuObject { get; set; }
 

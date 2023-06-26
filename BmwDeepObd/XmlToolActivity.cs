@@ -2400,9 +2400,10 @@ namespace BmwDeepObd
 
                     if (subMenuInfoObj != null)
                     {
-                        StringBuilder sb = new StringBuilder();
+                        List<object> serviceInfoMenus = new List<object>();
                         foreach (VehicleStructsBmw.ServiceInfoData serviceInfoData in serviceInfoList)
                         {
+                            StringBuilder sb = new StringBuilder();
                             foreach (string textHash in serviceInfoData.TextHashes)
                             {
                                 VehicleStructsBmw.ServiceTextData serviceInfoTextData = VehicleInfoBmw.GetServiceTextDataForHash(textHash);
@@ -2413,16 +2414,18 @@ namespace BmwDeepObd
                                     {
                                         if (sb.Length > 0)
                                         {
-                                            sb.Append("; ");
+                                            sb.Append("\r\n");
                                         }
 
                                         sb.Append(serviceInfoText);
                                     }
                                 }
                             }
-                        }
 
-                        IMenuItem menuItem = subMenuInfoObj.Add(sb.ToString());
+                            IMenuItem menuItem = subMenuInfoObj.Add(IMenu.None, serviceInfoMenus.Count, IMenu.None, sb.ToString());
+                            serviceInfoMenus.Add(menuItem);
+                        }
+                        serviceTreeItem.ServiceInfoMenus = serviceInfoMenus;
                     }
 
                     return true;
@@ -2431,12 +2434,13 @@ namespace BmwDeepObd
                 foreach (VehicleInfoBmw.ServiceTreeItem childItem in serviceTreeItem.ChildItems)
                 {
                     ISubMenu subMenuChild = subMenu;
-                    if (level > 1)
+                    if (level > 0)
                     {
                         VehicleStructsBmw.ServiceTextData diagObjTextData = VehicleInfoBmw.GetServiceTextDataForHash(childItem.Id);
                         if (diagObjTextData != null)
                         {
                             string diagObjText = diagObjTextData.Translation.GetTitle(language);
+                            //diagObjText = childItem.Id + ": " + diagObjText;
                             if (!string.IsNullOrEmpty(diagObjText))
                             {
                                 if (subMenu != null)
