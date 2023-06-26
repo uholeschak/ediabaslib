@@ -33,6 +33,7 @@ namespace BmwFileReader
                 Id = id;
                 ChildItems = new List<ServiceTreeItem>();
                 ServiceDataItem = null;
+                ServiceInfoList = null;
                 MenuObject = null;
             }
 
@@ -42,20 +43,22 @@ namespace BmwFileReader
 
             public VehicleStructsBmw.ServiceDataItem ServiceDataItem { get; set; }
 
+            public List<VehicleStructsBmw.ServiceInfoData> ServiceInfoList { get; set; }
+
             public object MenuObject { get; set; }
 
-            public bool HasInfoObjects
+            public bool HasInfoData
             {
                 get
                 {
-                    if (ServiceDataItem == null)
+                    if (ServiceInfoList != null && ServiceInfoList.Count > 0)
                     {
                         return true;
                     }
 
                     foreach (ServiceTreeItem childItem in ChildItems)
                     {
-                        if (childItem.HasInfoObjects)
+                        if (childItem.HasInfoData)
                         {
                             return true;
                         }
@@ -843,6 +846,21 @@ namespace BmwFileReader
             ServiceTreeItem serviceTreeItemRoot = new ServiceTreeItem(null);
             foreach (VehicleStructsBmw.ServiceDataItem serviceDataItem in serviceDataItems)
             {
+                List<VehicleStructsBmw.ServiceInfoData> serviceInfoList = new List<VehicleStructsBmw.ServiceInfoData>();
+                foreach (VehicleStructsBmw.ServiceInfoData serviceInfoData in serviceDataItem.InfoDataList)
+                {
+                    if (!IsValidServiceInfoData(serviceInfoData))
+                    {
+                        continue;
+                    }
+                    serviceInfoList.Add(serviceInfoData);
+                }
+
+                if (serviceInfoList.Count == 0)
+                {
+                    continue;
+                }
+
                 ServiceTreeItem serviceTreeItemCurrent = serviceTreeItemRoot;
                 foreach (string diagObjId in serviceDataItem.DiagObjIds)
                 {
@@ -882,6 +900,7 @@ namespace BmwFileReader
                 }
 
                 childItemInfoMatch.ServiceDataItem = serviceDataItem;
+                childItemInfoMatch.ServiceInfoList = serviceInfoList;
             }
 
             return serviceTreeItemRoot;
