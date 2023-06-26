@@ -194,7 +194,10 @@ namespace BmwFileReader
             try
             {
                 string keyEcuRep = "EcuRepresentative".ToUpperInvariant();
+                string keyEcuClique = "EcuClique".ToUpperInvariant();
+
                 _propertiesDict.Remove(keyEcuRep);
+                _propertiesDict.Remove(keyEcuClique);
 
                 if (ecuVariant != null)
                 {
@@ -202,6 +205,12 @@ namespace BmwFileReader
                     if (!string.IsNullOrEmpty(repsName))
                     {
                         _propertiesDict.Add(keyEcuRep, new List<string> { repsName });
+                    }
+
+                    string cliqueName = ecuVariant.EcuClique?.CliqueName;
+                    if (!string.IsNullOrEmpty(cliqueName))
+                    {
+                        _propertiesDict.Add(keyEcuClique, new List<string> { cliqueName });
                     }
                 }
             }
