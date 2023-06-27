@@ -175,6 +175,12 @@ namespace ExtractEcuFunctions
                     return 1;
                 }
 
+                if (!WriteTypeKeyClassInfo(outTextWriter, typeKeyInfoList, outDirSub))
+                {
+                    outTextWriter?.WriteLine("WriteTypeKeyClassInfo failed");
+                    return 1;
+                }
+
                 if (!WriteVinRanges(outTextWriter, connection, outDirSub))
                 {
                     outTextWriter?.WriteLine("Write VinRanges failed");
@@ -537,6 +543,7 @@ namespace ExtractEcuFunctions
                                 if (!typeKeyInfoList.TryGetValue(typeKey, out List<string> storageList))
                                 {
                                     storageList = new List<string>();
+                                    typeKeyInfoList.Add(typeKey, storageList);
                                 }
 
                                 while (storageList.Count < infoIndex + 1)
@@ -553,6 +560,38 @@ namespace ExtractEcuFunctions
                 }
 
                 outTextWriter?.WriteLine("*** Write TypeKeyInfo done ***");
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                outTextWriter?.WriteLine(e);
+                return false;
+            }
+        }
+
+        private static bool WriteTypeKeyClassInfo(TextWriter outTextWriter, Dictionary<string, List<string>> typeKeyInfoList, string outDirSub)
+        {
+            try
+            {
+                outTextWriter?.WriteLine("*** Write TypeKeyInfo start ***");
+                string typeKeysFile = Path.Combine(outDirSub, "typekeyinfo.txt");
+                using (StreamWriter swTypeKeys = new StreamWriter(typeKeysFile))
+                {
+                    foreach (KeyValuePair<string, List<string>> typeKeyPair in typeKeyInfoList)
+                    {
+                        StringBuilder sb = new StringBuilder();
+                        sb.Append(typeKeyPair.Key);
+                        foreach (string value in typeKeyPair.Value)
+                        {
+                            sb.Append(",");
+                            sb.Append(value);
+                        }
+                        swTypeKeys.WriteLine(sb.ToString());
+                    }
+                }
+
+                outTextWriter?.WriteLine("*** Write TypeKeys done ***");
 
                 return true;
             }
