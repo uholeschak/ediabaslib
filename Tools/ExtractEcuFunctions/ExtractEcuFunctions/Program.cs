@@ -72,6 +72,7 @@ namespace ExtractEcuFunctions
         private static readonly HashSet<string> EnvCondLabelIdHashSet = new HashSet<string>();
         private static string RootENameClassId = string.Empty;
         private static string RootProductLineClassId = string.Empty;
+        private static string RootHybridClassId = string.Empty;
         private static string TypeKeyClassId = string.Empty;
         private static string EnvDiscreteNodeClassId = string.Empty;
 
@@ -145,6 +146,25 @@ namespace ExtractEcuFunctions
                 if (!WriteTypeKeys(outTextWriter, connection, outDirSub))
                 {
                     outTextWriter?.WriteLine("Write TypeKeys failed");
+                    return 1;
+                }
+
+                Dictionary<string, List<string>> typeKeyInfoList = new Dictionary<string, List<string>>();
+                if (!ExtractTypeKeyClassInfo(outTextWriter, connection, RootENameClassId, typeKeyInfoList, 0))
+                {
+                    outTextWriter?.WriteLine("ExtractTypeKeyClassInfo 0 failed");
+                    return 1;
+                }
+
+                if (!ExtractTypeKeyClassInfo(outTextWriter, connection, RootProductLineClassId, typeKeyInfoList, 1))
+                {
+                    outTextWriter?.WriteLine("ExtractTypeKeyClassInfo 1 failed");
+                    return 1;
+                }
+
+                if (!ExtractTypeKeyClassInfo(outTextWriter, connection, RootHybridClassId, typeKeyInfoList, 2))
+                {
+                    outTextWriter?.WriteLine("ExtractTypeKeyClassInfo 2 failed");
                     return 1;
                 }
 
@@ -327,6 +347,7 @@ namespace ExtractEcuFunctions
 
                     RootENameClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootEBezeichnung");
                     RootProductLineClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootBaureihenverbundTypmerkmal");
+                    RootHybridClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootHybridkennzeichen");
                     TypeKeyClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"Typschluessel");
                     EnvDiscreteNodeClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, "EnvironmentalConditionTextDiscrete");
 
@@ -338,6 +359,11 @@ namespace ExtractEcuFunctions
                     }
 
                     if (string.IsNullOrEmpty(RootProductLineClassId))
+                    {
+                        return false;
+                    }
+
+                    if (string.IsNullOrEmpty(RootHybridClassId))
                     {
                         return false;
                     }
@@ -468,7 +494,7 @@ namespace ExtractEcuFunctions
         }
 
         // from GetCharacteristicsByTypeKeyId
-        private static bool ExtractTypeKeyClassInfo(TextWriter outTextWriter, string connection, string rootClassId, Dictionary<string, List<string>> infoList, int infoIndex)
+        private static bool ExtractTypeKeyClassInfo(TextWriter outTextWriter, string connection, string rootClassId, Dictionary<string, List<string>> typeKeyInfoList, int infoIndex)
         {
             try
             {
@@ -495,7 +521,7 @@ namespace ExtractEcuFunctions
                                     continue;
                                 }
 
-                                if (!infoList.TryGetValue(typeKey, out List<string> storageList))
+                                if (!typeKeyInfoList.TryGetValue(typeKey, out List<string> storageList))
                                 {
                                     storageList = new List<string>();
                                 }
