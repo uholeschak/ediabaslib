@@ -73,6 +73,7 @@ namespace ExtractEcuFunctions
         private static string RootENameClassId = string.Empty;
         private static string RootProductLineClassId = string.Empty;
         private static string RootHybridClassId = string.Empty;
+        private static string RootBodyClassId = string.Empty;
         private static string TypeKeyClassId = string.Empty;
         private static string EnvDiscreteNodeClassId = string.Empty;
 
@@ -165,6 +166,12 @@ namespace ExtractEcuFunctions
                 if (!ExtractTypeKeyClassInfo(outTextWriter, connection, RootHybridClassId, typeKeyInfoList, 2))
                 {
                     outTextWriter?.WriteLine("ExtractTypeKeyClassInfo 2 failed");
+                    return 1;
+                }
+
+                if (!ExtractTypeKeyClassInfo(outTextWriter, connection, RootBodyClassId, typeKeyInfoList, 3))
+                {
+                    outTextWriter?.WriteLine("ExtractTypeKeyClassInfo 3 failed");
                     return 1;
                 }
 
@@ -348,6 +355,7 @@ namespace ExtractEcuFunctions
                     RootENameClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootEBezeichnung");
                     RootProductLineClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootBaureihenverbundTypmerkmal");
                     RootHybridClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootHybridkennzeichen");
+                    RootBodyClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootKarosserie");
                     TypeKeyClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"Typschluessel");
                     EnvDiscreteNodeClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, "EnvironmentalConditionTextDiscrete");
 
@@ -364,6 +372,11 @@ namespace ExtractEcuFunctions
                     }
 
                     if (string.IsNullOrEmpty(RootHybridClassId))
+                    {
+                        return false;
+                    }
+
+                    if (string.IsNullOrEmpty(RootBodyClassId))
                     {
                         return false;
                     }
