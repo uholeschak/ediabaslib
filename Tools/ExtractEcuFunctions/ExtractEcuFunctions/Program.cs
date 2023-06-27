@@ -71,6 +71,7 @@ namespace ExtractEcuFunctions
         private static readonly HashSet<string> FaultModeLabelIdHashSet = new HashSet<string>();
         private static readonly HashSet<string> EnvCondLabelIdHashSet = new HashSet<string>();
         private static string RootENameClassId = string.Empty;
+        private static string RootProductLineClassId = string.Empty;
         private static string TypeKeyClassId = string.Empty;
         private static string EnvDiscreteNodeClassId = string.Empty;
 
@@ -325,12 +326,18 @@ namespace ExtractEcuFunctions
                     mDbConnection.Open();
 
                     RootENameClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootEBezeichnung");
+                    RootProductLineClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootBaureihenverbundTypmerkmal");
                     TypeKeyClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"Typschluessel");
                     EnvDiscreteNodeClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, "EnvironmentalConditionTextDiscrete");
 
                     mDbConnection.Close();
 
                     if (string.IsNullOrEmpty(RootENameClassId))
+                    {
+                        return false;
+                    }
+
+                    if (string.IsNullOrEmpty(RootProductLineClassId))
                     {
                         return false;
                     }
@@ -419,6 +426,7 @@ namespace ExtractEcuFunctions
                 );
         }
 
+        // from GetCharacteristicsByTypeKeyId
         private static bool WriteTypeKeys(TextWriter outTextWriter, string connection, string outDirSub)
         {
             try
@@ -449,6 +457,63 @@ namespace ExtractEcuFunctions
                 }
 
                 outTextWriter?.WriteLine("*** Write TypeKeys done ***");
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                outTextWriter?.WriteLine(e);
+                return false;
+            }
+        }
+
+        // from GetCharacteristicsByTypeKeyId
+        private static bool ExtractTypeKeyClassInfo(TextWriter outTextWriter, string connection, string rootClassId, Dictionary<string, List<string>> infoList, int infoIndex)
+        {
+            try
+            {
+                using (SQLiteConnection mDbConnection = new SQLiteConnection(connection))
+                {
+                    mDbConnection.SetPassword(DbPassword);
+                    mDbConnection.Open();
+
+                    outTextWriter?.WriteLine("*** Extract TypeKeyInfo start ClassId={0} ***", rootClassId);
+                    string sql = $"SELECT t.NAME AS TYPEKEY, c.NAME AS VALUE FROM XEP_CHARACTERISTICS t INNER JOIN XEP_VEHICLES v ON (v.TYPEKEYID = t.ID)" +
+                                 $" INNER JOIN XEP_CHARACTERISTICS c ON (v.CHARACTERISTICID = c.ID) INNER JOIN XEP_CHARACTERISTICROOTS r ON" +
+                                 $" (r.ID = c.PARENTID AND r.NODECLASS = {rootClassId}) WHERE t.NODECLASS = {TypeKeyClassId} ORDER BY TYPEKEY";
+                    using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
+                    {
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                string typeKey = reader["TYPEKEY"].ToString();
+                                string typeValue = reader["VALUE"].ToString();
+
+                                if (string.IsNullOrEmpty(typeKey) || string.IsNullOrEmpty(typeValue))
+                                {
+                                    continue;
+                                }
+
+                                if (!infoList.TryGetValue(typeKey, out List<string> storageList))
+                                {
+                                    storageList = new List<string>();
+                                }
+
+                                while (storageList.Count < infoIndex + 1)
+                                {
+                                    storageList.Add(string.Empty);
+                                }
+
+                                storageList[infoIndex] = typeValue;
+                            }
+                        }
+                    }
+
+                    mDbConnection.Close();
+                }
+
+                outTextWriter?.WriteLine("*** Write TypeKeyInfo done ***");
 
                 return true;
             }
