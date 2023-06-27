@@ -599,7 +599,6 @@ namespace BmwDeepObd
         private volatile bool _ediabasJobAbort;
         private ActivityCommon _activityCommon;
         private RuleEvalBmw _ruleEvalBmw;
-        private List<VehicleStructsBmw.ServiceDataItem> _bmwServiceDataItems;
         private CheckAdapter _checkAdapter;
         private EdiabasNet _ediabas;
         private SgFunctions _sgFunctions;
@@ -1405,7 +1404,6 @@ namespace BmwDeepObd
             _instanceData.Vin = string.Empty;
             _instanceData.VehicleType = string.Empty;
             _instanceData.CDate = string.Empty;
-            _bmwServiceDataItems = null;
         }
 
         private void ClearEcuList()
@@ -2193,8 +2191,8 @@ namespace BmwDeepObd
             IMenuItem bmwServiceMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_bmw_service);
             if (bmwServiceMenu != null)
             {
-                bool enableBmwService = _bmwServiceDataItems != null && _bmwServiceDataItems.Count > 0;
-                bmwServiceMenu.SetEnabled(enableMenuAction && enableBmwService);
+                bool enableBmwService = enableMenuAction && ShowBwmServiceMenu(_ecuList[itemPos]);
+                bmwServiceMenu.SetEnabled(enableBmwService);
                 bmwServiceMenu.SetVisible(bmwVisible);
             }
 
@@ -2288,7 +2286,7 @@ namespace BmwDeepObd
                         break;
 
                     case Resource.Id.menu_xml_tool_bmw_service:
-                        ShowBwmServiceMenu(anchor);
+                        ShowBwmServiceMenu(_ecuList[itemPos], anchor);
                         break;
 
                     case Resource.Id.menu_xml_tool_vag_coding:
@@ -2328,16 +2326,30 @@ namespace BmwDeepObd
             return true;
         }
 
-        private bool ShowBwmServiceMenu(View anchor)
+        private bool ShowBwmServiceMenu(EcuInfo ecuInfo, View anchor = null)
         {
-            if (_bmwServiceDataItems == null)
-            {
-                return false;
-            }
-
             try
             {
-                VehicleInfoBmw.ServiceTreeItem serviceTreeItem = VehicleInfoBmw.GetServiceItemTree(_bmwServiceDataItems);
+                List<VehicleStructsBmw.ServiceDataItem> bmwServiceDataItems = null;
+                if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
+                {
+                    string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
+                    EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
+                    _ruleEvalBmw?.UpdateEvalEcuProperties(ecuVariant);
+                    bmwServiceDataItems = VehicleInfoBmw.GetServiceDataItems(_bmwDir, _ruleEvalBmw);
+                }
+
+                if (bmwServiceDataItems == null)
+                {
+                    return false;
+                }
+
+                VehicleInfoBmw.ServiceTreeItem serviceTreeItem = VehicleInfoBmw.GetServiceItemTree(bmwServiceDataItems);
+                if (anchor == null)
+                {
+                    return serviceTreeItem.HasInfoData;
+                }
+
                 AndroidX.AppCompat.Widget.PopupMenu popupMenu = new AndroidX.AppCompat.Widget.PopupMenu(this, anchor);
                 string language = ActivityCommon.GetCurrentLanguage();
                 AddBwmServiceMenuChilds(popupMenu.Menu, null, serviceTreeItem, language, 0);
@@ -3050,7 +3062,8 @@ namespace BmwDeepObd
                         if (_ruleEvalBmw != null)
                         {
                             _ruleEvalBmw.SetEvalProperties(detectVehicleBmw, null);
-                            _bmwServiceDataItems = VehicleInfoBmw.GetServiceDataItems(_bmwDir, _ruleEvalBmw);
+                            // precompile rules
+                            VehicleInfoBmw.GetServiceDataItems(_bmwDir, _ruleEvalBmw);
                         }
                     }
 
@@ -3098,7 +3111,8 @@ namespace BmwDeepObd
                             if (_ruleEvalBmw != null)
                             {
                                 _ruleEvalBmw.SetEvalProperties(detectVehicleBmw, null);
-                                _bmwServiceDataItems = VehicleInfoBmw.GetServiceDataItems(_bmwDir, _ruleEvalBmw);
+                                // precompile rules
+                                VehicleInfoBmw.GetServiceDataItems(_bmwDir, _ruleEvalBmw);
                             }
                         }
 
