@@ -128,7 +128,7 @@ namespace ExtractEcuFunctions
         private static readonly HashSet<string> FaultCodeLabelIdHashSet = new HashSet<string>();
         private static readonly HashSet<string> FaultModeLabelIdHashSet = new HashSet<string>();
         private static readonly HashSet<string> EnvCondLabelIdHashSet = new HashSet<string>();
-        private static Dictionary<string, long> RootClassDict;
+        private static Dictionary<long, string> RootClassDict;
         private static string TypeKeyClassId = string.Empty;
         private static string EnvDiscreteNodeClassId = string.Empty;
 
@@ -201,9 +201,9 @@ namespace ExtractEcuFunctions
 
                 Dictionary<string, List<string>> typeKeyInfoList = new Dictionary<string, List<string>>();
                 int infoIndex = 0;
-                foreach (KeyValuePair<string, long> rootClassPair in RootClassDict)
+                foreach (KeyValuePair<long, string> rootClassPair in RootClassDict)
                 {
-                    if (!ExtractTypeKeyClassInfo(outTextWriter, connection, rootClassPair.Value, typeKeyInfoList, infoIndex))
+                    if (!ExtractTypeKeyClassInfo(outTextWriter, connection, rootClassPair.Key, typeKeyInfoList, infoIndex))
                     {
                         outTextWriter?.WriteLine("ExtractTypeKeyClassInfo Index: {0} failed", infoIndex);
                         return 1;
@@ -392,24 +392,24 @@ namespace ExtractEcuFunctions
         {
             try
             {
-                string[] rootClassNames = Enum.GetNames(typeof(VehicleCharacteristic));
-                RootClassDict = new Dictionary<string, long>();
-                foreach (string rootClassName in rootClassNames)
-                {
-                    if (Enum.TryParse(rootClassName, out VehicleCharacteristic rootClassValue))
-                    {
-                        long value = (long) rootClassValue;
-                        if (value > 0)
-                        {
-                            RootClassDict.Add(rootClassName, value);
-                        }
-                    }
-                }
-
                 using (SQLiteConnection mDbConnection = new SQLiteConnection(connection))
                 {
                     mDbConnection.SetPassword(DbPassword);
                     mDbConnection.Open();
+
+                    long[] rootClassValues = (long[])Enum.GetValues(typeof(VehicleCharacteristic));
+                    RootClassDict = new Dictionary<long, string>();
+                    foreach (long rootClassValue in rootClassValues)
+                    {
+                        if (rootClassValue > 0)
+                        {
+                            string rootClassname = GetCharacteristicRootName(mDbConnection, rootClassValue);
+                            if (!string.IsNullOrEmpty(rootClassname))
+                            {
+                                RootClassDict.Add(rootClassValue, rootClassname);
+                            }
+                        }
+                    }
 
                     TypeKeyClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"Typschluessel");
                     EnvDiscreteNodeClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, "EnvironmentalConditionTextDiscrete");
@@ -558,6 +558,25 @@ namespace ExtractEcuFunctions
             }
         }
 
+        private static string GetCharacteristicRootName(SQLiteConnection mDbConnection, long rootClassId)
+        {
+            string rootName = null;
+            string sql = $"SELECT TITLE_DEDE FROM XEP_CHARACTERISTICROOTS WHERE (NODECLASS = {rootClassId})";
+            using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
+            {
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        rootName = reader["TITLE_DEDE"].ToString().Trim();
+                        break;
+                    }
+                }
+            }
+
+            return rootName;
+        }
+
         private static bool WriteTypeKeyClassInfo(TextWriter outTextWriter, Dictionary<string, List<string>> typeKeyInfoList, string outDirSub)
         {
             try
@@ -568,7 +587,7 @@ namespace ExtractEcuFunctions
                 using (StreamWriter swTypeKeys = new StreamWriter(typeKeysFile))
                 {
                     StringBuilder sbHeader = new StringBuilder();
-                    foreach (KeyValuePair<string, long> rootClassPair in RootClassDict)
+                    foreach (KeyValuePair<long, string> rootClassPair in RootClassDict)
                     {
                         if (sbHeader.Length > 0)
                         {
@@ -578,7 +597,7 @@ namespace ExtractEcuFunctions
                         {
                             sbHeader.Append("#");
                         }
-                        sbHeader.Append(rootClassPair.Key);
+                        sbHeader.Append(rootClassPair.Value);
                         itemCount++;
                     }
                     swTypeKeys.WriteLine(sbHeader.ToString());
