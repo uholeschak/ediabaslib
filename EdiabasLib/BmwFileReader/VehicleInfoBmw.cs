@@ -413,12 +413,24 @@ namespace BmwFileReader
                                         {
                                             break;
                                         }
+
+                                        if (line.StartsWith("#"))
+                                        {
+                                            continue;
+                                        }
+
                                         string[] lineArray = line.Split(',');
                                         if (lineArray.Length >= 2)
                                         {
-                                            if (!typeKeyDict.ContainsKey(lineArray[0]))
+                                            string key = lineArray[0].Trim();
+                                            string value = lineArray[1].Trim();
+
+                                            if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(value))
                                             {
-                                                typeKeyDict.Add(lineArray[0], lineArray[1]);
+                                                if (!typeKeyDict.ContainsKey(key))
+                                                {
+                                                    typeKeyDict.Add(key, value);
+                                                }
                                             }
                                         }
                                     }
