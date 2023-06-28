@@ -70,12 +70,7 @@ namespace ExtractEcuFunctions
         private static readonly HashSet<string> FaultCodeLabelIdHashSet = new HashSet<string>();
         private static readonly HashSet<string> FaultModeLabelIdHashSet = new HashSet<string>();
         private static readonly HashSet<string> EnvCondLabelIdHashSet = new HashSet<string>();
-        private static string RootENameClassId = string.Empty;
-        private static string RootProductLineClassId = string.Empty;
-        private static string RootHybridClassId = string.Empty;
-        private static string RootBodyClassId = string.Empty;
-        private static string RootMotorClassId = string.Empty;
-        private static string RootMotorPerformClassId = string.Empty;
+        private static readonly List<string> RootClassList = new List<string>();
         private static string TypeKeyClassId = string.Empty;
         private static string EnvDiscreteNodeClassId = string.Empty;
 
@@ -146,47 +141,17 @@ namespace ExtractEcuFunctions
                     return 1;
                 }
 
-                if (!WriteTypeKeys(outTextWriter, connection, outDirSub))
-                {
-                    outTextWriter?.WriteLine("Write TypeKeys failed");
-                    return 1;
-                }
-
                 Dictionary<string, List<string>> typeKeyInfoList = new Dictionary<string, List<string>>();
-                if (!ExtractTypeKeyClassInfo(outTextWriter, connection, RootENameClassId, typeKeyInfoList, 0))
+                int infoIndex = 0;
+                foreach (string rootClass in RootClassList)
                 {
-                    outTextWriter?.WriteLine("ExtractTypeKeyClassInfo ename failed");
-                    return 1;
-                }
+                    if (!ExtractTypeKeyClassInfo(outTextWriter, connection, rootClass, typeKeyInfoList, infoIndex))
+                    {
+                        outTextWriter?.WriteLine("ExtractTypeKeyClassInfo Index: {0} failed", infoIndex);
+                        return 1;
+                    }
 
-                if (!ExtractTypeKeyClassInfo(outTextWriter, connection, RootProductLineClassId, typeKeyInfoList, 1))
-                {
-                    outTextWriter?.WriteLine("ExtractTypeKeyClassInfo product failed");
-                    return 1;
-                }
-
-                if (!ExtractTypeKeyClassInfo(outTextWriter, connection, RootHybridClassId, typeKeyInfoList, 2))
-                {
-                    outTextWriter?.WriteLine("ExtractTypeKeyClassInfo hybrid failed");
-                    return 1;
-                }
-
-                if (!ExtractTypeKeyClassInfo(outTextWriter, connection, RootBodyClassId, typeKeyInfoList, 3))
-                {
-                    outTextWriter?.WriteLine("ExtractTypeKeyClassInfo body failed");
-                    return 1;
-                }
-
-                if (!ExtractTypeKeyClassInfo(outTextWriter, connection, RootMotorClassId, typeKeyInfoList, 4))
-                {
-                    outTextWriter?.WriteLine("ExtractTypeKeyClassInfo motor failed");
-                    return 1;
-                }
-
-                if (!ExtractTypeKeyClassInfo(outTextWriter, connection, RootMotorPerformClassId, typeKeyInfoList, 5))
-                {
-                    outTextWriter?.WriteLine("ExtractTypeKeyClassInfo motor perform failed");
-                    return 1;
+                    infoIndex++;
                 }
 
                 if (!WriteTypeKeyClassInfo(outTextWriter, typeKeyInfoList, outDirSub))
@@ -200,6 +165,8 @@ namespace ExtractEcuFunctions
                     outTextWriter?.WriteLine("Write VinRanges failed");
                     return 1;
                 }
+
+                //return 0;
 
                 List<String> ecuNameList;
                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
@@ -372,45 +339,27 @@ namespace ExtractEcuFunctions
                     mDbConnection.SetPassword(DbPassword);
                     mDbConnection.Open();
 
-                    RootENameClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootEBezeichnung");
-                    RootProductLineClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootBaureihenverbundTypmerkmal");
-                    RootHybridClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootHybridkennzeichen");
-                    RootBodyClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootKarosserie");
-                    RootMotorClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootMotor");
-                    RootMotorPerformClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootLeistungsklasse");
+                    RootClassList.Add(DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootEBezeichnung"));
+                    RootClassList.Add(DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootMarke"));
+                    RootClassList.Add(DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootBaureihenverbundTypmerkmal"));
+                    RootClassList.Add(DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootHybridkennzeichen"));
+                    RootClassList.Add(DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootKarosserie"));
+                    RootClassList.Add(DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootAntrieb"));
+                    RootClassList.Add(DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootMotor"));
+                    RootClassList.Add(DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootLeistungsklasse"));
+                    RootClassList.Add(DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootHubraum"));
+
                     TypeKeyClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"Typschluessel");
                     EnvDiscreteNodeClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, "EnvironmentalConditionTextDiscrete");
 
                     mDbConnection.Close();
 
-                    if (string.IsNullOrEmpty(RootENameClassId))
+                    foreach (string rootClass in RootClassList)
                     {
-                        return false;
-                    }
-
-                    if (string.IsNullOrEmpty(RootProductLineClassId))
-                    {
-                        return false;
-                    }
-
-                    if (string.IsNullOrEmpty(RootHybridClassId))
-                    {
-                        return false;
-                    }
-
-                    if (string.IsNullOrEmpty(RootBodyClassId))
-                    {
-                        return false;
-                    }
-
-                    if (string.IsNullOrEmpty(RootMotorClassId))
-                    {
-                        return false;
-                    }
-
-                    if (string.IsNullOrEmpty(RootMotorPerformClassId))
-                    {
-                        return false;
+                        if (string.IsNullOrEmpty(rootClass))
+                        {
+                            return false;
+                        }
                     }
 
                     if (string.IsNullOrEmpty(TypeKeyClassId))
@@ -498,47 +447,6 @@ namespace ExtractEcuFunctions
         }
 
         // from GetCharacteristicsByTypeKeyId
-        private static bool WriteTypeKeys(TextWriter outTextWriter, string connection, string outDirSub)
-        {
-            try
-            {
-                using (SQLiteConnection mDbConnection = new SQLiteConnection(connection))
-                {
-                    mDbConnection.SetPassword(DbPassword);
-                    mDbConnection.Open();
-
-                    outTextWriter?.WriteLine("*** Write TypeKeys start ***");
-                    string typeKeysFile = Path.Combine(outDirSub, "typekeys.txt");
-                    using (StreamWriter swTypeKeys = new StreamWriter(typeKeysFile))
-                    {
-                        string sql = $"SELECT t.NAME AS TYPEKEY, c.NAME AS EREIHE FROM XEP_CHARACTERISTICS t INNER JOIN XEP_VEHICLES v ON (v.TYPEKEYID = t.ID) INNER JOIN XEP_CHARACTERISTICS c ON (v.CHARACTERISTICID = c.ID) INNER JOIN XEP_CHARACTERISTICROOTS r ON (r.ID = c.PARENTID AND r.NODECLASS = {RootENameClassId}) WHERE t.NODECLASS = {TypeKeyClassId} ORDER BY TYPEKEY";
-                        using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
-                        {
-                            using (SQLiteDataReader reader = command.ExecuteReader())
-                            {
-                                while (reader.Read())
-                                {
-                                    swTypeKeys.WriteLine(reader["TYPEKEY"] + "," + reader["EREIHE"]);
-                                }
-                            }
-                        }
-                    }
-
-                    mDbConnection.Close();
-                }
-
-                outTextWriter?.WriteLine("*** Write TypeKeys done ***");
-
-                return true;
-            }
-            catch (Exception e)
-            {
-                outTextWriter?.WriteLine(e);
-                return false;
-            }
-        }
-
-        // from GetCharacteristicsByTypeKeyId
         private static bool ExtractTypeKeyClassInfo(TextWriter outTextWriter, string connection, string rootClassId, Dictionary<string, List<string>> typeKeyInfoList, int infoIndex)
         {
             try
@@ -601,7 +509,7 @@ namespace ExtractEcuFunctions
             try
             {
                 outTextWriter?.WriteLine("*** Write TypeKeyInfo start ***");
-                string typeKeysFile = Path.Combine(outDirSub, "typekeyinfo.txt");
+                string typeKeysFile = Path.Combine(outDirSub, "typekey.txt");
                 using (StreamWriter swTypeKeys = new StreamWriter(typeKeysFile))
                 {
                     foreach (KeyValuePair<string, List<string>> typeKeyPair in typeKeyInfoList)
