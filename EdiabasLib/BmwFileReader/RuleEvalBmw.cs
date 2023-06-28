@@ -115,7 +115,9 @@ namespace BmwFileReader
 
                     if (!string.IsNullOrWhiteSpace(detectVehicleBmw.TypeKey))
                     {
-                        _propertiesDict.Add("Typschl\u00FCssel".ToUpperInvariant(), new List<string> { detectVehicleBmw.TypeKey.Trim() });
+                        string keyName = "Typschl\u00FCssel".ToUpperInvariant();
+                        _propertiesDict.Add(keyName, new List<string> { detectVehicleBmw.TypeKey.Trim() });
+                        _propertiesDict.Add(VehicleInfoBmw.RemoveNonAsciiChars(keyName), new List<string> { detectVehicleBmw.TypeKey.Trim() });
                     }
 
                     if (!string.IsNullOrWhiteSpace(detectVehicleBmw.Series))
