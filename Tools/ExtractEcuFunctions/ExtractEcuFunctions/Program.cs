@@ -67,6 +67,19 @@ namespace ExtractEcuFunctions
                 "POSTOPERATORTEXT_PT, POSTOPERATORTEXT_ZHTW, POSTOPERATORTEXT_JA, " +
                 "POSTOPERATORTEXT_CSCZ, POSTOPERATORTEXT_PLPL";
 
+        private static List<string> RootClassNames = new List<string>()
+        {
+            @"RootEBezeichnung",
+            @"RootMarke",
+            @"RootBaureihenverbundTypmerkmal",
+            @"RootHybridkennzeichen",
+            @"RootKarosserie",
+            @"RootAntrieb",
+            @"RootMotor",
+            @"RootLeistungsklasse",
+            @"RootHubraum",
+        };
+
         private static readonly HashSet<string> FaultCodeLabelIdHashSet = new HashSet<string>();
         private static readonly HashSet<string> FaultModeLabelIdHashSet = new HashSet<string>();
         private static readonly HashSet<string> EnvCondLabelIdHashSet = new HashSet<string>();
@@ -339,15 +352,10 @@ namespace ExtractEcuFunctions
                     mDbConnection.SetPassword(DbPassword);
                     mDbConnection.Open();
 
-                    RootClassList.Add(DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootEBezeichnung"));
-                    RootClassList.Add(DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootMarke"));
-                    RootClassList.Add(DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootBaureihenverbundTypmerkmal"));
-                    RootClassList.Add(DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootHybridkennzeichen"));
-                    RootClassList.Add(DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootKarosserie"));
-                    RootClassList.Add(DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootAntrieb"));
-                    RootClassList.Add(DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootMotor"));
-                    RootClassList.Add(DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootLeistungsklasse"));
-                    RootClassList.Add(DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootHubraum"));
+                    foreach (string rootClassName in RootClassNames)
+                    {
+                        RootClassList.Add(DatabaseFunctions.GetNodeClassId(mDbConnection, rootClassName));
+                    }
 
                     TypeKeyClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"Typschluessel");
                     EnvDiscreteNodeClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, "EnvironmentalConditionTextDiscrete");
@@ -512,16 +520,31 @@ namespace ExtractEcuFunctions
                 string typeKeysFile = Path.Combine(outDirSub, "typekey.txt");
                 using (StreamWriter swTypeKeys = new StreamWriter(typeKeysFile))
                 {
+                    StringBuilder sbHeader = new StringBuilder();
+                    foreach (string rootClassName in RootClassNames)
+                    {
+                        if (sbHeader.Length > 0)
+                        {
+                            sbHeader.Append(",");
+                        }
+                        else
+                        {
+                            sbHeader.Append("#");
+                        }
+                        sbHeader.Append(rootClassName);
+                    }
+                    swTypeKeys.WriteLine(sbHeader.ToString());
+
                     foreach (KeyValuePair<string, List<string>> typeKeyPair in typeKeyInfoList)
                     {
-                        StringBuilder sb = new StringBuilder();
-                        sb.Append(typeKeyPair.Key);
+                        StringBuilder sbLine = new StringBuilder();
+                        sbLine.Append(typeKeyPair.Key);
                         foreach (string value in typeKeyPair.Value)
                         {
-                            sb.Append(",");
-                            sb.Append(value);
+                            sbLine.Append(",");
+                            sbLine.Append(value);
                         }
-                        swTypeKeys.WriteLine(sb.ToString());
+                        swTypeKeys.WriteLine(sbLine.ToString());
                     }
                 }
 
