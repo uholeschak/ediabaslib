@@ -74,6 +74,8 @@ namespace ExtractEcuFunctions
         private static string RootProductLineClassId = string.Empty;
         private static string RootHybridClassId = string.Empty;
         private static string RootBodyClassId = string.Empty;
+        private static string RootMotorClassId = string.Empty;
+        private static string RootMotorPerformClassId = string.Empty;
         private static string TypeKeyClassId = string.Empty;
         private static string EnvDiscreteNodeClassId = string.Empty;
 
@@ -153,25 +155,37 @@ namespace ExtractEcuFunctions
                 Dictionary<string, List<string>> typeKeyInfoList = new Dictionary<string, List<string>>();
                 if (!ExtractTypeKeyClassInfo(outTextWriter, connection, RootENameClassId, typeKeyInfoList, 0))
                 {
-                    outTextWriter?.WriteLine("ExtractTypeKeyClassInfo 0 failed");
+                    outTextWriter?.WriteLine("ExtractTypeKeyClassInfo ename failed");
                     return 1;
                 }
 
                 if (!ExtractTypeKeyClassInfo(outTextWriter, connection, RootProductLineClassId, typeKeyInfoList, 1))
                 {
-                    outTextWriter?.WriteLine("ExtractTypeKeyClassInfo 1 failed");
+                    outTextWriter?.WriteLine("ExtractTypeKeyClassInfo product failed");
                     return 1;
                 }
 
                 if (!ExtractTypeKeyClassInfo(outTextWriter, connection, RootHybridClassId, typeKeyInfoList, 2))
                 {
-                    outTextWriter?.WriteLine("ExtractTypeKeyClassInfo 2 failed");
+                    outTextWriter?.WriteLine("ExtractTypeKeyClassInfo hybrid failed");
                     return 1;
                 }
 
                 if (!ExtractTypeKeyClassInfo(outTextWriter, connection, RootBodyClassId, typeKeyInfoList, 3))
                 {
-                    outTextWriter?.WriteLine("ExtractTypeKeyClassInfo 3 failed");
+                    outTextWriter?.WriteLine("ExtractTypeKeyClassInfo body failed");
+                    return 1;
+                }
+
+                if (!ExtractTypeKeyClassInfo(outTextWriter, connection, RootMotorClassId, typeKeyInfoList, 4))
+                {
+                    outTextWriter?.WriteLine("ExtractTypeKeyClassInfo motor failed");
+                    return 1;
+                }
+
+                if (!ExtractTypeKeyClassInfo(outTextWriter, connection, RootMotorPerformClassId, typeKeyInfoList, 5))
+                {
+                    outTextWriter?.WriteLine("ExtractTypeKeyClassInfo motor perform failed");
                     return 1;
                 }
 
@@ -362,6 +376,8 @@ namespace ExtractEcuFunctions
                     RootProductLineClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootBaureihenverbundTypmerkmal");
                     RootHybridClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootHybridkennzeichen");
                     RootBodyClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootKarosserie");
+                    RootMotorClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootMotor");
+                    RootMotorPerformClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"RootLeistungsklasse");
                     TypeKeyClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"Typschluessel");
                     EnvDiscreteNodeClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, "EnvironmentalConditionTextDiscrete");
 
@@ -383,6 +399,16 @@ namespace ExtractEcuFunctions
                     }
 
                     if (string.IsNullOrEmpty(RootBodyClassId))
+                    {
+                        return false;
+                    }
+
+                    if (string.IsNullOrEmpty(RootMotorClassId))
+                    {
+                        return false;
+                    }
+
+                    if (string.IsNullOrEmpty(RootMotorPerformClassId))
                     {
                         return false;
                     }
