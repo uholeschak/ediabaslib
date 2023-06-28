@@ -520,12 +520,24 @@ namespace ExtractEcuFunctions
             return rootName;
         }
 
+        private static string RemoveNonAsciiChars(string text)
+        {
+            try
+            {
+                return new ASCIIEncoding().GetString(Encoding.ASCII.GetBytes(text.ToCharArray()));
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+        }
+
         private static bool WriteTypeKeyClassInfo(TextWriter outTextWriter, Dictionary<string, List<string>> typeKeyInfoList, string outDirSub)
         {
             try
             {
                 outTextWriter?.WriteLine("*** Write TypeKeyInfo start ***");
-                string typeKeysFile = Path.Combine(outDirSub, "typekey.txt");
+                string typeKeysFile = Path.Combine(outDirSub, "typekeyinfo.txt");
                 int itemCount = 0;
                 using (StreamWriter swTypeKeys = new StreamWriter(typeKeysFile))
                 {
@@ -534,13 +546,13 @@ namespace ExtractEcuFunctions
                     {
                         if (sbHeader.Length > 0)
                         {
-                            sbHeader.Append(";");
+                            sbHeader.Append("|");
                         }
                         else
                         {
                             sbHeader.Append("#");
                         }
-                        sbHeader.Append(rootClassPair.Value);
+                        sbHeader.Append(RemoveNonAsciiChars(rootClassPair.Value));
                         itemCount++;
                     }
                     swTypeKeys.WriteLine(sbHeader.ToString());
@@ -552,14 +564,14 @@ namespace ExtractEcuFunctions
                         int items = 1;
                         foreach (string value in typeKeyPair.Value)
                         {
-                            sbLine.Append(";");
+                            sbLine.Append("|");
                             sbLine.Append(value);
                             items++;
                         }
 
                         while (items < itemCount)
                         {
-                            sbLine.Append(";");
+                            sbLine.Append("|");
                             items++;
                         }
                         swTypeKeys.WriteLine(sbLine.ToString());
