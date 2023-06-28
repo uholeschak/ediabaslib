@@ -85,6 +85,9 @@
     <Compile Include="..\..\..\EdiabasLib\BmwFileReader\EcuFunctionStructs.cs">
       <Link>EcuFunctionStructs.cs</Link>
     </Compile>
+    <Compile Include="..\..\Psdz\PsdzClientLibrary\Core\VehicleCharacteristicAbstract.cs">
+      <Link>VehicleCharacteristicAbstract.cs</Link>
+    </Compile>
     <Compile Include="..\Common\DatabaseFunctions.cs">
       <Link>DatabaseFunctions.cs</Link>
     </Compile>
