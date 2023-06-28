@@ -263,11 +263,24 @@ namespace BmwFileReader
                 return false;
             }
 
+            string valueTrim = value.Trim();
             foreach (string propertyString in propertyStrings)
             {
-                if (string.Compare(propertyString.Trim(), value.Trim(), StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare(propertyString.Trim(), valueTrim, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     return true;
+                }
+            }
+
+            string valueAsc = VehicleInfoBmw.RemoveNonAsciiChars(valueTrim);
+            if (!string.IsNullOrEmpty(valueAsc) && valueAsc != valueTrim)
+            {
+                foreach (string propertyString in propertyStrings)
+                {
+                    if (string.Compare(propertyString.Trim(), valueAsc, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        return true;
+                    }
                 }
             }
 
