@@ -67,23 +67,68 @@ namespace ExtractEcuFunctions
                 "POSTOPERATORTEXT_PT, POSTOPERATORTEXT_ZHTW, POSTOPERATORTEXT_JA, " +
                 "POSTOPERATORTEXT_CSCZ, POSTOPERATORTEXT_PLPL";
 
-        private static List<string> RootClassNames = new List<string>()
+        public enum VehicleCharacteristic : long
         {
-            @"RootEBezeichnung",
-            @"RootMarke",
-            @"RootBaureihenverbundTypmerkmal",
-            @"RootHybridkennzeichen",
-            @"RootKarosserie",
-            @"RootAntrieb",
-            @"RootMotor",
-            @"RootLeistungsklasse",
-            @"RootHubraum",
-        };
+            Motor = 40142338L,
+            Karosserie = 40146178L,
+            Baureihe = 40140418L,
+            Lenkung = 40141954L,
+            Hubraum = 40142722L,
+            Getriebe = 40141186L,
+            VerkaufsBezeichnung = 40143490L,
+            Typ = 40139650L,
+            Antrieb = 40143874L,
+            BrandName = 40144642L,
+            Leistungsklasse = 40141570L,
+            Ueberarbeitung = 40145794L,
+            Prodart = 40140034L,
+            Ereihe = 40140802L,
+            Land = 40146562L,
+            Tueren = 40144258L,
+            Abgas = 68771233282L,
+            Motorarbeitsverfahren = 68771234050L,
+            Drehmoment = 68771234434L,
+            Hybridkennzeichen = 68771233666L,
+            Produktlinie = 40039947266L,
+            Kraftstoffart = 40143106L,
+            MOTKraftstoffart = 99999999909L,
+            BasicType = 99999999905L,
+            Baureihenverbund = 99999999950L,
+            Sicherheitsrelevant = 40145410L,
+            MOTEinbaulage = 99999999910L,
+            MOTBezeichnung = 99999999918L,
+            AELeistungsklasse = 99999999907L,
+            AEUeberarbeitung = 99999999908L,
+            AEKurzbezeichnung = 99999999906L,
+            BaustandsJahr = -100L,
+            BaustandsMonat = -101L,
+            EMOTBaureihe = 99999999880L,
+            EMOTArbeitsverfahren = 99999999878L,
+            EMOTDrehmoment = 99999999876L,
+            EMOTLeistungsklasse = 99999999874L,
+            EMOTUeberarbeitung = 99999999872L,
+            EMOTBezeichnung = 99999999870L,
+            EMOTKraftstoffart = 99999999868L,
+            EMOTEinbaulage = 99999999866L,
+            CountryOfAssembly = 99999999851L,
+            BaseVersion = 99999999850L,
+            ElektrischeReichweite = 99999999854L,
+            AEBezeichnung = 99999999848L,
+            EngineLabel2 = 99999999701L,
+            Engine2 = 99999999702L,
+            HeatMOTPlatzhalter1 = 99999999703L,
+            HeatMOTPlatzhalter2 = 99999999704L,
+            HeatMOTFortlaufendeNum = 99999999705L,
+            HeatMOTLeistungsklasse = 99999999706L,
+            HeatMOTLebenszyklus = 99999999707L,
+            HeatMOTKraftstoffart = 99999999708L,
+            KraftstoffartEinbaulage = 53330059L
+        }
 
         private static readonly HashSet<string> FaultCodeLabelIdHashSet = new HashSet<string>();
         private static readonly HashSet<string> FaultModeLabelIdHashSet = new HashSet<string>();
         private static readonly HashSet<string> EnvCondLabelIdHashSet = new HashSet<string>();
-        private static readonly List<string> RootClassList = new List<string>();
+        private static Dictionary<string, long> RootClassDict;
         private static string TypeKeyClassId = string.Empty;
         private static string EnvDiscreteNodeClassId = string.Empty;
 
@@ -156,9 +201,9 @@ namespace ExtractEcuFunctions
 
                 Dictionary<string, List<string>> typeKeyInfoList = new Dictionary<string, List<string>>();
                 int infoIndex = 0;
-                foreach (string rootClass in RootClassList)
+                foreach (KeyValuePair<string, long> rootClassPair in RootClassDict)
                 {
-                    if (!ExtractTypeKeyClassInfo(outTextWriter, connection, rootClass, typeKeyInfoList, infoIndex))
+                    if (!ExtractTypeKeyClassInfo(outTextWriter, connection, rootClassPair.Value, typeKeyInfoList, infoIndex))
                     {
                         outTextWriter?.WriteLine("ExtractTypeKeyClassInfo Index: {0} failed", infoIndex);
                         return 1;
@@ -347,28 +392,29 @@ namespace ExtractEcuFunctions
         {
             try
             {
+                string[] rootClassNames = Enum.GetNames(typeof(VehicleCharacteristic));
+                RootClassDict = new Dictionary<string, long>();
+                foreach (string rootClassName in rootClassNames)
+                {
+                    if (Enum.TryParse(rootClassName, out VehicleCharacteristic rootClassValue))
+                    {
+                        long value = (long) rootClassValue;
+                        if (value > 0)
+                        {
+                            RootClassDict.Add(rootClassName, value);
+                        }
+                    }
+                }
+
                 using (SQLiteConnection mDbConnection = new SQLiteConnection(connection))
                 {
                     mDbConnection.SetPassword(DbPassword);
                     mDbConnection.Open();
 
-                    foreach (string rootClassName in RootClassNames)
-                    {
-                        RootClassList.Add(DatabaseFunctions.GetNodeClassId(mDbConnection, rootClassName));
-                    }
-
                     TypeKeyClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, @"Typschluessel");
                     EnvDiscreteNodeClassId = DatabaseFunctions.GetNodeClassId(mDbConnection, "EnvironmentalConditionTextDiscrete");
 
                     mDbConnection.Close();
-
-                    foreach (string rootClass in RootClassList)
-                    {
-                        if (string.IsNullOrEmpty(rootClass))
-                        {
-                            return false;
-                        }
-                    }
 
                     if (string.IsNullOrEmpty(TypeKeyClassId))
                     {
@@ -455,7 +501,7 @@ namespace ExtractEcuFunctions
         }
 
         // from GetCharacteristicsByTypeKeyId
-        private static bool ExtractTypeKeyClassInfo(TextWriter outTextWriter, string connection, string rootClassId, Dictionary<string, List<string>> typeKeyInfoList, int infoIndex)
+        private static bool ExtractTypeKeyClassInfo(TextWriter outTextWriter, string connection, long rootClassId, Dictionary<string, List<string>> typeKeyInfoList, int infoIndex)
         {
             try
             {
@@ -518,20 +564,22 @@ namespace ExtractEcuFunctions
             {
                 outTextWriter?.WriteLine("*** Write TypeKeyInfo start ***");
                 string typeKeysFile = Path.Combine(outDirSub, "typekey.txt");
+                int itemCount = 0;
                 using (StreamWriter swTypeKeys = new StreamWriter(typeKeysFile))
                 {
                     StringBuilder sbHeader = new StringBuilder();
-                    foreach (string rootClassName in RootClassNames)
+                    foreach (KeyValuePair<string, long> rootClassPair in RootClassDict)
                     {
                         if (sbHeader.Length > 0)
                         {
-                            sbHeader.Append(",");
+                            sbHeader.Append(";");
                         }
                         else
                         {
                             sbHeader.Append("#");
                         }
-                        sbHeader.Append(rootClassName);
+                        sbHeader.Append(rootClassPair.Key);
+                        itemCount++;
                     }
                     swTypeKeys.WriteLine(sbHeader.ToString());
 
@@ -539,10 +587,18 @@ namespace ExtractEcuFunctions
                     {
                         StringBuilder sbLine = new StringBuilder();
                         sbLine.Append(typeKeyPair.Key);
+                        int items = 1;
                         foreach (string value in typeKeyPair.Value)
                         {
-                            sbLine.Append(",");
+                            sbLine.Append(";");
                             sbLine.Append(value);
+                            items++;
+                        }
+
+                        while (items < itemCount)
+                        {
+                            sbLine.Append(";");
+                            items++;
                         }
                         swTypeKeys.WriteLine(sbLine.ToString());
                     }
