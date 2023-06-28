@@ -4142,6 +4142,18 @@ namespace PsdzClient
             }
         }
 
+        private static string RemoveNonAsciiChars(string text)
+        {
+            try
+            {
+                return new ASCIIEncoding().GetString(Encoding.ASCII.GetBytes(text.ToCharArray()));
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+        }
+
         public bool SaveFaultRulesClass(VehicleStructsBmw.RulesInfoData rulesInfoData, string fileName)
         {
             try
@@ -4206,7 +4218,7 @@ $@"            case ""{ruleInfo.Id.Trim()}"":
                             (ruleInfoLast != null && string.Compare(ruleInfo.RuleFormula, ruleInfoLast.RuleFormula, StringComparison.Ordinal) != 0))
                         {
                             sb.Append(
-$@"                return {ruleInfo.RuleFormula};
+$@"                return {RemoveNonAsciiChars(ruleInfo.RuleFormula)};
 
 "
                             );
@@ -4241,7 +4253,7 @@ $@"            case ""{ruleInfo.Id.Trim()}"":
                             (ruleInfoLast != null && string.Compare(ruleInfo.RuleFormula, ruleInfoLast.RuleFormula, StringComparison.Ordinal) != 0))
                         {
                             sb.Append(
-$@"                return {ruleInfo.RuleFormula};
+$@"                return {RemoveNonAsciiChars(ruleInfo.RuleFormula)};
 
 "
                             );
@@ -4276,7 +4288,7 @@ $@"            case ""{ruleInfo.Id.Trim()}"":
                             (ruleInfoLast != null && string.Compare(ruleInfo.RuleFormula, ruleInfoLast.RuleFormula, StringComparison.Ordinal) != 0))
                         {
                             sb.Append(
-$@"                return {ruleInfo.RuleFormula};
+$@"                return {RemoveNonAsciiChars(ruleInfo.RuleFormula)};
 
 "
                             );
