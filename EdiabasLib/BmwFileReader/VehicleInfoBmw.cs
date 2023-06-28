@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -413,7 +414,7 @@ namespace BmwFileReader
                                             break;
                                         }
                                         string[] lineArray = line.Split(',');
-                                        if (lineArray.Length == 2)
+                                        if (lineArray.Length >= 2)
                                         {
                                             if (!typeKeyDict.ContainsKey(lineArray[0]))
                                             {
@@ -756,6 +757,18 @@ namespace BmwFileReader
                 }
             }
             return null;
+        }
+
+        public static string RemoveNonAsciiChars(string text)
+        {
+            try
+            {
+                return new ASCIIEncoding().GetString(Encoding.ASCII.GetBytes(text.ToCharArray()));
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
         }
 
 #if Android
