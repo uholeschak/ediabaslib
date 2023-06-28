@@ -425,7 +425,7 @@ namespace BmwFileReader
                                             string key = lineArray[0].Trim();
                                             string value = lineArray[1].Trim();
 
-                                            if (!string.IsNullOrEmpty(key))
+                                            if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(value))
                                             {
                                                 if (!typeKeyDict.ContainsKey(key))
                                                 {
