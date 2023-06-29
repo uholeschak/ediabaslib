@@ -91,7 +91,20 @@ namespace MergeEcuFunctions
                         try
                         {
                             bool stored = false;
-                            if (!entryName.StartsWith("faultdata_", StringComparison.OrdinalIgnoreCase))
+                            bool entryValid = true;
+
+                            string entryExtension = Path.GetExtension(entryName);
+                            if (string.Compare(entryExtension, ".xml", StringComparison.OrdinalIgnoreCase) != 0)
+                            {
+                                entryValid = false;
+                            }
+
+                            if (entryName.StartsWith("faultdata_", StringComparison.OrdinalIgnoreCase))
+                            {
+                                entryValid = false;
+                            }
+
+                            if (entryValid)
                             {
                                 if (GetEcuDataObject(inFileName, entryName, typeof(EcuFunctionStructs.EcuVariant)) is EcuFunctionStructs.EcuVariant ecuVariantIn)
                                 {
