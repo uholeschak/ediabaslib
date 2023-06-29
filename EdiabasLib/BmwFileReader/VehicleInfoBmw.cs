@@ -401,6 +401,7 @@ namespace BmwFileReader
                             {
                                 continue; // Ignore directories
                             }
+
                             if (string.Compare(zipEntry.Name, "typekeys.txt", StringComparison.OrdinalIgnoreCase) == 0)
                             {
                                 Stream zipStream = zf.GetInputStream(zipEntry);
@@ -414,27 +415,54 @@ namespace BmwFileReader
                                             break;
                                         }
 
-                                        if (line.StartsWith("#"))
-                                        {
-                                            continue;
-                                        }
-
                                         string[] lineArray = line.Split(',');
-                                        if (lineArray.Length >= 2)
+                                        if (lineArray.Length == 2)
                                         {
                                             string key = lineArray[0].Trim();
                                             string value = lineArray[1].Trim();
 
                                             if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(value))
                                             {
-                                                if (!typeKeyDict.ContainsKey(key))
-                                                {
-                                                    typeKeyDict.Add(key, value);
-                                                }
+                                                typeKeyDict.TryAdd(key, value);
                                             }
                                         }
                                     }
                                 }
+                                break;
+                            }
+
+                            if (string.Compare(zipEntry.Name, "typekeyinfo.txt", StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                Stream zipStream = zf.GetInputStream(zipEntry);
+                                using (StreamReader sr = new StreamReader(zipStream))
+                                {
+                                    while (sr.Peek() >= 0)
+                                    {
+                                        string line = sr.ReadLine();
+                                        if (line == null)
+                                        {
+                                            break;
+                                        }
+
+                                        string[] lineArray = line.Split('|');
+                                        if (line.StartsWith("#"))
+                                        {
+                                            continue;
+                                        }
+
+                                        if (lineArray.Length > 4)
+                                        {
+                                            string key = lineArray[0].Trim();
+                                            string value = lineArray[4].Trim();
+
+                                            if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(value))
+                                            {
+                                                typeKeyDict.TryAdd(key, value);
+                                            }
+                                        }
+                                    }
+                                }
+                                break;
                             }
                         }
                         ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Extract type key dict done");
