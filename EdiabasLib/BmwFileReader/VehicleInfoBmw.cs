@@ -127,6 +127,29 @@ namespace BmwFileReader
 
                 return typeKeyList[index];
             }
+
+            public Dictionary<string, string> GetTypeKeyProperties(string typeKey)
+            {
+                if (!TypeKeyDict.TryGetValue(typeKey.ToUpperInvariant(), out List<string> typeKeyList))
+                {
+                    return null;
+                }
+
+                Dictionary<string, string> propertyDict = new Dictionary<string, string>();
+                int index = 0;
+                foreach (string itemName in ItemNames)
+                {
+                    if (index >= typeKeyList.Count)
+                    {
+                        break;
+                    }
+
+                    propertyDict.TryAdd(itemName, typeKeyList[index]);
+                    index++;
+                }
+
+                return propertyDict;
+            }
         }
 
         private static TypeKeyInfo _typeKeyInfo;
@@ -607,6 +630,26 @@ namespace BmwFileReader
         public static string GetVehicleTypeFromVin(string vin, EdiabasNet ediabas, string databaseDir)
         {
             ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle type from VIN: {0}", vin ?? "No VIN");
+            Dictionary<string, string> propertyDict = GetVehiclePropertiesFromVin(vin, ediabas, databaseDir);
+            if (propertyDict == null)
+            {
+                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "No type key properties present");
+                return null;
+            }
+
+            if (!propertyDict.TryGetValue("E-Bezeichnung", out string vehicleType))
+            {
+                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "No vehicle type in properties");
+                return null;
+            }
+
+            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle type: {0}", vehicleType);
+            return vehicleType;
+        }
+
+        public static Dictionary<string, string> GetVehiclePropertiesFromVin(string vin, EdiabasNet ediabas, string databaseDir)
+        {
+            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle properties from VIN: {0}", vin ?? "No VIN");
             string typeKey = GetTypeKeyFromVin(vin, ediabas, databaseDir);
             if (typeKey == null)
             {
@@ -624,9 +667,14 @@ namespace BmwFileReader
                 return null;
             }
 
-            string vehicleType = _typeKeyInfo.GetItem(typeKey,"E-Bezeichnung");
-            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle type: {0}", vehicleType);
-            return vehicleType;
+            Dictionary<string, string> propertyDict = _typeKeyInfo.GetTypeKeyProperties(typeKey);
+            if (propertyDict == null)
+            {
+                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "No type key properties present");
+                return null;
+            }
+
+            return propertyDict;
         }
 #endif
 
