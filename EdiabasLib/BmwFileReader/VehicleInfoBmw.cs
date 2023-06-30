@@ -86,17 +86,17 @@ namespace BmwFileReader
             public List<string> ItemNames { get; set; }
             public Dictionary<string, List<string>> TypeKeyDict { get; set; }
 
-            public int GetItemIndex(string name)
+            public int GetItemIndex(string itemName)
             {
-                if (string.IsNullOrEmpty(name))
+                if (string.IsNullOrEmpty(itemName))
                 {
                     return -1;
                 }
 
                 int index = 0;
-                foreach (string itemName in ItemNames)
+                foreach (string currentName in ItemNames)
                 {
-                    if (string.Compare(itemName, name, StringComparison.OrdinalIgnoreCase) == 0)
+                    if (string.Compare(currentName, itemName, StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         return index;
                     }
@@ -105,6 +105,27 @@ namespace BmwFileReader
                 }
 
                 return -1;
+            }
+
+            public string GetItem(string typeKey, string itemName)
+            {
+                int index = GetItemIndex(itemName);
+                if (index < 0)
+                {
+                    return null;
+                }
+
+                if (!TypeKeyDict.TryGetValue(typeKey.ToUpperInvariant(), out List<string> typeKeyList))
+                {
+                    return null;
+                }
+
+                if (index >= typeKeyList.Count)
+                {
+                    return null;
+                }
+
+                return typeKeyList[index];
             }
         }
 
@@ -603,26 +624,7 @@ namespace BmwFileReader
                 return null;
             }
 
-            int eTypeIndex = _typeKeyInfo.GetItemIndex("E-Bezeichnung");
-            if (eTypeIndex < 0)
-            {
-                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Vehicle E-Bezeichnung not found");
-                return null;
-            }
-
-            if (!_typeKeyInfo.TypeKeyDict.TryGetValue(typeKey.ToUpperInvariant(), out List<string> typeKeyList))
-            {
-                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Vehicle type info not found");
-                return null;
-            }
-
-            if (eTypeIndex >= typeKeyList.Count)
-            {
-                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Vehicle E-Bezeichnung index invalid");
-                return null;
-            }
-
-            string vehicleType = typeKeyList[eTypeIndex];
+            string vehicleType = _typeKeyInfo.GetItem(typeKey,"E-Bezeichnung");
             ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle type: {0}", vehicleType);
             return vehicleType;
         }
