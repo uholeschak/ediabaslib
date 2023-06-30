@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -73,11 +74,25 @@ namespace BmwFileReader
             }
         }
 
+#if Android
+        public class TypeKeyInfo
+        {
+            public TypeKeyInfo(List<string> itemNames, Dictionary<string, List<string>> typeKeyDict)
+            {
+                ItemNames = itemNames;
+                TypeKeyDict = typeKeyDict;
+            }
+
+            public List<string> ItemNames { get; set; }
+            public Dictionary<string, List<string>> TypeKeyDict { get; set; }
+        }
+
+        private static Dictionary<string, string> _typeKeyDict;
+        private static TypeKeyInfo _typeKeyInfo;
+#endif
+
         public const string ResultUnknown = "UNBEK";
 
-#if Android
-        private static Dictionary<string, string> _typeKeyDict;
-#endif
         private static VehicleStructsBmw.VehicleSeriesInfoData _vehicleSeriesInfoData;
         private static VehicleStructsBmw.RulesInfoData _rulesInfoData;
         private static VehicleStructsBmw.ServiceData _serviceData;
@@ -382,6 +397,95 @@ namespace BmwFileReader
         }
 
 #if Android
+        public static TypeKeyInfo GetTypeKeyInfo(EdiabasNet ediabas, string databaseDir)
+        {
+            ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Extract type key info");
+
+            if (_typeKeyInfo != null)
+            {
+                return _typeKeyInfo;
+            }
+
+            try
+            {
+                List<string> itemNames = new List<string>();
+                Dictionary<string, List<string>> typeKeyDict = new Dictionary<string, List<string>>();
+                ZipFile zf = null;
+                try
+                {
+                    using (FileStream fs = File.OpenRead(Path.Combine(databaseDir, EcuFunctionReader.EcuFuncFileName)))
+                    {
+                        zf = new ZipFile(fs);
+                        foreach (ZipEntry zipEntry in zf)
+                        {
+                            if (!zipEntry.IsFile)
+                            {
+                                continue; // Ignore directories
+                            }
+
+                            if (string.Compare(zipEntry.Name, "typekeyinfo.txt", StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                Stream zipStream = zf.GetInputStream(zipEntry);
+                                using (StreamReader sr = new StreamReader(zipStream))
+                                {
+                                    while (sr.Peek() >= 0)
+                                    {
+                                        string line = sr.ReadLine();
+                                        if (line == null)
+                                        {
+                                            break;
+                                        }
+
+                                        bool isHeader = line.StartsWith("#");
+                                        if (isHeader)
+                                        {
+                                            line = line.TrimStart('#');
+                                        }
+
+                                        string[] lineArray = line.Split('|');
+                                        if (isHeader)
+                                        {
+                                            itemNames = lineArray.ToList();
+                                            continue;
+                                        }
+
+                                        if (lineArray.Length > 1)
+                                        {
+                                            string key = lineArray[0].Trim();
+
+                                            if (!string.IsNullOrEmpty(key))
+                                            {
+                                                List<string> lineList = lineArray.ToList();
+                                                lineList.RemoveAt(0);
+                                                typeKeyDict.TryAdd(key, lineList);
+                                            }
+                                        }
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                        ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Extract type key info done");
+                        _typeKeyInfo = new TypeKeyInfo(itemNames, typeKeyDict);
+                        return _typeKeyInfo;
+                    }
+                }
+                finally
+                {
+                    if (zf != null)
+                    {
+                        zf.IsStreamOwner = true; // Makes close also shut the underlying stream
+                        zf.Close(); // Ensure we release resources
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Extract type key info exception: {0}", EdiabasNet.GetExceptionText(ex));
+                return null;
+            }
+        }
+
         public static Dictionary<string, string> GetTypeKeyDict(EdiabasNet ediabas, string databaseDir)
         {
             ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Extract type key dict");
