@@ -85,6 +85,27 @@ namespace BmwFileReader
 
             public List<string> ItemNames { get; set; }
             public Dictionary<string, List<string>> TypeKeyDict { get; set; }
+
+            public int GetItemIndex(string name)
+            {
+                if (string.IsNullOrEmpty(name))
+                {
+                    return -1;
+                }
+
+                int index = 0;
+                foreach (string itemName in ItemNames)
+                {
+                    if (string.Compare(itemName, name, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        return index;
+                    }
+
+                    index++;
+                }
+
+                return -1;
+            }
         }
 
         private static TypeKeyInfo _typeKeyInfo;
@@ -582,7 +603,7 @@ namespace BmwFileReader
                 return null;
             }
 
-            int eTypeIndex = _typeKeyInfo.ItemNames.IndexOf("E-Bezeichnung");
+            int eTypeIndex = _typeKeyInfo.GetItemIndex("E-Bezeichnung");
             if (eTypeIndex < 0)
             {
                 ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Vehicle E-Bezeichnung not found");
