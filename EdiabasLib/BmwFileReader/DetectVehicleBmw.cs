@@ -112,6 +112,7 @@ namespace BmwFileReader
         public bool Ds2Vehicle { get; private set; }
         public string Vin { get; private set; }
         public string TypeKey { get; private set; }
+        public Dictionary<string, string> TypeKeyProperties;
         public string GroupSgdb { get; private set; }
         public string ModelSeries { get; private set; }
         public string Series { get; private set; }
@@ -250,7 +251,8 @@ namespace BmwFileReader
                 }
 
                 Vin = detectedVin;
-                TypeKey = VehicleInfoBmw.GetTypeKeyFromVin(detectedVin, _ediabas, _bmwDir);
+                TypeKeyProperties = VehicleInfoBmw.GetVehiclePropertiesFromVin(detectedVin, _ediabas, _bmwDir, out string typeKey);
+                TypeKey = typeKey;
                 string vehicleType = null;
                 string modelSeries = null;
                 DateTime? cDate = null;
@@ -382,9 +384,12 @@ namespace BmwFileReader
 
                 ProgressFunc?.Invoke(100);
 
-                if (string.IsNullOrEmpty(vehicleType))
+                if (TypeKeyProperties != null)
                 {
-                    vehicleType = VehicleInfoBmw.GetVehicleTypeFromVin(detectedVin, _ediabas, _bmwDir);
+                    if (TypeKeyProperties.TryGetValue(VehicleInfoBmw.VehicleTypeName, out string vehicleTypeProp))
+                    {
+                        vehicleType = vehicleTypeProp;
+                    }
                 }
 
                 ModelSeries = modelSeries;
@@ -697,7 +702,8 @@ namespace BmwFileReader
                 }
 
                 Vin = detectedVin;
-                TypeKey = VehicleInfoBmw.GetTypeKeyFromVin(detectedVin, _ediabas, _bmwDir);
+                TypeKeyProperties = VehicleInfoBmw.GetVehiclePropertiesFromVin(detectedVin, _ediabas, _bmwDir, out string typeKey);
+                TypeKey = typeKey;
                 int modelYear = VehicleInfoBmw.GetModelYearFromVin(detectedVin);
                 if (modelYear >= 0)
                 {
@@ -748,9 +754,12 @@ namespace BmwFileReader
                     }
                 }
 
-                if (string.IsNullOrEmpty(vehicleType))
+                if (TypeKeyProperties != null)
                 {
-                    vehicleType = VehicleInfoBmw.GetVehicleTypeFromVin(detectedVin, _ediabas, _bmwDir);
+                    if (TypeKeyProperties.TryGetValue(VehicleInfoBmw.VehicleTypeName, out string vehicleTypeProp))
+                    {
+                        vehicleType = vehicleTypeProp;
+                    }
                 }
 
                 VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(vehicleType, null, _ediabas);
@@ -861,6 +870,7 @@ namespace BmwFileReader
             Ds2Vehicle = false;
             Vin = null;
             TypeKey = null;
+            TypeKeyProperties = null;
             GroupSgdb = null;
             ModelSeries = null;
             Series = null;
