@@ -144,7 +144,7 @@ namespace BmwFileReader
                         break;
                     }
 
-                    propertyDict.TryAdd(itemName, typeKeyList[index]);
+                    propertyDict.TryAdd(itemName, typeKeyList[index] ?? string.Empty);
                     index++;
                 }
 
