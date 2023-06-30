@@ -108,19 +108,31 @@ namespace BmwFileReader
                         return false;
                     }
 
+                    if (detectVehicleBmw.TypeKeyProperties != null)
+                    {
+                        foreach (KeyValuePair<string,string> propertyPair in detectVehicleBmw.TypeKeyProperties)
+                        {
+                            string value = propertyPair.Value;
+                            if (!string.IsNullOrWhiteSpace(value))
+                            {
+                                _propertiesDict.TryAdd(propertyPair.Key.ToUpperInvariant(), new List<string> { value.Trim() });
+                            }
+                        }
+                    }
+
                     if (detectVehicleBmw.BrandList != null && detectVehicleBmw.BrandList.Count > 0)
                     {
-                        _propertiesDict.Add("Marke".ToUpperInvariant(), detectVehicleBmw.BrandList);
+                        _propertiesDict.TryAdd("Marke".ToUpperInvariant(), detectVehicleBmw.BrandList);
                     }
 
                     if (!string.IsNullOrWhiteSpace(detectVehicleBmw.TypeKey))
                     {
-                        _propertiesDict.Add("Typschl?ssel", new List<string> { detectVehicleBmw.TypeKey.Trim() });
+                        _propertiesDict.TryAdd("Typschl?ssel", new List<string> { detectVehicleBmw.TypeKey.Trim() });
                     }
 
                     if (!string.IsNullOrWhiteSpace(detectVehicleBmw.Series))
                     {
-                        _propertiesDict.Add("E-Bezeichnung".ToUpperInvariant(), new List<string> { detectVehicleBmw.Series.Trim() });
+                        _propertiesDict.TryAdd("E-Bezeichnung".ToUpperInvariant(), new List<string> { detectVehicleBmw.Series.Trim() });
                     }
 
                     if (!string.IsNullOrWhiteSpace(detectVehicleBmw.ConstructYear))
@@ -134,7 +146,7 @@ namespace BmwFileReader
                         {
                             constructDate += "01";
                         }
-                        _propertiesDict.Add("Baustand".ToUpperInvariant(), new List<string> { constructDate });
+                        _propertiesDict.TryAdd("Baustand".ToUpperInvariant(), new List<string> { constructDate });
 
                         string productionDate = constructDate;
                         if (!string.IsNullOrWhiteSpace(detectVehicleBmw.ILevelShip))
@@ -152,7 +164,7 @@ namespace BmwFileReader
                             }
                         }
 
-                        _propertiesDict.Add("Produktionsdatum".ToUpperInvariant(), new List<string> { productionDate });
+                        _propertiesDict.TryAdd("Produktionsdatum".ToUpperInvariant(), new List<string> { productionDate });
                     }
 
                     if (!string.IsNullOrWhiteSpace(detectVehicleBmw.ILevelCurrent))
