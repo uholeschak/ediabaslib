@@ -87,7 +87,6 @@ namespace BmwFileReader
             public Dictionary<string, List<string>> TypeKeyDict { get; set; }
         }
 
-        private static Dictionary<string, string> _typeKeyDict;
         private static TypeKeyInfo _typeKeyInfo;
 #endif
 
@@ -401,11 +400,6 @@ namespace BmwFileReader
         {
             ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Extract type key info");
 
-            if (_typeKeyInfo != null)
-            {
-                return _typeKeyInfo;
-            }
-
             try
             {
                 List<string> itemNames = new List<string>();
@@ -466,8 +460,7 @@ namespace BmwFileReader
                             }
                         }
                         ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Extract type key info done");
-                        _typeKeyInfo = new TypeKeyInfo(itemNames, typeKeyDict);
-                        return _typeKeyInfo;
+                        return new TypeKeyInfo(itemNames, typeKeyDict);
                     }
                 }
                 finally
@@ -680,20 +673,38 @@ namespace BmwFileReader
             {
                 return null;
             }
-            if (_typeKeyDict == null)
+
+            if (_typeKeyInfo == null)
             {
-                _typeKeyDict = GetTypeKeyDict(ediabas, databaseDir);
+                _typeKeyInfo = GetTypeKeyInfo(ediabas, databaseDir);
             }
-            if (_typeKeyDict == null)
+
+            if (_typeKeyInfo == null)
             {
-                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "No type key dict present");
+                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "No type key info present");
                 return null;
             }
-            if (!_typeKeyDict.TryGetValue(typeKey.ToUpperInvariant(), out string vehicleType))
+
+            int eTypeIndex = _typeKeyInfo.ItemNames.IndexOf("E-Bezeichnung");
+            if (eTypeIndex < 0)
             {
-                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Vehicle type not found");
+                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Vehicle E-Bezeichnung not found");
                 return null;
             }
+
+            if (!_typeKeyInfo.TypeKeyDict.TryGetValue(typeKey.ToUpperInvariant(), out List<string> typeKeyList))
+            {
+                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Vehicle type info not found");
+                return null;
+            }
+
+            if (eTypeIndex >= typeKeyList.Count)
+            {
+                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Vehicle E-Bezeichnung index invalid");
+                return null;
+            }
+
+            string vehicleType = typeKeyList[eTypeIndex];
             ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle type: {0}", vehicleType);
             return vehicleType;
         }
