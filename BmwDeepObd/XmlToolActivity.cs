@@ -2333,9 +2333,13 @@ namespace BmwDeepObd
                 List<VehicleStructsBmw.ServiceDataItem> bmwServiceDataItems = null;
                 if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
                 {
+#if false
                     string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
                     EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
                     _ruleEvalBmw?.UpdateEvalEcuProperties(ecuVariant);
+#else
+                    _ruleEvalBmw?.UpdateEvalEcuProperties(null);
+#endif
                     bmwServiceDataItems = VehicleInfoBmw.GetServiceDataItems(_bmwDir, _ruleEvalBmw);
                 }
 
