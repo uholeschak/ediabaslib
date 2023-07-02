@@ -276,18 +276,39 @@ namespace BmwFileReader
                 return false;
             }
 
+#if DEBUG
+            bool logInfo = name == "EcuRepresentative".ToUpperInvariant() || name == "EcuClique".ToUpperInvariant();
+#endif
             string valueTrim = value.Trim();
             foreach (string propertyString in propertyStrings)
             {
                 if (string.Compare(propertyString.Trim(), valueTrim, StringComparison.OrdinalIgnoreCase) == 0)
                 {
+#if DEBUG
+                    if (logInfo)
+                    {
+                        Log.Info(Tag, string.Format("IsValidRuleString {0}: '{1}'=='{2}'", name, propertyString, valueTrim));
+                    }
+#endif
                     return true;
                 }
+#if DEBUG
+                if (logInfo)
+                {
+                    Log.Info(Tag, string.Format("IsValidRuleString {0}: '{1}'!='{2}'", name, propertyString, valueTrim));
+                }
+#endif
             }
 
             string valueAsc = VehicleInfoBmw.RemoveNonAsciiChars(valueTrim);
             if (!string.IsNullOrEmpty(valueAsc) && valueAsc != valueTrim)
             {
+#if DEBUG
+                if (logInfo)
+                {
+                    Log.Info(Tag, string.Format("IsValidRuleString {0}: '{1}'->'{2}'", name, valueAsc, valueTrim));
+                }
+#endif
                 foreach (string propertyString in propertyStrings)
                 {
                     if (string.Compare(propertyString.Trim(), valueAsc, StringComparison.OrdinalIgnoreCase) == 0)
