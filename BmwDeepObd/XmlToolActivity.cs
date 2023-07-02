@@ -2344,10 +2344,15 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                List<string> validSgbds = null;
+                List<string> validSgbds = new List<string>();
                 if (!string.IsNullOrWhiteSpace(ecuInfo.Grp))
                 {
-                    validSgbds = new List<string> { ecuInfo.Grp };
+                    validSgbds.Add(ecuInfo.Grp);
+                }
+
+                if (!string.IsNullOrWhiteSpace(ecuInfo.Sgbd))
+                {
+                    validSgbds.Add(ecuInfo.Sgbd);
                 }
 
                 VehicleInfoBmw.ServiceTreeItem serviceTreeItem = VehicleInfoBmw.GetServiceItemTree(bmwServiceDataItems, validSgbds);
@@ -2433,12 +2438,20 @@ namespace BmwDeepObd
                             }
 
                             StringBuilder sb = new StringBuilder();
-                            sb.Append("JOB:");
+                            int jobIndex = 0;
                             foreach (string jobItem in jobBareItems)
                             {
-                                sb.Append(" \"");
-                                sb.Append(jobItem);
-                                sb.Append("\"");
+                                if (jobIndex > 0)
+                                {
+                                    if (sb.Length > 0)
+                                    {
+                                        sb.Append(" ");
+                                    }
+
+                                    sb.Append(jobItem);
+                                }
+
+                                jobIndex++;
                             }
 
                             foreach (string textHash in serviceInfoData.TextHashes)
