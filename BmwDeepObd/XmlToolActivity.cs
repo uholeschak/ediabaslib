@@ -2344,7 +2344,13 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                VehicleInfoBmw.ServiceTreeItem serviceTreeItem = VehicleInfoBmw.GetServiceItemTree(bmwServiceDataItems);
+                List<string> validSgbds = null;
+                if (!string.IsNullOrWhiteSpace(ecuInfo.Grp))
+                {
+                    validSgbds = new List<string> { ecuInfo.Grp };
+                }
+
+                VehicleInfoBmw.ServiceTreeItem serviceTreeItem = VehicleInfoBmw.GetServiceItemTree(bmwServiceDataItems, validSgbds);
                 if (anchor == null)
                 {
                     return serviceTreeItem.HasInfoData;
