@@ -2333,13 +2333,9 @@ namespace BmwDeepObd
                 List<VehicleStructsBmw.ServiceDataItem> bmwServiceDataItems = null;
                 if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
                 {
-#if false
                     string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
                     EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
                     _ruleEvalBmw?.UpdateEvalEcuProperties(ecuVariant);
-#else
-                    _ruleEvalBmw?.UpdateEvalEcuProperties(null);
-#endif
                     bmwServiceDataItems = VehicleInfoBmw.GetServiceDataItems(_bmwDir, _ruleEvalBmw);
                 }
 
@@ -2419,7 +2415,26 @@ namespace BmwDeepObd
                         List<object> serviceInfoMenus = new List<object>();
                         foreach (VehicleStructsBmw.ServiceInfoData serviceInfoData in serviceInfoList)
                         {
+                            if (serviceInfoData.EdiabasJobBare == null)
+                            {
+                                continue;
+                            }
+
+                            string[] jobBareItems = serviceInfoData.EdiabasJobBare.Split('#');
+                            if (jobBareItems.Length < 2)
+                            {
+                                continue;
+                            }
+
                             StringBuilder sb = new StringBuilder();
+                            sb.Append("JOB:");
+                            foreach (string jobItem in jobBareItems)
+                            {
+                                sb.Append(" \"");
+                                sb.Append(jobItem);
+                                sb.Append("\"");
+                            }
+
                             foreach (string textHash in serviceInfoData.TextHashes)
                             {
                                 VehicleStructsBmw.ServiceTextData serviceInfoTextData = VehicleInfoBmw.GetServiceTextDataForHash(textHash);
@@ -2437,6 +2452,7 @@ namespace BmwDeepObd
                                     }
                                 }
                             }
+
 
                             IMenuItem menuItem = subMenuInfoObj.Add(IMenu.None, serviceInfoMenus.Count, IMenu.None, sb.ToString());
                             serviceInfoMenus.Add(menuItem);
