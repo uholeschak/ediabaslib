@@ -270,15 +270,31 @@ namespace BmwFileReader
                 return false;
             }
 
+#if DEBUG
+            // ReSharper disable once ReplaceWithSingleAssignment.False
+            bool logInfo = false;
+            if (string.Compare(name, "EcuRepresentative", StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                logInfo = true;
+            }
+            if (string.Compare(name, "EcuClique", StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                logInfo = true;
+            }
+#endif
+
             List<string> propertyStrings = GetPropertyStrings(name);
             if (propertyStrings == null)
             {
+#if DEBUG
+                if (logInfo)
+                {
+                    Log.Info(Tag, string.Format("IsValidRuleString {0}: not found", name));
+                }
+#endif
                 return false;
             }
 
-#if DEBUG
-            bool logInfo = name == "EcuRepresentative".ToUpperInvariant() || name == "EcuClique".ToUpperInvariant();
-#endif
             string valueTrim = value.Trim();
             foreach (string propertyString in propertyStrings)
             {
