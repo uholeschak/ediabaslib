@@ -112,11 +112,8 @@ namespace BmwFileReader
                     {
                         foreach (KeyValuePair<string,string> propertyPair in detectVehicleBmw.TypeKeyProperties)
                         {
-                            string value = propertyPair.Value;
-                            if (!string.IsNullOrWhiteSpace(value))
-                            {
-                                _propertiesDict.TryAdd(propertyPair.Key.ToUpperInvariant(), new List<string> { value.Trim() });
-                            }
+                            string value = propertyPair.Value ?? string.Empty;
+                            _propertiesDict.TryAdd(propertyPair.Key.ToUpperInvariant(), new List<string> { value.Trim() });
                         }
                     }
 
