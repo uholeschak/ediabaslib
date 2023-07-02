@@ -914,7 +914,7 @@ namespace BmwFileReader
             return serviceDataItems;
         }
 
-        public static bool IsValidServiceInfoData(VehicleStructsBmw.ServiceInfoData serviceInfoData)
+        public static bool IsValidServiceInfoData(VehicleStructsBmw.ServiceInfoData serviceInfoData, List<string> validSgbds = null)
         {
             if (serviceInfoData == null)
             {
@@ -931,6 +931,30 @@ namespace BmwFileReader
             if (jobBareItems.Length < 2)
             {
                 return false;
+            }
+
+            string jobSgbd = jobBareItems[0].Trim();
+            if (string.IsNullOrEmpty(jobSgbd))
+            {
+                return false;
+            }
+
+            if (validSgbds != null && validSgbds.Count > 0)
+            {
+                bool valid = false;
+                foreach (string sgbd in validSgbds)
+                {
+                    if (string.Compare(jobSgbd, sgbd.Trim(), StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        valid = true;
+                        break;
+                    }
+                }
+
+                if (!valid)
+                {
+                    return false;
+                }
             }
 #if false
             if (serviceInfoData.TextHashes == null || serviceInfoData.TextHashes.Count < 1)
@@ -956,7 +980,7 @@ namespace BmwFileReader
             return true;
         }
 
-        public static ServiceTreeItem GetServiceItemTree(List<VehicleStructsBmw.ServiceDataItem> serviceDataItems)
+        public static ServiceTreeItem GetServiceItemTree(List<VehicleStructsBmw.ServiceDataItem> serviceDataItems, List<string> validSgbds = null)
         {
             if (serviceDataItems == null)
             {
@@ -969,7 +993,7 @@ namespace BmwFileReader
                 List<VehicleStructsBmw.ServiceInfoData> serviceInfoList = new List<VehicleStructsBmw.ServiceInfoData>();
                 foreach (VehicleStructsBmw.ServiceInfoData serviceInfoData in serviceDataItem.InfoDataList)
                 {
-                    if (!IsValidServiceInfoData(serviceInfoData))
+                    if (!IsValidServiceInfoData(serviceInfoData, validSgbds))
                     {
                         continue;
                     }
