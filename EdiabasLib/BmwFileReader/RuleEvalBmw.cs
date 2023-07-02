@@ -213,12 +213,18 @@ namespace BmwFileReader
                     string repsName = ecuVariant.EcuClique?.EcuRepsName;
                     if (!string.IsNullOrEmpty(repsName))
                     {
+#if DEBUG
+                        Log.Info(Tag, string.Format("SetEvalEcuProperties '{0}'='{1}'", keyEcuRep, repsName));
+#endif
                         _propertiesDict.Add(keyEcuRep, new List<string> { repsName });
                     }
 
                     string cliqueName = ecuVariant.EcuClique?.CliqueName;
                     if (!string.IsNullOrEmpty(cliqueName))
                     {
+#if DEBUG
+                        Log.Info(Tag, string.Format("SetEvalEcuProperties '{0}'='{1}'", keyEcuClique, cliqueName));
+#endif
                         _propertiesDict.Add(keyEcuClique, new List<string> { cliqueName });
                     }
                 }
