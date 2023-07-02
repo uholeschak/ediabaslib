@@ -921,11 +921,6 @@ namespace BmwFileReader
                 return false;
             }
 
-            if (serviceInfoData.TextHashes == null || serviceInfoData.TextHashes.Count < 1)
-            {
-                return false;
-            }
-
             string jobBare = serviceInfoData.EdiabasJobBare;
             if (string.IsNullOrEmpty(jobBare))
             {
@@ -937,7 +932,12 @@ namespace BmwFileReader
             {
                 return false;
             }
-
+#if false
+            if (serviceInfoData.TextHashes == null || serviceInfoData.TextHashes.Count < 1)
+            {
+                return false;
+            }
+#endif
             if (jobBareItems[1].StartsWith("IDENT", StringComparison.OrdinalIgnoreCase))
             {
                 return false;
@@ -1046,5 +1046,5 @@ namespace BmwFileReader
             return textData;
         }
 #endif
-    }
+        }
 }
