@@ -384,7 +384,6 @@ namespace BmwDeepObd
         private const string XsdFileName = "BmwDeepObd.xsd";
         private const string TranslationFileName = "Translation.xml";
         private const int MotorAddrVag = 1;
-        private const int ServiceMenuGroupId = 1;
 
         private const string PageExtension = ".ccpage";
         private const string ErrorsFileName = "Errors.ccpage";
@@ -2244,11 +2243,6 @@ namespace BmwDeepObd
                     return;
                 }
 
-                if (args.Item.GroupId == ServiceMenuGroupId)
-                {
-                    return;
-                }
-
                 switch (args.Item.ItemId)
                 {
                     case Resource.Id.menu_xml_tool_config_ecu:
@@ -2390,6 +2384,25 @@ namespace BmwDeepObd
                 }
 
                 popupMenu.Show();
+                popupMenu.MenuItemClick += (sender, args) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    if (args?.Item == null)
+                    {
+                        return;
+                    }
+
+                    VehicleStructsBmw.ServiceInfoData serviceInfoDataMenu = SearchBwmServiceMenuItem(args.Item, serviceTreeItem);
+                    if (serviceInfoDataMenu == null)
+                    {
+                        return;
+                    }
+                };
+
                 return true;
             }
             catch (Exception)
@@ -2430,11 +2443,11 @@ namespace BmwDeepObd
                         {
                             if (subMenu != null)
                             {
-                                subMenuInfoObj = subMenu.AddSubMenu(ServiceMenuGroupId, menuId++, IMenu.None, infoObjText);
+                                subMenuInfoObj = subMenu.AddSubMenu(IMenu.None, menuId++, IMenu.None, infoObjText);
                             }
                             else
                             {
-                                subMenuInfoObj = menu.AddSubMenu(ServiceMenuGroupId, menuId++, IMenu.None, infoObjText);
+                                subMenuInfoObj = menu.AddSubMenu(IMenu.None, menuId++, IMenu.None, infoObjText);
                             }
 
                             serviceTreeItem.MenuId = menuId;
@@ -2493,7 +2506,7 @@ namespace BmwDeepObd
                             }
 
 
-                            IMenuItem menuItem = subMenuInfoObj.Add(ServiceMenuGroupId, menuId++, IMenu.None, sb.ToString());
+                            IMenuItem menuItem = subMenuInfoObj.Add(IMenu.None, menuId++, IMenu.None, sb.ToString());
                             serviceInfoMenus.Add(menuId);
                         }
                         serviceTreeItem.ServiceInfoMenuIds = serviceInfoMenus;
@@ -2516,11 +2529,11 @@ namespace BmwDeepObd
                             {
                                 if (subMenu != null)
                                 {
-                                    subMenuChild = subMenu.AddSubMenu(ServiceMenuGroupId, menuId++, IMenu.None, diagObjText);
+                                    subMenuChild = subMenu.AddSubMenu(IMenu.None, menuId++, IMenu.None, diagObjText);
                                 }
                                 else
                                 {
-                                    subMenuChild = menu.AddSubMenu(ServiceMenuGroupId, menuId++, IMenu.None, diagObjText);
+                                    subMenuChild = menu.AddSubMenu(IMenu.None, menuId++, IMenu.None, diagObjText);
                                 }
 
                                 childItem.MenuId = menuId;
@@ -2537,6 +2550,58 @@ namespace BmwDeepObd
             {
                 return false;
             }
+        }
+
+        private VehicleStructsBmw.ServiceInfoData SearchBwmServiceMenuItem(IMenuItem menuItem, VehicleInfoBmw.ServiceTreeItem serviceTreeItem)
+        {
+            if (menuItem == null)
+            {
+                return null;
+            }
+
+            if (serviceTreeItem == null)
+            {
+                return null;
+            }
+
+            if (menuItem.HasSubMenu)
+            {
+                return null;
+            }
+
+            if (serviceTreeItem.ServiceInfoMenuIds != null)
+            {
+                int itemId = menuItem.ItemId;
+                int index = 0;
+                foreach (int menuId in serviceTreeItem.ServiceInfoMenuIds)
+                {
+                    if (menuId == itemId)
+                    {
+                        if (serviceTreeItem.ServiceInfoList.Count < index)
+                        {
+                            return null;
+                        }
+
+                        return serviceTreeItem.ServiceInfoList[index];
+                    }
+
+                    index++;
+                }
+            }
+
+            if (serviceTreeItem.ChildItems != null)
+            {
+                foreach (VehicleInfoBmw.ServiceTreeItem childItem in serviceTreeItem.ChildItems)
+                {
+                    VehicleStructsBmw.ServiceInfoData serviceInfoDataChild = SearchBwmServiceMenuItem(menuItem, childItem);
+                    if (serviceInfoDataChild != null)
+                    {
+                        return serviceInfoDataChild;
+                    }
+                }
+            }
+
+            return null;
         }
 
         private bool SelectBluetoothDevice()
