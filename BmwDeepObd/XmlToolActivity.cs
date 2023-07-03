@@ -384,6 +384,7 @@ namespace BmwDeepObd
         private const string XsdFileName = "BmwDeepObd.xsd";
         private const string TranslationFileName = "Translation.xml";
         private const int MotorAddrVag = 1;
+        private const int ServiceMenuGroupId = 1;
 
         private const string PageExtension = ".ccpage";
         private const string ErrorsFileName = "Errors.ccpage";
@@ -2243,6 +2244,11 @@ namespace BmwDeepObd
                     return;
                 }
 
+                if (args.Item.GroupId == ServiceMenuGroupId)
+                {
+                    return;
+                }
+
                 switch (args.Item.ItemId)
                 {
                     case Resource.Id.menu_xml_tool_config_ecu:
@@ -2486,7 +2492,7 @@ namespace BmwDeepObd
                             }
 
 
-                            IMenuItem menuItem = subMenuInfoObj.Add(IMenu.None, serviceInfoMenus.Count, IMenu.None, sb.ToString());
+                            IMenuItem menuItem = subMenuInfoObj.Add(ServiceMenuGroupId, serviceInfoMenus.Count, IMenu.None, sb.ToString());
                             serviceInfoMenus.Add(menuItem);
                         }
                         serviceTreeItem.ServiceInfoMenus = serviceInfoMenus;
