@@ -2382,7 +2382,8 @@ namespace BmwDeepObd
 
                 AndroidX.AppCompat.Widget.PopupMenu popupMenu = new AndroidX.AppCompat.Widget.PopupMenu(this, anchor);
                 string language = ActivityCommon.GetCurrentLanguage();
-                AddBwmServiceMenuChilds(popupMenu.Menu, null, serviceTreeItem, language, 0);
+                int menuId = 0;
+                AddBwmServiceMenuChilds(popupMenu.Menu, null, serviceTreeItem, language, 0, ref menuId);
                 if (!popupMenu.Menu.HasVisibleItems)
                 {
                     return false;
@@ -2397,7 +2398,7 @@ namespace BmwDeepObd
             }
         }
 
-        private bool AddBwmServiceMenuChilds(IMenu menu, ISubMenu subMenu, VehicleInfoBmw.ServiceTreeItem serviceTreeItem, string language, int level)
+        private bool AddBwmServiceMenuChilds(IMenu menu, ISubMenu subMenu, VehicleInfoBmw.ServiceTreeItem serviceTreeItem, string language, int level, ref int menuId)
         {
             try
             {
@@ -2413,7 +2414,7 @@ namespace BmwDeepObd
                     VehicleInfoBmw.ServiceTreeItem childItem = serviceTreeItem.ChildItems[0];
                     if (serviceInfoList == null)
                     {
-                        AddBwmServiceMenuChilds(menu, subMenu, childItem, language, level + 1);
+                        AddBwmServiceMenuChilds(menu, subMenu, childItem, language, level + 1, ref menuId);
                         return true;
                     }
                 }
@@ -2429,20 +2430,20 @@ namespace BmwDeepObd
                         {
                             if (subMenu != null)
                             {
-                                subMenuInfoObj = subMenu.AddSubMenu(infoObjText);
+                                subMenuInfoObj = subMenu.AddSubMenu(ServiceMenuGroupId, menuId++, IMenu.None, infoObjText);
                             }
                             else
                             {
-                                subMenuInfoObj = menu.AddSubMenu(infoObjText);
+                                subMenuInfoObj = menu.AddSubMenu(ServiceMenuGroupId, menuId++, IMenu.None, infoObjText);
                             }
 
-                            serviceTreeItem.MenuObject = subMenuInfoObj;
+                            serviceTreeItem.MenuId = menuId;
                         }
                     }
 
                     if (subMenuInfoObj != null)
                     {
-                        List<object> serviceInfoMenus = new List<object>();
+                        List<int> serviceInfoMenus = new List<int>();
                         foreach (VehicleStructsBmw.ServiceInfoData serviceInfoData in serviceInfoList)
                         {
                             if (serviceInfoData.EdiabasJobBare == null)
@@ -2492,10 +2493,10 @@ namespace BmwDeepObd
                             }
 
 
-                            IMenuItem menuItem = subMenuInfoObj.Add(ServiceMenuGroupId, serviceInfoMenus.Count, IMenu.None, sb.ToString());
-                            serviceInfoMenus.Add(menuItem);
+                            IMenuItem menuItem = subMenuInfoObj.Add(ServiceMenuGroupId, menuId++, IMenu.None, sb.ToString());
+                            serviceInfoMenus.Add(menuId);
                         }
-                        serviceTreeItem.ServiceInfoMenus = serviceInfoMenus;
+                        serviceTreeItem.ServiceInfoMenuIds = serviceInfoMenus;
                     }
 
                     return true;
@@ -2515,19 +2516,19 @@ namespace BmwDeepObd
                             {
                                 if (subMenu != null)
                                 {
-                                    subMenuChild = subMenu.AddSubMenu(diagObjText);
+                                    subMenuChild = subMenu.AddSubMenu(ServiceMenuGroupId, menuId++, IMenu.None, diagObjText);
                                 }
                                 else
                                 {
-                                    subMenuChild = menu.AddSubMenu(diagObjText);
+                                    subMenuChild = menu.AddSubMenu(ServiceMenuGroupId, menuId++, IMenu.None, diagObjText);
                                 }
 
-                                childItem.MenuObject = subMenuChild;
+                                childItem.MenuId = menuId;
                             }
                         }
                     }
 
-                    AddBwmServiceMenuChilds(menu, subMenuChild, childItem, language, level + 1);
+                    AddBwmServiceMenuChilds(menu, subMenuChild, childItem, language, level + 1, ref menuId);
                 }
 
                 return true;
