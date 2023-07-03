@@ -135,6 +135,9 @@ namespace BmwDeepObd
         public const string ExtraInitDir = "init_dir";
         public const string ExtraAppDataDir = "app_data_dir";
         public const string ExtraSgbdFile = "sgbd";
+        public const string ExtraJobName = "job_name";
+        public const string ExtraJobArgs = "job_args";
+        public const string ExtraJobResults = "job_results";
         public const string ExtraInterface = "interface";
         public const string ExtraDeviceName = "device_name";
         public const string ExtraDeviceAddress = "device_address";

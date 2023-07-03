@@ -1867,6 +1867,10 @@ namespace BmwDeepObd
         private void StartEdiabasTool(EcuInfo ecuInfo, VehicleStructsBmw.ServiceInfoData serviceInfoData = null)
         {
             string sgdb = null;
+            string jobName = null;
+            string jobArgs = null;
+            string jobResults = null;
+
             if (ecuInfo != null)
             {
                 sgdb = ecuInfo.Sgbd;
@@ -1877,9 +1881,24 @@ namespace BmwDeepObd
                 if (serviceInfoData.EdiabasJobBare != null)
                 {
                     string[] jobBareItems = serviceInfoData.EdiabasJobBare.Split('#');
-                    if (jobBareItems.Length >= 2)
+                    if (jobBareItems.Length >= 1)
                     {
                         sgdb = jobBareItems[0];
+                    }
+
+                    if (jobBareItems.Length >= 2)
+                    {
+                        jobName = jobBareItems[1];
+                    }
+
+                    if (jobBareItems.Length >= 3)
+                    {
+                        jobArgs = jobBareItems[2];
+                    }
+
+                    if (jobBareItems.Length >= 4)
+                    {
+                        jobResults = jobBareItems[3];
                     }
                 }
             }
@@ -1899,6 +1918,18 @@ namespace BmwDeepObd
             serverIntent.PutExtra(EdiabasToolActivity.ExtraInitDir, _ecuDir);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraAppDataDir, _appDataDir);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraSgbdFile, Path.Combine(_ecuDir, sgdb));
+            if (jobName != null)
+            {
+                serverIntent.PutExtra(EdiabasToolActivity.ExtraJobName, jobName);
+            }
+            if (jobArgs != null)
+            {
+                serverIntent.PutExtra(EdiabasToolActivity.ExtraJobArgs, jobArgs);
+            }
+            if (jobResults != null)
+            {
+                serverIntent.PutExtra(EdiabasToolActivity.ExtraJobResults, jobResults);
+            }
             serverIntent.PutExtra(EdiabasToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceName, _instanceData.DeviceName);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceAddress, _instanceData.DeviceAddress);
