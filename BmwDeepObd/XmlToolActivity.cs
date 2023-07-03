@@ -1864,21 +1864,41 @@ namespace BmwDeepObd
             return true;
         }
 
-        private void StartEdiabasTool(EcuInfo ecuInfo)
+        private void StartEdiabasTool(EcuInfo ecuInfo, VehicleStructsBmw.ServiceInfoData serviceInfoData = null)
         {
-            if (ecuInfo == null)
+            string sgdb = null;
+            if (ecuInfo != null)
+            {
+                sgdb = ecuInfo.Sgbd;
+            }
+
+            if (serviceInfoData != null)
+            {
+                if (serviceInfoData.EdiabasJobBare != null)
+                {
+                    string[] jobBareItems = serviceInfoData.EdiabasJobBare.Split('#');
+                    if (jobBareItems.Length >= 2)
+                    {
+                        sgdb = jobBareItems[0];
+                    }
+                }
+            }
+
+            if (string.IsNullOrEmpty(sgdb))
             {
                 return;
             }
+
             if (!EdiabasClose(true))
             {
                 return;
             }
+
             Intent serverIntent = new Intent(this, typeof(EdiabasToolActivity));
             EdiabasToolActivity.IntentTranslateActivty = _activityCommon;
             serverIntent.PutExtra(EdiabasToolActivity.ExtraInitDir, _ecuDir);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraAppDataDir, _appDataDir);
-            serverIntent.PutExtra(EdiabasToolActivity.ExtraSgbdFile, Path.Combine(_ecuDir, ecuInfo.Sgbd));
+            serverIntent.PutExtra(EdiabasToolActivity.ExtraSgbdFile, Path.Combine(_ecuDir, sgdb));
             serverIntent.PutExtra(EdiabasToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceName, _instanceData.DeviceName);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceAddress, _instanceData.DeviceAddress);
@@ -2401,6 +2421,8 @@ namespace BmwDeepObd
                     {
                         return;
                     }
+
+                    StartEdiabasTool(null, serviceInfoDataMenu);
                 };
 
                 return true;
