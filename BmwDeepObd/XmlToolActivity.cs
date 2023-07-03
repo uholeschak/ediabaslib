@@ -2330,11 +2330,25 @@ namespace BmwDeepObd
         {
             try
             {
+                List<string> validSgbds = new List<string>();
                 List<VehicleStructsBmw.ServiceDataItem> bmwServiceDataItems = null;
                 if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
                 {
                     string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
                     EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
+
+                    string groupName = ecuVariant.GroupName;
+                    if (!string.IsNullOrWhiteSpace(groupName))
+                    {
+                        validSgbds.Add(groupName);
+                    }
+
+                    string cliqueName = ecuVariant.EcuClique?.CliqueName;
+                    if (!string.IsNullOrWhiteSpace(cliqueName))
+                    {
+                        validSgbds.Add(cliqueName);
+                    }
+
                     _ruleEvalBmw?.UpdateEvalEcuProperties(ecuVariant);
                     bmwServiceDataItems = VehicleInfoBmw.GetServiceDataItems(_bmwDir, _ruleEvalBmw);
                 }
@@ -2344,7 +2358,6 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                List<string> validSgbds = new List<string>();
                 if (!string.IsNullOrWhiteSpace(ecuInfo.Grp))
                 {
                     validSgbds.Add(ecuInfo.Grp);
