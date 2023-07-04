@@ -1883,22 +1883,22 @@ namespace BmwDeepObd
                     string[] jobBareItems = serviceInfoData.EdiabasJobBare.Split('#');
                     if (jobBareItems.Length >= 1)
                     {
-                        sgdb = jobBareItems[0];
+                        sgdb = jobBareItems[0].Trim();
                     }
 
                     if (jobBareItems.Length >= 2)
                     {
-                        jobName = jobBareItems[1];
+                        jobName = jobBareItems[1].Trim();
                     }
 
                     if (jobBareItems.Length >= 3)
                     {
-                        jobArgs = jobBareItems[2];
+                        jobArgs = jobBareItems[2].Trim();
                     }
 
                     if (jobBareItems.Length >= 4)
                     {
-                        jobResults = jobBareItems[3];
+                        jobResults = jobBareItems[3].Trim();
                     }
                 }
             }
@@ -2535,7 +2535,7 @@ namespace BmwDeepObd
                                         sb.Append(" ");
                                     }
 
-                                    sb.Append(jobItem);
+                                    sb.Append(jobItem.Trim());
                                 }
 
                                 jobIndex++;
