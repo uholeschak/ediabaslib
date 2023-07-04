@@ -177,6 +177,9 @@ namespace BmwDeepObd
         private volatile bool _runContinuous;
         private volatile bool _ediabasJobAbort;
         private string _sgbdFileNameInitial = string.Empty;
+        private string _jobNameInitial;
+        private string _jobArgsInitial;
+        private string _jobResultsInitial;
         private bool _activityActive;
         private bool _translateEnabled;
         private bool _translateActive;
@@ -297,6 +300,9 @@ namespace BmwDeepObd
             _initDirStart = Intent.GetStringExtra(ExtraInitDir);
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
             _sgbdFileNameInitial = Intent.GetStringExtra(ExtraSgbdFile);
+            _jobNameInitial = Intent.GetStringExtra(ExtraJobName);
+            _jobArgsInitial = Intent.GetStringExtra(ExtraJobArgs);
+            _jobResultsInitial = Intent.GetStringExtra(ExtraJobResults);
             if (!_activityRecreated)
             {
                 _instanceData.DeviceName = Intent.GetStringExtra(ExtraDeviceName);
@@ -2400,19 +2406,46 @@ namespace BmwDeepObd
             _jobListAdapter.NotifyDataSetChanged();
 
             bool selectionChanged = true;
-            if (keepSelection && jobInfoSelected != null)
+            if (keepSelection)
             {
-                int selectedIndex = _jobListAdapter.Items.IndexOf(jobInfoSelected);
-                if (selectedIndex >= 0)
+                if (jobInfoSelected != null)
                 {
-                    _spinnerJobs.SetSelection(selectedIndex);
+                    int selectedIndex = _jobListAdapter.Items.IndexOf(jobInfoSelected);
+                    if (selectedIndex >= 0)
+                    {
+                        _spinnerJobs.SetSelection(selectedIndex);
+                    }
+
+                    JobInfo jobInfoCurrent = GetSelectedJob();
+                    if (jobInfoCurrent == jobInfoSelected)
+                    {
+                        selectionChanged = false;
+                    }
+                }
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(_jobNameInitial))
+                {
+                    int jobIndex = -1;
+                    int index = 0;
+                    foreach (JobInfo jobInfo in _jobListAdapter.Items)
+                    {
+                        if (string.Compare(jobInfo.Name, _jobNameInitial, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            jobIndex = index;
+                            break;
+                        }
+
+                        index++;
+                    }
+
+                    if (jobIndex >= 0)
+                    {
+                        _spinnerJobs.SetSelection(jobIndex);
+                    }
                 }
 
-                JobInfo jobInfoCurrent = GetSelectedJob();
-                if (jobInfoCurrent == jobInfoSelected)
-                {
-                    selectionChanged = false;
-                }
             }
 
             if (selectionChanged)
