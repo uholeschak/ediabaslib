@@ -2406,6 +2406,8 @@ namespace BmwDeepObd
             _jobListAdapter.NotifyDataSetChanged();
 
             bool selectionChanged = true;
+            bool setInitalData = false;
+            bool update = false;
             if (keepSelection)
             {
                 if (jobInfoSelected != null)
@@ -2443,14 +2445,33 @@ namespace BmwDeepObd
                     if (jobIndex >= 0)
                     {
                         _spinnerJobs.SetSelection(jobIndex);
+                        setInitalData = true;
                     }
                 }
 
+                if (setInitalData)
+                {
+                    string jobArgs = string.Empty;
+                    bool binArgs = false;
+                    if (!string.IsNullOrEmpty(_jobArgsInitial))
+                    {
+                        jobArgs = _jobArgsInitial;
+                        binArgs = jobArgs.StartsWith("|");
+                        if (binArgs)
+                        {
+                            jobArgs = jobArgs.Remove(0, 1);
+                        }
+                    }
+
+                    _editTextArgs.Text = jobArgs;
+                    _checkBoxBinArgs.Checked = binArgs;
+                    update = true;
+                }
             }
 
             if (selectionChanged)
             {
-                NewJobSelected();
+                NewJobSelected(update);
                 DisplayJobComments();
             }
         }
