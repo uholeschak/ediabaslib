@@ -106,7 +106,7 @@ namespace BmwDeepObd
 
             public List<ExtraInfo> Results { get; }
 
-            public string InitialArgs { get; }
+            public string InitialArgs { get; set; }
         }
 
         public class InstanceData
@@ -1430,20 +1430,33 @@ namespace BmwDeepObd
 
             _resultSelectListAdapter.Items.Clear();
             string defaultArgs = string.Empty;
+            bool defaultBinArgs = false;
             if (jobInfo != null)
             {
-                foreach (ExtraInfo result in jobInfo.Results.OrderBy(x => x.Name))
+                if (jobInfo.InitialArgs != null)
                 {
-                    _resultSelectListAdapter.Items.Add(result);
-                }
-
-                AddArgAssistResults(serviceId);
-
-                if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
-                {
-                    if (string.Compare(jobInfo.Name, XmlToolActivity.JobReadMwBlock, StringComparison.OrdinalIgnoreCase) == 0)
+                    defaultArgs = jobInfo.InitialArgs;
+                    if (defaultArgs.StartsWith('|'))
                     {
-                        defaultArgs = jobInfo.ObjectName.Contains("1281") ? "0;WertEinmalLesen" : "100;LESEN";
+                        defaultBinArgs = true;
+                        defaultArgs = defaultArgs.Remove(0, 1);
+                    }
+                }
+                else
+                {
+                    foreach (ExtraInfo result in jobInfo.Results.OrderBy(x => x.Name))
+                    {
+                        _resultSelectListAdapter.Items.Add(result);
+                    }
+
+                    AddArgAssistResults(serviceId);
+
+                    if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+                    {
+                        if (string.Compare(jobInfo.Name, XmlToolActivity.JobReadMwBlock, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            defaultArgs = jobInfo.ObjectName.Contains("1281") ? "0;WertEinmalLesen" : "100;LESEN";
+                        }
                     }
                 }
             }
@@ -1454,7 +1467,7 @@ namespace BmwDeepObd
             if (!update)
             {
                 _editTextArgs.Text = defaultArgs;
-                _checkBoxBinArgs.Checked = false;
+                _checkBoxBinArgs.Checked = defaultBinArgs;
                 _buttonArgAssist.Enabled = GetArgAssistFuncCount(serviceId) > 0;
             }
         }
@@ -2406,15 +2419,28 @@ namespace BmwDeepObd
 
                 if (jobValid)
                 {
-                    _jobListAdapter.Items.Add(job);
+                    if (_jobListInitial != null && _jobListInitial.Count > 0)
+                    {
+                        foreach (string[] jobItems in _jobListInitial)
+                        {
+                            if (jobItems.Length > 0 && string.Compare(job.Name, jobItems[0], StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                job.InitialArgs = jobItems.Length > 1 ? jobItems[1] : string.Empty;
+                                _jobListAdapter.Items.Add(job);
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        _jobListAdapter.Items.Add(job);
+                    }
                 }
             }
 
             _jobListAdapter.NotifyDataSetChanged();
 
             bool selectionChanged = true;
-            string jobArgsInitial = null;
-            bool update = false;
             if (keepSelection)
             {
                 if (jobInfoSelected != null)
@@ -2440,14 +2466,10 @@ namespace BmwDeepObd
                     int index = 0;
                     foreach (JobInfo jobInfo in _jobListAdapter.Items)
                     {
-                        foreach (string[] jobItems in _jobListInitial)
+                        if (jobInfo.InitialArgs != null)
                         {
-                            if (jobItems.Length > 0 &&  string.Compare(jobInfo.Name, jobItems[0], StringComparison.OrdinalIgnoreCase) == 0)
-                            {
-                                jobIndex = index;
-                                jobArgsInitial = jobItems.Length > 1 ? jobItems[1] : string.Empty;
-                                break;
-                            }
+                            jobIndex = index;
+                            break;
                         }
 
                         index++;
@@ -2458,25 +2480,11 @@ namespace BmwDeepObd
                         _spinnerJobs.SetSelection(jobIndex);
                     }
                 }
-
-                if (jobArgsInitial != null)
-                {
-                    string jobArgs = jobArgsInitial;
-                    bool binArgs = jobArgs.StartsWith("|");
-                    if (binArgs)
-                    {
-                        jobArgs = jobArgs.Remove(0, 1);
-                    }
-
-                    _editTextArgs.Text = jobArgs;
-                    _checkBoxBinArgs.Checked = binArgs;
-                    update = true;
-                }
             }
 
             if (selectionChanged)
             {
-                NewJobSelected(update);
+                NewJobSelected();
                 DisplayJobComments();
             }
         }
