@@ -91,6 +91,7 @@ namespace BmwDeepObd
                 Comments = new List<string>();
                 Arguments = new List<ExtraInfo>();
                 Results = new List<ExtraInfo>();
+                InitialArgs = null;
             }
 
             public string Name { get; }
@@ -104,6 +105,8 @@ namespace BmwDeepObd
             public List<ExtraInfo> Arguments { get; }
 
             public List<ExtraInfo> Results { get; }
+
+            public string InitialArgs { get; }
         }
 
         public class InstanceData
@@ -135,9 +138,7 @@ namespace BmwDeepObd
         public const string ExtraInitDir = "init_dir";
         public const string ExtraAppDataDir = "app_data_dir";
         public const string ExtraSgbdFile = "sgbd";
-        public const string ExtraJobName = "job_name";
-        public const string ExtraJobArgs = "job_args";
-        public const string ExtraJobResults = "job_results";
+        public const string ExtraJobList = "job_list";
         public const string ExtraInterface = "interface";
         public const string ExtraDeviceName = "device_name";
         public const string ExtraDeviceAddress = "device_address";
@@ -177,9 +178,7 @@ namespace BmwDeepObd
         private volatile bool _runContinuous;
         private volatile bool _ediabasJobAbort;
         private string _sgbdFileNameInitial = string.Empty;
-        private string _jobNameInitial;
-        private string _jobArgsInitial;
-        private string _jobResultsInitial;
+        private List<string[]> _jobListInitial;
         private bool _activityActive;
         private bool _translateEnabled;
         private bool _translateActive;
@@ -300,9 +299,17 @@ namespace BmwDeepObd
             _initDirStart = Intent.GetStringExtra(ExtraInitDir);
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
             _sgbdFileNameInitial = Intent.GetStringExtra(ExtraSgbdFile);
-            _jobNameInitial = Intent.GetStringExtra(ExtraJobName);
-            _jobArgsInitial = Intent.GetStringExtra(ExtraJobArgs);
-            _jobResultsInitial = Intent.GetStringExtra(ExtraJobResults);
+            string[] jobListInitial = Intent.GetStringArrayExtra(ExtraJobList);
+            if (jobListInitial != null && jobListInitial.Length > 0)
+            {
+                _jobListInitial = new List<string[]>();
+                foreach (string jobEntry in jobListInitial)
+                {
+                    string[] jobItems = jobEntry.Split('#');
+                    _jobListInitial.Add(jobItems);
+                }
+            }
+
             if (!_activityRecreated)
             {
                 _instanceData.DeviceName = Intent.GetStringExtra(ExtraDeviceName);
@@ -2406,7 +2413,7 @@ namespace BmwDeepObd
             _jobListAdapter.NotifyDataSetChanged();
 
             bool selectionChanged = true;
-            bool setInitalData = false;
+            string jobArgsInitial = null;
             bool update = false;
             if (keepSelection)
             {
@@ -2427,16 +2434,20 @@ namespace BmwDeepObd
             }
             else
             {
-                if (!string.IsNullOrEmpty(_jobNameInitial))
+                if (_jobListInitial != null && _jobListInitial.Count > 0)
                 {
                     int jobIndex = -1;
                     int index = 0;
                     foreach (JobInfo jobInfo in _jobListAdapter.Items)
                     {
-                        if (string.Compare(jobInfo.Name, _jobNameInitial, StringComparison.OrdinalIgnoreCase) == 0)
+                        foreach (string[] jobItems in _jobListInitial)
                         {
-                            jobIndex = index;
-                            break;
+                            if (jobItems.Length > 0 &&  string.Compare(jobInfo.Name, jobItems[0], StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                jobIndex = index;
+                                jobArgsInitial = jobItems.Length > 1 ? jobItems[1] : string.Empty;
+                                break;
+                            }
                         }
 
                         index++;
@@ -2445,22 +2456,16 @@ namespace BmwDeepObd
                     if (jobIndex >= 0)
                     {
                         _spinnerJobs.SetSelection(jobIndex);
-                        setInitalData = true;
                     }
                 }
 
-                if (setInitalData)
+                if (jobArgsInitial != null)
                 {
-                    string jobArgs = string.Empty;
-                    bool binArgs = false;
-                    if (!string.IsNullOrEmpty(_jobArgsInitial))
+                    string jobArgs = jobArgsInitial;
+                    bool binArgs = jobArgs.StartsWith("|");
+                    if (binArgs)
                     {
-                        jobArgs = _jobArgsInitial;
-                        binArgs = jobArgs.StartsWith("|");
-                        if (binArgs)
-                        {
-                            jobArgs = jobArgs.Remove(0, 1);
-                        }
+                        jobArgs = jobArgs.Remove(0, 1);
                     }
 
                     _editTextArgs.Text = jobArgs;

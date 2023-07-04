@@ -1867,9 +1867,7 @@ namespace BmwDeepObd
         private void StartEdiabasTool(EcuInfo ecuInfo, VehicleStructsBmw.ServiceInfoData serviceInfoData = null)
         {
             string sgdb = null;
-            string jobName = null;
-            string jobArgs = null;
-            string jobResults = null;
+            List<string>jobList = new List<string>();
 
             if (ecuInfo != null)
             {
@@ -1880,6 +1878,7 @@ namespace BmwDeepObd
             {
                 if (serviceInfoData.EdiabasJobBare != null)
                 {
+                    StringBuilder sbJob = new StringBuilder();
                     string[] jobBareItems = serviceInfoData.EdiabasJobBare.Split('#');
                     if (jobBareItems.Length >= 1)
                     {
@@ -1888,17 +1887,24 @@ namespace BmwDeepObd
 
                     if (jobBareItems.Length >= 2)
                     {
-                        jobName = jobBareItems[1].Trim();
+                        sbJob.Append(jobBareItems[1].Trim());
                     }
 
                     if (jobBareItems.Length >= 3)
                     {
-                        jobArgs = jobBareItems[2].Trim();
+                        sbJob.Append("#");
+                        sbJob.Append(jobBareItems[2].Trim());
                     }
 
                     if (jobBareItems.Length >= 4)
                     {
-                        jobResults = jobBareItems[3].Trim();
+                        sbJob.Append("#");
+                        sbJob.Append(jobBareItems[3].Trim());
+                    }
+
+                    if (sbJob.Length > 0)
+                    {
+                        jobList.Add(sbJob.ToString());
                     }
                 }
             }
@@ -1918,18 +1924,12 @@ namespace BmwDeepObd
             serverIntent.PutExtra(EdiabasToolActivity.ExtraInitDir, _ecuDir);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraAppDataDir, _appDataDir);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraSgbdFile, Path.Combine(_ecuDir, sgdb));
-            if (jobName != null)
+
+            if (jobList.Count > 0)
             {
-                serverIntent.PutExtra(EdiabasToolActivity.ExtraJobName, jobName);
+                serverIntent.PutExtra(EdiabasToolActivity.ExtraJobList, jobList.ToArray());
             }
-            if (jobArgs != null)
-            {
-                serverIntent.PutExtra(EdiabasToolActivity.ExtraJobArgs, jobArgs);
-            }
-            if (jobResults != null)
-            {
-                serverIntent.PutExtra(EdiabasToolActivity.ExtraJobResults, jobResults);
-            }
+
             serverIntent.PutExtra(EdiabasToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceName, _instanceData.DeviceName);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceAddress, _instanceData.DeviceAddress);
