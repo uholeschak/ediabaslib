@@ -613,7 +613,8 @@ namespace BmwDeepObd
                                         defaultBackground = spinner.Background;
                                         StringObjAdapter spinnerAdapter = new StringObjAdapter(this);
                                         spinnerAdapter.Items.Add(new StringObjType("--", null, Android.Graphics.Color.Red));
-                                        int selection = 0;
+                                        Int64 selectParamValue = EdiabasNet.StringToValue(selectParam, out bool selectParamValueValid);
+                                        int selection = -1;
                                         int index = 1;
                                         foreach (SgFunctions.SgFuncNameInfo funcNameInfo in funcArgInfo.NameInfoList)
                                         {
@@ -625,13 +626,32 @@ namespace BmwDeepObd
                                                 sbName.Append(": ");
                                                 sbName.Append(valNameInfo.Text);
                                                 spinnerAdapter.Items.Add(new StringObjType(sbName.ToString(), valNameInfo));
-                                                if (string.Compare(valNameInfo.Text, selectParam, StringComparison.OrdinalIgnoreCase) == 0)
+                                                if (selection < 0)
                                                 {
-                                                    selection = index;
+                                                    if (string.Compare(valNameInfo.Text, selectParam, StringComparison.OrdinalIgnoreCase) == 0)
+                                                    {
+                                                        selection = index;
+                                                    }
+                                                    else if (selectParamValueValid)
+                                                    {
+                                                        Int64 nameInfoValue = EdiabasNet.StringToValue(valNameInfo.Value, out bool nameInfoValueValid);
+                                                        if (nameInfoValueValid)
+                                                        {
+                                                            if (nameInfoValue == selectParamValue)
+                                                            {
+                                                                selection = index;
+                                                            }
+                                                        }
+                                                    }
                                                 }
                                             }
 
                                             index++;
+                                        }
+
+                                        if (selection < 0)
+                                        {
+                                            selection = 0;
                                         }
 
                                         spinnerAdapter.NotifyDataSetChanged();
