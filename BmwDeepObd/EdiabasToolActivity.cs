@@ -92,6 +92,7 @@ namespace BmwDeepObd
                 Arguments = new List<ExtraInfo>();
                 Results = new List<ExtraInfo>();
                 InitialArgs = null;
+                InitialResults = null;
             }
 
             public string Name { get; }
@@ -107,6 +108,8 @@ namespace BmwDeepObd
             public List<ExtraInfo> Results { get; }
 
             public string InitialArgs { get; set; }
+
+            public string InitialResults { get; set; }
         }
 
         public class InstanceData
@@ -2426,6 +2429,7 @@ namespace BmwDeepObd
                             if (jobItems.Length > 0 && string.Compare(job.Name, jobItems[0], StringComparison.OrdinalIgnoreCase) == 0)
                             {
                                 job.InitialArgs = jobItems.Length > 1 ? jobItems[1] : string.Empty;
+                                job.InitialResults = jobItems.Length > 2 ? jobItems[2] : string.Empty;
                                 _jobListAdapter.Items.Add(job);
                                 break;
                             }
