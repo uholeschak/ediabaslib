@@ -1880,26 +1880,25 @@ namespace BmwDeepObd
                 {
                     StringBuilder sbJob = new StringBuilder();
                     string[] jobBareItems = serviceInfoData.EdiabasJobBare.Split('#');
-                    if (jobBareItems.Length >= 1)
-                    {
-                        sgdb = jobBareItems[0].Trim();
-                    }
 
-                    if (jobBareItems.Length >= 2)
+                    int itemIndex = 0;
+                    foreach (string jobItem in jobBareItems)
                     {
-                        sbJob.Append(jobBareItems[1].Trim());
-                    }
+                        if (itemIndex == 0)
+                        {
+                            sgdb = jobItem.Trim();
+                        }
+                        else
+                        {
+                            if (sbJob.Length > 0)
+                            {
+                                sbJob.Append("#");
+                            }
 
-                    if (jobBareItems.Length >= 3)
-                    {
-                        sbJob.Append("#");
-                        sbJob.Append(jobBareItems[2].Trim());
-                    }
+                            sbJob.Append(jobItem.Trim());
+                        }
 
-                    if (jobBareItems.Length >= 4)
-                    {
-                        sbJob.Append("#");
-                        sbJob.Append(jobBareItems[3].Trim());
+                        itemIndex++;
                     }
 
                     if (sbJob.Length > 0)
