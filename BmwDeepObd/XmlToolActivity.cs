@@ -1864,7 +1864,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        private void StartEdiabasTool(EcuInfo ecuInfo, VehicleStructsBmw.ServiceInfoData serviceInfoData = null)
+        private void StartEdiabasTool(EcuInfo ecuInfo, List<VehicleStructsBmw.ServiceInfoData> serviceInfoDataList = null)
         {
             string sgdb = null;
             List<string>jobList = new List<string>();
@@ -1873,37 +1873,42 @@ namespace BmwDeepObd
             {
                 sgdb = ecuInfo.Sgbd;
             }
-
-            if (serviceInfoData != null)
+            else if (serviceInfoDataList != null)
             {
-                if (serviceInfoData.EdiabasJobBare != null)
+                foreach (VehicleStructsBmw.ServiceInfoData serviceInfoData in serviceInfoDataList)
                 {
-                    StringBuilder sbJob = new StringBuilder();
-                    string[] jobBareItems = serviceInfoData.EdiabasJobBare.Split('#');
-
-                    int itemIndex = 0;
-                    foreach (string jobItem in jobBareItems)
+                    if (serviceInfoData.EdiabasJobBare != null)
                     {
-                        if (itemIndex == 0)
+                        StringBuilder sbJob = new StringBuilder();
+                        string[] jobBareItems = serviceInfoData.EdiabasJobBare.Split('#');
+
+                        int itemIndex = 0;
+                        foreach (string jobItem in jobBareItems)
                         {
-                            sgdb = jobItem.Trim();
-                        }
-                        else
-                        {
-                            if (sbJob.Length > 0)
+                            if (itemIndex == 0)
                             {
-                                sbJob.Append("#");
+                                if (string.IsNullOrEmpty(sgdb))
+                                {
+                                    sgdb = jobItem.Trim();
+                                }
+                            }
+                            else
+                            {
+                                if (sbJob.Length > 0)
+                                {
+                                    sbJob.Append("#");
+                                }
+
+                                sbJob.Append(jobItem.Trim());
                             }
 
-                            sbJob.Append(jobItem.Trim());
+                            itemIndex++;
                         }
 
-                        itemIndex++;
-                    }
-
-                    if (sbJob.Length > 0)
-                    {
-                        jobList.Add(sbJob.ToString());
+                        if (sbJob.Length > 0)
+                        {
+                            jobList.Add(sbJob.ToString());
+                        }
                     }
                 }
             }
@@ -2446,13 +2451,13 @@ namespace BmwDeepObd
                         return;
                     }
 
-                    VehicleStructsBmw.ServiceInfoData serviceInfoDataMenu = SearchBwmServiceMenuItem(args.Item, serviceTreeItem);
-                    if (serviceInfoDataMenu == null)
+                    List<VehicleStructsBmw.ServiceInfoData> serviceInfoDataListMenu = SearchBwmServiceMenuItems(args.Item, serviceTreeItem);
+                    if (serviceInfoDataListMenu == null)
                     {
                         return;
                     }
 
-                    StartEdiabasTool(null, serviceInfoDataMenu);
+                    StartEdiabasTool(null, serviceInfoDataListMenu);
                 };
 
                 return true;
@@ -2510,6 +2515,7 @@ namespace BmwDeepObd
                     if (subMenuInfoObj != null)
                     {
                         List<int> serviceInfoMenus = new List<int>();
+                        List<VehicleStructsBmw.ServiceInfoData> serviceUseList = new List<VehicleStructsBmw.ServiceInfoData>();
                         foreach (VehicleStructsBmw.ServiceInfoData serviceInfoData in serviceInfoList)
                         {
                             if (serviceInfoData.EdiabasJobBare == null)
@@ -2523,47 +2529,30 @@ namespace BmwDeepObd
                                 continue;
                             }
 
-                            StringBuilder sb = new StringBuilder();
-                            int jobIndex = 0;
-                            foreach (string jobItem in jobBareItems)
+                            bool jobPresent = false;
+                            foreach (VehicleStructsBmw.ServiceInfoData serviceInfoUse in serviceUseList)
                             {
-                                if (jobIndex > 0)
+                                if (string.Compare(serviceInfoUse.EdiabasJobBare, serviceInfoData.EdiabasJobBare, StringComparison.OrdinalIgnoreCase) == 0)
                                 {
-                                    if (sb.Length > 0)
-                                    {
-                                        sb.Append(" ");
-                                    }
-
-                                    sb.Append(jobItem.Trim());
-                                }
-
-                                jobIndex++;
-                            }
-
-                            foreach (string textHash in serviceInfoData.TextHashes)
-                            {
-                                VehicleStructsBmw.ServiceTextData serviceInfoTextData = VehicleInfoBmw.GetServiceTextDataForHash(textHash);
-                                if (serviceInfoTextData != null)
-                                {
-                                    string serviceInfoText = serviceInfoTextData.Translation.GetTitle(language);
-                                    if (!string.IsNullOrEmpty(serviceInfoText))
-                                    {
-                                        if (sb.Length > 0)
-                                        {
-                                            sb.Append("\r\n");
-                                        }
-
-                                        sb.Append(serviceInfoText);
-                                    }
+                                    jobPresent = true;
                                 }
                             }
 
+                            if (!jobPresent)
+                            {
+                                serviceUseList.Add(serviceInfoData);
+                            }
+                        }
 
-                            IMenuItem menuItem = subMenuInfoObj.Add(IMenu.None, menuId, IMenu.None, sb.ToString());
+                        if (serviceUseList.Count > 0)
+                        {
+                            string menuText = string.Format("Jobs: {0}", serviceUseList.Count);
+                            IMenuItem menuItem = subMenuInfoObj.Add(IMenu.None, menuId, IMenu.None, menuText);
                             serviceInfoMenus.Add(menuId);
                             menuId++;
+                            serviceTreeItem.MenuServiceInfos = serviceUseList;
+                            serviceTreeItem.ServiceInfoMenuIds = serviceInfoMenus;
                         }
-                        serviceTreeItem.ServiceInfoMenuIds = serviceInfoMenus;
                     }
 
                     return true;
@@ -2607,7 +2596,7 @@ namespace BmwDeepObd
             }
         }
 
-        private VehicleStructsBmw.ServiceInfoData SearchBwmServiceMenuItem(IMenuItem menuItem, VehicleInfoBmw.ServiceTreeItem serviceTreeItem)
+        private List<VehicleStructsBmw.ServiceInfoData> SearchBwmServiceMenuItems(IMenuItem menuItem, VehicleInfoBmw.ServiceTreeItem serviceTreeItem)
         {
             if (menuItem == null)
             {
@@ -2627,20 +2616,15 @@ namespace BmwDeepObd
             if (serviceTreeItem.ServiceInfoMenuIds != null)
             {
                 int itemId = menuItem.ItemId;
-                int index = 0;
                 foreach (int menuId in serviceTreeItem.ServiceInfoMenuIds)
                 {
                     if (menuId == itemId)
                     {
-                        if (serviceTreeItem.ServiceInfoList.Count < index)
+                        if (serviceTreeItem.MenuServiceInfos != null && serviceTreeItem.MenuServiceInfos.Count > 0)
                         {
-                            return null;
+                            return serviceTreeItem.MenuServiceInfos;
                         }
-
-                        return serviceTreeItem.ServiceInfoList[index];
                     }
-
-                    index++;
                 }
             }
 
@@ -2648,10 +2632,10 @@ namespace BmwDeepObd
             {
                 foreach (VehicleInfoBmw.ServiceTreeItem childItem in serviceTreeItem.ChildItems)
                 {
-                    VehicleStructsBmw.ServiceInfoData serviceInfoDataChild = SearchBwmServiceMenuItem(menuItem, childItem);
-                    if (serviceInfoDataChild != null)
+                    List<VehicleStructsBmw.ServiceInfoData> serviceInfoDataItemsChild = SearchBwmServiceMenuItems(menuItem, childItem);
+                    if (serviceInfoDataItemsChild != null && serviceInfoDataItemsChild.Count > 0)
                     {
-                        return serviceInfoDataChild;
+                        return serviceInfoDataItemsChild;
                     }
                 }
             }
