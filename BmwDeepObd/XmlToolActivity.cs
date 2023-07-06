@@ -2434,7 +2434,7 @@ namespace BmwDeepObd
                 AndroidX.AppCompat.Widget.PopupMenu popupMenu = new AndroidX.AppCompat.Widget.PopupMenu(this, anchor);
                 string language = ActivityCommon.GetCurrentLanguage();
                 int menuId = 1;
-                AddBwmServiceMenuChilds(popupMenu.Menu, null, serviceTreeItem, language, 0, ref menuId);
+                AddBwmServiceMenuChilds(popupMenu.Menu, null, serviceTreeItem, ecuInfo, language, 0, ref menuId);
                 if (!popupMenu.Menu.HasVisibleItems)
                 {
                     return false;
@@ -2470,7 +2470,7 @@ namespace BmwDeepObd
             }
         }
 
-        private bool AddBwmServiceMenuChilds(IMenu menu, ISubMenu subMenu, VehicleInfoBmw.ServiceTreeItem serviceTreeItem, string language, int level, ref int menuId)
+        private bool AddBwmServiceMenuChilds(IMenu menu, ISubMenu subMenu, VehicleInfoBmw.ServiceTreeItem serviceTreeItem, EcuInfo ecuInfo, string language, int level, ref int menuId)
         {
             try
             {
@@ -2486,7 +2486,7 @@ namespace BmwDeepObd
                     VehicleInfoBmw.ServiceTreeItem childItem = serviceTreeItem.ChildItems[0];
                     if (serviceInfoList == null)
                     {
-                        AddBwmServiceMenuChilds(menu, subMenu, childItem, language, level + 1, ref menuId);
+                        AddBwmServiceMenuChilds(menu, subMenu, childItem, ecuInfo, language, level + 1, ref menuId);
                         return true;
                     }
                 }
@@ -2531,6 +2531,11 @@ namespace BmwDeepObd
                             }
 
                             string sgdb = jobBareItems[0].Trim();
+                            if (string.Compare(sgdb, ecuInfo.Grp, StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                sgdb = ecuInfo.Sgbd;
+                            }
+
                             string key = sgdb.ToUpperInvariant();
                             if (!serviceInfoDict.TryGetValue(key, out List<VehicleStructsBmw.ServiceInfoData> serviceListSgdb))
                             {
@@ -2606,7 +2611,7 @@ namespace BmwDeepObd
                         }
                     }
 
-                    AddBwmServiceMenuChilds(menu, subMenuChild, childItem, language, level + 1, ref menuId);
+                    AddBwmServiceMenuChilds(menu, subMenuChild, childItem, ecuInfo, language, level + 1, ref menuId);
                 }
 
                 return true;
