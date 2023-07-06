@@ -2514,7 +2514,7 @@ namespace BmwDeepObd
 
                     if (subMenuInfoObj != null)
                     {
-                        List<int> serviceInfoMenus = new List<int>();
+                        Dictionary<int, List<VehicleStructsBmw.ServiceInfoData>> serviceMenuInfoDict = new Dictionary<int, List<VehicleStructsBmw.ServiceInfoData>>();
                         List<VehicleStructsBmw.ServiceInfoData> serviceUseList = new List<VehicleStructsBmw.ServiceInfoData>();
                         foreach (VehicleStructsBmw.ServiceInfoData serviceInfoData in serviceInfoList)
                         {
@@ -2548,10 +2548,16 @@ namespace BmwDeepObd
                         {
                             string menuText = string.Format("Jobs: {0}", serviceUseList.Count);
                             IMenuItem menuItem = subMenuInfoObj.Add(IMenu.None, menuId, IMenu.None, menuText);
-                            serviceInfoMenus.Add(menuId);
-                            menuId++;
-                            serviceTreeItem.MenuServiceInfos = serviceUseList;
-                            serviceTreeItem.ServiceInfoMenuIds = serviceInfoMenus;
+                            if (menuItem != null)
+                            {
+                                serviceMenuInfoDict.TryAdd(menuId, serviceUseList);
+                                menuId++;
+                            }
+                        }
+
+                        if (serviceMenuInfoDict.Count > 0)
+                        {
+                            serviceTreeItem.ServiceMenuInfoDict = serviceMenuInfoDict;
                         }
                     }
 
@@ -2613,16 +2619,16 @@ namespace BmwDeepObd
                 return null;
             }
 
-            if (serviceTreeItem.ServiceInfoMenuIds != null)
+            if (serviceTreeItem.ServiceMenuInfoDict != null)
             {
                 int itemId = menuItem.ItemId;
-                foreach (int menuId in serviceTreeItem.ServiceInfoMenuIds)
+                foreach (KeyValuePair<int, List<VehicleStructsBmw.ServiceInfoData>> keyValueMenu in serviceTreeItem.ServiceMenuInfoDict)
                 {
-                    if (menuId == itemId)
+                    if (keyValueMenu.Key == itemId)
                     {
-                        if (serviceTreeItem.MenuServiceInfos != null && serviceTreeItem.MenuServiceInfos.Count > 0)
+                        if (keyValueMenu.Value != null && keyValueMenu.Value.Count > 0)
                         {
-                            return serviceTreeItem.MenuServiceInfos;
+                            return keyValueMenu.Value;
                         }
                     }
                 }
