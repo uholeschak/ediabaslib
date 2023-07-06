@@ -2514,8 +2514,7 @@ namespace BmwDeepObd
 
                     if (subMenuInfoObj != null)
                     {
-                        Dictionary<int, List<VehicleStructsBmw.ServiceInfoData>> serviceMenuInfoDict = new Dictionary<int, List<VehicleStructsBmw.ServiceInfoData>>();
-                        List<VehicleStructsBmw.ServiceInfoData> serviceUseList = new List<VehicleStructsBmw.ServiceInfoData>();
+                        Dictionary<string, List<VehicleStructsBmw.ServiceInfoData>> serviceInfoDict = new Dictionary<string, List<VehicleStructsBmw.ServiceInfoData>>();
                         foreach (VehicleStructsBmw.ServiceInfoData serviceInfoData in serviceInfoList)
                         {
                             if (serviceInfoData.EdiabasJobBare == null)
@@ -2529,8 +2528,16 @@ namespace BmwDeepObd
                                 continue;
                             }
 
+                            string sgdb = jobBareItems[0].Trim();
+                            string key = sgdb.ToUpperInvariant();
+                            if (!serviceInfoDict.TryGetValue(key, out List<VehicleStructsBmw.ServiceInfoData> serviceListSgdb))
+                            {
+                                serviceListSgdb = new List<VehicleStructsBmw.ServiceInfoData>();
+                                serviceInfoDict.Add(key, serviceListSgdb);
+                            }
+
                             bool jobPresent = false;
-                            foreach (VehicleStructsBmw.ServiceInfoData serviceInfoUse in serviceUseList)
+                            foreach (VehicleStructsBmw.ServiceInfoData serviceInfoUse in serviceListSgdb)
                             {
                                 if (string.Compare(serviceInfoUse.EdiabasJobBare, serviceInfoData.EdiabasJobBare, StringComparison.OrdinalIgnoreCase) == 0)
                                 {
@@ -2540,18 +2547,23 @@ namespace BmwDeepObd
 
                             if (!jobPresent)
                             {
-                                serviceUseList.Add(serviceInfoData);
+                                serviceListSgdb.Add(serviceInfoData);
                             }
                         }
 
-                        if (serviceUseList.Count > 0)
+                        Dictionary<int, List<VehicleStructsBmw.ServiceInfoData>> serviceMenuInfoDict = new Dictionary<int, List<VehicleStructsBmw.ServiceInfoData>>();
+                        foreach (KeyValuePair<string, List<VehicleStructsBmw.ServiceInfoData>> keyValueSgdb in serviceInfoDict)
                         {
-                            string menuText = string.Format("Jobs: {0}", serviceUseList.Count);
-                            IMenuItem menuItem = subMenuInfoObj.Add(IMenu.None, menuId, IMenu.None, menuText);
-                            if (menuItem != null)
+                            List<VehicleStructsBmw.ServiceInfoData> serviceListSgdb = keyValueSgdb.Value;
+                            if (serviceListSgdb.Count > 0)
                             {
-                                serviceMenuInfoDict.TryAdd(menuId, serviceUseList);
-                                menuId++;
+                                string menuText = string.Format("Jobs: {0}", serviceListSgdb.Count);
+                                IMenuItem menuItem = subMenuInfoObj.Add(IMenu.None, menuId, IMenu.None, menuText);
+                                if (menuItem != null)
+                                {
+                                    serviceMenuInfoDict.TryAdd(menuId, serviceListSgdb);
+                                    menuId++;
+                                }
                             }
                         }
 
