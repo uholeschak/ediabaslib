@@ -2391,17 +2391,19 @@ namespace BmwDeepObd
                 {
                     string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
                     EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
-
-                    string groupName = ecuVariant.GroupName;
-                    if (!string.IsNullOrWhiteSpace(groupName))
+                    if (ecuVariant != null)
                     {
-                        validSgbds.Add(groupName);
-                    }
+                        string groupName = ecuVariant.GroupName;
+                        if (!string.IsNullOrWhiteSpace(groupName))
+                        {
+                            validSgbds.Add(groupName);
+                        }
 
-                    string cliqueName = ecuVariant.EcuClique?.CliqueName;
-                    if (!string.IsNullOrWhiteSpace(cliqueName))
-                    {
-                        validSgbds.Add(cliqueName);
+                        string cliqueName = ecuVariant.EcuClique?.CliqueName;
+                        if (!string.IsNullOrWhiteSpace(cliqueName))
+                        {
+                            validSgbds.Add(cliqueName);
+                        }
                     }
 
                     _ruleEvalBmw?.UpdateEvalEcuProperties(ecuVariant);
@@ -2557,7 +2559,23 @@ namespace BmwDeepObd
                             List<VehicleStructsBmw.ServiceInfoData> serviceListSgdb = keyValueSgdb.Value;
                             if (serviceListSgdb.Count > 0)
                             {
-                                string menuText = string.Format("Jobs: {0}", serviceListSgdb.Count);
+                                string ecuName = null;
+                                if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
+                                {
+                                    string ecuSgbdName = keyValueSgdb.Key;
+                                    EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
+                                    if (ecuVariant != null)
+                                    {
+                                        ecuName = ecuVariant.Title.GetTitle(language);
+                                    }
+                                }
+
+                                if (string.IsNullOrEmpty(ecuName))
+                                {
+                                    ecuName = keyValueSgdb.Key;
+                                }
+
+                                string menuText = string.Format("{0}: {1} Jobs", ecuName, serviceListSgdb.Count);
                                 IMenuItem menuItem = subMenuInfoObj.Add(IMenu.None, menuId, IMenu.None, menuText);
                                 if (menuItem != null)
                                 {
