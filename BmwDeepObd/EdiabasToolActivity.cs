@@ -82,7 +82,7 @@ namespace BmwDeepObd
             public object Tag { get; set; }
         }
 
-        private class JobInfo
+        private class JobInfo : ICloneable
         {
             public JobInfo(string name, string objectName)
             {
@@ -110,6 +110,11 @@ namespace BmwDeepObd
             public string InitialArgs { get; set; }
 
             public string InitialResults { get; set; }
+
+            public object Clone()
+            {
+                return MemberwiseClone();
+            }
         }
 
         public class InstanceData
@@ -2428,10 +2433,12 @@ namespace BmwDeepObd
                         {
                             if (jobItems.Length > 0 && string.Compare(job.Name, jobItems[0], StringComparison.OrdinalIgnoreCase) == 0)
                             {
-                                job.InitialArgs = jobItems.Length > 1 ? jobItems[1] : string.Empty;
-                                job.InitialResults = jobItems.Length > 2 ? jobItems[2] : string.Empty;
-                                _jobListAdapter.Items.Add(job);
-                                break;
+                                if (job.Clone() is JobInfo jobClone)
+                                {
+                                    jobClone.InitialArgs = jobItems.Length > 1 ? jobItems[1] : string.Empty;
+                                    jobClone.InitialResults = jobItems.Length > 2 ? jobItems[2] : string.Empty;
+                                    _jobListAdapter.Items.Add(jobClone);
+                                }
                             }
                         }
                     }
