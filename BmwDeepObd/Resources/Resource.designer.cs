@@ -15574,22 +15574,25 @@ namespace BmwDeepObd
 			public const int xml_tool_sel_mwtab_info = 2131755867;
 			
 			// aapt resource value: 0x7F10035E
-			public const int xml_tool_title = 2131755870;
+			public const int xml_tool_service_open_jobs = 2131755870;
 			
 			// aapt resource value: 0x7F10035F
-			public const int yandex_api_key_title = 2131755871;
+			public const int xml_tool_title = 2131755871;
 			
 			// aapt resource value: 0x7F100360
-			public const int yandex_key_copy_title = 2131755872;
+			public const int yandex_api_key_title = 2131755872;
 			
 			// aapt resource value: 0x7F100361
-			public const int yandex_key_desc = 2131755873;
+			public const int yandex_key_copy_title = 2131755873;
 			
 			// aapt resource value: 0x7F100362
-			public const int yandex_key_paste_title = 2131755874;
+			public const int yandex_key_desc = 2131755874;
 			
 			// aapt resource value: 0x7F100363
-			public const int yandex_key_test_title = 2131755875;
+			public const int yandex_key_paste_title = 2131755875;
+			
+			// aapt resource value: 0x7F100364
+			public const int yandex_key_test_title = 2131755876;
 			
 			static String()
 			{

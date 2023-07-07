@@ -1873,8 +1873,10 @@ namespace BmwDeepObd
             {
                 sgdb = ecuInfo.Sgbd;
             }
-            else if (serviceInfoDataList != null)
+
+            if (serviceInfoDataList != null)
             {
+                sgdb = null;
                 foreach (VehicleStructsBmw.ServiceInfoData serviceInfoData in serviceInfoDataList)
                 {
                     if (serviceInfoData.EdiabasJobBare != null)
@@ -1909,6 +1911,14 @@ namespace BmwDeepObd
                         {
                             jobList.Add(sbJob.ToString());
                         }
+                    }
+                }
+
+                if (ecuInfo != null && !string.IsNullOrEmpty(sgdb))
+                {
+                    if (string.Compare(sgdb, ecuInfo.Grp, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        sgdb = ecuInfo.Sgbd;
                     }
                 }
             }
@@ -2459,7 +2469,7 @@ namespace BmwDeepObd
                         return;
                     }
 
-                    StartEdiabasTool(null, serviceInfoDataListMenu);
+                    StartEdiabasTool(ecuInfo, serviceInfoDataListMenu);
                 };
 
                 return true;
@@ -2564,8 +2574,7 @@ namespace BmwDeepObd
                             List<VehicleStructsBmw.ServiceInfoData> serviceListSgdb = keyValueSgdb.Value;
                             if (serviceListSgdb.Count > 0)
                             {
-                                string ecuName = keyValueSgdb.Key;
-                                string menuText = string.Format("{0}: {1} Jobs", ecuName, serviceListSgdb.Count);
+                                string menuText = string.Format(GetString(Resource.String.xml_tool_service_open_jobs), serviceListSgdb.Count);
                                 IMenuItem menuItem = subMenuInfoObj.Add(IMenu.None, menuId, IMenu.None, menuText);
                                 if (menuItem != null)
                                 {

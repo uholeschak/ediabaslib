@@ -596,6 +596,7 @@
   <string name="xml_tool_job_read_mwblock">Messwerteblock lesen</string>
   <string name="xml_tool_job_read_vin">Fahrgestellnummer lesen</string>
   <string name="xml_tool_result_vin">Fahrgestellnummer</string>
+  <string name="xml_tool_service_open_jobs">{0} Jobs anzeigen</string>
 
   <!-- XML Tool Options Menu -->
   <string name="menu_xml_tool_add_errors_page">Fehlerseite hinzufügen</string>
