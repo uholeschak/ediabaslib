@@ -2905,7 +2905,14 @@ namespace BmwDeepObd
                 view.SetBackgroundColor(_backgroundColor);
                 TextView textName = view.FindViewById<TextView>(Resource.Id.textJobName);
                 TextView textDesc = view.FindViewById<TextView>(Resource.Id.textJobDesc);
-                textName.Text = item.Name;
+
+                string name = item.Name;
+                if (!string.IsNullOrEmpty(item.InitialArgs))
+                {
+                    name += " " + item.InitialArgs;
+                }
+                textName.Text = name;
+
                 List<string> commentList = item.CommentsTrans ?? item.Comments;
                 if (commentList.Count > 0)
                 {
