@@ -572,6 +572,7 @@
   <string name="xml_tool_job_read_mwblock">Read measurement value block</string>
   <string name="xml_tool_job_read_vin">Read VIN</string>
   <string name="xml_tool_result_vin">VIN</string>
+  <string name="xml_tool_service_open_jobs">Show {0} jobs</string>
 
   <!-- XML Tool Options Menu -->
   <string name="menu_xml_tool_add_errors_page">Add errors page</string>

@@ -595,6 +595,8 @@
   <string name="xml_tool_job_read_mwblock">Считать блок измерений</string>
   <string name="xml_tool_job_read_vin">Определить VIN</string>
   <string name="xml_tool_result_vin">VIN</string>
+  <!--Translate-->
+  <string name="xml_tool_service_open_jobs">Показать {0} вакансий</string>
 
   <!-- XML Tool Options Menu -->
   <string name="menu_xml_tool_add_errors_page">Добавить страницу ошибок</string>
