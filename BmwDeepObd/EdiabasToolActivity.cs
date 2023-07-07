@@ -91,6 +91,7 @@ namespace BmwDeepObd
                 Comments = new List<string>();
                 Arguments = new List<ExtraInfo>();
                 Results = new List<ExtraInfo>();
+                InitialIndex = null;
                 InitialArgs = null;
                 InitialResults = null;
             }
@@ -106,6 +107,8 @@ namespace BmwDeepObd
             public List<ExtraInfo> Arguments { get; }
 
             public List<ExtraInfo> Results { get; }
+
+            public int? InitialIndex { get; set; }
 
             public string InitialArgs { get; set; }
 
@@ -2429,17 +2432,21 @@ namespace BmwDeepObd
                 {
                     if (_jobListInitial != null && _jobListInitial.Count > 0)
                     {
+                        int initialIndex = 0;
                         foreach (string[] jobItems in _jobListInitial)
                         {
                             if (jobItems.Length > 0 && string.Compare(job.Name, jobItems[0], StringComparison.OrdinalIgnoreCase) == 0)
                             {
                                 if (job.Clone() is JobInfo jobClone)
                                 {
+                                    jobClone.InitialIndex = initialIndex;
                                     jobClone.InitialArgs = jobItems.Length > 1 ? jobItems[1] : string.Empty;
                                     jobClone.InitialResults = jobItems.Length > 2 ? jobItems[2] : string.Empty;
                                     _jobListAdapter.Items.Add(jobClone);
                                 }
                             }
+
+                            initialIndex++;
                         }
                     }
                     else
@@ -2473,14 +2480,15 @@ namespace BmwDeepObd
             {
                 if (_jobListInitial != null && _jobListInitial.Count > 0)
                 {
+                    int initialIndex = -1;
                     int jobIndex = -1;
                     int index = 0;
                     foreach (JobInfo jobInfo in _jobListAdapter.Items)
                     {
-                        if (jobInfo.InitialArgs != null)
+                        if (jobInfo.InitialIndex.HasValue && (initialIndex < 0 || jobInfo.InitialIndex.Value < initialIndex))
                         {
+                            initialIndex = jobInfo.InitialIndex.Value;
                             jobIndex = index;
-                            break;
                         }
 
                         index++;
