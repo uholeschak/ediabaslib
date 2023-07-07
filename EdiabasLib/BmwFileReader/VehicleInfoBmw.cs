@@ -36,6 +36,7 @@ namespace BmwFileReader
                 ChildItems = new List<ServiceTreeItem>();
                 ServiceDataItem = null;
                 ServiceInfoList = null;
+                ServiceInfoListAux = null;
                 ServiceMenuInfoDict = null;
                 MenuId = -1;
             }
@@ -47,6 +48,8 @@ namespace BmwFileReader
             public VehicleStructsBmw.ServiceDataItem ServiceDataItem { get; set; }
 
             public List<VehicleStructsBmw.ServiceInfoData> ServiceInfoList { get; set; }
+
+            public List<VehicleStructsBmw.ServiceInfoData> ServiceInfoListAux { get; set; }
 
             public Dictionary<int, List<VehicleStructsBmw.ServiceInfoData>> ServiceMenuInfoDict { get; set; }
 
@@ -914,8 +917,9 @@ namespace BmwFileReader
             return serviceDataItems;
         }
 
-        public static bool IsValidServiceInfoData(VehicleStructsBmw.ServiceInfoData serviceInfoData, List<string> validSgbds = null)
+        public static bool IsValidServiceInfoData(VehicleStructsBmw.ServiceInfoData serviceInfoData, List<string> validSgbds, out bool auxItem)
         {
+            auxItem = false;
             if (serviceInfoData == null)
             {
                 return false;
@@ -964,17 +968,18 @@ namespace BmwFileReader
 #endif
             if (jobBareItems[1].StartsWith("IDENT", StringComparison.OrdinalIgnoreCase))
             {
+                auxItem = true;
                 return false;
             }
 
             if (jobBareItems[1].StartsWith("STATUS", StringComparison.OrdinalIgnoreCase))
             {
-                return false;
+                auxItem = true;
             }
 
             if (jobBareItems[1].Contains("LESEN", StringComparison.OrdinalIgnoreCase))
             {
-                return false;
+                auxItem = true;
             }
 
             return true;
@@ -991,13 +996,22 @@ namespace BmwFileReader
             foreach (VehicleStructsBmw.ServiceDataItem serviceDataItem in serviceDataItems)
             {
                 List<VehicleStructsBmw.ServiceInfoData> serviceInfoList = new List<VehicleStructsBmw.ServiceInfoData>();
+                List<VehicleStructsBmw.ServiceInfoData> serviceInfoListAux = new List<VehicleStructsBmw.ServiceInfoData>();
                 foreach (VehicleStructsBmw.ServiceInfoData serviceInfoData in serviceDataItem.InfoDataList)
                 {
-                    if (!IsValidServiceInfoData(serviceInfoData, validSgbds))
+                    if (!IsValidServiceInfoData(serviceInfoData, validSgbds, out bool auxItem))
                     {
                         continue;
                     }
-                    serviceInfoList.Add(serviceInfoData);
+
+                    if (auxItem)
+                    {
+                        serviceInfoListAux.Add(serviceInfoData);
+                    }
+                    else
+                    {
+                        serviceInfoList.Add(serviceInfoData);
+                    }
                 }
 
                 if (serviceInfoList.Count == 0)
@@ -1045,6 +1059,7 @@ namespace BmwFileReader
 
                 childItemInfoMatch.ServiceDataItem = serviceDataItem;
                 childItemInfoMatch.ServiceInfoList = serviceInfoList;
+                childItemInfoMatch.ServiceInfoListAux = serviceInfoListAux;
             }
 
             return serviceTreeItemRoot;
