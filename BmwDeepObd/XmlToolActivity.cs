@@ -349,6 +349,7 @@ namespace BmwDeepObd
                 SgbdFunctional = string.Empty;
                 Vin = string.Empty;
                 VehicleType = string.Empty;
+                ServiceFunctionWarningShown = false;
             }
 
             public bool ForceAppend { get; set; }
@@ -369,6 +370,7 @@ namespace BmwDeepObd
             public string VehicleType { get; set; }
             public string CDate { get; set; }
             public bool CommErrorsOccurred { get; set; }
+            public bool ServiceFunctionWarningShown { get; set; }
         }
 
 #if DEBUG
@@ -2466,6 +2468,28 @@ namespace BmwDeepObd
                     List<VehicleStructsBmw.ServiceInfoData> serviceInfoDataListMenu = SearchBwmServiceMenuItems(args.Item, serviceTreeItem);
                     if (serviceInfoDataListMenu == null)
                     {
+                        return;
+                    }
+
+                    if (!_instanceData.ServiceFunctionWarningShown)
+                    {
+                        new AlertDialog.Builder(this)
+                            .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                            {
+                                if (_activityCommon == null)
+                                {
+                                    return;
+                                }
+
+                                _instanceData.ServiceFunctionWarningShown = true;
+                                StartEdiabasTool(ecuInfo, serviceInfoDataListMenu);
+                            })
+                            .SetNegativeButton(Resource.String.button_no, (sender, args) =>
+                            {
+                            })
+                            .SetMessage(Resource.String.xml_tool_service_jobs_warning)
+                            .SetTitle(Resource.String.alert_title_warning)
+                            .Show();
                         return;
                     }
 
