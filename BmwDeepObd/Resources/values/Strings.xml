@@ -573,6 +573,7 @@
   <string name="xml_tool_job_read_vin">Read VIN</string>
   <string name="xml_tool_result_vin">VIN</string>
   <string name="xml_tool_service_open_jobs">Show {0} jobs</string>
+  <string name="xml_tool_service_jobs_warning">The service functions are still experimental!\nThe displayed jobs the Ediabas Tool may have only default arguments, that have to be adapted before job execution!\nIt\'s your responsibility to check the jobs before execution!\nBecause of data acquisition complexity it\'s possible, that in future the jobs require Deep OBD adapters for execution.\nDo you want to continue anyway?</string>
 
   <!-- XML Tool Options Menu -->
   <string name="menu_xml_tool_add_errors_page">Add errors page</string>
