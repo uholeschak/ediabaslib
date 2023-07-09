@@ -2422,7 +2422,18 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                return ShowBwmServiceMenu(ecuInfo, _listViewEcu);
+                View anchor = null;
+                if (_listViewEcu.ChildCount > 0)
+                {
+                    anchor = _listViewEcu.GetChildAt(0);
+                }
+
+                if (anchor == null)
+                {
+                    anchor = _listViewEcu;
+                }
+
+                return ShowBwmServiceMenu(ecuInfo, anchor);
             }
             catch (Exception)
             {
@@ -2488,8 +2499,8 @@ namespace BmwDeepObd
                 AndroidX.AppCompat.Widget.PopupMenu popupMenu = new AndroidX.AppCompat.Widget.PopupMenu(this, anchor, (int) GravityFlags.Right);
                 string language = ActivityCommon.GetCurrentLanguage();
                 int menuId = 1;
-                AddBwmServiceMenuChilds(popupMenu.Menu, null, serviceTreeItem, ecuInfo, language, 0, ref menuId);
-                if (!popupMenu.Menu.HasVisibleItems)
+                bool result = AddBwmServiceMenuChilds(popupMenu.Menu, null, serviceTreeItem, ecuInfo, language, 0, ref menuId);
+                if (!result || menuId == 1 || !popupMenu.Menu.HasVisibleItems)
                 {
                     return false;
                 }
@@ -2555,6 +2566,18 @@ namespace BmwDeepObd
                     return false;
                 }
 
+                if (level == 0)
+                {
+                    string title = GetString(Resource.String.menu_xml_tool_bmw_service);
+                    if (!string.IsNullOrEmpty(ecuInfo.EcuName))
+                    {
+                        title += ": " + ecuInfo.EcuName;
+                    }
+
+                    IMenuItem menuTitle = menu.Add(IMenu.None, -1, IMenu.None, title);
+                    menuTitle?.SetEnabled(false);
+                }
+
                 VehicleStructsBmw.ServiceDataItem serviceDataItem = serviceTreeItem.ServiceDataItem;
                 List<VehicleStructsBmw.ServiceInfoData> serviceInfoList = serviceTreeItem.ServiceInfoList;
                 if (serviceTreeItem.ChildItems.Count == 1)
@@ -2562,8 +2585,7 @@ namespace BmwDeepObd
                     VehicleInfoBmw.ServiceTreeItem childItem = serviceTreeItem.ChildItems[0];
                     if (serviceInfoList == null)
                     {
-                        AddBwmServiceMenuChilds(menu, subMenu, childItem, ecuInfo, language, level + 1, ref menuId);
-                        return true;
+                        return AddBwmServiceMenuChilds(menu, subMenu, childItem, ecuInfo, language, level + 1, ref menuId);
                     }
                 }
 
@@ -2697,7 +2719,10 @@ namespace BmwDeepObd
                         }
                     }
 
-                    AddBwmServiceMenuChilds(menu, subMenuChild, childItem, ecuInfo, language, level + 1, ref menuId);
+                    if (!AddBwmServiceMenuChilds(menu, subMenuChild, childItem, ecuInfo, language, level + 1, ref menuId))
+                    {
+                        return false;
+                    }
                 }
 
                 return true;
