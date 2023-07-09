@@ -1014,7 +1014,7 @@ namespace BmwDeepObd
 
                         if (showServiceMenu)
                         {
-                            ShowBwmServiceMenuAtItem(ecuInfo);
+                            ShowBwmServiceMenuItemForEcu(ecuInfo);
                         }
                     }
                     break;
@@ -2412,7 +2412,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        private bool ShowBwmServiceMenuAtItem(EcuInfo ecuInfo)
+        private bool ShowBwmServiceMenuItemForEcu(EcuInfo ecuInfo)
         {
             try
             {
@@ -2422,19 +2422,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                View itemView = _listViewEcu.GetChildAt(itemIndex);
-                if (itemView == null)
-                {
-                    return false;
-                }
-
-                ImageButton buttonEcuOptionsMenu = itemView.FindViewById<ImageButton>(Resource.Id.buttonEcuOptionsMenu);
-                if (buttonEcuOptionsMenu == null)
-                {
-                    return false;
-                }
-
-                return ShowBwmServiceMenu(ecuInfo, buttonEcuOptionsMenu);
+                return ShowBwmServiceMenu(ecuInfo, _listViewEcu);
             }
             catch (Exception)
             {
@@ -2497,7 +2485,7 @@ namespace BmwDeepObd
                     return serviceTreeItem.HasInfoData;
                 }
 
-                AndroidX.AppCompat.Widget.PopupMenu popupMenu = new AndroidX.AppCompat.Widget.PopupMenu(this, anchor);
+                AndroidX.AppCompat.Widget.PopupMenu popupMenu = new AndroidX.AppCompat.Widget.PopupMenu(this, anchor, (int) GravityFlags.Right);
                 string language = ActivityCommon.GetCurrentLanguage();
                 int menuId = 1;
                 AddBwmServiceMenuChilds(popupMenu.Menu, null, serviceTreeItem, ecuInfo, language, 0, ref menuId);
