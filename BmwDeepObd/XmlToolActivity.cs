@@ -1026,7 +1026,7 @@ namespace BmwDeepObd
                                 return;
                             }
 
-                            ShowBwmServiceMenu(ecuInfo, anchor);
+                            ShowBwmServiceMenu(ecuInfo, _listViewEcu);
                         }
                     }
                     break;
@@ -1832,11 +1832,16 @@ namespace BmwDeepObd
                     return;
                 }
 
-                if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
+                bool bmwServiceFunctions = false;
+                if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
                 {
-                    string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
-                    EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
-                    _ruleEvalBmw?.UpdateEvalEcuProperties(ecuVariant);
+                    bmwServiceFunctions = ShowBwmServiceMenu(ecuInfo);
+                    if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
+                    {
+                        string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
+                        EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
+                        _ruleEvalBmw?.UpdateEvalEcuProperties(ecuVariant);
+                    }
                 }
 
                 XmlToolEcuActivity.IntentEcuInfo = ecuInfo;
@@ -1849,6 +1854,7 @@ namespace BmwDeepObd
                 {
                     serverIntent.PutExtra(XmlToolEcuActivity.ExtraVehicleType, _instanceData.VehicleType);
                 }
+                serverIntent.PutExtra(XmlToolEcuActivity.ExtraBmwServiceFunctions, bmwServiceFunctions);
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraTraceDir, _instanceData.TraceDir);
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraTraceAppend, _instanceData.TraceAppend || _instanceData.ForceAppend);
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
@@ -2422,6 +2428,11 @@ namespace BmwDeepObd
         {
             try
             {
+                if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+                {
+                    return false;
+                }
+
                 List<string> validSgbds = new List<string>();
                 List<VehicleStructsBmw.ServiceDataItem> bmwServiceDataItems = null;
                 if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)

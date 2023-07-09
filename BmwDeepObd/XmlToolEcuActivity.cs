@@ -223,6 +223,7 @@ namespace BmwDeepObd
         public const string ExtraEcuName = "ecu_name";
         public const string ExtraEcuDir = "ecu_dir";
         public const string ExtraVehicleType = "vehicle_type";
+        public const string ExtraBmwServiceFunctions = "bmw_service_functions";
         public const string ExtraTraceDir = "trace_dir";
         public const string ExtraTraceAppend = "trace_append";
         public const string ExtraInterface = "interface";
@@ -313,6 +314,7 @@ namespace BmwDeepObd
         private string _appDataDir;
         private string _ecuDir;
         private string _vehicleType;
+        private bool _bmwServiceFunctions;
         private string _traceDir;
         private bool _traceAppend;
         private string _deviceAddress;
@@ -374,6 +376,7 @@ namespace BmwDeepObd
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
             _vehicleType = Intent.GetStringExtra(ExtraVehicleType);
+            _bmwServiceFunctions = Intent.GetBooleanExtra(ExtraBmwServiceFunctions, false);
             _traceDir = Intent.GetStringExtra(ExtraTraceDir);
             _traceAppend = Intent.GetBooleanExtra(ExtraTraceAppend, true);
             _activityCommon.SelectedInterface = (ActivityCommon.InterfaceType)
@@ -698,7 +701,7 @@ namespace BmwDeepObd
             bool bmwServiceEnabled = false;
             if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
             {
-                bmwServiceEnabled = true;
+                bmwServiceEnabled = _bmwServiceFunctions;
             }
 
             _buttonBmwService = FindViewById<Button>(Resource.Id.buttonBmwService);
