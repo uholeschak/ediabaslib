@@ -1020,7 +1020,7 @@ namespace BmwDeepObd
                                 return;
                             }
 
-                            View anchor = _listViewEcu.SelectedView;
+                            View anchor = _ecuListAdapter.GetView(itemIndex, null, _listViewEcu);
                             if (anchor == null)
                             {
                                 return;
