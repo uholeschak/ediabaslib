@@ -2417,16 +2417,20 @@ namespace BmwDeepObd
         {
             try
             {
-                int itemIndex = _ecuListAdapter.Items.IndexOf(ecuInfo);
-                if (itemIndex < 0)
-                {
-                    return false;
-                }
-
                 View anchor = null;
-                if (_listViewEcu.ChildCount > 0)
+
+                if (!IsPageSelectionActive())
                 {
-                    anchor = _listViewEcu.GetChildAt(0);
+                    int itemIndex = _ecuListAdapter.Items.IndexOf(ecuInfo);
+                    if (itemIndex < 0)
+                    {
+                        return false;
+                    }
+
+                    if (_listViewEcu.ChildCount > 0)
+                    {
+                        anchor = _listViewEcu.GetChildAt(0);
+                    }
                 }
 
                 if (anchor == null)
