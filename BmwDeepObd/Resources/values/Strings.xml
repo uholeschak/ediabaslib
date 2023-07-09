@@ -646,6 +646,7 @@
   <string name="xml_tool_ecu_add_functions">Additional functions</string>
   <string name="xml_tool_button_ediabas_tool">Ediabas tool</string>
   <string name="xml_tool_button_bmw_actuator">Actuator functions</string>
+  <string name="xml_tool_button_bmw_service">Service functions</string>
   <string name="xml_tool_button_bmw_coding">Coding</string>
   <string name="xml_tool_button_coding">Coding</string>
   <string name="xml_tool_button_coding2">Coding 2</string>

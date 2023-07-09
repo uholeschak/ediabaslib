@@ -983,16 +983,21 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestSelectJobs:
+                {
                     if (IsPageSelectionActive())
                     {
                         Finish();
                     }
 
+                    EcuInfo ecuInfo = XmlToolEcuActivity.IntentEcuInfo;
+                    XmlToolEcuActivity.IntentEcuInfo = null;
+                    XmlToolEcuActivity.IntentRuleEvalBmw = null;
+
                     _ecuFuncCallMenu = EcuFunctionCallType.None;
-                    if (XmlToolEcuActivity.IntentEcuInfo?.JobList != null)
+                    if (ecuInfo?.JobList != null)
                     {
-                        int selectCount = XmlToolEcuActivity.IntentEcuInfo.JobList.Count(job => job.Selected);
-                        XmlToolEcuActivity.IntentEcuInfo.Selected = selectCount > 0;
+                        int selectCount = ecuInfo.JobList.Count(job => job.Selected);
+                        ecuInfo.Selected = selectCount > 0;
                         _ecuListAdapter.NotifyDataSetChanged();
                         UpdateDisplay();
                     }
@@ -1000,12 +1005,32 @@ namespace BmwDeepObd
                     if (data?.Extras != null && resultCode == Android.App.Result.Ok)
                     {
                         bool callEdiabasTool = data.Extras.GetBoolean(XmlToolEcuActivity.ExtraCallEdiabasTool, false);
+                        bool showServiceMenu = data.Extras.GetBoolean(XmlToolEcuActivity.ExtraShowBwmServiceMenu, false);
                         if (callEdiabasTool)
                         {
-                            StartEdiabasTool(XmlToolEcuActivity.IntentEcuInfo);
+                            StartEdiabasTool(ecuInfo);
+                            break;
+                        }
+
+                        if (showServiceMenu)
+                        {
+                            int itemIndex = _ecuListAdapter.Items.IndexOf(ecuInfo);
+                            if (itemIndex < 0)
+                            {
+                                return;
+                            }
+
+                            View anchor = _listViewEcu.SelectedView;
+                            if (anchor == null)
+                            {
+                                return;
+                            }
+
+                            ShowBwmServiceMenu(ecuInfo, anchor);
                         }
                     }
                     break;
+                }
 
                 case ActivityRequest.RequestOpenExternalFile:
                     UpdateOptionsMenu();

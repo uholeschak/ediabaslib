@@ -598,7 +598,7 @@
   <!--Translate-->
   <string name="xml_tool_service_open_jobs">Показать {0} вакансий</string>
   <!--Translate-->
-  <string name="xml_tool_service_jobs_warning">Сервисные функции пока экспериментальные!\nОтображаемые задания в Ediabas Tool могут иметь только аргументы по умолчанию, которые необходимо адаптировать перед выполнением задания!\nВы обязаны проверять задания перед выполнением!\nИз-за сложности сбора данных возможно, что в будущем для выполнения заданий потребуются адаптеры Deep OBD.\nВы все равно хотите продолжить?</string>
+  <string name="xml_tool_service_jobs_warning">Сервисные функции пока экспериментальные!\nОтображаемые задания в Ediabas Tool могут иметь только аргументы по умолчанию, которые необходимо адаптировать перед выполнением задания!\nВы обязаны проверять задания перед выполнением!\nПомощник по аргументам может быть полезен в этом случае.\nИз-за сложности сбора данных возможно, что в будущем для выполнения заданий потребуются адаптеры Deep OBD.\nВы все равно хотите продолжить?</string>
 
   <!-- XML Tool Options Menu -->
   <string name="menu_xml_tool_add_errors_page">Добавить страницу ошибок</string>
@@ -674,6 +674,8 @@
   <string name="xml_tool_button_ediabas_tool">Ediabas утилита</string>
   <string name="xml_tool_button_bmw_actuator">Функции актуатора</string>
   <string name="xml_tool_button_bmw_coding">Кодировать</string>
+  <!--Translate-->
+  <string name="xml_tool_button_bmw_service">Сервисные функции</string>
   <string name="xml_tool_button_coding">Кодировать</string>
   <string name="xml_tool_button_coding2">Кодировать 2</string>
   <string name="xml_tool_button_adaption">Адаптация</string>
