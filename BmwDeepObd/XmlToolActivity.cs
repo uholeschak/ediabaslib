@@ -2417,16 +2417,20 @@ namespace BmwDeepObd
         {
             try
             {
-                int itemIndex = _ecuListAdapter.Items.IndexOf(ecuInfo);
-                if (itemIndex < 0)
-                {
-                    return false;
-                }
-
                 View anchor = null;
-                if (_listViewEcu.ChildCount > 0)
+
+                if (!IsPageSelectionActive())
                 {
-                    anchor = _listViewEcu.GetChildAt(0);
+                    int itemIndex = _ecuListAdapter.Items.IndexOf(ecuInfo);
+                    if (itemIndex < 0)
+                    {
+                        return false;
+                    }
+
+                    if (_listViewEcu.ChildCount > 0)
+                    {
+                        anchor = _listViewEcu.GetChildAt(0);
+                    }
                 }
 
                 if (anchor == null)
@@ -4300,6 +4304,35 @@ namespace BmwDeepObd
         {
             if (ecuInfo == null)
             {
+                return;
+            }
+
+            if (_ecuFuncCall == EcuFunctionCallType.BmwService)
+            {
+                bool menuShown = ShowBwmServiceMenuItemForEcu(ecuInfo);
+                if (!menuShown)
+                {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                        .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+                        {
+                            Finish();
+                        })
+                        .SetMessage(Resource.String.xml_tool_ecu_msg_func_not_avail)
+                        .SetTitle(Resource.String.alert_title_error);
+                    AlertDialog alertDialog = builder.Show();
+                    if (alertDialog != null)
+                    {
+                        alertDialog.DismissEvent += (sender, args) =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+
+                            Finish();
+                        };
+                    }
+                }
                 return;
             }
 
