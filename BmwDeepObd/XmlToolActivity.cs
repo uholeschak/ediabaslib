@@ -4303,6 +4303,35 @@ namespace BmwDeepObd
                 return;
             }
 
+            if (_ecuFuncCall == EcuFunctionCallType.BmwService)
+            {
+                bool menuShown = ShowBwmServiceMenuItemForEcu(ecuInfo);
+                if (!menuShown)
+                {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                        .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+                        {
+                            Finish();
+                        })
+                        .SetMessage(Resource.String.xml_tool_ecu_msg_func_not_avail)
+                        .SetTitle(Resource.String.alert_title_error);
+                    AlertDialog alertDialog = builder.Show();
+                    if (alertDialog != null)
+                    {
+                        alertDialog.DismissEvent += (sender, args) =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+
+                            Finish();
+                        };
+                    }
+                }
+                return;
+            }
+
             if (ecuInfo.JobList != null)
             {
                 SelectJobs(ecuInfo);
