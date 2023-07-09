@@ -674,6 +674,8 @@
   <string name="xml_tool_button_ediabas_tool">Ediabas утилита</string>
   <string name="xml_tool_button_bmw_actuator">Функции актуатора</string>
   <string name="xml_tool_button_bmw_coding">Кодировать</string>
+  <!--Translate-->
+  <string name="xml_tool_button_bmw_service">Сервисные функции</string>
   <string name="xml_tool_button_coding">Кодировать</string>
   <string name="xml_tool_button_coding2">Кодировать 2</string>
   <string name="xml_tool_button_adaption">Адаптация</string>

@@ -233,6 +233,7 @@ namespace BmwDeepObd
         public const string ExtraEcuFuncCall = "ecu_func_call";
         // Intent results
         public const string ExtraCallEdiabasTool = "ediabas_tool";
+        public const string ExtraShowBwmServiceMenu = "show_bmw_service_menu";
         private static readonly int[] LengthValues = {0, 1, 2, 3, 4, 5, 6, 8, 10, 15, 20, 25, 30, 35, 40};
 
         public static XmlToolActivity.EcuInfo IntentEcuInfo { get; set; }
@@ -294,6 +295,7 @@ namespace BmwDeepObd
         private TextView _textViewTestFormatOutput;
         private Button _buttonEdiabasTool;
         private Button _buttonBmwActuator;
+        private Button _buttonBmwService;
         private Button _buttonBmwCoding;
         private Button _buttonCoding;
         private Button _buttonCoding2;
@@ -691,6 +693,24 @@ namespace BmwDeepObd
             _buttonBmwActuator.Click += (sender, args) =>
             {
                 StartBmwActuator();
+            };
+
+            bool bmwServiceEnabled = false;
+            if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
+            {
+                bmwServiceEnabled = true;
+            }
+
+            _buttonBmwService = FindViewById<Button>(Resource.Id.buttonBmwService);
+            _buttonBmwService.Visibility = bmwButtonsVisibility;
+            _buttonBmwService.Enabled = bmwServiceEnabled;
+            _buttonBmwService.Click += (sender, args) =>
+            {
+                Intent intent = new Intent();
+                intent.PutExtra(ExtraShowBwmServiceMenu, true);
+                SetResult(Android.App.Result.Ok, intent);
+                StoreResults();
+                Finish();
             };
 
             bool bmwCodingEnabled = false;
