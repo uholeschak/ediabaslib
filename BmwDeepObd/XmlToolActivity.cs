@@ -1014,19 +1014,7 @@ namespace BmwDeepObd
 
                         if (showServiceMenu)
                         {
-                            int itemIndex = _ecuListAdapter.Items.IndexOf(ecuInfo);
-                            if (itemIndex < 0)
-                            {
-                                return;
-                            }
-
-                            View anchor = _ecuListAdapter.GetView(itemIndex, null, _listViewEcu);
-                            if (anchor == null)
-                            {
-                                return;
-                            }
-
-                            ShowBwmServiceMenu(ecuInfo, _listViewEcu);
+                            ShowBwmServiceMenuAtItem(ecuInfo);
                         }
                     }
                     break;
@@ -2422,6 +2410,36 @@ namespace BmwDeepObd
             PerformJobsRead(ecuInfo);
 
             return true;
+        }
+
+        private bool ShowBwmServiceMenuAtItem(EcuInfo ecuInfo)
+        {
+            try
+            {
+                int itemIndex = _ecuListAdapter.Items.IndexOf(ecuInfo);
+                if (itemIndex < 0)
+                {
+                    return false;
+                }
+
+                View itemView = _listViewEcu.GetChildAt(itemIndex);
+                if (itemView == null)
+                {
+                    return false;
+                }
+
+                ImageButton buttonEcuOptionsMenu = itemView.FindViewById<ImageButton>(Resource.Id.buttonEcuOptionsMenu);
+                if (buttonEcuOptionsMenu == null)
+                {
+                    return false;
+                }
+
+                return ShowBwmServiceMenu(ecuInfo, buttonEcuOptionsMenu);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         private bool ShowBwmServiceMenu(EcuInfo ecuInfo, View anchor = null)
