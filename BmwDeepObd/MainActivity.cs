@@ -1438,6 +1438,13 @@ namespace BmwDeepObd
                 cfgPageBmwActuatorMenu.SetVisible(bmwVisible);
             }
 
+            IMenuItem cfgPageBmwServiceMenu = menu.FindItem(Resource.Id.menu_cfg_page_bmw_service);
+            if (cfgPageBmwServiceMenu != null)
+            {
+                cfgPageBmwServiceMenu.SetEnabled(interfaceAvailable && !commActive);
+                cfgPageBmwServiceMenu.SetVisible(bmwVisible);
+            }
+
             bool vagVisible = ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw && selectedPageFuncAvail && !string.IsNullOrEmpty(_instanceData.ConfigFileName);
             IMenuItem cfgPageVagCodingMenu = menu.FindItem(Resource.Id.menu_cfg_page_vag_coding);
             if (cfgPageVagCodingMenu != null)
@@ -1675,6 +1682,10 @@ namespace BmwDeepObd
 
                 case Resource.Id.menu_cfg_page_bmw_actuator:
                     StartXmlTool(XmlToolActivity.EcuFunctionCallType.BmwActuator);
+                    return true;
+
+                case Resource.Id.menu_cfg_page_bmw_service:
+                    StartXmlTool(XmlToolActivity.EcuFunctionCallType.BmwService);
                     return true;
 
                 case Resource.Id.menu_cfg_page_vag_coding:
