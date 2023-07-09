@@ -293,6 +293,7 @@
   <string name="menu_cfg_page_functions">Page functions</string>
   <string name="menu_cfg_page_ediabas">Ediabas tool</string>
   <string name="menu_cfg_page_bmw_actuator">Actuator functions</string>
+  <string name="menu_cfg_page_bmw_service">Service functions</string>
   <string name="menu_cfg_page_vag_coding">Coding</string>
   <string name="menu_cfg_page_vag_coding2">Coding 2</string>
   <string name="menu_cfg_page_vag_adaption">Adaption</string>

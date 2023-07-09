@@ -80,6 +80,7 @@ namespace BmwDeepObd
         {
             None,
             BmwActuator,
+            BmwService,
             VagCoding,
             VagCoding2,
             VagAdaption,

@@ -63,6 +63,9 @@
                   <item android:id="@+id/menu_cfg_page_bmw_actuator"
                         android:icon="@android:drawable/ic_menu_manage"
                         android:title="@string/menu_cfg_page_bmw_actuator"/>
+                  <item android:id="@+id/menu_cfg_page_bmw_service"
+                        android:icon="@android:drawable/ic_menu_manage"
+                        android:title="@string/menu_cfg_page_bmw_service"/>
                   <item android:id="@+id/menu_cfg_page_vag_coding"
                         android:icon="@android:drawable/ic_menu_manage"
                         android:title="@string/menu_cfg_page_vag_coding"/>
