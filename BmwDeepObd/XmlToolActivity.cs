@@ -1014,19 +1014,33 @@ namespace BmwDeepObd
 
                         if (showServiceMenu)
                         {
-                            int itemIndex = _ecuListAdapter.Items.IndexOf(ecuInfo);
-                            if (itemIndex < 0)
+                            try
                             {
-                                return;
-                            }
+                                int itemIndex = _ecuListAdapter.Items.IndexOf(ecuInfo);
+                                if (itemIndex < 0)
+                                {
+                                    return;
+                                }
 
-                            View anchor = _ecuListAdapter.GetView(itemIndex, null, _listViewEcu);
-                            if (anchor == null)
+                                View itemView = _listViewEcu.GetChildAt(itemIndex);
+                                if (itemView == null)
+                                {
+                                    return;
+                                }
+
+                                ImageButton buttonEcuOptionsMenu = itemView.FindViewById<ImageButton>(Resource.Id.buttonEcuOptionsMenu);
+                                if (buttonEcuOptionsMenu == null)
+                                {
+                                    return;
+                                }
+
+                                ShowBwmServiceMenu(ecuInfo, buttonEcuOptionsMenu);
+                            }
+                            catch (Exception e)
                             {
-                                return;
+                                Console.WriteLine(e);
+                                throw;
                             }
-
-                            ShowBwmServiceMenu(ecuInfo, anchor);
                         }
                     }
                     break;
