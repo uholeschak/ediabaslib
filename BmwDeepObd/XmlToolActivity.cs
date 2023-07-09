@@ -2422,7 +2422,18 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                return ShowBwmServiceMenu(ecuInfo, _listViewEcu);
+                View anchor = null;
+                if (_listViewEcu.ChildCount > 0)
+                {
+                    anchor = _listViewEcu.GetChildAt(0);
+                }
+
+                if (anchor == null)
+                {
+                    anchor = _listViewEcu;
+                }
+
+                return ShowBwmServiceMenu(ecuInfo, anchor);
             }
             catch (Exception)
             {
