@@ -15,6 +15,7 @@ using Android.OS;
 using Android.Text.Method;
 using Android.Util;
 using Android.Views;
+using Android.Views.InputMethods;
 using Android.Widget;
 using BmwDeepObd.FilePicker;
 using EdiabasLib;
@@ -583,6 +584,8 @@ namespace BmwDeepObd
 
         private InstanceData _instanceData = new InstanceData();
         private bool _activityRecreated;
+        private InputMethodManager _imm;
+        private View _contentView;
         private View _barView;
         private Button _buttonRead;
         private Button _buttonSafe;
@@ -641,6 +644,9 @@ namespace BmwDeepObd
                 SupportActionBar.SetDisplayShowCustomEnabled(true);
             }
             SetContentView(Resource.Layout.xml_tool);
+
+            _imm = (InputMethodManager)GetSystemService(InputMethodService);
+            _contentView = FindViewById<View>(Android.Resource.Id.Content);
 
             _barView = LayoutInflater.Inflate(Resource.Layout.bar_xml_tool, null);
             ActionBar.LayoutParams barLayoutParams = new ActionBar.LayoutParams(
@@ -2435,7 +2441,7 @@ namespace BmwDeepObd
 
                 if (anchor == null)
                 {
-                    anchor = _listViewEcu;
+                    anchor = _contentView;
                 }
 
                 return ShowBwmServiceMenu(ecuInfo, anchor);
@@ -4304,35 +4310,6 @@ namespace BmwDeepObd
         {
             if (ecuInfo == null)
             {
-                return;
-            }
-
-            if (_ecuFuncCall == EcuFunctionCallType.BmwService)
-            {
-                bool menuShown = ShowBwmServiceMenuItemForEcu(ecuInfo);
-                if (!menuShown)
-                {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                        .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
-                        {
-                            Finish();
-                        })
-                        .SetMessage(Resource.String.xml_tool_ecu_msg_func_not_avail)
-                        .SetTitle(Resource.String.alert_title_error);
-                    AlertDialog alertDialog = builder.Show();
-                    if (alertDialog != null)
-                    {
-                        alertDialog.DismissEvent += (sender, args) =>
-                        {
-                            if (_activityCommon == null)
-                            {
-                                return;
-                            }
-
-                            Finish();
-                        };
-                    }
-                }
                 return;
             }
 
