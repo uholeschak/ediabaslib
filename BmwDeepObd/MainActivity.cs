@@ -7493,6 +7493,7 @@ namespace BmwDeepObd
                 }
 
                 string pageFileName = null;
+                bool ecuAutoRead = false;
                 if (ecuFuncCall != XmlToolActivity.EcuFunctionCallType.None)
                 {
                     JobReader.PageInfo pageInfo = GetSelectedPage();
@@ -7510,6 +7511,12 @@ namespace BmwDeepObd
                     if (ecuFuncCall == XmlToolActivity.EcuFunctionCallType.BmwActuator && !SelectedPageFunctionsAvailable())
                     {
                         return;
+                    }
+
+                    if (ecuFuncCall == XmlToolActivity.EcuFunctionCallType.BmwService)
+                    {
+                        pageFileName = null;
+                        ecuAutoRead = true;
                     }
                 }
 
@@ -7540,8 +7547,9 @@ namespace BmwDeepObd
                 if (!string.IsNullOrEmpty(pageFileName))
                 {
                     serverIntent.PutExtra(XmlToolActivity.ExtraPageFileName, pageFileName);
-                    serverIntent.PutExtra(XmlToolActivity.ExtraEcuFuncCall, (int)ecuFuncCall);
                 }
+                serverIntent.PutExtra(XmlToolActivity.ExtraEcuFuncCall, (int)ecuFuncCall);
+                serverIntent.PutExtra(XmlToolActivity.ExtraEcuAutoRead, ecuAutoRead);
                 serverIntent.PutExtra(XmlToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
                 serverIntent.PutExtra(XmlToolActivity.ExtraDeviceName, _instanceData.DeviceName);
                 serverIntent.PutExtra(XmlToolActivity.ExtraDeviceAddress, _instanceData.DeviceAddress);

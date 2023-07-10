@@ -351,6 +351,7 @@ namespace BmwDeepObd
                 SgbdFunctional = string.Empty;
                 Vin = string.Empty;
                 VehicleType = string.Empty;
+                ShownServiceMenuHint = false;
                 ServiceFunctionWarningShown = false;
             }
 
@@ -372,6 +373,7 @@ namespace BmwDeepObd
             public string VehicleType { get; set; }
             public string CDate { get; set; }
             public bool CommErrorsOccurred { get; set; }
+            public bool ShownServiceMenuHint { get; set; }
             public bool ServiceFunctionWarningShown { get; set; }
         }
 
@@ -570,6 +572,7 @@ namespace BmwDeepObd
         public const string ExtraAppDataDir = "app_data_dir";
         public const string ExtraPageFileName = "page_file_name";
         public const string ExtraEcuFuncCall = "ecu_func_call";
+        public const string ExtraEcuAutoRead = "ecu_auto_read";
         public const string ExtraInterface = "interface";
         public const string ExtraDeviceName = "device_name";
         public const string ExtraDeviceAddress = "device_address";
@@ -597,6 +600,7 @@ namespace BmwDeepObd
         private string _bmwDir;
         private string _appDataDir;
         private string _pageFileName = string.Empty;
+        private bool _ecuAutoRead = false;
         private EcuFunctionCallType _ecuFuncCall = EcuFunctionCallType.None;
         private EcuFunctionCallType _ecuFuncCallMenu = EcuFunctionCallType.None;
         private string _lastFileName = string.Empty;
@@ -632,6 +636,14 @@ namespace BmwDeepObd
 
             _pageFileName = Intent.GetStringExtra(ExtraPageFileName);
             _ecuFuncCall = (EcuFunctionCallType)Intent.GetIntExtra(ExtraEcuFuncCall, (int)EcuFunctionCallType.None);
+            _ecuAutoRead = Intent.GetBooleanExtra(ExtraEcuAutoRead, false);
+
+            bool bmwServiceCall = _ecuFuncCall == EcuFunctionCallType.BmwService;
+            if (bmwServiceCall)
+            {
+                _ecuFuncCall = EcuFunctionCallType.None;
+            }
+
             if (IsPageSelectionActive())
             {
                 SupportActionBar.Hide();
@@ -761,36 +773,56 @@ namespace BmwDeepObd
             _activityCommon.SetPreferredNetworkInterface();
 
             EdiabasClose(_instanceData.ForceAppend);
-            if (!_activityRecreated && (_instanceData.ManualConfigIdx > 0 || IsPageSelectionActive()))
+            if (!_activityRecreated)
             {
-                EdiabasOpen();
-                ReadAllXml();
-                if (_instanceData.ManualConfigIdx > 0)
+                if (_instanceData.ManualConfigIdx > 0 || IsPageSelectionActive())
                 {
-                    ExecuteUpdateEcuInfo(error =>
+                    EdiabasOpen();
+                    ReadAllXml();
+                    if (_instanceData.ManualConfigIdx > 0)
                     {
-                        if (!error && IsPageSelectionActive())
+                        ExecuteUpdateEcuInfo(error =>
+                        {
+                            if (!error && IsPageSelectionActive())
+                            {
+                                if (!SelectPageFile(_pageFileName))
+                                {
+                                    ShowAlert(Resource.String.alert_title_error, Resource.String.xml_tool_msg_page_not_avail);
+                                }
+                            }
+                        });
+                    }
+                    else
+                    {
+                        if (IsPageSelectionActive())
                         {
                             if (!SelectPageFile(_pageFileName))
                             {
                                 ShowAlert(Resource.String.alert_title_error, Resource.String.xml_tool_msg_page_not_avail);
                             }
+
+                            return;
                         }
-                    });
+                    }
                 }
                 else
                 {
-                    if (IsPageSelectionActive())
+                    if (_ecuAutoRead)
                     {
-                        if (!SelectPageFile(_pageFileName))
+                        if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw &&
+                            _instanceData.ManualConfigIdx <= 0)
                         {
-                            ShowAlert(Resource.String.alert_title_error, Resource.String.xml_tool_msg_page_not_avail);
-                        }
+                            if (bmwServiceCall)
+                            {
+                                _instanceData.ShownServiceMenuHint = true;
+                            }
 
-                        return;
+                            PerformAnalyze();
+                        }
                     }
                 }
             }
+
             UpdateDisplay();
         }
 
