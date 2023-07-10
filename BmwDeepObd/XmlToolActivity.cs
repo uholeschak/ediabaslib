@@ -817,7 +817,7 @@ namespace BmwDeepObd
                                 _instanceData.ShownServiceMenuHint = true;
                             }
 
-                            PerformAnalyze();
+                            ExecuteAnalyzeJob();
                         }
                     }
                 }
