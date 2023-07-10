@@ -304,16 +304,16 @@
       <HintPath>packages\Xamarin.Jetbrains.Annotations.24.0.1.2\lib\monoandroid12.0\Xamarin.Jetbrains.Annotations.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Kotlin.StdLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Xamarin.Kotlin.StdLib.1.8.22\lib\monoandroid12.0\Xamarin.Kotlin.StdLib.dll</HintPath>
+      <HintPath>packages\Xamarin.Kotlin.StdLib.1.9.0\lib\monoandroid12.0\Xamarin.Kotlin.StdLib.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Kotlin.StdLib.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Xamarin.Kotlin.StdLib.Common.1.8.22\lib\monoandroid12.0\Xamarin.Kotlin.StdLib.Common.dll</HintPath>
+      <HintPath>packages\Xamarin.Kotlin.StdLib.Common.1.9.0\lib\monoandroid12.0\Xamarin.Kotlin.StdLib.Common.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Kotlin.StdLib.Jdk7, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Xamarin.Kotlin.StdLib.Jdk7.1.8.22\lib\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk7.dll</HintPath>
+      <HintPath>packages\Xamarin.Kotlin.StdLib.Jdk7.1.9.0\lib\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk7.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Kotlin.StdLib.Jdk8, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Xamarin.Kotlin.StdLib.Jdk8.1.8.22\lib\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk8.dll</HintPath>
+      <HintPath>packages\Xamarin.Kotlin.StdLib.Jdk8.1.9.0\lib\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk8.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.KotlinX.Coroutines.Android, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Xamarin.KotlinX.Coroutines.Android.1.7.2\lib\monoandroid12.0\Xamarin.KotlinX.Coroutines.Android.dll</HintPath>
@@ -920,16 +920,16 @@
     <Error Condition="!Exists('packages\Xamarin.AndroidX.ViewPager2.1.0.0.20\build\monoandroid12.0\Xamarin.AndroidX.ViewPager2.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.ViewPager2.1.0.0.20\build\monoandroid12.0\Xamarin.AndroidX.ViewPager2.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.WebKit.1.7.0\build\monoandroid12.0\Xamarin.AndroidX.WebKit.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.WebKit.1.7.0\build\monoandroid12.0\Xamarin.AndroidX.WebKit.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.Google.Android.Material.1.9.0.1\build\monoandroid12.0\Xamarin.Google.Android.Material.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Google.Android.Material.1.9.0.1\build\monoandroid12.0\Xamarin.Google.Android.Material.targets'))" />
-    <Error Condition="!Exists('packages\Xamarin.Kotlin.StdLib.Common.1.8.22\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Kotlin.StdLib.Common.1.8.22\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Common.targets'))" />
-    <Error Condition="!Exists('packages\Xamarin.Kotlin.StdLib.1.8.22\build\monoandroid12.0\Xamarin.Kotlin.StdLib.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Kotlin.StdLib.1.8.22\build\monoandroid12.0\Xamarin.Kotlin.StdLib.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.Annotation.Jvm.1.6.0.1\build\monoandroid12.0\Xamarin.AndroidX.Annotation.Jvm.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.Annotation.Jvm.1.6.0.1\build\monoandroid12.0\Xamarin.AndroidX.Annotation.Jvm.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.Annotation.1.6.0.3\build\monoandroid12.0\Xamarin.AndroidX.Annotation.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.Annotation.1.6.0.3\build\monoandroid12.0\Xamarin.AndroidX.Annotation.targets'))" />
-    <Error Condition="!Exists('packages\Xamarin.Kotlin.StdLib.Jdk7.1.8.22\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk7.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Kotlin.StdLib.Jdk7.1.8.22\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk7.targets'))" />
-    <Error Condition="!Exists('packages\Xamarin.Kotlin.StdLib.Jdk8.1.8.22\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk8.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Kotlin.StdLib.Jdk8.1.8.22\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk8.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.Fragment.1.6.0\build\monoandroid12.0\Xamarin.AndroidX.Fragment.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.Fragment.1.6.0\build\monoandroid12.0\Xamarin.AndroidX.Fragment.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.Annotation.Experimental.1.3.1\build\monoandroid12.0\Xamarin.AndroidX.Annotation.Experimental.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.Annotation.Experimental.1.3.1\build\monoandroid12.0\Xamarin.AndroidX.Annotation.Experimental.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.KotlinX.Coroutines.Core.Jvm.1.7.2\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Core.Jvm.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.KotlinX.Coroutines.Core.Jvm.1.7.2\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Core.Jvm.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.KotlinX.Coroutines.Android.1.7.2\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Android.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.KotlinX.Coroutines.Android.1.7.2\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Android.targets'))" />
+    <Error Condition="!Exists('packages\Xamarin.Kotlin.StdLib.Common.1.9.0\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Kotlin.StdLib.Common.1.9.0\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Common.targets'))" />
+    <Error Condition="!Exists('packages\Xamarin.Kotlin.StdLib.1.9.0\build\monoandroid12.0\Xamarin.Kotlin.StdLib.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Kotlin.StdLib.1.9.0\build\monoandroid12.0\Xamarin.Kotlin.StdLib.targets'))" />
+    <Error Condition="!Exists('packages\Xamarin.Kotlin.StdLib.Jdk7.1.9.0\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk7.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Kotlin.StdLib.Jdk7.1.9.0\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk7.targets'))" />
+    <Error Condition="!Exists('packages\Xamarin.Kotlin.StdLib.Jdk8.1.9.0\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk8.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Kotlin.StdLib.Jdk8.1.9.0\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk8.targets'))" />
   </Target>
   <PropertyGroup>
     <PostBuildEvent>SETLOCAL EnableDelayedExpansion
@@ -993,14 +993,14 @@ if EXIST "!cache_dir!" (
   <Import Project="packages\Xamarin.AndroidX.ViewPager2.1.0.0.20\build\monoandroid12.0\Xamarin.AndroidX.ViewPager2.targets" Condition="Exists('packages\Xamarin.AndroidX.ViewPager2.1.0.0.20\build\monoandroid12.0\Xamarin.AndroidX.ViewPager2.targets')" />
   <Import Project="packages\Xamarin.AndroidX.WebKit.1.7.0\build\monoandroid12.0\Xamarin.AndroidX.WebKit.targets" Condition="Exists('packages\Xamarin.AndroidX.WebKit.1.7.0\build\monoandroid12.0\Xamarin.AndroidX.WebKit.targets')" />
   <Import Project="packages\Xamarin.Google.Android.Material.1.9.0.1\build\monoandroid12.0\Xamarin.Google.Android.Material.targets" Condition="Exists('packages\Xamarin.Google.Android.Material.1.9.0.1\build\monoandroid12.0\Xamarin.Google.Android.Material.targets')" />
-  <Import Project="packages\Xamarin.Kotlin.StdLib.Common.1.8.22\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Common.targets" Condition="Exists('packages\Xamarin.Kotlin.StdLib.Common.1.8.22\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Common.targets')" />
-  <Import Project="packages\Xamarin.Kotlin.StdLib.1.8.22\build\monoandroid12.0\Xamarin.Kotlin.StdLib.targets" Condition="Exists('packages\Xamarin.Kotlin.StdLib.1.8.22\build\monoandroid12.0\Xamarin.Kotlin.StdLib.targets')" />
   <Import Project="packages\Xamarin.AndroidX.Annotation.Jvm.1.6.0.1\build\monoandroid12.0\Xamarin.AndroidX.Annotation.Jvm.targets" Condition="Exists('packages\Xamarin.AndroidX.Annotation.Jvm.1.6.0.1\build\monoandroid12.0\Xamarin.AndroidX.Annotation.Jvm.targets')" />
   <Import Project="packages\Xamarin.AndroidX.Annotation.1.6.0.3\build\monoandroid12.0\Xamarin.AndroidX.Annotation.targets" Condition="Exists('packages\Xamarin.AndroidX.Annotation.1.6.0.3\build\monoandroid12.0\Xamarin.AndroidX.Annotation.targets')" />
-  <Import Project="packages\Xamarin.Kotlin.StdLib.Jdk7.1.8.22\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk7.targets" Condition="Exists('packages\Xamarin.Kotlin.StdLib.Jdk7.1.8.22\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk7.targets')" />
-  <Import Project="packages\Xamarin.Kotlin.StdLib.Jdk8.1.8.22\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk8.targets" Condition="Exists('packages\Xamarin.Kotlin.StdLib.Jdk8.1.8.22\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk8.targets')" />
   <Import Project="packages\Xamarin.AndroidX.Fragment.1.6.0\build\monoandroid12.0\Xamarin.AndroidX.Fragment.targets" Condition="Exists('packages\Xamarin.AndroidX.Fragment.1.6.0\build\monoandroid12.0\Xamarin.AndroidX.Fragment.targets')" />
   <Import Project="packages\Xamarin.AndroidX.Annotation.Experimental.1.3.1\build\monoandroid12.0\Xamarin.AndroidX.Annotation.Experimental.targets" Condition="Exists('packages\Xamarin.AndroidX.Annotation.Experimental.1.3.1\build\monoandroid12.0\Xamarin.AndroidX.Annotation.Experimental.targets')" />
   <Import Project="packages\Xamarin.KotlinX.Coroutines.Core.Jvm.1.7.2\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Core.Jvm.targets" Condition="Exists('packages\Xamarin.KotlinX.Coroutines.Core.Jvm.1.7.2\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Core.Jvm.targets')" />
   <Import Project="packages\Xamarin.KotlinX.Coroutines.Android.1.7.2\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Android.targets" Condition="Exists('packages\Xamarin.KotlinX.Coroutines.Android.1.7.2\build\monoandroid12.0\Xamarin.KotlinX.Coroutines.Android.targets')" />
+  <Import Project="packages\Xamarin.Kotlin.StdLib.Common.1.9.0\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Common.targets" Condition="Exists('packages\Xamarin.Kotlin.StdLib.Common.1.9.0\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Common.targets')" />
+  <Import Project="packages\Xamarin.Kotlin.StdLib.1.9.0\build\monoandroid12.0\Xamarin.Kotlin.StdLib.targets" Condition="Exists('packages\Xamarin.Kotlin.StdLib.1.9.0\build\monoandroid12.0\Xamarin.Kotlin.StdLib.targets')" />
+  <Import Project="packages\Xamarin.Kotlin.StdLib.Jdk7.1.9.0\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk7.targets" Condition="Exists('packages\Xamarin.Kotlin.StdLib.Jdk7.1.9.0\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk7.targets')" />
+  <Import Project="packages\Xamarin.Kotlin.StdLib.Jdk8.1.9.0\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk8.targets" Condition="Exists('packages\Xamarin.Kotlin.StdLib.Jdk8.1.9.0\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk8.targets')" />
 </Project>
