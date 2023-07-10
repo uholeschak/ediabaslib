@@ -3557,19 +3557,27 @@ namespace BmwDeepObd
                         }
                         else
                         {
-                            if (pin78ConnRequire)
+                            if (_instanceData.ShownServiceMenuHint)
                             {
-                                if (!IsPageSelectionActive())
-                                {
-                                    ShowAlert(Resource.String.alert_title_warning, Resource.String.xml_tool_msg_pin78);
-                                }
+                                _instanceData.ShownServiceMenuHint = false;
+                                ShowAlert(Resource.String.alert_title_info, Resource.String.xml_tool_msg_service_menu);
                             }
-                            else if (bestInvalidCount > 0)
+                            else
                             {
-                                _instanceData.CommErrorsOccurred = true;
-                                if (!IsPageSelectionActive())
+                                if (pin78ConnRequire)
                                 {
-                                    ShowAlert(Resource.String.alert_title_warning, Resource.String.xml_tool_msg_ecu_error);
+                                    if (!IsPageSelectionActive())
+                                    {
+                                        ShowAlert(Resource.String.alert_title_warning, Resource.String.xml_tool_msg_pin78);
+                                    }
+                                }
+                                else if (bestInvalidCount > 0)
+                                {
+                                    _instanceData.CommErrorsOccurred = true;
+                                    if (!IsPageSelectionActive())
+                                    {
+                                        ShowAlert(Resource.String.alert_title_warning, Resource.String.xml_tool_msg_ecu_error);
+                                    }
                                 }
                             }
                         }
