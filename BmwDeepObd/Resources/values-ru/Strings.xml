@@ -586,6 +586,8 @@
   <string name="xml_tool_msg_ecu_error">Для некоторых ECU информация не может быть найдена.</string>
   <string name="xml_tool_msg_pin78">Необходимо соединить контакты 7 и 8 в OBD разъеме адаптера, чтобы определилось больше блоков управления.\nВ автомобилях с OBD I разъёмом в моторном отсеке, контакт 8 должен быть дополнительно подключён к OBD II гнезду в салоне.</string>
   <string name="xml_tool_msg_page_not_avail">Выбранная страница ECU не может быть открыта.\nКонфигурация должна быть создана с помощью генератора конфигурации, и ECU должен быть доступен.</string>
+  <!--Translate-->
+  <string name="xml_tool_msg_service_menu">Чтобы выполнить сервисные функции для ЭБУ, откройте контекстное меню ЭБУ и выберите пункт меню сервисных функций, если он доступен.</string>
   <string name="xml_tool_select_ecu_type">Выбрать ECU-тип</string>
   <string name="xml_tool_ecu_list">Обнаруженные ECU</string>
   <string name="xml_tool_info_sgbd">SGBD</string>

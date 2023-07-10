@@ -15538,76 +15538,79 @@ namespace BmwDeepObd
 			public const int xml_tool_msg_save_config_select = 2131755855;
 			
 			// aapt resource value: 0x7F100350
-			public const int xml_tool_no_mwtab = 2131755856;
+			public const int xml_tool_msg_service_menu = 2131755856;
 			
 			// aapt resource value: 0x7F100351
-			public const int xml_tool_no_response = 2131755857;
+			public const int xml_tool_no_mwtab = 2131755857;
 			
 			// aapt resource value: 0x7F100352
-			public const int xml_tool_no_response_adapter = 2131755858;
+			public const int xml_tool_no_response = 2131755858;
 			
 			// aapt resource value: 0x7F100353
-			public const int xml_tool_no_response_manual = 2131755859;
+			public const int xml_tool_no_response_adapter = 2131755859;
 			
 			// aapt resource value: 0x7F100354
-			public const int xml_tool_no_response_raw = 2131755860;
+			public const int xml_tool_no_response_manual = 2131755860;
 			
 			// aapt resource value: 0x7F100355
-			public const int xml_tool_read_ecu_again = 2131755861;
+			public const int xml_tool_no_response_raw = 2131755861;
 			
 			// aapt resource value: 0x7F100356
-			public const int xml_tool_read_ecu_info_failed = 2131755862;
+			public const int xml_tool_read_ecu_again = 2131755862;
 			
 			// aapt resource value: 0x7F100357
-			public const int xml_tool_read_jobs_failed = 2131755863;
+			public const int xml_tool_read_ecu_info_failed = 2131755863;
 			
 			// aapt resource value: 0x7F100358
-			public const int xml_tool_read_test_job_failed = 2131755864;
+			public const int xml_tool_read_jobs_failed = 2131755864;
 			
 			// aapt resource value: 0x7F100359
-			public const int xml_tool_reset_ecu_setting = 2131755865;
+			public const int xml_tool_read_test_job_failed = 2131755865;
 			
 			// aapt resource value: 0x7F10035A
-			public const int xml_tool_result_vin = 2131755866;
+			public const int xml_tool_reset_ecu_setting = 2131755866;
 			
 			// aapt resource value: 0x7F10035B
-			public const int xml_tool_save_xml_failed = 2131755867;
+			public const int xml_tool_result_vin = 2131755867;
 			
 			// aapt resource value: 0x7F10035C
-			public const int xml_tool_search_ecus = 2131755868;
-			
-			// aapt resource value: 0x7F10035E
-			public const int xml_tool_select_ecu_type = 2131755870;
-			
-			// aapt resource value: 0x7F10035F
-			public const int xml_tool_select_sgbd = 2131755871;
+			public const int xml_tool_save_xml_failed = 2131755868;
 			
 			// aapt resource value: 0x7F10035D
-			public const int xml_tool_sel_mwtab_info = 2131755869;
+			public const int xml_tool_search_ecus = 2131755869;
+			
+			// aapt resource value: 0x7F10035F
+			public const int xml_tool_select_ecu_type = 2131755871;
 			
 			// aapt resource value: 0x7F100360
-			public const int xml_tool_service_jobs_warning = 2131755872;
+			public const int xml_tool_select_sgbd = 2131755872;
+			
+			// aapt resource value: 0x7F10035E
+			public const int xml_tool_sel_mwtab_info = 2131755870;
 			
 			// aapt resource value: 0x7F100361
-			public const int xml_tool_service_open_jobs = 2131755873;
+			public const int xml_tool_service_jobs_warning = 2131755873;
 			
 			// aapt resource value: 0x7F100362
-			public const int xml_tool_title = 2131755874;
+			public const int xml_tool_service_open_jobs = 2131755874;
 			
 			// aapt resource value: 0x7F100363
-			public const int yandex_api_key_title = 2131755875;
+			public const int xml_tool_title = 2131755875;
 			
 			// aapt resource value: 0x7F100364
-			public const int yandex_key_copy_title = 2131755876;
+			public const int yandex_api_key_title = 2131755876;
 			
 			// aapt resource value: 0x7F100365
-			public const int yandex_key_desc = 2131755877;
+			public const int yandex_key_copy_title = 2131755877;
 			
 			// aapt resource value: 0x7F100366
-			public const int yandex_key_paste_title = 2131755878;
+			public const int yandex_key_desc = 2131755878;
 			
 			// aapt resource value: 0x7F100367
-			public const int yandex_key_test_title = 2131755879;
+			public const int yandex_key_paste_title = 2131755879;
+			
+			// aapt resource value: 0x7F100368
+			public const int yandex_key_test_title = 2131755880;
 			
 			static String()
 			{
