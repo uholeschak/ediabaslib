@@ -570,6 +570,7 @@ namespace BmwDeepObd
         public const string ExtraAppDataDir = "app_data_dir";
         public const string ExtraPageFileName = "page_file_name";
         public const string ExtraEcuFuncCall = "ecu_func_call";
+        public const string ExtraEcuAutoRead = "ecu_auto_read";
         public const string ExtraInterface = "interface";
         public const string ExtraDeviceName = "device_name";
         public const string ExtraDeviceAddress = "device_address";
@@ -597,6 +598,7 @@ namespace BmwDeepObd
         private string _bmwDir;
         private string _appDataDir;
         private string _pageFileName = string.Empty;
+        private bool _ecuAutoRead = false;
         private EcuFunctionCallType _ecuFuncCall = EcuFunctionCallType.None;
         private EcuFunctionCallType _ecuFuncCallMenu = EcuFunctionCallType.None;
         private string _lastFileName = string.Empty;
@@ -632,6 +634,7 @@ namespace BmwDeepObd
 
             _pageFileName = Intent.GetStringExtra(ExtraPageFileName);
             _ecuFuncCall = (EcuFunctionCallType)Intent.GetIntExtra(ExtraEcuFuncCall, (int)EcuFunctionCallType.None);
+            _ecuAutoRead = Intent.GetBooleanExtra(ExtraEcuAutoRead, false);
             if (IsPageSelectionActive())
             {
                 SupportActionBar.Hide();
@@ -791,6 +794,14 @@ namespace BmwDeepObd
                     }
                 }
             }
+            else
+            {
+                if (_ecuAutoRead)
+                {
+                    PerformAnalyze();
+                }
+            }
+
             UpdateDisplay();
         }
 
