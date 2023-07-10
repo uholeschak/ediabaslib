@@ -586,7 +586,7 @@
   <string name="xml_tool_msg_ecu_error">Für einige ECUs konnten keine Information ermittelt werden.</string>
   <string name="xml_tool_msg_pin78">Eine Verbindung zwischen den Adapter Pins 7 and 8 ist notwendig, um mehr ECUs erkennen zu können.\nBei Fahrzeugen mit OBD I Buchse im Motorraum muss zusätzlich Pin 8 an der OBD II Buchse im Fahrzeug verbunden werden!</string>
   <string name="xml_tool_msg_page_not_avail">Die gewählte ECU Seite kann nicht geöffnet werden.\nDie Konfiguration muss mit dem Konfigurationsgenerator erstellt worden sein und die ECU erreichbar sein.</string>
-  <string name="xml_tool_msg_service_menu">Um Service Funktionen für eine ECU auszuführen, öffnen sie das Kontextmenü der ECU und wählen Sie den Service Funktionen Menü Eintrag, wenn dieser verfügbar ist.</string>
+  <string name="xml_tool_msg_service_menu">Um Service Funktionen für eine ECU auszuführen, öffnen sie das Kontextmenü der ECU und wählen Sie den Eintrag \'Service Funktionen\'.</string>
   <string name="xml_tool_select_ecu_type">ECU-Typ auswählen</string>
   <string name="xml_tool_ecu_list">Erkannte ECUs</string>
   <string name="xml_tool_info_sgbd">SGBD</string>

@@ -600,7 +600,7 @@ namespace BmwDeepObd
         private string _bmwDir;
         private string _appDataDir;
         private string _pageFileName = string.Empty;
-        private bool _ecuAutoRead = false;
+        private bool _ecuAutoRead;
         private EcuFunctionCallType _ecuFuncCall = EcuFunctionCallType.None;
         private EcuFunctionCallType _ecuFuncCallMenu = EcuFunctionCallType.None;
         private string _lastFileName = string.Empty;
