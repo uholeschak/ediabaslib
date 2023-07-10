@@ -7547,8 +7547,8 @@ namespace BmwDeepObd
                 if (!string.IsNullOrEmpty(pageFileName))
                 {
                     serverIntent.PutExtra(XmlToolActivity.ExtraPageFileName, pageFileName);
-                    serverIntent.PutExtra(XmlToolActivity.ExtraEcuFuncCall, (int)ecuFuncCall);
                 }
+                serverIntent.PutExtra(XmlToolActivity.ExtraEcuFuncCall, (int)ecuFuncCall);
                 serverIntent.PutExtra(XmlToolActivity.ExtraEcuAutoRead, ecuAutoRead);
                 serverIntent.PutExtra(XmlToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
                 serverIntent.PutExtra(XmlToolActivity.ExtraDeviceName, _instanceData.DeviceName);
