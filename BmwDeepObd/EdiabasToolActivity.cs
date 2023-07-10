@@ -2498,6 +2498,11 @@ namespace BmwDeepObd
                     {
                         _spinnerJobs.SetSelection(jobIndex);
                     }
+
+                    if (!_activityRecreated && string.IsNullOrEmpty(_jobFilterText) && _jobListAdapter.Items.Count == 0)
+                    {
+                        _activityCommon.ShowAlert(GetString(Resource.String.tool_no_matching_jobs_found), Resource.String.alert_title_error);
+                    }
                 }
             }
 
