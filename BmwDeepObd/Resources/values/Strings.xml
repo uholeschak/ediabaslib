@@ -562,7 +562,7 @@
   <string name="xml_tool_msg_ecu_error">Unable to get valid information for some ECUs.</string>
   <string name="xml_tool_msg_pin78">A connection of the adapter pins 7 and 8 is required to detect more ECUs.\nFor vehicles with OBD I socket in the engine bay additionally the pin 8 of the OBD II socket has to be connected at the vehicle side.</string>
   <string name="xml_tool_msg_page_not_avail">The selected ECU page could not be opened.\nThe configuration has be to created with the configuration generator and the ECU must be reachable.</string>
-  <string name="xml_tool_msg_service_menu">To execute service functions for an ECU, open the context menu of the ECU and select the service functions menu entry if available.</string>
+  <string name="xml_tool_msg_service_menu">To execute service functions for an ECU, open the context menu of the ECU and select the entry \'service functions\'.</string>
   <string name="xml_tool_select_ecu_type">Select ECU type</string>
   <string name="xml_tool_ecu_list">Detected ECUs</string>
   <string name="xml_tool_info_sgbd">SGBD</string>
