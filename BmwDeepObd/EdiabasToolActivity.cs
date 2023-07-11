@@ -2676,7 +2676,7 @@ namespace BmwDeepObd
                         string exceptionText = String.Empty;
                         if (!AbortEdiabasJob())
                         {
-                            exceptionText = EdiabasNet.GetExceptionText(ex);
+                            exceptionText = EdiabasNet.GetExceptionText(ex, false, false);
                         }
                         messageList.Add(exceptionText);
                         if (ActivityCommon.IsCommunicationError(exceptionText))

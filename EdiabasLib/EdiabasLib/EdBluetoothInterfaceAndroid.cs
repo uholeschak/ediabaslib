@@ -878,7 +878,7 @@ namespace EdiabasLib
 #pragma warning restore CS0168
                 {
 #if DEBUG_ANDROID
-                    Android.Util.Log.Info(Tag, string.Format("BluetoothConnect Exception={0}", EdiabasNet.GetExceptionText(ex, true)));
+                    Android.Util.Log.Info(Tag, string.Format("BluetoothConnect Exception={0}", EdiabasNet.GetExceptionText(ex, true, true)));
 #endif
                     connectOk = false;
                 }
