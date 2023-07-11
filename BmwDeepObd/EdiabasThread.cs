@@ -900,7 +900,7 @@ namespace BmwDeepObd
                         string exText = string.Empty;
                         if (!AbortEdiabasJob())
                         {
-                            exText = EdiabasNet.GetExceptionText(ex);
+                            exText = EdiabasNet.GetExceptionText(ex, false, false);
                         }
                         errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, ecuInfo.Sgbd, string.Empty, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, false, true, null, null, exText));
                         lock (DataLock)
@@ -1086,7 +1086,7 @@ namespace BmwDeepObd
                         string exText = string.Empty;
                         if (!AbortEdiabasJob())
                         {
-                            exText = EdiabasNet.GetExceptionText(ex);
+                            exText = EdiabasNet.GetExceptionText(ex, false, false);
                         }
                         errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, ecuInfo.Sgbd, string.Empty, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, false, true, null, null, exText));
                         lock (DataLock)
@@ -1138,7 +1138,7 @@ namespace BmwDeepObd
                         string exText = string.Empty;
                         if (!AbortEdiabasJob())
                         {
-                            exText = EdiabasNet.GetExceptionText(ex);
+                            exText = EdiabasNet.GetExceptionText(ex, false, false);
                         }
                         lock (DataLock)
                         {
@@ -1308,7 +1308,7 @@ namespace BmwDeepObd
                 string exText = string.Empty;
                 if (!AbortEdiabasJob())
                 {
-                    exText = EdiabasNet.GetExceptionText(ex);
+                    exText = EdiabasNet.GetExceptionText(ex, false, false);
                 }
                 lock (DataLock)
                 {
