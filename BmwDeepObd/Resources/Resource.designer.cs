@@ -15051,6 +15051,9 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7F1002AD
 			public const int tool_check_continuous = 2131755693;
 			
+			// aapt resource value: 0x7F1002B9
+			public const int tool_jobs_not_found_list = 2131755705;
+			
 			// aapt resource value: 0x7F1002AF
 			public const int tool_job_arguments = 2131755695;
 			
@@ -15084,11 +15087,8 @@ namespace BmwDeepObd
 			// aapt resource value: 0x7F1002B8
 			public const int tool_job_results = 2131755704;
 			
-			// aapt resource value: 0x7F1002B9
-			public const int tool_no_errors = 2131755705;
-			
 			// aapt resource value: 0x7F1002BA
-			public const int tool_no_matching_jobs_found = 2131755706;
+			public const int tool_no_errors = 2131755706;
 			
 			// aapt resource value: 0x7F1002BB
 			public const int tool_read_errors_failure = 2131755707;

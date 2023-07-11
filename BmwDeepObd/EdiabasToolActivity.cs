@@ -2535,7 +2535,8 @@ namespace BmwDeepObd
                             }
                             _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Missing jobs names: {0}", sbJobs.ToString());
 
-                            _activityCommon.ShowAlert(GetString(Resource.String.tool_no_matching_jobs_found), Resource.String.alert_title_error);
+                            sbJobs.Insert(0, GetString(Resource.String.tool_jobs_not_found_list) + "\r\n");
+                            _activityCommon.ShowAlert(sbJobs.ToString(), Resource.String.alert_title_warning);
                         }
                     }
                 }
