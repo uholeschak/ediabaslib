@@ -528,7 +528,7 @@
   <string name="tool_check_continuous">Fortlaufend</string>
   <string name="tool_read_errors_failure">Fehler lesen fehlgeschlagen</string>
   <string name="tool_no_errors">Keine Fehler</string>
-  <string name="tool_no_matching_jobs_found">Keine passenden Jobs gefunden</string>
+  <string name="tool_jobs_not_found_list">Die folgenden Jobs konnten in der ECU nicht gefunden werden:</string>
 
   <!--  Argument Assistant Status -->
   <string name="arg_assist_title">Argument Assistent</string>

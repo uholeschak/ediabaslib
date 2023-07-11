@@ -529,7 +529,7 @@
   <string name="tool_read_errors_failure">Не удалось считать ошибки</string>
   <string name="tool_no_errors">Ошибки отсутствуют</string>
   <!--Translate-->
-  <string name="tool_no_matching_jobs_found">Подходящих вакансий не найдено</string>
+  <string name="tool_jobs_not_found_list">В ECU не удалось найти следующие задания:</string>
 
   <!--  Argument Assistant Status -->
   <string name="arg_assist_title">Помощник по аргументам</string>

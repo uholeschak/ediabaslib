@@ -504,7 +504,7 @@
   <string name="tool_check_continuous">Continuous</string>
   <string name="tool_read_errors_failure">Reading errors failed</string>
   <string name="tool_no_errors">No errors</string>
-  <string name="tool_no_matching_jobs_found">No matching jobs found</string>
+  <string name="tool_jobs_not_found_list">The following jobs could not be found in the ECU:</string>
 
   <!--  Argument Assistant -->
   <string name="arg_assist_title">Argument Assistant</string>
