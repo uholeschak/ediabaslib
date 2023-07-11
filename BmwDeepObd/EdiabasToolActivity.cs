@@ -138,6 +138,7 @@ namespace BmwDeepObd
             public string DeviceAddress { get; set; }
             public string DataLogDir { get; set; }
             public string TraceDir { get; set; }
+            public bool CheckMissingJobs { get; set; }
             public bool Offline { get; set; }
             public bool TraceActive { get; set; }
             public bool TraceAppend { get; set; }
@@ -325,7 +326,12 @@ namespace BmwDeepObd
             {
                 _instanceData.DeviceName = Intent.GetStringExtra(ExtraDeviceName);
                 _instanceData.DeviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
+                if (jobListInitial != null && jobListInitial.Length > 0)
+                {
+                    _instanceData.CheckMissingJobs = true;
+                }
             }
+
             _activityCommon.SelectedEnetIp = Intent.GetStringExtra(ExtraEnetIp);
             _activityCommon.SelectedElmWifiIp = Intent.GetStringExtra(ExtraElmWifiIp);
             _activityCommon.SelectedDeepObdWifiIp = Intent.GetStringExtra(ExtraDeepObdWifiIp);
@@ -2397,6 +2403,7 @@ namespace BmwDeepObd
         private void UpdateJobList(bool keepSelection = false)
         {
             JobInfo jobInfoSelected = GetSelectedJob();
+            HashSet<int> initialJobsIndexHash = new HashSet<int>();
             _jobListAdapter.Items.Clear();
             foreach (JobInfo job in _jobList.OrderBy(x => x.Name))
             {
@@ -2437,6 +2444,7 @@ namespace BmwDeepObd
                         {
                             if (jobItems.Length > 0 && string.Compare(job.Name, jobItems[0], StringComparison.OrdinalIgnoreCase) == 0)
                             {
+                                initialJobsIndexHash.Add(initialIndex);
                                 if (job.Clone() is JobInfo jobClone)
                                 {
                                     jobClone.InitialIndex = initialIndex;
@@ -2499,13 +2507,41 @@ namespace BmwDeepObd
                         _spinnerJobs.SetSelection(jobIndex);
                     }
 
-                    if (!_activityRecreated && string.IsNullOrEmpty(_jobFilterText) && _jobListAdapter.Items.Count == 0)
+                    if (_instanceData.CheckMissingJobs && string.IsNullOrEmpty(_jobFilterText))
                     {
-                        _activityCommon.ShowAlert(GetString(Resource.String.tool_no_matching_jobs_found), Resource.String.alert_title_error);
+                        List<string> missingJobsList = new List<string>();
+                        int indexMissing = 0;
+                        foreach (string[] jobItems in _jobListInitial)
+                        {
+                            if (jobItems.Length > 0 && !initialJobsIndexHash.Contains(indexMissing))
+                            {
+                                missingJobsList.Add(jobItems[0]);
+                            }
+
+                            indexMissing++;
+                        }
+
+                        if (missingJobsList.Count > 0)
+                        {
+                            StringBuilder sbJobs = new StringBuilder();
+                            foreach (string jobName in missingJobsList)
+                            {
+                                if (sbJobs.Length > 0)
+                                {
+                                    sbJobs.Append(", ");
+                                }
+
+                                sbJobs.Append(jobName);
+                            }
+                            _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Missing jobs names: {0}", sbJobs.ToString());
+
+                            _activityCommon.ShowAlert(GetString(Resource.String.tool_no_matching_jobs_found), Resource.String.alert_title_error);
+                        }
                     }
                 }
             }
 
+            _instanceData.CheckMissingJobs = false;
             if (selectionChanged)
             {
                 NewJobSelected();
