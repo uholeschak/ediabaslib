@@ -2397,6 +2397,7 @@ namespace BmwDeepObd
         private void UpdateJobList(bool keepSelection = false)
         {
             JobInfo jobInfoSelected = GetSelectedJob();
+            HashSet<int> initialJobsIndexHash = new HashSet<int>();
             _jobListAdapter.Items.Clear();
             foreach (JobInfo job in _jobList.OrderBy(x => x.Name))
             {
@@ -2437,6 +2438,7 @@ namespace BmwDeepObd
                         {
                             if (jobItems.Length > 0 && string.Compare(job.Name, jobItems[0], StringComparison.OrdinalIgnoreCase) == 0)
                             {
+                                initialJobsIndexHash.Add(initialIndex);
                                 if (job.Clone() is JobInfo jobClone)
                                 {
                                     jobClone.InitialIndex = initialIndex;
@@ -2499,8 +2501,20 @@ namespace BmwDeepObd
                         _spinnerJobs.SetSelection(jobIndex);
                     }
 
-                    if (!_activityRecreated && string.IsNullOrEmpty(_jobFilterText) && _jobListAdapter.Items.Count == 0)
+                    if (!_activityRecreated && string.IsNullOrEmpty(_jobFilterText) && initialJobsIndexHash.Count < _jobListInitial.Count)
                     {
+                        List<string> missingJobsList = new List<string>();
+                        int indexMissing = 0;
+                        foreach (string[] jobItems in _jobListInitial)
+                        {
+                            if (jobItems.Length > 0 && !initialJobsIndexHash.Contains(indexMissing))
+                            {
+                                missingJobsList.Add(jobItems[0]);
+                            }
+
+                            indexMissing++;
+                        }
+
                         _activityCommon.ShowAlert(GetString(Resource.String.tool_no_matching_jobs_found), Resource.String.alert_title_error);
                     }
                 }
