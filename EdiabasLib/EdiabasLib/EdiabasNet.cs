@@ -3265,10 +3265,10 @@ namespace EdiabasLib
 #endif
         public static string GetExceptionText(Exception ex)
         {
-            return GetExceptionText(ex, false);
+            return GetExceptionText(ex, false, true);
         }
 
-        public static string GetExceptionText(Exception ex, bool includeTypes)
+        public static string GetExceptionText(Exception ex, bool includeTypes, bool includeStack)
         {
             if (ex == null)
             {
@@ -3305,7 +3305,7 @@ namespace EdiabasLib
                 exIter = exIter.InnerException;
             }
 
-            if (!string.IsNullOrEmpty(ex.StackTrace))
+            if (includeStack && !string.IsNullOrEmpty(ex.StackTrace))
             {
                 sb.Append("\r\n");
                 sb.Append(ex.StackTrace);
