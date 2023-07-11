@@ -138,6 +138,7 @@ namespace BmwDeepObd
             public string DeviceAddress { get; set; }
             public string DataLogDir { get; set; }
             public string TraceDir { get; set; }
+            public bool CheckMissingJobs { get; set; }
             public bool Offline { get; set; }
             public bool TraceActive { get; set; }
             public bool TraceAppend { get; set; }
@@ -325,7 +326,12 @@ namespace BmwDeepObd
             {
                 _instanceData.DeviceName = Intent.GetStringExtra(ExtraDeviceName);
                 _instanceData.DeviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
+                if (jobListInitial != null && jobListInitial.Length > 0)
+                {
+                    _instanceData.CheckMissingJobs = true;
+                }
             }
+
             _activityCommon.SelectedEnetIp = Intent.GetStringExtra(ExtraEnetIp);
             _activityCommon.SelectedElmWifiIp = Intent.GetStringExtra(ExtraElmWifiIp);
             _activityCommon.SelectedDeepObdWifiIp = Intent.GetStringExtra(ExtraDeepObdWifiIp);
@@ -2501,7 +2507,7 @@ namespace BmwDeepObd
                         _spinnerJobs.SetSelection(jobIndex);
                     }
 
-                    if (!_activityRecreated && string.IsNullOrEmpty(_jobFilterText) && initialJobsIndexHash.Count < _jobListInitial.Count)
+                    if (_instanceData.CheckMissingJobs && string.IsNullOrEmpty(_jobFilterText))
                     {
                         List<string> missingJobsList = new List<string>();
                         int indexMissing = 0;
@@ -2515,11 +2521,27 @@ namespace BmwDeepObd
                             indexMissing++;
                         }
 
-                        _activityCommon.ShowAlert(GetString(Resource.String.tool_no_matching_jobs_found), Resource.String.alert_title_error);
+                        if (missingJobsList.Count > 0)
+                        {
+                            StringBuilder sbJobs = new StringBuilder();
+                            foreach (string jobName in missingJobsList)
+                            {
+                                if (sbJobs.Length > 0)
+                                {
+                                    sbJobs.Append(", ");
+                                }
+
+                                sbJobs.Append(jobName);
+                            }
+                            _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Missing jobs names: {0}", sbJobs.ToString());
+
+                            _activityCommon.ShowAlert(GetString(Resource.String.tool_no_matching_jobs_found), Resource.String.alert_title_error);
+                        }
                     }
                 }
             }
 
+            _instanceData.CheckMissingJobs = false;
             if (selectionChanged)
             {
                 NewJobSelected();
