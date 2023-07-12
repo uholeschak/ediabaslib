@@ -187,6 +187,7 @@ namespace BmwDeepObd
         private EdiabasNet _ediabas;
         private StreamWriter _swDataLog;
         private Thread _jobThread;
+        private bool _transmitCanceled;
         private volatile bool _runContinuous;
         private volatile bool _ediabasJobAbort;
         private string _sgbdFileNameInitial = string.Empty;
@@ -2126,14 +2127,8 @@ namespace BmwDeepObd
             }
         }
 
-        private void ReadSgbd()
+        private void EdiabasInit()
         {
-            if (string.IsNullOrEmpty(_instanceData.SgbdFileName))
-            {
-                return;
-            }
-            _translateEnabled = false;
-            CloseDataLog();
             if (_ediabas == null)
             {
                 _ediabas = new EdiabasNet
@@ -2145,6 +2140,20 @@ namespace BmwDeepObd
                 _sgFunctions = new SgFunctions(_ediabas);
             }
 
+            _transmitCanceled = false;
+            _ediabas.EdInterfaceClass.TransmitCancel(false);
+        }
+
+        private void ReadSgbd()
+        {
+            if (string.IsNullOrEmpty(_instanceData.SgbdFileName))
+            {
+                return;
+            }
+            _translateEnabled = false;
+            CloseDataLog();
+            EdiabasInit();
+
             ClearLists();
             UpdateDisplay();
 
@@ -2154,7 +2163,12 @@ namespace BmwDeepObd
 
             CustomProgressDialog progress = new CustomProgressDialog(this);
             progress.SetMessage(GetString(Resource.String.tool_read_sgbd));
-            progress.ButtonAbort.Visibility = ViewStates.Gone;
+            progress.ButtonAbort.Visibility = ViewStates.Visible;
+            progress.AbortClick = sender =>
+            {
+                _transmitCanceled = true;
+                _ediabas.EdInterfaceClass.TransmitCancel(true);
+            };
             progress.Show();
 
             _ediabasJobAbort = false;
@@ -2353,13 +2367,13 @@ namespace BmwDeepObd
                 }
                 catch (Exception ex)
                 {
-                    string exceptionText = String.Empty;
+                    string exceptionText = string.Empty;
                     if (!AbortEdiabasJob())
                     {
-                        exceptionText = EdiabasNet.GetExceptionText(ex);
+                        exceptionText = EdiabasNet.GetExceptionText(ex, false, false);
                     }
                     messageList.Add(exceptionText);
-                    if (ActivityCommon.IsCommunicationError(exceptionText))
+                    if (!_transmitCanceled && ActivityCommon.IsCommunicationError(exceptionText))
                     {
                         _instanceData.CommErrorsCount++;
                     }

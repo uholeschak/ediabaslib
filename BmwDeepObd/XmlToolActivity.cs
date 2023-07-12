@@ -2564,6 +2564,11 @@ namespace BmwDeepObd
                     return false;
                 }
 
+                if (_ediabas != null)
+                {
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ShowBwmServiceMenu Menu entries: {0}", menuId - 1);
+                }
+
                 popupMenu.Show();
                 popupMenu.MenuItemClick += (sender, args) =>
                 {
