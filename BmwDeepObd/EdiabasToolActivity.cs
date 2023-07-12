@@ -2535,7 +2535,7 @@ namespace BmwDeepObd
                             indexMissing++;
                         }
 
-                        if (missingJobsList.Count > 0)
+                        if (missingJobsList.Count > 0 && _jobList.Count > 0)
                         {
                             StringBuilder sbJobs = new StringBuilder();
                             foreach (string jobName in missingJobsList)
