@@ -2609,7 +2609,7 @@ namespace BmwDeepObd
         {
             try
             {
-                if (!serviceTreeItem.HasInfoData)
+                if (serviceTreeItem.InfoDataCount == 0)
                 {
                     return false;
                 }
