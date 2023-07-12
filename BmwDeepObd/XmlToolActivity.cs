@@ -2534,9 +2534,14 @@ namespace BmwDeepObd
                 }
 
                 VehicleInfoBmw.ServiceTreeItem serviceTreeItem = VehicleInfoBmw.GetServiceItemTree(bmwServiceDataItems, validSgbds);
+                if (serviceTreeItem == null)
+                {
+                    return false;
+                }
+
                 if (anchor == null)
                 {
-                    return serviceTreeItem.HasInfoData;
+                    return serviceTreeItem.InfoDataCount > 0;
                 }
 
                 AndroidX.AppCompat.Widget.PopupMenu popupMenu = new AndroidX.AppCompat.Widget.PopupMenu(this, anchor, (int) GravityFlags.Right);
@@ -2604,7 +2609,7 @@ namespace BmwDeepObd
         {
             try
             {
-                if (!serviceTreeItem.HasInfoData)
+                if (serviceTreeItem.InfoDataCount == 0)
                 {
                     return false;
                 }

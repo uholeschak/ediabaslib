@@ -55,24 +55,22 @@ namespace BmwFileReader
 
             public int MenuId { get; set; }
 
-            public bool HasInfoData
+            public int InfoDataCount
             {
                 get
                 {
-                    if (ServiceInfoList != null && ServiceInfoList.Count > 0)
+                    int infoCount = 0;
+                    if (ServiceInfoList != null)
                     {
-                        return true;
+                        infoCount = ServiceInfoList.Count;
                     }
 
                     foreach (ServiceTreeItem childItem in ChildItems)
                     {
-                        if (childItem.HasInfoData)
-                        {
-                            return true;
-                        }
+                        infoCount += childItem.InfoDataCount;
                     }
 
-                    return false;
+                    return infoCount;
                 }
             }
         }
