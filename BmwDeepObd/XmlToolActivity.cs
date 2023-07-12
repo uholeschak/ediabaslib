@@ -2533,10 +2533,21 @@ namespace BmwDeepObd
                     validSgbds.Add(ecuInfo.Sgbd);
                 }
 
+                if (_ediabas != null)
+                {
+                    string sgdbNames = string.Join(", ", validSgbds.ToArray());
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ShowBwmServiceMenu Sgdb names: {0}", sgdbNames);
+                }
+
                 VehicleInfoBmw.ServiceTreeItem serviceTreeItem = VehicleInfoBmw.GetServiceItemTree(bmwServiceDataItems, validSgbds);
                 if (serviceTreeItem == null)
                 {
                     return false;
+                }
+
+                if (_ediabas != null)
+                {
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ShowBwmServiceMenu Info count: {0}", serviceTreeItem.InfoDataCount);
                 }
 
                 if (anchor == null)
