@@ -2449,16 +2449,17 @@ namespace BmwDeepObd
                     }
                 }
 
-                if (jobValid)
+
+                if (_jobListInitial != null && _jobListInitial.Count > 0)
                 {
-                    if (_jobListInitial != null && _jobListInitial.Count > 0)
+                    int initialIndex = 0;
+                    foreach (string[] jobItems in _jobListInitial)
                     {
-                        int initialIndex = 0;
-                        foreach (string[] jobItems in _jobListInitial)
+                        if (jobItems.Length > 0 && string.Compare(job.Name, jobItems[0], StringComparison.OrdinalIgnoreCase) == 0)
                         {
-                            if (jobItems.Length > 0 && string.Compare(job.Name, jobItems[0], StringComparison.OrdinalIgnoreCase) == 0)
+                            initialJobsIndexHash.Add(initialIndex);
+                            if (jobValid)
                             {
-                                initialJobsIndexHash.Add(initialIndex);
                                 if (job.Clone() is JobInfo jobClone)
                                 {
                                     jobClone.InitialIndex = initialIndex;
@@ -2467,11 +2468,14 @@ namespace BmwDeepObd
                                     _jobListAdapter.Items.Add(jobClone);
                                 }
                             }
-
-                            initialIndex++;
                         }
+
+                        initialIndex++;
                     }
-                    else
+                }
+                else
+                {
+                    if (jobValid)
                     {
                         _jobListAdapter.Items.Add(job);
                     }
@@ -2521,7 +2525,7 @@ namespace BmwDeepObd
                         _spinnerJobs.SetSelection(jobIndex);
                     }
 
-                    if (_instanceData.CheckMissingJobs && string.IsNullOrEmpty(_jobFilterText))
+                    if (_instanceData.CheckMissingJobs)
                     {
                         List<string> missingJobsList = new List<string>();
                         int indexMissing = 0;
