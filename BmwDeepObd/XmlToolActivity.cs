@@ -130,6 +130,7 @@ namespace BmwDeepObd
                 ReadCommand = null;
                 UseCompatIds = false;
                 EcuJobNames = null;
+                SgdbResolved = null;
             }
 
             public void InitReadValues()
@@ -301,6 +302,8 @@ namespace BmwDeepObd
             public bool UseCompatIds { get; set; }
 
             public List<string> EcuJobNames { get; set; }
+
+            public string SgdbResolved { get; set; }
         }
 
         public class EcuInfoSubSys
@@ -2906,6 +2909,16 @@ namespace BmwDeepObd
                 _ediabas.ResultsRequests = string.Empty;
                 _ediabas.NoInitForVJobs = true;
                 _ediabas.ExecuteJob("_JOBS");
+
+                string sgbdResolved = _ediabas.SgbdFileName;
+                if (!string.IsNullOrEmpty(sgbdResolved))
+                {
+                    sgbdResolved = Path.GetFileNameWithoutExtension(sgbdResolved);
+                    if (string.Compare(sgbdResolved, ecuInfo.Sgbd, StringComparison.OrdinalIgnoreCase) != 0)
+                    {
+                        ecuInfo.SgdbResolved = sgbdResolved;
+                    }
+                }
 
                 List<string> ecuJobNames = new List<string>();
                 List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
