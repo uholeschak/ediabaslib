@@ -2906,10 +2906,13 @@ namespace BmwDeepObd
 
                         if (resultDict.TryGetValue("JOBNAME", out EdiabasNet.ResultData resultData))
                         {
-                            string jobName = resultData.OpData as string;
-                            if (!string.IsNullOrWhiteSpace(jobName))
+                            if (resultData.OpData is string jobName)
                             {
-                                ecuJobNames.Add(jobName.Trim());
+                                jobName = jobName.Trim();
+                                if (!string.IsNullOrEmpty(jobName))
+                                {
+                                    ecuJobNames.Add(jobName);
+                                }
                             }
                         }
                         dictIndex++;
