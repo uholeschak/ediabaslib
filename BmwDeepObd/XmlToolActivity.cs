@@ -2685,6 +2685,7 @@ namespace BmwDeepObd
                         Dictionary<string, List<VehicleStructsBmw.ServiceInfoData>> serviceInfoDict = new Dictionary<string, List<VehicleStructsBmw.ServiceInfoData>>();
                         for (int listType = 0; listType < 2; listType++)
                         {
+                            List<string> removedJobs = new List<string>();
                             List<VehicleStructsBmw.ServiceInfoData> serviceInfoListUse = listType == 0 ? serviceInfoList : serviceInfoListAux;
                             foreach (VehicleStructsBmw.ServiceInfoData serviceInfoData in serviceInfoListUse)
                             {
@@ -2722,6 +2723,7 @@ namespace BmwDeepObd
 
                                         if (!jobFound)
                                         {
+                                            removedJobs.Add(jobName);
                                             continue;
                                         }
                                     }
@@ -2753,6 +2755,20 @@ namespace BmwDeepObd
                                         serviceListSgdb.Add(serviceInfoData);
                                     }
                                 }
+                            }
+
+                            if (removedJobs.Count > 0)
+                            {
+                                StringBuilder sbJobs = new StringBuilder();
+                                foreach (string removedJob in removedJobs)
+                                {
+                                    if (sbJobs.Length > 0)
+                                    {
+                                        sbJobs.Append(", ");
+                                    }
+                                    sbJobs.Append(removedJob);
+                                }
+                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Removed jobs for SGDB {0}: {1}", ecuInfo.Sgbd, sbJobs.ToString());
                             }
                         }
 
