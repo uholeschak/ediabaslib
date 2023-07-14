@@ -2700,9 +2700,31 @@ namespace BmwDeepObd
                                 }
 
                                 string sgdb = jobBareItems[0].Trim();
+                                string jobName = jobBareItems[1].Trim();
                                 if (string.Compare(sgdb, ecuInfo.Grp, StringComparison.OrdinalIgnoreCase) == 0)
                                 {
                                     sgdb = ecuInfo.Sgbd;
+                                }
+
+                                if (string.Compare(sgdb, ecuInfo.Sgbd, StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    if (ecuInfo.EcuJobNames != null && ecuInfo.EcuJobNames.Count > 0)
+                                    {
+                                        bool jobFound = false;
+                                        foreach (string ecuJobName in ecuInfo.EcuJobNames)
+                                        {
+                                            if (string.Compare(ecuJobName, jobName, StringComparison.OrdinalIgnoreCase) == 0)
+                                            {
+                                                jobFound = true;
+                                                break;
+                                            }
+                                        }
+
+                                        if (!jobFound)
+                                        {
+                                            continue;
+                                        }
+                                    }
                                 }
 
                                 string key = sgdb.ToUpperInvariant();
@@ -2885,9 +2907,9 @@ namespace BmwDeepObd
                         if (resultDict.TryGetValue("JOBNAME", out EdiabasNet.ResultData resultData))
                         {
                             string jobName = resultData.OpData as string;
-                            if (!string.IsNullOrEmpty(jobName))
+                            if (!string.IsNullOrWhiteSpace(jobName))
                             {
-                                ecuJobNames.Add(jobName);
+                                ecuJobNames.Add(jobName.Trim());
                             }
                         }
                         dictIndex++;
