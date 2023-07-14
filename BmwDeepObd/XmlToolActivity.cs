@@ -2511,6 +2511,10 @@ namespace BmwDeepObd
                         if (!string.IsNullOrWhiteSpace(groupName))
                         {
                             validSgbds.Add(groupName);
+                            if (string.IsNullOrEmpty(ecuInfo.Grp))
+                            {
+                                ecuInfo.Grp = groupName;
+                            }
                         }
 
                         string cliqueName = ecuVariant.EcuClique?.CliqueName;
@@ -2914,10 +2918,7 @@ namespace BmwDeepObd
                 if (!string.IsNullOrEmpty(sgbdResolved))
                 {
                     sgbdResolved = Path.GetFileNameWithoutExtension(sgbdResolved);
-                    if (string.Compare(sgbdResolved, ecuInfo.Sgbd, StringComparison.OrdinalIgnoreCase) != 0)
-                    {
-                        ecuInfo.SgdbResolved = sgbdResolved;
-                    }
+                    ecuInfo.SgdbResolved = sgbdResolved.Trim();
                 }
 
                 List<string> ecuJobNames = new List<string>();
