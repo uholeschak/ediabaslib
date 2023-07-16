@@ -852,7 +852,11 @@ namespace CarSimulator
 
         public bool ThreadRunning()
         {
-            if (_workerThread == null) return false;
+            if (_workerThread == null)
+            {
+                return false;
+            }
+
             return _threadRunning;
         }
 
@@ -916,6 +920,7 @@ namespace CarSimulator
                 Disconnect();
             }
             _threadRunning = false;
+            _form.RefreshDisplay();
         }
 
         private bool Connect()

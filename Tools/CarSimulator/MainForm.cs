@@ -689,6 +689,20 @@ namespace CarSimulator
             }
         }
 
+        public void RefreshDisplay()
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke((Action)(() =>
+                {
+                    RefreshDisplay();
+                }));
+                return;
+            }
+
+            UpdateDisplay();
+        }
+
         private void buttonRootFolder_Click(object sender, EventArgs e)
         {
             folderBrowserDialog.SelectedPath = _rootFolder;
