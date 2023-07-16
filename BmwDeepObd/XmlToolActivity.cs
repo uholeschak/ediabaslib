@@ -2580,9 +2580,12 @@ namespace BmwDeepObd
                     return false;
                 }
 
+                int infoCountAll = serviceTreeItem.InfoDataCount;
+                RemoveInvalidJobs(serviceTreeItem, ecuInfo);
+
                 if (_ediabas != null)
                 {
-                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ShowBwmServiceMenu Info count: {0}", serviceTreeItem.InfoDataCount);
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ShowBwmServiceMenu Info count All={0}, Valid={1}", infoCountAll, serviceTreeItem.InfoDataCount);
                 }
 
                 if (anchor == null)
@@ -2656,6 +2659,73 @@ namespace BmwDeepObd
             }
         }
 
+        private void RemoveInvalidJobs(VehicleInfoBmw.ServiceTreeItem serviceTreeItem, EcuInfo ecuInfo)
+        {
+            if (serviceTreeItem.InfoDataCount == 0)
+            {
+                return;
+            }
+
+            for (int listType = 0; listType < 2; listType++)
+            {
+                List<VehicleStructsBmw.ServiceInfoData> removeItems = new List<VehicleStructsBmw.ServiceInfoData>();
+                List<VehicleStructsBmw.ServiceInfoData> serviceInfoListUse = listType == 0 ? serviceTreeItem.ServiceInfoList : serviceTreeItem.ServiceInfoListAux;
+                foreach (VehicleStructsBmw.ServiceInfoData serviceInfoData in serviceInfoListUse)
+                {
+                    if (serviceInfoData.EdiabasJobBare == null)
+                    {
+                        removeItems.Add(serviceInfoData);
+                        continue;
+                    }
+
+                    string[] jobBareItems = serviceInfoData.EdiabasJobBare.Split('#');
+                    if (jobBareItems.Length < 2)
+                    {
+                        removeItems.Add(serviceInfoData);
+                        continue;
+                    }
+
+                    string sgdb = jobBareItems[0].Trim();
+                    string jobName = jobBareItems[1].Trim();
+                    if (string.Compare(sgdb, ecuInfo.Grp, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        sgdb = ecuInfo.Sgbd;
+                    }
+
+                    if (string.Compare(sgdb, ecuInfo.Sgbd, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        if (ecuInfo.EcuJobNames != null && ecuInfo.EcuJobNames.Count > 0)
+                        {
+                            bool jobFound = false;
+                            foreach (string ecuJobName in ecuInfo.EcuJobNames)
+                            {
+                                if (string.Compare(ecuJobName, jobName, StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    jobFound = true;
+                                    break;
+                                }
+                            }
+
+                            if (!jobFound)
+                            {
+                                removeItems.Add(serviceInfoData);
+                            }
+                        }
+                    }
+                }
+
+                foreach (VehicleStructsBmw.ServiceInfoData removeItem in removeItems)
+                {
+                    serviceInfoListUse.Remove(removeItem);
+                }
+            }
+
+            foreach (VehicleInfoBmw.ServiceTreeItem childItem in serviceTreeItem.ChildItems)
+            {
+                RemoveInvalidJobs(childItem, ecuInfo);
+            }
+        }
+
         private bool AddBwmServiceMenuChilds(IMenu menu, ISubMenu subMenu, VehicleInfoBmw.ServiceTreeItem serviceTreeItem, EcuInfo ecuInfo, string language, int level, ref int menuId)
         {
             try
@@ -2717,7 +2787,6 @@ namespace BmwDeepObd
                         Dictionary<string, List<VehicleStructsBmw.ServiceInfoData>> serviceInfoDict = new Dictionary<string, List<VehicleStructsBmw.ServiceInfoData>>();
                         for (int listType = 0; listType < 2; listType++)
                         {
-                            List<string> removedJobs = new List<string>();
                             List<VehicleStructsBmw.ServiceInfoData> serviceInfoListUse = listType == 0 ? serviceInfoList : serviceInfoListAux;
                             foreach (VehicleStructsBmw.ServiceInfoData serviceInfoData in serviceInfoListUse)
                             {
@@ -2733,32 +2802,9 @@ namespace BmwDeepObd
                                 }
 
                                 string sgdb = jobBareItems[0].Trim();
-                                string jobName = jobBareItems[1].Trim();
                                 if (string.Compare(sgdb, ecuInfo.Grp, StringComparison.OrdinalIgnoreCase) == 0)
                                 {
                                     sgdb = ecuInfo.Sgbd;
-                                }
-
-                                if (string.Compare(sgdb, ecuInfo.Sgbd, StringComparison.OrdinalIgnoreCase) == 0)
-                                {
-                                    if (ecuInfo.EcuJobNames != null && ecuInfo.EcuJobNames.Count > 0)
-                                    {
-                                        bool jobFound = false;
-                                        foreach (string ecuJobName in ecuInfo.EcuJobNames)
-                                        {
-                                            if (string.Compare(ecuJobName, jobName, StringComparison.OrdinalIgnoreCase) == 0)
-                                            {
-                                                jobFound = true;
-                                                break;
-                                            }
-                                        }
-
-                                        if (!jobFound)
-                                        {
-                                            removedJobs.Add(jobName);
-                                            continue;
-                                        }
-                                    }
                                 }
 
                                 string key = sgdb.ToUpperInvariant();
@@ -2787,20 +2833,6 @@ namespace BmwDeepObd
                                         serviceListSgdb.Add(serviceInfoData);
                                     }
                                 }
-                            }
-
-                            if (removedJobs.Count > 0)
-                            {
-                                StringBuilder sbJobs = new StringBuilder();
-                                foreach (string removedJob in removedJobs)
-                                {
-                                    if (sbJobs.Length > 0)
-                                    {
-                                        sbJobs.Append(", ");
-                                    }
-                                    sbJobs.Append(removedJob);
-                                }
-                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Removed jobs for SGDB {0}: {1}", ecuInfo.Sgbd, sbJobs.ToString());
                             }
                         }
 
