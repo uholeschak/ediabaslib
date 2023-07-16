@@ -2507,18 +2507,44 @@ namespace BmwDeepObd
                         string groupName = ecuVariant.GroupName;
                         if (!string.IsNullOrWhiteSpace(groupName))
                         {
-                            validSgbds.Add(groupName);
+                            if (!validSgbds.Contains(groupName, StringComparer.OrdinalIgnoreCase))
+                            {
+                                validSgbds.Add(groupName);
+                            }
                         }
 
                         string cliqueName = ecuVariant.EcuClique?.CliqueName;
                         if (!string.IsNullOrWhiteSpace(cliqueName))
                         {
-                            validSgbds.Add(cliqueName);
+                            if (!validSgbds.Contains(cliqueName, StringComparer.OrdinalIgnoreCase))
+                            {
+                                validSgbds.Add(cliqueName);
+                            }
                         }
                     }
 
                     _ruleEvalBmw?.UpdateEvalEcuProperties(ecuVariant);
                     bmwServiceDataItems = VehicleInfoBmw.GetServiceDataItems(_bmwDir, _ruleEvalBmw);
+
+                    VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(_instanceData.VehicleType, null, _ediabas);
+                    if (vehicleSeriesInfo != null)
+                    {
+                        VehicleStructsBmw.VehicleEcuInfo vehicleEcuInfo = VehicleInfoBmw.GetEcuInfoByGroupName(vehicleSeriesInfo, ecuInfo.Grp);
+                        if (vehicleEcuInfo != null)
+                        {
+                            if (!string.IsNullOrWhiteSpace(vehicleEcuInfo.GroupSgbd))
+                            {
+                                string[] groupNames = vehicleEcuInfo.GroupSgbd.Split('|');
+                                foreach (string groupName in groupNames)
+                                {
+                                    if (!validSgbds.Contains(groupName, StringComparer.OrdinalIgnoreCase))
+                                    {
+                                        validSgbds.Add(groupName);
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
 
                 if (bmwServiceDataItems == null)
@@ -2528,12 +2554,18 @@ namespace BmwDeepObd
 
                 if (!string.IsNullOrWhiteSpace(ecuInfo.Grp))
                 {
-                    validSgbds.Add(ecuInfo.Grp);
+                    if (!validSgbds.Contains(ecuInfo.Grp, StringComparer.OrdinalIgnoreCase))
+                    {
+                        validSgbds.Add(ecuInfo.Grp);
+                    }
                 }
 
                 if (!string.IsNullOrWhiteSpace(ecuInfo.Sgbd))
                 {
-                    validSgbds.Add(ecuInfo.Sgbd);
+                    if (!validSgbds.Contains(ecuInfo.Sgbd, StringComparer.OrdinalIgnoreCase))
+                    {
+                        validSgbds.Add(ecuInfo.Sgbd);
+                    }
                 }
 
                 if (_ediabas != null)
