@@ -2887,6 +2887,11 @@ namespace BmwDeepObd
 
         private void UpdateBmwEcuInfo(DetectVehicleBmw detectVehicleBmw)
         {
+            if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+            {
+                return;
+            }
+
             if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
             {
                 if (_ruleEvalBmw != null)
@@ -2898,20 +2903,6 @@ namespace BmwDeepObd
 
                 foreach (EcuInfo ecuInfo in _ecuList)
                 {
-                    if (string.IsNullOrEmpty(ecuInfo.Grp))
-                    {
-                        string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
-                        EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
-                        if (ecuVariant != null)
-                        {
-                            string groupName = ecuVariant.GroupName;
-                            if (!string.IsNullOrWhiteSpace(groupName))
-                            {
-                                ecuInfo.Grp = groupName.Trim();
-                            }
-                        }
-                    }
-
                     GetEcuJobNames(ecuInfo);
                 }
             }
@@ -3803,6 +3794,10 @@ namespace BmwDeepObd
                                         else
                                         {
                                             title = ecuVariant.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                            if (!string.IsNullOrWhiteSpace(ecuVariant.GroupName))
+                                            {
+                                                ecuInfo.Grp = ecuVariant.GroupName.Trim();
+                                            }
                                         }
                                     }
 
