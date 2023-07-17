@@ -2582,7 +2582,7 @@ namespace BmwDeepObd
                 AndroidX.AppCompat.Widget.PopupMenu popupMenu = new AndroidX.AppCompat.Widget.PopupMenu(this, anchor, (int) GravityFlags.Right);
                 string language = ActivityCommon.GetCurrentLanguage();
                 int menuId = 1;
-                bool result = AddBwmServiceMenuChilds(popupMenu.Menu, null, serviceTreeItem, ecuInfo, language, 0, ref menuId);
+                bool result = AddBwmServiceMenuChilds(popupMenu.Menu, null, serviceTreeItem, ecuInfo, validSgbdDict, language, 0, ref menuId);
                 if (!result || menuId == 1 || !popupMenu.Menu.HasVisibleItems)
                 {
                     return false;
@@ -2718,7 +2718,7 @@ namespace BmwDeepObd
             }
         }
 
-        private bool AddBwmServiceMenuChilds(IMenu menu, ISubMenu subMenu, VehicleInfoBmw.ServiceTreeItem serviceTreeItem, EcuInfo ecuInfo, string language, int level, ref int menuId)
+        private bool AddBwmServiceMenuChilds(IMenu menu, ISubMenu subMenu, VehicleInfoBmw.ServiceTreeItem serviceTreeItem, EcuInfo ecuInfo, Dictionary<string, bool> validSgbdDict, string language, int level, ref int menuId)
         {
             try
             {
@@ -2746,7 +2746,7 @@ namespace BmwDeepObd
                     VehicleInfoBmw.ServiceTreeItem childItem = serviceTreeItem.ChildItems[0];
                     if (serviceInfoList == null)
                     {
-                        return AddBwmServiceMenuChilds(menu, subMenu, childItem, ecuInfo, language, level + 1, ref menuId);
+                        return AddBwmServiceMenuChilds(menu, subMenu, childItem, ecuInfo, validSgbdDict, language, level + 1, ref menuId);
                     }
                 }
 
@@ -2796,9 +2796,12 @@ namespace BmwDeepObd
                                     }
 
                                     string sgdb = jobBareItems[0].Trim();
-                                    if (string.Compare(sgdb, ecuInfo.Grp, StringComparison.OrdinalIgnoreCase) == 0)
+                                    if (validSgbdDict.TryGetValue(sgdb.ToUpperInvariant(), out bool isGroup))
                                     {
-                                        sgdb = ecuInfo.Sgbd;
+                                        if (isGroup)
+                                        {
+                                            sgdb = ecuInfo.Sgbd;
+                                        }
                                     }
 
                                     string key = sgdb.ToUpperInvariant();
@@ -2883,7 +2886,7 @@ namespace BmwDeepObd
                         }
                     }
 
-                    if (!AddBwmServiceMenuChilds(menu, subMenuChild, childItem, ecuInfo, language, level + 1, ref menuId))
+                    if (!AddBwmServiceMenuChilds(menu, subMenuChild, childItem, ecuInfo, validSgbdDict, language, level + 1, ref menuId))
                     {
                         return false;
                     }
