@@ -2780,49 +2780,52 @@ namespace BmwDeepObd
                         for (int listType = 0; listType < 2; listType++)
                         {
                             List<VehicleStructsBmw.ServiceInfoData> serviceInfoListUse = listType == 0 ? serviceInfoList : serviceInfoListAux;
-                            foreach (VehicleStructsBmw.ServiceInfoData serviceInfoData in serviceInfoListUse)
+                            if (serviceInfoListUse != null)
                             {
-                                if (serviceInfoData.EdiabasJobBare == null)
+                                foreach (VehicleStructsBmw.ServiceInfoData serviceInfoData in serviceInfoListUse)
                                 {
-                                    continue;
-                                }
-
-                                string[] jobBareItems = serviceInfoData.EdiabasJobBare.Split('#');
-                                if (jobBareItems.Length < 2)
-                                {
-                                    continue;
-                                }
-
-                                string sgdb = jobBareItems[0].Trim();
-                                if (string.Compare(sgdb, ecuInfo.Grp, StringComparison.OrdinalIgnoreCase) == 0)
-                                {
-                                    sgdb = ecuInfo.Sgbd;
-                                }
-
-                                string key = sgdb.ToUpperInvariant();
-                                if (!serviceInfoDict.TryGetValue(key, out List<VehicleStructsBmw.ServiceInfoData> serviceListSgdb))
-                                {
-                                    if (listType == 0)
-                                    {   // add only aux items if jobs are present
-                                        serviceListSgdb = new List<VehicleStructsBmw.ServiceInfoData>();
-                                        serviceInfoDict.Add(key, serviceListSgdb);
-                                    }
-                                }
-
-                                if (serviceListSgdb != null)
-                                {
-                                    bool jobPresent = false;
-                                    foreach (VehicleStructsBmw.ServiceInfoData serviceInfoUse in serviceListSgdb)
+                                    if (serviceInfoData.EdiabasJobBare == null)
                                     {
-                                        if (string.Compare(serviceInfoUse.EdiabasJobBare, serviceInfoData.EdiabasJobBare, StringComparison.OrdinalIgnoreCase) == 0)
-                                        {
-                                            jobPresent = true;
+                                        continue;
+                                    }
+
+                                    string[] jobBareItems = serviceInfoData.EdiabasJobBare.Split('#');
+                                    if (jobBareItems.Length < 2)
+                                    {
+                                        continue;
+                                    }
+
+                                    string sgdb = jobBareItems[0].Trim();
+                                    if (string.Compare(sgdb, ecuInfo.Grp, StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        sgdb = ecuInfo.Sgbd;
+                                    }
+
+                                    string key = sgdb.ToUpperInvariant();
+                                    if (!serviceInfoDict.TryGetValue(key, out List<VehicleStructsBmw.ServiceInfoData> serviceListSgdb))
+                                    {
+                                        if (listType == 0)
+                                        {   // add only aux items if jobs are present
+                                            serviceListSgdb = new List<VehicleStructsBmw.ServiceInfoData>();
+                                            serviceInfoDict.Add(key, serviceListSgdb);
                                         }
                                     }
 
-                                    if (!jobPresent)
+                                    if (serviceListSgdb != null)
                                     {
-                                        serviceListSgdb.Add(serviceInfoData);
+                                        bool jobPresent = false;
+                                        foreach (VehicleStructsBmw.ServiceInfoData serviceInfoUse in serviceListSgdb)
+                                        {
+                                            if (string.Compare(serviceInfoUse.EdiabasJobBare, serviceInfoData.EdiabasJobBare, StringComparison.OrdinalIgnoreCase) == 0)
+                                            {
+                                                jobPresent = true;
+                                            }
+                                        }
+
+                                        if (!jobPresent)
+                                        {
+                                            serviceListSgdb.Add(serviceInfoData);
+                                        }
                                     }
                                 }
                             }
