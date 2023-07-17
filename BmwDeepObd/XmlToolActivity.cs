@@ -2732,7 +2732,7 @@ namespace BmwDeepObd
             {
                 if (serviceTreeItem.InfoDataCount == 0)
                 {
-                    return false;
+                    return true;
                 }
 
                 if (level == 0)
