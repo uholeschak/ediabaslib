@@ -2568,10 +2568,18 @@ namespace BmwDeepObd
 
                 int infoCountAll = serviceTreeItem.InfoDataCount;
                 RemoveInvalidJobs(serviceTreeItem, ecuInfo, validSgbdDict);
+                int infoCountFilt = serviceTreeItem.InfoDataCount;
 
                 if (_ediabas != null)
                 {
-                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ShowBwmServiceMenu Info count All={0}, Valid={1}", infoCountAll, serviceTreeItem.InfoDataCount);
+                    if (infoCountAll != infoCountFilt)
+                    {
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ShowBwmServiceMenu Info count filtered: {0} -> {1}", infoCountAll, infoCountFilt);
+                    }
+                    else
+                    {
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ShowBwmServiceMenu Info count: {0}", infoCountAll);
+                    }
                 }
 
                 if (anchor == null)
