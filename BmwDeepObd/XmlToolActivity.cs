@@ -627,6 +627,17 @@ namespace BmwDeepObd
         {
             SetTheme(ActivityCommon.SelectedThemeId);
             base.OnCreate(savedInstanceState);
+
+            if (_ecuList == null)
+            {
+                _ecuList = new List<EcuInfo>();
+            }
+
+            if (_ruleEvalBmw == null)
+            {
+                _ruleEvalBmw = new RuleEvalBmw();
+            }
+
             if (savedInstanceState != null)
             {
                 _activityRecreated = true;
@@ -634,8 +645,8 @@ namespace BmwDeepObd
             }
             else
             {
-                _ecuList = new List<EcuInfo>();
-                _ruleEvalBmw = new RuleEvalBmw();
+                _ecuList.Clear();
+                _ruleEvalBmw?.ClearEvalProperties();
             }
 
             _pageFileName = Intent.GetStringExtra(ExtraPageFileName);
@@ -905,7 +916,7 @@ namespace BmwDeepObd
         {
             base.Finish();
             _ecuList.Clear();
-            _ruleEvalBmw = new RuleEvalBmw();
+            _ruleEvalBmw.ClearEvalProperties();
         }
 
         public override void OnBackPressedEvent()
