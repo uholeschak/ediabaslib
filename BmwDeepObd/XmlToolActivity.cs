@@ -2720,9 +2720,19 @@ namespace BmwDeepObd
                 }
             }
 
-            foreach (VehicleInfoBmw.ServiceTreeItem childItem in serviceTreeItem.ChildItems)
+            int index = 0;
+            while (index < serviceTreeItem.ChildItems.Count)
             {
+                VehicleInfoBmw.ServiceTreeItem childItem = serviceTreeItem.ChildItems[index];
                 RemoveInvalidJobs(childItem, ecuInfo, validSgbdDict);
+                if (childItem.InfoDataCount == 0)
+                {
+                    serviceTreeItem.ChildItems.Remove(childItem);
+                }
+                else
+                {
+                    index++;
+                }
             }
         }
 
