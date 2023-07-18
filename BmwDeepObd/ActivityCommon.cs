@@ -10245,13 +10245,41 @@ namespace BmwDeepObd
 
         private static bool IsEmulator()
         {
-            string fing = Build.Fingerprint;
-            bool isEmulator = false;
-            if (fing != null)
+            try
             {
-                isEmulator = fing.Contains("vbox") || fing.Contains("generic");
+                string brand = Build.Brand ?? string.Empty;
+                string device = Build.Device ?? string.Empty;
+                string fingerprint = Build.Fingerprint ?? string.Empty;
+                string hardware = Build.Hardware ?? string.Empty;
+                string model = Build.Model ?? string.Empty;
+                string manufact = Build.Manufacturer ?? string.Empty;
+                string product = Build.Product ?? string.Empty;
+
+                bool isEmulator =
+                    (brand.StartsWith("generic") && device.StartsWith("generic"))
+                    || fingerprint.StartsWith("generic")
+                    || fingerprint.StartsWith("unknown")
+                    || hardware.Contains("goldfish")
+                    || hardware.Contains("ranchu")
+                    || model.Contains("google_sdk")
+                    || model.Contains("Emulator")
+                    || model.Contains("Android SDK built for x86")
+                    || manufact.Contains("Genymotion")
+                    || product.Contains("sdk_google")
+                    || product.Contains("google_sdk")
+                    || product.Contains("sdk")
+                    || product.Contains("sdk_x86")
+                    || product.Contains("sdk_gphone64_arm64")
+                    || product.Contains("vbox86p")
+                    || product.Contains("emulator")
+                    || product.Contains("simulator");
+
+                return isEmulator;
             }
-            return isEmulator;
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public static void WriteResourceToFile(string resourceName, string fileName)
