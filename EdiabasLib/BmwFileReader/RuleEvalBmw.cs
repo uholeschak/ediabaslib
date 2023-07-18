@@ -95,6 +95,15 @@ namespace BmwFileReader
             }
         }
 
+        public void ClearEvalProperties()
+        {
+            lock (_lockObject)
+            {
+                _unknownNamesHash.Clear();
+                _propertiesDict.Clear();
+            }
+        }
+
         public bool SetEvalProperties(DetectVehicleBmw detectVehicleBmw, EcuFunctionStructs.EcuVariant ecuVariant)
         {
             lock (_lockObject)
