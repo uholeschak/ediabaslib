@@ -611,7 +611,7 @@ namespace BmwDeepObd
         private bool _activityActive;
         private volatile bool _ediabasJobAbort;
         private ActivityCommon _activityCommon;
-        private RuleEvalBmw _ruleEvalBmw;
+        private static RuleEvalBmw _ruleEvalBmw = new RuleEvalBmw();
         private CheckAdapter _checkAdapter;
         private EdiabasNet _ediabas;
         private SgFunctions _sgFunctions;
@@ -635,6 +635,7 @@ namespace BmwDeepObd
             else
             {
                 _ecuList = new List<EcuInfo>();
+                _ruleEvalBmw = new RuleEvalBmw();
             }
 
             _pageFileName = Intent.GetStringExtra(ExtraPageFileName);
@@ -714,15 +715,6 @@ namespace BmwDeepObd
                     PerformJobsRead(_ecuList[pos]);
                 }
             };
-
-            if (_activityRecreated && XmlToolEcuActivity.IntentRuleEvalBmw != null)
-            {
-                _ruleEvalBmw = XmlToolEcuActivity.IntentRuleEvalBmw;
-            }
-            else
-            {
-                _ruleEvalBmw = new RuleEvalBmw();
-            }
 
             _activityCommon = new ActivityCommon(this, () =>
             {
@@ -909,6 +901,13 @@ namespace BmwDeepObd
             _activityCommon = null;
         }
 
+        public override void Finish()
+        {
+            base.Finish();
+            _ecuList.Clear();
+            _ruleEvalBmw = new RuleEvalBmw();
+        }
+
         public override void OnBackPressedEvent()
         {
             if (IsJobRunning())
@@ -1041,6 +1040,7 @@ namespace BmwDeepObd
 
                     EcuInfo ecuInfo = XmlToolEcuActivity.IntentEcuInfo;
                     XmlToolEcuActivity.IntentEcuInfo = null;
+                    XmlToolEcuActivity.IntentRuleEvalBmw = null;
 
                     _ecuFuncCallMenu = EcuFunctionCallType.None;
                     if (ecuInfo?.JobList != null)
