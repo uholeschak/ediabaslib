@@ -715,7 +715,15 @@ namespace BmwDeepObd
                 }
             };
 
-            _ruleEvalBmw = new RuleEvalBmw();
+            if (_activityRecreated && XmlToolEcuActivity.IntentRuleEvalBmw != null)
+            {
+                _ruleEvalBmw = XmlToolEcuActivity.IntentRuleEvalBmw;
+            }
+            else
+            {
+                _ruleEvalBmw = new RuleEvalBmw();
+            }
+
             _activityCommon = new ActivityCommon(this, () =>
             {
                 if (_activityCommon == null)
@@ -1033,7 +1041,6 @@ namespace BmwDeepObd
 
                     EcuInfo ecuInfo = XmlToolEcuActivity.IntentEcuInfo;
                     XmlToolEcuActivity.IntentEcuInfo = null;
-                    XmlToolEcuActivity.IntentRuleEvalBmw = null;
 
                     _ecuFuncCallMenu = EcuFunctionCallType.None;
                     if (ecuInfo?.JobList != null)
