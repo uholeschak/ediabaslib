@@ -3006,13 +3006,18 @@ namespace BmwDeepObd
                 {
                     GetEcuJobNames(ecuInfo);
 
-                    string ecuFunctionNames = null;
+                    StringBuilder sbFuncNames = new StringBuilder();
                     if (ShowBwmServiceMenu(ecuInfo))
                     {
-                        ecuFunctionNames = GetString(Resource.String.menu_xml_tool_bmw_service);
+                        if (sbFuncNames.Length > 0)
+                        {
+                            sbFuncNames.Append(", ");
+                        }
+
+                        sbFuncNames.Append(GetString(Resource.String.menu_xml_tool_bmw_service));
                     }
 
-                    ecuInfo.EcuFunctionNames = ecuFunctionNames;
+                    ecuInfo.EcuFunctionNames = sbFuncNames.ToString();
                 }
             }
         }
