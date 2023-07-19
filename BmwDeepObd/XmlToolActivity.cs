@@ -117,6 +117,7 @@ namespace BmwDeepObd
 
                 PageName = name;
                 EcuName = name;
+                EcuFunctionNames = null;
                 DisplayMode = displayMode;
                 FontSize = fontSize;
                 GaugesPortrait = gaugesPortrait;
@@ -273,6 +274,8 @@ namespace BmwDeepObd
             public string PageName { get; set; }
 
             public string EcuName { get; set; }
+
+            public string EcuFunctionNames { get; set; }
 
             public JobReader.PageInfo.DisplayModeType DisplayMode { get; set; }
 
@@ -3002,6 +3005,14 @@ namespace BmwDeepObd
                 foreach (EcuInfo ecuInfo in _ecuList)
                 {
                     GetEcuJobNames(ecuInfo);
+
+                    string ecuFunctionNames = null;
+                    if (ShowBwmServiceMenu(ecuInfo))
+                    {
+                        ecuFunctionNames = GetString(Resource.String.menu_xml_tool_bmw_service);
+                    }
+
+                    ecuInfo.EcuFunctionNames = ecuFunctionNames;
                 }
             }
         }
@@ -9055,6 +9066,7 @@ namespace BmwDeepObd
 
                 TextView textEcuName = view.FindViewById<TextView>(Resource.Id.textEcuName);
                 TextView textEcuDesc = view.FindViewById<TextView>(Resource.Id.textEcuDesc);
+                TextView textEcuFunctions = view.FindViewById<TextView>(Resource.Id.textEcuFunctions);
 
                 StringBuilder stringBuilderName = new StringBuilder();
                 if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw && item.Address >= 0)
@@ -9090,6 +9102,31 @@ namespace BmwDeepObd
                     stringBuilderInfo.Append(item.Vin);
                 }
                 textEcuDesc.Text = stringBuilderInfo.ToString();
+
+                StringBuilder stringBuilderFunctions = new StringBuilder();
+                if (item.EcuJobNames != null)
+                {
+                    foreach (string jobName in item.EcuJobNames)
+                    {
+                        if (stringBuilderFunctions.Length > 0)
+                        {
+                            stringBuilderFunctions.Append(", ");
+                        }
+
+                        stringBuilderFunctions.Append(jobName);
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(item.EcuFunctionNames))
+                {
+                    textEcuFunctions.Visibility = ViewStates.Visible;
+                    textEcuFunctions.Text = item.EcuFunctionNames;
+                }
+                else
+                {
+                    textEcuFunctions.Visibility = ViewStates.Gone;
+                    textEcuFunctions.Text = string.Empty;
+                }
 
                 return view;
             }
