@@ -9103,24 +9103,11 @@ namespace BmwDeepObd
                 }
                 textEcuDesc.Text = stringBuilderInfo.ToString();
 
-                StringBuilder stringBuilderFunctions = new StringBuilder();
-                if (item.EcuJobNames != null)
-                {
-                    foreach (string jobName in item.EcuJobNames)
-                    {
-                        if (stringBuilderFunctions.Length > 0)
-                        {
-                            stringBuilderFunctions.Append(", ");
-                        }
-
-                        stringBuilderFunctions.Append(jobName);
-                    }
-                }
-
-                if (!string.IsNullOrEmpty(item.EcuFunctionNames))
+                string ecuFunctionNames = item.EcuFunctionNames;
+                if (!string.IsNullOrEmpty(ecuFunctionNames))
                 {
                     textEcuFunctions.Visibility = ViewStates.Visible;
-                    textEcuFunctions.Text = item.EcuFunctionNames;
+                    textEcuFunctions.Text = ecuFunctionNames;
                 }
                 else
                 {
