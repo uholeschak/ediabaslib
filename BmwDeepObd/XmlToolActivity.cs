@@ -2333,7 +2333,8 @@ namespace BmwDeepObd
             IMenuItem bmwActuatorMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_bmw_actuator);
             if (bmwActuatorMenu != null)
             {
-                bmwActuatorMenu.SetEnabled(enableMenuAction);
+                bool enableBmwActuator= enableMenuAction && XmlToolEcuActivity.HasControlActuator(_ecuList[itemPos]);
+                bmwActuatorMenu.SetEnabled(enableBmwActuator);
                 bmwActuatorMenu.SetVisible(bmwVisible);
             }
 
@@ -4971,6 +4972,9 @@ namespace BmwDeepObd
                     }
                 }
             }
+
+            ApplyBmwJobRules(ecuInfo, jobList, _ruleEvalBmw);
+
             foreach (XmlToolEcuActivity.JobInfo job in jobList)
             {
                 if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
@@ -5273,6 +5277,43 @@ namespace BmwDeepObd
                             // ignored
                         }
                     }
+                }
+            }
+        }
+
+        private void ApplyBmwJobRules(EcuInfo ecuInfo, List<XmlToolEcuActivity.JobInfo> jobList, RuleEvalBmw ruleEvalBmw)
+        {
+            if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+            {
+                return;
+            }
+
+            if (ruleEvalBmw == null)
+            {
+                return;
+            }
+
+            if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
+            {
+                string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
+                EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
+                ruleEvalBmw.UpdateEvalEcuProperties(ecuVariant);
+
+                int jobIndex = 0;
+                while (jobIndex < jobList.Count)
+                {
+                    XmlToolEcuActivity.JobInfo job = jobList[jobIndex];
+                    if (job.EcuFixedFuncStruct != null)
+                    {
+                        bool validId = ruleEvalBmw.EvaluateRule(job.EcuFixedFuncStruct.Id, RuleEvalBmw.RuleType.EcuFunc);
+                        if (!validId)
+                        {
+                            jobList.Remove(job);
+                            continue;
+                        }
+                    }
+
+                    jobIndex++;
                 }
             }
         }

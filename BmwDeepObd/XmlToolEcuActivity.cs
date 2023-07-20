@@ -676,8 +676,7 @@ namespace BmwDeepObd
             ViewStates bmwButtonsVisibility = ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw?
                 ViewStates.Visible : ViewStates.Gone;
 
-            RuleEvalBmw ruleEvalBmw = ActivityCommon.EcuFunctionsActive ? IntentRuleEvalBmw : null;
-            bool bmwActuatorEnabled = HasControlActuator(_ecuInfo, ruleEvalBmw);
+            bool bmwActuatorEnabled = HasControlActuator(_ecuInfo);
             _buttonBmwActuator = FindViewById<Button>(Resource.Id.buttonBmwActuator);
             _buttonBmwActuator.Visibility = bmwButtonsVisibility;
             _buttonBmwActuator.Enabled = bmwActuatorEnabled;
@@ -1227,7 +1226,7 @@ namespace BmwDeepObd
             return job.ArgCount == 0 && validResult;
         }
 
-        public static bool HasControlActuator(XmlToolActivity.EcuInfo ecuInfo, RuleEvalBmw ruleEvalBmw = null)
+        public static bool HasControlActuator(XmlToolActivity.EcuInfo ecuInfo)
         {
             if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
             {
@@ -1239,11 +1238,7 @@ namespace BmwDeepObd
                 if (jobInfo.EcuFixedFuncStruct != null &&
                     jobInfo.EcuFixedFuncStruct.GetNodeClassType() == EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator)
                 {
-                    bool validId = ruleEvalBmw == null || ruleEvalBmw.EvaluateRule(jobInfo.EcuFixedFuncStruct.Id, RuleEvalBmw.RuleType.EcuFunc);
-                    if (validId)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
 
