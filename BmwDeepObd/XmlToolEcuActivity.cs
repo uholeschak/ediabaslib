@@ -238,7 +238,6 @@ namespace BmwDeepObd
         private static readonly int[] LengthValues = {0, 1, 2, 3, 4, 5, 6, 8, 10, 15, 20, 25, 30, 35, 40};
 
         public static XmlToolActivity.EcuInfo IntentEcuInfo { get; set; }
-        public static RuleEvalBmw IntentRuleEvalBmw { get; set; }
 
         private InstanceData _instanceData = new InstanceData();
         private InputMethodManager _imm;
@@ -1226,19 +1225,26 @@ namespace BmwDeepObd
             return job.ArgCount == 0 && validResult;
         }
 
-        public static bool HasControlActuator(XmlToolActivity.EcuInfo ecuInfo)
+        public static bool HasControlActuator(XmlToolActivity.EcuInfo ecuInfo, RuleEvalBmw ruleEvalBmw = null)
         {
             if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
             {
                 return false;
             }
 
-            foreach (JobInfo jobInfo in ecuInfo.JobList)
+            if (ecuInfo.JobList != null)
             {
-                if (jobInfo.EcuFixedFuncStruct != null &&
-                    jobInfo.EcuFixedFuncStruct.GetNodeClassType() == EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator)
+                foreach (JobInfo jobInfo in ecuInfo.JobList)
                 {
-                    return true;
+                    if (jobInfo.EcuFixedFuncStruct != null &&
+                        jobInfo.EcuFixedFuncStruct.GetNodeClassType() == EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator)
+                    {
+                        bool validId = ruleEvalBmw == null || ruleEvalBmw.EvaluateRule(jobInfo.EcuFixedFuncStruct.Id, RuleEvalBmw.RuleType.EcuFunc);
+                        if (validId)
+                        {
+                            return true;
+                        }
+                    }
                 }
             }
 
@@ -1431,14 +1437,13 @@ namespace BmwDeepObd
         private void UpdateDisplay(bool filterJobs = false)
         {
             int selection = 0;
-            RuleEvalBmw ruleEvalBmw = ActivityCommon.EcuFunctionsActive ? IntentRuleEvalBmw : null;
 
             _spinnerJobsAdapter.Items.Clear();
             List<JobInfo> jobListSort = new List<JobInfo>(_ecuInfo.JobList);
             jobListSort.Sort(new JobInfoComparer());
             foreach (JobInfo job in jobListSort)
             {
-                if (IsValidJob(job, _ecuInfo, ruleEvalBmw))
+                if (IsValidJob(job, _ecuInfo))
                 {
                     bool addJob = true;
                     if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
