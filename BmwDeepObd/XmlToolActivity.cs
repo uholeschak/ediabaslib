@@ -1054,7 +1054,6 @@ namespace BmwDeepObd
 
                     EcuInfo ecuInfo = XmlToolEcuActivity.IntentEcuInfo;
                     XmlToolEcuActivity.IntentEcuInfo = null;
-                    XmlToolEcuActivity.IntentRuleEvalBmw = null;
 
                     _ecuFuncCallMenu = EcuFunctionCallType.None;
                     if (ecuInfo?.JobList != null)
@@ -1896,7 +1895,6 @@ namespace BmwDeepObd
                 }
 
                 XmlToolEcuActivity.IntentEcuInfo = ecuInfo;
-                XmlToolEcuActivity.IntentRuleEvalBmw = _ruleEvalBmw;
                 Intent serverIntent = new Intent(this, typeof(XmlToolEcuActivity));
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraAppDataDir, _appDataDir);
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuName, ecuInfo.Name);
@@ -2333,8 +2331,7 @@ namespace BmwDeepObd
             IMenuItem bmwActuatorMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_bmw_actuator);
             if (bmwActuatorMenu != null)
             {
-                bool enableBmwActuator= enableMenuAction && XmlToolEcuActivity.HasControlActuator(_ecuList[itemPos]);
-                bmwActuatorMenu.SetEnabled(enableBmwActuator);
+                bmwActuatorMenu.SetEnabled(enableMenuAction);
                 bmwActuatorMenu.SetVisible(bmwVisible);
             }
 
