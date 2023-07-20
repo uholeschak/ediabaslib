@@ -676,20 +676,8 @@ namespace BmwDeepObd
             ViewStates bmwButtonsVisibility = ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw?
                 ViewStates.Visible : ViewStates.Gone;
 
-            bool bmwActuatorEnabled = false;
-            if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
-            {
-                foreach (JobInfo jobInfo in _ecuInfo.JobList)
-                {
-                    if (jobInfo.EcuFixedFuncStruct != null &&
-                        jobInfo.EcuFixedFuncStruct.GetNodeClassType() == EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator)
-                    {
-                        bmwActuatorEnabled = true;
-                        break;
-                    }
-                }
-            }
-
+            RuleEvalBmw ruleEvalBmw = ActivityCommon.EcuFunctionsActive ? IntentRuleEvalBmw : null;
+            bool bmwActuatorEnabled = HasControlActuator(_ecuInfo, ruleEvalBmw);
             _buttonBmwActuator = FindViewById<Button>(Resource.Id.buttonBmwActuator);
             _buttonBmwActuator.Visibility = bmwButtonsVisibility;
             _buttonBmwActuator.Enabled = bmwActuatorEnabled;
@@ -1237,6 +1225,29 @@ namespace BmwDeepObd
                 validResult = true;
             }
             return job.ArgCount == 0 && validResult;
+        }
+
+        public static bool HasControlActuator(XmlToolActivity.EcuInfo ecuInfo, RuleEvalBmw ruleEvalBmw = null)
+        {
+            if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+            {
+                return false;
+            }
+
+            foreach (JobInfo jobInfo in ecuInfo.JobList)
+            {
+                if (jobInfo.EcuFixedFuncStruct != null &&
+                    jobInfo.EcuFixedFuncStruct.GetNodeClassType() == EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator)
+                {
+                    bool validId = ruleEvalBmw == null || ruleEvalBmw.EvaluateRule(jobInfo.EcuFixedFuncStruct.Id, RuleEvalBmw.RuleType.EcuFunc);
+                    if (validId)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         public static string GetJobArgs(ActivityCommon.MwTabEntry mwTabEntry, XmlToolActivity.EcuInfo ecuInfo)
