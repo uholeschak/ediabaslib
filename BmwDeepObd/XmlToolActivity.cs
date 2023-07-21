@@ -1059,7 +1059,7 @@ namespace BmwDeepObd
                     XmlToolEcuActivity.IntentEcuInfo = null;
 
                     _ecuFuncCallMenu = EcuFunctionCallType.None;
-                    if (ecuInfo?.JobList != null)
+                    if (ecuInfo != null && ecuInfo.JobList != null && ecuInfo.JobListValid)
                     {
                         int selectCount = ecuInfo.JobList.Count(job => job.Selected);
                         ecuInfo.Selected = selectCount > 0;
@@ -1669,7 +1669,7 @@ namespace BmwDeepObd
                         {
                             stringList.Add(ecu.Description);
                         }
-                        if (ecu.JobList != null)
+                        if (ecu.JobList != null && ecu.JobListValid)
                         {
                             // ReSharper disable LoopCanBeConvertedToQuery
                             foreach (XmlToolEcuActivity.JobInfo jobInfo in ecu.JobList)
@@ -1733,7 +1733,7 @@ namespace BmwDeepObd
                                                 ecu.DescriptionTrans = transList[transIndex++];
                                             }
                                         }
-                                        if (ecu.JobList != null)
+                                        if (ecu.JobList != null && ecu.JobListValid)
                                         {
                                             foreach (XmlToolEcuActivity.JobInfo jobInfo in ecu.JobList)
                                             {
@@ -5505,7 +5505,8 @@ namespace BmwDeepObd
             {
                 return;
             }
-            if (readFailed || (ecuInfo.JobList?.Count == 0))
+
+            if (readFailed || ecuInfo.JobList == null || ecuInfo.JobList.Count == 0 || !ecuInfo.JobListValid)
             {
                 ShowAlert(Resource.String.alert_title_error, Resource.String.xml_tool_read_jobs_failed);
             }
@@ -7080,10 +7081,11 @@ namespace BmwDeepObd
             else
             {
                 int selectCount = 0;
-                if (ecuInfo.JobList != null)
+                if (ecuInfo.JobList != null && ecuInfo.JobListValid)
                 {
                     selectCount = ecuInfo.JobList.Count(job => job.Selected);
                 }
+
                 if ((selectCount > 0) || !string.IsNullOrEmpty(ecuInfo.MwTabFileName))
                 {
                     new AlertDialog.Builder(this)
