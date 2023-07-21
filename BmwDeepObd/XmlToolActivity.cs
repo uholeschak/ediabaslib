@@ -1875,7 +1875,7 @@ namespace BmwDeepObd
         {
             try
             {
-                if (ecuInfo?.JobList == null)
+                if (ecuInfo == null || ecuInfo.JobList == null || !ecuInfo.JobListValid)
                 {
                     return;
                 }
@@ -7536,7 +7536,7 @@ namespace BmwDeepObd
         {
             try
             {
-                if (ecuInfo.JobList == null)
+                if (ecuInfo.JobList == null || !ecuInfo.JobListValid)
                 {
                     return null;
                 }
@@ -8570,7 +8570,11 @@ namespace BmwDeepObd
                 // page files
                 foreach (EcuInfo ecuInfo in _ecuList)
                 {
-                    if (ecuInfo.JobList == null) continue;
+                    if (ecuInfo.JobList == null || !ecuInfo.JobListValid)
+                    {
+                        continue;
+                    }
+
                     if (!ecuInfo.Selected) continue;
                     string xmlPageFile = Path.Combine(xmlFileDir, ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension));
                     XDocument documentPage = null;
