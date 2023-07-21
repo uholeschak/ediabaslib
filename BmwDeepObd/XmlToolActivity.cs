@@ -3026,6 +3026,16 @@ namespace BmwDeepObd
                         sbFuncNames.Append(GetString(Resource.String.menu_xml_tool_bmw_service));
                     }
 
+                    if (XmlToolEcuActivity.HasControlActuator(ecuInfo))
+                    {
+                        if (sbFuncNames.Length > 0)
+                        {
+                            sbFuncNames.Append(", ");
+                        }
+
+                        sbFuncNames.Append(GetString(Resource.String.menu_xml_tool_bmw_actuator));
+                    }
+
                     ecuInfo.EcuFunctionNames = sbFuncNames.ToString();
                 }
             }
