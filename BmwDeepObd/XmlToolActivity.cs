@@ -4683,69 +4683,7 @@ namespace BmwDeepObd
                     _ediabas.ExecuteJob("_JOBS");
 
                     List<XmlToolEcuActivity.JobInfo> jobList = new List<XmlToolEcuActivity.JobInfo>();
-
-                    if (ecuVariant != null)
-                    {
-                        string language = ActivityCommon.GetCurrentLanguage();
-                        List<Tuple<EcuFunctionStructs.EcuFixedFuncStruct, EcuFunctionStructs.EcuFuncStruct>> fixedFuncStructList = ActivityCommon.EcuFunctionReader.GetFixedFuncStructList(ecuVariant);
-                        foreach (var ecuFixedFuncStructPair in fixedFuncStructList)
-                        {
-                            EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct = ecuFixedFuncStructPair.Item1;
-                            EcuFunctionStructs.EcuFuncStruct ecuFuncStruct = ecuFixedFuncStructPair.Item2;
-                            EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType nodeClassType = ecuFixedFuncStruct.GetNodeClassType();
-                            switch (nodeClassType)
-                            {
-                                case EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.Identification:
-                                case EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ReadState:
-                                case EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator:
-                                {
-                                    XmlToolEcuActivity.JobInfo jobInfo = new XmlToolEcuActivity.JobInfo(ecuFixedFuncStruct.Id);
-                                    string displayName = ecuFixedFuncStruct.Title?.GetTitle(language);
-                                    if (!string.IsNullOrWhiteSpace(displayName))
-                                    {
-                                        jobInfo.DisplayName = displayName;
-                                    }
-
-                                    jobInfo.Comments = new List<string>();
-                                    jobInfo.EcuFixedFuncStruct = ecuFixedFuncStruct;
-                                    jobInfo.EcuFuncStruct = ecuFuncStruct;
-
-                                    foreach (EcuFunctionStructs.EcuJob ecuJob in ecuFixedFuncStruct.EcuJobList)
-                                    {
-                                        foreach (EcuFunctionStructs.EcuJobResult ecuJobResult in ecuJob.EcuJobResultList)
-                                        {
-                                            if (ecuJobResult.EcuFuncRelevant.ConvertToInt() > 0)
-                                            {
-                                                string resultTitle = ecuJobResult.Title?.GetTitle(language) ?? string.Empty;
-                                                string resultName = ecuJobResult.Name;
-                                                string resultType = DataTypeStringReal;
-                                                string comment = resultName + " (" + ecuJob.Name + ")";
-                                                List<string> resultCommentList = new List<string> { comment };
-                                                XmlToolEcuActivity.ResultInfo resultInfo =
-                                                    new XmlToolEcuActivity.ResultInfo(resultName, resultTitle, resultType, null, resultCommentList);
-                                                resultInfo.CommentsTransRequired = false;
-                                                resultInfo.EcuJob = ecuJob;
-                                                resultInfo.EcuJobResult = ecuJobResult;
-                                                jobInfo.Results.Add(resultInfo);
-                                                jobInfo.Comments.Add(resultTitle);
-                                            }
-                                        }
-                                    }
-
-                                    jobInfo.CommentsTransRequired = false;
-                                    jobList.Add(jobInfo);
-                                    break;
-                                }
-
-                                default:
-#if DEBUG
-                                    Log.Info(Tag, string.Format("ExecuteJobsRead: Unknown node class={0}, name={1}",
-                                        ecuFixedFuncStruct.NodeClassName, ecuFixedFuncStruct.Title?.GetTitle(language)));
-#endif
-                                    break;
-                            }
-                        }
-                    }
+                    AddBmwFuncStructsJobs(ecuInfo, jobList, _ruleEvalBmw);
 
                     List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
                     if (resultSets != null && resultSets.Count >= 2)
@@ -4969,8 +4907,6 @@ namespace BmwDeepObd
                     }
                 }
             }
-
-            ApplyBmwJobRules(ecuInfo, jobList, _ruleEvalBmw);
 
             foreach (XmlToolEcuActivity.JobInfo job in jobList)
             {
@@ -5278,7 +5214,7 @@ namespace BmwDeepObd
             }
         }
 
-        private void ApplyBmwJobRules(EcuInfo ecuInfo, List<XmlToolEcuActivity.JobInfo> jobList, RuleEvalBmw ruleEvalBmw)
+        private void AddBmwFuncStructsJobs(EcuInfo ecuInfo, List<XmlToolEcuActivity.JobInfo> jobList, RuleEvalBmw ruleEvalBmw)
         {
             if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
             {
@@ -5290,27 +5226,79 @@ namespace BmwDeepObd
                 return;
             }
 
-            if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
+            if (!(ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null))
             {
-                string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
-                EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
-                ruleEvalBmw.UpdateEvalEcuProperties(ecuVariant);
+                return;
+            }
 
-                int jobIndex = 0;
-                while (jobIndex < jobList.Count)
+            string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
+            EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
+            ruleEvalBmw.UpdateEvalEcuProperties(ecuVariant);
+
+            string language = ActivityCommon.GetCurrentLanguage();
+            List<Tuple<EcuFunctionStructs.EcuFixedFuncStruct, EcuFunctionStructs.EcuFuncStruct>> fixedFuncStructList = ActivityCommon.EcuFunctionReader.GetFixedFuncStructList(ecuVariant);
+            foreach (var ecuFixedFuncStructPair in fixedFuncStructList)
+            {
+                EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct = ecuFixedFuncStructPair.Item1;
+                EcuFunctionStructs.EcuFuncStruct ecuFuncStruct = ecuFixedFuncStructPair.Item2;
+                EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType nodeClassType = ecuFixedFuncStruct.GetNodeClassType();
+                bool validId = ruleEvalBmw.EvaluateRule(ecuFixedFuncStruct.Id, RuleEvalBmw.RuleType.EcuFunc);
+                if (!validId)
                 {
-                    XmlToolEcuActivity.JobInfo job = jobList[jobIndex];
-                    if (job.EcuFixedFuncStruct != null)
-                    {
-                        bool validId = ruleEvalBmw.EvaluateRule(job.EcuFixedFuncStruct.Id, RuleEvalBmw.RuleType.EcuFunc);
-                        if (!validId)
-                        {
-                            jobList.Remove(job);
-                            continue;
-                        }
-                    }
+                    continue;
+                }
 
-                    jobIndex++;
+                switch (nodeClassType)
+                {
+                    case EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.Identification:
+                    case EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ReadState:
+                    case EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator:
+                        {
+                            XmlToolEcuActivity.JobInfo jobInfo = new XmlToolEcuActivity.JobInfo(ecuFixedFuncStruct.Id);
+                            string displayName = ecuFixedFuncStruct.Title?.GetTitle(language);
+                            if (!string.IsNullOrWhiteSpace(displayName))
+                            {
+                                jobInfo.DisplayName = displayName;
+                            }
+
+                            jobInfo.Comments = new List<string>();
+                            jobInfo.EcuFixedFuncStruct = ecuFixedFuncStruct;
+                            jobInfo.EcuFuncStruct = ecuFuncStruct;
+
+                            foreach (EcuFunctionStructs.EcuJob ecuJob in ecuFixedFuncStruct.EcuJobList)
+                            {
+                                foreach (EcuFunctionStructs.EcuJobResult ecuJobResult in ecuJob.EcuJobResultList)
+                                {
+                                    if (ecuJobResult.EcuFuncRelevant.ConvertToInt() > 0)
+                                    {
+                                        string resultTitle = ecuJobResult.Title?.GetTitle(language) ?? string.Empty;
+                                        string resultName = ecuJobResult.Name;
+                                        string resultType = DataTypeStringReal;
+                                        string comment = resultName + " (" + ecuJob.Name + ")";
+                                        List<string> resultCommentList = new List<string> { comment };
+                                        XmlToolEcuActivity.ResultInfo resultInfo =
+                                            new XmlToolEcuActivity.ResultInfo(resultName, resultTitle, resultType, null, resultCommentList);
+                                        resultInfo.CommentsTransRequired = false;
+                                        resultInfo.EcuJob = ecuJob;
+                                        resultInfo.EcuJobResult = ecuJobResult;
+                                        jobInfo.Results.Add(resultInfo);
+                                        jobInfo.Comments.Add(resultTitle);
+                                    }
+                                }
+                            }
+
+                            jobInfo.CommentsTransRequired = false;
+                            jobList.Add(jobInfo);
+                            break;
+                        }
+
+                    default:
+#if DEBUG
+                        Log.Info(Tag, string.Format("ExecuteJobsRead: Unknown node class={0}, name={1}",
+                            ecuFixedFuncStruct.NodeClassName, ecuFixedFuncStruct.Title?.GetTitle(language)));
+#endif
+                        break;
+
                 }
             }
         }
