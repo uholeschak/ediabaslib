@@ -123,6 +123,7 @@ namespace BmwDeepObd
                 GaugesPortrait = gaugesPortrait;
                 GaugesLandscape = gaugesLandscape;
                 JobList = null;
+                JobListValid = false;
                 MwTabFileName = mwTabFileName;
                 MwTabList = null;
                 MwTabEcuDict = mwTabEcuDict;
@@ -286,6 +287,8 @@ namespace BmwDeepObd
             public int GaugesLandscape { get; set; }
 
             public List<XmlToolEcuActivity.JobInfo> JobList { get; set; }
+
+            public bool JobListValid { get; set; }
 
             public string MwTabFileName { get; set; }
 
@@ -4595,11 +4598,14 @@ namespace BmwDeepObd
                 return;
             }
 
-            if (ecuInfo.JobList != null)
+            if (ecuInfo.JobList != null && ecuInfo.JobListValid)
             {
                 SelectJobs(ecuInfo);
                 return;
             }
+
+            ecuInfo.JobList = null;
+            ecuInfo.JobListValid = false;
 
             EdiabasOpen();
             _translateEnabled = false;
@@ -5185,6 +5191,7 @@ namespace BmwDeepObd
             }
 
             ecuInfo.JobList = jobList;
+            ecuInfo.JobListValid = true;
 
             if (ecuInfo.IgnoreXmlFile)
             {
@@ -7078,6 +7085,7 @@ namespace BmwDeepObd
                         .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                         {
                             ecuInfo.JobList = null;
+                            ecuInfo.JobListValid = false;
                             ecuInfo.MwTabFileName = string.Empty;
                             ecuInfo.MwTabList = null;
                             ecuInfo.IgnoreXmlFile = true;
