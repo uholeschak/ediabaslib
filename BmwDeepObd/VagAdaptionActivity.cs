@@ -1976,7 +1976,7 @@ namespace BmwDeepObd
                     {
                         if (finishUpdate)
                         {
-                            _ecuInfo.JobList = null;    // force update
+                            _ecuInfo.JobListValid = false;    // force update
                             SetResult(Android.App.Result.Ok);
                             Finish();
                             return;
