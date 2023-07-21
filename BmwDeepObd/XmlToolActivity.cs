@@ -2334,7 +2334,8 @@ namespace BmwDeepObd
             IMenuItem bmwActuatorMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_bmw_actuator);
             if (bmwActuatorMenu != null)
             {
-                bmwActuatorMenu.SetEnabled(enableMenuAction);
+                bool enableBmwActuator = enableMenuAction && XmlToolEcuActivity.HasControlActuator(_ecuList[itemPos]);
+                bmwActuatorMenu.SetEnabled(enableBmwActuator);
                 bmwActuatorMenu.SetVisible(bmwVisible);
             }
 
@@ -3005,6 +3006,13 @@ namespace BmwDeepObd
 
                 foreach (EcuInfo ecuInfo in _ecuList)
                 {
+                    if (ecuInfo.JobList == null)
+                    {
+                        List<XmlToolEcuActivity.JobInfo> jobList = new List<XmlToolEcuActivity.JobInfo>();
+                        AddBmwFuncStructsJobs(ecuInfo, jobList, _ruleEvalBmw);
+                        ecuInfo.JobList = jobList;
+                    }
+
                     GetEcuJobNames(ecuInfo);
 
                     StringBuilder sbFuncNames = new StringBuilder();
@@ -4651,20 +4659,7 @@ namespace BmwDeepObd
                 bool readFailed = false;
                 try
                 {
-                    EcuFunctionStructs.EcuVariant ecuVariant = null;
-                    if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
-                    {
-                        if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
-                        {
-                            string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
-                            ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
-                            if (ecuVariant == null)
-                            {
-                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No ECU variant found for: {0}", ecuSgbdName);
-                            }
-                        }
-                    }
-                    else
+                    if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                     {
                         bool udsEcu = IsUdsEcu(ecuInfo);
                         if (ActivityCommon.VagUdsActive && udsEcu)
