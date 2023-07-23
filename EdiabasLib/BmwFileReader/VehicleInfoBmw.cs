@@ -73,6 +73,24 @@ namespace BmwFileReader
                     return infoCount;
                 }
             }
+            public int ServiceCount
+            {
+                get
+                {
+                    int serviceCount = 0;
+                    if (ServiceInfoList != null && ServiceInfoList.Count > 0)
+                    {
+                        serviceCount = 1;
+                    }
+
+                    foreach (ServiceTreeItem childItem in ChildItems)
+                    {
+                        serviceCount += childItem.ServiceCount;
+                    }
+
+                    return serviceCount;
+                }
+            }
         }
 
 #if Android
