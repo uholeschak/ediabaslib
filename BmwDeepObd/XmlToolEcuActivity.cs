@@ -675,7 +675,7 @@ namespace BmwDeepObd
             ViewStates bmwButtonsVisibility = ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw?
                 ViewStates.Visible : ViewStates.Gone;
 
-            bool bmwActuatorEnabled = HasControlActuator(_ecuInfo);
+            bool bmwActuatorEnabled = ControlActuatorCount(_ecuInfo) > 0;
             _buttonBmwActuator = FindViewById<Button>(Resource.Id.buttonBmwActuator);
             _buttonBmwActuator.Visibility = bmwButtonsVisibility;
             _buttonBmwActuator.Enabled = bmwActuatorEnabled;
@@ -1225,13 +1225,14 @@ namespace BmwDeepObd
             return job.ArgCount == 0 && validResult;
         }
 
-        public static bool HasControlActuator(XmlToolActivity.EcuInfo ecuInfo)
+        public static int ControlActuatorCount(XmlToolActivity.EcuInfo ecuInfo)
         {
             if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
             {
-                return false;
+                return -1;
             }
 
+            int count = 0;
             if (ecuInfo.JobList != null)
             {
                 foreach (JobInfo jobInfo in ecuInfo.JobList)
@@ -1239,12 +1240,12 @@ namespace BmwDeepObd
                     if (jobInfo.EcuFixedFuncStruct != null &&
                         jobInfo.EcuFixedFuncStruct.GetNodeClassType() == EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator)
                     {
-                        return true;
+                        count++;
                     }
                 }
             }
 
-            return false;
+            return count;
         }
 
         public static string GetJobArgs(ActivityCommon.MwTabEntry mwTabEntry, XmlToolActivity.EcuInfo ecuInfo)
