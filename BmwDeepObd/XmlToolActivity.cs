@@ -1888,7 +1888,7 @@ namespace BmwDeepObd
                 bool bmwServiceFunctions = false;
                 if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
                 {
-                    bmwServiceFunctions = ShowBwmServiceMenu(ecuInfo);
+                    bmwServiceFunctions = ShowBwmServiceMenu(ecuInfo) > 0;
                     if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
                     {
                         string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
@@ -2342,7 +2342,7 @@ namespace BmwDeepObd
             IMenuItem bmwServiceMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_bmw_service);
             if (bmwServiceMenu != null)
             {
-                bool enableBmwService = enableMenuAction && ShowBwmServiceMenu(_ecuList[itemPos]);
+                bool enableBmwService = enableMenuAction && ShowBwmServiceMenu(_ecuList[itemPos]) > 0;
                 bmwServiceMenu.SetEnabled(enableBmwService);
                 bmwServiceMenu.SetVisible(bmwVisible);
             }
@@ -2502,7 +2502,7 @@ namespace BmwDeepObd
                     anchor = _contentView;
                 }
 
-                return ShowBwmServiceMenu(ecuInfo, anchor);
+                return ShowBwmServiceMenu(ecuInfo, anchor) > 0;
             }
             catch (Exception)
             {
@@ -2510,13 +2510,13 @@ namespace BmwDeepObd
             }
         }
 
-        private bool ShowBwmServiceMenu(EcuInfo ecuInfo, View anchor = null)
+        private int ShowBwmServiceMenu(EcuInfo ecuInfo, View anchor = null)
         {
             try
             {
                 if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                 {
-                    return false;
+                    return -1;
                 }
 
                 Dictionary<string, bool> validSgbdDict = new Dictionary<string, bool>();
@@ -2563,7 +2563,7 @@ namespace BmwDeepObd
 
                 if (bmwServiceDataItems == null)
                 {
-                    return false;
+                    return 0;
                 }
 
                 if (!string.IsNullOrWhiteSpace(ecuInfo.Grp))
@@ -2586,7 +2586,7 @@ namespace BmwDeepObd
                 VehicleInfoBmw.ServiceTreeItem serviceTreeItem = VehicleInfoBmw.GetServiceItemTree(bmwServiceDataItems, validSgbdList);
                 if (serviceTreeItem == null)
                 {
-                    return false;
+                    return 0;
                 }
 
                 int infoCountAll = serviceTreeItem.InfoDataCount;
@@ -2607,7 +2607,7 @@ namespace BmwDeepObd
 
                 if (anchor == null)
                 {
-                    return serviceTreeItem.InfoDataCount > 0;
+                    return serviceTreeItem.InfoDataCount;
                 }
 
                 AndroidX.AppCompat.Widget.PopupMenu popupMenu = new AndroidX.AppCompat.Widget.PopupMenu(this, anchor, (int) GravityFlags.Right);
@@ -2616,7 +2616,7 @@ namespace BmwDeepObd
                 bool result = AddBwmServiceMenuChilds(popupMenu.Menu, null, serviceTreeItem, ecuInfo, validSgbdDict, language, 0, ref menuId);
                 if (!result || menuId == 1 || !popupMenu.Menu.HasVisibleItems)
                 {
-                    return false;
+                    return 0;
                 }
 
                 if (_ediabas != null)
@@ -2668,11 +2668,11 @@ namespace BmwDeepObd
                     StartEdiabasTool(ecuInfo, serviceInfoDataListMenu);
                 };
 
-                return true;
+                return serviceTreeItem.InfoDataCount;
             }
             catch (Exception)
             {
-                return false;
+                return 0;
             }
         }
 
@@ -3017,14 +3017,15 @@ namespace BmwDeepObd
                     GetEcuJobNames(ecuInfo);
 
                     StringBuilder sbFuncNames = new StringBuilder();
-                    if (ShowBwmServiceMenu(ecuInfo))
+                    int serviceCount = ShowBwmServiceMenu(ecuInfo);
+                    if (serviceCount > 0)
                     {
                         if (sbFuncNames.Length > 0)
                         {
                             sbFuncNames.Append(", ");
                         }
 
-                        sbFuncNames.Append(GetString(Resource.String.menu_xml_tool_bmw_service));
+                        sbFuncNames.Append(string.Format("{0}: {1}", GetString(Resource.String.menu_xml_tool_bmw_service), serviceCount));
                     }
 
                     int actuatorCount = XmlToolEcuActivity.ControlActuatorCount(ecuInfo);
