@@ -2334,7 +2334,7 @@ namespace BmwDeepObd
             IMenuItem bmwActuatorMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_bmw_actuator);
             if (bmwActuatorMenu != null)
             {
-                bool enableBmwActuator = enableMenuAction && XmlToolEcuActivity.HasControlActuator(_ecuList[itemPos]);
+                bool enableBmwActuator = enableMenuAction && XmlToolEcuActivity.ControlActuatorCount(_ecuList[itemPos]) > 0;
                 bmwActuatorMenu.SetEnabled(enableBmwActuator);
                 bmwActuatorMenu.SetVisible(bmwVisible);
             }
@@ -3011,6 +3011,7 @@ namespace BmwDeepObd
                         List<XmlToolEcuActivity.JobInfo> jobList = new List<XmlToolEcuActivity.JobInfo>();
                         AddBmwFuncStructsJobs(ecuInfo, jobList, _ruleEvalBmw);
                         ecuInfo.JobList = jobList;
+                        ecuInfo.JobListValid = false;
                     }
 
                     GetEcuJobNames(ecuInfo);
@@ -3026,14 +3027,15 @@ namespace BmwDeepObd
                         sbFuncNames.Append(GetString(Resource.String.menu_xml_tool_bmw_service));
                     }
 
-                    if (XmlToolEcuActivity.HasControlActuator(ecuInfo))
+                    int actuatorCount = XmlToolEcuActivity.ControlActuatorCount(ecuInfo);
+                    if (actuatorCount > 0)
                     {
                         if (sbFuncNames.Length > 0)
                         {
                             sbFuncNames.Append(", ");
                         }
 
-                        sbFuncNames.Append(GetString(Resource.String.menu_xml_tool_bmw_actuator));
+                        sbFuncNames.Append(string.Format("{0}: {1}", GetString(Resource.String.menu_xml_tool_bmw_actuator), actuatorCount));
                     }
 
                     ecuInfo.EcuFunctionNames = sbFuncNames.ToString();
