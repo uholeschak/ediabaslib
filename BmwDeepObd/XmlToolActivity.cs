@@ -2607,7 +2607,7 @@ namespace BmwDeepObd
 
                 if (anchor == null)
                 {
-                    return serviceTreeItem.InfoDataCount;
+                    return serviceTreeItem.ServiceCount;
                 }
 
                 AndroidX.AppCompat.Widget.PopupMenu popupMenu = new AndroidX.AppCompat.Widget.PopupMenu(this, anchor, (int) GravityFlags.Right);
@@ -2668,7 +2668,7 @@ namespace BmwDeepObd
                     StartEdiabasTool(ecuInfo, serviceInfoDataListMenu);
                 };
 
-                return serviceTreeItem.InfoDataCount;
+                return serviceTreeItem.ServiceCount;
             }
             catch (Exception)
             {
