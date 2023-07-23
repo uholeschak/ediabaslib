@@ -67,7 +67,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="InTheHand.Net.Bluetooth, Version=4.0.0.0, Culture=neutral, PublicKeyToken=ea38caa273134499, processorArchitecture=MSIL">
-      <HintPath>..\packages\InTheHand.Net.Bluetooth.4.0.34.1\lib\net461\InTheHand.Net.Bluetooth.dll</HintPath>
+      <HintPath>..\packages\InTheHand.Net.Bluetooth.4.0.36\lib\net461\InTheHand.Net.Bluetooth.dll</HintPath>
     </Reference>
     <Reference Include="SimpleWifi, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SimpleWifi.1.0.0.0\lib\net40\SimpleWifi.dll</HintPath>
