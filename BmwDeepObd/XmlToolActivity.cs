@@ -907,6 +907,7 @@ namespace BmwDeepObd
 
             _instanceData.ForceAppend = true;   // OnSaveInstanceState is called before OnStop
             _activityActive = false;
+            _ecuInfoBmwServiceMenu = null;
             if (_menuUpdateHandler != null)
             {
                 _menuUpdateHandler.RemoveCallbacks(_showServiceMenuRunnable);
