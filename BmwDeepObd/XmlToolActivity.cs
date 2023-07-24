@@ -691,8 +691,9 @@ namespace BmwDeepObd
 
                 if (_activityActive)
                 {
-                    ShowBwmServiceMenuItemForEcu(_ecuInfoBmwServiceMenu);
+                    EcuInfo ecuInfoMenu = _ecuInfoBmwServiceMenu;
                     _ecuInfoBmwServiceMenu = null;
+                    ShowBwmServiceMenuItemForEcu(ecuInfoMenu);
                 }
             });
 
@@ -904,19 +905,17 @@ namespace BmwDeepObd
         protected override void OnPause()
         {
             base.OnPause();
+            RemoveBmwServiceMenuRequest();
 
             _instanceData.ForceAppend = true;   // OnSaveInstanceState is called before OnStop
             _activityActive = false;
-            _ecuInfoBmwServiceMenu = null;
-            if (_menuUpdateHandler != null)
-            {
-                _menuUpdateHandler.RemoveCallbacks(_showServiceMenuRunnable);
-            }
         }
 
         protected override void OnStop()
         {
             base.OnStop();
+            RemoveBmwServiceMenuRequest();
+
             if (_activityCommon != null && _activityCommon.MtcBtService)
             {
                 _activityCommon.StopMtcService();
@@ -2524,6 +2523,15 @@ namespace BmwDeepObd
             PerformJobsRead(ecuInfo);
 
             return true;
+        }
+
+        private void RemoveBmwServiceMenuRequest()
+        {
+            _ecuInfoBmwServiceMenu = null;
+            if (_menuUpdateHandler != null)
+            {
+                _menuUpdateHandler.RemoveCallbacks(_showServiceMenuRunnable);
+            }
         }
 
         private bool ShowBwmServiceMenuItemForEcu(EcuInfo ecuInfo)
