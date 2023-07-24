@@ -597,6 +597,7 @@ namespace BmwDeepObd
         private InstanceData _instanceData = new InstanceData();
         private bool _activityRecreated;
         private Handler _menuUpdateHandler;
+        private Java.Lang.Runnable _showServiceMenuRunnable;
         private InputMethodManager _imm;
         private View _contentView;
         private View _barView;
@@ -681,6 +682,20 @@ namespace BmwDeepObd
             SetContentView(Resource.Layout.xml_tool);
 
             _menuUpdateHandler = new Handler(Looper.MainLooper);
+            _showServiceMenuRunnable = new Java.Lang.Runnable(() =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                if (_activityActive)
+                {
+                    ShowBwmServiceMenuItemForEcu(_ecuInfoBmwServiceMenu);
+                    _ecuInfoBmwServiceMenu = null;
+                }
+            });
+
             _imm = (InputMethodManager)GetSystemService(InputMethodService);
             _contentView = FindViewById<View>(Android.Resource.Id.Content);
 
@@ -892,6 +907,10 @@ namespace BmwDeepObd
 
             _instanceData.ForceAppend = true;   // OnSaveInstanceState is called before OnStop
             _activityActive = false;
+            if (_menuUpdateHandler != null)
+            {
+                _menuUpdateHandler.RemoveCallbacks(_showServiceMenuRunnable);
+            }
         }
 
         protected override void OnStop()
@@ -933,7 +952,6 @@ namespace BmwDeepObd
                 }
                 _menuUpdateHandler = null;
             }
-
         }
 
         public override void Finish()
@@ -1097,10 +1115,11 @@ namespace BmwDeepObd
 
                         if (showServiceMenu)
                         {
-                            _menuUpdateHandler.Post(() =>
+                            if (!_menuUpdateHandler.HasCallbacks(_showServiceMenuRunnable))
                             {
-                                ShowBwmServiceMenuItemForEcu(ecuInfo);
-                            });
+                                _ecuInfoBmwServiceMenu = ecuInfo;
+                                _menuUpdateHandler.Post(_showServiceMenuRunnable);
+                            }
                         }
                     }
                     break;
@@ -1457,10 +1476,10 @@ namespace BmwDeepObd
 
             if (_ecuInfoBmwServiceMenu != null)
             {
-                _menuUpdateHandler.Post(() =>
+                if (!_menuUpdateHandler.HasCallbacks(_showServiceMenuRunnable))
                 {
-                    ShowBwmServiceMenuItemForEcu(_ecuInfoBmwServiceMenu);
-                });
+                    _menuUpdateHandler.Post(_showServiceMenuRunnable);
+                }
             }
         }
 
@@ -2508,13 +2527,6 @@ namespace BmwDeepObd
 
         private bool ShowBwmServiceMenuItemForEcu(EcuInfo ecuInfo)
         {
-            if (!_activityActive)
-            {
-                _ecuInfoBmwServiceMenu = ecuInfo;
-                return false;
-            }
-
-            _ecuInfoBmwServiceMenu = null;
             try
             {
                 View anchor = null;
