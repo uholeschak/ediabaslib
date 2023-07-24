@@ -596,6 +596,7 @@ namespace BmwDeepObd
 
         private InstanceData _instanceData = new InstanceData();
         private bool _activityRecreated;
+        private Handler _menuUpdateHandler;
         private InputMethodManager _imm;
         private View _contentView;
         private View _barView;
@@ -625,6 +626,7 @@ namespace BmwDeepObd
         private static List<EcuInfo> _ecuList = new List<EcuInfo>();
         private EcuInfo _ecuInfoMot;
         private EcuInfo _ecuInfoDid;
+        private EcuInfo _ecuInfoBmwServiceMenu;
         private bool _translateEnabled = true;
         private bool _translateActive;
         private bool _ecuListTranslated;
@@ -678,6 +680,7 @@ namespace BmwDeepObd
             }
             SetContentView(Resource.Layout.xml_tool);
 
+            _menuUpdateHandler = new Handler(Looper.MainLooper);
             _imm = (InputMethodManager)GetSystemService(InputMethodService);
             _contentView = FindViewById<View>(Android.Resource.Id.Content);
 
@@ -916,6 +919,21 @@ namespace BmwDeepObd
 
             _activityCommon?.Dispose();
             _activityCommon = null;
+
+            if (_menuUpdateHandler != null)
+            {
+                try
+                {
+                    _menuUpdateHandler.RemoveCallbacksAndMessages(null);
+                    _menuUpdateHandler.Dispose();
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+                _menuUpdateHandler = null;
+            }
+
         }
 
         public override void Finish()
@@ -1079,7 +1097,10 @@ namespace BmwDeepObd
 
                         if (showServiceMenu)
                         {
-                            ShowBwmServiceMenuItemForEcu(ecuInfo);
+                            _menuUpdateHandler.Post(() =>
+                            {
+                                ShowBwmServiceMenuItemForEcu(ecuInfo);
+                            });
                         }
                     }
                     break;
@@ -1433,6 +1454,14 @@ namespace BmwDeepObd
             SelectInterfaceEnable();
             UpdateOptionsMenu();
             UpdateDisplay();
+
+            if (_ecuInfoBmwServiceMenu != null)
+            {
+                _menuUpdateHandler.Post(() =>
+                {
+                    ShowBwmServiceMenuItemForEcu(_ecuInfoBmwServiceMenu);
+                });
+            }
         }
 
         private void EdiabasOpen()
@@ -2479,6 +2508,13 @@ namespace BmwDeepObd
 
         private bool ShowBwmServiceMenuItemForEcu(EcuInfo ecuInfo)
         {
+            if (!_activityActive)
+            {
+                _ecuInfoBmwServiceMenu = ecuInfo;
+                return false;
+            }
+
+            _ecuInfoBmwServiceMenu = null;
             try
             {
                 View anchor = null;
