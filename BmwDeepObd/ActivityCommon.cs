@@ -716,7 +716,7 @@ namespace BmwDeepObd
         private Dictionary<string, string> _yandexCurrentLangDict;
         private Dictionary<string, List<string>> _vagDtcCodeDict;
         private string _lastEnetSsid = string.Empty;
-        private bool? _lastInvertfaceAvailable;
+        private bool? _lastInerfaceAvailable;
         private bool _usbPermissionRequested;
         private bool _usbPermissionRequestDisabled;
 
@@ -1105,7 +1105,7 @@ namespace BmwDeepObd
                 if (_selectedInterface != value)
                 {
                     _lastEnetSsid = CommActive ? null : string.Empty;
-                    _lastInvertfaceAvailable = null;
+                    _lastInerfaceAvailable = null;
                 }
                 _selectedInterface = value;
                 SetPreferredNetworkInterface();
@@ -11216,10 +11216,10 @@ namespace BmwDeepObd
                     case InterfaceType.DeepObdWifi:
                     {
                         bool interfaceAvailable = IsInterfaceAvailable();
-                        if (!_lastInvertfaceAvailable.HasValue ||
-                            _lastInvertfaceAvailable.Value != interfaceAvailable)
+                        if (!_lastInerfaceAvailable.HasValue ||
+                            _lastInerfaceAvailable.Value != interfaceAvailable)
                         {
-                            _lastInvertfaceAvailable = interfaceAvailable;
+                            _lastInerfaceAvailable = interfaceAvailable;
                             _bcReceiverUpdateDisplayHandler?.Invoke();
                         }
                         break;
