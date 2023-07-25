@@ -251,7 +251,6 @@
   <string name="bt_mtc_module_error">Устройства Android с модулем Bluetooth FSC-BW124, похоже, имеют проблемы коммуникации с адаптерами OBD.\nСоединение, вероятно, не будет работать правильно.</string>  <string name="bt_module_name">(Модуль Bluetooth: {0})</string>
   <string name="bt_mtc_module_escape_mode">Bluetooth модуль {0} имеет ограниченный канал связи, поэтому необходимо использовать специальный режим связи.\nПо техническим причинам в этом режиме поддерживаются не все протоколы OBD, и требуется самая новая прошивка адаптера.</string>
   <string name="bt_mtc_module_pwd">Текущий пин для Bluetooth {0} не является значением для адаптера по умолчанию {1}.\nЛибо вы меняете пин адаптера, либо текущий пин для Bluetooth.\nВы хотите изменить текущий пин на {1}?</string>
-  <!--Translate-->
   <string formatted="false" name="bt_mtc_firmware_error">Известно, что текущая версия микропрограммы {0} имеет проблемы со связью по Bluetooth.&lt;br&gt;Необходимо обновить прошивку на более новую или более старую версию (в зависимости от наличия).&lt;br&gt;&lt;a href=\'{1}\'&gt;Загрузка прошивки&lt;/a&gt;&lt;br&gt;&lt;a href=\'{2}\'&gt;Инструкции по обновлению&lt;/a&gt;</string>
   <string name="title_paired_devices">Авторизированные устройства</string>
   <string name="title_other_devices">Другие доступные устройства</string>
@@ -316,7 +315,6 @@
   <string name="menu_cfg_page_functions">Функции страницы</string>
   <string name="menu_cfg_page_ediabas">Ediabas утилита</string>
   <string name="menu_cfg_page_bmw_actuator">Функции актуатора</string>
-  <!--Translate-->
   <string name="menu_cfg_page_bmw_service">Сервисные функции</string>
   <string name="menu_cfg_page_vag_coding">Кодировать</string>
   <string name="menu_cfg_page_vag_coding2">Кодировать 2</string>
@@ -528,7 +526,6 @@
   <string name="tool_check_continuous">Непрерывно</string>
   <string name="tool_read_errors_failure">Не удалось считать ошибки</string>
   <string name="tool_no_errors">Ошибки отсутствуют</string>
-  <!--Translate-->
   <string name="tool_jobs_not_found_list">В ECU не удалось найти следующие задания:</string>
 
   <!--  Argument Assistant Status -->
@@ -588,8 +585,7 @@
   <string name="xml_tool_msg_ecu_error">Для некоторых ECU информация не может быть найдена.</string>
   <string name="xml_tool_msg_pin78">Необходимо соединить контакты 7 и 8 в OBD разъеме адаптера, чтобы определилось больше блоков управления.\nВ автомобилях с OBD I разъёмом в моторном отсеке, контакт 8 должен быть дополнительно подключён к OBD II гнезду в салоне.</string>
   <string name="xml_tool_msg_page_not_avail">Выбранная страница ECU не может быть открыта.\nКонфигурация должна быть создана с помощью генератора конфигурации, и ECU должен быть доступен.</string>
-  <!--Translate-->
-  <string name="xml_tool_msg_service_menu">Чтобы выполнить сервисные функции для ЭБУ, откройте контекстное меню ЭБУ и выберите пункт «Сервисные функции».</string>
+  <string name="xml_tool_msg_service_menu">Чтобы выполнить сервисные функции для ECU, откройте контекстное меню ECU и выберите пункт «Сервисные функции».</string>
   <string name="xml_tool_select_ecu_type">Выбрать ECU-тип</string>
   <string name="xml_tool_ecu_list">Обнаруженные ECU</string>
   <string name="xml_tool_info_sgbd">SGBD</string>
@@ -601,10 +597,8 @@
   <string name="xml_tool_job_read_mwblock">Считать блок измерений</string>
   <string name="xml_tool_job_read_vin">Определить VIN</string>
   <string name="xml_tool_result_vin">VIN</string>
-  <!--Translate-->
-  <string name="xml_tool_service_open_jobs">Показать {0} вакансий</string>
-  <!--Translate-->
-  <string name="xml_tool_service_jobs_warning">Сервисные функции пока экспериментальные!\nОтображаемые задания в Ediabas Tool могут иметь только аргументы по умолчанию, которые необходимо адаптировать перед выполнением задания!\nВы обязаны проверять задания перед выполнением!\nПомощник по аргументам может быть полезен в этом случае.\nИз-за сложности сбора данных возможно, что в будущем для выполнения заданий потребуются адаптеры Deep OBD.\nВы все равно хотите продолжить?</string>
+  <string name="xml_tool_service_open_jobs">Показать {0} задания</string>
+  <string name="xml_tool_service_jobs_warning">Сервисные функции пока экспериментальные!\nОтображаемые задания в Ediabas Tool могут иметь только аргументы по умолчанию, которые необходимо адаптировать перед выполнением задания!\nВы обязаны проверять задания перед выполнением!\nПомощник по аргументам может быть полезен в этом случае.\nИз-за сложности сбора данных возможно, что в будущем для выполнения заданий потребуются адаптеры Deep OBD.\nХотите продолжить?</string>
 
   <!-- XML Tool Options Menu -->
   <string name="menu_xml_tool_add_errors_page">Добавить страницу ошибок</string>
