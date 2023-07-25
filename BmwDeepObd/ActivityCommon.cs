@@ -412,6 +412,7 @@ namespace BmwDeepObd
         public const string DefaultLang = "en";
         public const string TraceFileName = "ifh.trc.zip";
         public const string TraceBackupDir = "TraceBackup";
+        public const string EnetSsidUnset = "*";
         public const string AdapterSsidDeepObd = "Deep OBD BMW";
         public const string AdapterSsidEnetLink = "ENET-LINK_";
         public const string AdapterSsidModBmw = "modBMW ENET";
@@ -639,6 +640,7 @@ namespace BmwDeepObd
         private bool _disposed;
         private readonly Context _context;
         private readonly Android.App.Activity _activity;
+        private readonly BaseActivity _baseActivity;
         private static Context _packageContext;
         private readonly BcReceiverUpdateDisplayDelegate _bcReceiverUpdateDisplayHandler;
         private readonly BcReceiverReceivedDelegate _bcReceiverReceivedHandler;
@@ -715,8 +717,7 @@ namespace BmwDeepObd
         private readonly Dictionary<string, Dictionary<string, string>> _yandexTransDict;
         private Dictionary<string, string> _yandexCurrentLangDict;
         private Dictionary<string, List<string>> _vagDtcCodeDict;
-        private string _lastEnetSsid = string.Empty;
-        private bool? _lastInvertfaceAvailable;
+        private bool? _lastInerfaceAvailable;
         private bool _usbPermissionRequested;
         private bool _usbPermissionRequestDisabled;
 
@@ -1104,8 +1105,12 @@ namespace BmwDeepObd
             {
                 if (_selectedInterface != value)
                 {
-                    _lastEnetSsid = CommActive ? null : string.Empty;
-                    _lastInvertfaceAvailable = null;
+                    if (_baseActivity != null)
+                    {
+                        _baseActivity.InstanceDataCommon.LastEnetSsid = CommActive ? EnetSsidUnset : string.Empty;
+                    }
+
+                    _lastInerfaceAvailable = null;
                 }
                 _selectedInterface = value;
                 SetPreferredNetworkInterface();
@@ -1210,6 +1215,7 @@ namespace BmwDeepObd
             }
             _context = context;
             _activity = context as Android.App.Activity;
+            _baseActivity = context as BaseActivity;
             _bcReceiverUpdateDisplayHandler = bcReceiverUpdateDisplayHandler;
             _bcReceiverReceivedHandler = bcReceiverReceivedHandler;
             Emulator = IsEmulator();
@@ -3855,9 +3861,16 @@ namespace BmwDeepObd
                         }
                     }
                 }
-                if (_lastEnetSsid == null)
+
+                string lastEnetSsid = string.Empty;
+                if (_baseActivity != null)
                 {
-                    _lastEnetSsid = enetSsid;
+                    lastEnetSsid = _baseActivity.InstanceDataCommon.LastEnetSsid ?? string.Empty;
+                    if (string.Compare(lastEnetSsid, EnetSsidUnset, StringComparison.Ordinal) == 0)
+                    {
+                        _baseActivity.InstanceDataCommon.LastEnetSsid = enetSsid;
+                        lastEnetSsid = enetSsid;
+                    }
                 }
 
                 bool validSsid = enetSsid.Contains(AdapterSsidDeepObd) || enetSsid.Contains(AdapterSsidEnetLink) || enetSsid.Contains(AdapterSsidModBmw) || enetSsid.Contains(AdapterSsidUniCar);
@@ -3865,9 +3878,12 @@ namespace BmwDeepObd
                 bool ipSelected = !string.IsNullOrEmpty(SelectedEnetIp);
 
                 if (!ipSelected && !validEthernet && !validDeepObd && !validEnetLink && !validModBmw &&
-                    string.Compare(_lastEnetSsid, enetSsid, StringComparison.Ordinal) != 0)
+                    string.Compare(lastEnetSsid, enetSsid, StringComparison.Ordinal) != 0)
                 {
-                    _lastEnetSsid = enetSsid;
+                    if (_baseActivity != null)
+                    {
+                        _baseActivity.InstanceDataCommon.LastEnetSsid = enetSsid;
+                    }
 
                     if (!validSsid && string.IsNullOrEmpty(SelectedEnetIp))
                     {
@@ -4501,7 +4517,11 @@ namespace BmwDeepObd
                     }
                     if (!_maWifi.IsWifiEnabled)
                     {
-                        _lastEnetSsid = string.Empty;
+                        if (_baseActivity != null)
+                        {
+                            _baseActivity.InstanceDataCommon.LastEnetSsid = string.Empty;
+                        }
+
                         try
                         {
                             if (Build.VERSION.SdkInt < BuildVersionCodes.Q)
@@ -11216,10 +11236,10 @@ namespace BmwDeepObd
                     case InterfaceType.DeepObdWifi:
                     {
                         bool interfaceAvailable = IsInterfaceAvailable();
-                        if (!_lastInvertfaceAvailable.HasValue ||
-                            _lastInvertfaceAvailable.Value != interfaceAvailable)
+                        if (!_lastInerfaceAvailable.HasValue ||
+                            _lastInerfaceAvailable.Value != interfaceAvailable)
                         {
-                            _lastInvertfaceAvailable = interfaceAvailable;
+                            _lastInerfaceAvailable = interfaceAvailable;
                             _bcReceiverUpdateDisplayHandler?.Invoke();
                         }
                         break;
