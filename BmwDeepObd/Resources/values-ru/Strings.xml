@@ -612,7 +612,6 @@
   <string name="menu_xml_tool_edit_del_all">Удалить всю ECU-информацию</string>
 
   <!-- XML Tool context Menu -->
-  <!--Translate-->
   <string name="menu_xml_config_ecu">Настроить ECU</string>
   <string name="menu_xml_tool_move_top">Переместить в начало</string>
   <string name="menu_xml_tool_move_up">Переместить вверх</string>
@@ -620,7 +619,6 @@
   <string name="menu_xml_tool_move_bottom">Переместить в конец</string>
   <string name="menu_xml_tool_ediabas_tool">Ediabas утилита</string>
   <string name="menu_xml_tool_bmw_actuator">Функции актуатора</string>
-  <!--Translate-->
   <string name="menu_xml_tool_bmw_service">Сервисные функции</string>
   <string name="menu_xml_tool_vag_coding">Кодировать</string>
   <string name="menu_xml_tool_vag_coding2">Кодировать 2</string>
@@ -628,7 +626,7 @@
   <string name="menu_xml_tool_vag_login">Авторизация</string>
   <string name="menu_xml_tool_vag_sec_access">Права доступа</string>
 
-    <!-- XML Tool Ecu Activity -->
+  <!-- XML Tool Ecu Activity -->
   <string name="xml_tool_ecu_title">Задания для ECU: {0}</string>
   <string name="xml_tool_ecu_job_comments">Комментарии для задания: {0}</string>
   <string name="xml_tool_ecu_job_comments_ecu_info">ECU информация:</string>
@@ -674,7 +672,6 @@
   <string name="xml_tool_button_ediabas_tool">Ediabas утилита</string>
   <string name="xml_tool_button_bmw_actuator">Функции актуатора</string>
   <string name="xml_tool_button_bmw_coding">Кодировать</string>
-  <!--Translate-->
   <string name="xml_tool_button_bmw_service">Сервисные функции</string>
   <string name="xml_tool_button_coding">Кодировать</string>
   <string name="xml_tool_button_coding2">Кодировать 2</string>
@@ -706,8 +703,7 @@
   <string name="vag_coding_execute_title">Выполнить операцию</string>
   <string name="vag_coding_button_execute">Выполнить</string>
   <string name="vag_coding_processing">Выполнение операции</string>
-  <!--Translate-->
-  <string name="vag_coding_write_values_invalid">Если код мастерской, номер импортера или номер оборудования равен 0 или слишком велик, ЭБУ может отклонить значения.\nХотите продолжить?</string>
+  <string name="vag_coding_write_values_invalid">Если идентификационный номер предприятия, номер импортера или серийный номер прибора равен 0 или слишком большой, ECU может отклонить значения.\nХотите продолжить?</string>
   <string name="vag_coding_write_coding_illegal_arguments">Аргументы для операции находятся вне рабочего диапазона</string>
   <string name="vag_coding_write_coding_failed">Ошибка выполнения операции</string>
   <string name="vag_coding_write_coding_access_denied">В доступе отказано, сначала вы должны авторизироваться</string>
@@ -741,7 +737,6 @@
   <string name="vag_adaption_button_store">Сохранить</string>
   <string name="vag_adaption_button_stop">Остановить</string>
   <string name="vag_adaption_ecu_reset">Выполнить ECU сброс</string>
-  <!--Translate-->
   <string name="vag_adaption_change_coding_first">Рекомендуется сначала исправить кодировку в ECU.</string>
 
   <!-- BMW Actuator Activity -->
@@ -803,8 +798,7 @@
   <string name="can_adapter_fw_update_connect">При подключении к устройству может потребоваться перезагрузка процессора.</string>
   <string name="can_adapter_fw_update_active">Обновление прошивки.\nПожалуйста не прерывайте связь.</string>
   <string name="can_adapter_fw_update_conn_failed">Не удалось подключиться к адаптеру</string>
-  <!--Translate-->
-  <string name="can_adapter_fw_update_failed">Не удалось обновление прошивки.\nЕсли все светодиоды адаптера активны, адаптер находится в режиме загрузчика, и для нормального использования его необходимо снова прошить.</string>
+  <string name="can_adapter_fw_update_failed">Не удалось обновить прошивку.\nЕсли все светодиоды адаптера активны, адаптер находится в режиме загрузчика, и для нормального использования его необходимо снова прошить.</string>
   <string name="can_adapter_fw_update_ok">Обновление прошивки успешно завершено</string>
   <string name="can_adapter_fw_invalid">Файл прошивки неисправен.</string>
   <string name="can_adapter_fw_update_ok_detect">Обновление программного обеспечения прошло успешно.\nНеобходимо перезагрузить и заново идентифицировать адаптер.</string>
