@@ -905,7 +905,6 @@ namespace BmwDeepObd
         protected override void OnPause()
         {
             base.OnPause();
-            RemoveBmwServiceMenuRequest();
 
             _instanceData.ForceAppend = true;   // OnSaveInstanceState is called before OnStop
             _activityActive = false;

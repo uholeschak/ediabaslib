@@ -412,7 +412,7 @@ namespace BmwDeepObd
         public const string DefaultLang = "en";
         public const string TraceFileName = "ifh.trc.zip";
         public const string TraceBackupDir = "TraceBackup";
-        public const string EnetSsidUnset = "*";
+        public const string EnetSsidEmpty = "***";
         public const string AdapterSsidDeepObd = "Deep OBD BMW";
         public const string AdapterSsidEnetLink = "ENET-LINK_";
         public const string AdapterSsidModBmw = "modBMW ENET";
@@ -1107,7 +1107,7 @@ namespace BmwDeepObd
                 {
                     if (_baseActivity != null)
                     {
-                        _baseActivity.InstanceDataCommon.LastEnetSsid = CommActive ? EnetSsidUnset : string.Empty;
+                        _baseActivity.InstanceDataCommon.LastEnetSsid = CommActive ? EnetSsidEmpty : string.Empty;
                     }
 
                     _lastInerfaceAvailable = null;
@@ -3866,7 +3866,7 @@ namespace BmwDeepObd
                 if (_baseActivity != null)
                 {
                     lastEnetSsid = _baseActivity.InstanceDataCommon.LastEnetSsid ?? string.Empty;
-                    if (string.Compare(lastEnetSsid, EnetSsidUnset, StringComparison.Ordinal) == 0)
+                    if (string.Compare(lastEnetSsid, EnetSsidEmpty, StringComparison.Ordinal) == 0)
                     {
                         _baseActivity.InstanceDataCommon.LastEnetSsid = enetSsid;
                         lastEnetSsid = enetSsid;
