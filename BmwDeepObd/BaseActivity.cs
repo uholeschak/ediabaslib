@@ -23,6 +23,8 @@ namespace BmwDeepObd
         {
             public InstanceDataBase()
             {
+                LowMemoryShown = false;
+                LongClickShown = false;
                 LastEnetSsid = string.Empty;
             }
 
