@@ -1274,7 +1274,12 @@ namespace BmwDeepObd
             _packageManager = context?.PackageManager;
             _activityManager = context?.GetSystemService(Context.ActivityService) as Android.App.ActivityManager;
             _selectedInterface = InterfaceType.None;
-            _yandexTransDict = cacheActivity?._yandexTransDict ?? new Dictionary<string, Dictionary<string, string>>();
+            if (cacheActivity != null && !cacheActivity._disposed)
+            {
+                _yandexTransDict = cacheActivity._yandexTransDict;
+            }
+
+            _yandexTransDict ??= new Dictionary<string, Dictionary<string, string>>();
 
             if (context != null)
             {
