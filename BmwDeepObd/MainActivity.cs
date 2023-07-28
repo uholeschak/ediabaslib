@@ -1216,6 +1216,7 @@ namespace BmwDeepObd
 
                 case ActivityRequest.RequestEdiabasTool:
                     _activityCommon.SetPreferredNetworkInterface();
+                    StoreTranslation();
                     UpdateOptionsMenu();
                     break;
 
@@ -5622,6 +5623,33 @@ namespace BmwDeepObd
             }
 
             PostCompileCode();
+        }
+
+        private bool StoreTranslation()
+        {
+            if (_activityCommon == null)
+            {
+                return false;
+            }
+
+            try
+            {
+                if (ActivityCommon.IsTranslationAvailable() && ActivityCommon.IsTranslationRequired() &&
+                    !_activityCommon.IsTranslationCacheEmpty() && !string.IsNullOrEmpty(_instanceData.ConfigFileName))
+                {
+                    string xmlFileDir = Path.GetDirectoryName(_instanceData.ConfigFileName);
+                    if (!string.IsNullOrEmpty(xmlFileDir))
+                    {
+                        return _activityCommon.StoreTranslationCache(Path.Combine(xmlFileDir, ActivityCommon.TranslationFileName));
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return false;
         }
 
         private void UpdateJobReaderSettings()
