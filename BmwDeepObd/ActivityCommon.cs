@@ -710,12 +710,12 @@ namespace BmwDeepObd
         private bool _updateCheckActive;
         private bool _transLoginActive;
         private bool _translateLockAquired;
-        private List<string> _yandexLangList;
-        private List<string> _yandexTransList;
-        private List<string> _yandexReducedStringList;
-        private string _yandexCurrentLang;
-        private readonly Dictionary<string, Dictionary<string, string>> _yandexTransDict;
-        private Dictionary<string, string> _yandexCurrentLangDict;
+        private List<string> _transLangList;
+        private List<string> _transList;
+        private List<string> _transReducedStringList;
+        private string _transCurrentLang;
+        private readonly Dictionary<string, Dictionary<string, string>> _transDict;
+        private Dictionary<string, string> _transCurrentLangDict;
         private Dictionary<string, List<string>> _vagDtcCodeDict;
         private bool? _lastInerfaceAvailable;
         private bool _usbPermissionRequested;
@@ -999,7 +999,7 @@ namespace BmwDeepObd
             {
                 if (_translatorType != value)
                 {
-                    _yandexLangList = null;
+                    _transLangList = null;
                 }
 
                 _translatorType = value;
@@ -1276,10 +1276,10 @@ namespace BmwDeepObd
             _selectedInterface = InterfaceType.None;
             if (cacheActivity != null && !cacheActivity._disposed)
             {
-                _yandexTransDict = cacheActivity._yandexTransDict;
+                _transDict = cacheActivity._transDict;
             }
 
-            _yandexTransDict ??= new Dictionary<string, Dictionary<string, string>>();
+            _transDict ??= new Dictionary<string, Dictionary<string, string>>();
 
             if (context != null)
             {
@@ -8344,9 +8344,9 @@ namespace BmwDeepObd
             try
             {
                 XElement xmlLangNodes = new XElement("LanguageCache");
-                foreach (string language in _yandexTransDict.Keys)
+                foreach (string language in _transDict.Keys)
                 {
-                    Dictionary<string, string> langDict = _yandexTransDict[language];
+                    Dictionary<string, string> langDict = _transDict[language];
                     XElement xmlLang = new XElement("Language");
                     xmlLang.Add(new XAttribute("Name", language));
                     foreach (string key in langDict.Keys)
@@ -8376,7 +8376,7 @@ namespace BmwDeepObd
         {
             try
             {
-                _yandexTransDict.Clear();
+                _transDict.Clear();
                 using (MemoryStream ms = new MemoryStream())
                 {
                     if (!ExtractZipFile(fileName + ".zip", Path.GetFileName(fileName), ms))
@@ -8397,7 +8397,7 @@ namespace BmwDeepObd
                             continue;
                         }
                         string language = attrName.Value;
-                        if (!_yandexTransDict.ContainsKey(language))
+                        if (!_transDict.ContainsKey(language))
                         {
                             Dictionary<string, string> langDict = new Dictionary<string, string>();
                             foreach (XElement transNode in langNode.Elements("Trans"))
@@ -8417,7 +8417,7 @@ namespace BmwDeepObd
                                     langDict.Add(attrKey.Value, attrValue.Value);
                                 }
                             }
-                            _yandexTransDict.Add(language, langDict);
+                            _transDict.Add(language, langDict);
                         }
                     }
                 }
@@ -8431,12 +8431,12 @@ namespace BmwDeepObd
 
         public void ClearTranslationCache()
         {
-            _yandexTransDict.Clear();
+            _transDict.Clear();
         }
 
         public bool IsTranslationCacheEmpty()
         {
-            return _yandexTransDict.Count == 0;
+            return _transDict.Count == 0;
         }
 
         public bool RequestEnableTranslate(EventHandler<EventArgs> handler = null)
@@ -8504,30 +8504,30 @@ namespace BmwDeepObd
 
             if (_translateProgress == null)
             {
-                _yandexTransList = null;
+                _transList = null;
                 // try to translate with cache first
-                _yandexCurrentLang = (GetCurrentLanguage()).ToLowerInvariant();
+                _transCurrentLang = (GetCurrentLanguage()).ToLowerInvariant();
 
-                if (!_yandexTransDict.TryGetValue(_yandexCurrentLang, out _yandexCurrentLangDict) || (_yandexCurrentLangDict == null))
+                if (!_transDict.TryGetValue(_transCurrentLang, out _transCurrentLangDict) || (_transCurrentLangDict == null))
                 {
-                    _yandexCurrentLangDict = new Dictionary<string, string>();
-                    _yandexTransDict.Add(_yandexCurrentLang, _yandexCurrentLangDict);
+                    _transCurrentLangDict = new Dictionary<string, string>();
+                    _transDict.Add(_transCurrentLang, _transCurrentLangDict);
                 }
-                _yandexReducedStringList = new List<string>();
+                _transReducedStringList = new List<string>();
                 List<string> translationList = new List<string>();
                 foreach (string text in stringList)
                 {
                     string translation;
-                    if (!disableCache && _yandexCurrentLangDict.TryGetValue(text, out translation))
+                    if (!disableCache && _transCurrentLangDict.TryGetValue(text, out translation))
                     {
                         translationList.Add(translation);
                     }
                     else
                     {
-                        _yandexReducedStringList.Add(text);
+                        _transReducedStringList.Add(text);
                     }
                 }
-                if (_yandexReducedStringList.Count == 0)
+                if (_transReducedStringList.Count == 0)
                 {
                     handler(translationList);
                     return true;
@@ -8556,7 +8556,7 @@ namespace BmwDeepObd
                 _translateLockAquired = SetLock(LockTypeCommunication);
             }
             _translateProgress.ButtonAbort.Enabled = false;
-            _translateProgress.Progress = (_yandexTransList?.Count ?? 0) * 100 / _yandexReducedStringList.Count;
+            _translateProgress.Progress = (_transList?.Count ?? 0) * 100 / _transReducedStringList.Count;
             SetPreferredNetworkInterface();
 
             Thread translateThread = new Thread(() =>
@@ -8569,7 +8569,7 @@ namespace BmwDeepObd
                     StringBuilder sbUrl = new StringBuilder();
                     if (SelectedTranslator == TranslatorType.IbmWatson)
                     {
-                        if (_yandexLangList == null)
+                        if (_transLangList == null)
                         {
                             // no language list present, get it first
                             sbUrl.Append(IbmTranslatorUrl);
@@ -8585,23 +8585,23 @@ namespace BmwDeepObd
                             sbUrl.Append(IbmTransVersion);
 
                             List<string> transList = new List<string>();
-                            int offset = _yandexTransList?.Count ?? 0;
+                            int offset = _transList?.Count ?? 0;
                             int sumLength = 0;
-                            for (int i = offset; i < _yandexReducedStringList.Count; i++)
+                            for (int i = offset; i < _transReducedStringList.Count; i++)
                             {
-                                string testString = "\"" + JsonEncodedText.Encode(_yandexReducedStringList[i]) + "\",";
+                                string testString = "\"" + JsonEncodedText.Encode(_transReducedStringList[i]) + "\",";
                                 sumLength += testString.Length;
                                 if (sumLength > 40000)
                                 {
                                     break;
                                 }
 
-                                transList.Add(_yandexReducedStringList[i]);
+                                transList.Add(_transReducedStringList[i]);
                                 stringCount++;
                             }
 
-                            string targetLang = _yandexCurrentLang;
-                            if (_yandexLangList.All(lang => string.Compare(lang, _yandexCurrentLang, StringComparison.OrdinalIgnoreCase) != 0))
+                            string targetLang = _transCurrentLang;
+                            if (_transLangList.All(lang => string.Compare(lang, _transCurrentLang, StringComparison.OrdinalIgnoreCase) != 0))
                             {
                                 // language not found
                                 targetLang = "en";
@@ -8628,7 +8628,7 @@ namespace BmwDeepObd
                     }
                     else
                     {
-                        if (_yandexLangList == null)
+                        if (_transLangList == null)
                         {
                             // no language list present, get it first
                             sbUrl.Append(@"https://translate.yandex.net/api/v1.5/tr/getLangs?");
@@ -8637,9 +8637,9 @@ namespace BmwDeepObd
                         }
                         else
                         {
-                            string langPair = "de-" + _yandexCurrentLang;
+                            string langPair = "de-" + _transCurrentLang;
                             string langPairTemp = langPair;     // prevent warning
-                            if (_yandexLangList.All(lang => string.Compare(lang, langPairTemp, StringComparison.OrdinalIgnoreCase) != 0))
+                            if (_transLangList.All(lang => string.Compare(lang, langPairTemp, StringComparison.OrdinalIgnoreCase) != 0))
                             {
                                 // language not found
                                 langPair = "de-en";
@@ -8650,11 +8650,11 @@ namespace BmwDeepObd
                             sbUrl.Append(System.Uri.EscapeDataString(YandexApiKey));
                             sbUrl.Append("&lang=");
                             sbUrl.Append(langPair);
-                            int offset = _yandexTransList?.Count ?? 0;
-                            for (int i = offset; i < _yandexReducedStringList.Count; i++)
+                            int offset = _transList?.Count ?? 0;
+                            for (int i = offset; i < _transReducedStringList.Count; i++)
                             {
                                 sbUrl.Append("&text=");
-                                sbUrl.Append(System.Uri.EscapeDataString(_yandexReducedStringList[i]));
+                                sbUrl.Append(System.Uri.EscapeDataString(_transReducedStringList[i]));
                                 stringCount++;
                                 if (sbUrl.Length > 8000)
                                 {
@@ -8699,20 +8699,20 @@ namespace BmwDeepObd
 
                     if (success)
                     {
-                        if (_yandexLangList == null)
+                        if (_transLangList == null)
                         {
                             switch (SelectedTranslator)
                             {
                                 case TranslatorType.YandexTranslate:
-                                    _yandexLangList = GetYandexLanguages(responseTranslateResult);
+                                    _transLangList = GetYandexLanguages(responseTranslateResult);
                                     break;
 
                                 case TranslatorType.IbmWatson:
-                                    _yandexLangList = GetIbmLanguages(responseTranslateResult);
+                                    _transLangList = GetIbmLanguages(responseTranslateResult);
                                     break;
                             }
 
-                            if (_yandexLangList != null)
+                            if (_transLangList != null)
                             {
                                 _activity?.RunOnUiThread(() =>
                                 {
@@ -8741,15 +8741,15 @@ namespace BmwDeepObd
 
                             if (transList != null && transList.Count == stringCount)
                             {
-                                if (_yandexTransList == null)
+                                if (_transList == null)
                                 {
-                                    _yandexTransList = transList;
+                                    _transList = transList;
                                 }
                                 else
                                 {
-                                    _yandexTransList.AddRange(transList);
+                                    _transList.AddRange(transList);
                                 }
-                                if (_yandexTransList.Count < _yandexReducedStringList.Count)
+                                if (_transList.Count < _transReducedStringList.Count)
                                 {
                                     _activity?.RunOnUiThread(() =>
                                     {
@@ -8765,14 +8765,14 @@ namespace BmwDeepObd
                             else
                             {
                                 // error
-                                _yandexTransList = null;
+                                _transList = null;
                             }
                         }
                     }
                     else
                     {
                         // error
-                        _yandexTransList = null;
+                        _transList = null;
                     }
                     _activity?.RunOnUiThread(() =>
                     {
@@ -8791,7 +8791,7 @@ namespace BmwDeepObd
                                 _translateLockAquired = false;
                             }
                         }
-                        if ((_yandexLangList == null) || (_yandexTransList == null))
+                        if ((_transLangList == null) || (_transList == null))
                         {
                             string errorMessage = string.Empty;
                             if (!success)
@@ -8844,20 +8844,20 @@ namespace BmwDeepObd
                         {
                             if (disableCache)
                             {
-                                handler(_yandexReducedStringList.Count == _yandexTransList.Count
-                                    ? _yandexTransList : null);
+                                handler(_transReducedStringList.Count == _transList.Count
+                                    ? _transList : null);
                             }
                             else
                             {
                                 // add translation to cache
-                                if (_yandexReducedStringList.Count == _yandexTransList.Count)
+                                if (_transReducedStringList.Count == _transList.Count)
                                 {
-                                    for (int i = 0; i < _yandexTransList.Count; i++)
+                                    for (int i = 0; i < _transList.Count; i++)
                                     {
-                                        string key = _yandexReducedStringList[i];
-                                        if (!_yandexCurrentLangDict.ContainsKey(key))
+                                        string key = _transReducedStringList[i];
+                                        if (!_transCurrentLangDict.ContainsKey(key))
                                         {
-                                            _yandexCurrentLangDict.Add(key, _yandexTransList[i]);
+                                            _transCurrentLangDict.Add(key, _transList[i]);
                                         }
                                     }
                                 }
@@ -8866,7 +8866,7 @@ namespace BmwDeepObd
                                 foreach (string text in stringList)
                                 {
                                     string translation;
-                                    if (_yandexCurrentLangDict.TryGetValue(text, out translation))
+                                    if (_transCurrentLangDict.TryGetValue(text, out translation))
                                     {
                                         transListFull.Add(translation);
                                     }
