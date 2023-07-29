@@ -651,6 +651,7 @@ namespace BmwDeepObd
             {
                 _activityRecreated = true;
                 _instanceData = GetInstanceState(savedInstanceState, _instanceData) as InstanceData;
+                ReadTranslation();
             }
             else
             {
@@ -867,6 +868,7 @@ namespace BmwDeepObd
 
         protected override void OnSaveInstanceState(Bundle outState)
         {
+            StoreTranslation();
             StoreInstanceState(outState, _instanceData);
             base.OnSaveInstanceState(outState);
         }
@@ -8614,7 +8616,8 @@ namespace BmwDeepObd
                     // ignored
                 }
             }
-            _activityCommon.ReadTranslationCache(Path.Combine(xmlFileDir, TranslationFileName));
+
+            ReadTranslation();
         }
 
         private string SaveAllXml()
@@ -8746,12 +8749,46 @@ namespace BmwDeepObd
                     }
                 }
                 ActivityCommon.WriteResourceToFile(typeof(XmlToolActivity).Namespace + ".Xml." + XsdFileName, Path.Combine(xmlFileDir, XsdFileName));
-                _activityCommon.StoreTranslationCache(Path.Combine(xmlFileDir, TranslationFileName));
+                StoreTranslation();
                 return xmlConfigFile;
             }
             catch (Exception)
             {
                 return null;
+            }
+        }
+
+        private bool ReadTranslation()
+        {
+            try
+            {
+                string xmlFileDir = XmlFileDir();
+                if (xmlFileDir == null)
+                {
+                    return false;
+                }
+                return _activityCommon.ReadTranslationCache(Path.Combine(xmlFileDir, TranslationFileName));
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private bool StoreTranslation()
+        {
+            try
+            {
+                string xmlFileDir = XmlFileDir();
+                if (xmlFileDir == null)
+                {
+                    return false;
+                }
+                return _activityCommon.StoreTranslationCache(Path.Combine(xmlFileDir, TranslationFileName));
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
 
