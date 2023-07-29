@@ -432,6 +432,7 @@ namespace BmwDeepObd
         private const long EcuExtractSize = 2600000000;         // extracted ecu files size
         private const string InfoXmlName = "ObbInfo.xml";
         private const string ContentFileName = "Content.xml";
+        private const string TranslationFileNameMain = "TranslationMain.xml";
         private const int MenuGroupRecentId = 1;
         private const int CpuLoadCritical = 70;
         private const int AutoHideTimeout = 3000;
@@ -1854,6 +1855,7 @@ namespace BmwDeepObd
                     _activityCommon.ClearTranslationCache();
                     _translationList = null;
                     _translatedList = null;
+                    StoreTranslation();
                     UpdateOptionsMenu();
                     UpdateDisplay();
                     return true;
@@ -3904,6 +3906,7 @@ namespace BmwDeepObd
             _translationList = null;
             _translatedList = null;
 
+            StoreTranslation();
             UpdateCheck();
             if (_instanceData.CommErrorsCount >= ActivityCommon.MinSendCommErrors && responseCount > 0 &&
                 _instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir))
@@ -5613,9 +5616,10 @@ namespace BmwDeepObd
             }
 
             UpdateJobReaderSettings();
-            _activityCommon.ClearTranslationCache();
             _translationList = null;
             _translatedList = null;
+
+            ReadTranslation();
             UpdateDirectories();
             if (!failed)
             {
@@ -5623,6 +5627,32 @@ namespace BmwDeepObd
             }
 
             PostCompileCode();
+        }
+
+        private bool ReadTranslation()
+        {
+            if (_activityCommon == null)
+            {
+                return false;
+            }
+
+            try
+            {
+                if (ActivityCommon.IsTranslationAvailable() && ActivityCommon.IsTranslationRequired() && !string.IsNullOrEmpty(_instanceData.ConfigFileName))
+                {
+                    string xmlFileDir = Path.GetDirectoryName(_instanceData.ConfigFileName);
+                    if (!string.IsNullOrEmpty(xmlFileDir))
+                    {
+                        return _activityCommon.ReadTranslationCache(Path.Combine(xmlFileDir, TranslationFileNameMain));
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return false;
         }
 
         private bool StoreTranslation()
@@ -5634,13 +5664,12 @@ namespace BmwDeepObd
 
             try
             {
-                if (ActivityCommon.IsTranslationAvailable() && ActivityCommon.IsTranslationRequired() &&
-                    !_activityCommon.IsTranslationCacheEmpty() && !string.IsNullOrEmpty(_instanceData.ConfigFileName))
+                if (ActivityCommon.IsTranslationAvailable() && ActivityCommon.IsTranslationRequired() && !string.IsNullOrEmpty(_instanceData.ConfigFileName))
                 {
                     string xmlFileDir = Path.GetDirectoryName(_instanceData.ConfigFileName);
                     if (!string.IsNullOrEmpty(xmlFileDir))
                     {
-                        return _activityCommon.StoreTranslationCache(Path.Combine(xmlFileDir, ActivityCommon.TranslationFileName));
+                        return _activityCommon.StoreTranslationCache(Path.Combine(xmlFileDir, TranslationFileNameMain));
                     }
                 }
             }
@@ -7234,6 +7263,7 @@ namespace BmwDeepObd
 
         private void ClearConfiguration()
         {
+            StoreTranslation();
             ActivityCommon.JobReader.Clear();
             _instanceData.ConfigFileName = string.Empty;
             StoreSettings();

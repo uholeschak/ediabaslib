@@ -412,7 +412,6 @@ namespace BmwDeepObd
         public const string DefaultLang = "en";
         public const string TraceFileName = "ifh.trc.zip";
         public const string TraceBackupDir = "TraceBackup";
-        public const string TranslationFileName = "Translation.xml";
         public const string EnetSsidEmpty = "***";
         public const string AdapterSsidDeepObd = "Deep OBD BMW";
         public const string AdapterSsidEnetLink = "ENET-LINK_";

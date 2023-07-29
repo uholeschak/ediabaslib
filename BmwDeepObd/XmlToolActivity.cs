@@ -397,6 +397,7 @@ namespace BmwDeepObd
             xsi:schemaLocation=""http://www.holeschak.de/BmwDeepObd BmwDeepObd.xsd"">
             </{0}>";
         private const string XsdFileName = "BmwDeepObd.xsd";
+        private const string TranslationFileName = "Translation.xml";
         private const int MotorAddrVag = 1;
 
         private const string PageExtension = ".ccpage";
@@ -8614,7 +8615,7 @@ namespace BmwDeepObd
                     // ignored
                 }
             }
-            _activityCommon.ReadTranslationCache(Path.Combine(xmlFileDir, ActivityCommon.TranslationFileName));
+            _activityCommon.ReadTranslationCache(Path.Combine(xmlFileDir, TranslationFileName));
         }
 
         private string SaveAllXml()
@@ -8746,7 +8747,7 @@ namespace BmwDeepObd
                     }
                 }
                 ActivityCommon.WriteResourceToFile(typeof(XmlToolActivity).Namespace + ".Xml." + XsdFileName, Path.Combine(xmlFileDir, XsdFileName));
-                _activityCommon.StoreTranslationCache(Path.Combine(xmlFileDir, ActivityCommon.TranslationFileName));
+                _activityCommon.StoreTranslationCache(Path.Combine(xmlFileDir, TranslationFileName));
                 return xmlConfigFile;
             }
             catch (Exception)
