@@ -7648,10 +7648,27 @@ namespace BmwDeepObd
                 EdiabasToolActivity.IntentTranslateActivty = _activityCommon;
                 serverIntent.PutExtra(EdiabasToolActivity.ExtraInitDir, _instanceData.EcuPath);
                 serverIntent.PutExtra(EdiabasToolActivity.ExtraAppDataDir, _instanceData.AppDataPath);
+                if (!string.IsNullOrEmpty(_instanceData.ConfigFileName))
+                {
+                    try
+                    {
+                        string xmlFileDir = Path.GetDirectoryName(_instanceData.ConfigFileName);
+                        if (!string.IsNullOrEmpty(xmlFileDir))
+                        {
+                            serverIntent.PutExtra(EdiabasToolActivity.ExtraConfigDir, xmlFileDir);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+
                 if (!string.IsNullOrEmpty(sgdbFile))
                 {
                     serverIntent.PutExtra(EdiabasToolActivity.ExtraSgbdFile, sgdbFile);
                 }
+
                 serverIntent.PutExtra(EdiabasToolActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
                 serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceName, _instanceData.DeviceName);
                 serverIntent.PutExtra(EdiabasToolActivity.ExtraDeviceAddress, _instanceData.DeviceAddress);
