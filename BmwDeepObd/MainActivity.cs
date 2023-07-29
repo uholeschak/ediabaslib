@@ -782,6 +782,7 @@ namespace BmwDeepObd
 
         protected override void OnSaveInstanceState(Bundle outState)
         {
+            StoreTranslation();
             _instanceData.SelectedInterface = _activityCommon.SelectedInterface;
             _instanceData.SelectedEnetIp = _activityCommon.SelectedEnetIp;
             _instanceData.SelectedElmWifiIp = _activityCommon.SelectedElmWifiIp;
@@ -7645,7 +7646,6 @@ namespace BmwDeepObd
                 }
 
                 Intent serverIntent = new Intent(this, typeof(EdiabasToolActivity));
-                EdiabasToolActivity.IntentTranslateActivty = _activityCommon;
                 serverIntent.PutExtra(EdiabasToolActivity.ExtraInitDir, _instanceData.EcuPath);
                 serverIntent.PutExtra(EdiabasToolActivity.ExtraAppDataDir, _instanceData.AppDataPath);
                 if (!string.IsNullOrEmpty(_instanceData.ConfigFileName))
