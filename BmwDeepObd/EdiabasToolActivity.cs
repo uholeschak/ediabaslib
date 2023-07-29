@@ -160,7 +160,7 @@ namespace BmwDeepObd
         public const string ExtraDeepObdWifiIp = "deepobdwifi_ip";
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
 
-        public static ActivityCommon IntentTranslateActivty { get; set; }
+        private const string TranslationFileName = "TranslationEdiabas.xml";
 
         private InstanceData _instanceData = new InstanceData();
         private bool _activityRecreated;
@@ -184,6 +184,7 @@ namespace BmwDeepObd
         private ResultListAdapter _infoListAdapter;
         private string _initDirStart;
         private string _appDataDir;
+        private string _configDir;
         private ActivityCommon _activityCommon;
         private EdiabasNet _ediabas;
         private StreamWriter _swDataLog;
@@ -304,7 +305,7 @@ namespace BmwDeepObd
                     UpdateOptionsMenu();
                     UpdateDisplay();
                 }
-            }, BroadcastReceived, IntentTranslateActivty)
+            }, BroadcastReceived)
             {
                 SelectedInterface = (ActivityCommon.InterfaceType)
                     Intent.GetIntExtra(ExtraInterface, (int) ActivityCommon.InterfaceType.None)
@@ -312,6 +313,7 @@ namespace BmwDeepObd
 
             _initDirStart = Intent.GetStringExtra(ExtraInitDir);
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
+            _configDir = Intent.GetStringExtra(ExtraConfigDir);
             _sgbdFileNameInitial = Intent.GetStringExtra(ExtraSgbdFile);
             string[] jobListInitial = Intent.GetStringArrayExtra(ExtraJobList);
             if (jobListInitial != null && jobListInitial.Length > 0)
@@ -340,6 +342,7 @@ namespace BmwDeepObd
             _activityCommon.SetPreferredNetworkInterface();
 
             EdiabasClose(_instanceData.ForceAppend);
+            ReadTranslation();
             UpdateDisplay();
 
             if (!_activityRecreated && !string.IsNullOrEmpty(_sgbdFileNameInitial))
@@ -351,6 +354,7 @@ namespace BmwDeepObd
 
         protected override void OnSaveInstanceState(Bundle outState)
         {
+            StoreTranslation();
             StoreInstanceState(outState, _instanceData);
             base.OnSaveInstanceState(outState);
         }
@@ -399,6 +403,12 @@ namespace BmwDeepObd
             {
                 _activityCommon.StopMtcService();
             }
+        }
+
+        public override void Finish()
+        {
+            base.Finish();
+            StoreTranslation();
         }
 
         protected override void OnDestroy()
@@ -1117,6 +1127,50 @@ namespace BmwDeepObd
             _jobListAdapter.NotifyDataSetChanged();
             NewJobSelected();
             DisplayJobComments();
+        }
+
+        private bool ReadTranslation()
+        {
+            if (_activityCommon == null)
+            {
+                return false;
+            }
+
+            try
+            {
+                if (ActivityCommon.IsTranslationAvailable() && ActivityCommon.IsTranslationRequired() && !string.IsNullOrEmpty(_configDir))
+                {
+                    return _activityCommon.ReadTranslationCache(Path.Combine(_configDir, TranslationFileName));
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return false;
+        }
+
+        private bool StoreTranslation()
+        {
+            if (_activityCommon == null)
+            {
+                return false;
+            }
+
+            try
+            {
+                if (ActivityCommon.IsTranslationAvailable() && ActivityCommon.IsTranslationRequired() && !string.IsNullOrEmpty(_configDir))
+                {
+                    return _activityCommon.StoreTranslationCache(Path.Combine(_configDir, TranslationFileName));
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return false;
         }
 
         private void UpdateDisplay()
