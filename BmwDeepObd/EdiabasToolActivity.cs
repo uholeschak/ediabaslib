@@ -877,6 +877,7 @@ namespace BmwDeepObd
                 case Resource.Id.menu_translation_clear_cache:
                     _activityCommon.ClearTranslationCache();
                     ResetTranslations();
+                    StoreTranslation();
                     _jobListTranslated = false;
                     UpdateOptionsMenu();
                     UpdateDisplay();

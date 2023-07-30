@@ -2073,6 +2073,13 @@ namespace BmwDeepObd
             Intent serverIntent = new Intent(this, typeof(EdiabasToolActivity));
             serverIntent.PutExtra(EdiabasToolActivity.ExtraInitDir, _ecuDir);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraAppDataDir, _appDataDir);
+
+            string xmlFileDir = XmlFileDir();
+            if (!string.IsNullOrEmpty(xmlFileDir))
+            {
+                serverIntent.PutExtra(EdiabasToolActivity.ExtraConfigDir, xmlFileDir);
+            }
+
             serverIntent.PutExtra(EdiabasToolActivity.ExtraSgbdFile, Path.Combine(_ecuDir, sgdb));
 
             if (jobList.Count > 0)
@@ -2363,6 +2370,7 @@ namespace BmwDeepObd
             bool enableMenuAction = itemPos >= 0 && itemPos < _ecuListAdapter.Items.Count && !IsJobRunning();
             bool bmwVisible = ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw;
             bool vagVisible = ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw;
+            bool bmwDatabaseActive = ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null;
 
             IMenuItem configEcuMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_config_ecu);
             configEcuMenu.SetEnabled(enableMenuAction);
@@ -2387,7 +2395,7 @@ namespace BmwDeepObd
             {
                 bool enableBmwActuator = enableMenuAction && XmlToolEcuActivity.ControlActuatorCount(_ecuList[itemPos]) > 0;
                 bmwActuatorMenu.SetEnabled(enableBmwActuator);
-                bmwActuatorMenu.SetVisible(bmwVisible);
+                bmwActuatorMenu.SetVisible(bmwVisible && bmwDatabaseActive);
             }
 
             IMenuItem bmwServiceMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_bmw_service);
@@ -2395,7 +2403,7 @@ namespace BmwDeepObd
             {
                 bool enableBmwService = enableMenuAction && ShowBwmServiceMenu(_ecuList[itemPos]) > 0;
                 bmwServiceMenu.SetEnabled(enableBmwService);
-                bmwServiceMenu.SetVisible(bmwVisible);
+                bmwServiceMenu.SetVisible(bmwVisible && bmwDatabaseActive);
             }
 
             IMenuItem vagCodingMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_vag_coding);
