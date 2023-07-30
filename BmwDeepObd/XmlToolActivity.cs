@@ -959,6 +959,7 @@ namespace BmwDeepObd
         public override void Finish()
         {
             base.Finish();
+            StoreTranslation();
             _ecuList.Clear();
             _ruleEvalBmw.ClearEvalProperties();
         }
