@@ -1207,7 +1207,7 @@ namespace BmwDeepObd
         }
 
         public ActivityCommon(Context context, BcReceiverUpdateDisplayDelegate bcReceiverUpdateDisplayHandler = null,
-            BcReceiverReceivedDelegate bcReceiverReceivedHandler = null, ActivityCommon cacheActivity = null)
+            BcReceiverReceivedDelegate bcReceiverReceivedHandler = null)
         {
             lock (LockObject)
             {
@@ -1274,12 +1274,7 @@ namespace BmwDeepObd
             _packageManager = context?.PackageManager;
             _activityManager = context?.GetSystemService(Context.ActivityService) as Android.App.ActivityManager;
             _selectedInterface = InterfaceType.None;
-            if (cacheActivity != null && !cacheActivity._disposed)
-            {
-                _transDict = cacheActivity._transDict;
-            }
-
-            _transDict ??= new Dictionary<string, Dictionary<string, string>>();
+            _transDict = new Dictionary<string, Dictionary<string, string>>();
 
             if (context != null)
             {
