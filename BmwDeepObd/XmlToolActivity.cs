@@ -8766,6 +8766,11 @@ namespace BmwDeepObd
                 return false;
             }
 
+            if (_ecuList == null || _ecuList.Count == 0)
+            {
+                return false;
+            }
+
             try
             {
                 string xmlFileDir = XmlFileDir();
@@ -8784,6 +8789,11 @@ namespace BmwDeepObd
         private bool StoreTranslation()
         {
             if (_activityCommon == null)
+            {
+                return false;
+            }
+
+            if (_ecuList == null || _ecuList.Count == 0)
             {
                 return false;
             }
