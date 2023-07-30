@@ -1218,7 +1218,6 @@ namespace BmwDeepObd
 
                 case ActivityRequest.RequestEdiabasTool:
                     _activityCommon.SetPreferredNetworkInterface();
-                    StoreTranslation();
                     UpdateOptionsMenu();
                     break;
 
@@ -1854,9 +1853,9 @@ namespace BmwDeepObd
 
                 case Resource.Id.menu_translation_clear_cache:
                     _activityCommon.ClearTranslationCache();
+                    StoreTranslation();
                     _translationList = null;
                     _translatedList = null;
-                    StoreTranslation();
                     UpdateOptionsMenu();
                     UpdateDisplay();
                     return true;
