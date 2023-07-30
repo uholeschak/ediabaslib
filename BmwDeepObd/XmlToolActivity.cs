@@ -651,7 +651,6 @@ namespace BmwDeepObd
             {
                 _activityRecreated = true;
                 _instanceData = GetInstanceState(savedInstanceState, _instanceData) as InstanceData;
-                ReadTranslation();
             }
             else
             {
@@ -813,6 +812,8 @@ namespace BmwDeepObd
             _activityCommon.SetPreferredNetworkInterface();
 
             EdiabasClose(_instanceData.ForceAppend);
+            ReadTranslation();
+
             if (!_activityRecreated)
             {
                 if (_instanceData.ManualConfigIdx > 0 || IsPageSelectionActive())
@@ -8760,6 +8761,11 @@ namespace BmwDeepObd
 
         private bool ReadTranslation()
         {
+            if (_activityCommon == null)
+            {
+                return false;
+            }
+
             try
             {
                 string xmlFileDir = XmlFileDir();
@@ -8777,6 +8783,11 @@ namespace BmwDeepObd
 
         private bool StoreTranslation()
         {
+            if (_activityCommon == null)
+            {
+                return false;
+            }
+
             try
             {
                 string xmlFileDir = XmlFileDir();
