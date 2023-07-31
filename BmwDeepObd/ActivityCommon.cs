@@ -1639,6 +1639,9 @@ namespace BmwDeepObd
 
                 case TranslatorType.IbmWatson:
                     return _context.GetString(Resource.String.select_translator_ibm);
+
+                case TranslatorType.Deepl:
+                    return _context.GetString(Resource.String.select_translator_deepl);
             }
             return string.Empty;
         }
@@ -8332,6 +8335,9 @@ namespace BmwDeepObd
 
                 case TranslatorType.IbmWatson:
                     return !string.IsNullOrWhiteSpace(IbmTranslatorApiKey) && !string.IsNullOrWhiteSpace(IbmTranslatorUrl);
+
+                case TranslatorType.Deepl:
+                    return !string.IsNullOrWhiteSpace(DeeplApiKey);
             }
 
             return false;

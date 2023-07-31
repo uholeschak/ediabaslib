@@ -384,6 +384,7 @@
   <!-- Translator selection -->
   <string name="select_translator_yantex">Yantex.Translate</string>
   <string name="select_translator_ibm">IBM Watson</string>
+  <string name="select_translator_deepl">DeepL</string>
 
   <!-- Bluetooth -->
   <string name="mtc_disconnect_warn">Для стабильной связи с адаптером, соедините радио с любым имеющимся смартфоном.\nХотите продолжить без подключения смартфона?</string>
