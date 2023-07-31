@@ -8633,11 +8633,17 @@ namespace BmwDeepObd
                                 stringCount++;
                             }
 
-                            string targetLang = _transCurrentLang.ToUpperInvariant();
-                            if (_transLangList.All(lang => string.Compare(lang, _transCurrentLang, StringComparison.OrdinalIgnoreCase) != 0))
+                            string targetLang = "EN-US";
+                            foreach (string lang in _transLangList)
                             {
-                                // language not found
-                                targetLang = "EN";
+                                if (lang.StartsWith(_transCurrentLang, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    targetLang = lang;
+                                    if (lang.Length == 2)
+                                    {
+                                        break;
+                                    }
+                                }
                             }
 
                             DeeplTranslateRequest translateRequest = new DeeplTranslateRequest(transList.ToArray(), "DE", targetLang);
@@ -8647,7 +8653,7 @@ namespace BmwDeepObd
                             httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                         }
 
-                        _translateHttpClient.DefaultRequestHeaders.Add("Authorization", string.Format("DeepL-Auth-Key {0}", DeeplApiKey));
+                        _translateHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("DeepL-Auth-Key", DeeplApiKey);
                         if (httpContent != null)
                         {
                             taskTranslate = _translateHttpClient.PostAsync(sbUrl.ToString(), httpContent);
