@@ -270,6 +270,7 @@ namespace BmwDeepObd
                 YandexApiKey = ActivityCommon.YandexApiKey;
                 IbmTranslatorApiKey = ActivityCommon.IbmTranslatorApiKey;
                 IbmTranslatorUrl = ActivityCommon.IbmTranslatorUrl;
+                DeeplApiKey = ActivityCommon.DeeplApiKey;
                 Translator = !string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey) ? ActivityCommon.TranslatorType.YandexTranslate : ActivityCommon.SelectedTranslator;
                 ShowBatteryVoltageWarning = ActivityCommon.ShowBatteryVoltageWarning;
                 BatteryWarnings = ActivityCommon.BatteryWarnings;
@@ -389,6 +390,7 @@ namespace BmwDeepObd
             [XmlElement("YandexApiKey")] public string YandexApiKey { get; set; }
             [XmlElement("IbmTranslatorApiKey")] public string IbmTranslatorApiKey { get; set; }
             [XmlElement("IbmTranslatorUrl")] public string IbmTranslatorUrl { get; set; }
+            [XmlElement("DeeplApiKey")] public string DeeplApiKey { get; set; }
             [XmlElement("Translator")] public ActivityCommon.TranslatorType Translator { get; set; }
             [XmlElement("ShowBatteryVoltageWarning")] public bool ShowBatteryVoltageWarning { get; set; }
             [XmlElement("BatteryWarnings")] public long BatteryWarnings { get; set; }
@@ -3231,6 +3233,7 @@ namespace BmwDeepObd
                     ActivityCommon.YandexApiKey = storageData.YandexApiKey;
                     ActivityCommon.IbmTranslatorApiKey = storageData.IbmTranslatorApiKey;
                     ActivityCommon.IbmTranslatorUrl = storageData.IbmTranslatorUrl;
+                    ActivityCommon.DeeplApiKey = storageData.DeeplApiKey;
                     _activityCommon.Translator = storageData.Translator;
                     ActivityCommon.ShowBatteryVoltageWarning = storageData.ShowBatteryVoltageWarning;
                     ActivityCommon.BatteryWarnings = storageData.BatteryWarnings;

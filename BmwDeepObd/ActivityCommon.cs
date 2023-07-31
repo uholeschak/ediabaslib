@@ -8641,8 +8641,7 @@ namespace BmwDeepObd
                             httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                         }
 
-                        string authParameter = Convert.ToBase64String(Encoding.UTF8.GetBytes(String.Format("DeepL-Auth-Key {0}", DeeplApiKey)));
-                        _translateHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authParameter);
+                        _translateHttpClient.DefaultRequestHeaders.Add("Authorization", string.Format("DeepL-Auth-Key {0}", DeeplApiKey));
                         if (httpContent != null)
                         {
                             taskTranslate = _translateHttpClient.PostAsync(sbUrl.ToString(), httpContent);
