@@ -376,6 +376,7 @@ namespace BmwDeepObd
         {
             [XmlEnum(Name = "YandexTranslate")] YandexTranslate,    // Yandex.translate
             [XmlEnum(Name = "IbmWatson")] IbmWatson,                // IBM Watson Translator
+            [XmlEnum(Name = "DeepL")] Deepl,                        // DeepL
         }
 
         public enum SsidWarnAction
@@ -8705,6 +8706,10 @@ namespace BmwDeepObd
                                 case TranslatorType.IbmWatson:
                                     _transLangList = GetIbmLanguages(responseTranslateResult);
                                     break;
+
+                                case TranslatorType.Deepl:
+                                    _transLangList = GetDeeplLanguages(responseTranslateResult);
+                                    break;
                             }
 
                             if (_transLangList != null)
@@ -8731,6 +8736,10 @@ namespace BmwDeepObd
 
                                 case TranslatorType.IbmWatson:
                                     transList = GetIbmTranslations(responseTranslateResult);
+                                    break;
+
+                                case TranslatorType.Deepl:
+                                    transList = GetDeeplTranslations(responseTranslateResult);
                                     break;
                             }
 
@@ -8799,6 +8808,10 @@ namespace BmwDeepObd
 
                                     case TranslatorType.IbmWatson:
                                         errorMessage = GetIbmTranslationError(responseTranslateResult, out int _);
+                                        break;
+
+                                    case TranslatorType.Deepl:
+                                        errorMessage = GetDeeplTranslationError(responseTranslateResult);
                                         break;
                                 }
                             }
@@ -8948,31 +8961,22 @@ namespace BmwDeepObd
             return true;
         }
 
-        private string GetYandexTranslationError(string xmlResult, out int errorCode)
+        private string GetDeeplTranslationError(string jsonResult)
         {
-            errorCode = -1;
             string message = string.Empty;
             try
             {
-                if (string.IsNullOrEmpty(xmlResult))
+                if (string.IsNullOrEmpty(jsonResult))
                 {
                     return message;
                 }
-                XDocument xmlDoc = XDocument.Parse(xmlResult);
-                if (xmlDoc.Root == null)
+
+                JsonDocument jsonDocument = JsonDocument.Parse(jsonResult);
+                if (jsonDocument.RootElement.TryGetProperty("message", out JsonElement jsonErrorText))
                 {
-                    return message;
+                    message = jsonErrorText.GetString();
                 }
-                XAttribute attrCode = xmlDoc.Root.Attribute("code");
-                if (attrCode != null)
-                {
-                    errorCode = XmlConvert.ToInt32(attrCode.Value);
-                }
-                XAttribute attrMessage = xmlDoc.Root.Attribute("message");
-                if (attrMessage != null)
-                {
-                    message = attrMessage.Value;
-                }
+
                 return message;
             }
             catch (Exception)
@@ -9003,6 +9007,39 @@ namespace BmwDeepObd
                     message = jsonErrorText.GetString();
                 }
 
+                return message;
+            }
+            catch (Exception)
+            {
+                return message;
+            }
+        }
+
+        private string GetYandexTranslationError(string xmlResult, out int errorCode)
+        {
+            errorCode = -1;
+            string message = string.Empty;
+            try
+            {
+                if (string.IsNullOrEmpty(xmlResult))
+                {
+                    return message;
+                }
+                XDocument xmlDoc = XDocument.Parse(xmlResult);
+                if (xmlDoc.Root == null)
+                {
+                    return message;
+                }
+                XAttribute attrCode = xmlDoc.Root.Attribute("code");
+                if (attrCode != null)
+                {
+                    errorCode = XmlConvert.ToInt32(attrCode.Value);
+                }
+                XAttribute attrMessage = xmlDoc.Root.Attribute("message");
+                if (attrMessage != null)
+                {
+                    message = attrMessage.Value;
+                }
                 return message;
             }
             catch (Exception)
@@ -9074,6 +9111,33 @@ namespace BmwDeepObd
             }
         }
 
+        private List<string> GetDeeplLanguages(string jsonResult)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(jsonResult))
+                {
+                    return null;
+                }
+
+                JsonDocument jsonDocument = JsonDocument.Parse(jsonResult);
+                List<string> transList = new List<string>();
+                foreach (JsonElement translation in jsonDocument.RootElement.EnumerateArray())
+                {
+                    if (translation.TryGetProperty("language", out JsonElement transElem))
+                    {
+                        transList.Add(transElem.GetString());
+                    }
+                }
+
+                return transList;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         private List<string> GetYandexTranslations(string xmlResult)
         {
             try
@@ -9123,6 +9187,38 @@ namespace BmwDeepObd
                 foreach (JsonElement translation in translations.EnumerateArray())
                 {
                     if (translation.TryGetProperty("translation", out JsonElement transElem))
+                    {
+                        transList.Add(transElem.GetString());
+                    }
+                }
+
+                return transList;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        private List<string> GetDeeplTranslations(string jsonResult)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(jsonResult))
+                {
+                    return null;
+                }
+
+                JsonDocument jsonDocument = JsonDocument.Parse(jsonResult);
+                List<string> transList = new List<string>();
+                if (!jsonDocument.RootElement.TryGetProperty("translations", out JsonElement translations))
+                {
+                    return null;
+                }
+
+                foreach (JsonElement translation in translations.EnumerateArray())
+                {
+                    if (translation.TryGetProperty("text", out JsonElement transElem))
                     {
                         transList.Add(transElem.GetString());
                     }
