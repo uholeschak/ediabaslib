@@ -65,6 +65,7 @@ namespace BmwDeepObd
         private TextView _textViewCaptionTranslator;
         private RadioButton _radioButtonTranslatorYandex;
         private RadioButton _radioButtonTranslatorIbm;
+        private RadioButton _radioButtonTranslatorDeepl;
         private TextView _textViewCaptionTranslatorLogin;
         private CheckBox _checkBoxTranslatorLogin;
         private CheckBox _checkBoxAutoHideTitleBar;
@@ -179,6 +180,8 @@ namespace BmwDeepObd
             _radioButtonTranslatorYandex.Visibility = viewStateTranslation;
             _radioButtonTranslatorIbm = FindViewById<RadioButton>(Resource.Id.radioButtonTranslatorIbm);
             _radioButtonTranslatorIbm.Visibility = viewStateTranslation;
+            _radioButtonTranslatorDeepl = FindViewById<RadioButton>(Resource.Id.radioButtonTranslatorDeepl);
+            _radioButtonTranslatorDeepl.Visibility = viewStateTranslation;
 
             ViewStates viewStateTransLogin =
                 ActivityCommon.IsTranslationRequired() ||
@@ -566,6 +569,10 @@ namespace BmwDeepObd
                     _radioButtonTranslatorIbm.Checked = true;
                     break;
 
+                case ActivityCommon.TranslatorType.Deepl:
+                    _radioButtonTranslatorDeepl.Checked = true;
+                    break;
+
                 default:
                     _radioButtonTranslatorYandex.Checked = true;
                     break;
@@ -734,6 +741,10 @@ namespace BmwDeepObd
             else if (_radioButtonTranslatorIbm.Checked)
             {
                 translatorType = ActivityCommon.TranslatorType.IbmWatson;
+            }
+            else if (_radioButtonTranslatorDeepl.Checked)
+            {
+                translatorType = ActivityCommon.TranslatorType.Deepl;
             }
             _activityCommon.Translator = translatorType;
 

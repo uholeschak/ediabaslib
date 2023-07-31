@@ -79,6 +79,10 @@ namespace BmwDeepObd
                         _instanceData.OldApiKey = ActivityCommon.IbmTranslatorApiKey ?? string.Empty;
                         _instanceData.OldApiUrl = ActivityCommon.IbmTranslatorUrl ?? string.Empty;
                         break;
+
+                    case ActivityCommon.TranslatorType.Deepl:
+                        _instanceData.OldApiKey = ActivityCommon.DeeplApiKey ?? string.Empty;
+                        break;
                 }
             }
 
@@ -135,7 +139,17 @@ namespace BmwDeepObd
                             {
                                 // ignored
                             }
+                            break;
 
+                        case ActivityCommon.TranslatorType.Deepl:
+                            try
+                            {
+                                StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://www.deepl.com/account")));
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
                             break;
                     }
                 });
@@ -169,6 +183,17 @@ namespace BmwDeepObd
                             try
                             {
                                 StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://cloud.ibm.com/resources")));
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                            break;
+
+                        case ActivityCommon.TranslatorType.Deepl:
+                            try
+                            {
+                                StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://www.deepl.com/de/account/summary")));
                             }
                             catch (Exception)
                             {
@@ -228,6 +253,10 @@ namespace BmwDeepObd
                     case ActivityCommon.TranslatorType.IbmWatson:
                         ActivityCommon.IbmTranslatorApiKey = _editTextYandexApiKey.Text.Trim();
                         ActivityCommon.IbmTranslatorUrl = _editTextApiUrl.Text.Trim();
+                        break;
+
+                    case ActivityCommon.TranslatorType.Deepl:
+                        ActivityCommon.DeeplApiKey = _editTextYandexApiKey.Text.Trim();
                         break;
                 }
 
@@ -367,6 +396,7 @@ namespace BmwDeepObd
             switch (ActivityCommon.SelectedTranslator)
             {
                 case ActivityCommon.TranslatorType.IbmWatson:
+                case ActivityCommon.TranslatorType.Deepl:
                     if (string.IsNullOrWhiteSpace(_editTextApiUrl.Text))
                     {
                         testEnabled = false;
@@ -400,6 +430,10 @@ namespace BmwDeepObd
                             ActivityCommon.IbmTranslatorApiKey = newApiKey;
                             ActivityCommon.IbmTranslatorUrl = newApiUrl;
                             break;
+
+                        case ActivityCommon.TranslatorType.Deepl:
+                            ActivityCommon.DeeplApiKey = newApiKey;
+                            break;
                     }
 
                     SetResult(Android.App.Result.Ok);
@@ -416,6 +450,10 @@ namespace BmwDeepObd
                         case ActivityCommon.TranslatorType.IbmWatson:
                             ActivityCommon.IbmTranslatorApiKey = _instanceData.OldApiKey;
                             ActivityCommon.IbmTranslatorUrl = _instanceData.OldApiUrl;
+                            break;
+
+                        case ActivityCommon.TranslatorType.Deepl:
+                            ActivityCommon.DeeplApiKey = _instanceData.OldApiKey;
                             break;
                     }
 

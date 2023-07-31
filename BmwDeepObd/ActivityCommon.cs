@@ -1639,6 +1639,9 @@ namespace BmwDeepObd
 
                 case TranslatorType.IbmWatson:
                     return _context.GetString(Resource.String.select_translator_ibm);
+
+                case TranslatorType.Deepl:
+                    return _context.GetString(Resource.String.select_translator_deepl);
             }
             return string.Empty;
         }
@@ -8332,6 +8335,9 @@ namespace BmwDeepObd
 
                 case TranslatorType.IbmWatson:
                     return !string.IsNullOrWhiteSpace(IbmTranslatorApiKey) && !string.IsNullOrWhiteSpace(IbmTranslatorUrl);
+
+                case TranslatorType.Deepl:
+                    return !string.IsNullOrWhiteSpace(DeeplApiKey);
             }
 
             return false;
@@ -8641,8 +8647,7 @@ namespace BmwDeepObd
                             httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                         }
 
-                        string authParameter = Convert.ToBase64String(Encoding.UTF8.GetBytes(String.Format("DeepL-Auth-Key {0}", DeeplApiKey)));
-                        _translateHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authParameter);
+                        _translateHttpClient.DefaultRequestHeaders.Add("Authorization", string.Format("DeepL-Auth-Key {0}", DeeplApiKey));
                         if (httpContent != null)
                         {
                             taskTranslate = _translateHttpClient.PostAsync(sbUrl.ToString(), httpContent);

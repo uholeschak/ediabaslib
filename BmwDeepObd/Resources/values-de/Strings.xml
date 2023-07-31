@@ -386,6 +386,7 @@
   <!-- Translator selection -->
   <string name="select_translator_yantex">Yantex.Translate</string>
   <string name="select_translator_ibm">IBM Watson</string>
+  <string name="select_translator_deepl">DeepL</string>
 
   <!-- Bluetooth -->
   <string name="mtc_disconnect_warn">Für eine stabile Kommunikation mit dem Adapter wird empfohlen, irgendein zuätzliches Smartphone mit dem Radio zu koppeln.\nWollen Sie trotzdem fortfahren?</string>
@@ -439,6 +440,7 @@
   <string name="settings_caption_translator">Übersetzer</string>
   <string name="settings_translator_yandex">Yandex.Translate</string>
   <string name="settings_translator_ibm">IBM Watson</string>
+  <string name="settings_translator_deepl">DeepL</string>
   <string name="settings_caption_translator_login">Übersetzer aktiv halten</string>
   <string name="settings_translator_login">Den IBM Watson Api Key ein mal pro Tag aktiv halten.</string>
   <string name="settings_caption_title_bar">Titelzeile</string>
