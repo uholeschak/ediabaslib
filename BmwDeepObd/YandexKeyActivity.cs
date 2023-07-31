@@ -396,7 +396,6 @@ namespace BmwDeepObd
             switch (ActivityCommon.SelectedTranslator)
             {
                 case ActivityCommon.TranslatorType.IbmWatson:
-                case ActivityCommon.TranslatorType.Deepl:
                     if (string.IsNullOrWhiteSpace(_editTextApiUrl.Text))
                     {
                         testEnabled = false;
