@@ -437,6 +437,7 @@
   <string name="settings_caption_translator">Переводчик</string>
   <string name="settings_translator_yandex">Яндекс.Переводчик</string>
   <string name="settings_translator_ibm">IBM Watson</string>
+  <string name="settings_translator_deepl">DeepL</string>
   <string name="settings_caption_translator_login">Держать переводчиков активным</string>
   <string name="settings_translator_login">Держать ключ IBM Watson Api активным один раз в день.</string>
   <string name="settings_caption_title_bar">Панель заглавия</string>
