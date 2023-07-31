@@ -85,6 +85,25 @@ namespace BmwDeepObd
             public double FreeSizeBytes { get; set; }
         }
 
+        public class DeeplTranslateRequest
+        {
+            public DeeplTranslateRequest(string[] textArray, string source, string target)
+            {
+                TextArray = textArray;
+                Source = source;
+                Target = target;
+            }
+
+            [JsonPropertyName("text")]
+            public string[] TextArray { get; }
+
+            [JsonPropertyName("source_lang")]
+            public string Source { get; }
+
+            [JsonPropertyName("target_lang")]
+            public string Target { get; }
+        }
+
         public class IbmTranslateRequest
         {
             public IbmTranslateRequest(string[] textArray, string source, string target)
@@ -453,6 +472,10 @@ namespace BmwDeepObd
         private const string IbmTransVersion = @"version=2018-05-01";
         private const string IbmTransIdentLang = @"/v3/identifiable_languages";
         private const string IbmTransTranslate = @"/v3/translate";
+        private const string DeeplFreeUrl = @"https://api-free.deepl.com";
+        private const string DeeplProUrl = @"https://api.deepl.com";
+        private const string DeeplIdentLang = @"/v2/languages?type=target";
+        private const string DeeplTranslate = @"/v2/translate";
         public static Regex Ipv4RegEx = new Regex(@"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
         public static readonly long TickResolMs = Stopwatch.Frequency / 1000;
 
@@ -1012,6 +1035,8 @@ namespace BmwDeepObd
         public static string IbmTranslatorApiKey { get; set; }
 
         public static string IbmTranslatorUrl { get; set; }
+
+        public static string DeeplApiKey { get; set; }
 
         public static bool EnableTranslation { get; set; }
 
@@ -7384,6 +7409,7 @@ namespace BmwDeepObd
                 YandexApiKey = string.Empty;
                 IbmTranslatorApiKey = string.Empty;
                 IbmTranslatorUrl = string.Empty;
+                DeeplApiKey = string.Empty;
                 BatteryWarnings = 0;
                 BatteryWarningVoltage = 0;
                 AdapterBlacklist = string.Empty;
@@ -8563,7 +8589,70 @@ namespace BmwDeepObd
                     int stringCount = 0;
                     HttpContent httpContent = null;
                     StringBuilder sbUrl = new StringBuilder();
-                    if (SelectedTranslator == TranslatorType.IbmWatson)
+                    if (SelectedTranslator == TranslatorType.Deepl)
+                    {
+                        string deeplApiUrl = DeeplProUrl;
+                        if (!string.IsNullOrEmpty(DeeplApiKey))
+                        {
+                            if (DeeplApiKey.EndsWith(":fx"))
+                            {
+                                deeplApiUrl = DeeplFreeUrl;
+                            }
+                        }
+
+                        if (_transLangList == null)
+                        {
+                            // no language list present, get it first
+                            sbUrl.Append(deeplApiUrl);
+                            sbUrl.Append(DeeplIdentLang);
+                        }
+                        else
+                        {
+                            sbUrl.Append(deeplApiUrl);
+                            sbUrl.Append(DeeplTranslate);
+
+                            List<string> transList = new List<string>();
+                            int offset = _transList?.Count ?? 0;
+                            int sumLength = 0;
+                            for (int i = offset; i < _transReducedStringList.Count; i++)
+                            {
+                                string testString = "\"" + JsonEncodedText.Encode(_transReducedStringList[i]) + "\",";
+                                sumLength += testString.Length;
+                                if (sumLength > 120 * 1024)
+                                {   // real limit is 128KiB
+                                    break;
+                                }
+
+                                transList.Add(_transReducedStringList[i]);
+                                stringCount++;
+                            }
+
+                            string targetLang = _transCurrentLang.ToUpperInvariant();
+                            if (_transLangList.All(lang => string.Compare(lang, _transCurrentLang, StringComparison.OrdinalIgnoreCase) != 0))
+                            {
+                                // language not found
+                                targetLang = "EN";
+                            }
+
+                            DeeplTranslateRequest translateRequest = new DeeplTranslateRequest(transList.ToArray(), "DE", targetLang);
+                            string jsonString = JsonSerializer.Serialize(translateRequest);
+
+                            httpContent = new StringContent(jsonString);
+                            httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                        }
+
+                        string authParameter = Convert.ToBase64String(Encoding.UTF8.GetBytes(String.Format("DeepL-Auth-Key {0}", DeeplApiKey)));
+                        _translateHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authParameter);
+                        if (httpContent != null)
+                        {
+                            taskTranslate = _translateHttpClient.PostAsync(sbUrl.ToString(), httpContent);
+                        }
+                        else
+                        {
+                            taskTranslate = _translateHttpClient.GetAsync(sbUrl.ToString());
+                        }
+                    }
+                    else if (SelectedTranslator == TranslatorType.IbmWatson)
                     {
                         if (_transLangList == null)
                         {
