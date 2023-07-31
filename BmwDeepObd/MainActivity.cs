@@ -271,7 +271,18 @@ namespace BmwDeepObd
                 IbmTranslatorApiKey = ActivityCommon.IbmTranslatorApiKey;
                 IbmTranslatorUrl = ActivityCommon.IbmTranslatorUrl;
                 DeeplApiKey = ActivityCommon.DeeplApiKey;
-                Translator = !string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey) ? ActivityCommon.TranslatorType.YandexTranslate : ActivityCommon.SelectedTranslator;
+
+                ActivityCommon.TranslatorType translator = ActivityCommon.SelectedTranslator;
+                if (!string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey))
+                {
+                    translator = ActivityCommon.TranslatorType.YandexTranslate;
+                }
+                if (!string.IsNullOrWhiteSpace(ActivityCommon.IbmTranslatorApiKey))
+                {
+                    translator = ActivityCommon.TranslatorType.IbmWatson;
+                }
+                Translator = translator;
+
                 ShowBatteryVoltageWarning = ActivityCommon.ShowBatteryVoltageWarning;
                 BatteryWarnings = ActivityCommon.BatteryWarnings;
                 BatteryWarningVoltage = ActivityCommon.BatteryWarningVoltage;
