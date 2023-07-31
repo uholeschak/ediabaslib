@@ -8639,7 +8639,10 @@ namespace BmwDeepObd
                                 if (lang.StartsWith(_transCurrentLang, StringComparison.OrdinalIgnoreCase))
                                 {
                                     targetLang = lang;
-                                    break;
+                                    if (lang.Length == 2)
+                                    {
+                                        break;
+                                    }
                                 }
                             }
 
