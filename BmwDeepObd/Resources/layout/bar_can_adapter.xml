@@ -17,4 +17,11 @@
         android:text="@string/button_can_adapter_write"
         android:layout_gravity="center"
         android:layout_weight="1" />
+    <Button
+        android:id="@+id/buttonAdapterClose"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/button_can_adapter_close"
+        android:layout_gravity="center"
+        android:layout_weight="1" />
 </LinearLayout>

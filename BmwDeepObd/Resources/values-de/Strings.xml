@@ -810,6 +810,7 @@
   <string name="can_adapter_select_fw_file">Firmware auswählen</string>
   <string name="button_can_adapter_read">Lesen</string>
   <string name="button_can_adapter_write">Schreiben</string>
+  <string name="button_can_adapter_close">Schließen</string>
   <string name="button_can_adapter_can_auto">Automatisch</string>
   <string name="button_can_adapter_can_500">D-CAN (ab 3/2007)</string>
   <string name="button_can_adapter_can_100">K-CAN (kein Standard)</string>
