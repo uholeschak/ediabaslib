@@ -62,12 +62,6 @@ namespace BmwDeepObd
         private RadioButton _radioButtonLocaleRu;
         private RadioButton _radioButtonThemeDark;
         private RadioButton _radioButtonThemeLight;
-        private TextView _textViewCaptionTranslator;
-        private RadioButton _radioButtonTranslatorYandex;
-        private RadioButton _radioButtonTranslatorIbm;
-        private RadioButton _radioButtonTranslatorDeepl;
-        private TextView _textViewCaptionTranslatorLogin;
-        private CheckBox _checkBoxTranslatorLogin;
         private CheckBox _checkBoxAutoHideTitleBar;
         private CheckBox _checkBoxSuppressTitleBar;
         private CheckBox _checkBoxFullScreenMode;
@@ -172,25 +166,6 @@ namespace BmwDeepObd
 
             _radioButtonThemeDark = FindViewById<RadioButton>(Resource.Id.radioButtonThemeDark);
             _radioButtonThemeLight = FindViewById<RadioButton>(Resource.Id.radioButtonThemeLight);
-
-            ViewStates viewStateTranslation = ActivityCommon.IsTranslationRequired() ? ViewStates.Visible : ViewStates.Gone;
-            _textViewCaptionTranslator = FindViewById<TextView>(Resource.Id.textViewCaptionTranslator);
-            _textViewCaptionTranslator.Visibility = viewStateTranslation;
-            _radioButtonTranslatorYandex = FindViewById<RadioButton>(Resource.Id.radioButtonTranslatorYandex);
-            _radioButtonTranslatorYandex.Visibility = viewStateTranslation;
-            _radioButtonTranslatorIbm = FindViewById<RadioButton>(Resource.Id.radioButtonTranslatorIbm);
-            _radioButtonTranslatorIbm.Visibility = viewStateTranslation;
-            _radioButtonTranslatorDeepl = FindViewById<RadioButton>(Resource.Id.radioButtonTranslatorDeepl);
-            _radioButtonTranslatorDeepl.Visibility = viewStateTranslation;
-
-            ViewStates viewStateTransLogin =
-                ActivityCommon.IsTranslationRequired() ||
-                (ActivityCommon.SelectedTranslator == ActivityCommon.TranslatorType.IbmWatson && ActivityCommon.IsTranslationAvailable()) ?
-                ViewStates.Visible : ViewStates.Gone;
-            _textViewCaptionTranslatorLogin = FindViewById<TextView>(Resource.Id.textViewCaptionTranslatorLogin);
-            _textViewCaptionTranslatorLogin.Visibility = viewStateTransLogin;
-            _checkBoxTranslatorLogin = FindViewById<CheckBox>(Resource.Id.checkBoxTranslatorLogin);
-            _checkBoxTranslatorLogin.Visibility = viewStateTransLogin;
 
             _checkBoxAutoHideTitleBar = FindViewById<CheckBox>(Resource.Id.checkBoxAutoHideTitleBar);
             _checkBoxSuppressTitleBar = FindViewById<CheckBox>(Resource.Id.checkBoxSuppressTitleBar);
@@ -563,23 +538,6 @@ namespace BmwDeepObd
                     break;
             }
 
-            switch (ActivityCommon.SelectedTranslator)
-            {
-                case ActivityCommon.TranslatorType.IbmWatson:
-                    _radioButtonTranslatorIbm.Checked = true;
-                    break;
-
-                case ActivityCommon.TranslatorType.Deepl:
-                    _radioButtonTranslatorDeepl.Checked = true;
-                    break;
-
-                default:
-                    _radioButtonTranslatorYandex.Checked = true;
-                    break;
-            }
-
-            _checkBoxTranslatorLogin.Checked = ActivityCommon.EnableTranslateLogin;
-
             _checkBoxAutoHideTitleBar.Checked = ActivityCommon.AutoHideTitleBar;
             _checkBoxSuppressTitleBar.Checked = ActivityCommon.SuppressTitleBar;
             _checkBoxFullScreenMode.Checked = ActivityCommon.FullScreenMode;
@@ -732,23 +690,6 @@ namespace BmwDeepObd
                 themeType = ActivityCommon.ThemeType.Dark;
             }
             ActivityCommon.SelectedTheme = themeType;
-
-            ActivityCommon.TranslatorType translatorType = ActivityCommon.SelectedTranslator;
-            if (_radioButtonTranslatorYandex.Checked)
-            {
-                translatorType = ActivityCommon.TranslatorType.YandexTranslate;
-            }
-            else if (_radioButtonTranslatorIbm.Checked)
-            {
-                translatorType = ActivityCommon.TranslatorType.IbmWatson;
-            }
-            else if (_radioButtonTranslatorDeepl.Checked)
-            {
-                translatorType = ActivityCommon.TranslatorType.Deepl;
-            }
-            _activityCommon.Translator = translatorType;
-
-            ActivityCommon.EnableTranslateLogin = _checkBoxTranslatorLogin.Checked;
 
             ActivityCommon.AutoHideTitleBar = _checkBoxAutoHideTitleBar.Checked;
             ActivityCommon.SuppressTitleBar = _checkBoxSuppressTitleBar.Checked;

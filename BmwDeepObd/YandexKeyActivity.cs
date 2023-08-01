@@ -21,6 +21,7 @@ namespace BmwDeepObd
             public InstanceData()
             {
                 OldTranslator = string.Empty;
+                OldYandexApiKey = string.Empty;
                 OldIbmTranslatorApiKey = string.Empty;
                 OldIbmTranslatorUrl = string.Empty;
                 OldDeeplApiKey = string.Empty;
@@ -54,7 +55,7 @@ namespace BmwDeepObd
         private EditText _editTextApiUrl;
         private Button _buttonYandexApiKeyTest;
         private TextView _textViewYandexApiKeyTestResult;
-        private bool ignoreChange;
+        private bool _ignoreChange;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -93,7 +94,7 @@ namespace BmwDeepObd
             _radioButtonTranslatorYandex = FindViewById<RadioButton>(Resource.Id.radioButtonTranslatorYandex);
             _radioButtonTranslatorYandex.CheckedChange += (sender, e) =>
             {
-                if (ignoreChange)
+                if (_ignoreChange)
                 {
                     return;
                 }
@@ -105,7 +106,7 @@ namespace BmwDeepObd
             _radioButtonTranslatorIbm = FindViewById<RadioButton>(Resource.Id.radioButtonTranslatorIbm);
             _radioButtonTranslatorIbm.CheckedChange += (sender, e) =>
             {
-                if (ignoreChange)
+                if (_ignoreChange)
                 {
                     return;
                 }
@@ -117,7 +118,7 @@ namespace BmwDeepObd
             _radioButtonTranslatorDeepl = FindViewById<RadioButton>(Resource.Id.radioButtonTranslatorDeepl);
             _radioButtonTranslatorDeepl.CheckedChange += (sender, e) =>
             {
-                if (ignoreChange)
+                if (_ignoreChange)
                 {
                     return;
                 }
@@ -257,17 +258,32 @@ namespace BmwDeepObd
                 string clipText = _activityCommon.GetClipboardText();
                 if (!string.IsNullOrWhiteSpace(clipText))
                 {
-                    _editTextYandexApiKey.Text = clipText.Trim();
+                    try
+                    {
+                        _ignoreChange = true;
+                        _editTextYandexApiKey.Text = clipText.Trim();
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                    finally
+                    {
+                        _ignoreChange = false;
+                    }
+
+                    UpdateSetting();
                     UpdateDisplay();
                 }
             };
             _buttonYandexApiKeyPaste.TextChanged += (sender, args) =>
             {
-                if (ignoreChange)
+                if (_ignoreChange)
                 {
                     return;
                 }
 
+                UpdateSetting();
                 UpdateDisplay();
             };
 
@@ -283,17 +299,32 @@ namespace BmwDeepObd
                 string clipText = _activityCommon.GetClipboardText();
                 if (!string.IsNullOrWhiteSpace(clipText))
                 {
-                    _editTextApiUrl.Text = clipText.Trim();
+                    try
+                    {
+                        _ignoreChange = true;
+                        _editTextApiUrl.Text = clipText.Trim();
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                    finally
+                    {
+                        _ignoreChange = false;
+                    }
+
+                    UpdateSetting();
                     UpdateDisplay();
                 }
             };
             _buttonApiUrlPaste.TextChanged += (sender, args) =>
             {
-                if (ignoreChange)
+                if (_ignoreChange)
                 {
                     return;
                 }
 
+                UpdateSetting();
                 UpdateDisplay();
             };
 
@@ -441,26 +472,26 @@ namespace BmwDeepObd
 
             try
             {
-                ignoreChange = true;
+                _ignoreChange = true;
                 _textViewYandexKeyDesc.Text = string.Format(GetString(Resource.String.yandex_key_desc), _activityCommon.TranslatorName());
 
                 switch (ActivityCommon.SelectedTranslator)
                 {
                     case ActivityCommon.TranslatorType.IbmWatson:
                         _radioButtonTranslatorIbm.Checked = true;
-                        _editTextYandexApiKey.Text = _instanceData.OldIbmTranslatorApiKey;
-                        _editTextApiUrl.Text = _instanceData.OldIbmTranslatorUrl;
+                        _editTextYandexApiKey.Text = ActivityCommon.IbmTranslatorApiKey;
+                        _editTextApiUrl.Text = ActivityCommon.IbmTranslatorUrl;
                         break;
 
                     case ActivityCommon.TranslatorType.Deepl:
                         _radioButtonTranslatorDeepl.Checked = true;
-                        _editTextYandexApiKey.Text = _instanceData.OldDeeplApiKey;
+                        _editTextYandexApiKey.Text = ActivityCommon.DeeplApiKey;
                         _editTextApiUrl.Text = string.Empty;
                         break;
 
                     default:
                         _radioButtonTranslatorYandex.Checked = true;
-                        _editTextYandexApiKey.Text = _instanceData.OldYandexApiKey;
+                        _editTextYandexApiKey.Text = ActivityCommon.YandexApiKey;
                         _editTextApiUrl.Text = string.Empty;
                         break;
                 }
@@ -498,7 +529,7 @@ namespace BmwDeepObd
             }
             finally
             {
-                ignoreChange = false;
+                _ignoreChange = false;
             }
         }
 

@@ -732,7 +732,6 @@ namespace BmwDeepObd
         private HttpClient _updateHttpClient;
         private HttpClient _transLoginHttpClient;
         private bool _updateCheckActive;
-        private bool _transLoginActive;
         private bool _translateLockAquired;
         private List<string> _transLangList;
         private List<string> _transList;
@@ -1039,8 +1038,6 @@ namespace BmwDeepObd
         public static string DeeplApiKey { get; set; }
 
         public static bool EnableTranslation { get; set; }
-
-        public static bool EnableTranslateLogin { get; set; }
 
         public static bool EnableTranslateRequested { get; set; }
 
@@ -7324,86 +7321,6 @@ namespace BmwDeepObd
             }
         }
 
-        public bool TranslateLogin(TranslateLoginDelegate handler)
-        {
-            try
-            {
-                if (SelectedTranslator != TranslatorType.IbmWatson)
-                {
-                    return false;
-                }
-
-                if (!IsTranslationAvailable())
-                {
-                    return false;
-                }
-
-                if (_transLoginActive)
-                {
-                    return false;
-                }
-
-                if (handler == null)
-                {
-                    return false;
-                }
-
-                if (_transLoginHttpClient == null)
-                {
-                    _transLoginHttpClient = new HttpClient(new HttpClientHandler()
-                    {
-                        SslProtocols = DefaultSslProtocols,
-                        ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true
-                    });
-                }
-
-                StringBuilder sbUrl = new StringBuilder();
-                sbUrl.Append(IbmTranslatorUrl);
-                sbUrl.Append(IbmTransIdentLang);
-                sbUrl.Append(@"?");
-                sbUrl.Append(IbmTransVersion);
-
-                string authParameter = Convert.ToBase64String(Encoding.UTF8.GetBytes(String.Format("apikey:{0}", IbmTranslatorApiKey)));
-                _transLoginHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authParameter);
-
-                System.Threading.Tasks.Task<HttpResponseMessage> taskLogin = _transLoginHttpClient.GetAsync(sbUrl.ToString());
-                _transLoginActive = true;
-                taskLogin.ContinueWith((task, o) =>
-                {
-                    TranslateLoginDelegate handlerLocal = o as TranslateLoginDelegate;
-                    _transLoginActive = false;
-                    try
-                    {
-                        HttpResponseMessage responseLogin = task.Result;
-                        bool success = responseLogin.IsSuccessStatusCode;
-                        string responseTranslateResult = responseLogin.Content.ReadAsStringAsync().Result;
-
-                        if (success)
-                        {
-                            List<string> languages = GetIbmLanguages(responseTranslateResult);
-                            if (languages == null)
-                            {
-                                success = false;
-                            }
-                        }
-
-                        handlerLocal?.Invoke(success);
-                    }
-                    catch (Exception)
-                    {
-                        handlerLocal?.Invoke(false);
-                    }
-                }, handler, System.Threading.Tasks.TaskContinuationOptions.None);
-            }
-            catch (Exception)
-            {
-                _transLoginActive = false;
-                return false;
-            }
-
-            return true;
-        }
-
         public void SetDefaultSettings(bool globalOnly = false, bool includeTheme = false)
         {
             if (!globalOnly)
@@ -7428,7 +7345,6 @@ namespace BmwDeepObd
             }
 
             CustomStorageMedia = string.Empty;
-            EnableTranslateLogin = true;
             ShowBatteryVoltageWarning = true;
             AutoHideTitleBar = false;
             SuppressTitleBar = false;
