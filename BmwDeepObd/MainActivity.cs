@@ -266,7 +266,6 @@ namespace BmwDeepObd
                 CopyFromAppDst = ActivityCommon.CopyFromAppDst;
                 UsbFirmwareFileName = ActivityCommon.UsbFirmwareFileName;
                 EnableTranslation = ActivityCommon.EnableTranslation;
-                EnableTranslateLogin = ActivityCommon.EnableTranslateLogin;
                 YandexApiKey = ActivityCommon.YandexApiKey;
                 IbmTranslatorApiKey = ActivityCommon.IbmTranslatorApiKey;
                 IbmTranslatorUrl = ActivityCommon.IbmTranslatorUrl;
@@ -386,7 +385,6 @@ namespace BmwDeepObd
             [XmlElement("CopyFromAppDst")] public string CopyFromAppDst { get; set; }
             [XmlElement("UsbFirmwareFile")] public string UsbFirmwareFileName { get; set; }
             [XmlElement("EnableTranslation")] public bool EnableTranslation { get; set; }
-            [XmlElement("EnableTranslateLogin")] public bool EnableTranslateLogin { get; set; }
             [XmlElement("YandexApiKey")] public string YandexApiKey { get; set; }
             [XmlElement("IbmTranslatorApiKey")] public string IbmTranslatorApiKey { get; set; }
             [XmlElement("IbmTranslatorUrl")] public string IbmTranslatorUrl { get; set; }
@@ -2399,8 +2397,6 @@ namespace BmwDeepObd
         // ReSharper disable once UnusedMethodReturnValue.Local
         private bool UpdateCheck()
         {
-            TranslateLogin();
-
             long updateCheckDelay = ActivityCommon.UpdateCheckDelay;
             bool serialCheck = ActivityCommon.IsSerialNumberCheckRequired();
             if (serialCheck)
@@ -2451,29 +2447,6 @@ namespace BmwDeepObd
                     });
                 }
             }, _instanceData.UpdateSkipVersion);
-
-            return result;
-        }
-
-        // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool TranslateLogin()
-        {
-            if (!ActivityCommon.EnableTranslateLogin)
-            {
-                _instanceData.TransLoginTimeNext = DateTime.MinValue.Ticks;
-                return false;
-            }
-
-            if (DateTime.Now.Ticks < _instanceData.TransLoginTimeNext)
-            {
-                return false;
-            }
-
-            bool result = _activityCommon.TranslateLogin(success =>
-            {
-                _instanceData.TransLoginTimeNext = DateTime.Now.Ticks + (success ? TimeSpan.TicksPerDay : TimeSpan.TicksPerHour);
-                StoreSettings();
-            });
 
             return result;
         }
@@ -2880,8 +2853,6 @@ namespace BmwDeepObd
                         prefs.GetString("StorageMedia", ActivityCommon.CustomStorageMedia);
                     ActivityCommon.EnableTranslation =
                         prefs.GetBoolean("EnableTranslation", ActivityCommon.EnableTranslation);
-                    ActivityCommon.EnableTranslateLogin =
-                        prefs.GetBoolean("EnableTranslateLogin", ActivityCommon.EnableTranslateLogin);
                     ActivityCommon.YandexApiKey = prefs.GetString("YandexApiKey", ActivityCommon.YandexApiKey);
                     ActivityCommon.IbmTranslatorApiKey =
                         prefs.GetString("IbmTranslatorApiKey", ActivityCommon.IbmTranslatorApiKey);
@@ -3229,7 +3200,6 @@ namespace BmwDeepObd
                     ActivityCommon.CopyFromAppDst = storageData.CopyFromAppDst;
                     ActivityCommon.UsbFirmwareFileName = storageData.UsbFirmwareFileName;
                     ActivityCommon.EnableTranslation = storageData.EnableTranslation;
-                    ActivityCommon.EnableTranslateLogin = storageData.EnableTranslateLogin;
                     ActivityCommon.YandexApiKey = storageData.YandexApiKey;
                     ActivityCommon.IbmTranslatorApiKey = storageData.IbmTranslatorApiKey;
                     ActivityCommon.IbmTranslatorUrl = storageData.IbmTranslatorUrl;
