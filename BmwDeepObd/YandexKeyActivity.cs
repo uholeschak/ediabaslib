@@ -540,6 +540,22 @@ namespace BmwDeepObd
                 return;
             }
 
+            switch (ActivityCommon.SelectedTranslator)
+            {
+                case ActivityCommon.TranslatorType.YandexTranslate:
+                    ActivityCommon.YandexApiKey = _editTextYandexApiKey.Text.Trim();
+                    break;
+
+                case ActivityCommon.TranslatorType.IbmWatson:
+                    ActivityCommon.IbmTranslatorApiKey = _editTextYandexApiKey.Text.Trim();
+                    ActivityCommon.IbmTranslatorUrl = _editTextApiUrl.Text.Trim();
+                    break;
+
+                case ActivityCommon.TranslatorType.Deepl:
+                    ActivityCommon.DeeplApiKey = _editTextYandexApiKey.Text.Trim();
+                    break;
+            }
+
             ActivityCommon.TranslatorType translatorType = ActivityCommon.SelectedTranslator;
             if (_radioButtonTranslatorYandex.Checked)
             {
@@ -555,22 +571,6 @@ namespace BmwDeepObd
             }
 
             _activityCommon.Translator = translatorType;
-
-            switch (translatorType)
-            {
-                case ActivityCommon.TranslatorType.YandexTranslate:
-                    ActivityCommon.YandexApiKey = _editTextYandexApiKey.Text.Trim();
-                    break;
-
-                case ActivityCommon.TranslatorType.IbmWatson:
-                    ActivityCommon.IbmTranslatorApiKey = _editTextYandexApiKey.Text.Trim();
-                    ActivityCommon.IbmTranslatorUrl = _editTextApiUrl.Text.Trim();
-                    break;
-
-                case ActivityCommon.TranslatorType.Deepl:
-                    ActivityCommon.DeeplApiKey = _editTextYandexApiKey.Text.Trim();
-                    break;
-            }
         }
 
         private void RestoreSetting()
