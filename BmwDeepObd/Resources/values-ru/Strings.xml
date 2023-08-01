@@ -808,6 +808,7 @@
   <string name="can_adapter_select_fw_file">Выбрать прошивку</string>
   <string name="button_can_adapter_read">Считать</string>
   <string name="button_can_adapter_write">Сохранить</string>
+  <string name="button_can_adapter_close">Закрыть</string>
   <string name="button_can_adapter_can_auto">Автоматически</string>
   <string name="button_can_adapter_can_500">D-CAN (после 3/2007)</string>
   <string name="button_can_adapter_can_100">K-CAN (не стандарт)</string>

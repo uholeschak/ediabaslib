@@ -59,6 +59,7 @@ namespace BmwDeepObd
         private View _barView;
         private Button _buttonRead;
         private Button _buttonWrite;
+        private Button _buttonClose;
         private LinearLayout _layoutCanAdapter;
         private TextView _textViewCanAdapterModeTitle;
         private Spinner _spinnerCanAdapterMode;
@@ -161,6 +162,11 @@ namespace BmwDeepObd
             _buttonRead.SetOnTouchListener(this);
             _buttonRead.Click += (sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
                 PerformRead();
             };
             _buttonRead.Visibility = visibility;
@@ -169,9 +175,31 @@ namespace BmwDeepObd
             _buttonWrite.SetOnTouchListener(this);
             _buttonWrite.Click += (sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
                 PerformWrite();
             };
             _buttonWrite.Visibility = (customElmAdapter || rawAdapter) ? ViewStates.Gone : ViewStates.Visible;
+
+            _buttonClose = _barView.FindViewById<Button>(Resource.Id.buttonAdapterClose);
+            _buttonClose.SetOnTouchListener(this);
+            _buttonClose.Click += (sender, args) =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                if (IsJobRunning())
+                {
+                    return;
+                }
+
+                Finish();
+            };
 
             _layoutCanAdapter = FindViewById<LinearLayout>(Resource.Id.layoutCanAdapter);
             _layoutCanAdapter.SetOnTouchListener(this);
@@ -541,6 +569,7 @@ namespace BmwDeepObd
             bool mtcService = _activityCommon.MtcBtService;
             _buttonRead.Enabled = bEnabled;
             _buttonWrite.Enabled = bEnabled;
+            _buttonClose.Enabled = bEnabled;
             _editTextBtPin.Enabled = _editTextBtPin.Visibility == ViewStates.Visible && bEnabled && !mtcService && _btPin != null && _btPin.Length >= 4;
             int maxPinLength = (_btPin != null && _btPin.Length > 0) ? _btPin.Length : 4;
             _editTextBtPin.SetFilters(new Android.Text.IInputFilter[] { new Android.Text.InputFilterLengthFilter(maxPinLength) });
@@ -805,6 +834,11 @@ namespace BmwDeepObd
 
         private void PerformRead()
         {
+            if (IsJobRunning())
+            {
+                return;
+            }
+
             if (!_bCustomAdapter)
             {
                 UpdateDisplay();
@@ -1021,6 +1055,11 @@ namespace BmwDeepObd
 
         private void PerformWrite()
         {
+            if (IsJobRunning())
+            {
+                return;
+            }
+
             EdiabasInit();
 
             int blockSize = _spinnerCanAdapterBlockSize.SelectedItemPosition;
