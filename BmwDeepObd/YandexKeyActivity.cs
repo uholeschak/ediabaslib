@@ -20,12 +20,13 @@ namespace BmwDeepObd
         {
             public InstanceData()
             {
-                OldYandexApiKey = string.Empty;
+                OldTranslator = string.Empty;
                 OldIbmTranslatorApiKey = string.Empty;
                 OldIbmTranslatorUrl = string.Empty;
                 OldDeeplApiKey = string.Empty;
             }
 
+            public string OldTranslator { get; set; }
             public string OldYandexApiKey { get; set; }
             public string OldIbmTranslatorApiKey { get; set; }
             public string OldIbmTranslatorUrl { get; set; }
@@ -79,6 +80,7 @@ namespace BmwDeepObd
 
             if (!_activityRecreated)
             {
+                _instanceData.OldTranslator = ActivityCommon.SelectedTranslator.ToString();
                 _instanceData.OldYandexApiKey = ActivityCommon.YandexApiKey ?? string.Empty;
                 _instanceData.OldIbmTranslatorApiKey = ActivityCommon.IbmTranslatorApiKey ?? string.Empty;
                 _instanceData.OldIbmTranslatorUrl = ActivityCommon.IbmTranslatorUrl ?? string.Empty;
@@ -542,6 +544,11 @@ namespace BmwDeepObd
 
         private void RestoreSetting()
         {
+            if (Enum.TryParse(_instanceData.OldTranslator, out ActivityCommon.TranslatorType translator))
+            {
+                _activityCommon.Translator = translator;
+            }
+
             ActivityCommon.YandexApiKey = _instanceData.OldYandexApiKey;
             ActivityCommon.IbmTranslatorApiKey = _instanceData.OldIbmTranslatorApiKey;
             ActivityCommon.IbmTranslatorUrl = _instanceData.OldIbmTranslatorUrl;
