@@ -20,12 +20,16 @@ namespace BmwDeepObd
         {
             public InstanceData()
             {
-                OldApiKey = string.Empty;
-                OldApiUrl = string.Empty;
+                OldYandexApiKey = string.Empty;
+                OldIbmTranslatorApiKey = string.Empty;
+                OldIbmTranslatorUrl = string.Empty;
+                OldDeeplApiKey = string.Empty;
             }
 
-            public string OldApiKey { get; set; }
-            public string OldApiUrl { get; set; }
+            public string OldYandexApiKey { get; set; }
+            public string OldIbmTranslatorApiKey { get; set; }
+            public string OldIbmTranslatorUrl { get; set; }
+            public string OldDeeplApiKey { get; set; }
         }
 
         private InstanceData _instanceData = new InstanceData();
@@ -34,6 +38,10 @@ namespace BmwDeepObd
         private Timer _clipboardCheckTimer;
         private ActivityCommon _activityCommon;
         private View _contentView;
+        private TextView _textViewCaptionTranslator;
+        private RadioButton _radioButtonTranslatorYandex;
+        private RadioButton _radioButtonTranslatorIbm;
+        private RadioButton _radioButtonTranslatorDeepl;
         private TextView _textViewYandexKeyDesc;
         private LinearLayout _layoutYandexKey;
         private Button _buttonYandexApiKeyCreate;
@@ -45,12 +53,14 @@ namespace BmwDeepObd
         private EditText _editTextApiUrl;
         private Button _buttonYandexApiKeyTest;
         private TextView _textViewYandexApiKeyTestResult;
+        private bool ignoreChange;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             SetTheme(ActivityCommon.SelectedThemeId);
             base.OnCreate(savedInstanceState);
             _allowFullScreenMode = false;
+
             if (savedInstanceState != null)
             {
                 _activityRecreated = true;
@@ -69,47 +79,71 @@ namespace BmwDeepObd
 
             if (!_activityRecreated)
             {
-                switch (ActivityCommon.SelectedTranslator)
-                {
-                    case ActivityCommon.TranslatorType.YandexTranslate:
-                        _instanceData.OldApiKey = ActivityCommon.YandexApiKey ?? string.Empty;
-                        break;
-
-                    case ActivityCommon.TranslatorType.IbmWatson:
-                        _instanceData.OldApiKey = ActivityCommon.IbmTranslatorApiKey ?? string.Empty;
-                        _instanceData.OldApiUrl = ActivityCommon.IbmTranslatorUrl ?? string.Empty;
-                        break;
-
-                    case ActivityCommon.TranslatorType.Deepl:
-                        _instanceData.OldApiKey = ActivityCommon.DeeplApiKey ?? string.Empty;
-                        break;
-                }
+                _instanceData.OldYandexApiKey = ActivityCommon.YandexApiKey ?? string.Empty;
+                _instanceData.OldIbmTranslatorApiKey = ActivityCommon.IbmTranslatorApiKey ?? string.Empty;
+                _instanceData.OldIbmTranslatorUrl = ActivityCommon.IbmTranslatorUrl ?? string.Empty;
+                _instanceData.OldDeeplApiKey = ActivityCommon.DeeplApiKey ?? string.Empty;
             }
 
             _activityCommon = new ActivityCommon(this);
 
+            _textViewCaptionTranslator = FindViewById<TextView>(Resource.Id.textViewCaptionTranslator);
+            _radioButtonTranslatorYandex = FindViewById<RadioButton>(Resource.Id.radioButtonTranslatorYandex);
+            _radioButtonTranslatorYandex.CheckedChange += (sender, e) =>
+            {
+                if (ignoreChange)
+                {
+                    return;
+                }
+
+                UpdateSetting();
+                UpdateDisplay();
+            };
+
+            _radioButtonTranslatorIbm = FindViewById<RadioButton>(Resource.Id.radioButtonTranslatorIbm);
+            _radioButtonTranslatorIbm.CheckedChange += (sender, e) =>
+            {
+                if (ignoreChange)
+                {
+                    return;
+                }
+
+                UpdateSetting();
+                UpdateDisplay();
+            };
+
+            _radioButtonTranslatorDeepl = FindViewById<RadioButton>(Resource.Id.radioButtonTranslatorDeepl);
+            _radioButtonTranslatorDeepl.CheckedChange += (sender, e) =>
+            {
+                if (ignoreChange)
+                {
+                    return;
+                }
+
+                UpdateSetting();
+                UpdateDisplay();
+            };
+
             _textViewYandexKeyDesc = FindViewById<TextView>(Resource.Id.textViewYandexKeyDesc);
-            _textViewYandexKeyDesc.Text = string.Format(GetString(Resource.String.yandex_key_desc), _activityCommon.TranslatorName());
 
             _layoutYandexKey = FindViewById<LinearLayout>(Resource.Id.layoutYandexKey);
             _layoutYandexKey.SetOnTouchListener(this);
 
-            bool apiUrlVisible = ActivityCommon.SelectedTranslator == ActivityCommon.TranslatorType.IbmWatson;
-
             _editTextYandexApiKey = FindViewById<EditText>(Resource.Id.editTextYandexApiKey);
-            _editTextYandexApiKey.Text = _instanceData.OldApiKey;
 
             _textViewApiUrlPasteTitle = FindViewById<TextView>(Resource.Id.textViewApiUrlPasteTitle);
-            _textViewApiUrlPasteTitle.Visibility = apiUrlVisible ? ViewStates.Visible : ViewStates.Gone;
 
             _editTextApiUrl = FindViewById<EditText>(Resource.Id.editTextApiUrl);
-            _editTextApiUrl.Text = _instanceData.OldApiUrl;
-            _editTextApiUrl.Visibility = apiUrlVisible ? ViewStates.Visible : ViewStates.Gone;
 
             _buttonYandexApiKeyCreate = FindViewById<Button>(Resource.Id.buttonYandexKeyCreate);
             _buttonYandexApiKeyCreate.SetOnTouchListener(this);
             _buttonYandexApiKeyCreate.Click += (sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
                 _activityCommon.ShowWifiConnectedWarning(() =>
                 {
                     if (_activityCommon == null)
@@ -159,6 +193,11 @@ namespace BmwDeepObd
             _buttonYandexApiKeyGet.SetOnTouchListener(this);
             _buttonYandexApiKeyGet.Click += (sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
                 _activityCommon.ShowWifiConnectedWarning(() =>
                 {
                     if (_activityCommon == null)
@@ -208,6 +247,11 @@ namespace BmwDeepObd
             _buttonYandexApiKeyPaste.SetOnTouchListener(this);
             _buttonYandexApiKeyPaste.Click += (sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
                 string clipText = _activityCommon.GetClipboardText();
                 if (!string.IsNullOrWhiteSpace(clipText))
                 {
@@ -217,14 +261,23 @@ namespace BmwDeepObd
             };
             _buttonYandexApiKeyPaste.TextChanged += (sender, args) =>
             {
+                if (ignoreChange)
+                {
+                    return;
+                }
+
                 UpdateDisplay();
             };
 
             _buttonApiUrlPaste = FindViewById<Button>(Resource.Id.buttonApiUrlPaste);
-            _buttonApiUrlPaste.Visibility = apiUrlVisible ? ViewStates.Visible : ViewStates.Gone;
             _buttonApiUrlPaste.SetOnTouchListener(this);
             _buttonApiUrlPaste.Click += (sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
                 string clipText = _activityCommon.GetClipboardText();
                 if (!string.IsNullOrWhiteSpace(clipText))
                 {
@@ -234,6 +287,11 @@ namespace BmwDeepObd
             };
             _buttonApiUrlPaste.TextChanged += (sender, args) =>
             {
+                if (ignoreChange)
+                {
+                    return;
+                }
+
                 UpdateDisplay();
             };
 
@@ -243,22 +301,13 @@ namespace BmwDeepObd
             _buttonYandexApiKeyTest.SetOnTouchListener(this);
             _buttonYandexApiKeyTest.Click += (sender, args) =>
             {
-                _textViewYandexApiKeyTestResult.Text = string.Empty;
-                switch (ActivityCommon.SelectedTranslator)
+                if (_activityCommon == null)
                 {
-                    case ActivityCommon.TranslatorType.YandexTranslate:
-                        ActivityCommon.YandexApiKey = _editTextYandexApiKey.Text.Trim();
-                        break;
-
-                    case ActivityCommon.TranslatorType.IbmWatson:
-                        ActivityCommon.IbmTranslatorApiKey = _editTextYandexApiKey.Text.Trim();
-                        ActivityCommon.IbmTranslatorUrl = _editTextApiUrl.Text.Trim();
-                        break;
-
-                    case ActivityCommon.TranslatorType.Deepl:
-                        ActivityCommon.DeeplApiKey = _editTextYandexApiKey.Text.Trim();
-                        break;
+                    return;
                 }
+
+                UpdateSetting();
+                _textViewYandexApiKeyTestResult.Text = string.Empty;
 
                 if (!_activityCommon.TranslateStrings(new List<string> {"Dieser Text wurde erfolgreich \x00fcbersetzt"}, list =>
                 {
@@ -383,79 +432,134 @@ namespace BmwDeepObd
 
         private void UpdateDisplay()
         {
-            bool pasteEnable = false;
-
-            string clipText = _activityCommon.GetClipboardText();
-            if (!string.IsNullOrWhiteSpace(clipText))
+            if (_activityCommon == null)
             {
-                pasteEnable = true;
+                return;
             }
-            _buttonYandexApiKeyPaste.Enabled = pasteEnable;
 
-            bool testEnabled = !string.IsNullOrWhiteSpace(_editTextYandexApiKey.Text);
-            switch (ActivityCommon.SelectedTranslator)
+            try
             {
+                ignoreChange = true;
+                _textViewYandexKeyDesc.Text = string.Format(GetString(Resource.String.yandex_key_desc), _activityCommon.TranslatorName());
+
+                switch (ActivityCommon.SelectedTranslator)
+                {
+                    case ActivityCommon.TranslatorType.IbmWatson:
+                        _radioButtonTranslatorIbm.Checked = true;
+                        _editTextYandexApiKey.Text = _instanceData.OldIbmTranslatorApiKey;
+                        _editTextApiUrl.Text = _instanceData.OldIbmTranslatorUrl;
+                        break;
+
+                    case ActivityCommon.TranslatorType.Deepl:
+                        _radioButtonTranslatorDeepl.Checked = true;
+                        _editTextYandexApiKey.Text = _instanceData.OldDeeplApiKey;
+                        _editTextApiUrl.Text = string.Empty;
+                        break;
+
+                    default:
+                        _radioButtonTranslatorYandex.Checked = true;
+                        _editTextYandexApiKey.Text = _instanceData.OldYandexApiKey;
+                        _editTextApiUrl.Text = string.Empty;
+                        break;
+                }
+
+                bool apiUrlVisible = ActivityCommon.SelectedTranslator == ActivityCommon.TranslatorType.IbmWatson;
+                _textViewApiUrlPasteTitle.Visibility = apiUrlVisible ? ViewStates.Visible : ViewStates.Gone;
+                _editTextApiUrl.Visibility = apiUrlVisible ? ViewStates.Visible : ViewStates.Gone;
+                _buttonApiUrlPaste.Visibility = apiUrlVisible ? ViewStates.Visible : ViewStates.Gone;
+
+                bool pasteEnable = false;
+                string clipText = _activityCommon.GetClipboardText();
+                if (!string.IsNullOrWhiteSpace(clipText))
+                {
+                    pasteEnable = true;
+                }
+
+                _buttonYandexApiKeyPaste.Enabled = pasteEnable;
+
+                bool testEnabled = !string.IsNullOrWhiteSpace(_editTextYandexApiKey.Text);
+                switch (ActivityCommon.SelectedTranslator)
+                {
+                    case ActivityCommon.TranslatorType.IbmWatson:
+                        if (string.IsNullOrWhiteSpace(_editTextApiUrl.Text))
+                        {
+                            testEnabled = false;
+                        }
+                        break;
+                }
+
+                _buttonYandexApiKeyTest.Enabled = testEnabled;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+            finally
+            {
+                ignoreChange = false;
+            }
+        }
+
+        private void UpdateSetting()
+        {
+            if (_activityCommon == null)
+            {
+                return;
+            }
+
+            ActivityCommon.TranslatorType translatorType = ActivityCommon.SelectedTranslator;
+            if (_radioButtonTranslatorYandex.Checked)
+            {
+                translatorType = ActivityCommon.TranslatorType.YandexTranslate;
+            }
+            else if (_radioButtonTranslatorIbm.Checked)
+            {
+                translatorType = ActivityCommon.TranslatorType.IbmWatson;
+            }
+            else if (_radioButtonTranslatorDeepl.Checked)
+            {
+                translatorType = ActivityCommon.TranslatorType.Deepl;
+            }
+
+            _activityCommon.Translator = translatorType;
+
+            switch (translatorType)
+            {
+                case ActivityCommon.TranslatorType.YandexTranslate:
+                    ActivityCommon.YandexApiKey = _editTextYandexApiKey.Text.Trim();
+                    break;
+
                 case ActivityCommon.TranslatorType.IbmWatson:
-                    if (string.IsNullOrWhiteSpace(_editTextApiUrl.Text))
-                    {
-                        testEnabled = false;
-                    }
+                    ActivityCommon.IbmTranslatorApiKey = _editTextYandexApiKey.Text.Trim();
+                    ActivityCommon.IbmTranslatorUrl = _editTextApiUrl.Text.Trim();
+                    break;
+
+                case ActivityCommon.TranslatorType.Deepl:
+                    ActivityCommon.DeeplApiKey = _editTextYandexApiKey.Text.Trim();
                     break;
             }
+        }
 
-            _buttonYandexApiKeyTest.Enabled = testEnabled;
+        private void RestoreSetting()
+        {
+            ActivityCommon.YandexApiKey = _instanceData.OldYandexApiKey;
+            ActivityCommon.IbmTranslatorApiKey = _instanceData.OldIbmTranslatorApiKey;
+            ActivityCommon.IbmTranslatorUrl = _instanceData.OldIbmTranslatorUrl;
+            ActivityCommon.DeeplApiKey = _instanceData.OldDeeplApiKey;
         }
 
         private bool StoreYandexKey(EventHandler handler)
         {
-            string newApiKey = _editTextYandexApiKey.Text.Trim();
-            string newApiUrl = _editTextApiUrl.Text.Trim();
-            if (string.Compare(_instanceData.OldApiKey, newApiKey, StringComparison.Ordinal) == 0 &&
-                string.Compare(_instanceData.OldApiUrl, newApiUrl, StringComparison.Ordinal) == 0)
-            {
-                return true;
-            }
-
             new AlertDialog.Builder(this)
                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                 {
-                    switch (ActivityCommon.SelectedTranslator)
-                    {
-                        case ActivityCommon.TranslatorType.YandexTranslate:
-                            ActivityCommon.YandexApiKey = newApiKey;
-                            break;
-
-                        case ActivityCommon.TranslatorType.IbmWatson:
-                            ActivityCommon.IbmTranslatorApiKey = newApiKey;
-                            ActivityCommon.IbmTranslatorUrl = newApiUrl;
-                            break;
-
-                        case ActivityCommon.TranslatorType.Deepl:
-                            ActivityCommon.DeeplApiKey = newApiKey;
-                            break;
-                    }
-
+                    UpdateSetting();
                     SetResult(Android.App.Result.Ok);
                     handler?.Invoke(sender, args);
                 })
                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                 {
-                    switch (ActivityCommon.SelectedTranslator)
-                    {
-                        case ActivityCommon.TranslatorType.YandexTranslate:
-                            ActivityCommon.YandexApiKey = _instanceData.OldApiKey;
-                            break;
-
-                        case ActivityCommon.TranslatorType.IbmWatson:
-                            ActivityCommon.IbmTranslatorApiKey = _instanceData.OldApiKey;
-                            ActivityCommon.IbmTranslatorUrl = _instanceData.OldApiUrl;
-                            break;
-
-                        case ActivityCommon.TranslatorType.Deepl:
-                            ActivityCommon.DeeplApiKey = _instanceData.OldApiKey;
-                            break;
-                    }
-
+                    RestoreSetting();
                     handler?.Invoke(sender, args);
                 })
                 .SetCancelable(true)
