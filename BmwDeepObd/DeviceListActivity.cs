@@ -1559,6 +1559,9 @@ namespace BmwDeepObd
                         }
 
                         case AdapterTypeDetect.AdapterType.Custom:
+                            ReturnDeviceType(deviceAddress, deviceName);
+                            break;
+
                         case AdapterTypeDetect.AdapterType.CustomUpdate:
                             new AlertDialog.Builder(this)
                                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
@@ -1570,7 +1573,7 @@ namespace BmwDeepObd
                                     ReturnDeviceType(deviceAddress, deviceName);
                                 })
                                 .SetCancelable(true)
-                                .SetMessage(adapterType == AdapterTypeDetect.AdapterType.CustomUpdate ? Resource.String.adapter_fw_update : Resource.String.adapter_cfg_required)
+                                .SetMessage(Resource.String.adapter_fw_update)
                                 .SetTitle(Resource.String.alert_title_info)
                                 .Show();
                             break;
