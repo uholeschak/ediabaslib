@@ -61,7 +61,7 @@ namespace BmwDeepObd
         {
             SetTheme(ActivityCommon.SelectedThemeId);
             base.OnCreate(savedInstanceState);
-            _allowFullScreenMode = false;
+            _allowTitleHiding = false;
 
             if (savedInstanceState != null)
             {
