@@ -515,7 +515,7 @@
     <AndroidResource Include="Resources\layout\tab_errors.xml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\yandex_key_select.xml">
+    <AndroidResource Include="Resources\layout\translate_key_select.xml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\settings.xml">

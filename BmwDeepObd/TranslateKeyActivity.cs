@@ -72,7 +72,7 @@ namespace BmwDeepObd
             SupportActionBar.SetHomeButtonEnabled(true);
             SupportActionBar.SetDisplayShowHomeEnabled(true);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
-            SetContentView(Resource.Layout.yandex_key_select);
+            SetContentView(Resource.Layout.translate_key_select);
 
             _imm = (InputMethodManager)GetSystemService(InputMethodService);
             _contentView = FindViewById<View>(Android.Resource.Id.Content);
