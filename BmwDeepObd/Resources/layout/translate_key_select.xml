@@ -47,17 +47,17 @@
             android:id="@+id/buttonYandexKeyCreate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/button_yandex_key_create"
+            android:text="@string/button_api_key_create"
             android:layout_gravity="center" />
         <Button
             android:id="@+id/buttonYandexKeyGet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/button_yandex_key_get"
+            android:text="@string/button_api_key_get"
             android:layout_gravity="center" />
         <TextView
             android:id="@+id/textViewYandexKeyPasteTitle"
-            android:text="@string/yandex_key_paste_title"
+            android:text="@string/trans_key_paste_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
@@ -65,7 +65,7 @@
             android:id="@+id/buttonYandexKeyPaste"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/button_yandex_key_paste"
+            android:text="@string/button_api_key_paste"
             android:layout_gravity="center" />
         <EditText
             android:id="@+id/editTextYandexApiKey"
@@ -93,7 +93,7 @@
             android:maxLines="1" />
         <TextView
             android:id="@+id/textViewYandexKeyTestTitle"
-            android:text="@string/yandex_key_test_title"
+            android:text="@string/trans_key_test_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
@@ -101,7 +101,7 @@
             android:id="@+id/buttonYandexKeyTest"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/button_yandex_key_test"
+            android:text="@string/button_api_key_test"
             android:layout_gravity="center" />
         <TextView
             android:id="@+id/textViewYandexKeyTestResult"

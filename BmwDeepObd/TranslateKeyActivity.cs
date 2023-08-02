@@ -350,11 +350,11 @@ namespace BmwDeepObd
                     }
                     else
                     {
-                        _textViewYandexApiKeyTestResult.Text = GetString(Resource.String.button_yandex_key_test_failed);
+                        _textViewYandexApiKeyTestResult.Text = GetString(Resource.String.button_api_key_test_failed);
                     }
                 }, true))
                 {
-                    _textViewYandexApiKeyTestResult.Text = GetString(Resource.String.button_yandex_key_test_failed);
+                    _textViewYandexApiKeyTestResult.Text = GetString(Resource.String.button_api_key_test_failed);
                 }
             };
 
