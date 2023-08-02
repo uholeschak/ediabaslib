@@ -2858,12 +2858,8 @@ namespace BmwDeepObd
                         prefs.GetString("IbmTranslatorApiKey", ActivityCommon.IbmTranslatorApiKey);
                     ActivityCommon.IbmTranslatorUrl =
                         prefs.GetString("IbmTranslatorUrl", ActivityCommon.IbmTranslatorUrl);
-                    ActivityCommon.TranslatorType defaultTranslator =
-                        !string.IsNullOrWhiteSpace(ActivityCommon.YandexApiKey)
-                            ? ActivityCommon.TranslatorType.YandexTranslate
-                            : ActivityCommon.SelectedTranslator;
                     _activityCommon.Translator =
-                        (ActivityCommon.TranslatorType) prefs.GetLong("Translator", (int) defaultTranslator);
+                        (ActivityCommon.TranslatorType) prefs.GetLong("Translator", (int)ActivityCommon.SelectedTranslator);
                     ActivityCommon.ShowBatteryVoltageWarning = prefs.GetBoolean("ShowBatteryWarning",
                         ActivityCommon.ShowBatteryVoltageWarning);
                     ActivityCommon.BatteryWarnings = prefs.GetLong("BatteryWarnings", ActivityCommon.BatteryWarnings);

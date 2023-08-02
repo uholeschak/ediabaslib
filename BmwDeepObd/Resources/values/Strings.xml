@@ -205,6 +205,10 @@
 
   <!-- Yandex key -->
   <string name="yandex_api_key_title">Translation configuration</string>
+  <string name="trans_caption_translator">Translator</string>
+  <string name="trans_translator_yandex">Yandex.Translate</string>
+  <string name="trans_translator_ibm">IBM Watson</string>
+  <string name="trans_translator_deepl">DeepL</string>
   <string name="yandex_key_desc">For automatic translation with {0} a free API key and account is required, that allows a limited amount of translations per day.\nWith the buttons below log in to your account and create a key or display your existing ones.\nCopy the key from the web browser and paste it in the field below with the paste button.\nTo copy the key press and hold the first word, extend the selected range and choose copy.</string>
   <string name="yandex_key_copy_title">Copy API Key</string>
   <string name="button_yandex_key_create">Create API Key</string>
@@ -413,10 +417,6 @@
   <string name="settings_caption_theme">Theme</string>
   <string name="settings_theme_dark">Dark</string>
   <string name="settings_theme_light">Light</string>
-  <string name="settings_caption_translator">Translator</string>
-  <string name="settings_translator_yandex">Yandex.Translate</string>
-  <string name="settings_translator_ibm">IBM Watson</string>
-  <string name="settings_translator_deepl">DeepL</string>
   <string name="settings_caption_title_bar">Title bar</string>
   <string name="settings_auto_hide_title_bar">Auto hide title bar on main page when connected (show with long click and release)</string>
   <string name="settings_suppress_title_bar">Suppress unused title bars (show with swipe gesture)</string>

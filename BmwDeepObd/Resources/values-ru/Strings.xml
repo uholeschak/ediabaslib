@@ -228,6 +228,10 @@
 
   <!-- Yandex key -->
   <string name="yandex_api_key_title">Настройки перевода</string>
+  <string name="trans_caption_translator">Переводчик</string>
+  <string name="trans_translator_yandex">Яндекс.Переводчик</string>
+  <string name="trans_translator_ibm">IBM Watson</string>
+  <string name="trans_translator_deepl">DeepL</string>
   <string name="yandex_key_desc">Для автоматического перевода с {0} требуется бесплатный ключ API и учётная запись, что позволяет делать ограниченное количество переводов в день.\nИспользуйте следующие кнопки для входа в свою учетную запись, чтобы создать ключ или для отображения существующих.\nСкопируйте ключ из браузера и вставьте его в нижнее поле с помощью кнопки Вставить.\nЧтобы скопировать ключ, нажмите и удерживайте первое слово, расширьте диапазон и выберите "Копировать".</string>
   <string name="yandex_key_copy_title">копировать API ключ</string>
   <string name="button_yandex_key_create">создать API ключ</string>
@@ -435,10 +439,6 @@
   <string name="settings_caption_theme">Темы</string>
   <string name="settings_theme_dark">Темная</string>
   <string name="settings_theme_light">Светлая</string>
-  <string name="settings_caption_translator">Переводчик</string>
-  <string name="settings_translator_yandex">Яндекс.Переводчик</string>
-  <string name="settings_translator_ibm">IBM Watson</string>
-  <string name="settings_translator_deepl">DeepL</string>
   <string name="settings_caption_title_bar">Панель заглавия</string>
   <string name="settings_auto_hide_title_bar">Автоматически скрывать панель заглавия на главной странице (показать при отпускании после длинного нажатия)</string>
   <string name="settings_suppress_title_bar">Скрывать неиспользуемые панели заглавия  (показывать при помощи жеста смахивания)</string>
