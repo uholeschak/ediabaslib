@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
-            android:text="@string/settings_caption_translator"
+            android:text="@string/trans_caption_translator"
             android:id="@+id/textViewCaptionTranslator"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -21,17 +21,17 @@
                 android:id="@+id/radioButtonTranslatorYandex"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/settings_translator_yandex" />
+                android:text="@string/trans_translator_yandex" />
             <RadioButton
                 android:id="@+id/radioButtonTranslatorIbm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/settings_translator_ibm" />
+                android:text="@string/trans_translator_ibm" />
             <RadioButton
                 android:id="@+id/radioButtonTranslatorDeepl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/settings_translator_deepl" />
+                android:text="@string/trans_translator_deepl" />
         </RadioGroup>
         <TextView
             android:id="@+id/textViewYandexKeyDesc"

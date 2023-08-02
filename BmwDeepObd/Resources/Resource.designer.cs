@@ -14806,307 +14806,295 @@ namespace BmwDeepObd
 			public const int settings_caption_title_bar = 2131755610;
 			
 			// aapt resource value: 0x7F10025B
-			public const int settings_caption_translator = 2131755611;
+			public const int settings_caption_update = 2131755611;
 			
 			// aapt resource value: 0x7F10025C
-			public const int settings_caption_update = 2131755612;
+			public const int settings_check_cpu_usage = 2131755612;
 			
 			// aapt resource value: 0x7F10025D
-			public const int settings_check_cpu_usage = 2131755613;
+			public const int settings_check_ecu_files = 2131755613;
 			
 			// aapt resource value: 0x7F10025E
-			public const int settings_check_ecu_files = 2131755614;
+			public const int settings_collect_debug_info = 2131755614;
 			
 			// aapt resource value: 0x7F10025F
-			public const int settings_collect_debug_info = 2131755615;
+			public const int settings_default_settings = 2131755615;
 			
 			// aapt resource value: 0x7F100260
-			public const int settings_default_settings = 2131755616;
+			public const int settings_disable_bt_at_exit = 2131755616;
 			
 			// aapt resource value: 0x7F100261
-			public const int settings_disable_bt_at_exit = 2131755617;
+			public const int settings_double_click_for_app_exit = 2131755617;
 			
 			// aapt resource value: 0x7F100262
-			public const int settings_double_click_for_app_exit = 2131755618;
+			public const int settings_export_private = 2131755618;
 			
 			// aapt resource value: 0x7F100263
-			public const int settings_export_private = 2131755619;
+			public const int settings_export_settings = 2131755619;
 			
 			// aapt resource value: 0x7F100264
-			public const int settings_export_settings = 2131755620;
+			public const int settings_full_screen_mode = 2131755620;
 			
 			// aapt resource value: 0x7F100265
-			public const int settings_full_screen_mode = 2131755621;
+			public const int settings_hci_snoop_log = 2131755621;
 			
 			// aapt resource value: 0x7F100266
-			public const int settings_hci_snoop_log = 2131755622;
+			public const int settings_hci_snoop_log_config = 2131755622;
 			
 			// aapt resource value: 0x7F100267
-			public const int settings_hci_snoop_log_config = 2131755623;
+			public const int settings_import_no_file = 2131755623;
 			
 			// aapt resource value: 0x7F100268
-			public const int settings_import_no_file = 2131755624;
+			public const int settings_import_settings = 2131755624;
 			
 			// aapt resource value: 0x7F100269
-			public const int settings_import_settings = 2131755625;
+			public const int settings_internet_cellular = 2131755625;
 			
 			// aapt resource value: 0x7F10026A
-			public const int settings_internet_cellular = 2131755626;
+			public const int settings_internet_ethernet = 2131755626;
 			
 			// aapt resource value: 0x7F10026B
-			public const int settings_internet_ethernet = 2131755627;
+			public const int settings_internet_wifi = 2131755627;
 			
 			// aapt resource value: 0x7F10026C
-			public const int settings_internet_wifi = 2131755628;
+			public const int settings_locale_de = 2131755628;
 			
 			// aapt resource value: 0x7F10026D
-			public const int settings_locale_de = 2131755629;
+			public const int settings_locale_default = 2131755629;
 			
 			// aapt resource value: 0x7F10026E
-			public const int settings_locale_default = 2131755630;
+			public const int settings_locale_en = 2131755630;
 			
 			// aapt resource value: 0x7F10026F
-			public const int settings_locale_en = 2131755631;
+			public const int settings_locale_ru = 2131755631;
 			
 			// aapt resource value: 0x7F100270
-			public const int settings_locale_ru = 2131755632;
+			public const int settings_lock_bright = 2131755632;
 			
 			// aapt resource value: 0x7F100271
-			public const int settings_lock_bright = 2131755633;
+			public const int settings_lock_cpu = 2131755633;
 			
 			// aapt resource value: 0x7F100272
-			public const int settings_lock_cpu = 2131755634;
+			public const int settings_lock_dim = 2131755634;
 			
 			// aapt resource value: 0x7F100273
-			public const int settings_lock_dim = 2131755635;
-			
-			// aapt resource value: 0x7F100274
-			public const int settings_lock_none = 2131755636;
-			
-			// aapt resource value: 0x7F100276
-			public const int settings_notification_settings = 2131755638;
+			public const int settings_lock_none = 2131755635;
 			
 			// aapt resource value: 0x7F100275
-			public const int settings_no_bt_handling = 2131755637;
+			public const int settings_notification_settings = 2131755637;
+			
+			// aapt resource value: 0x7F100274
+			public const int settings_no_bt_handling = 2131755636;
+			
+			// aapt resource value: 0x7F100276
+			public const int settings_old_vag_mode = 2131755638;
 			
 			// aapt resource value: 0x7F100277
-			public const int settings_old_vag_mode = 2131755639;
+			public const int settings_options = 2131755639;
 			
 			// aapt resource value: 0x7F100278
-			public const int settings_options = 2131755640;
+			public const int settings_scan_all_ecus = 2131755640;
 			
 			// aapt resource value: 0x7F100279
-			public const int settings_scan_all_ecus = 2131755641;
+			public const int settings_send_data_broadcast = 2131755641;
 			
 			// aapt resource value: 0x7F10027A
-			public const int settings_send_data_broadcast = 2131755642;
+			public const int settings_show_battery_voltage_warning = 2131755642;
 			
 			// aapt resource value: 0x7F10027B
-			public const int settings_show_battery_voltage_warning = 2131755643;
+			public const int settings_show_only_relevant_errors = 2131755643;
 			
 			// aapt resource value: 0x7F10027C
-			public const int settings_show_only_relevant_errors = 2131755644;
+			public const int settings_start_connect = 2131755644;
 			
 			// aapt resource value: 0x7F10027D
-			public const int settings_start_connect = 2131755645;
+			public const int settings_start_connect_close = 2131755645;
 			
 			// aapt resource value: 0x7F10027E
-			public const int settings_start_connect_close = 2131755646;
+			public const int settings_start_offline = 2131755646;
 			
 			// aapt resource value: 0x7F10027F
-			public const int settings_start_offline = 2131755647;
+			public const int settings_storage_copy_tree_from_app = 2131755647;
 			
 			// aapt resource value: 0x7F100280
-			public const int settings_storage_copy_tree_from_app = 2131755648;
+			public const int settings_storage_copy_tree_to_app = 2131755648;
 			
 			// aapt resource value: 0x7F100281
-			public const int settings_storage_copy_tree_to_app = 2131755649;
+			public const int settings_storage_del_tree_from_app = 2131755649;
 			
 			// aapt resource value: 0x7F100282
-			public const int settings_storage_del_tree_from_app = 2131755650;
+			public const int settings_storage_sel_app_dir = 2131755650;
 			
 			// aapt resource value: 0x7F100283
-			public const int settings_storage_sel_app_dir = 2131755651;
+			public const int settings_storage_sel_public_dir = 2131755651;
 			
 			// aapt resource value: 0x7F100284
-			public const int settings_storage_sel_public_dir = 2131755652;
+			public const int settings_store_data_log_settings = 2131755652;
 			
 			// aapt resource value: 0x7F100285
-			public const int settings_store_data_log_settings = 2131755653;
+			public const int settings_suppress_title_bar = 2131755653;
 			
 			// aapt resource value: 0x7F100286
-			public const int settings_suppress_title_bar = 2131755654;
+			public const int settings_swap_multi_window_orientation = 2131755654;
 			
 			// aapt resource value: 0x7F100287
-			public const int settings_swap_multi_window_orientation = 2131755655;
+			public const int settings_theme_dark = 2131755655;
 			
 			// aapt resource value: 0x7F100288
-			public const int settings_theme_dark = 2131755656;
+			public const int settings_theme_light = 2131755656;
 			
 			// aapt resource value: 0x7F100289
-			public const int settings_theme_light = 2131755657;
+			public const int settings_title = 2131755657;
 			
 			// aapt resource value: 0x7F10028A
-			public const int settings_title = 2131755658;
+			public const int settings_update_1day = 2131755658;
 			
 			// aapt resource value: 0x7F10028B
-			public const int settings_translator_deepl = 2131755659;
+			public const int settings_update_1week = 2131755659;
 			
 			// aapt resource value: 0x7F10028C
-			public const int settings_translator_ibm = 2131755660;
+			public const int settings_update_off = 2131755660;
 			
 			// aapt resource value: 0x7F10028D
-			public const int settings_translator_yandex = 2131755661;
+			public const int settings_use_bmw_database = 2131755661;
 			
 			// aapt resource value: 0x7F10028E
-			public const int settings_update_1day = 2131755662;
+			public const int side_sheet_accessibility_pane_title = 2131755662;
 			
 			// aapt resource value: 0x7F10028F
-			public const int settings_update_1week = 2131755663;
+			public const int side_sheet_behavior = 2131755663;
 			
 			// aapt resource value: 0x7F100290
-			public const int settings_update_off = 2131755664;
+			public const int state_completed = 2131755664;
 			
 			// aapt resource value: 0x7F100291
-			public const int settings_use_bmw_database = 2131755665;
+			public const int state_connecting = 2131755665;
 			
 			// aapt resource value: 0x7F100292
-			public const int side_sheet_accessibility_pane_title = 2131755666;
+			public const int state_downloading = 2131755666;
 			
 			// aapt resource value: 0x7F100293
-			public const int side_sheet_behavior = 2131755667;
+			public const int state_failed = 2131755667;
 			
 			// aapt resource value: 0x7F100294
-			public const int state_completed = 2131755668;
+			public const int state_failed_cancelled = 2131755668;
 			
 			// aapt resource value: 0x7F100295
-			public const int state_connecting = 2131755669;
+			public const int state_failed_fetching_url = 2131755669;
 			
 			// aapt resource value: 0x7F100296
-			public const int state_downloading = 2131755670;
+			public const int state_failed_sdcard_full = 2131755670;
 			
 			// aapt resource value: 0x7F100297
-			public const int state_failed = 2131755671;
+			public const int state_failed_unlicensed = 2131755671;
 			
 			// aapt resource value: 0x7F100298
-			public const int state_failed_cancelled = 2131755672;
+			public const int state_fetching_url = 2131755672;
 			
 			// aapt resource value: 0x7F100299
-			public const int state_failed_fetching_url = 2131755673;
+			public const int state_idle = 2131755673;
 			
 			// aapt resource value: 0x7F10029A
-			public const int state_failed_sdcard_full = 2131755674;
+			public const int state_paused_by_request = 2131755674;
 			
 			// aapt resource value: 0x7F10029B
-			public const int state_failed_unlicensed = 2131755675;
+			public const int state_paused_network_setup_failure = 2131755675;
 			
 			// aapt resource value: 0x7F10029C
-			public const int state_fetching_url = 2131755676;
+			public const int state_paused_network_unavailable = 2131755676;
 			
 			// aapt resource value: 0x7F10029D
-			public const int state_idle = 2131755677;
+			public const int state_paused_roaming = 2131755677;
 			
 			// aapt resource value: 0x7F10029E
-			public const int state_paused_by_request = 2131755678;
+			public const int state_paused_sdcard_unavailable = 2131755678;
 			
 			// aapt resource value: 0x7F10029F
-			public const int state_paused_network_setup_failure = 2131755679;
+			public const int state_paused_wifi_disabled = 2131755679;
 			
 			// aapt resource value: 0x7F1002A0
-			public const int state_paused_network_unavailable = 2131755680;
+			public const int state_paused_wifi_unavailable = 2131755680;
 			
 			// aapt resource value: 0x7F1002A1
-			public const int state_paused_roaming = 2131755681;
+			public const int state_unknown = 2131755681;
 			
 			// aapt resource value: 0x7F1002A2
-			public const int state_paused_sdcard_unavailable = 2131755682;
+			public const int status_bar_notification_info_overflow = 2131755682;
 			
 			// aapt resource value: 0x7F1002A3
-			public const int state_paused_wifi_disabled = 2131755683;
+			public const int storage_requirements = 2131755683;
 			
 			// aapt resource value: 0x7F1002A4
-			public const int state_paused_wifi_unavailable = 2131755684;
+			public const int store_settings_failed = 2131755684;
 			
 			// aapt resource value: 0x7F1002A5
-			public const int state_unknown = 2131755685;
+			public const int store_settings_filename = 2131755685;
 			
 			// aapt resource value: 0x7F1002A6
-			public const int status_bar_notification_info_overflow = 2131755686;
+			public const int time_remaining = 2131755686;
 			
 			// aapt resource value: 0x7F1002A7
-			public const int storage_requirements = 2131755687;
+			public const int time_remaining_notification = 2131755687;
 			
 			// aapt resource value: 0x7F1002A8
-			public const int store_settings_failed = 2131755688;
+			public const int title_other_devices = 2131755688;
 			
 			// aapt resource value: 0x7F1002A9
-			public const int store_settings_filename = 2131755689;
+			public const int title_paired_devices = 2131755689;
 			
 			// aapt resource value: 0x7F1002AA
-			public const int time_remaining = 2131755690;
-			
-			// aapt resource value: 0x7F1002AB
-			public const int time_remaining_notification = 2131755691;
-			
-			// aapt resource value: 0x7F1002AC
-			public const int title_other_devices = 2131755692;
-			
-			// aapt resource value: 0x7F1002AD
-			public const int title_paired_devices = 2131755693;
-			
-			// aapt resource value: 0x7F1002AE
-			public const int tool_check_continuous = 2131755694;
-			
-			// aapt resource value: 0x7F1002BA
-			public const int tool_jobs_not_found_list = 2131755706;
-			
-			// aapt resource value: 0x7F1002B0
-			public const int tool_job_arguments = 2131755696;
-			
-			// aapt resource value: 0x7F1002B1
-			public const int tool_job_arguments_error_detail = 2131755697;
-			
-			// aapt resource value: 0x7F1002B2
-			public const int tool_job_arguments_info_detail = 2131755698;
-			
-			// aapt resource value: 0x7F1002AF
-			public const int tool_job_arg_assist = 2131755695;
-			
-			// aapt resource value: 0x7F1002B3
-			public const int tool_job_bin_args = 2131755699;
-			
-			// aapt resource value: 0x7F1002B4
-			public const int tool_job_infos = 2131755700;
-			
-			// aapt resource value: 0x7F1002B5
-			public const int tool_job_job = 2131755701;
+			public const int tool_check_continuous = 2131755690;
 			
 			// aapt resource value: 0x7F1002B6
-			public const int tool_job_jobs = 2131755702;
+			public const int tool_jobs_not_found_list = 2131755702;
+			
+			// aapt resource value: 0x7F1002AC
+			public const int tool_job_arguments = 2131755692;
+			
+			// aapt resource value: 0x7F1002AD
+			public const int tool_job_arguments_error_detail = 2131755693;
+			
+			// aapt resource value: 0x7F1002AE
+			public const int tool_job_arguments_info_detail = 2131755694;
+			
+			// aapt resource value: 0x7F1002AB
+			public const int tool_job_arg_assist = 2131755691;
+			
+			// aapt resource value: 0x7F1002AF
+			public const int tool_job_bin_args = 2131755695;
+			
+			// aapt resource value: 0x7F1002B0
+			public const int tool_job_infos = 2131755696;
+			
+			// aapt resource value: 0x7F1002B1
+			public const int tool_job_job = 2131755697;
+			
+			// aapt resource value: 0x7F1002B2
+			public const int tool_job_jobs = 2131755698;
+			
+			// aapt resource value: 0x7F1002B3
+			public const int tool_job_jobs_prompt = 2131755699;
+			
+			// aapt resource value: 0x7F1002B4
+			public const int tool_job_result = 2131755700;
+			
+			// aapt resource value: 0x7F1002B5
+			public const int tool_job_results = 2131755701;
 			
 			// aapt resource value: 0x7F1002B7
-			public const int tool_job_jobs_prompt = 2131755703;
+			public const int tool_no_errors = 2131755703;
 			
 			// aapt resource value: 0x7F1002B8
-			public const int tool_job_result = 2131755704;
+			public const int tool_read_errors_failure = 2131755704;
 			
 			// aapt resource value: 0x7F1002B9
-			public const int tool_job_results = 2131755705;
+			public const int tool_read_sgbd = 2131755705;
+			
+			// aapt resource value: 0x7F1002BA
+			public const int tool_select_sgbd = 2131755706;
 			
 			// aapt resource value: 0x7F1002BB
-			public const int tool_no_errors = 2131755707;
-			
-			// aapt resource value: 0x7F1002BC
-			public const int tool_read_errors_failure = 2131755708;
-			
-			// aapt resource value: 0x7F1002BD
-			public const int tool_read_sgbd = 2131755709;
-			
-			// aapt resource value: 0x7F1002BE
-			public const int tool_select_sgbd = 2131755710;
-			
-			// aapt resource value: 0x7F1002BF
-			public const int tool_title = 2131755711;
+			public const int tool_title = 2131755707;
 			
 			// aapt resource value: 0x7F1002C0
 			public const int translate_enable_request = 2131755712;
@@ -15122,6 +15110,18 @@ namespace BmwDeepObd
 			
 			// aapt resource value: 0x7F1002C4
 			public const int translate_text = 2131755716;
+			
+			// aapt resource value: 0x7F1002BC
+			public const int trans_caption_translator = 2131755708;
+			
+			// aapt resource value: 0x7F1002BD
+			public const int trans_translator_deepl = 2131755709;
+			
+			// aapt resource value: 0x7F1002BE
+			public const int trans_translator_ibm = 2131755710;
+			
+			// aapt resource value: 0x7F1002BF
+			public const int trans_translator_yandex = 2131755711;
 			
 			// aapt resource value: 0x7F1002C5
 			public const int unknown_adapter_generic = 2131755717;

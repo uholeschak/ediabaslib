@@ -229,6 +229,10 @@
 
   <!-- Yandex key -->
   <string name="yandex_api_key_title">Einstellungen Übersetzung</string>
+  <string name="trans_caption_translator">Übersetzer</string>
+  <string name="trans_translator_yandex">Yandex.Translate</string>
+  <string name="trans_translator_ibm">IBM Watson</string>
+  <string name="trans_translator_deepl">DeepL</string>
   <string name="yandex_key_desc">Für eine automatische Übersetzung mit {0} wird eine kostenloser API Key und Account benötigt, der eine begrenzte Anzahl an Übersetzungen pro Tag erlaubt.\nMit den folgenden Schaltflächen loggen Sie sich in Ihren Account ein um eine Key zu erzeugen oder Ihre bestehenden anzuzeigen.\nKopieren Sie den Key aus dem Browser und fügen Sie Ihn in das untere Feld mit der Einfügen Schaltfläche ein.\nUm den Key zu kopieren drücken und halten Sie das erste Wort, erweitern den Bereich und wählen Sie anschließend kopieren.</string>
   <string name="yandex_key_copy_title">API Key kopieren</string>
   <string name="button_yandex_key_create">API Key erzeugen</string>
@@ -437,10 +441,6 @@
   <string name="settings_caption_theme">Theme</string>
   <string name="settings_theme_dark">Dunkel</string>
   <string name="settings_theme_light">Hell</string>
-  <string name="settings_caption_translator">Übersetzer</string>
-  <string name="settings_translator_yandex">Yandex.Translate</string>
-  <string name="settings_translator_ibm">IBM Watson</string>
-  <string name="settings_translator_deepl">DeepL</string>
   <string name="settings_caption_title_bar">Titelzeile</string>
   <string name="settings_auto_hide_title_bar">Titelzeile auf Hauptseite bei Verbindung automatisch ausblenden (mit Lang-Klick und Loslassen anzeigen)</string>
   <string name="settings_suppress_title_bar">Nicht verwendete Titelzeilen unterdrücken (mit Wischgeste anzeigen)</string>
