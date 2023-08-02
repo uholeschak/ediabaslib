@@ -12897,19 +12897,19 @@ namespace BmwDeepObd
 			public const int trace_info = 2131427467;
 			
 			// aapt resource value: 0x7F0B008C
-			public const int vag_adaption = 2131427468;
+			public const int translate_key_select = 2131427468;
 			
 			// aapt resource value: 0x7F0B008D
-			public const int vag_coding = 2131427469;
+			public const int vag_adaption = 2131427469;
 			
 			// aapt resource value: 0x7F0B008E
-			public const int xml_tool = 2131427470;
+			public const int vag_coding = 2131427470;
 			
 			// aapt resource value: 0x7F0B008F
-			public const int xml_tool_ecu = 2131427471;
+			public const int xml_tool = 2131427471;
 			
 			// aapt resource value: 0x7F0B0090
-			public const int yandex_key_select = 2131427472;
+			public const int xml_tool_ecu = 2131427472;
 			
 			static Layout()
 			{
