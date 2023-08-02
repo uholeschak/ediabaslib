@@ -1418,7 +1418,7 @@ namespace BmwDeepObd
         {
             try
             {
-                Intent serverIntent = new Intent(this, typeof(YandexKeyActivity));
+                Intent serverIntent = new Intent(this, typeof(TranslateKeyActivity));
                 StartActivityForResult(serverIntent, (int)ActivityRequest.RequestYandexKey);
             }
             catch (Exception)

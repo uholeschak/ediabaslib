@@ -11,10 +11,10 @@ using AndroidX.AppCompat.App;
 namespace BmwDeepObd
 {
     [Android.App.Activity(Label = "@string/yandex_api_key_title",
-        Name = ActivityCommon.AppNameSpace + "." + nameof(YandexKeyActivity),
+        Name = ActivityCommon.AppNameSpace + "." + nameof(TranslateKeyActivity),
         WindowSoftInputMode = SoftInput.StateAlwaysHidden,
         ConfigurationChanges = ActivityConfigChanges)]
-    public class YandexKeyActivity : BaseActivity, View.IOnTouchListener
+    public class TranslateKeyActivity : BaseActivity, View.IOnTouchListener
     {
         public class InstanceData
         {

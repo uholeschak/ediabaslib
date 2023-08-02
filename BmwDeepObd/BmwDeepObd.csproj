@@ -418,7 +418,7 @@
     <Compile Include="ResultListAdapter.cs" />
     <Compile Include="XmlDocumentLoader.cs" />
     <Compile Include="XmlToolEcuActivity.cs" />
-    <Compile Include="YandexKeyActivity.cs" />
+    <Compile Include="TranslateKeyActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\dist\default\production\CanAdapterElm.X.production.hex">
