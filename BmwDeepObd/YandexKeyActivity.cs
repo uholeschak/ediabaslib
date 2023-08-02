@@ -272,8 +272,7 @@ namespace BmwDeepObd
                         _ignoreChange = false;
                     }
 
-                    UpdateTranslatorKeys();
-                    UpdateDisplay();
+                    UpdateButtonState();
                 }
             };
             _buttonYandexApiKeyPaste.TextChanged += (sender, args) =>
@@ -283,8 +282,7 @@ namespace BmwDeepObd
                     return;
                 }
 
-                UpdateTranslatorKeys();
-                UpdateDisplay();
+                UpdateButtonState();
             };
 
             _buttonApiUrlPaste = FindViewById<Button>(Resource.Id.buttonApiUrlPaste);
@@ -313,8 +311,7 @@ namespace BmwDeepObd
                         _ignoreChange = false;
                     }
 
-                    UpdateTranslatorKeys();
-                    UpdateDisplay();
+                    UpdateButtonState();
                 }
             };
             _buttonApiUrlPaste.TextChanged += (sender, args) =>
@@ -324,8 +321,7 @@ namespace BmwDeepObd
                     return;
                 }
 
-                UpdateTranslatorKeys();
-                UpdateDisplay();
+                UpdateButtonState();
             };
 
             _textViewYandexApiKeyTestResult = FindViewById<TextView>(Resource.Id.textViewYandexKeyTestResult);
@@ -383,7 +379,7 @@ namespace BmwDeepObd
         protected override void OnResume()
         {
             base.OnResume();
-            UpdateDisplay();
+            UpdateButtonState();
             if (_clipboardCheckTimer == null)
             {
                 _clipboardCheckTimer = new Timer(state =>
@@ -394,7 +390,7 @@ namespace BmwDeepObd
                         {
                             return;
                         }
-                        UpdateDisplay();
+                        UpdateButtonState();
                     });
                 }, null, 1000, 1000);
             }
@@ -463,7 +459,7 @@ namespace BmwDeepObd
             }
         }
 
-        private void UpdateDisplay()
+        private void UpdateButtonState()
         {
             if (_activityCommon == null)
             {
@@ -479,20 +475,14 @@ namespace BmwDeepObd
                 {
                     case ActivityCommon.TranslatorType.IbmWatson:
                         _radioButtonTranslatorIbm.Checked = true;
-                        _editTextYandexApiKey.Text = ActivityCommon.IbmTranslatorApiKey;
-                        _editTextApiUrl.Text = ActivityCommon.IbmTranslatorUrl;
                         break;
 
                     case ActivityCommon.TranslatorType.Deepl:
                         _radioButtonTranslatorDeepl.Checked = true;
-                        _editTextYandexApiKey.Text = ActivityCommon.DeeplApiKey;
-                        _editTextApiUrl.Text = string.Empty;
                         break;
 
                     default:
                         _radioButtonTranslatorYandex.Checked = true;
-                        _editTextYandexApiKey.Text = ActivityCommon.YandexApiKey;
-                        _editTextApiUrl.Text = string.Empty;
                         break;
                 }
 
@@ -531,6 +521,50 @@ namespace BmwDeepObd
             {
                 _ignoreChange = false;
             }
+        }
+
+        private void UpdateApiText()
+        {
+            if (_activityCommon == null)
+            {
+                return;
+            }
+
+            try
+            {
+                _ignoreChange = true;
+                switch (ActivityCommon.SelectedTranslator)
+                {
+                    case ActivityCommon.TranslatorType.IbmWatson:
+                        _editTextYandexApiKey.Text = ActivityCommon.IbmTranslatorApiKey;
+                        _editTextApiUrl.Text = ActivityCommon.IbmTranslatorUrl;
+                        break;
+
+                    case ActivityCommon.TranslatorType.Deepl:
+                        _editTextYandexApiKey.Text = ActivityCommon.DeeplApiKey;
+                        _editTextApiUrl.Text = string.Empty;
+                        break;
+
+                    default:
+                        _editTextYandexApiKey.Text = ActivityCommon.YandexApiKey;
+                        _editTextApiUrl.Text = string.Empty;
+                        break;
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+            finally
+            {
+                _ignoreChange = false;
+            }
+        }
+
+        private void UpdateDisplay()
+        {
+            UpdateApiText();
+            UpdateButtonState();
         }
 
         private void UpdateSetting()
