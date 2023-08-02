@@ -99,7 +99,7 @@ namespace BmwDeepObd
                     return;
                 }
 
-                UpdateSetting();
+                UpdateTranslatorType();
                 UpdateDisplay();
             };
 
@@ -111,7 +111,7 @@ namespace BmwDeepObd
                     return;
                 }
 
-                UpdateSetting();
+                UpdateTranslatorType();
                 UpdateDisplay();
             };
 
@@ -123,7 +123,7 @@ namespace BmwDeepObd
                     return;
                 }
 
-                UpdateSetting();
+                UpdateTranslatorType();
                 UpdateDisplay();
             };
 
@@ -272,7 +272,7 @@ namespace BmwDeepObd
                         _ignoreChange = false;
                     }
 
-                    UpdateSetting();
+                    UpdateTranslatorKeys();
                     UpdateDisplay();
                 }
             };
@@ -283,7 +283,7 @@ namespace BmwDeepObd
                     return;
                 }
 
-                UpdateSetting();
+                UpdateTranslatorKeys();
                 UpdateDisplay();
             };
 
@@ -313,7 +313,7 @@ namespace BmwDeepObd
                         _ignoreChange = false;
                     }
 
-                    UpdateSetting();
+                    UpdateTranslatorKeys();
                     UpdateDisplay();
                 }
             };
@@ -324,7 +324,7 @@ namespace BmwDeepObd
                     return;
                 }
 
-                UpdateSetting();
+                UpdateTranslatorKeys();
                 UpdateDisplay();
             };
 
@@ -535,6 +535,12 @@ namespace BmwDeepObd
 
         private void UpdateSetting()
         {
+            UpdateTranslatorKeys();
+            UpdateTranslatorType();
+        }
+
+        private void UpdateTranslatorKeys()
+        {
             if (_activityCommon == null)
             {
                 return;
@@ -554,6 +560,14 @@ namespace BmwDeepObd
                 case ActivityCommon.TranslatorType.Deepl:
                     ActivityCommon.DeeplApiKey = _editTextYandexApiKey.Text.Trim();
                     break;
+            }
+        }
+
+        private void UpdateTranslatorType()
+        {
+            if (_activityCommon == null)
+            {
+                return;
             }
 
             ActivityCommon.TranslatorType translatorType = ActivityCommon.SelectedTranslator;
